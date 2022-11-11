@@ -15,6 +15,8 @@ class Authenticate
      */
     public function handle($request, Closure $next)
     {
-        return $next($request);
+        if (! $request->expectsJson()) {
+            return route('login');
+        }
     }
 }
