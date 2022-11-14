@@ -2,8 +2,10 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -37,4 +39,19 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
     ];
+
+    protected $appends = [
+        'user_id',
+        'nama',
+    ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope(function (Builder $query) {
+            $query->selectRaw('AES_DECRYPT(id_user, "nur") user_id, petugas.nama, user.*')
+                ->join('petugas', DB::raw('AES_DECRYPT(id_user, "nur")'), '=', 'petugas.nip');
+        });
+    }
 }

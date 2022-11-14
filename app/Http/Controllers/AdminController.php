@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DataBarang;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -14,10 +15,6 @@ class AdminController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $isUserLoggedIn = auth()->check();
-        $username = optional(auth()->user())->name;
-        $email = optional(auth()->user())->email;
-
-        return view('admin.dashboard', compact('isUserLoggedIn', 'username', 'email'));
+        return view('admin.dashboard');
     }
 }

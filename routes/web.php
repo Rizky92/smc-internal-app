@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Khanza\Auth\LoginController;
 use App\Http\Controllers\Khanza\Auth\LogoutController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Middleware\Authenticate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -36,9 +37,9 @@ Route::middleware('auth')
     });
 
 
-// Route::prefix('admin')
-//     ->as('admin.')
-//     ->middleware('auth')
-//     ->group(function () {
-//         Route::get('laporan', [])
-//     });
+Route::prefix('admin')
+    ->as('admin.')
+    ->middleware('auth')
+    ->group(function () {
+        Route::resource('laporan', LaporanController::class)->names('laporan');
+    });

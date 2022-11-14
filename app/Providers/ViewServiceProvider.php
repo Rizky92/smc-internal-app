@@ -26,9 +26,32 @@ class ViewServiceProvider extends ServiceProvider
     public function boot()
     {
         View::composer('layouts.admin', function ($view) {
-            $user = Auth::user();
+            $sidebarMenu = collect([
+                [
+                    'name' => 'Dashboard',
+                    'url' => route('admin.dashboard'),
+                    'icon' => "fas fa-home",
+                    'type' => 'link',
+                ],
+                [
+                    'name' => 'Laporan',
+                    'type' => 'title',
+                ],
+                [
+                    'name' => 'Farmasi',
+                    'icon' => "far fa-circle",
+                    'type' => 'dropdown',
+                    'items' => [
+                        [
+                            'name' => 'Laporan Darurat Stok',
+                            'icon' => 'fas fa-newspaper',
+                            'url' => route('admin.laporan.index'),
+                        ]
+                    ],
+                ],
+            ]);
 
-            $view->with('username', $user->id_user);
+            $view->with('sidebarMenu', $sidebarMenu);
         });
     }
 }
