@@ -15,7 +15,26 @@
                 </div>
                 <div id="collapseOne" class="collapse show" data-parent="#accordion">
                     <div class="card-body">
-                        
+                        <form method="GET">
+                            <div class="form-group">
+                                <label for="filter-perpage">Per halaman</label>
+                                <select class="custom-select form-control-border" id="filter-perpage" name="perpage">
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                    <option value="200">200</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="filter-perpage">Per halaman</label>
+                                <select class="custom-select form-control-border" id="filter-perpage" name="perpage">
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                    <option value="200">200</option>
+                                </select>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
