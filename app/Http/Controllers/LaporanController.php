@@ -12,18 +12,23 @@ class LaporanController extends Controller
      * Display a listing of the resource.
      * 
      * @param  \Illuminate\Http\Request
-     *
+     * 
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
     {
-        $perpage = $request->input('perpage', 50);
-        $stokMinimalSatu = $request->boolean('stok_minimal_satu');
-        $daruratStok = DataBarang::stokDarurat()
-            ->paginate();
+        $janganTampilkanStokMinimalNol = $request->boolean('stok_minimal_nol');
 
+        $daruratStok = DataBarang::stokDarurat();
+
+        if ($janganTampilkanStokMinimalNol) {
+            $daruratStok = $daruratStok->janganTampilkanStokMinimalNol();
+
+            $request->session()->flash('tidak_ada_stok_minimal_nol', 'Menampilkan stok minimal lebih dari nol.');
+        }
+        
         return view('admin.laporan.index', [
-            'daruratStok' => $daruratStok,
+            'daruratStok' => $daruratStok->get(),
         ]);
     }
 

@@ -41,5 +41,9 @@ Route::prefix('admin')
     ->as('admin.')
     ->middleware('auth')
     ->group(function () {
-        Route::resource('laporan', LaporanController::class)->names('laporan');
+        Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index');
+
+        Route::resource('laporan', LaporanController::class)
+            ->except('index')
+            ->names('laporan');
     });
