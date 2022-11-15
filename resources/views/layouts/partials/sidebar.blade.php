@@ -1,7 +1,6 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <a href="{{ route('admin.dashboard') }}" class="brand-link">
-        <img src="{{ asset('img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-        <span class="brand-text font-weight-light">SMC LAPORAN</span>
+    <a href="{{ route('admin.dashboard') }}" class="brand-link text-center">
+        <span class="font-weight-light" style="white-space: normal">{{ config('app.name') }}</span>
     </a>
 
     <div class="sidebar">

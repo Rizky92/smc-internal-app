@@ -55,17 +55,17 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body table-responsive">
-                    <form method="GET" class="d-flex align-items-center justify-content-start mb-1">
+                    <form method="GET" class="d-flex align-items-center justify-content-start mb-3">
                         <div class="custom-control custom-switch">
                             <input type="checkbox" name="stok_minimal_nol" id="filter-stok-minimal-nol" class="custom-control-input">
-                            <label class="custom-control-label" for="filter-stok-minimal-nol">Filter stok minimal</label>
+                            <label class="custom-control-label" for="filter-stok-minimal-nol">Jangan tampilkan barang dengan stok minimal 0</label>
                         </div>
                         <button class="ml-3 btn btn-primary btn-sm" type="submit">
                             <i class="fas fa-save"></i>
                             <span class="ml-1">Simpan</span>
                         </button>
                     </form>
-                    <table id="table_laporan" class="table table-hover table-striped table-sm text-sm">
+                    <table id="table_laporan" class="table table-hover table-striped table-bordered table-sm text-sm">
                         <thead>
                             <tr>
                                 <th>Kode</th>
