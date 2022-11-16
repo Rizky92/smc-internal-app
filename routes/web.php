@@ -1,12 +1,11 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DataTable\LaporanDaruratStokController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Khanza\Auth\LoginController;
 use App\Http\Controllers\Khanza\Auth\LogoutController;
 use App\Http\Controllers\LaporanController;
-use App\Http\Middleware\Authenticate;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
 
 Route::get('login', [LoginController::class, 'create'])->name('login');
@@ -41,9 +40,5 @@ Route::prefix('admin')
     ->as('admin.')
     ->middleware('auth')
     ->group(function () {
-        Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index');
-
-        Route::resource('laporan', LaporanController::class)
-            ->except('index')
-            ->names('laporan');
+        Route::get('laporan', LaporanController::class)->name('laporan.index');
     });

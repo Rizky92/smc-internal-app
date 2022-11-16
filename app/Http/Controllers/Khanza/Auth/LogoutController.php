@@ -9,13 +9,13 @@ use Illuminate\Support\Facades\Auth;
 class LogoutController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Logout user from current session.
      *
      * @return \Illuminate\Http\Response
      */
     public function __invoke(Request $request)
     {
-        Auth::logout();
+        Auth::guard('web')->logout();
 
         $request->session()->invalidate();
 

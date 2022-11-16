@@ -21,7 +21,7 @@ class LoginController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store user session if credential matches in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response

@@ -19,8 +19,7 @@
         "laravel/tinker": "^2.5",
         "laravel/ui": "^2.5",
         "spatie/once": "^2.2",
-        "spatie/simple-excel": "^1.2",
-        "yajra/laravel-datatables": "^1.5"
+        "spatie/simple-excel": "^1.2"
     },
     "require-dev": {
         "facade/ignition": "^2.0",
