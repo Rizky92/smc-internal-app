@@ -44,7 +44,7 @@ class ViewServiceProvider extends ServiceProvider
                     'items' => [
                         [
                             'name' => 'Laporan Darurat Stok',
-                            'icon' => 'fas fa-newspaper',
+                            'icon' => 'far fa-newspaper',
                             'url' => route('admin.laporan.index'),
                         ]
                     ],

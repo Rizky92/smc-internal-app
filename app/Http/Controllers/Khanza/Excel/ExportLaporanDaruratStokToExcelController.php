@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Excel;
+namespace App\Http\Controllers\Khanza\Excel;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
