@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DataBarang;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LaporanDaruratStokController extends Controller
 {
@@ -15,8 +16,14 @@ class LaporanDaruratStokController extends Controller
      */
     public function index(Request $request)
     {
-        return view('admin.laporan.index', [
-            'daruratStok' => DataBarang::daruratStok()->get(),
+        // DB::enableQueryLog();
+
+        $daruratStok = DataBarang::daruratStok()->get();
+
+        // dd(DB::getQueryLog());
+
+        return view('admin.darurat-stok.index', [
+            'daruratStok' => $daruratStok,
         ]);
     }
 }

@@ -25,13 +25,13 @@
             var laporanDaruratStokTable;
 
             $.fn.dataTable.ext.search.push((settings, data, dataIndex) => {
-                let filterStokMinimalLebihDariNol = $('#filter_stok_minimal_nol').is(':checked')
+                let filterStokMinimal = $('#filter_stok_minimal_nol').is(':checked')
 
-                if (parseFloat(data[6]) > 0) {
+                if (parseFloat(data[4]) > 0) {
                     return true
                 }
 
-                return filterStokMinimalLebihDariNol
+                return filterStokMinimal
             })
 
             $(document).ready(() => {
@@ -83,29 +83,30 @@
                     <table id="table_laporan" class="table table-hover table-striped table-bordered table-sm text-sm">
                         <thead>
                             <tr>
-                                <th>Kode</th>
                                 <th>Nama</th>
-                                <th>Satuan besar</th>
-                                <th>Isi</th>
                                 <th>Satuan kecil</th>
                                 <th>Kategori</th>
+                                <th>Supplier</th>
                                 <th>Stok minimal</th>
-                                <th>Stok di gudang</th>
+                                <th>Stok saat ini</th>
                                 <th>Saran order</th>
+                                <th>Harga Per Unit</th>
+                                <th>Total Harga</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($daruratStok as $barang)
+                                @php($saranOrder = $barang->saran_order < 0 ? 0 : $barang->saran_order)
                                 <tr>
-                                    <td>{{ $barang->kode_brng }}</td>
                                     <td>{{ $barang->nama_brng }}</td>
-                                    <td>{{ $barang->satuan_besar }}</td>
-                                    <td>{{ $barang->isi }}</td>
                                     <td>{{ $barang->satuan_kecil }}</td>
                                     <td>{{ $barang->kategori }}</td>
+                                    <td>{{ $barang->nama_industri }}</td>
                                     <td>{{ $barang->stokminimal }}</td>
                                     <td>{{ $barang->stok_di_gudang }}</td>
-                                    <td>{{ $barang->saran_order < 0 ? "0" : $barang->saran_order }}</td>
+                                    <td>{{ $saranOrder }}</td>
+                                    <td>{{ rp($barang->h_beli) }}</td>
+                                    <td>{{ rp($barang->h_beli * $saranOrder) }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

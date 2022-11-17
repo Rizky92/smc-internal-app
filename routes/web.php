@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Khanza\Auth\LoginController;
 use App\Http\Controllers\Khanza\Auth\LogoutController;
 use App\Http\Controllers\LaporanDaruratStokController;
+use App\Http\Controllers\LaporanPenggunaanObatPerDokterController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,5 +37,6 @@ Route::prefix('admin')
     ->group(function () {
         Route::get('/', AdminController::class)->name('dashboard');
 
-        Route::get('farmasi/darurat-stok', [LaporanDaruratStokController::class, 'index'])->name('laporan.index');
+        Route::get('farmasi/darurat-stok', [LaporanDaruratStokController::class, 'index'])->name('darurat-stok.index');
+        Route::get('farmasi/penggunaan-obat-per-dokter', [LaporanPenggunaanObatPerDokterController::class, 'index'])->name('obat-perdokter.index');
     });

@@ -29,17 +29,17 @@ class DataBarang extends Model
             ->selectRaw("
                 databarang.kode_brng,
                 nama_brng,
-                isi,
-                satuankecil.satuan satuan_kecil,
-                satuanbesar.satuan satuan_besar,
+                kodesatuan.satuan satuan_kecil,
+                databarang.h_beli,
                 kategori_barang.nama kategori,
                 stokminimal,
                 stok_gudang.stok_di_gudang,
-                (databarang.stokminimal - stok_gudang.stok_di_gudang) saran_order
+                (databarang.stokminimal - stok_gudang.stok_di_gudang) saran_order,
+                industrifarmasi.nama_industri
             ")
             ->join('kategori_barang', 'databarang.kode_kategori', '=', 'kategori_barang.kode')
-            ->join(DB::raw('kodesatuan satuankecil'), 'databarang.kode_sat', '=', 'satuankecil.kode_sat')
-            ->join(DB::raw('kodesatuan satuanbesar'), 'databarang.kode_satbesar', '=', 'satuanbesar.kode_sat')
+            ->join('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
+            ->join('industrifarmasi', 'databarang.kode_industri', '=', 'industrifarmasi.kode_industri')
             ->join(DB::raw("(
                 SELECT
                     kode_brng,
