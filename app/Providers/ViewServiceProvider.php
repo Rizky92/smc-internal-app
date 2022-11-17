@@ -45,13 +45,18 @@ class ViewServiceProvider extends ServiceProvider
                         [
                             'name' => 'Laporan Darurat Stok',
                             'icon' => 'far fa-newspaper',
-                            'url' => route('admin.darurat-stok.index'),
+                            'url' => route('admin.farmasi.darurat-stok.index'),
                         ],
                         [
                             'name' => 'Penggunaan Obat Per Dokter',
                             'icon' => 'far fa-newspaper',
-                            'url' => route('admin.obat-perdokter.index'),
-                        ]
+                            'url' => route('admin.farmasi.obat-perdokter.index'),
+                        ],
+                        [
+                            'name' => 'Laporan Tahunan',
+                            'icon' => 'far fa-newspaper',
+                            'url' => route('admin.farmasi.laporan-tahunan.index'),
+                        ],
                     ],
                 ],
             ]);

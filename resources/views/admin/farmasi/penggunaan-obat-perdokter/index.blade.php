@@ -1,5 +1,5 @@
 @extends('layouts.admin', [
-    'title' => 'Darurat Stok',
+    'title' => 'Penggunaan Obat Per Dokter',
 ])
 
 @once
@@ -22,20 +22,10 @@
         <script src="{{ asset('plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
         <script src="{{ asset('plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
         <script>
-            var laporanDaruratStokTable;
-
-            $.fn.dataTable.ext.search.push((settings, data, dataIndex) => {
-                let filterStokMinimal = $('#filter_stok_minimal_nol').is(':checked')
-
-                if (parseFloat(data[4]) > 0) {
-                    return true
-                }
-
-                return filterStokMinimal
-            })
+            var mainTable;
 
             $(document).ready(() => {
-                laporanDaruratStokTable = $("#table_laporan")
+                mainTable = $("#table_index")
                     .DataTable({
                         autoWidth: false,
                         responsive: true,
@@ -55,14 +45,10 @@
                         ]
                     })
                 
-                laporanDaruratStokTable
+                mainTable
                     .buttons()
                     .container()
                     .appendTo('#table_filter_action .d-flex')
-            })
-
-            $('#filter_stok_minimal_nol').change(() => {
-                laporanDaruratStokTable.draw()
             })
         </script>
     @endpush
@@ -72,41 +58,29 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body pb-0" id="table_filter_action">
-                    <div class="d-flex justify-content-start align-items-center">
-                        <div class="custom-control custom-switch mr-auto">
-                            <input type="checkbox" name="stok_minimal_nol" id="filter_stok_minimal_nol" class="custom-control-input">
-                            <label class="custom-control-label" for="filter_stok_minimal_nol">Tampilkan barang dengan stok minimal 0</label>
-                        </div>
+                    <div class="d-flex justify-content-end align-items-center">
+                        
                     </div>
                 </div>
                 <div class="card-body table-responsive">
-                    <table id="table_laporan" class="table table-hover table-striped table-bordered table-sm text-sm">
+                    <table id="table_index" class="table table-hover table-striped table-bordered table-sm text-sm">
                         <thead>
                             <tr>
-                                <th>Nama</th>
-                                <th>Satuan kecil</th>
-                                <th>Kategori</th>
-                                <th>Supplier</th>
-                                <th>Stok minimal</th>
-                                <th>Stok saat ini</th>
-                                <th>Saran order</th>
-                                <th>Harga Per Unit</th>
-                                <th>Total Harga</th>
+                                <th>No. Resep</th>
+                                <th>Tanggal Peresepan</th>
+                                <th>Nama Obat</th>
+                                <th>Jumlah</th>
+                                <th>Dokter Peresep</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($daruratStok as $barang)
-                                @php($saranOrder = $barang->saran_order < 0 ? 0 : $barang->saran_order)
+                            @foreach ($obatPerDokter as $dataObat)
                                 <tr>
-                                    <td>{{ $barang->nama_brng }}</td>
-                                    <td>{{ $barang->satuan_kecil }}</td>
-                                    <td>{{ $barang->kategori }}</td>
-                                    <td>{{ $barang->nama_industri }}</td>
-                                    <td>{{ $barang->stokminimal }}</td>
-                                    <td>{{ $barang->stok_di_gudang }}</td>
-                                    <td>{{ $saranOrder }}</td>
-                                    <td>{{ rp($barang->h_beli) }}</td>
-                                    <td>{{ rp($barang->h_beli * $saranOrder) }}</td>
+                                    <td>{{ $dataObat->no_resep }}</td>
+                                    <td>{{ $dataObat->tgl_peresepan }}</td>
+                                    <td>{{ $dataObat->nama_brng }}</td>
+                                    <td>{{ $dataObat->jml }}</td>
+                                    <td>{{ $dataObat->nm_dokter }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

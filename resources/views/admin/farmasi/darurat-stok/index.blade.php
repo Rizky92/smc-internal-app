@@ -22,20 +22,20 @@
         <script src="{{ asset('plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
         <script src="{{ asset('plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
         <script>
-            var laporanDaruratStokTable;
+            var mainTable;
 
             $.fn.dataTable.ext.search.push((settings, data, dataIndex) => {
-                let filterStokMinimalLebihDariNol = $('#filter_stok_minimal_nol').is(':checked')
+                let filterStokMinimal = $('#filter_stok_minimal_nol').is(':checked')
 
-                if (parseFloat(data[5]) > 0) {
+                if (parseFloat(data[4]) > 0) {
                     return true
                 }
 
-                return filterStokMinimalLebihDariNol
+                return filterStokMinimal
             })
 
             $(document).ready(() => {
-                laporanDaruratStokTable = $("#table_laporan")
+                mainTable = $("#table_index")
                     .DataTable({
                         autoWidth: false,
                         responsive: true,
@@ -46,12 +46,6 @@
                             [10, 25, 50, 100, 200, -1],
                             ['10', '25', '50', '100', '200', 'Semua'],
                         ],
-                        columnDefs: [
-                            {
-                                target: 8,
-                                render: $.fn.dataTable.render.number('.', ',', 2, 'Rp. ')
-                            }
-                        ],
                         buttons: [
                             {
                                 extend: 'excel',
@@ -61,14 +55,14 @@
                         ]
                     })
                 
-                laporanDaruratStokTable
+                mainTable
                     .buttons()
                     .container()
                     .appendTo('#table_filter_action .d-flex')
             })
 
             $('#filter_stok_minimal_nol').change(() => {
-                laporanDaruratStokTable.draw()
+                mainTable.draw()
             })
         </script>
     @endpush
@@ -84,29 +78,28 @@
                                 <input type="checkbox" name="stok_minimal_nol" id="filter_stok_minimal_nol" class="custom-control-input">
                                 <label class="custom-control-label" for="filter_stok_minimal_nol">Tampilkan barang dengan stok minimal 0</label>
                             </div>
-                            <div class="custom-control custom-switch mt-3">
-                                <input type="checkbox" name="saran_order_nol" id="filter_saran_order_nol" class="custom-control-input">
-                                <label class="custom-control-label" for="filter_saran_order_nol">Tampilkan barang dengan saran order 0</label>
-                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="card-body table-responsive">
-                    <table id="table_laporan" class="table table-hover table-striped table-bordered table-sm text-sm">
+                    <table id="table_index" class="table table-hover table-striped table-bordered table-sm text-sm">
                         <thead>
                             <tr>
-                                <th>No.</th>
-                                <th>Tanggal</th>
-                                <th>Nama Item</th>
-                                <th>Qty</th>
-                                <th>Dokter</th>
+                                <th>Nama</th>
+                                <th>Satuan kecil</th>
+                                <th>Kategori</th>
+                                <th>Supplier</th>
+                                <th>Stok minimal</th>
+                                <th>Stok saat ini</th>
+                                <th>Saran order</th>
+                                <th>Harga Per Unit</th>
+                                <th>Total Harga</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($obatPerDokter as $dataObat)
+                            @foreach ($daruratStok as $barang)
                                 @php($saranOrder = $barang->saran_order < 0 ? 0 : $barang->saran_order)
                                 <tr>
-                                    <td>{{ $barang->kode_brng }}</td>
                                     <td>{{ $barang->nama_brng }}</td>
                                     <td>{{ $barang->satuan_kecil }}</td>
                                     <td>{{ $barang->kategori }}</td>

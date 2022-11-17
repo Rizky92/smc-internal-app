@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Farmasi;
 
+use App\Http\Controllers\Controller;
 use App\Resep;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,12 +17,10 @@ class LaporanPenggunaanObatPerDokterController extends Controller
      */
     public function index(Request $request)
     {
-        DB::enableQueryLog();
+        $penggunaanObatPerDokter = Resep::penggunaanObatPerDokter(now()->format('Y-m-d'), now()->format('Y-m-d'))->get();
         
-        dump(Resep::penggunaanObatPerDokter(now()->format('Y-m-d'), now()->format('Y-m-d'))->get());
-
-        dd(DB::getQueryLog());
-
-        return view('admin.penggunaan-obat-perdokter.index');
+        return view('admin.farmasi.penggunaan-obat-perdokter.index', [
+            'obatPerDokter' => $penggunaanObatPerDokter,
+        ]);
     }
 }

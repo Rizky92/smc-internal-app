@@ -30,7 +30,7 @@ class Resep extends Model
             ->join('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
             ->join('resep_dokter', 'resep_obat.no_resep', '=', 'resep_dokter.no_resep')
             ->join('databarang', 'resep_dokter.kode_brng', '=', 'databarang.kode_brng')
-            ->whereBetween('resep_obat.tgl_perawatan', [$dateMin, $dateMax])
+            ->whereBetween('resep_obat.tgl_peresepan', [$dateMin, $dateMax])
             ->where(function (Builder $query) {
                 return $query
                     ->whereNotNull(['resep_obat.jam', 'resep_obat.tgl_peresepan', 'resep_obat.jam_peresepan'])

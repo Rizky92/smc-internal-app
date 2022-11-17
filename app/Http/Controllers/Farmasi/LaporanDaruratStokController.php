@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Farmasi;
 
 use App\DataBarang;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -16,13 +17,9 @@ class LaporanDaruratStokController extends Controller
      */
     public function index(Request $request)
     {
-        // DB::enableQueryLog();
-
         $daruratStok = DataBarang::daruratStok()->get();
 
-        // dd(DB::getQueryLog());
-
-        return view('admin.darurat-stok.index', [
+        return view('admin.farmasi.darurat-stok.index', [
             'daruratStok' => $daruratStok,
         ]);
     }
