@@ -27,7 +27,7 @@
             $.fn.dataTable.ext.search.push((settings, data, dataIndex) => {
                 let filterStokMinimal = $('#filter_stok_minimal_nol').is(':checked')
 
-                if (parseFloat(data[4]) > 0) {
+                if (parseFloat(data[5]) > 0) {
                     return true
                 }
 
@@ -85,6 +85,7 @@
                     <table id="table_index" class="table table-hover table-striped table-bordered table-sm text-sm">
                         <thead>
                             <tr>
+                                <th>Kode barang</th>
                                 <th>Nama</th>
                                 <th>Satuan kecil</th>
                                 <th>Kategori</th>
@@ -100,6 +101,7 @@
                             @foreach ($daruratStok as $barang)
                                 @php($saranOrder = $barang->saran_order < 0 ? 0 : $barang->saran_order)
                                 <tr>
+                                    <td>{{ $barang->kode_brng }}</td>
                                     <td>{{ $barang->nama_brng }}</td>
                                     <td>{{ $barang->satuan_kecil }}</td>
                                     <td>{{ $barang->kategori }}</td>

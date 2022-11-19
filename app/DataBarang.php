@@ -47,7 +47,7 @@ class DataBarang extends Model
                 FROM gudangbarang
                 INNER JOIN bangsal ON gudangbarang.kd_bangsal = bangsal.kd_bangsal
                 WHERE bangsal.status = '1'
-                AND bangsal.kd_bangsal IN ('IFG', 'IFA', 'AP')
+                AND bangsal.kd_bangsal NOT IN ('VK', 'OK', 'IGD')
                 GROUP BY kode_brng
             ) stok_gudang"), 'databarang.kode_brng', '=', 'stok_gudang.kode_brng')
             ->where('status', '1');

@@ -57,55 +57,44 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-body pb-0" id="table_filter_action">
-                    <div class="d-flex justify-content-end align-items-center">
-                        
-                    </div>
-                </div>
                 <div class="card-body table-responsive p-0">
-                    <table id="table_index" class="table table-hover table-striped table-sm text-sm">
+                    <table id="table_index" class="table table-hover table-striped table-sm text-sm" style="width: 180rem">
                         <thead>
                             <tr>
-                                <th>Bulan</th>
-                                <th width="250">Kunjungan TOTAL</th>
-                                <th width="250">Inpatient</th>
-                                <th width="250">Outpatient</th>
-                                <th width="250">Emergency</th>
-                                <th width="250">Walk in</th>
-                                <th width="250">Pendapatan TOTAL</th>
-                                <th width="250">Pendapatan Obat Inpatient</th>
-                                <th width="250">Pendapatan Obat Outpatient</th>
-                                <th width="250">Pendapatan Obat Emergency</th>
-                                <th width="250">Pendapatan Obat Walk in</th>
-                                <th width="250">Pendapatan Alkes Farmasi dan Unit</th>
-                                <th width="250">Drug Return</th>
-                                <th width="250">pembelian Farmasi</th>
-                                <th width="250">Retur Supplier</th>
-                                <th width="250">Pembelian TOTAL (Pembelian Farmasi - Retur Supplier)</th>
-                                <th width="250">Pemakaian BHP</th>
-                                <th width="250">Transfer Order</th>
+                                @php($bulan = [
+                                    'Januari',
+                                    'Februari',
+                                    'Maret',
+                                    'April',
+                                    'Mei',
+                                    'Juni',
+                                    'Juli',
+                                    'Agustus',
+                                    'September',
+                                    'Oktober',
+                                    'November',
+                                    'Desember',
+                                ])
+                                <th>Laporan</th>
+                                @foreach ($bulan as $b)
+                                    <th>{{ $b }}</th>
+                                @endforeach
                             </tr>
                         </thead>
                         <tbody>
-                            @php($dataLaporan = [
-                                'Januari' => 1000,
-                                'Februari' => 1000,
-                                'Maret' => 1000,
-                                'April' => 1000,
-                                'Mei' => 1000,
-                                'Juni' => 1000,
-                                'Juli' => 1000,
-                                'Agustus' => 1000,
-                                'September' => 1000,
-                                'Oktober' => 1000,
-                                'November' => 1000,
-                                'Desember' => 1000,
-                            ])
-                            @foreach ($dataLaporan as $bulan => $data)
-                                <tr>
-                                    <td>{{ $bulan }}</td>
-                                </tr>
-                            @endforeach
+                            <tr>
+                                <th>TOTAL KUNJUNGAN</th>
+                                <th>Kunjungan Rawat Jalan</th>
+                                <th>Kunjungan Rawat Inap</th>
+                                <th>Kunjungan IGD</th>
+                                <th>Kunjungan <i>Walk in</i></th>
+                                <th>TOTAL PENDAPATAN</th>
+                                <th>Pendapatan Obat Rawat Jalan</th>
+                                <th>Pendapatan Obat Rawat Inap</th>
+                                <th>Pendapatan Obat IGD</th>
+                                <th>Pendapatan Obat <i>Walk in</i></th>
+                                <th></th>
+                            </tr>
                         </tbody>
                     </table>
                 </div>

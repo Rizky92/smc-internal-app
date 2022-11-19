@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Farmasi;
 use App\Http\Controllers\Controller;
 use App\Resep;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class LaporanPenggunaanObatPerDokterController extends Controller
 {

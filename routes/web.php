@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Farmasi\DataTable\LaporanPenggunaanObatPerDokterDataTableController;
 use App\Http\Controllers\Khanza\Auth\LoginController;
 use App\Http\Controllers\Khanza\Auth\LogoutController;
 use App\Http\Controllers\Farmasi\LaporanDaruratStokController;
@@ -37,6 +38,12 @@ Route::prefix('admin')
     ->middleware('auth')
     ->group(function () {
         Route::get('/', AdminController::class)->name('dashboard');
+
+        Route::prefix('datatable')
+            ->as('datatable.')
+            ->group(function () {
+                Route::get('penggunaan-obat-perdokter', LaporanPenggunaanObatPerDokterDataTableController::class)->name('obat-perdokter');
+            });
 
         Route::prefix('farmasi')
             ->as('farmasi.')
