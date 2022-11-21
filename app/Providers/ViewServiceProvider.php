@@ -59,6 +59,18 @@ class ViewServiceProvider extends ServiceProvider
                         ],
                     ],
                 ],
+                [
+                    'name' => 'Rekam Medis',
+                    'icon' => "far fa-circle",
+                    'type' => 'dropdown',
+                    'items' => [
+                        [
+                            'name' => 'Laporan Statistik',
+                            'icon' => 'far fa-newspaper',
+                            'url' => '#',
+                        ],
+                    ],
+                ],
             ]);
 
             $view->with('sidebarMenu', $sidebarMenu);

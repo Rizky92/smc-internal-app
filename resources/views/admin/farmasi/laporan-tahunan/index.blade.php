@@ -75,25 +75,63 @@
                                     'November',
                                     'Desember',
                                 ])
-                                <th>Laporan</th>
+                                <th width="250">Laporan</th>
                                 @foreach ($bulan as $b)
-                                    <th>{{ $b }}</th>
+                                    <th class="text-center">{{ $b }}</th>
                                 @endforeach
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <th>TOTAL KUNJUNGAN</th>
+                            </tr>
+                            <tr>
                                 <th>Kunjungan Rawat Jalan</th>
+                            </tr>
+                            <tr>
                                 <th>Kunjungan Rawat Inap</th>
+                            </tr>
+                            <tr>
                                 <th>Kunjungan IGD</th>
+                            </tr>
+                            <tr>
                                 <th>Kunjungan <i>Walk in</i></th>
+                            </tr>
+                            <tr>
                                 <th>TOTAL PENDAPATAN</th>
+                            </tr>
+                            <tr>
                                 <th>Pendapatan Obat Rawat Jalan</th>
+                            </tr>
+                            <tr>
                                 <th>Pendapatan Obat Rawat Inap</th>
+                            </tr>
+                            <tr>
                                 <th>Pendapatan Obat IGD</th>
+                            </tr>
+                            <tr>
                                 <th>Pendapatan Obat <i>Walk in</i></th>
-                                <th></th>
+                            </tr>
+                            <tr>
+                                <th>Pendapatan Alkes Farmasi dan Unit</th>
+                            </tr>
+                            <tr>
+                                <th>Retur Obat</th>
+                            </tr>
+                            <tr>
+                                <th>Pembelian Farmasi</th>
+                            </tr>
+                            <tr>
+                                <th>Retur Supplier</th>
+                            </tr>
+                            <tr>
+                                <th>TOTAL PEMBELIAN (Pembelian Farmasi - Retur Supplier)</th>
+                            </tr>
+                            <tr>
+                                <th>Pemakaian BHP</th>
+                            </tr>
+                            <tr>
+                                <th>Transfer Order</th>
                             </tr>
                         </tbody>
                     </table>
