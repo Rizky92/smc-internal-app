@@ -109,8 +109,8 @@
                                     <td>{{ $barang->stokminimal }}</td>
                                     <td>{{ $barang->stok_di_gudang }}</td>
                                     <td>{{ $saranOrder }}</td>
-                                    <td>{{ rp($barang->h_beli) }}</td>
-                                    <td>{{ rp($barang->h_beli * $saranOrder) }}</td>
+                                    <td>{{ rp($barang->h_beli, 0) }}</td>
+                                    <td>{{ rp($barang->h_beli * $saranOrder, 0) }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

@@ -45,17 +45,17 @@ class ViewServiceProvider extends ServiceProvider
                         [
                             'name' => 'Laporan Darurat Stok',
                             'icon' => 'far fa-newspaper',
-                            'url' => route('admin.farmasi.darurat-stok.index'),
+                            'url' => route('admin.farmasi.darurat-stok'),
                         ],
                         [
                             'name' => 'Penggunaan Obat Per Dokter',
                             'icon' => 'far fa-newspaper',
-                            'url' => route('admin.farmasi.obat-perdokter.index'),
+                            'url' => route('admin.farmasi.obat-perdokter'),
                         ],
                         [
                             'name' => 'Laporan Tahunan',
                             'icon' => 'far fa-newspaper',
-                            'url' => route('admin.farmasi.laporan-tahunan.index'),
+                            'url' => route('admin.farmasi.laporan-tahunan'),
                         ],
                     ],
                 ],
@@ -67,7 +67,7 @@ class ViewServiceProvider extends ServiceProvider
                         [
                             'name' => 'Laporan Statistik',
                             'icon' => 'far fa-newspaper',
-                            'url' => '#',
+                            'url' => route('admin.rekam-medis.laporan-statistik'),
                         ],
                     ],
                 ],

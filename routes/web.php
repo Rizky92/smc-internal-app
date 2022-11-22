@@ -7,6 +7,7 @@ use App\Http\Controllers\Khanza\Auth\LogoutController;
 use App\Http\Controllers\Farmasi\LaporanDaruratStokController;
 use App\Http\Controllers\Farmasi\LaporanPenggunaanObatPerDokterController;
 use App\Http\Controllers\Farmasi\LaporanTahunanController;
+use App\Http\Controllers\RekamMedis\LaporanStatistikPasienController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -48,8 +49,14 @@ Route::prefix('admin')
         Route::prefix('farmasi')
             ->as('farmasi.')
             ->group(function () {
-                Route::get('darurat-stok', [LaporanDaruratStokController::class, 'index'])->name('darurat-stok.index');
-                Route::get('penggunaan-obat-perdokter', [LaporanPenggunaanObatPerDokterController::class, 'index'])->name('obat-perdokter.index');
-                Route::get('laporan-tahunan', [LaporanTahunanController::class, 'index'])->name('laporan-tahunan.index');
+                Route::get('darurat-stok', LaporanDaruratStokController::class)->name('darurat-stok');
+                Route::get('penggunaan-obat-perdokter', LaporanPenggunaanObatPerDokterController::class)->name('obat-perdokter');
+                Route::get('laporan-tahunan', LaporanTahunanController::class)->name('laporan-tahunan');
+            });
+
+        Route::prefix('rekam-medis')
+            ->as('rekam-medis.')
+            ->group(function () {
+                Route::get('laporan-statistik', LaporanStatistikPasienController::class)->name('laporan-statistik');
             });
     });

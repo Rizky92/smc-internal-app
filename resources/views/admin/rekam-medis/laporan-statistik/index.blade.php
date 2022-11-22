@@ -6,26 +6,27 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-body table-responsive">
-                    <table id="table_index" class="table table-hover table-striped table-bordered table-sm text-sm">
+                <div class="card-body table-responsive p-0">
+                    <table id="table_index" class="table table-hover table-striped table-sm text-sm" style="width: 180rem">
                         <thead>
                             <tr>
                                 <th>No. Rawat</th>
                                 <th>No. Rekam Medis</th>
                                 <th>Nama Pasien</th>
                                 <th>NIK</th>
+                                <th>L / P</th>
+                                <th>Tgl. Lahir</th>
+                                <th>Umur</th>
                                 <th>Agama</th>
                                 <th>Suku</th>
-                                <th>Kebangsaan</th>
+                                <th>Jenis Perawatan</th>
                                 <th>Pasien Lama / Baru</th>
-                                <th>Waktu Masuk</th>
                                 <th>Tgl. Masuk</th>
+                                <th>Jam Masuk</th>
                                 <th>Tgl. Pulang</th>
-                                <th>Tgl. Lahir</th>
-                                <th>L / P</th>
-                                <th>Umur</th>
+                                <th>Jam Pulang</th>
                                 <th>Diagnosa Masuk</th>
-                                <th>Diagnosa Primer</th>
+                                {{-- <th>Diagnosa Primer</th>
                                 <th>ICD Primer</th>
                                 <th>Diagnosa Sekunder</th>
                                 <th>ICD Sekunder</th>
@@ -34,23 +35,25 @@
                                 <th>Lama Operasi</th>
                                 <th>Rujukan Asal</th>
                                 <th>DPJP</th>
-                                <th>Perawatan</th>
+                                <th>Perawatan</th> --}}
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($daruratStok as $barang)
-                                @php($saranOrder = $barang->saran_order < 0 ? 0 : $barang->saran_order)
+                            @foreach ($statistik as $registrasi)
                                 <tr>
-                                    <td>{{ $barang->kode_brng }}</td>
-                                    <td>{{ $barang->nama_brng }}</td>
-                                    <td>{{ $barang->satuan_kecil }}</td>
-                                    <td>{{ $barang->kategori }}</td>
-                                    <td>{{ $barang->nama_industri }}</td>
-                                    <td>{{ $barang->stokminimal }}</td>
-                                    <td>{{ $barang->stok_di_gudang }}</td>
-                                    <td>{{ $saranOrder }}</td>
-                                    <td>{{ rp($barang->h_beli) }}</td>
-                                    <td>{{ rp($barang->h_beli * $saranOrder) }}</td>
+                                    <td>{{ $registrasi->no_rawat }}</td>
+                                    <td>{{ $registrasi->no_rkm_medis }}</td>
+                                    <td>{{ optional($registrasi->pasien)->nm_pasien }}</td>
+                                    <td>{{ optional($registrasi->pasien)->no_ktp }}</td>
+                                    <td>{{ optional($registrasi->pasien)->jk }}</td>
+                                    <td>{{ optional($registrasi->pasien)->tgl_lahir }}</td>
+                                    <td>{{ optional($registrasi->pasien)->umur }} Tahun</td>
+                                    <td>{{ optional($registrasi->pasien)->agama }}</td>
+                                    <td>{{ optional(optional($registrasi->pasien)->suku)->nama_suku_bangsa }}</td>
+                                    <td>{{ $registrasi->status_lanjut }}</td>
+                                    <td>{{ $registrasi->status_poli }}</td>
+                                    <td>{{ $registrasi->tgl_registrasi }}</td>
+                                    <td>{{ $registrasi->jam_reg }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
