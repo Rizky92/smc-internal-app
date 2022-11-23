@@ -2,17 +2,17 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class TindakanRawatJalanDokterDanPerawat extends Model
+class TindakanRanapDokter extends Pivot
 {
-    protected $table = 'rawat_jl_drpr';
+    protected $table = 'rawat_inap_dr';
 
     public $incrementing = false;
 
     public $timestamps = false;
 
-    public $pivotColumns = [
+    public static $pivotColumns = [
         'kd_dokter',
         'tgl_perawatan',
         'jam_rawat',
@@ -22,7 +22,6 @@ class TindakanRawatJalanDokterDanPerawat extends Model
         'kso',
         'menejemen',
         'biaya_rawat',
-        'stts_bayar',
     ];
 
     public function dokter()

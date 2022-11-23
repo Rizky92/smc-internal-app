@@ -26,16 +26,25 @@
                                 <th>Tgl. Pulang</th>
                                 <th>Jam Pulang</th>
                                 <th>Diagnosa Masuk</th>
-                                {{-- <th>Diagnosa Primer</th>
+                                {{-- 
+                                <th>Diagnosa Primer</th>
                                 <th>ICD Primer</th>
                                 <th>Diagnosa Sekunder</th>
                                 <th>ICD Sekunder</th>
                                 <th>Tindakan</th>
                                 <th>ICD_9CM</th>
                                 <th>Lama Operasi</th>
-                                <th>Rujukan Asal</th>
+                                <th>Rujukan Masuk</th>
                                 <th>DPJP</th>
-                                <th>Perawatan</th> --}}
+                                <th>Poli</th>
+                                <th>Kelas</th>
+                                <th>Penjamin</th>
+                                <th>Status Pulang</th>
+                                <th>Rujuk keluar ke RS</th>
+                                <th>No. HP</th>
+                                <th>Alamat</th>
+                                <th>Kunjungan ke</th>
+                                --}}
                             </tr>
                         </thead>
                         <tbody>
