@@ -33,23 +33,26 @@ class DataBarang extends Model
                 databarang.h_beli,
                 kategori_barang.nama kategori,
                 stokminimal,
-                stok_gudang.stok_di_gudang,
+                IFNULL(stok_gudang.stok_di_gudang, 0) stok_saat_ini,
                 (databarang.stokminimal - stok_gudang.stok_di_gudang) saran_order,
                 industrifarmasi.nama_industri
             ")
             ->join('kategori_barang', 'databarang.kode_kategori', '=', 'kategori_barang.kode')
             ->join('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
             ->join('industrifarmasi', 'databarang.kode_industri', '=', 'industrifarmasi.kode_industri')
-            ->join(DB::raw("(
+            ->leftJoin(DB::raw("(
                 SELECT
                     kode_brng,
                     SUM(stok) stok_di_gudang
                 FROM gudangbarang
                 INNER JOIN bangsal ON gudangbarang.kd_bangsal = bangsal.kd_bangsal
                 WHERE bangsal.status = '1'
-                AND bangsal.kd_bangsal IN ('AP', 'IFG', 'IFA', 'RPI')
+                AND gudangbarang.kd_bangsal = 'AP'
                 GROUP BY kode_brng
             ) stok_gudang"), 'databarang.kode_brng', '=', 'stok_gudang.kode_brng')
-            ->where('status', '1');
+            ->where('status', '1')
+            ->where('stokminimal', '>', '0')
+            ->whereRaw('(databarang.stokminimal - stok_gudang.stok_di_gudang) > 0')
+            ->whereRaw('IFNULL(stok_gudang.stok_di_gudang, 0) <= stokminimal');
     }
 }

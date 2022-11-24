@@ -18,7 +18,7 @@ class TindakanRalanPerawat extends Pivot
         'jam_rawat',
         'material',
         'bhp',
-        'tarif_tindakandr',
+        'tarif_tindakanpr',
         'kso',
         'menejemen',
         'biaya_rawat',
@@ -27,6 +27,6 @@ class TindakanRalanPerawat extends Pivot
 
     public function perawat()
     {
-        return $this->belongsTo('App\Dokter', 'kd_dokter', 'kd_dokter');
+        return $this->belongsTo('App\Petugas', 'nip', 'nip');
     }
 }

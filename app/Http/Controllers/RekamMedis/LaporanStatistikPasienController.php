@@ -18,7 +18,9 @@ class LaporanStatistikPasienController extends Controller
     public function __invoke(Request $request)
     {
         $statistik = Registrasi::laporanStatistik()
-            ->limit(200)
+            ->orderBy('no_rawat')
+            ->orderBy('no_reg')
+            ->limit(1000)
             ->get();
 
         return view('admin.rekam-medis.laporan-statistik.index', [

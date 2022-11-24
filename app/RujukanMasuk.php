@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class RawatJalan extends Model
+class RujukanMasuk extends Model
 {
     //
 }

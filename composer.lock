@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "72e7c14c8b8fb17e0449c6aaf858ecd7",
+    "content-hash": "2eb9f33f8f6501f7c96c713c379aed70",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -4349,6 +4349,57 @@
                 }
             ],
             "time": "2020-04-06T14:01:48+00:00"
+        },
+        {
+            "name": "staudenmeir/eloquent-eager-limit",
+            "version": "v1.5.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/staudenmeir/eloquent-eager-limit.git",
+                "reference": "c188d8646f5554cabbd03b2eebb9a1945d857f25"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/staudenmeir/eloquent-eager-limit/zipball/c188d8646f5554cabbd03b2eebb9a1945d857f25",
+                "reference": "c188d8646f5554cabbd03b2eebb9a1945d857f25",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^7.0",
+                "php": "^7.2.5|^8.0"
+            },
+            "require-dev": {
+                "laravel/homestead": "^11.0",
+                "phpunit/phpunit": "^8.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Staudenmeir\\EloquentEagerLimit\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jonas Staudenmeir",
+                    "email": "mail@jonas-staudenmeir.de"
+                }
+            ],
+            "description": "Laravel Eloquent eager loading with limit",
+            "support": {
+                "issues": "https://github.com/staudenmeir/eloquent-eager-limit/issues",
+                "source": "https://github.com/staudenmeir/eloquent-eager-limit/tree/v1.5.1"
+            },
+            "funding": [
+                {
+                    "url": "https://paypal.me/JonasStaudenmeir",
+                    "type": "custom"
+                }
+            ],
+            "time": "2021-04-02T17:25:32+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",

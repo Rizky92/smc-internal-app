@@ -4,13 +4,13 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Penyakit extends Model
+class Penjamin extends Model
 {
-    protected $primaryKey = 'kd_penyakit';
+    protected $primaryKey = 'kd_pj';
 
     protected $keyType = 'string';
 
-    protected $table = 'penyakit';
+    protected $table = 'penjab';
 
     public $incrementing = false;
 

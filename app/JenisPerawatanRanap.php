@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class JenisPerawatanInap extends Model
+class JenisPerawatanRanap extends Model
 {
     protected $primaryKey = 'kd_jenis_prw';
 

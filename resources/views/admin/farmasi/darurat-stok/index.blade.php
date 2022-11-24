@@ -71,7 +71,7 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-body pb-0" id="table_filter_action">
+                {{-- <div class="card-body pb-0" id="table_filter_action">
                     <div class="d-flex justify-content-start align-items-center">
                         <div class="mr-auto">
                             <div class="custom-control custom-switch">
@@ -80,7 +80,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
                 <div class="card-body table-responsive">
                     <table id="table_index" class="table table-hover table-striped table-bordered table-sm text-sm">
                         <thead>
@@ -99,7 +99,7 @@
                         </thead>
                         <tbody>
                             @foreach ($daruratStok as $barang)
-                                @php($saranOrder = $barang->saran_order < 0 ? 0 : $barang->saran_order)
+                                @php($saranOrder = $barang->saran_order < 0 ? "0" : $barang->saran_order)
                                 <tr>
                                     <td>{{ $barang->kode_brng }}</td>
                                     <td>{{ $barang->nama_brng }}</td>
@@ -107,7 +107,7 @@
                                     <td>{{ $barang->kategori }}</td>
                                     <td>{{ $barang->nama_industri }}</td>
                                     <td>{{ $barang->stokminimal }}</td>
-                                    <td>{{ $barang->stok_di_gudang }}</td>
+                                    <td>{{ $barang->stok_saat_ini }}</td>
                                     <td>{{ $saranOrder }}</td>
                                     <td>{{ ceil($barang->h_beli) }}</td>
                                     <td>{{ ceil($barang->h_beli * $saranOrder) }}</td>
