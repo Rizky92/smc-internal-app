@@ -61,9 +61,9 @@
                                     <td>{{ $registrasi->status_poli }}</td>
                                     <td>{{ $registrasi->tgl_registrasi->format('d-m-Y') }}</td>
                                     <td>{{ $registrasi->jam_reg->format('H:i:s') }}</td>
-                                    <td>{{ optional($registrasi->rawatInap->first())->tgl_keluar ?? '' }}</td>
-                                    <td>{{ optional($registrasi->rawatInap->first())->jam_keluar ?? '' }}</td>
-                                    <td>{{ optional($registrasi->rawatInap->first())->diagnosa_masuk ?? '' }}</td>
+                                    <td>{{ optional($registrasi->rawatInap->first())->pivot->tgl_keluar ?? '' }}</td>
+                                    <td>{{ optional($registrasi->rawatInap->first())->pivot->jam_keluar ?? '' }}</td>
+                                    <td>{{ optional($registrasi->rawatInap->first())->pivot->diagnosa_masuk ?? '' }}</td>
                                     <td>{{ optional(optional($registrasi->diagnosa)->first())->kd_penyakit ?? '-' }}</td>
                                     <td>{{ optional(optional($registrasi->diagnosa)->first())->nm_penyakit ?? '-' }}</td>
                                     @php

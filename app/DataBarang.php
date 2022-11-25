@@ -34,7 +34,7 @@ class DataBarang extends Model
                 kategori_barang.nama kategori,
                 stokminimal,
                 IFNULL(stok_gudang.stok_di_gudang, 0) stok_saat_ini,
-                (databarang.stokminimal - stok_gudang.stok_di_gudang) saran_order,
+                (databarang.stokminimal - IFNULL(stok_gudang.stok_di_gudang, 0)) saran_order,
                 industrifarmasi.nama_industri
             ")
             ->join('kategori_barang', 'databarang.kode_kategori', '=', 'kategori_barang.kode')
@@ -52,7 +52,7 @@ class DataBarang extends Model
             ) stok_gudang"), 'databarang.kode_brng', '=', 'stok_gudang.kode_brng')
             ->where('status', '1')
             ->where('stokminimal', '>', '0')
-            ->whereRaw('(databarang.stokminimal - stok_gudang.stok_di_gudang) > 0')
+            ->whereRaw('(databarang.stokminimal - IFNULL(stok_gudang.stok_di_gudang, 0)) > 0')
             ->whereRaw('IFNULL(stok_gudang.stok_di_gudang, 0) <= stokminimal');
     }
 }
