@@ -1,5 +1,7 @@
+@php($isActive = collect($item['items'])->flatten()->contains(URL::current()))
+
 <li class="nav-item">
-    <a href="#" class="nav-link">
+    <a href="#" class="nav-link {{ $isActive ? 'active' : '' }}">
         <i class="nav-icon {{ $item['icon'] }}"></i>
         <p>
             {{ $item['name'] }}

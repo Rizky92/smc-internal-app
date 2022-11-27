@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Carbon\Carbon;
+use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -28,10 +30,37 @@ class Registrasi extends Model
 
     /**
      * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  \Carbon\Carbon|\DateTime|string|null $periodeAwal
+     * @param  \Carbon\Carbon|\DateTime|string|null $periodeAkhir
+     * 
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeLaporanStatistik($query)
+    public function scopeLaporanStatistik($query, $periodeAwal = null, $periodeAkhir = null)
     {
+        if (is_null($periodeAwal)) {
+            $periodeAwal = now()->startOfMonth();
+        }
+
+        if (is_null($periodeAkhir)) {
+            $periodeAkhir = now()->endOfMonth();
+        }
+
+        if (is_string($periodeAwal) && Carbon::hasFormat($periodeAwal, 'd-m-Y')) {
+            $periodeAwal = Carbon::createFromFormat('d-m-Y', $periodeAwal);
+        }
+
+        if (is_string($periodeAkhir) && Carbon::hasFormat($periodeAkhir, 'd-m-Y')) {
+            $periodeAkhir = Carbon::createFromFormat('d-m-Y', $periodeAkhir);
+        }
+
+        if ($periodeAwal instanceof Carbon || $periodeAwal instanceof DateTime) {
+            $periodeAwal = $periodeAwal->format('Y-m-d');
+        }
+
+        if ($periodeAkhir instanceof Carbon || $periodeAkhir instanceof DateTime) {
+            $periodeAkhir = $periodeAkhir->format('Y-m-d');
+        }
+
         return $query
             ->with([
                 'pasien',
@@ -48,10 +77,15 @@ class Registrasi extends Model
             ])
             ->whereBetween(
                 'tgl_registrasi',
-                [now()->subWeek()->format('Y-m-d'), now()->format('Y-m-d')]
+                [$periodeAwal, $periodeAkhir]
             );
     }
 
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * 
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
     public function scopeLaporanKunjunganRalan(Builder $query)
     {
         return $query->selectRaw('COUNT(no_rawat) jumlah, DATE_FORMAT(tgl_registrasi, "%Y-%m") tgl')

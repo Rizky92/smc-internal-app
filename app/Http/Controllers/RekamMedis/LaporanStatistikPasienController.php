@@ -20,8 +20,7 @@ class LaporanStatistikPasienController extends Controller
         $statistik = Registrasi::laporanStatistik()
             ->orderBy('no_rawat')
             ->orderBy('no_reg')
-            ->limit(1000)
-            ->get();
+            ->paginate($request->get(25));
 
         return view('admin.rekam-medis.laporan-statistik.index', [
             'statistik' => $statistik
