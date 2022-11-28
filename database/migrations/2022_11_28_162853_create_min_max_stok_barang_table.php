@@ -13,9 +13,8 @@ class CreateMinMaxStokBarangTable extends Migration
      */
     public function up()
     {
-        Schema::connection('mysql_smc')->create('min_max_stok_barang', function (Blueprint $table) {
+        Schema::connection('mysql_smc')->create('ipsrs_minmax_stok_barang', function (Blueprint $table) {
             $table->string('kode_brng', 15)->primary();
-            $table->unsignedInteger('stok_min');
             $table->unsignedInteger('stok_max');
             $table->timestamps();
             $table->softDeletes();
@@ -23,7 +22,7 @@ class CreateMinMaxStokBarangTable extends Migration
             $table->string('updated_by', 700)->nullable();
             $table->string('deleted_by', 700)->nullable();
 
-            $table->index(['created_by', 'updated_by']);
+            $table->index(['created_by', 'updated_by', 'deleted_by']);
         });
     }
 
@@ -34,6 +33,6 @@ class CreateMinMaxStokBarangTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('min_max_stok_barang');
+        Schema::connection('mysql_smc')->dropIfExists('ipsrs_minmax_stok_barang');
     }
 }
