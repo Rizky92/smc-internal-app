@@ -8,9 +8,28 @@
             <div class="card">
                 <div class="card-body" id="table_filter_action">
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-4">
                             <div class="form-group">
-                                <label for=""></label>
+                                <label for="kode_brng">Kode Barang</label>
+                                <input type="text" name="kode_brng" class="form-control" id="kode_brng" readonly autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <div class="form-group">
+                                <label for="nama_brng">Nama Barang</label>
+                                <input type="text" name="nama_brng" class="form-control" id="nama_brng" readonly autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-group">
+                                <label for="stok_min">Stok minimal</label>
+                                <input type="text" name="stok_min" class="form-control" id="stok_min" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-3 offset-1">
+                            <div class="form-group">
+                                <label for="stok_max">Stok maksimal</label>
+                                <input type="text" name="stok_max" class="form-control" id="stok_max" autocomplete="off">
                             </div>
                         </div>
                     </div>

@@ -78,8 +78,8 @@ class ViewServiceProvider extends ServiceProvider
                     'items' => [
                         [
                             'name' => 'Input stok min max',
-                            'icon' => 'far fa-newspaper',
-                            'url' => route('admin.logistik.min-max.index'),
+                            'icon' => 'fas fa-pencil-alt',
+                            'url' => route('admin.logistik.minmax.index'),
                         ],
                         [
                             'name' => 'Laporan Darurat Stok',
