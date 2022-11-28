@@ -1,29 +1,4 @@
 <div class="card">
-    {{-- @once
-        @push('css')
-            <link rel="stylesheet" href="{{ asset('plugins/daterangepicker/daterangepicker.css') }}">
-            <link rel="stylesheet" href="{{ asset('plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
-        @endpush
-        @push('js')
-            <script src="{{ asset('plugins/daterangepicker/daterangepicker.js') }}"></script>
-            <script src="{{ asset('plugins/moment/moment.min.js') }}"></script>
-            <script src="{{ asset('plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
-
-            <script>
-                $(document).ready(() => {
-                    $('#datemin').datetimepicker({
-                        format: 'DD-MM-yyyy'
-                    }).on('change.datetimepicker', console.log)
-
-                    $('#datemax').datetimepicker({
-                        format: 'DD-MM-yyyy'
-                    })
-
-                    $('#datemin').on('change', console.log)
-                })
-            </script>
-        @endpush
-    @endonce --}}
     <div class="card-body" id="table_filter_action">
         <div class="row">
             <div class="col-12">
@@ -33,14 +8,14 @@
                         <div class="input-group-prepend">
                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                         </div>
-                        <input type="date" class="form-control" wire:model="periodeAwal" />
+                        <input type="date" class="form-control" wire:model.defer="periodeAwal" />
                     </div>
                     <span class="text-sm px-2">Sampai</span>
                     <div class="input-group input-group-sm date w-25">
                         <div class="input-group-prepend">
                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                         </div>
-                        <input type="date" class="form-control" wire:model="periodeAkhir" />
+                        <input type="date" class="form-control" wire:model.defer="periodeAkhir" />
                     </div>
                     <div class="ml-auto">
                         <button class="btn btn-success btn-sm" type="button" wire:click="exportToExcel">
@@ -54,7 +29,7 @@
                 <div class="d-flex align-items-center justify-content-start">
                     <span class="text-sm pr-2">Tampilkan:</span>
                     <div class="input-group input-group-sm" style="width: 4rem">
-                        <select name="perpage" class="custom-control custom-select" wire:model="perpage">
+                        <select name="perpage" class="custom-control custom-select" wire:model.defer="perpage">
                             <option value="10">10</option>
                             <option value="25">25</option>
                             <option value="50">50</option>
@@ -67,9 +42,9 @@
                     <span class="text-sm pl-2">per halaman</span>
                     <span class="text-sm ml-auto pr-2">Cari:</span>
                     <div class="input-group input-group-sm" style="width: 16rem">
-                        <input type="search" name="search" class="form-control" wire:model.lazy="cari" />
+                        <input type="search" name="search" class="form-control" wire:model.defer="cari" />
                         <div class="input-group-append">
-                            <button type="button" wire:click="$emit('refresh')" class="btn btn-sm btn-default">
+                            <button type="button" wire:click="$emit('refreshFilter')" class="btn btn-sm btn-default">
                                 <i class="fas fa-redo-alt"></i>
                                 <span class="ml-1">Refresh</span>
                             </button>
@@ -169,7 +144,7 @@
                         $nmTindakan = collect([$nmTindakanRalanDokter, $nmTindakanRalanPerawat, $nmTindakanRalanDokterPerawat, $nmTindakanRanapDokter, $nmTindakanRanapPerawat, $nmTindakanRanapDokterPerawat]);
                         
                         $nmTindakan = $nmTindakan->join('');
-
+                        
                         $kdTindakanRalanDokter = $registrasi->tindakanRalanDokter->reduce(function ($carry, $item) {
                             return $item->kd_jenis_prw . '; <br>' . $carry;
                         });
@@ -193,7 +168,7 @@
                         $kdTindakanRanapDokterPerawat = $registrasi->tindakanRanapDokterPerawat->reduce(function ($carry, $item) {
                             return $item->kd_jenis_prw . '; <br>' . $carry;
                         });
-
+                        
                         $kdTindakan = collect([$kdTindakanRalanDokter, $kdTindakanRalanPerawat, $kdTindakanRalanDokterPerawat, $kdTindakanRanapDokter, $kdTindakanRanapPerawat, $kdTindakanRanapDokterPerawat]);
                         
                         $kdTindakan = $kdTindakan->join('');

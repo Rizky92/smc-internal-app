@@ -1,11 +1,11 @@
 @extends('layouts.admin', [
-    'title' => 'Laporan Statistik asd asd asd',
+    'title' => 'Laporan Statistik',
 ])
 
 @section('content')
     <div class="row">
         <div class="col-12">
-            @livewire('rekam-medis-data-table-component')
+            @livewire('rekam-medis')
         </div>
     </div>
 @endsection

@@ -9,7 +9,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Maatwebsite\Excel\Facades\Excel;
 
-class RekamMedisDataTableComponent extends Component
+class RekamMedis extends Component
 {
     use WithPagination;
 
@@ -22,6 +22,10 @@ class RekamMedisDataTableComponent extends Component
     public $perpage;
 
     protected $paginationTheme = 'bootstrap';
+
+    protected $listeners = [
+        'refreshFilter' => '$refresh',
+    ];
 
     protected function queryString()
     {
@@ -56,7 +60,7 @@ class RekamMedisDataTableComponent extends Component
     {
         $timestamp = now()->format('Y_m_d_H_i_s');
         $export = Excel::store(
-            new RekamMedisExport($this->periodeAwal, $this->periodeAkhir), 
+            new RekamMedisExport($this->periodeAwal, $this->periodeAkhir),
             "excel/{$timestamp}_rekam_medis.xlsx",
             'public'
         );
@@ -70,15 +74,7 @@ class RekamMedisDataTableComponent extends Component
 
     public function render()
     {
-        if (is_null($this->periodeAwal)) {
-            $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        }
-
-        if (is_null($this->periodeAkhir)) {
-            $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
-        }
-
-        return view('livewire.rekam-medis-data-table-component', [
+        return view('livewire.rekam-medis', [
             'statistik' => Registrasi::laporanStatistik($this->periodeAwal, $this->periodeAkhir)
                 ->orderBy('no_rawat')
                 ->orderBy('no_reg')

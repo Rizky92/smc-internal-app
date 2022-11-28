@@ -23,7 +23,6 @@ class RekamMedisExport implements FromView
             'statistik' => Registrasi::laporanStatistik($this->periodeAwal, $this->periodeAkhir)
                 ->orderBy('no_rawat')
                 ->orderBy('no_reg')
-                ->limit(1000)
                 ->get()
         ]);
     }

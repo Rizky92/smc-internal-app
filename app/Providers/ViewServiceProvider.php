@@ -71,6 +71,23 @@ class ViewServiceProvider extends ServiceProvider
                         ],
                     ],
                 ],
+                [
+                    'name' => 'Logistik',
+                    'icon' => "far fa-circle",
+                    'type' => 'dropdown',
+                    'items' => [
+                        [
+                            'name' => 'Input stok min max',
+                            'icon' => 'far fa-newspaper',
+                            'url' => route('admin.logistik.min-max.index'),
+                        ],
+                        [
+                            'name' => 'Laporan Darurat Stok',
+                            'icon' => 'far fa-newspaper',
+                            'url' => route('admin.logistik.darurat-stok'),
+                        ],
+                    ],
+                ],
             ]);
 
             $view->with('sidebarMenu', $sidebarMenu);
