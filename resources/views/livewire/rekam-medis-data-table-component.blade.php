@@ -1,24 +1,49 @@
 <div class="card">
+    {{-- @once
+        @push('css')
+            <link rel="stylesheet" href="{{ asset('plugins/daterangepicker/daterangepicker.css') }}">
+            <link rel="stylesheet" href="{{ asset('plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css') }}">
+        @endpush
+        @push('js')
+            <script src="{{ asset('plugins/daterangepicker/daterangepicker.js') }}"></script>
+            <script src="{{ asset('plugins/moment/moment.min.js') }}"></script>
+            <script src="{{ asset('plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js') }}"></script>
+
+            <script>
+                $(document).ready(() => {
+                    $('#datemin').datetimepicker({
+                        format: 'DD-MM-yyyy'
+                    }).on('change.datetimepicker', console.log)
+
+                    $('#datemax').datetimepicker({
+                        format: 'DD-MM-yyyy'
+                    })
+
+                    $('#datemin').on('change', console.log)
+                })
+            </script>
+        @endpush
+    @endonce --}}
     <div class="card-body" id="table_filter_action">
         <div class="row">
             <div class="col-12">
                 <div class="d-flex align-items-center justify-content-start">
                     <span class="text-sm pr-4">Periode:</span>
-                    <div class="input-group input-group-sm date w-25" id="datemin" data-target-input="nearest">
-                        <div class="input-group-prepend" data-target="#datemin" data-toggle="datetimepicker">
+                    <div class="input-group input-group-sm date w-25">
+                        <div class="input-group-prepend">
                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                         </div>
-                        <input type="text" name="periode_awal" class="form-control datetimepicker-input" data-target="#datemin" wire:model.defer="periodeAwal" value="{{ $periodeAwal }}" />
+                        <input type="date" class="form-control" wire:model="periodeAwal" />
                     </div>
                     <span class="text-sm px-2">Sampai</span>
-                    <div class="input-group input-group-sm date w-25" id="datemax" data-target-input="nearest">
-                        <div class="input-group-prepend" data-target="#datemax" data-toggle="datetimepicker">
+                    <div class="input-group input-group-sm date w-25">
+                        <div class="input-group-prepend">
                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                         </div>
-                        <input type="text" name="periode_akhir" class="form-control datetimepicker-input" data-target="#datemax" wire:model.defer="periodeAkhir" value="{{ $periodeAkhir }}" />
+                        <input type="date" class="form-control" wire:model="periodeAkhir" />
                     </div>
                     <div class="ml-auto">
-                        <button class="btn btn-default btn-sm" type="button">
+                        <button class="btn btn-success btn-sm" type="button" wire:click="exportToExcel">
                             <i class="fas fa-file-excel"></i>
                             <span class="ml-1">Export ke Excel</span>
                         </button>
@@ -29,7 +54,8 @@
                 <div class="d-flex align-items-center justify-content-start">
                     <span class="text-sm pr-2">Tampilkan:</span>
                     <div class="input-group input-group-sm" style="width: 4rem">
-                        <select name="perpage" class="custom-control custom-select">
+                        <select name="perpage" class="custom-control custom-select" wire:model="perpage">
+                            <option value="10">10</option>
                             <option value="25">25</option>
                             <option value="50">50</option>
                             <option value="100">100</option>
@@ -40,15 +66,21 @@
                     </div>
                     <span class="text-sm pl-2">per halaman</span>
                     <span class="text-sm ml-auto pr-2">Cari:</span>
-                    <div class="input-group input-group-sm" style="width: 12rem">
-                        <input type="search" name="search" class="form-control" />
+                    <div class="input-group input-group-sm" style="width: 16rem">
+                        <input type="search" name="search" class="form-control" wire:model.lazy="cari" />
+                        <div class="input-group-append">
+                            <button type="button" wire:click="$emit('refresh')" class="btn btn-sm btn-default">
+                                <i class="fas fa-redo-alt"></i>
+                                <span class="ml-1">Refresh</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="card-body table-responsive p-0">
-        <table id="rekammedis_table" class="table table-hover table-head-fixed table-striped table-sm text-sm" style="width: 480rem">
+        <table id="rekammedis_table" class="table table-hover table-head-fixed table-striped table-sm text-sm" style="width: 400rem">
             <thead>
                 <tr>
                     <th>No. Rawat</th>
@@ -88,6 +120,84 @@
             </thead>
             <tbody>
                 @foreach ($statistik as $registrasi)
+                    @php
+                        $diagnosa = $registrasi->diagnosa->take(1 - $registrasi->diagnosa->count());
+                        
+                        $kdDiagnosaSekunder = $diagnosa->reduce(function ($carry, $item) {
+                            return $item->kd_penyakit . '; <br>' . $carry;
+                        });
+                        
+                        $nmDiagnosaSekunder = $diagnosa->reduce(function ($carry, $item) {
+                            return $item->nm_penyakit . '; <br>' . $carry;
+                        });
+                        
+                        $tglKeluar = optional(optional($registrasi->rawatInap->first())->pivot)->tgl_keluar;
+                        $jamKeluar = optional(optional($registrasi->rawatInap->first())->pivot)->tgl_keluar;
+                        
+                        if (!is_null($tglKeluar)) {
+                            $tglKeluar = $tglKeluar->format('d-m-y');
+                        }
+                        
+                        if (!is_null($jamKeluar)) {
+                            $jamKeluar = $jamKeluar->format('H:i:s');
+                        }
+                        
+                        $nmTindakanRalanDokter = $registrasi->tindakanRalanDokter->reduce(function ($carry, $item) {
+                            return $item->nm_perawatan . '; <br>' . $carry;
+                        });
+                        
+                        $nmTindakanRalanPerawat = $registrasi->tindakanRalanPerawat->reduce(function ($carry, $item) {
+                            return $item->nm_perawatan . '; <br>' . $carry;
+                        });
+                        
+                        $nmTindakanRalanDokterPerawat = $registrasi->tindakanRalanDokterPerawat->reduce(function ($carry, $item) {
+                            return $item->nm_perawatan . '; <br>' . $carry;
+                        });
+                        
+                        $nmTindakanRanapDokter = $registrasi->tindakanRanapDokter->reduce(function ($carry, $item) {
+                            return $item->nm_perawatan . '; <br>' . $carry;
+                        });
+                        
+                        $nmTindakanRanapPerawat = $registrasi->tindakanRanapPerawat->reduce(function ($carry, $item) {
+                            return $item->nm_perawatan . '; <br>' . $carry;
+                        });
+                        
+                        $nmTindakanRanapDokterPerawat = $registrasi->tindakanRanapDokterPerawat->reduce(function ($carry, $item) {
+                            return $item->nm_perawatan . '; <br>' . $carry;
+                        });
+                        
+                        $nmTindakan = collect([$nmTindakanRalanDokter, $nmTindakanRalanPerawat, $nmTindakanRalanDokterPerawat, $nmTindakanRanapDokter, $nmTindakanRanapPerawat, $nmTindakanRanapDokterPerawat]);
+                        
+                        $nmTindakan = $nmTindakan->join('');
+
+                        $kdTindakanRalanDokter = $registrasi->tindakanRalanDokter->reduce(function ($carry, $item) {
+                            return $item->kd_jenis_prw . '; <br>' . $carry;
+                        });
+                        
+                        $kdTindakanRalanPerawat = $registrasi->tindakanRalanPerawat->reduce(function ($carry, $item) {
+                            return $item->kd_jenis_prw . '; <br>' . $carry;
+                        });
+                        
+                        $kdTindakanRalanDokterPerawat = $registrasi->tindakanRalanDokterPerawat->reduce(function ($carry, $item) {
+                            return $item->kd_jenis_prw . '; <br>' . $carry;
+                        });
+                        
+                        $kdTindakanRanapDokter = $registrasi->tindakanRanapDokter->reduce(function ($carry, $item) {
+                            return $item->kd_jenis_prw . '; <br>' . $carry;
+                        });
+                        
+                        $kdTindakanRanapPerawat = $registrasi->tindakanRanapPerawat->reduce(function ($carry, $item) {
+                            return $item->kd_jenis_prw . '; <br>' . $carry;
+                        });
+                        
+                        $kdTindakanRanapDokterPerawat = $registrasi->tindakanRanapDokterPerawat->reduce(function ($carry, $item) {
+                            return $item->kd_jenis_prw . '; <br>' . $carry;
+                        });
+
+                        $kdTindakan = collect([$kdTindakanRalanDokter, $kdTindakanRalanPerawat, $kdTindakanRalanDokterPerawat, $kdTindakanRanapDokter, $kdTindakanRanapPerawat, $kdTindakanRanapDokterPerawat]);
+                        
+                        $kdTindakan = $kdTindakan->join('');
+                    @endphp
                     <tr>
                         <td>{{ $registrasi->no_rawat }}</td>
                         <td>{{ $registrasi->no_rkm_medis }}</td>
@@ -102,24 +212,16 @@
                         <td>{{ $registrasi->status_poli }}</td>
                         <td>{{ $registrasi->tgl_registrasi->format('d-m-Y') }}</td>
                         <td>{{ $registrasi->jam_reg->format('H:i:s') }}</td>
-                        <td>{{ optional($registrasi->rawatInap->first())->pivot->tgl_keluar ?? '' }}</td>
-                        <td>{{ optional($registrasi->rawatInap->first())->pivot->jam_keluar ?? '' }}</td>
+                        <td>{{ $tglKeluar }}</td>
+                        <td>{{ $jamKeluar }}</td>
                         <td>{{ optional($registrasi->rawatInap->first())->pivot->diagnosa_awal ?? '' }}</td>
                         <td>{{ optional(optional($registrasi->diagnosa)->first())->kd_penyakit ?? '-' }}</td>
                         <td>{{ optional(optional($registrasi->diagnosa)->first())->nm_penyakit ?? '-' }}</td>
-                        @php
-                            $diagnosa = $registrasi->diagnosa->take(1 - $registrasi->diagnosa->count());
-                            $kdDiagnosa = $diagnosa->reduce(function ($carry, $item) {
-                                return $item->kd_penyakit . '; <br>' . $carry;
-                            });
-                            
-                            $nmDiagnosa = $diagnosa->reduce(function ($carry, $item) {
-                                return $item->nm_penyakit . '; <br>' . $carry;
-                            });
-                        @endphp
-                        <td>{!! $kdDiagnosa ?? '-' !!}</td>
-                        <td>{!! $nmDiagnosa ?? '-' !!}</td>
-                        <td colspan="4"></td>
+                        <td>{!! $kdDiagnosaSekunder ?? '-' !!}</td>
+                        <td>{!! $nmDiagnosaSekunder ?? '-' !!}</td>
+                        <td>{!! $nmTindakan !!}</td>
+                        <td>{!! $kdTindakan !!}</td>
+                        <td colspan="2"></td>
                         <td>{{ optional($registrasi->dokter)->nm_dokter }}</td>
                         <td>{{ optional($registrasi->poliklinik)->nm_poli }}</td>
                         <td>{{ optional($registrasi->rawatInap->first())->kelas }}</td>
@@ -128,7 +230,7 @@
                         <td></td>
                         <td>{{ optional($registrasi->pasien)->no_tlp }}</td>
                         <td>{{ optional($registrasi->pasien)->alamat }}</td>
-                        <td></td>
+                        <td>{{ $registrasi->kunjungan_ke }}</td>
                     </tr>
                 @endforeach
             </tbody>

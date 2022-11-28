@@ -22,7 +22,6 @@ class TindakanRanapPerawat extends Pivot
         'kso',
         'menejemen',
         'biaya_rawat',
-        'stts_bayar',
     ];
 
     public function perawat()

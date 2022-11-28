@@ -41,8 +41,6 @@
 
                 mainTable = $("#table_index")
                     .DataTable({
-                        // serverSide: true,
-                        // processing: true,
                         autoWidth: false,
                         responsive: true,
                         lengthChange: true,
@@ -57,15 +55,6 @@
                             text: '<i class="fas fa-file-excel"></i><span class="ml-1">Export ke excel</span>',
                             className: 'btn btn-default btn-sm',
                         }],
-                        // columns: [
-                        //     { data: 'no_resep' },
-                        //     { data: 'tgl_resep' },
-                        //     { data: 'nama_obat' },
-                        //     { data: 'jumlah' },
-                        //     { data: 'dokter_peresep' },
-                        // ],
-                        // colReader: true,
-                        // ajax: "{{ route('admin.datatable.obat-perdokter') }}"
                     })
 
                 mainTable

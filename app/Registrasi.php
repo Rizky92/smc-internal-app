@@ -4,10 +4,8 @@ namespace App;
 
 use Carbon\Carbon;
 use DateTime;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
 
 class Registrasi extends Model
 {
@@ -74,24 +72,23 @@ class Registrasi extends Model
                 'penjamin',
                 'diagnosa',
                 'rawatInap',
+                'tindakanRalanDokter',
+                'tindakanRalanPerawat',
+                'tindakanRalanDokterPerawat',
+                'tindakanRanapDokter',
+                'tindakanRanapPerawat',
+                'tindakanRanapDokterPerawat',
             ])
+            ->addSelect(DB::raw("(
+                SELECT COUNT(rp2.no_rkm_medis)
+                FROM reg_periksa rp2
+                WHERE rp2.no_rkm_medis = reg_periksa.no_rkm_medis
+                AND rp2.tgl_registrasi <= reg_periksa.tgl_registrasi
+            ) kunjungan_ke, reg_periksa.*"))
             ->whereBetween(
                 'tgl_registrasi',
                 [$periodeAwal, $periodeAkhir]
             );
-    }
-
-    /**
-     * @param  \Illuminate\Database\Eloquent\Builder $query
-     * 
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeLaporanKunjunganRalan(Builder $query)
-    {
-        return $query->selectRaw('COUNT(no_rawat) jumlah, DATE_FORMAT(tgl_registrasi, "%Y-%m") tgl')
-            ->where('status_lanjut', 'Ralan')
-            ->where('stts', '!=', 'Batal')
-            ->groupByRaw('DATE_FORMAT(tgl_registrasi, "%Y-%m")');
     }
 
     /**

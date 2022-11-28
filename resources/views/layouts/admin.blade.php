@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="{{ asset('plugins/fontawesome-free/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/adminlte.min.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
+    @livewireStyles
+
     @stack('css')
 </head>
 
@@ -65,6 +67,7 @@
     <script src="{{ asset('plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
     @stack('js')
     
+    @livewireScripts
     <!-- AdminLTE App -->
     <script src="{{ asset('js/adminlte.js') }}"></script>
 </body>

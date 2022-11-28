@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Pasien;
 use App\Registrasi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LaporanStatistikPasienController extends Controller
 {
@@ -17,14 +18,7 @@ class LaporanStatistikPasienController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $statistik = Registrasi::laporanStatistik()
-            ->orderBy('no_rawat')
-            ->orderBy('no_reg')
-            ->paginate($request->get(25));
-
-        return view('admin.rekam-medis.laporan-statistik.index', [
-            'statistik' => $statistik
-        ]);
+        return view('admin.rekam-medis.laporan-statistik.index');
     }
 
     /**

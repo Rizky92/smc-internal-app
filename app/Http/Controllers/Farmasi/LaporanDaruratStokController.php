@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Farmasi;
 
 use App\DataBarang;
+use App\Exports\DaruratStokExport;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use Storage;
 
 class LaporanDaruratStokController extends Controller
 {
@@ -22,5 +25,30 @@ class LaporanDaruratStokController extends Controller
         return view('admin.farmasi.darurat-stok.index', [
             'daruratStok' => $daruratStok,
         ]);
+    }
+
+    public function index2(Request $request)
+    {
+        $daruratStok = DataBarang::daruratStok()->get();
+
+        return view('admin.farmasi.darurat-stok.index2', [
+            'daruratStok' => $daruratStok,
+        ]);
+    }
+
+    public function export()
+    {
+        $timestamp = now()->format('U');
+        $export = Excel::store(
+            new DaruratStokExport, 
+            "excel/{$timestamp}_darurat_stok.xlsx",
+            'public'
+        );
+
+        if (!$export) {
+            return response('', 204);
+        }
+
+        return Storage::disk('public')->download("excel/{$timestamp}_darurat_stok.xlsx");
     }
 }

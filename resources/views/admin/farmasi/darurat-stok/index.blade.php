@@ -71,16 +71,11 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                {{-- <div class="card-body pb-0" id="table_filter_action">
-                    <div class="d-flex justify-content-start align-items-center">
-                        <div class="mr-auto">
-                            <div class="custom-control custom-switch">
-                                <input type="checkbox" name="stok_minimal_nol" id="filter_stok_minimal_nol" class="custom-control-input">
-                                <label class="custom-control-label" for="filter_stok_minimal_nol">Tampilkan barang dengan stok minimal 0</label>
-                            </div>
-                        </div>
+                <div class="card-body pb-0" id="table_filter_action">
+                    <div class="d-flex justify-content-end align-items-center">
+                        
                     </div>
-                </div> --}}
+                </div>
                 <div class="card-body table-responsive">
                     <table id="table_index" class="table table-hover table-striped table-bordered table-sm text-sm">
                         <thead>

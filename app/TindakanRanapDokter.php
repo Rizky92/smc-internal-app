@@ -24,6 +24,8 @@ class TindakanRanapDokter extends Pivot
         'biaya_rawat',
     ];
 
+    
+
     public function dokter()
     {
         return $this->belongsTo('App\Dokter', 'kd_dokter', 'kd_dokter');
