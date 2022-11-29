@@ -22,6 +22,9 @@
                             <i class="fas fa-file-excel"></i>
                             <span class="ml-1">Export ke Excel</span>
                         </button>
+                        @if (session()->has('excel.export'))
+                            <span>{{ session('excel.export') }}</span>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -107,15 +110,7 @@
                         });
                         
                         $tglKeluar = optional(optional($registrasi->rawatInap->first())->pivot)->tgl_keluar;
-                        $jamKeluar = optional(optional($registrasi->rawatInap->first())->pivot)->tgl_keluar;
-                        
-                        if (!is_null($tglKeluar)) {
-                            $tglKeluar = $tglKeluar->format('d-m-y');
-                        }
-                        
-                        if (!is_null($jamKeluar)) {
-                            $jamKeluar = $jamKeluar->format('H:i:s');
-                        }
+                        $jamKeluar = optional(optional($registrasi->rawatInap->first())->pivot)->jam_keluar;
                         
                         $nmTindakanRalanDokter = $registrasi->tindakanRalanDokter->reduce(function ($carry, $item) {
                             return $item->nm_perawatan . '; <br>' . $carry;
@@ -185,8 +180,8 @@
                         <td>{{ optional(optional($registrasi->pasien)->suku)->nama_suku_bangsa }}</td>
                         <td>{{ $registrasi->status_lanjut }}</td>
                         <td>{{ $registrasi->status_poli }}</td>
-                        <td>{{ $registrasi->tgl_registrasi->format('d-m-Y') }}</td>
-                        <td>{{ $registrasi->jam_reg->format('H:i:s') }}</td>
+                        <td>{{ $registrasi->tgl_registrasi }}</td>
+                        <td>{{ $registrasi->jam_reg }}</td>
                         <td>{{ $tglKeluar }}</td>
                         <td>{{ $jamKeluar }}</td>
                         <td>{{ optional($registrasi->rawatInap->first())->pivot->diagnosa_awal ?? '' }}</td>

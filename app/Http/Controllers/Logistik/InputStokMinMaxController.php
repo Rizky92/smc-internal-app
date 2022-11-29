@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Logistik;
 
 use App\Http\Controllers\Controller;
-use App\MinmaxBarangNonMedis;
+use App\Models\Nonmedis\BarangNonmedis;
+use App\Models\Nonmedis\SupplierNonmedis;
 use Illuminate\Http\Request;
 
 class InputStokMinMaxController extends Controller
@@ -42,10 +43,10 @@ class InputStokMinMaxController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\MinmaxBarangNonMedis $barang
+     * @param  mixed $barang
      * @return \Illuminate\Http\Response
      */
-    public function show(MinmaxBarangNonMedis $barang)
+    public function show($barang)
     {
         //
     }
@@ -53,10 +54,10 @@ class InputStokMinMaxController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\MinmaxBarangNonMedis $barang
+     * @param  mixed $barang
      * @return \Illuminate\Http\Response
      */
-    public function edit(MinmaxBarangNonMedis $barang)
+    public function edit($barang)
     {
         //
     }
@@ -65,10 +66,10 @@ class InputStokMinMaxController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\MinmaxBarangNonMedis $barang
+     * @param  mixed $barang
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, MinmaxBarangNonMedis $barang)
+    public function update(Request $request, $barang)
     {
         //
     }
@@ -76,10 +77,10 @@ class InputStokMinMaxController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\MinmaxBarangNonMedis $barang
+     * @param  mixed $barang
      * @return \Illuminate\Http\Response
      */
-    public function destroy(MinmaxBarangNonMedis $barang)
+    public function destroy($barang)
     {
         //
     }

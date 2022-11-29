@@ -12,13 +12,6 @@ class RawatInap extends Pivot
 
     public $timestamps = false;
 
-    protected $casts = [
-        'tgl_masuk' => 'date',
-        'jam_masuk' => 'datetime',
-        'tgl_keluar' => 'date',
-        'jam_keluar' => 'datetime',
-    ];
-
     public static $pivotColumns = [
         'trf_kamar',
         'diagnosa_awal',

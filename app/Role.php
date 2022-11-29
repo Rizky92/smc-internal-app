@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class BarangNonMedis extends Model
+class Role extends Model
 {
-    
+    protected $connection = 'mysql_smc';
 }

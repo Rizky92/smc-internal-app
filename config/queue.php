@@ -36,6 +36,7 @@ return [
 
         'database' => [
             'driver' => 'database',
+            'connection' => 'mysql_smc',
             'table' => 'jobs',
             'queue' => 'default',
             'retry_after' => 90,
@@ -82,7 +83,7 @@ return [
 
     'failed' => [
         'driver' => env('QUEUE_FAILED_DRIVER', 'database'),
-        'database' => env('DB_CONNECTION', 'mysql'),
+        'database' => env('DB_CONNECTION', 'mysql_smc'),
         'table' => 'failed_jobs',
     ],
 

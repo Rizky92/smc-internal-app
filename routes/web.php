@@ -57,6 +57,9 @@ Route::prefix('admin')
             ->as('rekam-medis.')
             ->group(function () {
                 Route::get('laporan-statistik', LaporanStatistikPasienController::class)->name('laporan-statistik');
+                Route::get('export-statistik', function () {
+                    return view('admin.rekam-medis.laporan-statistik.index');
+                });
             });
 
         Route::prefix('logistik')

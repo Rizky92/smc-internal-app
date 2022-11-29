@@ -2,12 +2,11 @@
 
 namespace App\Http\Livewire;
 
-use App\Exports\RekamMedisExport;
+use App\Jobs\ExportExcelRekamMedisJob;
 use App\Registrasi;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Queue;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Maatwebsite\Excel\Facades\Excel;
 
 class RekamMedis extends Component
 {
@@ -58,18 +57,9 @@ class RekamMedis extends Component
 
     public function exportToExcel()
     {
-        $timestamp = now()->format('Y_m_d_H_i_s');
-        $export = Excel::store(
-            new RekamMedisExport($this->periodeAwal, $this->periodeAkhir),
-            "excel/{$timestamp}_rekam_medis.xlsx",
-            'public'
-        );
+        ExportExcelRekamMedisJob::dispatch($this->periodeAwal, $this->periodeAkhir);
 
-        if (!$export) {
-            return response('', 204);
-        }
-
-        return Storage::disk('public')->download("excel/{$timestamp}_rekam_medis.xlsx");
+        session()->flash('excel.exporting', 'Sedang mengekspor...');
     }
 
     public function render()

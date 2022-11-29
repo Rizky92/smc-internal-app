@@ -21,11 +21,6 @@ class Registrasi extends Model
 
     public $timestamps = false;
 
-    protected $casts = [
-        'tgl_registrasi' => 'date',
-        'jam_reg' => 'datetime',
-    ];
-
     /**
      * @param  \Illuminate\Database\Eloquent\Builder $query
      * @param  \Carbon\Carbon|\DateTime|string|null $periodeAwal
@@ -61,25 +56,21 @@ class Registrasi extends Model
 
         return $query
             ->with([
-                'pasien',
+                'pasien:no_rkm_medis,nm_pasien,no_ktp,jk,tgl_lahir,agama,suku_bangsa,no_tlp,alamat',
                 'pasien.suku',
-                'pasien.kelurahan',
-                'pasien.kecamatan',
-                'pasien.kabupaten',
-                'pasien.provinsi',
-                'dokter',
-                'poliklinik',
-                'penjamin',
+                'dokter:kd_dokter,nm_dokter',
+                'poliklinik:kd_poli,nm_poli',
+                'penjamin:kd_pj,png_jawab',
                 'diagnosa',
                 'rawatInap',
-                'tindakanRalanDokter',
-                'tindakanRalanPerawat',
-                'tindakanRalanDokterPerawat',
-                'tindakanRanapDokter',
-                'tindakanRanapPerawat',
-                'tindakanRanapDokterPerawat',
+                'tindakanRalanDokter:kd_jenis_prw,nm_perawatan',
+                'tindakanRalanPerawat:kd_jenis_prw,nm_perawatan',
+                'tindakanRalanDokterPerawat:kd_jenis_prw,nm_perawatan',
+                'tindakanRanapDokter:kd_jenis_prw,nm_perawatan',
+                'tindakanRanapPerawat:kd_jenis_prw,nm_perawatan',
+                'tindakanRanapDokterPerawat:kd_jenis_prw,nm_perawatan',
             ])
-            ->addSelect(DB::raw("(
+            ->Select(DB::raw("(
                 SELECT COUNT(rp2.no_rkm_medis)
                 FROM reg_periksa rp2
                 WHERE rp2.no_rkm_medis = reg_periksa.no_rkm_medis
@@ -146,9 +137,9 @@ class Registrasi extends Model
      */
     public function tindakanRalanDokter()
     {
-        return $this->belongsToMany(JenisPerawatanRalan::class, 'rawat_jl_dr', 'no_rawat', 'kd_jenis_prw')
-            ->withPivot(TindakanRalanDokter::$pivotColumns)
-            ->using(TindakanRalanDokter::class);
+        return $this->belongsToMany(JenisPerawatanRalan::class, 'rawat_jl_dr', 'no_rawat', 'kd_jenis_prw');
+            // ->withPivot(TindakanRalanDokter::$pivotColumns)
+            // ->using(TindakanRalanDokter::class);
     }
 
     /**
@@ -156,9 +147,9 @@ class Registrasi extends Model
      */
     public function tindakanRalanPerawat()
     {
-        return $this->belongsToMany(JenisPerawatanRalan::class, 'rawat_jl_pr', 'no_rawat', 'kd_jenis_prw')
-            ->withPivot(TindakanRalanPerawat::$pivotColumns)
-            ->using(TindakanRalanPerawat::class);
+        return $this->belongsToMany(JenisPerawatanRalan::class, 'rawat_jl_pr', 'no_rawat', 'kd_jenis_prw');
+            // ->withPivot(TindakanRalanPerawat::$pivotColumns)
+            // ->using(TindakanRalanPerawat::class);
     }
 
     /**
@@ -166,9 +157,9 @@ class Registrasi extends Model
      */
     public function tindakanRalanDokterPerawat()
     {
-        return $this->belongsToMany(JenisPerawatanRalan::class, 'rawat_jl_drpr', 'no_rawat', 'kd_jenis_prw')
-            ->withPivot(TindakanRalanDokterPerawat::$pivotColumns)
-            ->using(TindakanRalanDokterPerawat::class);
+        return $this->belongsToMany(JenisPerawatanRalan::class, 'rawat_jl_drpr', 'no_rawat', 'kd_jenis_prw');
+            // ->withPivot(TindakanRalanDokterPerawat::$pivotColumns)
+            // ->using(TindakanRalanDokterPerawat::class);
     }
 
     /**
@@ -176,9 +167,9 @@ class Registrasi extends Model
      */
     public function tindakanRanapDokter()
     {
-        return $this->belongsToMany(JenisPerawatanRanap::class, 'rawat_inap_dr', 'no_rawat', 'kd_jenis_prw')
-            ->withPivot(TindakanRanapDokter::$pivotColumns)
-            ->using(TindakanRanapDokter::class);
+        return $this->belongsToMany(JenisPerawatanRanap::class, 'rawat_inap_dr', 'no_rawat', 'kd_jenis_prw');
+            // ->withPivot(TindakanRanapDokter::$pivotColumns)
+            // ->using(TindakanRanapDokter::class);
     }
 
     /**
@@ -186,9 +177,9 @@ class Registrasi extends Model
      */
     public function tindakanRanapPerawat()
     {
-        return $this->belongsToMany(JenisPerawatanRanap::class, 'rawat_inap_pr', 'no_rawat', 'kd_jenis_prw')
-            ->withPivot(TindakanRanapPerawat::$pivotColumns)
-            ->using(TindakanRanapPerawat::class);
+        return $this->belongsToMany(JenisPerawatanRanap::class, 'rawat_inap_pr', 'no_rawat', 'kd_jenis_prw');
+            // ->withPivot(TindakanRanapPerawat::$pivotColumns)
+            // ->using(TindakanRanapPerawat::class);
     }
 
     /**
@@ -196,8 +187,8 @@ class Registrasi extends Model
      */
     public function tindakanRanapDokterPerawat()
     {
-        return $this->belongsToMany(JenisPerawatanRanap::class, 'rawat_inap_drpr', 'no_rawat', 'kd_jenis_prw')
-            ->withPivot(TindakanRanapDokterPerawat::$pivotColumns)
-            ->using(TindakanRanapDokterPerawat::class);
+        return $this->belongsToMany(JenisPerawatanRanap::class, 'rawat_inap_drpr', 'no_rawat', 'kd_jenis_prw');
+            // ->withPivot(TindakanRanapDokterPerawat::$pivotColumns)
+            // ->using(TindakanRanapDokterPerawat::class);
     }
 }

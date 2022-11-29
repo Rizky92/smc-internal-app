@@ -1,16 +1,16 @@
 <?php
 
-namespace App;
+namespace App\Models\Nonmedis;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Satuan extends Model
+class SupplierNonmedis extends Model
 {
-    protected $primaryKey = 'kode_sat';
+    protected $primaryKey = 'kode_suplier';
 
     protected $keyType = 'string';
 
-    protected $table = 'kodesatuan';
+    protected $table = 'ipsrssuplier';
 
     public $incrementing = false;
 

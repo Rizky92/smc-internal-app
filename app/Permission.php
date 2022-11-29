@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class MinmaxBarangNonMedis extends Model
+class Permission extends Model
 {
     protected $connection = 'mysql_smc';
 }
