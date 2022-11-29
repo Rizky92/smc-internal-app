@@ -3,10 +3,7 @@
 namespace App\Http\Controllers\RekamMedis;
 
 use App\Http\Controllers\Controller;
-use App\Pasien;
-use App\Registrasi;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class LaporanStatistikPasienController extends Controller
 {

@@ -2,8 +2,11 @@
 
 namespace App\Models\Nonmedis;
 
+use App\Models\Satuan;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\DB;
 
 class BarangNonmedis extends Model
@@ -18,36 +21,22 @@ class BarangNonmedis extends Model
 
     public $timestamps = false;
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
-    public function stokMinmax()
+    public function stokMinmax(): HasOne
     {
-        return $this->hasOne('App\Models\Nonmedis\MinmaxBarangNonmedis', 'kode_brng', 'kode_brng');
+        return $this->hasOne(MinmaxBarangNonmedis::class, 'kode_brng', 'kode_brng');
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function satuan()
+    public function satuan(): BelongsTo
     {
-        return $this->belongsTo('App\Satuan', 'kode_sat', 'kode_sat');
+        return $this->belongsTo(Satuan::class, 'kode_sat', 'kode_sat');
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function jenisBarang()
+    public function jenisBarang(): BelongsTo
     {
-        return $this->belongsTo('App\Models\Nonmedis\JenisBarangNonmedis', 'jenis', 'kd_jenis');
+        return $this->belongsTo(JenisBarangNonmedis::class, 'jenis', 'kd_jenis');
     }
 
-    /**
-     * @param  \Illuminate\Database\Eloquent\Builder $query
-     * 
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeDaruratStok(Builder $query)
+    public function scopeDaruratStok(Builder $query): Builder
     {
         return $query->selectRaw("
             ipsrsbarang.kode_brng,

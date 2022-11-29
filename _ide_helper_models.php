@@ -10,9 +10,9 @@
  */
 
 
-namespace App{
+namespace App\Models{
 /**
- * App\Admin
+ * App\Models\Admin
  *
  * @method static \Illuminate\Database\Eloquent\Builder|Admin newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Admin newQuery()
@@ -21,55 +21,48 @@ namespace App{
 	class Admin extends \Eloquent {}
 }
 
-namespace App{
+namespace App\Models{
 /**
- * App\Asuransi
+ * App\Models\Dokter
  *
- * @property string $kd_pj
- * @property string $png_jawab
- * @property string $nama_perusahaan
- * @property string $alamat_asuransi
- * @property string $no_telp
- * @property string $attn
+ * @property string $kd_dokter
+ * @property string|null $nm_dokter
+ * @property string|null $jk
+ * @property string|null $tmp_lahir
+ * @property string|null $tgl_lahir
+ * @property string|null $gol_drh
+ * @property string|null $agama
+ * @property string|null $almt_tgl
+ * @property string|null $no_telp
+ * @property string|null $stts_nikah
+ * @property string|null $kd_sps
+ * @property string|null $alumni
+ * @property string|null $no_ijn_praktek
  * @property string $status
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Pasien[] $pasien
- * @property-read int|null $pasien_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Registrasi[] $registrasi
- * @property-read int|null $registrasi_count
- * @method static \Illuminate\Database\Eloquent\Builder|Asuransi newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Asuransi newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Asuransi query()
- * @method static \Illuminate\Database\Eloquent\Builder|Asuransi whereAlamatAsuransi($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asuransi whereAttn($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asuransi whereKdPj($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asuransi whereNamaPerusahaan($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asuransi whereNoTelp($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asuransi wherePngJawab($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Asuransi whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Dokter newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Dokter newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Dokter query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereAgama($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereAlmtTgl($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereAlumni($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereGolDrh($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereJk($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereKdDokter($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereKdSps($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereNmDokter($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereNoIjnPraktek($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereNoTelp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereSttsNikah($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereTglLahir($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereTmpLahir($value)
  */
-	class Asuransi extends \Eloquent {}
+	class Dokter extends \Eloquent {}
 }
 
-namespace App{
+namespace App\Models\Farmasi{
 /**
- * App\Bangsal
- *
- * @property string $kd_bangsal
- * @property string|null $nm_bangsal
- * @property string|null $status
- * @method static \Illuminate\Database\Eloquent\Builder|Bangsal newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Bangsal newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Bangsal query()
- * @method static \Illuminate\Database\Eloquent\Builder|Bangsal whereKdBangsal($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Bangsal whereNmBangsal($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Bangsal whereStatus($value)
- */
-	class Bangsal extends \Eloquent {}
-}
-
-namespace App{
-/**
- * App\DataBarang
+ * App\Models\Farmasi\DataBarang
  *
  * @property string $kode_brng
  * @property string|null $nama_brng
@@ -132,153 +125,74 @@ namespace App{
 	class DataBarang extends \Eloquent {}
 }
 
-namespace App{
+namespace App\Models\Farmasi{
 /**
- * App\Diagnosa
+ * App\Models\Farmasi\KategoriBarang
  *
+ * @method static \Illuminate\Database\Eloquent\Builder|KategoriBarang newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|KategoriBarang newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|KategoriBarang query()
+ */
+	class KategoriBarang extends \Eloquent {}
+}
+
+namespace App\Models\Farmasi{
+/**
+ * App\Models\Farmasi\Resep
+ *
+ * @property string $no_resep
+ * @property string|null $tgl_perawatan
+ * @property string $jam
  * @property string $no_rawat
- * @property string $kd_penyakit
- * @property string $status
- * @property bool $prioritas
- * @property string|null $status_penyakit
- * @method static \Illuminate\Database\Eloquent\Builder|Diagnosa newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Diagnosa newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Diagnosa query()
- * @method static \Illuminate\Database\Eloquent\Builder|Diagnosa whereKdPenyakit($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Diagnosa whereNoRawat($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Diagnosa wherePrioritas($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Diagnosa whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Diagnosa whereStatusPenyakit($value)
- */
-	class Diagnosa extends \Eloquent {}
-}
-
-namespace App{
-/**
- * App\Dokter
- *
  * @property string $kd_dokter
- * @property string|null $nm_dokter
- * @property string|null $jk
- * @property string|null $tmp_lahir
- * @property string|null $tgl_lahir
- * @property string|null $gol_drh
- * @property string|null $agama
- * @property string|null $almt_tgl
- * @property string|null $no_telp
- * @property string|null $stts_nikah
- * @property string|null $kd_sps
- * @property string|null $alumni
- * @property string|null $no_ijn_praktek
- * @property string $status
- * @method static \Illuminate\Database\Eloquent\Builder|Dokter newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Dokter newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Dokter query()
- * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereAgama($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereAlmtTgl($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereAlumni($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereGolDrh($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereJk($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereKdDokter($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereKdSps($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereNmDokter($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereNoIjnPraktek($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereNoTelp($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereSttsNikah($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereTglLahir($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Dokter whereTmpLahir($value)
+ * @property string|null $tgl_peresepan
+ * @property string|null $jam_peresepan
+ * @property string|null $status
+ * @property string $tgl_penyerahan
+ * @property string $jam_penyerahan
+ * @property-read \App\Models\Dokter $dokterPeresep
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Farmasi\DataBarang[] $obat
+ * @property-read int|null $obat_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Resep newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Resep newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Resep penggunaanObatPerDokter($dateMin, $dateMax)
+ * @method static \Illuminate\Database\Eloquent\Builder|Resep query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Resep whereJam($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Resep whereJamPenyerahan($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Resep whereJamPeresepan($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Resep whereKdDokter($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Resep whereNoRawat($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Resep whereNoResep($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Resep whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Resep whereTglPenyerahan($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Resep whereTglPerawatan($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Resep whereTglPeresepan($value)
  */
-	class Dokter extends \Eloquent {}
+	class Resep extends \Eloquent {}
 }
 
-namespace App{
+namespace App\Models\Farmasi{
 /**
- * App\JenisPerawatanRalan
+ * App\Models\Farmasi\ResepDokter
  *
- * @property string $kd_jenis_prw
- * @property string|null $nm_perawatan
- * @property string|null $kd_kategori
- * @property float|null $material
- * @property float $bhp
- * @property float|null $tarif_tindakandr
- * @property float|null $tarif_tindakanpr
- * @property float|null $kso
- * @property float|null $menejemen
- * @property float|null $total_byrdr
- * @property float|null $total_byrpr
- * @property float $total_byrdrpr
- * @property string $kd_pj
- * @property string $kd_poli
- * @property string $status
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan query()
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereBhp($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereKdJenisPrw($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereKdKategori($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereKdPj($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereKdPoli($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereKso($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereMaterial($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereMenejemen($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereNmPerawatan($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereTarifTindakandr($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereTarifTindakanpr($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereTotalByrdr($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereTotalByrdrpr($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereTotalByrpr($value)
+ * @property string|null $no_resep
+ * @property string|null $kode_brng
+ * @property float|null $jml
+ * @property string|null $aturan_pakai
+ * @method static \Illuminate\Database\Eloquent\Builder|ResepDokter newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResepDokter newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResepDokter query()
+ * @method static \Illuminate\Database\Eloquent\Builder|ResepDokter whereAturanPakai($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResepDokter whereJml($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResepDokter whereKodeBrng($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|ResepDokter whereNoResep($value)
  */
-	class JenisPerawatanRalan extends \Eloquent {}
+	class ResepDokter extends \Eloquent {}
 }
 
-namespace App{
+namespace App\Models{
 /**
- * App\JenisPerawatanRanap
- *
- * @property string $kd_jenis_prw
- * @property string|null $nm_perawatan
- * @property string $kd_kategori
- * @property float|null $material
- * @property float $bhp
- * @property float|null $tarif_tindakandr
- * @property float|null $tarif_tindakanpr
- * @property float|null $kso
- * @property float|null $menejemen
- * @property float|null $total_byrdr
- * @property float|null $total_byrpr
- * @property float $total_byrdrpr
- * @property string $kd_pj
- * @property string $kd_bangsal
- * @property string $status
- * @property string $kelas
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap query()
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereBhp($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereKdBangsal($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereKdJenisPrw($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereKdKategori($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereKdPj($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereKelas($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereKso($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereMaterial($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereMenejemen($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereNmPerawatan($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereTarifTindakandr($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereTarifTindakanpr($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereTotalByrdr($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereTotalByrdrpr($value)
- * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereTotalByrpr($value)
- */
-	class JenisPerawatanRanap extends \Eloquent {}
-}
-
-namespace App{
-/**
- * App\Kabupaten
+ * App\Models\Kabupaten
  *
  * @property int $kd_kab
  * @property string $nm_kab
@@ -291,46 +205,9 @@ namespace App{
 	class Kabupaten extends \Eloquent {}
 }
 
-namespace App{
+namespace App\Models{
 /**
- * App\Kamar
- *
- * @property string $kd_kamar
- * @property string|null $kd_bangsal
- * @property float|null $trf_kamar
- * @property string|null $status
- * @property string|null $kelas
- * @property string|null $statusdata
- * @property-read \App\Bangsal|null $bangsal
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Registrasi[] $rawatInap
- * @property-read int|null $rawat_inap_count
- * @method static \Illuminate\Database\Eloquent\Builder|Kamar newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Kamar newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Kamar query()
- * @method static \Illuminate\Database\Eloquent\Builder|Kamar whereKdBangsal($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Kamar whereKdKamar($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Kamar whereKelas($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Kamar whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Kamar whereStatusdata($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Kamar whereTrfKamar($value)
- */
-	class Kamar extends \Eloquent {}
-}
-
-namespace App{
-/**
- * App\KategoriBarang
- *
- * @method static \Illuminate\Database\Eloquent\Builder|KategoriBarang newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KategoriBarang newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|KategoriBarang query()
- */
-	class KategoriBarang extends \Eloquent {}
-}
-
-namespace App{
-/**
- * App\Kecamatan
+ * App\Models\Kecamatan
  *
  * @property int $kd_kec
  * @property string $nm_kec
@@ -343,9 +220,9 @@ namespace App{
 	class Kecamatan extends \Eloquent {}
 }
 
-namespace App{
+namespace App\Models{
 /**
- * App\Kelurahan
+ * App\Models\Kelurahan
  *
  * @property int $kd_kel
  * @property string $nm_kel
@@ -356,17 +233,6 @@ namespace App{
  * @method static \Illuminate\Database\Eloquent\Builder|Kelurahan whereNmKel($value)
  */
 	class Kelurahan extends \Eloquent {}
-}
-
-namespace App{
-/**
- * App\Laporan
- *
- * @method static \Illuminate\Database\Eloquent\Builder|Laporan newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Laporan newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Laporan query()
- */
-	class Laporan extends \Eloquent {}
 }
 
 namespace App\Models\Nonmedis{
@@ -381,7 +247,7 @@ namespace App\Models\Nonmedis{
  * @property float $harga
  * @property string $status
  * @property-read \App\Models\Nonmedis\JenisBarangNonmedis|null $jenisBarang
- * @property-read \App\Satuan $satuan
+ * @property-read \App\Models\Satuan $satuan
  * @property-read \App\Models\Nonmedis\MinmaxBarangNonmedis|null $stokMinmax
  * @method static \Illuminate\Database\Eloquent\Builder|BarangNonmedis daruratStok()
  * @method static \Illuminate\Database\Eloquent\Builder|BarangNonmedis newModelQuery()
@@ -497,9 +363,9 @@ namespace App\Models\Nonmedis{
 	class SupplierNonmedis extends \Eloquent {}
 }
 
-namespace App{
+namespace App\Models{
 /**
- * App\Pasien
+ * App\Models\Pasien
  *
  * @property string $no_rkm_medis
  * @property string|null $nm_pasien
@@ -537,11 +403,11 @@ namespace App{
  * @property string $nip
  * @property int $kd_prop
  * @property string $propinsipj
- * @property-read \App\Kabupaten $kabupaten
- * @property-read \App\Kecamatan $kecamatan
- * @property-read \App\Kelurahan $kelurahan
- * @property-read \App\Provinsi $provinsi
- * @property-read \App\Suku $suku
+ * @property-read \App\Models\Kabupaten $kabupaten
+ * @property-read \App\Models\Kecamatan $kecamatan
+ * @property-read \App\Models\Kelurahan $kelurahan
+ * @property-read \App\Models\Provinsi $provinsi
+ * @property-read \App\Models\Suku $suku
  * @method static \Illuminate\Database\Eloquent\Builder|Pasien newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Pasien newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Pasien query()
@@ -585,9 +451,9 @@ namespace App{
 	class Pasien extends \Eloquent {}
 }
 
-namespace App{
+namespace App\Models{
 /**
- * App\Penjamin
+ * App\Models\Penjamin
  *
  * @property string $kd_pj
  * @property string $png_jawab
@@ -610,9 +476,157 @@ namespace App{
 	class Penjamin extends \Eloquent {}
 }
 
-namespace App{
+namespace App\Models\Perawatan{
 /**
- * App\Penyakit
+ * App\Models\Perawatan\Bangsal
+ *
+ * @property string $kd_bangsal
+ * @property string|null $nm_bangsal
+ * @property string|null $status
+ * @method static \Illuminate\Database\Eloquent\Builder|Bangsal newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Bangsal newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Bangsal query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Bangsal whereKdBangsal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bangsal whereNmBangsal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Bangsal whereStatus($value)
+ */
+	class Bangsal extends \Eloquent {}
+}
+
+namespace App\Models\Perawatan{
+/**
+ * App\Models\Perawatan\Diagnosa
+ *
+ * @property string $no_rawat
+ * @property string $kd_penyakit
+ * @property string $status
+ * @property bool $prioritas
+ * @property string|null $status_penyakit
+ * @method static \Illuminate\Database\Eloquent\Builder|Diagnosa newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Diagnosa newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Diagnosa query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Diagnosa whereKdPenyakit($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Diagnosa whereNoRawat($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Diagnosa wherePrioritas($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Diagnosa whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Diagnosa whereStatusPenyakit($value)
+ */
+	class Diagnosa extends \Eloquent {}
+}
+
+namespace App\Models\Perawatan{
+/**
+ * App\Models\Perawatan\JenisPerawatanRalan
+ *
+ * @property string $kd_jenis_prw
+ * @property string|null $nm_perawatan
+ * @property string|null $kd_kategori
+ * @property float|null $material
+ * @property float $bhp
+ * @property float|null $tarif_tindakandr
+ * @property float|null $tarif_tindakanpr
+ * @property float|null $kso
+ * @property float|null $menejemen
+ * @property float|null $total_byrdr
+ * @property float|null $total_byrpr
+ * @property float $total_byrdrpr
+ * @property string $kd_pj
+ * @property string $kd_poli
+ * @property string $status
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan query()
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereBhp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereKdJenisPrw($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereKdKategori($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereKdPj($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereKdPoli($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereKso($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereMaterial($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereMenejemen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereNmPerawatan($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereTarifTindakandr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereTarifTindakanpr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereTotalByrdr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereTotalByrdrpr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRalan whereTotalByrpr($value)
+ */
+	class JenisPerawatanRalan extends \Eloquent {}
+}
+
+namespace App\Models\Perawatan{
+/**
+ * App\Models\Perawatan\JenisPerawatanRanap
+ *
+ * @property string $kd_jenis_prw
+ * @property string|null $nm_perawatan
+ * @property string $kd_kategori
+ * @property float|null $material
+ * @property float $bhp
+ * @property float|null $tarif_tindakandr
+ * @property float|null $tarif_tindakanpr
+ * @property float|null $kso
+ * @property float|null $menejemen
+ * @property float|null $total_byrdr
+ * @property float|null $total_byrpr
+ * @property float $total_byrdrpr
+ * @property string $kd_pj
+ * @property string $kd_bangsal
+ * @property string $status
+ * @property string $kelas
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap query()
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereBhp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereKdBangsal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereKdJenisPrw($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereKdKategori($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereKdPj($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereKelas($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereKso($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereMaterial($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereMenejemen($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereNmPerawatan($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereTarifTindakandr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereTarifTindakanpr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereTotalByrdr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereTotalByrdrpr($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisPerawatanRanap whereTotalByrpr($value)
+ */
+	class JenisPerawatanRanap extends \Eloquent {}
+}
+
+namespace App\Models\Perawatan{
+/**
+ * App\Models\Perawatan\Kamar
+ *
+ * @property string $kd_kamar
+ * @property string|null $kd_bangsal
+ * @property float|null $trf_kamar
+ * @property string|null $status
+ * @property string|null $kelas
+ * @property string|null $statusdata
+ * @property-read \App\Models\Perawatan\Bangsal|null $bangsal
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Perawatan\Registrasi[] $rawatInap
+ * @property-read int|null $rawat_inap_count
+ * @method static \Illuminate\Database\Eloquent\Builder|Kamar newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Kamar newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Kamar query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Kamar whereKdBangsal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Kamar whereKdKamar($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Kamar whereKelas($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Kamar whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Kamar whereStatusdata($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Kamar whereTrfKamar($value)
+ */
+	class Kamar extends \Eloquent {}
+}
+
+namespace App\Models\Perawatan{
+/**
+ * App\Models\Perawatan\Penyakit
  *
  * @property string $kd_penyakit
  * @property string|null $nm_penyakit
@@ -633,65 +647,13 @@ namespace App{
 	class Penyakit extends \Eloquent {}
 }
 
-namespace App{
+namespace App\Models\Perawatan{
 /**
- * App\Permission
- *
- * @property int $id
- * @property string $name
- * @property int $role_id
- * @method static \Illuminate\Database\Eloquent\Builder|Permission newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Permission newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Permission query()
- * @method static \Illuminate\Database\Eloquent\Builder|Permission whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Permission whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Permission whereRoleId($value)
- */
-	class Permission extends \Eloquent {}
-}
-
-namespace App{
-/**
- * App\Petugas
- *
- * @property string $nip
- * @property string|null $nama
- * @property string|null $jk
- * @property string|null $tmp_lahir
- * @property string|null $tgl_lahir
- * @property string|null $gol_darah
- * @property string|null $agama
- * @property string|null $stts_nikah
- * @property string|null $alamat
- * @property string|null $kd_jbtn
- * @property string|null $no_telp
- * @property string|null $status
- * @method static \Illuminate\Database\Eloquent\Builder|Petugas newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Petugas newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Petugas query()
- * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereAgama($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereAlamat($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereGolDarah($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereJk($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereKdJbtn($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereNama($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereNip($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereNoTelp($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereSttsNikah($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereTglLahir($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereTmpLahir($value)
- */
-	class Petugas extends \Eloquent {}
-}
-
-namespace App{
-/**
- * App\Poliklinik
+ * App\Models\Perawatan\Poliklinik
  *
  * @property string $kd_poli
  * @property string|null $nm_poli
- * @property \Illuminate\Database\Eloquent\Collection|\App\Registrasi[] $registrasi
+ * @property \Illuminate\Database\Eloquent\Collection|\App\Models\Perawatan\Registrasi[] $registrasi
  * @property float $registrasilama
  * @property string $status
  * @property-read int|null $registrasi_count
@@ -707,24 +669,9 @@ namespace App{
 	class Poliklinik extends \Eloquent {}
 }
 
-namespace App{
+namespace App\Models\Perawatan{
 /**
- * App\Provinsi
- *
- * @property int $kd_prop
- * @property string $nm_prop
- * @method static \Illuminate\Database\Eloquent\Builder|Provinsi newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Provinsi newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Provinsi query()
- * @method static \Illuminate\Database\Eloquent\Builder|Provinsi whereKdProp($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Provinsi whereNmProp($value)
- */
-	class Provinsi extends \Eloquent {}
-}
-
-namespace App{
-/**
- * App\RawatInap
+ * App\Models\Perawatan\RawatInap
  *
  * @property string $no_rawat
  * @property string $kd_kamar
@@ -757,9 +704,9 @@ namespace App{
 	class RawatInap extends \Eloquent {}
 }
 
-namespace App{
+namespace App\Models\Perawatan{
 /**
- * App\Registrasi
+ * App\Models\Perawatan\Registrasi
  *
  * @property string|null $no_reg
  * @property string $no_rawat
@@ -780,27 +727,28 @@ namespace App{
  * @property string|null $sttsumur
  * @property string $status_bayar
  * @property string $status_poli
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Penyakit[] $diagnosa
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Perawatan\Penyakit[] $diagnosa
  * @property-read int|null $diagnosa_count
- * @property-read \App\Dokter|null $dokter
- * @property-read \App\Pasien|null $pasien
- * @property-read \App\Penjamin $penjamin
- * @property-read \App\Poliklinik|null $poliklinik
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Kamar[] $rawatInap
+ * @property-read \App\Models\Dokter|null $dokter
+ * @property-read \App\Models\Pasien|null $pasien
+ * @property-read \App\Models\Penjamin $penjamin
+ * @property-read \App\Models\Perawatan\Poliklinik|null $poliklinik
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Perawatan\Kamar[] $rawatInap
  * @property-read int|null $rawat_inap_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\JenisPerawatanRalan[] $tindakanRalanDokter
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Perawatan\JenisPerawatanRalan[] $tindakanRalanDokter
  * @property-read int|null $tindakan_ralan_dokter_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\JenisPerawatanRalan[] $tindakanRalanDokterPerawat
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Perawatan\JenisPerawatanRalan[] $tindakanRalanDokterPerawat
  * @property-read int|null $tindakan_ralan_dokter_perawat_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\JenisPerawatanRalan[] $tindakanRalanPerawat
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Perawatan\JenisPerawatanRalan[] $tindakanRalanPerawat
  * @property-read int|null $tindakan_ralan_perawat_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\JenisPerawatanRanap[] $tindakanRanapDokter
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Perawatan\JenisPerawatanRanap[] $tindakanRanapDokter
  * @property-read int|null $tindakan_ranap_dokter_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\JenisPerawatanRanap[] $tindakanRanapDokterPerawat
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Perawatan\JenisPerawatanRanap[] $tindakanRanapDokterPerawat
  * @property-read int|null $tindakan_ranap_dokter_perawat_count
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\JenisPerawatanRanap[] $tindakanRanapPerawat
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Perawatan\JenisPerawatanRanap[] $tindakanRanapPerawat
  * @property-read int|null $tindakan_ranap_perawat_count
- * @method static \Illuminate\Database\Eloquent\Builder|Registrasi laporanStatistik($periodeAwal = null, $periodeAkhir = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|Registrasi laporanKunjunganRalan()
+ * @method static \Illuminate\Database\Eloquent\Builder|Registrasi laporanStatistik(\Illuminate\Support\Carbon $periodeAwal, \Illuminate\Support\Carbon $periodeAkhir)
  * @method static \Illuminate\Database\Eloquent\Builder|Registrasi newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Registrasi newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Registrasi query()
@@ -827,82 +775,9 @@ namespace App{
 	class Registrasi extends \Eloquent {}
 }
 
-namespace App{
+namespace App\Models\Perawatan{
 /**
- * App\Resep
- *
- * @property string $no_resep
- * @property string|null $tgl_perawatan
- * @property string $jam
- * @property string $no_rawat
- * @property string $kd_dokter
- * @property string|null $tgl_peresepan
- * @property string|null $jam_peresepan
- * @property string|null $status
- * @property string $tgl_penyerahan
- * @property string $jam_penyerahan
- * @property-read \App\Dokter $dokterPeresep
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\DataBarang[] $obat
- * @property-read int|null $obat_count
- * @method static \Illuminate\Database\Eloquent\Builder|Resep newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Resep newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Resep penggunaanObatPerDokter($dateMin, $dateMax)
- * @method static \Illuminate\Database\Eloquent\Builder|Resep query()
- * @method static \Illuminate\Database\Eloquent\Builder|Resep whereJam($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Resep whereJamPenyerahan($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Resep whereJamPeresepan($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Resep whereKdDokter($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Resep whereNoRawat($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Resep whereNoResep($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Resep whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Resep whereTglPenyerahan($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Resep whereTglPerawatan($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Resep whereTglPeresepan($value)
- */
-	class Resep extends \Eloquent {}
-}
-
-namespace App{
-/**
- * App\ResepDokter
- *
- * @property string|null $no_resep
- * @property string|null $kode_brng
- * @property float|null $jml
- * @property string|null $aturan_pakai
- * @method static \Illuminate\Database\Eloquent\Builder|ResepDokter newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ResepDokter newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|ResepDokter query()
- * @method static \Illuminate\Database\Eloquent\Builder|ResepDokter whereAturanPakai($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ResepDokter whereJml($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ResepDokter whereKodeBrng($value)
- * @method static \Illuminate\Database\Eloquent\Builder|ResepDokter whereNoResep($value)
- */
-	class ResepDokter extends \Eloquent {}
-}
-
-namespace App{
-/**
- * App\Role
- *
- * @property int $id
- * @property string $name
- * @property string $guard_name
- * @property string|null $user
- * @method static \Illuminate\Database\Eloquent\Builder|Role newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Role newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Role query()
- * @method static \Illuminate\Database\Eloquent\Builder|Role whereGuardName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Role whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Role whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Role whereUser($value)
- */
-	class Role extends \Eloquent {}
-}
-
-namespace App{
-/**
- * App\RujukanKeluar
+ * App\Models\Perawatan\RujukanKeluar
  *
  * @method static \Illuminate\Database\Eloquent\Builder|RujukanKeluar newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RujukanKeluar newQuery()
@@ -911,9 +786,9 @@ namespace App{
 	class RujukanKeluar extends \Eloquent {}
 }
 
-namespace App{
+namespace App\Models\Perawatan{
 /**
- * App\RujukanMasuk
+ * App\Models\Perawatan\RujukanMasuk
  *
  * @method static \Illuminate\Database\Eloquent\Builder|RujukanMasuk newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|RujukanMasuk newQuery()
@@ -922,39 +797,9 @@ namespace App{
 	class RujukanMasuk extends \Eloquent {}
 }
 
-namespace App{
+namespace App\Models\Perawatan{
 /**
- * App\Satuan
- *
- * @property string $kode_sat
- * @property string|null $satuan
- * @method static \Illuminate\Database\Eloquent\Builder|Satuan newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Satuan newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Satuan query()
- * @method static \Illuminate\Database\Eloquent\Builder|Satuan whereKodeSat($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Satuan whereSatuan($value)
- */
-	class Satuan extends \Eloquent {}
-}
-
-namespace App{
-/**
- * App\Suku
- *
- * @property int $id
- * @property string|null $nama_suku_bangsa
- * @method static \Illuminate\Database\Eloquent\Builder|Suku newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Suku newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Suku query()
- * @method static \Illuminate\Database\Eloquent\Builder|Suku whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Suku whereNamaSukuBangsa($value)
- */
-	class Suku extends \Eloquent {}
-}
-
-namespace App{
-/**
- * App\TindakanRalan
+ * App\Models\Perawatan\TindakanRalan
  *
  * @property string $kd_jenis_prw
  * @property string|null $nm_perawatan
@@ -993,9 +838,9 @@ namespace App{
 	class TindakanRalan extends \Eloquent {}
 }
 
-namespace App{
+namespace App\Models\Perawatan{
 /**
- * App\TindakanRalanDokter
+ * App\Models\Perawatan\TindakanRalanDokter
  *
  * @property string $no_rawat
  * @property string $kd_jenis_prw
@@ -1009,7 +854,7 @@ namespace App{
  * @property float|null $menejemen
  * @property float|null $biaya_rawat
  * @property string|null $stts_bayar
- * @property-read \App\Dokter $dokter
+ * @property-read \App\Models\Dokter $dokter
  * @method static \Illuminate\Database\Eloquent\Builder|TindakanRalanDokter newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TindakanRalanDokter newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TindakanRalanDokter query()
@@ -1029,9 +874,9 @@ namespace App{
 	class TindakanRalanDokter extends \Eloquent {}
 }
 
-namespace App{
+namespace App\Models\Perawatan{
 /**
- * App\TindakanRalanDokterPerawat
+ * App\Models\Perawatan\TindakanRalanDokterPerawat
  *
  * @property string $no_rawat
  * @property string $kd_jenis_prw
@@ -1047,8 +892,8 @@ namespace App{
  * @property float|null $menejemen
  * @property float|null $biaya_rawat
  * @property string|null $stts_bayar
- * @property-read \App\Dokter $dokter
- * @property-read \App\Petugas $perawat
+ * @property-read \App\Models\Dokter $dokter
+ * @property-read \App\Models\Petugas $perawat
  * @method static \Illuminate\Database\Eloquent\Builder|TindakanRalanDokterPerawat newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TindakanRalanDokterPerawat newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TindakanRalanDokterPerawat query()
@@ -1070,9 +915,9 @@ namespace App{
 	class TindakanRalanDokterPerawat extends \Eloquent {}
 }
 
-namespace App{
+namespace App\Models\Perawatan{
 /**
- * App\TindakanRalanPerawat
+ * App\Models\Perawatan\TindakanRalanPerawat
  *
  * @property string $no_rawat
  * @property string $kd_jenis_prw
@@ -1088,7 +933,7 @@ namespace App{
  * @property float|null $menejemen
  * @property float|null $biaya_rawat
  * @property string|null $stts_bayar
- * @property-read \App\Petugas $perawat
+ * @property-read \App\Models\Petugas $perawat
  * @method static \Illuminate\Database\Eloquent\Builder|TindakanRalanPerawat newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TindakanRalanPerawat newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TindakanRalanPerawat query()
@@ -1110,9 +955,9 @@ namespace App{
 	class TindakanRalanPerawat extends \Eloquent {}
 }
 
-namespace App{
+namespace App\Models\Perawatan{
 /**
- * App\TindakanRanapDokter
+ * App\Models\Perawatan\TindakanRanapDokter
  *
  * @property string $no_rawat
  * @property string $kd_jenis_prw
@@ -1125,7 +970,7 @@ namespace App{
  * @property float|null $kso
  * @property float|null $menejemen
  * @property float|null $biaya_rawat
- * @property-read \App\Dokter $dokter
+ * @property-read \App\Models\Dokter $dokter
  * @method static \Illuminate\Database\Eloquent\Builder|TindakanRanapDokter newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TindakanRanapDokter newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TindakanRanapDokter query()
@@ -1144,9 +989,9 @@ namespace App{
 	class TindakanRanapDokter extends \Eloquent {}
 }
 
-namespace App{
+namespace App\Models\Perawatan{
 /**
- * App\TindakanRanapDokterPerawat
+ * App\Models\Perawatan\TindakanRanapDokterPerawat
  *
  * @property string $no_rawat
  * @property string $kd_jenis_prw
@@ -1161,8 +1006,8 @@ namespace App{
  * @property float|null $kso
  * @property float|null $menejemen
  * @property float|null $biaya_rawat
- * @property-read \App\Dokter $dokter
- * @property-read \App\Petugas $perawat
+ * @property-read \App\Models\Dokter $dokter
+ * @property-read \App\Models\Petugas $perawat
  * @method static \Illuminate\Database\Eloquent\Builder|TindakanRanapDokterPerawat newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TindakanRanapDokterPerawat newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TindakanRanapDokterPerawat query()
@@ -1183,9 +1028,9 @@ namespace App{
 	class TindakanRanapDokterPerawat extends \Eloquent {}
 }
 
-namespace App{
+namespace App\Models\Perawatan{
 /**
- * App\TindakanRanapPerawat
+ * App\Models\Perawatan\TindakanRanapPerawat
  *
  * @property string $no_rawat
  * @property string $kd_jenis_prw
@@ -1198,7 +1043,7 @@ namespace App{
  * @property float|null $kso
  * @property float|null $menejemen
  * @property float|null $biaya_rawat
- * @property-read \App\Petugas $perawat
+ * @property-read \App\Models\Petugas $perawat
  * @method static \Illuminate\Database\Eloquent\Builder|TindakanRanapPerawat newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TindakanRanapPerawat newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TindakanRanapPerawat query()
@@ -1215,6 +1060,122 @@ namespace App{
  * @method static \Illuminate\Database\Eloquent\Builder|TindakanRanapPerawat whereTglPerawatan($value)
  */
 	class TindakanRanapPerawat extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\Permission
+ *
+ * @property int $id
+ * @property string $name
+ * @property int $role_id
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission whereRoleId($value)
+ */
+	class Permission extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\Petugas
+ *
+ * @property string $nip
+ * @property string|null $nama
+ * @property string|null $jk
+ * @property string|null $tmp_lahir
+ * @property string|null $tgl_lahir
+ * @property string|null $gol_darah
+ * @property string|null $agama
+ * @property string|null $stts_nikah
+ * @property string|null $alamat
+ * @property string|null $kd_jbtn
+ * @property string|null $no_telp
+ * @property string|null $status
+ * @method static \Illuminate\Database\Eloquent\Builder|Petugas newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Petugas newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Petugas query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereAgama($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereAlamat($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereGolDarah($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereJk($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereKdJbtn($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereNama($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereNip($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereNoTelp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereSttsNikah($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereTglLahir($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Petugas whereTmpLahir($value)
+ */
+	class Petugas extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\Provinsi
+ *
+ * @property int $kd_prop
+ * @property string $nm_prop
+ * @method static \Illuminate\Database\Eloquent\Builder|Provinsi newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Provinsi newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Provinsi query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Provinsi whereKdProp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Provinsi whereNmProp($value)
+ */
+	class Provinsi extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\Role
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $guard_name
+ * @property string|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder|Role newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Role newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Role query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Role whereGuardName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role whereUser($value)
+ */
+	class Role extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\Satuan
+ *
+ * @property string $kode_sat
+ * @property string|null $satuan
+ * @method static \Illuminate\Database\Eloquent\Builder|Satuan newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Satuan newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Satuan query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Satuan whereKodeSat($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Satuan whereSatuan($value)
+ */
+	class Satuan extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\Suku
+ *
+ * @property int $id
+ * @property string|null $nama_suku_bangsa
+ * @method static \Illuminate\Database\Eloquent\Builder|Suku newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Suku newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Suku query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Suku whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Suku whereNamaSukuBangsa($value)
+ */
+	class Suku extends \Eloquent {}
 }
 
 namespace App{

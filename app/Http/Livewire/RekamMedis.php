@@ -3,8 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Jobs\ExportExcelRekamMedisJob;
-use App\Registrasi;
-use Illuminate\Support\Facades\Queue;
+use App\Models\Perawatan\Registrasi;
 use Livewire\Component;
 use Livewire\WithPagination;
 

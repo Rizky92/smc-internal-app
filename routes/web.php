@@ -1,6 +1,5 @@
 <?php
 
-use App\DataBarang;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Khanza\Auth\LoginController;
 use App\Http\Controllers\Khanza\Auth\LogoutController;
@@ -10,7 +9,7 @@ use App\Http\Controllers\Farmasi\LaporanTahunanController;
 use App\Http\Controllers\Logistik\InputStokMinMaxController;
 use App\Http\Controllers\Logistik\LaporanDaruratStokController as DaruratStokLogistikController;
 use App\Http\Controllers\RekamMedis\LaporanStatistikPasienController;
-use App\Registrasi;
+use App\Models\Perawatan\Registrasi;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -58,7 +57,11 @@ Route::prefix('admin')
             ->group(function () {
                 Route::get('laporan-statistik', LaporanStatistikPasienController::class)->name('laporan-statistik');
                 Route::get('export-statistik', function () {
-                    return view('admin.rekam-medis.laporan-statistik.index');
+                    $statistik = Registrasi::laporanStatistikRekamMedis()->get();
+
+                    return view('admin.rekam-medis.laporan-statistik.table', [
+                        'statistik' => $statistik
+                    ]);
                 });
             });
 

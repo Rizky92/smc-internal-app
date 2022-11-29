@@ -4,19 +4,10 @@
             <div class="col-12">
                 <div class="d-flex align-items-center justify-content-start">
                     <span class="text-sm pr-4">Periode:</span>
-                    <div class="input-group input-group-sm date w-25">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                        </div>
-                        <input type="date" class="form-control" wire:model.defer="periodeAwal" />
-                    </div>
-                    <span class="text-sm px-2">Sampai</span>
-                    <div class="input-group input-group-sm date w-25">
-                        <div class="input-group-prepend">
-                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                        </div>
-                        <input type="date" class="form-control" wire:model.defer="periodeAkhir" />
-                    </div>
+                    <input type="date" class="form-control form-control-sm w-25" wire:model.defer="periodeAwal" />
+                    <span class="text-sm px-2">sampai</span>
+                    <input type="date" class="form-control form-control-sm w-25" wire:model.defer="periodeAkhir" />
+
                     <div class="ml-auto">
                         <button class="btn btn-success btn-sm" type="button" wire:click="exportToExcel">
                             <i class="fas fa-file-excel"></i>
