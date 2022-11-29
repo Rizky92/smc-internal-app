@@ -52,7 +52,8 @@ class BarangNonmedis extends Model
         return $query->selectRaw("
             ipsrsbarang.kode_brng,
             ipsrsbarang.nama_brng,
-            IFNULL(ipsrssuplier.nama_suplier, '-') supplier,
+            IFNULL(ipsrssuplier.kode_suplier, '-') kode_supplier,
+            IFNULL(ipsrssuplier.nama_suplier, '-') nama_supplier,
             ipsrsjenisbarang.nm_jenis jenis,
             kodesatuan.satuan,
             IFNULL(smc.ipsrs_minmax_stok_barang.stok_min, 0) stokmin,

@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Logistik;
 
 use App\Http\Controllers\Controller;
-use App\Models\Nonmedis\BarangNonmedis;
-use App\Models\Nonmedis\SupplierNonmedis;
 use Illuminate\Http\Request;
 
 class InputStokMinMaxController extends Controller

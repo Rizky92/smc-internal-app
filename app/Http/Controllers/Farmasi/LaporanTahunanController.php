@@ -25,6 +25,8 @@ class LaporanTahunanController extends Controller
                 return [$registrasi->tgl => $registrasi->jumlah];
             });
 
+        dd($kunjunganRalan);
+
         return view('admin.farmasi.laporan-tahunan.index');
     }
 }

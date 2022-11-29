@@ -12,6 +12,17 @@
 
 namespace App{
 /**
+ * App\Admin
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|Admin newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Admin newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Admin query()
+ */
+	class Admin extends \Eloquent {}
+}
+
+namespace App{
+/**
  * App\Asuransi
  *
  * @property string $kd_pj
@@ -128,7 +139,7 @@ namespace App{
  * @property string $no_rawat
  * @property string $kd_penyakit
  * @property string $status
- * @property int $prioritas
+ * @property bool $prioritas
  * @property string|null $status_penyakit
  * @method static \Illuminate\Database\Eloquent\Builder|Diagnosa newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Diagnosa newQuery()
@@ -358,6 +369,134 @@ namespace App{
 	class Laporan extends \Eloquent {}
 }
 
+namespace App\Models\Nonmedis{
+/**
+ * App\Models\Nonmedis\BarangNonmedis
+ *
+ * @property string $kode_brng
+ * @property string $nama_brng
+ * @property string $kode_sat
+ * @property string|null $jenis
+ * @property float $stok
+ * @property float $harga
+ * @property string $status
+ * @property-read \App\Models\Nonmedis\JenisBarangNonmedis|null $jenisBarang
+ * @property-read \App\Satuan $satuan
+ * @property-read \App\Models\Nonmedis\MinmaxBarangNonmedis|null $stokMinmax
+ * @method static \Illuminate\Database\Eloquent\Builder|BarangNonmedis daruratStok()
+ * @method static \Illuminate\Database\Eloquent\Builder|BarangNonmedis newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|BarangNonmedis newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|BarangNonmedis query()
+ * @method static \Illuminate\Database\Eloquent\Builder|BarangNonmedis whereHarga($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BarangNonmedis whereJenis($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BarangNonmedis whereKodeBrng($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BarangNonmedis whereKodeSat($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BarangNonmedis whereNamaBrng($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BarangNonmedis whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BarangNonmedis whereStok($value)
+ */
+	class BarangNonmedis extends \Eloquent {}
+}
+
+namespace App\Models\Nonmedis{
+/**
+ * App\Models\Nonmedis\JenisBarangNonmedis
+ *
+ * @property string $kd_jenis
+ * @property string|null $nm_jenis
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisBarangNonmedis newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisBarangNonmedis newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisBarangNonmedis query()
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisBarangNonmedis whereKdJenis($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|JenisBarangNonmedis whereNmJenis($value)
+ */
+	class JenisBarangNonmedis extends \Eloquent {}
+}
+
+namespace App\Models\Nonmedis{
+/**
+ * App\Models\Nonmedis\MinmaxBarangNonmedis
+ *
+ * @property string $kode_brng
+ * @property int $stok_min
+ * @property int $stok_max
+ * @property string|null $kode_suplier
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property \Illuminate\Support\Carbon|null $deleted_at
+ * @property string|null $created_by
+ * @property string|null $updated_by
+ * @property string|null $deleted_by
+ * @method static \Illuminate\Database\Eloquent\Builder|MinmaxBarangNonmedis newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MinmaxBarangNonmedis newQuery()
+ * @method static \Illuminate\Database\Query\Builder|MinmaxBarangNonmedis onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder|MinmaxBarangNonmedis query()
+ * @method static \Illuminate\Database\Eloquent\Builder|MinmaxBarangNonmedis whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MinmaxBarangNonmedis whereCreatedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MinmaxBarangNonmedis whereDeletedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MinmaxBarangNonmedis whereDeletedBy($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MinmaxBarangNonmedis whereKodeBrng($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MinmaxBarangNonmedis whereKodeSuplier($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MinmaxBarangNonmedis whereStokMax($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MinmaxBarangNonmedis whereStokMin($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MinmaxBarangNonmedis whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MinmaxBarangNonmedis whereUpdatedBy($value)
+ * @method static \Illuminate\Database\Query\Builder|MinmaxBarangNonmedis withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|MinmaxBarangNonmedis withoutTrashed()
+ */
+	class MinmaxBarangNonmedis extends \Eloquent {}
+}
+
+namespace App\Models\Nonmedis{
+/**
+ * App\Models\Nonmedis\PemesananBarangNonmedis
+ *
+ * @property string $kode_suplier
+ * @property string|null $nama_suplier
+ * @property string|null $alamat
+ * @property string|null $kota
+ * @property string|null $no_telp
+ * @property string|null $nama_bank
+ * @property string|null $rekening
+ * @method static \Illuminate\Database\Eloquent\Builder|PemesananBarangNonmedis newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PemesananBarangNonmedis newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|PemesananBarangNonmedis query()
+ * @method static \Illuminate\Database\Eloquent\Builder|PemesananBarangNonmedis whereAlamat($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PemesananBarangNonmedis whereKodeSuplier($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PemesananBarangNonmedis whereKota($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PemesananBarangNonmedis whereNamaBank($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PemesananBarangNonmedis whereNamaSuplier($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PemesananBarangNonmedis whereNoTelp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|PemesananBarangNonmedis whereRekening($value)
+ */
+	class PemesananBarangNonmedis extends \Eloquent {}
+}
+
+namespace App\Models\Nonmedis{
+/**
+ * App\Models\Nonmedis\SupplierNonmedis
+ *
+ * @property string $kode_suplier
+ * @property string|null $nama_suplier
+ * @property string|null $alamat
+ * @property string|null $kota
+ * @property string|null $no_telp
+ * @property string|null $nama_bank
+ * @property string|null $rekening
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierNonmedis newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierNonmedis newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierNonmedis query()
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierNonmedis whereAlamat($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierNonmedis whereKodeSuplier($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierNonmedis whereKota($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierNonmedis whereNamaBank($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierNonmedis whereNamaSuplier($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierNonmedis whereNoTelp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|SupplierNonmedis whereRekening($value)
+ */
+	class SupplierNonmedis extends \Eloquent {}
+}
+
 namespace App{
 /**
  * App\Pasien
@@ -496,6 +635,23 @@ namespace App{
 
 namespace App{
 /**
+ * App\Permission
+ *
+ * @property int $id
+ * @property string $name
+ * @property int $role_id
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Permission whereRoleId($value)
+ */
+	class Permission extends \Eloquent {}
+}
+
+namespace App{
+/**
  * App\Petugas
  *
  * @property string $nip
@@ -575,10 +731,10 @@ namespace App{
  * @property float|null $trf_kamar
  * @property string|null $diagnosa_awal
  * @property string|null $diagnosa_akhir
- * @property \Illuminate\Support\Carbon $tgl_masuk
- * @property \Illuminate\Support\Carbon $jam_masuk
- * @property \Illuminate\Support\Carbon|null $tgl_keluar
- * @property \Illuminate\Support\Carbon|null $jam_keluar
+ * @property string $tgl_masuk
+ * @property string $jam_masuk
+ * @property string|null $tgl_keluar
+ * @property string|null $jam_keluar
  * @property float|null $lama
  * @property float|null $ttl_biaya
  * @property string $stts_pulang
@@ -607,8 +763,8 @@ namespace App{
  *
  * @property string|null $no_reg
  * @property string $no_rawat
- * @property \Illuminate\Support\Carbon|null $tgl_registrasi
- * @property \Illuminate\Support\Carbon|null $jam_reg
+ * @property string|null $tgl_registrasi
+ * @property string|null $jam_reg
  * @property string|null $kd_dokter
  * @property string|null $no_rkm_medis
  * @property string|null $kd_poli
@@ -644,8 +800,7 @@ namespace App{
  * @property-read int|null $tindakan_ranap_dokter_perawat_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\JenisPerawatanRanap[] $tindakanRanapPerawat
  * @property-read int|null $tindakan_ranap_perawat_count
- * @method static \Illuminate\Database\Eloquent\Builder|Registrasi laporanKunjunganRalan()
- * @method static \Illuminate\Database\Eloquent\Builder|Registrasi laporanStatistik($periodeAwal, $periodeAkhir)
+ * @method static \Illuminate\Database\Eloquent\Builder|Registrasi laporanStatistik($periodeAwal = null, $periodeAkhir = null)
  * @method static \Illuminate\Database\Eloquent\Builder|Registrasi newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Registrasi newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Registrasi query()
@@ -728,6 +883,25 @@ namespace App{
 
 namespace App{
 /**
+ * App\Role
+ *
+ * @property int $id
+ * @property string $name
+ * @property string $guard_name
+ * @property string|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder|Role newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Role newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Role query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Role whereGuardName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role whereName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Role whereUser($value)
+ */
+	class Role extends \Eloquent {}
+}
+
+namespace App{
+/**
  * App\RujukanKeluar
  *
  * @method static \Illuminate\Database\Eloquent\Builder|RujukanKeluar newModelQuery()
@@ -752,9 +926,13 @@ namespace App{
 /**
  * App\Satuan
  *
+ * @property string $kode_sat
+ * @property string|null $satuan
  * @method static \Illuminate\Database\Eloquent\Builder|Satuan newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Satuan newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Satuan query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Satuan whereKodeSat($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Satuan whereSatuan($value)
  */
 	class Satuan extends \Eloquent {}
 }
