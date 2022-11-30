@@ -109,7 +109,7 @@ class Registrasi extends Model
                     kamar_inap.stts_pulang
                 FROM kamar_inap
                 LEFT JOIN kamar ON kamar_inap.kd_kamar = kamar.kd_kamar
-                GROUP BY kamar_inap.no_rawat, kamar_inap.diagnosa_awal, kamar_inap.tgl_keluar, kamar_inap.jam_keluar, kamar.kelas, kamar_inap.stts_pulang
+                GROUP BY kamar_inap.no_rawat
                 HAVING max(kamar_inap.tgl_keluar)
                 AND max(kamar_inap.jam_keluar)
             ) rawatinap"), 'reg_periksa.no_rawat', '=', 'rawatinap.no_rawat')
@@ -136,7 +136,7 @@ class Registrasi extends Model
             ) tindakan_perawatan"), 'reg_periksa.no_rawat', '=', 'tindakan_perawatan.no_rawat')
             ->whereBetween(
                 'reg_periksa.tgl_registrasi',
-                ['2022-10-31', '2022-11-10']
+                ['2022-10-31', '2022-11-01']
             );
     }
 

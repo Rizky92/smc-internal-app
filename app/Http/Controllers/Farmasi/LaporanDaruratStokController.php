@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Farmasi;
 
-use App\DataBarang;
 use App\Exports\DaruratStokExport;
 use App\Http\Controllers\Controller;
+use App\Models\Farmasi\DataBarang;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Storage;
 

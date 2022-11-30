@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\Farmasi;
 
 use App\Http\Controllers\Controller;
-use App\Registrasi;
+use App\Models\Perawatan\Registrasi;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class LaporanTahunanController extends Controller
 {

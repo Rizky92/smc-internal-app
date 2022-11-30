@@ -2,19 +2,17 @@
 
 namespace App\Jobs;
 
-use App\Exports\RekamMedisExport;
+use App\Exports\LaporanStokMinmaxBarangLogistik;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class ExportExcelRekamMedisJob implements ShouldQueue
+class ExportExcelStokBarangLogistik implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private $periodeAwal;
-    private $periodeAkhir;
     private $timestamp;
 
     /**
@@ -22,11 +20,8 @@ class ExportExcelRekamMedisJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($periodeAwal = null, $periodeAkhir = null, $timestamp = null)
+    public function __construct($timestamp = null)
     {
-        $this->periodeAwal = $periodeAwal ?? now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = $periodeAkhir ?? now()->endOfMonth()->format('Y-m-d');
-
         $this->timestamp = $timestamp ?? now()->format('Ymd_His');
     }
 
@@ -37,7 +32,7 @@ class ExportExcelRekamMedisJob implements ShouldQueue
      */
     public function handle()
     {
-        (new RekamMedisExport($this->periodeAwal, $this->periodeAkhir, $this->timestamp))
-            ->store("excel/{$this->timestamp}_rekammedis.xlsx", 'public');
+        (new LaporanStokMinmaxBarangLogistik($this->timestamp))
+            ->store("excel/{$this->timestamp}_daruratstok_logistik.xlsx", 'public');
     }
 }

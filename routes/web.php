@@ -10,6 +10,7 @@ use App\Http\Controllers\Logistik\InputStokMinMaxController;
 use App\Http\Controllers\Logistik\LaporanDaruratStokController as DaruratStokLogistikController;
 use App\Http\Controllers\RekamMedis\LaporanStatistikPasienController;
 use App\Models\Perawatan\Registrasi;
+use App\Models\RekamMedis;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -57,7 +58,7 @@ Route::prefix('admin')
             ->group(function () {
                 Route::get('laporan-statistik', LaporanStatistikPasienController::class)->name('laporan-statistik');
                 Route::get('export-statistik', function () {
-                    $statistik = Registrasi::laporanStatistikRekamMedis()->get();
+                    $statistik = RekamMedis::whereBetween('tgl_registrasi', ['2022-10-31', '2022-11-01'])->get();
 
                     return view('admin.rekam-medis.laporan-statistik.table', [
                         'statistik' => $statistik

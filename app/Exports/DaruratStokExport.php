@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\DataBarang;
+use App\Models\Farmasi\DataBarang;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 

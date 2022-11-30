@@ -27,7 +27,7 @@
             $.fn.dataTable.ext.search.push((settings, data, dataIndex) => {
                 let filterStokMinimal = $('#filter_stok_minimal_nol').is(':checked')
 
-                if (parseFloat(data[5]) > 0) {
+                if (parseFloat(data[4]) > 0) {
                     return true
                 }
 
@@ -84,10 +84,10 @@
                                 <th>Nama</th>
                                 <th>Satuan kecil</th>
                                 <th>Kategori</th>
-                                <th>Supplier</th>
                                 <th>Stok minimal</th>
                                 <th>Stok saat ini</th>
                                 <th>Saran order</th>
+                                <th>Supplier</th>
                                 <th>Harga Per Unit (Rp)</th>
                                 <th>Total Harga (Rp)</th>
                             </tr>
@@ -100,10 +100,10 @@
                                     <td>{{ $barang->nama_brng }}</td>
                                     <td>{{ $barang->satuan_kecil }}</td>
                                     <td>{{ $barang->kategori }}</td>
-                                    <td>{{ $barang->nama_industri }}</td>
                                     <td>{{ $barang->stokminimal }}</td>
                                     <td>{{ $barang->stok_saat_ini }}</td>
                                     <td>{{ $saranOrder }}</td>
+                                    <td>{{ $barang->nama_industri }}</td>
                                     <td>{{ ceil($barang->h_beli) }}</td>
                                     <td>{{ ceil($barang->h_beli * $saranOrder) }}</td>
                                 </tr>

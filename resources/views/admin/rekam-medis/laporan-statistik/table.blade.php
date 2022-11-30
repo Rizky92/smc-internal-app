@@ -17,11 +17,9 @@
             <th>Tgl. Pulang</th>
             <th>Jam Pulang</th>
             <th>Diagnosa Masuk</th>
-            <th>ICD Primer</th>
-            <th>Diagnosa Primer</th>
-            <th>ICD Sekunder</th>
-            <th>Diagnosa Sekunder</th>
-            <th>ICD 9CM</th>
+            <th>ICD Diagnosa</th>
+            <th>Diagnosa</th>
+            <th>ICD Tindakan</th>
             <th>Tindakan</th>
             <th>Lama Operasi</th>
             <th>Rujukan Masuk</th>
@@ -38,17 +36,6 @@
     </thead>
     <tbody>
         @foreach ($statistik as $registrasi)
-            @php
-                $diagnosa = $registrasi->diagnosa->take(1 - $registrasi->diagnosa->count());
-                
-                $kdDiagnosaSekunder = $diagnosa->reduce(function ($carry, $item) {
-                    return $item->kd_penyakit . '; <br>' . $carry;
-                });
-                
-                $nmDiagnosaSekunder = $diagnosa->reduce(function ($carry, $item) {
-                    return $item->nm_penyakit . '; <br>' . $carry;
-                });
-            @endphp
             <tr>
                 <td>{{ $registrasi->no_rawat }}</td>
                 <td>{{ $registrasi->no_rkm_medis }}</td>
@@ -66,16 +53,10 @@
                 <td>{{ $registrasi->tgl_keluar }}</td>
                 <td>{{ $registrasi->jam_keluar }}</td>
                 <td>{{ $registrasi->diagnosa_awal }}</td>
-                <td>{{ optional(optional($registrasi->diagnosa)->first())->kd_penyakit ?? '-' }}</td>
-                <td>{{ optional(optional($registrasi->diagnosa)->first())->nm_penyakit ?? '-' }}</td>
-                <td>{!! $kdDiagnosaSekunder ?? '-' !!}</td>
-                <td>{!! $nmDiagnosaSekunder ?? '-' !!}</td>
-                {{-- <td>-</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td> --}}
-                <td>{{ $registrasi->kode_tindakan }}</td>
-                <td>{{ $registrasi->nama_tindakan }}</td>
+                <td>{{ $registrasi->kd_diagnosa }}</td>
+                <td>{{ $registrasi->nm_diagnosa }}</td>
+                <td>{{ $registrasi->kd_tindakan }}</td>
+                <td>{{ $registrasi->nm_tindakan }}</td>
                 <td>-</td>
                 <td>-</td>
                 <td>{{ $registrasi->nm_dokter }}</td>
@@ -89,9 +70,5 @@
                 <td>{{ $registrasi->kunjungan_ke }}</td>
             </tr>
         @endforeach
-        @php
-            unset($kdDiagnosaSekunder);
-            unset($nmDiagnosaSekunder);
-        @endphp
     </tbody>
 </table>

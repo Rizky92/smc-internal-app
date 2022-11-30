@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Farmasi;
 
 use App\Http\Controllers\Controller;
-use App\Resep;
+use App\Models\Farmasi\Resep;
 use Illuminate\Http\Request;
 
 class LaporanPenggunaanObatPerDokterController extends Controller

@@ -4,6 +4,8 @@ namespace App\Http\Livewire;
 
 use App\Jobs\ExportExcelRekamMedisJob;
 use App\Models\Perawatan\Registrasi;
+use App\Models\RekamMedis as ModelsRekamMedis;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -19,10 +21,15 @@ class RekamMedis extends Component
 
     public $perpage;
 
+    public $downloadUrl;
+
     protected $paginationTheme = 'bootstrap';
+
+    public $timestamp = null;
 
     protected $listeners = [
         'refreshFilter' => '$refresh',
+        'refreshPage',
     ];
 
     protected function queryString()
@@ -54,19 +61,37 @@ class RekamMedis extends Component
         $this->perpage = 25;
     }
 
+    public function refreshPage()
+    {
+        $file = "excel/{$this->timestamp}_rekammedis.xlsx";
+
+        $fileExists = Storage::disk('public')->has($file);
+
+        if (!$fileExists) {
+            $this->emit('refreshFilter');
+        } else {
+            session()->flash('excel.download', Storage::disk('public')->url($file));
+            session()->flash('excel.exported', 'File berhasil diproses! Mulai download atau klik');
+    
+            Storage::disk('public')->download($file);
+        }
+
+    }
+
     public function exportToExcel()
     {
-        ExportExcelRekamMedisJob::dispatch($this->periodeAwal, $this->periodeAkhir);
+        $this->timestamp = now()->format('Ymd_His');
 
-        session()->flash('excel.exporting', 'Sedang mengekspor...');
+        ExportExcelRekamMedisJob::dispatch($this->periodeAwal, $this->periodeAkhir, $this->timestamp);
+
+        session()->flash('excel.exporting', 'Sedang memproses. Silahkan klik "refresh" sekitar 1 menit. Mohon untuk tidak klik ulang tombol export.');
     }
 
     public function render()
     {
         return view('livewire.rekam-medis', [
-            'statistik' => Registrasi::laporanStatistik($this->periodeAwal, $this->periodeAkhir)
+            'statistik' => ModelsRekamMedis::whereBetween('tgl_registrasi', [$this->periodeAwal, $this->periodeAkhir])
                 ->orderBy('no_rawat')
-                ->orderBy('no_reg')
                 ->paginate($this->perpage)
         ]);
     }

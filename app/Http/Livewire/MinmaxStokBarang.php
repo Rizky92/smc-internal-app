@@ -2,25 +2,44 @@
 
 namespace App\Http\Livewire;
 
-use App\Http\Controllers\Logistik\InputStokMinMaxController;
+use App\Exports\LaporanStokMinmaxBarangLogistik;
+use App\Jobs\ExportExcelStokBarangLogistik;
 use App\Models\Nonmedis\BarangNonmedis;
 use App\Models\Nonmedis\MinmaxBarangNonmedis;
 use App\Models\Nonmedis\SupplierNonmedis;
 use Livewire\Component;
+use Livewire\WithPagination;
+use Storage;
 
 class MinmaxStokBarang extends Component
 {
+    use WithPagination;
+
     public $kodeBarang;
+    
     public $namaBarang;
+    
     public $kodeSupplier;
+    
     public $stokMin;
+    
     public $stokMax;
+    
     public $stokSekarang;
+    
     public $saranOrder;
+
+    public $cari;
+
+    protected $paginationTheme = 'bootstrap';
 
     protected $rules = [
         'stokMin' => ['required', 'numeric', 'min:0'],
         'stokMax' => ['required', 'numeric', 'min:0'],
+    ];
+
+    protected $listeners = [
+        'refreshData' => '$refresh',
     ];
 
     public function getItem($kodeBarang)
@@ -38,18 +57,29 @@ class MinmaxStokBarang extends Component
 
     public function exportToExcel()
     {
-        
+        $timestamp = now()->format('Ymd_His');
+
+        $file = "excel/{$timestamp}_daruratstok_logistik.xlsx";
+
+        $export = (new LaporanStokMinmaxBarangLogistik($timestamp, $this->cari ?? null))
+            ->store("excel/{$timestamp}_daruratstok_logistik.xlsx", 'public');
+
+        if ($export) {
+            return Storage::disk('public')->download($file);
+        }
     }
 
-    public function simpan()
+    public function simpan($kodeSuplier)
     {
-        $barang = MinmaxBarangNonmedis::find($this->kodeBarang);
+        $minmaxBarang = MinmaxBarangNonmedis::find($this->kodeBarang);
 
-        $barang->stok_min = $this->stokMin;
-        $barang->stok_max = $this->stokMax;
-        $barang->kode_suplier = $this->kodeSupplier;
+        $minmaxBarang->stok_min = $this->stokMin;
+        $minmaxBarang->stok_max = $this->stokMax;
+        $minmaxBarang->kode_suplier = $kodeSuplier;
 
-        $barang->save();
+        $minmaxBarang->save();
+
+        $this->clear();
 
         session()->flash('saved.title', 'Sukses!');
         session()->flash('saved.content', 'Data berhasil disimpan!');
@@ -57,14 +87,27 @@ class MinmaxStokBarang extends Component
         return 0;
     }
 
+    private function clear()
+    {
+        $this->kodeBarang = null;
+        $this->namaBarang = null;
+        $this->kodeSupplier = null;
+        $this->stokMin = null;
+        $this->stokMax = null;
+        $this->stokSekarang = null;
+        $this->saranOrder = null;
+        $this->cari = null;
+    }
+
     public function render()
     {
-        $barang = BarangNonmedis::daruratStok()->get();
+        $barang = BarangNonmedis::daruratStok($this->cari)
+            ->paginate();
 
         $supplier = SupplierNonmedis::pluck('nama_suplier', 'kode_suplier');
 
         return view('livewire.minmax-stok-barang', [
-            'barang' => $barang,
+            'barangLogistik' => $barang,
             'supplier' => $supplier,
         ]);
     }
