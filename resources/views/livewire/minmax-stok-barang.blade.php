@@ -115,14 +115,21 @@
                     </div>
                 </div>
             </div>
-            <div class="row mt-2">
+            <div class="row mt-3">
                 <div class="col-12">
                     <div class="d-flex justify-content-start align-items-center">
                         <div class="input-group input-group-sm w-25">
                             <div class="input-group-prepend">
-                                <label for="cari" class="input-group-text">Cari...</label>
+                                <button type="button" class="btn btn-default" wire:click="$emit('refreshData')">
+                                    <i class="fas fa-sync"></i>
+                                    <span class="ml-1">Refresh</span>
+                                </button>
                             </div>
-                            <input type="search" id="cari" name="cari" class="form-control" wire:model.defer="cari" wire:keydown.enter="$emit('refreshData')">
+                            <input type="search" id="cari" name="cari" class="form-control" wire:model.defer="cari" wire:keydown.enter.stop="$emit('refreshData')">
+                        </div>
+                        <div class="custom-control custom-switch ml-3">
+                            <input type="checkbox" class="custom-control-input" id="tampilkanSaranOrderNol" wire:model.defer="tampilkanSaranOrderNol">
+                            <label class="custom-control-label text-sm" for="tampilkanSaranOrderNol">Tampilkan barang dengan saran order nol</label>
                         </div>
                         <button type="button" wire:click="exportToExcel" class="ml-auto btn btn-default btn-sm">
                             <i class="fas fa-file-excel"></i>
@@ -157,7 +164,16 @@
                         <tr style="position: relative">
                             <td>
                                 {{ $barang->kode_brng }}
-                                <a href="#" style="position: absolute; left: 0; right: 0; top: 0; bottom: 0" onclick="loadData('{{ $barang->kode_brng }}', '{{ $barang->kode_supplier }}')"></a>
+                                <a href="#" style="position: absolute; left: 0; right: 0; top: 0; bottom: 0"
+                                    data-kode-barang="{{ $barang->kode_brng }}"
+                                    data-nama-barang="{{ $barang->nama_brng }}"
+                                    data-kode-supplier="{{ $barang->kode_supplier }}"
+                                    data-stok-min="{{ $barang->stok_min }}"
+                                    data-stok-max="{{ $barang->stok_max }}"
+                                    data-stok-skrg="{{ $barang->stok }}"
+                                    data-saran-order="{{ $barang->saran_order }}"
+                                    onclick="loadData('{{ $barang->kode_brng }}', '{{ $barang->kode_supplier }}')"
+                                ></a>
                             </td>
                             <td>{{ $barang->nama_brng }}</td>
                             <td>{{ $barang->satuan }}</td>

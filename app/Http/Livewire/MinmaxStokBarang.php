@@ -3,7 +3,6 @@
 namespace App\Http\Livewire;
 
 use App\Exports\LaporanStokMinmaxBarangLogistik;
-use App\Jobs\ExportExcelStokBarangLogistik;
 use App\Models\Nonmedis\BarangNonmedis;
 use App\Models\Nonmedis\MinmaxBarangNonmedis;
 use App\Models\Nonmedis\SupplierNonmedis;
@@ -30,6 +29,8 @@ class MinmaxStokBarang extends Component
     public $saranOrder;
 
     public $cari;
+
+    public $tampilkanSaranOrderNol = true;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -61,7 +62,7 @@ class MinmaxStokBarang extends Component
 
         $file = "excel/{$timestamp}_daruratstok_logistik.xlsx";
 
-        $export = (new LaporanStokMinmaxBarangLogistik($timestamp, $this->cari ?? null))
+        $export = (new LaporanStokMinmaxBarangLogistik($timestamp, $this->cari ?? null, $this->tampilkanSaranOrderNol))
             ->store("excel/{$timestamp}_daruratstok_logistik.xlsx", 'public');
 
         if ($export) {
@@ -97,11 +98,12 @@ class MinmaxStokBarang extends Component
         $this->stokSekarang = null;
         $this->saranOrder = null;
         $this->cari = null;
+        $this->tampilkanSaranOrderNol = true;
     }
 
     public function render()
     {
-        $barang = BarangNonmedis::daruratStok($this->cari)
+        $barang = BarangNonmedis::daruratStok($this->cari, $this->tampilkanSaranOrderNol)
             ->paginate();
 
         $supplier = SupplierNonmedis::pluck('nama_suplier', 'kode_suplier');

@@ -2,7 +2,7 @@
     'title' => 'Penggunaan Obat Per Dokter Peresep',
 ])
 
-@once
+{{-- @once
     @push('css')
         <link rel="stylesheet" href="{{ asset('plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
         <link rel="stylesheet" href="{{ asset('plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
@@ -64,7 +64,7 @@
             })
         </script>
     @endpush
-@endonce
+@endonce --}}
 @section('content')
     <div class="row">
         <div class="col-12">
@@ -112,6 +112,14 @@
                             @endforeach
                         </tbody>
                     </table>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex align-items center justify-content-start">
+                        <p class="text-muted">Menampilkan {{ $obatPerDokter->count() }} dari total {{ number_format($obatPerDokter->total(), 0, ',', '.') }} item.</p>
+                        <div class="ml-auto">
+                            {{ $obatPerDokter->links() }}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

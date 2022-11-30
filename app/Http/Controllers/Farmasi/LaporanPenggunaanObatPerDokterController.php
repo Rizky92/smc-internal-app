@@ -17,9 +17,9 @@ class LaporanPenggunaanObatPerDokterController extends Controller
     public function __invoke(Request $request)
     {
         $penggunaanObatPerDokter = Resep::penggunaanObatPerDokter(
-            now()->startOfWeek()->format('Y-m-d'),
-            now()->endOfWeek()->format('Y-m-d')
-        )->get();
+            now()->startOfMonth()->format('Y-m-d'),
+            now()->endOfMonth()->format('Y-m-d')
+        )->paginate();
         
         return view('admin.farmasi.penggunaan-obat-perdokter.index', [
             'obatPerDokter' => $penggunaanObatPerDokter,

@@ -13,11 +13,13 @@ class LaporanStokMinmaxBarangLogistik implements FromCollection, WithHeadings
 
     private $timestamp;
     private $cari;
+    private $saranOrderNol;
 
-    public function __construct($timestamp = null, $cari = null)
+    public function __construct($timestamp = null, $cari = null, $saranOrderNol = true)
     {
         $this->timestamp = $timestamp ?? now()->format('Ymd_His');
         $this->cari = $cari;
+        $this->saranOrderNol = $saranOrderNol;
     }
 
     /**
@@ -25,7 +27,7 @@ class LaporanStokMinmaxBarangLogistik implements FromCollection, WithHeadings
     */
     public function collection()
     {
-        return BarangNonmedis::laporanDaruratStok($this->cari)
+        return BarangNonmedis::laporanDaruratStok($this->cari, $this->saranOrderNol)
             ->cursor();
     }
 
