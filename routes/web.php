@@ -24,9 +24,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('home');
-});
+Route::view('/', 'home');
 
 Route::get('login', [LoginController::class, 'create'])->name('login');
 Route::post('login', [LoginController::class, 'store']);
