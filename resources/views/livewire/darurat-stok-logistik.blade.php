@@ -9,14 +9,14 @@
     @endif
 
     <div class="card">
-        <div class="card-body border-bottom" id="input">
+        <div class="card-body" id="input">
             <div class="row">
                 <div class="col-12">
-                    <div class="d-flex align-items-center justify-content-start">
-                        <span class="text-sm pr-4">Periode:</span>
-                        <input type="date" class="form-control form-control-sm w-25" wire:model.defer="periodeAwal" />
-                        <span class="text-sm px-2">sampai</span>
-                        <input type="date" class="form-control form-control-sm w-25" wire:model.defer="periodeAkhir" />
+                    <div class="d-flex justify-content-start align-items-center">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="tampilkanSaranOrderNol" wire:model.defer="tampilkanSaranOrderNol">
+                            <label class="custom-control-label text-sm" for="tampilkanSaranOrderNol">Tampilkan barang dengan saran order nol</label>
+                        </div>
                         <div class="ml-auto">
                             <button class="btn btn-default btn-sm" type="button" wire:click="exportToExcel">
                                 <i class="fas fa-file-excel"></i>
@@ -26,8 +26,24 @@
                     </div>
                 </div>
             </div>
+            <div class="row mt-2">
+                <div class="col-12">
+                    <div class="d-flex align-items-center justify-content-start">
+                        <span class="text-sm pr-4">Periode:</span>
+                        <input type="date" class="form-control form-control-sm w-25" wire:model.defer="periodeAwal" />
+                        <span class="text-sm px-2">sampai</span>
+                        <input type="date" class="form-control form-control-sm w-25" wire:model.defer="periodeAkhir" />
+                        <div class="ml-auto">
+                            <button class="btn btn-default btn-sm" type="button" wire:click="$emit('refreshFilter')">
+                                <i class="fas fa-sync"></i>
+                                <span class="ml-1">Refresh</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="card-body table-responsive p-0" style="position:relative">
+        <div class="card-body table-responsive p-0">
             <table id="table_index" class="table table-hover table-striped table-sm text-sm">
                 <thead>
                     <tr>
