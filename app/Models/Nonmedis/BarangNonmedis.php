@@ -38,6 +38,8 @@ class BarangNonmedis extends Model
 
     public function scopeLaporanDaruratStok(Builder $query, $cari = null, $saranOrderNol = true): Builder
     {
+        // tidak ada kode supplier disini
+        
         return $query->selectRaw("
             ipsrsbarang.kode_brng,
             ipsrsbarang.nama_brng,
