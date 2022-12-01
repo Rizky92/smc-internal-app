@@ -2,7 +2,10 @@
 
 namespace App\Http\Livewire;
 
+use App\Exports\Farmasi\PenggunaanObatPerdokterExport;
+use App\Jobs\ExportPenggunaanObatPerdokterJob;
 use App\Models\Farmasi\Resep;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -24,7 +27,7 @@ class PenggunaanObatPerDokterPeresep extends Component
 
     protected $listeners = [
         'refreshFilter' => '$refresh',
-        'refreshPage',
+        'processExcelExport',
     ];
     
     protected function queryString()
@@ -52,6 +55,20 @@ class PenggunaanObatPerDokterPeresep extends Component
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
         $this->perpage = 25;
+    }
+
+    public function processExcelExport()
+    {
+        $this->timestamp = now()->format('Ymd_His');
+
+        ExportPenggunaanObatPerdokterJob::dispatch($this->periodeAwal, $this->periodeAkhir, $this->timestamp);
+    }
+
+    public function exportToExcel()
+    {
+        session()->flash('excel.exporting', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+
+        $this->emit('processExcelExport');
     }
 
     public function render()

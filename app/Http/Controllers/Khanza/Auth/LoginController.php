@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Khanza\Auth;
 
+use App\Admin;
 use App\Http\Controllers\Controller;
 use App\User;
 use Illuminate\Http\Request;
@@ -28,26 +29,39 @@ class LoginController extends Controller
      */
     public function store(Request $request)
     {
-        $input = $request->validate([
-            'username' => ['required', 'string', 'max:20'],
-            'password' => ['required', 'string', 'max:20'],
-        ], $request->only(['username', 'password']));
+        $request->validate([
+            'user' => ['required', 'string', 'max:20'],
+            'pass' => ['required', 'string', 'max:20'],
+        ], $request->only(['user', 'pass']));
 
-        $user = User::selectRaw('*')
-            ->whereRaw('AES_DECRYPT(id_user, "nur") = ?', $request->get('username'))
-            ->whereRaw('AES_DECRYPT(password, "windi") = ?', $request->get('password'))
+        $admin = Admin::selectRaw('*')
+            ->whereRaw('AES_DECRYPT(usere, "nur") = ?', $request->get('user'))
+            ->whereRaw('AES_DECRYPT(passworde, "windi") = ?', $request->get('pass'))
             ->first();
 
-        if (! $user) {
-            throw ValidationException::withMessages([
-                'username' => 'Username atau password salah'
-            ]);
+        $user = User::selectRaw('*')
+            ->whereRaw('AES_DECRYPT(id_user, "nur") = ?', $request->get('user'))
+            ->whereRaw('AES_DECRYPT(password, "windi") = ?', $request->get('pass'))
+            ->first();
+
+        if ($user) {
+            Auth::guard('web')->login($user);
+
+            $request->session()->regenerate();
+
+            return redirect()->route('admin.dashboard');
         }
 
-        Auth::guard('web')->login($user);
+        if ($admin) {
+            Auth::guard('admin')->login($admin);
 
-        $request->session()->regenerate();
+            $request->session()->regenerate();
 
-        return redirect()->route('admin.dashboard');
+            return redirect()->route('admin.dashboard');
+        }
+        
+        throw ValidationException::withMessages([
+            'user' => 'user atau pass salah'
+        ]);
     }
 }

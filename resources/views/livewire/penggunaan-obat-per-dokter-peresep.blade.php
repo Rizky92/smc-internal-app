@@ -1,4 +1,13 @@
 <div>
+    @if (session()->has('excel.exporting'))
+        <div class="alert alert-dark alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <p>
+                {{ session('excel.exporting') }}
+            </p>
+        </div>
+    @endif
+    
     <div class="card">
         <div class="card-body">
             <div class="row">
@@ -53,9 +62,11 @@
                     <tr>
                         <th>No. Resep</th>
                         <th>Tgl. Validasi</th>
+                        <th>Jam</th>
                         <th>Nama Obat</th>
                         <th>Jumlah</th>
                         <th>Dokter Peresep</th>
+                        <th>Asal</th>
                         <th>Asal Poli</th>
                     </tr>
                 </thead>
@@ -64,9 +75,11 @@
                         <tr>
                             <td>{{ $dataObat->no_resep }}</td>
                             <td>{{ $dataObat->tgl_perawatan }}</td>
+                            <td>{{ $dataObat->jam }}</td>
                             <td>{{ $dataObat->nama_brng }}</td>
-                            <td>{{ $dataObat->jumlah }}</td>
+                            <td>{{ $dataObat->jml }}</td>
                             <td>{{ $dataObat->nm_dokter }}</td>
+                            <td>{{ $dataObat->status }}</td>
                             <td>{{ $dataObat->nm_poli }}</td>
                         </tr>
                     @endforeach

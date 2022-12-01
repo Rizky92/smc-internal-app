@@ -4,18 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\DB;
 
-class User extends Authenticatable
+class Admin extends Authenticatable
 {
-    use Notifiable;
-
-    protected $primaryKey = 'id_user';
+    protected $primaryKey = 'usere';
 
     protected $keyType = 'string';
 
-    protected $table = 'user';
+    protected $table = 'admin';
 
     public $incrementing = false;
 
@@ -31,7 +27,6 @@ class User extends Authenticatable
     ];
 
     protected $appends = [
-        'user_id',
         'nama',
     ];
 
@@ -40,8 +35,7 @@ class User extends Authenticatable
         parent::boot();
 
         static::addGlobalScope(function (Builder $query) {
-            $query->selectRaw('AES_DECRYPT(id_user, "nur") user_id, petugas.nama, user.*')
-                ->join('petugas', DB::raw('AES_DECRYPT(id_user, "nur")'), '=', 'petugas.nip');
+            return $query->selectRaw('"Admin Utama" nama');
         });
     }
 }

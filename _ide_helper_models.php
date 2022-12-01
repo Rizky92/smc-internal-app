@@ -10,13 +10,17 @@
  */
 
 
-namespace App\Models{
+namespace App{
 /**
- * App\Models\Admin
+ * App\Admin
  *
+ * @property string|null $usere
+ * @property string|null $passworde
  * @method static \Illuminate\Database\Eloquent\Builder|Admin newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Admin newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Admin query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Admin wherePassworde($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Admin whereUsere($value)
  */
 	class Admin extends \Eloquent {}
 }
@@ -155,7 +159,7 @@ namespace App\Models\Farmasi{
  * @property-read int|null $obat_count
  * @method static \Illuminate\Database\Eloquent\Builder|Resep newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Resep newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Resep penggunaanObatPerDokter($dateMin, $dateMax)
+ * @method static \Illuminate\Database\Eloquent\Builder|Resep penggunaanObatPerDokter(string $dateMin = '', string $dateMax = '')
  * @method static \Illuminate\Database\Eloquent\Builder|Resep query()
  * @method static \Illuminate\Database\Eloquent\Builder|Resep whereJam($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Resep whereJamPenyerahan($value)
@@ -249,7 +253,8 @@ namespace App\Models\Nonmedis{
  * @property-read \App\Models\Nonmedis\JenisBarangNonmedis|null $jenisBarang
  * @property-read \App\Models\Satuan $satuan
  * @property-read \App\Models\Nonmedis\MinmaxBarangNonmedis|null $stokMinmax
- * @method static \Illuminate\Database\Eloquent\Builder|BarangNonmedis daruratStok()
+ * @method static \Illuminate\Database\Eloquent\Builder|BarangNonmedis daruratStok($cari = '', $saranOrderNol = true)
+ * @method static \Illuminate\Database\Eloquent\Builder|BarangNonmedis denganMinmax($cari = '', $export = false)
  * @method static \Illuminate\Database\Eloquent\Builder|BarangNonmedis newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|BarangNonmedis newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|BarangNonmedis query()
@@ -748,7 +753,8 @@ namespace App\Models\Perawatan{
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Perawatan\JenisPerawatanRanap[] $tindakanRanapPerawat
  * @property-read int|null $tindakan_ranap_perawat_count
  * @method static \Illuminate\Database\Eloquent\Builder|Registrasi laporanKunjunganRalan()
- * @method static \Illuminate\Database\Eloquent\Builder|Registrasi laporanStatistik(\Illuminate\Support\Carbon $periodeAwal, \Illuminate\Support\Carbon $periodeAkhir)
+ * @method static \Illuminate\Database\Eloquent\Builder|Registrasi laporanStatistik(string $periodeAwal, string $periodeAkhir)
+ * @method static \Illuminate\Database\Eloquent\Builder|Registrasi laporanStatistikRekamMedis()
  * @method static \Illuminate\Database\Eloquent\Builder|Registrasi newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Registrasi newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Registrasi query()
@@ -1064,23 +1070,6 @@ namespace App\Models\Perawatan{
 
 namespace App\Models{
 /**
- * App\Models\Permission
- *
- * @property int $id
- * @property string $name
- * @property int $role_id
- * @method static \Illuminate\Database\Eloquent\Builder|Permission newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Permission newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Permission query()
- * @method static \Illuminate\Database\Eloquent\Builder|Permission whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Permission whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Permission whereRoleId($value)
- */
-	class Permission extends \Eloquent {}
-}
-
-namespace App\Models{
-/**
  * App\Models\Petugas
  *
  * @property string $nip
@@ -1131,21 +1120,75 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * App\Models\Role
+ * App\Models\RekamMedis
  *
- * @property int $id
- * @property string $name
- * @property string $guard_name
- * @property string|null $user
- * @method static \Illuminate\Database\Eloquent\Builder|Role newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Role newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Role query()
- * @method static \Illuminate\Database\Eloquent\Builder|Role whereGuardName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Role whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Role whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Role whereUser($value)
+ * @property string $no_rawat
+ * @property string|null $no_rkm_medis
+ * @property string|null $nm_pasien
+ * @property string|null $no_ktp
+ * @property string|null $jk
+ * @property string|null $tgl_lahir
+ * @property string|null $umur
+ * @property string|null $agama
+ * @property string|null $nama_suku_bangsa
+ * @property string $status_lanjut
+ * @property string $status_poli
+ * @property string|null $tgl_registrasi
+ * @property string|null $jam_reg
+ * @property string|null $tgl_keluar
+ * @property string|null $jam_keluar
+ * @property string|null $diagnosa_awal
+ * @property string|null $kd_diagnosa
+ * @property string|null $nm_diagnosa
+ * @property string|null $kd_tindakan
+ * @property string|null $nm_tindakan
+ * @property mixed|null $NULL
+ * @property mixed|null $My_exp_NULL
+ * @property string|null $nm_dokter
+ * @property string|null $nm_poli
+ * @property string|null $kelas
+ * @property string|null $png_jawab
+ * @property string|null $stts_pulang
+ * @property mixed|null $My_exp_1_NULL
+ * @property string|null $no_tlp
+ * @property string|null $alamat
+ * @property int|null $kunjungan_ke
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis query()
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereAgama($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereAlamat($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereDiagnosaAwal($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereJamKeluar($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereJamReg($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereJk($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereKdDiagnosa($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereKdTindakan($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereKelas($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereKunjunganKe($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereMyExp1NULL($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereMyExpNULL($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereNULL($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereNamaSukuBangsa($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereNmDiagnosa($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereNmDokter($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereNmPasien($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereNmPoli($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereNmTindakan($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereNoKtp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereNoRawat($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereNoRkmMedis($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereNoTlp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis wherePngJawab($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereStatusLanjut($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereStatusPoli($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereSttsPulang($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereTglKeluar($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereTglLahir($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereTglRegistrasi($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|RekamMedis whereUmur($value)
  */
-	class Role extends \Eloquent {}
+	class RekamMedis extends \Eloquent {}
 }
 
 namespace App\Models{

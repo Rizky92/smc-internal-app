@@ -26,8 +26,9 @@ class Resep extends Model
                 resep_obat.tgl_perawatan,
                 resep_obat.jam,
                 databarang.nama_brng,
-                SUM(resep_dokter.jml) jumlah,
+                resep_dokter.jml,
                 dokter.nm_dokter,
+                resep_obat.status,
                 poliklinik.nm_poli
             ")
             ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
@@ -43,7 +44,6 @@ class Resep extends Model
             ->where('reg_periksa.status_bayar', 'Sudah Bayar')
             ->where('reg_periksa.stts', '!=', 'Batal')
             ->whereNotNull('resep_dokter.kode_brng')
-            ->groupBy(['resep_obat.no_resep', 'resep_obat.kd_dokter'])
             ->orderBy('resep_obat.no_resep');
     }
 
