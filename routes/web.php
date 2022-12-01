@@ -55,13 +55,6 @@ Route::prefix('admin')
             ->as('rekam-medis.')
             ->group(function () {
                 Route::get('laporan-statistik', LaporanStatistikPasienController::class)->name('laporan-statistik');
-                Route::get('export-statistik', function () {
-                    $statistik = RekamMedis::whereBetween('tgl_registrasi', ['2022-10-31', '2022-11-01'])->get();
-
-                    return view('admin.rekam-medis.laporan-statistik.table', [
-                        'statistik' => $statistik
-                    ]);
-                });
             });
 
         Route::prefix('logistik')
