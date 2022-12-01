@@ -125,7 +125,7 @@
                                     <span class="ml-1">Refresh</span>
                                 </button>
                             </div>
-                            <input type="search" id="cari" name="cari" class="form-control" wire:model.defer="cari" wire:keydown.enter.stop="$emit('refreshData')">
+                            <input type="search" id="cari" name="cari" placeholder="Cari..." class="form-control" wire:model.defer="cari" wire:keydown.enter.stop="$emit('refreshData')">
                         </div>
                         <div class="custom-control custom-switch ml-3">
                             <input type="checkbox" class="custom-control-input" id="tampilkanSaranOrderNol" wire:model.defer="tampilkanSaranOrderNol">

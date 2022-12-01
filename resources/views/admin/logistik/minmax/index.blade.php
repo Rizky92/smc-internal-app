@@ -5,7 +5,7 @@
 @section('content')
     <div class="row">
         <div class="col-12">
-            @livewire('minmax-stok-barang')
+            @livewire('minmax-stok-barang-logistik')
         </div>
     </div>
 @endsection

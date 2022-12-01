@@ -8,9 +8,9 @@ use App\Models\Nonmedis\MinmaxBarangNonmedis;
 use App\Models\Nonmedis\SupplierNonmedis;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Storage;
+use Illuminate\Support\Facades\Storage;
 
-class MinmaxStokBarang extends Component
+class MinmaxStokBarangLogistik extends Component
 {
     use WithPagination;
 
@@ -108,7 +108,7 @@ class MinmaxStokBarang extends Component
 
         $supplier = SupplierNonmedis::pluck('nama_suplier', 'kode_suplier');
 
-        return view('livewire.minmax-stok-barang', [
+        return view('livewire.minmax-stok-barang-logistik', [
             'barangLogistik' => $barang,
             'supplier' => $supplier,
         ]);

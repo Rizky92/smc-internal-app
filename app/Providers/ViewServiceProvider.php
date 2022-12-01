@@ -81,11 +81,11 @@ class ViewServiceProvider extends ServiceProvider
                             'icon' => 'fas fa-pencil-alt',
                             'url' => route('admin.logistik.minmax.index'),
                         ],
-                        [
-                            'name' => 'Laporan Darurat Stok',
-                            'icon' => 'far fa-newspaper',
-                            'url' => route('admin.logistik.darurat-stok'),
-                        ],
+                        // [
+                        //     'name' => 'Laporan Darurat Stok',
+                        //     'icon' => 'far fa-newspaper',
+                        //     'url' => route('admin.logistik.darurat-stok'),
+                        // ],
                     ],
                 ],
             ]);

@@ -23,10 +23,12 @@ class Resep extends Model
         return $query
             ->selectRaw("
                 resep_obat.no_resep,
-                resep_obat.tgl_peresepan,
+                resep_obat.tgl_perawatan,
+                resep_obat.jam,
+                databarang.nama_brng,
+                SUM(resep_dokter.jml),
                 dokter.nm_dokter,
-                resep_dokter.jml,
-                databarang.nama_brng
+                rp.status_lanjut
             ")
             ->join('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
             ->join('resep_dokter', 'resep_obat.no_resep', '=', 'resep_dokter.no_resep')

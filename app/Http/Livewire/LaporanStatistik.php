@@ -2,14 +2,14 @@
 
 namespace App\Http\Livewire;
 
+use App\Exports\RekamMedisExport;
 use App\Jobs\ExportExcelRekamMedisJob;
-use App\Models\Perawatan\Registrasi;
-use App\Models\RekamMedis as ModelsRekamMedis;
+use App\Models\RekamMedis;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class RekamMedis extends Component
+class LaporanStatistik extends Component
 {
     use WithPagination;
 
@@ -20,8 +20,6 @@ class RekamMedis extends Component
     public $cari;
 
     public $perpage;
-
-    public $downloadUrl;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -39,11 +37,11 @@ class RekamMedis extends Component
                 'except' => ''
             ],
             'periodeAwal' => [
-                'except' => now()->startOfMonth()->format('d-m-Y'),
+                'except' => now()->startOfMonth()->format('Y-m-d'),
                 'as' => 'periode_awal',
             ],
             'periodeAkhir' => [
-                'except' => now()->endOfMonth()->format('d-m-Y'),
+                'except' => now()->endOfMonth()->format('Y-m-d'),
                 'as' => 'periode_akhir',
             ],
             'perpage' => [
@@ -75,22 +73,27 @@ class RekamMedis extends Component
     
             Storage::disk('public')->download($file);
         }
-
     }
 
     public function exportToExcel()
     {
         $this->timestamp = now()->format('Ymd_His');
 
-        ExportExcelRekamMedisJob::dispatch($this->periodeAwal, $this->periodeAkhir, $this->timestamp);
+        (new RekamMedisExport($this->periodeAwal, $this->periodeAkhir, $this->timestamp))
+            ->store("excel/{$this->timestamp}_rekammedis.xlsx", 'public');
 
-        session()->flash('excel.exporting', 'Sedang memproses. Silahkan klik "refresh" sekitar 1 menit. Mohon untuk tidak klik ulang tombol export.');
+        return Storage::disk('public')->download("excel/{$this->timestamp}_rekammedis.xlsx");
+    }
+
+    public function download()
+    {
+        
     }
 
     public function render()
     {
         return view('livewire.rekam-medis', [
-            'statistik' => ModelsRekamMedis::whereBetween('tgl_registrasi', [$this->periodeAwal, $this->periodeAkhir])
+            'statistik' => RekamMedis::whereBetween('tgl_registrasi', [$this->periodeAwal, $this->periodeAkhir])
                 ->orderBy('no_rawat')
                 ->paginate($this->perpage)
         ]);
