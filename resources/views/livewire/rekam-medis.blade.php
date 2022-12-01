@@ -3,27 +3,7 @@
         <div class="alert alert-dark alert-dismissible fade show">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
             <p>
-                Proses ekspor dimulai! Mohon jangan ditutup halaman ini. Silahkan tunggu sekiranya 1 menit agar file selesai diproses.
-            </p>
-            <p>
-                Klik refresh untuk cek apakah file sudah diekspor.
-                <button type="button" wire:click="refreshPage" class="btn btn-sm btn-light">
-                    <i class="fas fa-sync"></i>
-                    <span>refresh</span>
-                </button>
-            </p>
-        </div>
-    @endif
-
-    @if (session()->has('excel.exported'))
-        <div class="alert alert-success alert-dismissible fade show">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            <p>
-                {{ session('excel.exported') }}
-                <a href="{{ session('excel.download') }}" class="btn btn-sm btn-dark text-decoration-none ml-1">
-                    <i class="fas fa-download"></i>
-                    <span class="ml-1">Download.</span>
-                </a>
+                {{ session('excel.exporting') }}
             </p>
         </div>
     @endif

@@ -18,7 +18,7 @@ class Resep extends Model
 
     public $timestamps = false;
 
-    public function scopePenggunaanObatPerDokter(Builder $query, $dateMin, $dateMax)
+    public function scopePenggunaanObatPerDokter(Builder $query, string $dateMin = '', string $dateMax = ''): Builder
     {
         return $query
             ->selectRaw("
@@ -26,19 +26,25 @@ class Resep extends Model
                 resep_obat.tgl_perawatan,
                 resep_obat.jam,
                 databarang.nama_brng,
-                SUM(resep_dokter.jml),
+                SUM(resep_dokter.jml) jumlah,
                 dokter.nm_dokter,
-                rp.status_lanjut
+                poliklinik.nm_poli
             ")
-            ->join('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
-            ->join('resep_dokter', 'resep_obat.no_resep', '=', 'resep_dokter.no_resep')
-            ->join('databarang', 'resep_dokter.kode_brng', '=', 'databarang.kode_brng')
-            ->whereBetween('resep_obat.tgl_peresepan', [$dateMin, $dateMax])
-            ->where(function (Builder $query) {
-                return $query
-                    ->whereNotNull(['resep_obat.jam', 'resep_obat.tgl_peresepan', 'resep_obat.jam_peresepan'])
-                    ->where('resep_obat.kd_dokter', '!=', '-');
-            });
+            ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
+            ->leftJoin('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
+            ->leftJoin('resep_dokter', 'resep_obat.no_resep', '=', 'resep_dokter.no_resep')
+            ->leftJoin('databarang', 'resep_dokter.kode_brng', '=', 'databarang.kode_brng')
+            ->where('resep_obat.tgl_perawatan', '>', '0000-00-00')
+            ->where('resep_obat.jam', '>', '0000-00-00')
+            ->when(!empty($dateMin) || !empty($dateMax), function (Builder $query) use ($dateMin, $dateMax) {
+                return $query->whereBetween('resep_obat.tgl_perawatan', [$dateMin, $dateMax]);
+            })
+            ->where('reg_periksa.status_bayar', 'Sudah Bayar')
+            ->where('reg_periksa.stts', '!=', 'Batal')
+            ->whereNotNull('resep_dokter.kode_brng')
+            ->groupBy(['resep_obat.no_resep', 'resep_obat.kd_dokter'])
+            ->orderBy('resep_obat.no_resep');
     }
 
     public function dokterPeresep()

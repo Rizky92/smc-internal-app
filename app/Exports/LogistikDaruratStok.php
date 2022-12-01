@@ -7,17 +7,15 @@ use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
-class LaporanStokMinmaxBarangLogistik implements FromCollection, WithHeadings
+class LogistikDaruratStok implements FromCollection, WithHeadings
 {
     use Exportable;
-
-    private $timestamp;
+    
     private $cari;
     private $saranOrderNol;
 
-    public function __construct($timestamp = null, $cari = null, $saranOrderNol = true)
+    public function __construct($cari = '', $saranOrderNol = true)
     {
-        $this->timestamp = $timestamp ?? now()->format('Ymd_His');
         $this->cari = $cari;
         $this->saranOrderNol = $saranOrderNol;
     }
@@ -27,7 +25,7 @@ class LaporanStokMinmaxBarangLogistik implements FromCollection, WithHeadings
     */
     public function collection()
     {
-        return BarangNonmedis::laporanDaruratStok($this->cari, $this->saranOrderNol)
+        return BarangNonmedis::daruratStok($this->cari, $this->saranOrderNol, true)
             ->cursor();
     }
 

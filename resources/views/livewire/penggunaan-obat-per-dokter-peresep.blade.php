@@ -52,20 +52,22 @@
                 <thead>
                     <tr>
                         <th>No. Resep</th>
-                        <th>Tanggal Peresepan</th>
+                        <th>Tgl. Validasi</th>
                         <th>Nama Obat</th>
                         <th>Jumlah</th>
                         <th>Dokter Peresep</th>
+                        <th>Asal Poli</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($obatPerDokter as $dataObat)
                         <tr>
                             <td>{{ $dataObat->no_resep }}</td>
-                            <td>{{ $dataObat->tgl_peresepan }}</td>
+                            <td>{{ $dataObat->tgl_perawatan }}</td>
                             <td>{{ $dataObat->nama_brng }}</td>
-                            <td>{{ $dataObat->jml }}</td>
+                            <td>{{ $dataObat->jumlah }}</td>
                             <td>{{ $dataObat->nm_dokter }}</td>
+                            <td>{{ $dataObat->nm_poli }}</td>
                         </tr>
                     @endforeach
                 </tbody>

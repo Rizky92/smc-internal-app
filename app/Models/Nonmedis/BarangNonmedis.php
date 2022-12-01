@@ -36,32 +36,33 @@ class BarangNonmedis extends Model
         return $this->belongsTo(JenisBarangNonmedis::class, 'jenis', 'kd_jenis');
     }
 
-    public function scopeLaporanDaruratStok(Builder $query, $cari = null, $saranOrderNol = true): Builder
+    public function scopeDenganMinmax(Builder $query, $cari = '', $export = false): Builder
     {
-        // tidak ada kode supplier disini
-        
-        return $query->selectRaw("
+        $select = "
             ipsrsbarang.kode_brng,
             ipsrsbarang.nama_brng,
-            kodesatuan.satuan,
-            ipsrsjenisbarang.nm_jenis jenis,
+            IFNULL(ipsrssuplier.kode_suplier, '-') kode_supplier,
             IFNULL(ipsrssuplier.nama_suplier, '-') nama_supplier,
+            ipsrsjenisbarang.nm_jenis jenis,
+            kodesatuan.satuan,
             IFNULL(smc.ipsrs_minmax_stok_barang.stok_min, 0) stokmin,
             IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0) stokmax,
-            IFNULL(ipsrsbarang.stok, '0') stok,
-            IFNULL(IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0) - IFNULL(ipsrsbarang.stok, 0), '0') saran_order,
+            ipsrsbarang.stok,
+            IFNULL(IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok, '0') saran_order,
             ipsrsbarang.harga,
-            IFNULL(ipsrsbarang.harga * (IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok), '0') total_harga
-        ")
-            ->join('ipsrsjenisbarang', 'ipsrsbarang.jenis', '=', 'ipsrsjenisbarang.kd_jenis')
-            ->join('kodesatuan', 'ipsrsbarang.kode_sat', '=', 'kodesatuan.kode_sat')
+            (ipsrsbarang.harga * (IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok)) total_harga
+        ";
+
+        if ($export) {
+            $select = str_replace("IFNULL(ipsrssuplier.kode_suplier, '-') kode_supplier,", '', $select);
+        }
+
+        return $query->selectRaw($select)
+            ->leftJoin('ipsrsjenisbarang', 'ipsrsbarang.jenis', '=', 'ipsrsjenisbarang.kd_jenis')
+            ->leftJoin('kodesatuan', 'ipsrsbarang.kode_sat', '=', 'kodesatuan.kode_sat')
             ->leftJoin('smc.ipsrs_minmax_stok_barang', 'ipsrsbarang.kode_brng', '=', 'smc.ipsrs_minmax_stok_barang.kode_brng')
             ->leftJoin('ipsrssuplier', 'smc.ipsrs_minmax_stok_barang.kode_suplier', '=', 'ipsrssuplier.kode_suplier')
             ->where(DB::raw('ipsrsbarang.status'), '1')
-            ->where(DB::raw('ipsrsbarang.stok'), '<=', DB::raw('IFNULL(smc.ipsrs_minmax_stok_barang.stok_min, 0)'))
-            ->when(!$saranOrderNol, function (Builder $query) {
-                return $query->where(DB::raw("IFNULL(IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok, '0')"), '>', 0);
-            })
             ->when(is_string($cari) && !empty($cari), function (Builder $query) use ($cari) {
                 return $query->where(function (Builder $query) use ($cari) {
                     return $query->where(DB::raw('ipsrsbarang.kode_brng'), 'LIKE', "%{$cari}%")
@@ -74,12 +75,11 @@ class BarangNonmedis extends Model
             });
     }
 
-    public function scopeDaruratStok(Builder $query, $cari = null, $saranOrderNol = true): Builder
+    public function scopeDaruratStok(Builder $query, $cari = '', $saranOrderNol = true): Builder
     {
         return $query->selectRaw("
             ipsrsbarang.kode_brng,
             ipsrsbarang.nama_brng,
-            IFNULL(ipsrssuplier.kode_suplier, '-') kode_supplier,
             IFNULL(ipsrssuplier.nama_suplier, '-') nama_supplier,
             ipsrsjenisbarang.nm_jenis jenis,
             kodesatuan.satuan,
@@ -95,7 +95,7 @@ class BarangNonmedis extends Model
             ->leftJoin('smc.ipsrs_minmax_stok_barang', 'ipsrsbarang.kode_brng', '=', 'smc.ipsrs_minmax_stok_barang.kode_brng')
             ->leftJoin('ipsrssuplier', 'smc.ipsrs_minmax_stok_barang.kode_suplier', '=', 'ipsrssuplier.kode_suplier')
             ->where(DB::raw('ipsrsbarang.status'), '1')
-            // ->where(DB::raw('ipsrsbarang.stok'), '<=', DB::raw('IFNULL(smc.ipsrs_minmax_stok_barang.stok_min, 0)'))
+            ->where(DB::raw('ipsrsbarang.stok'), '<=', DB::raw('IFNULL(smc.ipsrs_minmax_stok_barang.stok_min, 0)'))
             ->when(!$saranOrderNol, function (Builder $query) {
                 return $query->where(DB::raw("IFNULL(IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok, '0')"), '>', 0);
             })

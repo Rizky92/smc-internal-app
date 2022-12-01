@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Exports\LaporanStokMinmaxBarangLogistik;
+use App\Exports\LogistikStokMinmaxBarang;
 use App\Models\Nonmedis\BarangNonmedis;
 use App\Models\Nonmedis\MinmaxBarangNonmedis;
 use App\Models\Nonmedis\SupplierNonmedis;
@@ -30,8 +31,6 @@ class MinmaxStokBarangLogistik extends Component
 
     public $cari;
 
-    public $tampilkanSaranOrderNol = true;
-
     protected $paginationTheme = 'bootstrap';
 
     protected $rules = [
@@ -41,11 +40,12 @@ class MinmaxStokBarangLogistik extends Component
 
     protected $listeners = [
         'refreshData' => '$refresh',
+        'processExcelExport',
     ];
 
     public function getItem($kodeBarang)
     {
-        $barang = BarangNonmedis::daruratStok()->where('ipsrsbarang.kode_brng', $kodeBarang)->first();
+        $barang = BarangNonmedis::denganMinmax()->where('ipsrsbarang.kode_brng', $kodeBarang)->first();
 
         $this->kodeBarang = $kodeBarang;
         $this->namaBarang = $barang->nama_brng;
@@ -56,18 +56,23 @@ class MinmaxStokBarangLogistik extends Component
         $this->saranOrder = $barang->saran_order;
     }
 
-    public function exportToExcel()
+    public function processExcelExport()
     {
         $timestamp = now()->format('Ymd_His');
 
-        $file = "excel/{$timestamp}_daruratstok_logistik.xlsx";
+        $filename = "excel/{$timestamp}_minmax_stok_logistik.xlsx";
 
-        $export = (new LaporanStokMinmaxBarangLogistik($timestamp, $this->cari ?? null, $this->tampilkanSaranOrderNol))
-            ->store("excel/{$timestamp}_daruratstok_logistik.xlsx", 'public');
+        (new LogistikStokMinmaxBarang($this->cari))
+            ->store($filename, 'public');
+        
+        return Storage::disk('public')->download($filename);
+    }
 
-        if ($export) {
-            return Storage::disk('public')->download($file);
-        }
+    public function exportToExcel()
+    {
+        session()->flash('excel.exporting', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+
+        $this->emit('processExcelExport');
     }
 
     public function simpan($kodeSuplier)
@@ -98,12 +103,11 @@ class MinmaxStokBarangLogistik extends Component
         $this->stokSekarang = null;
         $this->saranOrder = null;
         $this->cari = null;
-        $this->tampilkanSaranOrderNol = true;
     }
 
     public function render()
     {
-        $barang = BarangNonmedis::daruratStok($this->cari, $this->tampilkanSaranOrderNol)
+        $barang = BarangNonmedis::denganMinmax($this->cari)
             ->paginate();
 
         $supplier = SupplierNonmedis::pluck('nama_suplier', 'kode_suplier');

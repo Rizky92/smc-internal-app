@@ -28,6 +28,7 @@ class LaporanStatistik extends Component
     protected $listeners = [
         'refreshFilter' => '$refresh',
         'refreshPage',
+        'processExcelExport',
     ];
 
     protected function queryString()
@@ -59,35 +60,23 @@ class LaporanStatistik extends Component
         $this->perpage = 25;
     }
 
-    public function refreshPage()
+    public function processExcelExport()
     {
-        $file = "excel/{$this->timestamp}_rekammedis.xlsx";
+        $this->timestamp = now()->format('Ymd_His');
 
-        $fileExists = Storage::disk('public')->has($file);
+        $filename = "excel/{$this->timestamp}_rekammedis.xlsx";
 
-        if (!$fileExists) {
-            $this->emit('refreshFilter');
-        } else {
-            session()->flash('excel.download', Storage::disk('public')->url($file));
-            session()->flash('excel.exported', 'File berhasil diproses! Mulai download atau klik');
-    
-            Storage::disk('public')->download($file);
-        }
+        (new RekamMedisExport($this->periodeAwal, $this->periodeAkhir))
+            ->store($filename, 'public');
+
+        return Storage::disk('public')->download($filename);
     }
 
     public function exportToExcel()
     {
-        $this->timestamp = now()->format('Ymd_His');
+        session()->flash('excel.exporting', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
 
-        (new RekamMedisExport($this->periodeAwal, $this->periodeAkhir, $this->timestamp))
-            ->store("excel/{$this->timestamp}_rekammedis.xlsx", 'public');
-
-        return Storage::disk('public')->download("excel/{$this->timestamp}_rekammedis.xlsx");
-    }
-
-    public function download()
-    {
-        
+        $this->emit('processExcelExport');
     }
 
     public function render()
