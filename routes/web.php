@@ -9,6 +9,7 @@ use App\Http\Controllers\Farmasi\LaporanTahunanController;
 use App\Http\Controllers\Logistik\InputStokMinMaxController;
 use App\Http\Controllers\Logistik\LaporanDaruratStokController as DaruratStokLogistikController;
 use App\Http\Controllers\RekamMedis\LaporanStatistikPasienController;
+use App\Http\Controllers\UserController;
 use App\Models\Perawatan\Registrasi;
 use App\Models\RekamMedis;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +41,9 @@ Route::prefix('admin')
     ->middleware('auth')
     ->group(function () {
         Route::get('/', AdminController::class)->name('dashboard');
+
+        Route::get('pengguna', UserController::class)
+            ->name('users');
 
         Route::prefix('farmasi')
             ->as('farmasi.')

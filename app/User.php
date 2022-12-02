@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, HasRoles;
 
     protected $primaryKey = 'id_user';
 
@@ -21,13 +22,12 @@ class User extends Authenticatable
 
     public $timestamps = false;
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
     protected $hidden = [
         'password',
+    ];
+
+    protected $with = [
+        'roles',
     ];
 
     protected $appends = [
@@ -40,8 +40,9 @@ class User extends Authenticatable
         parent::boot();
 
         static::addGlobalScope(function (Builder $query) {
-            $query->selectRaw('AES_DECRYPT(id_user, "nur") user_id, petugas.nama, user.*')
-                ->join('petugas', DB::raw('AES_DECRYPT(id_user, "nur")'), '=', 'petugas.nip');
+            $query->selectRaw('AES_DECRYPT(id_user, "nur") user_id, petugas.nama, jabatan.nm_jbtn, user.*')
+                ->join('petugas', DB::raw('AES_DECRYPT(id_user, "nur")'), '=', 'petugas.nip')
+                ->join('jabatan', 'petugas.kd_jbtn', '=', 'jabatan.kd_jbtn');
         });
     }
 }

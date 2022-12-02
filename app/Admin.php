@@ -7,9 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Admin extends Authenticatable
 {
-    protected $primaryKey = 'usere';
-
-    protected $keyType = 'string';
+    protected $primaryKey = null;
 
     protected $table = 'admin';
 
@@ -35,7 +33,7 @@ class Admin extends Authenticatable
         parent::boot();
 
         static::addGlobalScope(function (Builder $query) {
-            return $query->selectRaw('"Admin Utama" nama');
+            return $query->selectRaw('"Admin Utama" nama, admin.*');
         });
     }
 }

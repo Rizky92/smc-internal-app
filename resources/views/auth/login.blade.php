@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Login - SMC Custom Report</title>
 
-    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/login.a1.css') }}">
 </head>
 
 <body>
@@ -19,13 +19,16 @@
                 <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-stone-900">Silahkan login terlebih dahulu</h2>
             </div>
             <form class="mt-8 space-y-6" action="#" method="POST" action="{{ route('login') }}" autocomplete="off">
+                @error('user')
+                    <span class="mt-4 block text-center text-sm text-red-500 font-medium">Username atau password salah!</span>
+                @enderror
                 <input autocomplete="false" name="__hidden" type="text" style="display:none;">
                 @csrf
                 <input type="hidden" name="remember" value="true">
                 <div class="-space-y-px rounded-md shadow-sm">
                     <div>
                         <label for="username" class="sr-only">Username</label>
-                        <input id="username" name="user" type="text" autocomplete="off" required class="relative block w-full appearance-none rounded-none rounded-t-md border border-stone-300 px-3 py-2 text-stone-900 placeholder-stone-500 focus:z-10 focus:border-emerald-500 focus:outline-none focus:ring-emerald-500 sm:text-sm" placeholder="Username">
+                        <input id="username" name="user" type="password" autocomplete="off" required class="relative block w-full appearance-none rounded-none rounded-t-md border border-stone-300 px-3 py-2 text-stone-900 placeholder-stone-500 focus:z-10 focus:border-emerald-500 focus:outline-none focus:ring-emerald-500 sm:text-sm" placeholder="Username">
                     </div>
                     <div>
                         <label for="password" class="sr-only">Password</label>

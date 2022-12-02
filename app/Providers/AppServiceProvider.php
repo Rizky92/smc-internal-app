@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Gate;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Support\Facades\Queue;
@@ -27,5 +28,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         // \Debugbar::disable();
+        Gate::before(function ($user, $ability) {
+            return $user->hasRole('develop') ? true : null;
+        });
     }
 }

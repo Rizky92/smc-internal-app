@@ -61,7 +61,12 @@ class PenggunaanObatPerDokterPeresep extends Component
     {
         $this->timestamp = now()->format('Ymd_His');
 
-        ExportPenggunaanObatPerdokterJob::dispatch($this->periodeAwal, $this->periodeAkhir, $this->timestamp);
+        $filename = "excel/{$this->timestamp}_obat_perdokter.xlsx";
+
+        (new PenggunaanObatPerdokterExport($this->periodeAwal, $this->periodeAkhir))
+            ->store($filename, 'public');
+
+        return Storage::disk('public')->download($filename);
     }
 
     public function exportToExcel()

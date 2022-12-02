@@ -15,7 +15,13 @@ class LogoutController extends Controller
      */
     public function __invoke(Request $request)
     {
-        Auth::guard('web')->logout();
+        if (Auth::guard('web')->check()) {
+            Auth::guard('web')->logout();
+        }
+
+        if (Auth::guard('admin')->check()) {
+            Auth::guard('admin')->logout();
+        }
 
         $request->session()->invalidate();
 
