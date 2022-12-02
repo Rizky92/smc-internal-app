@@ -3,9 +3,6 @@
 namespace App\Providers;
 
 use Gate;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Queue\Events\JobProcessed;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
