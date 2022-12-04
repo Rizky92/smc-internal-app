@@ -23,10 +23,11 @@ class PermissionSeeder extends Seeder
         ];
 
         $logistikPermissions = [
-            Permission::create(['name' => 'logistik.stok-minmax.create']),
+            // Permission::create(['name' => 'logistik.stok-minmax.create']),
             Permission::create(['name' => 'logistik.stok-minmax.read']),
             Permission::create(['name' => 'logistik.stok-minmax.update']),
-            Permission::create(['name' => 'logistik.stok-minmax.delete']),
+            // Permission::create(['name' => 'logistik.stok-minmax.delete']),
+
             Permission::create(['name' => 'logistik.darurat-stok.read']),
         ];
 

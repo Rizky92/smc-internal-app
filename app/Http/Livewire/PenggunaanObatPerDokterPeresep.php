@@ -8,6 +8,7 @@ use App\Models\Farmasi\Resep;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Vtiful\Kernel\Excel;
 
 class PenggunaanObatPerDokterPeresep extends Component
 {
@@ -63,8 +64,18 @@ class PenggunaanObatPerDokterPeresep extends Component
 
         $filename = "excel/{$this->timestamp}_obat_perdokter.xlsx";
 
-        (new PenggunaanObatPerdokterExport($this->periodeAwal, $this->periodeAkhir))
-            ->store($filename, 'public');
+        $config = [
+            'path' => storage_path('app/public'),
+        ];
+
+        $data = Resep::penggunaanObatPerDokter($this->periodeAwal, $this->periodeAkhir)
+            ->get()
+            ->toArray();
+
+        (new Excel($config))
+            ->fileName($filename)
+            ->data($data)
+            ->output();
 
         return Storage::disk('public')->download($filename);
     }

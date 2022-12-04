@@ -2,9 +2,7 @@
     @if (session()->has('excel.exporting'))
         <div class="alert alert-dark alert-dismissible fade show">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            <p>
-                {{ session('excel.exporting') }}
-            </p>
+            <p>{{ session('excel.exporting') }}</p>
         </div>
     @endif
 
@@ -46,9 +44,8 @@
                         <div class="input-group input-group-sm" style="width: 16rem">
                             <input type="search" name="search" class="form-control" wire:model.defer="cari" />
                             <div class="input-group-append">
-                                <button type="button" wire:click="$emit('refreshFilter')" class="btn btn-sm btn-default">
-                                    <i class="fas fa-redo-alt"></i>
-                                    <span class="ml-1">Refresh</span>
+                                <button type="button" wire:click="$refresh" class="btn btn-sm btn-default">
+                                    <i class="fas fa-search"></i>
                                 </button>
                             </div>
                         </div>
@@ -94,7 +91,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($statistik as $registrasi)
+                    @foreach ($$this->laporanStatistik as $registrasi)
                         <tr>
                             <td>{{ $registrasi->no_rawat }}</td>
                             <td>{{ $registrasi->no_rkm_medis }}</td>
@@ -134,9 +131,9 @@
         </div>
         <div class="card-footer">
             <div class="d-flex align-items center justify-content-start">
-                <p class="text-muted">Menampilkan {{ $statistik->count() }} dari total {{ number_format($statistik->total(), 0, ',', '.') }} item.</p>
+                <p class="text-muted">Menampilkan {{ $$this->laporanStatistik->count() }} dari total {{ number_format($$this->laporanStatistik->total(), 0, ',', '.') }} item.</p>
                 <div class="ml-auto">
-                    {{ $statistik->links() }}
+                    {{ $$this->laporanStatistik->links() }}
                 </div>
             </div>
         </div>

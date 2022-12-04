@@ -10,8 +10,7 @@ use App\Http\Controllers\Logistik\InputStokMinMaxController;
 use App\Http\Controllers\Logistik\LaporanDaruratStokController as DaruratStokLogistikController;
 use App\Http\Controllers\RekamMedis\LaporanStatistikPasienController;
 use App\Http\Controllers\UserController;
-use App\Models\Perawatan\Registrasi;
-use App\Models\RekamMedis;
+use App\Http\Livewire\Farmasi\PenggunaanObatPerdokter;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -50,7 +49,8 @@ Route::prefix('admin')
             ->group(function () {
                 Route::get('darurat-stok', DaruratStokFarmasiController::class)->name('darurat-stok');
 
-                Route::get('penggunaan-obat-perdokter', LaporanPenggunaanObatPerDokterController::class)->name('obat-perdokter');
+                // Route::get('penggunaan-obat-perdokter', LaporanPenggunaanObatPerDokterController::class)->name('obat-perdokter');
+                Route::get('penggunaan-obat-perdokter', PenggunaanObatPerdokter::class)->name('obat-perdokter');
                 
                 Route::get('laporan-tahunan', LaporanTahunanController::class)->name('laporan-tahunan');
             });

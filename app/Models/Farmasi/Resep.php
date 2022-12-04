@@ -40,8 +40,6 @@ class Resep extends Model
             ->leftJoin('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
             ->leftJoin('resep_dokter', 'resep_obat.no_resep', '=', 'resep_dokter.no_resep')
             ->leftJoin('databarang', 'resep_dokter.kode_brng', '=', 'databarang.kode_brng')
-            ->where('resep_obat.tgl_perawatan', '>', '0000-00-00')
-            ->where('resep_obat.jam', '>', '00:00:00')
             ->when(!empty($dateMin) || !empty($dateMax), function (Builder $query) use ($dateMin, $dateMax) {
                 return $query->whereBetween('resep_obat.tgl_perawatan', [$dateMin, $dateMax]);
             })
