@@ -60,7 +60,7 @@ class LaporanStatistik extends Component
         $this->perpage = 25;
     }
 
-    public function getLaporanStatistikProperty()
+    public function getDataLaporanStatistikProperty()
     {
         return RekamMedis::whereBetween('tgl_registrasi', [$this->periodeAwal, $this->periodeAkhir])
             ->orderBy('no_rawat')
@@ -91,6 +91,37 @@ class LaporanStatistik extends Component
             'path' => storage_path('app/public'),
         ];
 
+        $columnHeaders = [
+            'No. Rawat',
+            'No. RM',
+            'Nama Pasien',
+            'NIK',
+            'L / P',
+            'Tgl. Lahir',
+            'Umur',
+            'Agama',
+            'Suku',
+            'Jenis Perawatan',
+            'Pasien Lama / Baru',
+            'Tgl. Masuk',
+            'Jam Masuk',
+            'Tgl. Pulang',
+            'Jam Pulang',
+            'Diagnosa Masuk',
+            'ICD Diagnosa',
+            'Diagnosa',
+            'ICD Tindakan',
+            'Tindakan',
+            'DPJP',
+            'Poli',
+            'Kelas',
+            'Penjamin',
+            'Status Pulang',
+            'No. HP',
+            'Alamat',
+            'Kunjungan ke',
+        ];
+
         $data = RekamMedis::whereBetween('tgl_registrasi', [$this->periodeAwal, $this->periodeAkhir])
             ->orderBy('no_rawat')
             ->get()
@@ -98,6 +129,7 @@ class LaporanStatistik extends Component
 
         (new Excel($config))
             ->fileName($filename)
+            ->header($columnHeaders)
             ->data($data)
             ->output();
 

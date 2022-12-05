@@ -30,12 +30,13 @@ class DataBarang extends Model
                 databarang.kode_brng,
                 nama_brng,
                 kodesatuan.satuan satuan_kecil,
-                databarang.h_beli,
                 kategori_barang.nama kategori,
                 stokminimal,
                 IFNULL(stok_gudang.stok_di_gudang, 0) stok_saat_ini,
                 (databarang.stokminimal - IFNULL(stok_gudang.stok_di_gudang, 0)) saran_order,
-                industrifarmasi.nama_industri
+                industrifarmasi.nama_industri,
+                databarang.h_beli,
+                ((databarang.stokminimal - IFNULL(stok_gudang.stok_di_gudang, 0)) * databarang.h_beli) h_total
             ")
             ->join('kategori_barang', 'databarang.kode_kategori', '=', 'kategori_barang.kode')
             ->join('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')

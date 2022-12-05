@@ -42,7 +42,7 @@
                         <span class="text-sm pl-2">per halaman</span>
                         <span class="text-sm ml-auto pr-2">Cari:</span>
                         <div class="input-group input-group-sm" style="width: 16rem">
-                            <input type="search" name="search" class="form-control" wire:model.defer="cari" />
+                            <input type="search" class="form-control" wire:model.defer="cari" />
                             <div class="input-group-append">
                                 <button type="button" wire:click="$refresh" class="btn btn-sm btn-default">
                                     <i class="fas fa-search"></i>
@@ -91,7 +91,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($$this->laporanStatistik as $registrasi)
+                    @foreach ($this->dataLaporanStatistik as $registrasi)
                         <tr>
                             <td>{{ $registrasi->no_rawat }}</td>
                             <td>{{ $registrasi->no_rkm_medis }}</td>
@@ -131,9 +131,9 @@
         </div>
         <div class="card-footer">
             <div class="d-flex align-items center justify-content-start">
-                <p class="text-muted">Menampilkan {{ $$this->laporanStatistik->count() }} dari total {{ number_format($$this->laporanStatistik->total(), 0, ',', '.') }} item.</p>
+                <p class="text-muted">Menampilkan {{ $this->dataLaporanStatistik->count() }} dari total {{ number_format($this->dataLaporanStatistik->total(), 0, ',', '.') }} item.</p>
                 <div class="ml-auto">
-                    {{ $$this->laporanStatistik->links() }}
+                    {{ $this->dataLaporanStatistik->links() }}
                 </div>
             </div>
         </div>

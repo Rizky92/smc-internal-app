@@ -128,6 +128,7 @@ class PenggunaanObatPerdokter extends Component
             ->insertText(3, 5, $columnHeaders[5])
             ->insertText(3, 6, $columnHeaders[6])
             ->insertText(3, 7, $columnHeaders[7])
+            ->insertText(4, 0, '')
 
             // insert data
             ->data($data)

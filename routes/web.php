@@ -4,13 +4,12 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Khanza\Auth\LoginController;
 use App\Http\Controllers\Khanza\Auth\LogoutController;
 use App\Http\Controllers\Farmasi\LaporanDaruratStokController as DaruratStokFarmasiController;
-use App\Http\Controllers\Farmasi\LaporanPenggunaanObatPerDokterController;
 use App\Http\Controllers\Farmasi\LaporanTahunanController;
 use App\Http\Controllers\Logistik\InputStokMinMaxController;
 use App\Http\Controllers\Logistik\LaporanDaruratStokController as DaruratStokLogistikController;
-use App\Http\Controllers\RekamMedis\LaporanStatistikPasienController;
 use App\Http\Controllers\UserController;
 use App\Http\Livewire\Farmasi\PenggunaanObatPerdokter;
+use App\Http\Livewire\RekamMedis\LaporanStatistik;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -47,27 +46,39 @@ Route::prefix('admin')
         Route::prefix('farmasi')
             ->as('farmasi.')
             ->group(function () {
-                Route::get('darurat-stok', DaruratStokFarmasiController::class)->name('darurat-stok');
+                Route::get('darurat-stok', DaruratStokFarmasiController::class)
+                    ->name('darurat-stok');
 
                 // Route::get('penggunaan-obat-perdokter', LaporanPenggunaanObatPerDokterController::class)->name('obat-perdokter');
-                Route::get('penggunaan-obat-perdokter', PenggunaanObatPerdokter::class)->name('obat-perdokter');
+                Route::get('penggunaan-obat-perdokter', PenggunaanObatPerdokter::class)
+                    // ->middleware('can:farmasi.penggunaan-obat-perdokter.read')
+                    ->name('obat-perdokter');
                 
-                Route::get('laporan-tahunan', LaporanTahunanController::class)->name('laporan-tahunan');
+                Route::get('laporan-tahunan', LaporanTahunanController::class)
+                    ->name('laporan-tahunan');
             });
 
         Route::prefix('rekam-medis')
             ->as('rekam-medis.')
             ->group(function () {
-                Route::get('laporan-statistik', LaporanStatistikPasienController::class)->name('laporan-statistik');
+                Route::get('laporan-statistik', LaporanStatistik::class)
+                    ->middleware('can:rekam-medis.laporan-statistik.read')
+                    ->name('laporan-statistik');
             });
 
         Route::prefix('logistik')
             ->as('logistik.')
             ->group(function () {
-                Route::get('darurat-stok', DaruratStokLogistikController::class)->name('darurat-stok');
+                Route::get('darurat-stok', DaruratStokLogistikController::class)
+                    ->middleware('can:logistik.darurat-stok.read')
+                    ->name('darurat-stok');
 
                 Route::resource('minmax', InputStokMinMaxController::class)
                     ->parameters('barang')
+                    ->middleware([
+                        'can:logistik.stok-minmax.read',
+                        'can:logistik.stok-minmax.update',
+                    ])
                     ->names('minmax');
             });
     });

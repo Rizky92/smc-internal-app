@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\DB;
 
 class Registrasi extends Model
 {
@@ -22,12 +23,62 @@ class Registrasi extends Model
 
     public $timestamps = false;
 
-    public function scopeLaporanKunjunganRalan(Builder $query): Builder
+    public function scopeKunjunganRalan(Builder $query): Builder
     {
-        return $query->selectRaw('COUNT(no_rawat) jumlah, DATE_FORMAT(tgl_registrasi, "%Y-%m") tgl')
-            ->where('status_lanjut', 'Ralan')
-            ->where('stts', '!=', 'Batal')
-            ->groupByRaw('DATE_FORMAT(tgl_registrasi, "%Y-%m")');
+        return $query->selectRaw("
+            'Rawat Jalan' kategori,
+            COUNT(reg_periksa.no_rawat) jumlah,
+            DATE_FORMAT(reg_periksa.tgl_registrasi, '%m-%Y') bulan
+        ")
+            ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
+            ->where('reg_periksa.stts', '!=', 'Batal')
+            ->where('reg_periksa.status_lanjut', '=', 'Ralan')
+            ->where('poliklinik.kd_poli', '!=', 'IGDK')
+            ->groupBy([
+                DB::raw('reg_periksa.status_lanjut'),
+                DB::raw("DATE_FORMAT(reg_periksa.tgl_registrasi, '%m-%Y')"),
+            ]);
+    }
+
+    public function scopeKunjunganRanap(Builder $query): Builder
+    {
+        return $query->selectRaw("
+            'Rawat Inap' kategori,
+            COUNT(reg_periksa.no_rawat) jumlah,
+            DATE_FORMAT(reg_periksa.tgl_registrasi, '%m-%Y') bulan
+        ")
+            ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
+            ->where('reg_periksa.stts', '!=', 'Batal')
+            ->where('reg_periksa.status_lanjut', '=', 'Ranap')
+            ->where('poliklinik.kd_poli', '!=', 'IGDK')
+            ->groupBy([
+                DB::raw('reg_periksa.status_lanjut'),
+                DB::raw("DATE_FORMAT(reg_periksa.tgl_registrasi, '%m-%Y')"),
+            ]);
+    }
+
+    public function scopeKunjunganIGD(Builder $query): Builder
+    {
+        return $query->selectRaw("
+            'IGD' kategori,
+            COUNT(reg_periksa.no_rawat) jumlah,
+            DATE_FORMAT(reg_periksa.tgl_registrasi, '%m-%Y') bulan
+        ")
+            ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
+            ->where('reg_periksa.stts', '!=', 'Batal')
+            ->where('poliklinik.kd_poli', '=', 'IGDK')
+            ->groupByRaw("DATE_FORMAT(reg_periksa.tgl_registrasi, '%m-%Y')");
+    }
+
+    public function scopeKunjunganTotal(Builder $query): Builder
+    {
+        return $query->selectRaw("
+            'TOTAL' kategori,
+            COUNT(reg_periksa.no_rawat) jumlah,
+            DATE_FORMAT(reg_periksa.tgl_registrasi, '%m-%Y') bulan
+        ")
+            ->where('reg_periksa.stts', '!=', 'Batal')
+            ->groupByRaw("DATE_FORMAT(reg_periksa.tgl_registrasi, '%m-%Y')");
     }
 
     public function pasien(): BelongsTo

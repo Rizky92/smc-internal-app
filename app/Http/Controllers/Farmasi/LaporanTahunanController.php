@@ -16,13 +16,25 @@ class LaporanTahunanController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $kunjunganRalan = Registrasi::laporanKunjunganRalan()
-            ->get()
-            ->map(function ($registrasi) {
-                /** @var \App\Registrasi $registrasi */
-                
-                return [$registrasi->tgl => $registrasi->jumlah];
-            });
+        $ralan = Registrasi::kunjunganRalan()->get();
+        $ranap = Registrasi::kunjunganRanap()->get();
+        $igd = Registrasi::kunjunganIGD()->get();
+        $total = Registrasi::kunjunganTotal()->get();
+
+        $kunjungan = collect([
+            $ralan,
+            $ranap,
+            $igd,
+            $total,
+        ]);
+
+        dd($kunjungan->flatten(1)->mapToGroups(function ($item) {
+            return [
+                $item['kategori'] => [
+                    $item['bulan'] => $item['jumlah'],
+                ],
+            ];
+        })->toArray());
 
         return view('admin.farmasi.laporan-tahunan.index');
     }
