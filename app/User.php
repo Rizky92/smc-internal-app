@@ -40,9 +40,23 @@ class User extends Authenticatable
         parent::boot();
 
         static::addGlobalScope(function (Builder $query) {
-            $query->selectRaw('AES_DECRYPT(id_user, "nur") user_id, petugas.nama, jabatan.nm_jbtn, user.*')
+            return $query->selectRaw('AES_DECRYPT(id_user, "nur") user_id, petugas.nama, jabatan.nm_jbtn, user.*')
                 ->join('petugas', DB::raw('AES_DECRYPT(id_user, "nur")'), '=', 'petugas.nip')
-                ->join('jabatan', 'petugas.kd_jbtn', '=', 'jabatan.kd_jbtn');
+                ->join('jabatan', 'petugas.kd_jbtn', '=', 'jabatan.kd_jbtn')
+                ->orderBy(DB::raw('AES_DECRYPT(id_user, "nur")'));
         });
+    }
+
+    public static function findByName(string $name): self
+    {
+        return (new static)->whereRaw('AES_DECRYPT(id_user, "nur") = ?', $name)
+            ->first();
+    }
+
+    public function scopeDenganPencarian(Builder $query, $cari): Builder
+    {
+        return $query->where(DB::raw('AES_DECRYPT(id_user, "nur")'), 'LIKE', "%{$cari}%")
+            ->orWhere(DB::raw('petugas.nama'), 'LIKE', "%{$cari}%")
+            ->orWhere(DB::raw('jabatan.nm_jbtn'), 'LIKE', "%{$cari}%");
     }
 }

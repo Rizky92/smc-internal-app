@@ -1,6 +1,7 @@
 <?php
 
 use App\Permission;
+use App\Role;
 use Illuminate\Database\Seeder;
 
 class PermissionSeeder extends Seeder
@@ -23,14 +24,20 @@ class PermissionSeeder extends Seeder
         ];
 
         $logistikPermissions = [
-            // Permission::create(['name' => 'logistik.stok-minmax.create']),
+            Permission::create(['name' => 'logistik.stok-minmax.create']),
             Permission::create(['name' => 'logistik.stok-minmax.read']),
             Permission::create(['name' => 'logistik.stok-minmax.update']),
-            // Permission::create(['name' => 'logistik.stok-minmax.delete']),
+            Permission::create(['name' => 'logistik.stok-minmax.delete']),
 
             Permission::create(['name' => 'logistik.darurat-stok.read']),
         ];
 
-        
+        $farmasiRole = Role::findByName('farmasi');
+        $rekamMedisRole = Role::findByName('rekam-medis');
+        $logistikRole = Role::findByName('logistik');
+
+        $farmasiRole->givePermissionTo($farmasiPermissions);
+        $rekamMedisRole->givePermissionTo($rekamMedisPermissions);
+        $logistikRole->givePermissionTo($logistikPermissions);
     }
 }

@@ -1,4 +1,4 @@
-@php($isActive = collect($item['items'])->flatten()->contains(URL::current()))
+@php($isActive = collect($item['items'])->flatten()->containsStrict(URL::current()))
 
 @if ($item['hasAnyPermissions'])
     <li class="nav-item">

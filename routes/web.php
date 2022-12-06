@@ -5,11 +5,9 @@ use App\Http\Controllers\Khanza\Auth\LoginController;
 use App\Http\Controllers\Khanza\Auth\LogoutController;
 use App\Http\Controllers\Farmasi\LaporanDaruratStokController as DaruratStokFarmasiController;
 use App\Http\Controllers\Farmasi\LaporanTahunanController;
-use App\Http\Controllers\Logistik\InputStokMinMaxController;
 use App\Http\Controllers\Logistik\LaporanDaruratStokController as DaruratStokLogistikController;
 use App\Http\Controllers\UserController;
-use App\Http\Livewire\Farmasi\PenggunaanObatPerdokter;
-use App\Http\Livewire\RekamMedis\LaporanStatistik;
+use App\Http\Livewire;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,7 +31,6 @@ Route::middleware('auth')
         Route::post('logout', LogoutController::class)->name('logout');
     });
 
-
 Route::prefix('admin')
     ->as('admin.')
     ->middleware('auth')
@@ -49,19 +46,19 @@ Route::prefix('admin')
                 Route::get('darurat-stok', DaruratStokFarmasiController::class)
                     ->name('darurat-stok');
 
-                // Route::get('penggunaan-obat-perdokter', LaporanPenggunaanObatPerDokterController::class)->name('obat-perdokter');
-                Route::get('penggunaan-obat-perdokter', PenggunaanObatPerdokter::class)
-                    // ->middleware('can:farmasi.penggunaan-obat-perdokter.read')
+                Route::get('penggunaan-obat-perdokter', Livewire\Farmasi\PenggunaanObatPerdokter::class)
+                    ->middleware('can:farmasi.penggunaan-obat-perdokter.read')
                     ->name('obat-perdokter');
                 
                 Route::get('laporan-tahunan', LaporanTahunanController::class)
+                    ->middleware('can:farmasi.laporan-tahunan.read')
                     ->name('laporan-tahunan');
             });
 
         Route::prefix('rekam-medis')
             ->as('rekam-medis.')
             ->group(function () {
-                Route::get('laporan-statistik', LaporanStatistik::class)
+                Route::get('laporan-statistik', Livewire\RekamMedis\LaporanStatistik::class)
                     ->middleware('can:rekam-medis.laporan-statistik.read')
                     ->name('laporan-statistik');
             });
@@ -73,12 +70,22 @@ Route::prefix('admin')
                     ->middleware('can:logistik.darurat-stok.read')
                     ->name('darurat-stok');
 
-                Route::resource('minmax', InputStokMinMaxController::class)
-                    ->parameters('barang')
+                Route::get('minmax', Livewire\Logistik\StokInputMinmaxBarang::class)
                     ->middleware([
                         'can:logistik.stok-minmax.read',
                         'can:logistik.stok-minmax.update',
                     ])
-                    ->names('minmax');
+                    ->name('minmax');
+            });
+
+        Route::prefix('users')
+            ->as('users.')
+            ->group(function () {
+                Route::get('/', Livewire\User\Manage::class)
+                    ->middleware([
+                        'can:user.manage',
+                        'can:user.update',
+                    ])
+                    ->name('manage');
             });
     });
