@@ -42,7 +42,6 @@ class Manage extends Component
     public function mount()
     {
         $this->perpage = 25;
-        $this->currentNRP = '';
     }
 
     public function getUsersProperty()
@@ -64,14 +63,9 @@ class Manage extends Component
 
     public function simpan(string $nrp, array $roles)
     {
-        if (empty($this->currentNRP) || ! $roles) {
-            session()->flash('saved.content', "Maaf, terjadi error! Silahkan coba lagi.");
-            session()->flash('saved.type', 'danger');
-        }
-
         User::findByNRP($nrp)->syncRoles($roles);
 
-        session()->flash('saved.content', "Hak akses untuk user {$this->currentNRP} berhasil diubah!");
+        session()->flash('saved.content', "Hak akses untuk user {$nrp} berhasil diubah!");
         session()->flash('saved.type', 'success');
     }
 

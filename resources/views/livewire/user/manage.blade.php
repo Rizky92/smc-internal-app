@@ -8,64 +8,55 @@
         </div>
     @endif
 
-    @push('css')
-        <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
-    @endpush
-    @push('js')
-        <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
-        <script>
-            let inputNRP
-            let inputNama
-            let inputHakAkses
+    @once
+        @push('js')
+            <script>
+                var inputNRP = $('#user')
+                var inputNama = $('#nama')
+                var inputHakAkses = $('input[name=rolenames]')
 
-            $(document).ready(() => {
-                inputNRP = $('#user')
-                inputNama = $('#nama')
-                inputHakAkses = $('#hak_akses').select2({
-                    theme: 'bootstrap4'
+                function loadData ({ nrp, nama, roleIds }) {
+                    let roles = new Set(Array.from(roleIds.split(',')))
+
+                    changeData(nrp, nama, roles)
+                }
+
+                inputHakAkses.each((index, el) => {
+                    let value = el.value
+
+                    if (el.checked && !roles.has(value)) {
+                        roles.push(value)
+                    } else {
+                        roles.delete(value)
+                    }
                 })
-            })
 
-            const loadData = ({
-                nrp,
-                nama,
-                roleIds
-            }) => {
-                let roles = Array.from(roleIds.split(','))
+                const changeData = (nrp, nama, roles) => {
+                    inputNRP.val(nrp)
+                    inputNama.val(nama)
+                    inputHakAkses.val(roles)
 
-                changeData(nrp, nama, roles)
+                    inputNRP.trigger('change')
+                    inputNama.trigger('change')
+                    inputHakAkses.trigger('change')
+                }
 
-                console.log({
-                    nrp: inputNRP.val(),
-                    nama: inputNama.val(),
-                    roles: inputHakAkses.val(),
+                $('#simpandata').click(() => {
+                    console.log(roles)
+
+                    // @this.emit('simpan', inputNRP.val(), roles)
+
+                    changeData('', '', null)
                 })
-            }
 
-            const changeData = (nrp, nama, roles) => {
-                inputNRP.val(nrp)
-                inputNama.val(nama)
-                inputHakAkses.val(roles)
+                $('#batalsimpan').click(() => {
+                    changeData('', '', null)
 
-                inputNRP.trigger('change')
-                inputNama.trigger('change')
-                inputHakAkses.trigger('change')
-            }
-
-            $('#simpandata').click(() => {
-                @this.emit('simpan', inputNRP.val(), inputHakAkses.val())
-
-                changeData('', '', null)
-            })
-
-            $('#batalsimpan').click(() => {
-                changeData('', '', null)
-
-                @this.$refresh
-            })
-        </script>
-    @endpush
+                    @this.$refresh
+                })
+            </script>
+        @endpush
+    @endonce
 
     <div class="card">
         <div class="card-body">
@@ -83,20 +74,16 @@
                     </div>
                 </div>
                 <div class="col-6">
-                    <div class="d-flex align-items-end justify-items-start">
-                        <div class="form-group flex-grow-1">
-                            <label for="hak_akses" class="text-sm">Hak Akses</label>
-                            <select class="form-control select2" id="hak_akses" multiple>
-                                @foreach ($this->roles as $id => $role)
-                                    <option value="{{ $id }}">{{ $role }}</option>
-                                @endforeach
-                            </select>
+                    <div class="form-group">
+                        <label class="text-sm">Hak Akses</label>
+                        <div class="d-flex justify-items-start align-items center mt-1">
+                            @foreach ($this->roles as $id => $roleName)
+                                <div class="custom-control custom-checkbox {{ !$loop->first ? 'ml-4' : '' }}">
+                                    <input class="custom-control-input" type="checkbox" id="role-{{ $id }}" value="{{ $id }}" name="rolenames">
+                                    <label for="role-{{ $id }}" class="custom-control-label">{{ $roleName }}</label>
+                                </div>
+                            @endforeach
                         </div>
-                        {{-- <button type="button" class="btn btn-default mb-3 ml-2" data-toggle="modal" data-target="#detail_modal">
-                            <i class="fas fa-info-circle"></i>
-                            <span class="ml-1">Detail</span>
-                        </button>
-                        @livewire('user.detail') --}}
                     </div>
                 </div>
             </div>
