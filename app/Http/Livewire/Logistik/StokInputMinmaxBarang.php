@@ -86,6 +86,8 @@ class StokInputMinmaxBarang extends Component
 
     public function simpan($kodeBarang, $stokMin, $stokMax, $kodeSupplier)
     {
+        $kodeSupplier = $kodeSupplier != '-' ? $kodeSupplier : null;
+
         $minmaxBarang = MinmaxBarangNonmedis::find($kodeBarang);
 
         $minmaxBarang->stok_min = $stokMin;

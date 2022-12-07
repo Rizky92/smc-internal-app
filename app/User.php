@@ -47,9 +47,11 @@ class User extends Authenticatable
         });
     }
 
-    public static function findByName(string $name): self
+    public static function findByNRP(string $nrp): self
     {
-        return (new static)->whereRaw('AES_DECRYPT(id_user, "nur") = ?', $name)
+        if (empty($nrp)) return (new static);
+
+        return (new static)->whereRaw('AES_DECRYPT(id_user, "nur") = ?', $nrp)
             ->first();
     }
 

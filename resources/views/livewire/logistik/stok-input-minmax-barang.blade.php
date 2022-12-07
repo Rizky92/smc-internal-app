@@ -127,6 +127,7 @@
                     <div class="form-group">
                         <label for="supplier">Supplier</label>
                         <select class="form-control" id="supplier" autocomplete="off">
+                            <option value="-">-</option>
                             @foreach ($this->supplier as $kode => $nama)
                                 <option value="{{ $kode }}">{{ $nama }}</option>
                             @endforeach

@@ -1,6 +1,6 @@
 <div>
     @if (session()->has('saved.content'))
-        <div class="alert alert-success alert-dismissible fade show">
+        <div class="alert alert-{{ session('saved.type') }} alert-dismissible fade show">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
             <p>
                 {{ session('saved.content') }}
@@ -8,59 +8,64 @@
         </div>
     @endif
 
-    @once
-        @push('css')
-            <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
-            <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
-        @endpush
-        @push('js')
-            <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
-            <script>
-                let inputNRP
-                let inputNama
-                let inputHakAkses
+    @push('css')
+        <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+    @endpush
+    @push('js')
+        <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+        <script>
+            let inputNRP
+            let inputNama
+            let inputHakAkses
 
-                $(document).ready(() => {
-                    inputNRP = $('#user')
-                    inputNama = $('#nama')
-                    inputHakAkses = $('#hak_akses').select2({
-                        theme: 'bootstrap4'
-                    })
+            $(document).ready(() => {
+                inputNRP = $('#user')
+                inputNama = $('#nama')
+                inputHakAkses = $('#hak_akses').select2({
+                    theme: 'bootstrap4'
                 })
+            })
 
-                const loadData = ({
-                    nrp,
-                    nama,
-                    roleIds
-                }) => {
-                    let roles = Array.from(roleIds.split(','))
+            const loadData = ({
+                nrp,
+                nama,
+                roleIds
+            }) => {
+                let roles = Array.from(roleIds.split(','))
 
-                    console.log({
-                        nrp,
-                        nama,
-                        roleIds,
-                        roles
-                    })
+                changeData(nrp, nama, roles)
 
-                    inputNRP.val(nrp)
-                    inputNama.val(nama)
-                    inputHakAkses.val(roles)
-
-                    inputNRP.trigger('change')
-                    inputNama.trigger('change')
-                    inputHakAkses.trigger('change')
-                }
-
-                $('#simpandata').click(() => {
-                    console.log({
-                        nrp: inputNRP.val()
-                        nama: inputNama.val()
-                        roles: inputHakAkses.val()
-                    })
+                console.log({
+                    nrp: inputNRP.val(),
+                    nama: inputNama.val(),
+                    roles: inputHakAkses.val(),
                 })
-            </script>
-        @endpush
-    @endonce
+            }
+
+            const changeData = (nrp, nama, roles) => {
+                inputNRP.val(nrp)
+                inputNama.val(nama)
+                inputHakAkses.val(roles)
+
+                inputNRP.trigger('change')
+                inputNama.trigger('change')
+                inputHakAkses.trigger('change')
+            }
+
+            $('#simpandata').click(() => {
+                @this.emit('simpan', inputNRP.val(), inputHakAkses.val())
+
+                changeData('', '', null)
+            })
+
+            $('#batalsimpan').click(() => {
+                changeData('', '', null)
+
+                @this.$refresh
+            })
+        </script>
+    @endpush
 
     <div class="card">
         <div class="card-body">
@@ -87,7 +92,11 @@
                                 @endforeach
                             </select>
                         </div>
-                        <button type="button" class="btn btn-default mb-3 ml-2">Detail</button>
+                        {{-- <button type="button" class="btn btn-default mb-3 ml-2" data-toggle="modal" data-target="#detail_modal">
+                            <i class="fas fa-info-circle"></i>
+                            <span class="ml-1">Detail</span>
+                        </button>
+                        @livewire('user.detail') --}}
                     </div>
                 </div>
             </div>
@@ -112,10 +121,14 @@
                             </select>
                         </div>
                         <span class="text-sm pl-2">per halaman</span>
-                        <div class="input-group input-group-sm w-25 ml-4">
-                            <input type="search" id="cari" name="cari" placeholder="Cari..." class="form-control" wire:model.defer="cari" wire:keydown.enter.stop="$emit('refreshData')">
+                        <button type="button" class="btn btn-sm btn-default ml-4" wire:click="$emit('hardRefresh')">
+                            <i class="fas fa-sync-alt"></i>
+                            <span class="ml-1">Refresh</span>
+                        </button>
+                        <div class="input-group input-group-sm w-25 ml-2">
+                            <input type="search" id="cari" name="cari" placeholder="Cari..." class="form-control" wire:model.defer="cari" wire:keydown.enter.stop="$refresh">
                             <div class="input-group-append">
-                                <button type="button" class="btn btn-default" wire:click="$emit('refreshData')">
+                                <button type="button" class="btn btn-default" wire:click="$refresh">
                                     <i class="fas fa-search"></i>
                                 </button>
                             </div>
@@ -140,7 +153,10 @@
                         <tr style="position: relative">
                             <td>
                                 {{ $user->user_id }}
-                                <a href="#" style="position: absolute; left: 0; right: 0; top: 0; bottom: 0" data-nrp="{{ $user->user_id }}" data-nama="{{ $user->nama }}" data-role-ids="{{ $user->roles->pluck('name', 'id')->flip()->join(',') }}" onclick="loadData(this.dataset)"></a>
+                                <a href="#" style="
+                                    display: inline;
+                                    position: absolute;
+                                    left: 0; right: 0; top: 0; bottom: 0;" data-nrp="{{ $user->user_id }}" data-nama="{{ $user->nama }}" data-role-ids="{{ $user->roles->pluck('name', 'id')->flip()->join(',') }}" onclick="loadData(this.dataset)"></a>
                             </td>
                             <td>{{ $user->nama }}</td>
                             <td>{{ $user->nm_jbtn }}</td>
