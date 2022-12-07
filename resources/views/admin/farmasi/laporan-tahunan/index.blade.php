@@ -58,7 +58,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body table-responsive p-0">
-                    <table id="table_index" class="table table-hover table-striped table-sm text-sm" style="width: 180rem">
+                    <table id="table_index" class="table table-hover table-striped table-bordered table-sm text-sm" style="width: 150rem">
                         <thead>
                             <tr>
                                 @php($bulan = [
@@ -77,61 +77,79 @@
                                 ])
                                 <th width="250">Laporan</th>
                                 @foreach ($bulan as $b)
-                                    <th class="text-center">{{ $b }}</th>
+                                    <th class="text-center px-0" width="150">{{ $b }}</th>
                                 @endforeach
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <th>TOTAL KUNJUNGAN</th>
+                                <th scope="row" width="250">TOTAL KUNJUNGAN</th>
+                                @foreach ($kunjunganTotal as $item)
+                                    <th scope="col" class="text-center px-0" width="150">{{ $item }}</th>
+                                @endforeach
                             </tr>
                             <tr>
-                                <th>Kunjungan Rawat Jalan</th>
+                                <th scope="row" width="250">Kunjungan Rawat Jalan</th>
+                                @foreach ($kunjunganRalan as $item)
+                                    <td class="text-center px-0" width="150">{{ $item }}</td>
+                                @endforeach
                             </tr>
                             <tr>
-                                <th>Kunjungan Rawat Inap</th>
+                                <th scope="row" width="250">Kunjungan Rawat Inap</th>
+                                @foreach ($kunjunganRanap as $item)
+                                    <td class="text-center px-0" width="150">{{ $item }}</td>
+                                @endforeach
                             </tr>
                             <tr>
                                 <th>Kunjungan IGD</th>
+                                @foreach ($kunjunganIgd as $item)
+                                    <td class="text-center px-0" width="150">{{ $item }}</td>
+                                @endforeach
                             </tr>
                             <tr>
-                                <th>Kunjungan <i>Walk in</i></th>
+                                <th width="250">Kunjungan <i>Walk in</i></th>
+                                @foreach ($kunjunganWalkIn as $item)
+                                    <td class="text-center px-0" width="150">{{ $item }}</td>
+                                @endforeach
                             </tr>
                             <tr>
-                                <th>TOTAL PENDAPATAN</th>
+                                <th width="250">TOTAL PENDAPATAN</th>
                             </tr>
                             <tr>
-                                <th>Pendapatan Obat Rawat Jalan</th>
+                                <th width="250">Pendapatan Obat Rawat Jalan</th>
                             </tr>
                             <tr>
-                                <th>Pendapatan Obat Rawat Inap</th>
+                                <th width="250">Pendapatan Obat Rawat Inap</th>
                             </tr>
                             <tr>
-                                <th>Pendapatan Obat IGD</th>
+                                <th width="250">Pendapatan Obat IGD</th>
                             </tr>
                             <tr>
-                                <th>Pendapatan Obat <i>Walk in</i></th>
+                                <th width="250">Pendapatan Obat <i>Walk in</i></th>
                             </tr>
                             <tr>
-                                <th>Pendapatan Alkes Farmasi dan Unit</th>
+                                <th width="250">Pendapatan Alkes Farmasi dan Unit</th>
                             </tr>
                             <tr>
-                                <th>Retur Obat</th>
+                                <th width="250">Retur Obat</th>
+                                @foreach ($totalReturObat as $item)
+                                    <td class="text-center px-0" width="150">{{ $item }}</td>
+                                @endforeach
                             </tr>
                             <tr>
-                                <th>Pembelian Farmasi</th>
+                                <th width="250">Pembelian Farmasi</th>
                             </tr>
                             <tr>
-                                <th>Retur Supplier</th>
+                                <th width="250">Retur Supplier</th>
                             </tr>
                             <tr>
-                                <th>TOTAL PEMBELIAN (Pembelian Farmasi - Retur Supplier)</th>
+                                <th width="250">TOTAL PEMBELIAN (Pembelian Farmasi - Retur Supplier)</th>
                             </tr>
                             <tr>
-                                <th>Pemakaian BHP</th>
+                                <th width="250">Pemakaian BHP</th>
                             </tr>
                             <tr>
-                                <th>Transfer Order</th>
+                                <th width="250">Transfer Order</th>
                             </tr>
                         </tbody>
                     </table>

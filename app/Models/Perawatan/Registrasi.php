@@ -154,4 +154,31 @@ class Registrasi extends Model
             ->withPivot(TindakanRanapDokterPerawat::$pivotColumns)
             ->using(TindakanRanapDokterPerawat::class);
     }
+
+    public static function totalKunjunganRalan()
+    {
+        return (new static)->kunjunganRalan()
+            ->get()
+            ->map(function ($value, $key) {
+                return [$value->bulan => $value->jumlah];
+            })->flatten(1)->pad(-12, 0)->toArray();
+    }
+
+    public static function totalKunjunganRanap()
+    {
+        return (new static)->kunjunganRanap()
+            ->get()
+            ->map(function ($value, $key) {
+                return [$value->bulan => $value->jumlah];
+            })->flatten(1)->pad(-12, 0)->toArray();
+    }
+
+    public static function totalKunjunganIGD()
+    {
+        return (new static)->kunjunganIGD()
+            ->get()
+            ->map(function ($value, $key) {
+                return [$value->bulan => $value->jumlah];
+            })->flatten(1)->pad(-12, 0)->toArray();
+    }
 }

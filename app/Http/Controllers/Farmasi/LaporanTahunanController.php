@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Farmasi;
 
 use App\Http\Controllers\Controller;
+use App\Models\Farmasi\PenjualanWalkIn;
+use App\Models\Farmasi\ReturJual;
 use App\Models\Perawatan\Registrasi;
 use Illuminate\Http\Request;
 
@@ -16,26 +18,27 @@ class LaporanTahunanController extends Controller
      */
     public function __invoke(Request $request)
     {
-        $ralan = Registrasi::kunjunganRalan()->get();
-        $ranap = Registrasi::kunjunganRanap()->get();
-        $igd = Registrasi::kunjunganIGD()->get();
-        $total = Registrasi::kunjunganTotal()->get();
+        $kunjunganRalan = Registrasi::totalKunjunganRalan();
+        $kunjunganRanap = Registrasi::totalKunjunganRanap();
+        $kunjunganIgd = Registrasi::totalKunjunganIGD();
+        $kunjunganWalkIn = PenjualanWalkIn::totalKunjunganWalkIn();
+        $kunjunganTotal = [];
 
-        $kunjungan = collect([
-            $ralan,
-            $ranap,
-            $igd,
-            $total,
+        $totalReturObat = ReturJual::totalReturObat();
+
+        dd($totalReturObat);
+
+        foreach ($kunjunganRalan as $key => $data) {
+            $kunjunganTotal[$key] = $kunjunganRalan[$key] + $kunjunganRanap[$key] + $kunjunganIgd[$key] + $kunjunganWalkIn[$key];
+        }        
+
+        return view('admin.farmasi.laporan-tahunan.index', [
+            'kunjunganRalan' => $kunjunganRalan,
+            'kunjunganRanap' => $kunjunganRanap,
+            'kunjunganIgd' => $kunjunganIgd,
+            'kunjunganWalkIn' => $kunjunganWalkIn,
+            'kunjunganTotal' => $kunjunganTotal,
+            'totalReturObat' => $totalReturObat,
         ]);
-
-        dd($kunjungan->flatten(1)->mapToGroups(function ($item) {
-            return [
-                $item['kategori'] => [
-                    $item['bulan'] => $item['jumlah'],
-                ],
-            ];
-        })->toArray());
-
-        return view('admin.farmasi.laporan-tahunan.index');
     }
 }
