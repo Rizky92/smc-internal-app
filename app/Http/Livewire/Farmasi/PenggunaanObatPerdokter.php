@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire\Farmasi;
 
-use App\Models\Farmasi\Resep;
+use App\Models\Farmasi\ResepObat;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
@@ -61,7 +61,7 @@ class PenggunaanObatPerdokter extends Component
 
     public function getObatPerDokterProperty()
     {
-        return Resep::penggunaanObatPerDokter($this->periodeAwal, $this->periodeAkhir)
+        return ResepObat::penggunaanObatPerDokter($this->periodeAwal, $this->periodeAkhir)
             ->paginate($this->perpage);
     }
 
@@ -107,7 +107,7 @@ class PenggunaanObatPerdokter extends Component
             'Asal Poli',
         ];
 
-        $data = Resep::penggunaanObatPerDokter($this->periodeAwal, $this->periodeAkhir)
+        $data = ResepObat::penggunaanObatPerDokter($this->periodeAwal, $this->periodeAkhir)
             ->cursor()
             ->toArray();
 

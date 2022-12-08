@@ -11,49 +11,56 @@
     @once
         @push('js')
             <script>
-                var inputNRP = $('#user')
-                var inputNama = $('#nama')
-                var inputHakAkses = $('input[name=rolenames]')
+                let inputNRP
+                let inputNama
+                let inputHakAkses
 
-                function loadData ({ nrp, nama, roleIds }) {
-                    let roles = new Set(Array.from(roleIds.split(',')))
-
-                    changeData(nrp, nama, roles)
-                }
-
-                inputHakAkses.each((index, el) => {
-                    let value = el.value
-
-                    if (el.checked && !roles.has(value)) {
-                        roles.push(value)
-                    } else {
-                        roles.delete(value)
-                    }
+                $(document).ready(() => {
+                    inputNRP = $('#user')
+                    inputNama = $('#nama')
+                    inputHakAkses = $('input[name=rolenames]')
                 })
 
-                const changeData = (nrp, nama, roles) => {
+                function loadData({ nrp, nama, roleIds }) {
                     inputNRP.val(nrp)
                     inputNama.val(nama)
-                    inputHakAkses.val(roles)
 
-                    inputNRP.trigger('change')
-                    inputNama.trigger('change')
-                    inputHakAkses.trigger('change')
+                    let roles = Array.from(roleIds.split(','))
+                    inputHakAkses.each((i, el) => {
+                        (el.value === roles[i])
+                            ? el.checked = true
+                            : el.checked = false
+                    })
                 }
 
                 $('#simpandata').click(() => {
-                    console.log(roles)
+                    let nrp = inputNRP.val()
+                    let roles = []
 
-                    // @this.emit('simpan', inputNRP.val(), roles)
+                    inputHakAkses.each((i, el) => {
+                        if (el.checked) {
+                            roles.push(el.value)
+                        }
+                    })
 
-                    changeData('', '', null)
+                    console.log(nrp, roles)
+
+                    @this.simpan(nrp, roles)
+
+                    clearData()
                 })
 
                 $('#batalsimpan').click(() => {
-                    changeData('', '', null)
-
-                    @this.$refresh
+                    clearData()
                 })
+
+                const clearData = () => {
+                    inputNRP.val('')
+                    inputNama.val('')
+                    inputHakAkses.each((i, el) => {
+                        el.checked = false
+                    })
+                }
             </script>
         @endpush
     @endonce

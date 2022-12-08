@@ -8,6 +8,7 @@ use App\Http\Controllers\Farmasi\LaporanTahunanController;
 use App\Http\Controllers\Logistik\LaporanDaruratStokController as DaruratStokLogistikController;
 use App\Http\Controllers\UserController;
 use App\Http\Livewire;
+use App\Http\Livewire\Farmasi\LaporanProduksiTahunan;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -50,7 +51,7 @@ Route::prefix('admin')
                     ->middleware('can:farmasi.penggunaan-obat-perdokter.read')
                     ->name('obat-perdokter');
                 
-                Route::get('laporan-tahunan', LaporanTahunanController::class)
+                Route::get('laporan-tahunan', LaporanProduksiTahunan::class)
                     ->middleware('can:farmasi.laporan-tahunan.read')
                     ->name('laporan-tahunan');
             });

@@ -4,7 +4,6 @@ namespace App\Http\Livewire\User;
 
 use App\Role;
 use App\User;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -21,7 +20,6 @@ class Manage extends Component
     protected $listeners = [
         'beginExcelExport',
         'hardRefresh',
-        'simpan',
     ];
 
     protected function queryString()
@@ -61,7 +59,7 @@ class Manage extends Component
             ->section('content');
     }
 
-    public function simpan(string $nrp, array $roles)
+    public function simpan($nrp, $roles)
     {
         User::findByNRP($nrp)->syncRoles($roles);
 

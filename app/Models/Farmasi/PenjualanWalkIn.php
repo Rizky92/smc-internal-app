@@ -29,6 +29,11 @@ class PenjualanWalkIn extends Model
             ->groupByRaw("DATE_FORMAT(penjualan.tgl_jual, '%m-%Y')");
     }
 
+    // public function scopePendapatanWalkIn(Builder $query): Builder
+    // {
+    //     return $query->selectRaw("")
+    // }
+
     public function detail(): BelongsToMany
     {
         return $this->belongsToMany(DataBarang::class, 'detailjual', 'nota_jual', 'kode_brng');

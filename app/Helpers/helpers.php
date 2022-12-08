@@ -1,7 +1,7 @@
 <?php
 
 if (! function_exists('rp')) {
-    function rp($nominal, $decimalCount = 2)
+    function rp($nominal, $decimalCount = 0)
     {
         return 'Rp. ' . number_format($nominal, $decimalCount, ',', '.');
     }

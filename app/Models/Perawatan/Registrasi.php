@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class Registrasi extends Model
 {
@@ -23,57 +24,36 @@ class Registrasi extends Model
 
     public $timestamps = false;
 
-    public function scopeKunjunganRalan(Builder $query): Builder
+    public function scopeKunjungan(Builder $query, $poli = ''): Builder
     {
         return $query->selectRaw("
-            'Rawat Jalan' kategori,
             COUNT(reg_periksa.no_rawat) jumlah,
             DATE_FORMAT(reg_periksa.tgl_registrasi, '%m-%Y') bulan
         ")
-            ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
-            ->where('reg_periksa.stts', '!=', 'Batal')
-            ->where('reg_periksa.status_lanjut', '=', 'Ralan')
-            ->where('poliklinik.kd_poli', '!=', 'IGDK')
-            ->groupBy([
-                DB::raw('reg_periksa.status_lanjut'),
-                DB::raw("DATE_FORMAT(reg_periksa.tgl_registrasi, '%m-%Y')"),
-            ]);
-    }
-
-    public function scopeKunjunganRanap(Builder $query): Builder
-    {
-        return $query->selectRaw("
-            'Rawat Inap' kategori,
-            COUNT(reg_periksa.no_rawat) jumlah,
-            DATE_FORMAT(reg_periksa.tgl_registrasi, '%m-%Y') bulan
-        ")
-            ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
-            ->where('reg_periksa.stts', '!=', 'Batal')
-            ->where('reg_periksa.status_lanjut', '=', 'Ranap')
-            ->where('poliklinik.kd_poli', '!=', 'IGDK')
-            ->groupBy([
-                DB::raw('reg_periksa.status_lanjut'),
-                DB::raw("DATE_FORMAT(reg_periksa.tgl_registrasi, '%m-%Y')"),
-            ]);
-    }
-
-    public function scopeKunjunganIGD(Builder $query): Builder
-    {
-        return $query->selectRaw("
-            'IGD' kategori,
-            COUNT(reg_periksa.no_rawat) jumlah,
-            DATE_FORMAT(reg_periksa.tgl_registrasi, '%m-%Y') bulan
-        ")
-            ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
-            ->where('reg_periksa.stts', '!=', 'Batal')
-            ->where('poliklinik.kd_poli', '=', 'IGDK')
+            ->whereNotIn('reg_periksa.stts', ['Belum', 'Batal'])
+            ->where('reg_periksa.status_bayar', 'Sudah Bayar')
+            ->when(!empty($poli), function (Builder $query) use ($poli) {
+                switch (Str::title($poli)) {
+                    case 'Ralan':
+                        return $query->where('reg_periksa.status_lanjut', '=', 'Ralan')
+                            ->whereNotIn('reg_periksa.kd_poli', ['U0056', 'U0057', 'IGDK']);
+                    case 'Ranap':
+                        return $query->where('reg_periksa.status_lanjut', '=', 'Ranap')
+                            ->whereNotIn('reg_periksa.kd_poli', ['U0056', 'U0057', 'IGDK']);
+                    case 'Igd':
+                        return $query->where('reg_periksa.kd_poli', '=', 'IGDK');
+                    case 'Walkin':
+                        return $query->where('reg_periksa.status_lanjut', '=', 'Ralan')
+                            ->whereIn('reg_periksa.kd_poli', ['U0056', 'U0057']);
+                }
+            })
+            ->whereRaw('YEAR(reg_periksa.tgl_registrasi) = ?', now()->format('Y'))
             ->groupByRaw("DATE_FORMAT(reg_periksa.tgl_registrasi, '%m-%Y')");
     }
 
     public function scopeKunjunganTotal(Builder $query): Builder
     {
         return $query->selectRaw("
-            'TOTAL' kategori,
             COUNT(reg_periksa.no_rawat) jumlah,
             DATE_FORMAT(reg_periksa.tgl_registrasi, '%m-%Y') bulan
         ")
@@ -157,7 +137,7 @@ class Registrasi extends Model
 
     public static function totalKunjunganRalan()
     {
-        return (new static)->kunjunganRalan()
+        return (new static)->kunjungan('Ralan')
             ->get()
             ->map(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
@@ -166,7 +146,7 @@ class Registrasi extends Model
 
     public static function totalKunjunganRanap()
     {
-        return (new static)->kunjunganRanap()
+        return (new static)->kunjungan('Ranap')
             ->get()
             ->map(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
@@ -175,7 +155,7 @@ class Registrasi extends Model
 
     public static function totalKunjunganIGD()
     {
-        return (new static)->kunjunganIGD()
+        return (new static)->kunjungan('Igd')
             ->get()
             ->map(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];

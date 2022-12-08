@@ -2,57 +2,6 @@
     'title' => 'Laporan Produksi Farmasi Per Tahun',
 ])
 
-{{-- @once
-    @push('css')
-        <link rel="stylesheet" href="{{ asset('plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
-    @endpush
-    @push('js')
-        <script src="{{ asset('plugins/datatables/jquery.dataTables.min.js') }}"></script>
-        <script src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
-        <script src="{{ asset('plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
-        <script src="{{ asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
-        <script src="{{ asset('plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
-        <script src="{{ asset('plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
-        <script src="{{ asset('plugins/jszip/jszip.min.js') }}"></script>
-        <script src="{{ asset('plugins/pdfmake/pdfmake.min.js') }}"></script>
-        <script src="{{ asset('plugins/pdfmake/vfs_fonts.js') }}"></script>
-        <script src="{{ asset('plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
-        <script src="{{ asset('plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
-        <script src="{{ asset('plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
-        <script>
-            var mainTable;
-
-            $(document).ready(() => {
-                mainTable = $("#table_index")
-                    .DataTable({
-                        autoWidth: false,
-                        responsive: true,
-                        lengthChange: true,
-                        paging: true,
-                        pageLength: 25,
-                        lengthMenu: [
-                            [10, 25, 50, 100, 200, -1],
-                            ['10', '25', '50', '100', '200', 'Semua'],
-                        ],
-                        buttons: [
-                            {
-                                extend: 'excel',
-                                text: '<i class="fas fa-file-excel"></i><span class="ml-1">Export ke excel</span>',
-                                className: 'btn btn-default btn-sm',
-                            }
-                        ]
-                    })
-                
-                mainTable
-                    .buttons()
-                    .container()
-                    .appendTo('#table_filter_action .d-flex')
-            })
-        </script>
-    @endpush
-@endonce --}}
 @section('content')
     <div class="row">
         <div class="col-12">
@@ -114,18 +63,33 @@
                             </tr>
                             <tr>
                                 <th width="250">TOTAL PENDAPATAN</th>
+                                @foreach ($pendapatanObatTotal as $item)
+                                    <th class="text-center px-0" width="150">{{ rp($item) }}</th>
+                                @endforeach
                             </tr>
                             <tr>
                                 <th width="250">Pendapatan Obat Rawat Jalan</th>
+                                @foreach ($pendapatanObatRalan as $item)
+                                    <td class="text-center px-0" width="150">{{ rp($item) }}</td>
+                                @endforeach
                             </tr>
                             <tr>
                                 <th width="250">Pendapatan Obat Rawat Inap</th>
+                                @foreach ($pendapatanObatRanap as $item)
+                                    <td class="text-center px-0" width="150">{{ rp($item) }}</td>
+                                @endforeach
                             </tr>
                             <tr>
                                 <th width="250">Pendapatan Obat IGD</th>
+                                @foreach ($pendapatanObatIGD as $item)
+                                    <td class="text-center px-0" width="150">{{ rp($item) }}</td>
+                                @endforeach
                             </tr>
                             <tr>
                                 <th width="250">Pendapatan Obat <i>Walk in</i></th>
+                                @foreach ($pendapatanObatWalkIn as $item)
+                                    <td class="text-center px-0" width="150">{{ rp($item) }}</td>
+                                @endforeach
                             </tr>
                             <tr>
                                 <th width="250">Pendapatan Alkes Farmasi dan Unit</th>
@@ -133,7 +97,7 @@
                             <tr>
                                 <th width="250">Retur Obat</th>
                                 @foreach ($totalReturObat as $item)
-                                    <td class="text-center px-0" width="150">{{ $item }}</td>
+                                    <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                                 @endforeach
                             </tr>
                             <tr>
