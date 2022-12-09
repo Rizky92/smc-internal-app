@@ -6,6 +6,7 @@ use App\Models\Nonmedis\BarangNonmedis;
 use App\Models\Nonmedis\MinmaxBarangNonmedis;
 use App\Models\Nonmedis\SupplierNonmedis;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Vtiful\Kernel\Excel;
@@ -67,7 +68,7 @@ class StokInputMinmaxBarang extends Component
 
     public function getBarangLogistikProperty()
     {
-        return BarangNonmedis::denganMinmax($this->cari)->paginate($this->perpage);
+        return BarangNonmedis::denganMinmax(Str::lower($this->cari))->paginate($this->perpage);
     }
 
     public function render()
@@ -88,7 +89,7 @@ class StokInputMinmaxBarang extends Component
     {
         $kodeSupplier = $kodeSupplier != '-' ? $kodeSupplier : null;
 
-        $minmaxBarang = MinmaxBarangNonmedis::find($kodeBarang);
+        $minmaxBarang = MinmaxBarangNonmedis::findOrNew($kodeBarang);
 
         $minmaxBarang->stok_min = $stokMin;
         $minmaxBarang->stok_max = $stokMax;

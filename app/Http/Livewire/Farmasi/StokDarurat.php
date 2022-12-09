@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Farmasi;
 
 use App\Models\Farmasi\DataBarang;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Vtiful\Kernel\Excel;
@@ -21,7 +22,6 @@ class StokDarurat extends Component
     protected $listeners = [
         'beginExcelExport',
         'clearFilters',
-        'clearFiltersAndHardRefresh',
     ];
 
     protected function queryString()
@@ -42,11 +42,12 @@ class StokDarurat extends Component
     public function mount()
     {
         $this->perpage = 25;
+        $this->cari = '';
     }
 
     public function getBarangDaruratStokProperty()
     {
-        return DataBarang::daruratStok()
+        return DataBarang::daruratStok(Str::lower($this->cari))
             ->paginate($this->perpage);
     }
 
@@ -122,21 +123,5 @@ class StokDarurat extends Component
             ->output();
 
         return Storage::disk('public')->download($filename);
-    }
-
-    public function clearFilters()
-    {
-        $this->cari = '';
-        $this->page = 1;
-        $this->perpage = 25;
-    }
-
-    public function clearFiltersAndHardRefresh()
-    {
-        $this->emit('cleanFilters');
-
-        $this->forgetComputed();
-
-        $this->emit('$refresh');
     }
 }

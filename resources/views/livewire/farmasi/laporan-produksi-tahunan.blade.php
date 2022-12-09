@@ -109,9 +109,15 @@
                     </tr>
                     <tr>
                         <th width="250">TOTAL PEMBELIAN (Pembelian Farmasi - Retur Supplier)</th>
+                        @foreach ($this->totalBersihPembelianFarmasi as $item)
+                            <td class="text-center px-0" width="150">{{ rp($item) }}</td>
+                        @endforeach
                     </tr>
                     <tr>
                         <th width="250">Pemakaian BHP</th>
+                        @foreach ($this->stokKeluarMedis as $item)
+                            <td class="text-center px-0" width="150">{{ rp($item) }}</td>
+                        @endforeach
                     </tr>
                     <tr>
                         <th width="250">Transfer Order</th>

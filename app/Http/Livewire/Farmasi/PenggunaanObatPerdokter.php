@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Farmasi;
 use App\Models\Farmasi\ResepObat;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Vtiful\Kernel\Excel;
@@ -61,7 +62,7 @@ class PenggunaanObatPerdokter extends Component
 
     public function getObatPerDokterProperty()
     {
-        return ResepObat::penggunaanObatPerDokter($this->periodeAwal, $this->periodeAkhir)
+        return ResepObat::penggunaanObatPerDokter($this->periodeAwal, $this->periodeAkhir, Str::lower($this->cari))
             ->paginate($this->perpage);
     }
 

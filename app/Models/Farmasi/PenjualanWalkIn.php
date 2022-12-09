@@ -21,7 +21,6 @@ class PenjualanWalkIn extends Model
     public function scopeKunjunganWalkIn(Builder $query): Builder
     {
         return $query->selectRaw("
-            'WALK IN' kategori,
             COUNT(penjualan.nota_jual) jumlah,
             DATE_FORMAT(penjualan.tgl_jual, '%m-%Y') bulan
         ")

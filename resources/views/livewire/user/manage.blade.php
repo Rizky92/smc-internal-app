@@ -131,7 +131,7 @@
                 </div>
             </div>
         </div>
-        <div class="card-body table-responsive p-0">
+        <div class="card-body table-responsive p-0 border-top">
             <table id="table_index" class="table table-hover table-striped table-sm text-sm">
                 <thead>
                     <tr>

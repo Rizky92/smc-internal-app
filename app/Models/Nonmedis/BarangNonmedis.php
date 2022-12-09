@@ -36,7 +36,7 @@ class BarangNonmedis extends Model
         return $this->belongsTo(JenisBarangNonmedis::class, 'jenis', 'kd_jenis');
     }
 
-    public function scopeDenganMinmax(Builder $query, $cari = '', $export = false): Builder
+    public function scopeDenganMinmax(Builder $query, string $cari = '', bool $export = false): Builder
     {
         $select = "
             ipsrsbarang.kode_brng,
@@ -63,19 +63,19 @@ class BarangNonmedis extends Model
             ->leftJoin('smc.ipsrs_minmax_stok_barang', 'ipsrsbarang.kode_brng', '=', 'smc.ipsrs_minmax_stok_barang.kode_brng')
             ->leftJoin('ipsrssuplier', 'smc.ipsrs_minmax_stok_barang.kode_suplier', '=', 'ipsrssuplier.kode_suplier')
             ->where(DB::raw('ipsrsbarang.status'), '1')
-            ->when(is_string($cari) && !empty($cari), function (Builder $query) use ($cari) {
+            ->when(!empty($cari), function (Builder $query) use ($cari) {
                 return $query->where(function (Builder $query) use ($cari) {
-                    return $query->where(DB::raw('ipsrsbarang.kode_brng'), 'LIKE', "%{$cari}%")
-                        ->orWhere(DB::raw('ipsrsbarang.nama_brng'), 'LIKE', "%{$cari}%")
-                        ->orWhere(DB::raw('ipsrssuplier.kode_suplier'), 'LIKE', "%{$cari}%")
-                        ->orWhere(DB::raw('ipsrssuplier.nama_suplier'), 'LIKE', "%{$cari}%")
-                        ->orWhere(DB::raw('ipsrsjenisbarang.nm_jenis'), 'LIKE', "%{$cari}%")
-                        ->orWhere(DB::raw('kodesatuan.satuan'), 'LIKE', "%{$cari}%");
+                    return $query->where('ipsrsbarang.kode_brng', 'LIKE', "%{$cari}%")
+                        ->orWhere('ipsrsbarang.nama_brng', 'LIKE', "%{$cari}%")
+                        ->orWhere('ipsrssuplier.kode_suplier', 'LIKE', "%{$cari}%")
+                        ->orWhere('ipsrssuplier.nama_suplier', 'LIKE', "%{$cari}%")
+                        ->orWhere('ipsrsjenisbarang.nm_jenis', 'LIKE', "%{$cari}%")
+                        ->orWhere('kodesatuan.satuan', 'LIKE', "%{$cari}%");
                 });
             });
     }
 
-    public function scopeDaruratStok(Builder $query, $cari = '', $saranOrderNol = true): Builder
+    public function scopeDaruratStok(Builder $query, string $cari = '', bool $saranOrderNol = true): Builder
     {
         return $query->selectRaw("
             ipsrsbarang.kode_brng,
@@ -99,14 +99,14 @@ class BarangNonmedis extends Model
             ->when(!$saranOrderNol, function (Builder $query) {
                 return $query->where(DB::raw("IFNULL(IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok, '0')"), '>', 0);
             })
-            ->when(is_string($cari) && !empty($cari), function (Builder $query) use ($cari) {
+            ->when(!empty($cari), function (Builder $query) use ($cari) {
                 return $query->where(function (Builder $query) use ($cari) {
-                    return $query->where(DB::raw('ipsrsbarang.kode_brng'), 'LIKE', "%{$cari}%")
-                        ->orWhere(DB::raw('ipsrsbarang.nama_brng'), 'LIKE', "%{$cari}%")
-                        ->orWhere(DB::raw('ipsrssuplier.kode_suplier'), 'LIKE', "%{$cari}%")
-                        ->orWhere(DB::raw('ipsrssuplier.nama_suplier'), 'LIKE', "%{$cari}%")
-                        ->orWhere(DB::raw('ipsrsjenisbarang.nm_jenis'), 'LIKE', "%{$cari}%")
-                        ->orWhere(DB::raw('kodesatuan.satuan'), 'LIKE', "%{$cari}%");
+                    return $query->where('ipsrsbarang.kode_brng', 'LIKE', "%{$cari}%")
+                        ->orWhere('ipsrsbarang.nama_brng', 'LIKE', "%{$cari}%")
+                        ->orWhere('ipsrssuplier.kode_suplier', 'LIKE', "%{$cari}%")
+                        ->orWhere('ipsrssuplier.nama_suplier', 'LIKE', "%{$cari}%")
+                        ->orWhere('ipsrsjenisbarang.nm_jenis', 'LIKE', "%{$cari}%")
+                        ->orWhere('kodesatuan.satuan', 'LIKE', "%{$cari}%");
                 });
             });
     }

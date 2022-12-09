@@ -16,4 +16,10 @@ class MinmaxBarangNonmedis extends Model
     protected $keyType = 'string';
 
     protected $table = 'ipsrs_minmax_stok_barang';
+
+    protected $fillable = [
+        'stok_min',
+        'stok_max',
+        'kode_suplier',
+    ];
 }

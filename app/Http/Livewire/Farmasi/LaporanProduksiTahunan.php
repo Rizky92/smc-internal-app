@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Farmasi;
 
 use App\Models\Farmasi\PemesananBarang;
+use App\Models\Farmasi\PengeluaranObat;
 use App\Models\Farmasi\PenjualanWalkIn;
 use App\Models\Farmasi\ResepDokterRacikan;
 use App\Models\Farmasi\ResepObat;
@@ -23,22 +24,29 @@ class LaporanProduksiTahunan extends Component
 
     public function getKunjunganRalanProperty()
     {
-        return Registrasi::totalKunjunganRalan();
+        return ResepObat::kunjunganPasienRalan();
     }
 
     public function getKunjunganRanapProperty()
     {
-        return Registrasi::totalKunjunganRanap();
+        return ResepObat::kunjunganPasienRanap();
     }
 
     public function getKunjunganIGDProperty()
     {
-        return Registrasi::totalKunjunganIGD();
+        return ResepObat::kunjunganPasienIGD();
     }
 
     public function getKunjunganWalkInProperty()
     {
-        return PenjualanWalkIn::totalKunjunganWalkIn();
+        $pasienWalkInDariRalan = ResepObat::kunjunganPasienWalkIn();
+        $pasienWalkInKeFarmasi = PenjualanWalkIn::totalKunjunganWalkIn();
+
+        foreach ($pasienWalkInDariRalan as $key => $data) {
+            $pasienWalkInDariRalan[$key] += $pasienWalkInKeFarmasi[$key];
+        }
+
+        return $pasienWalkInDariRalan;
     }
 
     public function getKunjunganTotalProperty()
@@ -126,6 +134,22 @@ class LaporanProduksiTahunan extends Component
         return ReturSupplier::totalBarangRetur();
     }
 
+    public function getTotalBersihPembelianFarmasiProperty()
+    {
+        $totalBersih = $this->totalPembelianFarmasi;
+
+        foreach ($totalBersih as $key => $data) {
+            $totalBersih[$key] -= $this->totalReturObatKeSupplier[$key];
+        }
+
+        return $totalBersih;
+    }
+
+    public function getStokKeluarMedisProperty()
+    {
+        return PengeluaranObat::stokPengeluaranMedisFarmasi();
+    }
+
     public function render()
     {
         return view('livewire.farmasi.laporan-produksi-tahunan')
@@ -183,10 +207,10 @@ class LaporanProduksiTahunan extends Component
             array_merge(['Pendapatan Obat Walk In'], $this->pendapatanObatWalkIn),
             array_merge(['Pendapatan Alkes Farmasi dan Unit'], []),
             array_merge(['Retur Obat'], $this->totalReturObat),
-            array_merge(['Pembelian Farmasi'], $this->pembelianFarmasi),
+            array_merge(['Pembelian Farmasi'], $this->totalPembelianFarmasi),
             array_merge(['Retur Supplier'], []),
             array_merge(['TOTAL PEMBELIAN (Pembelian Farmasi - Retur Supplier)'], []),
-            array_merge(['Pemakaian BHP'], []),
+            array_merge(['Pemakaian BHP'], $this->stokKeluarMedis),
             array_merge(['Transfer Order'], []),
         ];
 

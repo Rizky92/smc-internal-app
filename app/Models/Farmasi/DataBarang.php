@@ -23,7 +23,7 @@ class DataBarang extends Model
         return $query->where('stokminimal', '>', 0);
     }
 
-    public function scopeDaruratStok(Builder $query)
+    public function scopeDaruratStok(Builder $query, $cari = ''): Builder
     {
         return $query
             ->selectRaw("
@@ -54,6 +54,14 @@ class DataBarang extends Model
             ->where('status', '1')
             ->where('stokminimal', '>', '0')
             ->whereRaw('(databarang.stokminimal - IFNULL(stok_gudang.stok_di_gudang, 0)) > 0')
-            ->whereRaw('IFNULL(stok_gudang.stok_di_gudang, 0) <= stokminimal');
+            ->whereRaw('IFNULL(stok_gudang.stok_di_gudang, 0) <= stokminimal')
+            ->when(!empty($cari), function (Builder $query) use ($cari) {
+                return $query->where(function (Builder $query) use ($cari) {
+                    return $query->where('databarang.kode_brng', 'LIKE', "%{$cari}%")
+                        ->orWhere('databarang.nama_brng', 'LIKE', "%{$cari}%")
+                        ->orWhere('kategori_barang.nama kategori', 'LIKE', "%{$cari}%")
+                        ->orWhere('industrifarmasi.nama_industri', 'LIKE', "%{$cari}%");
+                });
+            });
     }
 }

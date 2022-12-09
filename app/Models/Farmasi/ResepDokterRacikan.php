@@ -26,6 +26,7 @@ class ResepDokterRacikan extends Model
             ->join('reg_periksa', 'detail_obat_racikan.no_rawat', '=', 'reg_periksa.no_rawat')
             ->whereNotIn('reg_periksa.stts', ['Belum', 'Batal'])
             ->where('reg_periksa.status_bayar', 'Sudah Bayar')
+            ->where('databarang.kode_kategori', 'NOT LIKE', "3.%")
             ->when(!empty($poli), function (Builder $query) use ($poli) {
                 switch (Str::title($poli)) {
                     case 'Ralan':
@@ -41,7 +42,7 @@ class ResepDokterRacikan extends Model
                             ->whereIn('reg_periksa.kd_poli', ['U0056', 'U0057']);
                 }
             })
-            ->whereRaw('YEAR(detail_obat_racikan.tgl_perawatan) = ?', now()->format('Y'))
+            ->whereBetween('detail_obat_racikan.tgl_perawatan', [now()->startOfYear()->format('Y-m-d'), now()->endOfYear()->format('Y-m-d')])
             ->groupByRaw("DATE_FORMAT(detail_obat_racikan.tgl_perawatan, '%m-%Y')");
     }
 

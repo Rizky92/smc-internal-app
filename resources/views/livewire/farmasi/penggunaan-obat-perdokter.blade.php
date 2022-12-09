@@ -43,7 +43,7 @@
                         </div>
                         <span class="text-sm pl-2">per halaman</span>
                         <div class="ml-auto input-group input-group-sm" style="width: 16rem">
-                            <input type="search" placeholder="Cari..." class="form-control" wire:model.defer="cari" />
+                            <input type="search" placeholder="Cari..." class="form-control" wire:model.defer="cari" wire:keydown.enter="$refresh" />
                             <div class="input-group-append">
                                 <button type="button" wire:click="$refresh" class="btn btn-sm btn-default">
                                     <i class="fas fa-search"></i>
@@ -54,7 +54,7 @@
                 </div>
             </div>
         </div>
-        <div class="card-body table-responsive p-0">
+        <div class="card-body table-responsive p-0 border-top">
             <table class="table table-hover table-striped table-sm text-sm">
                 <thead>
                     <tr>
