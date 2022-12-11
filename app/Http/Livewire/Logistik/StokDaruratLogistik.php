@@ -6,10 +6,13 @@ use App\Models\Logistik\BarangNonMedis;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
+use Livewire\WithPagination;
 use Vtiful\Kernel\Excel;
 
 class StokDaruratLogistik extends Component
 {
+    use WithPagination;
+    
     public $cari;
 
     public $tampilkanSaranOrderNol;
@@ -48,7 +51,7 @@ class StokDaruratLogistik extends Component
         $this->perpage = 25;
     }
 
-    public function getBarangDaruratStokProperty()
+    public function getStokDaruratLogistikProperty()
     {
         return BarangNonMedis::daruratStok(Str::lower($this->cari), $this->tampilkanSaranOrderNol)
             ->paginate($this->perpage);

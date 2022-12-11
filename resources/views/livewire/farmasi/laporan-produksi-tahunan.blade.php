@@ -1,4 +1,13 @@
 <div>
+    @if (session()->has('excel.exporting'))
+        <div class="alert alert-dark alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <p>
+                {{ session('excel.exporting') }}
+            </p>
+        </div>
+    @endif
+
     <div class="card">
         <div class="card-body">
             <div class="row">

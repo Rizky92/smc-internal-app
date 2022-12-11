@@ -1,7 +1,7 @@
 <aside class="main-sidebar sidebar-light-olive elevation-1">
     <a href="{{ route('admin.dashboard') }}" class="brand-link">
         <img src="{{ asset('img/logo.png') }}" alt="AdminLTE Logo" class="brand-image" style="opacity: .8">
-        <span class="brand-text font-weight-light text-sm" style="white-space: normal">{{ config('app.name') }}</span>
+        <span class="brand-text">{{ config('app.name') }}</span>
     </a>
 
     <div class="sidebar">

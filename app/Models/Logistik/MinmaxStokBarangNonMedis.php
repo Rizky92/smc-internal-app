@@ -18,6 +18,7 @@ class MinmaxStokBarangNonMedis extends Model
     protected $table = 'ipsrs_minmax_stok_barang';
 
     protected $fillable = [
+        'kode_brng',
         'stok_min',
         'stok_max',
         'kode_suplier',

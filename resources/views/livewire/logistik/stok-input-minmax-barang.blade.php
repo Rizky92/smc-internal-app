@@ -170,11 +170,12 @@
                             <i class="fas fa-file-excel"></i>
                             <span class="ml-1">Export ke Excel</span>
                         </button>
-                        <div class="input-group input-group-sm w-25 ml-auto">
-                            <input type="search" id="cari" name="cari" placeholder="Cari..." class="form-control" wire:model.defer="cari" wire:keydown.enter.stop="$refresh">
+                        <div class="ml-auto input-group input-group-sm" style="width: 20rem">
+                            <input type="search" class="form-control" wire:model.defer="cari" placeholder="Cari..." wire:keydown.enter.stop="$refresh" />
                             <div class="input-group-append">
-                                <button type="button" class="btn btn-default" wire:click="$refresh">
-                                    <i class="fas fa-search"></i>
+                                <button type="button" wire:click="$refresh" class="btn btn-sm btn-default">
+                                    <i class="fas fa-sync-alt"></i>
+                                    <span class="ml-1">Refresh</span>
                                 </button>
                             </div>
                         </div>
@@ -195,8 +196,8 @@
                         <th>Max</th>
                         <th>Saat ini</th>
                         <th>Saran order</th>
-                        <th>Harga Per Unit (Rp)</th>
-                        <th>Total Harga (Rp)</th>
+                        <th>Harga Per Unit</th>
+                        <th>Total Harga</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -214,8 +215,8 @@
                             <td>{{ $barang->stokmax }}</td>
                             <td>{{ $barang->stok }}</td>
                             <td>{{ $barang->saran_order }}</td>
-                            <td>{{ $barang->harga }}</td>
-                            <td>{{ $barang->total_harga }}</td>
+                            <td>{{ rp($barang->harga) }}</td>
+                            <td>{{ rp($barang->total_harga) }}</td>
                         </tr>
                     @endforeach
                 </tbody>

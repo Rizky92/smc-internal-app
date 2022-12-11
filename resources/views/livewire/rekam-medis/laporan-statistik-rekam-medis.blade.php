@@ -40,12 +40,12 @@
                             </select>
                         </div>
                         <span class="text-sm pl-2">per halaman</span>
-                        <span class="text-sm ml-auto pr-2">Cari:</span>
-                        <div class="input-group input-group-sm" style="width: 16rem">
-                            <input type="search" class="form-control" wire:model.defer="cari" />
+                        <div class="ml-auto input-group input-group-sm" style="width: 20rem">
+                            <input type="search" class="form-control" wire:model.defer="cari" placeholder="Cari..." wire:keydown.enter.stop="$refresh" />
                             <div class="input-group-append">
                                 <button type="button" wire:click="$refresh" class="btn btn-sm btn-default">
-                                    <i class="fas fa-search"></i>
+                                    <i class="fas fa-sync-alt"></i>
+                                    <span class="ml-1">Refresh</span>
                                 </button>
                             </div>
                         </div>

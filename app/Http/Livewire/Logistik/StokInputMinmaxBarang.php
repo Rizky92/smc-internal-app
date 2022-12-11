@@ -20,9 +20,9 @@ class StokInputMinmaxBarang extends Component
     public $perpage;
 
     public $kodeSupplier;
-    
+
     public $stokMin;
-    
+
     public $stokMax;
 
     protected $paginationTheme = 'bootstrap';
@@ -85,17 +85,17 @@ class StokInputMinmaxBarang extends Component
         $this->emit('beginExcelExport');
     }
 
-    public function simpan($kodeBarang, $stokMin, $stokMax, $kodeSupplier)
+    public function simpan(string $kodeBarang, int $stokMin = 0, int $stokMax = 0, $kodeSupplier)
     {
         $kodeSupplier = $kodeSupplier != '-' ? $kodeSupplier : null;
 
-        $minmaxBarang = MinmaxStokBarangNonMedis::findOrNew($kodeBarang);
-
-        $minmaxBarang->stok_min = $stokMin;
-        $minmaxBarang->stok_max = $stokMax;
-        $minmaxBarang->kode_suplier = $kodeSupplier;
-
-        $minmaxBarang->save();
+        MinmaxStokBarangNonMedis::updateOrCreate([
+            'kode_brng' => $kodeBarang,
+        ], [
+            'stok_min' => $stokMin,
+            'stok_max' => $stokMax,
+            'kode_suplier' => $kodeSupplier,
+        ]);
 
         $this->clearFilters();
 
@@ -175,7 +175,7 @@ class StokInputMinmaxBarang extends Component
     public function clearFiltersAndHardRefresh()
     {
         $this->emit('cleanFilters');
-        
+
         $this->forgetComputed();
 
         $this->emit('$refresh');

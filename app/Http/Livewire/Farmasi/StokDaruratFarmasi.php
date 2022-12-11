@@ -45,7 +45,7 @@ class StokDaruratFarmasi extends Component
         $this->cari = '';
     }
 
-    public function getBarangDaruratStokProperty()
+    public function getStokDaruratObatProperty()
     {
         return Obat::daruratStok(Str::lower($this->cari))
             ->paginate($this->perpage);
@@ -70,7 +70,7 @@ class StokDaruratFarmasi extends Component
     {
         $timestamp = now()->format('Ymd_His');
 
-        $filename = "excel/farmasi_{$timestamp}_daruratstok.xlsx";
+        $filename = "excel/{$timestamp}_farmasi_daruratstok.xlsx";
 
         $config = [
             'path' => storage_path('app/public'),
@@ -101,9 +101,9 @@ class StokDaruratFarmasi extends Component
             ->fileName($filename)
 
             // page header
-            ->mergeCells('A1:H1', $row1)
-            ->mergeCells('A2:H2', $row2)
-            ->mergeCells('A3:H3', $row3)
+            ->mergeCells('A1:J1', $row1)
+            ->mergeCells('A2:J2', $row2)
+            ->mergeCells('A3:J3', $row3)
 
             // column header
             ->insertText(3, 0, $columnHeaders[0])

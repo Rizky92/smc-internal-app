@@ -1,4 +1,13 @@
 <div>
+    @if (session()->has('excel.exporting'))
+        <div class="alert alert-dark alert-dismissible fade show">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <p>
+                {{ session('excel.exporting') }}
+            </p>
+        </div>
+    @endif
+
     <div class="card">
         <div class="card-body">
             <div class="row">
@@ -20,7 +29,7 @@
                         <div class="input-group input-group-sm" style="width: 4rem">
                             <select name="perpage" class="custom-control custom-select" wire:model.defer="perpage">
                                 <option value="10">10</option>
-                                <option value="25">25</option>
+                                <option value="25" selected>25</option>
                                 <option value="50">50</option>
                                 <option value="100">100</option>
                                 <option value="200">200</option>
@@ -29,12 +38,12 @@
                             </select>
                         </div>
                         <span class="text-sm pl-2">per halaman</span>
-                        <span class="text-sm ml-auto pr-2">Cari:</span>
-                        <div class="input-group input-group-sm" style="width: 16rem">
-                            <input type="search" class="form-control" wire:model.defer="cari" />
+                        <div class="ml-auto input-group input-group-sm" style="width: 20rem">
+                            <input type="search" class="form-control" wire:model.defer="cari" placeholder="Cari..." wire:keydown.enter.stop="$refresh" />
                             <div class="input-group-append">
                                 <button type="button" wire:click="$refresh" class="btn btn-sm btn-default">
-                                    <i class="fas fa-search"></i>
+                                    <i class="fas fa-sync-alt"></i>
+                                    <span class="ml-1">Refresh</span>
                                 </button>
                             </div>
                         </div>
@@ -42,40 +51,47 @@
                 </div>
             </div>
         </div>
-        <div class="card-body table-responsive p-0">
+        <div class="card-body table-responsive p-0 border-top">
             <table class="table table-hover table-striped table-sm text-sm">
                 <thead>
                     <tr>
-                        <th>Kode barang</th>
+                        <th>Kode</th>
                         <th>Nama</th>
-                        <th>Satuan kecil</th>
+                        <th>Satuan</th>
                         <th>Kategori</th>
                         <th>Stok minimal</th>
                         <th>Stok saat ini</th>
                         <th>Saran order</th>
                         <th>Supplier</th>
-                        <th>Harga Per Unit (Rp)</th>
-                        <th>Total Harga (Rp)</th>
+                        <th>Harga Per Unit</th>
+                        <th>Total Harga</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($stokDarurat as $barang)
-                        @php($saranOrder = $barang->saran_order < 0 ? '0' : $barang->saran_order)
+                    @foreach ($this->stokDaruratObat as $obat)
                         <tr>
-                            <td>{{ $barang->kode_brng }}</td>
-                            <td>{{ $barang->nama_brng }}</td>
-                            <td>{{ $barang->satuan_kecil }}</td>
-                            <td>{{ $barang->kategori }}</td>
-                            <td>{{ $barang->stokminimal }}</td>
-                            <td>{{ $barang->stok_saat_ini }}</td>
-                            <td>{{ $saranOrder }}</td>
-                            <td>{{ $barang->nama_industri }}</td>
-                            <td>{{ ceil($barang->h_beli) }}</td>
-                            <td>{{ ceil($barang->h_beli * $saranOrder) }}</td>
+                            <td>{{ $obat->kode_brng }}</td>
+                            <td>{{ $obat->nama_brng }}</td>
+                            <td>{{ $obat->satuan_kecil }}</td>
+                            <td>{{ $obat->kategori }}</td>
+                            <td>{{ $obat->stokminimal }}</td>
+                            <td>{{ $obat->stok_sekarang }}</td>
+                            <td>{{ $obat->saran_order }}</td>
+                            <td>{{ $obat->nama_industri }}</td>
+                            <td>{{ rp($obat->harga_beli) }}</td>
+                            <td>{{ rp($obat->harga_beli_total) }}</td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
+        </div>
+        <div class="card-footer">
+            <div class="d-flex align-items center justify-content-start">
+                <p class="text-muted">Menampilkan {{ $this->stokDaruratObat->count() }} dari total {{ number_format($this->stokDaruratObat->total(), 0, ',', '.') }} item.</p>
+                <div class="ml-auto">
+                    {{ $this->stokDaruratObat->links() }}
+                </div>
+            </div>
         </div>
     </div>
 </div>

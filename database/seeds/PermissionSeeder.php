@@ -1,7 +1,7 @@
 <?php
 
-use App\Permission;
-use App\Role;
+use App\Models\Aplikasi\Permission;
+use App\Models\Aplikasi\Role;
 use Illuminate\Database\Seeder;
 
 class PermissionSeeder extends Seeder
@@ -32,9 +32,10 @@ class PermissionSeeder extends Seeder
             Permission::create(['name' => 'logistik.darurat-stok.read']),
         ];
 
-        $farmasiRole = Role::findByName('farmasi');
-        $rekamMedisRole = Role::findByName('rekam-medis');
-        $logistikRole = Role::findByName('logistik');
+        $developRole = Role::create(['name' => 'develop', 'guard_name' => 'web']);
+        $farmasiRole = Role::create(['name' => 'farmasi', 'guard_name' => 'web']);
+        $rekamMedisRole = Role::create(['name' => 'rekam-medis', 'guard_name' => 'web']);
+        $logistikRole = Role::create(['name' => 'logistik', 'guard_name' => 'web']);
 
         $farmasiRole->givePermissionTo($farmasiPermissions);
         $rekamMedisRole->givePermissionTo($rekamMedisPermissions);

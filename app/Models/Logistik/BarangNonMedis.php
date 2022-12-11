@@ -48,9 +48,9 @@ class BarangNonMedis extends Model
             IFNULL(smc.ipsrs_minmax_stok_barang.stok_min, 0) stokmin,
             IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0) stokmax,
             ipsrsbarang.stok,
-            IFNULL(IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok, '0') saran_order,
+            IF(ipsrsbarang.stok <= IFNULL(smc.ipsrs_minmax_stok_barang.stok_min, 0), IFNULL(IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, IFNULL(smc.ipsrs_minmax_stok_barang.stok_min, 0)) - ipsrsbarang.stok, 0), 0) saran_order,
             ipsrsbarang.harga,
-            (ipsrsbarang.harga * (IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok)) total_harga
+            IF(ipsrsbarang.stok <= IFNULL(smc.ipsrs_minmax_stok_barang.stok_min, 0), ipsrsbarang.harga * (IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok), 0) total_harga
         ";
 
         if ($export) {

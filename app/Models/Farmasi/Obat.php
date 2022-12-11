@@ -23,7 +23,7 @@ class Obat extends Model
         return $query->where('stokminimal', '>', 0);
     }
 
-    public function scopeDaruratStok(Builder $query, $cari = ''): Builder
+    public function scopeDaruratStok(Builder $query, string $cari = ''): Builder
     {
         return $query
             ->selectRaw("
@@ -32,11 +32,11 @@ class Obat extends Model
                 kodesatuan.satuan satuan_kecil,
                 kategori_barang.nama kategori,
                 stokminimal,
-                IFNULL(stok_gudang.stok_di_gudang, 0) stok_saat_ini,
+                IFNULL(ROUND(stok_gudang.stok_di_gudang, 2), 0) stok_sekarang,
                 (databarang.stokminimal - IFNULL(stok_gudang.stok_di_gudang, 0)) saran_order,
                 industrifarmasi.nama_industri,
-                databarang.h_beli,
-                ((databarang.stokminimal - IFNULL(stok_gudang.stok_di_gudang, 0)) * databarang.h_beli) h_total
+                CEIL(databarang.h_beli) harga_beli,
+                CEIL((databarang.stokminimal - IFNULL(stok_gudang.stok_di_gudang, 0)) * databarang.h_beli) harga_beli_total
             ")
             ->join('kategori_barang', 'databarang.kode_kategori', '=', 'kategori_barang.kode')
             ->join('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
