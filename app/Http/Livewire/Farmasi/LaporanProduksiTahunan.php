@@ -2,14 +2,13 @@
 
 namespace App\Http\Livewire\Farmasi;
 
-use App\Models\Farmasi\PemesananBarang;
-use App\Models\Farmasi\PengeluaranObat;
-use App\Models\Farmasi\PenjualanWalkIn;
-use App\Models\Farmasi\ResepDokterRacikan;
+use App\Models\Farmasi\PemesananObat;
+use App\Models\Farmasi\PengeluaranStokObat;
+use App\Models\Farmasi\PenjualanWalkInObat;
 use App\Models\Farmasi\ResepObat;
-use App\Models\Farmasi\ReturJual;
-use App\Models\Farmasi\ReturSupplier;
-use App\Models\Perawatan\Registrasi;
+use App\Models\Farmasi\ResepObatRacikanDetail;
+use App\Models\Farmasi\ReturObatKeSupplier;
+use App\Models\Farmasi\ReturPenjualanObat;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Vtiful\Kernel\Excel;
@@ -40,7 +39,7 @@ class LaporanProduksiTahunan extends Component
     public function getKunjunganWalkInProperty()
     {
         $pasienWalkInDariRalan = ResepObat::kunjunganPasienWalkIn();
-        $pasienWalkInKeFarmasi = PenjualanWalkIn::totalKunjunganWalkIn();
+        $pasienWalkInKeFarmasi = PenjualanWalkInObat::totalKunjunganWalkIn();
 
         foreach ($pasienWalkInDariRalan as $key => $data) {
             $pasienWalkInDariRalan[$key] += $pasienWalkInKeFarmasi[$key];
@@ -63,7 +62,7 @@ class LaporanProduksiTahunan extends Component
     public function getPendapatanObatRalanProperty()
     {
         $resepRegular = ResepObat::pendapatanObatRalan();
-        $resepRacikan = ResepDokterRacikan::pendapatanRacikanObatRalan();
+        $resepRacikan = ResepObatRacikanDetail::pendapatanRacikanObatRalan();
 
         foreach ($resepRegular as $key => $data) {
             $resepRegular[$key] += $resepRacikan[$key];
@@ -75,7 +74,7 @@ class LaporanProduksiTahunan extends Component
     public function getPendapatanObatRanapProperty()
     {
         $resepRegular = ResepObat::pendapatanObatRanap();
-        $resepRacikan = ResepDokterRacikan::pendapatanRacikanObatRanap();
+        $resepRacikan = ResepObatRacikanDetail::pendapatanRacikanObatRanap();
 
         foreach ($resepRegular as $key => $data) {
             $resepRegular[$key] += $resepRacikan[$key];
@@ -87,7 +86,7 @@ class LaporanProduksiTahunan extends Component
     public function getPendapatanObatIGDProperty()
     {
         $resepRegular = ResepObat::pendapatanObatIGD();
-        $resepRacikan = ResepDokterRacikan::pendapatanRacikanObatIGD();
+        $resepRacikan = ResepObatRacikanDetail::pendapatanRacikanObatIGD();
 
         foreach ($resepRegular as $key => $data) {
             $resepRegular[$key] += $resepRacikan[$key];
@@ -99,7 +98,7 @@ class LaporanProduksiTahunan extends Component
     public function getPendapatanObatWalkInProperty()
     {
         $resepRegular = ResepObat::pendapatanObatWalkIn();
-        $resepRacikan = ResepDokterRacikan::pendapatanRacikanObatWalkIn();
+        $resepRacikan = ResepObatRacikanDetail::pendapatanRacikanObatWalkIn();
 
         foreach ($resepRegular as $key => $data) {
             $resepRegular[$key] += $resepRacikan[$key];
@@ -121,17 +120,17 @@ class LaporanProduksiTahunan extends Component
 
     public function getTotalReturObatProperty()
     {
-        return ReturJual::totalReturObat();
+        return ReturPenjualanObat::totalReturObat();
     }
 
     public function getTotalPembelianFarmasiProperty()
     {
-        return PemesananBarang::totalPembelianDariFarmasi();
+        return PemesananObat::totalPembelianDariFarmasi();
     }
 
     public function getTotalReturObatKeSupplierProperty()
     {
-        return ReturSupplier::totalBarangRetur();
+        return ReturObatKeSupplier::totalBarangRetur();
     }
 
     public function getTotalBersihPembelianFarmasiProperty()
@@ -147,7 +146,7 @@ class LaporanProduksiTahunan extends Component
 
     public function getStokKeluarMedisProperty()
     {
-        return PengeluaranObat::stokPengeluaranMedisFarmasi();
+        return PengeluaranStokObat::stokPengeluaranMedisFarmasi();
     }
 
     public function render()

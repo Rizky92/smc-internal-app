@@ -19,6 +19,6 @@ class Poliklinik extends Model
 
     public function registrasi(): HasMany
     {
-        return $this->hasMany(Registrasi::class, 'kd_poli', 'kd_poli');
+        return $this->hasMany(RegistrasiPasien::class, 'kd_poli', 'kd_poli');
     }
 }

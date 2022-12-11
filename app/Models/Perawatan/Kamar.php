@@ -25,7 +25,7 @@ class Kamar extends Model
 
     public function rawatInap(): BelongsToMany
     {
-        return $this->belongsToMany(Registrasi::class, 'kamar_inap', 'kd_kamar', 'no_rawat')
+        return $this->belongsToMany(RegistrasiPasien::class, 'kamar_inap', 'kd_kamar', 'no_rawat')
             ->withPivot(RawatInap::$pivotColumns)
             ->using(RawatInap::class);
     }

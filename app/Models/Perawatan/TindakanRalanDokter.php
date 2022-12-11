@@ -2,6 +2,8 @@
 
 namespace App\Models\Perawatan;
 
+use App\Models\Dokter;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class TindakanRalanDokter extends Pivot
@@ -25,8 +27,8 @@ class TindakanRalanDokter extends Pivot
         'stts_bayar',
     ];
 
-    public function dokter()
+    public function dokter(): BelongsTo
     {
-        return $this->belongsTo('App\Models\Dokter', 'kd_dokter', 'kd_dokter');
+        return $this->belongsTo(Dokter::class, 'kd_dokter', 'kd_dokter');
     }
 }

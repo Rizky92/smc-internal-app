@@ -3,41 +3,20 @@
 namespace App\Http\Livewire\Logistik;
 
 use App\Models\Logistik\BarangNonMedis;
-use App\Models\Logistik\MinmaxStokBarangNonMedis;
-use App\Models\Logistik\SupplierNonMedis;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
-use Livewire\WithPagination;
 use Vtiful\Kernel\Excel;
 
-class StokInputMinmaxBarang extends Component
+class StokDaruratLogistik extends Component
 {
-    use WithPagination;
-
     public $cari;
+
+    public $tampilkanSaranOrderNol;
 
     public $perpage;
 
-    public $kodeSupplier;
-    
-    public $stokMin;
-    
-    public $stokMax;
-
     protected $paginationTheme = 'bootstrap';
-
-    protected $listeners = [
-        'beginExcelExport',
-        'clearFilters',
-        'clearFiltersAndHardRefresh',
-    ];
-
-    protected $rules = [
-        'stokMin' => ['required', 'numeric', 'min:0'],
-        'stokMax' => ['required', 'numeric', 'min:0'],
-        'kodeSupplier' => ['required', 'string'],
-    ];
 
     protected function queryString()
     {
@@ -45,69 +24,48 @@ class StokInputMinmaxBarang extends Component
             'cari' => [
                 'except' => '',
             ],
-            'page' => [
-                'except' => 1,
+            'tampilkanSaranOrderNol' => [
+                'except' => true,
             ],
             'perpage' => [
                 'except' => 25,
             ],
+            'page' => [
+                'except' => 1,
+            ],
         ];
     }
+
+    protected $listeners = [
+        'beginExcelExport',
+        'clearFilters',
+    ];
 
     public function mount()
     {
         $this->cari = '';
-        $this->page = 1;
+        $this->tampilkanSaranOrderNol = true;
         $this->perpage = 25;
     }
 
-    public function getSupplierProperty()
+    public function getBarangDaruratStokProperty()
     {
-        return SupplierNonMedis::pluck('nama_suplier', 'kode_suplier');
-    }
-
-    public function getBarangLogistikProperty()
-    {
-        return BarangNonMedis::denganMinmax(Str::lower($this->cari))->paginate($this->perpage);
+        return BarangNonMedis::daruratStok(Str::lower($this->cari), $this->tampilkanSaranOrderNol)
+            ->paginate($this->perpage);
     }
 
     public function render()
     {
-        return view('livewire.logistik.stok-input-minmax-barang')
-            ->extends('layouts.admin', ['title' => 'Stok Minmax Barang Logistik'])
+        return view('livewire.logistik.stok-darurat-logistik')
+            ->extends('layouts.admin', ['title' => 'Stok Darurat Barang Logistik'])
             ->section('content');
-    }
-
-    public function exportToExcel()
-    {
-        session()->flash('excel.exporting', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
-
-        $this->emit('beginExcelExport');
-    }
-
-    public function simpan($kodeBarang, $stokMin, $stokMax, $kodeSupplier)
-    {
-        $kodeSupplier = $kodeSupplier != '-' ? $kodeSupplier : null;
-
-        $minmaxBarang = MinmaxStokBarangNonMedis::findOrNew($kodeBarang);
-
-        $minmaxBarang->stok_min = $stokMin;
-        $minmaxBarang->stok_max = $stokMax;
-        $minmaxBarang->kode_suplier = $kodeSupplier;
-
-        $minmaxBarang->save();
-
-        $this->clearFilters();
-
-        session()->flash('saved.title', 'Sukses!');
-        session()->flash('saved.content', 'Data berhasil disimpan!');
     }
 
     public function beginExcelExport()
     {
         $timestamp = now()->format('Ymd_His');
 
-        $filename = "excel/{$timestamp}_stokminmax_barang.xlsx";
+        $filename = "excel/{$timestamp}_darurat_stok_logistik.xlsx";
 
         $config = [
             'path' => storage_path('app/public'),
@@ -131,7 +89,7 @@ class StokInputMinmaxBarang extends Component
             'Total Harga (Rp)',
         ];
 
-        $data = BarangNonMedis::denganMinmax($this->cari, true)
+        $data = BarangNonMedis::daruratStok($this->cari, $this->tampilkanSaranOrderNol)
             ->cursor()
             ->toArray();
 
@@ -165,19 +123,10 @@ class StokInputMinmaxBarang extends Component
         return Storage::disk('public')->download($filename);
     }
 
-    public function clearFilters()
+    public function exportToExcel()
     {
-        $this->cari = '';
-        $this->page = 1;
-        $this->perpage = 25;
-    }
+        session()->flash('excel.exporting', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
 
-    public function clearFiltersAndHardRefresh()
-    {
-        $this->emit('cleanFilters');
-        
-        $this->forgetComputed();
-
-        $this->emit('$refresh');
+        $this->emit('beginExcelExport');
     }
 }

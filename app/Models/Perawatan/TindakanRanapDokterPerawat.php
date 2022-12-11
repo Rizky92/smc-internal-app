@@ -2,6 +2,9 @@
 
 namespace App\Models\Perawatan;
 
+use App\Models\Dokter;
+use App\Models\Petugas;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class TindakanRanapDokterPerawat extends Pivot
@@ -26,13 +29,13 @@ class TindakanRanapDokterPerawat extends Pivot
         'biaya_rawat',
     ];
 
-    public function dokter()
+    public function dokter(): BelongsTo
     {
-        return $this->belongsTo('App\Models\Dokter', 'kd_dokter', 'kd_dokter');
+        return $this->belongsTo(Dokter::class, 'kd_dokter', 'kd_dokter');
     }
 
-    public function perawat()
+    public function perawat(): BelongsTo
     {
-        return $this->belongsTo('App\Models\Petugas', 'nip', 'nip');
+        return $this->belongsTo(Petugas::class, 'nip', 'nip');
     }
 }

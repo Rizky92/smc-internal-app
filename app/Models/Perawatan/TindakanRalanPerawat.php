@@ -2,6 +2,8 @@
 
 namespace App\Models\Perawatan;
 
+use App\Models\Petugas;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class TindakanRalanPerawat extends Pivot
@@ -25,8 +27,8 @@ class TindakanRalanPerawat extends Pivot
         'stts_bayar',
     ];
 
-    public function perawat()
+    public function perawat(): BelongsTo
     {
-        return $this->belongsTo('App\Models\Petugas', 'nip', 'nip');
+        return $this->belongsTo(Petugas::class, 'nip', 'nip');
     }
 }

@@ -1,16 +1,16 @@
 <?php
 
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\Khanza\Auth\LoginController;
-use App\Http\Controllers\Khanza\Auth\LogoutController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Farmasi\LaporanDaruratStokController as DaruratStokFarmasiController;
 use App\Http\Livewire\Farmasi\LaporanProduksiTahunan;
 use App\Http\Livewire\Farmasi\PenggunaanObatPerdokter;
-use App\Http\Livewire\Logistik\StokDarurat as StokDaruratLogistik;
+use App\Http\Livewire\Farmasi\StokDaruratFarmasi;
+use App\Http\Livewire\Logistik\StokDaruratLogistik;
 use App\Http\Livewire\Logistik\StokInputMinmaxBarang;
-use App\Http\Livewire\RekamMedis\LaporanStatistik;
-use App\Http\Livewire\User\Manage as ManageUser;
+use App\Http\Livewire\RekamMedis\LaporanStatistikRekamMedis;
+use App\Http\Livewire\User\ManajemenUser;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,12 +38,12 @@ Route::prefix('admin')
     ->as('admin.')
     ->middleware('auth')
     ->group(function () {
-        Route::get('/', AdminController::class)->name('dashboard');
+        Route::get('/', DashboardController::class)->name('dashboard');
 
         Route::prefix('farmasi')
             ->as('farmasi.')
             ->group(function () {
-                Route::get('darurat-stok', DaruratStokFarmasiController::class)
+                Route::get('darurat-stok', StokDaruratFarmasi::class)
                     ->name('darurat-stok');
 
                 Route::get('penggunaan-obat-perdokter', PenggunaanObatPerdokter::class)
@@ -58,7 +58,7 @@ Route::prefix('admin')
         Route::prefix('rekam-medis')
             ->as('rekam-medis.')
             ->group(function () {
-                Route::get('laporan-statistik', LaporanStatistik::class)
+                Route::get('laporan-statistik', LaporanStatistikRekamMedis::class)
                     ->middleware('can:rekam-medis.laporan-statistik.read')
                     ->name('laporan-statistik');
             });
@@ -81,7 +81,7 @@ Route::prefix('admin')
         Route::prefix('users')
             ->as('users.')
             ->group(function () {
-                Route::get('/', ManageUser::class)
+                Route::get('/', ManajemenUser::class)
                     ->middleware([
                         'can:user.manage',
                         'can:user.update',
