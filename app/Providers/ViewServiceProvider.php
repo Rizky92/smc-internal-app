@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -27,7 +26,7 @@ class ViewServiceProvider extends ServiceProvider
     {
         View::composer('layouts.admin', function ($view) {
             /**@var \App\User $user */
-            $user = auth()->user();
+            $user = auth('web')->user();
             
             $sidebarMenu = collect([
                 [

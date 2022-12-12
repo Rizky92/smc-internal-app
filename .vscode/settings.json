@@ -107,5 +107,8 @@
     "xlswriter"
   ],
   "intelephense.phpdoc.useFullyQualifiedNames": true,
-  "html.format.templating": false
+  "html.format.templating": false,
+  "LaravelExtraIntellisense.phpCommand": "/opt/lampp/bin/php -r \"{code}\"",
+  "intelephense.environment.phpVersion": "7.2.34",
+  "php.debug.executablePath": "/opt/lampp/bin/php"
 }
