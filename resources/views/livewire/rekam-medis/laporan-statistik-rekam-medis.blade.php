@@ -68,6 +68,7 @@
                         <th>Suku</th>
                         <th>Jenis Perawatan</th>
                         <th>Pasien Lama / Baru</th>
+                        <th>Status</th>
                         <th>Tgl. Masuk</th>
                         <th>Jam Masuk</th>
                         <th>Tgl. Pulang</th>
@@ -83,6 +84,7 @@
                         <th>Poli</th>
                         <th>Kelas</th>
                         <th>Penjamin</th>
+                        <th>Status Bayar</th>
                         <th>Status Pulang</th>
                         <th>Rujuk keluar ke RS</th>
                         <th>No. HP</th>
@@ -104,6 +106,7 @@
                             <td>{{ $registrasi->nama_suku_bangsa }}</td>
                             <td>{{ $registrasi->status_lanjut }}</td>
                             <td>{{ $registrasi->status_poli }}</td>
+                            <td>{{ $registrasi->status_perawatan }}</td>
                             <td>{{ $registrasi->tgl_registrasi }}</td>
                             <td>{{ $registrasi->jam_reg }}</td>
                             <td>{{ $registrasi->tgl_keluar }}</td>
@@ -119,7 +122,8 @@
                             <td>{{ $registrasi->nm_poli }}</td>
                             <td>{{ $registrasi->kelas }}</td>
                             <td>{{ $registrasi->png_jawab }}</td>
-                            <td>{{ $registrasi->stts }}</td>
+                            <td>{{ $registrasi->status_bayar }}</td>
+                            <td>{{ $registrasi->stts_pulang }}</td>
                             <td>-</td>
                             <td>{{ $registrasi->no_tlp }}</td>
                             <td>{{ $registrasi->alamat }}</td>
@@ -135,6 +139,11 @@
                 <div class="ml-auto">
                     {{ $this->dataLaporanStatistik->links() }}
                 </div>
+            </div>
+        </div>
+        <div wire:loading.delay.class="overlay light">
+            <div class="d-none justify-content-center align-items-center" wire:loading.delay.class="d-flex" wire:loading.delay.class.remove="d-none"> 
+                <i class="fas fa-sync-alt fa-2x fa-spin"></i>
             </div>
         </div>
     </div>

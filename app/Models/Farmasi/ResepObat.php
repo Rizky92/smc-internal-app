@@ -125,35 +125,21 @@ class ResepObat extends Model
             ->groupByRaw('DATE_FORMAT(resep_obat.tgl_perawatan, "%m-%Y")');
     }
 
-    // public function scopePendapatanObatSelainFarmasi(Builder $query): Builder
-    // {
-    //     return $query->selectRaw("
-    //         CEIL(SUM(resep_dokter.jml * databarang.h_beli)) jumlah,
-    //         DATE_FORMAT(resep_obat.tgl_perawatan, '%m-%Y') bulan
-    //     ")
-    //         ->join('resep_dokter', 'resep_obat.no_resep', '=', 'resep_dokter.no_resep')
-    //         ->join('databarang', 'resep_dokter.kode_brng', '=', 'databarang.kode_brng')
-    //         ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
-    //         ->whereNotIn('reg_periksa.stts', ['Belum', 'Batal'])
-    //         ->where('reg_periksa.status_bayar', 'Sudah Bayar')
-    //         ->when(!empty($poli), function (Builder $query) use ($poli) {
-    //             switch (Str::title($poli)) {
-    //                 case 'Ralan':
-    //                     return $query->where('reg_periksa.status_lanjut', '=', 'Ralan')
-    //                         ->whereNotIn('reg_periksa.kd_poli', ['U0056', 'U0057', 'IGDK']);
-    //                 case 'Ranap':
-    //                     return $query->where('reg_periksa.status_lanjut', '=', 'Ranap')
-    //                         ->whereNotIn('reg_periksa.kd_poli', ['U0056', 'U0057', 'IGDK']);
-    //                 case 'Igd':
-    //                     return $query->where('reg_periksa.kd_poli', '=', 'IGDK');
-    //                 case 'Walkin':
-    //                     return $query->where('reg_periksa.status_lanjut', '=', 'Ralan')
-    //                         ->whereIn('reg_periksa.kd_poli', ['U0056', 'U0057']);
-    //             }
-    //         })
-    //         ->whereBetween('resep_obat.tgl_perawatan', [now()->startOfYear()->format('Y-m-d'), now()->endOfYear()->format('Y-m-d')])
-    //         ->groupByRaw('DATE_FORMAT(resep_obat.tgl_perawatan, "%m-%Y")');
-    // }
+    public function scopePendapatanAlkes(Builder $query): Builder
+    {
+        return $query->selectRaw("
+            CEIL(SUM(resep_dokter.jml * databarang.h_beli)) jumlah,
+            DATE_FORMAT(resep_obat.tgl_perawatan, '%m-%Y') bulan
+        ")
+            ->join('resep_dokter', 'resep_obat.no_resep', '=', 'resep_dokter.no_resep')
+            ->join('databarang', 'resep_dokter.kode_brng', '=', 'databarang.kode_brng')
+            ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->whereNotIn('reg_periksa.stts', ['Belum', 'Batal'])
+            ->where('reg_periksa.status_bayar', 'Sudah Bayar')
+            ->where('databarang.kode_kategori', 'LIKE', "3.%")
+            ->whereBetween('resep_obat.tgl_perawatan', [now()->startOfYear()->format('Y-m-d'), now()->endOfYear()->format('Y-m-d')])
+            ->groupByRaw('DATE_FORMAT(resep_obat.tgl_perawatan, "%m-%Y")');
+    }
 
     public function dokterPeresep(): BelongsTo
     {
@@ -219,6 +205,14 @@ class ResepObat extends Model
     public static function pendapatanObatWalkIn(): array
     {
         return (new static)->pendapatanObat('Walkin')->get()
+            ->map(function ($value, $key) {
+                return [$value->bulan => $value->jumlah];
+            })->flatten(1)->pad(-12, 0)->toArray();
+    }
+
+    public static function pendapatanAlkesFarmasiDanUnit(): array
+    {
+        return (new static)->pendapatanAlkes()->get()
             ->map(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
             })->flatten(1)->pad(-12, 0)->toArray();

@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Farmasi;
 
+use App\Models\Farmasi\MutasiObat;
 use App\Models\Farmasi\PemesananObat;
 use App\Models\Farmasi\PengeluaranStokObat;
 use App\Models\Farmasi\PenjualanWalkInObat;
@@ -107,6 +108,11 @@ class LaporanProduksiTahunan extends Component
         return $resepRegular;
     }
 
+    public function getpendapatanAlkesFarmasiDanUnitProperty()
+    {
+        return ResepObat::pendapatanAlkesFarmasiDanUnit();
+    }
+
     public function getPendapatanObatTotalProperty()
     {
         $pendapatanObat = [];
@@ -147,6 +153,11 @@ class LaporanProduksiTahunan extends Component
     public function getStokKeluarMedisProperty()
     {
         return PengeluaranStokObat::stokPengeluaranMedisFarmasi();
+    }
+
+    public function getMutasiObatDariFarmasiProperty()
+    {
+        return MutasiObat::mutasiObatDariFarmasi();
     }
 
     public function render()
