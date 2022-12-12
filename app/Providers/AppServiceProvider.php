@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Aplikasi\Permission;
+use App\Models\Aplikasi\Role;
+use App\Models\Aplikasi\User;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,8 +28,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // \Debugbar::disable();
-        Gate::before(function ($user) {
+        Relation::morphMap([
+            'User' => User::class,
+            'Role' => Role::class,
+            'Permission' => Permission::class,
+        ]);
+
+        Gate::before(function (User $user) {
             return $user->hasRole('develop') ? true : null;
         });
     }

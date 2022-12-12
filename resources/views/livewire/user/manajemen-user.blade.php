@@ -115,7 +115,7 @@
                             </select>
                         </div>
                         <span class="text-sm pl-2">per halaman</span>
-                        <div class="ml-auto input-group input-group-sm" style="width: 20rem">
+                        <div class="ml-4 input-group input-group-sm" style="width: 20rem">
                             <input type="search" class="form-control" wire:model.defer="cari" placeholder="Cari..." wire:keydown.enter.stop="$refresh" />
                             <div class="input-group-append">
                                 <button type="button" wire:click="$refresh" class="btn btn-sm btn-default">

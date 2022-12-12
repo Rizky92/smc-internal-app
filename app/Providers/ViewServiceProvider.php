@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -27,7 +26,7 @@ class ViewServiceProvider extends ServiceProvider
     {
         View::composer('layouts.admin', function ($view) {
             /**@var \App\User $user */
-            $user = auth()->user();
+            $user = auth('web')->user();
             
             $sidebarMenu = collect([
                 [
@@ -36,6 +35,16 @@ class ViewServiceProvider extends ServiceProvider
                     'icon' => "fas fa-home",
                     'type' => 'link',
                     'hasAnyPermissions' => true,
+                ],
+                [
+                    'name' => 'Rawat Inap',
+                    'url' => route('admin.perawatan.pasien-ranap'),
+                    'icon' => "fas fa-hospital-alt",
+                    'type' => 'link',
+                    'hasAnyPermissions' => $user->can([
+                        'perawatan.pasien-ranap.read',
+                        'perawatan.pasien-ranap.pulangkan-pasien',
+                    ]),
                 ],
                 [
                     'name' => 'Farmasi',

@@ -119,7 +119,7 @@ return [
      * the default setting is false here for optimum safety.
      */
 
-    'display_permission_in_exception' => false,
+    'display_permission_in_exception' => env('APP_DEBUG', false),
 
     /*
      * When set to true, the required role names are added to the exception
@@ -127,7 +127,7 @@ return [
      * the default setting is false here for optimum safety.
      */
 
-    'display_role_in_exception' => false,
+    'display_role_in_exception' => env('APP_DEBUG', false),
 
     /*
      * By default wildcard permission lookups are disabled.
@@ -142,7 +142,7 @@ return [
          * When permissions or roles are updated the cache is flushed automatically.
          */
 
-        'expiration_time' => \Carbon\CarbonInterval::createFromDateString('24 hours'),
+        'expiration_time' => \DateInterval::createFromDateString('24 hours'),
 
         /*
          * The cache key used to store all permissions.

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class RegistrasiPasien extends Model
@@ -22,6 +23,38 @@ class RegistrasiPasien extends Model
     public $incrementing = false;
 
     public $timestamps = false;
+
+    public function scopeDaftarPasienRanap(Builder $query): Builder
+    {
+        return $query->selectRaw("
+            reg_periksa.no_rawat,
+            reg_periksa.no_rkm_medis,
+            concat(pasien.nm_pasien, ' (', reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur, ')') data_pasien,
+            concat(pasien.alamat, ', Kel. ', kelurahan.nm_kel, ', Kec. ', kecamatan.nm_kec, ', ', kabupaten.nm_kab, ', ', propinsi.nm_prop) alamat_pasien,
+            pasien.agama,
+            concat(pasien.namakeluarga, ' (', pasien.keluarga, ')') pj,
+            penjab.png_jawab,
+            concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal) ruangan,
+            kamar_inap.trf_kamar,
+            kamar_inap.tgl_masuk,
+            kamar_inap.jam_masuk,
+            kamar_inap.lama,
+            dokter.nm_dokter,
+            pasien.no_tlp
+        ")
+            ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->join('dpjp_ranap', 'reg_periksa.no_rawat', '=', DB::raw("( SELECT dpjp_ranap.no_rawat FROM dpjp_ranap WHERE )"))
+            ->join('dokter', 'dpjp_ranap.kd_dokter', '=', 'dokter.kd_dokter')
+            ->join('kamar_inap', 'reg_periksa.no_rawat', '=', 'kamar_inap.no_rawat')
+            ->join('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
+            ->join('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
+            ->join('kelurahan', 'pasien.kd_kel', '=', 'kelurahan.kd_kel')
+            ->join('kecamatan', 'pasien.kd_kec', '=', 'kecamatan.kd_kec')
+            ->join('kabupaten', 'pasien.kd_kab', '=', 'kabupaten.kd_kab')
+            ->join('propinsi', 'pasien.kd_prop', '=', 'propinsi.kd_prop')
+            ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+            ->where('kamar_inap.stts_pulang', '-');
+    }
 
     public function scopeKunjungan(Builder $query, string $poli = ''): Builder
     {

@@ -97,6 +97,9 @@
                     </tr>
                     <tr>
                         <th width="250">Pendapatan Alkes Farmasi dan Unit</th>
+                        @foreach ($this->pendapatanAlkesFarmasiDanUnit as $item)
+                            <td class="text-center px-0" width="150">{{ rp($item) }}</td>
+                        @endforeach
                     </tr>
                     <tr>
                         <th width="250">Retur Obat</th>
@@ -117,7 +120,7 @@
                         @endforeach
                     </tr>
                     <tr>
-                        <th width="250">TOTAL PEMBELIAN (Pembelian Farmasi - Retur Supplier)</th>
+                        <th width="250">TOTAL PEMBELIAN (<i>Pembelian Farmasi - Retur Supplier</i>)</th>
                         @foreach ($this->totalBersihPembelianFarmasi as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
@@ -130,6 +133,9 @@
                     </tr>
                     <tr>
                         <th width="250">Transfer Order</th>
+                        @foreach ($this->mutasiObatDariFarmasi as $item)
+                            <td class="text-center px-0" width="150">{{ rp($item) }}</td>
+                        @endforeach
                     </tr>
                 </tbody>
             </table>
