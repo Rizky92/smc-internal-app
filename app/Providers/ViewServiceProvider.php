@@ -37,6 +37,16 @@ class ViewServiceProvider extends ServiceProvider
                     'hasAnyPermissions' => true,
                 ],
                 [
+                    'name' => 'Rawat Inap',
+                    'url' => route('admin.perawatan.pasien-ranap'),
+                    'icon' => "fas fa-hospital-alt",
+                    'type' => 'link',
+                    'hasAnyPermissions' => $user->can([
+                        'perawatan.pasien-ranap.read',
+                        'perawatan.pasien-ranap.pulangkan-pasien',
+                    ]),
+                ],
+                [
                     'name' => 'Farmasi',
                     'icon' => "far fa-circle",
                     'type' => 'dropdown',

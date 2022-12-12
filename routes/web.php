@@ -9,6 +9,7 @@ use App\Http\Livewire\Farmasi\PenggunaanObatPerdokter;
 use App\Http\Livewire\Farmasi\StokDaruratFarmasi;
 use App\Http\Livewire\Logistik\StokDaruratLogistik;
 use App\Http\Livewire\Logistik\StokInputMinmaxBarang;
+use App\Http\Livewire\Perawatan\DaftarPasienRanap;
 use App\Http\Livewire\RekamMedis\LaporanStatistikRekamMedis;
 use App\Http\Livewire\User\ManajemenUser;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,17 @@ Route::prefix('admin')
     ->middleware('auth')
     ->group(function () {
         Route::get('/', DashboardController::class)->name('dashboard');
+
+        Route::prefix('perawatan')
+            ->as('perawatan.')
+            ->group(function () {
+                Route::get('pasien-ranap', DaftarPasienRanap::class)
+                    ->middleware([
+                        'can:perawatan.pasien-ranap.read',
+                        'can:perawatan.pasien-ranap.pulangkan-pasien',
+                    ])
+                    ->name('pasien-ranap');
+            });
 
         Route::prefix('farmasi')
             ->as('farmasi.')
