@@ -35,16 +35,17 @@ class RegistrasiPasien extends Model
             concat(pasien.namakeluarga, ' (', pasien.keluarga, ')') pj,
             penjab.png_jawab,
             concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal) ruangan,
+            kamar_inap.kd_kamar,
             kamar_inap.trf_kamar,
             kamar_inap.tgl_masuk,
             kamar_inap.jam_masuk,
             kamar_inap.lama,
-            dokter.nm_dokter,
+            (
+                SELECT dokter.nm_dokter FROM dokter JOIN dpjp_ranap ON dpjp_ranap.kd_dokter = dokter.kd_dokter WHERE dpjp_ranap.no_rawat = reg_periksa.no_rawat LIMIT 1
+            ) nama_dokter,
             pasien.no_tlp
         ")
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
-            ->join('dpjp_ranap', 'reg_periksa.no_rawat', '=', DB::raw("( SELECT dpjp_ranap.no_rawat FROM dpjp_ranap WHERE )"))
-            ->join('dokter', 'dpjp_ranap.kd_dokter', '=', 'dokter.kd_dokter')
             ->join('kamar_inap', 'reg_periksa.no_rawat', '=', 'kamar_inap.no_rawat')
             ->join('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
             ->join('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
@@ -104,6 +105,11 @@ class RegistrasiPasien extends Model
     public function dokter(): BelongsTo
     {
         return $this->belongsTo(Dokter::class, 'kd_dokter', 'kd_dokter');
+    }
+
+    public function dpjp(): BelongsToMany
+    {
+        return $this->belongsToMany(Dokter::class, 'dpjp_ranap', 'no_rawat', 'kd_dokter');
     }
 
     public function poliklinik(): BelongsTo

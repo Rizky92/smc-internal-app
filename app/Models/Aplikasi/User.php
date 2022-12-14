@@ -30,14 +30,9 @@ class User extends Authenticatable
         'roles',
     ];
 
-    protected $appends = [
-        'user_id',
-        'nama',
-    ];
-
-    protected static function boot()
+    protected static function booted()
     {
-        parent::boot();
+        parent::booted();
 
         static::addGlobalScope(function (Builder $query) {
             return $query->selectRaw('AES_DECRYPT(id_user, "nur") user_id, petugas.nama, jabatan.nm_jbtn, user.*')
@@ -46,19 +41,23 @@ class User extends Authenticatable
                 ->orderBy(DB::raw('AES_DECRYPT(id_user, "nur")'));
         });
     }
-
-    public static function findByNRP(string $nrp): self
+    
+    /**
+     * @return static
+     */
+    public static function findByNRP(string $nrp)
     {
-        if (empty($nrp)) return (new static);
+        if (empty($nrp)) return new static;
 
-        return (new static)->whereRaw('AES_DECRYPT(id_user, "nur") = ?', $nrp)
+        return (new static)
+            ->where(DB::raw('AES_DECRYPT(id_user, "nur")'), $nrp)
             ->first();
     }
 
-    public function scopeDenganPencarian(Builder $query, $cari): Builder
+    public function scopeDenganPencarian(Builder $query, string $cari): Builder
     {
         return $query->where(DB::raw('AES_DECRYPT(id_user, "nur")'), 'LIKE', "%{$cari}%")
-            ->orWhere(DB::raw('petugas.nama'), 'LIKE', "%{$cari}%")
-            ->orWhere(DB::raw('jabatan.nm_jbtn'), 'LIKE', "%{$cari}%");
+            ->orWhere('petugas.nama', 'LIKE', "%{$cari}%")
+            ->orWhere('jabatan.nm_jbtn', 'LIKE', "%{$cari}%");
     }
 }

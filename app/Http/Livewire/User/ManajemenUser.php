@@ -15,6 +15,8 @@ class ManajemenUser extends Component
 
     public $perpage;
 
+    public $user;
+
     protected $paginationTheme = 'bootstrap';
 
     protected $listeners = [
@@ -39,6 +41,7 @@ class ManajemenUser extends Component
 
     public function mount()
     {
+        $this->cari = '';
         $this->perpage = 25;
     }
 
@@ -59,9 +62,23 @@ class ManajemenUser extends Component
             ->section('content');
     }
 
-    public function simpan($nrp, $roles)
+    public function setUser($nrp)
     {
-        User::findByNRP($nrp)->syncRoles($roles);
+        $this->user = User::findByNRP($nrp);
+    }
+
+    public function searchUsers()
+    {
+        $this->page = 1;
+
+        $this->emit('$refresh');
+    }
+
+    public function simpan($roles)
+    {
+        $this->user->syncRoles($roles);
+
+        $nrp = $this->user->user_id;
 
         session()->flash('saved.content', "Hak akses untuk user {$nrp} berhasil diubah!");
         session()->flash('saved.type', 'success');
@@ -70,6 +87,11 @@ class ManajemenUser extends Component
     public function hardRefresh()
     {
         $this->forgetComputed();
+
+        $this->cari = '';
+        $this->perpage = 25;
+        $this->page = 1;
+        $this->user = null;
 
         $this->emit('$refresh');
     }

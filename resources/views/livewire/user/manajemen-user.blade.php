@@ -21,15 +21,18 @@
                     inputHakAkses = $('input[name=rolenames]')
                 })
 
-                function loadData({ nrp, nama, roleIds }) {
+                function loadData({
+                    nrp,
+                    nama,
+                    roleIds
+                }) {
                     inputNRP.val(nrp)
                     inputNama.val(nama)
 
                     let roles = Array.from(roleIds.split(','))
                     inputHakAkses.each((i, el) => {
-                        (el.value === roles[i])
-                            ? el.checked = true
-                            : el.checked = false
+                        (el.value === roles[i]) ?
+                        el.checked = true: el.checked = false
                     })
                 }
 
@@ -52,6 +55,8 @@
 
                 $('#batalsimpan').click(() => {
                     clearData()
+
+                    @this.emit('hardRefresh')
                 })
 
                 const clearData = () => {
@@ -71,16 +76,19 @@
                 <div class="col-2">
                     <div class="form-group">
                         <label for="user" class="text-sm">NRP</label>
-                        <input type="text" class="form-control" id="user" readonly autocomplete="off">
+                        <input type="text" class="form-control form-control-sm bg-light" id="user" readonly autocomplete="off">
                     </div>
                 </div>
                 <div class="col-4">
                     <div class="form-group">
                         <label for="nama" class="text-sm">Nama</label>
-                        <input type="text" class="form-control" id="nama" readonly autocomplete="off">
+                        <input type="text" class="form-control form-control-sm bg-light" id="nama" readonly autocomplete="off">
                     </div>
                 </div>
                 <div class="col-6">
+                    {{-- @livewire('user.set-hak-akses') --}}
+                </div>
+                <div class="col-12">
                     <div class="form-group">
                         <label class="text-sm">Hak Akses</label>
                         <div class="d-flex justify-items-start align-items center mt-1">
@@ -101,7 +109,7 @@
                             <i class="fas fa-save"></i>
                             <span class="ml-1">Simpan</span>
                         </button>
-                        <button type="button" class="btn btn-default btn-sm ml-2" id="batalsimpan">Batal</button>
+                        <button type="button" class="btn btn-default btn-sm ml-2" id="batalsimpan" wire:click="$emit('hardRefresh')">Batal</button>
                         <span class="text-sm ml-auto pr-2">Tampilkan:</span>
                         <div class="input-group input-group-sm" style="width: 4rem">
                             <select name="perpage" class="custom-control custom-select" wire:model.defer="perpage">
@@ -116,9 +124,9 @@
                         </div>
                         <span class="text-sm pl-2">per halaman</span>
                         <div class="ml-4 input-group input-group-sm" style="width: 20rem">
-                            <input type="search" class="form-control" wire:model.defer="cari" placeholder="Cari..." wire:keydown.enter.stop="$refresh" />
+                            <input type="search" class="form-control" wire:model.defer="cari" placeholder="Cari..." wire:keydown.enter.stop="searchUsers" />
                             <div class="input-group-append">
-                                <button type="button" wire:click="$refresh" class="btn btn-sm btn-default">
+                                <button type="button" wire:click="searchUsers" class="btn btn-sm btn-default">
                                     <i class="fas fa-sync-alt"></i>
                                     <span class="ml-1">Refresh</span>
                                 </button>

@@ -2,13 +2,12 @@
 
 namespace App\Models\Perawatan;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class RawatInap extends Pivot
 {
     protected $table = 'kamar_inap';
-
-    public $incrementing = false;
 
     public $timestamps = false;
 

@@ -39,13 +39,15 @@ class DaftarPasienRanap extends Component
 
     public function getDaftarPasienRanapProperty()
     {
-        return RegistrasiPasien::daftarPasienRanap()->paginate($this->perpage);
+        return RegistrasiPasien::daftarPasienRanap()
+            ->orderBy('no_rawat')
+            ->paginate($this->perpage);
     }
 
     public function render()
     {
         return view('livewire.perawatan.daftar-pasien-ranap')
-            ->extends('layouts.admin')
+            ->extends('layouts.admin', ['title' => 'Daftar Pasien Rawat Inap'])
             ->section('content');
     }
 }

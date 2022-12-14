@@ -17,14 +17,10 @@
 <body class="hold-transition sidebar-mini layout-fixed">
     <div class="wrapper">
         @include('layouts.partials.navbar')
-        @include('layouts.partials.sidebar', [
-            'sidebarMenu' => $sidebarMenu
-        ])
+        @include('layouts.partials.sidebar', compact('sidebarMenu'))
 
         <div class="content-wrapper">
-            @include('layouts.partials.header', [
-                'title' => $title ?? 'Dashboard',
-            ])
+            @include('layouts.partials.header', ['title' => $title ?? 'Dashboard'])
             <section class="content">
                 <div class="container-fluid">
                     @yield('content')
@@ -41,9 +37,8 @@
     <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
     <script src="{{ asset('js/adminlte.min.js') }}"></script>
-    @stack('js')
-    
     @livewireScripts
+    @stack('js')
 </body>
 
 </html>
