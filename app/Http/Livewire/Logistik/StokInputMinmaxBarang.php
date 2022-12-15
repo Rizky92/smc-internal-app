@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Logistik;
 use App\Models\Logistik\BarangNonMedis;
 use App\Models\Logistik\MinmaxStokBarangNonMedis;
 use App\Models\Logistik\SupplierNonMedis;
+use App\Support\Livewire\FlashComponent;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -14,6 +15,7 @@ use Vtiful\Kernel\Excel;
 class StokInputMinmaxBarang extends Component
 {
     use WithPagination;
+    use FlashComponent;
 
     public $cari;
 
@@ -87,6 +89,12 @@ class StokInputMinmaxBarang extends Component
 
     public function simpan(string $kodeBarang, int $stokMin = 0, int $stokMax = 0, $kodeSupplier)
     {
+        if (! auth()->user()->can('logistik.stok-minmax.update')) {
+            $this->flashError('Anda tidak memiliki izin untuk mengupdate barang');
+
+            return;
+        }
+
         $kodeSupplier = $kodeSupplier != '-' ? $kodeSupplier : null;
 
         MinmaxStokBarangNonMedis::updateOrCreate([
@@ -99,8 +107,7 @@ class StokInputMinmaxBarang extends Component
 
         $this->clearFilters();
 
-        session()->flash('saved.title', 'Sukses!');
-        session()->flash('saved.content', 'Data berhasil disimpan!');
+        $this->flashSuccess('Data berhasil disimpan!');
     }
 
     public function beginExcelExport()
