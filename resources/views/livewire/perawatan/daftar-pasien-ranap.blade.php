@@ -81,7 +81,7 @@
                         <input type="text" id="waktu_masuk" class="form-control form-control-sm bg-light" readonly>
                     </div>
                 </div>
-                <div class="col-6">
+                {{-- <div class="col-6">
                     <div class="d-flex justify-content-end align-items-end h-100 pb-3">
                         <button type="button" class="btn btn-sm btn-default">
                             <i class="fas fa-sync-alt"></i>
@@ -94,7 +94,7 @@
                             </button>
                         @endcan
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
         <div class="card-body border-top">
