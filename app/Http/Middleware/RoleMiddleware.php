@@ -23,7 +23,7 @@ class RoleMiddleware
             ? $role
             : explode('|', $role);
 
-        if (! $user->user()->hasAnyRole($roles)) {
+        if (! $user->hasAnyRole($roles)) {
             abort(404);
         }
 
