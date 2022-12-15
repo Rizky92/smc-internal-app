@@ -74,10 +74,10 @@
                         <th>Tgl. Pulang</th>
                         <th>Jam Pulang</th>
                         <th>Diagnosa Masuk</th>
-                        <th>ICD Diagnosa</th>
-                        <th>Diagnosa</th>
-                        <th>ICD Tindakan</th>
-                        <th>Tindakan</th>
+                        <th style="width: 30ch">ICD Diagnosa</th>
+                        <th style="width: 80ch">Diagnosa</th>
+                        <th style="width: 30ch">ICD Tindakan</th>
+                        <th style="width: 80ch">Tindakan</th>
                         <th>Lama Operasi</th>
                         <th>Rujukan Masuk</th>
                         <th>DPJP</th>

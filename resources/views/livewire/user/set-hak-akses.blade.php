@@ -8,11 +8,11 @@
                     dataModal = $('#hak-akses')
                 })
 
-                Livewire.on('setUser', console.log)
+                Livewire.on('setNrp', console.log)
             </script>
         @endpush
     @endonce
-    <button type="button" class="btn btn-default mb-3" data-toggle="modal" data-target="#hak-akses">
+    <button type="button" class="btn btn-sm btn-default mb-3" data-toggle="modal" data-target="#hak-akses">
         <i class="fas fa-info-circle"></i>
         <span class="ml-1">Set hak akses</span>
     </button>
@@ -26,7 +26,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-
+                    {{ $this->user->roles->toJson() }}
                 </div>
                 <div class="modal-footer justify-content-end">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Tutup</button>

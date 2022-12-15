@@ -11,11 +11,9 @@ class ManajemenUser extends Component
 {
     use WithPagination;
 
-    public $cari;
-
     public $perpage;
 
-    public $user;
+    public $cari;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -47,12 +45,15 @@ class ManajemenUser extends Component
 
     public function getUsersProperty()
     {
-        return User::denganPencarian($this->cari)->paginate($this->perpage);
+        return User::query()
+            ->with(['roles.permissions', 'permissions'])
+            ->denganPencarian($this->cari)
+            ->paginate($this->perpage);
     }
 
     public function getRolesProperty()
     {
-        return Role::pluck('name', 'id');
+        return Role::with('permissions')->get();
     }
 
     public function render()
@@ -62,11 +63,6 @@ class ManajemenUser extends Component
             ->section('content');
     }
 
-    public function setUser($nrp)
-    {
-        $this->user = User::findByNRP($nrp);
-    }
-
     public function searchUsers()
     {
         $this->page = 1;
@@ -74,11 +70,11 @@ class ManajemenUser extends Component
         $this->emit('$refresh');
     }
 
-    public function simpan($roles)
+    public function simpan($nrp, $roles)
     {
-        $this->user->syncRoles($roles);
+        $user = User::findByNRP($nrp);
 
-        $nrp = $this->user->user_id;
+        $user->syncRoles($roles);
 
         session()->flash('saved.content', "Hak akses untuk user {$nrp} berhasil diubah!");
         session()->flash('saved.type', 'success');

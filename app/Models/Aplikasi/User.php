@@ -45,13 +45,13 @@ class User extends Authenticatable
     /**
      * @return static
      */
-    public static function findByNRP(string $nrp)
+    public static function findByNRP(string $nrp, array $columns = ['*'])
     {
         if (empty($nrp)) return new static;
 
         return (new static)
             ->where(DB::raw('AES_DECRYPT(id_user, "nur")'), $nrp)
-            ->first();
+            ->first($columns);
     }
 
     public function scopeDenganPencarian(Builder $query, string $cari): Builder
