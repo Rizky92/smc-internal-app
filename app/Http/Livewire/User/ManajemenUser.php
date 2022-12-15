@@ -20,6 +20,7 @@ class ManajemenUser extends Component
     protected $listeners = [
         'beginExcelExport',
         'hardRefresh',
+        'throwFlash',
     ];
 
     protected function queryString()
@@ -70,14 +71,24 @@ class ManajemenUser extends Component
         $this->emit('$refresh');
     }
 
-    public function simpan($nrp, $roles)
+    public function simpan(string $nrp, array $roles, array $permissions)
     {
         $user = User::findByNRP($nrp);
 
-        $user->syncRoles($roles);
-
-        session()->flash('saved.content', "Hak akses untuk user {$nrp} berhasil diubah!");
-        session()->flash('saved.type', 'success');
+        if ($user->is(auth()->user())) {
+            $this->emit('throwFlash', [
+                'saved.content' => 'Tidak dapat mengubah hak akses untuk diri sendiri!',
+                'saved.type' => 'warning',
+            ]);
+        } else {   
+            $user->syncRoles($roles);
+            $user->syncPermissions($permissions);
+            
+            $this->emit('throwFlash', [
+                'saved.content' => "Hak akses untuk user {$nrp} berhasil diubah!",
+                'saved.type' => 'success',
+            ]);
+        }
     }
 
     public function hardRefresh()
@@ -90,5 +101,12 @@ class ManajemenUser extends Component
         $this->user = null;
 
         $this->emit('$refresh');
+    }
+
+    public function throwFlash(array $flash)
+    {
+        foreach ($flash as $key => $message) {
+            session()->flash($key, $message);
+        }
     }
 }

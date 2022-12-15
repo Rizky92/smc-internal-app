@@ -119,8 +119,15 @@ class ViewServiceProvider extends ServiceProvider
                 ],
                 [
                     'name' => 'Manajemen User',
-                    'url' => route('admin.users.manage'),
+                    'url' => route('admin.users.manajemen'),
                     'icon' => "fas fa-users",
+                    'type' => 'link',
+                    'hasAnyPermissions' => $user->hasRole('develop'),
+                ],
+                [
+                    'name' => 'Set Hak Akses',
+                    'url' => route('admin.users.hak-akses'),
+                    'icon' => "fas fa-key",
                     'type' => 'link',
                     'hasAnyPermissions' => $user->hasRole('develop'),
                 ],

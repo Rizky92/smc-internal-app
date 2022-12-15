@@ -12,6 +12,7 @@ use App\Http\Livewire\Logistik\StokInputMinmaxBarang;
 use App\Http\Livewire\Perawatan\DaftarPasienRanap;
 use App\Http\Livewire\RekamMedis\LaporanStatistikRekamMedis;
 use App\Http\Livewire\User\ManajemenUser;
+use App\Http\Livewire\User\SetHakAkses;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -93,11 +94,15 @@ Route::prefix('admin')
         Route::prefix('users')
             ->as('users.')
             ->group(function () {
-                Route::get('/', ManajemenUser::class)
+                Route::get('/manajemen', ManajemenUser::class)
                     ->middleware([
                         'can:user.manage',
                         'can:user.update',
                     ])
-                    ->name('manage');
+                    ->name('manajemen');
+
+                Route::get('/hak-akses', SetHakAkses::class)
+                    ->middleware('can:user.hak-akses')
+                    ->name('hak-akses');
             });
     });
