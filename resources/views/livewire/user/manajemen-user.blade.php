@@ -224,7 +224,7 @@
                     @foreach ($this->users as $user)
                         <tr style="position: relative">
                             <td>
-                                {{ $user->user_id }}
+                                {{ $user->nip }}
                                 <a href="#" style="display: inline; position: absolute; left: 0; right: 0; top: 0; bottom: 0" data-nrp="{{ $user->user_id }}" data-nama="{{ $user->nama }}" data-role-ids="{{ $user->roles->pluck('id')->join(',') }}" data-permission-ids="{{ $user->getAllPermissions()->pluck('id')->join(',') }}" onclick="loadData(this.dataset)"></a>
                             </td>
                             <td>{{ $user->nama }}</td>

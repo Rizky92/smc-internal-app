@@ -5,7 +5,7 @@ namespace App\Http\Livewire\Logistik;
 use App\Models\Logistik\BarangNonMedis;
 use App\Models\Logistik\MinmaxStokBarangNonMedis;
 use App\Models\Logistik\SupplierNonMedis;
-use App\Support\Livewire\FlashComponent;
+use App\Support\Traits\Livewire\FlashComponent;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;

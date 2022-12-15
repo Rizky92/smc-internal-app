@@ -2,6 +2,8 @@
 
 namespace App\Models\Aplikasi;
 
+use App\Support\Searchable\Searchable;
+use App\Support\Searchable\SearchContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -10,7 +12,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use Notifiable, HasRoles;
+    use Notifiable, HasRoles, Searchable;
 
     protected $primaryKey = 'id_user';
 
@@ -30,15 +32,24 @@ class User extends Authenticatable
         'roles',
     ];
 
+    protected function searchColumns(): array
+    {
+        return [
+            'petugas.nip',
+            'petugas.nama',
+            'jabatan.nm_jbtn',
+        ];
+    }
+
     protected static function booted()
     {
         parent::booted();
 
         static::addGlobalScope(function (Builder $query) {
-            return $query->selectRaw('AES_DECRYPT(id_user, "nur") user_id, petugas.nama, jabatan.nm_jbtn, user.*')
+            return $query->selectRaw('petugas.nip, petugas.nama, jabatan.nm_jbtn, user.id_user, user.password')
                 ->join('petugas', DB::raw('AES_DECRYPT(id_user, "nur")'), '=', 'petugas.nip')
                 ->join('jabatan', 'petugas.kd_jbtn', '=', 'jabatan.kd_jbtn')
-                ->orderBy(DB::raw('AES_DECRYPT(id_user, "nur")'));
+                ->orderBy('petugas.nip');
         });
     }
     
@@ -52,12 +63,5 @@ class User extends Authenticatable
         return (new static)
             ->where(DB::raw('AES_DECRYPT(id_user, "nur")'), $nrp)
             ->first($columns);
-    }
-
-    public function scopeDenganPencarian(Builder $query, string $cari): Builder
-    {
-        return $query->where(DB::raw('AES_DECRYPT(id_user, "nur")'), 'LIKE', "%{$cari}%")
-            ->orWhere('petugas.nama', 'LIKE', "%{$cari}%")
-            ->orWhere('jabatan.nm_jbtn', 'LIKE', "%{$cari}%");
     }
 }
