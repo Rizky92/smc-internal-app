@@ -111,7 +111,7 @@
                                         <ul class="form-group">
                                             @foreach ($role->permissions as $permission)
                                                 <li class="custom-control custom-checkbox">
-                                                    <input class="custom-control-input custom-control-input-secondary" type="checkbox" id="permission-{{ $permission->id }}" value="{{ $permission->id }}" name="permissions">
+                                                    <input class="custom-control-input custom-control-input-secondary" type="checkbox" id="permission-{{ $permission->id }}" value="{{ $permission->id }}" name="permissions" data-role-id="{{ $role->id }}">
                                                     <label for="permission-{{ $permission->id }}" class="custom-control-label font-weight-normal">{{ $permission->name }}</label>
                                                 </li>
                                             @endforeach
