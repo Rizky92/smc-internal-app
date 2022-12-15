@@ -91,11 +91,11 @@
         @endpush
     @endonce
 
-    <div class="modal fade" id="permission">
+    <div class="modal fade" id="set-permission">
         <div class="modal-dialog modal-dialog-scrollable modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Set permission per role</h4>
+                    <h4 class="modal-title">Set perizinan per hak akses</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -107,7 +107,7 @@
                                 @foreach ($this->permissions as $permission)
                                     <li class="custom-control custom-checkbox">
                                         <input class="custom-control-input" type="checkbox" id="permission-{{ $permission->id }}" value="{{ $permission->id }}" name="permissions">
-                                        <label for="permission-{{ $permission->id }}" class="custom-control-label">{{ Str::title($permission->name) }}</label>
+                                        <label for="permission-{{ $permission->id }}" class="custom-control-label font-weight-normal">{{ $permission->name }}</label>
                                     </li>
                                 @endforeach
                             </ul>
@@ -161,25 +161,28 @@
                 <thead>
                     <tr>
                         <th>Nama</th>
-                        <th>Permission tersedia</th>
+                        <th>Perizinan yang diberikan</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($this->roles as $role)
                         <tr style="position: relative">
                             <td>
-                                {{ $role->name }}
+                                {{ Str::upper($role->name) }}
                                 <a href="#" style="display: inline; position: absolute; left: 0; right: 0; top: 0; bottom: 0;"
                                     data-id="{{ $role->id }}"
                                     data-permission-ids="{{ $role->permissions->pluck('id')->join(',') }}"
                                     data-toggle="modal"
-                                    data-target="#hak-akses"
-                                    onclick="loadData(this.dataset)"></a>
+                                    data-target="#set-permission"
+                                    onclick="loadData(this.dataset)"
+                                ></a>
                             </td>
                             <td>
                                 <p>
+                                    @if ($role->name === config('permission.superadmin_name')) * @endif
                                     @foreach ($role->permissions as $permission)
-                                        {{ $permission->name }} <br>
+                                        @php($br = $loop->last ? '' : '<br>')
+                                        {{ $permission->name }} {!! $br !!}
                                     @endforeach
                                 </p>
                             </td>

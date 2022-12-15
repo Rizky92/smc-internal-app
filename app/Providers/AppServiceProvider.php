@@ -35,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         Gate::before(function (User $user) {
-            return $user->hasRole('develop') ? true : null;
+            return $user->hasRole(config('permission.superadmin_name')) ? true : null;
         });
     }
 }

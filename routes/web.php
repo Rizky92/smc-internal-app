@@ -93,16 +93,12 @@ Route::prefix('admin')
 
         Route::prefix('users')
             ->as('users.')
+            ->middleware('role:' . config('permission.superadmin_name'))
             ->group(function () {
                 Route::get('/manajemen', ManajemenUser::class)
-                    ->middleware([
-                        'can:user.manage',
-                        'can:user.update',
-                    ])
                     ->name('manajemen');
 
                 Route::get('/hak-akses', SetHakAkses::class)
-                    ->middleware('can:user.hak-akses')
                     ->name('hak-akses');
             });
     });

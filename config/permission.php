@@ -158,4 +158,6 @@ return [
 
         'store' => 'default',
     ],
+
+    'superadmin_name' => env('ROLE_SUPERADMIN_NAME'),
 ];

@@ -122,14 +122,14 @@ class ViewServiceProvider extends ServiceProvider
                     'url' => route('admin.users.manajemen'),
                     'icon' => "fas fa-users",
                     'type' => 'link',
-                    'hasAnyPermissions' => $user->hasRole('develop'),
+                    'hasAnyPermissions' => $user->hasRole(config('permission.superadmin_name')),
                 ],
                 [
-                    'name' => 'Set Hak Akses',
+                    'name' => 'Pengaturan Hak Akses',
                     'url' => route('admin.users.hak-akses'),
                     'icon' => "fas fa-key",
                     'type' => 'link',
-                    'hasAnyPermissions' => $user->hasRole('develop'),
+                    'hasAnyPermissions' => $user->hasRole(config('permission.superadmin_name')),
                 ],
             ]);
 
