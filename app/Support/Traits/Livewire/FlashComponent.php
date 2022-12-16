@@ -14,7 +14,7 @@ trait FlashComponent
     /**
      * Emit flash event to component.
      * 
-     * @param  array<string, string> $flash
+     * @param  array<string,string> $flash
      * @return void
      */
     public function flash(array $flash)

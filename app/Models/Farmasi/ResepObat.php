@@ -20,10 +20,17 @@ class ResepObat extends Model
 
     public $timestamps = false;
 
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  string $periodeAwal
+     * @param  string $periodeAkhir
+     * 
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
     public function scopePenggunaanObatPerDokter(
         Builder $query,
-        string $dateMin = '',
-        string $dateMax = '',
+        string $periodeAwal = '',
+        string $periodeAkhir = '',
         string $cari = ''
     ): Builder {
         return $query
@@ -42,15 +49,16 @@ class ResepObat extends Model
             ->leftJoin('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
             ->leftJoin('resep_dokter', 'resep_obat.no_resep', '=', 'resep_dokter.no_resep')
             ->leftJoin('databarang', 'resep_dokter.kode_brng', '=', 'databarang.kode_brng')
-            ->when(!empty($dateMin) || !empty($dateMax), function (Builder $query) use ($dateMin, $dateMax) {
-                return $query->whereBetween('resep_obat.tgl_perawatan', [$dateMin, $dateMax]);
+            ->when(!empty($periodeAwal) || !empty($periodeAkhir), function (Builder $query) use ($periodeAwal, $periodeAkhir) {
+                return $query->whereBetween('resep_obat.tgl_perawatan', [$periodeAwal, $periodeAkhir]);
             })
             ->where('reg_periksa.status_bayar', 'Sudah Bayar')
             ->where('reg_periksa.stts', '!=', 'Batal')
             ->whereNotNull('resep_dokter.kode_brng')
             ->when(!empty($cari), function (Builder $query) use ($cari) {
                 return $query->where(function (Builder $query) use ($cari) {
-                    return $query->where('resep_obat.no_resep', 'LIKE', "%{$cari}%")
+                    return $query
+                        ->where('resep_obat.no_resep', 'LIKE', "%{$cari}%")
                         ->orWhere('databarang.nama_brng', 'LIKE', "%{$cari}%")
                         ->orWhere('dokter.nm_dokter', 'LIKE', "%{$cari}%")
                         ->orWhere('poliklinik.nm_poli', 'LIKE', "%{$cari}%")
@@ -60,7 +68,34 @@ class ResepObat extends Model
             ->orderBy('resep_obat.no_resep');
     }
 
-    public function scopeKunjunganPasien(Builder $query, string $poli = ''): Builder
+    public function scopeKunjunganResepPasien(Builder $query, string $jenisPerawatan = ''): Builder
+    {
+        return $query->selectRaw("
+            reg_periksa.no_rawat,
+            resep_obat.no_resep,
+            pasien.nm_pasien,
+            resep_obat.tgl_perawatan,
+            reg_periksa.status_lanjut,
+            round(sum(resep_dokter.jml * databarang.h_beli)) total
+        ")
+            ->leftJoin('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->leftJoin('resep_dokter', 'resep_obat.no_resep', '=', 'resep_dokter.no_resep')
+            ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->leftJoin('databarang', 'resep_dokter.kode_brng', '=', 'databarang.kode_brng')
+            ->where('reg_periksa.status_bayar', 'Sudah Bayar')
+            ->when(!empty($jenisPerawatan), function (Builder $query) use ($jenisPerawatan) {
+                return $query->where('reg_periksa.status_lanjut', $jenisPerawatan);
+            })
+            ->groupBy([
+                'reg_periksa.no_rawat',
+                'resep_obat.no_resep',
+                'pasien.nm_pasien',
+                'resep_obat.tgl_perawatan',
+                'reg_periksa.status_lanjut',
+            ]);
+    }
+
+    public function scopeJumlahKunjunganPasien(Builder $query, string $poli = ''): Builder
     {
         return $query->selectRaw("
             COUNT(resep_obat.no_resep) jumlah,
@@ -91,7 +126,7 @@ class ResepObat extends Model
             ->groupByRaw('DATE_FORMAT(resep_obat.tgl_perawatan, "%m-%Y")');
     }
 
-    public function scopePendapatanObat(Builder $query, string $poli = ''): Builder
+    public function scopeJumlahPendapatanObat(Builder $query, string $poli = ''): Builder
     {
         return $query->selectRaw("
             CEIL(SUM(resep_dokter.jml * databarang.h_beli)) jumlah,
@@ -125,7 +160,7 @@ class ResepObat extends Model
             ->groupByRaw('DATE_FORMAT(resep_obat.tgl_perawatan, "%m-%Y")');
     }
 
-    public function scopePendapatanAlkes(Builder $query): Builder
+    public function scopeJumlahPendapatanAlkes(Builder $query): Builder
     {
         return $query->selectRaw("
             CEIL(SUM(resep_dokter.jml * databarang.h_beli)) jumlah,
@@ -148,7 +183,7 @@ class ResepObat extends Model
 
     public static function kunjunganPasienRalan(): array
     {
-        return (new static)->kunjunganPasien('Ralan')->get()
+        return (new static)->jumlahKunjunganPasien('ralan')->get()
             ->map(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
             })->flatten(1)->pad(-12, 0)->toArray();
@@ -156,7 +191,7 @@ class ResepObat extends Model
 
     public static function kunjunganPasienRanap(): array
     {
-        return (new static)->kunjunganPasien('Ranap')->get()
+        return (new static)->jumlahKunjunganPasien('ranap')->get()
             ->map(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
             })->flatten(1)->pad(-12, 0)->toArray();
@@ -164,7 +199,7 @@ class ResepObat extends Model
 
     public static function kunjunganPasienIGD(): array
     {
-        return (new static)->kunjunganPasien('IGD')->get()
+        return (new static)->jumlahKunjunganPasien('IGD')->get()
             ->map(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
             })->flatten(1)->pad(-12, 0)->toArray();
@@ -172,7 +207,7 @@ class ResepObat extends Model
 
     public static function kunjunganPasienWalkIn(): array
     {
-        return (new static)->kunjunganPasien('Walkin')->get()
+        return (new static)->jumlahKunjunganPasien('walkin')->get()
             ->map(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
             })->flatten(1)->pad(-12, 0)->toArray();
@@ -180,7 +215,7 @@ class ResepObat extends Model
 
     public static function pendapatanObatRalan(): array
     {
-        return (new static)->pendapatanObat('Ralan')->get()
+        return (new static)->jumlahPendapatanObat('ralan')->get()
             ->map(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
             })->flatten(1)->pad(-12, 0)->toArray();
@@ -188,7 +223,7 @@ class ResepObat extends Model
 
     public static function pendapatanObatRanap(): array
     {
-        return (new static)->pendapatanObat('Ranap')->get()
+        return (new static)->jumlahPendapatanObat('ranap')->get()
             ->map(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
             })->flatten(1)->pad(-12, 0)->toArray();
@@ -196,7 +231,7 @@ class ResepObat extends Model
 
     public static function pendapatanObatIGD(): array
     {
-        return (new static)->pendapatanObat('Igd')->get()
+        return (new static)->jumlahPendapatanObat('IGD')->get()
             ->map(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
             })->flatten(1)->pad(-12, 0)->toArray();
@@ -204,7 +239,7 @@ class ResepObat extends Model
 
     public static function pendapatanObatWalkIn(): array
     {
-        return (new static)->pendapatanObat('Walkin')->get()
+        return (new static)->jumlahPendapatanObat('walkin')->get()
             ->map(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
             })->flatten(1)->pad(-12, 0)->toArray();
@@ -212,7 +247,7 @@ class ResepObat extends Model
 
     public static function pendapatanAlkesFarmasiDanUnit(): array
     {
-        return (new static)->pendapatanAlkes()->get()
+        return (new static)->jumlahPendapatanAlkes()->get()
             ->map(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
             })->flatten(1)->pad(-12, 0)->toArray();

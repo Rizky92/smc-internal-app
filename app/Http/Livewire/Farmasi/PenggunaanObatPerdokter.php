@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Farmasi;
 
 use App\Models\Farmasi\ResepObat;
+use App\Support\Livewire\SearchData;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -12,14 +13,18 @@ use Vtiful\Kernel\Excel;
 
 class PenggunaanObatPerdokter extends Component
 {
-    use WithPagination;
+    use WithPagination, SearchData;
 
+    /** @var string $periodeAwal */
     public $periodeAwal;
 
+    /** @var string $periodeAkhir */
     public $periodeAkhir;
 
+    /** @var string $cari */
     public $cari;
 
+    /** @var int $periodeAwal */
     public $perpage;
 
     protected $paginationTheme = 'bootstrap';
@@ -30,7 +35,7 @@ class PenggunaanObatPerdokter extends Component
         'clearFiltersAndHardRefresh',
     ];
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
             'cari' => [
@@ -62,7 +67,8 @@ class PenggunaanObatPerdokter extends Component
 
     public function getObatPerDokterProperty()
     {
-        return ResepObat::penggunaanObatPerDokter($this->periodeAwal, $this->periodeAkhir, Str::lower($this->cari))
+        return ResepObat::query()
+            ->penggunaanObatPerDokter($this->periodeAwal, $this->periodeAkhir, Str::lower($this->cari))
             ->paginate($this->perpage);
     }
 

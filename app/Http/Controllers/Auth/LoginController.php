@@ -21,7 +21,7 @@ class LoginController
             'pass' => ['required', 'string', 'max:20'],
         ], $request->only(['user', 'pass']));
 
-        $user = User::selectRaw('*')
+        $user = User::query()
             ->whereRaw('AES_DECRYPT(id_user, "nur") = ?', $request->get('user'))
             ->whereRaw('AES_DECRYPT(password, "windi") = ?', $request->get('pass'))
             ->where('status', '1')

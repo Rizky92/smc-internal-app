@@ -3,43 +3,42 @@
 namespace App\Support\Searchable;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 use LogicException;
 
 trait Searchable
 {
-    /**
-     * Array of columns to search within.
-     * 
-     * @var array $searchColumns
-     */
-    protected $searchColumns = [];
+    /** @var array<int,string> $searchColumns */
+    protected $searchColumns;
 
     /**
-     * Local scope of performing search in columns within model.
-     * 
      * @param  \Illuminate\Database\Eloquent\Builder $query
      * @param  string $search
+     * @param  array<int,string> $columns
      * 
      * @return \Illuminate\Database\Eloquent\Builder
+     * @throws \LogicException
      */
-    public function scopeBeginSearch(Builder $query, string $search): Builder
+    public function scopeSearch(Builder $query, string $search, $columns = []): Builder
     {
-        $columns = $this->searchColumns;
+        if (is_array($this->searchColumns)) {
+            $columns = array_merge($columns, $this->searchColumns);
+        }
 
         if (method_exists($this, 'searchColumns')) {
-            $columns = array_merge($this->searchColumns());
+            $columns = array_merge($columns, $this->searchColumns());
         }
 
         if (empty($columns)) {
             throw new LogicException("No columns are defined to perform search.");
         }
 
-        $query = $query->where($columns[0], 'LIKE', "%{$search}%");
+        $search = Str::lower($search);
 
-        array_shift($columns);
+        $query->where(array_shift($columns), 'LIKE', "%{$search}%");
 
         foreach ($columns as $column) {
-            $query = $query->orWhere($column, 'LIKE', "%{$search}%");
+            $query->orWhere($column, 'LIKE', "%{$search}%");
         }
 
         return $query;

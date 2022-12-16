@@ -3,7 +3,6 @@
 namespace App\Models\Aplikasi;
 
 use App\Support\Searchable\Searchable;
-use App\Support\Searchable\SearchContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -32,6 +31,9 @@ class User extends Authenticatable
         'roles',
     ];
 
+    /**
+     * @return array<int,string>
+     */
     protected function searchColumns(): array
     {
         return [
@@ -61,7 +63,7 @@ class User extends Authenticatable
         if (empty($nrp)) return new static;
 
         return (new static)
-            ->where(DB::raw('AES_DECRYPT(id_user, "nur")'), $nrp)
+            ->where('petugas.nip', $nrp)
             ->first($columns);
     }
 }

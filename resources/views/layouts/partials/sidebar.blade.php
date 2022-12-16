@@ -13,7 +13,7 @@
                 <div class="info">
                     <a href="#" class="d-block" style="line-height: 1.1">
                         <span>{{ auth()->user()->nama }}</span> <br>
-                        <span class="text-xs">{{ auth()->user()->user_id }}</span>
+                        <span class="text-xs">{{ auth()->user()->nip }}</span>
                     </a>
                 </div>
             </div>
