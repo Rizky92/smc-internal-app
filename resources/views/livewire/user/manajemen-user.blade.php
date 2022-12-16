@@ -1,7 +1,7 @@
 <div>
     @if (session()->has('saved.content'))
         <div class="alert alert-{{ session('saved.type') }} alert-dismissible fade show">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times</button>
+            <button class="close" data-dismiss="alert" type="button" aria-hidden="true">&times</button>
             <p>
                 {{ session('saved.content') }}
             </p>
@@ -22,7 +22,7 @@
                     inputRoles = $('input[name=roles]')
                     inputPermissions = $('input[name=permissions]')
 
-                    Livewire.on('throwFlash', () => {
+                    Livewire.on('flash', () => {
                         $('#hak-akses').modal('hide')
                     })
                 })
@@ -119,7 +119,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Setup hak akses untuk user</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button class="close" data-dismiss="modal" type="button" aria-label="Close">
                         <span aria-hidden="true">&times</span>
                     </button>
                 </div>
@@ -129,13 +129,13 @@
                             <ul class="form-group" id="role_permissions">
                                 @foreach ($this->roles as $role)
                                     <li class="custom-control custom-checkbox">
-                                        <input class="custom-control-input" type=checkbox id="role-{{ $role->id }}" value="{{ $role->id }}" name="roles">
-                                        <label for="role-{{ $role->id }}" class="custom-control-label">{{ Str::of($role->name)->upper() }}</label>
+                                        <input class="custom-control-input" id="role-{{ $role->id }}" name="roles" type=checkbox value="{{ $role->id }}">
+                                        <label class="custom-control-label" for="role-{{ $role->id }}">{{ Str::of($role->name)->upper() }}</label>
                                         <ul class="form-group">
                                             @foreach ($role->permissions as $permission)
                                                 <li class="custom-control custom-checkbox">
-                                                    <input class="custom-control-input custom-control-input-secondary" type=checkbox id="permission-{{ $permission->id }}" value="{{ $permission->id }}" name="permissions" data-role-id="{{ $role->id }}">
-                                                    <label for="permission-{{ $permission->id }}" class="custom-control-label font-weight-normal">{{ $permission->name }}</label>
+                                                    <input class="custom-control-input custom-control-input-secondary" id="permission-{{ $permission->id }}" name="permissions" data-role-id="{{ $role->id }}" type=checkbox value="{{ $permission->id }}">
+                                                    <label class="custom-control-label font-weight-normal" for="permission-{{ $permission->id }}">{{ $permission->name }}</label>
                                                 </li>
                                             @endforeach
                                         </ul>
@@ -146,8 +146,8 @@
                     </div>
                 </div>
                 <div class="modal-footer justify-content-end">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" id="batalsimpan">Batal</button>
-                    <button type="button" class="btn btn-primary" id="simpandata">
+                    <button class="btn btn-default" id="batalsimpan" data-dismiss="modal" type="button">Batal</button>
+                    <button class="btn btn-primary" id="simpandata" type="button">
                         <i class="fas fa-save"></i>
                         <span class="ml-1">Simpan</span>
                     </button>
@@ -161,19 +161,19 @@
             <div class="row" wire:ignore>
                 <div class="col-2">
                     <div class="form-group">
-                        <label for="user" class="text-sm">NRP</label>
-                        <input type="text" class="form-control form-control-sm bg-light" id="user" readonly autocomplete="off">
+                        <label class="text-sm" for="user">NRP</label>
+                        <input class="form-control form-control-sm bg-light" id="user" type="text" readonly autocomplete="off">
                     </div>
                 </div>
                 <div class="col-4">
                     <div class="form-group">
-                        <label for="nama" class="text-sm">Nama</label>
-                        <input type="text" class="form-control form-control-sm bg-light" id="nama" readonly autocomplete="off">
+                        <label class="text-sm" for="nama">Nama</label>
+                        <input class="form-control form-control-sm bg-light" id="nama" type="text" readonly autocomplete="off">
                     </div>
                 </div>
                 <div class="col-6">
                     <div class="d-flex align-items-end h-100">
-                        <button type="button" class="btn btn-sm btn-default mb-3" data-toggle="modal" data-target="#hak-akses">
+                        <button class="btn btn-sm btn-default mb-3" data-toggle="modal" data-target="#hak-akses" type="button">
                             <i class="fas fa-info-circle"></i>
                             <span class="ml-1">Set hak akses</span>
                         </button>
@@ -185,7 +185,7 @@
                     <div class="d-flex justify-content-start align-items-center">
                         <span class="text-sm pr-2">Tampilkan:</span>
                         <div class="input-group input-group-sm" style="width: 4rem">
-                            <select name="perpage" class="custom-control custom-select" wire:model.defer="perpage">
+                            <select class="custom-control custom-select" name="perpage" wire:model.defer="perpage">
                                 <option value="10">10</option>
                                 <option value="25">25</option>
                                 <option value="50">50</option>
@@ -197,9 +197,9 @@
                         </div>
                         <span class="text-sm pl-2">per halaman</span>
                         <div class="ml-auto input-group input-group-sm" style="width: 20rem">
-                            <input type="search" class="form-control" wire:model.defer="cari" placeholder="Cari..." wire:keydown.enter.stop="searchUsers" />
+                            <input class="form-control" type="search" wire:model.defer="cari" placeholder="Cari..." wire:keydown.enter.stop="searchUsers" />
                             <div class="input-group-append">
-                                <button type="button" wire:click="searchUsers" class="btn btn-sm btn-default">
+                                <button class="btn btn-sm btn-default" type="button" wire:click="searchUsers">
                                     <i class="fas fa-sync-alt"></i>
                                     <span class="ml-1">Refresh</span>
                                 </button>
@@ -210,7 +210,7 @@
             </div>
         </div>
         <div class="card-body table-responsive p-0 border-top border-bottom">
-            <table id="table_index" class="table table-hover table-striped table-sm text-sm">
+            <table class="table table-hover table-striped table-sm text-sm" id="table_index">
                 <thead>
                     <tr>
                         <th>NRP</th>
@@ -225,7 +225,7 @@
                         <tr style="position: relative">
                             <td>
                                 {{ $user->nip }}
-                                <a href="#" style="display: inline; position: absolute; left: 0; right: 0; top: 0; bottom: 0" data-nrp="{{ $user->user_id }}" data-nama="{{ $user->nama }}" data-role-ids="{{ $user->roles->pluck('id')->join(',') }}" data-permission-ids="{{ $user->getAllPermissions()->pluck('id')->join(',') }}" onclick="loadData(this.dataset)"></a>
+                                <a data-nrp="{{ $user->user_id }}" data-nama="{{ $user->nama }}" data-role-ids="{{ $user->roles->pluck('id')->join(',') }}" data-permission-ids="{{ $user->getAllPermissions()->pluck('id')->join(',') }}" href="#" style="display: inline; position: absolute; left: 0; right: 0; top: 0; bottom: 0" onclick="loadData(this.dataset)"></a>
                             </td>
                             <td>{{ $user->nama }}</td>
                             <td>{{ $user->nm_jbtn }}</td>

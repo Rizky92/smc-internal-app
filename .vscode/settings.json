@@ -111,6 +111,5 @@
   "LaravelExtraIntellisense.phpCommand": "/opt/lampp/bin/php -r \"{code}\"",
   "intelephense.environment.phpVersion": "7.4.33",
   "php.debug.executablePath": "/opt/lampp/bin/php",
-  "editor.fontLigatures": true,
-  "editor.fontFamily": "'Jetbrains Mono'"
+  "editor.fontLigatures": true
 }
