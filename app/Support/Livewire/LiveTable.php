@@ -14,13 +14,6 @@ trait LiveTable
 
     protected $paginationTheme = 'bootstrap';
 
-    public function initializeLiveTable()
-    {
-        $this->listeners = array_merge($this->listeners, [
-            'flash',
-        ]);
-    }
-
     public function searchData()
     {
         if (method_exists($this, 'gotoPage')) {
