@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Livewire\Farmasi\KunjunganResepPasien;
 use App\Http\Livewire\Farmasi\LaporanProduksiTahunan;
 use App\Http\Livewire\Farmasi\PenggunaanObatPerdokter;
 use App\Http\Livewire\Farmasi\StokDaruratFarmasi;
@@ -66,6 +67,10 @@ Route::prefix('admin')
                 Route::get('laporan-tahunan', LaporanProduksiTahunan::class)
                     ->middleware('can:farmasi.laporan-tahunan.read')
                     ->name('laporan-tahunan');
+
+                Route::get('kunjungan-resep', KunjunganResepPasien::class)
+                    ->middleware('can:farmasi.kunjungan-resep.read')
+                    ->name('kunjungan-resep');
             });
 
         Route::prefix('rekam-medis')

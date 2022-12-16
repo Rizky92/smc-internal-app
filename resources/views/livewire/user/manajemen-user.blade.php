@@ -197,9 +197,9 @@
                         </div>
                         <span class="text-sm pl-2">per halaman</span>
                         <div class="ml-auto input-group input-group-sm" style="width: 20rem">
-                            <input type="search" class="form-control" wire:model.defer="cari" placeholder="Cari..." wire:keydown.enter.stop="searchUsers" />
+                            <input type="search" class="form-control" wire:model.defer="cari" placeholder="Cari..." wire:keydown.enter.stop="searchData" />
                             <div class="input-group-append">
-                                <button type="button" wire:click="searchUsers" class="btn btn-sm btn-default">
+                                <button type="button" wire:click="searchData" class="btn btn-sm btn-default">
                                     <i class="fas fa-sync-alt"></i>
                                     <span class="ml-1">Refresh</span>
                                 </button>
@@ -224,8 +224,8 @@
                     @foreach ($this->users as $user)
                         <tr style="position: relative">
                             <td>
-                                {{ $user->user_id }}
-                                <a href="#" style="display: inline; position: absolute; left: 0; right: 0; top: 0; bottom: 0" data-nrp="{{ $user->user_id }}" data-nama="{{ $user->nama }}" data-role-ids="{{ $user->roles->pluck('id')->join(',') }}" data-permission-ids="{{ $user->getAllPermissions()->pluck('id')->join(',') }}" onclick="loadData(this.dataset)"></a>
+                                {{ $user->nip }}
+                                <a href="#" style="display: inline; position: absolute; left: 0; right: 0; top: 0; bottom: 0" data-nrp="{{ $user->nip }}" data-nama="{{ $user->nama }}" data-role-ids="{{ $user->roles->pluck('id')->join(',') }}" data-permission-ids="{{ $user->getAllPermissions()->pluck('id')->join(',') }}" onclick="loadData(this.dataset)"></a>
                             </td>
                             <td>{{ $user->nama }}</td>
                             <td>{{ $user->nm_jbtn }}</td>

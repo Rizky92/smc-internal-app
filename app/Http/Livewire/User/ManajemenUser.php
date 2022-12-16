@@ -4,15 +4,19 @@ namespace App\Http\Livewire\User;
 
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
+use App\Support\Livewire\FlashComponent;
+use App\Support\Livewire\SearchData;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class ManajemenUser extends Component
 {
-    use WithPagination;
+    use WithPagination, FlashComponent, SearchData;
 
+    /** @var int $perpage */
     public $perpage;
 
+    /** @var string $cari */
     public $cari;
 
     protected $paginationTheme = 'bootstrap';
@@ -20,10 +24,9 @@ class ManajemenUser extends Component
     protected $listeners = [
         'beginExcelExport',
         'hardRefresh',
-        'throwFlash',
     ];
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
             'cari' => [
@@ -48,7 +51,7 @@ class ManajemenUser extends Component
     {
         return User::query()
             ->with(['roles.permissions', 'permissions'])
-            ->denganPencarian($this->cari)
+            ->search($this->cari)
             ->paginate($this->perpage);
     }
 
@@ -64,31 +67,20 @@ class ManajemenUser extends Component
             ->section('content');
     }
 
-    public function searchUsers()
-    {
-        $this->page = 1;
-
-        $this->emit('$refresh');
-    }
-
     public function simpan(string $nrp, array $roles, array $permissions)
     {
         $user = User::findByNRP($nrp);
 
         if ($user->is(auth()->user())) {
-            $this->emit('throwFlash', [
-                'saved.content' => 'Tidak dapat mengubah hak akses untuk diri sendiri!',
-                'saved.type' => 'warning',
-            ]);
-        } else {   
-            $user->syncRoles($roles);
-            $user->syncPermissions($permissions);
-            
-            $this->emit('throwFlash', [
-                'saved.content' => "Hak akses untuk user {$nrp} berhasil diubah!",
-                'saved.type' => 'success',
-            ]);
+            $this->flashError('Tidak dapat mengubah hak akses untuk diri sendiri!');
+
+            return;
         }
+        
+        $user->syncRoles($roles);
+        $user->syncPermissions($permissions);
+
+        $this->flashSuccess("Hak akses untuk user {$nrp} berhasil diubah!");
     }
 
     public function hardRefresh()
@@ -101,12 +93,5 @@ class ManajemenUser extends Component
         $this->user = null;
 
         $this->emit('$refresh');
-    }
-
-    public function throwFlash(array $flash)
-    {
-        foreach ($flash as $key => $message) {
-            session()->flash($key, $message);
-        }
     }
 }

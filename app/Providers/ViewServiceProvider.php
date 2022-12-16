@@ -54,6 +54,7 @@ class ViewServiceProvider extends ServiceProvider
                         'farmasi.darurat-stok.read',
                         'farmasi.penggunaan-obat-perdokter.read',
                         'farmasi.laporan-tahunan.read',
+                        'farmasi.kunjungan-resep.read',
                     ]),
                     'items' => [
                         [
@@ -67,6 +68,12 @@ class ViewServiceProvider extends ServiceProvider
                             'icon' => 'far fa-newspaper',
                             'url' => route('admin.farmasi.obat-perdokter'),
                             'hasAnyPermissions' => $user->can('farmasi.penggunaan-obat-perdokter.read'),
+                        ],
+                        [
+                            'name' => 'Kunjungan Resep',
+                            'icon' => 'far fa-newspaper',
+                            'url' => route('admin.farmasi.kunjungan-resep'),
+                            'hasAnyPermissions' => $user->can('farmasi.kunjungan-resep.read'),
                         ],
                         [
                             'name' => 'Laporan Tahunan',
@@ -96,7 +103,6 @@ class ViewServiceProvider extends ServiceProvider
                     'type' => 'dropdown',
                     'hasAnyPermissions' => $user->can([
                         'logistik.stok-minmax.read',
-                        'logistik.stok-minmax.update',
                         'logistik.darurat-stok.read',
                     ]),
                     'items' => [
@@ -104,10 +110,7 @@ class ViewServiceProvider extends ServiceProvider
                             'name' => 'Input stok min max',
                             'icon' => 'fas fa-pencil-alt',
                             'url' => route('admin.logistik.minmax'),
-                            'hasAnyPermissions' => $user->can([
-                                'logistik.stok-minmax.read',
-                                'logistik.stok-minmax.update',
-                            ]),
+                            'hasAnyPermissions' => $user->can('logistik.stok-minmax.read'),
                         ],
                         [
                             'name' => 'Laporan Darurat Stok',

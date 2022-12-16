@@ -58,6 +58,12 @@ class StokDaruratFarmasi extends Component
             ->section('content');
     }
 
+    public function searchData()
+    {
+        $this->gotoPage(1);
+
+        $this->emit('$refresh');
+    }
 
     public function exportToExcel()
     {
