@@ -24,6 +24,11 @@ class KunjunganResepPasien extends Component
         return ResepObat::kunjunganResepPasien('ralan')->paginate($this->perpage);
     }
 
+    public function getKunjunganResepPasienRanapProperty()
+    {
+        return ResepObat::kunjunganResepPasien('ranap')->paginate($this->perpage);
+    }
+
     public function render()
     {
         return view('livewire.farmasi.kunjungan-resep-pasien')
