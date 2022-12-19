@@ -6,6 +6,7 @@ use App\Models\Dokter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class ResepObat extends Model
@@ -19,6 +20,9 @@ class ResepObat extends Model
     public $incrementing = false;
 
     public $timestamps = false;
+
+    public const RALAN = 'ralan';
+    public const RANAP = 'ranap';
 
     /**
      * @param  \Illuminate\Database\Eloquent\Builder $query
@@ -68,13 +72,27 @@ class ResepObat extends Model
             ->orderBy('resep_obat.no_resep');
     }
 
-    public function scopeKunjunganResepPasien(Builder $query, string $jenisPerawatan = ''): Builder
+    public function scopeKunjunganResepPasien(
+        Builder $query,
+        string $periodeAwal = '',
+        string $periodeAkhir = '',
+        string $jenisPerawatan = ''
+    ): Builder
     {
+        if (empty($periodeAwal)) {
+            $periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($periodeAkhir)) {
+            $periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        }
+
         return $query->selectRaw("
             reg_periksa.no_rawat,
             resep_obat.no_resep,
             pasien.nm_pasien,
             resep_obat.tgl_perawatan,
+            resep_obat.jam,
             reg_periksa.status_lanjut,
             round(sum(resep_dokter.jml * databarang.h_beli)) total
         ")
@@ -83,6 +101,7 @@ class ResepObat extends Model
             ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->leftJoin('databarang', 'resep_dokter.kode_brng', '=', 'databarang.kode_brng')
             ->where('reg_periksa.status_bayar', 'Sudah Bayar')
+            ->whereBetween('resep_obat.tgl_perawatan', [$periodeAwal, $periodeAkhir])
             ->when(!empty($jenisPerawatan), function (Builder $query) use ($jenisPerawatan) {
                 return $query->where('reg_periksa.status_lanjut', $jenisPerawatan);
             })
@@ -91,6 +110,7 @@ class ResepObat extends Model
                 'resep_obat.no_resep',
                 'pasien.nm_pasien',
                 'resep_obat.tgl_perawatan',
+                'resep_obat.jam',
                 'reg_periksa.status_lanjut',
             ]);
     }
@@ -179,6 +199,16 @@ class ResepObat extends Model
     public function dokterPeresep(): BelongsTo
     {
         return $this->belongsTo(Dokter::class, 'kd_dokter', 'kd_dokter');
+    }
+
+    public function resepDokter(): HasMany
+    {
+        return $this->hasMany(ResepDokter::class, 'no_resep', 'no_resep');
+    }
+
+    public function resepDokterRacikan(): HasMany
+    {
+        return $this->hasMany(ResepDokterRacikan::class, 'no_resep', 'no_resep');
     }
 
     public static function kunjunganPasienRalan(): array

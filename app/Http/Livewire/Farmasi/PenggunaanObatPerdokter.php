@@ -140,6 +140,13 @@ class PenggunaanObatPerdokter extends Component
         return Storage::disk('public')->download($filename);
     }
 
+    public function searchData()
+    {
+        $this->resetPage();
+
+        $this->emit('$refresh');
+    }
+
     public function resetFilters()
     {
         $this->cari = '';
@@ -155,6 +162,6 @@ class PenggunaanObatPerdokter extends Component
     {
         $this->forgetComputed();
 
-        $this->emit('resetFilters');
+        $this->resetFilters();
     }
 }

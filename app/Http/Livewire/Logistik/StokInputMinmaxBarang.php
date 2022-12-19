@@ -30,8 +30,8 @@ class StokInputMinmaxBarang extends Component
 
     protected $listeners = [
         'beginExcelExport',
-        'clearFilters',
-        'clearFiltersAndHardRefresh',
+        'resetFilters',
+        'fullRefresh',
     ];
 
     protected $rules = [
@@ -81,7 +81,7 @@ class StokInputMinmaxBarang extends Component
 
     public function exportToExcel()
     {
-        session()->flash('excel.exporting', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+        $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
 
         $this->emit('beginExcelExport');
     }
@@ -104,7 +104,7 @@ class StokInputMinmaxBarang extends Component
             'kode_suplier' => $kodeSupplier,
         ]);
 
-        $this->clearFilters();
+        $this->resetFilters();
 
         $this->flashSuccess('Data berhasil disimpan!');
     }
@@ -171,19 +171,19 @@ class StokInputMinmaxBarang extends Component
         return Storage::disk('public')->download($filename);
     }
 
-    public function clearFilters()
+    public function resetFilters()
     {
         $this->cari = '';
-        $this->page = 1;
+        $this->resetPage();
         $this->perpage = 25;
-    }
-
-    public function clearFiltersAndHardRefresh()
-    {
-        $this->emit('cleanFilters');
-
-        $this->forgetComputed();
 
         $this->emit('$refresh');
+    }
+
+    public function fullRefresh()
+    {
+        $this->forgetComputed();
+
+        $this->resetFilters();
     }
 }

@@ -83,15 +83,19 @@ class ManajemenUser extends Component
         $this->flashSuccess("Hak akses untuk user {$nrp} berhasil diubah!");
     }
 
+    public function resetFilters()
+    {
+        $this->cari = '';
+        $this->perpage = 25;
+        $this->resetPage();
+
+        $this->emit('$refresh');
+    }
+
     public function hardRefresh()
     {
         $this->forgetComputed();
 
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->page = 1;
-        $this->user = null;
-
-        $this->emit('$refresh');
+        $this->resetFilters();
     }
 }

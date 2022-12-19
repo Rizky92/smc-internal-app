@@ -22,7 +22,9 @@ class StokDaruratFarmasi extends Component
 
     protected $listeners = [
         'beginExcelExport',
-        'clearFilters',
+        'searchData',
+        'resetFilters',
+        'fullRefresh',
     ];
 
     protected function queryString()
@@ -57,13 +59,6 @@ class StokDaruratFarmasi extends Component
         return view('livewire.farmasi.stok-darurat-farmasi')
             ->extends('layouts.admin', ['title' => 'Darurat Stok'])
             ->section('content');
-    }
-
-    public function searchData()
-    {
-        $this->resetPage();
-
-        $this->emit('$refresh');
     }
 
     public function exportToExcel()
@@ -130,5 +125,28 @@ class StokDaruratFarmasi extends Component
             ->output();
 
         return Storage::disk('public')->download($filename);
+    }
+
+    public function searchData()
+    {
+        $this->resetPage();
+
+        $this->emit('$refresh');
+    }
+
+    public function resetFilters()
+    {
+        $this->cari = '';
+        $this->perpage = 25;
+        $this->resetPage();
+
+        $this->emit('$refresh');
+    }
+
+    public function fullRefresh()
+    {
+        $this->forgetComputed();
+
+        $this->resetFilters();
     }
 }
