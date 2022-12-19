@@ -55,6 +55,12 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="px-4 py-2 d-flex align-items-center justify-content-start bg-light">
+                        <p class="text-muted">Menampilkan {{ $this->kunjunganResepObatRegularPasien->count() }} dari total {{ number_format($this->kunjunganResepObatRegularPasien->total(), 0, ',', '.') }} item.</p>
+                        <div class="ml-auto">
+                            {{ $this->kunjunganResepObatRegularPasien->links() }}
+                        </div>
+                    </div>
                  </div>
                  <div class="tab-pane" id="content-obat-racikan" role="tabpanel" aria-label="Tab Obat Racikan">
                     <div class="table-responsive">
@@ -85,27 +91,13 @@
                             </tbody>
                         </table>
                     </div>
-                 </div>
-            </div>
-        </div>
-        <div class="card-footer">
-            <div class="tab-content">
-                <div class="tab-pane show active" id="content-obat-regular" role="tabpanel" aria-label="Footer Obat Umum">
-                    <div class="d-flex align-items center justify-content-start">
-                        <p class="text-muted">Menampilkan {{ $this->kunjunganResepObatRegularPasien->count() }} dari total {{ number_format($this->kunjunganResepObatRegularPasien->total(), 0, ',', '.') }} item.</p>
-                        <div class="ml-auto">
-                            {{ $this->kunjunganResepObatRegularPasien->links() }}
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane" id="content-obat-racikan" role="tabpanel" aria-label="Footer Obat Racikan">
-                    <div class="d-flex align-items center justify-content-start">
+                    <div class="px-4 py-2 d-flex align-items-center justify-content-start bg-light">
                         <p class="text-muted">Menampilkan {{ $this->kunjunganResepObatRacikanPasien->count() }} dari total {{ number_format($this->kunjunganResepObatRacikanPasien->total(), 0, ',', '.') }} item.</p>
                         <div class="ml-auto">
                             {{ $this->kunjunganResepObatRacikanPasien->links() }}
                         </div>
                     </div>
-                </div>
+                 </div>
             </div>
         </div>
     </div>
