@@ -37,8 +37,9 @@
     <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
     <script src="{{ asset('js/adminlte.min.js') }}"></script>
-    @livewireScripts
     @stack('js')
+    
+    @livewireScripts
 </body>
 
 </html>
