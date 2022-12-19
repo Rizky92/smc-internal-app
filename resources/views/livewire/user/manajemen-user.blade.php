@@ -1,12 +1,5 @@
 <div>
-    @if (session()->has('saved.content'))
-        <div class="alert alert-{{ session('saved.type') }} alert-dismissible fade show">
-            <button class="close" data-dismiss="alert" type="button" aria-hidden="true">&times</button>
-            <p>
-                {{ session('saved.content') }}
-            </p>
-        </div>
-    @endif
+    @include('layouts.components.flash')
 
     @once
         @push('js')
@@ -225,7 +218,13 @@
                         <tr style="position: relative">
                             <td>
                                 {{ $user->nip }}
-                                <a href="#" style="display: inline; position: absolute; left: 0; right: 0; top: 0; bottom: 0" data-nrp="{{ $user->nip }}" data-nama="{{ $user->nama }}" data-role-ids="{{ $user->roles->pluck('id')->join(',') }}" data-permission-ids="{{ $user->getAllPermissions()->pluck('id')->join(',') }}" onclick="loadData(this.dataset)"></a>
+                                <a href="#"
+                                    style="display: inline; position: absolute; left: 0; right: 0; top: 0; bottom: 0"
+                                    data-nrp="{{ $user->nip }}"
+                                    data-nama="{{ $user->nama }}"
+                                    data-role-ids="{{ $user->roles->pluck('id')->join(',') }}"
+                                    data-permission-ids="{{ $user->getAllPermissions()->pluck('id')->join(',') }}"
+                                    onclick="loadData(this.dataset)"></a>
                             </td>
                             <td>{{ $user->nama }}</td>
                             <td>{{ $user->nm_jbtn }}</td>

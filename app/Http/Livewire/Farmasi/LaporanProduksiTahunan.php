@@ -10,16 +10,17 @@ use App\Models\Farmasi\ResepObat;
 use App\Models\Farmasi\ResepObatRacikanDetail;
 use App\Models\Farmasi\ReturObatKeSupplier;
 use App\Models\Farmasi\ReturPenjualanObat;
+use App\Support\Traits\Livewire\FlashComponent;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Vtiful\Kernel\Excel;
 
 class LaporanProduksiTahunan extends Component
 {
+    use FlashComponent;
+
     protected $listeners = [
         'beginExcelExport',
-        'clearFilters',
-        'clearFiltersAndHardRefresh',
     ];
 
     public function getKunjunganRalanProperty()
@@ -108,7 +109,7 @@ class LaporanProduksiTahunan extends Component
         return $resepRegular;
     }
 
-    public function getpendapatanAlkesFarmasiDanUnitProperty()
+    public function getPendapatanAlkesFarmasiDanUnitProperty()
     {
         return ResepObat::pendapatanAlkesFarmasiDanUnit();
     }
@@ -124,27 +125,27 @@ class LaporanProduksiTahunan extends Component
         return $pendapatanObat;
     }
 
-    public function getTotalReturObatProperty()
+    public function getReturObatProperty()
     {
         return ReturPenjualanObat::totalReturObat();
     }
 
-    public function getTotalPembelianFarmasiProperty()
+    public function getPembelianFarmasiProperty()
     {
         return PemesananObat::totalPembelianDariFarmasi();
     }
 
-    public function getTotalReturObatKeSupplierProperty()
+    public function getReturSupplierProperty()
     {
         return ReturObatKeSupplier::totalBarangRetur();
     }
 
     public function getTotalBersihPembelianFarmasiProperty()
     {
-        $totalBersih = $this->totalPembelianFarmasi;
+        $totalBersih = $this->pembelianFarmasi;
 
         foreach ($totalBersih as $key => $data) {
-            $totalBersih[$key] -= $this->totalReturObatKeSupplier[$key];
+            $totalBersih[$key] -= $this->returSupplier[$key];
         }
 
         return $totalBersih;
@@ -169,7 +170,7 @@ class LaporanProduksiTahunan extends Component
 
     public function exportToExcel()
     {
-        session()->flash('excel.exporting', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+        $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
 
         $this->emit('beginExcelExport');
     }
@@ -215,13 +216,13 @@ class LaporanProduksiTahunan extends Component
             array_merge(['Pendapatan Obat Rawat Inap'], $this->pendapatanObatRanap),
             array_merge(['Pendapatan Obat IGD'], $this->pendapatanObatIGD),
             array_merge(['Pendapatan Obat Walk In'], $this->pendapatanObatWalkIn),
-            array_merge(['Pendapatan Alkes Farmasi dan Unit'], []),
-            array_merge(['Retur Obat'], $this->totalReturObat),
-            array_merge(['Pembelian Farmasi'], $this->totalPembelianFarmasi),
-            array_merge(['Retur Supplier'], []),
-            array_merge(['TOTAL PEMBELIAN (Pembelian Farmasi - Retur Supplier)'], []),
+            array_merge(['Pendapatan Alkes Farmasi dan Unit'], $this->pendapatanAlkesFarmasiDanUnit),
+            array_merge(['Retur Obat'], $this->returObat),
+            array_merge(['Pembelian Farmasi'], $this->pembelianFarmasi),
+            array_merge(['Retur Supplier'], $this->returSupplier),
+            array_merge(['TOTAL PEMBELIAN (Pembelian Farmasi - Retur Supplier)'], $this->totalBersihPembelianFarmasi),
             array_merge(['Pemakaian BHP'], $this->stokKeluarMedis),
-            array_merge(['Transfer Order'], []),
+            array_merge(['Transfer Order'], $this->mutasiObatDariFarmasi),
         ];
 
         (new Excel($config))

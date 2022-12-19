@@ -1,21 +1,5 @@
 <div>
-    @if (session()->has('excel.exporting'))
-        <div class="alert alert-dark alert-dismissible fade show">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            <p>
-                {{ session('excel.exporting') }}
-            </p>
-        </div>
-    @endif
-
-    @if (session()->has('saved.content'))
-        <div class="alert alert-success alert-dismissible fade show">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            <p>
-                {{ session('saved.content') }}
-            </p>
-        </div>
-    @endif
+    @include('layouts.components.flash')
 
     <div class="card">
         @once

@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Farmasi;
 
 use App\Models\Farmasi\Obat;
+use App\Support\Traits\Livewire\FlashComponent;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -11,7 +12,7 @@ use Vtiful\Kernel\Excel;
 
 class StokDaruratFarmasi extends Component
 {
-    use WithPagination;
+    use WithPagination, FlashComponent;
 
     public $cari;
 
@@ -60,14 +61,14 @@ class StokDaruratFarmasi extends Component
 
     public function searchData()
     {
-        $this->gotoPage(1);
+        $this->resetPage();
 
         $this->emit('$refresh');
     }
 
     public function exportToExcel()
     {
-        session()->flash('excel.exporting', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+        $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
 
         $this->emit('beginExcelExport');
     }

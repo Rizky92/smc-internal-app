@@ -33,8 +33,8 @@ trait FlashComponent
     public function flashSuccess(string $message)
     {
         $this->emit('flash', [
-            'type' => 'success',
-            'message' => $message,
+            'flash.type' => 'success',
+            'flash.message' => $message,
         ]);
     }
 
@@ -47,8 +47,8 @@ trait FlashComponent
     public function flashInfo(string $message)
     {
         $this->emit('flash', [
-            'type' => 'info',
-            'message' => $message,
+            'flash.type' => 'dark',
+            'flash.message' => $message,
         ]);
     }
 
@@ -61,8 +61,8 @@ trait FlashComponent
     public function flashWarning(string $message)
     {
         $this->emit('flash', [
-            'type' => 'warning',
-            'message' => $message,
+            'flash.type' => 'warning',
+            'flash.message' => $message,
         ]);
     }
 
@@ -75,8 +75,8 @@ trait FlashComponent
     public function flashError(string $message)
     {
         $this->emit('flash', [
-            'type' => 'danger',
-            'message' => $message,
+            'flash.type' => 'danger',
+            'flash.message' => $message,
         ]);
     }
 }

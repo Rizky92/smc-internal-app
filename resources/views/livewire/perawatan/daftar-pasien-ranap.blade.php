@@ -1,6 +1,5 @@
 <div>
-    @if (session()->has('saved.kamar-dibatalkan'))
-    @endif
+    @include('layouts.components.flash')
 
     @once
         @push('js')
