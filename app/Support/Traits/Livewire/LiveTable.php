@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Livewire;
+namespace App\Support\Traits\Livewire;
 
 trait LiveTable
 {

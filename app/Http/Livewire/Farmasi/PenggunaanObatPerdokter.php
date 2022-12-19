@@ -3,7 +3,7 @@
 namespace App\Http\Livewire\Farmasi;
 
 use App\Models\Farmasi\ResepObat;
-use App\Support\Livewire\SearchData;
+use App\Support\Traits\Livewire\SearchData;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;

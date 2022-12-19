@@ -14,8 +14,7 @@ use Vtiful\Kernel\Excel;
 
 class StokInputMinmaxBarang extends Component
 {
-    use WithPagination;
-    use FlashComponent;
+    use WithPagination, FlashComponent;
 
     public $cari;
 

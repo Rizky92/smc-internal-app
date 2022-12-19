@@ -4,8 +4,8 @@ namespace App\Http\Livewire\User;
 
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
-use App\Support\Livewire\FlashComponent;
-use App\Support\Livewire\SearchData;
+use App\Support\Traits\Livewire\FlashComponent;
+use App\Support\Traits\Livewire\SearchData;
 use Livewire\Component;
 use Livewire\WithPagination;
 
