@@ -65,7 +65,7 @@ class ResepObat extends Model
                         ->where('resep_obat.no_resep', 'LIKE', "%{$cari}%")
                         ->orWhere('databarang.nama_brng', 'LIKE', "%{$cari}%")
                         ->orWhere('dokter.nm_dokter', 'LIKE', "%{$cari}%")
-                        ->orWhere('poliklinik.nm_poli', 'LIKE', "%{$cari}%")
+                        ->orWhere('resep_obat.status', 'LIKE', "%{$cari}%")
                         ->orWhere('poliklinik.nm_poli', 'LIKE', "%{$cari}%");
                 });
             })

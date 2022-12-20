@@ -59,7 +59,7 @@ class Obat extends Model
                 return $query->where(function (Builder $query) use ($cari) {
                     return $query->where('databarang.kode_brng', 'LIKE', "%{$cari}%")
                         ->orWhere('databarang.nama_brng', 'LIKE', "%{$cari}%")
-                        ->orWhere('kategori_barang.nama kategori', 'LIKE', "%{$cari}%")
+                        ->orWhere('kategori_barang.nama', 'LIKE', "%{$cari}%")
                         ->orWhere('industrifarmasi.nama_industri', 'LIKE', "%{$cari}%");
                 });
             });
