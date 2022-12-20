@@ -4,8 +4,6 @@ namespace App\Http\Livewire\Farmasi;
 
 use App\Models\Farmasi\ResepDokter;
 use App\Models\Farmasi\ResepDokterRacikan;
-use App\Models\Farmasi\ResepObat;
-use App\Models\Farmasi\ResepObatRacikan;
 use App\Support\Traits\Livewire\FlashComponent;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
@@ -43,6 +41,10 @@ class KunjunganResepPasien extends Component
             'periodeAkhir' => [
                 'except' => now()->endOfMonth()->format('Y-m-d'),
                 'as' => 'periode_akhir'
+            ],
+            'jenisPerawatan' => [
+                'except' => '',
+                'as' => 'jenis_perawatan',
             ],
         ];
     }
@@ -82,6 +84,15 @@ class KunjunganResepPasien extends Component
             ->section('content');
     }
 
+    public function searchData()
+    {
+        // dd($this->jenisPerawatan);
+        $this->resetPage('obat_racikan_page');
+        $this->resetPage('obat_regular_page');
+
+        $this->emit('$refresh');
+    }
+
     public function exportToExcel()
     {
         $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
@@ -117,9 +128,8 @@ class KunjunganResepPasien extends Component
         $sheet2 = ResepDokterRacikan::kunjunganResepObatRacikan($this->periodeAwal, $this->periodeAkhir, $this->jenisPerawatan)->get()->toArray();
 
         $excel = new Excel($config);
-        $excel->fileName($filename, 'Obat Regular');
-
-        $excel->mergeCells('A1:G1', $row1)
+        $excel->fileName($filename, 'Obat Regular')
+            ->mergeCells('A1:G1', $row1)
             ->mergeCells('A2:G2', $row2)
             ->mergeCells('A3:G3', $row3);
 
@@ -130,8 +140,8 @@ class KunjunganResepPasien extends Component
         $excel->insertText(4, 0, '');
         $excel->data($sheet1);
 
-        $excel->addSheet('Obat Racikan');
-        $excel->mergeCells('A1:G1', $row1)
+        $excel->addSheet('Obat Racikan')
+            ->mergeCells('A1:G1', $row1)
             ->mergeCells('A2:G2', $row2)
             ->mergeCells('A3:G3', $row3);
 

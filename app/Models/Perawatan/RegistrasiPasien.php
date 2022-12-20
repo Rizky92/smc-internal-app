@@ -24,6 +24,11 @@ class RegistrasiPasien extends Model
 
     public $timestamps = false;
 
+    public $fillable = [
+        'status_lanjut',
+        'stts',
+    ];
+
     public function scopeDaftarPasienRanap(Builder $query): Builder
     {
         return $query->selectRaw("
@@ -124,9 +129,7 @@ class RegistrasiPasien extends Model
 
     public function rawatInap(): BelongsToMany
     {
-        return $this->belongsToMany(Kamar::class, 'kamar_inap', 'no_rawat', 'kd_kamar')
-            ->withPivot(RawatInap::$pivotColumns)
-            ->using(RawatInap::class);
+        return $this->belongsToMany(Kamar::class, 'kamar_inap', 'no_rawat', 'kd_kamar');
     }
 
     public function diagnosa(): BelongsToMany

@@ -10,6 +10,8 @@
                 let inputReadRuangan
                 let inputReadKamar
                 let inputReadWaktuMasuk
+                let inputReadTglMasuk
+                let inputReadJamMasuk
 
                 $(document).ready(() => {
                     inputReadNoRawat = $('#no_rawat')
@@ -18,6 +20,8 @@
                     inputReadRuangan = $('#ruangan')
                     inputReadKamar = $('#kamar')
                     inputReadWaktuMasuk = $('#waktu_masuk')
+                    inputReadTglMasuk = $('#tgl_masuk')
+                    inputReadJamMasuk = $('#jam_masuk')
                 })
 
                 const loadData = ({
@@ -26,14 +30,17 @@
                     pasien,
                     ruangan,
                     kamar,
-                    waktuMasuk
+                    tglMasuk,
+                    jamMasuk
                 }) => {
                     inputReadNoRawat.val(noRawat)
                     inputReadNoRekamMedis.val(noRekamMedis)
                     inputReadPasien.val(pasien)
                     inputReadRuangan.val(ruangan)
                     inputReadKamar.val(kamar)
-                    inputReadWaktuMasuk.val(waktuMasuk)
+                    inputReadWaktuMasuk.val(`${tglMasuk} ${jamMasuk}`)
+                    inputReadJamMasuk.val(jamMasuk)
+                    inputReadTglMasuk.val(tglMasuk)
 
                     inputReadNoRawat.trigger('change')
                     inputReadNoRekamMedis.trigger('change')
@@ -41,59 +48,141 @@
                     inputReadRuangan.trigger('change')
                     inputReadKamar.trigger('change')
                     inputReadWaktuMasuk.trigger('change')
+                    inputReadJamMasuk.trigger('change')
+                    inputReadTglMasuk.trigger('change')
+                }
+
+                $('#batalkan-ranap').click(() => {
+                    if (
+                        inputReadNoRawat.val() &&
+                        inputReadNoRekamMedis.val() &&
+                        inputReadPasien.val() &&
+                        inputReadRuangan.val() &&
+                        inputReadKamar.val() &&
+                        inputReadWaktuMasuk.val() &&
+                        inputReadJamMasuk.val() &&
+                        inputReadTglMasuk.val()
+                    ) {
+                        $('#konfirmasi-batal').modal('show')
+                    }
+                })
+
+                $('#simpandata').click(() => {
+                    @this.batalkanRanapPasien(
+                        inputReadNoRawat.val(),
+                        inputReadTglMasuk.val(),
+                        inputReadJamMasuk.val(),
+                        inputReadKamar.val()
+                    )
+
+                    clearinputs()
+                })
+
+                $('#batalsimpan').click(() => clearinputs())
+                $('#resetinput').click(() => clearinputs())
+
+                function clearinputs()
+                {
+                    inputReadNoRawat.val('')
+                    inputReadNoRekamMedis.val('')
+                    inputReadPasien.val('')
+                    inputReadRuangan.val('')
+                    inputReadKamar.val('')
+                    inputReadWaktuMasuk.val('')
+                    inputReadJamMasuk.val('')
+                    inputReadTglMasuk.val('')
+
+                    inputReadNoRawat.trigger('change')
+                    inputReadNoRekamMedis.trigger('change')
+                    inputReadPasien.trigger('change')
+                    inputReadRuangan.trigger('change')
+                    inputReadKamar.trigger('change')
+                    inputReadWaktuMasuk.trigger('change')
+                    inputReadJamMasuk.trigger('change')
+                    inputReadTglMasuk.trigger('change')
                 }
             </script>
         @endpush
     @endonce
 
+    <div class="modal fade" id="konfirmasi-batal">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-start align-items-start">
+                                <h5 class="ml-2">Apakah anda yakin?</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-end align-items-center">
+                                <button class="btn btn-default" id="batalsimpan" data-dismiss="modal" type="button">
+                                    Tidak
+                                </button>
+                                <button class="ml-2 btn btn-danger" id="simpandata" data-dismiss="modal" type="button">
+                                    <i class="fas fa-check"></i>
+                                    <span class="ml-1">Ya</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="card">
         <div class="card-body">
             <div class="row">
                 <div class="col-4">
                     <div class="form-group">
-                        <label for="no_rawat" class="text-sm">No. Rawat</label>
-                        <input type="text" id="no_rawat" class="form-control form-control-sm bg-light" readonly>
+                        <label class="text-sm" for="no_rawat">No. Rawat</label>
+                        <input class="form-control form-control-sm bg-light" id="no_rawat" type="text" readonly>
                     </div>
                 </div>
                 <div class="col-3">
                     <div class="form-group">
-                        <label for="no_rm" class="text-sm">No. Rekam Medis</label>
-                        <input type="text" id="no_rm" class="form-control form-control-sm bg-light" readonly>
+                        <label class="text-sm" for="no_rm">No. Rekam Medis</label>
+                        <input class="form-control form-control-sm bg-light" id="no_rm" type="text" readonly>
                     </div>
                 </div>
                 <div class="col-5">
                     <div class="form-group">
-                        <label for="nama_pasien" class="text-sm">Pasien</label>
-                        <input type="text" id="pasien" class="form-control form-control-sm bg-light" readonly>
+                        <label class="text-sm" for="nama_pasien">Pasien</label>
+                        <input class="form-control form-control-sm bg-light" id="pasien" type="text" readonly>
                     </div>
                 </div>
                 <div class="col-3">
                     <div class="form-group">
-                        <label for="ruangan" class="text-sm">Kamar / Ruangan</label>
-                        <input type="text" id="ruangan" class="form-control form-control-sm bg-light" readonly>
-                        <input type="hidden" id="kamar" readonly>
+                        <label class="text-sm" for="ruangan">Kamar / Ruangan</label>
+                        <input class="form-control form-control-sm bg-light" id="ruangan" type="text" readonly>
+                        <input id="kamar" type="hidden" readonly>
                     </div>
                 </div>
                 <div class="col-3">
                     <div class="form-group">
-                        <label for="waktu_masuk" class="text-sm">Waktu Masuk</label>
-                        <input type="text" id="waktu_masuk" class="form-control form-control-sm bg-light" readonly>
+                        <label class="text-sm" for="waktu_masuk">Waktu Masuk</label>
+                        <input class="form-control form-control-sm bg-light" id="waktu_masuk" type="text" readonly>
+                        <input id="tgl_masuk" type="hidden" readonly>
+                        <input id="jam_masuk" type="hidden" readonly>
                     </div>
                 </div>
-                {{-- <div class="col-6">
+                <div class="col-6">
                     <div class="d-flex justify-content-end align-items-end h-100 pb-3">
-                        <button type="button" class="btn btn-sm btn-default">
+                        <button class="btn btn-sm btn-default" id="resetinput" type="button">
                             <i class="fas fa-sync-alt"></i>
                             <span class="ml-1">Reset</span>
                         </button>
                         @can('perawatan.rawat-inap.batal-ranap')
-                            <button type="button" class="ml-2 btn btn-sm btn-danger">
+                            <button class="ml-2 btn btn-sm btn-danger" id="batalkan-ranap" type="button">
                                 <i class="fas fa-sign-out-alt fa-flip-horizontal"></i>
                                 <span class="ml-1">Batal Ranap</span>
                             </button>
                         @endcan
                     </div>
-                </div> --}}
+                </div>
             </div>
         </div>
         <div class="card-body border-top">
@@ -101,9 +190,9 @@
                 <div class="col-12">
                     <div class="d-flex align-items-center justify-content-start">
                         <span class="text-sm pr-4">Periode:</span>
-                        <input type="date" class="form-control form-control-sm w-25" wire:model.defer="periodeAwal" />
+                        <input class="form-control form-control-sm w-25" type="date" wire:model.defer="periodeAwal" />
                         <span class="text-sm px-2">sampai</span>
-                        <input type="date" class="form-control form-control-sm w-25" wire:model.defer="periodeAkhir" />
+                        <input class="form-control form-control-sm w-25" type="date" wire:model.defer="periodeAkhir" />
                     </div>
                 </div>
             </div>
@@ -112,7 +201,7 @@
                     <div class="d-flex align-items-center justify-content-start">
                         <span class="text-sm pr-2">Tampilkan:</span>
                         <div class="input-group input-group-sm" style="width: 4rem">
-                            <select name="perpage" class="custom-control custom-select" wire:model.defer="perpage">
+                            <select class="custom-control custom-select" name="perpage" wire:model.defer="perpage">
                                 <option value="10">10</option>
                                 <option value="25">25</option>
                                 <option value="50">50</option>
@@ -124,9 +213,9 @@
                         </div>
                         <span class="text-sm pl-2">per halaman</span>
                         <div class="ml-auto input-group input-group-sm" style="width: 20rem">
-                            <input type="search" class="form-control" wire:model.defer="cari" placeholder="Cari..." wire:keydown.enter.stop="$refresh" />
+                            <input class="form-control" type="search" wire:model.defer="cari" placeholder="Cari..." wire:keydown.enter.stop="$refresh" />
                             <div class="input-group-append">
-                                <button type="button" wire:click="$refresh" class="btn btn-sm btn-default">
+                                <button class="btn btn-sm btn-default" type="button" wire:click="$refresh">
                                     <i class="fas fa-sync-alt"></i>
                                     <span class="ml-1">Refresh</span>
                                 </button>
@@ -161,7 +250,7 @@
                         <tr style="position: relative">
                             <td style="width: 20ch">
                                 {{ $pasien->no_rawat }}
-                                <a href="#" style="position: absolute; left: 0; right: 0; top: 0; bottom: 0" data-no-rawat="{{ $pasien->no_rawat }}" data-no-rekam-medis="{{ $pasien->no_rkm_medis }}" data-pasien="{{ $pasien->data_pasien }}" data-ruangan="{{ $pasien->ruangan }}" data-kamar="{{ $pasien->kd_kamar }}" data-waktu-masuk="{{ $pasien->tgl_masuk }} {{ $pasien->jam_masuk }}" onclick="loadData(this.dataset)"></a>
+                                <a data-no-rawat="{{ $pasien->no_rawat }}" data-no-rekam-medis="{{ $pasien->no_rkm_medis }}" data-pasien="{{ $pasien->data_pasien }}" data-ruangan="{{ $pasien->ruangan }}" data-kamar="{{ $pasien->kd_kamar }}" data-tgl-masuk="{{ $pasien->tgl_masuk }}" data-jam-masuk="{{ $pasien->jam_masuk }}" href="#" style="position: absolute; left: 0; right: 0; top: 0; bottom: 0" onclick="loadData(this.dataset)"></a>
                             </td>
                             <td style="width: 10ch">{{ $pasien->no_rkm_medis }}</td>
                             <td style="width: 25ch">
