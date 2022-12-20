@@ -1,97 +1,45 @@
 <div>
-    @if (session()->has('saved.content'))
-        <div class="alert alert-{{ session('saved.type') }} alert-dismissible fade show">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            <p>
-                {{ session('saved.content') }}
-            </p>
-        </div>
-    @endif
+    @include('layouts.components.flash')
 
     @once
         @push('js')
             <script>
-                let inputNRP
-                let inputNama
-                let inputRoles
+                let inputRole
                 let inputPermissions
 
                 $(document).ready(() => {
-                    inputNRP = $('#user')
-                    inputNama = $('#nama')
-                    inputRoles = $('input[name=roles]')
+                    inputRole = $('input[type=hidden][name=role]')
                     inputPermissions = $('input[name=permissions]')
                 })
 
                 function loadData({
-                    nrp,
-                    nama,
-                    roleIds,
+                    roleId,
                     permissionIds,
                 }) {
-                    inputNRP.val(nrp)
-                    inputNama.val(nama)
+                    inputRole.val(roleId)
 
-                    let roles = Array.from(roleIds.split(','))
                     let permissions = Array.from(permissionIds.split(','))
 
-                    console.log({ nrp, nama, roles, permissions, inputRoles, inputPermissions })
+                    console.log({permissionIds, roleId});
 
-                    inputRoles.each((i, el) => el.checked = roles.find(v => v === el.value))
                     inputPermissions.each((i, el) => el.checked = permissions.find(v => v === el.value))
                 }
 
-                $('input[type="checkbox"]').change(e => {
-                    let checked = $(this).prop("checked")
-                    let container = $(this).parent()
-                    let siblings = container.siblings()
+                $('#simpandata').click(() => {
+                    let currentRoleId = inputRole.val()
+                    let currentPermissionsIds = []
 
-                    container.find('input[type="checkbox"]').prop({
-                        indeterminate: false,
-                        checked: checked
+                    inputPermissions.each((i, el) => {
+                        currentPermissionsIds.push(el.checked && el.value)
                     })
 
-                    const checkSiblings = el => {
-                        let parent = el.parent().parent()
-                        let all = true
-
-                        el.siblings().each(() => {
-                            let returnValue = all = ($(this).children('input[type="checkbox"]').prop("checked") === checked)
-
-                            return returnValue
-                        })
-
-                        if (all && checked) {
-                            parent.children('input[type="checkbox"]').prop({
-                                indeterminate: false,
-                                checked: checked
-                            })
-
-                            checkSiblings(parent)
-
-                        } else if (all && !checked) {
-                            parent.children('input[type="checkbox"]')
-                                .prop("checked", checked)
-
-                            parent.children('input[type="checkbox"]')
-                                .prop("indeterminate", (parent.find('input[type="checkbox"]:checked').length > 0))
-
-                            checkSiblings(parent)
-                        } else {
-                            el.parents("li").children('input[type="checkbox"]').prop({
-                                indeterminate: true,
-                                checked: false
-                            })
-                        }
-                    }
-
-                    checkSiblings(container)
-                });
+                    @this.updatePermissions(currentRoleId, currentPermissionsIds)
+                })
             </script>
         @endpush
     @endonce
 
-    <div class="modal fade" id="set-permission">
+    <div class="modal fade" id="permission-modal">
         <div class="modal-dialog modal-dialog-scrollable modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -104,10 +52,11 @@
                     <div class="row">
                         <div class="col-12">
                             <ul class="form-group" id="role_permissions">
-                                @foreach ($this->permissions as $permission)
+                                <input type="hidden" name="role" class="d-none">
+                                @foreach ($this->permissions as $key => $name)
                                     <li class="custom-control custom-checkbox">
-                                        <input class="custom-control-input" type="checkbox" id="permission-{{ $permission->id }}" value="{{ $permission->id }}" name="permissions">
-                                        <label for="permission-{{ $permission->id }}" class="custom-control-label font-weight-normal">{{ $permission->name }}</label>
+                                        <input class="custom-control-input" type="checkbox" id="permission-{{ $key }}" value="{{ $key }}" name="permissions">
+                                        <label for="permission-{{ $key }}" class="custom-control-label font-weight-normal">{{ $name }}</label>
                                     </li>
                                 @endforeach
                             </ul>
@@ -116,7 +65,7 @@
                 </div>
                 <div class="modal-footer justify-content-end">
                     <button type="button" class="btn btn-default" data-dismiss="modal" id="batalsimpan">Batal</button>
-                    <button type="button" class="btn btn-primary" id="simpandata">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="simpandata">
                         <i class="fas fa-save"></i>
                         <span class="ml-1">Simpan</span>
                     </button>
@@ -170,10 +119,10 @@
                             <td>
                                 {{ Str::upper($role->name) }}
                                 <a href="#" style="display: inline; position: absolute; left: 0; right: 0; top: 0; bottom: 0;"
-                                    data-id="{{ $role->id }}"
+                                    data-role-id="{{ $role->id }}"
                                     data-permission-ids="{{ $role->permissions->pluck('id')->join(',') }}"
                                     data-toggle="modal"
-                                    data-target="#set-permission"
+                                    data-target="#permission-modal"
                                     onclick="loadData(this.dataset)"
                                 ></a>
                             </td>

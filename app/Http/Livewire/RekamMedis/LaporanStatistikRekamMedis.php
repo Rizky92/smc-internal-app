@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\RekamMedis;
 
 use App\Models\RekamMedis\StatistikRekamMedis;
+use App\Support\Traits\Livewire\FlashComponent;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -10,7 +11,7 @@ use Vtiful\Kernel\Excel;
 
 class LaporanStatistikRekamMedis extends Component
 {
-    use WithPagination;
+    use WithPagination, FlashComponent;
 
     public $periodeAwal;
 
@@ -24,8 +25,8 @@ class LaporanStatistikRekamMedis extends Component
 
     protected $listeners = [
         'beginExcelExport',
-        'clearFilters',
-        'clearFiltersAndHardRefresh',
+        'resetFilters',
+        'fullRefresh',
     ];
 
     protected function queryString()
@@ -76,7 +77,7 @@ class LaporanStatistikRekamMedis extends Component
 
     public function exportToExcel()
     {
-        session()->flash('excel.exporting', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+        $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
 
         $this->emit('beginExcelExport');
     }
@@ -126,7 +127,7 @@ class LaporanStatistikRekamMedis extends Component
 
         $data = StatistikRekamMedis::whereBetween('tgl_registrasi', [$this->periodeAwal, $this->periodeAkhir])
             ->orderBy('no_rawat')
-            ->get()
+            ->cursor()
             ->toArray();
 
         (new Excel($config))
@@ -138,21 +139,21 @@ class LaporanStatistikRekamMedis extends Component
         return Storage::disk('public')->download($filename);
     }
 
-    public function clearFilters()
+    public function resetFilters()
     {
         $this->cari = '';
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->page = 1;
+        $this->resetPage();
         $this->perpage = 25;
-    }
-
-    public function clearFiltersAndHardRefresh()
-    {
-        $this->emit('cleanFilters');
-        
-        $this->forgetComputed();
 
         $this->emit('$refresh');
+    }
+
+    public function fullRefresh()
+    {
+        $this->forgetComputed();
+
+        $this->emit('resetFilters');
     }
 }

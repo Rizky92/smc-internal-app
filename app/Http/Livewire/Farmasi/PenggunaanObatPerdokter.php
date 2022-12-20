@@ -3,7 +3,7 @@
 namespace App\Http\Livewire\Farmasi;
 
 use App\Models\Farmasi\ResepObat;
-use App\Support\Traits\Livewire\SearchData;
+use App\Support\Traits\Livewire\FlashComponent;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -13,26 +13,22 @@ use Vtiful\Kernel\Excel;
 
 class PenggunaanObatPerdokter extends Component
 {
-    use WithPagination, SearchData;
+    use WithPagination, FlashComponent;
 
-    /** @var string $periodeAwal */
     public $periodeAwal;
 
-    /** @var string $periodeAkhir */
     public $periodeAkhir;
 
-    /** @var string $cari */
     public $cari;
 
-    /** @var int $periodeAwal */
     public $perpage;
 
     protected $paginationTheme = 'bootstrap';
 
     protected $listeners = [
         'beginExcelExport',
-        'clearFilters',
-        'clearFiltersAndHardRefresh',
+        'resetFilters',
+        'fullRefresh',
     ];
 
     protected function queryString(): array
@@ -81,7 +77,7 @@ class PenggunaanObatPerdokter extends Component
 
     public function exportToExcel()
     {
-        session()->flash('excel.exporting', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+        $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
 
         $this->emit('beginExcelExport');
     }
@@ -144,21 +140,28 @@ class PenggunaanObatPerdokter extends Component
         return Storage::disk('public')->download($filename);
     }
 
-    public function clearFilters()
+    public function searchData()
+    {
+        $this->resetPage();
+
+        $this->emit('$refresh');
+    }
+
+    public function resetFilters()
     {
         $this->cari = '';
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->page = 1;
+        $this->resetPage();
         $this->perpage = 25;
-    }
-
-    public function clearFiltersAndHardRefresh()
-    {
-        $this->emit('cleanFilters');
-
-        $this->forgetComputed();
 
         $this->emit('$refresh');
+    }
+
+    public function fullRefresh()
+    {
+        $this->forgetComputed();
+
+        $this->resetFilters();
     }
 }

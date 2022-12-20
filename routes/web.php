@@ -28,6 +28,7 @@ use Livewire\Controllers\HttpConnectionHandler;
 |
 */
 
+// Cari tau alternative laravel untuk kembali ke dashboard dengan url yang memiliki 1 segmen
 Route::get('/', HomeController::class);
 
 Route::get('login', [LoginController::class, 'create'])->name('login');

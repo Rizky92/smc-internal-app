@@ -3,11 +3,18 @@
 namespace App\Models\Perawatan;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class RawatInap extends Pivot
+class RawatInap extends Model
 {
+    protected $primaryKey = false;
+
+    protected $keyType = false;
+
     protected $table = 'kamar_inap';
+
+    public $incrementing = false;
 
     public $timestamps = false;
 

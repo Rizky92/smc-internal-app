@@ -6,7 +6,7 @@ trait SearchData
 {
     public function searchData()
     {
-        $this->gotoPage(1);
+        $this->resetPage();
 
         $this->emit('$refresh');
     }

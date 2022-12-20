@@ -1,12 +1,5 @@
 <div>
-    @if (session()->has('excel.exporting'))
-        <div class="alert alert-dark alert-dismissible fade show">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            <p>
-                {{ session('excel.exporting') }}
-            </p>
-        </div>
-    @endif
+    @include('layouts.components.flash')
 
     <div class="card">
         <div class="card-body">
@@ -14,9 +7,9 @@
                 <div class="col-12">
                     <div class="d-flex align-items-center justify-content-start">
                         <span class="text-sm pr-4">Periode:</span>
-                        <input type="date" class="form-control form-control-sm w-25" wire:model.defer="periodeAwal" />
+                        <input class="form-control form-control-sm w-25" type="date" wire:model.defer="periodeAwal" />
                         <span class="text-sm px-2">sampai</span>
-                        <input type="date" class="form-control form-control-sm w-25" wire:model.defer="periodeAkhir" />
+                        <input class="form-control form-control-sm w-25" type="date" wire:model.defer="periodeAkhir" />
                         <div class="ml-auto">
                             <button class="btn btn-default btn-sm" type="button" wire:click="exportToExcel">
                                 <i class="fas fa-file-excel"></i>
@@ -31,7 +24,7 @@
                     <div class="d-flex align-items-center justify-content-start">
                         <span class="text-sm pr-2">Tampilkan:</span>
                         <div class="input-group input-group-sm" style="width: 4rem">
-                            <select name="perpage" class="custom-control custom-select" wire:model.defer="perpage">
+                            <select class="custom-control custom-select" name="perpage" wire:model.defer="perpage">
                                 <option value="10">10</option>
                                 <option value="25">25</option>
                                 <option value="50">50</option>
@@ -43,9 +36,9 @@
                         </div>
                         <span class="text-sm pl-2">per halaman</span>
                         <div class="ml-auto input-group input-group-sm" style="width: 20rem">
-                            <input type="search" class="form-control" wire:model.defer="cari" placeholder="Cari..." wire:keydown.enter.stop="searchData" />
+                            <input class="form-control" type="search" wire:model.defer="cari" placeholder="Cari..." wire:keydown.enter.stop="searchData" />
                             <div class="input-group-append">
-                                <button type="button" wire:click="searchData" class="btn btn-sm btn-default">
+                                <button class="btn btn-sm btn-default" type="button" wire:click="searchData">
                                     <i class="fas fa-sync-alt"></i>
                                     <span class="ml-1">Refresh</span>
                                 </button>

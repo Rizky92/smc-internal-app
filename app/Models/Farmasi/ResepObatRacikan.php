@@ -16,8 +16,25 @@ class ResepObatRacikan extends Model
 
     public $timestamps = false;
 
-    public function scopeKunjunganResepRacikanPasien(Builder $query, string $jenisPerawatan = ''): Builder
-    {   
+    public const RALAN = 'ralan';
+
+    public const RANAP = 'ranap';
+
+    public function scopeKunjunganResepRacikanPasien(
+        Builder $query,
+        string $periodeAwal = '',
+        string $periodeAkhir = '',
+        string $jenisPerawatan = ''
+    ): Builder
+    {
+        if (empty($periodeAwal)) {
+            $periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($periodeAkhir)) {
+            $periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        }
+
         return $query->selectRaw("
             obat_racikan.no_rawat,
             obat_racikan.tgl_perawatan,
@@ -38,6 +55,7 @@ class ResepObatRacikan extends Model
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join('databarang', 'detail_obat_racikan.kode_brng', '=', 'databarang.kode_brng')
             ->where('reg_periksa.status_bayar', 'Sudah Bayar')
+            ->whereBetween('obat_racikan.tgl_perawatan', [$periodeAwal, $periodeAkhir])
             ->when(!empty($jenisPerawatan), function (Builder $query) use ($jenisPerawatan) {
                 return $query->where('reg_periksa.status_lanjut', $jenisPerawatan);
             })

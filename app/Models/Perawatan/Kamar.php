@@ -18,6 +18,10 @@ class Kamar extends Model
 
     public $timestamps = false;
 
+    public $fillable = [
+        'status',
+    ];
+
     public function bangsal(): BelongsTo
     {
         return $this->belongsTo(Bangsal::class, 'kd_bangsal', 'kd_bangsal');
@@ -25,8 +29,6 @@ class Kamar extends Model
 
     public function rawatInap(): BelongsToMany
     {
-        return $this->belongsToMany(RegistrasiPasien::class, 'kamar_inap', 'kd_kamar', 'no_rawat')
-            ->withPivot(RawatInap::$pivotColumns)
-            ->using(RawatInap::class);
+        return $this->belongsToMany(RegistrasiPasien::class, 'kamar_inap', 'kd_kamar', 'no_rawat');
     }
 }

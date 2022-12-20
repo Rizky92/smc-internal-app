@@ -1,12 +1,5 @@
 <div>
-    @if (session()->has('excel.exporting'))
-        <div class="alert alert-dark alert-dismissible fade show">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            <p>
-                {{ session('excel.exporting') }}
-            </p>
-        </div>
-    @endif
+    @include('layouts.components.flash')
 
     <div class="card">
         <div class="card-body">
@@ -103,19 +96,19 @@
                     </tr>
                     <tr>
                         <th width="250">Retur Obat</th>
-                        @foreach ($this->totalReturObat as $item)
+                        @foreach ($this->returObat as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
                     </tr>
                     <tr>
                         <th width="250">Pembelian Farmasi</th>
-                        @foreach ($this->totalPembelianFarmasi as $item)
+                        @foreach ($this->pembelianFarmasi as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
                     </tr>
                     <tr>
                         <th width="250">Retur Supplier</th>
-                        @foreach ($this->totalReturObatKeSupplier as $item)
+                        @foreach ($this->returSupplier as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
                     </tr>
