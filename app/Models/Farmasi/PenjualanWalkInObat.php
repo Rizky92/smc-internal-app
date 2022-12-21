@@ -28,10 +28,12 @@ class PenjualanWalkInObat extends Model
             ->groupByRaw("DATE_FORMAT(penjualan.tgl_jual, '%m-%Y')");
     }
 
-    // public function scopePendapatanWalkIn(Builder $query): Builder
-    // {
-    //     return $query->selectRaw("")
-    // }
+    public function scopePendapatanWalkIn(Builder $query): Builder
+    {
+        return $query->selectRaw("
+            COUNT(penju
+        ")
+    }
 
     public function detail(): BelongsToMany
     {

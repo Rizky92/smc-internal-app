@@ -30,16 +30,13 @@ class ResepObatRacikanDetail extends Model
             ->when(!empty($poli), function (Builder $query) use ($poli) {
                 switch (Str::lower($poli)) {
                     case 'ralan':
-                        return $query->where('reg_periksa.status_lanjut', '=', 'Ralan')
-                            ->whereNotIn('reg_periksa.kd_poli', ['U0056', 'U0057', 'IGDK']);
+                        return $query->where('reg_periksa.status_lanjut', 'Ralan')
+                            ->where('reg_periksa.kd_poli', '!=', 'IGDK');
                     case 'ranap':
-                        return $query->where('reg_periksa.status_lanjut', '=', 'Ranap')
-                            ->whereNotIn('reg_periksa.kd_poli', ['U0056', 'U0057', 'IGDK']);
+                        return $query->where('reg_periksa.status_lanjut', 'Ranap')
+                            ->where('reg_periksa.kd_poli', '!=', 'IGDK');
                     case 'igd':
-                        return $query->where('reg_periksa.kd_poli', '=', 'IGDK');
-                    case 'walkin':
-                        return $query->where('reg_periksa.status_lanjut', '=', 'Ralan')
-                            ->whereIn('reg_periksa.kd_poli', ['U0056', 'U0057']);
+                        return $query->where('reg_periksa.kd_poli', 'IGDK');
                 }
             })
             ->whereBetween('detail_obat_racikan.tgl_perawatan', [
@@ -68,14 +65,6 @@ class ResepObatRacikanDetail extends Model
     public static function pendapatanRacikanObatIGD(): array
     {
         return (new static)->pendapatanObatRacikan('Igd')->get()
-            ->map(function ($value, $key) {
-                return [$value->bulan => $value->jumlah];
-            })->flatten(1)->pad(-12, 0)->toArray();
-    }
-
-    public static function pendapatanRacikanObatWalkIn(): array
-    {
-        return (new static)->pendapatanObatRacikan('Walkin')->get()
             ->map(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
             })->flatten(1)->pad(-12, 0)->toArray();
