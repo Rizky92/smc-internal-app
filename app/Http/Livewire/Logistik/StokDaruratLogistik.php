@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Logistik;
 
 use App\Models\Logistik\BarangNonMedis;
 use App\Support\Traits\Livewire\FlashComponent;
+use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -61,8 +62,7 @@ class StokDaruratLogistik extends Component
     public function render()
     {
         return view('livewire.logistik.stok-darurat-logistik')
-            ->extends('layouts.admin', ['title' => 'Stok Darurat Barang Logistik'])
-            ->section('content');
+            ->layout(BaseLayout::class, ['title' => 'Stok Darurat Barang Logistik']);
     }
 
     public function beginExcelExport()

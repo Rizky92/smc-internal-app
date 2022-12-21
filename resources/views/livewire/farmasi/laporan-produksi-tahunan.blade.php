@@ -1,5 +1,5 @@
 <div>
-    @include('layouts.components.flash')
+    <x-flash />
 
     <div class="card">
         <div class="card-body">
@@ -113,9 +113,9 @@
                         @endforeach
                     </tr>
                     <tr>
-                        <th width="250">TOTAL PEMBELIAN (<i>Pembelian Farmasi - Retur Supplier</i>)</th>
+                        <th width="250">TOTAL PEMBELIAN<br> (<i>Pembelian Farmasi - Retur Supplier</i>)</th>
                         @foreach ($this->totalBersihPembelianFarmasi as $item)
-                            <td class="text-center px-0" width="150">{{ rp($item) }}</td>
+                            <th class="text-center px-0" width="150">{{ rp($item) }}</th>
                         @endforeach
                     </tr>
                     <tr>

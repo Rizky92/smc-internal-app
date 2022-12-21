@@ -1,6 +1,6 @@
 <div>
-    @include('layouts.components.flash')
-
+    <x-flash />
+    
     <div class="card">
         <div class="card-body">
             <div class="row">

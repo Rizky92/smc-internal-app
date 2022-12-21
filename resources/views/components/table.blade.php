@@ -1,4 +1,9 @@
-<table id="table_index" class="table table-hover table-striped table-bordered table-sm text-sm">
+@props([
+    'header' => [],
+    'data' => [],
+])
+
+<table class="table table-hover table-striped table-sm text-sm">
     <thead>
         <tr>
             @foreach ($header as $name => $title)

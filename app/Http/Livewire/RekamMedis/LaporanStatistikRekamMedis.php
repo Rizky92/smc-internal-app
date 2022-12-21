@@ -4,6 +4,7 @@ namespace App\Http\Livewire\RekamMedis;
 
 use App\Models\RekamMedis\StatistikRekamMedis;
 use App\Support\Traits\Livewire\FlashComponent;
+use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -71,8 +72,7 @@ class LaporanStatistikRekamMedis extends Component
     public function render()
     {
         return view('livewire.rekam-medis.laporan-statistik-rekam-medis')
-            ->extends('layouts.admin', ['title' => 'Laporan Statistik'])
-            ->section('content');
+            ->layout(BaseLayout::class, ['title' => 'Laporan Statistik']);
     }
 
     public function exportToExcel()

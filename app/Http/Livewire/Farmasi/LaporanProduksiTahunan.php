@@ -11,6 +11,7 @@ use App\Models\Farmasi\ResepObatRacikanDetail;
 use App\Models\Farmasi\ReturObatKeSupplier;
 use App\Models\Farmasi\ReturPenjualanObat;
 use App\Support\Traits\Livewire\FlashComponent;
+use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Vtiful\Kernel\Excel;
@@ -164,8 +165,7 @@ class LaporanProduksiTahunan extends Component
     public function render()
     {
         return view('livewire.farmasi.laporan-produksi-tahunan')
-            ->extends('layouts.admin', ['title' => 'Laporan Produksi Farmasi Tahun ' . now()->format('Y')])
-            ->section('content');
+            ->layout(BaseLayout::class, ['title' => 'Laporan Produksi Farmasi Tahun ' . now()->format('Y')]);
     }
 
     public function exportToExcel()

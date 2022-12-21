@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Farmasi;
 
 use App\Models\Farmasi\ResepObat;
 use App\Support\Traits\Livewire\FlashComponent;
+use App\View\Components\BaseLayout;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -71,8 +72,7 @@ class PenggunaanObatPerdokter extends Component
     public function render()
     {
         return view('livewire.farmasi.penggunaan-obat-perdokter')
-            ->extends('layouts.admin', ['title' => 'Penggunaan Obat Per Dokter Peresep'])
-            ->section('content');
+            ->layout(BaseLayout::class, ['title' => 'Penggunaan Obat Per Dokter Peresep']);
     }
 
     public function exportToExcel()

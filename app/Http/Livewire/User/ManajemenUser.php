@@ -6,6 +6,7 @@ use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\SearchData;
+use App\View\Components\BaseLayout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -63,10 +64,16 @@ class ManajemenUser extends Component
     public function render()
     {
         return view('livewire.user.manajemen-user')
-            ->extends('layouts.admin', ['title' => 'Manajemen Hak Akses User'])
-            ->section('content');
+            ->layout(BaseLayout::class, ['title' => 'Manajemen Hak Akses User']);
     }
 
+    /**
+     * @param  string $nrp
+     * @param  array<int,int> $roles
+     * @param  array<int,int> $permissions
+     * 
+     * @return void
+     */
     public function simpan(string $nrp, array $roles, array $permissions)
     {
         $user = User::findByNRP($nrp);

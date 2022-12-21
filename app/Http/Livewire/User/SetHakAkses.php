@@ -5,6 +5,7 @@ namespace App\Http\Livewire\User;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Support\Traits\Livewire\FlashComponent;
+use App\View\Components\BaseLayout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -38,13 +39,14 @@ class SetHakAkses extends Component
     public function render()
     {
         return view('livewire.user.set-hak-akses')
-            ->extends('layouts.admin', ['title' => 'Pengaturan Hak Akses'])
-            ->section('content');
+            ->layout(BaseLayout::class, ['title' => 'Pengaturan Hak Akses']);
     }
 
     /**
      * @param  int $roleId
      * @param  array<int,int> $permissionIds
+     * 
+     * @return void
      */
     public function updatePermissions(int $roleId, array $permissionIds)
     {
