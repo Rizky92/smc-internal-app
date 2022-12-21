@@ -1,3 +1,3 @@
-@extends('layouts.admin', [
-    'title' => 'Dashboard',
-])
+<x-base-layout title="Dashboard">
+
+</x-base-layout>

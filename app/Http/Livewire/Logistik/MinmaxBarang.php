@@ -6,13 +6,14 @@ use App\Models\Logistik\BarangNonMedis;
 use App\Models\Logistik\MinmaxStokBarangNonMedis;
 use App\Models\Logistik\SupplierNonMedis;
 use App\Support\Traits\Livewire\FlashComponent;
+use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Vtiful\Kernel\Excel;
 
-class StokInputMinmaxBarang extends Component
+class MinmaxBarang extends Component
 {
     use WithPagination, FlashComponent;
 
@@ -74,9 +75,8 @@ class StokInputMinmaxBarang extends Component
 
     public function render()
     {
-        return view('livewire.logistik.stok-input-minmax-barang')
-            ->extends('layouts.admin', ['title' => 'Stok Minmax Barang Logistik'])
-            ->section('content');
+        return view('livewire.logistik.minmax-barang')
+            ->layout(BaseLayout::class, ['title' => 'Stok Minmax Barang Logistik']);
     }
 
     public function exportToExcel()

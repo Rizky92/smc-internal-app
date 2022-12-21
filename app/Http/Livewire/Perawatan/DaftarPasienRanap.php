@@ -6,6 +6,7 @@ use App\Models\Perawatan\Kamar;
 use App\Models\Perawatan\RawatInap;
 use App\Models\Perawatan\RegistrasiPasien;
 use App\Support\Traits\Livewire\FlashComponent;
+use App\View\Components\BaseLayout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -54,8 +55,7 @@ class DaftarPasienRanap extends Component
     public function render()
     {
         return view('livewire.perawatan.daftar-pasien-ranap')
-            ->extends('layouts.admin', ['title' => 'Daftar Pasien Rawat Inap'])
-            ->section('content');
+            ->layout(BaseLayout::class, ['title' => 'Daftar Pasien Rawat Inap']);
     }
 
     public function exportToExcel()

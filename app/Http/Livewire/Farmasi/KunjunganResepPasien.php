@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Farmasi;
 use App\Models\Farmasi\ResepDokter;
 use App\Models\Farmasi\ResepDokterRacikan;
 use App\Support\Traits\Livewire\FlashComponent;
+use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -80,8 +81,7 @@ class KunjunganResepPasien extends Component
     public function render()
     {
         return view('livewire.farmasi.kunjungan-resep-pasien')
-            ->extends('layouts.admin', ['title' => 'Kunjungan Resep Pasien'])
-            ->section('content');
+            ->layout(BaseLayout::class, ['title' => 'Kunjungan Resep Pasien']);
     }
 
     public function searchData()
@@ -104,7 +104,7 @@ class KunjunganResepPasien extends Component
     {
         $timestamp = now()->format('Ymd_His');
 
-        $filename = "excel/{$timestamp}_farmasi_daruratstok.xlsx";
+        $filename = "excel/{$timestamp}_farmasi_kunjungan_resep.xlsx";
 
         $config = [
             'path' => storage_path('app/public'),

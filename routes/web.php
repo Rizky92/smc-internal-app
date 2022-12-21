@@ -8,14 +8,13 @@ use App\Http\Livewire\Farmasi\KunjunganResepPasien;
 use App\Http\Livewire\Farmasi\LaporanProduksiTahunan;
 use App\Http\Livewire\Farmasi\PenggunaanObatPerdokter;
 use App\Http\Livewire\Farmasi\StokDaruratFarmasi;
+use App\Http\Livewire\Logistik\MinmaxBarang;
 use App\Http\Livewire\Logistik\StokDaruratLogistik;
-use App\Http\Livewire\Logistik\StokInputMinmaxBarang;
 use App\Http\Livewire\Perawatan\DaftarPasienRanap;
 use App\Http\Livewire\RekamMedis\LaporanStatistikRekamMedis;
 use App\Http\Livewire\User\ManajemenUser;
 use App\Http\Livewire\User\SetHakAkses;
 use Illuminate\Support\Facades\Route;
-use Livewire\Controllers\HttpConnectionHandler;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,24 +47,25 @@ Route::prefix('admin')
         Route::prefix('perawatan')
             ->as('perawatan.')
             ->group(function () {
-                Route::get('pasien-ranap', DaftarPasienRanap::class)
+                Route::get('rawat-inap', DaftarPasienRanap::class)
                     ->middleware([
-                        'can:perawatan.pasien-ranap.read',
-                        'can:perawatan.pasien-ranap.pulangkan-pasien',
+                        'can:perawatan.rawat-inap.read',
+                        'can:perawatan.rawat-inap.batal-ranap',
                     ])
-                    ->name('pasien-ranap');
+                    ->name('rawat-inap');
             });
 
         Route::prefix('farmasi')
             ->as('farmasi.')
             ->group(function () {
                 Route::get('darurat-stok', StokDaruratFarmasi::class)
+                    ->middleware('can:farmasi.darurat-stok.read')
                     ->name('darurat-stok');
 
                 Route::get('penggunaan-obat-perdokter', PenggunaanObatPerdokter::class)
                     ->middleware('can:farmasi.penggunaan-obat-perdokter.read')
                     ->name('obat-perdokter');
-                
+
                 Route::get('laporan-tahunan', LaporanProduksiTahunan::class)
                     ->middleware('can:farmasi.laporan-tahunan.read')
                     ->name('laporan-tahunan');
@@ -90,7 +90,7 @@ Route::prefix('admin')
                     ->middleware('can:logistik.darurat-stok.read')
                     ->name('darurat-stok');
 
-                Route::get('minmax', StokInputMinmaxBarang::class)
+                Route::get('minmax', MinmaxBarang::class)
                     ->middleware([
                         'can:logistik.stok-minmax.read',
                         'can:logistik.stok-minmax.update',

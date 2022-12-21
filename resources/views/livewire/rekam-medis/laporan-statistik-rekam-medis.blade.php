@@ -1,5 +1,5 @@
 <div>
-    @include('layouts.components.flash')
+    <x-flash />
 
     <div class="card">
         <div class="card-body">
@@ -36,9 +36,9 @@
                         </div>
                         <span class="text-sm pl-2">per halaman</span>
                         <div class="ml-auto input-group input-group-sm" style="width: 20rem">
-                            <input class="form-control" type="search" wire:model.defer="cari" placeholder="Cari..." wire:keydown.enter.stop="$refresh" />
+                            <input class="form-control" type="search" wire:model.defer="cari" placeholder="Cari..." wire:keydown.enter="searchData" />
                             <div class="input-group-append">
-                                <button class="btn btn-sm btn-default" type="button" wire:click="$refresh">
+                                <button class="btn btn-sm btn-default" type="button" wire:click="searchData">
                                     <i class="fas fa-sync-alt"></i>
                                     <span class="ml-1">Refresh</span>
                                 </button>
@@ -63,7 +63,7 @@
                         <th>Suku</th>
                         <th>Jenis Perawatan</th>
                         <th>Pasien Lama / Baru</th>
-                        <th>Status</th>
+                        <th>Status Ralan</th>
                         <th>Tgl. Masuk</th>
                         <th>Jam Masuk</th>
                         <th>Tgl. Pulang</th>

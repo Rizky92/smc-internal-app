@@ -4,6 +4,7 @@ namespace App\Http\Livewire\RekamMedis;
 
 use App\Models\RekamMedis\StatistikRekamMedis;
 use App\Support\Traits\Livewire\FlashComponent;
+use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -63,7 +64,9 @@ class LaporanStatistikRekamMedis extends Component
 
     public function getDataLaporanStatistikProperty()
     {
-        return StatistikRekamMedis::whereBetween('tgl_registrasi', [$this->periodeAwal, $this->periodeAkhir])
+        return StatistikRekamMedis::query()
+            ->denganPencarian($this->cari)
+            ->whereBetween('tgl_registrasi', [$this->periodeAwal, $this->periodeAkhir])
             ->orderBy('no_rawat')
             ->paginate($this->perpage);
     }
@@ -71,8 +74,14 @@ class LaporanStatistikRekamMedis extends Component
     public function render()
     {
         return view('livewire.rekam-medis.laporan-statistik-rekam-medis')
-            ->extends('layouts.admin', ['title' => 'Laporan Statistik'])
-            ->section('content');
+            ->layout(BaseLayout::class, ['title' => 'Laporan Statistik']);
+    }
+
+    public function searchData()
+    {
+        $this->resetPage();
+
+        $this->emit('$refresh');
     }
 
     public function exportToExcel()
@@ -104,7 +113,7 @@ class LaporanStatistikRekamMedis extends Component
             'Suku',
             'Jenis Perawatan',
             'Pasien Lama / Baru',
-            'Status',
+            'Status Ralan',
             'Tgl. Masuk',
             'Jam Masuk',
             'Tgl. Pulang',

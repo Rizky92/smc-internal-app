@@ -37,7 +37,7 @@ class LoginController
 
         $request->session()->regenerate();
 
-        return redirect()->route('admin.dashboard');
+        return redirect()->intended('admin.dashboard');
 
     }
 }

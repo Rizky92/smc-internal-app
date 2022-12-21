@@ -1,5 +1,5 @@
 <div>
-    @include('layouts.components.flash')
+    <x-flash />
 
     @once
         @push('js')
