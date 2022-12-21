@@ -64,7 +64,9 @@ class LaporanStatistikRekamMedis extends Component
 
     public function getDataLaporanStatistikProperty()
     {
-        return StatistikRekamMedis::whereBetween('tgl_registrasi', [$this->periodeAwal, $this->periodeAkhir])
+        return StatistikRekamMedis::query()
+            ->denganPencarian($this->cari)
+            ->whereBetween('tgl_registrasi', [$this->periodeAwal, $this->periodeAkhir])
             ->orderBy('no_rawat')
             ->paginate($this->perpage);
     }
@@ -73,6 +75,13 @@ class LaporanStatistikRekamMedis extends Component
     {
         return view('livewire.rekam-medis.laporan-statistik-rekam-medis')
             ->layout(BaseLayout::class, ['title' => 'Laporan Statistik']);
+    }
+
+    public function searchData()
+    {
+        $this->resetPage();
+
+        $this->emit('$refresh');
     }
 
     public function exportToExcel()
@@ -104,7 +113,7 @@ class LaporanStatistikRekamMedis extends Component
             'Suku',
             'Jenis Perawatan',
             'Pasien Lama / Baru',
-            'Status',
+            'Status Ralan',
             'Tgl. Masuk',
             'Jam Masuk',
             'Tgl. Pulang',
