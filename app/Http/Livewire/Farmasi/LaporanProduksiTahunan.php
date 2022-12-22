@@ -41,14 +41,7 @@ class LaporanProduksiTahunan extends Component
 
     public function getKunjunganWalkInProperty()
     {
-        $pasienWalkInDariRalan = ResepObat::kunjunganPasienWalkIn();
-        $pasienWalkInKeFarmasi = PenjualanWalkInObat::totalKunjunganWalkIn();
-
-        foreach ($pasienWalkInDariRalan as $key => $data) {
-            $pasienWalkInDariRalan[$key] += $pasienWalkInKeFarmasi[$key];
-        }
-
-        return $pasienWalkInDariRalan;
+        return PenjualanWalkInObat::totalKunjunganWalkIn();
     }
 
     public function getKunjunganTotalProperty()
