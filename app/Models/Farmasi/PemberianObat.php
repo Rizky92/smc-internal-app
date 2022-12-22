@@ -33,10 +33,10 @@ class PemberianObat extends Model
                         return $query->where('reg_periksa.status_lanjut', 'Ralan')
                             ->where('reg_periksa.kd_poli', '!=', 'IGDK');
                     case 'ranap':
-                        return $query->where('reg_periksa.status_lanjut', 'Ranap');
+                        return $query->where('reg_periksa.status_lanjut', 'Ranap')
+                            ->where('reg_periksa.kd_poli', '!=', 'IGDK');
                     case 'igd':
-                        return $query->where('reg_periksa.status_lanjut', 'Ralan')
-                            ->where('reg_periksa.kd_poli', '=', 'IGDK');
+                        return $query->where('reg_periksa.kd_poli', '=', 'IGDK');
                 }
             })
             ->when($selainFarmasi, function (Builder $query) {

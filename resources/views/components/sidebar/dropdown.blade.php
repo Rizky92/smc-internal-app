@@ -6,7 +6,7 @@
 ])
 
 @if ($hasPermissions)
-    <li class="nav-item">
+    <li class="nav-item {{ $isActive ? 'menu-is-opening menu-open' : null }}">
         <a href="#" class="nav-link {{ $isActive ? 'active' : '' }}">
             <i class="nav-icon {{ $icon }}"></i>
             <p>

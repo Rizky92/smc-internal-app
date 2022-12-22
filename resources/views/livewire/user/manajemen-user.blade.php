@@ -134,6 +134,15 @@
                                         </ul>
                                     </li>
                                 @endforeach
+                                <li style="list-style: none">
+                                    <b>Hak akses lainnya</b>
+                                    @foreach ($this->otherPermissions as $op)
+                                    <li class="custom-control custom-checkbox">
+                                        <input class="custom-control-input custom-control-input-secondary" id="permission-{{ $op->id }}" name="permissions" type=checkbox value="{{ $op->id }}">
+                                        <label class="custom-control-label font-weight-normal" for="permission-{{ $op->id }}">{{ $op->name }}</label>
+                                    </li>
+                                    @endforeach
+                                </li>
                             </ul>
                         </div>
                     </div>

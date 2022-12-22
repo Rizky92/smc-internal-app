@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\User;
 
+use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
 use App\Support\Traits\Livewire\FlashComponent;
@@ -59,6 +60,17 @@ class ManajemenUser extends Component
     public function getRolesProperty()
     {
         return Role::with('permissions')->get();
+    }
+
+    public function getOtherPermissionsProperty()
+    {
+        $availablePermissions = $this->roles->map(function ($role) {
+            return $role->permissions->map(function ($permission) {
+                return $permission->id;
+            });
+        })->flatten()->toArray();
+
+        return Permission::whereNotIn('id', $availablePermissions)->get();
     }
 
     public function render()
