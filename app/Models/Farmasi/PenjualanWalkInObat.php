@@ -5,6 +5,7 @@ namespace App\Models\Farmasi;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\DB;
 
 class PenjualanWalkInObat extends Model
 {
@@ -25,14 +26,24 @@ class PenjualanWalkInObat extends Model
             DATE_FORMAT(penjualan.tgl_jual, '%m-%Y') bulan
         ")
             ->where('status', 'Sudah Dibayar')
+            ->whereBetween('tgl_jual', [now()->startOfYear()->format('Y-m-d'), now()->endOfYear()->format('Y-m-d')])
             ->groupByRaw("DATE_FORMAT(penjualan.tgl_jual, '%m-%Y')");
     }
 
     public function scopePendapatanWalkIn(Builder $query): Builder
     {
         return $query->selectRaw("
-            COUNT(penju
+            round(sum(dj.total + penjualan.ppn)) jumlah,
+            date_format(penjualan.tgl_jual, '%m-%Y') bulan
         ")
+            ->leftJoin(DB::raw("(
+                select sum(detailjual.subtotal) total, detailjual.nota_jual
+                from detailjual
+                group by detailjual.nota_jual
+            ) dj"), 'penjualan.nota_jual', '=', 'dj.nota_jual')
+            ->where('penjualan.status', 'Sudah Dibayar')
+            ->whereBetween('penjualan.tgl_jual', [now()->startOfYear()->format('Y-m-d'), now()->endOfYear()->format('Y-m-d')])
+            ->groupByRaw("date_format(penjualan.tgl_jual, '%m-%Y')");
     }
 
     public function detail(): BelongsToMany
@@ -42,7 +53,15 @@ class PenjualanWalkInObat extends Model
 
     public static function totalKunjunganWalkIn(): array
     {
-        return (new static)->kunjunganWalkIn()->get()
+        return (new static)::kunjunganWalkIn()->get()
+            ->map(function ($value, $key) {
+                return [$value->bulan => $value->jumlah];
+            })->flatten(1)->pad(-12, 0)->toArray();
+    }
+
+    public static function totalPendapatanWalkIn(): array
+    {
+        return (new static)::pendapatanWalkIn()->get()
             ->map(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
             })->flatten(1)->pad(-12, 0)->toArray();

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Farmasi;
+namespace App\Models\Farmasi\Inventaris;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -20,13 +20,12 @@ class PemesananObat extends Model
     public function scopePembelianFarmasi(Builder $query): Builder
     {
         return $query->selectRaw("
-            CEIL(SUM(bayar_pemesanan.besar_bayar)) jumlah,
-	        DATE_FORMAT(pemesanan.tgl_faktur, '%m-%Y') bulan
+            round(sum(tagihan)) jumlah,
+	        date_format(tgl_pesan, '%m-%Y') bulan
         ")
-            ->leftJoin('bayar_pemesanan', 'pemesanan.no_faktur', '=', 'bayar_pemesanan.no_faktur')
-            ->whereRaw('YEAR(pemesanan.tgl_faktur) = ?', now()->format('Y'))
-            ->whereIn('pemesanan.kd_bangsal', ['IFA', 'IFG', 'AP'])
-            ->groupByRaw("DATE_FORMAT(pemesanan.tgl_faktur, '%m-%Y')");
+            ->where('status', 'Sudah Dibayar')
+            ->whereBetween('tgl_pesan', [now()->startOfYear()->format('Y-m-d'), now()->endOfYear()->format('Y-m-d')])
+            ->groupByRaw("date_format(tgl_pesan, '%m-%Y')");
     }
 
     public static function totalPembelianDariFarmasi(): array

@@ -23,6 +23,7 @@ class ResepObat extends Model
 
     public const RALAN = 'ralan';
     public const RANAP = 'ranap';
+    public const IGD = 'igd';
 
     /**
      * @param  \Illuminate\Database\Eloquent\Builder $query
@@ -114,7 +115,7 @@ class ResepObat extends Model
             ]);
     }
 
-    public function scopeJumlahKunjunganPasien(Builder $query, string $poli = ''): Builder
+    public function scopeKunjunganPasien(Builder $query, string $jenisPerawatan = ''): Builder
     {
         return $query->selectRaw("
             COUNT(resep_obat.no_resep) jumlah,
@@ -125,8 +126,8 @@ class ResepObat extends Model
                 now()->startOfYear()->format('Y-m-d'),
                 now()->endOfYear()->format('Y-m-d')
             ])
-            ->when(!empty($poli), function (Builder $query) use ($poli) {
-                switch (Str::lower($poli)) {
+            ->when(!empty($jenisPerawatan), function (Builder $query) use ($jenisPerawatan) {
+                switch (Str::lower($jenisPerawatan)) {
                     case 'ralan':
                         return $query->where('resep_obat.status', 'Ralan')
                             ->where('reg_periksa.kd_poli', '!=', 'IGDK');
@@ -143,13 +144,17 @@ class ResepObat extends Model
     public function scopeJumlahPendapatanObat(Builder $query, string $poli = ''): Builder
     {
         return $query->selectRaw("
-            CEIL(SUM(resep_dokter.jml * databarang.h_beli)) jumlah,
+            ROUND(SUM(resep_dokter.jml * databarang.h_beli)) jumlah,
             DATE_FORMAT(resep_obat.tgl_perawatan, '%m-%Y') bulan
         ")
             ->join('resep_dokter', 'resep_obat.no_resep', '=', 'resep_dokter.no_resep')
             ->join('databarang', 'resep_dokter.kode_brng', '=', 'databarang.kode_brng')
             ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
             ->where('reg_periksa.status_bayar', 'Sudah Bayar')
+            ->whereBetween('resep_obat.tgl_perawatan', [
+                now()->startOfYear()->format('Y-m-d'),
+                now()->endOfYear()->format('Y-m-d')
+            ])
             ->when(!empty($poli), function (Builder $query) use ($poli) {
                 switch (Str::lower($poli)) {
                     case 'ralan':
@@ -162,10 +167,6 @@ class ResepObat extends Model
                         return $query->where('reg_periksa.kd_poli', 'IGDK');
                 }
             })
-            ->whereBetween('resep_obat.tgl_perawatan', [
-                now()->startOfYear()->format('Y-m-d'),
-                now()->endOfYear()->format('Y-m-d')
-            ])
             ->groupByRaw('DATE_FORMAT(resep_obat.tgl_perawatan, "%m-%Y")');
     }
 
@@ -202,7 +203,7 @@ class ResepObat extends Model
 
     public static function kunjunganPasienRalan(): array
     {
-        return (new static)->jumlahKunjunganPasien('ralan')->get()
+        return (new static)::kunjunganPasien('ralan')->get()
             ->map(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
             })->flatten(1)->pad(-12, 0)->toArray();
@@ -210,7 +211,7 @@ class ResepObat extends Model
 
     public static function kunjunganPasienRanap(): array
     {
-        return (new static)->jumlahKunjunganPasien('ranap')->get()
+        return (new static)::kunjunganPasien('ranap')->get()
             ->map(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
             })->flatten(1)->pad(-12, 0)->toArray();
@@ -218,15 +219,7 @@ class ResepObat extends Model
 
     public static function kunjunganPasienIGD(): array
     {
-        return (new static)->jumlahKunjunganPasien('IGD')->get()
-            ->map(function ($value, $key) {
-                return [$value->bulan => $value->jumlah];
-            })->flatten(1)->pad(-12, 0)->toArray();
-    }
-
-    public static function kunjunganPasienWalkIn(): array
-    {
-        return (new static)->jumlahKunjunganPasien('walkin')->get()
+        return (new static)::kunjunganPasien('IGD')->get()
             ->map(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
             })->flatten(1)->pad(-12, 0)->toArray();
@@ -234,7 +227,7 @@ class ResepObat extends Model
 
     public static function pendapatanObatRalan(): array
     {
-        return (new static)->jumlahPendapatanObat('ralan')->get()
+        return (new static)::jumlahPendapatanObat('ralan')->get()
             ->map(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
             })->flatten(1)->pad(-12, 0)->toArray();
@@ -242,7 +235,7 @@ class ResepObat extends Model
 
     public static function pendapatanObatRanap(): array
     {
-        return (new static)->jumlahPendapatanObat('ranap')->get()
+        return (new static)::jumlahPendapatanObat('ranap')->get()
             ->map(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
             })->flatten(1)->pad(-12, 0)->toArray();
@@ -250,7 +243,7 @@ class ResepObat extends Model
 
     public static function pendapatanObatIGD(): array
     {
-        return (new static)->jumlahPendapatanObat('IGD')->get()
+        return (new static)::jumlahPendapatanObat('IGD')->get()
             ->map(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
             })->flatten(1)->pad(-12, 0)->toArray();
@@ -258,7 +251,7 @@ class ResepObat extends Model
 
     public static function pendapatanAlkesFarmasiDanUnit(): array
     {
-        return (new static)->jumlahPendapatanAlkes()->get()
+        return (new static)::jumlahPendapatanAlkes()->get()
             ->map(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
             })->flatten(1)->pad(-12, 0)->toArray();
