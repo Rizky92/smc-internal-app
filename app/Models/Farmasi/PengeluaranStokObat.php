@@ -26,7 +26,6 @@ class PengeluaranStokObat extends Model
             ->leftJoin('detail_pengeluaran_obat_bhp', 'pengeluaran_obat_bhp.no_keluar', '=', 'detail_pengeluaran_obat_bhp.no_keluar')
             ->join('databarang', 'detail_pengeluaran_obat_bhp.kode_brng', '=', 'databarang.kode_brng')
             ->whereBetween('pengeluaran_obat_bhp.tanggal', [now()->startOfYear()->format('Y-m-d'), now()->endOfYear()->format('Y-m-d')])
-            ->whereIn('pengeluaran_obat_bhp.kd_bangsal', ['AP', 'IFG', 'IFA'])
             ->groupByRaw('DATE_FORMAT(pengeluaran_obat_bhp.tanggal, "%m-%Y")');
     }
 

@@ -53,6 +53,45 @@ class LaporanStatistikRekamMedis extends Component
         ];
     }
 
+    protected function getColumnHeaders()
+    {
+        return [
+            'no_rawat'         => 'No. Rawat',
+            'no_rkm_medis'     => 'No. RM',
+            'nm_pasien'        => 'Nama Pasien',
+            'no_ktp'           => 'NIK',
+            'jk'               => 'L / P',
+            'tgl_lahir'        => 'Tgl. Lahir',
+            'umur'             => 'Umur',
+            'agama'            => 'Agama',
+            'nama_suku_bangsa' => 'Suku',
+            'status_lanjut'    => 'Jenis Perawatan',
+            'status_poli'      => 'Pasien Lama / Baru',
+            'status_perawatan' => 'Status Ralan',
+            'tgl_registrasi'   => 'Tgl. Masuk',
+            'jam_reg'          => 'Jam Masuk',
+            'tgl_keluar'       => 'Tgl. Pulang',
+            'jam_keluar'       => 'Jam Pulang',
+            'diagnosa_awal'    => 'Diagnosa Masuk',
+            'kd_diagnosa'      => 'ICD Diagnosa',
+            'nm_diagnosa'      => 'Diagnosa',
+            'kd_tindakan'      => 'ICD Tindakan',
+            'nm_tindakan'      => 'Tindakan',
+            'lama_operasi'     => 'Lama Operasi',
+            'rujukan_masuk'    => 'Rujukan Masuk',
+            'nm_dokter'        => 'DPJP',
+            'nm_poli'          => 'Poli',
+            'kelas'            => 'Kelas',
+            'png_jawab'        => 'Penjamin',
+            'status_bayar'     => 'Status Bayar',
+            'stts_pulang'      => 'Status Pulang',
+            'rujuk_ke_rs'      => 'Rujuk Keluar ke RS',
+            'no_tlp'           => 'No. HP',
+            'alamat'           => 'Alamat',
+            'kunjungan_ke'     => 'Kunjungan ke',
+        ];
+    }
+
     public function mount()
     {
         $this->cari = '';

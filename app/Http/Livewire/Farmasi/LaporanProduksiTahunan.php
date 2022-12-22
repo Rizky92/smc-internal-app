@@ -77,7 +77,7 @@ class LaporanProduksiTahunan extends Component
 
     public function getPendapatanAlkesFarmasiDanUnitProperty()
     {
-        return ResepObat::pendapatanAlkesFarmasiDanUnit();
+        return PemberianObat::pendapatanAlkesUnit();
     }
 
     public function getPendapatanObatTotalProperty()

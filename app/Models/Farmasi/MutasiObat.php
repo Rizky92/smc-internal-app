@@ -23,7 +23,6 @@ class MutasiObat extends Model
             ROUND(SUM(mutasibarang.jml * mutasibarang.harga)) jumlah,
             DATE_FORMAT(mutasibarang.tanggal, '%m-%Y') bulan
         ")
-            ->whereIn('mutasibarang.kd_bangsaldari', ['AP', 'IFG', 'IFA'])
             ->whereBetween('mutasibarang.tanggal', [
                 now()->startOfYear()->format('Y-m-d'),
                 now()->endOfYear()->format('Y-m-d')

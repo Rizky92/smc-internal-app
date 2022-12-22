@@ -23,7 +23,7 @@
                     @case('dropdown')
                         <x-sidebar.dropdown
                             :hasPermissions="$menu['hasAnyPermissions']"
-                            :isActive="collect($menu['items'])->flatten()->containsStrict($current)"
+                            :isActive="in_array($current, Arr::flatten($menu['items']), true)"
                             :icon="$menu['icon']"
                             :name="$menu['name']"
                         >

@@ -19,13 +19,20 @@ class PemesananObat extends Model
 
     public function scopePembelianFarmasi(Builder $query): Builder
     {
+        // select
+        //     round(sum(detailpesan.total)) jumlah,
+        //     date_format(pemesanan.tgl_pesan, '%m-%Y') bulan
+        // from pemesanan
+        // join detailpesan on pemesanan.no_faktur = detailpesan.no_faktur
+        // group by date_format(pemesanan.tgl_pesan, '%m-%Y')
+
         return $query->selectRaw("
-            round(sum(tagihan)) jumlah,
-	        date_format(tgl_pesan, '%m-%Y') bulan
+            round(sum(detailpesan.total)) jumlah,
+            date_format(pemesanan.tgl_pesan, '%m-%Y') bulan
         ")
-            ->where('status', 'Sudah Dibayar')
-            ->whereBetween('tgl_pesan', [now()->startOfYear()->format('Y-m-d'), now()->endOfYear()->format('Y-m-d')])
-            ->groupByRaw("date_format(tgl_pesan, '%m-%Y')");
+            ->join('detailpesan', 'pemesanan.no_faktur', '=', 'detailpesan.no_faktur')
+            ->whereBetween('pemesanan.tgl_pesan', [now()->startOfYear()->format('Y-m-d'), now()->endOfYear()->format('Y-m-d')])
+            ->groupByRaw("date_format(pemesanan.tgl_pesan, '%m-%Y')");
     }
 
     public static function totalPembelianDariFarmasi(): array
