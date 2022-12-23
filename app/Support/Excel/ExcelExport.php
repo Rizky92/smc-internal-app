@@ -10,18 +10,55 @@ use Vtiful\Kernel\Excel;
 
 class ExcelExport
 {
+    /**
+     * The excel instance
+     * 
+     * @var \Vtiful\Kernel\Excel $excel
+     */
     protected $excel;
 
+    /**
+     * Array of columns for the data
+     * 
+     * @var array<int|string,string> $columnHeaders
+     */
     protected $columnHeaders = [];
 
+    /**
+     * Array of titles for page header
+     * 
+     * @var array<int,string> $pageHeaders
+     */
     protected $pageHeaders = [];
 
+    /**
+     * The exported excel file name
+     * 
+     * @var string $filename
+     */
     protected $filename;
 
+    /**
+     * Array of configurations for excel instance
+     * 
+     * @var array<int|string,string> $config
+     */
     protected $config = [];
 
+    /**
+     * Array of sheet names for excel
+     * 
+     * @var array<int,string> $sheets
+     */
     protected $sheets = [];
 
+    /**
+     * @param  string $filename
+     * @param  string $sheetName
+     * @param  array<int|string,string> $config
+     * 
+     * @return self
+     */
     public function __construct($filename, $sheetName = 'Sheet 1', array $config = [])
     {
         $this->filename = Str::of($filename)
@@ -41,6 +78,13 @@ class ExcelExport
         return $this;
     }
 
+    /**
+     * Set the column headers for the cell data
+     * 
+     * @param  array<int|string,string> $columnHeaders
+     * 
+     * @return self
+     */
     public function setColumnHeaders(array $columnHeaders)
     {
         $this->columnHeaders = $columnHeaders;
@@ -48,6 +92,13 @@ class ExcelExport
         return $this;
     }
 
+    /**
+     * Set the page headers for the given sheet or all sheets
+     * 
+     * @param  array<int,string> $pageHeaders
+     * 
+     * @return self
+     */
     public function setPageHeaders(array $pageHeaders)
     {
         $this->pageHeaders = $pageHeaders;
@@ -55,6 +106,13 @@ class ExcelExport
         return $this;
     }
 
+    /**
+     * Set the type of data to be inserted to excel
+     * 
+     * @param  \Illuminate\Support\Collection|\Illuminate\Contracts\Support\Arrayable|array<int|string,mixed> $data
+     * 
+     * @return self
+     */
     public function setData($data)
     {
         if ($data instanceof Arrayable) {
@@ -69,6 +127,13 @@ class ExcelExport
         return $this;
     }
 
+    /**
+     * Add a new sheet to excel
+     * 
+     * @param  string $sheetName
+     * 
+     * @return self
+     */
     public function addSheet($sheetName)
     {
         $this->excel->addSheet($sheetName)
@@ -79,6 +144,13 @@ class ExcelExport
         return $this;
     }
 
+    /**
+     * Use available sheets or create a new sheet in excel
+     * 
+     * @param  string $sheetName
+     * 
+     * @return self
+     */
     public function useSheet($sheetName)
     {
         if (! in_array($sheetName, $this->sheets, true)) {
@@ -90,6 +162,11 @@ class ExcelExport
         return $this;
     }
 
+    /**
+     * Export excel to file as downloadable
+     * 
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     */
     public function export()
     {
         $this->excel->output();
@@ -97,6 +174,9 @@ class ExcelExport
         return Storage::disk('public')->download("excel/{$this->filename}");
     }
 
+    /**
+     * @return void
+     */
     protected function putColumnHeadersToCell()
     {
         if (empty($this->columnHeaders)) {
@@ -116,6 +196,9 @@ class ExcelExport
         $this->excel->insertText(count($this->pageHeaders) + 1, 0, '');
     }
 
+    /**
+     * @return void
+     */
     protected function putPageHeadersToCell()
     {
         if (empty($this->pageHeaders)) {
