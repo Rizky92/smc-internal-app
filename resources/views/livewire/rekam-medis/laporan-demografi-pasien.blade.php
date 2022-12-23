@@ -53,13 +53,13 @@
                 <table class="table table-hover table-striped table-sm text-sm m-0" style="width: 150rem">
                     <thead>
                         <tr>
-                            <th width="250">Nama Kecamatan</th>
-                            <th width="50">No RM</th>
-                            <th width="150">No Registrasi</th>
+                            <th width="250">Kecamatan</th>
+                            <th width="70">No. RM</th>
+                            <th width="150">No. Registrasi</th>
                             <th width="250">Nama Pasien</th>
-                            <th width="400">Alamat</th>
+                            <th width="500">Alamat</th>
                             <th width="50">Umur</th>
-                            <th width="120">Jenis Kelamin</th>
+                            <th width="50">L / P</th>
                             <th>Diagnosa</th>
                             <th width="100">Agama</th>
                             <th width="100">Pendidikan</th>
@@ -89,7 +89,7 @@
             </div>
         </div>
         <div class="card-footer">
-            <div class="px-4 pt-3 pb-2 d-flex align-items-center justify-content-start bg-light">
+            <div class="d-flex align-items-center justify-content-start bg-light">
                 <p class="text-muted">Menampilkan {{ $this->demografiPasien->count() }} dari total {{ number_format($this->demografiPasien->total(), 0, ',', '.') }} item.</p>
                 <div class="ml-auto">
                     {{ $this->demografiPasien->links() }}

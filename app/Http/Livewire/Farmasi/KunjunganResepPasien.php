@@ -97,7 +97,7 @@ class KunjunganResepPasien extends Component
     public function render()
     {
         return view('livewire.farmasi.kunjungan-resep-pasien')
-            ->layout(BaseLayout::class, ['title' => 'Kunjungan Resep Pasien']);
+            ->layout(BaseLayout::class, ['title' => 'Kunjungan Resep Pasien Per Bentuk Obat']);
     }
 
     public function searchData()
@@ -136,8 +136,6 @@ class KunjunganResepPasien extends Component
             ->setData($sheet1);
 
         $excel->useSheet('Obat Racikan')
-            ->setPageHeaders($titles)
-            ->setColumnHeaders($this->columnHeaders)
             ->setData($sheet2);
 
         return $excel->export();

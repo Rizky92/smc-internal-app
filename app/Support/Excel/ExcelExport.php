@@ -45,34 +45,12 @@ class ExcelExport
     {
         $this->columnHeaders = $columnHeaders;
 
-        if (empty($this->pageHeaders)) {
-            $this->excel->header($columnHeaders);
-        } else {
-            foreach (array_values($this->columnHeaders) as $id => $column) {
-                $this->excel->insertText(count($this->columnHeaders) - 1, $id, $column);
-            }
-
-            $this->excel->insertText(count($this->columnHeaders), 0, '');
-        }
-
         return $this;
     }
 
     public function setPageHeaders(array $pageHeaders)
     {
         $this->pageHeaders = $pageHeaders;
-
-        $colStart = $colEnd = 'A';
-
-        for ($i = 0; $i < count($this->columnHeaders); $i++) {
-            ++$colEnd;
-        }
-
-        foreach (array_values($pageHeaders) as $id => $title) {
-            $i = $id + 1;
-
-            $this->excel->mergeCells("{$colStart}{$i}:{$colEnd}{$i}", $title);
-        }
 
         return $this;
     }
@@ -82,6 +60,9 @@ class ExcelExport
         if ($data instanceof Arrayable) {
             $data = $data->toArray();
         }
+
+        $this->putColumnHeadersToCell();
+        $this->putPageHeadersToCell();
 
         $this->excel->data($data);
 
@@ -102,6 +83,8 @@ class ExcelExport
     {
         if (! in_array($sheetName, $this->sheets, true)) {
             $this->addSheet($sheetName);
+        } else {
+            $this->excel->checkoutSheet($sheetName);
         }
 
         return $this;
@@ -112,5 +95,43 @@ class ExcelExport
         $this->excel->output();
 
         return Storage::disk('public')->download("excel/{$this->filename}");
+    }
+
+    protected function putColumnHeadersToCell()
+    {
+        if (empty($this->columnHeaders)) {
+            throw new Exception("Cell column headers need to be set first!");
+        }
+
+        if (empty($this->pageHeaders)) {
+            $this->excel->header($this->columnHeaders);
+
+            return;
+        }
+
+        foreach (array_values($this->columnHeaders) as $id => $column) {
+            $this->excel->insertText(count($this->pageHeaders), $id, $column);
+        }
+
+        $this->excel->insertText(count($this->pageHeaders) + 1, 0, '');
+    }
+
+    protected function putPageHeadersToCell()
+    {
+        if (empty($this->pageHeaders)) {
+            return;
+        }
+
+        $colStart = $colEnd = 'A';
+
+        for ($i = 0; $i < count($this->columnHeaders) - 1; $i++) {
+            $colEnd++;
+        }
+
+        foreach (array_values($this->pageHeaders) as $id => $title) {
+            $i = $id + 1;
+
+            $this->excel->mergeCells("{$colStart}{$i}:{$colEnd}{$i}", $title);
+        }
     }
 }

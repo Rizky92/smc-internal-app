@@ -51,6 +51,7 @@ class LaporanDemografiPasien extends Component
         $this->cari = '';
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->perpage = 25;
     }
 
     public function getColumnHeadersProperty()
@@ -64,24 +65,34 @@ class LaporanDemografiPasien extends Component
         // 45-64 THN
         // >65 THN
         return [
-            'kecamatan' => 'Nama Kecamatan',
-            'no_rm' => 'No RM',
-            'no_rawat' => 'No Registrasi',
-            'nm_pasien' => 'Nama Pasien',
-            'almt' => 'Alamat',
-            'umur' => 'Rentang Umur',
-            'jk' => 'Jenis Kelamin',
-            'diagnosa' => 'Diagnosa',
-            'agama' => 'Agama',
-            'pendidikan' => 'Pendidikan',
-            'bahasa' => 'Bahasa',
-            'suku' => 'Suku',
+            'Kecamatan',
+            'No. RM',
+            'No. Registrasi',
+            'Pasien',
+            'Alamat',
+            '0 - < 28 Hr',
+            '28 Hr - 1 Th',
+            '1 - 4 Th',
+            '5 - 14 Th',
+            '15 - 24 Th',
+            '25 - 44 Th',
+            '45 - 64 Th',
+            '> 64 Th',
+            'PR',
+            'LK',
+            'diagnosa',
+            'agama',
+            'pendidikan',
+            'bahasa',
+            'suku',
         ];
     }
 
     public function getDemografiPasienProperty()
     {
-        return DemografiPasien::paginate($this->perpage);
+        return DemografiPasien::query()
+            ->whereBetween('tgl_registrasi', [$this->periodeAwal, $this->periodeAkhir])
+            ->paginate($this->perpage);
     }
 
     public function render()
@@ -100,5 +111,12 @@ class LaporanDemografiPasien extends Component
     public function beginExcelExport()
     {
         
+    }
+
+    public function searchData()
+    {
+        $this->resetPage();
+
+        $this->emit('$refresh');
     }
 }
