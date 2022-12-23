@@ -87,6 +87,12 @@ class BaseLayout extends Component
                         'hasAnyPermissions' => $user->can('farmasi.kunjungan-resep.read'),
                     ],
                     [
+                        'name' => 'Kunjungan Farmasi Pasien',
+                        'icon' => 'far fa-newspaper',
+                        'url' => route('admin.farmasi.kunjungan-pasien-per-poli'),
+                        'hasAnyPermissions' => $user->can('farmasi.kunjungan-pasien-per-poli.read'),
+                    ],
+                    [
                         'name' => 'Laporan Tahunan',
                         'icon' => 'far fa-newspaper',
                         'url' => route('admin.farmasi.laporan-tahunan'),

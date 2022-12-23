@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Livewire\Farmasi\KunjunganFarmasiPasienPerPoli;
 use App\Http\Livewire\Farmasi\KunjunganResepPasien;
 use App\Http\Livewire\Farmasi\LaporanProduksiTahunan;
 use App\Http\Livewire\Farmasi\PenggunaanObatPerdokter;
@@ -74,6 +75,10 @@ Route::prefix('admin')
                 Route::get('kunjungan-resep', KunjunganResepPasien::class)
                     ->middleware('can:farmasi.kunjungan-resep.read')
                     ->name('kunjungan-resep');
+
+                Route::get('kunjungan-pasien-per-poli', KunjunganFarmasiPasienPerPoli::class)
+                    ->middleware('can:farmasi.kunjungan-pasien-per-poli.read')
+                    ->name('kunjungan-pasien-per-poli');
             });
 
         Route::prefix('rekam-medis')

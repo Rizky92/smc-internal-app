@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\RekamMedis;
 
 use App\Models\RekamMedis\DemografiPasien;
+use App\Support\Excel\ExcelExport;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
@@ -80,11 +81,11 @@ class LaporanDemografiPasien extends Component
             '> 64 Th',
             'PR',
             'LK',
-            'diagnosa',
-            'agama',
-            'pendidikan',
-            'bahasa',
-            'suku',
+            'Diagnosa',
+            'Agama',
+            'Pendidikan',
+            'Bahasa',
+            'Suku',
         ];
     }
 
@@ -110,7 +111,22 @@ class LaporanDemografiPasien extends Component
 
     public function beginExcelExport()
     {
-        
+        $timestamp = now()->format('Ymd_His');
+
+        $filename = "{$timestamp}_laporan_demografi_pasien.xlsx";
+
+        $titles = [
+            'RS Samarinda Medika Citra',
+            'Laporan Demografi Pasien',
+            now()->format('d F Y'),
+        ];
+
+        $excel = (new ExcelExport($filename))
+            ->setPageHeaders($titles)
+            ->setColumnHeaders($this->columnHeaders)
+            ->setData(DemografiPasien::laporanDemografiExcel($this->periodeAwal, $this->periodeAkhir)->get());
+
+        return $excel->export();
     }
 
     public function searchData()
@@ -118,5 +134,22 @@ class LaporanDemografiPasien extends Component
         $this->resetPage();
 
         $this->emit('$refresh');
+    }
+
+    public function resetFilters()
+    {
+        $this->cari = '';
+        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->perpage = 25;
+
+        $this->searchData();
+    }
+
+    public function fullRefresh()
+    {
+        $this->forgetComputed();
+
+        $this->resetFilters();
     }
 }

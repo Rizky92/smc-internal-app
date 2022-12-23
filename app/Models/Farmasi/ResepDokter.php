@@ -70,4 +70,9 @@ class ResepDokter extends Model
                 'reg_periksa.status_lanjut',
             ]);
     }
+
+    public function scopeKunjunganFarmasiPasien(Builder $query, string $periodeAwal, string $periodeAkhir): Builder
+    {
+        return $query->selectRaw();
+    }
 }

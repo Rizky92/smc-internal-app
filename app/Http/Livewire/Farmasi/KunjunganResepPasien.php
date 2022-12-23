@@ -9,7 +9,6 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Vtiful\Kernel\Format;
 
 class KunjunganResepPasien extends Component
 {
@@ -119,7 +118,7 @@ class KunjunganResepPasien extends Component
     {
         $timestamp = now()->format('Ymd_His');
 
-        $filename = "excel/{$timestamp}_farmasi_kunjungan_resep.xlsx";
+        $filename = "{$timestamp}_farmasi_kunjungan_resep.xlsx";
 
         $sheet1 = ResepDokter::kunjunganResepObatRegular($this->periodeAwal, $this->periodeAkhir, $this->jenisPerawatan)->get()->toArray();
         $sheet2 = ResepDokterRacikan::kunjunganResepObatRacikan($this->periodeAwal, $this->periodeAkhir, $this->jenisPerawatan)->get()->toArray();
