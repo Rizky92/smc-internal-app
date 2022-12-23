@@ -50,28 +50,38 @@
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover table-striped table-sm text-sm m-0">
+                <table class="table table-hover table-striped table-sm text-sm m-0" style="width: 150rem">
                     <thead>
                         <tr>
-                            <th>No. Resep</th>
-                            <th>Dokter Peresep</th>
-                            <th>Tgl. Validasi</th>
-                            <th>Jam</th>
-                            <th>Pasien</th>
-                            <th>Jenis Perawatan</th>
-                            <th>Total Pembelian</th>
+                            <th width="250">Nama Kecamatan</th>
+                            <th width="50">No RM</th>
+                            <th width="150">No Registrasi</th>
+                            <th width="250">Nama Pasien</th>
+                            <th width="400">Alamat</th>
+                            <th width="50">Umur</th>
+                            <th width="120">Jenis Kelamin</th>
+                            <th>Diagnosa</th>
+                            <th width="100">Agama</th>
+                            <th width="100">Pendidikan</th>
+                            <th width="100">Bahasa</th>
+                            <th width="100">Suku</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($this->kunjunganResepObatRegularPasien as $resep)
+                        @foreach ($this->demografiPasien as $pasien)
                             <tr>
-                                <td>{{ $resep->no_resep }}</td>
-                                <td>{{ $resep->nm_dokter }}</td>
-                                <td>{{ $resep->tgl_perawatan }}</td>
-                                <td>{{ $resep->jam }}</td>
-                                <td>{{ $resep->nm_pasien }}</td>
-                                <td>{{ $resep->status_lanjut }}</td>
-                                <td>{{ rp($resep->total) }}</td>
+                                <td>{{ $pasien->kecamatan }}</td>
+                                <td>{{ $pasien->no_rm }}</td>
+                                <td>{{ $pasien->no_rawat }}</td>
+                                <td>{{ $pasien->nm_pasien }}</td>
+                                <td>{{ $pasien->almt }}</td>
+                                <td>{{ $pasien->umur }}</td>
+                                <td>{{ $pasien->jk }}</td>
+                                <td>{{ $pasien->diagnosa }}</td>
+                                <td>{{ $pasien->agama }}</td>
+                                <td>{{ $pasien->pendidikan }}</td>
+                                <td>{{ $pasien->bahasa }}</td>
+                                <td>{{ $pasien->suku }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -80,9 +90,9 @@
         </div>
         <div class="card-footer">
             <div class="px-4 pt-3 pb-2 d-flex align-items-center justify-content-start bg-light">
-                <p class="text-muted">Menampilkan {{ $this->kunjunganResepObatRegularPasien->count() }} dari total {{ number_format($this->kunjunganResepObatRegularPasien->total(), 0, ',', '.') }} item.</p>
+                <p class="text-muted">Menampilkan {{ $this->demografiPasien->count() }} dari total {{ number_format($this->demografiPasien->total(), 0, ',', '.') }} item.</p>
                 <div class="ml-auto">
-                    {{ $this->kunjunganResepObatRegularPasien->links() }}
+                    {{ $this->demografiPasien->links() }}
                 </div>
             </div>
         </div>

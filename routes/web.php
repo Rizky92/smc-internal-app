@@ -11,7 +11,7 @@ use App\Http\Livewire\Farmasi\StokDaruratFarmasi;
 use App\Http\Livewire\Logistik\MinmaxBarang;
 use App\Http\Livewire\Logistik\StokDaruratLogistik;
 use App\Http\Livewire\Perawatan\DaftarPasienRanap;
-use App\Http\Livewire\RekamMedis\DemografiPasien;
+use App\Http\Livewire\RekamMedis\LaporanDemografiPasien;
 use App\Http\Livewire\RekamMedis\LaporanStatistikRekamMedis;
 use App\Http\Livewire\User\ManajemenUser;
 use App\Http\Livewire\User\SetHakAkses;
@@ -83,7 +83,7 @@ Route::prefix('admin')
                     ->middleware('can:rekam-medis.laporan-statistik.read')
                     ->name('laporan-statistik');
 
-                Route::get('demografi-pasien', DemografiPasien::class)
+                Route::get('laporan-demografi-pasien', LaporanDemografiPasien::class)
                     ->middleware('can:rekam-medis.demografi-pasien.read')
                     ->name('demografi-pasien');
             });
