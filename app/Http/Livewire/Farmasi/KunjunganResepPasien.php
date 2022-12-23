@@ -4,16 +4,19 @@ namespace App\Http\Livewire\Farmasi;
 
 use App\Models\Farmasi\ResepDokter;
 use App\Models\Farmasi\ResepDokterRacikan;
+use App\Support\Excel\ExcelExport;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Vtiful\Kernel\Excel;
+use Vtiful\Kernel\Format;
 
 class KunjunganResepPasien extends Component
 {
     use WithPagination, FlashComponent;
+
+    private const OBAT_REGULAR_PAGE = 'obat_regular_page';
+    private const OBAT_RACIKAN_PAGE = 'obat_racikan_page';
 
     public $perpage;
 
@@ -65,7 +68,7 @@ class KunjunganResepPasien extends Component
             $this->periodeAkhir,
             $this->jenisPerawatan
         )
-            ->paginate($this->perpage, ['*'], 'obat_regular_page');
+            ->paginate($this->perpage, ['*'], $this::OBAT_REGULAR_PAGE);
     }
 
     public function getKunjunganResepObatRacikanPasienProperty()
@@ -75,7 +78,20 @@ class KunjunganResepPasien extends Component
             $this->periodeAkhir,
             $this->jenisPerawatan
         )
-            ->paginate($this->perpage, ['*'], 'obat_racikan_page');
+            ->paginate($this->perpage, ['*'], $this::OBAT_RACIKAN_PAGE);
+    }
+
+    public function getColumnHeadersProperty()
+    {
+        return [
+            'no_resep' => 'No. Resep',
+            'nm_dokter' => 'Dokter Peresep',
+            'tgl_perawatan' => 'Tgl. Validasi',
+            'jam' => 'Jam',
+            'nm_pasien' => 'Pasien',
+            'status_lanjut' => 'Jenis Perawatan',
+            'total' => 'Total Pembelian (RP)',
+        ];
     }
 
     public function render()
@@ -86,9 +102,8 @@ class KunjunganResepPasien extends Component
 
     public function searchData()
     {
-        // dd($this->jenisPerawatan);
-        $this->resetPage('obat_racikan_page');
-        $this->resetPage('obat_regular_page');
+        $this->resetPage($this::OBAT_REGULAR_PAGE);
+        $this->resetPage($this::OBAT_RACIKAN_PAGE);
 
         $this->emit('$refresh');
     }
@@ -106,54 +121,25 @@ class KunjunganResepPasien extends Component
 
         $filename = "excel/{$timestamp}_farmasi_kunjungan_resep.xlsx";
 
-        $config = [
-            'path' => storage_path('app/public'),
-        ];
-
-        $row1 = 'RS Samarinda Medika Citra';
-        $row2 = 'Laporan Darurat Stok Farmasi';
-        $row3 = now()->format('d F Y');
-
-        $columnHeaders = [
-            'No. Resep',
-            'Dokter Peresep',
-            'Tgl. Validasi',
-            'Jam',
-            'Pasien',
-            'Jenis Perawatan',
-            'Total Pembelian (RP)',
-        ];
-
         $sheet1 = ResepDokter::kunjunganResepObatRegular($this->periodeAwal, $this->periodeAkhir, $this->jenisPerawatan)->get()->toArray();
         $sheet2 = ResepDokterRacikan::kunjunganResepObatRacikan($this->periodeAwal, $this->periodeAkhir, $this->jenisPerawatan)->get()->toArray();
 
-        $excel = new Excel($config);
-        $excel->fileName($filename, 'Obat Regular')
-            ->mergeCells('A1:G1', $row1)
-            ->mergeCells('A2:G2', $row2)
-            ->mergeCells('A3:G3', $row3);
+        $titles = [
+            'RS Samarinda Medika Citra',
+            'Laporan Kunjungan Resep Pasien',
+            now()->format('d F Y'),
+        ];
 
-        foreach ($columnHeaders as $idx => $header) {
-            $excel->insertText(3, $idx, $header);
-        }
+        $excel = (new ExcelExport($filename, 'Obat Regular'))
+            ->setPageHeaders($titles)
+            ->setColumnHeaders($this->columnHeaders)
+            ->setData($sheet1);
 
-        $excel->insertText(4, 0, '');
-        $excel->data($sheet1);
+        $excel->useSheet('Obat Racikan')
+            ->setPageHeaders($titles)
+            ->setColumnHeaders($this->columnHeaders)
+            ->setData($sheet2);
 
-        $excel->addSheet('Obat Racikan')
-            ->mergeCells('A1:G1', $row1)
-            ->mergeCells('A2:G2', $row2)
-            ->mergeCells('A3:G3', $row3);
-
-        foreach ($columnHeaders as $idx => $header) {
-            $excel->insertText(3, $idx, $header);
-        }
-
-        $excel->insertText(4, 0, '');
-        $excel->data($sheet2);
-
-        $excel->output();
-
-        return Storage::disk('public')->download($filename);
+        return $excel->export();
     }
 }

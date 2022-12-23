@@ -17,6 +17,27 @@ class DemografiPasien extends Component
 
     public $periodeAkhir;
 
+    protected $listeners = [
+        'beginExcelExport',
+    ];
+
+    protected function queryString()
+    {
+        return [
+            'cari' => [
+                'except' => '',
+            ],
+            'periodeAwal' => [
+                'except' => now()->startOfMonth()->format('Y-m-d'),
+                'as' => 'periode_awal',
+            ],
+            'periodeAkhir' => [
+                'except' => now()->endOfMonth()->format('Y-m-d'),
+                'as' => 'periode_akhir',
+            ],
+        ];
+    }
+
     public function mount()
     {
         $this->cari = '';
@@ -35,5 +56,10 @@ class DemografiPasien extends Component
         $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
 
         $this->emit('beginExcelExport');
+    }
+
+    public function beginExcelExport()
+    {
+        
     }
 }

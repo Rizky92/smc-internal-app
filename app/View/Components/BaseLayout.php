@@ -52,7 +52,7 @@ class BaseLayout extends Component
                 'url' => route('admin.perawatan.rawat-inap'),
                 'icon' => "fas fa-hospital-alt",
                 'type' => 'link',
-                'hasAnyPermissions' => $user->can([
+                'hasAnyPermissions' => $user->canAny([
                     'perawatan.rawat-inap.read',
                     'perawatan.rawat-inap.batal-ranap',
                 ]),
@@ -61,7 +61,7 @@ class BaseLayout extends Component
                 'name' => 'Farmasi',
                 'icon' => "far fa-circle",
                 'type' => 'dropdown',
-                'hasAnyPermissions' => $user->can([
+                'hasAnyPermissions' => $user->canAny([
                     'farmasi.darurat-stok.read',
                     'farmasi.penggunaan-obat-perdokter.read',
                     'farmasi.laporan-tahunan.read',
@@ -98,7 +98,10 @@ class BaseLayout extends Component
                 'name' => 'Rekam Medis',
                 'icon' => "far fa-circle",
                 'type' => 'dropdown',
-                'hasAnyPermissions' => $user->can(['rekam-medis.laporan-statistik.read']),
+                'hasAnyPermissions' => $user->canAny([
+                    'rekam-medis.laporan-statistik.read',
+                    'rekam-medis.demografi-pasien.read',
+                ]),
                 'items' => [
                     [
                         'name' => 'Laporan Statistik',
@@ -106,14 +109,21 @@ class BaseLayout extends Component
                         'url' => route('admin.rekam-medis.laporan-statistik'),
                         'hasAnyPermissions' => $user->can('rekam-medis.laporan-statistik.read'),
                     ],
+                    [
+                        'name' => 'Demografi Pasien',
+                        'icon' => 'far fa-newspaper',
+                        'url' => route('admin.rekam-medis.demografi-pasien'),
+                        'hasAnyPermissions' => $user->can('rekam-medis.demografi-pasien.read'),
+                    ],
                 ],
             ],
             [
                 'name' => 'Logistik',
                 'icon' => "far fa-circle",
                 'type' => 'dropdown',
-                'hasAnyPermissions' => $user->can([
+                'hasAnyPermissions' => $user->canAny([
                     'logistik.stok-minmax.read',
+                    'logistik.stok-minmax.update',
                     'logistik.darurat-stok.read',
                 ]),
                 'items' => [
@@ -121,7 +131,10 @@ class BaseLayout extends Component
                         'name' => 'Input stok min max',
                         'icon' => 'fas fa-pencil-alt',
                         'url' => route('admin.logistik.minmax'),
-                        'hasAnyPermissions' => $user->can('logistik.stok-minmax.read'),
+                        'hasAnyPermissions' => $user->canAny([
+                            'logistik.stok-minmax.read',
+                            'logistik.stok-minmax.update',
+                        ]),
                     ],
                     [
                         'name' => 'Laporan Darurat Stok',
