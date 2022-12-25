@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Rizky92\Xlswriter\ExcelExport;
 use Vtiful\Kernel\Excel;
 
 class PenggunaanObatPerdokter extends Component
@@ -86,58 +87,29 @@ class PenggunaanObatPerdokter extends Component
     {
         $timestamp = now()->format('Ymd_His');
 
-        $filename = "excel/{$timestamp}_obat_perdokter.xlsx";
-
-        $config = [
-            'path' => storage_path('app/public'),
-        ];
+        $filename = "{$timestamp}_obat_perdokter.xlsx";
 
         $headerTglAwal = Carbon::parse($this->periodeAwal)->format('d F Y');
         $headerTglAkhir = Carbon::parse($this->periodeAkhir)->format('d F Y');
 
-        $row1 = 'RS Samarinda Medika Citra';
-        $row2 = 'Laporan Penggunaan Obat Per Dokter Peresep';
-        $row3 = "{$headerTglAwal} - {$headerTglAkhir}";
-
-        $columnHeaders = [
-            'No. Resep',
-            'Tgl. Validasi',
-            'Jam',
-            'Nama Obat',
-            'Jumlah',
-            'Dokter Peresep',
-            'Asal',
-            'Asal Poli',
+        $titles = [
+            'RS Samarinda Medika Citra',
+            'Laporan Penggunaan Obat Per Dokter Peresep',
+            "{$headerTglAwal} - {$headerTglAkhir}",
         ];
+
+        $columnHeaders = ['No. Resep', 'Tgl. Validasi', 'Jam', 'Nama Obat', 'Jumlah', 'Dokter Peresep', 'Asal', 'Asal Poli'];
 
         $data = ResepObat::penggunaanObatPerDokter($this->periodeAwal, $this->periodeAkhir)
             ->cursor()
             ->toArray();
 
-        (new Excel($config))
-            ->fileName($filename)
+        $excel = ExcelExport::make($filename)
+            ->setPageHeaders($titles)
+            ->setColumnHeaders($columnHeaders)
+            ->setData($data);
 
-            // page header
-            ->mergeCells('A1:H1', $row1)
-            ->mergeCells('A2:H2', $row2)
-            ->mergeCells('A3:H3', $row3)
-
-            // column header
-            ->insertText(3, 0, $columnHeaders[0])
-            ->insertText(3, 1, $columnHeaders[1])
-            ->insertText(3, 2, $columnHeaders[2])
-            ->insertText(3, 3, $columnHeaders[3])
-            ->insertText(3, 4, $columnHeaders[4])
-            ->insertText(3, 5, $columnHeaders[5])
-            ->insertText(3, 6, $columnHeaders[6])
-            ->insertText(3, 7, $columnHeaders[7])
-            ->insertText(4, 0, '')
-
-            // insert data
-            ->data($data)
-            ->output();
-
-        return Storage::disk('public')->download($filename);
+        return $excel->export();
     }
 
     public function searchData()

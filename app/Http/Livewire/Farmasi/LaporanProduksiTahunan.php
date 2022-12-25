@@ -12,9 +12,8 @@ use App\Models\Farmasi\Inventaris\PemesananObat;
 use App\Models\Farmasi\Inventaris\ReturSupplierObat;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
-use Vtiful\Kernel\Excel;
+use Rizky92\Xlswriter\ExcelExport;
 
 class LaporanProduksiTahunan extends Component
 {
@@ -144,15 +143,13 @@ class LaporanProduksiTahunan extends Component
     {
         $timestamp = now()->format('Ymd_His');
 
-        $filename = "excel/{$timestamp}_laporan_produksi.xlsx";
+        $filename = "{$timestamp}_laporan_produksi.xlsx";
 
-        $config = [
-            'path' => storage_path('app/public'),
+        $titles = [
+            'RS Samarinda Medika Citra',
+            'Laporan Produksi Farmasi Tahun ' . now()->format('Y'),
+            now()->format('d F Y'),
         ];
-
-        $row1 = 'RS Samarinda Medika Citra';
-        $row2 = 'Laporan Produksi Farmasi Tahun ' . now()->format('Y');
-        $row3 = now()->format('d F Y');
 
         $columnHeaders = [
             'Laporan',
@@ -190,34 +187,11 @@ class LaporanProduksiTahunan extends Component
             array_merge(['Transfer Order'], $this->mutasiObatDariFarmasi),
         ];
 
-        (new Excel($config))
-            ->fileName($filename)
+        $excel = ExcelExport::make($filename)
+            ->setPageHeaders($titles)
+            ->setColumnHeaders($columnHeaders)
+            ->setData($data);
 
-            // page header
-            ->mergeCells('A1:M1', $row1)
-            ->mergeCells('A2:M2', $row2)
-            ->mergeCells('A3:M3', $row3)
-
-            // column header
-            ->insertText(3, 0, $columnHeaders[0])
-            ->insertText(3, 1, $columnHeaders[1])
-            ->insertText(3, 2, $columnHeaders[2])
-            ->insertText(3, 3, $columnHeaders[3])
-            ->insertText(3, 4, $columnHeaders[4])
-            ->insertText(3, 5, $columnHeaders[5])
-            ->insertText(3, 6, $columnHeaders[6])
-            ->insertText(3, 7, $columnHeaders[7])
-            ->insertText(3, 8, $columnHeaders[8])
-            ->insertText(3, 9, $columnHeaders[9])
-            ->insertText(3, 10, $columnHeaders[10])
-            ->insertText(3, 11, $columnHeaders[11])
-            ->insertText(3, 12, $columnHeaders[12])
-            ->insertText(4, 0, '')
-
-            // insert data
-            ->data($data)
-            ->output();
-
-        return Storage::disk('public')->download($filename);
+        return $excel->export();
     }
 }

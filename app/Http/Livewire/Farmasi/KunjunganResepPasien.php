@@ -4,11 +4,11 @@ namespace App\Http\Livewire\Farmasi;
 
 use App\Models\Farmasi\ResepDokter;
 use App\Models\Farmasi\ResepDokterRacikan;
-use App\Support\Excel\ExcelExport;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Rizky92\Xlswriter\ExcelExport;
 
 class KunjunganResepPasien extends Component
 {
