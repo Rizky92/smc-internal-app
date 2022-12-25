@@ -129,7 +129,7 @@ class KunjunganResepPasien extends Component
             now()->format('d F Y'),
         ];
 
-        $excel = (new ExcelExport($filename, 'Obat Regular'))
+        $excel = ExcelExport::make($filename, 'Obat Regular')
             ->setPageHeaders($titles)
             ->setColumnHeaders($this->columnHeaders)
             ->setData($sheet1);
