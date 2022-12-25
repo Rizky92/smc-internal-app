@@ -4,6 +4,7 @@
 /storage/*.key
 /vendor
 /.vscode
+/_packages
 .env
 .env.local
 .env.production
@@ -18,4 +19,3 @@ _ide_helper.php
 .phpstorm.meta.php
 .editorconfig
 .bashrc
-/[packages]
