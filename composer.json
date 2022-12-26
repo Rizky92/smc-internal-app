@@ -42,8 +42,8 @@
     },
     "repositories": [
         {
-            "type": "path",
-            "url": "_packages/rizky92/laravel-xlswriter"
+            "type": "vcs",
+            "url": "https://github.com/Rizky92/laravel-xlswriter"
         }
     ],
     "autoload": {
@@ -51,8 +51,7 @@
             "App\\": "app/"
         },
         "classmap": [
-            "database/seeds",
-            "database/factories"
+            "database/seeds"
         ],
         "files": [
             "app/Support/helpers.php"
