@@ -213,9 +213,9 @@
                         </div>
                         <span class="text-sm pl-2">per halaman</span>
                         <div class="ml-auto input-group input-group-sm" style="width: 20rem">
-                            <input class="form-control" type="search" wire:model.defer="cari" placeholder="Cari..." wire:keydown.enter.stop="$refresh" />
+                            <input class="form-control" type="search" wire:model.defer="cari" placeholder="Cari..." wire:keydown.enter.stop="searchData" />
                             <div class="input-group-append">
-                                <button class="btn btn-sm btn-default" type="button" wire:click="$refresh">
+                                <button class="btn btn-sm btn-default" type="button" wire:click="searchData">
                                     <i class="fas fa-sync-alt"></i>
                                     <span class="ml-1">Refresh</span>
                                 </button>

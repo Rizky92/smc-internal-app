@@ -64,7 +64,7 @@ class DaftarPasienRanap extends Component
 
     public function getDaftarPasienRanapProperty()
     {
-        return RegistrasiPasien::daftarPasienRanap()
+        return RegistrasiPasien::daftarPasienRanap($this->jenisRanapDitampilkan, $this->cari)
             ->orderBy('no_rawat')
             ->paginate($this->perpage);
     }

@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class RegistrasiPasien extends Model
@@ -29,7 +28,7 @@ class RegistrasiPasien extends Model
         'stts',
     ];
 
-    public function scopeDaftarPasienRanap(Builder $query): Builder
+    public function scopeDaftarPasienRanap(Builder $query, string $jenisRanapDitampilkan, string $cari = ''): Builder
     {
         return $query->selectRaw("
             reg_periksa.no_rawat,
@@ -59,7 +58,18 @@ class RegistrasiPasien extends Model
             ->join('kabupaten', 'pasien.kd_kab', '=', 'kabupaten.kd_kab')
             ->join('propinsi', 'pasien.kd_prop', '=', 'propinsi.kd_prop')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
-            ->where('kamar_inap.stts_pulang', '-');
+            ->where('kamar_inap.stts_pulang', '-')
+            ->when(! empty($cari), function (Builder $query) use ($cari) {
+                return $query->where(function (Builder $query) use ($cari) {
+                    return $query
+                        ->where('pasien.nm_pasien', 'LIKE', "%{$cari}%")
+                        ->orWhere('bangsal.nm_bangsal', 'LIKE', "%{$cari}%")
+                        ->orWhere('bangsal.kd_bangsal', 'LIKE', "%{$cari}%")
+                        ->orWhere('kamar.kd_kamar', 'LIKE', "%{$cari}%")
+                        ->orWhere('reg_periksa.no_rawat', 'LIKE', "%{$cari}%")
+                        ->orWhere('pasien.no_rkm_medis', 'LIKE', "%{$cari}%");
+                });
+            });
     }
 
     public function scopeKunjungan(Builder $query, string $poli = ''): Builder

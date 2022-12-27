@@ -155,9 +155,9 @@
                             <span class="ml-1">Export ke Excel</span>
                         </button>
                         <div class="ml-auto input-group input-group-sm" style="width: 20rem">
-                            <input type="search" class="form-control" wire:model.defer="cari" placeholder="Cari..." wire:keydown.enter.stop="$refresh" />
+                            <input type="search" class="form-control" wire:model.defer="cari" placeholder="Cari..." wire:keydown.enter.stop="searchData" />
                             <div class="input-group-append">
-                                <button type="button" wire:click="$refresh" class="btn btn-sm btn-default">
+                                <button type="button" wire:click="searchData" class="btn btn-sm btn-default">
                                     <i class="fas fa-sync-alt"></i>
                                     <span class="ml-1">Refresh</span>
                                 </button>

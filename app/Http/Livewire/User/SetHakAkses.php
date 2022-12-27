@@ -13,6 +13,8 @@ class SetHakAkses extends Component
 {
     use WithPagination, FlashComponent;
 
+    public $cari;
+
     public $perpage;
 
     protected $paginationTheme = 'bootstrap';
@@ -23,12 +25,14 @@ class SetHakAkses extends Component
 
     public function mount()
     {
+        $this->cari = '';
         $this->perpage = 25;
     }
 
     public function getRolesProperty()
     {
-        return Role::with('permissions')->paginate($this->perpage);
+        return Role::with('permissions')
+            ->paginate($this->perpage);
     }
 
     public function getPermissionsProperty()
@@ -42,12 +46,6 @@ class SetHakAkses extends Component
             ->layout(BaseLayout::class, ['title' => 'Pengaturan Hak Akses']);
     }
 
-    /**
-     * @param  int $roleId
-     * @param  array<int,int> $permissionIds
-     * 
-     * @return void
-     */
     public function updatePermissions(int $roleId, array $permissionIds)
     {
         $role = Role::find($roleId);
@@ -55,5 +53,27 @@ class SetHakAkses extends Component
         $role->syncPermissions($permissionIds);
 
         $this->flashSuccess('Hak akses berhasil diupdate');
+    }
+
+    public function searchData()
+    {
+        $this->resetPage();
+
+        $this->emit('$refresh');
+    }
+
+    public function resetFilters()
+    {
+        $this->cari = '';
+        $this->perpage = 25;
+
+        $this->searchData();
+    }
+
+    public function fullRefresh()
+    {
+        $this->forgetComputed();
+
+        $this->resetFilters();
     }
 }
