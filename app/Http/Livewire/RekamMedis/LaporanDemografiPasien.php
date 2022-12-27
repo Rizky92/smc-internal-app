@@ -3,11 +3,11 @@
 namespace App\Http\Livewire\RekamMedis;
 
 use App\Models\RekamMedis\DemografiPasien;
-use App\Support\Excel\ExcelExport;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Rizky92\Xlswriter\ExcelExport;
 
 class LaporanDemografiPasien extends Component
 {
@@ -25,6 +25,9 @@ class LaporanDemografiPasien extends Component
 
     protected $listeners = [
         'beginExcelExport',
+        'searchData',
+        'resetFilters',
+        'fullRefresh',
     ];
 
     protected function queryString()
@@ -121,7 +124,7 @@ class LaporanDemografiPasien extends Component
             now()->format('d F Y'),
         ];
 
-        $excel = (new ExcelExport($filename))
+        $excel = ExcelExport::make($filename)
             ->setPageHeaders($titles)
             ->setColumnHeaders($this->columnHeaders)
             ->setData(DemografiPasien::laporanDemografiExcel($this->periodeAwal, $this->periodeAkhir)->get());

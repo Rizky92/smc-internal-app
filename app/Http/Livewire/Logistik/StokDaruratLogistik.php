@@ -5,11 +5,10 @@ namespace App\Http\Livewire\Logistik;
 use App\Models\Logistik\BarangNonMedis;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Vtiful\Kernel\Excel;
+use Rizky92\Xlswriter\ExcelExport;
 
 class StokDaruratLogistik extends Component
 {
@@ -43,7 +42,9 @@ class StokDaruratLogistik extends Component
 
     protected $listeners = [
         'beginExcelExport',
-        'clearFilters',
+        'searchData',
+        'resetFilters',
+        'fullRefresh',
     ];
 
     public function mount()
@@ -65,19 +66,24 @@ class StokDaruratLogistik extends Component
             ->layout(BaseLayout::class, ['title' => 'Stok Darurat Barang Logistik']);
     }
 
+    public function exportToExcel()
+    {
+        $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+
+        $this->emit('beginExcelExport');
+    }
+
     public function beginExcelExport()
     {
         $timestamp = now()->format('Ymd_His');
 
-        $filename = "excel/{$timestamp}_darurat_stok_logistik.xlsx";
+        $filename = "{$timestamp}_logistik_darurat_stok.xlsx";
 
-        $config = [
-            'path' => storage_path('app/public'),
+        $titles = [
+            'RS Samarinda Medika Citra',
+            'Minmax Stok Barang Non Medis',
+            now()->format('d F Y'),
         ];
-
-        $row1 = 'RS Samarinda Medika Citra';
-        $row2 = 'Minmax Stok Barang Non Medis';
-        $row3 = now()->format('d F Y');
 
         $columnHeaders = [
             'Kode',
@@ -94,43 +100,37 @@ class StokDaruratLogistik extends Component
         ];
 
         $data = BarangNonMedis::daruratStok($this->cari, $this->tampilkanSaranOrderNol)
-            ->cursor()
+            ->get()
             ->toArray();
 
-        (new Excel($config))
-            ->fileName($filename)
+        $excel = ExcelExport::make($filename)
+            ->setPageHeaders($titles)
+            ->setColumnHeaders($columnHeaders)
+            ->setData($data);
 
-            // page header
-            ->mergeCells('A1:K1', $row1)
-            ->mergeCells('A2:K2', $row2)
-            ->mergeCells('A3:K3', $row3)
-
-            // column header
-            ->insertText(3, 0, $columnHeaders[0])
-            ->insertText(3, 1, $columnHeaders[1])
-            ->insertText(3, 2, $columnHeaders[2])
-            ->insertText(3, 3, $columnHeaders[3])
-            ->insertText(3, 4, $columnHeaders[4])
-            ->insertText(3, 5, $columnHeaders[5])
-            ->insertText(3, 6, $columnHeaders[6])
-            ->insertText(3, 7, $columnHeaders[7])
-            ->insertText(3, 8, $columnHeaders[8])
-            ->insertText(3, 9, $columnHeaders[9])
-            ->insertText(3, 10, $columnHeaders[10])
-
-            // empty row untuk insert data
-            ->insertText(4, 0, '')
-
-            ->data($data)
-            ->output();
-
-        return Storage::disk('public')->download($filename);
+        return $excel->export();
     }
 
-    public function exportToExcel()
+    public function searchData()
     {
-        $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+        $this->resetPage();
 
-        $this->emit('beginExcelExport');
+        $this->emit('$refresh');
+    }
+
+    public function resetFilters()
+    {
+        $this->cari = '';
+        $this->tampilkanSaranOrderNol = true;
+        $this->perpage = 25;
+
+        $this->searchData();
+    }
+
+    public function fullRefresh()
+    {
+        $this->forgetComputed();
+
+        $this->resetFilters();
     }
 }

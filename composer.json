@@ -15,7 +15,7 @@
         "guzzlehttp/guzzle": "^6.3.1|^7.0.1",
         "laravel/framework": "^8.0",
         "laravel/tinker": "^2.5",
-        "livewire/livewire": "^2.10",
+        "livewire/livewire": "<=2.10.7",
         "rizky92/laravel-xlswriter": "*",
         "spatie/laravel-permission": "^5.3",
         "staudenmeir/eloquent-eager-limit": "^1.5"

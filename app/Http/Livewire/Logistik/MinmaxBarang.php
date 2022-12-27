@@ -7,11 +7,10 @@ use App\Models\Logistik\MinmaxStokBarangNonMedis;
 use App\Models\Logistik\SupplierNonMedis;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Vtiful\Kernel\Excel;
+use Rizky92\Xlswriter\ExcelExport;
 
 class MinmaxBarang extends Component
 {
@@ -31,6 +30,7 @@ class MinmaxBarang extends Component
 
     protected $listeners = [
         'beginExcelExport',
+        'searchData',
         'resetFilters',
         'fullRefresh',
     ];
@@ -113,15 +113,13 @@ class MinmaxBarang extends Component
     {
         $timestamp = now()->format('Ymd_His');
 
-        $filename = "excel/{$timestamp}_stokminmax_barang.xlsx";
+        $filename = "{$timestamp}_logistik_stokminmax_barang.xlsx";
 
-        $config = [
-            'path' => storage_path('app/public'),
+        $titles = [
+            'RS Samarinda Medika Citra',
+            'Minmax Stok Barang Non Medis',
+            now()->format('d F Y'),
         ];
-
-        $row1 = 'RS Samarinda Medika Citra';
-        $row2 = 'Minmax Stok Barang Non Medis';
-        $row3 = now()->format('d F Y');
 
         $columnHeaders = [
             'Kode',
@@ -141,43 +139,27 @@ class MinmaxBarang extends Component
             ->cursor()
             ->toArray();
 
-        (new Excel($config))
-            ->fileName($filename)
+        $excel = ExcelExport::make($filename)
+            ->setPageHeaders($titles)
+            ->setColumnHeaders($columnHeaders)
+            ->setData($data);
 
-            // page header
-            ->mergeCells('A1:K1', $row1)
-            ->mergeCells('A2:K2', $row2)
-            ->mergeCells('A3:K3', $row3)
+        return $excel->export();
+    }
 
-            // column header
-            ->insertText(3, 0, $columnHeaders[0])
-            ->insertText(3, 1, $columnHeaders[1])
-            ->insertText(3, 2, $columnHeaders[2])
-            ->insertText(3, 3, $columnHeaders[3])
-            ->insertText(3, 4, $columnHeaders[4])
-            ->insertText(3, 5, $columnHeaders[5])
-            ->insertText(3, 6, $columnHeaders[6])
-            ->insertText(3, 7, $columnHeaders[7])
-            ->insertText(3, 8, $columnHeaders[8])
-            ->insertText(3, 9, $columnHeaders[9])
-            ->insertText(3, 10, $columnHeaders[10])
+    public function searchData()
+    {
+        $this->resetPage();
 
-            // empty row untuk insert data
-            ->insertText(4, 0, '')
-
-            ->data($data)
-            ->output();
-
-        return Storage::disk('public')->download($filename);
+        $this->emit('$refresh');
     }
 
     public function resetFilters()
     {
         $this->cari = '';
-        $this->resetPage();
         $this->perpage = 25;
 
-        $this->emit('$refresh');
+        $this->searchData();
     }
 
     public function fullRefresh()

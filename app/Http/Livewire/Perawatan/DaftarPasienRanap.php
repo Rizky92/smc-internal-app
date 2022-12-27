@@ -14,14 +14,28 @@ class DaftarPasienRanap extends Component
 {
     use WithPagination, FlashComponent;
 
+    private const BELUM_PULANG = 'belum pulang';
+    private const SUDAH_PULANG = 'sudah pulang';
+    private const BERDASARKAN_TGL_MASUK = 'berdasarkan tgl masuk';
+    private const BERDASARKAN_TGL_PULANG = 'berdasarkan tgl pulang';
+
     public $cari;
 
     public $perpage;
+
+    public $periodeAwal;
+
+    public $periodeAkhir;
+
+    public $jenisRanapDitampilkan;
 
     protected $paginationTheme = 'bootstrap';
 
     protected $listeners = [
         'beginExcelExport',
+        'searchData',
+        'resetFilters',
+        'fullRefresh',
     ];
 
     protected function queryString()
@@ -43,6 +57,9 @@ class DaftarPasienRanap extends Component
     {
         $this->cari = '';
         $this->perpage = 25;
+        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->jenisRanapDitampilkan = self::BELUM_PULANG;
     }
 
     public function getDaftarPasienRanapProperty()
@@ -67,23 +84,30 @@ class DaftarPasienRanap extends Component
 
     public function beginExcelExport()
     {
-        //
+        $timestamp = now()->format('Ymd_His');
+
+        $filename = "{$timestamp}_perawatan_daftar_pasien_ranap";
     }
 
     public function batalkanRanapPasien(string $noRawat, string $tglMasuk, string $jamMasuk, string $kamar)
     {
-        $kamarInap = RawatInap::query()
-            ->where([
-                ['no_rawat', '=', $noRawat],
-                ['tgl_masuk', '=', $tglMasuk],
-                ['jam_masuk', '=', $jamMasuk],
-                ['kd_kamar', '=', $kamar]
-            ])
+        if (!auth()->user()->can('perawatan.rawat-inap.batal-ranap')) {
+            $this->flashError('Anda tidak dapat melakukan aksi ini');
+
+            return;
+        }
+
+        RawatInap::where([
+            ['no_rawat', '=', $noRawat],
+            ['tgl_masuk', '=', $tglMasuk],
+            ['jam_masuk', '=', $jamMasuk],
+            ['kd_kamar', '=', $kamar]
+        ])
             ->delete();
 
         Kamar::find($kamar)->update(['status' => 'KOSONG']);
 
-        if (! RawatInap::where('no_rawat', $noRawat)->exists()) {
+        if (!RawatInap::where('no_rawat', $noRawat)->exists()) {
             RegistrasiPasien::find($noRawat)->update([
                 'status_lanjut' => 'Ralan',
                 'stts' => 'Sudah',
@@ -92,12 +116,28 @@ class DaftarPasienRanap extends Component
 
         $this->flashSuccess("Data pasien dengan No. Rawat {$noRawat} sudah kembali ke rawat jalan!");
     }
-}
-// 2022/11/10/000886
-// 2022-11-10
-// 23:14:10
-// 222D
 
-// admin kartika
-// 287044
-// 2022/12/14/000891
+    public function searchData()
+    {
+        $this->resetPage();
+
+        $this->emit('$refresh');
+    }
+
+    public function resetFilters()
+    {
+        $this->cari = '';
+        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->jenisRanapDitampilkan = self::BELUM_PULANG;
+
+        $this->searchData();
+    }
+
+    public function fullRefresh()
+    {
+        $this->forgetComputed();
+
+        $this->resetFilters();
+    }
+}

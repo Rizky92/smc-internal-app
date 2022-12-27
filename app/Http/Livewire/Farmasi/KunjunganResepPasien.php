@@ -29,6 +29,9 @@ class KunjunganResepPasien extends Component
 
     protected $listeners = [
         'beginExcelExport',
+        'searchData',
+        'resetFilters',
+        'fullRefresh',
     ];
 
     protected function queryString()
@@ -67,7 +70,7 @@ class KunjunganResepPasien extends Component
             $this->periodeAkhir,
             $this->jenisPerawatan
         )
-            ->paginate($this->perpage, ['*'], $this::OBAT_REGULAR_PAGE);
+            ->paginate($this->perpage, ['*'], self::OBAT_REGULAR_PAGE);
     }
 
     public function getKunjunganResepObatRacikanPasienProperty()
@@ -77,34 +80,13 @@ class KunjunganResepPasien extends Component
             $this->periodeAkhir,
             $this->jenisPerawatan
         )
-            ->paginate($this->perpage, ['*'], $this::OBAT_RACIKAN_PAGE);
-    }
-
-    public function getColumnHeadersProperty()
-    {
-        return [
-            'no_resep' => 'No. Resep',
-            'nm_dokter' => 'Dokter Peresep',
-            'tgl_perawatan' => 'Tgl. Validasi',
-            'jam' => 'Jam',
-            'nm_pasien' => 'Pasien',
-            'status_lanjut' => 'Jenis Perawatan',
-            'total' => 'Total Pembelian (RP)',
-        ];
+            ->paginate($this->perpage, ['*'], self::OBAT_RACIKAN_PAGE);
     }
 
     public function render()
     {
         return view('livewire.farmasi.kunjungan-resep-pasien')
             ->layout(BaseLayout::class, ['title' => 'Kunjungan Resep Pasien Per Bentuk Obat']);
-    }
-
-    public function searchData()
-    {
-        $this->resetPage($this::OBAT_REGULAR_PAGE);
-        $this->resetPage($this::OBAT_RACIKAN_PAGE);
-
-        $this->emit('$refresh');
     }
 
     public function exportToExcel()
@@ -129,14 +111,49 @@ class KunjunganResepPasien extends Component
             now()->format('d F Y'),
         ];
 
+        $columnHeaders = [
+            'No. Resep',
+            'Dokter Peresep',
+            'Tgl. Validasi',
+            'Jam',
+            'Pasien',
+            'Jenis Perawatan',
+            'Total Pembelian (RP)',
+        ];
+
         $excel = ExcelExport::make($filename, 'Obat Regular')
             ->setPageHeaders($titles)
-            ->setColumnHeaders($this->columnHeaders)
+            ->setColumnHeaders($columnHeaders)
             ->setData($sheet1);
 
         $excel->useSheet('Obat Racikan')
             ->setData($sheet2);
 
         return $excel->export();
+    }
+
+    public function searchData()
+    {
+        $this->resetPage(self::OBAT_REGULAR_PAGE);
+        $this->resetPage(self::OBAT_RACIKAN_PAGE);
+
+        $this->emit('$refresh');
+    }
+
+    public function resetFilters()
+    {
+        $this->perpage = 25;
+        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->jenisPerawatan = '';
+        
+        $this->searchData();
+    }
+
+    public function fullRefresh()
+    {
+        $this->forgetComputed();
+
+        $this->resetFilters();
     }
 }

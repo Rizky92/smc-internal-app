@@ -5,9 +5,11 @@ namespace App\Http\Livewire\RekamMedis;
 use App\Models\RekamMedis\StatistikRekamMedis;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Rizky92\Xlswriter\ExcelExport;
 use Vtiful\Kernel\Excel;
 
 class LaporanStatistikRekamMedis extends Component
@@ -26,6 +28,7 @@ class LaporanStatistikRekamMedis extends Component
 
     protected $listeners = [
         'beginExcelExport',
+        'searchData',
         'resetFilters',
         'fullRefresh',
     ];
@@ -77,13 +80,6 @@ class LaporanStatistikRekamMedis extends Component
             ->layout(BaseLayout::class, ['title' => 'Laporan Statistik']);
     }
 
-    public function searchData()
-    {
-        $this->resetPage();
-
-        $this->emit('$refresh');
-    }
-
     public function exportToExcel()
     {
         $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
@@ -95,10 +91,15 @@ class LaporanStatistikRekamMedis extends Component
     {
         $timestamp = now()->format('Ymd_His');
 
-        $filename = "excel/{$timestamp}_rekammedis.xlsx";
+        $filename = "{$timestamp}_rekammedis_laporan_statistik.xlsx";
 
-        $config = [
-            'path' => storage_path('app/public'),
+        $dateStart = Carbon::parse($this->periodeAwal)->format('d F Y');
+        $dateEnd = Carbon::parse($this->periodeAkhir)->format('d F Y');
+
+        $titles = [
+            'RS Samarinda Medika Citra',
+            'Laporan Statistik Rekam Medis',
+            "{$dateStart} - {$dateEnd}",
         ];
 
         $columnHeaders = [
@@ -139,13 +140,19 @@ class LaporanStatistikRekamMedis extends Component
             ->cursor()
             ->toArray();
 
-        (new Excel($config))
-            ->fileName($filename)
-            ->header($columnHeaders)
-            ->data($data)
-            ->output();
+        $excel = ExcelExport::make($filename)
+            ->setPageHeaders($titles)
+            ->setColumnHeaders($columnHeaders)
+            ->setData($data);
 
-        return Storage::disk('public')->download($filename);
+        return $excel->export();
+    }
+
+    public function searchData()
+    {
+        $this->resetPage();
+
+        $this->emit('$refresh');
     }
 
     public function resetFilters()
@@ -153,16 +160,15 @@ class LaporanStatistikRekamMedis extends Component
         $this->cari = '';
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->resetPage();
         $this->perpage = 25;
 
-        $this->emit('$refresh');
+        $this->searchData();
     }
 
     public function fullRefresh()
     {
         $this->forgetComputed();
 
-        $this->emit('resetFilters');
+        $this->resetFilters();
     }
 }

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Rizky92\Xlswriter\ExcelExport;
 use Vtiful\Kernel\Excel;
 
 class StokDaruratFarmasi extends Component
@@ -73,15 +74,13 @@ class StokDaruratFarmasi extends Component
     {
         $timestamp = now()->format('Ymd_His');
 
-        $filename = "excel/{$timestamp}_farmasi_daruratstok.xlsx";
+        $filename = "{$timestamp}_farmasi_daruratstok.xlsx";
 
-        $config = [
-            'path' => storage_path('app/public'),
+        $titles = [
+            'RS Samarinda Medika Citra',
+            'Laporan Darurat Stok Farmasi',
+            now()->format('d F Y'),
         ];
-
-        $row1 = 'RS Samarinda Medika Citra';
-        $row2 = 'Laporan Darurat Stok Farmasi';
-        $row3 = now()->format('d F Y');
 
         $columnHeaders = [
             'Kode',
@@ -97,35 +96,15 @@ class StokDaruratFarmasi extends Component
         ];
 
         $data = Obat::daruratStok()
-            ->cursor()
+            ->get()
             ->toArray();
 
-        (new Excel($config))
-            ->fileName($filename)
+        $excel = ExcelExport::make($filename)
+            ->setPageHeaders($titles)
+            ->setColumnHeaders($columnHeaders)
+            ->setData($data);
 
-            // page header
-            ->mergeCells('A1:J1', $row1)
-            ->mergeCells('A2:J2', $row2)
-            ->mergeCells('A3:J3', $row3)
-
-            // column header
-            ->insertText(3, 0, $columnHeaders[0])
-            ->insertText(3, 1, $columnHeaders[1])
-            ->insertText(3, 2, $columnHeaders[2])
-            ->insertText(3, 3, $columnHeaders[3])
-            ->insertText(3, 4, $columnHeaders[4])
-            ->insertText(3, 5, $columnHeaders[5])
-            ->insertText(3, 6, $columnHeaders[6])
-            ->insertText(3, 7, $columnHeaders[7])
-            ->insertText(3, 8, $columnHeaders[8])
-            ->insertText(3, 9, $columnHeaders[9])
-            ->insertText(4, 0, '')
-
-            // insert data
-            ->data($data)
-            ->output();
-
-        return Storage::disk('public')->download($filename);
+        return $excel->export();
     }
 
     public function searchData()
@@ -139,9 +118,8 @@ class StokDaruratFarmasi extends Component
     {
         $this->cari = '';
         $this->perpage = 25;
-        $this->resetPage();
 
-        $this->emit('$refresh');
+        $this->searchData();
     }
 
     public function fullRefresh()

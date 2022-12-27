@@ -6,12 +6,10 @@ use App\Models\Farmasi\ResepObat;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Rizky92\Xlswriter\ExcelExport;
-use Vtiful\Kernel\Excel;
 
 class PenggunaanObatPerdokter extends Component
 {
@@ -29,6 +27,7 @@ class PenggunaanObatPerdokter extends Component
 
     protected $listeners = [
         'beginExcelExport',
+        'searchData',
         'resetFilters',
         'fullRefresh',
     ];

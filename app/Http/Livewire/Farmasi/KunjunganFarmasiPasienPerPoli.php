@@ -45,11 +45,6 @@ class KunjunganFarmasiPasienPerPoli extends Component
         ];
     }
 
-    public function getPasienPerPoliProperty()
-    {
-        return;
-    }
-
     public function render()
     {
         return view('livewire.farmasi.kunjungan-farmasi-pasien-per-poli')
