@@ -4,6 +4,7 @@
 /storage/*.key
 /vendor
 /.vscode
+/_packages
 .env
 .env.local
 .env.production

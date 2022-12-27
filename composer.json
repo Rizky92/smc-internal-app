@@ -16,6 +16,7 @@
         "laravel/framework": "^8.0",
         "laravel/tinker": "^2.5",
         "livewire/livewire": "^2.10",
+        "rizky92/laravel-xlswriter": "*",
         "spatie/laravel-permission": "^5.3",
         "staudenmeir/eloquent-eager-limit": "^1.5"
     },
@@ -39,13 +40,18 @@
             "dont-discover": []
         }
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/Rizky92/laravel-xlswriter"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "App\\": "app/"
         },
         "classmap": [
-            "database/seeds",
-            "database/factories"
+            "database/seeds"
         ],
         "files": [
             "app/Support/helpers.php"
