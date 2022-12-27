@@ -4,7 +4,6 @@
             <div class="col-sm-6">
                 <h1 class="m-0">{{ $title }}</h1>
             </div>
-            {{-- {{ Breadcrumbs::render() }} --}}
         </div>
     </div>
 </div>
