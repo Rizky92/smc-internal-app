@@ -60,7 +60,7 @@ class RingkasanPerbandinganBarangPO extends Component
 
     public function getPerbandinganOrderObatPOProperty()
     {
-        return Obat::perbandinganObatPO($this->periodeAwal, $this->periodeAkhir)->paginate($this->perpage);
+        return Obat::perbandinganObatPO($this->periodeAwal, $this->periodeAkhir, $this->cari)->paginate($this->perpage);
     }
 
     public function render()

@@ -5,6 +5,7 @@ namespace App\Models\Farmasi;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class Obat extends Model
 {
@@ -65,7 +66,7 @@ class Obat extends Model
             });
     }
 
-    public function scopePerbandinganObatPO(Builder $query, string $periodeAwal = '', string $periodeAkhir = ''): Builder
+    public function scopePerbandinganObatPO(Builder $query, string $periodeAwal = '', string $periodeAkhir = '', string $cari = ''): Builder
     {
         if (empty($periodeAwal)) {
             $periodeAwal = now()->startOfMonth()->format('Y-m-d');
@@ -95,6 +96,16 @@ class Obat extends Model
             ->leftJoin(DB::raw('datasuplier suplierdatang'), 'pemesanan.kode_suplier', '=', 'suplierdatang.kode_suplier')
             ->whereBetween('pemesanan.tgl_pesan', [$periodeAwal, $periodeAkhir])
             ->where('surat_pemesanan_medis.status', 'sudah datang')
+            ->when(!empty($cari), function (Builder $query) use ($cari) {
+                return $query->where(function (Builder $query) use ($cari) {
+                    $cari = Str::lower($cari);
+                    return $query->where('surat_pemesanan_medis.no_pemesanan', 'like', "%{$cari}%")
+                        ->orWhere('databarang.kode_brng', 'like', "%{$cari}%")
+                        ->orWhere('databarang.nama_brng', 'like', "%{$cari}%")
+                        ->orWhere('suplierpesan.nama_suplier', 'like', "%{$cari}%")
+                        ->orWhere('suplierdatang.nama_suplier', 'like', "%{$cari}%");
+                });
+            })
             ->groupBy(['databarang.kode_brng', 'surat_pemesanan_medis.no_pemesanan'])
             ->orderBy('databarang.kode_brng');
     }
