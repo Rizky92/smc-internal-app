@@ -47,8 +47,8 @@
                             <td>{{ $obat->nama_brng }}</td>
                             <td>{{ $obat->suplier_pesan }}</td>
                             <td>{{ $obat->suplier_datang }}</td>
-                            <td>{{ $obat->jumlah_pesan }} {{ $obat->satuan_pesan }}</td>
-                            <td>{{ $obat->jumlah_datang }} {{ $obat->satuan_datang }}</td>
+                            <td>{{ $obat->jumlah_pesan }}</td>
+                            <td>{{ $obat->jumlah_datang }}</td>
                             <td>{{ $obat->selisih }}</td>
                         </tr>
                     @endforeach
