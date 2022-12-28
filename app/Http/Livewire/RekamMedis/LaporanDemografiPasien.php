@@ -58,40 +58,6 @@ class LaporanDemografiPasien extends Component
         $this->perpage = 25;
     }
 
-    public function getColumnHeadersProperty()
-    {
-        // 0 - 28 HR
-        // 28 HR - 1 THN
-        // 1-4 THN
-        // 5-14 THN
-        // 15-24 THN
-        // 25-54 THN
-        // 45-64 THN
-        // >65 THN
-        return [
-            'Kecamatan',
-            'No. RM',
-            'No. Registrasi',
-            'Pasien',
-            'Alamat',
-            '0 - < 28 Hr',
-            '28 Hr - 1 Th',
-            '1 - 4 Th',
-            '5 - 14 Th',
-            '15 - 24 Th',
-            '25 - 44 Th',
-            '45 - 64 Th',
-            '> 64 Th',
-            'PR',
-            'LK',
-            'Diagnosa',
-            'Agama',
-            'Pendidikan',
-            'Bahasa',
-            'Suku',
-        ];
-    }
-
     public function getDemografiPasienProperty()
     {
         return DemografiPasien::query()
@@ -124,9 +90,32 @@ class LaporanDemografiPasien extends Component
             now()->format('d F Y'),
         ];
 
+        $columnHeaders = [
+            'Kecamatan',
+            'No. RM',
+            'No. Registrasi',
+            'Pasien',
+            'Alamat',
+            '0 - < 28 Hr',
+            '28 Hr - 1 Th',
+            '1 - 4 Th',
+            '5 - 14 Th',
+            '15 - 24 Th',
+            '25 - 44 Th',
+            '45 - 64 Th',
+            '> 64 Th',
+            'PR',
+            'LK',
+            'Diagnosa',
+            'Agama',
+            'Pendidikan',
+            'Bahasa',
+            'Suku',
+        ];
+
         $excel = ExcelExport::make($filename)
             ->setPageHeaders($titles)
-            ->setColumnHeaders($this->columnHeaders)
+            ->setColumnHeaders($columnHeaders)
             ->setData(DemografiPasien::laporanDemografiExcel($this->periodeAwal, $this->periodeAkhir)->get());
 
         return $excel->export();

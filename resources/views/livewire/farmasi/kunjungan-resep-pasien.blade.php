@@ -20,35 +20,22 @@
                 </div>
             </div>
             <div class="row mt-2">
-                <div class="col-12">
-                    <div class="d-flex align-items-center justify-content-start">
-                        <span class="text-sm pr-2">Tampilkan:</span>
-                        <div class="input-group input-group-sm" style="width: 4rem">
-                            <select class="custom-control custom-select" name="perpage" wire:model.defer="perpage">
-                                <option value="10">10</option>
-                                <option value="25">25</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                                <option value="200">200</option>
-                                <option value="500">500</option>
-                                <option value="1000">1000</option>
+                <x-filter>
+                    <x-slot name="replaceSearch">
+                        <div class="ml-2 d-flex align-items-center">
+                            <span class="text-sm">Jenis Perawatan:</span>
+                            <select class="ml-2 form-control form-control-sm" wire:model.defer="jenisPerawatan" style="width: 8rem">
+                                <option value="-">Semua</option>
+                                <option value="ralan">Rawat Jalan</option>
+                                <option value="ranap">Rawat Inap</option>
                             </select>
-                        </div>
-                        <span class="text-sm pl-2">per halaman</span>
-                        <span class="text-sm ml-auto">Jenis Perawatan:</span>
-                        <select class="ml-2 form-control form-control-sm" wire:model.defer="jenisPerawatan" style="width: 8rem">
-                            <option value="-">Semua</option>
-                            <option value="ralan">Rawat Jalan</option>
-                            <option value="ranap">Rawat Inap</option>
-                        </select>
-                        <div class="ml-2">
-                            <button class="btn btn-sm btn-default" type="button" wire:click="searchData">
+                            <button class="ml-2 btn btn-sm btn-default" type="button" wire:click="searchData">
                                 <i class="fas fa-sync-alt"></i>
                                 <span class="ml-1">Refresh</span>
                             </button>
                         </div>
-                    </div>
-                </div>
+                    </x-slot>
+                </x-filter>
             </div>
         </div>
         <div class="card-body p-0">

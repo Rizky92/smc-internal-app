@@ -98,6 +98,12 @@ class BaseLayout extends Component
                         'url' => route('admin.farmasi.laporan-tahunan'),
                         'hasAnyPermissions' => $user->can('farmasi.laporan-tahunan.read'),
                     ],
+                    [
+                        'name' => 'Ringkasan Perbandingan PO Obat',
+                        'icon' => 'far fa-newspaper',
+                        'url' => route('admin.farmasi.perbandingan-po-obat'),
+                        'hasAnyPermissions' => $user->can('farmasi.perbandingan-po-obat.read'),
+                    ],
                 ],
             ],
             [

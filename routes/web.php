@@ -8,6 +8,7 @@ use App\Http\Livewire\Farmasi\KunjunganFarmasiPasienPerPoli;
 use App\Http\Livewire\Farmasi\KunjunganResepPasien;
 use App\Http\Livewire\Farmasi\LaporanProduksiTahunan;
 use App\Http\Livewire\Farmasi\PenggunaanObatPerdokter;
+use App\Http\Livewire\Farmasi\RingkasanPerbandinganBarangPO;
 use App\Http\Livewire\Farmasi\StokDaruratFarmasi;
 use App\Http\Livewire\Logistik\MinmaxBarang;
 use App\Http\Livewire\Logistik\StokDaruratLogistik;
@@ -79,6 +80,10 @@ Route::prefix('admin')
                 Route::get('kunjungan-pasien-per-poli', KunjunganFarmasiPasienPerPoli::class)
                     ->middleware('can:farmasi.kunjungan-pasien-per-poli.read')
                     ->name('kunjungan-pasien-per-poli');
+
+                Route::get('ringkasan-perbandingan-po-obat', RingkasanPerbandinganBarangPO::class)
+                    ->middleware('can:farmasi.perbandingan-po-obat.read')
+                    ->name('perbandingan-po-obat');
             });
 
         Route::prefix('rekam-medis')
