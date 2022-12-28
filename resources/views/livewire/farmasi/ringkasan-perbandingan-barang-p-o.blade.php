@@ -7,9 +7,13 @@
                 <div class="col-12">
                     <div class="d-flex align-items-center justify-content-start">
                         <span class="text-sm pr-4">Periode:</span>
-                        <input class="form-control form-control-sm w-25" type="date" wire:model.defer="periodeAwal" />
+                        <input class="form-control form-control-sm" style="width: 10rem" type="date" wire:model.defer="periodeAwal" />
                         <span class="text-sm px-2">sampai</span>
-                        <input class="form-control form-control-sm w-25" type="date" wire:model.defer="periodeAkhir" />
+                        <input class="form-control form-control-sm" style="width: 10rem" type="date" wire:model.defer="periodeAkhir" />
+                        <div class="ml-4 custom-control custom-switch">
+                            <input type="checkbox" class="custom-control-input" id="hanyaTampilkanPenerimaanBarangYangBerbeda" wire:model.defer="hanyaTampilkanPenerimaanBarangYangBerbeda">
+                            <label class="custom-control-label text-sm" for="hanyaTampilkanPenerimaanBarangYangBerbeda">Tampilkan barang yang berbeda jumlah</label>
+                        </div>
                         <div class="ml-auto">
                             <button class="btn btn-default btn-sm" type="button" wire:click="exportToExcel">
                                 <i class="fas fa-file-excel"></i>
@@ -28,9 +32,7 @@
                 <thead>
                     <tr>
                         <th>No. Pemesanan</th>
-                        <th>Kode</th>
                         <th>Nama</th>
-                        <th>Satuan</th>
                         <th>Supplier Tujuan</th>
                         <th>Supplier yang Mendatangkan</th>
                         <th>Jumlah Dipesan</th>
@@ -42,13 +44,11 @@
                     @foreach ($this->perbandinganOrderObatPO as $obat)
                         <tr>
                             <td>{{ $obat->no_pemesanan }}</td>
-                            <td>{{ $obat->kode_brng }}</td>
                             <td>{{ $obat->nama_brng }}</td>
-                            <td>{{ $obat->satuan }}</td>
-                            <td>{{ $obat->nama_suplier_dipesan }}</td>
-                            <td>{{ $obat->nama_suplier_datang }}</td>
-                            <td>{{ $obat->jumlah_dipesan }}</td>
-                            <td>{{ $obat->jumlah_datang }}</td>
+                            <td>{{ $obat->suplier_pesan }}</td>
+                            <td>{{ $obat->suplier_datang }}</td>
+                            <td>{{ $obat->jumlah_pesan }} {{ $obat->satuan_pesan }}</td>
+                            <td>{{ $obat->jumlah_datang }} {{ $obat->satuan_datang }}</td>
                             <td>{{ $obat->selisih }}</td>
                         </tr>
                     @endforeach
