@@ -36,8 +36,8 @@ class Obat extends Model
                 IFNULL(ROUND(stok_gudang.stok_di_gudang, 2), 0) stok_sekarang,
                 (databarang.stokminimal - IFNULL(stok_gudang.stok_di_gudang, 0)) saran_order,
                 industrifarmasi.nama_industri,
-                CEIL(databarang.h_beli) harga_beli,
-                CEIL((databarang.stokminimal - IFNULL(stok_gudang.stok_di_gudang, 0)) * databarang.h_beli) harga_beli_total
+                ROUND(databarang.h_beli) harga_beli,
+                ROUND((databarang.stokminimal - IFNULL(stok_gudang.stok_di_gudang, 0)) * databarang.h_beli) harga_beli_total
             ")
             ->join('kategori_barang', 'databarang.kode_kategori', '=', 'kategori_barang.kode')
             ->join('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
@@ -64,49 +64,5 @@ class Obat extends Model
                         ->orWhere('industrifarmasi.nama_industri', 'LIKE', "%{$cari}%");
                 });
             });
-    }
-
-    public function scopePerbandinganObatPO(Builder $query, string $periodeAwal = '', string $periodeAkhir = '', string $cari = ''): Builder
-    {
-        if (empty($periodeAwal)) {
-            $periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        }
-
-        if (empty($periodeAkhir)) {
-            $periodeAkhir = now()->endOfMonth()->format('Y-m-d');
-        }
-
-        return $query->selectRaw("
-            surat_pemesanan_medis.no_pemesanan,
-            databarang.kode_brng,
-            databarang.nama_brng,
-            kodesatuan.satuan,
-            suplierpesan.nama_suplier nama_suplier_dipesan,
-            suplierdatang.nama_suplier nama_suplier_datang,
-            sum(detail_surat_pemesanan_medis.jumlah2) jumlah_dipesan,
-            sum(detailpesan.jumlah2) jumlah_datang,
-            (sum(detail_surat_pemesanan_medis.jumlah2) - sum(detailpesan.jumlah2)) selisih
-        ")
-            ->leftJoin('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
-            ->leftJoin('detail_surat_pemesanan_medis', 'databarang.kode_brng', '=', 'detail_surat_pemesanan_medis.kode_brng')
-            ->leftJoin('surat_pemesanan_medis', 'detail_surat_pemesanan_medis.no_pemesanan', '=', 'surat_pemesanan_medis.no_pemesanan')
-            ->leftJoin('pemesanan', 'surat_pemesanan_medis.no_pemesanan', '=', 'pemesanan.no_order')
-            ->leftJoin('detailpesan', 'pemesanan.no_faktur', '=', 'detailpesan.no_faktur')
-            ->leftJoin(DB::raw('datasuplier suplierpesan'), 'surat_pemesanan_medis.kode_suplier', '=', 'suplierpesan.kode_suplier')
-            ->leftJoin(DB::raw('datasuplier suplierdatang'), 'pemesanan.kode_suplier', '=', 'suplierdatang.kode_suplier')
-            ->whereBetween('pemesanan.tgl_pesan', [$periodeAwal, $periodeAkhir])
-            ->where('surat_pemesanan_medis.status', 'sudah datang')
-            ->when(!empty($cari), function (Builder $query) use ($cari) {
-                return $query->where(function (Builder $query) use ($cari) {
-                    $cari = Str::lower($cari);
-                    return $query->where('surat_pemesanan_medis.no_pemesanan', 'like', "%{$cari}%")
-                        ->orWhere('databarang.kode_brng', 'like', "%{$cari}%")
-                        ->orWhere('databarang.nama_brng', 'like', "%{$cari}%")
-                        ->orWhere('suplierpesan.nama_suplier', 'like', "%{$cari}%")
-                        ->orWhere('suplierdatang.nama_suplier', 'like', "%{$cari}%");
-                });
-            })
-            ->groupBy(['databarang.kode_brng', 'surat_pemesanan_medis.no_pemesanan'])
-            ->orderBy('databarang.kode_brng');
     }
 }
