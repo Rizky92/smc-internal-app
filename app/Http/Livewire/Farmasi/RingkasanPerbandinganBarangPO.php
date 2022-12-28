@@ -22,7 +22,7 @@ class RingkasanPerbandinganBarangPO extends Component
 
     public $perpage;
 
-    public $hanyaTampilkanPenerimaanBarangYangBerbeda;
+    public $hanyaTampilkanBarangSelisih;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -50,6 +50,10 @@ class RingkasanPerbandinganBarangPO extends Component
                 'except' => now()->endOfMonth()->format('Y-m-d'),
                 'as' => 'periode_akhir',
             ],
+            'hanyaTampilkanBarangSelisih' => [
+                'except' => false,
+                'as' => 'barang_selisih',
+            ],
         ];
     }
 
@@ -59,7 +63,7 @@ class RingkasanPerbandinganBarangPO extends Component
         $this->perpage = 25;
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->hanyaTampilkanPenerimaanBarangYangBerbeda = false;
+        $this->hanyaTampilkanBarangSelisih = false;
     }
 
     public function getPerbandinganOrderObatPOProperty()
@@ -68,7 +72,7 @@ class RingkasanPerbandinganBarangPO extends Component
             $this->periodeAwal,
             $this->periodeAkhir,
             Str::lower($this->cari),
-            $this->hanyaTampilkanPenerimaanBarangYangBerbeda
+            $this->hanyaTampilkanBarangSelisih
         )
             ->paginate($this->perpage);
     }
@@ -110,7 +114,7 @@ class RingkasanPerbandinganBarangPO extends Component
             'Selisih',
         ];
 
-        $data = SuratPemesananObat::perbandinganPemesananObatPO($this->periodeAwal, $this->periodeAkhir, '', $this->hanyaTampilkanPenerimaanBarangYangBerbeda)
+        $data = SuratPemesananObat::perbandinganPemesananObatPO($this->periodeAwal, $this->periodeAkhir, '', $this->hanyaTampilkanBarangSelisih)
             ->get()->toArray();
 
         $excel = ExcelExport::make($filename)
