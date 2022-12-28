@@ -65,14 +65,8 @@ class Obat extends Model
             });
     }
 
-    public function scopePerbandinganObatPO(
-        Builder $query,
-        string $periodeAwal = '',
-        string $periodeAkhir = '',
-        string $berdasarkan = 'tanggal pesan',
-        string $statusPemesanan = 'sudah datang',
-        string $statusPenerimaan = 'sudah dibayar'
-    ): Builder {
+    public function scopePerbandinganObatPO(Builder $query, string $periodeAwal = '', string $periodeAkhir = ''): Builder
+    {
         if (empty($periodeAwal)) {
             $periodeAwal = now()->startOfMonth()->format('Y-m-d');
         }
@@ -81,57 +75,27 @@ class Obat extends Model
             $periodeAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        $tgl = [$periodeAwal, $periodeAkhir];
-
-        $barangDipesan = DB::raw("(
-                select
-                    detail_surat_pemesanan_medis.kode_brng,
-                    datasuplier.nama_suplier,
-                    surat_pemesanan_medis.tanggal tgl_pesan,
-                    sum(detail_surat_pemesanan_medis.jumlah2) jumlah
-                from detail_surat_pemesanan_medis
-                left join surat_pemesanan_medis on detail_surat_pemesanan_medis.no_pemesanan  = surat_pemesanan_medis.no_pemesanan
-                left join datasuplier on surat_pemesanan_medis.kode_suplier = datasuplier.kode_suplier
-                where surat_pemesanan_medis.status = '{$statusPemesanan}'
-                group by detail_surat_pemesanan_medis.kode_brng,
-                    surat_pemesanan_medis.kode_suplier
-            ) barang_dipesan");
-
-        $barangDiterima = DB::raw("(
-                select
-                    detailpesan.kode_brng,
-                    datasuplier.nama_suplier,
-                    pemesanan.tgl_pesan tgl_datang,
-                    sum(detailpesan.jumlah2) jumlah
-                from detailpesan
-                left join pemesanan on detailpesan.no_faktur = pemesanan.no_faktur
-                left join datasuplier on pemesanan.kode_suplier = datasuplier.kode_suplier
-                where pemesanan.status = '{$statusPenerimaan}'
-                group by detailpesan.kode_brng,
-                    pemesanan.kode_suplier
-            ) barang_diterima");
-
         return $query->selectRaw("
+            surat_pemesanan_medis.no_pemesanan,
             databarang.kode_brng,
             databarang.nama_brng,
             kodesatuan.satuan,
-            barang_dipesan.nama_suplier suplier_pesan,
-            barang_diterima.nama_suplier suplier_diterima,
-            barang_dipesan.jumlah jumlah_dipesan,
-            barang_diterima.jumlah jumlah_datang,
-            (barang_dipesan.jumlah - barang_diterima.jumlah) selisih
+            suplierpesan.nama_suplier nama_suplier_dipesan,
+            suplierdatang.nama_suplier nama_suplier_datang,
+            sum(detail_surat_pemesanan_medis.jumlah2) jumlah_dipesan,
+            sum(detailpesan.jumlah2) jumlah_datang,
+            (sum(detail_surat_pemesanan_medis.jumlah2) - sum(detailpesan.jumlah2)) selisih
         ")
             ->leftJoin('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
-            ->leftJoin($barangDipesan, 'databarang.kode_brng', '=', 'barang_dipesan.kode_brng')
-            ->leftJoin($barangDiterima, 'databarang.kode_brng', '=', 'barang_diterima.kode_brng')
-            ->where(function (Builder $query) use ($berdasarkan, $tgl) {
-                switch ($berdasarkan) {
-                    case 'tanggal pesan':
-                        return $query->whereBetween('barang_dipesan.tgl_pesan', $tgl);
-                    case 'tanggal datang':
-                        return $query->whereBetween('barang_diterima.tgl_datang', $tgl);
-                }
-            })
+            ->leftJoin('detail_surat_pemesanan_medis', 'databarang.kode_brng', '=', 'detail_surat_pemesanan_medis.kode_brng')
+            ->leftJoin('surat_pemesanan_medis', 'detail_surat_pemesanan_medis.no_pemesanan', '=', 'surat_pemesanan_medis.no_pemesanan')
+            ->leftJoin('pemesanan', 'surat_pemesanan_medis.no_pemesanan', '=', 'pemesanan.no_order')
+            ->leftJoin('detailpesan', 'pemesanan.no_faktur', '=', 'detailpesan.no_faktur')
+            ->leftJoin(DB::raw('datasuplier suplierpesan'), 'surat_pemesanan_medis.kode_suplier', '=', 'suplierpesan.kode_suplier')
+            ->leftJoin(DB::raw('datasuplier suplierdatang'), 'pemesanan.kode_suplier', '=', 'suplierdatang.kode_suplier')
+            ->whereBetween('pemesanan.tgl_pesan', [$periodeAwal, $periodeAkhir])
+            ->where('surat_pemesanan_medis.status', 'sudah datang')
+            ->groupBy(['databarang.kode_brng', 'surat_pemesanan_medis.no_pemesanan'])
             ->orderBy('databarang.kode_brng');
     }
 }

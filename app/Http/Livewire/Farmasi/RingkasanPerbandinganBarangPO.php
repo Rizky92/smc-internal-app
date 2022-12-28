@@ -3,13 +3,15 @@
 namespace App\Http\Livewire\Farmasi;
 
 use App\Models\Farmasi\Obat;
+use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Rizky92\Xlswriter\ExcelExport;
 
 class RingkasanPerbandinganBarangPO extends Component
 {
-    use WithPagination;
+    use WithPagination, FlashComponent;
 
     public $cari;
 
@@ -19,13 +21,14 @@ class RingkasanPerbandinganBarangPO extends Component
 
     public $perpage;
 
-    public $berdasarkan;
-
-    public $statusPemesanan;
-
-    public $statusPenerimaan;
-
     protected $paginationTheme = 'bootstrap';
+
+    protected $listeners = [
+        'beginExcelExport',
+        'searchData',
+        'resetFilters',
+        'fullRefresh',
+    ];
 
     protected function queryString()
     {
@@ -53,52 +56,58 @@ class RingkasanPerbandinganBarangPO extends Component
         $this->perpage = 25;
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->berdasarkan = 'tanggal datang';
-        $this->statusPemesanan = 'sudah datang';
-        $this->statusPenerimaan = 'sudah dibayar';
     }
 
     public function getPerbandinganOrderObatPOProperty()
     {
-        return Obat::perbandinganObatPO(
-            $this->periodeAwal,
-            $this->periodeAkhir,
-            $this->berdasarkan,
-            $this->statusPemesanan,
-            $this->statusPenerimaan
-        )->paginate($this->perpage);
-    }
-
-    public function getKriteriaBerdasarkanProperty()
-    {
-        return [
-            'tanggal pesan',
-            'tanggal datang'
-        ];
-    }
-
-    public function getKriteriaStatusPemesananProperty()
-    {
-        return [
-            'proses pesan',
-            'sudah datang'
-        ];
-    }
-
-    public function getKriteriaStatusPenerimaanProperty()
-    {
-        return [
-            'Sudah Dibayar',
-            'Belum Dibayar',
-            'Belum Lunas',
-            'Titip Faktur',
-        ];
+        return Obat::perbandinganObatPO($this->periodeAwal, $this->periodeAkhir)->paginate($this->perpage);
     }
 
     public function render()
     {
         return view('livewire.farmasi.ringkasan-perbandingan-barang-p-o')
             ->layout(BaseLayout::class, ['title' => 'Ringkasan Perbandingan Barang PO Farmasi']);
+    }
+
+    public function exportToExcel()
+    {
+        $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+
+        $this->emit('beginExcelExport');
+    }
+
+    public function beginExcelExport()
+    {
+        $timestamp = now()->format('Ymd_His');
+
+        $filename = "{$timestamp}_farmasi_perbandingan_po_obat.xlsx";
+
+        $titles = [
+            'RS Samarinda Medika Citra',
+            'Ringkasan Perbandingan PO Obat',
+            now()->format('d F Y'),
+        ];
+
+        $columnHeaders = [
+            'No. Pemesanan',
+            'Kode',
+            'Nama',
+            'Satuan',
+            'Supplier Tujuan',
+            'Supplier yang Mendatangkan',
+            'Jumlah Dipesan',
+            'Jumlah yang Datang',
+            'Selisih',
+        ];
+
+        $data = Obat::perbandinganObatPO($this->periodeAwal, $this->periodeAkhir)->get()->toArray();
+
+        $excel = ExcelExport::make($filename)
+            ->setPageHeaders($titles)
+            ->setColumnHeaders($columnHeaders)
+            ->setData($data);
+
+        return $excel->export();
     }
 
     public function searchData()
