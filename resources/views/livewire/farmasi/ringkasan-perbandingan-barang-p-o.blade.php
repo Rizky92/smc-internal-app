@@ -11,8 +11,8 @@
                         <span class="text-sm px-2">sampai</span>
                         <input class="form-control form-control-sm" style="width: 10rem" type="date" wire:model.defer="periodeAkhir" />
                         <div class="ml-4 custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input" id="hanyaTampilkanPenerimaanBarangYangBerbeda" wire:model.defer="hanyaTampilkanPenerimaanBarangYangBerbeda">
-                            <label class="custom-control-label text-sm" for="hanyaTampilkanPenerimaanBarangYangBerbeda">Tampilkan barang yang berbeda jumlah</label>
+                            <input type="checkbox" class="custom-control-input" id="hanyaTampilkanBarangSelisih" wire:model.defer="hanyaTampilkanBarangSelisih">
+                            <label class="custom-control-label text-sm" for="hanyaTampilkanBarangSelisih">Tampilkan barang berselisih</label>
                         </div>
                         <div class="ml-auto">
                             <button class="btn btn-default btn-sm" type="button" wire:click="exportToExcel">
