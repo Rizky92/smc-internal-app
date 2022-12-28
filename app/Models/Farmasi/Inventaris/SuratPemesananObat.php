@@ -76,7 +76,7 @@ class SuratPemesananObat extends Model
             ->where('surat_pemesanan_medis.status', 'Sudah Datang')
             ->whereBetween('pemesanan_datang.tgl_pesan', [$periodeAwal, $periodeAkhir])
             ->when($hanyaTampilkanYangBerbeda, function (Builder $query) {
-                return $query->where('detail_surat_pemesanan_medis.jumlah2', '!=', 'pemesanan_datang.jumlah');
+                return $query->where(DB::raw('(detail_surat_pemesanan_medis.jumlah2 - pemesanan_datang.jumlah)'), '!=', 0);
             })
             ->when(!empty($cari), function (Builder $query) use ($cari) {
                 return $query->where(function (Builder $query) use ($cari) {
