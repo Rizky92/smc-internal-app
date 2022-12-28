@@ -2,9 +2,10 @@
 
 namespace App\Http\Livewire\Farmasi;
 
-use App\Models\Farmasi\Obat;
+use App\Models\Farmasi\Inventaris\SuratPemesananObat;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Rizky92\Xlswriter\ExcelExport;
@@ -20,6 +21,8 @@ class RingkasanPerbandinganBarangPO extends Component
     public $periodeAkhir;
 
     public $perpage;
+
+    public $hanyaTampilkanPenerimaanBarangYangBerbeda;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -56,11 +59,18 @@ class RingkasanPerbandinganBarangPO extends Component
         $this->perpage = 25;
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->hanyaTampilkanPenerimaanBarangYangBerbeda = false;
     }
 
     public function getPerbandinganOrderObatPOProperty()
     {
-        return Obat::perbandinganObatPO($this->periodeAwal, $this->periodeAkhir, $this->cari)->paginate($this->perpage);
+        return SuratPemesananObat::perbandinganPemesananObatPO(
+            $this->periodeAwal,
+            $this->periodeAkhir,
+            Str::lower($this->cari),
+            $this->hanyaTampilkanPenerimaanBarangYangBerbeda
+        )
+            ->paginate($this->perpage);
     }
 
     public function render()
@@ -90,17 +100,18 @@ class RingkasanPerbandinganBarangPO extends Component
 
         $columnHeaders = [
             'No. Pemesanan',
-            'Kode',
             'Nama',
-            'Satuan',
             'Supplier Tujuan',
             'Supplier yang Mendatangkan',
             'Jumlah Dipesan',
+            'Satuan',
             'Jumlah yang Datang',
+            'Satuan',
             'Selisih',
         ];
 
-        $data = Obat::perbandinganObatPO($this->periodeAwal, $this->periodeAkhir)->get()->toArray();
+        $data = SuratPemesananObat::perbandinganPemesananObatPO($this->periodeAwal, $this->periodeAkhir, '', $this->hanyaTampilkanPenerimaanBarangYangBerbeda)
+            ->get()->toArray();
 
         $excel = ExcelExport::make($filename)
             ->setPageHeaders($titles)
