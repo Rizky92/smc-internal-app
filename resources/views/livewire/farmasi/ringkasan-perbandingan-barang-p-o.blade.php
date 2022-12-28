@@ -27,24 +27,26 @@
             <table class="table table-hover table-striped table-sm text-sm">
                 <thead>
                     <tr>
+                        <th>No. Pemesanan</th>
                         <th>Kode</th>
                         <th>Nama</th>
                         <th>Satuan</th>
-                        <th>Supplier tujuan</th>
-                        <th>Supplier yang mendatangkan</th>
-                        <th>Jumlah dipesan</th>
-                        <th>Jumlah yang datang</th>
+                        <th>Supplier Tujuan</th>
+                        <th>Supplier yang Mendatangkan</th>
+                        <th>Jumlah Dipesan</th>
+                        <th>Jumlah yang Datang</th>
                         <th>Selisih</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($this->perbandinganOrderObatPO as $obat)
                         <tr>
+                            <td>{{ $obat->no_pemesanan }}</td>
                             <td>{{ $obat->kode_brng }}</td>
                             <td>{{ $obat->nama_brng }}</td>
                             <td>{{ $obat->satuan }}</td>
-                            <td>{{ $obat->suplier_pesan }}</td>
-                            <td>{{ $obat->suplier_diterima }}</td>
+                            <td>{{ $obat->nama_suplier_dipesan }}</td>
+                            <td>{{ $obat->nama_suplier_datang }}</td>
                             <td>{{ $obat->jumlah_dipesan }}</td>
                             <td>{{ $obat->jumlah_datang }}</td>
                             <td>{{ $obat->selisih }}</td>
