@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Farmasi;
 
+use App\Models\Farmasi\ResepObat;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
 use Livewire\WithPagination;

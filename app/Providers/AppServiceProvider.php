@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -37,5 +38,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::before(function (User $user) {
             return $user->hasRole(config('permission.superadmin_name')) ? true : null;
         });
+
+        Model::preventLazyLoading(! app()->isProduction());
     }
 }

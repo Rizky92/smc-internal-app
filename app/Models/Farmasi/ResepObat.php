@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ResepObat extends Model
@@ -25,13 +26,6 @@ class ResepObat extends Model
     public const RANAP = 'ranap';
     public const IGD = 'igd';
 
-    /**
-     * @param  \Illuminate\Database\Eloquent\Builder $query
-     * @param  string $periodeAwal
-     * @param  string $periodeAkhir
-     * 
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
     public function scopePenggunaanObatPerDokter(
         Builder $query,
         string $periodeAwal = '',
@@ -71,6 +65,47 @@ class ResepObat extends Model
                 });
             })
             ->orderBy('resep_obat.no_resep');
+    }
+
+    public function scopeKunjunganFarmasi(Builder $query, string $periodeAwal = '', string $periodeAkhir = '', string $cari = ''): Builder
+    {
+        if (empty($periodeAwal)) {
+            $periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($periodeAkhir)) {
+            $periodeAkhir = now()->endofMonth()->format('Y-m-d');
+        }
+
+        return $query->selectRaw("
+            resep_obat.no_rawat,
+            resep_obat.no_resep,
+            pasien.nm_pasien,
+            concat(reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur) umur,
+            resep_obat.tgl_perawatan,
+            resep_obat.jam,
+            dokter_peresep.nm_dokter nm_dokter_peresep,
+            dokter_poli.nm_dokter nm_dokter_poli,
+            reg_periksa.status_lanjut,
+            poliklinik.nm_poli
+        ")
+            ->leftJoin('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
+            ->leftJoin(DB::raw('dokter dokter_poli'), 'reg_periksa.kd_dokter', '=', 'dokter_poli.kd_dokter')
+            ->leftJoin(DB::raw('dokter dokter_peresep'), 'resep_obat.kd_dokter', '=', 'dokter_peresep.kd_dokter')
+            ->whereBetween('resep_obat.tgl_perawatan', [$periodeAwal, $periodeAkhir])
+            ->when(! empty($cari), function (Builder $query) use ($cari) {
+                return $query->where(function (Builder $query) use ($cari) {
+                    return $query->where
+                })
+            });
+        // join reg_periksa on resep_obat.no_rawat = reg_periksa.no_rawat
+        // join pasien on reg_periksa.no_rkm_medis = pasien.no_rkm_medis
+        // join poliklinik on reg_periksa.kd_poli = poliklinik.kd_poli
+        // join dokter dokter_poli on reg_periksa.kd_dokter = dokter_poli.kd_dokter
+        // join dokter dokter_peresep on resep_obat.kd_dokter = dokter_peresep.kd_dokter 
+        // where resep_obat.tgl_perawatan between '2022-11-01' and '2022-11-30'
     }
 
     public function scopeKunjunganResepPasien(
