@@ -2,12 +2,22 @@
 
 namespace [namespace];
 
-use Livewire\Component;
+use App\View\Components\BaseLayout;
+use App\Http\Livewire\BaseComponent as Component;
+use Illuminate\Support\Str;
 
 class [class] extends Component
 {
     public function render()
     {
-        return view('[view]');
+        return view('[view]')
+            ->layout(BaseLayout::class, ['title' => Str::title('[class]')]);
+    }
+
+    public function defaultPropertyValues()
+    {
+        return [
+            // 
+        ];
     }
 }
