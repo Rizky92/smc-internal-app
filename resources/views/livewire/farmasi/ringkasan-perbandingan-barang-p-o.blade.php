@@ -6,7 +6,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="d-flex align-items-center justify-content-start">
-                        <span class="text-sm pr-4">Periode:</span>
+                        <span class="text-sm pr-4">Tgl. SPM:</span>
                         <input class="form-control form-control-sm" style="width: 10rem" type="date" wire:model.defer="periodeAwal" />
                         <span class="text-sm px-2">sampai</span>
                         <input class="form-control form-control-sm" style="width: 10rem" type="date" wire:model.defer="periodeAkhir" />

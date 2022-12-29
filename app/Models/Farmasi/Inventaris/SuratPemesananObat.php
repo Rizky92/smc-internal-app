@@ -66,7 +66,7 @@ class SuratPemesananObat extends Model
                     ->on('surat_pemesanan_medis.no_pemesanan', '=', 'pemesanan_datang.no_order')
                     ->on('detail_surat_pemesanan_medis.kode_brng', '=', 'pemesanan_datang.kode_brng');
             })
-            ->whereBetween('pemesanan_datang.tgl_pesan', [$periodeAwal, $periodeAkhir])
+            ->whereBetween('surat_pemesanan_medis.tanggal', [$periodeAwal, $periodeAkhir])
             ->when($hanyaTampilkanYangBerbeda, function (Builder $query) {
                 return $query->where(DB::raw('(detail_surat_pemesanan_medis.jumlah2 - pemesanan_datang.jumlah)'), '!=', 0);
             })
