@@ -39,21 +39,13 @@
             </div>
         </div>
         <div class="card-body p-0">
-            <ul class="nav nav-tabs nav-fill border-bottom-0" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active" id="tab-ralan" data-toggle="pill" href="#content-obat-regular" role="tab" aria-controls="content-obat-regular" aria-selected="false" wire:ignore>
-                        <span>Obat Umum</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="tab-ranap" data-toggle="pill" href="#content-obat-racikan" role="tab" aria-controls="content-obat-racikan" aria-selected="false" wire:ignore>
-                        <span>Obat Racikan</span>
-                    </a>
-                </li>
-            </ul>
-            <div class="tab-content">
-                <div class="tab-pane show active" id="content-obat-regular" role="tabpanel" aria-label="Tab Obat Umum" wire:ignore.self>
-                    <div>
+            <x-navtabs :livewire="true">
+                <x-slot name="tabs">
+                    <x-navtabs.tab id="obat-regular" title="Obat Regular" selected />
+                    <x-navtabs.tab id="obat-racikan" title="Obat Racikan" />
+                </x-slot>
+                <x-slot name="contents">
+                    <x-navtabs.content id="obat-regular" title="Obat Regular" selected>
                         <div class="table-responsive">
                             <table class="table table-hover table-striped table-sm text-sm m-0">
                                 <thead>
@@ -88,10 +80,8 @@
                                 {{ $this->kunjunganResepObatRegularPasien->links() }}
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="tab-pane" id="content-obat-racikan" role="tabpanel" aria-label="Tab Obat Racikan" wire:ignore.self>
-                    <div>
+                    </x-navtabs.content>
+                    <x-navtabs.content id="obat-racikan" title="Obat Racikan">
                         <div class="table-responsive">
                             <table class="table table-hover table-striped table-sm text-sm m-0">
                                 <thead>
@@ -126,9 +116,9 @@
                                 {{ $this->kunjunganResepObatRacikanPasien->links() }}
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
+                    </x-navtabs.content>
+                </x-slot>
+            </x-navtabs>
         </div>
     </div>
 </div>

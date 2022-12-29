@@ -12,7 +12,7 @@ use App\Http\Livewire\Farmasi\RingkasanPerbandinganBarangPO;
 use App\Http\Livewire\Farmasi\StokDaruratFarmasi;
 use App\Http\Livewire\Logistik\MinmaxBarang;
 use App\Http\Livewire\Logistik\StokDaruratLogistik;
-use App\Http\Livewire\Perawatan\DaftarPasienRanap;
+use App\Http\Livewire\DaftarPasienRanap;
 use App\Http\Livewire\RekamMedis\LaporanDemografiPasien;
 use App\Http\Livewire\RekamMedis\LaporanStatistikRekamMedis;
 use App\Http\Livewire\User\ManajemenUser;
@@ -30,7 +30,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Cari tau alternative laravel untuk kembali ke dashboard dengan url yang memiliki 1 segmen
 Route::get('/', HomeController::class);
 
 Route::get('login', [LoginController::class, 'create'])->name('login');

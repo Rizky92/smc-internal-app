@@ -27,8 +27,8 @@
             <table class="table table-hover table-striped table-sm text-sm">
                 <thead>
                     <tr>
-                        <th>No. Resep</th>
                         <th>No. Rawat</th>
+                        <th>No. Resep</th>
                         <th>Pasien</th>
                         <th>Umur</th>
                         <th>Tgl. Validasi</th>

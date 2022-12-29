@@ -157,18 +157,26 @@ class BaseLayout extends Component
                 ],
             ],
             [
-                'name' => 'Manajemen User',
-                'url' => route('admin.users.manajemen'),
-                'icon' => "fas fa-users",
-                'type' => 'link',
+                'name' => 'Admin',
+                'icon' => "fas fa-users-cog",
+                'type' => 'dropdown',
                 'hasAnyPermissions' => $user->hasRole(config('permission.superadmin_name')),
-            ],
-            [
-                'name' => 'Pengaturan Hak Akses',
-                'url' => route('admin.users.hak-akses'),
-                'icon' => "fas fa-key",
-                'type' => 'link',
-                'hasAnyPermissions' => $user->hasRole(config('permission.superadmin_name')),
+                'items' => [
+                    [
+                        'name' => 'Manajemen User',
+                        'url' => route('admin.users.manajemen'),
+                        'icon' => "fas fa-users",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->hasRole(config('permission.superadmin_name')),
+                    ],
+                    [
+                        'name' => 'Pengaturan Hak Akses',
+                        'url' => route('admin.users.hak-akses'),
+                        'icon' => "fas fa-key",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->hasRole(config('permission.superadmin_name')),
+                    ],
+                ],
             ],
         ]);
     }

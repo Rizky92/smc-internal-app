@@ -253,9 +253,7 @@
                                 <a data-no-rawat="{{ $pasien->no_rawat }}" data-no-rekam-medis="{{ $pasien->no_rkm_medis }}" data-pasien="{{ $pasien->data_pasien }}" data-ruangan="{{ $pasien->ruangan }}" data-kamar="{{ $pasien->kd_kamar }}" data-tgl-masuk="{{ $pasien->tgl_masuk }}" data-jam-masuk="{{ $pasien->jam_masuk }}" href="#" style="position: absolute; left: 0; right: 0; top: 0; bottom: 0" onclick="loadData(this.dataset)"></a>
                             </td>
                             <td style="width: 10ch">{{ $pasien->no_rkm_medis }}</td>
-                            <td style="width: 25ch">
-                                {{ $pasien->data_pasien }}
-                            </td>
+                            <td style="width: 25ch">{{ $pasien->data_pasien }}</td>
                             <td style="width: 50ch;">{{ $pasien->alamat_pasien }}</td>
                             <td>{{ $pasien->agama }}</td>
                             <td>{{ $pasien->pj }}</td>
