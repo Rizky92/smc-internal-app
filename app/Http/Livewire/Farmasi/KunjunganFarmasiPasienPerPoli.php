@@ -19,6 +19,8 @@ class KunjunganFarmasiPasienPerPoli extends Component
 
     public $perpage;
 
+    protected $paginationTheme = 'bootstrap';
+
     protected $listeners = [
         'beginExcelExport',
     ];

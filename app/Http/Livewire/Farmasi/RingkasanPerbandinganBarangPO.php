@@ -108,14 +108,18 @@ class RingkasanPerbandinganBarangPO extends Component
             'Supplier Tujuan',
             'Supplier yang Mendatangkan',
             'Jumlah Dipesan',
-            'Satuan',
             'Jumlah yang Datang',
-            'Satuan',
             'Selisih',
         ];
 
-        $data = SuratPemesananObat::perbandinganPemesananObatPO($this->periodeAwal, $this->periodeAkhir, '', $this->hanyaTampilkanBarangSelisih)
-            ->get()->toArray();
+        $data = SuratPemesananObat::perbandinganPemesananObatPO(
+            $this->periodeAwal,
+            $this->periodeAkhir,
+            '',
+            $this->hanyaTampilkanBarangSelisih
+        )
+            ->get()
+            ->toArray();
 
         $excel = ExcelExport::make($filename)
             ->setPageHeaders($titles)
