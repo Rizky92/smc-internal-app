@@ -56,7 +56,7 @@ class SuratPemesananObat extends Model
             ifnull(pemesanan_datang.nama_suplier, '-') suplier_datang,
             detail_surat_pemesanan_medis.jumlah2 jumlah_pesan,
             ifnull(pemesanan_datang.jumlah, 0) jumlah_datang,
-            ifnull((detail_surat_pemesanan_medis.jumlah2 - pemesanan_datang.jumlah), 'Barang tidak datang') selisih
+            ifnull((detail_surat_pemesanan_medis.jumlah2 - pemesanan_datang.jumlah), 'Barang belum datang') selisih
         ")
             ->join('datasuplier', 'surat_pemesanan_medis.kode_suplier', '=', 'datasuplier.kode_suplier')
             ->join('detail_surat_pemesanan_medis', 'surat_pemesanan_medis.no_pemesanan', '=', 'detail_surat_pemesanan_medis.no_pemesanan')
