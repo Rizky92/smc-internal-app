@@ -59,9 +59,9 @@
         </div>
         <div class="card-footer">
             <div class="d-flex align-items center justify-content-start">
-                <p class="text-muted">Menampilkan {{ $this->pasienPerPoli->count() }} dari total {{ number_format($this->pasienPerPoli->total(), 0, ',', '.') }} item.</p>
+                <p class="text-muted">Menampilkan {{ $this->dataKunjunganResepPasien->count() }} dari total {{ number_format($this->dataKunjunganResepPasien->total(), 0, ',', '.') }} item.</p>
                 <div class="ml-auto">
-                    {{ $this->pasienPerPoli->links() }}
+                    {{ $this->dataKunjunganResepPasien->links() }}
                 </div>
             </div>
         </div>
