@@ -28,27 +28,30 @@
                 <thead>
                     <tr>
                         <th>No. Resep</th>
+                        <th>No. Rawat</th>
+                        <th>Pasien</th>
+                        <th>Umur</th>
                         <th>Tgl. Validasi</th>
                         <th>Jam</th>
-                        <th>Nama Obat</th>
-                        <th>Jumlah</th>
                         <th>Dokter Peresep</th>
-                        <th>Asal</th>
+                        <th>Dokter Poli</th>
+                        <th>Jenis Perawatan</th>
                         <th>Asal Poli</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($this->pasienPerPoli as $pasien)
+                    @foreach ($this->dataKunjunganResepPasien as $pasien)
                         <tr>
-                            <td>{{ $pasien->no_resep }}</td>
                             <td>{{ $pasien->no_rawat }}</td>
+                            <td>{{ $pasien->no_resep }}</td>
                             <td>{{ $pasien->nm_pasien }}</td>
+                            <td>{{ $pasien->umur }}</td>
+                            <td>{{ $pasien->tgl_perawatan }}</td>
+                            <td>{{ $pasien->jam }}</td>
+                            <td>{{ $pasien->nm_dokter_peresep }}</td>
+                            <td>{{ $pasien->nm_dokter_poli }}</td>
                             <td>{{ $pasien->status_lanjut }}</td>
                             <td>{{ $pasien->nm_poli }}</td>
-                            <td>{{ $pasien->tgl_peresepan }}</td>
-                            <td>{{ $pasien->tgl_perawatan }}</td>
-                            <td>{{ $pasien->jumlah_obat }}</td>
-                            <td>{{ $pasien->total_obat }}</td>
                         </tr>
                     @endforeach
                 </tbody>

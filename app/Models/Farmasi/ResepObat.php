@@ -97,15 +97,21 @@ class ResepObat extends Model
             ->whereBetween('resep_obat.tgl_perawatan', [$periodeAwal, $periodeAkhir])
             ->when(! empty($cari), function (Builder $query) use ($cari) {
                 return $query->where(function (Builder $query) use ($cari) {
-                    return $query->where
-                })
+                    $cari = Str::lower($cari);
+
+                    return $query
+                        ->where('resep_obat.no_rawat', 'like', "%{$cari}%")
+                        ->orWhere('resep_obat.no_resep', 'like', "%{$cari}%")
+                        ->orWhere('pasien.no_rkm_medis', 'like', "%{$cari}%")
+                        ->orWhere('pasien.nm_pasien', 'like', "%{$cari}%")
+                        ->orWhere('dokter_peresep.nm_dokter', 'like', "%{$cari}%")
+                        ->orWhere('dokter_peresep.kd_dokter', 'like', "%{$cari}%")
+                        ->orWhere('dokter_poli.nm_dokter', 'like', "%{$cari}%")
+                        ->orWhere('dokter_poli.kd_dokter', 'like', "%{$cari}%")
+                        ->orWhere('reg_periksa.status_lanjut', 'like', "%{$cari}%")
+                        ->orWhere('poliklinik.nm_poli', 'like', "%{$cari}%");
+                });
             });
-        // join reg_periksa on resep_obat.no_rawat = reg_periksa.no_rawat
-        // join pasien on reg_periksa.no_rkm_medis = pasien.no_rkm_medis
-        // join poliklinik on reg_periksa.kd_poli = poliklinik.kd_poli
-        // join dokter dokter_poli on reg_periksa.kd_dokter = dokter_poli.kd_dokter
-        // join dokter dokter_peresep on resep_obat.kd_dokter = dokter_peresep.kd_dokter 
-        // where resep_obat.tgl_perawatan between '2022-11-01' and '2022-11-30'
     }
 
     public function scopeKunjunganResepPasien(

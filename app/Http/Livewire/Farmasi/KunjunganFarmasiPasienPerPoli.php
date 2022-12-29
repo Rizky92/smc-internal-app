@@ -31,24 +31,9 @@ class KunjunganFarmasiPasienPerPoli extends Component
         $this->perpage = 25;
     }
 
-    public function getColumnHeadersProperty()
-    {
-        return [
-            'No. Resep',
-            'No. Rawat',
-            'Pasien',
-            'Jenis Perawatan',
-            'Asal Poli',
-            'Tgl. Peresepan',
-            'Tgl. Validasi',
-            'Jumlah Obat',
-            'Total',
-        ];
-    }
-
     public function getDataKunjunganResepPasienProperty()
     {
-        
+        return ResepObat::kunjunganFarmasi($this->periodeAwal, $this->periodeAkhir, $this->cari)->paginate($this->perpage);
     }
 
     public function render()
