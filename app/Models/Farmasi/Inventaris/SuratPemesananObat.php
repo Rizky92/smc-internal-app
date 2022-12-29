@@ -68,8 +68,7 @@ class SuratPemesananObat extends Model
             })
             ->whereBetween('surat_pemesanan_medis.tanggal', [$periodeAwal, $periodeAkhir])
             ->when($hanyaTampilkanYangBerbeda, function (Builder $query) {
-                return $query->where(DB::raw('(detail_surat_pemesanan_medis.jumlah2 - pemesanan_datang.jumlah)'), '!=', 0)
-                    ->orWhere(DB::raw("ifnull((detail_surat_pemesanan_medis.jumlah2 - pemesanan_datang.jumlah), 'Barang belum datang')"), 'Barang belum datang');
+                return $query->where(DB::raw('(detail_surat_pemesanan_medis.jumlah2 - ifnull(pemesanan_datang.jumlah, 0))'), '!=', 0);
             })
             ->when(!empty($cari), function (Builder $query) use ($cari) {
                 return $query->where(function (Builder $query) use ($cari) {
