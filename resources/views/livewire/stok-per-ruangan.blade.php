@@ -36,6 +36,7 @@
                             <div class="d-flex align-items-center" wire:ignore>
                                 <span class="text-sm pr-2">Ruangan:</span>
                                 <select class="form-control form-control-sm simple-select2-sm input-sm" id="bangsal" autocomplete="off">
+                                    <option value="-">-</option>
                                     @foreach ($this->bangsal as $kode => $nama)
                                         <option value="{{ $kode }}">{{ $nama }}</option>
                                     @endforeach

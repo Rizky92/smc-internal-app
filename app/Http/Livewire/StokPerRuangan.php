@@ -49,7 +49,7 @@ class StokPerRuangan extends Component
     {
         $this->cari = '';
         $this->perpage = 25;
-        $this->kodeBangsal = '';
+        $this->kodeBangsal = '-';
     }
 
     public function getStokObatPerRuanganProperty()
@@ -118,7 +118,7 @@ class StokPerRuangan extends Component
     {
         $this->cari = '';
         $this->perpage = 25;
-        $this->kodeBangsal = '';
+        $this->kodeBangsal = '-';
 
         $this->searchData();
     }

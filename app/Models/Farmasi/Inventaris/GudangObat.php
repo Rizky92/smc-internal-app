@@ -27,7 +27,7 @@ class GudangObat extends Model
             ->join('bangsal', 'gudangbarang.kd_bangsal', '=', 'bangsal.kd_bangsal');
     }
 
-    public function scopeStokPerRuangan(Builder $query, string $kodeBangsal = '', string $cari = ''): Builder
+    public function scopeStokPerRuangan(Builder $query, string $kodeBangsal = '-', string $cari = ''): Builder
     {
         return $query->selectRaw("
             bangsal.nm_bangsal,
@@ -41,7 +41,7 @@ class GudangObat extends Model
             ->leftJoin('databarang', 'gudangbarang.kode_brng', '=', 'databarang.kode_brng')
             ->leftJoin('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
             ->leftJoin('bangsal', 'gudangbarang.kd_bangsal', '=', 'bangsal.kd_bangsal')
-            ->when(!empty($kodeBangsal), function (Builder $query) use ($kodeBangsal) {
+            ->when($kodeBangsal !== '-', function (Builder $query) use ($kodeBangsal) {
                 return $query->where('gudangbarang.kd_bangsal', $kodeBangsal);
             })
             ->when(!empty($cari), function (Builder $query) use ($cari) {
