@@ -6,7 +6,6 @@ use App\Models\Bangsal;
 use App\Models\Farmasi\Inventaris\GudangObat;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Rizky92\Xlswriter\ExcelExport;
@@ -16,10 +15,6 @@ class StokPerRuangan extends Component
     use WithPagination, FlashComponent;
 
     public $cari;
-
-    public $periodeAwal;
-
-    public $periodeAkhir;
 
     public $perpage;
 
@@ -40,14 +35,6 @@ class StokPerRuangan extends Component
             'cari' => [
                 'except' => '',
             ],
-            'periodeAwal' => [
-                'except' => now()->startOfMonth()->format('Y-m-d'),
-                'as' => 'periode_awal',
-            ],
-            'periodeAkhir' => [
-                'except' => now()->endOfMonth()->format('Y-m-d'),
-                'as' => 'periode_akhir',
-            ],
             'perpage' => [
                 'except' => 25,
             ],
@@ -61,8 +48,6 @@ class StokPerRuangan extends Component
     public function mount()
     {
         $this->cari = '';
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
         $this->perpage = 25;
         $this->kodeBangsal = '';
     }
@@ -74,7 +59,7 @@ class StokPerRuangan extends Component
 
     public function getBangsalProperty()
     {
-        return Bangsal::pluck('nm_bangsal', 'kd_bangsal');
+        return GudangObat::bangsalYangAda()->pluck('nm_bangsal', 'kd_bangsal');
     }
 
     public function render()
@@ -132,8 +117,6 @@ class StokPerRuangan extends Component
     public function resetFilters()
     {
         $this->cari = '';
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
         $this->perpage = 25;
         $this->kodeBangsal = '';
 

@@ -4,7 +4,6 @@ namespace App\Models\Farmasi\Inventaris;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Str;
 
 class GudangObat extends Model
@@ -19,17 +18,17 @@ class GudangObat extends Model
 
     public $timestamps = false;
 
-    public function scopeStokPerRuangan(Builder $query, string $kodeBangsal = '', string $cari = ''): Builder
-    // public function scopeStokPerRuangan(Builder $query, string $periodeAwal = '', string $periodeAkhir = '', string $cari = ''): Builder
+    public function scopeBangsalYangAda(Builder $query): Builder
     {
-        // if (empty($periodeAwal)) {
-        //     $periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        // }
+        return $query->selectRaw("
+            select distinct(gudangbarang.kd_bangsal) kd_bangsal,
+            bangsal.nm_bangsal
+        ")
+            ->join('bangsal', 'gudangbarang.kd_bangsal', '=', 'bangsal.kd_bangsal');
+    }
 
-        // if (empty($periodeAkhir)) {
-        //     $periodeAkhir = now()->endOfMonth()->format('Y-m-d');
-        // }
-
+    public function scopeStokPerRuangan(Builder $query, string $kodeBangsal = '', string $cari = ''): Builder
+    {
         return $query->selectRaw("
             bangsal.nm_bangsal,
             gudangbarang.kode_brng,
