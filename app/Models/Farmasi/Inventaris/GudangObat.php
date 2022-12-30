@@ -21,7 +21,7 @@ class GudangObat extends Model
     public function scopeBangsalYangAda(Builder $query): Builder
     {
         return $query->selectRaw("
-            select distinct(gudangbarang.kd_bangsal) kd_bangsal,
+            distinct(gudangbarang.kd_bangsal) kd_bangsal,
             bangsal.nm_bangsal
         ")
             ->join('bangsal', 'gudangbarang.kd_bangsal', '=', 'bangsal.kd_bangsal');
