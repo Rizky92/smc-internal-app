@@ -15,6 +15,7 @@ use App\Http\Livewire\Logistik\StokDaruratLogistik;
 use App\Http\Livewire\DaftarPasienRanap;
 use App\Http\Livewire\RekamMedis\LaporanDemografiPasien;
 use App\Http\Livewire\RekamMedis\LaporanStatistikRekamMedis;
+use App\Http\Livewire\StokPerRuangan;
 use App\Http\Livewire\User\ManajemenUser;
 use App\Http\Livewire\User\SetHakAkses;
 use Illuminate\Support\Facades\Route;
@@ -46,16 +47,16 @@ Route::prefix('admin')
     ->group(function () {
         Route::get('/', DashboardController::class)->name('dashboard');
 
-        Route::prefix('perawatan')
-            ->as('perawatan.')
-            ->group(function () {
-                Route::get('rawat-inap', DaftarPasienRanap::class)
-                    ->middleware([
-                        'can:perawatan.rawat-inap.read',
-                        'can:perawatan.rawat-inap.batal-ranap',
-                    ])
-                    ->name('rawat-inap');
-            });
+        Route::get('rawat-inap', DaftarPasienRanap::class)
+            ->middleware([
+                'can:perawatan.rawat-inap.read',
+                'can:perawatan.rawat-inap.batal-ranap',
+            ])
+            ->name('rawat-inap');
+
+        Route::get('stok-obat-per-ruangan', StokPerRuangan::class)
+            ->middleware('can:manajemen.stok-obat-per-ruangan.read')
+            ->name('stok-obat-per-ruangan');
 
         Route::prefix('farmasi')
             ->as('farmasi.')

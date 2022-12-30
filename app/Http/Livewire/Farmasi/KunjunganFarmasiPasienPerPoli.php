@@ -41,7 +41,7 @@ class KunjunganFarmasiPasienPerPoli extends Component
     public function render()
     {
         return view('livewire.farmasi.kunjungan-farmasi-pasien-per-poli')
-            ->layout(BaseLayout::class, ['title' => 'Kunjungan Farmasi Pasien per Poli']);
+            ->layout(BaseLayout::class, ['title' => 'Kunjungan Farmasi Pasien Per Poli']);
     }
 
     public function beginExcelExport()

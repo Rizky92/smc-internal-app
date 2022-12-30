@@ -88,7 +88,7 @@ class DaftarPasienRanap extends Component
     {
         $timestamp = now()->format('Ymd_His');
 
-        $filename = "{$timestamp}_perawatan_daftar_pasien_ranap";
+        $filename = "{$timestamp}_daftar_pasien_ranap";
 
         $titles = [
             'RS Samarinda Medika Citra',

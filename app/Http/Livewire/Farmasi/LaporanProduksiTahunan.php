@@ -143,11 +143,13 @@ class LaporanProduksiTahunan extends Component
     {
         $timestamp = now()->format('Ymd_His');
 
-        $filename = "{$timestamp}_laporan_produksi.xlsx";
+        $year = now()->format('Y');
+
+        $filename = "{$timestamp}_farmasi_laporan_produksi_farmasi_tahun_{$year}.xlsx";
 
         $titles = [
             'RS Samarinda Medika Citra',
-            'Laporan Produksi Farmasi Tahun ' . now()->format('Y'),
+            "Laporan Produksi Farmasi Tahun {$year}",
             now()->format('d F Y'),
         ];
 

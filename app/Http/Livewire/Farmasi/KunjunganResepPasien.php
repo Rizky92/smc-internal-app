@@ -100,7 +100,7 @@ class KunjunganResepPasien extends Component
     {
         $timestamp = now()->format('Ymd_His');
 
-        $filename = "{$timestamp}_farmasi_kunjungan_resep.xlsx";
+        $filename = "{$timestamp}_farmasi_kunjungan_resep_pasien_per_bentuk_obat.xlsx";
 
         $sheet1 = ResepDokter::kunjunganResepObatRegular($this->periodeAwal, $this->periodeAkhir, $this->jenisPerawatan)->get()->toArray();
         $sheet2 = ResepDokterRacikan::kunjunganResepObatRacikan($this->periodeAwal, $this->periodeAkhir, $this->jenisPerawatan)->get()->toArray();

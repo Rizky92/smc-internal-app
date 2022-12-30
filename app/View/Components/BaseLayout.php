@@ -48,14 +48,21 @@ class BaseLayout extends Component
                 'hasAnyPermissions' => true,
             ],
             [
-                'name' => 'Rawat Inap',
-                'url' => route('admin.perawatan.rawat-inap'),
+                'name' => 'Pasien Rawat Inap',
+                'url' => route('admin.rawat-inap'),
                 'icon' => "fas fa-hospital-alt",
                 'type' => 'link',
                 'hasAnyPermissions' => $user->canAny([
                     'perawatan.rawat-inap.read',
                     'perawatan.rawat-inap.batal-ranap',
                 ]),
+            ],
+            [
+                'name' => 'Stok Ruangan',
+                'url' => route('admin.stok-obat-per-ruangan'),
+                'icon' => "fas fa-shapes",
+                'type' => 'link',
+                'hasAnyPermissions' => $user->can('manajemen.stok-obat-per-ruangan.read'),
             ],
             [
                 'name' => 'Farmasi',

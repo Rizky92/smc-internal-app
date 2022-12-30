@@ -2,10 +2,14 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Bangsal;
+use App\Models\Farmasi\Inventaris\GudangObat;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Rizky92\Xlswriter\ExcelExport;
 
 class StokPerRuangan extends Component
 {
@@ -18,6 +22,8 @@ class StokPerRuangan extends Component
     public $periodeAkhir;
 
     public $perpage;
+
+    public $kodeBangsal;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -45,6 +51,10 @@ class StokPerRuangan extends Component
             'perpage' => [
                 'except' => 25,
             ],
+            'kodeBangsal' => [
+                'except' => '',
+                'as' => 'kode_bangsal',
+            ],
         ];
     }
 
@@ -54,11 +64,17 @@ class StokPerRuangan extends Component
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
         $this->perpage = 25;
+        $this->kodeBangsal = '';
     }
 
     public function getStokObatPerRuanganProperty()
     {
+        return GudangObat::stokPerRuangan($this->kodeBangsal, $this->cari)->paginate($this->perpage);
+    }
 
+    public function getBangsalProperty()
+    {
+        return Bangsal::pluck('nm_bangsal', 'kd_bangsal');
     }
 
     public function render()
@@ -69,10 +85,41 @@ class StokPerRuangan extends Component
 
     public function exportToExcel()
     {
+        $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+
+        $this->emit('beginExcelExport');
     }
 
     public function beginExcelExport()
     {
+        $timestamp = now()->format('Ymd_His');
+
+        $filename = "{$timestamp}_stok_per_ruangan";
+
+        $titles = [
+            'RS Samarinda Medika Citra',
+            'Stok Barang per Ruangan',
+            now()->format('d F Y'),
+        ];
+
+        $columnHeaders = [
+            'Bangsal',
+            'Kode',
+            'Nama',
+            'Satuan',
+            'Harga',
+            'Stok Sekarang',
+            'Total Harga',
+        ];
+
+        $data = GudangObat::stokPerRuangan($this->kodeBangsal)->get();
+
+        $excel = ExcelExport::make($filename)
+            ->setPageHeaders($titles)
+            ->setColumnHeaders($columnHeaders)
+            ->setData($data);
+
+        return $excel->export();
     }
 
     public function searchData()
@@ -88,6 +135,7 @@ class StokPerRuangan extends Component
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
         $this->perpage = 25;
+        $this->kodeBangsal = '';
 
         $this->searchData();
     }
