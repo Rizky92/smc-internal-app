@@ -3,8 +3,8 @@
 
     @once
         @push('css')
-            <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
-            <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+            <link href="{{ asset('plugins/select2/css/select2.min.css') }}" rel="stylesheet">
+            <link href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}" rel="stylesheet">
         @endpush
         @push('js')
             <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
@@ -14,14 +14,15 @@
                 $(document).ready(() => {
                     inputBangsal = $('#bangsal').select2({
                         dropdownCssClass: 'text-sm px-0',
-                        selectionCssClass: 'm-0 p-0 bg-dark'
                     })
-                })
 
-                $('#bangsal').change(() => @this.set('kodeBangsal', $('#bangsal').val(), true))
+                    inputBangsal.on('select2:select', e => {
+                        @this.set('kodeBangsal', inputBangsal.val(), true)
+                    })
 
-                @this.on('searchData', () => {
-                    inputBangsal.trigger('change')
+                    inputBangsal.on('select2:unselect', e => {
+                        @this.set('kodeBangsal', inputBangsal.val(), true)
+                    })
                 })
             </script>
         @endpush
@@ -31,22 +32,16 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-12">
-                    <div class="d-flex align-items-center justify-content-start">
+                    <div class="d-flex align-items-center justify-content-start" wire:ignore>
                         <div class="d-flex align-items-center">
-                            <div class="d-flex align-items-center" wire:ignore>
-                                <span class="text-sm pr-2">Ruangan:</span>
-                                <select class="form-control form-control-sm simple-select2-sm input-sm" id="bangsal" autocomplete="off">
-                                    <option value="-">-</option>
-                                    @foreach ($this->bangsal as $kode => $nama)
-                                        <option value="{{ $kode }}">{{ $nama }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+                            <span class="text-sm pr-2">Ruangan:</span>
+                            <select class="form-control form-control-sm simple-select2-sm input-sm" id="bangsal" autocomplete="off">
+                                <option value="-">-</option>
+                                @foreach ($this->bangsal as $kode => $nama)
+                                    <option value="{{ $kode }}">{{ $nama }}</option>
+                                @endforeach
+                            </select>
                         </div>
-                        {{-- <span class="text-sm pr-4">Periode:</span>
-                        <input class="form-control form-control-sm w-25" type="date" wire:model.defer="periodeAwal" />
-                        <span class="text-sm px-2">sampai</span>
-                        <input class="form-control form-control-sm w-25" type="date" wire:model.defer="periodeAkhir" /> --}}
                         <div class="ml-auto">
                             <button class="btn btn-default btn-sm" type="button" wire:click="exportToExcel">
                                 <i class="fas fa-file-excel"></i>
@@ -70,8 +65,6 @@
                         <th>Satuan</th>
                         <th>Harga</th>
                         <th>Stok saat ini</th>
-                        {{-- <th>SO terakhir</th>
-                        <th>Tgl. SO Terakhir</th> --}}
                         <th>Projeksi Harga</th>
                     </tr>
                 </thead>
@@ -84,8 +77,6 @@
                             <td>{{ $obat->satuan }}</td>
                             <td>{{ rp($obat->h_beli) }}</td>
                             <td>{{ $obat->stok }}</td>
-                            {{-- <td>{{ $obat->so_terakhir }}</td>
-                            <td>{{ $obat->tgl_so_terakhir }}</td> --}}
                             <td>{{ rp($obat->projeksi_harga) }}</td>
                         </tr>
                     @endforeach

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Http\Livewire\Keuangan;
 
 use App\Models\Bangsal;
 use App\Models\Farmasi\Inventaris\GudangObat;
@@ -39,7 +39,7 @@ class StokPerRuangan extends Component
                 'except' => 25,
             ],
             'kodeBangsal' => [
-                'except' => '',
+                'except' => '-',
                 'as' => 'kode_bangsal',
             ],
         ];
@@ -64,7 +64,7 @@ class StokPerRuangan extends Component
 
     public function render()
     {
-        return view('livewire.stok-per-ruangan')
+        return view('livewire.keuangan.stok-per-ruangan')
             ->layout(BaseLayout::class, ['title' => 'Stok Per Ruangan']);
     }
 

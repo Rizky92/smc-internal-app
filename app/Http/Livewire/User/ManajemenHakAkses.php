@@ -9,7 +9,7 @@ use App\View\Components\BaseLayout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class SetHakAkses extends Component
+class ManajemenHakAkses extends Component
 {
     use WithPagination, FlashComponent;
 
@@ -42,7 +42,7 @@ class SetHakAkses extends Component
 
     public function render()
     {
-        return view('livewire.user.set-hak-akses')
+        return view('livewire.user.manajemen-hak-akses')
             ->layout(BaseLayout::class, ['title' => 'Pengaturan Hak Akses']);
     }
 

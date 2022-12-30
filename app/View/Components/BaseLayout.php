@@ -58,11 +58,21 @@ class BaseLayout extends Component
                 ]),
             ],
             [
-                'name' => 'Stok Ruangan',
-                'url' => route('admin.stok-obat-per-ruangan'),
-                'icon' => "fas fa-shapes",
-                'type' => 'link',
-                'hasAnyPermissions' => $user->can('manajemen.stok-obat-per-ruangan.read'),
+                'name' => 'Keuangan',
+                'icon' => "far fa-circle",
+                'type' => 'dropdown',
+                'hasAnyPermissions' => $user->canAny([
+                    'keuangan.stok-obat-per-ruangan.read',
+                ]),
+                'items' => [
+                    [
+                        'name' => 'Stok Obat Per Ruangan',
+                        'url' => route('admin.keuangan.stok-obat-per-ruangan'),
+                        'icon' => "fas fa-shapes",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.stok-obat-per-ruangan.read'),
+                    ],
+                ],
             ],
             [
                 'name' => 'Farmasi',

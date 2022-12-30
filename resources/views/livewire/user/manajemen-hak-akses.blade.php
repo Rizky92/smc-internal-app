@@ -48,7 +48,15 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body position-relative">
+                    <div class="row sticky-top bg-white pb-3 px-0 mx-0">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-start align-items-center">
+                                <label for="cari_permission" class="pr-2 mt-1 text-sm">Cari permission: </label>
+                                <input type="text" wire:model.defer="searchPermissions" id="cari_permission" class="form-control form-control-sm w-50">
+                            </div>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-12">
                             <ul class="form-group" id="role_permissions">
