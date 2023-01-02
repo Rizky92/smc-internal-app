@@ -167,47 +167,58 @@
                         <span aria-hidden="true">&times</span>
                     </button>
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-12 p-0 table-responsive">
-                            <table class="table table-hover table-striped table-sm text-sm">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>NRP</th>
-                                        <th>Nama</th>
-                                        <th>Jabatan</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($this->users as $user)
-                                        <tr style="position: relative">
-                                            <td>
-                                                <label for="user-{{ $user->nip }}">
-                                                    <input type="hidden" name="to_user" value="false">
-                                                    <input type="checkbox" name="to_user" value="true" wire:checked="">
-                                                </label>
-                                            </td>
-                                            <td>{{ $user->nip }}</td>
-                                            <td>{{ $user->nama }}</td>
-                                            <td>{{ $user->nm_jbtn }}</td>
-                                            <td>Petugas</td>
-                                            <td>
-                                                @foreach ($user->roles as $role)
-                                                    @php($first = $loop->first ? '' : 'ml-1')
-                                                    <span class="{{ $first }} badge badge-dark">{{ $role->name }}</span>
-                                                @endforeach
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                <div class="modal-body p-0">
+                    <div class="p-3 d-flex justify-content-start align-items-start">
+                        <p id="transfer-text">Transfer hak akses yang dimiliki :currentUser ke:</p>
+                        <div class="ml-auto w-50 d-flex flex-column">
+                            <span class="text-sm text-muted">Hak akses yang akan diberikan:</span>
+                            <div class="d-flex flex-wrap mt-2" style="row-gap: .5rem; column-gap: .25rem">
+                                @foreach ($this->roles as $role)
+                                    <span class="badge badge-dark">{{ $role->name }}</span>
+                                @endforeach
+                            </div>
                         </div>
                     </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped table-sm text-sm">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>NRP</th>
+                                    <th>Nama</th>
+                                    <th>Jabatan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($this->users as $user)
+                                    <tr style="position: relative">
+                                        <td>
+                                            <label for="user-{{ $user->nip }}" style="position: absolute; left: 0; right: 0; top: 0; bottom: 0; cursor: pointer">
+                                                <input type="hidden" value="false">
+                                                <input type="checkbox" value="true" wire:checked.defer="toUser('{{ $user->nip }}')" id="user-{{ $user->nip }}" class="ml-1 mt-2">
+                                            </label>
+                                        </td>
+                                        <td>{{ $user->nip }}</td>
+                                        <td>{{ $user->nama }}</td>
+                                        <td>{{ $user->nm_jbtn }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="modal-footer justify-content-end">
-                    <button class="btn btn-default" id="batalsimpan" data-dismiss="modal" type="button">Batal</button>
-                    <button class="btn btn-primary" id="simpandata" type="button">
+                <div class="modal-footer justify-content-start">
+                    <div class="ml-2 input-group input-group-sm" style="width: 16rem">
+                        <input class="form-control" type="search" wire:model.defer="cari" wire:keydown.enter.stop="searchData" />
+                        <div class="input-group-append">
+                            <button class="btn btn-sm btn-default" type="button" wire:click="searchData">
+                                <i class="fas fa-search"></i>
+                                <span class="ml-1">Cari</span>
+                            </button>
+                        </div>
+                    </div>
+                    <button class="btn btn-sm btn-default ml-auto" id="batalsimpan" data-dismiss="modal" type="button">Batal</button>
+                    <button class="btn btn-sm btn-primary" id="simpandata" type="button">
                         <i class="fas fa-save"></i>
                         <span class="ml-1">Simpan</span>
                     </button>
