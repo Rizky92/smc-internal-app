@@ -3,7 +3,7 @@
         <li class="nav-item">
             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
         </li>
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <ul class="d-flex justify-content-start align-items-center nav-link" style="list-style: none">
                 <li class="text-muted">Dashboard</li>
                 <li class="mx-3">/</li>
@@ -11,7 +11,7 @@
                 <li class="mx-3">/</li>
                 <li class="text-dark font-weight-bold text-uppercase">Darurat Stok</li>
             </ul>
-        </li>
+        </li> --}}
     </ul>
 
     <ul class="navbar-nav ml-auto">
