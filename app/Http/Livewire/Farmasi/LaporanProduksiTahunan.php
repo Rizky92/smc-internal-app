@@ -19,28 +19,44 @@ class LaporanProduksiTahunan extends Component
 {
     use FlashComponent;
 
+    public $tahun;
+
     protected $listeners = [
         'beginExcelExport',
     ];
 
+    protected function queryString()
+    {
+        return [
+            'tahun' => [
+                'except' => now()->format('Y'),
+            ],
+        ];
+    }
+
+    public function mount()
+    {
+        $this->tahun = now()->format('Y');
+    }
+
     public function getKunjunganRalanProperty()
     {
-        return ResepObat::kunjunganPasienRalan();
+        return ResepObat::kunjunganPasienRalan($this->tahun);
     }
 
     public function getKunjunganRanapProperty()
     {
-        return ResepObat::kunjunganPasienRanap();
+        return ResepObat::kunjunganPasienRanap($this->tahun);
     }
 
     public function getKunjunganIGDProperty()
     {
-        return ResepObat::kunjunganPasienIGD();
+        return ResepObat::kunjunganPasienIGD($this->tahun);
     }
 
     public function getKunjunganWalkInProperty()
     {
-        return PenjualanWalkInObat::totalKunjunganWalkIn();
+        return PenjualanWalkInObat::totalKunjunganWalkIn($this->tahun);
     }
 
     public function getKunjunganTotalProperty()
@@ -56,27 +72,27 @@ class LaporanProduksiTahunan extends Component
 
     public function getPendapatanObatRalanProperty()
     {
-        return PemberianObat::pendapatanObatRalan();
+        return PemberianObat::pendapatanObatRalan($this->tahun);
     }
 
     public function getPendapatanObatRanapProperty()
     {
-        return PemberianObat::pendapatanObatRanap();
+        return PemberianObat::pendapatanObatRanap($this->tahun);
     }
 
     public function getPendapatanObatIGDProperty()
     {
-        return PemberianObat::pendapatanObatIGD();
+        return PemberianObat::pendapatanObatIGD($this->tahun);
     }
 
     public function getPendapatanObatWalkInProperty()
     {
-        return PenjualanWalkInObat::totalPendapatanWalkIn();
+        return PenjualanWalkInObat::totalPendapatanWalkIn($this->tahun);
     }
 
     public function getPendapatanAlkesFarmasiDanUnitProperty()
     {
-        return PemberianObat::pendapatanAlkesUnit();
+        return PemberianObat::pendapatanAlkesUnit($this->tahun);
     }
 
     public function getPendapatanObatTotalProperty()
@@ -92,17 +108,17 @@ class LaporanProduksiTahunan extends Component
 
     public function getReturObatProperty()
     {
-        return ReturPenjualanObat::totalReturObat();
+        return ReturPenjualanObat::totalReturObat($this->tahun);
     }
 
     public function getPembelianFarmasiProperty()
     {
-        return PemesananObat::totalPembelianDariFarmasi();
+        return PemesananObat::totalPembelianDariFarmasi($this->tahun);
     }
 
     public function getReturSupplierProperty()
     {
-        return ReturSupplierObat::totalBarangRetur();
+        return ReturSupplierObat::totalBarangRetur($this->tahun);
     }
 
     public function getTotalBersihPembelianFarmasiProperty()
@@ -118,18 +134,18 @@ class LaporanProduksiTahunan extends Component
 
     public function getStokKeluarMedisProperty()
     {
-        return PengeluaranStokObat::stokPengeluaranMedisFarmasi();
+        return PengeluaranStokObat::stokPengeluaranMedisFarmasi($this->tahun);
     }
 
     public function getMutasiObatDariFarmasiProperty()
     {
-        return MutasiObat::mutasiObatDariFarmasi();
+        return MutasiObat::mutasiObatDariFarmasi($this->tahun);
     }
 
     public function render()
     {
         return view('livewire.farmasi.laporan-produksi-tahunan')
-            ->layout(BaseLayout::class, ['title' => 'Laporan Produksi Farmasi Tahun ' . now()->format('Y')]);
+            ->layout(BaseLayout::class, ['title' => 'Laporan Produksi Farmasi']);
     }
 
     public function exportToExcel()
@@ -143,13 +159,11 @@ class LaporanProduksiTahunan extends Component
     {
         $timestamp = now()->format('Ymd_His');
 
-        $year = now()->format('Y');
-
-        $filename = "{$timestamp}_farmasi_laporan_produksi_farmasi_tahun_{$year}.xlsx";
+        $filename = "{$timestamp}_farmasi_laporan_produksi_farmasi_tahun_{$this->tahun}.xlsx";
 
         $titles = [
             'RS Samarinda Medika Citra',
-            "Laporan Produksi Farmasi Tahun {$year}",
+            "Laporan Produksi Farmasi Tahun {$this->tahun}",
             now()->format('d F Y'),
         ];
 

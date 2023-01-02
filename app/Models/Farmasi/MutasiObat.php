@@ -17,24 +17,23 @@ class MutasiObat extends Model
 
     public $timestamps = false;
 
-    public function scopeMutasiObatFarmasi(Builder $query): Builder
+    public function scopeMutasiObatFarmasi(Builder $query, string $year = '2022'): Builder
     {
         return $query->selectRaw("
-            ROUND(SUM(mutasibarang.jml * mutasibarang.harga)) jumlah,
-            DATE_FORMAT(mutasibarang.tanggal, '%m-%Y') bulan
+            round(sum(mutasibarang.jml * mutasibarang.harga)) jumlah,
+            month(mutasibarang.tanggal) bulan
         ")
-            ->whereBetween('mutasibarang.tanggal', [
-                now()->startOfYear()->format('Y-m-d'),
-                now()->endOfYear()->format('Y-m-d')
-            ])
-            ->groupByRaw("DATE_FORMAT(mutasibarang.tanggal, '%m-%Y')");
+            ->whereBetween('mutasibarang.tanggal', ["{$year}-01-01", "{$year}-12-31"])
+            ->groupByRaw('month(mutasibarang.tanggal)');
     }
 
-    public static function mutasiObatDariFarmasi(): array
+    public static function mutasiObatDariFarmasi(string $year = '2022'): array
     {
-        return (new static)->mutasiObatFarmasi()->get()
-            ->map(function ($value, $key) {
+        $data = (new static)::mutasiObatFarmasi($year)->get()
+            ->mapWithKeys(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
-            })->flatten(1)->pad(-12, 0)->toArray();
+            })->toArray();
+
+        return map_bulan($data);
     }
 }

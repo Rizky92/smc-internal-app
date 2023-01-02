@@ -95,7 +95,7 @@ class ResepObat extends Model
             ->leftJoin(DB::raw('dokter dokter_poli'), 'reg_periksa.kd_dokter', '=', 'dokter_poli.kd_dokter')
             ->leftJoin(DB::raw('dokter dokter_peresep'), 'resep_obat.kd_dokter', '=', 'dokter_peresep.kd_dokter')
             ->whereBetween('resep_obat.tgl_perawatan', [$periodeAwal, $periodeAkhir])
-            ->when(! empty($cari), function (Builder $query) use ($cari) {
+            ->when(!empty($cari), function (Builder $query) use ($cari) {
                 return $query->where(function (Builder $query) use ($cari) {
                     $cari = Str::lower($cari);
 
@@ -156,14 +156,14 @@ class ResepObat extends Model
             ]);
     }
 
-    public function scopeKunjunganPasien(Builder $query, string $jenisPerawatan = ''): Builder
+    public function scopeKunjunganPasien(Builder $query, string $jenisPerawatan = '', string $year = '2022'): Builder
     {
         return $query->selectRaw("
-            COUNT(resep_obat.no_resep) jumlah,
-            DATE_FORMAT(resep_obat.tgl_perawatan, '%m-%Y') bulan
+            count(resep_obat.no_resep) jumlah,
+            month(resep_obat.tgl_perawatan) bulan
         ")
             ->leftJoin('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
-            ->whereBetween('resep_obat.tgl_perawatan', [now()->startOfYear()->format('Y-m-d'), now()->endOfYear()->format('Y-m-d')])
+            ->whereBetween('resep_obat.tgl_perawatan', ["{$year}-01-01", "{$year}-12-31"])
             ->when(!empty($jenisPerawatan), function (Builder $query) use ($jenisPerawatan) {
                 switch (Str::lower($jenisPerawatan)) {
                     case 'ralan':
@@ -176,7 +176,7 @@ class ResepObat extends Model
                         return $query->where('reg_periksa.kd_poli', '=', 'IGDK');
                 }
             })
-            ->groupByRaw('DATE_FORMAT(resep_obat.tgl_perawatan, "%m-%Y")');
+            ->groupByRaw('month(resep_obat.tgl_perawatan)');
     }
 
     public function dokterPeresep(): BelongsTo
@@ -194,27 +194,33 @@ class ResepObat extends Model
         return $this->hasMany(ResepDokterRacikan::class, 'no_resep', 'no_resep');
     }
 
-    public static function kunjunganPasienRalan(): array
+    public static function kunjunganPasienRalan(string $year = '2022'): array
     {
-        return (new static)::kunjunganPasien('ralan')->get()
-            ->map(function ($value, $key) {
+        $data = (new static)::kunjunganPasien('ralan', $year)->get()
+            ->mapWithKeys(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
-            })->flatten(1)->pad(-12, 0)->toArray();
+            })->toArray();
+
+        return map_bulan($data);
     }
 
-    public static function kunjunganPasienRanap(): array
+    public static function kunjunganPasienRanap(string $year = '2022'): array
     {
-        return (new static)::kunjunganPasien('ranap')->get()
-            ->map(function ($value, $key) {
+        $data = (new static)::kunjunganPasien('ranap', $year)->get()
+            ->mapWithKeys(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
-            })->flatten(1)->pad(-12, 0)->toArray();
+            })->toArray();
+
+        return map_bulan($data);
     }
 
-    public static function kunjunganPasienIGD(): array
+    public static function kunjunganPasienIGD(string $year = '2022'): array
     {
-        return (new static)::kunjunganPasien('IGD')->get()
-            ->map(function ($value, $key) {
+        $data = (new static)::kunjunganPasien('IGD', $year)->get()
+            ->mapWithKeys(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
-            })->flatten(1)->pad(-12, 0)->toArray();
+            })->toArray();
+
+        return map_bulan($data);
     }
 }

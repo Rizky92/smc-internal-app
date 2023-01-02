@@ -6,6 +6,20 @@
             <div class="row">
                 <div class="col-12">
                     <div class="d-flex align-items-center justify-content-start">
+                        <div class="d-flex align-items-center">
+                            <span class="text-sm pr-2">Tahun:</span>
+                            <div class="input-group input-group-sm" style="width: 5rem">
+                                <select class="custom-control custom-select" name="tahun" wire:model.defer="tahun">
+                                    @foreach (range((int) now()->format('Y'), 2022, -1) as $year)
+                                        <option value="{{ $year }}">{{ $year }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <button class="ml-2 btn btn-sm btn-default" type="button" wire:click="$refresh">
+                            <i class="fas fa-sync-alt"></i>
+                            <span class="ml-1">Refresh</span>
+                        </button>
                         <div class="ml-auto">
                             <button class="btn btn-default btn-sm" type="button" wire:click="exportToExcel">
                                 <i class="fas fa-file-excel"></i>
@@ -17,7 +31,7 @@
             </div>
         </div>
         <div class="card-body table-responsive p-0 border-top">
-            <table id="table_index" class="table table-hover table-striped table-sm text-sm" style="width: 150rem">
+            <table class="table table-hover table-striped table-sm text-sm" id="table_index" style="width: 150rem">
                 <thead>
                     <tr>
                         @php($bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'])
@@ -31,7 +45,7 @@
                     <tr>
                         <th scope="row" width="250">TOTAL KUNJUNGAN</th>
                         @foreach ($this->kunjunganTotal as $item)
-                            <th scope="col" class="text-center px-0" width="150">{{ $item }}</th>
+                            <th class="text-center px-0" scope="col" width="150">{{ $item }}</th>
                         @endforeach
                     </tr>
                     <tr>

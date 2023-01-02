@@ -17,22 +17,24 @@ class PemesananObat extends Model
 
     public $timestamps = false;
 
-    public function scopePembelianFarmasi(Builder $query): Builder
+    public function scopePembelianFarmasi(Builder $query, string $year = '2022'): Builder
     {
         return $query->selectRaw("
             round(sum(detailpesan.total)) jumlah,
-            date_format(pemesanan.tgl_pesan, '%m-%Y') bulan
+            month(pemesanan.tgl_pesan) bulan
         ")
             ->join('detailpesan', 'pemesanan.no_faktur', '=', 'detailpesan.no_faktur')
-            ->whereBetween('pemesanan.tgl_pesan', [now()->startOfYear()->format('Y-m-d'), now()->endOfYear()->format('Y-m-d')])
-            ->groupByRaw("date_format(pemesanan.tgl_pesan, '%m-%Y')");
+            ->whereBetween('pemesanan.tgl_pesan', ["{$year}-01-01", "{$year}-12-31"])
+            ->groupByRaw("month(pemesanan.tgl_pesan)");
     }
 
-    public static function totalPembelianDariFarmasi(): array
+    public static function totalPembelianDariFarmasi(string $year = '2022'): array
     {
-        return (new static)->pembelianFarmasi()->get()
-            ->map(function ($value, $key) {
+        $data = (new static)::pembelianFarmasi($year)->get()
+            ->mapWithKeys(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
-            })->flatten(1)->pad(-12, 0)->toArray();
+            })->toArray();
+
+        return map_bulan($data);
     }
 }

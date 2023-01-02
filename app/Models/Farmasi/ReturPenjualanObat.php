@@ -23,22 +23,24 @@ class ReturPenjualanObat extends Model
         return $this->belongsToMany(Obat::class, 'detreturjual', 'no_retur_jual', 'kode_brng');
     }
 
-    public function scopeReturObatPasien(Builder $query): Builder
+    public function scopeReturObatPasien(Builder $query, string $year = '2022'): Builder
     {
         return $query->selectRaw("
-            'RETUR OBAT' kategori,
-            ROUND(SUM(detreturjual.subtotal), 2) jumlah,
-            DATE_FORMAT(returjual.tgl_retur, '%m-%Y') bulan
+            round(sum(detreturjual.subtotal)) jumlah,
+            month(returjual.tgl_retur) bulan
         ")
             ->join('detreturjual', 'returjual.no_retur_jual', '=', 'detreturjual.no_retur_jual')
-            ->groupByRaw("DATE_FORMAT(returjual.tgl_retur, '%m-%Y')");
+            ->whereBetween('returjual.tgl_retur', ["{$year}-01-01", "{$year}-12-31"])
+            ->groupByRaw('month(returjual.tgl_retur)');
     }
 
-    public static function totalReturObat(): array
+    public static function totalReturObat(string $year = '2022'): array
     {
-        return (new static)->returObatPasien()->get()
-            ->map(function ($value, $key) {
+        $data = (new static)::returObatPasien($year)->get()
+            ->mapWithKeys(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
-            })->flatten(1)->pad(-12, 0)->toArray();
+            })->toArray();
+        
+        return map_bulan($data);
     }
 }

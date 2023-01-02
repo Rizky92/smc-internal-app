@@ -19,22 +19,22 @@ class PenjualanWalkInObat extends Model
 
     public $timestamps = false;
 
-    public function scopeKunjunganWalkIn(Builder $query): Builder
+    public function scopeKunjunganWalkIn(Builder $query, string $year = '2022'): Builder
     {
         return $query->selectRaw("
-            COUNT(penjualan.nota_jual) jumlah,
-            DATE_FORMAT(penjualan.tgl_jual, '%m-%Y') bulan
+            count(penjualan.nota_jual) jumlah,
+            month(penjualan.tgl_jual) bulan
         ")
             ->where('status', 'Sudah Dibayar')
-            ->whereBetween('tgl_jual', [now()->startOfYear()->format('Y-m-d'), now()->endOfYear()->format('Y-m-d')])
-            ->groupByRaw("DATE_FORMAT(penjualan.tgl_jual, '%m-%Y')");
+            ->whereBetween('tgl_jual', ["{$year}-01-01", "{$year}-12-31"])
+            ->groupByRaw('month(penjualan.tgl_jual)');
     }
 
-    public function scopePendapatanWalkIn(Builder $query): Builder
+    public function scopePendapatanWalkIn(Builder $query, string $year = '2022'): Builder
     {
         return $query->selectRaw("
             round(sum(dj.total + penjualan.ppn)) jumlah,
-            date_format(penjualan.tgl_jual, '%m-%Y') bulan
+            month(penjualan.tgl_jual) bulan
         ")
             ->leftJoin(DB::raw("(
                 select sum(detailjual.subtotal) total, detailjual.nota_jual
@@ -42,8 +42,8 @@ class PenjualanWalkInObat extends Model
                 group by detailjual.nota_jual
             ) dj"), 'penjualan.nota_jual', '=', 'dj.nota_jual')
             ->where('penjualan.status', 'Sudah Dibayar')
-            ->whereBetween('penjualan.tgl_jual', [now()->startOfYear()->format('Y-m-d'), now()->endOfYear()->format('Y-m-d')])
-            ->groupByRaw("date_format(penjualan.tgl_jual, '%m-%Y')");
+            ->whereBetween('penjualan.tgl_jual', ["{$year}-01-01", "{$year}-12-31"])
+            ->groupByRaw('month(penjualan.tgl_jual)');
     }
 
     public function detail(): BelongsToMany
@@ -51,19 +51,23 @@ class PenjualanWalkInObat extends Model
         return $this->belongsToMany(Obat::class, 'detailjual', 'nota_jual', 'kode_brng');
     }
 
-    public static function totalKunjunganWalkIn(): array
+    public static function totalKunjunganWalkIn(string $year = '2022'): array
     {
-        return (new static)::kunjunganWalkIn()->get()
-            ->map(function ($value, $key) {
+        $data = (new static)::kunjunganWalkIn($year)->get()
+            ->mapWithKeys(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
-            })->flatten(1)->pad(-12, 0)->toArray();
+            })->toArray();
+
+        return map_bulan($data);
     }
 
-    public static function totalPendapatanWalkIn(): array
+    public static function totalPendapatanWalkIn(string $year = '2022'): array
     {
-        return (new static)::pendapatanWalkIn()->get()
-            ->map(function ($value, $key) {
+        $data = (new static)::pendapatanWalkIn($year)->get()
+            ->mapWithKeys(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
-            })->flatten(1)->pad(-12, 0)->toArray();
+            })->toArray();
+
+        return map_bulan($data);
     }
 }

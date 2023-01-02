@@ -18,15 +18,15 @@ class PemberianObat extends Model
 
     public $timestamps = false;
 
-    public function scopePendapatanObat(Builder $query, string $jenisPerawatan = '', bool $selainFarmasi = false): Builder
+    public function scopePendapatanObat(Builder $query, string $jenisPerawatan = '', string $year = '2022', bool $selainFarmasi = false): Builder
     {
         return $query->selectRaw("
             round(sum(detail_pemberian_obat.total)) jumlah,
-            date_format(detail_pemberian_obat.tgl_perawatan, '%m-%Y') bulan
+            month(detail_pemberian_obat.tgl_perawatan) bulan
         ")
             ->leftJoin('reg_periksa', 'detail_pemberian_obat.no_rawat', '=', 'reg_periksa.no_rawat')
             ->leftJoin('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
-            ->whereBetween('detail_pemberian_obat.tgl_perawatan', [now()->startOfYear()->format('Y-m-d'), now()->endOfYear()->format('Y-m-d')])
+            ->whereBetween('detail_pemberian_obat.tgl_perawatan', ["{$year}-01-01", "{$year}-12-31"])
             ->when(!empty($jenisPerawatan), function (Builder $query) use ($jenisPerawatan) {
                 switch (Str::lower($jenisPerawatan)) {
                     case 'ralan':
@@ -42,38 +42,46 @@ class PemberianObat extends Model
             ->when($selainFarmasi, function (Builder $query) {
                 return $query->where('databarang.kode_kategori', 'like', '3.%');
             })
-            ->groupByRaw("date_format(detail_pemberian_obat.tgl_perawatan, '%m-%Y')");
+            ->groupByRaw('month(detail_pemberian_obat.tgl_perawatan)');
     }
 
-    public static function pendapatanObatRalan()
+    public static function pendapatanObatRalan(string $year = '2022'): array
     {
-        return (new static)::pendapatanObat('ralan')->get()
-            ->map(function ($value, $key) {
+        $data = (new static)::pendapatanObat('ralan', $year)->get()
+            ->mapWithKeys(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
-            })->flatten(1)->pad(-12, 0)->toArray();
+            })->toArray();
+
+        return map_bulan($data);
     }
 
-    public static function pendapatanObatRanap()
+    public static function pendapatanObatRanap(string $year = '2022'): array
     {
-        return (new static)::pendapatanObat('ranap')->get()
-            ->map(function ($value, $key) {
+        $data = (new static)::pendapatanObat('ranap', $year)->get()
+            ->mapWithKeys(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
-            })->flatten(1)->pad(-12, 0)->toArray();
+            })->toArray();
+
+        return map_bulan($data);
     }
 
-    public static function pendapatanObatIGD()
+    public static function pendapatanObatIGD(string $year = '2022'): array
     {
-        return (new static)::pendapatanObat('igd')->get()
-            ->map(function ($value, $key) {
+        $data = (new static)::pendapatanObat('IGD', $year)->get()
+            ->mapWithKeys(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
-            })->flatten(1)->pad(-12, 0)->toArray();
+            })->toArray();
+
+        return map_bulan($data);
     }
 
-    public static function pendapatanAlkesUnit()
+    public static function pendapatanAlkesUnit(string $year = '2022'): array
     {
-        return (new static)::pendapatanObat('', true)->get()
-            ->map(function ($value, $key) {
+        $data = (new static)::pendapatanObat('', $year, true)->get()
+            ->mapWithKeys(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
-            })->flatten(1)->pad(-12, 0)->toArray();
+            })->toArray();
+
+        return map_bulan($data);
     }
 }

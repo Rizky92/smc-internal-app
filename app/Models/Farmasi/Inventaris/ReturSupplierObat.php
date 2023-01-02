@@ -17,23 +17,25 @@ class ReturSupplierObat extends Model
 
     public $timestamps = false;
 
-    public function scopeReturKeSupplier(Builder $query): Builder
+    public function scopeReturKeSupplier(Builder $query, string $year = '2022'): Builder
     {
         return $query->selectRaw("
-            CEIL(SUM(detreturbeli.total)) jumlah,
-            DATE_FORMAT(returbeli.tgl_retur, '%m-%Y') total
+            ceil(sum(detreturbeli.total)) jumlah,
+            month(returbeli.tgl_retur) total
         ")
             ->leftJoin('detreturbeli', 'returbeli.no_retur_beli', '=', 'detreturbeli.no_retur_beli')
-            ->whereRaw('YEAR(returbeli.tgl_retur) = ?', now()->format('Y'))
+            ->whereBetween('returbeli.tgl_retur', ["{$year}-01-01", "{$year}-12-31"])
             ->whereIn('returbeli.kd_bangsal', ['IFA', 'IFG', 'AP'])
-            ->groupByRaw("DATE_FORMAT(returbeli.tgl_retur, '%m-%Y')");
+            ->groupByRaw('month(returbeli.tgl_retur)');
     }
 
-    public static function totalBarangRetur(): array
+    public static function totalBarangRetur(string $year = '2022'): array
     {
-        return (new static)->returKeSupplier()->get()
-            ->map(function ($value, $key) {
+        $data = (new static)::returKeSupplier($year)->get()
+            ->mapWithKeys(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
-            })->flatten(1)->pad(-12, 0)->toArray();
+            })->toArray();
+
+        return map_bulan($data);
     }
 }

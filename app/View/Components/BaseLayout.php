@@ -48,7 +48,7 @@ class BaseLayout extends Component
                 'hasAnyPermissions' => true,
             ],
             [
-                'name' => 'Pasien Rawat Inap',
+                'name' => 'Daftar Pasien Ranap',
                 'url' => route('admin.rawat-inap'),
                 'icon' => "fas fa-hospital-alt",
                 'type' => 'link',
@@ -66,7 +66,7 @@ class BaseLayout extends Component
                 ]),
                 'items' => [
                     [
-                        'name' => 'Stok Obat Per Ruangan',
+                        'name' => 'Stok Obat Ruangan',
                         'url' => route('admin.keuangan.stok-obat-per-ruangan'),
                         'icon' => "fas fa-shapes",
                         'type' => 'link',
@@ -86,37 +86,37 @@ class BaseLayout extends Component
                 ]),
                 'items' => [
                     [
-                        'name' => 'Laporan Darurat Stok',
+                        'name' => 'Darurat Stok',
                         'icon' => 'far fa-newspaper',
                         'url' => route('admin.farmasi.darurat-stok'),
                         'hasAnyPermissions' => $user->can('farmasi.darurat-stok.read'),
                     ],
                     [
-                        'name' => 'Penggunaan Obat Per Dokter',
+                        'name' => 'Obat Per Dokter',
                         'icon' => 'far fa-newspaper',
                         'url' => route('admin.farmasi.obat-perdokter'),
                         'hasAnyPermissions' => $user->can('farmasi.penggunaan-obat-perdokter.read'),
                     ],
                     [
-                        'name' => 'Kunjungan Resep',
+                        'name' => 'Kunjungan Per Bentuk Obat',
                         'icon' => 'far fa-newspaper',
                         'url' => route('admin.farmasi.kunjungan-resep'),
                         'hasAnyPermissions' => $user->can('farmasi.kunjungan-resep.read'),
                     ],
                     [
-                        'name' => 'Kunjungan Farmasi Pasien',
+                        'name' => 'Kunjungan Per Poli',
                         'icon' => 'far fa-newspaper',
                         'url' => route('admin.farmasi.kunjungan-pasien-per-poli'),
                         'hasAnyPermissions' => $user->can('farmasi.kunjungan-pasien-per-poli.read'),
                     ],
                     [
-                        'name' => 'Laporan Tahunan',
+                        'name' => 'Laporan Produksi',
                         'icon' => 'far fa-newspaper',
                         'url' => route('admin.farmasi.laporan-tahunan'),
                         'hasAnyPermissions' => $user->can('farmasi.laporan-tahunan.read'),
                     ],
                     [
-                        'name' => 'Ringkasan Perbandingan PO Obat',
+                        'name' => 'Perbandingan PO Obat',
                         'icon' => 'far fa-newspaper',
                         'url' => route('admin.farmasi.perbandingan-po-obat'),
                         'hasAnyPermissions' => $user->can('farmasi.perbandingan-po-obat.read'),
@@ -157,7 +157,7 @@ class BaseLayout extends Component
                 ]),
                 'items' => [
                     [
-                        'name' => 'Input stok min max',
+                        'name' => 'Input Stok Minmax',
                         'icon' => 'fas fa-pencil-alt',
                         'url' => route('admin.logistik.minmax'),
                         'hasAnyPermissions' => $user->canAny([
@@ -166,7 +166,7 @@ class BaseLayout extends Component
                         ]),
                     ],
                     [
-                        'name' => 'Laporan Darurat Stok',
+                        'name' => 'Darurat Stok',
                         'icon' => 'far fa-newspaper',
                         'url' => route('admin.logistik.darurat-stok'),
                         'hasAnyPermissions' => $user->can('logistik.darurat-stok.read'),

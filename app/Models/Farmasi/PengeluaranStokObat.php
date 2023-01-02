@@ -17,23 +17,25 @@ class PengeluaranStokObat extends Model
 
     public $timestamps = false;
 
-    public function scopeStokKeluarMedis(Builder $query): Builder
+    public function scopeStokKeluarMedis(Builder $query, string $year = '2022'): Builder
     {
         return $query->selectRaw("
-            ROUND(SUM(detail_pengeluaran_obat_bhp.total)) jumlah,
-            DATE_FORMAT(pengeluaran_obat_bhp.tanggal, '%m-%Y') bulan
+            round(sum(detail_pengeluaran_obat_bhp.total)) jumlah,
+            month(pengeluaran_obat_bhp.tanggal) bulan
         ")
             ->leftJoin('detail_pengeluaran_obat_bhp', 'pengeluaran_obat_bhp.no_keluar', '=', 'detail_pengeluaran_obat_bhp.no_keluar')
             ->join('databarang', 'detail_pengeluaran_obat_bhp.kode_brng', '=', 'databarang.kode_brng')
-            ->whereBetween('pengeluaran_obat_bhp.tanggal', [now()->startOfYear()->format('Y-m-d'), now()->endOfYear()->format('Y-m-d')])
-            ->groupByRaw('DATE_FORMAT(pengeluaran_obat_bhp.tanggal, "%m-%Y")');
+            ->whereBetween('pengeluaran_obat_bhp.tanggal', ["{$year}-01-01", "{$year}-12-31"])
+            ->groupByRaw('month(pengeluaran_obat_bhp.tanggal)');
     }
 
-    public static function stokPengeluaranMedisFarmasi(): array
+    public static function stokPengeluaranMedisFarmasi(string $year = '2022'): array
     {
-        return (new static)->stokKeluarMedis()->get()
-            ->map(function ($value, $key) {
+        $data = (new static)::stokKeluarMedis($year)->get()
+            ->mapWithKeys(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
-            })->flatten(1)->pad(-12, 0)->toArray();
+            })->toArray();
+
+        return map_bulan($data);
     }
 }
