@@ -30,13 +30,13 @@ class PemberianObat extends Model
             ->when(!empty($jenisPerawatan), function (Builder $query) use ($jenisPerawatan) {
                 switch (Str::lower($jenisPerawatan)) {
                     case 'ralan':
-                        return $query->where('reg_periksa.status_lanjut', 'Ralan')
+                        return $query->where('detail_pemberian_obat.status', 'Ralan')
                             ->where('reg_periksa.kd_poli', '!=', 'IGDK');
                     case 'ranap':
-                        return $query->where('reg_periksa.status_lanjut', 'Ranap')
-                            ->where('reg_periksa.kd_poli', '!=', 'IGDK');
+                        return $query->where('detail_pemberian_obat.status', 'Ranap');
                     case 'igd':
-                        return $query->where('reg_periksa.kd_poli', '=', 'IGDK');
+                        return $query->where('detail_pemberian_obat.status', 'Ralan')
+                            ->where('reg_periksa.kd_poli', '=', 'IGDK');
                 }
             })
             ->when($selainFarmasi, function (Builder $query) {

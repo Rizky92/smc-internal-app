@@ -27,19 +27,19 @@ Breadcrumbs::for('admin.farmasi.kunjungan-pasien-per-poli', function (Trail $tra
     $trail->push('Kunjungan per Poli', route('admin.farmasi.kunjungan-pasien-per-poli'));
 });
 
-Breadcrumbs::for('admin.farmasi.kunjungan-resep-per-jenis-obat', function (Trail $trail) {
+Breadcrumbs::for('admin.farmasi.kunjungan-resep', function (Trail $trail) {
     $trail->parent('admin.farmasi');
-    $trail->push('Kunjungan per Bentuk Obat', route('admin.farmasi.kunjungan-resep-per-jenis-obat'));
+    $trail->push('Kunjungan per Bentuk Obat', route('admin.farmasi.kunjungan-resep'));
 });
 
-Breadcrumbs::for('admin.farmasi.laporan-produksi', function (Trail $trail) {
+Breadcrumbs::for('admin.farmasi.laporan-tahunan', function (Trail $trail) {
     $trail->parent('admin.farmasi');
-    $trail->push('Laporan Produksi', route('admin.farmasi.laporan-produksi'));
+    $trail->push('Laporan Produksi', route('admin.farmasi.laporan-tahunan'));
 });
 
-Breadcrumbs::for('admin.farmasi.obat-per-dokter', function (Trail $trail) {
+Breadcrumbs::for('admin.farmasi.obat-perdokter', function (Trail $trail) {
     $trail->parent('admin.farmasi');
-    $trail->push('Obat Per Dokter', route('admin.farmasi.obat-per-dokter'));
+    $trail->push('Obat Per Dokter', route('admin.farmasi.obat-perdokter'));
 });
 
 Breadcrumbs::for('admin.farmasi.perbandingan-po-obat', function (Trail $trail) {

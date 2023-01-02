@@ -170,10 +170,10 @@ class ResepObat extends Model
                         return $query->where('resep_obat.status', 'Ralan')
                             ->where('reg_periksa.kd_poli', '!=', 'IGDK');
                     case 'ranap':
-                        return $query->where('resep_obat.status', 'Ranap')
-                            ->where('reg_periksa.kd_poli', '!=', 'IGDK');
+                        return $query->where('resep_obat.status', 'Ranap');
                     case 'igd':
-                        return $query->where('reg_periksa.kd_poli', '=', 'IGDK');
+                        return $query->where('resep_obat.status', 'Ralan')
+                            ->where('reg_periksa.kd_poli', '=', 'IGDK');
                 }
             })
             ->groupByRaw('month(resep_obat.tgl_perawatan)');

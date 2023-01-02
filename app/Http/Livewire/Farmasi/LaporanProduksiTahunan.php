@@ -145,7 +145,7 @@ class LaporanProduksiTahunan extends Component
     public function render()
     {
         return view('livewire.farmasi.laporan-produksi-tahunan')
-            ->layout(BaseLayout::class, ['title' => 'Laporan Produksi Farmasi']);
+            ->layout(BaseLayout::class, ['title' => 'Laporan Produksi Tahunan Farmasi']);
     }
 
     public function exportToExcel()
