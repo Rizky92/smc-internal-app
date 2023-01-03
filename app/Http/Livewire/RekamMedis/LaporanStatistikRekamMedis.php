@@ -6,11 +6,9 @@ use App\Models\RekamMedis\StatistikRekamMedis;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Rizky92\Xlswriter\ExcelExport;
-use Vtiful\Kernel\Excel;
 
 class LaporanStatistikRekamMedis extends Component
 {
@@ -137,7 +135,7 @@ class LaporanStatistikRekamMedis extends Component
 
         $data = StatistikRekamMedis::whereBetween('tgl_registrasi', [$this->periodeAwal, $this->periodeAkhir])
             ->orderBy('no_rawat')
-            ->cursor()
+            ->lazy()
             ->toArray();
 
         $excel = ExcelExport::make($filename)

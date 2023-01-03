@@ -7,7 +7,7 @@
     <div class="d-flex align-items-center justify-content-start">
         @if ($hasPaginator)
             <div class="d-flex align-items-center">
-                <span class="text-sm pr-2">Tampilkan:</span>
+                <span class="text-sm" style="width: 5rem">Tampilkan:</span>
                 <div class="input-group input-group-sm" style="width: 4rem">
                     <select class="custom-control custom-select" name="perpage" wire:model.defer="perpage">
                         <option value="10">10</option>

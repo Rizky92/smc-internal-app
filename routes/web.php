@@ -12,7 +12,7 @@ use App\Http\Livewire\Farmasi\RingkasanPerbandinganBarangPO;
 use App\Http\Livewire\Farmasi\StokDaruratFarmasi;
 use App\Http\Livewire\Logistik\MinmaxBarang;
 use App\Http\Livewire\Logistik\StokDaruratLogistik;
-use App\Http\Livewire\DaftarPasienRanap;
+use App\Http\Livewire\Perawatan\DaftarPasienRanap;
 use App\Http\Livewire\RekamMedis\LaporanDemografiPasien;
 use App\Http\Livewire\RekamMedis\LaporanStatistikRekamMedis;
 use App\Http\Livewire\Keuangan\StokPerRuangan;

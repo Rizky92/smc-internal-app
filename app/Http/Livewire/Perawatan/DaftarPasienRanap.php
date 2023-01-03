@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Http\Livewire\Perawatan;
 
 use App\Models\Perawatan\Kamar;
 use App\Models\Perawatan\RawatInap;
@@ -16,20 +16,19 @@ class DaftarPasienRanap extends Component
 {
     use WithPagination, FlashComponent;
 
-    private const BELUM_PULANG = 'belum pulang';
-    private const SUDAH_PULANG = 'sudah pulang';
-    private const BERDASARKAN_TGL_MASUK = 'berdasarkan tgl masuk';
-    private const BERDASARKAN_TGL_PULANG = 'berdasarkan tgl pulang';
-
     public $cari;
 
     public $perpage;
 
-    public $periodeAwal;
+    public $tglAwal;
 
-    public $periodeAkhir;
+    public $tglAkhir;
 
-    public $jenisRanapDitampilkan;
+    public $jamAwal;
+
+    public $jamAkhir;
+
+    public $statusPerawatan;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -49,31 +48,62 @@ class DaftarPasienRanap extends Component
             'perpage' => [
                 'except' => 25,
             ],
-            'page' => [
-                'except' => 1,
+            'statusPerawatan' => [
+                'except' => '-',
+                'as' => 'status_perawatan'
+            ],
+            'tglAwal' => [
+                'except' => now()->format('Y-m-d'),
+                'as' => 'tgl_awal',
+            ],
+            'tglAkhir' => [
+                'except' => now()->format('Y-m-d'),
+                'as' => 'tgl_akhir',
+            ],
+            'jamAwal' => [
+                'except' => RegistrasiPasien::JAM_AWAL,
+                'as' => 'jam_awal',
+            ],
+            'jamAkhir' => [
+                'except' => RegistrasiPasien::JAM_AKHIR,
+                'as' => 'jam_akhir',
             ],
         ];
     }
 
-    public function mount()
+    private function defaultValues()
     {
         $this->cari = '';
         $this->perpage = 25;
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->jenisRanapDitampilkan = self::BELUM_PULANG;
+        $this->statusPerawatan = '-';
+        $this->tglAwal = now()->format('Y-m-d');
+        $this->tglAkhir = now()->format('Y-m-d');
+        $this->jamAwal = RegistrasiPasien::JAM_AWAL;
+        $this->jamAkhir = RegistrasiPasien::JAM_AKHIR;
+    }
+
+    public function mount()
+    {
+        $this->defaultValues();
     }
 
     public function getDaftarPasienRanapProperty()
     {
-        return RegistrasiPasien::daftarPasienRanap($this->jenisRanapDitampilkan, $this->cari)
+        return RegistrasiPasien::daftarPasienRanap(
+            $this->cari,
+            $this->statusPerawatan,
+            $this->tglAwal,
+            $this->tglAkhir,
+            $this->jamAwal,
+            $this->jamAkhir
+        )
             ->orderBy('no_rawat')
             ->paginate($this->perpage);
     }
 
     public function render()
     {
-        return view('livewire.daftar-pasien-ranap')
+        return view('livewire.perawatan.daftar-pasien-ranap')
             ->layout(BaseLayout::class, ['title' => 'Daftar Pasien Rawat Inap']);
     }
 
@@ -162,10 +192,7 @@ class DaftarPasienRanap extends Component
 
     public function resetFilters()
     {
-        $this->cari = '';
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->jenisRanapDitampilkan = self::BELUM_PULANG;
+        $this->defaultValues();
 
         $this->searchData();
     }
