@@ -5,7 +5,6 @@ namespace App\Models\Farmasi;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class Obat extends Model
 {
@@ -24,21 +23,28 @@ class Obat extends Model
         return $query->where('stokminimal', '>', 0);
     }
 
-    public function scopeDaruratStok(Builder $query, string $cari = ''): Builder
+    // TODO: ganti flag '$tanpaKode' dengan array untuk melakukan select column
+    public function scopeDaruratStok(Builder $query, string $cari = '', bool $tanpaKode = false): Builder
     {
+        $sqlSelect = [
+            'databarang.kode_brng',
+            'nama_brng',
+            'kodesatuan.satuan satuan_kecil',
+            'kategori_barang.nama kategori',
+            'stokminimal',
+            'IFNULL(ROUND(stok_gudang.stok_di_gudang, 2), 0) stok_sekarang',
+            '(databarang.stokminimal - IFNULL(stok_gudang.stok_di_gudang, 0)) saran_order',
+            'industrifarmasi.nama_industri',
+            'ROUND(databarang.h_beli) harga_beli',
+            'ROUND((databarang.stokminimal - IFNULL(stok_gudang.stok_di_gudang, 0)) * databarang.h_beli) harga_beli_total',
+        ];
+
+        if ($tanpaKode) {
+            array_shift($sqlSelect);
+        }
+
         return $query
-            ->selectRaw("
-                databarang.kode_brng,
-                nama_brng,
-                kodesatuan.satuan satuan_kecil,
-                kategori_barang.nama kategori,
-                stokminimal,
-                IFNULL(ROUND(stok_gudang.stok_di_gudang, 2), 0) stok_sekarang,
-                (databarang.stokminimal - IFNULL(stok_gudang.stok_di_gudang, 0)) saran_order,
-                industrifarmasi.nama_industri,
-                ROUND(databarang.h_beli) harga_beli,
-                ROUND((databarang.stokminimal - IFNULL(stok_gudang.stok_di_gudang, 0)) * databarang.h_beli) harga_beli_total
-            ")
+            ->selectRaw(collect($sqlSelect)->join(','))
             ->join('kategori_barang', 'databarang.kode_kategori', '=', 'kategori_barang.kode')
             ->join('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
             ->join('industrifarmasi', 'databarang.kode_industri', '=', 'industrifarmasi.kode_industri')
