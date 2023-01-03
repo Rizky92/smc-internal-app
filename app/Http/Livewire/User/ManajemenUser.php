@@ -6,7 +6,6 @@ use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
 use App\Support\Traits\Livewire\FlashComponent;
-use App\Support\Traits\Livewire\SearchData;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -15,14 +14,9 @@ class ManajemenUser extends Component
 {
     use WithPagination, FlashComponent;
 
-    /** @var int $perpage */
     public $perpage;
 
-    /** @var string $cari */
     public $cari;
-
-    /** @var \App\Models\Aplikasi\User $user */
-    public $user;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -52,7 +46,6 @@ class ManajemenUser extends Component
     {
         $this->cari = '';
         $this->perpage = 25;
-        $this->user = null;
     }
 
     public function getUsersProperty()
@@ -112,7 +105,6 @@ class ManajemenUser extends Component
     {
         $this->cari = '';
         $this->perpage = 25;
-        $this->user = null;
 
         $this->searchData();
     }
