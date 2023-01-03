@@ -137,11 +137,11 @@
                                 <li style="list-style: none">
                                     <b>Hak akses lainnya</b>
                                     @foreach ($this->otherPermissions as $op)
-                                    <li class="custom-control custom-checkbox">
-                                        <input class="custom-control-input custom-control-input-secondary" id="permission-{{ $op->id }}" name="permissions" type=checkbox value="{{ $op->id }}">
-                                        <label class="custom-control-label font-weight-normal" for="permission-{{ $op->id }}">{{ $op->name }}</label>
-                                    </li>
-                                    @endforeach
+                                <li class="custom-control custom-checkbox">
+                                    <input class="custom-control-input custom-control-input-secondary" id="permission-{{ $op->id }}" name="permissions" type=checkbox value="{{ $op->id }}">
+                                    <label class="custom-control-label font-weight-normal" for="permission-{{ $op->id }}">{{ $op->name }}</label>
+                                </li>
+                                @endforeach
                                 </li>
                             </ul>
                         </div>
@@ -150,6 +150,75 @@
                 <div class="modal-footer justify-content-end">
                     <button class="btn btn-default" id="batalsimpan" data-dismiss="modal" type="button">Batal</button>
                     <button class="btn btn-primary" id="simpandata" type="button">
+                        <i class="fas fa-save"></i>
+                        <span class="ml-1">Simpan</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="transfer-ke-user">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Transfer Hak Akses</h4>
+                    <button class="close" data-dismiss="modal" type="button" aria-label="Close">
+                        <span aria-hidden="true">&times</span>
+                    </button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="p-3 d-flex justify-content-start align-items-start">
+                        <p id="transfer-text">Transfer hak akses yang dimiliki :currentUser ke:</p>
+                        <div class="ml-auto w-50 d-flex flex-column">
+                            <span class="text-sm text-muted">Hak akses yang akan diberikan:</span>
+                            <div class="d-flex flex-wrap mt-2" style="row-gap: .5rem; column-gap: .25rem">
+                                @foreach ($this->roles as $role)
+                                    <span class="badge badge-dark">{{ $role->name }}</span>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped table-sm text-sm">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>NRP</th>
+                                    <th>Nama</th>
+                                    <th>Jabatan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($this->users as $user)
+                                    <tr style="position: relative">
+                                        <td>
+                                            <label for="user-{{ $user->nip }}" style="position: absolute; left: 0; right: 0; top: 0; bottom: 0; cursor: pointer">
+                                                <input type="hidden" value="false">
+                                                <input type="checkbox" value="true" wire:checked.defer="toUser('{{ $user->nip }}')" id="user-{{ $user->nip }}" class="ml-1 mt-2">
+                                            </label>
+                                        </td>
+                                        <td>{{ $user->nip }}</td>
+                                        <td>{{ $user->nama }}</td>
+                                        <td>{{ $user->nm_jbtn }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-start">
+                    <div class="ml-2 input-group input-group-sm" style="width: 16rem">
+                        <input class="form-control" type="search" wire:model.defer="cari" wire:keydown.enter.stop="searchData" />
+                        <div class="input-group-append">
+                            <button class="btn btn-sm btn-default" type="button" wire:click="searchData">
+                                <i class="fas fa-search"></i>
+                                <span class="ml-1">Cari</span>
+                            </button>
+                        </div>
+                    </div>
+                    <button class="btn btn-sm btn-default ml-auto" id="batalsimpan" data-dismiss="modal" type="button">Batal</button>
+                    <button class="btn btn-sm btn-primary" id="simpandata" type="button">
                         <i class="fas fa-save"></i>
                         <span class="ml-1">Simpan</span>
                     </button>
@@ -179,6 +248,10 @@
                             <i class="fas fa-info-circle"></i>
                             <span class="ml-1">Set hak akses</span>
                         </button>
+                        <button class="btn btn-sm btn-default mb-3 ml-2" data-toggle="modal" data-target="#transfer-ke-user" type="button">
+                            <i class="fas fa-share-square"></i>
+                            <span class="ml-1">Transfer ke user</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -202,13 +275,7 @@
                         <tr style="position: relative">
                             <td>
                                 {{ $user->nip }}
-                                <a href="#"
-                                    style="display: inline; position: absolute; left: 0; right: 0; top: 0; bottom: 0"
-                                    data-nrp="{{ $user->nip }}"
-                                    data-nama="{{ $user->nama }}"
-                                    data-role-ids="{{ $user->roles->pluck('id')->join(',') }}"
-                                    data-permission-ids="{{ $user->getAllPermissions()->pluck('id')->join(',') }}"
-                                    onclick="loadData(this.dataset)"></a>
+                                <a data-nrp="{{ $user->nip }}" data-nama="{{ $user->nama }}" data-role-ids="{{ $user->roles->pluck('id')->join(',') }}" data-permission-ids="{{ $user->getAllPermissions()->pluck('id')->join(',') }}" href="#" style="display: inline; position: absolute; left: 0; right: 0; top: 0; bottom: 0" onclick="loadData(this.dataset)"></a>
                             </td>
                             <td>{{ $user->nama }}</td>
                             <td>{{ $user->nm_jbtn }}</td>

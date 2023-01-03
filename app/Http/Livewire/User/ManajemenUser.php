@@ -13,7 +13,7 @@ use Livewire\WithPagination;
 
 class ManajemenUser extends Component
 {
-    use WithPagination, FlashComponent, SearchData;
+    use WithPagination, FlashComponent;
 
     /** @var int $perpage */
     public $perpage;
@@ -21,11 +21,16 @@ class ManajemenUser extends Component
     /** @var string $cari */
     public $cari;
 
+    /** @var \App\Models\Aplikasi\User $user */
+    public $user;
+
     protected $paginationTheme = 'bootstrap';
 
     protected $listeners = [
         'beginExcelExport',
-        'hardRefresh',
+        'searchData',
+        'resetFilters',
+        'fullRefresh',
     ];
 
     protected function queryString(): array
@@ -47,6 +52,7 @@ class ManajemenUser extends Component
     {
         $this->cari = '';
         $this->perpage = 25;
+        $this->user = null;
     }
 
     public function getUsersProperty()
@@ -79,13 +85,6 @@ class ManajemenUser extends Component
             ->layout(BaseLayout::class, ['title' => 'Manajemen Hak Akses User']);
     }
 
-    /**
-     * @param  string $nrp
-     * @param  array<int,int> $roles
-     * @param  array<int,int> $permissions
-     * 
-     * @return void
-     */
     public function simpan(string $nrp, array $roles, array $permissions)
     {
         $user = User::findByNRP($nrp);
@@ -102,16 +101,23 @@ class ManajemenUser extends Component
         $this->flashSuccess("Hak akses untuk user {$nrp} berhasil diubah!");
     }
 
-    public function resetFilters()
+    public function searchData()
     {
-        $this->cari = '';
-        $this->perpage = 25;
         $this->resetPage();
 
         $this->emit('$refresh');
     }
 
-    public function hardRefresh()
+    public function resetFilters()
+    {
+        $this->cari = '';
+        $this->perpage = 25;
+        $this->user = null;
+
+        $this->searchData();
+    }
+
+    public function fullRefresh()
     {
         $this->forgetComputed();
 

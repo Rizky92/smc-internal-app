@@ -14,7 +14,7 @@
     @stack('css')
 </head>
 
-<body class="hold-transition sidebar-mini layout-fixed bg-light">
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed bg-light">
     <div class="wrapper">
         <x-navbar />
         <x-sidebar>
