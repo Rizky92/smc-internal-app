@@ -83,7 +83,7 @@ class StokDaruratFarmasi extends Component
         ];
 
         $columnHeaders = [
-            'Kode',
+            // 'Kode',
             'Nama',
             'Satuan kecil',
             'Kategori',
@@ -95,7 +95,7 @@ class StokDaruratFarmasi extends Component
             'Total Harga (Rp)',
         ];
 
-        $data = Obat::daruratStok()
+        $data = Obat::daruratStok('', true)
             ->get()
             ->toArray();
 
