@@ -1,1 +1,1 @@
-<th {{ $attributes->merge(['class' => 'py-1']) }}>{{ $slot }}</th>
+<th {{ $attributes->merge(['class' => 'py-2']) }}>{{ $slot }}</th>

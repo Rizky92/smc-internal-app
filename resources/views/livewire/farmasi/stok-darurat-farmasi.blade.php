@@ -1,65 +1,53 @@
 <div>
     <x-flash />
-    
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-12">
-                    <div class="d-flex align-items-center justify-content-start">
-                        <div class="ml-auto">
-                            <button class="btn btn-default btn-sm" type="button" wire:click="exportToExcel">
-                                <i class="fas fa-file-excel"></i>
-                                <span class="ml-1">Export ke Excel</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-2">
-                <x-filter />
-            </div>
-        </div>
-        <div class="card-body table-responsive p-0 border-top">
-            <table class="table table-hover table-striped table-sm text-sm">
-                <thead>
-                    <tr>
-                        <th>Kode</th>
-                        <th>Nama</th>
-                        <th>Satuan</th>
-                        <th>Kategori</th>
-                        <th>Stok minimal</th>
-                        <th>Stok saat ini</th>
-                        <th>Saran order</th>
-                        <th>Supplier</th>
-                        <th>Harga Per Unit</th>
-                        <th>Total Harga</th>
-                    </tr>
-                </thead>
-                <tbody>
+
+    <x-card :filter="false">
+        <x-slot name="header">
+            <x-card.tools>
+                <x-card.tools.export-to-excel class="ml-auto" />
+            </x-card.tools>
+            <x-card.tools class="mt-2">
+                <x-card.tools.perpage />
+                <x-card.tools.reset-filters class="ml-auto" />
+                <x-card.tools.search class="ml-2" />
+            </x-card.tools>
+        </x-slot>
+        <x-slot name="body">
+            <x-card.table>
+                <x-slot name="columns">
+                    <x-card.table.th>Kode</x-card.table.th>
+                    <x-card.table.th>Nama</x-card.table.th>
+                    <x-card.table.th>Satuan</x-card.table.th>
+                    <x-card.table.th>Kategori</x-card.table.th>
+                    <x-card.table.th>Stok minimal</x-card.table.th>
+                    <x-card.table.th>Stok saat ini</x-card.table.th>
+                    <x-card.table.th>Saran order</x-card.table.th>
+                    <x-card.table.th>Supplier</x-card.table.th>
+                    <x-card.table.th>Harga Per Unit</x-card.table.th>
+                    <x-card.table.th>Total Harga</x-card.table.th>
+                </x-slot>
+                <x-slot name="body">
                     @foreach ($this->stokDaruratObat as $obat)
-                        <tr>
-                            <td>{{ $obat->kode_brng }}</td>
-                            <td>{{ $obat->nama_brng }}</td>
-                            <td>{{ $obat->satuan_kecil }}</td>
-                            <td>{{ $obat->kategori }}</td>
-                            <td>{{ $obat->stokminimal }}</td>
-                            <td>{{ $obat->stok_sekarang }}</td>
-                            <td>{{ $obat->saran_order }}</td>
-                            <td>{{ $obat->nama_industri }}</td>
-                            <td>{{ rp($obat->harga_beli) }}</td>
-                            <td>{{ rp($obat->harga_beli_total) }}</td>
-                        </tr>
+                        <x-card.table.tr>
+                            <x-card.table.td>{{ $obat->kode_brng }}</x-card.table.td>
+                            <x-card.table.td>{{ $obat->nama_brng }}</x-card.table.td>
+                            <x-card.table.td>{{ $obat->satuan_kecil }}</x-card.table.td>
+                            <x-card.table.td>{{ $obat->kategori }}</x-card.table.td>
+                            <x-card.table.td>{{ $obat->stokminimal }}</x-card.table.td>
+                            <x-card.table.td>{{ $obat->stok_sekarang }}</x-card.table.td>
+                            <x-card.table.td>{{ $obat->saran_order }}</x-card.table.td>
+                            <x-card.table.td>{{ $obat->nama_industri }}</x-card.table.td>
+                            <x-card.table.td>{{ rp($obat->harga_beli) }}</x-card.table.td>
+                            <x-card.table.td>{{ rp($obat->harga_beli_total) }}</x-card.table.td>
+                        </x-card.table.tr>
                     @endforeach
-                </tbody>
-            </table>
-        </div>
-        <div class="card-footer">
-            <div class="d-flex align-items center justify-content-start">
-                <p class="text-muted">Menampilkan {{ $this->stokDaruratObat->count() }} dari total {{ number_format($this->stokDaruratObat->total(), 0, ',', '.') }} item.</p>
-                <div class="ml-auto">
-                    {{ $this->stokDaruratObat->links() }}
-                </div>
-            </div>
-        </div>
-    </div>
+                </x-slot>
+            </x-card.table>
+        </x-slot>
+        <x-slot name="footer">
+            <x-card.paginator :count="$this->stokDaruratObat->count()" :total="$this->stokDaruratObat->total()">
+                <x-slot name="links">{{ $this->stokDaruratObat->links() }}</x-slot>
+            </x-card.paginator>
+        </x-slot>
+    </x-card>
 </div>

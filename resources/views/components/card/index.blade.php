@@ -27,9 +27,11 @@
     <div class="card-body {{ $table ? 'table-responsive p-0' : null }}">
         {{ $body }}
     </div>
-    <div class="card-footer">
-        {{ $footer }}
-    </div>
+    @if ($footer)    
+        <div class="card-footer">
+            {{ $footer }}
+        </div>
+    @endif
     @if ($loading)
         <x-card.loading />
     @endif

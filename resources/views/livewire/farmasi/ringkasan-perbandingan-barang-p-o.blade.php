@@ -1,67 +1,49 @@
 <div>
     <x-flash />
 
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-12">
-                    <div class="d-flex align-items-center justify-content-start">
-                        <span class="text-sm pr-4">Tgl. SPM:</span>
-                        <input class="form-control form-control-sm" style="width: 10rem" type="date" wire:model.defer="periodeAwal" />
-                        <span class="text-sm px-2">sampai</span>
-                        <input class="form-control form-control-sm" style="width: 10rem" type="date" wire:model.defer="periodeAkhir" />
-                        <div class="ml-4 custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input" id="hanyaTampilkanBarangSelisih" wire:model.defer="hanyaTampilkanBarangSelisih">
-                            <label class="custom-control-label text-sm" for="hanyaTampilkanBarangSelisih">Tampilkan barang berselisih</label>
-                        </div>
-                        <div class="ml-auto">
-                            <button class="btn btn-default btn-sm" type="button" wire:click="exportToExcel">
-                                <i class="fas fa-file-excel"></i>
-                                <span class="ml-1">Export ke Excel</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-2">
-                <x-filter />
-            </div>
-        </div>
-        <div class="card-body table-responsive p-0 border-top">
-            <table class="table table-hover table-striped table-sm text-sm">
-                <thead>
-                    <tr>
-                        <th>No. Pemesanan</th>
-                        <th>Nama</th>
-                        <th>Supplier Tujuan</th>
-                        <th>Supplier yang Mendatangkan</th>
-                        <th>Jumlah Dipesan</th>
-                        <th>Jumlah yang Datang</th>
-                        <th>Selisih</th>
-                    </tr>
-                </thead>
-                <tbody>
+    <x-card :filter="false">
+        <x-slot name="header">
+            <x-card.tools>
+                <x-card.tools.date-range title="Tgl. SPM" />
+                <x-card.tools.toggle model="hanyaTampilkanBarangSelisih" name="Tampilkan Barang Selisih" />
+                <x-card.tools.export-to-excel class="ml-auto" />
+            </x-card.tools>
+            <x-card.tools class="mt-2">
+                <x-card.tools.perpage />
+                <x-card.tools.reset-filters class="ml-auto" />
+                <x-card.tools.search class="ml-2" />
+            </x-card.tools>
+        </x-slot>
+        <x-slot name="body">
+            <x-card.table>
+                <x-slot name="columns">
+                    <x-card.table.th>No. Pemesanan</x-card.table.th>
+                    <x-card.table.th>Nama</x-card.table.th>
+                    <x-card.table.th>Supplier Tujuan</x-card.table.th>
+                    <x-card.table.th>Supplier yang Mendatangkan</x-card.table.th>
+                    <x-card.table.th>Jumlah Dipesan</x-card.table.th>
+                    <x-card.table.th>Jumlah yang Datang</x-card.table.th>
+                    <x-card.table.th>Selisih</x-card.table.th>
+                </x-slot>
+                <x-slot name="body">
                     @foreach ($this->perbandinganOrderObatPO as $obat)
-                        <tr>
-                            <td>{{ $obat->no_pemesanan }}</td>
-                            <td>{{ $obat->nama_brng }}</td>
-                            <td>{{ $obat->suplier_pesan }}</td>
-                            <td>{{ $obat->suplier_datang }}</td>
-                            <td>{{ $obat->jumlah_pesan }}</td>
-                            <td>{{ $obat->jumlah_datang }}</td>
-                            <td>{{ $obat->selisih }}</td>
-                        </tr>
+                        <x-card.table.tr>
+                            <x-card.table.td>{{ $obat->no_pemesanan }}</x-card.table.td>
+                            <x-card.table.td>{{ $obat->nama_brng }}</x-card.table.td>
+                            <x-card.table.td>{{ $obat->suplier_pesan }}</x-card.table.td>
+                            <x-card.table.td>{{ $obat->suplier_datang }}</x-card.table.td>
+                            <x-card.table.td>{{ $obat->jumlah_pesan }}</x-card.table.td>
+                            <x-card.table.td>{{ $obat->jumlah_datang }}</x-card.table.td>
+                            <x-card.table.td>{{ $obat->selisih }}</x-card.table.td>
+                        </x-card.table.tr>
                     @endforeach
-                </tbody>
-            </table>
-        </div>
-        <div class="card-footer">
-            <div class="d-flex align-items center justify-content-start">
-                <p class="text-muted">Menampilkan {{ $this->perbandinganOrderObatPO->count() }} dari total {{ number_format($this->perbandinganOrderObatPO->total(), 0, ',', '.') }} item.</p>
-                <div class="ml-auto">
-                    {{ $this->perbandinganOrderObatPO->links() }}
-                </div>
-            </div>
-        </div>
-    </div>
+                </x-slot>
+            </x-card.table>
+        </x-slot>
+        <x-slot name="footer">
+            <x-card.paginator :count="$this->perbandinganOrderObatPO->count()" :total="$this->perbandinganOrderObatPO->total()">
+                <x-slot name="links">{{ $this->perbandinganOrderObatPO->links() }}</x-slot>
+            </x-card.paginator>
+        </x-slot>
+    </x-card>
 </div>

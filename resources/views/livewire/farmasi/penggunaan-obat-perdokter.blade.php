@@ -1,65 +1,39 @@
 <div>
     <x-flash />
-    
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-12">
-                    <div class="d-flex align-items-center justify-content-start">
-                        <span class="text-sm pr-4">Periode:</span>
-                        <input class="form-control form-control-sm w-25" type="date" wire:model.defer="periodeAwal" />
-                        <span class="text-sm px-2">sampai</span>
-                        <input class="form-control form-control-sm w-25" type="date" wire:model.defer="periodeAkhir" />
-                        <div class="ml-auto">
-                            <button class="btn btn-default btn-sm" type="button" wire:click="exportToExcel">
-                                <i class="fas fa-file-excel"></i>
-                                <span class="ml-1">Export ke Excel</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-2">
-                <x-filter />
-            </div>
-        </div>
-        <div class="card-body table-responsive p-0 border-top">
-            <table class="table table-hover table-striped table-sm text-sm">
-                <thead>
-                    <tr>
-                        <th>No. Resep</th>
-                        <th>Tgl. Validasi</th>
-                        <th>Jam</th>
-                        <th>Nama Obat</th>
-                        <th>Jumlah</th>
-                        <th>Dokter Peresep</th>
-                        <th>Asal</th>
-                        <th>Asal Poli</th>
-                    </tr>
-                </thead>
-                <tbody>
+
+    <x-card>
+        <x-slot name="body">
+            <x-card.table>
+                <x-slot name="columns">
+                    <x-card.table.th>No. Resep</x-card.table.th>
+                    <x-card.table.th>Tgl. Validasi</x-card.table.th>
+                    <x-card.table.th>Jam</x-card.table.th>
+                    <x-card.table.th>Nama Obat</x-card.table.th>
+                    <x-card.table.th>Jumlah</x-card.table.th>
+                    <x-card.table.th>Dokter Peresep</x-card.table.th>
+                    <x-card.table.th>Asal</x-card.table.th>
+                    <x-card.table.th>Asal Poli</x-card.table.th>
+                </x-slot>
+                <x-slot name="body">
                     @foreach ($this->obatPerDokter as $obat)
-                        <tr>
-                            <td>{{ $obat->no_resep }}</td>
-                            <td>{{ $obat->tgl_perawatan }}</td>
-                            <td>{{ $obat->jam }}</td>
-                            <td>{{ $obat->nama_brng }}</td>
-                            <td>{{ $obat->jml }}</td>
-                            <td>{{ $obat->nm_dokter }}</td>
-                            <td>{{ $obat->status }}</td>
-                            <td>{{ $obat->nm_poli }}</td>
-                        </tr>
+                        <x-card.table.tr>
+                            <x-card.table.td>{{ $obat->no_resep }}</x-card.table.td>
+                            <x-card.table.td>{{ $obat->tgl_perawatan }}</x-card.table.td>
+                            <x-card.table.td>{{ $obat->jam }}</x-card.table.td>
+                            <x-card.table.td>{{ $obat->nama_brng }}</x-card.table.td>
+                            <x-card.table.td>{{ $obat->jml }}</x-card.table.td>
+                            <x-card.table.td>{{ $obat->nm_dokter }}</x-card.table.td>
+                            <x-card.table.td>{{ $obat->status }}</x-card.table.td>
+                            <x-card.table.td>{{ $obat->nm_poli }}</x-card.table.td>
+                        </x-card.table.tr>
                     @endforeach
-                </tbody>
-            </table>
-        </div>
-        <div class="card-footer">
-            <div class="d-flex align-items center justify-content-start">
-                <p class="text-muted">Menampilkan {{ $this->obatPerDokter->count() }} dari total {{ number_format($this->obatPerDokter->total(), 0, ',', '.') }} item.</p>
-                <div class="ml-auto">
-                    {{ $this->obatPerDokter->links() }}
-                </div>
-            </div>
-        </div>
-    </div>
+                </x-slot>
+            </x-card.table>
+        </x-slot>
+        <x-slot name="footer">
+            <x-card.paginator :count="$this->obatPerDokter->count()" :total="$this->obatPerDokter->total()">
+                <x-slot name="links">{{ $this->obatPerDokter->links() }}</x-slot>
+            </x-card.paginator>
+        </x-slot>
+    </x-card>
 </div>
