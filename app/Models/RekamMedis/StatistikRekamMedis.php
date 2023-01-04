@@ -40,6 +40,8 @@ class StatistikRekamMedis extends Model
             ->orWhere('kd_tindakan', 'LIKE', "%{$cari}%")
             ->orWhere('nm_tindakan', 'LIKE', "%{$cari}%")
             ->orWhere('nm_dokter', 'LIKE', "%{$cari}%")
+            ->orWhere('dokter_poli', 'LIKE', "%{$cari}%")
+            ->orWhere('rujuk_ke', 'LIKE', "%{$cari}%")
             ->orWhere('nm_poli', 'LIKE', "%{$cari}%")
             ->orWhere('png_jawab', 'LIKE', "%{$cari}%")
             ->orWhere('status_bayar', 'LIKE', "%{$cari}%")

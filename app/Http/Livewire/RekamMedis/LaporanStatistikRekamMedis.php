@@ -67,7 +67,7 @@ class LaporanStatistikRekamMedis extends Component
     {
         return StatistikRekamMedis::query()
             ->denganPencarian($this->cari)
-            ->whereBetween('tgl_registrasi', [$this->periodeAwal, $this->periodeAkhir])
+            ->whereBetween('tgl_masuk', [$this->periodeAwal, $this->periodeAkhir])
             ->orderBy('no_rawat')
             ->paginate($this->perpage);
     }
@@ -102,8 +102,8 @@ class LaporanStatistikRekamMedis extends Component
 
         $columnHeaders = [
             'No. Rawat',
-            'No. RM',
-            'Nama Pasien',
+            'No RM',
+            'Pasien',
             'NIK',
             'L / P',
             'Tgl. Lahir',
@@ -112,6 +112,8 @@ class LaporanStatistikRekamMedis extends Component
             'Suku',
             'Jenis Perawatan',
             'Pasien Lama / Baru',
+            'Asal Poli',
+            'Dokter Poli',
             'Status Ralan',
             'Tgl. Masuk',
             'Jam Masuk',
@@ -120,22 +122,26 @@ class LaporanStatistikRekamMedis extends Component
             'Diagnosa Masuk',
             'ICD Diagnosa',
             'Diagnosa',
-            'ICD Tindakan',
-            'Tindakan',
-            'DPJP',
-            'Poli',
+            'ICD Tindakan Ralan',
+            'Tindakan Ralan',
+            'ICD Tindakan Ranap',
+            'Tindakan Ranap',
+            'Lama Operasi',
+            'Rujukan Masuk',
+            'DPJP Ranap',
             'Kelas',
             'Penjamin',
             'Status Bayar',
             'Status Pulang',
+            'Rujukan Keluar',
             'No. HP',
             'Alamat',
             'Kunjungan ke',
         ];
 
-        $data = StatistikRekamMedis::whereBetween('tgl_registrasi', [$this->periodeAwal, $this->periodeAkhir])
+        $data = StatistikRekamMedis::whereBetween('tgl_masuk', [$this->periodeAwal, $this->periodeAkhir])
             ->orderBy('no_rawat')
-            ->lazy()
+            ->get()
             ->toArray();
 
         $excel = ExcelExport::make($filename)
