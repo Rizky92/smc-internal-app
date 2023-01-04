@@ -1,72 +1,59 @@
 <div>
     <x-flash />
 
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-12">
-                    <div class="d-flex align-items-center justify-content-start">
-                        <div class="custom-control custom-switch">
-                            <input type="checkbox" class="custom-control-input" id="tampilkanSaranOrderNol" wire:model.defer="tampilkanSaranOrderNol">
-                            <label class="custom-control-label text-sm" for="tampilkanSaranOrderNol">Tampilkan barang dengan saran order nol</label>
-                        </div>
-                        <div class="ml-auto">
-                            <button class="btn btn-default btn-sm" type="button" wire:click="exportToExcel">
-                                <i class="fas fa-file-excel"></i>
-                                <span class="ml-1">Export ke Excel</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-2">
-                <x-filter />
-            </div>
-        </div>
-        <div class="card-body table-responsive p-0 border-top">
-            <table id="table_index" class="table table-hover table-striped table-sm text-sm">
-                <thead>
-                    <tr>
-                        <th>Kode</th>
-                        <th>Nama</th>
-                        <th>Satuan</th>
-                        <th>Jenis</th>
-                        <th>Supplier</th>
-                        <th>Min</th>
-                        <th>Max</th>
-                        <th>Saat ini</th>
-                        <th>Saran order</th>
-                        <th>Harga Per Unit</th>
-                        <th>Total Harga</th>
-                    </tr>
-                </thead>
-                <tbody>
+    <x-card :filter="false">
+        <x-slot name="header">
+            <x-card.tools>
+                <x-card.tools.toggle model="tampilkanSaranOrderNol" name="Tampilkan Saran Order Nol" />
+                <x-card.tools.export-to-excel class="ml-auto" />
+            </x-card.tools>
+            <x-card.tools class="mt-2">
+                <x-card.tools.perpage />
+                <x-card.tools.reset-filters class="ml-auto" />
+                <x-card.tools.search class="ml-2" />
+            </x-card.tools>
+        </x-slot>
+        <x-slot name="body">
+            <x-card.table>
+                <x-slot name="columns">
+                    <x-card.table.th>Kode</x-card.table.th>
+                    <x-card.table.th>Nama</x-card.table.th>
+                    <x-card.table.th>Satuan</x-card.table.th>
+                    <x-card.table.th>Jenis</x-card.table.th>
+                    <x-card.table.th>Supplier</x-card.table.th>
+                    <x-card.table.th>Min</x-card.table.th>
+                    <x-card.table.th>Max</x-card.table.th>
+                    <x-card.table.th>Saat ini</x-card.table.th>
+                    <x-card.table.th>Saran order</x-card.table.th>
+                    <x-card.table.th>Harga Per Unit</x-card.table.th>
+                    <x-card.table.th>Total Harga</x-card.table.th>
+                </x-slot>
+                <x-slot name="body">
                     @foreach ($this->stokDaruratLogistik as $barang)
-                        <tr>
-                            <td>{{ $barang->kode_brng }}</td>
-                            <td>{{ $barang->nama_brng }}</td>
-                            <td>{{ $barang->satuan }}</td>
-                            <td>{{ $barang->jenis }}</td>
-                            <td>{{ $barang->nama_supplier }}</td>
-                            <td>{{ $barang->stokmin }}</td>
-                            <td>{{ $barang->stokmax }}</td>
-                            <td>{{ $barang->stok }}</td>
-                            <td>{{ $barang->saran_order }}</td>
-                            <td>{{ rp($barang->harga) }}</td>
-                            <td>{{ rp($barang->total_harga) }}</td>
-                        </tr>
+                        <x-card.table.tr>
+                            <x-card.table.td>{{ $barang->kode_brng }}</x-card.table.td>
+                            <x-card.table.td>{{ $barang->nama_brng }}</x-card.table.td>
+                            <x-card.table.td>{{ $barang->satuan }}</x-card.table.td>
+                            <x-card.table.td>{{ $barang->jenis }}</x-card.table.td>
+                            <x-card.table.td>{{ $barang->nama_supplier }}</x-card.table.td>
+                            <x-card.table.td>{{ $barang->stokmin }}</x-card.table.td>
+                            <x-card.table.td>{{ $barang->stokmax }}</x-card.table.td>
+                            <x-card.table.td>{{ $barang->stok }}</x-card.table.td>
+                            <x-card.table.td>{{ $barang->saran_order }}</x-card.table.td>
+                            <x-card.table.td>{{ rp($barang->harga) }}</x-card.table.td>
+                            <x-card.table.td>{{ rp($barang->total_harga) }}</x-card.table.td>
+                        </x-card.table.tr>
                     @endforeach
-                </tbody>
-            </table>
-        </div>
-        <div class="card-footer">
-            <div class="d-flex align-items center justify-content-start">
-                <p class="text-muted">Menampilkan {{ $this->stokDaruratLogistik->count() }} dari total
-                    {{ number_format($this->stokDaruratLogistik->total(), 0, ',', '.') }} item.</p>
-                <div class="ml-auto">
-                    {{ $this->stokDaruratLogistik->links() }}
-                </div>
-            </div>
-        </div>
-    </div>
+                </x-slot>
+            </x-card.table>
+        </x-slot>
+        <x-slot name="footer">
+            <x-card.paginator
+                :count="$this->stokDaruratLogistik->count()"
+                :total="$this->stokDaruratLogistik->total()"
+            >
+                <x-slot name="links">{{ $this->stokDaruratLogistik->links() }}</x-slot>
+            </x-card.paginator>
+        </x-slot>
+    </x-card>
 </div>

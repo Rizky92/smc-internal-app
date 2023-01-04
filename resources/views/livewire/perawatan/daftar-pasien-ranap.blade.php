@@ -301,113 +301,83 @@
         @endpush
     @endonce --}}
 
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-12">
-                    <div class="d-flex justify-content-start align-items-start">
-                        <div class="d-flex align-items-center">
-                            <span class="text-sm" style="width: 5rem">Status:</span>
-                            <select class="form-control form-control-sm" id="status_perawatan" wire:model.defer="statusPerawatan">
-                                <option value="-">Sedang dirawat</option>
-                                <option value="tanggal_masuk">Tgl. Masuk</option>
-                                <option value="tanggal_keluar">Tgl. Keluar</option>
-                            </select>
-                        </div>
-                        <div class="ml-auto">
-                            <button class="btn btn-default btn-sm" type="button" wire:click="exportToExcel">
-                                <i class="fas fa-file-excel"></i>
-                                <span class="ml-1">Export ke Excel</span>
-                            </button>
-                        </div>
-                    </div>
+    <x-card :filter="false">
+        <x-slot name="header">
+            <x-card.tools>
+                <x-card.tools.date-range />
+                <x-card.tools.export-to-excel class="ml-auto" />
+            </x-card.tools>
+            <x-card.tools class="mt-2">
+                <x-card.tools.time-range />
+                <x-card.tools.perpage class="ml-auto" />
+            </x-card.tools>
+            <x-card.tools class="mt-2">
+                <div class="d-flex justify-content-start align-items-center">
+                    <span class="text-sm" style="width: 5rem">Status:</span>
+                    <select class="form-control form-control-sm" style="width: 9rem" wire:model.defer="statusPerawatan">
+                        <option value="-">Sedang dirawat</option>
+                        <option value="tanggal_masuk">Tgl. Masuk</option>
+                        <option value="tanggal_keluar">Tgl. Keluar</option>
+                    </select>
                 </div>
-            </div>
-            <div class="row mt-2">
-                <div class="col-12">
-                    <div class="d-flex align-items-center justify-content-start">
-                        <div class="d-flex align-items-center">
-                            <span class="text-sm pr-4">Periode:</span>
-                            <input class="form-control form-control-sm" type="date" style="width: 9rem" wire:model.defer="tglAwal" />
-                            <span class="text-sm px-3">sampai</span>
-                            <input class="form-control form-control-sm" type="date" style="width: 9rem" wire:model.defer="tglAkhir" />
-                        </div>
-                        <div class="ml-auto d-flex justify-content-start align-items-center">
-                            <span class="text-sm pr-3">Jam:</span>
-                            <input class="form-control form-control-sm" type="time" style="width: 9rem" wire:model.defer="jamAwal" />
-                            <span class="text-sm px-3">sampai</span>
-                            <input class="form-control form-control-sm" type="time" style="width: 9rem" wire:model.defer="jamAkhir" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-2">
-                <x-filter />
-            </div>
-        </div>
-        <div class="card-body table-responsive p-0">
-            <table class="table table-hover table-head-fixed table-striped table-sm text-sm" style="width: 180rem">
-                <thead>
-                    <tr>
-                        <th style="width: 20ch">No. Rawat</th>
-                        <th style="width: 10ch">No. RM</th>
-                        <th>Kamar</th>
-                        <th style="width: 25ch">Pasien</th>
-                        <th>Alamat</th>
-                        <th style="width: 8ch">Agama</th>
-                        <th style="width: 25ch">P.J.</th>
-                        <th style="width: 20ch">Jenis Bayar</th>
-                        <th style="width: 10ch">Asal Poli</th>
-                        <th style="width: 25ch">Dokter Poli</th>
-                        <th style="width: 15ch">Status</th>
-                        <th style="width: 12ch">Tgl. Masuk</th>
-                        <th style="width: 12ch">Jam Masuk</th>
-                        <th style="width: 12ch">Tgl. Keluar</th>
-                        <th style="width: 12ch">Jam Keluar</th>
-                        <th style="width: 15ch">Tarif</th>
-                        {{-- <th style="width: 15ch">Lama Inap</th> --}}
-                        <th>Dokter P.J.</th>
-                        <th>No. HP</th>
-                    </tr>
-                </thead>
-                <tbody>
+                <x-card.tools.reset-filters class="ml-auto" />
+                <x-card.tools.search class="ml-2" />
+            </x-card.tools>
+        </x-slot>
+
+        <x-slot name="body">
+            <x-card.table style="width: 180rem">
+                <x-slot name="columns">
+                    <x-card.table.th style="width: 20ch">No. Rawat</x-card.table.th>
+                    <x-card.table.th style="width: 10ch">No. RM</x-card.table.th>
+                    <x-card.table.th>Kamar</x-card.table.th>
+                    <x-card.table.th style="width: 25ch">Pasien</x-card.table.th>
+                    <x-card.table.th>Alamat</x-card.table.th>
+                    <x-card.table.th style="width: 8ch">Agama</x-card.table.th>
+                    <x-card.table.th style="width: 25ch">P.J.</x-card.table.th>
+                    <x-card.table.th style="width: 20ch">Jenis Bayar</x-card.table.th>
+                    <x-card.table.th style="width: 10ch">Asal Poli</x-card.table.th>
+                    <x-card.table.th style="width: 25ch">Dokter Poli</x-card.table.th>
+                    <x-card.table.th style="width: 15ch">Status</x-card.table.th>
+                    <x-card.table.th style="width: 12ch">Tgl. Masuk</x-card.table.th>
+                    <x-card.table.th style="width: 12ch">Jam Masuk</x-card.table.th>
+                    <x-card.table.th style="width: 12ch">Tgl. Keluar</x-card.table.th>
+                    <x-card.table.th style="width: 12ch">Jam Keluar</x-card.table.th>
+                    <x-card.table.th style="width: 15ch">Tarif</x-card.table.th>
+                    <x-card.table.th>Dokter P.J.</x-card.table.th>
+                    <x-card.table.th>No. HP</x-card.table.th>
+                </x-slot>
+                <x-slot name="body">
                     @foreach ($this->daftarPasienRanap as $pasien)
-                        <tr style="position: relative">
-                            <td>{{ $pasien->no_rawat }}</td>
-                            <td>{{ $pasien->no_rkm_medis }}</td>
-                            <td>{{ $pasien->ruangan }}</td>
-                            <td>{{ $pasien->data_pasien }}</td>
-                            <td>{{ $pasien->alamat_pasien }}</td>
-                            <td>{{ $pasien->agama }}</td>
-                            <td>{{ $pasien->pj }}</td>
-                            <td>{{ $pasien->png_jawab }}</td>
-                            <td>{{ $pasien->nm_poli }}</td>
-                            <td>{{ $pasien->dokter_poli }}</td>
-                            <td>{{ $pasien->stts_pulang }}</td>
-                            <td>{{ $pasien->tgl_masuk }}</td>
-                            <td>{{ $pasien->jam_masuk }}</td>
-                            <td>{{ $pasien->tgl_keluar }}</td>
-                            <td>{{ $pasien->jam_keluar }}</td>
-                            <td>{{ rp($pasien->trf_kamar) }}</td>
-                            <td>{{ $pasien->nama_dokter }}</td>
-                            <td>{{ $pasien->no_tlp }}</td>
-                        </tr>
+                        <x-card.table.tr>
+                            <x-card.table.td>{{ $pasien->no_rawat }}</x-card.table.td>
+                            <x-card.table.td>{{ $pasien->no_rkm_medis }}</x-card.table.td>
+                            <x-card.table.td>{{ $pasien->ruangan }}</x-card.table.td>
+                            <x-card.table.td>{{ $pasien->data_pasien }}</x-card.table.td>
+                            <x-card.table.td>{{ $pasien->alamat_pasien }}</x-card.table.td>
+                            <x-card.table.td>{{ $pasien->agama }}</x-card.table.td>
+                            <x-card.table.td>{{ $pasien->pj }}</x-card.table.td>
+                            <x-card.table.td>{{ $pasien->png_jawab }}</x-card.table.td>
+                            <x-card.table.td>{{ $pasien->nm_poli }}</x-card.table.td>
+                            <x-card.table.td>{{ $pasien->dokter_poli }}</x-card.table.td>
+                            <x-card.table.td>{{ $pasien->stts_pulang }}</x-card.table.td>
+                            <x-card.table.td>{{ $pasien->tgl_masuk }}</x-card.table.td>
+                            <x-card.table.td>{{ $pasien->jam_masuk }}</x-card.table.td>
+                            <x-card.table.td>{{ $pasien->tgl_keluar }}</x-card.table.td>
+                            <x-card.table.td>{{ $pasien->jam_keluar }}</x-card.table.td>
+                            <x-card.table.td>{{ rp($pasien->trf_kamar) }}</x-card.table.td>
+                            <x-card.table.td>{{ $pasien->nama_dokter }}</x-card.table.td>
+                            <x-card.table.td>{{ $pasien->no_tlp }}</x-card.table.td>
+                        </x-card.table.tr>
                     @endforeach
-                </tbody>
-            </table>
-        </div>
-        <div class="card-footer">
-            <div class="d-flex align-items center justify-content-start">
-                <p class="text-muted">Menampilkan {{ $this->daftarPasienRanap->count() }} dari total {{ number_format($this->daftarPasienRanap->total(), 0, ',', '.') }} item.</p>
-                <div class="ml-auto">
-                    {{ $this->daftarPasienRanap->links() }}
-                </div>
-            </div>
-        </div>
-        <div wire:loading.delay.class="overlay light">
-            <div class="d-none justify-content-center align-items-center" wire:loading.delay.class="d-flex" wire:loading.delay.class.remove="d-none">
-                <i class="fas fa-sync-alt fa-2x fa-spin"></i>
-            </div>
-        </div>
-    </div>
+                </x-slot>
+            </x-card.table>
+        </x-slot>
+
+        <x-slot name="footer">
+            <x-card.paginator :count="$this->daftarPasienRanap->count()" :total="$this->daftarPasienRanap->total()">
+                <x-slot name="links">{{ $this->daftarPasienRanap->links() }}</x-slot>
+            </x-card.paginator>
+        </x-slot>
+    </x-card>
 </div>

@@ -5,7 +5,7 @@
         <x-slot name="header">
             <x-card.tools>
                 <x-card.tools.date-range title="Tgl. SPM" />
-                <x-card.tools.toggle model="hanyaTampilkanBarangSelisih" name="Tampilkan Barang Selisih" />
+                <x-card.tools.toggle class="ml-4" model="hanyaTampilkanBarangSelisih" name="Tampilkan Barang Selisih" />
                 <x-card.tools.export-to-excel class="ml-auto" />
             </x-card.tools>
             <x-card.tools class="mt-2">
