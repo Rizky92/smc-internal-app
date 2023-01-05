@@ -1,7 +1,6 @@
 @props([
-    'table' => true,
+    'useDefaultFilter' => false,
     'loading' => false,
-    'filter' => true,
 
     'header' => null,
     'body' => null,
@@ -9,25 +8,27 @@
 ])
 
 <div class="card">
+    @if ($useDefaultFilter || $header)
+        <div class="card-body">
+            @if ($useDefaultFilter)
+                <x-card.row>
+                    <x-filter.range-date />
+                    <x-filter.button-export-excel class="ml-auto" />
+                </x-card.row>
+                <x-card.row class="mt-2">
+                    <x-filter.select-perpage />
+                    <x-filter.button-reset-filters class="ml-auto" />
+                    <x-filter.search class="ml-2" />
+                </x-card.row>
+            @else
+                {{ $header }}
+            @endif
+        </div>
+    @endif
     <div class="card-body">
-        @if ($filter)
-            <x-card.tools>
-                <x-card.tools.date-range />
-                <x-card.tools.export-to-excel class="ml-auto" />
-            </x-card.tools>
-            <x-card.tools class="mt-2">
-                <x-card.tools.perpage />
-                <x-card.tools.reset-filters class="ml-auto" />
-                <x-card.tools.search class="ml-2" />
-            </x-card.tools>
-        @else
-            {{ $header }}
-        @endif
-    </div>
-    <div class="card-body {{ $table ? 'table-responsive p-0' : null }}">
         {{ $body }}
     </div>
-    @if ($footer)    
+    @if ($footer)
         <div class="card-footer">
             {{ $footer }}
         </div>

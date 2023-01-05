@@ -2,7 +2,7 @@
     'clickable' => null,
 ])
 
-<td>
+<td {{ $attributes }}>
     {{ $slot }}
     @if ($clickable)
         <a {{ $clickable->attributes->merge([

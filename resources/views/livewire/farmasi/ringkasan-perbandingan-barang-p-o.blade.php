@@ -1,49 +1,49 @@
 <div>
     <x-flash />
 
-    <x-card :filter="false">
+    <x-card>
         <x-slot name="header">
-            <x-card.tools>
-                <x-card.tools.date-range title="Tgl. SPM" />
-                <x-card.tools.toggle class="ml-4" model="hanyaTampilkanBarangSelisih" name="Tampilkan Barang Selisih" />
-                <x-card.tools.export-to-excel class="ml-auto" />
-            </x-card.tools>
-            <x-card.tools class="mt-2">
-                <x-card.tools.perpage />
-                <x-card.tools.reset-filters class="ml-auto" />
-                <x-card.tools.search class="ml-2" />
-            </x-card.tools>
+            <x-card.row>
+                <x-filter.range-date title="Tgl. SPM" />
+                <x-filter.toggle class="ml-4" model="hanyaTampilkanBarangSelisih" name="Tampilkan Barang Selisih" />
+                <x-filter.button-export-excel class="ml-auto" />
+            </x-card.row>
+            <x-card.row class="mt-2">
+                <x-filter.select-perpage />
+                <x-filter.button-reset-filters class="ml-auto" />
+                <x-filter.search class="ml-2" />
+            </x-card.row>
         </x-slot>
         <x-slot name="body">
-            <x-card.table>
+            <x-table>
                 <x-slot name="columns">
-                    <x-card.table.th>No. Pemesanan</x-card.table.th>
-                    <x-card.table.th>Nama</x-card.table.th>
-                    <x-card.table.th>Supplier Tujuan</x-card.table.th>
-                    <x-card.table.th>Supplier yang Mendatangkan</x-card.table.th>
-                    <x-card.table.th>Jumlah Dipesan</x-card.table.th>
-                    <x-card.table.th>Jumlah yang Datang</x-card.table.th>
-                    <x-card.table.th>Selisih</x-card.table.th>
+                    <x-table.th>No. Pemesanan</x-table.th>
+                    <x-table.th>Nama</x-table.th>
+                    <x-table.th>Supplier Tujuan</x-table.th>
+                    <x-table.th>Supplier yang Mendatangkan</x-table.th>
+                    <x-table.th>Jumlah Dipesan</x-table.th>
+                    <x-table.th>Jumlah yang Datang</x-table.th>
+                    <x-table.th>Selisih</x-table.th>
                 </x-slot>
                 <x-slot name="body">
                     @foreach ($this->perbandinganOrderObatPO as $obat)
-                        <x-card.table.tr>
-                            <x-card.table.td>{{ $obat->no_pemesanan }}</x-card.table.td>
-                            <x-card.table.td>{{ $obat->nama_brng }}</x-card.table.td>
-                            <x-card.table.td>{{ $obat->suplier_pesan }}</x-card.table.td>
-                            <x-card.table.td>{{ $obat->suplier_datang }}</x-card.table.td>
-                            <x-card.table.td>{{ $obat->jumlah_pesan }}</x-card.table.td>
-                            <x-card.table.td>{{ $obat->jumlah_datang }}</x-card.table.td>
-                            <x-card.table.td>{{ $obat->selisih }}</x-card.table.td>
-                        </x-card.table.tr>
+                        <x-table.tr>
+                            <x-table.td>{{ $obat->no_pemesanan }}</x-table.td>
+                            <x-table.td>{{ $obat->nama_brng }}</x-table.td>
+                            <x-table.td>{{ $obat->suplier_pesan }}</x-table.td>
+                            <x-table.td>{{ $obat->suplier_datang }}</x-table.td>
+                            <x-table.td>{{ $obat->jumlah_pesan }}</x-table.td>
+                            <x-table.td>{{ $obat->jumlah_datang }}</x-table.td>
+                            <x-table.td>{{ $obat->selisih }}</x-table.td>
+                        </x-table.tr>
                     @endforeach
                 </x-slot>
-            </x-card.table>
+            </x-table>
         </x-slot>
         <x-slot name="footer">
-            <x-card.paginator :count="$this->perbandinganOrderObatPO->count()" :total="$this->perbandinganOrderObatPO->total()">
-                <x-slot name="links">{{ $this->perbandinganOrderObatPO->links() }}</x-slot>
-            </x-card.paginator>
+            <x-paginator :count="$this->perbandinganOrderObatPO->count()" :total="$this->perbandinganOrderObatPO->total()">
+                {{ $this->perbandinganOrderObatPO->links() }}
+            </x-paginator>
         </x-slot>
     </x-card>
 </div>

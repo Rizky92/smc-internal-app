@@ -1,30 +1,24 @@
 <div>
     <x-flash />
 
-    <x-card :filter="false">
+    <x-card>
         <x-slot name="header">
-            <x-card.tools>
-                <x-card.tools.date-range />
-                <x-card.tools.export-to-excel class="ml-auto" />
-            </x-card.tools>
-            <x-card.tools class="mt-2">
-                <x-card.tools.perpage />
-                <x-card.tools.reset-filters class="ml-auto" />
+            <x-card.row>
+                <x-filter.range-date />
+                <x-filter.button-export-excel class="ml-auto" />
+            </x-card.row>
+            <x-card.row class="mt-2">
+                <x-filter.select-perpage />
+                <x-filter.button-reset-filters class="ml-auto" />
                 <div class="ml-2 input-group input-group-sm" style="width: 16rem">
-                    <select class="form-control form-control-sm" wire:model.defer="jenisPerawatan">
-                        <option value="" disabled selected>--JENIS PERAWATAN--</option>
-                        <option value="">Semua</option>
-                        <option value="ralan">Rawat Jalan</option>
-                        <option value="ranap">Rawat Inap</option>
-                    </select>
-                    <div class="input-group-append">
-                        <button class="btn btn-sm btn-default" type="button" wire:click="searchData">
-                            <i class="fas fa-sync-alt"></i>
-                            <span class="ml-1">Refresh</span>
-                        </button>
-                    </div>
+                    <x-filter.select model="jenisPerawatan" placeholder="--Jenis Perawatan--" :options="[
+                        '-' => 'Semua',
+                        'ralan' => 'Rawat Jalan',
+                        'ranap' => 'Rawat Inap',
+                    ]" />
+                    <x-filter.button-search class="input-group-append" title="Refresh" icon="fas fa-sync-alt" />
                 </div>
-            </x-card.tools>
+            </x-card.row>
         </x-slot>
         <x-slot name="body">
             <x-navtabs :livewire="true">
@@ -35,65 +29,65 @@
                 <x-slot name="contents">
                     <x-navtabs.content id="obat-regular" title="Obat Regular" selected>
                         <div class="table-responsive">
-                            <x-card.table class="mb-0">
+                            <x-table class="mb-0">
                                 <x-slot name="columns">
-                                    <x-card.table.th>No. Resep</x-card.table.th>
-                                    <x-card.table.th>Dokter Peresep</x-card.table.th>
-                                    <x-card.table.th>Tgl. Validasi</x-card.table.th>
-                                    <x-card.table.th>Jam</x-card.table.th>
-                                    <x-card.table.th>Pasien</x-card.table.th>
-                                    <x-card.table.th>Jenis Perawatan</x-card.table.th>
-                                    <x-card.table.th>Total Pembelian</x-card.table.th>
+                                    <x-table.th>No. Resep</x-table.th>
+                                    <x-table.th>Dokter Peresep</x-table.th>
+                                    <x-table.th>Tgl. Validasi</x-table.th>
+                                    <x-table.th>Jam</x-table.th>
+                                    <x-table.th>Pasien</x-table.th>
+                                    <x-table.th>Jenis Perawatan</x-table.th>
+                                    <x-table.th>Total Pembelian</x-table.th>
                                 </x-slot>
                                 <x-slot name="body">
                                     @foreach ($this->kunjunganResepObatRegularPasien as $resep)
-                                        <x-card.table.tr>
-                                            <x-card.table.td>{{ $resep->no_resep }}</x-card.table.td>
-                                            <x-card.table.td>{{ $resep->nm_dokter }}</x-card.table.td>
-                                            <x-card.table.td>{{ $resep->tgl_perawatan }}</x-card.table.td>
-                                            <x-card.table.td>{{ $resep->jam }}</x-card.table.td>
-                                            <x-card.table.td>{{ $resep->nm_pasien }}</x-card.table.td>
-                                            <x-card.table.td>{{ $resep->status_lanjut }}</x-card.table.td>
-                                            <x-card.table.td>{{ rp($resep->total) }}</x-card.table.td>
-                                        </x-card.table.tr>
+                                        <x-table.tr>
+                                            <x-table.td>{{ $resep->no_resep }}</x-table.td>
+                                            <x-table.td>{{ $resep->nm_dokter }}</x-table.td>
+                                            <x-table.td>{{ $resep->tgl_perawatan }}</x-table.td>
+                                            <x-table.td>{{ $resep->jam }}</x-table.td>
+                                            <x-table.td>{{ $resep->nm_pasien }}</x-table.td>
+                                            <x-table.td>{{ $resep->status_lanjut }}</x-table.td>
+                                            <x-table.td>{{ rp($resep->total) }}</x-table.td>
+                                        </x-table.tr>
                                     @endforeach
                                 </x-slot>
-                            </x-card.table>
+                            </x-table>
                         </div>
-                        <x-card.paginator class="px-4 pt-3 pb-2 bg-light" :count="$this->kunjunganResepObatRegularPasien->count()" :total="$this->kunjunganResepObatRegularPasien->total()">
-                            <x-slot name="links">{{ $this->kunjunganResepObatRegularPasien->links() }}</x-slot>
-                        </x-card.paginator>
+                        <x-paginator class="px-4 pt-3 pb-2 bg-light" :count="$this->kunjunganResepObatRegularPasien->count()" :total="$this->kunjunganResepObatRegularPasien->total()">
+                            {{ $this->kunjunganResepObatRegularPasien->links() }}
+                        </x-paginator>
                     </x-navtabs.content>
                     <x-navtabs.content id="obat-racikan" title="Obat Racikan">
                         <div class="table-responsive">
-                            <x-card.table class="mb-0">
+                            <x-table class="mb-0">
                                 <x-slot name="columns">
-                                    <x-card.table.th>No. Resep</x-card.table.th>
-                                    <x-card.table.th>Dokter Peresep</x-card.table.th>
-                                    <x-card.table.th>Tgl. Validasi</x-card.table.th>
-                                    <x-card.table.th>Jam</x-card.table.th>
-                                    <x-card.table.th>Pasien</x-card.table.th>
-                                    <x-card.table.th>Jenis Perawatan</x-card.table.th>
-                                    <x-card.table.th>Total Pembelian</x-card.table.th>
+                                    <x-table.th>No. Resep</x-table.th>
+                                    <x-table.th>Dokter Peresep</x-table.th>
+                                    <x-table.th>Tgl. Validasi</x-table.th>
+                                    <x-table.th>Jam</x-table.th>
+                                    <x-table.th>Pasien</x-table.th>
+                                    <x-table.th>Jenis Perawatan</x-table.th>
+                                    <x-table.th>Total Pembelian</x-table.th>
                                 </x-slot>
                                 <x-slot name="body">
                                     @foreach ($this->kunjunganResepObatRacikanPasien as $resep)
-                                        <x-card.table.tr>
-                                            <x-card.table.td>{{ $resep->no_resep }}</x-card.table.td>
-                                            <x-card.table.td>{{ $resep->nm_dokter }}</x-card.table.td>
-                                            <x-card.table.td>{{ $resep->tgl_perawatan }}</x-card.table.td>
-                                            <x-card.table.td>{{ $resep->jam }}</x-card.table.td>
-                                            <x-card.table.td>{{ $resep->nm_pasien }}</x-card.table.td>
-                                            <x-card.table.td>{{ $resep->status_lanjut }}</x-card.table.td>
-                                            <x-card.table.td>{{ rp($resep->total) }}</x-card.table.td>
-                                        </x-card.table.tr>
+                                        <x-table.tr>
+                                            <x-table.td>{{ $resep->no_resep }}</x-table.td>
+                                            <x-table.td>{{ $resep->nm_dokter }}</x-table.td>
+                                            <x-table.td>{{ $resep->tgl_perawatan }}</x-table.td>
+                                            <x-table.td>{{ $resep->jam }}</x-table.td>
+                                            <x-table.td>{{ $resep->nm_pasien }}</x-table.td>
+                                            <x-table.td>{{ $resep->status_lanjut }}</x-table.td>
+                                            <x-table.td>{{ rp($resep->total) }}</x-table.td>
+                                        </x-table.tr>
                                     @endforeach
                                 </x-slot>
-                            </x-card.table>
+                            </x-table>
                         </div>
-                        <x-card.paginator class="px-4 pt-3 pb-2 bg-light" :count="$this->kunjunganResepObatRacikanPasien->count()" :total="$this->kunjunganResepObatRacikanPasien->total()">
-                            <x-slot name="links">{{ $this->kunjunganResepObatRacikanPasien->links() }}</x-slot>
-                        </x-card.paginator>
+                        <x-paginator class="px-4 pt-3 pb-2 bg-light" :count="$this->kunjunganResepObatRacikanPasien->count()" :total="$this->kunjunganResepObatRacikanPasien->total()">
+                            {{ $this->kunjunganResepObatRacikanPasien->links() }}
+                        </x-paginator>
                     </x-navtabs.content>
                 </x-slot>
             </x-navtabs>

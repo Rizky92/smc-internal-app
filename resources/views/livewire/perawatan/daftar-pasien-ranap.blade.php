@@ -301,17 +301,17 @@
         @endpush
     @endonce --}}
 
-    <x-card :filter="false">
+    <x-card>
         <x-slot name="header">
-            <x-card.tools>
-                <x-card.tools.date-range model-start="tglAwal" model-end="tglAkhir" />
-                <x-card.tools.export-to-excel class="ml-auto" />
-            </x-card.tools>
-            <x-card.tools class="mt-2">
-                <x-card.tools.time-range />
-                <x-card.tools.perpage class="ml-auto" />
-            </x-card.tools>
-            <x-card.tools class="mt-2">
+            <x-card.row>
+                <x-filter.range-date model-start="tglAwal" model-end="tglAkhir" />
+                <x-filter.button-export-excel class="ml-auto" />
+            </x-card.row>
+            <x-card.row class="mt-2">
+                <x-filter.range-time />
+                <x-filter.select-perpage class="ml-auto" />
+            </x-card.row>
+            <x-card.row class="mt-2">
                 <div class="d-flex justify-content-start align-items-center">
                     <span class="text-sm" style="width: 5rem">Status:</span>
                     <select class="form-control form-control-sm" style="width: 9rem" wire:model.defer="statusPerawatan">
@@ -320,9 +320,16 @@
                         <option value="tanggal_keluar">Tgl. Keluar</option>
                     </select>
                 </div>
-                <x-card.tools.reset-filters class="ml-auto" />
-                <x-card.tools.search class="ml-2" />
-            </x-card.tools>
+                <x-filter.button-reset-filters class="ml-auto" />
+                <div class="ml-2 input-group input-group-sm" style="width: 16rem">
+                    <x-filter.select title="Status:" model="statusPerawatan" :options="[
+                        '-' => 'Sedang dirawat',
+                        'tanggal_masuk' => 'Tgl. Masuk',
+                        'tanggal_masuk' => 'Tgl. Keluar',
+                    ]" />
+                    <x-filter.button-search class="input-group-append" title="Refresh" icon="fas fa-sync-alt" />
+                </div>
+            </x-card.row>
         </x-slot>
 
         <x-slot name="body">

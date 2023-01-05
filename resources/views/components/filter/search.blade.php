@@ -1,6 +1,7 @@
 @props([
     'method' => 'searchData',
     'model' => 'cari',
+    'title' => 'Cari',
 ])
 
 <div {{ $attributes->merge([
@@ -11,7 +12,7 @@
     <div class="input-group-append">
         <button class="btn btn-sm btn-default" type="button" wire:click="{{ $method }}">
             <i class="fas fa-search"></i>
-            <span class="ml-1">Cari</span>
+            <span class="ml-1">{{ $title }}</span>
         </button>
     </div>
 </div>
