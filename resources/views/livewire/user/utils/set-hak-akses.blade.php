@@ -25,7 +25,7 @@
 
                 @this.simpan(inputNRP.val(), selectedRoles, selectedPermissions)
             })
-            
+
             $('input[type=checkbox]').change(function(e) {
                 var checked = $(this).prop("checked"),
                     container = $(this).parent(),
@@ -110,8 +110,8 @@
                 </div>
             </div>
             <div class="modal-footer justify-content-end">
-                <button class="btn btn-default" id="batalsimpan" data-dismiss="modal" type="button">Batal</button>
-                <button class="btn btn-primary" id="simpandata" type="button">
+                <button class="btn btn-sm btn-default" id="batalsimpan" data-dismiss="modal" type="button">Batal</button>
+                <button class="btn btn-sm btn-primary" id="simpandata" type="button">
                     <i class="fas fa-save"></i>
                     <span class="ml-1">Simpan</span>
                 </button>
