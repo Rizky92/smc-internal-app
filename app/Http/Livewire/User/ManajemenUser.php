@@ -56,42 +56,10 @@ class ManajemenUser extends Component
             ->paginate($this->perpage);
     }
 
-    public function getRolesProperty()
-    {
-        return Role::with('permissions')->get();
-    }
-
-    public function getOtherPermissionsProperty()
-    {
-        $availablePermissions = $this->roles->map(function ($role) {
-            return $role->permissions->map(function ($permission) {
-                return $permission->id;
-            });
-        })->flatten()->toArray();
-
-        return Permission::whereNotIn('id', $availablePermissions)->get();
-    }
-
     public function render()
     {
         return view('livewire.user.manajemen-user')
             ->layout(BaseLayout::class, ['title' => 'Manajemen Hak Akses User']);
-    }
-
-    public function simpan(string $nrp, array $roles, array $permissions)
-    {
-        $user = User::findByNRP($nrp);
-
-        if ($user->is(auth()->user())) {
-            $this->flashError('Tidak dapat mengubah hak akses untuk diri sendiri!');
-
-            return;
-        }
-        
-        $user->syncRoles($roles);
-        $user->syncPermissions($permissions);
-
-        $this->flashSuccess("Hak akses untuk user {$nrp} berhasil diubah!");
     }
 
     public function searchData()
