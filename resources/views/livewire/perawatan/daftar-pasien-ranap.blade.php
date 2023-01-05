@@ -304,7 +304,7 @@
     <x-card :filter="false">
         <x-slot name="header">
             <x-card.tools>
-                <x-card.tools.date-range />
+                <x-card.tools.date-range model-start="tglAwal" model-end="tglAkhir" />
                 <x-card.tools.export-to-excel class="ml-auto" />
             </x-card.tools>
             <x-card.tools class="mt-2">

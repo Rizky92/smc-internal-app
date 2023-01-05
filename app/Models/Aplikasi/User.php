@@ -62,8 +62,7 @@ class User extends Authenticatable
     {
         if (empty($nrp)) return new static;
 
-        return (new static)
-            ->where('petugas.nip', $nrp)
+        return (new static)::where('petugas.nip', $nrp)
             ->first($columns);
     }
 }

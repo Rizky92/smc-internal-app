@@ -2,37 +2,61 @@
 
 namespace App\Http\Livewire\User\Utils;
 
+use App\Models\Aplikasi\Permission;
+use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 class TransferHakAkses extends Component
 {
-    public $cari;
+    public $cariUser;
 
-    public $currentUser;
+    public $nrp;
+
+    public $nama;
+
+    public $roles;
+
+    public $permissions;
+
+    public $checkedUsers;
 
     protected function queryString()
     {
         return [
-            'cari' => [
+            'cariUser' => [
                 'except' => '',
+                'as' => 'cari_user',
             ],
         ];
     }
 
     protected $listeners = [
-        //
+        'prepareTransfer',
+        'transferPermissions',
     ];
 
     public function mount()
     {
-        $this->cari = '';
-        $this->currentUser = null;
+        $this->cariUser = '';
+        $this->nrp = '';
+        $this->nama = '';
+        $this->roles = [];
+        $this->permissions = [];
+        $this->checkedUsers = [];
     }
 
     public function getAvailableUsersProperty()
     {
-        return User::all();
+        return User::query()
+            ->where('petugas.nip', '!=', $this->nrp)
+            ->search($this->cariUser)
+            ->when(!empty($this->checkedUsers), function (Builder $query) {
+                return $query->orWhereIn('petugas.nip', $this->checkedUsers);
+            })
+            ->limit(50)
+            ->get();
     }
 
     public function render()
@@ -40,8 +64,51 @@ class TransferHakAkses extends Component
         return view('livewire.user.utils.transfer-hak-akses');
     }
 
-    public function setUser(string $nrp)
+    public function prepareTransfer(
+        string $nrp,
+        string $nama,
+        array $roles = [],
+        array $permissions = []
+    ) {
+        $this->nrp = $nrp;
+        $this->nama = $nama;
+        $this->roles = Role::whereIn('id', $roles)->pluck('name', 'id')->toArray();
+        $this->permissions = Permission::whereIn('id', $permissions)->pluck('name', 'id')->toArray();
+    }
+
+    public function transferPermissions()
     {
-        $this->currentUser = User::findByNRP($nrp);
+        if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
+            $this->emit('flash', [
+                'flash.type' => 'danger',
+                'flash.message' => 'Anda tidak diizinkan untuk melakukan aksi ini.',
+            ]);
+
+            return;
+        }
+
+        $permittedUsers = User::whereIn('petugas.nip', $this->checkedUsers)->get();
+
+        foreach ($permittedUsers as $user) {
+            $user->assignRole($this->roles);
+            $user->givePermissionTo($this->permissions);
+        }
+
+        $this->emit('flash', [
+            'flash.type' => 'success',
+            'flash.message' => "Hak akses untuk user {$this->nrp} berhasil diubah!",
+        ]);
+
+        $this->resetModal();
+    }
+
+    public function resetModal()
+    {
+        $this->cariUser = '';
+        $this->nrp = '';
+        $this->nama = '';
+        $this->roles = [];
+        $this->permissions = [];
+        $this->checkedUsers = [];
     }
 }

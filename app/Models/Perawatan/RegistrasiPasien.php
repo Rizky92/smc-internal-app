@@ -38,7 +38,8 @@ class RegistrasiPasien extends Model
         string $tglAwal = '',
         string $tglAkhir = '',
         string $jamAwal = '',
-        string $jamAkhir = ''
+        string $jamAkhir = '',
+        bool $exportExcel = false
     ): Builder {
         if (empty($tglAwal)) {
             $tglAwal = now()->format('Y-m-d');
@@ -56,30 +57,35 @@ class RegistrasiPasien extends Model
             $jamAkhir = '06:00:00';
         }
 
-        return $query->selectRaw("
+        $sqlSelect = "
+            kamar_inap.kd_kamar,
             reg_periksa.no_rawat,
             reg_periksa.no_rkm_medis,
+            concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal) ruangan,
             concat(pasien.nm_pasien, ' (', reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur, ')') data_pasien,
             concat(pasien.alamat, ', Kel. ', kelurahan.nm_kel, ', Kec. ', kecamatan.nm_kec, ', ', kabupaten.nm_kab, ', ', propinsi.nm_prop) alamat_pasien,
             pasien.agama,
             concat(pasien.namakeluarga, ' (', pasien.keluarga, ')') pj,
             penjab.png_jawab,
-            concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal) ruangan,
-            kamar_inap.kd_kamar,
-            kamar_inap.trf_kamar,
+            poliklinik.nm_poli,
+            dokter.nm_dokter dokter_poli,
+            kamar_inap.stts_pulang,
             kamar_inap.tgl_masuk,
             kamar_inap.jam_masuk,
             if(kamar_inap.tgl_keluar = '0000-00-00', '-', kamar_inap.tgl_keluar) tgl_keluar,
             if(kamar_inap.jam_keluar = '00:00:00', '-', kamar_inap.jam_keluar) jam_keluar,
-            kamar_inap.lama,
-            kamar_inap.stts_pulang,
+            kamar_inap.trf_kamar,
             (
                 SELECT dokter.nm_dokter FROM dokter JOIN dpjp_ranap ON dpjp_ranap.kd_dokter = dokter.kd_dokter WHERE dpjp_ranap.no_rawat = reg_periksa.no_rawat LIMIT 1
             ) nama_dokter,
-            pasien.no_tlp,
-            poliklinik.nm_poli,
-            dokter.nm_dokter dokter_poli
-        ")
+            pasien.no_tlp
+        ";
+
+        if ($exportExcel) {
+            $sqlSelect = Str::after($sqlSelect, "kamar_inap.kd_kamar,");
+        }
+
+        return $query->selectRaw($sqlSelect)
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join('kamar_inap', 'reg_periksa.no_rawat', '=', 'kamar_inap.no_rawat')
             ->join('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')

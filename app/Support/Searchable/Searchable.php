@@ -8,13 +8,13 @@ use LogicException;
 
 trait Searchable
 {
-    /** @var array<int,string> $searchColumns */
+    /** @var array<int, string> $searchColumns */
     protected $searchColumns;
 
     /**
      * @param  \Illuminate\Database\Eloquent\Builder $query
      * @param  string $search
-     * @param  array<int,string> $columns
+     * @param  array<int, string> $columns
      * 
      * @return \Illuminate\Database\Eloquent\Builder
      * @throws \LogicException
@@ -35,11 +35,14 @@ trait Searchable
 
         $search = Str::lower($search);
 
-        $query->where(array_shift($columns), 'LIKE', "%{$search}%");
+        $query->where(function (Builder $query) use ($columns, $search) {
+            $query->where(array_shift($columns), 'LIKE', "%{$search}%");
+            foreach ($columns as $column) {
+                $query->orWhere($column, 'LIKE', "%{$search}%");
+            }
 
-        foreach ($columns as $column) {
-            $query->orWhere($column, 'LIKE', "%{$search}%");
-        }
+            return $query;
+        });
 
         return $query;
     }

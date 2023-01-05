@@ -34,6 +34,8 @@
 
                     inputRoles.each((i, el) => el.checked = roles.find(v => v === el.value))
                     inputPermissions.each((i, el) => el.checked = permissions.find(v => v === el.value))
+
+                    @this.emit('prepareTransfer', nrp, nama, roles, permissions)
                 }
 
                 $('#simpandata').click(e => {
@@ -127,8 +129,8 @@
                                         <ul class="form-group">
                                             @foreach ($role->permissions as $permission)
                                                 <li class="custom-control custom-checkbox">
-                                                    <input class="custom-control-input custom-control-input-secondary" id="permission-{{ $permission->id }}" name="permissions" data-role-id="{{ $role->id }}" type=checkbox value="{{ $permission->id }}">
-                                                    <label class="custom-control-label font-weight-normal" for="permission-{{ $permission->id }}">{{ $permission->name }}</label>
+                                                    <input class="custom-control-input custom-control-input-secondary" id="permission-{{ $permission->id }}-{{ $role->id }}" name="permissions" data-role-id="{{ $role->id }}" type=checkbox value="{{ $permission->id }}">
+                                                    <label class="custom-control-label font-weight-normal" for="permission-{{ $permission->id }}-{{ $role->id }}">{{ $permission->name }}</label>
                                                 </li>
                                             @endforeach
                                         </ul>
@@ -158,6 +160,8 @@
         </div>
     </div>
 
+    <livewire:user.utils.transfer-hak-akses />
+
     <div class="card">
         <div class="card-body">
             <div class="row" wire:ignore>
@@ -178,6 +182,11 @@
                         <button class="btn btn-sm btn-default mb-3" data-toggle="modal" data-target="#hak-akses" type="button">
                             <i class="fas fa-info-circle"></i>
                             <span class="ml-1">Set hak akses</span>
+                        </button>
+
+                        <button class="btn btn-sm btn-default mb-3 ml-2" data-toggle="modal" data-target="#transfer-hak-akses" type="button" id="button-transfer-hak-akses">
+                            <i class="fas fa-share-square"></i>
+                            <span class="ml-1">Transfer hak akses</span>
                         </button>
                     </div>
                 </div>

@@ -123,27 +123,39 @@ class DaftarPasienRanap extends Component
         $titles = [
             'RS Samarinda Medika Citra',
             'Daftar Pasien Rawat Inap',
-            Carbon::parse($this->periodeAwal)->format('d F Y') . ' - ' . Carbon::parse($this->periodeAkhir)->format('d F Y'),
+            Carbon::parse($this->tglAwal)->format('d F Y') . ' - ' . Carbon::parse($this->tglAkhir)->format('d F Y'),
         ];
 
         $columnHeaders = [
             'No. Rawat',
             'No. RM',
+            'Kamar',
             'Pasien',
             'Alamat',
             'Agama',
             'P.J.',
             'Jenis Bayar',
-            'Kamar',
-            'Tarif',
+            'Asal Poli',
+            'Dokter Poli',
+            'Status',
             'Tgl. Masuk',
             'Jam Masuk',
-            'Lama Inap',
+            'Tgl. Keluar',
+            'Jam Keluar',
+            'Tarif',
             'Dokter P.J.',
             'No. HP',
         ];
 
-        $data = RegistrasiPasien::daftarPasienRanap($this->jenisRanapDitampilkan)
+        $data = RegistrasiPasien::daftarPasienRanap(
+            '',
+            $this->statusPerawatan,
+            $this->tglAwal,
+            $this->tglAkhir,
+            $this->jamAwal,
+            $this->jamAkhir,
+            true
+        )
             ->orderBy('no_rawat')
             ->get();
 
@@ -151,7 +163,7 @@ class DaftarPasienRanap extends Component
             ->setPageHeaders($titles)
             ->setColumnHeaders($columnHeaders)
             ->setData($data);
-        
+
         return $excel->export();
     }
 
