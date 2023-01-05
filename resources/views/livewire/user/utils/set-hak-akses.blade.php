@@ -81,7 +81,7 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-12">
-                        <ul class="form-group" id="role_permissions">
+                        <ul class="form-group" id="role_permissions" style="list-style: none">
                             @foreach ($this->roles as $role)
                                 <li class="custom-control custom-checkbox">
                                     <input class="custom-control-input" id="role-{{ $role->id }}" name="roles" type=checkbox value="{{ $role->id }}">
@@ -98,7 +98,7 @@
                             @endforeach
                             <li>
                                 <h6>Hak akses lainnya</h6>
-                                <ul class="form-group">
+                                <ul class="form-group" style="list-style: none">
                                     @foreach ($this->otherPermissions as $op)
                                         <li class="custom-control custom-checkbox">
                                             <input class="custom-control-input custom-control-input-secondary" id="permission-{{ $op->id }}" name="permissions" type=checkbox value="{{ $op->id }}">
