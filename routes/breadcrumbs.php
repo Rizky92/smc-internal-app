@@ -101,3 +101,8 @@ Breadcrumbs::for('admin.users.manajemen', function (Trail $trail) {
     $trail->parent('admin.users');
     $trail->push('Manajemen User', route('admin.users.manajemen'));
 });
+
+Breadcrumbs::for('admin.users.hak-akses-user', function (Trail $trail) {
+    $trail->parent('admin.users');
+    $trail->push('Khanza Set Akses User', route('admin.users.hak-akses-user'));
+});

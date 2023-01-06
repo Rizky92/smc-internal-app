@@ -3,14 +3,14 @@
 
     <x-card>
         <x-slot name="header">
-            <x-filter>
+            <x-card.row>
                 <x-filter.button-export-excel class="ml-auto" />
-            </x-filter>
-            <x-filter class="mt-2">
+            </x-card.row>
+            <x-card.row class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-            </x-filter>
+            </x-card.row>
         </x-slot>
         <x-slot name="body">
             <x-table>

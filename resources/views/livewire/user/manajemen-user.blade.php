@@ -16,7 +16,12 @@
                     inputPermissions = $('input[name=permissions]')
                 })
 
-                function loadData({ nrp, nama, roleIds, permissionIds }) {
+                function loadData({
+                    nrp,
+                    nama,
+                    roleIds,
+                    permissionIds
+                }) {
                     inputNRP.val(nrp)
                     inputNama.val(nama)
 
@@ -37,8 +42,8 @@
 
     <livewire:user.utils.transfer-hak-akses />
 
-    <div class="card">
-        <div class="card-body">
+    <x-card>
+        <x-slot name="header">
             <div class="row" wire:ignore>
                 <div class="col-2">
                     <div class="form-group">
@@ -58,7 +63,7 @@
                             <i class="fas fa-info-circle"></i>
                             <span class="ml-1">Set hak akses</span>
                         </button>
-
+    
                         <button class="btn btn-sm btn-default mb-3 ml-2" data-toggle="modal" data-target="#transfer-hak-akses" type="button" id="button-transfer-hak-akses">
                             <i class="fas fa-share-square"></i>
                             <span class="ml-1">Transfer hak akses</span>
@@ -66,49 +71,45 @@
                     </div>
                 </div>
             </div>
-            <div class="row mt-3">
-                <x-filter />
-            </div>
-        </div>
-        <div class="card-body table-responsive p-0 border-top border-bottom">
-            <table class="table table-hover table-striped table-sm text-sm" id="table_index">
-                <thead>
-                    <tr>
-                        <th>NRP</th>
-                        <th>Nama</th>
-                        <th>Jabatan</th>
-                        <th>Jenis</th>
-                        <th>Hak Akses</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <x-card.row class="mt-2">
+                <x-filter.select-perpage />
+                <x-filter.button-reset-filters class="ml-auto" />
+                <x-filter.search class="ml-2" />
+            </x-card.row>
+        </x-slot>
+        <x-slot name="body" class="table-responsive p-0">
+            <x-table>
+                <x-slot name="columns">
+                    <x-table.th>NRP</x-table.th>
+                    <x-table.th>Nama</x-table.th>
+                    <x-table.th>Jabatan</x-table.th>
+                    <x-table.th>Jenis</x-table.th>
+                    <x-table.th>Hak Akses</x-table.th>
+                </x-slot>
+                <x-slot name="body">
                     @foreach ($this->users as $user)
-                        <tr style="position: relative">
-                            <td>
+                        <x-table.tr>
+                            <x-table.td>
                                 {{ $user->nip }}
-                                <a data-nrp="{{ $user->nip }}" data-nama="{{ $user->nama }}" data-role-ids="{{ $user->roles->pluck('id')->join(',') }}" data-permission-ids="{{ $user->getAllPermissions()->pluck('id')->join(',') }}" href="#" style="display: inline; position: absolute; left: 0; right: 0; top: 0; bottom: 0" onclick="loadData(this.dataset)"></a>
-                            </td>
-                            <td>{{ $user->nama }}</td>
-                            <td>{{ $user->nm_jbtn }}</td>
-                            <td>Petugas</td>
-                            <td>
+                                <x-slot name="clickable" data-nrp="{{ $user->nip }}" data-nama="{{ $user->nama }}" data-role-ids="{{ $user->roles->pluck('id')->join(',') }}" data-permission-ids="{{ $user->getAllPermissions()->pluck('id')->join(',') }}"></x-slot>
+                            </x-table.td>
+                            <x-table.td>{{ $user->nama }}</x-table.td>
+                            <x-table.td>{{ $user->nm_jbtn }}</x-table.td>
+                            <x-table.td>Petugas</x-table.td>
+                            <x-table.td>
                                 @foreach ($user->roles as $role)
-                                    @php($first = $loop->first ? '' : 'ml-1')
-                                    <span class="{{ $first }} badge badge-dark">{{ $role->name }}</span>
+                                    <x-badge :class="Arr::toCssClasses(['badge-dark', 'ml-1' => $loop->first], ' ')">{{ $role->name }}</x-badge>
                                 @endforeach
-                            </td>
-                        </tr>
+                            </x-table.td>
+                        </x-table.tr>
                     @endforeach
-                </tbody>
-            </table>
-        </div>
-        <div class="card-footer">
-            <div class="d-flex align-items center justify-content-start">
-                <p class="text-muted">Menampilkan {{ $this->users->count() }} dari total {{ number_format($this->users->total(), 0, ',', '.') }} item.</p>
-                <div class="ml-auto">
-                    {{ $this->users->links() }}
-                </div>
-            </div>
-        </div>
-    </div>
+                </x-slot>
+            </x-table>
+        </x-slot>
+        <x-slot name="footer">
+            <x-paginator :count="$this->users->count()" :total="$this->users->total()">
+                {{ $this->users->links() }}
+            </x-paginator>
+        </x-slot>
+    </x-card>
 </div>

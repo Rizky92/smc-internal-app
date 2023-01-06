@@ -10,7 +10,7 @@
             <x-card.row class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
-                <div class="ml-2 input-group input-group-sm" style="width: 16rem">
+                <div class="ml-2 input-group input-group-sm" style="width: max-content">
                     <x-filter.select model="jenisPerawatan" placeholder="--Jenis Perawatan--" :options="[
                         '-' => 'Semua',
                         'ralan' => 'Rawat Jalan',

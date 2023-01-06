@@ -54,6 +54,10 @@ class User extends Authenticatable
                 ->orderBy('petugas.nip');
         });
     }
+
+    public function scopeWithHakAkses(Builder $query) {
+        return $query->selectRaw('user.*');
+    }
     
     /**
      * @return static
@@ -63,6 +67,16 @@ class User extends Authenticatable
         if (empty($nrp)) return new static;
 
         return (new static)::where('petugas.nip', $nrp)
+            ->first($columns);
+    }
+
+    public static function rawFindByNRP(string $nrp, array $columns = [''])
+    {
+        if (empty($nrp)) return new static;
+
+        return (new static)->newQueryWithoutScopes()
+            ->withHakAkses()
+            ->whereRaw("AES_DECRYPT(user.id_user, 'nur') = ?", $nrp)
             ->first($columns);
     }
 }

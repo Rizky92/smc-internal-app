@@ -34,6 +34,8 @@ class BaseLayout extends Component
         /** @var \App\Models\Aplikasi\User $user */
         $user = auth()->user();
 
+        $su = config('permission.superadmin_name');
+
         $this->title = $title;
         $this->current = URL::current();
         $this->nama = $user->nama;
@@ -177,21 +179,28 @@ class BaseLayout extends Component
                 'name' => 'Admin',
                 'icon' => "fas fa-users-cog",
                 'type' => 'dropdown',
-                'hasAnyPermissions' => $user->hasRole(config('permission.superadmin_name')),
+                'hasAnyPermissions' => $user->hasRole($su),
                 'items' => [
                     [
                         'name' => 'Manajemen User',
                         'url' => route('admin.users.manajemen'),
                         'icon' => "fas fa-users",
                         'type' => 'link',
-                        'hasAnyPermissions' => $user->hasRole(config('permission.superadmin_name')),
+                        'hasAnyPermissions' => $user->hasRole($su),
                     ],
                     [
                         'name' => 'Pengaturan Hak Akses',
                         'url' => route('admin.users.hak-akses'),
                         'icon' => "fas fa-key",
                         'type' => 'link',
-                        'hasAnyPermissions' => $user->hasRole(config('permission.superadmin_name')),
+                        'hasAnyPermissions' => $user->hasRole($su),
+                    ],
+                    [
+                        'name' => 'Khanza Set Akses User',
+                        'url' => route('admin.users.hak-akses-user'),
+                        'icon' => 'fas fa-users',
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->hasRole($su),
                     ],
                 ],
             ],

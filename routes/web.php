@@ -16,6 +16,7 @@ use App\Http\Livewire\Perawatan\DaftarPasienRanap;
 use App\Http\Livewire\RekamMedis\LaporanDemografiPasien;
 use App\Http\Livewire\RekamMedis\LaporanStatistikRekamMedis;
 use App\Http\Livewire\Keuangan\StokPerRuangan;
+use App\Http\Livewire\Khanza\User\ManajemenUser as KhanzaManajemenUser;
 use App\Http\Livewire\User\ManajemenHakAkses;
 use App\Http\Livewire\User\ManajemenUser;
 use Illuminate\Support\Facades\Route;
@@ -126,5 +127,8 @@ Route::prefix('admin')
 
                 Route::get('/hak-akses', ManajemenHakAkses::class)
                     ->name('hak-akses');
+
+                Route::get('hak-akses-user', KhanzaManajemenUser::class)
+                    ->name('hak-akses-user');
             });
     });

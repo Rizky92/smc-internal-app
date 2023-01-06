@@ -1,6 +1,6 @@
 @props([
     'useDefaultFilter' => false,
-    'loading' => false,
+    'useLoading' => false,
 
     'header' => null,
     'body' => null,
@@ -25,7 +25,7 @@
             @endif
         </div>
     @endif
-    <div class="card-body">
+    <div {{ $body->attributes->merge(['class' => 'card-body']) }}>
         {{ $body }}
     </div>
     @if ($footer)
@@ -33,7 +33,7 @@
             {{ $footer }}
         </div>
     @endif
-    @if ($loading)
+    @if ($useLoading)
         <x-card.loading />
     @endif
 </div>

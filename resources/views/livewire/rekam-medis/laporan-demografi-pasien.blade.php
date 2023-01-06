@@ -1,75 +1,47 @@
 <div>
     <x-flash />
 
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-12">
-                    <div class="d-flex align-items-center justify-content-start">
-                        <span class="text-sm pr-4">Periode:</span>
-                        <input class="form-control form-control-sm" style="width: 10rem" type="date" wire:model.defer="periodeAwal" />
-                        <span class="text-sm px-2">sampai</span>
-                        <input class="form-control form-control-sm" style="width: 10rem" type="date" wire:model.defer="periodeAkhir" />
-                        <div class="ml-auto">
-                            <button class="ml-auto btn btn-default btn-sm" type="button" wire:click="exportToExcel">
-                                <i class="fas fa-file-excel"></i>
-                                <span class="ml-1">Export ke Excel</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row mt-2">
-                <x-filter />
-            </div>
-        </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover table-striped table-sm text-sm m-0" style="width: 150rem">
-                    <thead>
-                        <tr>
-                            <th width="250">Kecamatan</th>
-                            <th width="70">No. RM</th>
-                            <th width="150">No. Registrasi</th>
-                            <th width="250">Nama Pasien</th>
-                            <th width="500">Alamat</th>
-                            <th width="50">Umur</th>
-                            <th width="50">L / P</th>
-                            <th>Diagnosa</th>
-                            <th width="100">Agama</th>
-                            <th width="100">Pendidikan</th>
-                            <th width="100">Bahasa</th>
-                            <th width="100">Suku</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($this->demografiPasien as $pasien)
-                            <tr>
-                                <td>{{ $pasien->kecamatan }}</td>
-                                <td>{{ $pasien->no_rm }}</td>
-                                <td>{{ $pasien->no_rawat }}</td>
-                                <td>{{ $pasien->nm_pasien }}</td>
-                                <td>{{ $pasien->almt }}</td>
-                                <td>{{ $pasien->umur }}</td>
-                                <td>{{ $pasien->jk }}</td>
-                                <td>{{ $pasien->diagnosa }}</td>
-                                <td>{{ $pasien->agama }}</td>
-                                <td>{{ $pasien->pendidikan }}</td>
-                                <td>{{ $pasien->bahasa }}</td>
-                                <td>{{ $pasien->suku }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="card-footer">
-            <div class="d-flex align-items-center justify-content-start bg-light">
-                <p class="text-muted">Menampilkan {{ $this->demografiPasien->count() }} dari total {{ number_format($this->demografiPasien->total(), 0, ',', '.') }} item.</p>
-                <div class="ml-auto">
-                    {{ $this->demografiPasien->links() }}
-                </div>
-            </div>
-        </div>
-    </div>
+    <x-card use-default-filter use-loading>
+        <x-slot name="body" class="table-responsive p-0">
+            <x-table style="width: 150rem">
+                <x-slot name="columns">
+                    <x-table.th width="250">Kecamatan</x-table.th>
+                    <x-table.th width="70">No. RM</x-table.th>
+                    <x-table.th width="150">No. Registrasi</x-table.th>
+                    <x-table.th width="250">Nama Pasien</x-table.th>
+                    <x-table.th width="500">Alamat</x-table.th>
+                    <x-table.th width="50">Umur</x-table.th>
+                    <x-table.th width="50">L / P</x-table.th>
+                    <x-table.th>Diagnosa</x-table.th>
+                    <x-table.th width="100">Agama</x-table.th>
+                    <x-table.th width="100">Pendidikan</x-table.th>
+                    <x-table.th width="100">Bahasa</x-table.th>
+                    <x-table.th width="100">Suku</x-table.th>
+                </x-slot>
+                <x-slot name="body">
+                    @foreach ($this->demografiPasien as $pasien)
+                        <x-table.tr>
+                            <x-table.td>{{ $pasien->kecamatan }}</x-table.td>
+                            <x-table.td>{{ $pasien->no_rm }}</x-table.td>
+                            <x-table.td>{{ $pasien->no_rawat }}</x-table.td>
+                            <x-table.td>{{ $pasien->nm_pasien }}</x-table.td>
+                            <x-table.td>{{ $pasien->almt }}</x-table.td>
+                            <x-table.td>{{ $pasien->umur }}</x-table.td>
+                            <x-table.td>{{ $pasien->jk }}</x-table.td>
+                            <x-table.td>{{ $pasien->diagnosa }}</x-table.td>
+                            <x-table.td>{{ $pasien->agama }}</x-table.td>
+                            <x-table.td>{{ $pasien->pendidikan }}</x-table.td>
+                            <x-table.td>{{ $pasien->bahasa }}</x-table.td>
+                            <x-table.td>{{ $pasien->suku }}</x-table.td>
+                        </x-table.tr>
+                    @endforeach
+                </x-slot>
+            </x-table>
+        </x-slot>
+        <x-slot name="footer">
+            <x-paginator :count="$this->demografiPasien->count()" :total="$this->demografiPasien->total()">
+                {{ $this->demografiPasien->links() }}
+            </x-paginator>
+        </x-slot>
+    </x-card>
 </div>

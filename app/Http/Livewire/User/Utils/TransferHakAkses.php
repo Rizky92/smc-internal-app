@@ -96,7 +96,7 @@ class TransferHakAkses extends Component
 
         $this->emit('flash', [
             'flash.type' => 'success',
-            'flash.message' => "Hak akses untuk user {$this->nrp} berhasil diubah!",
+            'flash.message' => "Transfer hak akses berhasil!",
         ]);
 
         $this->resetModal();

@@ -1,47 +1,36 @@
 <div>
     <x-flash />
 
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-12">
-                    <div class="d-flex align-items-center justify-content-start">
-                        <div class="d-flex align-items-center">
-                            <span class="text-sm pr-2">Tahun:</span>
-                            <div class="input-group input-group-sm" style="width: 5rem">
-                                <select class="custom-control custom-select" name="tahun" wire:model.defer="tahun">
-                                    @foreach (range((int) now()->format('Y'), 2022, -1) as $year)
-                                        <option value="{{ $year }}">{{ $year }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <button class="ml-2 btn btn-sm btn-default" type="button" wire:click="$refresh">
-                            <i class="fas fa-sync-alt"></i>
-                            <span class="ml-1">Refresh</span>
-                        </button>
-                        <div class="ml-auto">
-                            <button class="btn btn-default btn-sm" type="button" wire:click="exportToExcel">
-                                <i class="fas fa-file-excel"></i>
-                                <span class="ml-1">Export ke Excel</span>
-                            </button>
-                        </div>
-                    </div>
+    <x-card>
+        <x-slot name="header">
+            <x-card.row>
+                <x-filter.label>Tahun:</x-filter.label>
+                <div class="input-group input-group-sm ml-2" style="width: 5rem">
+                    @php
+                        $year = collect(range((int) now()->format('Y'), 2022, -1));
+                        
+                        $year = $year
+                            ->mapWithKeys(function ($value, $key) {
+                                return [$value => $value];
+                            })
+                            ->toArray();
+                    @endphp
+                    <x-filter.select model="tahun" :options="$year" constant-width />
                 </div>
-            </div>
-        </div>
-        <div class="card-body table-responsive p-0 border-top">
-            <table class="table table-hover table-striped table-sm text-sm" id="table_index" style="width: 150rem">
-                <thead>
-                    <tr>
-                        @php($bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'])
-                        <th width="250">Laporan</th>
-                        @foreach ($bulan as $b)
-                            <th class="text-center px-0" width="150">{{ $b }}</th>
-                        @endforeach
-                    </tr>
-                </thead>
-                <tbody>
+                <x-filter.button-search class="ml-2" title="Refresh" method="$refresh" icon="fas fa-sync-alt" />
+                <x-filter.button-export-excel class="ml-auto" />
+            </x-card.row>
+        </x-slot>
+        <x-slot name="body" class="table-responsive p-0">
+            <x-table style="width: 150rem">
+                <x-slot name="columns">
+                    @php($bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'])
+                    <x-table.th width="250">Laporan</x-table.th>
+                    @foreach ($bulan as $b)
+                        <x-table.th class="text-center px-0" width="150">{{ $b }}</x-table.th>
+                    @endforeach
+                </x-slot>
+                <x-slot name="body">
                     <tr>
                         <th scope="row" width="250">TOTAL KUNJUNGAN</th>
                         @foreach ($this->kunjunganTotal as $item)
@@ -144,8 +133,8 @@
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
                     </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+                </x-slot>
+            </x-table>
+        </x-slot>
+    </x-card>
 </div>

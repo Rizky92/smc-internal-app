@@ -28,68 +28,56 @@
         @endpush
     @endonce
 
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-12">
-                    <div class="d-flex align-items-center justify-content-start" wire:ignore>
-                        <div class="d-flex align-items-center">
-                            <span class="text-sm pr-2">Ruangan:</span>
-                            <select class="form-control form-control-sm simple-select2-sm input-sm" id="bangsal" autocomplete="off">
-                                <option value="-">-</option>
-                                @foreach ($this->bangsal as $kode => $nama)
-                                    <option value="{{ $kode }}">{{ $nama }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="ml-auto">
-                            <button class="btn btn-default btn-sm" type="button" wire:click="exportToExcel">
-                                <i class="fas fa-file-excel"></i>
-                                <span class="ml-1">Export ke Excel</span>
-                            </button>
-                        </div>
-                    </div>
+    <x-card>
+        <x-slot name="header">
+            <x-card.row>
+                <x-filter.label constant-width>Ruangan:</x-filter.label>
+                <div wire:ignore class="w-25">
+                    <select class="form-control form-control-sm simple-select2-sm input-sm" id="bangsal" autocomplete="off">
+                        <option value="-">-</option>
+                        @foreach ($this->bangsal as $kode => $nama)
+                            <option value="{{ $kode }}">{{ $nama }}</option>
+                        @endforeach
+                    </select>
                 </div>
-            </div>
-            <div class="row mt-2">
-                <x-filter />
-            </div>
-        </div>
-        <div class="card-body table-responsive p-0 border-top">
-            <table class="table table-hover table-striped table-sm text-sm">
-                <thead>
-                    <tr>
-                        <th>Ruangan</th>
-                        <th>Kode</th>
-                        <th>Nama</th>
-                        <th>Satuan</th>
-                        <th>Harga</th>
-                        <th>Stok saat ini</th>
-                        <th>Projeksi Harga</th>
-                    </tr>
-                </thead>
-                <tbody>
+                <x-filter.button-export-excel class="ml-auto" />
+            </x-card.row>
+            <x-card.row class="mt-2">
+                <x-filter.select-perpage :constantWidth="true" />
+                <x-filter.button-reset-filters class="ml-auto" />
+                <x-filter.search class="ml-2" />
+            </x-card.row>
+        </x-slot>
+        <x-slot name="body" class="table-responsive p-0">
+            <x-table>
+                <x-slot name="columns">
+                    <x-table.th>Ruangan</x-table.th>
+                    <x-table.th>Kode</x-table.th>
+                    <x-table.th>Nama</x-table.th>
+                    <x-table.th>Satuan</x-table.th>
+                    <x-table.th>Harga</x-table.th>
+                    <x-table.th>Stok saat ini</x-table.th>
+                    <x-table.th>Projeksi Harga</x-table.th>
+                </x-slot>
+                <x-slot name="body">
                     @foreach ($this->stokObatPerRuangan as $obat)
-                        <tr>
-                            <td>{{ $obat->nm_bangsal }}</td>
-                            <td>{{ $obat->kode_brng }}</td>
-                            <td>{{ $obat->nama_brng }}</td>
-                            <td>{{ $obat->satuan }}</td>
-                            <td>{{ rp($obat->h_beli) }}</td>
-                            <td>{{ $obat->stok }}</td>
-                            <td>{{ rp($obat->projeksi_harga) }}</td>
-                        </tr>
+                        <x-table.tr>
+                            <x-table.td>{{ $obat->nm_bangsal }}</x-table.td>
+                            <x-table.td>{{ $obat->kode_brng }}</x-table.td>
+                            <x-table.td>{{ $obat->nama_brng }}</x-table.td>
+                            <x-table.td>{{ $obat->satuan }}</x-table.td>
+                            <x-table.td>{{ rp($obat->h_beli) }}</x-table.td>
+                            <x-table.td>{{ $obat->stok }}</x-table.td>
+                            <x-table.td>{{ rp($obat->projeksi_harga) }}</x-table.td>
+                        </x-table.tr>
                     @endforeach
-                </tbody>
-            </table>
-        </div>
-        <div class="card-footer">
-            <div class="d-flex align-items center justify-content-start">
-                <p class="text-muted">Menampilkan {{ $this->stokObatPerRuangan->count() }} dari total {{ number_format($this->stokObatPerRuangan->total(), 0, ',', '.') }} item.</p>
-                <div class="ml-auto">
-                    {{ $this->stokObatPerRuangan->links() }}
-                </div>
-            </div>
-        </div>
-    </div>
+                </x-slot>
+            </x-table>
+        </x-slot>
+        <x-slot name="footer">
+            <x-paginator :count="$this->stokObatPerRuangan->count()" :total="$this->stokObatPerRuangan->total()">
+                {{ $this->stokObatPerRuangan->links() }}
+            </x-paginator>
+        </x-slot>
+    </x-card>
 </div>

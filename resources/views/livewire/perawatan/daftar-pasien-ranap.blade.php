@@ -312,79 +312,72 @@
                 <x-filter.select-perpage class="ml-auto" />
             </x-card.row>
             <x-card.row class="mt-2">
-                <div class="d-flex justify-content-start align-items-center">
-                    <span class="text-sm" style="width: 5rem">Status:</span>
-                    <select class="form-control form-control-sm" style="width: 9rem" wire:model.defer="statusPerawatan">
-                        <option value="-">Sedang dirawat</option>
-                        <option value="tanggal_masuk">Tgl. Masuk</option>
-                        <option value="tanggal_keluar">Tgl. Keluar</option>
-                    </select>
+                <x-filter.label constant-width>Status:</x-filter.label>
+                <div class="input-group input-group-sm" style="width: max-content">
+                    <x-filter.select model="statusPerawatan" :options="[
+                        '-' => 'Sedang Dirawat',
+                        'tanggal_masuk' => 'Tgl. Masuk',
+                        'tanggal_keluar' => 'Tgl. Keluar'
+                    ]" />
                 </div>
                 <x-filter.button-reset-filters class="ml-auto" />
-                <div class="ml-2 input-group input-group-sm" style="width: 16rem">
-                    <x-filter.select title="Status:" model="statusPerawatan" :options="[
-                        '-' => 'Sedang dirawat',
-                        'tanggal_masuk' => 'Tgl. Masuk',
-                        'tanggal_masuk' => 'Tgl. Keluar',
-                    ]" />
-                    <x-filter.button-search class="input-group-append" title="Refresh" icon="fas fa-sync-alt" />
-                </div>
+                <x-filter.search />
             </x-card.row>
         </x-slot>
 
-        <x-slot name="body">
-            <x-card.table style="width: 180rem">
+        <x-slot name="body" class="table-responsive p-0">
+            <x-table style="width: 180rem">
                 <x-slot name="columns">
-                    <x-card.table.th style="width: 20ch">No. Rawat</x-card.table.th>
-                    <x-card.table.th style="width: 10ch">No. RM</x-card.table.th>
-                    <x-card.table.th>Kamar</x-card.table.th>
-                    <x-card.table.th style="width: 25ch">Pasien</x-card.table.th>
-                    <x-card.table.th>Alamat</x-card.table.th>
-                    <x-card.table.th style="width: 8ch">Agama</x-card.table.th>
-                    <x-card.table.th style="width: 25ch">P.J.</x-card.table.th>
-                    <x-card.table.th style="width: 20ch">Jenis Bayar</x-card.table.th>
-                    <x-card.table.th style="width: 10ch">Asal Poli</x-card.table.th>
-                    <x-card.table.th style="width: 25ch">Dokter Poli</x-card.table.th>
-                    <x-card.table.th style="width: 15ch">Status</x-card.table.th>
-                    <x-card.table.th style="width: 12ch">Tgl. Masuk</x-card.table.th>
-                    <x-card.table.th style="width: 12ch">Jam Masuk</x-card.table.th>
-                    <x-card.table.th style="width: 12ch">Tgl. Keluar</x-card.table.th>
-                    <x-card.table.th style="width: 12ch">Jam Keluar</x-card.table.th>
-                    <x-card.table.th style="width: 15ch">Tarif</x-card.table.th>
-                    <x-card.table.th>Dokter P.J.</x-card.table.th>
-                    <x-card.table.th>No. HP</x-card.table.th>
+                    <x-table.th style="width: 20ch">No. Rawat</x-table.th>
+                    <x-table.th style="width: 10ch">No. RM</x-table.th>
+                    <x-table.th>Kamar</x-table.th>
+                    <x-table.th style="width: 25ch">Pasien</x-table.th>
+                    <x-table.th>Alamat</x-table.th>
+                    <x-table.th style="width: 8ch">Agama</x-table.th>
+                    <x-table.th style="width: 25ch">P.J.</x-table.th>
+                    <x-table.th style="width: 20ch">Jenis Bayar</x-table.th>
+                    <x-table.th style="width: 10ch">Asal Poli</x-table.th>
+                    <x-table.th style="width: 25ch">Dokter Poli</x-table.th>
+                    <x-table.th style="width: 15ch">Status</x-table.th>
+                    <x-table.th style="width: 12ch">Tgl. Masuk</x-table.th>
+                    <x-table.th style="width: 12ch">Jam Masuk</x-table.th>
+                    <x-table.th style="width: 12ch">Tgl. Keluar</x-table.th>
+                    <x-table.th style="width: 12ch">Jam Keluar</x-table.th>
+                    <x-table.th style="width: 15ch">Tarif</x-table.th>
+                    <x-table.th>Dokter P.J.</x-table.th>
+                    <x-table.th>No. HP</x-table.th>
                 </x-slot>
                 <x-slot name="body">
                     @foreach ($this->daftarPasienRanap as $pasien)
-                        <x-card.table.tr>
-                            <x-card.table.td>{{ $pasien->no_rawat }}</x-card.table.td>
-                            <x-card.table.td>{{ $pasien->no_rkm_medis }}</x-card.table.td>
-                            <x-card.table.td>{{ $pasien->ruangan }}</x-card.table.td>
-                            <x-card.table.td>{{ $pasien->data_pasien }}</x-card.table.td>
-                            <x-card.table.td>{{ $pasien->alamat_pasien }}</x-card.table.td>
-                            <x-card.table.td>{{ $pasien->agama }}</x-card.table.td>
-                            <x-card.table.td>{{ $pasien->pj }}</x-card.table.td>
-                            <x-card.table.td>{{ $pasien->png_jawab }}</x-card.table.td>
-                            <x-card.table.td>{{ $pasien->nm_poli }}</x-card.table.td>
-                            <x-card.table.td>{{ $pasien->dokter_poli }}</x-card.table.td>
-                            <x-card.table.td>{{ $pasien->stts_pulang }}</x-card.table.td>
-                            <x-card.table.td>{{ $pasien->tgl_masuk }}</x-card.table.td>
-                            <x-card.table.td>{{ $pasien->jam_masuk }}</x-card.table.td>
-                            <x-card.table.td>{{ $pasien->tgl_keluar }}</x-card.table.td>
-                            <x-card.table.td>{{ $pasien->jam_keluar }}</x-card.table.td>
-                            <x-card.table.td>{{ rp($pasien->trf_kamar) }}</x-card.table.td>
-                            <x-card.table.td>{{ $pasien->nama_dokter }}</x-card.table.td>
-                            <x-card.table.td>{{ $pasien->no_tlp }}</x-card.table.td>
-                        </x-card.table.tr>
+                        <x-table.tr>
+                            <x-table.td>{{ $pasien->no_rawat }}</x-table.td>
+                            <x-table.td>{{ $pasien->no_rkm_medis }}</x-table.td>
+                            <x-table.td>{{ $pasien->ruangan }}</x-table.td>
+                            <x-table.td>{{ $pasien->data_pasien }}</x-table.td>
+                            <x-table.td>{{ $pasien->alamat_pasien }}</x-table.td>
+                            <x-table.td>{{ $pasien->agama }}</x-table.td>
+                            <x-table.td>{{ $pasien->pj }}</x-table.td>
+                            <x-table.td>{{ $pasien->png_jawab }}</x-table.td>
+                            <x-table.td>{{ $pasien->nm_poli }}</x-table.td>
+                            <x-table.td>{{ $pasien->dokter_poli }}</x-table.td>
+                            <x-table.td>{{ $pasien->stts_pulang }}</x-table.td>
+                            <x-table.td>{{ $pasien->tgl_masuk }}</x-table.td>
+                            <x-table.td>{{ $pasien->jam_masuk }}</x-table.td>
+                            <x-table.td>{{ $pasien->tgl_keluar }}</x-table.td>
+                            <x-table.td>{{ $pasien->jam_keluar }}</x-table.td>
+                            <x-table.td>{{ rp($pasien->trf_kamar) }}</x-table.td>
+                            <x-table.td>{{ $pasien->nama_dokter }}</x-table.td>
+                            <x-table.td>{{ $pasien->no_tlp }}</x-table.td>
+                        </x-table.tr>
                     @endforeach
                 </x-slot>
-            </x-card.table>
+            </x-table>
         </x-slot>
 
         <x-slot name="footer">
-            <x-card.paginator :count="$this->daftarPasienRanap->count()" :total="$this->daftarPasienRanap->total()">
-                <x-slot name="links">{{ $this->daftarPasienRanap->links() }}</x-slot>
-            </x-card.paginator>
+            <x-paginator :count="$this->daftarPasienRanap->count()" :total="$this->daftarPasienRanap->total()">
+                {{ $this->daftarPasienRanap->links() }}
+            </x-paginator>
         </x-slot>
     </x-card>
 </div>

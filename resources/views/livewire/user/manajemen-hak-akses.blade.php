@@ -20,7 +20,10 @@
 
                     let permissions = Array.from(permissionIds.split(','))
 
-                    console.log({permissionIds, roleId});
+                    console.log({
+                        permissionIds,
+                        roleId
+                    });
 
                     inputPermissions.each((i, el) => el.checked = permissions.find(v => v === el.value))
                 }
@@ -48,8 +51,8 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body position-relative">
-                    <div class="row sticky-top bg-white pb-3 px-0 mx-0">
+                <div class="modal-body position-relative py-0">
+                    <div class="row sticky-top bg-white py-3 px-3 mx-0">
                         <div class="col-12">
                             <div class="d-flex justify-content-start align-items-center">
                                 <label for="cari_permission" class="pr-2 mt-1 text-sm">Cari permission: </label>
@@ -82,79 +85,48 @@
         </div>
     </div>
 
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-12">
-                    <div class="d-flex justify-content-start align-items-center">
-                        <span class="text-sm pr-2">Tampilkan:</span>
-                        <div class="input-group input-group-sm" style="width: 4rem">
-                            <select name="perpage" class="custom-control custom-select" wire:model.defer="perpage">
-                                <option value="10">10</option>
-                                <option value="25">25</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                                <option value="200">200</option>
-                                <option value="500">500</option>
-                                <option value="1000">1000</option>
-                            </select>
-                        </div>
-                        <span class="text-sm pl-2">per halaman</span>
-                        <div class="ml-auto input-group input-group-sm" style="width: 20rem">
-                            <input type="search" class="form-control" wire:model.defer="cari" placeholder="Cari..." wire:keydown.enter.stop="searchData" />
-                            <div class="input-group-append">
-                                <button type="button" wire:click="searchData" class="btn btn-sm btn-default">
-                                    <i class="fas fa-sync-alt"></i>
-                                    <span class="ml-1">Refresh</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="card-body table-responsive p-0 border-top border-bottom">
-            <table id="table_index" class="table table-hover table-striped table-sm text-sm">
-                <thead>
-                    <tr>
-                        <th>Nama</th>
-                        <th>Perizinan yang diberikan</th>
-                    </tr>
-                </thead>
-                <tbody>
+    <x-card>
+        <x-slot name="header">
+            <x-card.row>
+                <x-filter.select-perpage />
+                <x-filter.button-reset-filters class="ml-auto" />
+                <x-filter.search class="ml-2" />
+            </x-card.row>
+        </x-slot>
+
+        <x-slot name="body" class="table-responsive p-0">
+            <x-table>
+                <x-slot name="columns">
+                    <x-table.th>Nama</x-table.th>
+                    <x-table.th>Perizinan yang Diberikan</x-table.th>
+                </x-slot>
+                <x-slot name="body">
                     @foreach ($this->roles as $role)
-                        <tr style="position: relative">
-                            <td>
+                        <x-table.tr>
+                            <x-table.td>
                                 {{ Str::upper($role->name) }}
-                                <a href="#" style="display: inline; position: absolute; left: 0; right: 0; top: 0; bottom: 0;"
-                                    data-role-id="{{ $role->id }}"
-                                    data-permission-ids="{{ $role->permissions->pluck('id')->join(',') }}"
-                                    data-toggle="modal"
-                                    data-target="#permission-modal"
-                                    onclick="loadData(this.dataset)"
-                                ></a>
-                            </td>
-                            <td>
+                                <x-slot name="clickable" data-role-id="{{ $role->id }}" data-permission-ids="{{ $role->permissions->pluck('id')->join(',') }}" data-toggle="modal" data-target="#permission-modal"></x-slot>
+                            </x-table.td>
+                            <x-table.td>
                                 <p>
-                                    @if ($role->name === config('permission.superadmin_name')) * @endif
+                                    @if ($role->name === config('permission.superadmin_name'))
+                                        *
+                                    @endif
                                     @foreach ($role->permissions as $permission)
                                         @php($br = $loop->last ? '' : '<br>')
                                         {{ $permission->name }} {!! $br !!}
                                     @endforeach
                                 </p>
-                            </td>
-                        </tr>
+                            </x-table.td>
+                        </x-table.tr>
                     @endforeach
-                </tbody>
-            </table>
-        </div>
-        <div class="card-footer">
-            <div class="d-flex align-items center justify-content-start">
-                <p class="text-muted">Menampilkan {{ $this->roles->count() }} dari total {{ number_format($this->roles->total(), 0, ',', '.') }} item.</p>
-                <div class="ml-auto">
-                    {{ $this->roles->links() }}
-                </div>
-            </div>
-        </div>
-    </div>
+                </x-slot>
+            </x-table>
+        </x-slot>
+        <x-slot name="footer">
+            <x-paginator :count="$this->roles->count()" :total="$this->roles->total()">
+                {{ $this->roles->links() }}
+            </x-paginator>
+        </x-slot>
+    </x-card>
 </div>
