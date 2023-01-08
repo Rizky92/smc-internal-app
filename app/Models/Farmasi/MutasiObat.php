@@ -17,7 +17,7 @@ class MutasiObat extends Model
 
     public $timestamps = false;
 
-    public function scopeMutasiObatFarmasi(Builder $query, string $year = '2022'): Builder
+    public function scopeJumlahTransferOrder(Builder $query, string $year = '2022'): Builder
     {
         return $query->selectRaw("
             round(sum(mutasibarang.jml * mutasibarang.harga)) jumlah,
@@ -27,9 +27,11 @@ class MutasiObat extends Model
             ->groupByRaw('month(mutasibarang.tanggal)');
     }
 
-    public static function mutasiObatDariFarmasi(string $year = '2022'): array
+    public static function transferOrder(string $year = '2022'): array
     {
-        $data = (new static)::mutasiObatFarmasi($year)->get()
+        $data = static::query()
+            ->jumlahTransferOrder($year)
+            ->get()
             ->mapWithKeys(function ($value, $key) {
                 return [$value->bulan => $value->jumlah];
             })->toArray();

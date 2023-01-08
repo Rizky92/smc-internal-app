@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Livewire\Khanza\User\Utils;
+namespace App\Http\Livewire\User\Khanza;
 
 use App\Models\Aplikasi\User;
-use App\Models\Khanza\HakAkses;
+use App\Models\HakAksesKhanza;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -29,7 +29,7 @@ class TransferHakAkses extends Component
 
     public function getHakAksesTersediaProperty()
     {
-        Return HakAkses::pluck('judul_menu', 'nama_field');
+        return HakAksesKhanza::pluck('judul_menu', 'nama_field');
     }
 
     public function getAvailableUsersProperty()
@@ -46,7 +46,7 @@ class TransferHakAkses extends Component
 
     public function render()
     {
-        return view('livewire.khanza.user.utils.transfer-hak-akses');
+        return view('livewire.user.khanza.transfer-hak-akses');
     }
 
     public function prepareUser(string $nrp, string $nama)

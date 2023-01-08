@@ -10,7 +10,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Rizky92\Xlswriter\ExcelExport;
 
-class KunjunganResepPasien extends Component
+class KunjunganPerBentukObat extends Component
 {
     use WithPagination, FlashComponent;
 
@@ -63,6 +63,12 @@ class KunjunganResepPasien extends Component
         $this->jenisPerawatan = '';
     }
 
+    public function render()
+    {
+        return view('livewire.farmasi.kunjungan-per-bentuk-obat')
+            ->layout(BaseLayout::class, ['title' => 'Kunjungan Resep Pasien Per Bentuk Obat']);
+    }
+
     public function getKunjunganResepObatRegularPasienProperty()
     {
         return ResepDokter::kunjunganResepObatRegular(
@@ -81,12 +87,6 @@ class KunjunganResepPasien extends Component
             $this->jenisPerawatan
         )
             ->paginate($this->perpage, ['*'], self::OBAT_RACIKAN_PAGE);
-    }
-
-    public function render()
-    {
-        return view('livewire.farmasi.kunjungan-resep-pasien')
-            ->layout(BaseLayout::class, ['title' => 'Kunjungan Resep Pasien Per Bentuk Obat']);
     }
 
     public function exportToExcel()

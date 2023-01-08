@@ -8,9 +8,6 @@ use LogicException;
 
 trait Searchable
 {
-    /** @var array<int, string> $searchColumns */
-    protected $searchColumns;
-
     /**
      * @param  \Illuminate\Database\Eloquent\Builder $query
      * @param  string $search
@@ -21,10 +18,6 @@ trait Searchable
      */
     public function scopeSearch(Builder $query, string $search, $columns = []): Builder
     {
-        if (is_array($this->searchColumns)) {
-            $columns = array_merge($columns, $this->searchColumns);
-        }
-
         if (method_exists($this, 'searchColumns')) {
             $columns = array_merge($columns, $this->searchColumns());
         }
@@ -35,7 +28,7 @@ trait Searchable
 
         $search = Str::lower($search);
 
-        $query->where(function (Builder $query) use ($columns, $search) {
+        return $query->where(function (Builder $query) use ($columns, $search) {
             $query->where(array_shift($columns), 'LIKE', "%{$search}%");
             foreach ($columns as $column) {
                 $query->orWhere($column, 'LIKE', "%{$search}%");
@@ -43,7 +36,5 @@ trait Searchable
 
             return $query;
         });
-
-        return $query;
     }
 }

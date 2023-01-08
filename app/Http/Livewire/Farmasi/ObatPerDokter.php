@@ -1,25 +1,27 @@
 <?php
 
-namespace App\Http\Livewire\RekamMedis;
+namespace App\Http\Livewire\Farmasi;
 
-use App\Models\RekamMedis\DemografiPasien;
+use App\Models\Farmasi\ResepObat;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Rizky92\Xlswriter\ExcelExport;
 
-class LaporanDemografiPasien extends Component
+class ObatPerDokter extends Component
 {
     use WithPagination, FlashComponent;
-
-    public $cari;
-
-    public $perpage;
 
     public $periodeAwal;
 
     public $periodeAkhir;
+
+    public $cari;
+
+    public $perpage;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -30,7 +32,7 @@ class LaporanDemografiPasien extends Component
         'fullRefresh',
     ];
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
             'cari' => [
@@ -44,6 +46,9 @@ class LaporanDemografiPasien extends Component
                 'except' => now()->endOfMonth()->format('Y-m-d'),
                 'as' => 'periode_akhir',
             ],
+            'page' => [
+                'except' => 1,
+            ],
             'perpage' => [
                 'except' => 25,
             ],
@@ -52,23 +57,22 @@ class LaporanDemografiPasien extends Component
 
     public function mount()
     {
-        $this->cari = '';
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
         $this->perpage = 25;
     }
 
-    public function getDemografiPasienProperty()
+    public function getObatPerDokterProperty()
     {
-        return DemografiPasien::query()
-            ->whereBetween('tgl_registrasi', [$this->periodeAwal, $this->periodeAkhir])
+        return ResepObat::query()
+            ->penggunaanObatPerDokter($this->periodeAwal, $this->periodeAkhir, Str::lower($this->cari))
             ->paginate($this->perpage);
     }
 
     public function render()
     {
-        return view('livewire.rekam-medis.laporan-demografi-pasien')
-            ->layout(BaseLayout::class, ['title' => 'Demografi Pasien']);
+        return view('livewire.farmasi.obat-per-dokter')
+            ->layout(BaseLayout::class, ['title' => 'Penggunaan Obat Per Dokter Peresep']);
     }
 
     public function exportToExcel()
@@ -82,41 +86,27 @@ class LaporanDemografiPasien extends Component
     {
         $timestamp = now()->format('Ymd_His');
 
-        $filename = "{$timestamp}_laporan_demografi_pasien.xlsx";
+        $filename = "{$timestamp}_obat_perdokter.xlsx";
+
+        $headerTglAwal = Carbon::parse($this->periodeAwal)->format('d F Y');
+        $headerTglAkhir = Carbon::parse($this->periodeAkhir)->format('d F Y');
 
         $titles = [
             'RS Samarinda Medika Citra',
-            'Laporan Demografi Pasien',
-            now()->format('d F Y'),
+            'Laporan Penggunaan Obat Per Dokter Peresep',
+            "{$headerTglAwal} - {$headerTglAkhir}",
         ];
 
-        $columnHeaders = [
-            'Kecamatan',
-            'No. RM',
-            'No. Registrasi',
-            'Pasien',
-            'Alamat',
-            '0 - < 28 Hr',
-            '28 Hr - 1 Th',
-            '1 - 4 Th',
-            '5 - 14 Th',
-            '15 - 24 Th',
-            '25 - 44 Th',
-            '45 - 64 Th',
-            '> 64 Th',
-            'PR',
-            'LK',
-            'Diagnosa',
-            'Agama',
-            'Pendidikan',
-            'Bahasa',
-            'Suku',
-        ];
+        $columnHeaders = ['No. Resep', 'Tgl. Validasi', 'Jam', 'Nama Obat', 'Jumlah', 'Dokter Peresep', 'Asal', 'Asal Poli'];
+
+        $data = ResepObat::penggunaanObatPerDokter($this->periodeAwal, $this->periodeAkhir)
+            ->cursor()
+            ->toArray();
 
         $excel = ExcelExport::make($filename)
             ->setPageHeaders($titles)
             ->setColumnHeaders($columnHeaders)
-            ->setData(DemografiPasien::laporanDemografiExcel($this->periodeAwal, $this->periodeAkhir)->get());
+            ->setData($data);
 
         return $excel->export();
     }
@@ -133,9 +123,10 @@ class LaporanDemografiPasien extends Component
         $this->cari = '';
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->resetPage();
         $this->perpage = 25;
 
-        $this->searchData();
+        $this->emit('$refresh');
     }
 
     public function fullRefresh()

@@ -10,7 +10,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Rizky92\Xlswriter\ExcelExport;
 
-class RingkasanPerbandinganBarangPO extends Component
+class PerbandinganBarangPO extends Component
 {
     use WithPagination, FlashComponent;
 
@@ -79,7 +79,7 @@ class RingkasanPerbandinganBarangPO extends Component
 
     public function render()
     {
-        return view('livewire.farmasi.ringkasan-perbandingan-barang-p-o')
+        return view('livewire.farmasi.perbandingan-barang-p-o')
             ->layout(BaseLayout::class, ['title' => 'Ringkasan Perbandingan Barang PO Farmasi']);
     }
 

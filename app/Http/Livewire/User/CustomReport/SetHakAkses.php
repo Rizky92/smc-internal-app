@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\User\Utils;
+namespace App\Http\Livewire\User\CustomReport;
 
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
@@ -56,7 +56,7 @@ class SetHakAkses extends Component
 
     public function render()
     {
-        return view('livewire.user.utils.set-hak-akses');
+        return view('livewire.user.custom-report.set-hak-akses');
     }
 
     public function prepareUser(string $nrp)

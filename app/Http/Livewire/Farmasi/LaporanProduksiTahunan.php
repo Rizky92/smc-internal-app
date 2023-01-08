@@ -146,9 +146,9 @@ class LaporanProduksiTahunan extends Component
         return PengeluaranStokObat::stokPengeluaranMedisFarmasi($this->tahun);
     }
 
-    public function getMutasiObatDariFarmasiProperty()
+    public function getTransferOrderProperty()
     {
-        return MutasiObat::mutasiObatDariFarmasi($this->tahun);
+        return MutasiObat::transferOrder($this->tahun);
     }
 
     public function render()

@@ -10,7 +10,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Rizky92\Xlswriter\ExcelExport;
 
-class StokPerRuangan extends Component
+class StokObatRuangan extends Component
 {
     use WithPagination, FlashComponent;
 
@@ -64,7 +64,7 @@ class StokPerRuangan extends Component
 
     public function render()
     {
-        return view('livewire.keuangan.stok-per-ruangan')
+        return view('livewire.keuangan.stok-obat-ruangan')
             ->layout(BaseLayout::class, ['title' => 'Stok Per Ruangan']);
     }
 

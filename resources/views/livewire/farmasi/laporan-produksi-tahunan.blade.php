@@ -15,11 +15,19 @@
         <x-slot name="body" class="table-responsive">
             <x-table style="width: 150rem">
                 <x-slot name="columns">
-                    @php($bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'])
                     <x-table.th width="250">Laporan</x-table.th>
-                    @foreach ($bulan as $b)
-                        <x-table.th class="text-center px-0" width="150">{{ $b }}</x-table.th>
-                    @endforeach
+                    <x-table.th class="text-center px-0" width="150">Januari</x-table.th>
+                    <x-table.th class="text-center px-0" width="150">Februari</x-table.th>
+                    <x-table.th class="text-center px-0" width="150">Maret</x-table.th>
+                    <x-table.th class="text-center px-0" width="150">April</x-table.th>
+                    <x-table.th class="text-center px-0" width="150">Mei</x-table.th>
+                    <x-table.th class="text-center px-0" width="150">Juni</x-table.th>
+                    <x-table.th class="text-center px-0" width="150">Juli</x-table.th>
+                    <x-table.th class="text-center px-0" width="150">Agustus</x-table.th>
+                    <x-table.th class="text-center px-0" width="150">September</x-table.th>
+                    <x-table.th class="text-center px-0" width="150">Oktober</x-table.th>
+                    <x-table.th class="text-center px-0" width="150">November</x-table.th>
+                    <x-table.th class="text-center px-0" width="150">Desember</x-table.th>
                 </x-slot>
                 <x-slot name="body">
                     <tr>
@@ -42,7 +50,7 @@
                     </tr>
                     <tr>
                         <th>Kunjungan IGD</th>
-                        @foreach ($this->kunjunganIgd as $item)
+                        @foreach ($this->kunjunganIGD as $item)
                             <td class="text-center px-0" width="150">{{ $item }}</td>
                         @endforeach
                     </tr>
@@ -120,7 +128,7 @@
                     </tr>
                     <tr>
                         <th width="250">Transfer Order</th>
-                        @foreach ($this->mutasiObatDariFarmasi as $item)
+                        @foreach ($this->transferOrder as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
                     </tr>

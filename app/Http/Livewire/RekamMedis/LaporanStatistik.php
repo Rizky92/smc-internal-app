@@ -1,17 +1,16 @@
 <?php
 
-namespace App\Http\Livewire\Farmasi;
+namespace App\Http\Livewire\RekamMedis;
 
-use App\Models\Farmasi\ResepObat;
+use App\Models\RekamMedis\StatistikRekamMedis;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
+use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Rizky92\Xlswriter\ExcelExport;
 
-class PenggunaanObatPerdokter extends Component
+class LaporanStatistik extends Component
 {
     use WithPagination, FlashComponent;
 
@@ -32,7 +31,7 @@ class PenggunaanObatPerdokter extends Component
         'fullRefresh',
     ];
 
-    protected function queryString(): array
+    protected function queryString()
     {
         return [
             'cari' => [
@@ -57,22 +56,26 @@ class PenggunaanObatPerdokter extends Component
 
     public function mount()
     {
+        $this->cari = '';
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->page = 1;
         $this->perpage = 25;
     }
 
-    public function getObatPerDokterProperty()
+    public function getDataLaporanStatistikProperty()
     {
-        return ResepObat::query()
-            ->penggunaanObatPerDokter($this->periodeAwal, $this->periodeAkhir, Str::lower($this->cari))
+        return StatistikRekamMedis::query()
+            ->denganPencarian($this->cari)
+            ->whereBetween('tgl_masuk', [$this->periodeAwal, $this->periodeAkhir])
+            ->orderBy('no_rawat')
             ->paginate($this->perpage);
     }
 
     public function render()
     {
-        return view('livewire.farmasi.penggunaan-obat-perdokter')
-            ->layout(BaseLayout::class, ['title' => 'Penggunaan Obat Per Dokter Peresep']);
+        return view('livewire.rekam-medis.laporan-statistik')
+            ->layout(BaseLayout::class, ['title' => 'Laporan Statistik']);
     }
 
     public function exportToExcel()
@@ -86,21 +89,59 @@ class PenggunaanObatPerdokter extends Component
     {
         $timestamp = now()->format('Ymd_His');
 
-        $filename = "{$timestamp}_obat_perdokter.xlsx";
+        $filename = "{$timestamp}_rekammedis_laporan_statistik.xlsx";
 
-        $headerTglAwal = Carbon::parse($this->periodeAwal)->format('d F Y');
-        $headerTglAkhir = Carbon::parse($this->periodeAkhir)->format('d F Y');
+        $dateStart = Carbon::parse($this->periodeAwal)->format('d F Y');
+        $dateEnd = Carbon::parse($this->periodeAkhir)->format('d F Y');
 
         $titles = [
             'RS Samarinda Medika Citra',
-            'Laporan Penggunaan Obat Per Dokter Peresep',
-            "{$headerTglAwal} - {$headerTglAkhir}",
+            'Laporan Statistik Rekam Medis',
+            "{$dateStart} - {$dateEnd}",
         ];
 
-        $columnHeaders = ['No. Resep', 'Tgl. Validasi', 'Jam', 'Nama Obat', 'Jumlah', 'Dokter Peresep', 'Asal', 'Asal Poli'];
+        $columnHeaders = [
+            'No. Rawat',
+            'No RM',
+            'Pasien',
+            'NIK',
+            'L / P',
+            'Tgl. Lahir',
+            'Umur',
+            'Agama',
+            'Suku',
+            'Jenis Perawatan',
+            'Pasien Lama / Baru',
+            'Asal Poli',
+            'Dokter Poli',
+            'Status Ralan',
+            'Tgl. Masuk',
+            'Jam Masuk',
+            'Tgl. Pulang',
+            'Jam Pulang',
+            'Diagnosa Masuk',
+            'ICD Diagnosa',
+            'Diagnosa',
+            'ICD Tindakan Ralan',
+            'Tindakan Ralan',
+            'ICD Tindakan Ranap',
+            'Tindakan Ranap',
+            'Lama Operasi',
+            'Rujukan Masuk',
+            'DPJP Ranap',
+            'Kelas',
+            'Penjamin',
+            'Status Bayar',
+            'Status Pulang',
+            'Rujukan Keluar',
+            'No. HP',
+            'Alamat',
+            'Kunjungan ke',
+        ];
 
-        $data = ResepObat::penggunaanObatPerDokter($this->periodeAwal, $this->periodeAkhir)
-            ->cursor()
+        $data = StatistikRekamMedis::whereBetween('tgl_masuk', [$this->periodeAwal, $this->periodeAkhir])
+            ->orderBy('no_rawat')
+            ->get()
             ->toArray();
 
         $excel = ExcelExport::make($filename)
@@ -123,10 +164,9 @@ class PenggunaanObatPerdokter extends Component
         $this->cari = '';
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->resetPage();
         $this->perpage = 25;
 
-        $this->emit('$refresh');
+        $this->searchData();
     }
 
     public function fullRefresh()

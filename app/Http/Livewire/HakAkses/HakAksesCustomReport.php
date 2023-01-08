@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\User;
+namespace App\Http\Livewire\HakAkses;
 
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
@@ -9,7 +9,7 @@ use App\View\Components\BaseLayout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class ManajemenHakAkses extends Component
+class HakAksesCustomReport extends Component
 {
     use WithPagination, FlashComponent;
 
@@ -42,7 +42,7 @@ class ManajemenHakAkses extends Component
 
     public function render()
     {
-        return view('livewire.user.manajemen-hak-akses')
+        return view('livewire.hak-akses.hak-akses-custom-report')
             ->layout(BaseLayout::class, ['title' => 'Pengaturan Hak Akses']);
     }
 

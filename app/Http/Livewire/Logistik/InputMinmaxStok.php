@@ -12,7 +12,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Rizky92\Xlswriter\ExcelExport;
 
-class MinmaxBarang extends Component
+class InputMinmaxStok extends Component
 {
     use WithPagination, FlashComponent;
 
@@ -75,7 +75,7 @@ class MinmaxBarang extends Component
 
     public function render()
     {
-        return view('livewire.logistik.minmax-barang')
+        return view('livewire.logistik.input-minmax-stok')
             ->layout(BaseLayout::class, ['title' => 'Stok Minmax Barang Logistik']);
     }
 

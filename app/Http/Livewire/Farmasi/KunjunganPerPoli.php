@@ -7,7 +7,7 @@ use App\View\Components\BaseLayout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class KunjunganFarmasiPasienPerPoli extends Component
+class KunjunganPerPoli extends Component
 {
     use WithPagination;
 
@@ -40,7 +40,7 @@ class KunjunganFarmasiPasienPerPoli extends Component
 
     public function render()
     {
-        return view('livewire.farmasi.kunjungan-farmasi-pasien-per-poli')
+        return view('livewire.farmasi.kunjungan-per-poli')
             ->layout(BaseLayout::class, ['title' => 'Kunjungan Farmasi Pasien Per Poli']);
     }
 

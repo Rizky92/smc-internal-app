@@ -23,17 +23,10 @@ class User extends Authenticatable
 
     public $timestamps = false;
 
-    protected $hidden = [
-        'password',
-    ];
+    protected $hidden = ['password'];
 
-    protected $with = [
-        'roles',
-    ];
+    protected $with = ['roles'];
 
-    /**
-     * @return array<int,string>
-     */
     protected function searchColumns(): array
     {
         return [
@@ -59,14 +52,12 @@ class User extends Authenticatable
         return $query->selectRaw('user.*');
     }
     
-    /**
-     * @return static
-     */
     public static function findByNRP(string $nrp, array $columns = ['*'])
     {
         if (empty($nrp)) return new static;
 
-        return (new static)::where('petugas.nip', $nrp)
+        return static::query()
+            ->where('petugas.nip', $nrp)
             ->first($columns);
     }
 
@@ -74,7 +65,7 @@ class User extends Authenticatable
     {
         if (empty($nrp)) return new static;
 
-        return (new static)->newQueryWithoutScopes()
+        return static::newQueryWithoutScopes()
             ->withHakAkses()
             ->whereRaw("AES_DECRYPT(user.id_user, 'nur') = ?", $nrp)
             ->first($columns);

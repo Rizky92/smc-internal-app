@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models\Khanza;
+namespace App\Models\Aplikasi;
 
 use Illuminate\Database\Eloquent\Model;
 
-class HakAkses extends Model
+class MappingAksesKhanza extends Model
 {
     protected $connection = 'mysql_smc';
 

@@ -3,43 +3,62 @@
 use Diglactic\Breadcrumbs\Breadcrumbs;
 use Diglactic\Breadcrumbs\Generator as Trail;
 
+
 Breadcrumbs::for('admin.dashboard', function (Trail $trail) {
     $trail->push('Dashboard', route('admin.dashboard'));
 });
 
-Breadcrumbs::for('admin.rawat-inap', function (Trail $trail) {
+
+Breadcrumbs::for('admin.perawatan', function (Trail $trail) {
     $trail->parent('admin.dashboard');
-    $trail->push('Daftar Pasien Ranap', route('admin.rawat-inap'));
+    $trail->push('Perawatan');
 });
+
+Breadcrumbs::for('admin.perawatan.daftar-pasien-ranap', function (Trail $trail) {
+    $trail->parent('admin.perawatan');
+    $trail->push('Daftar Pasien Ranap', route('admin.perawatan.daftar-pasien-ranap'));
+});
+
+
+Breadcrumbs::for('admin.keuangan', function (Trail $trail) {
+    $trail->parent('admin.dashboard');
+    $trail->push('Keuangan');
+});
+
+Breadcrumbs::for('admin.keuangan.stok-obat-ruangan', function (Trail $trail) {
+    $trail->parent('admin.keuangan');
+    $trail->push('Stok Obat Ruangan', route('admin.keuangan.stok-obat-ruangan'));
+});
+
 
 Breadcrumbs::for('admin.farmasi', function (Trail $trail) {
     $trail->parent('admin.dashboard');
     $trail->push('Farmasi');
 });
 
-Breadcrumbs::for('admin.farmasi.darurat-stok', function (Trail $trail) {
+Breadcrumbs::for('admin.farmasi.stok-darurat', function (Trail $trail) {
     $trail->parent('admin.farmasi');
-    $trail->push('Darurat Stok', route('admin.farmasi.darurat-stok'));
+    $trail->push('Stok Darurat', route('admin.farmasi.stok-darurat'));
 });
 
-Breadcrumbs::for('admin.farmasi.kunjungan-pasien-per-poli', function (Trail $trail) {
+Breadcrumbs::for('admin.farmasi.obat-per-dokter', function (Trail $trail) {
     $trail->parent('admin.farmasi');
-    $trail->push('Kunjungan per Poli', route('admin.farmasi.kunjungan-pasien-per-poli'));
+    $trail->push('Obat Per Dokter', route('admin.farmasi.obat-per-dokter'));
 });
 
-Breadcrumbs::for('admin.farmasi.kunjungan-resep', function (Trail $trail) {
+Breadcrumbs::for('admin.farmasi.laporan-produksi', function (Trail $trail) {
     $trail->parent('admin.farmasi');
-    $trail->push('Kunjungan per Bentuk Obat', route('admin.farmasi.kunjungan-resep'));
+    $trail->push('Laporan Produksi', route('admin.farmasi.laporan-produksi'));
 });
 
-Breadcrumbs::for('admin.farmasi.laporan-tahunan', function (Trail $trail) {
+Breadcrumbs::for('admin.farmasi.kunjungan-per-bentuk-obat', function (Trail $trail) {
     $trail->parent('admin.farmasi');
-    $trail->push('Laporan Produksi', route('admin.farmasi.laporan-tahunan'));
+    $trail->push('Kunjungan per Bentuk Obat', route('admin.farmasi.kunjungan-per-bentuk-obat'));
 });
 
-Breadcrumbs::for('admin.farmasi.obat-perdokter', function (Trail $trail) {
+Breadcrumbs::for('admin.farmasi.kunjungan-per-poli', function (Trail $trail) {
     $trail->parent('admin.farmasi');
-    $trail->push('Obat Per Dokter', route('admin.farmasi.obat-perdokter'));
+    $trail->push('Kunjungan per Poli', route('admin.farmasi.kunjungan-per-poli'));
 });
 
 Breadcrumbs::for('admin.farmasi.perbandingan-po-obat', function (Trail $trail) {
@@ -47,39 +66,10 @@ Breadcrumbs::for('admin.farmasi.perbandingan-po-obat', function (Trail $trail) {
     $trail->push('Perbandingan PO Obat', route('admin.farmasi.perbandingan-po-obat'));
 });
 
-Breadcrumbs::for('admin.keuangan', function (Trail $trail) {
-    $trail->parent('admin.dashboard');
-    $trail->push('Keuangan');
-});
-
-Breadcrumbs::for('admin.keuangan.stok-obat-per-ruangan', function (Trail $trail) {
-    $trail->parent('admin.keuangan');
-    $trail->push('Stok Obat Ruangan', route('admin.keuangan.stok-obat-per-ruangan'));
-});
-
-Breadcrumbs::for('admin.logistik', function (Trail $trail) {
-    $trail->parent('admin.dashboard');
-    $trail->push('Logistik');
-});
-
-Breadcrumbs::for('admin.logistik.darurat-stok', function (Trail $trail) {
-    $trail->parent('admin.logistik');
-    $trail->push('Darurat Stok', route('admin.logistik.darurat-stok'));
-});
-
-Breadcrumbs::for('admin.logistik.minmax', function (Trail $trail) {
-    $trail->parent('admin.logistik');
-    $trail->push('Input Stok Minmax', route('admin.logistik.minmax'));
-});
 
 Breadcrumbs::for('admin.rekam-medis', function (Trail $trail) {
     $trail->parent('admin.dashboard');
     $trail->push('Rekam Medis');
-});
-
-Breadcrumbs::for('admin.rekam-medis.demografi-pasien', function (Trail $trail) {
-    $trail->parent('admin.rekam-medis');
-    $trail->push('Demografi Pasien', route('admin.rekam-medis.demografi-pasien'));
 });
 
 Breadcrumbs::for('admin.rekam-medis.laporan-statistik', function (Trail $trail) {
@@ -87,22 +77,45 @@ Breadcrumbs::for('admin.rekam-medis.laporan-statistik', function (Trail $trail) 
     $trail->push('Laporan Statistik', route('admin.rekam-medis.laporan-statistik'));
 });
 
-Breadcrumbs::for('admin.users', function (Trail $trail) {
+Breadcrumbs::for('admin.rekam-medis.laporan-demografi', function (Trail $trail) {
+    $trail->parent('admin.rekam-medis');
+    $trail->push('Demografi Pasien', route('admin.rekam-medis.laporan-demografi'));
+});
+
+
+Breadcrumbs::for('admin.logistik', function (Trail $trail) {
     $trail->parent('admin.dashboard');
-    $trail->push('Admin');
+    $trail->push('Logistik');
 });
 
-Breadcrumbs::for('admin.users.hak-akses', function (Trail $trail) {
-    $trail->parent('admin.users');
-    $trail->push('Pengaturan Hak Akses', route('admin.users.hak-akses'));
+Breadcrumbs::for('admin.logistik.input-minmax-stok', function (Trail $trail) {
+    $trail->parent('admin.logistik');
+    $trail->push('Input Minmax Stok', route('admin.logistik.input-minmax-stok'));
 });
 
-Breadcrumbs::for('admin.users.manajemen', function (Trail $trail) {
-    $trail->parent('admin.users');
-    $trail->push('Manajemen User', route('admin.users.manajemen'));
+Breadcrumbs::for('admin.logistik.stok-darurat', function (Trail $trail) {
+    $trail->parent('admin.logistik');
+    $trail->push('Stok Darurat', route('admin.logistik.stok-darurat'));
 });
 
-Breadcrumbs::for('admin.users.hak-akses-user', function (Trail $trail) {
-    $trail->parent('admin.users');
-    $trail->push('Khanza Set Akses User', route('admin.users.hak-akses-user'));
+
+Breadcrumbs::for('admin.manajemen-user', function (Trail $trail) {
+    $trail->parent('admin.dashboard');
+    $trail->push('Manajemen User', route('admin.manajemen-user'));
+});
+
+
+Breadcrumbs::for('admin.hak-akses', function (Trail $trail) {
+    $trail->parent('admin.dashboard');
+    $trail->push('Pengaturan Hak Akses');
+});
+
+Breadcrumbs::for('admin.hak-akses.custom-report', function (Trail $trail) {
+    $trail->parent('admin.hak-akses');
+    $trail->push('Custom Report', route('admin.hak-akses.custom-report'));
+});
+
+Breadcrumbs::for('admin.hak-akses.khanza', function (Trail $trail) {
+    $trail->parent('admin.hak-akses');
+    $trail->push('Khanza', route('admin.hak-akses.khanza'));
 });

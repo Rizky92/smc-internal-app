@@ -2,53 +2,74 @@
 
 namespace App\Support\Traits\Livewire;
 
-use Illuminate\Support\Facades\Storage;
-use LogicException;
-use Vtiful\Kernel\Excel;
+use Illuminate\Support\Str;
+use Rizky92\Xlswriter\ExcelExport;
 
-trait ExportToExcel
+trait ExcelExportable
 {
-    public function notifyComponent()
+    public function initializeExcelExportable()
+    {
+        $this->listeners = array_merge($this->listeners, [
+            'notifyExportToComponent',
+            'beginExport',
+        ]);
+    }
+
+    abstract protected function filename(): string;
+
+    abstract protected function dataPerSheet(): array;
+
+    abstract protected function columnHeaders(): array;
+
+    protected function getPageHeaders(): array
+    {
+        return [];
+    }
+
+    public function notifyExportToComponent()
     {
         if (method_exists($this, 'flashInfo')) {
             $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
         }
 
-        $this->emit('initializeExport');
+        $this->emit('beginExport');
     }
 
-    public function initializeExport()
+    public function beginExport()
     {
-        if (! method_exists($this, 'getExcelColumnHeaders')) {
-            throw new LogicException('Column headers are not defined!');
-        }
+        // $filename = now()->format('Ymd_His') . '_';
 
-        if (! method_exists($this, 'getExcelData')) {
-            throw new LogicException('No data has been set to export excel');
-        }
+        // $filename .= Str::snake($this->filename());
 
-        $columnHeaders = $this->getExcelColumnHeaders();
+        // $filename .= '.xlsx';
 
-        $timestamp = now()->format('Ymd_His');
+        // $sheet1 = ResepDokter::kunjunganResepObatRegular($this->periodeAwal, $this->periodeAkhir, $this->jenisPerawatan)->get()->toArray();
+        // $sheet2 = ResepDokterRacikan::kunjunganResepObatRacikan($this->periodeAwal, $this->periodeAkhir, $this->jenisPerawatan)->get()->toArray();
 
-        $filename = "excel/{$timestamp}.xlsx";
+        // $titles = [
+        //     'RS Samarinda Medika Citra',
+        //     'Laporan Kunjungan Resep Pasien',
+        //     now()->format('d F Y'),
+        // ];
 
-        if (method_exists($this, 'getFilename')) {
-            $filename = $this->getFilename();
-        }
+        // $columnHeaders = [
+        //     'No. Resep',
+        //     'Dokter Peresep',
+        //     'Tgl. Validasi',
+        //     'Jam',
+        //     'Pasien',
+        //     'Jenis Perawatan',
+        //     'Total Pembelian (RP)',
+        // ];
 
-        $config = [
-            'path' => storage_path('app/public'),
-        ];
+        // $excel = ExcelExport::make($filename, 'Obat Regular')
+        //     ->setPageHeaders($titles)
+        //     ->setColumnHeaders($columnHeaders)
+        //     ->setData($sheet1);
 
-        $data = $this->getExcelData();
+        // $excel->useSheet('Obat Racikan')
+        //     ->setData($sheet2);
 
-        (new Excel($config))
-            ->fileName($filename)
-            ->header($columnHeaders)
-            ->data($data)
-            ->output();
-
-        return Storage::disk('public')->download($filename);
+        // return $excel->export();
     }
 }

@@ -2,25 +2,24 @@
 
 namespace App\Http\Livewire\RekamMedis;
 
-use App\Models\RekamMedis\StatistikRekamMedis;
+use App\Models\RekamMedis\DemografiPasien;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
-use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Rizky92\Xlswriter\ExcelExport;
 
-class LaporanStatistikRekamMedis extends Component
+class LaporanDemografi extends Component
 {
     use WithPagination, FlashComponent;
-
-    public $periodeAwal;
-
-    public $periodeAkhir;
 
     public $cari;
 
     public $perpage;
+
+    public $periodeAwal;
+
+    public $periodeAkhir;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -45,9 +44,6 @@ class LaporanStatistikRekamMedis extends Component
                 'except' => now()->endOfMonth()->format('Y-m-d'),
                 'as' => 'periode_akhir',
             ],
-            'page' => [
-                'except' => 1,
-            ],
             'perpage' => [
                 'except' => 25,
             ],
@@ -59,23 +55,20 @@ class LaporanStatistikRekamMedis extends Component
         $this->cari = '';
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->page = 1;
         $this->perpage = 25;
     }
 
-    public function getDataLaporanStatistikProperty()
+    public function getDemografiPasienProperty()
     {
-        return StatistikRekamMedis::query()
-            ->denganPencarian($this->cari)
-            ->whereBetween('tgl_masuk', [$this->periodeAwal, $this->periodeAkhir])
-            ->orderBy('no_rawat')
+        return DemografiPasien::query()
+            ->whereBetween('tgl_registrasi', [$this->periodeAwal, $this->periodeAkhir])
             ->paginate($this->perpage);
     }
 
     public function render()
     {
-        return view('livewire.rekam-medis.laporan-statistik-rekam-medis')
-            ->layout(BaseLayout::class, ['title' => 'Laporan Statistik']);
+        return view('livewire.rekam-medis.laporan-demografi')
+            ->layout(BaseLayout::class, ['title' => 'Demografi Pasien']);
     }
 
     public function exportToExcel()
@@ -89,65 +82,41 @@ class LaporanStatistikRekamMedis extends Component
     {
         $timestamp = now()->format('Ymd_His');
 
-        $filename = "{$timestamp}_rekammedis_laporan_statistik.xlsx";
-
-        $dateStart = Carbon::parse($this->periodeAwal)->format('d F Y');
-        $dateEnd = Carbon::parse($this->periodeAkhir)->format('d F Y');
+        $filename = "{$timestamp}_laporan_demografi_pasien.xlsx";
 
         $titles = [
             'RS Samarinda Medika Citra',
-            'Laporan Statistik Rekam Medis',
-            "{$dateStart} - {$dateEnd}",
+            'Laporan Demografi Pasien',
+            now()->format('d F Y'),
         ];
 
         $columnHeaders = [
-            'No. Rawat',
-            'No RM',
+            'Kecamatan',
+            'No. RM',
+            'No. Registrasi',
             'Pasien',
-            'NIK',
-            'L / P',
-            'Tgl. Lahir',
-            'Umur',
-            'Agama',
-            'Suku',
-            'Jenis Perawatan',
-            'Pasien Lama / Baru',
-            'Asal Poli',
-            'Dokter Poli',
-            'Status Ralan',
-            'Tgl. Masuk',
-            'Jam Masuk',
-            'Tgl. Pulang',
-            'Jam Pulang',
-            'Diagnosa Masuk',
-            'ICD Diagnosa',
-            'Diagnosa',
-            'ICD Tindakan Ralan',
-            'Tindakan Ralan',
-            'ICD Tindakan Ranap',
-            'Tindakan Ranap',
-            'Lama Operasi',
-            'Rujukan Masuk',
-            'DPJP Ranap',
-            'Kelas',
-            'Penjamin',
-            'Status Bayar',
-            'Status Pulang',
-            'Rujukan Keluar',
-            'No. HP',
             'Alamat',
-            'Kunjungan ke',
+            '0 - < 28 Hr',
+            '28 Hr - 1 Th',
+            '1 - 4 Th',
+            '5 - 14 Th',
+            '15 - 24 Th',
+            '25 - 44 Th',
+            '45 - 64 Th',
+            '> 64 Th',
+            'PR',
+            'LK',
+            'Diagnosa',
+            'Agama',
+            'Pendidikan',
+            'Bahasa',
+            'Suku',
         ];
-
-        $data = StatistikRekamMedis::whereBetween('tgl_masuk', [$this->periodeAwal, $this->periodeAkhir])
-            ->orderBy('no_rawat')
-            ->get()
-            ->toArray();
 
         $excel = ExcelExport::make($filename)
             ->setPageHeaders($titles)
             ->setColumnHeaders($columnHeaders)
-            ->setData($data);
+            ->setData(DemografiPasien::laporanDemografiExcel($this->periodeAwal, $this->periodeAkhir)->get());
 
         return $excel->export();
     }

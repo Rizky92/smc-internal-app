@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Khanza\User\Utils;
+namespace App\Http\Livewire\User\Khanza;
 
 use Livewire\Component;
 
@@ -8,6 +8,6 @@ class SetHakAkses extends Component
 {
     public function render()
     {
-        return view('livewire.khanza.user.utils.set-hak-akses');
+        return view('livewire.user.khanza.set-hak-akses');
     }
 }

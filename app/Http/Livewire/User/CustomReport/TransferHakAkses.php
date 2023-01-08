@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\User\Utils;
+namespace App\Http\Livewire\User\CustomReport;
 
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
@@ -61,7 +61,7 @@ class TransferHakAkses extends Component
 
     public function render()
     {
-        return view('livewire.user.utils.transfer-hak-akses');
+        return view('livewire.user.custom-report.transfer-hak-akses');
     }
 
     public function prepareTransfer(
