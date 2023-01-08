@@ -3,18 +3,18 @@
 
     <x-card>
         <x-slot name="header">
-            <x-card.row>
+            <x-card.row-col>
                 <x-filter.range-date title="Tgl. SPM" />
                 <x-filter.toggle class="ml-4" model="hanyaTampilkanBarangSelisih" title="Tampilkan Barang Selisih" />
                 <x-filter.button-export-excel class="ml-auto" />
-            </x-card.row>
-            <x-card.row class="mt-2">
+            </x-card.row-col>
+            <x-card.row-col class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-            </x-card.row>
+            </x-card.row-col>
         </x-slot>
-        <x-slot name="body">
+        <x-slot name="body" class="table-responsive">
             <x-table>
                 <x-slot name="columns">
                     <x-table.th>No. Pemesanan</x-table.th>
@@ -41,9 +41,7 @@
             </x-table>
         </x-slot>
         <x-slot name="footer">
-            <x-paginator :count="$this->perbandinganOrderObatPO->count()" :total="$this->perbandinganOrderObatPO->total()">
-                {{ $this->perbandinganOrderObatPO->links() }}
-            </x-paginator>
+            <x-paginator :data="$this->perbandinganOrderObatPO" />
         </x-slot>
     </x-card>
 </div>

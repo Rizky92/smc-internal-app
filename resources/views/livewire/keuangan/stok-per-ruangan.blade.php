@@ -30,7 +30,7 @@
 
     <x-card>
         <x-slot name="header">
-            <x-card.row>
+            <x-card.row-col>
                 <x-filter.label constant-width>Ruangan:</x-filter.label>
                 <div wire:ignore class="w-25">
                     <select class="form-control form-control-sm simple-select2-sm input-sm" id="bangsal" autocomplete="off">
@@ -41,14 +41,14 @@
                     </select>
                 </div>
                 <x-filter.button-export-excel class="ml-auto" />
-            </x-card.row>
-            <x-card.row class="mt-2">
+            </x-card.row-col>
+            <x-card.row-col class="mt-2">
                 <x-filter.select-perpage :constantWidth="true" />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-            </x-card.row>
+            </x-card.row-col>
         </x-slot>
-        <x-slot name="body" class="table-responsive p-0">
+        <x-slot name="body" class="table-responsive">
             <x-table>
                 <x-slot name="columns">
                     <x-table.th>Ruangan</x-table.th>
@@ -75,9 +75,7 @@
             </x-table>
         </x-slot>
         <x-slot name="footer">
-            <x-paginator :count="$this->stokObatPerRuangan->count()" :total="$this->stokObatPerRuangan->total()">
-                {{ $this->stokObatPerRuangan->links() }}
-            </x-paginator>
+            <x-paginator :data="$this->stokObatPerRuangan" />
         </x-slot>
     </x-card>
 </div>

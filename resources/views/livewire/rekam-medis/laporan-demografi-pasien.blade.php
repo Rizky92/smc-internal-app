@@ -2,7 +2,7 @@
     <x-flash />
 
     <x-card use-default-filter use-loading>
-        <x-slot name="body" class="table-responsive p-0">
+        <x-slot name="body" class="table-responsive">
             <x-table style="width: 150rem">
                 <x-slot name="columns">
                     <x-table.th width="250">Kecamatan</x-table.th>
@@ -39,9 +39,7 @@
             </x-table>
         </x-slot>
         <x-slot name="footer">
-            <x-paginator :count="$this->demografiPasien->count()" :total="$this->demografiPasien->total()">
-                {{ $this->demografiPasien->links() }}
-            </x-paginator>
+            <x-paginator :data="$this->demografiPasien" />
         </x-slot>
     </x-card>
 </div>

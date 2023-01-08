@@ -3,17 +3,17 @@
 
     <x-card>
         <x-slot name="header">
-            <x-card.row>
+            <x-card.row-col>
                 <x-filter.toggle model="tampilkanSaranOrderNol" title="Tampilkan Saran Order Nol" />
                 <x-filter.button-export-excel class="ml-auto" />
-            </x-card.row>
-            <x-card.row class="mt-2">
+            </x-card.row-col>
+            <x-card.row-col class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-            </x-card.row>
+            </x-card.row-col>
         </x-slot>
-        <x-slot name="body" class="table-responsive p-0">
+        <x-slot name="body" class="table-responsive">
             <x-table>
                 <x-slot name="columns">
                     <x-table.th>Kode</x-table.th>
@@ -48,9 +48,7 @@
             </x-table>
         </x-slot>
         <x-slot name="footer">
-            <x-paginator :count="$this->stokDaruratLogistik->count()" :total="$this->stokDaruratLogistik->total()">
-                {{ $this->stokDaruratLogistik->links() }}
-            </x-paginator>
+            <x-paginator :data="$this->stokDaruratLogistik" />
         </x-slot>
     </x-card>
 </div>

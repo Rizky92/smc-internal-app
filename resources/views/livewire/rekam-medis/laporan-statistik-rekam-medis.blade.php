@@ -2,7 +2,7 @@
     <x-flash />
 
     <x-card use-default-filter use-loading>
-        <x-slot name="body" class="table-responsive p-0">
+        <x-slot name="body" class="table-responsive">
             <x-table style="width: 450rem">
                 <x-slot name="columns">
                     <x-table.th>No. Rawat</x-table.th>
@@ -87,9 +87,7 @@
             </x-table>
         </x-slot>
         <x-slot name="footer">
-            <x-paginator :count="$this->dataLaporanStatistik->count()" :total="$this->dataLaporanStatistik->total()">
-                {{ $this->dataLaporanStatistik->links() }}
-            </x-paginator>
+            <x-paginator :data="$this->dataLaporanStatistik" />
         </x-slot>
     </x-card>
 </div>

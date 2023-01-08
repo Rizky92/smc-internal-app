@@ -8,24 +8,24 @@
 ])
 
 <div class="card">
-    @if ($useDefaultFilter || $header)
+    @if ($useDefaultFilter)
         <div class="card-body">
-            @if ($useDefaultFilter)
-                <x-card.row>
-                    <x-filter.range-date />
-                    <x-filter.button-export-excel class="ml-auto" />
-                </x-card.row>
-                <x-card.row class="mt-2">
-                    <x-filter.select-perpage />
-                    <x-filter.button-reset-filters class="ml-auto" />
-                    <x-filter.search class="ml-2" />
-                </x-card.row>
-            @else
-                {{ $header }}
-            @endif
+            <x-card.row-col>
+                <x-filter.range-date />
+                <x-filter.button-export-excel class="ml-auto" />
+            </x-card.row-col>
+            <x-card.row-col class="mt-2">
+                <x-filter.select-perpage />
+                <x-filter.button-reset-filters class="ml-auto" />
+                <x-filter.search class="ml-2" />
+            </x-card.row-col>
+        </div>
+    @else
+        <div class="card-body">
+            {{ $header }}
         </div>
     @endif
-    <div {{ $body->attributes->merge(['class' => 'card-body']) }}>
+    <div {{ $body->attributes->merge(['class' => 'card-body p-0']) }}>
         {{ $body }}
     </div>
     @if ($footer)

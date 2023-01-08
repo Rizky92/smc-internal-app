@@ -87,14 +87,14 @@
 
     <x-card>
         <x-slot name="header">
-            <x-card.row>
+            <x-card.row-col>
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-            </x-card.row>
+            </x-card.row-col>
         </x-slot>
 
-        <x-slot name="body" class="table-responsive p-0">
+        <x-slot name="body" class="table-responsive">
             <x-table>
                 <x-slot name="columns">
                     <x-table.th>Nama</x-table.th>
@@ -124,9 +124,7 @@
             </x-table>
         </x-slot>
         <x-slot name="footer">
-            <x-paginator :count="$this->roles->count()" :total="$this->roles->total()">
-                {{ $this->roles->links() }}
-            </x-paginator>
+            <x-paginator :data="$this->roles" />
         </x-slot>
     </x-card>
 </div>

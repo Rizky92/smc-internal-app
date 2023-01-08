@@ -3,7 +3,7 @@
 
     <x-card>
         <x-slot name="header">
-            <x-card.row>
+            <x-card.row-col>
                 <x-filter.label>Tahun:</x-filter.label>
                 <div class="input-group input-group-sm ml-2" style="width: 5rem">
                     @php
@@ -19,9 +19,9 @@
                 </div>
                 <x-filter.button-search class="ml-2" title="Refresh" method="$refresh" icon="fas fa-sync-alt" />
                 <x-filter.button-export-excel class="ml-auto" />
-            </x-card.row>
+            </x-card.row-col>
         </x-slot>
-        <x-slot name="body" class="table-responsive p-0">
+        <x-slot name="body" class="table-responsive">
             <x-table style="width: 150rem">
                 <x-slot name="columns">
                     @php($bulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'])

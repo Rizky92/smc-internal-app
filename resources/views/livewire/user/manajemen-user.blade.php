@@ -44,6 +44,9 @@
 
     <x-card>
         <x-slot name="header">
+            <x-card.row wire:ignore>
+
+            </x-card.row>
             <div class="row" wire:ignore>
                 <div class="col-2">
                     <div class="form-group">
@@ -71,11 +74,11 @@
                     </div>
                 </div>
             </div>
-            <x-card.row class="mt-2">
+            <x-card.row-col class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-            </x-card.row>
+            </x-card.row-col>
         </x-slot>
         <x-slot name="body" class="table-responsive p-0">
             <x-table>
@@ -107,9 +110,7 @@
             </x-table>
         </x-slot>
         <x-slot name="footer">
-            <x-paginator :count="$this->users->count()" :total="$this->users->total()">
-                {{ $this->users->links() }}
-            </x-paginator>
+            <x-paginator :data="$this->users" />
         </x-slot>
     </x-card>
 </div>

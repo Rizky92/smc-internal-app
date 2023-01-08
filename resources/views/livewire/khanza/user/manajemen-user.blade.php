@@ -31,7 +31,7 @@
 
     <x-card>
         <x-slot name="header">
-            <div class="row" wire:ignore>
+            <x-card.row wire:ignore>
                 <div class="col-2">
                     <div class="form-group">
                         <label class="text-sm" for="user">NRP</label>
@@ -46,20 +46,20 @@
                 </div>
                 <div class="col-6">
                     <div class="d-flex align-items-end h-100">
-                        <button class="btn btn-sm btn-default mb-3 ml-2" data-toggle="modal" data-target="#transfer-hak-akses" type="button" id="button-transfer-hak-akses">
+                        <button class="btn btn-sm btn-default mb-3" data-toggle="modal" data-target="#transfer-hak-akses" type="button" id="button-transfer-hak-akses">
                             <i class="fas fa-share-square"></i>
                             <span class="ml-1">Transfer hak akses</span>
                         </button>
                     </div>
                 </div>
-            </div>
-            <x-card.row class="mt-2">
+            </x-card>
+            <x-card.row-col class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-            </x-card.row>
+            </x-card.row-col>
         </x-slot>
-        <x-slot name="body" class="table-responsive p-0">
+        <x-slot name="body" class="table-responsive">
             <x-table>
                 <x-slot name="columns">
                     <x-table.th>NRP</x-table.th>
@@ -81,9 +81,7 @@
             </x-table>
         </x-slot>
         <x-slot name="footer">
-            <x-paginator :count="$this->users->count()" :total="$this->users->total()">
-                {{ $this->users->links() }}
-            </x-paginator>
+            <x-paginator :data="$this->users" />
         </x-slot>
     </x-card>
 </div>

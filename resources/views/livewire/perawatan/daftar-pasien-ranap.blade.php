@@ -303,15 +303,15 @@
 
     <x-card>
         <x-slot name="header">
-            <x-card.row>
+            <x-card.row-col>
                 <x-filter.range-date model-start="tglAwal" model-end="tglAkhir" />
                 <x-filter.button-export-excel class="ml-auto" />
-            </x-card.row>
-            <x-card.row class="mt-2">
+            </x-card.row-col>
+            <x-card.row-col class="mt-2">
                 <x-filter.range-time />
                 <x-filter.select-perpage class="ml-auto" />
-            </x-card.row>
-            <x-card.row class="mt-2">
+            </x-card.row-col>
+            <x-card.row-col class="mt-2">
                 <x-filter.label constant-width>Status:</x-filter.label>
                 <div class="input-group input-group-sm" style="width: max-content">
                     <x-filter.select model="statusPerawatan" :options="[
@@ -322,10 +322,10 @@
                 </div>
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search />
-            </x-card.row>
+            </x-card.row-col>
         </x-slot>
 
-        <x-slot name="body" class="table-responsive p-0">
+        <x-slot name="body" class="table-responsive">
             <x-table style="width: 180rem">
                 <x-slot name="columns">
                     <x-table.th style="width: 20ch">No. Rawat</x-table.th>
@@ -375,9 +375,7 @@
         </x-slot>
 
         <x-slot name="footer">
-            <x-paginator :count="$this->daftarPasienRanap->count()" :total="$this->daftarPasienRanap->total()">
-                {{ $this->daftarPasienRanap->links() }}
-            </x-paginator>
+            <x-paginator :data="$this->daftarPasienRanap" />
         </x-slot>
     </x-card>
 </div>

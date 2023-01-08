@@ -1,11 +1,8 @@
-@props([
-    'count',
-    'total',
-])
+@props(['data'])
 
-<div {{ $attributes->merge(['class' => 'd-flex align-items center justify-content-start']) }}>
-    <p class="text-muted">Menampilkan {{ $count }} dari total {{ number_format($total, 0, ',', '.') }} item.</p>
+<div {{ $attributes->merge(['class' => 'd-flex align-items-center justify-content-start']) }}>
+    <span class="text-muted">Menampilkan {{ $data->count() }} dari total {{ number_format($data->total(), 0, ',', '.') }} item.</span>
     <div class="ml-auto">
-        {{ $slot }}
+        {{ $data->links() }}
     </div>
 </div>
