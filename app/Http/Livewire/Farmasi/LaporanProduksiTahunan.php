@@ -39,6 +39,15 @@ class LaporanProduksiTahunan extends Component
         $this->tahun = now()->format('Y');
     }
 
+    public function getDataTahunProperty()
+    {
+        return collect(range((int) now()->format('Y'), 2022, -1))
+            ->mapWithKeys(function ($value, $key) {
+                return [$value => $value];
+            })
+            ->toArray();
+    }
+
     public function getKunjunganRalanProperty()
     {
         return ResepObat::kunjunganPasienRalan($this->tahun);

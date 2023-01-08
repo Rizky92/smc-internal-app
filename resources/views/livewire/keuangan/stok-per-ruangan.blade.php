@@ -32,7 +32,7 @@
         <x-slot name="header">
             <x-card.row-col>
                 <x-filter.label constant-width>Ruangan:</x-filter.label>
-                <div wire:ignore class="w-25">
+                <div class="w-25" wire:ignore>
                     <select class="form-control form-control-sm simple-select2-sm input-sm" id="bangsal" autocomplete="off">
                         <option value="-">-</option>
                         @foreach ($this->bangsal as $kode => $nama)

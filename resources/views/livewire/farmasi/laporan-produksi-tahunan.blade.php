@@ -6,16 +6,7 @@
             <x-card.row-col>
                 <x-filter.label>Tahun:</x-filter.label>
                 <div class="input-group input-group-sm ml-2" style="width: 5rem">
-                    @php
-                        $year = collect(range((int) now()->format('Y'), 2022, -1));
-                        
-                        $year = $year
-                            ->mapWithKeys(function ($value, $key) {
-                                return [$value => $value];
-                            })
-                            ->toArray();
-                    @endphp
-                    <x-filter.select model="tahun" :options="$year" constant-width />
+                    <x-filter.select model="tahun" :options="$this->dataTahun" constant-width />
                 </div>
                 <x-filter.button-search class="ml-2" title="Refresh" method="$refresh" icon="fas fa-sync-alt" />
                 <x-filter.button-export-excel class="ml-auto" />

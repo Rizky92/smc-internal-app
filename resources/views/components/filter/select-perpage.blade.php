@@ -16,4 +16,4 @@
     </select>
 </div>
 
-<x-filter.label class="pl-2">{{ $titleEnd }}</x-filter.label>
+<x-filter.label class="pl-3">{{ $titleEnd }}</x-filter.label>
