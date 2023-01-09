@@ -45,7 +45,7 @@
 
     <livewire:user.custom-report.transfer-hak-akses />
 
-    {{-- <livewire:user.khanza.set-hak-akses /> --}}
+    <livewire:user.khanza.set-hak-akses />
 
     <livewire:user.khanza.transfer-hak-akses />
 

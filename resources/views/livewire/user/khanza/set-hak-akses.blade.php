@@ -1,4 +1,4 @@
-<div class="modal fade" id="transfer-akses-custom-report" wire:ignore.self>
+<div class="modal fade" id="set-akses-khanza" wire:ignore.self>
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -24,18 +24,22 @@
                             <thead>
                                 <tr>
                                     <th style="width: 2rem">#</th>
-                                    <th>Nama Akses</th>
+                                    <th>Nama Field</th>
+                                    <th>Judul Menu</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($this->availablePermissions as $permission)
+                                @foreach ($this->hakAksesKhanza as $field => $judul)
                                     <tr style="position: relative">
                                         <td>
-                                            <input id="permission-{{ $permission->nama_kolom }}" type="checkbox" wire:model.defer="checkedPermissions" value="{{ $permission->nama_kolom }}">
-                                            <label for="permission-{{ $permission->nama_kolom }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer"></label>
+                                            <input id="permission-{{ $field }}" type="checkbox" wire:model.defer="checkedPermissions" value="{{ $field }}">
+                                            <label for="permission-{{ $field }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer"></label>
                                         </td>
                                         <td>
-                                            {{ $permission->judul_menu }}
+                                            {{ $field }}
+                                        </td>
+                                        <td>
+                                            {{ $judul }}
                                         </td>
                                     </tr>
                                 @endforeach
@@ -46,7 +50,7 @@
             </div>
             <div class="modal-footer justify-content-start">
                 <div class="input-group input-group-sm" style="width: 16rem">
-                    <input class="form-control" type="search" wire:model.defer="cariUser" wire:keydown.enter.stop="$refresh" />
+                    <input class="form-control" type="search" wire:model.defer="khanzaCariHakAkses" wire:keydown.enter.stop="$refresh" />
                     <div class="input-group-append">
                         <button class="btn btn-sm btn-default" type="button" wire:click="$refresh">
                             <i class="fas fa-search"></i>

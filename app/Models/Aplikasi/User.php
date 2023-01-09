@@ -65,7 +65,8 @@ class User extends Authenticatable
     {
         if (empty($nrp)) return new static;
 
-        return static::newQueryWithoutScopes()
+        return static::query()
+            ->withoutGlobalScopes()
             ->withHakAkses()
             ->whereRaw("AES_DECRYPT(user.id_user, 'nur') = ?", $nrp)
             ->first($columns);
