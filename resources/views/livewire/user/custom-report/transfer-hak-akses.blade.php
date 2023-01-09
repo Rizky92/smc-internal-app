@@ -70,7 +70,7 @@
                         </button>
                     </div>
                 </div>
-                <button class="btn btn-sm btn-default ml-auto" data-dismiss="modal" type="button" wire:click="resetModal">Batal</button>
+                <button class="btn btn-sm btn-default ml-auto" type="button" data-dismiss="modal" wire:click="resetModal">Batal</button>
                 <button class="btn btn-sm btn-primary" type="button" data-dismiss="modal" wire:click="$emit('transferPermissions')">
                     <i class="fas fa-save"></i>
                     <span class="ml-1">Simpan</span>
