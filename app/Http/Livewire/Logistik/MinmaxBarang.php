@@ -88,7 +88,7 @@ class MinmaxBarang extends Component
 
     public function simpan(string $kodeBarang, int $stokMin = 0, int $stokMax = 0, $kodeSupplier)
     {
-        if (! auth()->user()->can('logistik.stok-minmax.update')) {
+        if (! auth()->user()->canAny(['logistik.stok-minmax.update', 'logistik.input-minmax-stok.update'])) {
             $this->flashError('Anda tidak memiliki izin untuk mengupdate barang');
 
             return;
