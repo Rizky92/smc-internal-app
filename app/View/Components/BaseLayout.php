@@ -54,7 +54,7 @@ class BaseLayout extends Component
                 'type' => 'link',
                 'hasAnyPermissions' => $user->canAny([
                     'perawatan.rawat-inap.read',
-                    'perawatan.rawat-inap.batal-ranap',
+                    'perawatan.daftar-pasien-ranap.read',
                 ]),
             ],
             [
@@ -63,6 +63,7 @@ class BaseLayout extends Component
                 'type' => 'dropdown',
                 'hasAnyPermissions' => $user->canAny([
                     'keuangan.stok-obat-per-ruangan.read',
+                    'keuangan.stok-obat-ruangan.read',
                 ]),
                 'items' => [
                     [
@@ -70,7 +71,10 @@ class BaseLayout extends Component
                         'url' => route('admin.keuangan.stok-obat-per-ruangan'),
                         'icon' => "fas fa-shapes",
                         'type' => 'link',
-                        'hasAnyPermissions' => $user->can('keuangan.stok-obat-per-ruangan.read'),
+                        'hasAnyPermissions' => $user->canAny([
+                            'keuangan.stok-obat-per-ruangan.read',
+                            'keuangan.stok-obat-ruangan.read',
+                        ]),
                     ],
                 ],
             ],
@@ -83,37 +87,59 @@ class BaseLayout extends Component
                     'farmasi.penggunaan-obat-perdokter.read',
                     'farmasi.laporan-tahunan.read',
                     'farmasi.kunjungan-resep.read',
+
+                    'farmasi.stok-darurat.read',
+                    'farmasi.obat-per-dokter.read',
+                    'farmasi.laporan-produksi.read',
+                    'farmasi.kunjungan-per-bentuk-obat.read',
+                    'farmasi.kunjungan-per-poli.read',
+                    'farmasi.perbandingan-po-obat.read',
                 ]),
                 'items' => [
                     [
                         'name' => 'Darurat Stok',
                         'icon' => 'far fa-newspaper',
                         'url' => route('admin.farmasi.darurat-stok'),
-                        'hasAnyPermissions' => $user->can('farmasi.darurat-stok.read'),
+                        'hasAnyPermissions' => $user->canAny([
+                            'farmasi.darurat-stok.read',
+                            'farmasi.stok-darurat.read',
+                        ]),
                     ],
                     [
                         'name' => 'Obat Per Dokter',
                         'icon' => 'far fa-newspaper',
                         'url' => route('admin.farmasi.obat-perdokter'),
-                        'hasAnyPermissions' => $user->can('farmasi.penggunaan-obat-perdokter.read'),
+                        'hasAnyPermissions' => $user->canAny([
+                            'farmasi.penggunaan-obat-perdokter.read',
+                            'farmasi.obat-per-dokter.read',
+                        ]),
                     ],
                     [
                         'name' => 'Kunjungan Per Bentuk Obat',
                         'icon' => 'far fa-newspaper',
                         'url' => route('admin.farmasi.kunjungan-resep'),
-                        'hasAnyPermissions' => $user->can('farmasi.kunjungan-resep.read'),
+                        'hasAnyPermissions' => $user->canAny([
+                            'farmasi.kunjungan-resep.read',
+                            'farmasi.kunjungan-per-bentuk-obat.read',
+                        ]),
                     ],
                     [
                         'name' => 'Kunjungan Per Poli',
                         'icon' => 'far fa-newspaper',
                         'url' => route('admin.farmasi.kunjungan-pasien-per-poli'),
-                        'hasAnyPermissions' => $user->can('farmasi.kunjungan-pasien-per-poli.read'),
+                        'hasAnyPermissions' => $user->canAny([
+                            'farmasi.kunjungan-pasien-per-poli.read',
+                            'farmasi.kunjungan-per-poli.read',
+                        ]),
                     ],
                     [
                         'name' => 'Laporan Produksi',
                         'icon' => 'far fa-newspaper',
                         'url' => route('admin.farmasi.laporan-tahunan'),
-                        'hasAnyPermissions' => $user->can('farmasi.laporan-tahunan.read'),
+                        'hasAnyPermissions' => $user->canAny([
+                            'farmasi.laporan-tahunan.read',
+                            'farmasi.laporan-produksi.read',
+                        ]),
                     ],
                     [
                         'name' => 'Perbandingan PO Obat',
@@ -129,6 +155,7 @@ class BaseLayout extends Component
                 'type' => 'dropdown',
                 'hasAnyPermissions' => $user->canAny([
                     'rekam-medis.laporan-statistik.read',
+                    'rekam-medis.laporan-demografi.read',
                     'rekam-medis.demografi-pasien.read',
                 ]),
                 'items' => [
@@ -142,7 +169,10 @@ class BaseLayout extends Component
                         'name' => 'Demografi Pasien',
                         'icon' => 'far fa-newspaper',
                         'url' => route('admin.rekam-medis.demografi-pasien'),
-                        'hasAnyPermissions' => $user->can('rekam-medis.demografi-pasien.read'),
+                        'hasAnyPermissions' => $user->canAny([
+                            'rekam-medis.demografi-pasien.read',
+                            'rekam-medis.laporan-demografi.read',
+                        ]),
                     ],
                 ],
             ],
@@ -154,6 +184,9 @@ class BaseLayout extends Component
                     'logistik.stok-minmax.read',
                     'logistik.stok-minmax.update',
                     'logistik.darurat-stok.read',
+
+                    'logistik.input-minmax-stok.read',
+                    'logistik.stok-darurat.read',
                 ]),
                 'items' => [
                     [
@@ -163,13 +196,20 @@ class BaseLayout extends Component
                         'hasAnyPermissions' => $user->canAny([
                             'logistik.stok-minmax.read',
                             'logistik.stok-minmax.update',
+
+                            'logistik.input-minmax-stok.create',
+                            'logistik.input-minmax-stok.read',
+                            'logistik.input-minmax-stok.update',
                         ]),
                     ],
                     [
                         'name' => 'Darurat Stok',
                         'icon' => 'far fa-newspaper',
                         'url' => route('admin.logistik.darurat-stok'),
-                        'hasAnyPermissions' => $user->can('logistik.darurat-stok.read'),
+                        'hasAnyPermissions' => $user->canAny([
+                            'logistik.darurat-stok.read',
+                            'logistik.stok-darurat.read',
+                        ]),
                     ],
                 ],
             ],
