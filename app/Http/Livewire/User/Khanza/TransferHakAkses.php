@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\User\Khanza;
 
+use App\Models\Aplikasi\MappingAksesKhanza;
 use App\Models\Aplikasi\User;
-use App\Models\HakAksesKhanza;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -16,11 +16,22 @@ class TransferHakAkses extends Component
 
     public $checkedUsers;
 
-    public $cariUser;
+    public $khanzaCariUser;
 
     protected $listeners = [
+        'khanzaPrepareTransfer',
         'khanzaTransferHakAkses',
     ];
+
+    protected function queryString()
+    {
+        return [
+            'khanzaCariUser' => [
+                'except' => '',
+                'as' => 'khanza_search',
+            ],
+        ];
+    }
 
     public function mount()
     {
@@ -29,14 +40,14 @@ class TransferHakAkses extends Component
 
     public function getHakAksesTersediaProperty()
     {
-        return HakAksesKhanza::pluck('judul_menu', 'nama_field');
+        return MappingAksesKhanza::pluck('judul_menu', 'nama_field');
     }
 
     public function getAvailableUsersProperty()
     {
         return User::query()
             ->where('petugas.nip', '!=', $this->nrp)
-            ->search($this->cariUser)
+            ->search($this->khanzaCariUser)
             ->when(!empty($this->checkedUsers), function (Builder $query) {
                 return $query->orWhereIn('petugas.nip', $this->checkedUsers);
             })
@@ -49,15 +60,15 @@ class TransferHakAkses extends Component
         return view('livewire.user.khanza.transfer-hak-akses');
     }
 
-    public function prepareUser(string $nrp, string $nama)
+    public function khanzaPrepareTransfer(string $nrp, string $nama)
     {
         $this->nrp = $nrp;
         $this->nama = $nama;
     }
 
-    public function khanzaTransferHakAkses(bool $hardTransfer = false)
+    public function khanzaTransferHakAkses()
     {
-        if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
+        if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->emit('flash', [
                 'flash.type' => 'danger',
                 'flash.message' => 'Anda tidak diizinkan untuk melakukan tindakan ini!',
@@ -78,18 +89,16 @@ class TransferHakAkses extends Component
             ->whereIn(DB::raw('AES_DECRYPT(user.id_user, "nur")'), $this->checkedUsers)
             ->get();
 
-        dd([$permittedUsers, $currentUser]);
+        // dd([$permittedUsers, $currentUser]);
 
-        foreach ($this->checkedUsers as $nrp) {
-            $user = User::rawFindByNRP($nrp);
-
+        foreach ($permittedUsers as $checkedUser) {
             foreach ($this->hakAksesTersedia as $kolom => $hakAkses) {
-                $user->setAttribute($kolom, $currentUser->getAttribute($kolom));
+                $checkedUser->setAttribute($kolom, $currentUser->getAttribute($kolom));
 
-                dd([$kolom, $user->getAttribute($kolom), $user, $currentUser]);
+                // dd([$kolom, $checkedUser->getAttribute($kolom), $checkedUser, $currentUser]);
             }
 
-            $user->save();
+            $checkedUser->save();
         }
 
         $this->emit('flash', [
@@ -100,7 +109,7 @@ class TransferHakAkses extends Component
 
     public function defaultValues()
     {
-        $this->cariUser = '';
+        $this->khanzaCariUser = '';
         $this->nrp = '';
         $this->nama = '';
         $this->checkedUsers = [];

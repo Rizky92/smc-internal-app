@@ -1,4 +1,4 @@
-<div class="modal fade" id="transfer-hak-akses" wire:ignore.self>
+<div class="modal fade" id="transfer-akses-khanza" wire:ignore.self>
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -48,7 +48,7 @@
             </div>
             <div class="modal-footer justify-content-start">
                 <div class="input-group input-group-sm" style="width: 16rem">
-                    <input class="form-control" type="search" wire:model.defer="cariUser" wire:keydown.enter.stop="$refresh" />
+                    <input class="form-control" type="search" wire:model.defer="khanzaCariUser" wire:keydown.enter.stop="$refresh" />
                     <div class="input-group-append">
                         <button class="btn btn-sm btn-default" type="button" wire:click="$refresh">
                             <i class="fas fa-search"></i>

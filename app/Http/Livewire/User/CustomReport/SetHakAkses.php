@@ -11,24 +11,26 @@ class SetHakAkses extends Component
 {
     public $nrp;
 
-    public $cariHakAkses;
+    public $nama;
+
+    public $customReportCariPermissions;
 
     public $checkedRoles;
 
     public $checkedPermissions;
 
     protected $listeners = [
-        'prepareUser',
-        'syncRolesAndPermissions',
-        'resetModal',
+        'customReportPrepareUser',
+        'customReportSyncRolesAndPermissions',
+        'customReportResetModal',
     ];
 
     protected function queryString()
     {
         return [
-            'cariHakAkses' => [
+            'customReportCariPermissions' => [
                 'except' => '',
-                'as' => 'cari_hak_akses',
+                'as' => 'cari_permission',
             ],
         ];
     }
@@ -59,12 +61,12 @@ class SetHakAkses extends Component
         return view('livewire.user.custom-report.set-hak-akses');
     }
 
-    public function prepareUser(string $nrp)
+    public function customReportPrepareUser(string $nrp)
     {
         $this->nrp = $nrp;
     }
 
-    public function syncRolesAndPermissions()
+    public function customReportSyncRolesAndPermissions()
     {
         if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->emit('flash', [
@@ -85,10 +87,10 @@ class SetHakAkses extends Component
             'flash.message' => "Hak akses untuk user {$this->nrp} berhasil diubah!",
         ]);
 
-        $this->resetModal();
+        $this->customReportResetModal();
     }
 
-    public function resetModal()
+    public function customReportResetModal()
     {
         $this->defaultValues();
 
@@ -97,6 +99,9 @@ class SetHakAkses extends Component
 
     private function defaultValues()
     {
+        $this->nrp = '';
+        $this->nama = '';
+        $this->customReportCariPermissions = '';
         $this->checkedRoles = [];
         $this->checkedPermissions = [];
     }

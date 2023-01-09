@@ -62,7 +62,7 @@ class BaseLayout extends Component
                         'url' => route('admin.perawatan.daftar-pasien-ranap'),
                         'icon' => "fas fa-procedures",
                         'type' => 'link',
-                        'hasAnyPermissions' => $user->can('perawatan.rawat-inap.read'),
+                        'hasAnyPermissions' => $user->can('perawatan.daftar-pasien-ranap.read'),
                     ],
                 ]
             ],

@@ -65,7 +65,7 @@ class StokObatRuangan extends Component
     public function render()
     {
         return view('livewire.keuangan.stok-obat-ruangan')
-            ->layout(BaseLayout::class, ['title' => 'Stok Per Ruangan']);
+            ->layout(BaseLayout::class, ['title' => 'Stok Obat Per Ruangan']);
     }
 
     public function exportToExcel()

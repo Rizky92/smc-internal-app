@@ -51,6 +51,7 @@ class GudangObat extends Model
                     return $query->where('databarang.kode_brng', 'like', "%{$cari}%")
                         ->orWhere('databarang.nama_brng', 'like', "%{$cari}%");
                 });
-            });
+            })
+            ->orderBy('databarang.nama_brng');
     }
 }

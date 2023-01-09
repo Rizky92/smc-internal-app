@@ -31,16 +31,23 @@
                     inputRoles.each((i, el) => el.checked = roles.find(v => v === el.value))
                     inputPermissions.each((i, el) => el.checked = permissions.find(v => v === el.value))
 
-                    @this.emit('prepareTransfer', nrp, nama, roles, permissions)
-                    @this.emit('prepareUser', nrp)
+                    @this.emit('customReportPrepareTransfer', nrp, nama, roles, permissions)
+                    @this.emit('customReportPrepareUser', nrp, nama, roles, permissions)
+
+                    @this.emit('khanzaPrepareTransfer', nrp, nama)
+                    @this.emit('khanzaPrepareUser', nrp, nama)
                 }
             </script>
         @endpush
     @endonce
 
-    <livewire:user.utils.set-hak-akses />
+    <livewire:user.custom-report.set-hak-akses />
 
-    <livewire:user.utils.transfer-hak-akses />
+    <livewire:user.custom-report.transfer-hak-akses />
+
+    {{-- <livewire:user.khanza.set-hak-akses /> --}}
+
+    <livewire:user.khanza.transfer-hak-akses />
 
     <x-card>
         <x-slot name="header">
@@ -62,15 +69,35 @@
                 </div>
                 <div class="col-6">
                     <div class="d-flex align-items-end h-100">
-                        <button class="btn btn-sm btn-default mb-3" data-toggle="modal" data-target="#hak-akses" type="button" id="button-set-hak-akses">
-                            <i class="fas fa-info-circle"></i>
-                            <span class="ml-1">Set hak akses</span>
-                        </button>
-    
-                        <button class="btn btn-sm btn-default mb-3 ml-2" data-toggle="modal" data-target="#transfer-hak-akses" type="button" id="button-transfer-hak-akses">
-                            <i class="fas fa-share-square"></i>
-                            <span class="ml-1">Transfer hak akses</span>
-                        </button>
+                        <div class="dropdown mb-3">
+                            <button class="btn btn-sm btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-info-circle"></i>
+                                <span class="ml-1">Set hak akses</span>
+                            </button>
+                            <div class="dropdown-menu">
+                                <button class="dropdown-item text-sm" type="button" data-toggle="modal" data-target="#set-akses-khanza" id="button-set-akses-khanza">
+                                    SIMRS Khanza
+                                </button>
+                                <button class="dropdown-item text-sm" type="button" data-toggle="modal" data-target="#set-akses-custom-report" id="button-set-akses-custom-report">
+                                    Custom Report
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="dropdown mb-3 ml-3">
+                            <button class="btn btn-sm btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-share-square"></i>
+                                <span class="ml-1">Transfer hak akses</span>
+                            </button>
+                            <div class="dropdown-menu">
+                                <button class="dropdown-item text-sm" type="button" data-toggle="modal" data-target="#transfer-akses-khanza" id="button-transfer-akses-khanza">
+                                    SIMRS Khanza
+                                </button>
+                                <button class="dropdown-item text-sm" type="button" data-toggle="modal" data-target="#transfer-akses-custom-report" id="button-transfer-akses-custom-report">
+                                    Custom Report
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

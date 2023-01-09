@@ -68,7 +68,7 @@ class LaporanDemografi extends Component
     public function render()
     {
         return view('livewire.rekam-medis.laporan-demografi')
-            ->layout(BaseLayout::class, ['title' => 'Demografi Pasien']);
+            ->layout(BaseLayout::class, ['title' => 'Laporan Demografi Pasien']);
     }
 
     public function exportToExcel()

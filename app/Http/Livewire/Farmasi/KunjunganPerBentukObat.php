@@ -126,7 +126,7 @@ class KunjunganPerBentukObat extends Component
             ->setColumnHeaders($columnHeaders)
             ->setData($sheet1);
 
-        $excel->useSheet('Obat Racikan')
+        $excel->addSheet('Obat Racikan')
             ->setData($sheet2);
 
         return $excel->export();

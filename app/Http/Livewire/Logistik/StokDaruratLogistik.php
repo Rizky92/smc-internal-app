@@ -63,7 +63,7 @@ class StokDaruratLogistik extends Component
     public function render()
     {
         return view('livewire.logistik.stok-darurat-logistik')
-            ->layout(BaseLayout::class, ['title' => 'Stok Darurat Barang Logistik']);
+            ->layout(BaseLayout::class, ['title' => 'Darurat Stok Barang Logistik']);
     }
 
     public function exportToExcel()

@@ -16,6 +16,12 @@
                         dropdownCssClass: 'text-sm px-0',
                     })
 
+                    Livewire.hook('element.updated', (el, component) => {
+                        inputBangsal.select2({
+                            dropdownCssClass: 'text-sm px-0',
+                        })
+                    })
+
                     inputBangsal.on('select2:select', e => {
                         @this.set('kodeBangsal', inputBangsal.val(), true)
                     })

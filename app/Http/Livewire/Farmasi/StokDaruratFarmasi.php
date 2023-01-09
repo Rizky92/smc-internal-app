@@ -57,7 +57,7 @@ class StokDaruratFarmasi extends Component
     public function render()
     {
         return view('livewire.farmasi.stok-darurat-farmasi')
-            ->layout(BaseLayout::class, ['title' => 'Darurat Stok']);
+            ->layout(BaseLayout::class, ['title' => 'Darurat Stok Farmasi']);
     }
 
     public function exportToExcel()

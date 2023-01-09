@@ -10,7 +10,7 @@ use Livewire\Component;
 
 class TransferHakAkses extends Component
 {
-    public $cariUser;
+    public $customReportCariUser;
 
     public $nrp;
 
@@ -25,7 +25,7 @@ class TransferHakAkses extends Component
     protected function queryString()
     {
         return [
-            'cariUser' => [
+            'customReportCariUser' => [
                 'except' => '',
                 'as' => 'cari_user',
             ],
@@ -33,25 +33,20 @@ class TransferHakAkses extends Component
     }
 
     protected $listeners = [
-        'prepareTransfer',
-        'transferPermissions',
+        'prepareTransferCustomReport',
+        'customReportTransferPermissions',
     ];
 
     public function mount()
     {
-        $this->cariUser = '';
-        $this->nrp = '';
-        $this->nama = '';
-        $this->roles = [];
-        $this->permissions = [];
-        $this->checkedUsers = [];
+        $this->defaultValues();
     }
 
     public function getAvailableUsersProperty()
     {
         return User::query()
             ->where('petugas.nip', '!=', $this->nrp)
-            ->search($this->cariUser)
+            ->search($this->customReportCariUser)
             ->when(!empty($this->checkedUsers), function (Builder $query) {
                 return $query->orWhereIn('petugas.nip', $this->checkedUsers);
             })
@@ -62,6 +57,16 @@ class TransferHakAkses extends Component
     public function render()
     {
         return view('livewire.user.custom-report.transfer-hak-akses');
+    }
+
+    private function defaultValues()
+    {
+        $this->customReportCariUser = '';
+        $this->nrp = '';
+        $this->nama = '';
+        $this->roles = [];
+        $this->permissions = [];
+        $this->checkedUsers = [];
     }
 
     public function prepareTransfer(
@@ -84,6 +89,8 @@ class TransferHakAkses extends Component
                 'flash.message' => 'Anda tidak diizinkan untuk melakukan aksi ini.',
             ]);
 
+            $this->defaultValues();
+
             return;
         }
 
@@ -104,11 +111,6 @@ class TransferHakAkses extends Component
 
     public function resetModal()
     {
-        $this->cariUser = '';
-        $this->nrp = '';
-        $this->nama = '';
-        $this->roles = [];
-        $this->permissions = [];
-        $this->checkedUsers = [];
+        $this->defaultValues();
     }
 }

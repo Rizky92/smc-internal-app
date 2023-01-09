@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
-use Illuminate\Database\Connection;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Schema;
@@ -30,7 +29,7 @@ class PermissionSeeder extends Seeder
 
         $perawatanPermissions = [
             Permission::create(['name' => 'perawatan.daftar-pasien-ranap.read', 'guard_name' => 'web']),
-            Permission::create(['name' => 'perawatan.rawat-inap.batal-ranap', 'guard_name' => 'web']),
+            Permission::create(['name' => 'perawatan.daftar-pasien-ranap.batal-ranap', 'guard_name' => 'web']),
         ];
 
         $keuanganPermissions = [
@@ -52,8 +51,10 @@ class PermissionSeeder extends Seeder
         ];
 
         $logistikPermissions = [
-            Permission::create(['name' => 'logistik.input-minmax-stok.input', 'guard_name' => 'web']),
+            Permission::create(['name' => 'logistik.input-minmax-stok.create', 'guard_name' => 'web']),
             Permission::create(['name' => 'logistik.input-minmax-stok.read', 'guard_name' => 'web']),
+            Permission::create(['name' => 'logistik.input-minmax-stok.update', 'guard_name' => 'web']),
+            Permission::create(['name' => 'logistik.input-minmax-stok.delete', 'guard_name' => 'web']),
             Permission::create(['name' => 'logistik.stok-darurat.read', 'guard_name' => 'web']),
         ];
 

@@ -2,8 +2,6 @@
 
 namespace App\Http\Livewire\User;
 
-use App\Models\Aplikasi\Permission;
-use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
@@ -59,7 +57,7 @@ class ManajemenUser extends Component
     public function render()
     {
         return view('livewire.user.manajemen-user')
-            ->layout(BaseLayout::class, ['title' => 'Manajemen Hak Akses User']);
+            ->layout(BaseLayout::class, ['title' => 'Manajemen User']);
     }
 
     public function searchData()

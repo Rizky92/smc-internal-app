@@ -209,7 +209,7 @@ class LaporanProduksiTahunan extends Component
             array_merge(['Retur Supplier'], $this->returSupplier),
             array_merge(['TOTAL PEMBELIAN (Pembelian Farmasi - Retur Supplier)'], $this->totalBersihPembelianFarmasi),
             array_merge(['Pemakaian BHP'], $this->stokKeluarMedis),
-            array_merge(['Transfer Order'], $this->mutasiObatDariFarmasi),
+            array_merge(['Transfer Order'], $this->transferOrder),
         ];
 
         $excel = ExcelExport::make($filename)
