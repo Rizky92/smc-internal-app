@@ -93,17 +93,17 @@
                         inputStokSekarang.val(0)
                         inputSaranOrder.val(0)
 
-                        inputKodeBarang.trigger('change')
-                        inputNamaBarang.trigger('change')
-                        inputSupplier.trigger('change')
-                        inputStokMin.trigger('change')
-                        inputStokMax.trigger('change')
-                        inputStokSekarang.trigger('change')
-                        inputSaranOrder.trigger('change')
-                    })
-                </script>
-            @endpush
-        @endonce
+                    inputKodeBarang.trigger('change')
+                    inputNamaBarang.trigger('change')
+                    inputSupplier.trigger('change')
+                    inputStokMin.trigger('change')
+                    inputStokMax.trigger('change')
+                    inputStokSekarang.trigger('change')
+                    inputSaranOrder.trigger('change')
+                })
+            </script>
+        @endpush
+    @endonce
         <div class="card-body border-bottom" id="input">
             <div class="row" wire:ignore>
                 <div class="col-2">
