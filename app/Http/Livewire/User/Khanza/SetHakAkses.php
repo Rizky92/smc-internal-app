@@ -58,7 +58,7 @@ class SetHakAkses extends Component
 
         foreach ($this->hakAksesKhanza as $field => $hakAkses) {
             if ($user->getAttribute($field) == 'true') {
-                $this->checkedHakAkses += $field;
+                $this->checkedHakAkses[] = $field;
             }
         }
     }

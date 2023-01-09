@@ -32,7 +32,7 @@
                                 @foreach ($this->hakAksesKhanza as $field => $judul)
                                     <tr style="position: relative">
                                         <td>
-                                            <input id="permission-{{ $field }}" type="checkbox" wire:model.defer="checkedPermissions" value="{{ $field }}">
+                                            <input id="permission-{{ $field }}" type="checkbox" wire:model.defer="checkedHakAkses" value="{{ $field }}">
                                             <label for="permission-{{ $field }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer"></label>
                                         </td>
                                         <td>
