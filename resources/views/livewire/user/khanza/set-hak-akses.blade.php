@@ -32,8 +32,8 @@
                                 @foreach ($this->hakAksesKhanza as $field => $judul)
                                     <tr style="position: relative">
                                         <td>
-                                            <input id="permission-{{ $field }}" type="checkbox" wire:model.defer="checkedHakAkses" value="{{ $field }}">
-                                            <label for="permission-{{ $field }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer"></label>
+                                            <input id="hak-akses-{{ $field }}" type="checkbox" wire:model.defer="khanzaCheckedHakAkses" value="{{ $field }}">
+                                            <label for="hak-akses-{{ $field }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer"></label>
                                         </td>
                                         <td>
                                             {{ $field }}
@@ -59,7 +59,7 @@
                     </div>
                 </div>
                 <button class="btn btn-sm btn-default ml-auto" data-dismiss="modal" type="button" wire:click="resetModal">Batal</button>
-                <button class="btn btn-sm btn-primary" type="button" data-dismiss="modal" wire:click="$emit('transferPermissions')">
+                <button class="btn btn-sm btn-primary" type="button" data-dismiss="modal" wire:click="$emit('khanzaSyncHakAkses')">
                     <i class="fas fa-save"></i>
                     <span class="ml-1">Simpan</span>
                 </button>

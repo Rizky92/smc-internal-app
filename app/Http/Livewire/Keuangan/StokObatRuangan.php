@@ -92,8 +92,8 @@ class StokObatRuangan extends Component
             'Kode',
             'Nama',
             'Satuan',
-            'Harga',
             'Stok Sekarang',
+            'Harga',
             'Total Harga',
         ];
 

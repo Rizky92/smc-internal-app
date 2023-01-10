@@ -14,7 +14,7 @@ class SetHakAkses extends Component
 
     public $khanzaCariHakAkses;
 
-    public $checkedHakAkses;
+    public $khanzaCheckedHakAkses;
 
     protected $listeners = [
         'khanzaPrepareUser',
@@ -32,6 +32,7 @@ class SetHakAkses extends Component
     public function mount()
     {
         $this->khanzaCariHakAkses = '';
+        $this->khanzaCheckedHakAkses = [];
         $this->nrp = '';
         $this->nama = '';
     }
@@ -41,6 +42,7 @@ class SetHakAkses extends Component
         return MappingAksesKhanza::query()
             ->where('nama_field', 'like', "%{$this->khanzaCariHakAkses}%")
             ->orWhere('judul_menu', 'like', "%{$this->khanzaCariHakAkses}%")
+            ->orWhereIn('nama_field', $this->khanzaCheckedHakAkses)
             ->pluck('judul_menu', 'nama_field');
     }
 
@@ -56,14 +58,16 @@ class SetHakAkses extends Component
 
         $user = User::rawFindByNRP($this->nrp);
 
+        $this->khanzaCheckedHakAkses = [];
+
         foreach ($this->hakAksesKhanza as $field => $hakAkses) {
             if ($user->getAttribute($field) == 'true') {
-                $this->checkedHakAkses[] = $field;
+                $this->khanzaCheckedHakAkses[] = $field;
             }
         }
     }
 
-    public function khanzaSyncHakAkses()
+    public function khanzaSyncHakAkses(bool $hardTransfer = true)
     {
         if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->emit('flash', [
@@ -76,8 +80,19 @@ class SetHakAkses extends Component
 
         $user = User::rawFindByNRP($this->nrp);
 
-        foreach ($this->checkedHakAkses as $hakAkses) {
+        foreach ($this->khanzaCheckedHakAkses as $hakAkses) {
             $user->setAttribute($hakAkses, 'true');
+        }
+
+        if ($hardTransfer) {
+            $khanzaCheckedHakAkses = $this->khanzaCheckedHakAkses;
+            $falsyHakAkses = $this->hakAksesKhanza->reject(function ($value, $key) use ($khanzaCheckedHakAkses) {
+                return in_array($key, $khanzaCheckedHakAkses);
+            })->keys();
+
+            foreach ($falsyHakAkses as $hakAkses) {
+                $user->setAttribute($hakAkses, 'false');
+            }
         }
 
         $user->save();

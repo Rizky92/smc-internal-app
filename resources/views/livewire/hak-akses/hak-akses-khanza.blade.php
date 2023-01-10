@@ -20,8 +20,8 @@
                     @foreach ($this->hakAksesKhanza as $hakAkses)
                         <x-table.tr>
                             <x-table.td>
-                                {{ $hakAkses->nama_kolom }}
-                                <x-slot name="clickable" data-kolom="{{ $hakAkses->nama_kolom }}" data-judul-menu="{{ $hakAkses->judul_menu }}"></x-slot>
+                                {{ $hakAkses->nama_field }}
+                                <x-slot name="clickable" data-kolom="{{ $hakAkses->nama_field }}" data-judul-menu="{{ $hakAkses->judul_menu }}"></x-slot>
                             </x-table.td>
                             <x-table.td>{{ $hakAkses->judul_menu }}</x-table.td>
                         </x-table.tr>

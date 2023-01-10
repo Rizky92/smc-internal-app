@@ -33,7 +33,7 @@ class TransferHakAkses extends Component
     }
 
     protected $listeners = [
-        'prepareTransferCustomReport',
+        'customReportPrepareTransfer',
         'customReportTransferPermissions',
     ];
 
@@ -69,7 +69,7 @@ class TransferHakAkses extends Component
         $this->checkedUsers = [];
     }
 
-    public function prepareTransfer(
+    public function customReportPrepareTransfer(
         string $nrp,
         string $nama,
         array $roles = [],
@@ -81,7 +81,7 @@ class TransferHakAkses extends Component
         $this->permissions = Permission::whereIn('id', $permissions)->pluck('name', 'id')->toArray();
     }
 
-    public function transferPermissions()
+    public function customReportTransferPermissions()
     {
         if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->emit('flash', [

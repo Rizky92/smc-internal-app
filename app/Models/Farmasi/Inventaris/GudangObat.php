@@ -34,8 +34,8 @@ class GudangObat extends Model
             gudangbarang.kode_brng,
             databarang.nama_brng,
             kodesatuan.satuan,
-            databarang.h_beli,
             gudangbarang.stok,
+            databarang.h_beli,
             round(databarang.h_beli * if(gudangbarang.stok < 0, 0, gudangbarang.stok)) projeksi_harga
         ")
             ->leftJoin('databarang', 'gudangbarang.kode_brng', '=', 'databarang.kode_brng')

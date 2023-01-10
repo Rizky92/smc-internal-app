@@ -51,10 +51,7 @@
 
     <x-card>
         <x-slot name="header">
-            <x-card.row wire:ignore>
-
-            </x-card.row>
-            <div class="row" wire:ignore>
+            <x-card.row :livewire="true">
                 <div class="col-2">
                     <div class="form-group">
                         <label class="text-sm" for="user">NRP</label>
@@ -83,7 +80,7 @@
                                 </button>
                             </div>
                         </div>
-
+    
                         <div class="dropdown mb-3 ml-3">
                             <button class="btn btn-sm btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-share-square"></i>
@@ -100,7 +97,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </x-card.row>
             <x-card.row-col class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />

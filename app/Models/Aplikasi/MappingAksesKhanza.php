@@ -17,4 +17,9 @@ class MappingAksesKhanza extends Model
     public $incrementing = false;
 
     public $timestamps = false;
+
+    protected $fillable = [
+        'nama_field',
+        'judul_menu',
+    ];
 }

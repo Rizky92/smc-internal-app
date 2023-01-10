@@ -61,8 +61,8 @@
                     <x-table.th>Kode</x-table.th>
                     <x-table.th>Nama</x-table.th>
                     <x-table.th>Satuan</x-table.th>
-                    <x-table.th>Harga</x-table.th>
                     <x-table.th>Stok saat ini</x-table.th>
+                    <x-table.th>Harga</x-table.th>
                     <x-table.th>Projeksi Harga</x-table.th>
                 </x-slot>
                 <x-slot name="body">
@@ -72,8 +72,8 @@
                             <x-table.td>{{ $obat->kode_brng }}</x-table.td>
                             <x-table.td>{{ $obat->nama_brng }}</x-table.td>
                             <x-table.td>{{ $obat->satuan }}</x-table.td>
-                            <x-table.td>{{ rp($obat->h_beli) }}</x-table.td>
                             <x-table.td>{{ $obat->stok }}</x-table.td>
+                            <x-table.td>{{ rp($obat->h_beli) }}</x-table.td>
                             <x-table.td>{{ rp($obat->projeksi_harga) }}</x-table.td>
                         </x-table.tr>
                     @endforeach

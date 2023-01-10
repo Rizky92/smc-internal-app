@@ -46,6 +46,16 @@ class HakAksesCustomReport extends Component
             ->layout(BaseLayout::class, ['title' => 'Pengaturan Hak Akses']);
     }
 
+    public function createRole(string $role = '')
+    {
+        
+    }
+
+    public function createPermission(string $permission = '')
+    {
+        
+    }
+
     public function updatePermissions(int $roleId, array $permissionIds)
     {
         $role = Role::find($roleId);
@@ -53,6 +63,16 @@ class HakAksesCustomReport extends Component
         $role->syncPermissions($permissionIds);
 
         $this->flashSuccess('Hak akses berhasil diupdate');
+    }
+
+    public function deleteRoles($roles = null)
+    {
+        
+    }
+
+    public function deletePermissions($permissions = null)
+    {
+        
     }
 
     public function searchData()
