@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
+use DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;

@@ -34,7 +34,7 @@
                                     <tr style="position: relative">
                                         <td>
                                             <input id="user-{{ $user->nip }}" type="checkbox" wire:model.defer="checkedUsers" value="{{ $user->nip }}">
-                                            <label for="user-{{ $user->nip }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer"></label>
+                                            <label for="user-{{ $user->nip }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer; margin: 0"></label>
                                         </td>
                                         <td>{{ $user->nip }}</td>
                                         <td>{{ $user->nama }}</td>

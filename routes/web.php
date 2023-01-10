@@ -20,6 +20,7 @@ use App\Http\Livewire\RekamMedis\LaporanDemografi;
 use App\Http\Livewire\RekamMedis\LaporanStatistik;
 use App\Http\Livewire\User\ManajemenUser;
 use Illuminate\Support\Facades\Route;
+use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -126,5 +127,8 @@ Route::prefix('admin')
 
                 Route::get('hak-akses/khanza', HakAksesKhanza::class)
                     ->name('hak-akses.khanza');
+
+                Route::get('logs', [LogViewerController::class, 'index'])
+                    ->name('log-viewer');
             });
     });

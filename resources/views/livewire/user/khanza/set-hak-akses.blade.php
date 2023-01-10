@@ -33,7 +33,7 @@
                                     <tr style="position: relative">
                                         <td>
                                             <input id="hak-akses-{{ $field }}" type="checkbox" wire:model.defer="khanzaCheckedHakAkses" value="{{ $field }}">
-                                            <label for="hak-akses-{{ $field }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer"></label>
+                                            <label for="hak-akses-{{ $field }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer; margin: 0"></label>
                                         </td>
                                         <td>
                                             {{ $field }}

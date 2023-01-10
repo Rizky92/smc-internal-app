@@ -5,6 +5,7 @@ namespace App\Http\Livewire\User\CustomReport;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
+use DB;
 use Livewire\Component;
 
 class SetHakAkses extends Component

@@ -57,7 +57,7 @@ class HakAksesKhanza extends Component
             ->layout(BaseLayout::class, ['title' => 'Manajemen Hak Akses SIMRS Khanza']);
     }
 
-    public function simpan(string $field, string $judul)
+    public function simpanHakAkses(string $field, string $judul)
     {
         if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
@@ -71,6 +71,25 @@ class HakAksesKhanza extends Component
         );
 
         $this->flashSuccess('Hak akses berhasil disimpan!');
+
+        $this->cari = '';
+
+        $this->searchData();
+    }
+
+    public function hapusHakAkses(string $field)
+    {
+        if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
+            $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
+
+            return;
+        }
+
+        MappingAksesKhanza::destroy($field);
+
+        $this->flashSuccess('Hak akses berhasil dihapus!');
+
+        $this->cari = '';
 
         $this->searchData();
     }

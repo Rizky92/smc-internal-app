@@ -1,6 +1,6 @@
 <?php
 
-if (! function_exists('rp')) {
+if (!function_exists('rp')) {
     /**
      * @param  int|float $nominal
      * @param  int $decimalCount
@@ -13,7 +13,7 @@ if (! function_exists('rp')) {
     }
 }
 
-if (! function_exists('map_bulan')) {
+if (!function_exists('map_bulan')) {
     /**
      * @param  \Illuminate\Contracts\Support\Arrayable<int,mixed>|array<int,mixed>|null $data
      * @param  mixed $default
@@ -46,5 +46,32 @@ if (! function_exists('map_bulan')) {
         }
 
         return $arr;
+    }
+}
+
+if (!function_exists('log_tracker')) {
+    function log_tracker($query)
+    {
+        if (!($query instanceof \Illuminate\Database\Eloquent\Builder || $query instanceof \Illuminate\Database\Query\Builder)) {
+            return;
+        }
+
+        if (is_array($query)) {
+            foreach ($query as $q) {
+                if (!($q instanceof \Illuminate\Database\Eloquent\Builder || $q instanceof \Illuminate\Database\Query\Builder)) {
+                    continue;
+                }
+
+                $sql = Str::of($query->toSql())
+                    ->replaceArray('?', $query->getBindings());
+
+                Log::info($sql);
+            }
+        } else {
+            $sql = Str::of($query->toSql())
+                ->replaceArray('?', $query->getBindings());
+    
+            Log::info($sql);
+        }
     }
 }

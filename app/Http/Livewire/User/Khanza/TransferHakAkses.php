@@ -80,25 +80,30 @@ class TransferHakAkses extends Component
         $currentUser = User::query()
             ->withoutGlobalScopes()
             ->withHakAkses()
-            ->whereRaw('AES_DECRYPT(user.id_user, "nur") = ?', $this->nrp)
-            ->first();
+            ->whereRaw('AES_DECRYPT(user.id_user, "nur") = ?', $this->nrp);
+
+        log_tracker($currentUser);
+
+        $currentUser = $currentUser->first();
 
         $permittedUsers = User::query()
             ->withoutGlobalScopes()
             ->withHakAkses()
-            ->whereIn(DB::raw('AES_DECRYPT(user.id_user, "nur")'), $this->checkedUsers)
-            ->get();
+            ->whereIn(DB::raw('AES_DECRYPT(user.id_user, "nur")'), $this->checkedUsers);
 
-        // dd([$permittedUsers, $currentUser]);
+        log_tracker($permittedUsers);
+
+        $permittedUsers = $permittedUsers->get();
 
         foreach ($permittedUsers as $checkedUser) {
+            /** @var \App\Models\Aplikasi\User $checkedUser */
             foreach ($this->hakAksesTersedia as $kolom => $hakAkses) {
                 $checkedUser->setAttribute($kolom, $currentUser->getAttribute($kolom));
-
-                // dd([$kolom, $checkedUser->getAttribute($kolom), $checkedUser, $currentUser]);
             }
 
             $checkedUser->save();
+
+            log_tracker($checkedUser);
         }
 
         $this->emit('flash', [
