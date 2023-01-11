@@ -20,7 +20,7 @@
                 </div>
                 <div class="row mt-2">
                     <div class="col-12 table-responsive">
-                        <table class="table table-hover table-striped table-sm text-sm">
+                        <table class="table table-hover table-striped table-sm text-sm m-0 p-0">
                             <thead>
                                 <tr>
                                     <th>#</th>
@@ -33,7 +33,7 @@
                                 @foreach ($this->availableUsers as $user)
                                     <tr style="position: relative">
                                         <td>
-                                            <input id="user-{{ $user->nip }}" type="checkbox" wire:model.defer="checkedUsers" value="{{ $user->nip }}">
+                                            <input id="user-{{ $user->nip }}" type="checkbox" wire:model.defer="khanzaCheckedUsers" value="{{ $user->nip }}">
                                             <label for="user-{{ $user->nip }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer; margin: 0"></label>
                                         </td>
                                         <td>{{ $user->nip }}</td>
@@ -48,7 +48,7 @@
             </div>
             <div class="modal-footer justify-content-start">
                 <div class="input-group input-group-sm" style="width: 16rem">
-                    <input class="form-control" type="search" wire:model.defer="khanzaCariUser" wire:keydown.enter.stop="$refresh" />
+                    <input class="form-control" type="search" wire:model.defer="cariUser" wire:keydown.enter.stop="$refresh" />
                     <div class="input-group-append">
                         <button class="btn btn-sm btn-default" type="button" wire:click="$refresh">
                             <i class="fas fa-search"></i>

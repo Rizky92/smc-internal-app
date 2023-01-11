@@ -5,7 +5,8 @@ namespace App\Http\Livewire\User\CustomReport;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
-use DB;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 class SetHakAkses extends Component
@@ -14,25 +15,22 @@ class SetHakAkses extends Component
 
     public $nama;
 
-    public $customReportCariPermissions;
+    public $customReportSearchRoleAndPermissions;
 
-    public $checkedRoles;
+    public $customReportCheckedRoles;
 
-    public $checkedPermissions;
+    public $customReportCheckedPermissions;
 
     protected $listeners = [
         'customReportPrepareUser',
         'customReportSyncRolesAndPermissions',
-        'customReportResetModal',
+        'resetModal',
     ];
 
     protected function queryString()
     {
         return [
-            'customReportCariPermissions' => [
-                'except' => '',
-                'as' => 'cari_permission',
-            ],
+            'customReportSearchRoleAndPermissions' => ['except' => '', 'as' => 'crsq'],
         ];
     }
 
@@ -41,69 +39,64 @@ class SetHakAkses extends Component
         $this->defaultValues();
     }
 
-    public function getRolesProperty()
-    {
-        return Role::with('permissions')->get();
-    }
-
-    public function getOtherPermissionsProperty()
-    {
-        $availablePermissions = $this->roles->map(function (Role $role) {
-            return $role->permissions->map(function (Permission $permission) {
-                return $permission->id;
-            });
-        })->flatten()->toArray();
-
-        return Permission::whereNotIn('id', $availablePermissions)->get();
-    }
-
     public function render()
     {
         return view('livewire.user.custom-report.set-hak-akses');
     }
 
-    public function customReportPrepareUser(string $nrp)
+    public function getAvailableRolesProperty()
+    {
+        return Role::query()
+            ->with('permissions')
+            ->when(! empty($this->customReportSearchRoleAndPermissions), function (Builder $query) {
+                return $query->where('name', 'like', "%{$this->customReportSearchRoleAndPermissions}%");
+            })
+            ->orWhereIn('id', $this->customReportCheckedRoles)
+            ->get();
+    }
+
+    public function getOtherAvailablePermissionsProperty()
+    {
+        return Permission::query()
+            ->whereDoesntHave('roles')
+            ->when(! empty($this->customReportSearchRoleAndPermissions), function (Builder $query) {
+                return $query->where('name', 'like', "%{$this->customReportSearchRoleAndPermissions}%");
+            })
+            ->orWhereIn('id', $this->customReportCheckedPermissions)
+            ->get();
+    }
+
+    public function customReportPrepareUser(string $nrp, string $nama)
     {
         $this->nrp = $nrp;
+        $this->nama = $nama;
     }
 
     public function customReportSyncRolesAndPermissions()
     {
-        if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
-            $this->emit('flash', [
-                'flash.type' => 'danger',
-                'flash.message' => 'Anda tidak diizinkan untuk melakukan aksi ini.',
-            ]);
-
-            return;
-        }
+        throw_if(!auth()->user()->hasRole(config('permission.superadmin_name')), AuthorizationException::class);
 
         $user = User::findByNRP($this->nrp);
 
-        $user->syncRoles($this->checkedRoles);
-        $user->syncPermissions($this->checkedPermissions);
+        $user->syncRoles($this->customReportCheckedRoles);
+        $user->syncPermissions($this->customReportCheckedPermissions);
 
-        $this->emit('flash', [
-            'flash.type' => 'success',
-            'flash.message' => "Hak akses untuk user {$this->nrp} berhasil diubah!",
-        ]);
-
-        $this->customReportResetModal();
+        $this->emitTo('user.manajemen-user', 'flashSuccess', "Hak akses untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
     }
 
-    public function customReportResetModal()
+    public function resetModal()
     {
         $this->defaultValues();
 
-        $this->emitSelf('$refresh');
+        $this->dispatchBrowserEvent('hide.bs.modal');
     }
 
     private function defaultValues()
     {
         $this->nrp = '';
         $this->nama = '';
-        $this->customReportCariPermissions = '';
-        $this->checkedRoles = [];
-        $this->checkedPermissions = [];
+        $this->customReportSearchRoleAndPermissions = '';
+        $this->customReportCheckedRoles = [];
+        $this->customReportCheckedPermissions = [];
     }
 }

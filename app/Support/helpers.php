@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Auth\AuthenticationException;
+
 if (!function_exists('rp')) {
     /**
      * @param  int|float $nominal
@@ -49,29 +51,31 @@ if (!function_exists('map_bulan')) {
     }
 }
 
-if (!function_exists('log_tracker')) {
-    function log_tracker($query)
+if (! function_exists('tracker_start')) {
+    function tracker_start(string $connection = 'mysql_sik')
     {
-        if (!($query instanceof \Illuminate\Database\Eloquent\Builder || $query instanceof \Illuminate\Database\Query\Builder)) {
-            return;
+        DB::connection($connection)->enableQueryLog();
+    }
+}
+
+if (!function_exists('tracker_end')) {
+    function tracker_end(string $connection = 'mysql_sik')
+    {
+        if (! auth()->check()) {
+            throw new AuthenticationException();
         }
 
-        if (is_array($query)) {
-            foreach ($query as $q) {
-                if (!($q instanceof \Illuminate\Database\Eloquent\Builder || $q instanceof \Illuminate\Database\Query\Builder)) {
-                    continue;
-                }
+        foreach (DB::connection($connection)->getQueryLog() as $log) {
+            $sql = Str::of($log['query'])
+                ->replaceArray('?', $log['bindings']);
 
-                $sql = Str::of($query->toSql())
-                    ->replaceArray('?', $query->getBindings());
-
-                Log::info($sql);
-            }
-        } else {
-            $sql = Str::of($query->toSql())
-                ->replaceArray('?', $query->getBindings());
-    
-            Log::info($sql);
+            DB::connection($connection)->table('trackersql')->insert([
+                'tanggal' => now(),
+                'sqle' => e($sql),
+                'usere' => auth()->id(),
+            ]);
         }
+        
+        DB::connection($connection)->disableQueryLog();
     }
 }

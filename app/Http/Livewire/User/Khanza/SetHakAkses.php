@@ -25,7 +25,7 @@ class SetHakAkses extends Component
     protected function queryString()
     {
         return [
-            'khanzaCariHakAkses' => ['except' => '', 'as' => 'hak_akses'],
+            'khanzaCariHakAkses' => ['except' => '', 'as' => 'q'],
         ];
     }
 
@@ -67,9 +67,9 @@ class SetHakAkses extends Component
         }
     }
 
-    public function khanzaSyncHakAkses(bool $hardTransfer = true)
+    public function khanzaSyncHakAkses()
     {
-        if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
+        if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->emit('flash', [
                 'flash.type' => 'danger',
                 'flash.message' => 'Anda tidak diizinkan untuk melakukan tindakan ini!',
@@ -78,24 +78,19 @@ class SetHakAkses extends Component
             return;
         }
 
+        $checkedHakAkses = $this->khanzaCheckedHakAkses;
+
         $user = User::rawFindByNRP($this->nrp);
 
-        foreach ($this->khanzaCheckedHakAkses as $hakAkses) {
+        tracker_start();
+
+        foreach ($checkedHakAkses as $hakAkses) {
             $user->setAttribute($hakAkses, 'true');
         }
 
-        if ($hardTransfer) {
-            $khanzaCheckedHakAkses = $this->khanzaCheckedHakAkses;
-            $falsyHakAkses = $this->hakAksesKhanza->reject(function ($value, $key) use ($khanzaCheckedHakAkses) {
-                return in_array($key, $khanzaCheckedHakAkses);
-            })->keys();
-
-            foreach ($falsyHakAkses as $hakAkses) {
-                $user->setAttribute($hakAkses, 'false');
-            }
-        }
-
         $user->save();
+
+        tracker_end();
 
         $this->emit('flash', [
             'flash.type' => 'success',

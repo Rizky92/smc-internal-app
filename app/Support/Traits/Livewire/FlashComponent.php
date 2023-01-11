@@ -8,6 +8,10 @@ trait FlashComponent
     {
         $this->listeners = array_merge($this->listeners, [
             'flash',
+            'flashSuccess',
+            'flashInfo',
+            'flashWarning',
+            'flashError',
         ]);
     }
 

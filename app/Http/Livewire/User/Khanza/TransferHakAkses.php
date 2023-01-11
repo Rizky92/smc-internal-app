@@ -14,9 +14,9 @@ class TransferHakAkses extends Component
 
     public $nama;
 
-    public $checkedUsers;
+    public $khanzaCheckedUsers;
 
-    public $khanzaCariUser;
+    public $cariUser;
 
     protected $listeners = [
         'khanzaPrepareTransfer',
@@ -26,9 +26,9 @@ class TransferHakAkses extends Component
     protected function queryString()
     {
         return [
-            'khanzaCariUser' => [
+            'cariUser' => [
                 'except' => '',
-                'as' => 'khanza_search',
+                'as' => 'qu',
             ],
         ];
     }
@@ -38,7 +38,7 @@ class TransferHakAkses extends Component
         $this->defaultValues();
     }
 
-    public function getHakAksesTersediaProperty()
+    public function getKhanzaHakAksesTersediaProperty()
     {
         return MappingAksesKhanza::pluck('judul_menu', 'nama_field');
     }
@@ -47,11 +47,10 @@ class TransferHakAkses extends Component
     {
         return User::query()
             ->where('petugas.nip', '!=', $this->nrp)
-            ->search($this->khanzaCariUser)
-            ->when(!empty($this->checkedUsers), function (Builder $query) {
-                return $query->orWhereIn('petugas.nip', $this->checkedUsers);
+            ->search($this->cariUser)
+            ->when(!empty($this->khanzaCheckedUsers), function (Builder $query) {
+                return $query->orWhereIn('petugas.nip', $this->khanzaCheckedUsers);
             })
-            ->limit(50)
             ->get();
     }
 
@@ -80,31 +79,26 @@ class TransferHakAkses extends Component
         $currentUser = User::query()
             ->withoutGlobalScopes()
             ->withHakAkses()
-            ->whereRaw('AES_DECRYPT(user.id_user, "nur") = ?', $this->nrp);
-
-        log_tracker($currentUser);
-
-        $currentUser = $currentUser->first();
+            ->whereRaw('AES_DECRYPT(user.id_user, "nur") = ?', $this->nrp)
+            ->first();
 
         $permittedUsers = User::query()
             ->withoutGlobalScopes()
             ->withHakAkses()
-            ->whereIn(DB::raw('AES_DECRYPT(user.id_user, "nur")'), $this->checkedUsers);
+            ->whereIn(DB::raw('AES_DECRYPT(user.id_user, "nur")'), $this->khanzaCheckedUsers)
+            ->get();
 
-        log_tracker($permittedUsers);
-
-        $permittedUsers = $permittedUsers->get();
+        tracker_start();
 
         foreach ($permittedUsers as $checkedUser) {
-            /** @var \App\Models\Aplikasi\User $checkedUser */
-            foreach ($this->hakAksesTersedia as $kolom => $hakAkses) {
+            foreach ($this->khanzaHakAksesTersedia as $kolom => $hakAkses) {
                 $checkedUser->setAttribute($kolom, $currentUser->getAttribute($kolom));
             }
 
             $checkedUser->save();
-
-            log_tracker($checkedUser);
         }
+
+        tracker_end();
 
         $this->emit('flash', [
             'flash.type' => 'success',
@@ -112,11 +106,18 @@ class TransferHakAkses extends Component
         ]);
     }
 
-    public function defaultValues()
+    public function resetModal()
     {
-        $this->khanzaCariUser = '';
+        $this->defaultValues();
+
+        $this->dispatchBrowserEvent('hide.bs.modal');
+    }
+
+    private function defaultValues()
+    {
+        $this->cariUser = '';
         $this->nrp = '';
         $this->nama = '';
-        $this->checkedUsers = [];
+        $this->khanzaCheckedUsers = [];
     }
 }
