@@ -11,7 +11,7 @@ trait ExcelExportable
     {
         $this->listeners = array_merge($this->listeners, [
             'notifyExportToComponent',
-            'beginExport',
+            'beginExcelExport',
         ]);
     }
 
@@ -21,7 +21,7 @@ trait ExcelExportable
 
     abstract protected function columnHeaders(): array;
 
-    protected function getPageHeaders(): array
+    protected function pageHeaders(): array
     {
         return [];
     }
@@ -35,41 +35,38 @@ trait ExcelExportable
         $this->emit('beginExport');
     }
 
-    public function beginExport()
+    public function beginExcelExport()
     {
-        // $filename = now()->format('Ymd_His') . '_';
+        $filename = now()->format('Ymd_His') . '_';
 
-        // $filename .= Str::snake($this->filename());
+        $filename .= Str::of($this->filename())
+            ->trim()
+            ->snake();
 
-        // $filename .= '.xlsx';
+        $filename .= '.xlsx';
 
-        // $sheet1 = ResepDokter::kunjunganResepObatRegular($this->periodeAwal, $this->periodeAkhir, $this->jenisPerawatan)->get()->toArray();
-        // $sheet2 = ResepDokterRacikan::kunjunganResepObatRacikan($this->periodeAwal, $this->periodeAkhir, $this->jenisPerawatan)->get()->toArray();
+        $dataSheets = $this->dataPerSheet();
 
-        // $titles = [
-        //     'RS Samarinda Medika Citra',
-        //     'Laporan Kunjungan Resep Pasien',
-        //     now()->format('d F Y'),
-        // ];
+        $firstSheet = sizeof($dataSheets) > 1
+            ? (string) array_keys($dataSheets)[0]
+            : 'Sheet 1';
 
-        // $columnHeaders = [
-        //     'No. Resep',
-        //     'Dokter Peresep',
-        //     'Tgl. Validasi',
-        //     'Jam',
-        //     'Pasien',
-        //     'Jenis Perawatan',
-        //     'Total Pembelian (RP)',
-        // ];
+        $firstData = is_iterable($dataSheets)
+            ? $dataSheets[0]
+            : $dataSheets[$firstSheet];
 
-        // $excel = ExcelExport::make($filename, 'Obat Regular')
-        //     ->setPageHeaders($titles)
-        //     ->setColumnHeaders($columnHeaders)
-        //     ->setData($sheet1);
+        $excel = ExcelExport::make($filename, $firstSheet)
+            ->setPageHeaders($this->getPageHeaders())
+            ->setColumnHeaders($this->columnHeaders())
+            ->setData($firstData);
+        
+        array_shift($dataSheets);
 
-        // $excel->useSheet('Obat Racikan')
-        //     ->setData($sheet2);
+        foreach ($dataSheets as $sheet => $data) {
+            $excel->addSheet($sheet)
+                ->setData($data);
+        }
 
-        // return $excel->export();
+        return $excel->export();
     }
 }

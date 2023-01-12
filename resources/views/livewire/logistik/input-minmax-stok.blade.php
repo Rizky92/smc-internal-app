@@ -106,13 +106,13 @@
                 <div class="col-2">
                     <div class="form-group">
                         <label class="text-sm" for="kode_brng">Kode Barang</label>
-                        <input type="text" class="form-control form-control-sm bg-light" id="kode_barang" readonly autocomplete="off">
+                        <input type="text" class="form-control form-control-sm" id="kode_barang" readonly autocomplete="off">
                     </div>
                 </div>
                 <div class="col-4">
                     <div class="form-group">
                         <label class="text-sm" for="nama_brng">Nama Barang</label>
-                        <input type="text" class="form-control form-control-sm bg-light" id="nama_barang" readonly autocomplete="off">
+                        <input type="text" class="form-control form-control-sm" id="nama_barang" readonly autocomplete="off">
                     </div>
                 </div>
                 <div class="col-6">
@@ -143,13 +143,13 @@
                 <div class="col-3">
                     <div class="form-group">
                         <label class="text-sm" for="stok_saat_ini">Stok saat ini</label>
-                        <input type="text" class="form-control form-control-sm bg-light" id="stok_sekarang" readonly autocomplete="off">
+                        <input type="text" class="form-control form-control-sm" id="stok_sekarang" readonly autocomplete="off">
                     </div>
                 </div>
                 <div class="col-3">
                     <div class="form-group">
                         <label class="text-sm" for="saran_order">Saran order</label>
-                        <input type="text" class="form-control form-control-sm bg-light" id="saran_order" readonly autocomplete="off">
+                        <input type="text" class="form-control form-control-sm" id="saran_order" readonly autocomplete="off">
                     </div>
                 </div>
             </x-card.row>

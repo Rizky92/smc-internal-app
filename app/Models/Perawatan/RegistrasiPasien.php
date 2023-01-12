@@ -58,6 +58,8 @@ class RegistrasiPasien extends Model
         }
 
         $sqlSelect = "
+            kamar_inap.lama,
+            kamar_inap.ttl_biaya,
             kamar_inap.kd_kamar,
             reg_periksa.no_rawat,
             reg_periksa.no_rkm_medis,

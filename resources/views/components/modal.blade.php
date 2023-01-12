@@ -12,23 +12,19 @@
 ])
 
 @php
-    $sizes = ['sm', 'DEFAULT', 'lg', 'xl'];
+    $sizes = ['sm', 'lg', 'xl'];
 
-    $finalClass = '';
-    $sizeClass = null;
-    $scrollableClass = null;
+    $finalClass = [];
 
     if (in_array($size, $sizes)) {
-        $sizeClass = 'modal-' . $size;
-        $finalClass .= $sizeClass;
+        $finalClass = array_merge(['modal-' . $size], $finalClass);
     }
-
-    $finalClass .= ' ';
 
     if ($scrollable) {
-        $scrollableClass = 'modal-dialog-scrollable';
-        $finalClass .= $scrollableClass;
+        $finalClass = array_merge(['modal-dialog-scrollable'], $finalClass);
     }
+
+    $finalClass = collect($finalClass)->join(' ');
 @endphp
 
 <div class="modal fade" id="{{ $id }}" {{ $livewire ? 'wire:ignore.self' : null }}>

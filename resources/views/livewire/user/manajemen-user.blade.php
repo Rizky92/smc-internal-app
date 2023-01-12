@@ -56,13 +56,13 @@
                 <div class="col-2">
                     <div class="form-group">
                         <label class="text-sm" for="user">NRP</label>
-                        <input class="form-control form-control-sm bg-light" id="user" type="text" readonly autocomplete="off">
+                        <input class="form-control form-control-sm" id="user" type="text" readonly autocomplete="off">
                     </div>
                 </div>
                 <div class="col-4">
                     <div class="form-group">
                         <label class="text-sm" for="nama">Nama</label>
-                        <input class="form-control form-control-sm bg-light" id="nama" type="text" readonly autocomplete="off">
+                        <input class="form-control form-control-sm" id="nama" type="text" readonly autocomplete="off">
                     </div>
                 </div>
                 <div class="col-6">
