@@ -30,6 +30,7 @@ class PermissionSeeder extends Seeder
         $perawatanPermissions = [
             Permission::create(['name' => 'perawatan.daftar-pasien-ranap.read', 'guard_name' => 'web']),
             Permission::create(['name' => 'perawatan.daftar-pasien-ranap.batal-ranap', 'guard_name' => 'web']),
+            Permission::create(['name' => 'perawatan.daftar-pasien-ranap.update-kamar-pasien', 'guard_name' => 'web']),
         ];
 
         $keuanganPermissions = [
