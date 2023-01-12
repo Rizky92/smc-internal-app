@@ -2,7 +2,7 @@
     @once
         @push('js')
             <script>
-                $('#simpandata').click(e => {
+                $('#set-role-permissions').click(e => {
                     let selectedRoles = []
                     let selectedPermissions = []
 
@@ -27,7 +27,7 @@
                     @this.set('checkedRoles', selectedRoles)
                     @this.set('checkedPermissions', selectedPermissions)
 
-                    @this.customReportSyncRolesAndPermissions()
+                    @this.emit('custom-report.set-role-permissions')
                 })
 
                 $('input[type="checkbox"]').change(function(e) {
@@ -75,15 +75,15 @@
             </script>
         @endpush
     @endonce
-    <x-modal :livewire="true" title="Set Role Permission untuk Custom Report">
+    <x-modal :livewire="true" title="Set Role Permission untuk Custom Report" id="modal-set-role-permissions">
         <x-slot name="body">
             <x-row-col>
-                <ul class="form-group" id="role_permissions" style="list-style: none; margin: 0; padding: 0;">
+                <ul class="form-group" id="role_permissions" style="list-style: none">
                     @foreach ($this->availableRoles as $role)
                         <li class="custom-control custom-checkbox">
                             <input class="custom-control-input" id="role-{{ $role->id }}" name="roles" type="checkbox" value="{{ $role->id }}">
                             <label class="custom-control-label" for="role-{{ $role->id }}">{{ Str::of($role->name)->upper() }}</label>
-                            <ul class="form-group" style="margin: 0; padding: 0;">
+                            <ul class="form-group" style="list-style: none">
                                 @foreach ($role->permissions as $permission)
                                     <li class="custom-control custom-checkbox">
                                         <input class="custom-control-input custom-control-input-secondary" id="permission-{{ $permission->id }}-{{ $role->id }}" name="permissions" data-role-id="{{ $role->id }}" type="checkbox" value="{{ $permission->id }}">
@@ -95,8 +95,8 @@
                     @endforeach
                     <li>
                         <h6 class="font-weight-bold">Hak akses lainnya</h6>
-                        <ul class="form-group px-0" style="list-style: none; margin: 0; padding: 0;">
-                            @foreach ($this->otherAvailabelPermissions as $op)
+                        <ul class="form-group px-0" style="list-style: none">
+                            @foreach ($this->otherPermissions as $op)
                                 <li class="custom-control custom-checkbox">
                                     <input class="custom-control-input custom-control-input-secondary" id="permission-{{ $op->id }}" name="permissions" type="checkbox" value="{{ $op->id }}">
                                     <label class="custom-control-label font-weight-normal" for="permission-{{ $op->id }}">{{ $op->name }}</label>
@@ -107,9 +107,10 @@
                 </ul>
             </x-row-col>
         </x-slot>
-        <x-slot name="footer" class="justify-content-end">
-            <x-button class="btn-default" id="batalsimpan" data-dismiss="modal" title="Batal" />
-            <x-button class="btn-primary" id="simpandata" data-dismiss="modal" title="Simpan" icon="fas fa-save" />
+        <x-slot name="footer" class="justify-content-start">
+            <x-filter.search method="$refresh" model="cari" />
+            <x-button class="btn-default ml-auto" data-dismiss="modal" wire:click="$emit('custom-report.close-modal')" title="Batal" />
+            <x-button class="btn-primary ml-2" data-dismiss="modal" id="set-role-permissions" title="Simpan" icon="fas fa-save" />
         </x-slot>
     </x-modal>
 </div>

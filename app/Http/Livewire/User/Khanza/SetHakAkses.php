@@ -8,6 +8,8 @@ use Livewire\Component;
 
 class SetHakAkses extends Component
 {
+    public $deferLoading = true;
+
     public $nrp;
 
     public $nama;
@@ -86,6 +88,14 @@ class SetHakAkses extends Component
 
         foreach ($checkedHakAkses as $hakAkses) {
             $user->setAttribute($hakAkses, 'true');
+        }
+
+        $falsyHakAkses = $this->hakAksesKhanza->reject(function ($value, $key) use ($checkedHakAkses) {
+            return in_array($key, $checkedHakAkses);
+        });
+
+        foreach ($falsyHakAkses as $field => $judul) {
+            $user->setAttribute($field, 'false');
         }
 
         $user->save();

@@ -28,26 +28,27 @@
                     let roles = Array.from(roleIds.split(','))
                     let permissions = Array.from(permissionIds.split(','))
 
-                    inputRoles.each((i, el) => el.checked = roles.find(v => v === el.value))
-                    inputPermissions.each((i, el) => el.checked = permissions.find(v => v === el.value))
+                    @this.emit('custom-report.prepare', nrp, nama, roles, permissions)
 
-                    @this.emit('customReportPrepareTransfer', nrp, nama, roles, permissions)
-                    @this.emit('customReportPrepareUser', nrp, nama, roles, permissions)
-
-                    @this.emit('khanzaPrepareTransfer', nrp, nama)
-                    @this.emit('khanzaPrepareUser', nrp, nama)
+                    @this.emit('khanza.prepare', nrp, nama)
                 }
+
+                $('#button-set-role-permissions').click(() => {
+                    @this.emit('custom-report.open-modal')
+                    
+                    $('#modal-set-role-permissions').modal('show')
+                })
             </script>
         @endpush
     @endonce
 
-    <livewire:user.custom-report.set-hak-akses />
+    <livewire:user.custom-report.set-role-permissions />
 
-    <livewire:user.custom-report.transfer-hak-akses />
+    {{-- <livewire:user.custom-report.transfer-role-permissions />
 
     <livewire:user.khanza.set-hak-akses />
 
-    <livewire:user.khanza.transfer-hak-akses />
+    <livewire:user.khanza.transfer-hak-akses /> --}}
 
     <x-card>
         <x-slot name="header">
@@ -75,7 +76,7 @@
                                 <button class="dropdown-item text-sm" type="button" data-toggle="modal" data-target="#set-akses-khanza" id="button-set-akses-khanza">
                                     SIMRS Khanza
                                 </button>
-                                <button class="dropdown-item text-sm" type="button" data-toggle="modal" data-target="#set-akses-custom-report" id="button-set-akses-custom-report">
+                                <button class="dropdown-item text-sm" type="button" id="button-set-role-permissions">
                                     Custom Report
                                 </button>
                             </div>

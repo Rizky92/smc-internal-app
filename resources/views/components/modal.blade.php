@@ -35,7 +35,7 @@
     <div class="modal-dialog {{ $finalClass }}">
         <div {{ $attributes->merge(['class' => 'modal-content']) }}>
 
-            <div {{ $header->attributes->merge(['class' => 'modal-header']) }}>
+            <div class="modal-header">
                 <h4 class="modal-title">{{ $title }}</h4>
                 {{ $header }}
                 @if ($dismissable)
@@ -57,3 +57,4 @@
         </div>
     </div>
 </div>
+

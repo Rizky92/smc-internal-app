@@ -10,6 +10,8 @@ use Livewire\Component;
 
 class TransferHakAkses extends Component
 {
+    public $deferLoading = true;
+
     public $nrp;
 
     public $nama;
