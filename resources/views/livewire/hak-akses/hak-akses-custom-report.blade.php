@@ -105,7 +105,9 @@
                         <x-table.tr>
                             <x-table.td>
                                 {{ Str::upper($role->name) }}
-                                <x-slot name="clickable" data-role-id="{{ $role->id }}" data-permission-ids="{{ $role->permissions->pluck('id')->join(',') }}" data-toggle="modal" data-target="#permission-modal"></x-slot>
+                                @unless ($role->name == config('permission.superadmin_name'))
+                                    <x-slot name="clickable" data-role-id="{{ $role->id }}" data-permission-ids="{{ $role->permissions->pluck('id')->join(',') }}" data-toggle="modal" data-target="#permission-modal"></x-slot>
+                                @endunless
                             </x-table.td>
                             <x-table.td>
                                 <p>
