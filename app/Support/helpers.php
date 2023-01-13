@@ -52,27 +52,23 @@ if (!function_exists('map_bulan')) {
 }
 
 if (! function_exists('tracker_start')) {
-    function tracker_start(string $connection = 'mysql_smc')
+    function tracker_start(string $connection = 'mysql_sik')
     {
         DB::connection($connection)->enableQueryLog();
     }
 }
 
 if (!function_exists('tracker_end')) {
-    function tracker_end(string $connection = 'mysql_smc')
+    function tracker_end(string $connection = 'mysql_sik')
     {
-        if (! auth()->check()) {
-            throw new AuthenticationException();
-        }
-
         foreach (DB::connection($connection)->getQueryLog() as $log) {
             $sql = Str::of($log['query'])
                 ->replaceArray('?', $log['bindings']);
 
-            DB::connection($connection)->table('trackersql')->insert([
+            DB::connection('mysql_smc')->table('trackersql')->insert([
                 'tanggal' => now(),
-                'sqle' => e($sql),
-                'usere' => auth()->id(),
+                'sqle' => (string) $sql,
+                'usere' => auth()->user()->nip,
             ]);
         }
         

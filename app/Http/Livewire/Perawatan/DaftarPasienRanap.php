@@ -8,6 +8,8 @@ use App\Models\Perawatan\RegistrasiPasien;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Rizky92\Xlswriter\ExcelExport;
@@ -33,6 +35,7 @@ class DaftarPasienRanap extends Component
     protected $paginationTheme = 'bootstrap';
 
     protected $listeners = [
+        'updateHargaKamar',
         'beginExcelExport',
         'searchData',
         'resetFilters',
@@ -193,6 +196,36 @@ class DaftarPasienRanap extends Component
         }
 
         $this->flashSuccess("Data pasien dengan No. Rawat {$noRawat} sudah kembali ke rawat jalan!");
+    }
+
+    public function updateHargaKamar(string $noRawat, string $kdKamar, string $tglMasuk, string $jamMasuk, int $hargaKamarBaru)
+    {
+        $validator = Validator::make(
+            ['harga_kamar_baru' => $hargaKamarBaru],
+            ['harga_kamar_baru' => 'required|integer|numeric|min:0']
+        );
+
+        if ($validator->fails()) {
+            $this->flashError('Ada data salah, silahkan dicek input anda.');
+
+            return;
+        }
+
+        tracker_start();
+
+        $perawatan = RawatInap::where([
+            ['no_rawat', '=', $noRawat],
+            ['kd_kamar', '=', $kdKamar],
+            ['tgl_masuk', '=', Carbon::parse($tglMasuk)->format('Y-m-d')],
+            ['jam_masuk', '=', Carbon::parse($jamMasuk)->format('H:i:s')],
+        ])->update([
+            'trf_kamar' => $hargaKamarBaru,
+            'ttl_biaya' => DB::raw("({$hargaKamarBaru} * lama)")
+        ]);
+
+        tracker_end();
+
+        $this->flashSuccess('Harga kamar berhasil diupdate!');
     }
 
     public function searchData()
