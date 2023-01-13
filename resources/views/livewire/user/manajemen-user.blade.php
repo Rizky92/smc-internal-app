@@ -28,9 +28,9 @@
                     let roles = Array.from(roleIds.split(','))
                     let permissions = Array.from(permissionIds.split(','))
 
-                    @this.emit('custom-report.prepare', nrp, nama, roles, permissions)
+                    @this.emit('custom-report.prepare-user', nrp, nama, roles, permissions)
 
-                    @this.emit('khanza.prepare', nrp, nama)
+                    @this.emit('khanza.prepare-user', nrp, nama)
                 }
 
                 $('#button-set-role-permissions').click(() => {
@@ -38,17 +38,23 @@
 
                     $('#modal-set-role-permissions').modal('show')
                 })
+
+                $('#button-set-hak-akses').click(e => {
+                    @this.emit('khanza.open-modal')
+
+                    $('#modal-set-hak-akses').modal('show')
+                })
             </script>
         @endpush
     @endonce
 
     <livewire:user.custom-report.set-role-permissions />
 
-    {{-- <livewire:user.custom-report.transfer-role-permissions />
+    {{-- <livewire:user.custom-report.transfer-role-permissions /> --}}
 
     <livewire:user.khanza.set-hak-akses />
 
-    <livewire:user.khanza.transfer-hak-akses /> --}}
+    {{-- <livewire:user.khanza.transfer-hak-akses /> --}}
 
     <x-card>
         <x-slot name="header">
@@ -73,7 +79,7 @@
                                 <span class="ml-1">Set hak akses</span>
                             </button>
                             <div class="dropdown-menu">
-                                <button class="dropdown-item text-sm" type="button" data-toggle="modal" data-target="#set-akses-khanza" id="button-set-akses-khanza">
+                                <button class="dropdown-item text-sm" type="button" id="button-set-hak-akses">
                                     SIMRS Khanza
                                 </button>
                                 <button class="dropdown-item text-sm" type="button" id="button-set-role-permissions">

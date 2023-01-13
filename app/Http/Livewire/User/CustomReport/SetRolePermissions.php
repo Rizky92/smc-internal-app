@@ -19,7 +19,7 @@ class SetRolePermissions extends Component
     public $checkedPermissions;
 
     protected $listeners = [
-        'custom-report.prepare' => 'prepareUser',
+        'custom-report.prepare-user' => 'prepareUser',
         'custom-report.set-permissions' => 'setRolePermissions',
         'custom-report.close-modal' => 'defaultValues',
     ];

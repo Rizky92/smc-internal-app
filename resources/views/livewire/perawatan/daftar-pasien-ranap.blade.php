@@ -177,8 +177,8 @@
                 </x-card.row>
 
                 <x-card.row-col class="pb-3 border-bottom">
-                    <x-button class="btn-primary" id="simpan-data" title="Simpan" icon="fas fa-save" />
-                    <x-button class="btn-default ml-2" id="batal-simpan" title="Batal" />
+                    <x-button disabled class="btn-primary" id="simpan-data" title="Simpan" icon="fas fa-save" />
+                    <x-button disabled class="btn-default ml-2" id="batal-simpan" title="Batal" />
                 </x-card.row-col>
             @endcan
 

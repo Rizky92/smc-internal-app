@@ -4,47 +4,49 @@ namespace App\Http\Livewire\User\Khanza;
 
 use App\Models\Aplikasi\MappingAksesKhanza;
 use App\Models\Aplikasi\User;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 class SetHakAkses extends Component
 {
-    public $deferLoading = true;
+    public $deferLoading;
 
     public $nrp;
 
     public $nama;
 
-    public $khanzaCariHakAkses;
+    public $cari;
 
-    public $khanzaCheckedHakAkses;
+    public $checkedHakAkses;
 
     protected $listeners = [
-        'khanzaPrepareUser',
-        'khanzaSyncHakAkses',
-        'khanzaResetModal',
+        'khanza.open-modal' => 'openModal',
+        'khanza.prepare-user' => 'prepareUser',
+        'khanza.save' => 'syncHakAkses',
+        'khanza.reset-modal' => 'defaultValues',
     ];
 
     protected function queryString()
     {
         return [
-            'khanzaCariHakAkses' => ['except' => '', 'as' => 'q'],
+            'cari' => ['except' => '', 'as' => 'q'],
         ];
     }
 
     public function mount()
     {
-        $this->khanzaCariHakAkses = '';
-        $this->khanzaCheckedHakAkses = [];
-        $this->nrp = '';
-        $this->nama = '';
+        $this->defaultValues();
     }
 
     public function getHakAksesKhanzaProperty()
     {
         return MappingAksesKhanza::query()
-            ->where('nama_field', 'like', "%{$this->khanzaCariHakAkses}%")
-            ->orWhere('judul_menu', 'like', "%{$this->khanzaCariHakAkses}%")
-            ->orWhereIn('nama_field', $this->khanzaCheckedHakAkses)
+            ->when(!$this->deferLoading, function (Builder $query) {
+                return $query
+                    ->where('nama_field', 'like', "%{$this->cari}%")
+                    ->orWhere('judul_menu', 'like', "%{$this->cari}%")
+                    ->orWhereIn('nama_field', $this->checkedHakAkses);
+            })
             ->pluck('judul_menu', 'nama_field');
     }
 
@@ -53,23 +55,24 @@ class SetHakAkses extends Component
         return view('livewire.user.khanza.set-hak-akses');
     }
 
-    public function khanzaPrepareUser(string $nrp = '', string $nama = '')
+    public function openModal()
     {
-        $this->nrp = $nrp;
-        $this->nama = $nama;
+        $this->deferLoading = false;
 
         $user = User::rawFindByNRP($this->nrp);
 
-        $this->khanzaCheckedHakAkses = [];
-
-        foreach ($this->hakAksesKhanza as $field => $hakAkses) {
-            if ($user->getAttribute($field) == 'true') {
-                $this->khanzaCheckedHakAkses[] = $field;
-            }
-        }
+        $this->checkedHakAkses = $this->hakAksesKhanza->keys()->filter(function ($field) use ($user) {
+            return $user->getAttribute($field) == 'true';
+        })->toArray();
     }
 
-    public function khanzaSyncHakAkses()
+    public function prepareUser(string $nrp = '', string $nama = '')
+    {
+        $this->nrp = $nrp;
+        $this->nama = $nama;
+    }
+
+    public function syncHakAkses()
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->emit('flash', [
@@ -80,18 +83,16 @@ class SetHakAkses extends Component
             return;
         }
 
-        $checkedHakAkses = $this->khanzaCheckedHakAkses;
-
         $user = User::rawFindByNRP($this->nrp);
 
         tracker_start();
 
-        foreach ($checkedHakAkses as $hakAkses) {
+        foreach ($this->checkedHakAkses as $hakAkses) {
             $user->setAttribute($hakAkses, 'true');
         }
 
-        $falsyHakAkses = $this->hakAksesKhanza->reject(function ($value, $key) use ($checkedHakAkses) {
-            return in_array($key, $checkedHakAkses);
+        $falsyHakAkses = $this->hakAksesKhanza->reject(function ($value, $key) {
+            return in_array($key, $this->checkedHakAkses);
         });
 
         foreach ($falsyHakAkses as $field => $judul) {
@@ -107,15 +108,15 @@ class SetHakAkses extends Component
             'flash.message' => "Hak akses SIMRS Khanza untuk user {$this->nrp} telah diupdate!",
         ]);
 
-        $this->resetModal();
+        $this->defaultValues();
     }
 
-    public function resetModal()
+    public function defaultValues()
     {
-        $this->khanzaCariHakAkses = '';
+        $this->deferLoading = true;
         $this->nrp = '';
         $this->nama = '';
-
-        $this->dispatchBrowserEvent('hide.bs.modal');
+        $this->cari = '';
+        $this->checkedHakAkses = [];
     }
 }
