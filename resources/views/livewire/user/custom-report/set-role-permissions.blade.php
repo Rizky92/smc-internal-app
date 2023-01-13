@@ -2,75 +2,92 @@
     @once
         @push('js')
             <script>
-                $('#set-role-permissions').click(e => {
-                    let selectedRoles = []
-                    let selectedPermissions = []
-
-                    inputRoles.each((i, el) => {
-                        if (el.checked) {
-                            selectedRoles.push(el.value)
-                        }
-
-                        if (el.indeterminate) {
-                            let inputRolePermissions = Array.from(el.nextElementSibling.nextElementSibling.children)
-
-                            inputRolePermissions.forEach(el => {
-                                let permissionCheckbox = el.children[0]
-
-                                if (permissionCheckbox.checked) {
-                                    selectedPermissions.push(permissionCheckbox.value)
-                                }
-                            })
-                        }
+                document.addEventListener('DOMContentLoaded', function() {
+                    $('#set-role-permissions').click(e => {
+                        let selectedRoles = []
+                        let selectedPermissions = []
+    
+                        inputRoles.each((i, el) => {
+                            if (el.checked) {
+                                selectedRoles.push(el.value)
+                            }
+    
+                            if (el.indeterminate) {
+                                let inputRolePermissions = Array.from(el.nextElementSibling.nextElementSibling.children)
+    
+                                inputRolePermissions.forEach(el => {
+                                    let permissionCheckbox = el.children[0]
+    
+                                    if (permissionCheckbox.checked) {
+                                        selectedPermissions.push(permissionCheckbox.value)
+                                    }
+                                })
+                            }
+                        })
+    
+                        @this.set('checkedRoles', selectedRoles)
+                        @this.set('checkedPermissions', selectedPermissions)
+    
+                        @this.emit('custom-report.set-role-permissions')
                     })
 
-                    @this.set('checkedRoles', selectedRoles)
-                    @this.set('checkedPermissions', selectedPermissions)
+                    $('input[type=checkbox]').change(function (e) {
+                        let checked = $(this).prop("checked"),
+                            container = $(this).parent(),
+                            siblings = container.siblings()
 
-                    @this.emit('custom-report.set-role-permissions')
-                })
-
-                $('input[type="checkbox"]').change(function(e) {
-                    var checked = $(this).prop("checked"),
-                        container = $(this).parent(),
-                        siblings = container.siblings()
-
-                    container.find('input[type="checkbox"]').prop({
-                        indeterminate: false,
-                        checked: checked
-                    })
-
-                    function checkSiblings(el) {
-                        var parent = el.parent().parent(),
-                            all = true
-
-                        el.siblings().each(function() {
-                            let returnValue = all = ($(this).children('input[type="checkbox"]').prop("checked") === checked)
-
-                            return returnValue
+                        container.find('input[type=checkbox]').prop({
+                            indeterminate: false,
+                            checked: checked
                         })
 
-                        if (all && checked) {
-                            parent.children('input[type="checkbox"]').prop({
-                                indeterminate: false,
-                                checked: checked
+                        function checkSiblings(el) {
+                            let parent = el.parent().parent(),
+                                all = true
+
+                            el.siblings().each(function() {
+                                let returnValue = all = ($(this).children('input[type=checkbox]').prop("checked") === checked)
+
+                                return returnValue
                             })
 
-                            checkSiblings(parent)
-                        } else if (all && !checked) {
-                            parent.children('input[type="checkbox"]').prop("checked", checked)
-                            parent.children('input[type="checkbox"]').prop("indeterminate", (parent.find('input[type="checkbox"]:checked').length > 0))
+                            if (all && checked) {
+                                parent.children('input[type=checkbox]').prop({
+                                    indeterminate: false,
+                                    checked: checked
+                                })
 
-                            checkSiblings(parent)
-                        } else {
-                            el.parents("li").children('input[type="checkbox"]').prop({
-                                indeterminate: true,
-                                checked: false
-                            })
+                                checkSiblings(parent)
+                            } else if (all && !checked) {
+                                parent.children('input[type=checkbox]').prop("checked", checked)
+                                parent.children('input[type=checkbox]').prop("indeterminate", (parent.find('input[type=checkbox]:checked').length > 0))
+
+                                checkSiblings(parent)
+                            } else {
+                                el.parents("li").children('input[type=checkbox]').prop({
+                                    indeterminate: true,
+                                    checked: false
+                                })
+                            }
                         }
-                    }
 
-                    checkSiblings(container)
+                        checkSiblings(container)
+                    })
+
+                    // $('input#search-role-permissions').change(e => {
+                    //     let container = $('ul#role_permissions')
+                    //     let children = Array.from(container.children())
+
+                    //     children.filter(el => {
+                    //         let name = el.children[1].textContent
+
+                    //         let permissionChilds = Array.from(el.children[2].children)
+
+                    //         permissionChilds.each(el => {
+
+                    //         })
+                    //     })
+                    // })
                 })
             </script>
         @endpush
@@ -108,7 +125,15 @@
             </x-row-col>
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
-            <x-filter.search method="$refresh" model="cari" />
+            {{-- <div class="input-group input-group-sm" style="width: 16rem">
+                <input class="form-control" type="search" id="search-role-permissions" />
+                <div class="input-group-append">
+                    <button class="btn btn-sm btn-default" type="button" id="perform-search">
+                        <i class="fas fa-search"></i>
+                        <span class="ml-1">Cari</span>
+                    </button>
+                </div>
+            </div> --}}
             <x-button class="btn-default ml-auto" data-dismiss="modal" wire:click="$emit('custom-report.close-modal')" title="Batal" />
             <x-button class="btn-primary ml-2" data-dismiss="modal" id="set-role-permissions" title="Simpan" icon="fas fa-save" />
         </x-slot>

@@ -7,6 +7,7 @@ use App\Models\Perawatan\RawatInap;
 use App\Models\Perawatan\RegistrasiPasien;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -200,6 +201,8 @@ class DaftarPasienRanap extends Component
 
     public function updateHargaKamar(string $noRawat, string $kdKamar, string $tglMasuk, string $jamMasuk, int $hargaKamarBaru)
     {
+        throw_if(! auth()->user()->can('perawatan.daftar-pasien-ranap.update-harga-kamar'), AuthorizationException::class, 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+
         $validator = Validator::make(
             ['harga_kamar_baru' => $hargaKamarBaru],
             ['harga_kamar_baru' => 'required|integer|numeric|min:0']

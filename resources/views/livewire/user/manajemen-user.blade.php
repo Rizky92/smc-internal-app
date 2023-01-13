@@ -35,7 +35,7 @@
 
                 $('#button-set-role-permissions').click(() => {
                     @this.emit('custom-report.open-modal')
-                    
+
                     $('#modal-set-role-permissions').modal('show')
                 })
             </script>
@@ -81,7 +81,7 @@
                                 </button>
                             </div>
                         </div>
-    
+
                         <div class="dropdown mb-3 ml-3">
                             <button class="btn btn-sm btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-share-square"></i>
