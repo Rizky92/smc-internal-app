@@ -4,7 +4,6 @@ namespace App\Http\Livewire\User\Khanza;
 
 use App\Models\Aplikasi\MappingAksesKhanza;
 use App\Models\Aplikasi\User;
-use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 class SetHakAkses extends Component
@@ -20,10 +19,10 @@ class SetHakAkses extends Component
     public $checkedHakAkses;
 
     protected $listeners = [
-        'khanza.open-modal' => 'openModal',
         'khanza.prepare-user' => 'prepareUser',
+        'khanza.open-modal' => 'openModal',
         'khanza.save' => 'syncHakAkses',
-        'khanza.reset-modal' => 'defaultValues',
+        'khanza.close-modal' => 'closeModal',
     ];
 
     protected function queryString()
@@ -40,13 +39,12 @@ class SetHakAkses extends Component
 
     public function getHakAksesKhanzaProperty()
     {
-        return MappingAksesKhanza::query()
-            ->when(!$this->deferLoading, function (Builder $query) {
-                return $query
-                    ->where('nama_field', 'like', "%{$this->cari}%")
-                    ->orWhere('judul_menu', 'like', "%{$this->cari}%")
-                    ->orWhereIn('nama_field', $this->checkedHakAkses);
-            })
+        return $this->deferLoading
+            ? []
+            : MappingAksesKhanza::query()
+            ->where('nama_field', 'like', "%{$this->cari}%")
+            ->orWhere('judul_menu', 'like', "%{$this->cari}%")
+            ->orWhereIn('nama_field', $this->checkedHakAkses)
             ->pluck('judul_menu', 'nama_field');
     }
 
@@ -62,8 +60,8 @@ class SetHakAkses extends Component
         $user = User::rawFindByNRP($this->nrp);
 
         $this->checkedHakAkses = $this->hakAksesKhanza->keys()->filter(function ($field) use ($user) {
-            return $user->getAttribute($field) == 'true';
-        })->toArray();
+            return $user->getAttribute($field) === 'true';
+        })->flatten()->toArray();
     }
 
     public function prepareUser(string $nrp = '', string $nama = '')
@@ -109,6 +107,14 @@ class SetHakAkses extends Component
         ]);
 
         $this->defaultValues();
+    }
+
+    public function closeModal()
+    {
+        $this->deferLoading = true;
+        $this->nrp = '';
+        $this->nama = '';
+        $this->cari = '';
     }
 
     public function defaultValues()

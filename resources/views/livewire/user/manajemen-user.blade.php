@@ -28,7 +28,7 @@
                     let roles = Array.from(roleIds.split(','))
                     let permissions = Array.from(permissionIds.split(','))
 
-                    @this.emit('custom-report.prepare-user', nrp, nama, roles, permissions)
+                    // @this.emit('custom-report.prepare-user', nrp, nama, roles, permissions)
 
                     @this.emit('khanza.prepare-user', nrp, nama)
                 }
