@@ -50,11 +50,11 @@
 
     <livewire:user.custom-report.set-role-permissions />
 
-    {{-- <livewire:user.custom-report.transfer-role-permissions /> --}}
+    <livewire:user.custom-report.transfer-role-permissions />
 
     <livewire:user.khanza.set-hak-akses />
 
-    {{-- <livewire:user.khanza.transfer-hak-akses /> --}}
+    <livewire:user.khanza.transfer-hak-akses />
 
     <x-card>
         <x-slot name="header">
@@ -94,10 +94,10 @@
                                 <span class="ml-1">Transfer hak akses</span>
                             </button>
                             <div class="dropdown-menu">
-                                <button class="dropdown-item text-sm" type="button" data-toggle="modal" data-target="#transfer-akses-khanza" id="button-transfer-akses-khanza">
+                                <button class="dropdown-item text-sm" type="button" id="button-transfer-hak-akses">
                                     SIMRS Khanza
                                 </button>
-                                <button class="dropdown-item text-sm" type="button" data-toggle="modal" data-target="#transfer-akses-custom-report" id="button-transfer-akses-custom-report">
+                                <button class="dropdown-item text-sm" type="button" id="button-transfer-role-permissions">
                                     Custom Report
                                 </button>
                             </div>

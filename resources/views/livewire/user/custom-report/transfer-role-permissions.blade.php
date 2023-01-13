@@ -1,5 +1,5 @@
 <div>
-    <x-modal :livewire="true" title="Transfer Role Permission untuk Custom Report" id="custom-report-transfer-permissions">
+    <x-modal :livewire="true" title="Transfer Role Permission untuk Custom Report" id="modal-transfer-role-permissions">
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-row-col>
                 <div class="d-flex justify-content-start px-3 pt-3">

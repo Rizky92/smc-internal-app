@@ -1,4 +1,49 @@
-<div class="modal fade" id="transfer-akses-khanza" wire:ignore.self>
+<div>
+    <x-modal id="transfer-hak-akses" title="Transfer Hak Akses Khanza ke User Lainnya" :livewire="true">
+        <x-slot name="body" class="p-0" style="overflow-x: hidden">
+            <x-row-col class="px-3 pt-3">
+                <div class="d-flex justify-content-start">
+                    <div class="w-100">
+                        <label>User:</label>
+                        <p>{{ "{$nrp} {$nama}" }}</p>
+                    </div>
+                </div>
+            </x-row-col>
+            <x-row-col class="pt-2">
+                <div class="table-responsive">
+                    <x-table>
+                        <x-slot name="columns">
+                            <x-table.th>#</x-table.th>
+                            <x-table.th>NRP</x-table.th>
+                            <x-table.th>Nama</x-table.th>
+                            <x-table.th>Jabatan</x-table.th>
+                        </x-slot>
+                        <x-slot name="body">
+                            @foreach ($this->availableUsers as $user)
+                                <x-table.tr>
+                                    <x-table.td>
+                                        <input id="user-{{ $user->nip }}" type="checkbox" wire:model.defer="checkedUsers" value="{{ $user->nip }}">
+                                        <label for="user-{{ $user->nip }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer; margin: 0"></label>
+                                    </x-table.td>
+                                    <x-table.td>{{ $user->nip }}</x-table.td>
+                                    <x-table.td>{{ $user->nama }}</x-table.td>
+                                    <x-table.td>{{ $user->nm_jbtn }}</x-table.td>
+                                </x-table.tr>
+                            @endforeach
+                        </x-slot>
+                    </x-table>
+                </div>
+            </x-row-col>
+        </x-slot>
+        <x-slot name="footer" class="justify-content-start">
+            <x-filter.search method="$refresh" />
+            <x-button class="btn-default ml-auto" data-dismiss="modal" wire:click="$emit('khanza.close-modal')" title="Batal" />
+            <x-button class="btn-default ml-auto" data-dismiss="modal" wire:click="$emit('khanza.transfer')" title="Transfer" icon="fas fa-share-square" />
+        </x-slot>
+    </x-modal>
+</div>
+{{-- 
+<div class="modal fade" id="transfer-hak-akses" wire:ignore.self>
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -64,4 +109,4 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
