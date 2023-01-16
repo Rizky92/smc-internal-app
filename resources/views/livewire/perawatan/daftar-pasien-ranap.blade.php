@@ -3,7 +3,7 @@
 
     <x-card>
         <x-slot name="header">
-            @can('perawatan.daftar-pasien-ranap.update-biaya-ranap')
+            @can('perawatan.daftar-pasien-ranap.update-harga-kamar')
                 @once
                     @push('js')
                         <script>
@@ -47,16 +47,15 @@
                                     let tglMasuk = hiddenTglMasuk.val()
                                     let jamMasuk = hiddenJamMasuk.val()
                                     let hargaKamarBaru = inputHargaKamar.val()
+                                    let lamaInap = inputLamaInap.val()
 
-                                    @this.emit('updateHargaKamar', noRawat, kdKamar, tglMasuk, jamMasuk, hargaKamarBaru)
+                                    @this.emit('updateHargaKamar', noRawat, kdKamar, tglMasuk, jamMasuk, hargaKamarBaru, lamaInap)
                                 })
 
                                 inputHargaKamar.keyup(updateTotalHarga)
-
                                 inputHargaKamar.change(updateTotalHarga)
 
                                 inputLamaInap.keyup(updateTotalHarga)
-
                                 inputLamaInap.change(updateTotalHarga)
 
                                 Livewire.on('updateHargaKamar', clearData)
@@ -198,7 +197,7 @@
                 </x-card.row-col>
             @endcan
 
-            <x-card.row-col class="mt-3">
+            <x-card.row-col :class="Arr::toCssClasses(['mt-3' => auth()->user()->can('perawatan.daftar-pasien-ranap.update-harga-kamar')])">
                 <x-filter.range-datetime />
                 <x-filter.label class="ml-auto pr-3">Status:</x-filter.label>
                 <div class="input-group input-group-sm" style="width: max-content">
@@ -209,7 +208,7 @@
                     ]" />
                 </div>
             </x-card.row-col>
-            <x-card.row-col class="mt-2">
+            <x-card.row-col class="mt-3">
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search />

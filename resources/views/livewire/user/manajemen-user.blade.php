@@ -43,7 +43,11 @@
                     }
 
                     inputRoles.each((i, el) => el.checked = roles.find(v => v === el.value))
-                    inputPermissions.each((i, el) => el.checked = rolePermissions.find(v => v === el.value))
+                    inputPermissions.each((i, el) => {
+                        let allPermissions = permissions.concat(rolePermissions)
+                        
+                        el.checked = allPermissions.find(v => v === el.value)
+                    })
 
                     @this.emit('custom-report.prepare-user', nrp, nama, roles, permissions)
                     @this.emit('custom-report.prepare-transfer', nrp, nama, roles, permissions)

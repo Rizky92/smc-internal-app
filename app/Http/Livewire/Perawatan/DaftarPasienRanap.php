@@ -5,11 +5,10 @@ namespace App\Http\Livewire\Perawatan;
 use App\Models\Perawatan\Kamar;
 use App\Models\Perawatan\RawatInap;
 use App\Models\Perawatan\RegistrasiPasien;
+use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -17,7 +16,7 @@ use Rizky92\Xlswriter\ExcelExport;
 
 class DaftarPasienRanap extends Component
 {
-    use WithPagination, FlashComponent;
+    use WithPagination, FlashComponent, Filterable;
 
     public $cari;
 
@@ -38,9 +37,6 @@ class DaftarPasienRanap extends Component
     protected $listeners = [
         'updateHargaKamar',
         'beginExcelExport',
-        'searchData',
-        'resetFilters',
-        'fullRefresh',
     ];
 
     protected function queryString()
@@ -75,7 +71,7 @@ class DaftarPasienRanap extends Component
         ];
     }
 
-    private function defaultValues()
+    protected function defaultValues()
     {
         $this->cari = '';
         $this->perpage = 25;
@@ -199,14 +195,21 @@ class DaftarPasienRanap extends Component
         $this->flashSuccess("Data pasien dengan No. Rawat {$noRawat} sudah kembali ke rawat jalan!");
     }
 
-    public function updateHargaKamar(string $noRawat, string $kdKamar, string $tglMasuk, string $jamMasuk, int $hargaKamarBaru)
+    public function updateHargaKamar(string $noRawat, string $kdKamar, string $tglMasuk, string $jamMasuk, int $hargaKamarBaru, int $lamaInap)
     {
-        throw_if(! auth()->user()->can('perawatan.daftar-pasien-ranap.update-harga-kamar'), AuthorizationException::class, 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+        if (!auth()->user()->can('perawatan.daftar-pasien-ranap.update-harga-kamar')) {
+            $this->emitTo('user.manajemen-user', 'flashError', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
-        $validator = Validator::make(
-            ['harga_kamar_baru' => $hargaKamarBaru],
-            ['harga_kamar_baru' => 'required|integer|numeric|min:0']
-        );
+            return;
+        }
+
+        $validator = Validator::make([
+            'harga_kamar_baru' => $hargaKamarBaru,
+            'lama_inap' => $lamaInap,
+        ], [
+            'harga_kamar_baru' => ['integer', 'numeric', 'min:0'],
+            'lama_inap' => ['integer', 'numeric', 'min:0'],
+        ]);
 
         if ($validator->fails()) {
             $this->flashError('Ada data salah, silahkan dicek input anda.');
@@ -223,32 +226,12 @@ class DaftarPasienRanap extends Component
             ['jam_masuk', '=', Carbon::parse($jamMasuk)->format('H:i:s')],
         ])->update([
             'trf_kamar' => $hargaKamarBaru,
-            'ttl_biaya' => DB::raw("({$hargaKamarBaru} * lama)")
+            'lama' => $lamaInap,
+            'ttl_biaya' => $hargaKamarBaru * $lamaInap
         ]);
 
         tracker_end();
 
         $this->flashSuccess('Harga kamar berhasil diupdate!');
-    }
-
-    public function searchData()
-    {
-        $this->resetPage();
-
-        $this->emit('$refresh');
-    }
-
-    public function resetFilters()
-    {
-        $this->defaultValues();
-
-        $this->searchData();
-    }
-
-    public function fullRefresh()
-    {
-        $this->forgetComputed();
-
-        $this->resetFilters();
     }
 }

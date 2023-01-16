@@ -16,6 +16,12 @@ class RawatInap extends Model
 
     public $timestamps = false;
 
+    protected $fillable = [
+        'trf_kamar',
+        'lama',
+        'ttl_biaya',
+    ];
+
     public static $pivotColumns = [
         'trf_kamar',
         'diagnosa_awal',
