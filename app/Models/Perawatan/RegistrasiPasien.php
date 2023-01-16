@@ -37,8 +37,8 @@ class RegistrasiPasien extends Model
         string $statusPerawatan = '-',
         string $tglAwal = '',
         string $tglAkhir = '',
-        string $jamAwal = '',
-        string $jamAkhir = '',
+        // string $jamAwal = '',
+        // string $jamAkhir = '',
         bool $exportExcel = false
     ): Builder {
         if (empty($tglAwal)) {
@@ -49,13 +49,13 @@ class RegistrasiPasien extends Model
             $tglAkhir = now()->format('Y-m-d');
         }
 
-        if (empty($jamAwal)) {
-            $jamAwal = '18:00:00';
-        }
+        // if (empty($jamAwal)) {
+        //     $jamAwal = '18:00:00';
+        // }
 
-        if (empty($jamAkhir)) {
-            $jamAkhir = '06:00:00';
-        }
+        // if (empty($jamAkhir)) {
+        //     $jamAkhir = '06:00:00';
+        // }
 
         $sqlSelect = "
             kamar_inap.lama,
@@ -102,25 +102,39 @@ class RegistrasiPasien extends Model
             ->when($statusPerawatan == '-', function (Builder $query) {
                 return $query->where('kamar_inap.stts_pulang', '-');
             })
-            ->when($statusPerawatan != '-', function (Builder $query) use ($statusPerawatan, $tglAwal, $tglAkhir, $jamAwal, $jamAkhir) {
+            // ->when($statusPerawatan != '-', function (Builder $query) use ($statusPerawatan, $tglAwal, $tglAkhir, $jamAwal, $jamAkhir) {
+            //     switch (Str::snake($statusPerawatan)) {
+            //         case 'tanggal_masuk':
+            //             return $query->where(function (Builder $query) use ($tglAwal, $tglAkhir, $jamAwal, $jamAkhir) {
+            //                 return $query->where('kamar_inap.stts_pulang', '-')
+            //                     ->whereBetween('kamar_inap.tgl_masuk', [$tglAwal, $tglAkhir])
+            //                     ->where(function (Builder $query) use ($jamAwal, $jamAkhir) {
+            //                         return $query->where('kamar_inap.jam_masuk', '<', $jamAkhir)
+            //                             ->orWhere('kamar_inap.jam_masuk', '>', $jamAwal);
+            //                     });
+            //             });
+            //         case 'tanggal_keluar':
+            //             return $query->where(function (Builder $query) use ($tglAwal, $tglAkhir, $jamAwal, $jamAkhir) {
+            //                 return $query->whereNotIn('kamar_inap.stts_pulang', ['-', 'pindah kamar'])
+            //                     ->whereBetween('kamar_inap.tgl_keluar', [$tglAwal, $tglAkhir])
+            //                     ->where(function (Builder $query) use ($jamAwal, $jamAkhir) {
+            //                         return $query->where('kamar_inap.jam_keluar', '<', $jamAkhir)
+            //                             ->orWhere('kamar_inap.jam_keluar', '>', $jamAwal);
+            //                     });
+            //             });
+            //     }
+            // })
+            ->when($statusPerawatan != '-', function (Builder $query) use ($statusPerawatan, $tglAwal, $tglAkhir) {
                 switch (Str::snake($statusPerawatan)) {
                     case 'tanggal_masuk':
-                        return $query->where(function (Builder $query) use ($tglAwal, $tglAkhir, $jamAwal, $jamAkhir) {
+                        return $query->where(function (Builder $query) use ($tglAwal, $tglAkhir) {
                             return $query->where('kamar_inap.stts_pulang', '-')
-                                ->whereBetween('kamar_inap.tgl_masuk', [$tglAwal, $tglAkhir])
-                                ->where(function (Builder $query) use ($jamAwal, $jamAkhir) {
-                                    return $query->where('kamar_inap.jam_masuk', '<', $jamAkhir)
-                                        ->orWhere('kamar_inap.jam_masuk', '>', $jamAwal);
-                                });
+                                ->whereBetween('kamar_inap.tgl_masuk', [$tglAwal, $tglAkhir]);
                         });
                     case 'tanggal_keluar':
-                        return $query->where(function (Builder $query) use ($tglAwal, $tglAkhir, $jamAwal, $jamAkhir) {
+                        return $query->where(function (Builder $query) use ($tglAwal, $tglAkhir) {
                             return $query->whereNotIn('kamar_inap.stts_pulang', ['-', 'pindah kamar'])
-                                ->whereBetween('kamar_inap.tgl_keluar', [$tglAwal, $tglAkhir])
-                                ->where(function (Builder $query) use ($jamAwal, $jamAkhir) {
-                                    return $query->where('kamar_inap.jam_keluar', '<', $jamAkhir)
-                                        ->orWhere('kamar_inap.jam_keluar', '>', $jamAwal);
-                                });
+                                ->whereBetween('kamar_inap.tgl_keluar', [$tglAwal, $tglAkhir]);
                         });
                 }
             })

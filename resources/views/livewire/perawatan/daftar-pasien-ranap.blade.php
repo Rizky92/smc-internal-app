@@ -198,7 +198,7 @@
             @endcan
 
             <x-card.row-col :class="Arr::toCssClasses(['mt-3' => auth()->user()->can('perawatan.daftar-pasien-ranap.update-harga-kamar')])">
-                <x-filter.range-datetime />
+                <x-filter.range-date model-start="tglAwal" model-end="tglAkhir" />
                 <x-filter.label class="ml-auto pr-3">Status:</x-filter.label>
                 <div class="input-group input-group-sm" style="width: max-content">
                     <x-filter.select model="statusPerawatan" :options="[
@@ -207,12 +207,12 @@
                         'tanggal_keluar' => 'Tgl. Keluar',
                     ]" />
                 </div>
+                <x-filter.button-export-excel class="ml-2" />
             </x-card.row-col>
             <x-card.row-col class="mt-3">
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search />
-                <x-filter.button-export-excel class="ml-2" />
             </x-card.row-col>
         </x-slot>
 

@@ -26,10 +26,6 @@ class DaftarPasienRanap extends Component
 
     public $tglAkhir;
 
-    public $jamAwal;
-
-    public $jamAkhir;
-
     public $statusPerawatan;
 
     protected $paginationTheme = 'bootstrap';
@@ -60,14 +56,6 @@ class DaftarPasienRanap extends Component
                 'except' => now()->format('Y-m-d'),
                 'as' => 'tgl_akhir',
             ],
-            'jamAwal' => [
-                'except' => RegistrasiPasien::JAM_AWAL,
-                'as' => 'jam_awal',
-            ],
-            'jamAkhir' => [
-                'except' => RegistrasiPasien::JAM_AKHIR,
-                'as' => 'jam_akhir',
-            ],
         ];
     }
 
@@ -78,8 +66,6 @@ class DaftarPasienRanap extends Component
         $this->statusPerawatan = '-';
         $this->tglAwal = now()->format('Y-m-d');
         $this->tglAkhir = now()->format('Y-m-d');
-        $this->jamAwal = RegistrasiPasien::JAM_AWAL;
-        $this->jamAkhir = RegistrasiPasien::JAM_AKHIR;
     }
 
     public function mount()
@@ -94,8 +80,6 @@ class DaftarPasienRanap extends Component
             $this->statusPerawatan,
             $this->tglAwal,
             $this->tglAkhir,
-            $this->jamAwal,
-            $this->jamAkhir
         )
             ->orderBy('no_rawat')
             ->paginate($this->perpage);
