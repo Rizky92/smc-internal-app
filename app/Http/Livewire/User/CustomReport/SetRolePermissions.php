@@ -5,11 +5,12 @@ namespace App\Http\Livewire\User\CustomReport;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
-use Illuminate\Auth\Access\AuthorizationException;
 use Livewire\Component;
 
 class SetRolePermissions extends Component
 {
+    public $deferLoading;
+
     public $nrp;
 
     public $nama;
@@ -19,9 +20,10 @@ class SetRolePermissions extends Component
     public $checkedPermissions;
 
     protected $listeners = [
+        'custom-report.show-srp' => 'showModal',
+        'custom-report.hide-srp' => 'hideModal',
         'custom-report.prepare-user' => 'prepareUser',
-        'custom-report.set-permissions' => 'setRolePermissions',
-        'custom-report.close-modal' => 'defaultValues',
+        'custom-report.save' => 'setRolePermissions',
     ];
 
     public function mount()
@@ -44,7 +46,7 @@ class SetRolePermissions extends Component
         return Permission::whereDoesntHave('roles')->get();
     }
 
-    public function prepareUser(string $nrp, string $nama, array $roleIds, array $permissionIds)
+    public function prepareUser(string $nrp = '', string $nama = '', array $roleIds = [], array $permissionIds = [])
     {
         $this->nrp = $nrp;
         $this->nama = $nama;
@@ -54,18 +56,37 @@ class SetRolePermissions extends Component
 
     public function setRolePermissions()
     {
-        throw_if(!auth()->user()->hasRole(config('permission.superadmin_name')), AuthorizationException::class);
+        if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
+            $this->emitTo('user.manajemen-user', 'flashError', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+
+            return;
+        }
 
         $user = User::findByNRP($this->nrp);
+
+        tracker_start();
 
         $user->syncRoles($this->checkedRoles);
         $user->syncPermissions($this->checkedPermissions);
 
+        tracker_end();
+
         $this->emitTo('user.manajemen-user', 'flashSuccess', "Hak akses untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
+    }
+
+    public function showModal()
+    {
+        $this->deferLoading = false;
+    }
+
+    public function hideModal()
+    {
+        $this->defaultValues();
     }
 
     public function defaultValues()
     {
+        $this->deferLoading = true;
         $this->nrp = '';
         $this->nama = '';
         $this->checkedRoles = [];

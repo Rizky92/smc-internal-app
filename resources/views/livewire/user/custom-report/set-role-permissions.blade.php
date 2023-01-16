@@ -6,32 +6,32 @@
                     $('#set-role-permissions').click(e => {
                         let selectedRoles = []
                         let selectedPermissions = []
-    
+
                         inputRoles.each((i, el) => {
                             if (el.checked) {
                                 selectedRoles.push(el.value)
                             }
-    
+
                             if (el.indeterminate) {
                                 let inputRolePermissions = Array.from(el.nextElementSibling.nextElementSibling.children)
-    
+
                                 inputRolePermissions.forEach(el => {
                                     let permissionCheckbox = el.children[0]
-    
+
                                     if (permissionCheckbox.checked) {
                                         selectedPermissions.push(permissionCheckbox.value)
                                     }
                                 })
                             }
                         })
-    
+
                         @this.set('checkedRoles', selectedRoles)
                         @this.set('checkedPermissions', selectedPermissions)
-    
-                        @this.emit('custom-report.set-role-permissions')
+
+                        @this.emit('custom-report.save')
                     })
 
-                    $('input[type=checkbox]').change(function (e) {
+                    $('input[type=checkbox]').change(function(e) {
                         let checked = $(this).prop("checked"),
                             container = $(this).parent(),
                             siblings = container.siblings()
@@ -74,20 +74,13 @@
                         checkSiblings(container)
                     })
 
-                    // $('input#search-role-permissions').change(e => {
-                    //     let container = $('ul#role_permissions')
-                    //     let children = Array.from(container.children())
+                    $('#modal-set-role-permissions').on('shown.bs.modal', e => {
+                        @this.emit('custom-report.show-srp')
+                    })
 
-                    //     children.filter(el => {
-                    //         let name = el.children[1].textContent
-
-                    //         let permissionChilds = Array.from(el.children[2].children)
-
-                    //         permissionChilds.each(el => {
-
-                    //         })
-                    //     })
-                    // })
+                    $('#modal-set-role-permissions').on('hide.bs.modal', e => {
+                        @this.emit('custom-report.hide-srp')
+                    })
                 })
             </script>
         @endpush
@@ -134,7 +127,7 @@
                     </button>
                 </div>
             </div> --}}
-            <x-button class="btn-default ml-auto" data-dismiss="modal" wire:click="$emit('custom-report.close-modal')" title="Batal" />
+            <x-button class="btn-default ml-auto" data-dismiss="modal" title="Batal" />
             <x-button class="btn-primary ml-2" data-dismiss="modal" id="set-role-permissions" title="Simpan" icon="fas fa-save" />
         </x-slot>
     </x-modal>

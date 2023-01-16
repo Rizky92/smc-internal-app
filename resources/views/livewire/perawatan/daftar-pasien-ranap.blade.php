@@ -51,10 +51,26 @@
                                     @this.emit('updateHargaKamar', noRawat, kdKamar, tglMasuk, jamMasuk, hargaKamarBaru)
                                 })
 
+                                inputHargaKamar.keyup(updateTotalHarga)
+
+                                inputHargaKamar.change(updateTotalHarga)
+
+                                inputLamaInap.keyup(updateTotalHarga)
+
+                                inputLamaInap.change(updateTotalHarga)
+
                                 Livewire.on('updateHargaKamar', clearData)
 
                                 buttonBatalSimpan.click(clearData)
                             })
+
+                            function updateTotalHarga(e) {
+                                let val = inputHargaKamar.val()
+
+                                inputTotalHarga.val(val * inputLamaInap.val())
+
+                                inputTotalHarga.trigger('change')
+                            }
 
                             function loadData({
                                 noRawat,
@@ -153,18 +169,18 @@
                 </x-card.row>
 
                 <x-card.row>
-                    <div class="col-6">
+                    <div class="col-5">
                         <div class="form-group">
                             <label class="text-sm" for="harga_kamar">Harga Kamar</label>
-                            <input type="text" class="form-control form-control-sm" id="harga_kamar" autocomplete="off">
+                            <input type="number" class="form-control form-control-sm" id="harga_kamar" autocomplete="off" min="0">
                         </div>
                     </div>
-                    <div class="col-1">
+                    <div class="col-2">
                         <div class="form-group">
                             <label class="text-sm text-white" for="lama_inap">Lama Inap</label>
                             <div class="d-flex align-items-center">
                                 <span class="font-weight-medium pr-3">x</span>
-                                <input type="text" class="form-control form-control-sm" id="lama_inap" readonly autocomplete="off">
+                                <input type="number" class="form-control form-control-sm" id="lama_inap" autocomplete="off" min="0">
                             </div>
                         </div>
                     </div>

@@ -31,10 +31,7 @@ class PengeluaranStokObat extends Model
 
     public static function stokPengeluaranMedisFarmasi(string $year = '2022'): array
     {
-        $data = (new static)::stokKeluarMedis($year)->get()
-            ->mapWithKeys(function ($value, $key) {
-                return [$value->bulan => $value->jumlah];
-            })->toArray();
+        $data = static::stokKeluarMedis($year)->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
     }

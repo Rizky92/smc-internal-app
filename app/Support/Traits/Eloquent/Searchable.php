@@ -1,4 +1,4 @@
-<?<?php
+<?php
 
 namespace App\Support\Traits\Eloquent;
 

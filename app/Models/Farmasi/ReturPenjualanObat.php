@@ -18,11 +18,6 @@ class ReturPenjualanObat extends Model
 
     public $timestamps = false;
 
-    public function detail(): BelongsToMany
-    {
-        return $this->belongsToMany(Obat::class, 'detreturjual', 'no_retur_jual', 'kode_brng');
-    }
-
     public function scopeReturObatPasien(Builder $query, string $year = '2022'): Builder
     {
         return $query->selectRaw("
@@ -36,10 +31,7 @@ class ReturPenjualanObat extends Model
 
     public static function totalReturObat(string $year = '2022'): array
     {
-        $data = (new static)::returObatPasien($year)->get()
-            ->mapWithKeys(function ($value, $key) {
-                return [$value->bulan => $value->jumlah];
-            })->toArray();
+        $data = static::returObatPasien($year)->pluck('jumlah', 'bulan');
         
         return map_bulan($data);
     }

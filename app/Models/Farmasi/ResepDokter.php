@@ -18,16 +18,6 @@ class ResepDokter extends Model
 
     public $timestamps = false;
 
-    public function resepObat(): BelongsTo
-    {
-        return $this->belongsTo(ResepObat::class, 'no_resep', 'no_resep');
-    }
-
-    public function obat(): BelongsTo
-    {
-        return $this->belongsTo(Obat::class, 'kode_brng', 'kode_brng');
-    }
-
     public function scopeKunjunganResepObatRegular(
         Builder $query,
         string $periodeAwal = '',
@@ -69,10 +59,5 @@ class ResepDokter extends Model
                 'pasien.nm_pasien',
                 'reg_periksa.status_lanjut',
             ]);
-    }
-
-    public function scopeKunjunganFarmasiPasien(Builder $query, string $periodeAwal, string $periodeAkhir): Builder
-    {
-        return $query->selectRaw();
     }
 }

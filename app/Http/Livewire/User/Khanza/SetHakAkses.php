@@ -19,10 +19,10 @@ class SetHakAkses extends Component
     public $checkedHakAkses;
 
     protected $listeners = [
+        'khanza.show-sha' => 'showModal',
+        'khanza.hide-sha' => 'hideModal',
         'khanza.prepare-user' => 'prepareUser',
-        'khanza.open-modal' => 'openModal',
-        'khanza.save' => 'syncHakAkses',
-        'khanza.close-modal' => 'closeModal',
+        'khanza.simpan' => 'setHakAkses',
     ];
 
     protected function queryString()
@@ -53,15 +53,17 @@ class SetHakAkses extends Component
         return view('livewire.user.khanza.set-hak-akses');
     }
 
-    public function openModal()
+    public function showModal()
     {
         $this->deferLoading = false;
 
         $user = User::rawFindByNRP($this->nrp);
 
-        $this->checkedHakAkses = $this->hakAksesKhanza->keys()->filter(function ($field) use ($user) {
-            return $user->getAttribute($field) === 'true';
-        })->flatten()->toArray();
+        if (! $this->deferLoading) {
+            $this->checkedHakAkses = $this->hakAksesKhanza->keys()->filter(function ($field) use ($user) {
+                return $user->getAttribute($field) === 'true';
+            })->flatten()->toArray();
+        }
     }
 
     public function prepareUser(string $nrp = '', string $nama = '')
@@ -70,13 +72,10 @@ class SetHakAkses extends Component
         $this->nama = $nama;
     }
 
-    public function syncHakAkses()
+    public function setHakAkses()
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
-            $this->emit('flash', [
-                'flash.type' => 'danger',
-                'flash.message' => 'Anda tidak diizinkan untuk melakukan tindakan ini!',
-            ]);
+            $this->emitTo('user.manajemen-user', 'flashError', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
         }
@@ -101,20 +100,12 @@ class SetHakAkses extends Component
 
         tracker_end();
 
-        $this->emit('flash', [
-            'flash.type' => 'success',
-            'flash.message' => "Hak akses SIMRS Khanza untuk user {$this->nrp} telah diupdate!",
-        ]);
-
-        $this->defaultValues();
+        $this->emitTo('user.manajemen-user', 'flashSuccess', "Hak akses SIMRS Khanza untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
     }
 
-    public function closeModal()
+    public function hideModal()
     {
-        $this->deferLoading = true;
-        $this->nrp = '';
-        $this->nama = '';
-        $this->cari = '';
+        $this->defaultValues();
     }
 
     public function defaultValues()

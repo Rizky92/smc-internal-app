@@ -10,28 +10,27 @@ use Livewire\Component;
 
 class TransferHakAkses extends Component
 {
-    public $deferLoading = true;
+    public $deferLoading;
 
     public $nrp;
 
     public $nama;
 
-    public $khanzaCheckedUsers;
+    public $checkedUsers;
 
-    public $cariUser;
+    public $cari;
 
     protected $listeners = [
-        'khanzaPrepareTransfer',
-        'khanzaTransferHakAkses',
+        'khanza.show-tha' => 'showModal',
+        'khanza.hide-tha' => 'hideModal',
+        'khanza.prepare-transfer' => 'prepareTransfer',
+        'khanza.transfer' => 'transferHakAkses',
     ];
 
     protected function queryString()
     {
         return [
-            'cariUser' => [
-                'except' => '',
-                'as' => 'qu',
-            ],
+            'cari' => ['except' => '', 'as' => 'q'],
         ];
     }
 
@@ -40,18 +39,15 @@ class TransferHakAkses extends Component
         $this->defaultValues();
     }
 
-    public function getKhanzaHakAksesTersediaProperty()
-    {
-        return MappingAksesKhanza::pluck('judul_menu', 'nama_field');
-    }
-
     public function getAvailableUsersProperty()
     {
-        return User::query()
+        return $this->deferLoading
+            ? []
+            : User::query()
             ->where('petugas.nip', '!=', $this->nrp)
-            ->search($this->cariUser)
-            ->when(!empty($this->khanzaCheckedUsers), function (Builder $query) {
-                return $query->orWhereIn('petugas.nip', $this->khanzaCheckedUsers);
+            ->search($this->cari)
+            ->when(!empty($this->checkedUsers), function (Builder $query) {
+                return $query->orWhereIn('petugas.nip', $this->checkedUsers);
             })
             ->get();
     }
@@ -61,19 +57,16 @@ class TransferHakAkses extends Component
         return view('livewire.user.khanza.transfer-hak-akses');
     }
 
-    public function khanzaPrepareTransfer(string $nrp, string $nama)
+    public function prepareTransfer(string $nrp = '', string $nama = '')
     {
         $this->nrp = $nrp;
         $this->nama = $nama;
     }
 
-    public function khanzaTransferHakAkses()
+    public function transferHakAkses()
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
-            $this->emit('flash', [
-                'flash.type' => 'danger',
-                'flash.message' => 'Anda tidak diizinkan untuk melakukan tindakan ini!',
-            ]);
+            $this->emitTo('user.manajemen-user', 'flashError', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
         }
@@ -87,13 +80,15 @@ class TransferHakAkses extends Component
         $permittedUsers = User::query()
             ->withoutGlobalScopes()
             ->withHakAkses()
-            ->whereIn(DB::raw('AES_DECRYPT(user.id_user, "nur")'), $this->khanzaCheckedUsers)
+            ->whereIn(DB::raw('AES_DECRYPT(user.id_user, "nur")'), $this->checkedUsers)
             ->get();
+
+        $hakAkses = MappingAksesKhanza::pluck('judul_menu', 'nama_field');
 
         tracker_start();
 
         foreach ($permittedUsers as $checkedUser) {
-            foreach ($this->khanzaHakAksesTersedia as $kolom => $hakAkses) {
+            foreach ($hakAkses as $kolom => $judul) {
                 $checkedUser->setAttribute($kolom, $currentUser->getAttribute($kolom));
             }
 
@@ -102,24 +97,25 @@ class TransferHakAkses extends Component
 
         tracker_end();
 
-        $this->emit('flash', [
-            'flash.type' => 'success',
-            'flash.message' => 'Transfer hak akses berhasil!',
-        ]);
+        $this->emitTo('user.manajemen-user', 'flashSuccess', "Transfer hak akses SIMRS Khanza berhasil!");
     }
 
-    public function resetModal()
+    public function showModal()
+    {
+        $this->deferLoading = false;
+    }
+
+    public function hideModal()
     {
         $this->defaultValues();
-
-        $this->dispatchBrowserEvent('hide.bs.modal');
     }
 
     private function defaultValues()
     {
-        $this->cariUser = '';
+        $this->deferLoading = true;
+        $this->cari = '';
         $this->nrp = '';
         $this->nama = '';
-        $this->khanzaCheckedUsers = [];
+        $this->checkedUsers = [];
     }
 }

@@ -53,20 +53,14 @@ class PenjualanWalkInObat extends Model
 
     public static function totalKunjunganWalkIn(string $year = '2022'): array
     {
-        $data = (new static)::kunjunganWalkIn($year)->get()
-            ->mapWithKeys(function ($value, $key) {
-                return [$value->bulan => $value->jumlah];
-            })->toArray();
+        $data = static::kunjunganWalkIn($year)->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
     }
 
     public static function totalPendapatanWalkIn(string $year = '2022'): array
     {
-        $data = (new static)::pendapatanWalkIn($year)->get()
-            ->mapWithKeys(function ($value, $key) {
-                return [$value->bulan => $value->jumlah];
-            })->toArray();
+        $data = static::pendapatanWalkIn($year)->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
     }

@@ -2,7 +2,7 @@
 
 namespace App\Models\Aplikasi;
 
-use App\Support\Searchable\Searchable;
+use App\Support\Traits\Eloquent\Searchable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -25,7 +25,10 @@ class User extends Authenticatable
 
     protected $hidden = ['password'];
 
-    protected $with = ['roles'];
+    protected $with = [
+        'roles.permissions',
+        'permissions',
+    ];
 
     protected function searchColumns(): array
     {

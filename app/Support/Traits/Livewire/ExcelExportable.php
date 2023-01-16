@@ -15,8 +15,6 @@ trait ExcelExportable
         ]);
     }
 
-    abstract protected function filename(): string;
-
     abstract protected function dataPerSheet(): array;
 
     abstract protected function columnHeaders(): array;
@@ -39,9 +37,13 @@ trait ExcelExportable
     {
         $filename = now()->format('Ymd_His') . '_';
 
-        $filename .= Str::of($this->filename())
-            ->trim()
-            ->snake();
+        if (method_exists($this, 'filename')) {
+            $filename .= Str::of($this->filename())
+                ->trim()
+                ->snake();
+        } else {
+            $filename .= Str::snake(class_basename($this));
+        }
 
         $filename .= '.xlsx';
 

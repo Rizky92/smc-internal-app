@@ -1,4 +1,19 @@
 <div>
+    @once
+        @push('js')
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    $('#modal-set-hak-akses').on('shown.bs.modal', e => {
+                        @this.emit('khanza.show-sha')
+                    })
+
+                    $('#modal-set-hak-akses').on('hide.bs.modal', e => {
+                        @this.emit('khanza.hide-sha')
+                    })
+                })
+            </script>
+        @endpush
+    @endonce
     <x-modal :livewire="true" id="modal-set-hak-akses" title="Set Hak Akses User untuk SIMRS Khanza">
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-row-col class="px-3 pt-3">
@@ -35,8 +50,8 @@
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
             <x-filter.search method="$refresh" />
-            <x-button class="btn-default ml-auto" data-dismiss="modal" wire:click="$emit('khanza.close-modal')" title="Batal" />
-            <x-button class="btn-default ml-auto" data-dismiss="modal" wire:click="$emit('khanza.simpan')" title="Simpan" icon="fas fa-save" />
+            <x-button class="btn-default ml-auto" data-dismiss="modal" title="Batal" />
+            <x-button class="btn-primary ml-2" data-dismiss="modal" wire:click="$emit('khanza.simpan')" title="Simpan" icon="fas fa-save" />
         </x-slot>
     </x-modal>
 </div>

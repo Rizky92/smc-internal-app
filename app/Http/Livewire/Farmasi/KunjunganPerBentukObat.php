@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Farmasi;
 
 use App\Models\Farmasi\ResepDokter;
 use App\Models\Farmasi\ResepDokterRacikan;
+use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
@@ -12,7 +13,7 @@ use Rizky92\Xlswriter\ExcelExport;
 
 class KunjunganPerBentukObat extends Component
 {
-    use WithPagination, FlashComponent;
+    use WithPagination, FlashComponent, Filterable;
 
     private const OBAT_REGULAR_PAGE = 'obat_regular_page';
     private const OBAT_RACIKAN_PAGE = 'obat_racikan_page';
@@ -29,9 +30,6 @@ class KunjunganPerBentukObat extends Component
 
     protected $listeners = [
         'beginExcelExport',
-        'searchData',
-        'resetFilters',
-        'fullRefresh',
     ];
 
     protected function queryString()
@@ -53,14 +51,6 @@ class KunjunganPerBentukObat extends Component
                 'as' => 'jenis_perawatan',
             ],
         ];
-    }
-
-    public function mount()
-    {
-        $this->perpage = 25;
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->jenisPerawatan = '';
     }
 
     public function render()
@@ -132,28 +122,19 @@ class KunjunganPerBentukObat extends Component
         return $excel->export();
     }
 
+    protected function defaultValues()
+    {
+        $this->perpage = 25;
+        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->jenisPerawatan = '';        
+    }
+
     public function searchData()
     {
         $this->resetPage(self::OBAT_REGULAR_PAGE);
         $this->resetPage(self::OBAT_RACIKAN_PAGE);
 
         $this->emit('$refresh');
-    }
-
-    public function resetFilters()
-    {
-        $this->perpage = 25;
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->jenisPerawatan = '';
-        
-        $this->searchData();
-    }
-
-    public function fullRefresh()
-    {
-        $this->forgetComputed();
-
-        $this->resetFilters();
     }
 }

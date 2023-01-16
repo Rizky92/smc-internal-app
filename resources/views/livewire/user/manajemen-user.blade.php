@@ -20,6 +20,55 @@
                     nrp,
                     nama,
                     roleIds,
+                    rolePermissionIds,
+                    permissionIds
+                }) {
+                    inputNRP.val(nrp)
+                    inputNama.val(nama)
+
+                    let roles = []
+                    let rolePermissions = []
+                    let permissions = []
+
+                    if (roleIds !== "") {
+                        roles = Array.from(roleIds.split(','))
+                    }
+
+                    if (rolePermissionIds !== "") {
+                        rolePermissions = Array.from(rolePermissionIds.split(','))
+                    }
+
+                    if (permissionIds !== "") {
+                        permissions = Array.from(permissionIds.split(','))
+                    }
+
+                    inputRoles.each((i, el) => el.checked = roles.find(v => v === el.value))
+                    inputPermissions.each((i, el) => el.checked = rolePermissions.find(v => v === el.value))
+
+                    @this.emit('custom-report.prepare-user', nrp, nama, roles, permissions)
+                    @this.emit('custom-report.prepare-transfer', nrp, nama, roles, permissions)
+                    @this.emit('khanza.prepare-user', nrp, nama)
+                    @this.emit('khanza.prepare-transfer', nrp, nama)
+                }
+            </script>
+
+            {{-- <script>
+                let inputNRP
+                let inputNama
+                let inputRoles
+                let inputPermissions
+
+                $(document).ready(() => {
+                    inputNRP = $('#user')
+                    inputNama = $('#nama')
+                    inputRoles = $('input[name=roles]')
+                    inputPermissions = $('input[name=permissions]')
+                })
+
+                function loadData({
+                    nrp,
+                    nama,
+                    roleIds,
                     permissionIds
                 }) {
                     inputNRP.val(nrp)
@@ -28,23 +77,13 @@
                     let roles = Array.from(roleIds.split(','))
                     let permissions = Array.from(permissionIds.split(','))
 
-                    // @this.emit('custom-report.prepare-user', nrp, nama, roles, permissions)
+                    window.livewire.find('5WbIefbHoDkrmJsVMUl7').emit('customReportPrepareTransfer', nrp, nama, roles, permissions)
+                    window.livewire.find('5WbIefbHoDkrmJsVMUl7').emit('customReportPrepareUser', nrp, nama, roles, permissions)
 
-                    @this.emit('khanza.prepare-user', nrp, nama)
+                    window.livewire.find('5WbIefbHoDkrmJsVMUl7').emit('khanzaPrepareTransfer', nrp, nama)
+                    window.livewire.find('5WbIefbHoDkrmJsVMUl7').emit('khanzaPrepareUser', nrp, nama)
                 }
-
-                $('#button-set-role-permissions').click(() => {
-                    @this.emit('custom-report.open-modal')
-
-                    $('#modal-set-role-permissions').modal('show')
-                })
-
-                $('#button-set-hak-akses').click(e => {
-                    @this.emit('khanza.open-modal')
-
-                    $('#modal-set-hak-akses').modal('show')
-                })
-            </script>
+            </script> --}}
         @endpush
     @endonce
 
@@ -79,10 +118,10 @@
                                 <span class="ml-1">Set hak akses</span>
                             </button>
                             <div class="dropdown-menu">
-                                <button class="dropdown-item text-sm" type="button" id="button-set-hak-akses">
+                                <button class="dropdown-item text-sm" type="button" id="button-set-hak-akses" data-toggle="modal" data-target="#modal-set-hak-akses">
                                     SIMRS Khanza
                                 </button>
-                                <button class="dropdown-item text-sm" type="button" id="button-set-role-permissions">
+                                <button class="dropdown-item text-sm" type="button" id="button-set-role-permissions" data-toggle="modal" data-target="#modal-set-role-permissions">
                                     Custom Report
                                 </button>
                             </div>
@@ -94,10 +133,10 @@
                                 <span class="ml-1">Transfer hak akses</span>
                             </button>
                             <div class="dropdown-menu">
-                                <button class="dropdown-item text-sm" type="button" id="button-transfer-hak-akses">
+                                <button class="dropdown-item text-sm" type="button" id="button-transfer-hak-akses" data-toggle="modal" data-target="#modal-transfer-hak-akses">
                                     SIMRS Khanza
                                 </button>
-                                <button class="dropdown-item text-sm" type="button" id="button-transfer-role-permissions">
+                                <button class="dropdown-item text-sm" type="button" id="button-transfer-role-permissions" data-toggle="modal" data-target="#modal-transfer-role-permissions">
                                     Custom Report
                                 </button>
                             </div>
@@ -125,7 +164,12 @@
                         <x-table.tr>
                             <x-table.td>
                                 {{ $user->nip }}
-                                <x-slot name="clickable" data-nrp="{{ $user->nip }}" data-nama="{{ $user->nama }}" data-role-ids="{{ $user->roles->pluck('id')->join(',') }}" data-permission-ids="{{ $user->getAllPermissions()->pluck('id')->join(',') }}"></x-slot>
+                                <x-slot name="clickable"
+                                    data-nrp="{{ $user->nip }}"
+                                    data-nama="{{ $user->nama }}"
+                                    data-role-ids="{{ $user->roles->pluck('id')->join(',') }}"
+                                    data-role-permission-ids="{{ $user->getPermissionsViaRoles()->pluck('id')->join(',') }}"
+                                    data-permission-ids="{{ $user->permissions->pluck('id')->join(',') }}"></x-slot>
                             </x-table.td>
                             <x-table.td>{{ $user->nama }}</x-table.td>
                             <x-table.td>{{ $user->nm_jbtn }}</x-table.td>

@@ -18,11 +18,6 @@ class ResepDokterRacikan extends Model
 
     public $timestamps = false;
 
-    public function resepObat(): BelongsTo
-    {
-        return $this->belongsTo(ResepObat::class, 'no_resep', 'no_resep');
-    }
-
     public function scopeKunjunganResepObatRacikan(
         Builder $query,
         string $periodeAwal = '',

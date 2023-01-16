@@ -47,40 +47,28 @@ class PemberianObat extends Model
 
     public static function pendapatanObatRalan(string $year = '2022'): array
     {
-        $data = (new static)::pendapatanObat('ralan', $year)->get()
-            ->mapWithKeys(function ($value, $key) {
-                return [$value->bulan => $value->jumlah];
-            })->toArray();
+        $data = static::pendapatanObat('ralan', $year)->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
     }
 
     public static function pendapatanObatRanap(string $year = '2022'): array
     {
-        $data = (new static)::pendapatanObat('ranap', $year)->get()
-            ->mapWithKeys(function ($value, $key) {
-                return [$value->bulan => $value->jumlah];
-            })->toArray();
+        $data = static::pendapatanObat('ranap', $year)->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
     }
 
     public static function pendapatanObatIGD(string $year = '2022'): array
     {
-        $data = (new static)::pendapatanObat('IGD', $year)->get()
-            ->mapWithKeys(function ($value, $key) {
-                return [$value->bulan => $value->jumlah];
-            })->toArray();
+        $data = static::pendapatanObat('IGD', $year)->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
     }
 
     public static function pendapatanAlkesUnit(string $year = '2022'): array
     {
-        $data = (new static)::pendapatanObat('', $year, true)->get()
-            ->mapWithKeys(function ($value, $key) {
-                return [$value->bulan => $value->jumlah];
-            })->toArray();
+        $data = static::pendapatanObat('', $year, true)->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
     }

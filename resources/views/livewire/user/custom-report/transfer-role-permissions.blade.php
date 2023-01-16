@@ -1,4 +1,19 @@
 <div>
+    @once
+        @push('js')
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    $('#modal-transfer-role-permissions').on('shown.bs.modal', e => {
+                        @this.emit('custom-report.show-trp')
+                    })
+
+                    $('#modal-transfer-role-permissions').on('hide.bs.modal', e => {
+                        @this.emit('custom-report.hide-trp')
+                    })
+                })
+            </script>
+        @endpush
+    @endonce
     <x-modal :livewire="true" title="Transfer Role Permission untuk Custom Report" id="modal-transfer-role-permissions">
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-row-col>
@@ -9,9 +24,12 @@
                     </div>
                     <div class="w-50">
                         <label>Hak akses diberikan:</label>
-                        <ul class="d-flex flex-wrap p-0 m-0" style="list-style: none; row-gap: 0.5rem; column-gap: 0.25rem">
-                            @foreach ($roles as $role)
-                                <li class="badge badge-light text-sm font-weight-normal border">{{ $role }}</li>
+                        <ul class="d-flex flex-wrap p-0 m-0 text-sm" style="list-style: none; row-gap: 0.5rem; column-gap: 0.25rem">
+                            @foreach ($roles as $roleId => $role)
+                                <li class="badge badge-dark text-sm font-weight-normal border">{{ $role }}</li>
+                            @endforeach
+                            @foreach ($permissions as $permissionId => $permission)
+                                <li class="badge badge-light text-sm font-weight-normal border">{{ $permission }}</li>
                             @endforeach
                         </ul>
                     </div>
@@ -25,6 +43,7 @@
                             <x-table.th>NRP</x-table.th>
                             <x-table.th>Nama</x-table.th>
                             <x-table.th>Jabatan</x-table.th>
+                            <x-table.th>Role</x-table.th>
                         </x-slot>
                         <x-slot name="body">
                             @foreach ($this->availableUsers as $user)
@@ -36,6 +55,11 @@
                                     <x-table.td>{{ $user->nip }}</x-table.td>
                                     <x-table.td>{{ $user->nama }}</x-table.td>
                                     <x-table.td>{{ $user->nm_jbtn }}</x-table.td>
+                                    <x-table.td>
+                                        @foreach ($user->roles as $userRole)
+                                            <span class="badge badge-dark text-sm font-weight-normal border">{{ $userRole->name }}</span>
+                                        @endforeach
+                                    </x-table.td>
                                 </x-table.tr>
                             @endforeach
                         </x-slot>
@@ -44,9 +68,9 @@
             </x-row-col>
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
-            <x-filter.search model="customReportSearchUsers" method="$refresh" />
-            <x-button class="btn-default ml-auto" data-dismiss="modal" wire:click="resetModal" title="Batal" />
-            <x-button class="btn-primary ml-2" data-dismiss="modal" wire:click="transferPermissions" title="Simpan" icon="fas fa-save" />
+            <x-filter.search method="$refresh" />
+            <x-button class="btn-default ml-auto" data-dismiss="modal" title="Batal" />
+            <x-button class="btn-primary ml-2" data-dismiss="modal" wire:click="$emit('custom-report.transfer')" title="Simpan" icon="fas fa-save" />
         </x-slot>
     </x-modal>
 </div>

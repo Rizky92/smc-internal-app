@@ -22,16 +22,20 @@ class ResepObat extends Model
 
     public $timestamps = false;
 
-    public const RALAN = 'ralan';
-    public const RANAP = 'ranap';
-    public const IGD = 'igd';
-
     public function scopePenggunaanObatPerDokter(
         Builder $query,
         string $periodeAwal = '',
         string $periodeAkhir = '',
         string $cari = ''
     ): Builder {
+        if (empty($periodeAwal)) {
+            $periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($periodeAkhir)) {
+            $periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        }
+        
         return $query
             ->selectRaw("
                 resep_obat.no_resep,
@@ -179,47 +183,23 @@ class ResepObat extends Model
             ->groupByRaw('month(resep_obat.tgl_perawatan)');
     }
 
-    public function dokterPeresep(): BelongsTo
-    {
-        return $this->belongsTo(Dokter::class, 'kd_dokter', 'kd_dokter');
-    }
-
-    public function resepDokter(): HasMany
-    {
-        return $this->hasMany(ResepDokter::class, 'no_resep', 'no_resep');
-    }
-
-    public function resepDokterRacikan(): HasMany
-    {
-        return $this->hasMany(ResepDokterRacikan::class, 'no_resep', 'no_resep');
-    }
-
     public static function kunjunganPasienRalan(string $year = '2022'): array
     {
-        $data = (new static)::kunjunganPasien('ralan', $year)->get()
-            ->mapWithKeys(function ($value, $key) {
-                return [$value->bulan => $value->jumlah];
-            })->toArray();
+        $data = static::kunjunganPasien('ralan', $year)->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
     }
 
     public static function kunjunganPasienRanap(string $year = '2022'): array
     {
-        $data = (new static)::kunjunganPasien('ranap', $year)->get()
-            ->mapWithKeys(function ($value, $key) {
-                return [$value->bulan => $value->jumlah];
-            })->toArray();
+        $data = static::kunjunganPasien('ranap', $year)->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
     }
 
     public static function kunjunganPasienIGD(string $year = '2022'): array
     {
-        $data = (new static)::kunjunganPasien('IGD', $year)->get()
-            ->mapWithKeys(function ($value, $key) {
-                return [$value->bulan => $value->jumlah];
-            })->toArray();
+        $data = static::kunjunganPasien('IGD', $year)->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
     }

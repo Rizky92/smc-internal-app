@@ -1,5 +1,20 @@
 <div>
-    <x-modal id="transfer-hak-akses" title="Transfer Hak Akses Khanza ke User Lainnya" :livewire="true">
+    @once
+        @push('js')
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    $('#modal-transfer-hak-akses').on('shown.bs.modal', e => {
+                        @this.emit('khanza.show-tha')
+                    })
+
+                    $('#modal-transfer-hak-akses').on('hide.bs.modal', e => {
+                        @this.emit('khanza.hide-tha')
+                    })
+                })
+            </script>
+        @endpush
+    @endonce
+    <x-modal id="modal-transfer-hak-akses" title="Transfer Hak Akses Khanza ke User Lainnya" :livewire="true">
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-row-col class="px-3 pt-3">
                 <div class="d-flex justify-content-start">
@@ -37,13 +52,13 @@
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
             <x-filter.search method="$refresh" />
-            <x-button class="btn-default ml-auto" data-dismiss="modal" wire:click="$emit('khanza.close-modal')" title="Batal" />
-            <x-button class="btn-default ml-auto" data-dismiss="modal" wire:click="$emit('khanza.transfer')" title="Transfer" icon="fas fa-share-square" />
+            <x-button class="btn-default ml-auto" data-dismiss="modal" title="Batal" />
+            <x-button class="btn-primary ml-2" data-dismiss="modal" wire:click="$emit('khanza.transfer')" title="Transfer" icon="fas fa-share-square" />
         </x-slot>
     </x-modal>
 </div>
 {{-- 
-<div class="modal fade" id="transfer-hak-akses" wire:ignore.self>
+<div class="modal fade" id="modal-transfer-hak-akses" wire:ignore.self>
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
         <div class="modal-content">
             <div class="modal-header">
