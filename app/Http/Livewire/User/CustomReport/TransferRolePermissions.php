@@ -75,14 +75,14 @@ class TransferRolePermissions extends Component
         $permittedUsers = User::whereIn('petugas.nip', $this->checkedUsers)
             ->get();
 
-        tracker_start();
+        tracker_start('mysql_smc');
 
         foreach ($permittedUsers as $permittedUser) {
             $permittedUser->syncRoles($this->roles);
             $permittedUser->syncPermissions($this->permissions);
         }
 
-        tracker_end();
+        tracker_end('mysql_smc');
 
         $this->emitTo('user.manajemen-user', 'flashSuccess', "Transfer hak akses Custom Report berhasil!");
     }

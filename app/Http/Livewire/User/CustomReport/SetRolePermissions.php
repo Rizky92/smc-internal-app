@@ -64,12 +64,12 @@ class SetRolePermissions extends Component
 
         $user = User::findByNRP($this->nrp);
 
-        tracker_start();
+        tracker_start('mysql_smc');
 
         $user->syncRoles($this->checkedRoles);
         $user->syncPermissions($this->checkedPermissions);
 
-        tracker_end();
+        tracker_end('mysql_smc');
 
         $this->emitTo('user.manajemen-user', 'flashSuccess', "Hak akses untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
     }
