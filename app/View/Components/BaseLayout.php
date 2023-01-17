@@ -16,11 +16,9 @@ class BaseLayout extends Component
     /** @var string $current */
     public $current;
 
-    /** @var string $username */
     public $nama;
 
-    /** @var string $nip */
-    public $nip;
+    public $nik;
 
     /**
      * Create a new component instance.
@@ -39,7 +37,7 @@ class BaseLayout extends Component
         $this->title = $title;
         $this->current = URL::current();
         $this->nama = $user->nama;
-        $this->nip = $user->nip;
+        $this->nik = $user->nik;
 
         $this->sidebarMenu = collect([
             [

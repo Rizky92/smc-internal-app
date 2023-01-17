@@ -24,7 +24,6 @@ class LoginController
         $user = User::query()
             ->whereRaw('AES_DECRYPT(id_user, "nur") = ?', $request->get('user'))
             ->whereRaw('AES_DECRYPT(password, "windi") = ?', $request->get('pass'))
-            ->where('status', '1')
             ->first();
 
         if (! $user) {

@@ -1,4 +1,4 @@
-@aware(['nama', 'nip'])
+@aware(['nama', 'nik'])
 
 <aside class="main-sidebar sidebar-light-olive border-right">
     <a href="{{ route('admin.dashboard') }}" class="brand-link text-sm border-right">
@@ -15,7 +15,7 @@
                 <div class="info">
                     <a href="#" class="d-block" style="line-height: 1.1">
                         <span>{{ $nama }}</span> <br>
-                        <span class="text-xs">{{ $nip }}</span>
+                        <span class="text-xs">{{ $nik }}</span>
                     </a>
                 </div>
             </div>

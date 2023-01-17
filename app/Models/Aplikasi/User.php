@@ -936,7 +936,7 @@ class User extends Authenticatable
     protected function searchColumns(): array
     {
         return [
-            'petugas.nip',
+            'pegawai.nik',
             'petugas.nama',
             'jabatan.nm_jbtn',
         ];
@@ -947,10 +947,22 @@ class User extends Authenticatable
         parent::booted();
 
         static::addGlobalScope(function (Builder $query) {
-            return $query->selectRaw('petugas.nip, petugas.nama, jabatan.nm_jbtn, user.id_user, user.password')
-                ->join('petugas', DB::raw('AES_DECRYPT(id_user, "nur")'), '=', 'petugas.nip')
-                ->join('jabatan', 'petugas.kd_jbtn', '=', 'jabatan.kd_jbtn')
-                ->orderBy('petugas.nip');
+            $sqlSelect = "
+                pegawai.nik nik,
+                pegawai.nama nama,
+                coalesce(jabatan.nm_jbtn, spesialis.nm_sps, pegawai.jbtn) jbtn,
+                (case when petugas.nip is not null then 'Petugas' when dokter.kd_dokter is not null then 'Dokter' else '-' end) jenis,
+                user.id_user id_user,
+                user.password password
+            ";
+
+            return $query->selectRaw($sqlSelect)
+                ->join('pegawai', DB::raw('AES_DECRYPT(id_user, "nur")'), '=', 'pegawai.nik')
+                ->leftJoin('petugas', 'pegawai.nik', '=', 'petugas.nip')
+                ->leftJoin('jabatan', 'petugas.kd_jbtn', '=', 'jabatan.kd_jbtn')
+                ->leftJoin('dokter', 'pegawai.nik', '=', 'dokter.kd_dokter')
+                ->leftJoin('spesialis', 'dokter.kd_sps', '=', 'spesialis.kd_sps')
+                ->orderBy('pegawai.nik');
         });
     }
 
@@ -964,7 +976,7 @@ class User extends Authenticatable
         if (empty($nrp)) return new static;
 
         return static::query()
-            ->where('petugas.nip', $nrp)
+            ->where('pegawai.nik', $nrp)
             ->first($columns);
     }
 

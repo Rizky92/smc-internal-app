@@ -68,7 +68,7 @@ if (!function_exists('tracker_end')) {
             DB::connection('mysql_smc')->table('trackersql')->insert([
                 'tanggal' => now(),
                 'sqle' => (string) $sql,
-                'usere' => auth()->user()->nip,
+                'usere' => auth()->user()->nik,
             ]);
         }
         

@@ -134,17 +134,17 @@
                     @foreach ($this->users as $user)
                         <x-table.tr>
                             <x-table.td>
-                                {{ $user->nip }}
+                                {{ $user->nik }}
                                 <x-slot name="clickable"
-                                    data-nrp="{{ $user->nip }}"
+                                    data-nrp="{{ $user->nik }}"
                                     data-nama="{{ $user->nama }}"
                                     data-role-ids="{{ $user->roles->pluck('id')->join(',') }}"
                                     data-role-permission-ids="{{ $user->getPermissionsViaRoles()->pluck('id')->join(',') }}"
                                     data-permission-ids="{{ $user->permissions->pluck('id')->join(',') }}"></x-slot>
                             </x-table.td>
                             <x-table.td>{{ $user->nama }}</x-table.td>
-                            <x-table.td>{{ $user->nm_jbtn }}</x-table.td>
-                            <x-table.td>Petugas</x-table.td>
+                            <x-table.td>{{ $user->jbtn }}</x-table.td>
+                            <x-table.td>{{ $user->jenis }}</x-table.td>
                             <x-table.td>
                                 @foreach ($user->roles as $role)
                                     <x-badge :class="Arr::toCssClasses(['badge-dark', 'ml-1' => $loop->first], ' ')">{{ $role->name }}</x-badge>

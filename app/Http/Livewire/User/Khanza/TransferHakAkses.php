@@ -44,10 +44,10 @@ class TransferHakAkses extends Component
         return $this->deferLoading
             ? []
             : User::query()
-            ->where('petugas.nip', '!=', $this->nrp)
+            ->where('pegawai.nik', '!=', $this->nrp)
             ->search($this->cari)
             ->when(!empty($this->checkedUsers), function (Builder $query) {
-                return $query->orWhereIn('petugas.nip', $this->checkedUsers);
+                return $query->orWhereIn('pegawai.nik', $this->checkedUsers);
             })
             ->get();
     }

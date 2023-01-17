@@ -46,7 +46,6 @@ class ManajemenUser extends Component
     public function getUsersProperty()
     {
         return User::query()
-            ->with(['roles.permissions', 'permissions'])
             ->search($this->cari)
             ->paginate($this->perpage);
     }

@@ -47,11 +47,11 @@ class TransferRolePermissions extends Component
             ? []
             : User::query()
             ->with('roles')
-            ->where('petugas.nip', '!=', $this->nrp)
+            ->where('pegawai.nik', '!=', $this->nrp)
             ->where(function (Builder $query) {
                 return $query
                     ->search($this->cari)
-                    ->orWhereIn('petugas.nip', $this->checkedUsers);
+                    ->orWhereIn('pegawai.nik', $this->checkedUsers);
             })
             ->get();
     }
@@ -72,7 +72,7 @@ class TransferRolePermissions extends Component
             return;
         }
 
-        $permittedUsers = User::whereIn('petugas.nip', $this->checkedUsers)
+        $permittedUsers = User::whereIn('pegawai.nik', $this->checkedUsers)
             ->get();
 
         tracker_start('mysql_smc');
