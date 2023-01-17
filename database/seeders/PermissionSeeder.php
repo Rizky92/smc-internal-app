@@ -30,14 +30,11 @@ class PermissionSeeder extends Seeder
         $perawatanPermissions = [
             Permission::create(['name' => 'perawatan.daftar-pasien-ranap.read', 'guard_name' => 'web']),
             Permission::create(['name' => 'perawatan.daftar-pasien-ranap.batal-ranap', 'guard_name' => 'web']),
+            Permission::create(['name' => 'perawatan.daftar-pasien-ranap.update-harga-kamar', 'guard_name' => 'web']),
         ];
 
         $keuanganPermissions = [
             Permission::create(['name' => 'keuangan.stok-obat-ruangan.read', 'guard_name' => 'web']),
-        ];
-
-        $kasirPermissions = [
-            Permission::create(['name' => 'kasir.ubah-ranap-pasien.update-harga-kamar', 'guard_name' => 'web']),
         ];
 
         $farmasiPermissions = [
@@ -67,14 +64,12 @@ class PermissionSeeder extends Seeder
         
         $perawatanRole = Role::create(['name' => 'Perawatan', 'guard_name' => 'web']);
         $keuanganRole = Role::create(['name' => 'Keuangan', 'guard_name' => 'web']);
-        $kasirRole = Role::create(['name' => 'Kasir', 'guard_name' => 'web']);
         $farmasiRole = Role::create(['name' => 'Farmasi', 'guard_name' => 'web']);
         $rekamMedisRole = Role::create(['name' => 'Rekam Medis', 'guard_name' => 'web']);
         $logistikRole = Role::create(['name' => 'Logistik', 'guard_name' => 'web']);
 
-        $perawatanRole->givePermissionTo($perawatanPermissions);
         $keuanganRole->givePermissionTo($keuanganPermissions);
-        $kasirRole->givePermissionTo($kasirPermissions);
+        $perawatanRole->givePermissionTo($perawatanPermissions);
         $farmasiRole->givePermissionTo($farmasiPermissions);
         $rekamMedisRole->givePermissionTo($rekamMedisPermissions);
         $logistikRole->givePermissionTo($logistikPermissions);
