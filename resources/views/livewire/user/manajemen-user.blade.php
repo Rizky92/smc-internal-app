@@ -55,39 +55,6 @@
                     @this.emit('khanza.prepare-transfer', nrp, nama)
                 }
             </script>
-
-            {{-- <script>
-                let inputNRP
-                let inputNama
-                let inputRoles
-                let inputPermissions
-
-                $(document).ready(() => {
-                    inputNRP = $('#user')
-                    inputNama = $('#nama')
-                    inputRoles = $('input[name=roles]')
-                    inputPermissions = $('input[name=permissions]')
-                })
-
-                function loadData({
-                    nrp,
-                    nama,
-                    roleIds,
-                    permissionIds
-                }) {
-                    inputNRP.val(nrp)
-                    inputNama.val(nama)
-
-                    let roles = Array.from(roleIds.split(','))
-                    let permissions = Array.from(permissionIds.split(','))
-
-                    window.livewire.find('5WbIefbHoDkrmJsVMUl7').emit('customReportPrepareTransfer', nrp, nama, roles, permissions)
-                    window.livewire.find('5WbIefbHoDkrmJsVMUl7').emit('customReportPrepareUser', nrp, nama, roles, permissions)
-
-                    window.livewire.find('5WbIefbHoDkrmJsVMUl7').emit('khanzaPrepareTransfer', nrp, nama)
-                    window.livewire.find('5WbIefbHoDkrmJsVMUl7').emit('khanzaPrepareUser', nrp, nama)
-                }
-            </script> --}}
         @endpush
     @endonce
 

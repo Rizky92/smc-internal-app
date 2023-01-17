@@ -60,6 +60,16 @@ class ManajemenUser extends Component
             ->layout(BaseLayout::class, ['title' => 'Manajemen User']);
     }
 
+    public function setUser(string $nrp)
+    {
+        $this->currentUser = User::findByNRP($nrp);
+    }
+
+    public function clearUser()
+    {
+        $this->currentUser = null;
+    }
+
     public function searchData()
     {
         $this->resetPage();
