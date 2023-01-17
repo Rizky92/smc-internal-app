@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\User;
 
 use App\Models\Aplikasi\User;
+use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
@@ -10,7 +11,7 @@ use Livewire\WithPagination;
 
 class ManajemenUser extends Component
 {
-    use WithPagination, FlashComponent;
+    use WithPagination, FlashComponent, Searchable;
 
     public $perpage;
 
@@ -20,9 +21,6 @@ class ManajemenUser extends Component
 
     protected $listeners = [
         'beginExcelExport',
-        'searchData',
-        'resetFilters',
-        'fullRefresh',
     ];
 
     protected function queryString(): array
@@ -42,8 +40,7 @@ class ManajemenUser extends Component
 
     public function mount()
     {
-        $this->cari = '';
-        $this->perpage = 25;
+        $this->defaultValues();
     }
 
     public function getUsersProperty()
@@ -60,35 +57,9 @@ class ManajemenUser extends Component
             ->layout(BaseLayout::class, ['title' => 'Manajemen User']);
     }
 
-    public function setUser(string $nrp)
+    protected function defaultValues()
     {
-        $this->currentUser = User::findByNRP($nrp);
-    }
-
-    public function clearUser()
-    {
-        $this->currentUser = null;
-    }
-
-    public function searchData()
-    {
-        $this->resetPage();
-
-        $this->emit('$refresh');
-    }
-
-    public function resetFilters()
-    {
-        $this->cari = '';
         $this->perpage = 25;
-
-        $this->searchData();
-    }
-
-    public function fullRefresh()
-    {
-        $this->forgetComputed();
-
-        $this->resetFilters();
+        $this->cari = '';        
     }
 }
