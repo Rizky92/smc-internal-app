@@ -3,7 +3,7 @@
 namespace App\Http\Livewire\User;
 
 use App\Models\Aplikasi\User;
-use App\Support\Traits\Eloquent\Searchable;
+use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
@@ -11,7 +11,7 @@ use Livewire\WithPagination;
 
 class ManajemenUser extends Component
 {
-    use WithPagination, FlashComponent, Searchable;
+    use WithPagination, FlashComponent, Filterable;
 
     public $perpage;
 
