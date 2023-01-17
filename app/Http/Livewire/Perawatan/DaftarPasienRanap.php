@@ -136,8 +136,6 @@ class DaftarPasienRanap extends Component
             $this->statusPerawatan,
             $this->tglAwal,
             $this->tglAkhir,
-            $this->jamAwal,
-            $this->jamAkhir,
             true
         )
             ->orderBy('no_rawat')
@@ -159,6 +157,8 @@ class DaftarPasienRanap extends Component
             return;
         }
 
+        tracker_start();
+
         RawatInap::where([
             ['no_rawat', '=', $noRawat],
             ['tgl_masuk', '=', $tglMasuk],
@@ -175,6 +175,8 @@ class DaftarPasienRanap extends Component
                 'stts' => 'Sudah',
             ]);
         }
+
+        tracker_end();
 
         $this->flashSuccess("Data pasien dengan No. Rawat {$noRawat} sudah kembali ke rawat jalan!");
     }
