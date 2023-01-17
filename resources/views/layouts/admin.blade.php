@@ -9,6 +9,7 @@
     <link href="{{ asset('plugins/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/adminlte.min.css') }}" rel="stylesheet">
     <link href="{{ asset('plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="{{ asset('logo.ico') }}">
     @livewireStyles
 
     @stack('css')

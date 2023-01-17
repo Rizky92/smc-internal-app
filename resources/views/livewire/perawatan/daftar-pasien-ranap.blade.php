@@ -207,12 +207,12 @@
                         'tanggal_keluar' => 'Tgl. Keluar',
                     ]" />
                 </div>
-                <x-filter.button-export-excel class="ml-2" />
             </x-card.row-col>
             <x-card.row-col class="mt-3">
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search />
+                <x-filter.button-export-excel class="ml-2" />
             </x-card.row-col>
         </x-slot>
 
