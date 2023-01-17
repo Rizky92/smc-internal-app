@@ -128,13 +128,11 @@ class RegistrasiPasien extends Model
                 switch (Str::snake($statusPerawatan)) {
                     case 'tanggal_masuk':
                         return $query->where(function (Builder $query) use ($tglAwal, $tglAkhir) {
-                            return $query->where('kamar_inap.stts_pulang', '-')
-                                ->whereBetween('kamar_inap.tgl_masuk', [$tglAwal, $tglAkhir]);
+                            return $query->whereBetween('kamar_inap.tgl_masuk', [$tglAwal, $tglAkhir]);
                         });
                     case 'tanggal_keluar':
                         return $query->where(function (Builder $query) use ($tglAwal, $tglAkhir) {
-                            return $query->whereNotIn('kamar_inap.stts_pulang', ['-', 'pindah kamar'])
-                                ->whereBetween('kamar_inap.tgl_keluar', [$tglAwal, $tglAkhir]);
+                            return $query->whereBetween('kamar_inap.tgl_keluar', [$tglAwal, $tglAkhir]);
                         });
                 }
             })
