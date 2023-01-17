@@ -8,9 +8,5 @@ trait LiveTable
 
     public $perpage;
 
-    public $dateStart;
-
-    public $dateEnd;
-
     protected $paginationTheme = 'bootstrap';
 }

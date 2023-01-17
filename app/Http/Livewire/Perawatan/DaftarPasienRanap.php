@@ -22,9 +22,9 @@ class DaftarPasienRanap extends Component
 
     public $perpage;
 
-    public $tglAwal;
+    public $periodeAwal;
 
-    public $tglAkhir;
+    public $periodeAkhir;
 
     public $statusPerawatan;
 
@@ -48,13 +48,13 @@ class DaftarPasienRanap extends Component
                 'except' => '-',
                 'as' => 'status_perawatan'
             ],
-            'tglAwal' => [
+            'periodeAwal' => [
                 'except' => now()->format('Y-m-d'),
-                'as' => 'tgl_awal',
+                'as' => 'periode_awal',
             ],
-            'tglAkhir' => [
+            'periodeAkhir' => [
                 'except' => now()->format('Y-m-d'),
-                'as' => 'tgl_akhir',
+                'as' => 'periode_akhir',
             ],
         ];
     }
@@ -64,13 +64,8 @@ class DaftarPasienRanap extends Component
         $this->cari = '';
         $this->perpage = 25;
         $this->statusPerawatan = '-';
-        $this->tglAwal = now()->format('Y-m-d');
-        $this->tglAkhir = now()->format('Y-m-d');
-    }
-
-    public function mount()
-    {
-        $this->defaultValues();
+        $this->periodeAwal = now()->format('Y-m-d');
+        $this->periodeAkhir = now()->format('Y-m-d');
     }
 
     public function getDaftarPasienRanapProperty()
@@ -78,8 +73,8 @@ class DaftarPasienRanap extends Component
         return RegistrasiPasien::daftarPasienRanap(
             $this->cari,
             $this->statusPerawatan,
-            $this->tglAwal,
-            $this->tglAkhir,
+            $this->periodeAwal,
+            $this->periodeAkhir,
         )
             ->orderBy('no_rawat')
             ->paginate($this->perpage);
@@ -107,7 +102,7 @@ class DaftarPasienRanap extends Component
         $titles = [
             'RS Samarinda Medika Citra',
             'Daftar Pasien Rawat Inap',
-            Carbon::parse($this->tglAwal)->format('d F Y') . ' - ' . Carbon::parse($this->tglAkhir)->format('d F Y'),
+            Carbon::parse($this->periodeAwal)->format('d F Y') . ' - ' . Carbon::parse($this->periodeAkhir)->format('d F Y'),
         ];
 
         $columnHeaders = [
@@ -134,8 +129,8 @@ class DaftarPasienRanap extends Component
         $data = RegistrasiPasien::daftarPasienRanap(
             '',
             $this->statusPerawatan,
-            $this->tglAwal,
-            $this->tglAkhir,
+            $this->periodeAwal,
+            $this->periodeAkhir,
             true
         )
             ->orderBy('no_rawat')
