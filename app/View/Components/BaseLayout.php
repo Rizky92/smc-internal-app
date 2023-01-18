@@ -70,6 +70,7 @@ class BaseLayout extends Component
                 'type' => 'dropdown',
                 'hasAnyPermissions' => $user->canAny([
                     'keuangan.stok-obat-ruangan.read',
+                    'keuangan.piutang-pasien.read',
                 ]),
                 'items' => [
                     [
@@ -78,6 +79,13 @@ class BaseLayout extends Component
                         'icon' => "fas fa-shapes",
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.stok-obat-ruangan.read'),
+                    ],
+                    [
+                        'name' => 'Piutang Pasien',
+                        'url' => route('admin.keuangan.piutang-pasien'),
+                        'icon' => "fas fa-file-invoice",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.piutang-pasien.read'),
                     ],
                 ],
             ],

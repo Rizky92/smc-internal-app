@@ -30,11 +30,11 @@ class PermissionSeeder extends Seeder
         $perawatanPermissions = [
             Permission::create(['name' => 'perawatan.daftar-pasien-ranap.read', 'guard_name' => 'web']),
             Permission::create(['name' => 'perawatan.daftar-pasien-ranap.batal-ranap', 'guard_name' => 'web']),
-            Permission::create(['name' => 'perawatan.daftar-pasien-ranap.update-harga-kamar', 'guard_name' => 'web']),
         ];
 
         $keuanganPermissions = [
             Permission::create(['name' => 'keuangan.stok-obat-ruangan.read', 'guard_name' => 'web']),
+            Permission::create(['name' => 'keuangan.piutang-pasien.read', 'guard_name' => 'web']),
         ];
 
         $farmasiPermissions = [
@@ -59,6 +59,14 @@ class PermissionSeeder extends Seeder
             Permission::create(['name' => 'logistik.stok-darurat.read', 'guard_name' => 'web']),
         ];
 
+        $kasirPermissions = [
+            Permission::create(['name' => 'perawatan.daftar-pasien-ranap.update-harga-kamar', 'guard_name' => 'web']),
+        ];
+
+        $manajemenPermissions = [
+            Permission::create(['name' => 'mod.laporan-pasien-ranap.read', 'guard_name' => 'web']),
+        ];
+
         // Superadmin role name, bypasses all permissions
         Role::create(['name' => config('permission.superadmin_name'), 'guard_name' => 'web']);
         
@@ -67,12 +75,16 @@ class PermissionSeeder extends Seeder
         $farmasiRole = Role::create(['name' => 'Farmasi', 'guard_name' => 'web']);
         $rekamMedisRole = Role::create(['name' => 'Rekam Medis', 'guard_name' => 'web']);
         $logistikRole = Role::create(['name' => 'Logistik', 'guard_name' => 'web']);
+        $kasirRole = Role::create(['name' => 'Kasir', 'guard_name' => 'web']);
+        $manajemenRole = Role::create(['name' => 'MOD', 'guard_name' => 'web']);
 
         $keuanganRole->givePermissionTo($keuanganPermissions);
         $perawatanRole->givePermissionTo($perawatanPermissions);
         $farmasiRole->givePermissionTo($farmasiPermissions);
         $rekamMedisRole->givePermissionTo($rekamMedisPermissions);
         $logistikRole->givePermissionTo($logistikPermissions);
+        $kasirRole->givePermissionTo($kasirPermissions);
+        $manajemenRole->givePermissionTo($manajemenPermissions);
 
         Schema::connection('mysql_smc')->enableForeignKeyConstraints();
         DB::setDefaultConnection('mysql_sik');

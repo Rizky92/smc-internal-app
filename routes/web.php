@@ -12,6 +12,7 @@ use App\Http\Livewire\Farmasi\PerbandinganBarangPO;
 use App\Http\Livewire\Farmasi\StokDaruratFarmasi;
 use App\Http\Livewire\HakAkses\HakAksesCustomReport;
 use App\Http\Livewire\HakAkses\HakAksesKhanza;
+use App\Http\Livewire\Keuangan\RekapPiutangPasien;
 use App\Http\Livewire\Keuangan\StokObatRuangan;
 use App\Http\Livewire\Logistik\InputMinmaxStok;
 use App\Http\Livewire\Logistik\StokDaruratLogistik;
@@ -63,6 +64,10 @@ Route::prefix('admin')
                 Route::get('stok-obat-ruangan', StokObatRuangan::class)
                     ->middleware('can:keuangan.stok-obat-ruangan.read')
                     ->name('stok-obat-ruangan');
+
+                Route::get('rekap-piutang-pasien', RekapPiutangPasien::class)
+                    ->middleware('can:keuangan.piutang-pasien.read')
+                    ->name('piutang-pasien');
             });
 
         Route::prefix('farmasi')

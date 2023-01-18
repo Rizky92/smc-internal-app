@@ -15,11 +15,6 @@ trait Filterable
         ]);
     }
 
-    public function mountFilterable()
-    {
-        $this->defaultValues();
-    }
-
     public function pageName()
     {
         return 'page';

@@ -1,6 +1,7 @@
 @props([
     'columns' => null,
     'body' => null,
+    'footer' => null,
     'responsive' => true,
 ])
 
@@ -13,4 +14,7 @@
     <tbody {{ $body->attributes }}>
         {{ $body }}
     </tbody>
+    <tfoot {{ optional($footer)->attributes }}>
+        {{ $footer }}
+    </tfoot>
 </table>

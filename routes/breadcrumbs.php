@@ -30,6 +30,11 @@ Breadcrumbs::for('admin.keuangan.stok-obat-ruangan', function (Trail $trail) {
     $trail->push('Stok Obat Ruangan', route('admin.keuangan.stok-obat-ruangan'));
 });
 
+Breadcrumbs::for('admin.keuangan.piutang-pasien', function (Trail $trail) {
+    $trail->parent('admin.keuangan');
+    $trail->push('Piutang Pasien', route('admin.keuangan.piutang-pasien'));
+});
+
 
 Breadcrumbs::for('admin.farmasi', function (Trail $trail) {
     $trail->parent('admin.dashboard');

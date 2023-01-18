@@ -168,19 +168,19 @@
                 </x-card.row>
 
                 <x-card.row>
-                    <div class="col-5">
+                    <div class="col-6">
                         <div class="form-group">
                             <label class="text-sm" for="harga_kamar">Harga Kamar</label>
-                            <input type="number" class="form-control form-control-sm" id="harga_kamar" autocomplete="off" min="0">
+                            <div class="d-flex align-items-center">
+                                <input type="number" class="form-control form-control-sm" id="harga_kamar" autocomplete="off" min="0">
+                                <span class="font-weight-medium pl-3">x</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-2">
+                    <div class="col-1">
                         <div class="form-group">
-                            <label class="text-sm text-white" for="lama_inap">Lama Inap</label>
-                            <div class="d-flex align-items-center">
-                                <span class="font-weight-medium pr-3">x</span>
-                                <input type="number" class="form-control form-control-sm" id="lama_inap" autocomplete="off" min="0">
-                            </div>
+                            <label class="text-sm" for="lama_inap">Lama Inap</label>
+                            <input type="number" class="form-control form-control-sm" id="lama_inap" autocomplete="off" min="0">
                         </div>
                     </div>
                     <div class="col-5">

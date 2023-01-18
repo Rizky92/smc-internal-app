@@ -10,7 +10,7 @@ trait ExcelExportable
     public function initializeExcelExportable()
     {
         $this->listeners = array_merge($this->listeners, [
-            'notifyExportToComponent',
+            'exportToExcel',
             'beginExcelExport',
         ]);
     }
@@ -24,13 +24,13 @@ trait ExcelExportable
         return [];
     }
 
-    public function notifyExportToComponent()
+    public function exportToExcel()
     {
         if (method_exists($this, 'flashInfo')) {
             $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
         }
 
-        $this->emit('beginExport');
+        $this->emit('beginExcelExport');
     }
 
     public function beginExcelExport()
@@ -58,7 +58,7 @@ trait ExcelExportable
             : $dataSheets[$firstSheet];
 
         $excel = ExcelExport::make($filename, $firstSheet)
-            ->setPageHeaders($this->getPageHeaders())
+            ->setPageHeaders($this->pageHeaders())
             ->setColumnHeaders($this->columnHeaders())
             ->setData($firstData);
         

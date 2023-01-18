@@ -1,6 +1,7 @@
 <?php
 
 return [
+    // [A]
     'jadwal_praktek' => '[A] Jadwal Praktek',
     'registrasi' => '[A] Registrasi',
     'tindakan_ralan' => '[A] Tindakan Ralan',
