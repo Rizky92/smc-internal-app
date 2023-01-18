@@ -52,7 +52,7 @@ class RekapPiutangPasien extends Component
 
     public function getPenjaminProperty()
     {
-        return Penjamin::pluck('png_jawab', 'kd_pj');
+        return Penjamin::where('status', '1')->pluck('png_jawab', 'kd_pj');
     }
 
     public function getPiutangPasienProperty()
@@ -63,7 +63,7 @@ class RekapPiutangPasien extends Component
             $this->caraBayar,
             $this->cari
         )
-            ->orderBy('tgl_piutang')
+            ->orderBy('png_jaawb')
             ->paginate($this->perpage);
     }
 
@@ -84,7 +84,7 @@ class RekapPiutangPasien extends Component
 
         return [
             // TODO: ubah cara berikut dengan callback
-            collect($query->orderBy('tgl_piutang')->get()->toArray())
+            collect($query->orderBy('png_jawab')->get()->toArray())
                 ->merge([
                 [
                     'no_rawat' => 'TOTAL',
