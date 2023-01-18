@@ -3,14 +3,16 @@
 namespace App\Http\Livewire\Farmasi;
 
 use App\Models\Farmasi\ResepObat;
+use App\Support\Traits\Livewire\ExcelExportable;
+use App\Support\Traits\Livewire\Filterable;
+use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Rizky92\Xlswriter\ExcelExport;
 
 class KunjunganPerPoli extends Component
 {
-    use WithPagination;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable;
 
     public $cari;
 
@@ -22,13 +24,6 @@ class KunjunganPerPoli extends Component
 
     protected $paginationTheme = 'bootstrap';
 
-    protected $listeners = [
-        'beginExcelExport',
-        'searchData',
-        'resetFilters',
-        'fullRefresh',
-    ];
-
     protected function queryString()
     {
         return [
@@ -37,14 +32,6 @@ class KunjunganPerPoli extends Component
             'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'periode_awal'],
             'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'periode_akhir'],
         ];
-    }
-
-    private function defaultValues()
-    {
-        $this->cari = '';
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->perpage = 25;
     }
 
     public function mount()
@@ -63,28 +50,24 @@ class KunjunganPerPoli extends Component
             ->layout(BaseLayout::class, ['title' => 'Kunjungan Resep Pasien Per Poli']);
     }
 
-    public function beginExcelExport()
+    protected function defaultValues()
     {
-        $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
-
-        $this->emit('beginExcelExport');
+        $this->cari = '';
+        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->perpage = 25;
     }
 
-    public function exportToExcel()
+    protected function dataPerSheet(): array
     {
-        $timestamp = now()->format('Ymd_His');
-
-        $filename = "{$timestamp}_farmasi_kunjungan_pasien_per_poli.xlsx";
-
-        $data = ResepObat::kunjunganFarmasi($this->periodeAwal, $this->periodeAkhir, '')->get()->toArray();
-
-        $titles = [
-            'RS Samarinda Medika Citra',
-            'Laporan Kunjungan Pasien Per Poli di Farmasi',
-            now()->format('d F Y'),
+        return [
+            ResepObat::kunjunganFarmasi($this->periodeAwal, $this->periodeAkhir, '')->get()
         ];
+    }
 
-        $columnHeaders = [
+    protected function columnHeaders(): array
+    {
+        return [
             'No. Rawat',
             'No. Resep',
             'Pasien',
@@ -96,33 +79,14 @@ class KunjunganPerPoli extends Component
             'Jenis Perawatan',
             'Asal Poli',
         ];
-
-        $excel = ExcelExport::make($filename)
-            ->setPageHeaders($titles)
-            ->setColumnHeaders($columnHeaders)
-            ->setData($data);
-
-        return $excel->export();
     }
 
-    public function searchData()
+    protected function pageHeaders(): array
     {
-        $this->resetPage();
-
-        $this->emit('$refresh');
-    }
-
-    public function resetFilters()
-    {
-        $this->defaultValues();
-
-        $this->searchData();
-    }
-
-    public function fullRefresh()
-    {
-        $this->forgetComputed();
-
-        $this->resetFilters();
+        return [
+            'RS Samarinda Medika Citra',
+            'Laporan Kunjungan Pasien Per Poli di Farmasi',
+            now()->format('d F Y'),
+        ];
     }
 }

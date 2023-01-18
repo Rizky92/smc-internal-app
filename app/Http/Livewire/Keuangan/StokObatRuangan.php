@@ -2,8 +2,9 @@
 
 namespace App\Http\Livewire\Keuangan;
 
-use App\Models\Bangsal;
 use App\Models\Farmasi\Inventaris\GudangObat;
+use App\Support\Traits\Livewire\ExcelExportable;
+use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
@@ -12,7 +13,7 @@ use Rizky92\Xlswriter\ExcelExport;
 
 class StokObatRuangan extends Component
 {
-    use WithPagination, FlashComponent;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable;
 
     public $cari;
 
@@ -21,13 +22,6 @@ class StokObatRuangan extends Component
     public $kodeBangsal;
 
     protected $paginationTheme = 'bootstrap';
-
-    protected $listeners = [
-        'beginExcelExport',
-        'searchData',
-        'resetFilters',
-        'fullRefresh',
-    ];
 
     protected function queryString()
     {
@@ -40,16 +34,14 @@ class StokObatRuangan extends Component
             ],
             'kodeBangsal' => [
                 'except' => '-',
-                'as' => 'kode_bangsal',
+                'as' => 'ruangan',
             ],
         ];
     }
 
     public function mount()
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->kodeBangsal = '-';
+        $this->defaultValues();
     }
 
     public function getStokObatPerRuanganProperty()
@@ -68,65 +60,39 @@ class StokObatRuangan extends Component
             ->layout(BaseLayout::class, ['title' => 'Stok Obat Per Ruangan']);
     }
 
-    public function exportToExcel()
+    protected function defaultValues()
     {
-        $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
-
-        $this->emit('beginExcelExport');
+        $this->cari = '';
+        $this->perpage = 25;
+        $this->kodeBangsal = '-';
     }
 
-    public function beginExcelExport()
+    protected function dataPerSheet(): array
     {
-        $timestamp = now()->format('Ymd_His');
-
-        $filename = "{$timestamp}_stok_per_ruangan";
-
-        $titles = [
-            'RS Samarinda Medika Citra',
-            'Stok Barang per Ruangan',
-            now()->format('d F Y'),
+        return [
+            GudangObat::stokPerRuangan($this->kodeBangsal)->get(),
         ];
+    }
 
-        $columnHeaders = [
+    protected function columnHeaders(): array
+    {
+        return [
             'Bangsal',
             'Kode',
             'Nama',
             'Satuan',
             'Stok Sekarang',
-            'Harga',
-            'Total Harga',
+            'Harga (RP)',
+            'Total Harga (RP)',
         ];
-
-        $data = GudangObat::stokPerRuangan($this->kodeBangsal)->get();
-
-        $excel = ExcelExport::make($filename)
-            ->setPageHeaders($titles)
-            ->setColumnHeaders($columnHeaders)
-            ->setData($data);
-
-        return $excel->export();
     }
 
-    public function searchData()
+    protected function pageHeaders(): array
     {
-        $this->resetPage();
-
-        $this->emit('$refresh');
-    }
-
-    public function resetFilters()
-    {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->kodeBangsal = '-';
-
-        $this->searchData();
-    }
-
-    public function fullRefresh()
-    {
-        $this->forgetComputed();
-
-        $this->resetFilters();
+        return [
+            'RS Samarinda Medika Citra',
+            'Stok Obat per Ruangan',
+            now()->format('d F Y'),
+        ];
     }
 }

@@ -115,7 +115,7 @@
                     </div>
                 </div>
             </x-card.row>
-            <x-card.row-col class="mt-2">
+            <x-card.row-col>
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />

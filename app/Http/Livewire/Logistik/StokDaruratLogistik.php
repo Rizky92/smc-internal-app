@@ -3,55 +3,38 @@
 namespace App\Http\Livewire\Logistik;
 
 use App\Models\Logistik\BarangNonMedis;
+use App\Support\Traits\Livewire\ExcelExportable;
+use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Rizky92\Xlswriter\ExcelExport;
 
 class StokDaruratLogistik extends Component
 {
-    use WithPagination, FlashComponent;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable;
     
     public $cari;
 
-    public $tampilkanSaranOrderNol;
-
     public $perpage;
+
+    public $tampilkanSaranOrderNol;
 
     protected $paginationTheme = 'bootstrap';
 
     protected function queryString()
     {
         return [
-            'cari' => [
-                'except' => '',
-            ],
-            'tampilkanSaranOrderNol' => [
-                'except' => true,
-            ],
-            'perpage' => [
-                'except' => 25,
-            ],
-            'page' => [
-                'except' => 1,
-            ],
+            'cari' => ['except' => ''],
+            'perpage' => ['except' => 25],
+            'tampilkanSaranOrderNol' => ['except' => true],
         ];
     }
 
-    protected $listeners = [
-        'beginExcelExport',
-        'searchData',
-        'resetFilters',
-        'fullRefresh',
-    ];
-
     public function mount()
     {
-        $this->cari = '';
-        $this->tampilkanSaranOrderNol = true;
-        $this->perpage = 25;
+        $this->defaultValues();
     }
 
     public function getStokDaruratLogistikProperty()
@@ -66,26 +49,23 @@ class StokDaruratLogistik extends Component
             ->layout(BaseLayout::class, ['title' => 'Darurat Stok Barang Logistik']);
     }
 
-    public function exportToExcel()
+    protected function defaultValues()
     {
-        $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
-
-        $this->emit('beginExcelExport');
+        $this->cari = '';
+        $this->perpage = 25;
+        $this->tampilkanSaranOrderNol = true;
     }
 
-    public function beginExcelExport()
+    protected function dataPerSheet(): array
     {
-        $timestamp = now()->format('Ymd_His');
-
-        $filename = "{$timestamp}_logistik_darurat_stok.xlsx";
-
-        $titles = [
-            'RS Samarinda Medika Citra',
-            'Minmax Stok Barang Non Medis',
-            now()->format('d F Y'),
+        return [
+            BarangNonMedis::daruratStok('', $this->tampilkanSaranOrderNol)->get()
         ];
+    }
 
-        $columnHeaders = [
+    protected function columnHeaders(): array
+    {
+        return [
             'Kode',
             'Nama',
             'Satuan',
@@ -98,39 +78,14 @@ class StokDaruratLogistik extends Component
             'Harga Per Unit (Rp)',
             'Total Harga (Rp)',
         ];
-
-        $data = BarangNonMedis::daruratStok($this->cari, $this->tampilkanSaranOrderNol)
-            ->get()
-            ->toArray();
-
-        $excel = ExcelExport::make($filename)
-            ->setPageHeaders($titles)
-            ->setColumnHeaders($columnHeaders)
-            ->setData($data);
-
-        return $excel->export();
     }
 
-    public function searchData()
+    protected function pageHeaders(): array
     {
-        $this->resetPage();
-
-        $this->emit('$refresh');
-    }
-
-    public function resetFilters()
-    {
-        $this->cari = '';
-        $this->tampilkanSaranOrderNol = true;
-        $this->perpage = 25;
-
-        $this->searchData();
-    }
-
-    public function fullRefresh()
-    {
-        $this->forgetComputed();
-
-        $this->resetFilters();
+        return [
+            'RS Samarinda Medika Citra',
+            'Darurat Stok Barang Non Medis',
+            now()->format('d F Y'),
+        ];
     }
 }

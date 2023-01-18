@@ -5,35 +5,23 @@ namespace App\Http\Livewire\Logistik;
 use App\Models\Logistik\BarangNonMedis;
 use App\Models\Logistik\MinmaxStokBarangNonMedis;
 use App\Models\Logistik\SupplierNonMedis;
+use App\Support\Traits\Livewire\ExcelExportable;
+use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Rizky92\Xlswriter\ExcelExport;
 
 class InputMinmaxStok extends Component
 {
-    use WithPagination, FlashComponent;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable;
 
     public $cari;
 
     public $perpage;
 
-    public $kodeSupplier;
-
-    public $stokMin;
-
-    public $stokMax;
-
     protected $paginationTheme = 'bootstrap';
-
-    protected $listeners = [
-        'beginExcelExport',
-        'searchData',
-        'resetFilters',
-        'fullRefresh',
-    ];
 
     protected $rules = [
         'stokMin' => ['required', 'numeric', 'min:0'],
@@ -44,23 +32,14 @@ class InputMinmaxStok extends Component
     protected function queryString()
     {
         return [
-            'cari' => [
-                'except' => '',
-            ],
-            'page' => [
-                'except' => 1,
-            ],
-            'perpage' => [
-                'except' => 25,
-            ],
+            'cari' => ['except' => ''],
+            'perpage' => ['except' => 25],
         ];
     }
 
     public function mount()
     {
-        $this->cari = '';
-        $this->page = 1;
-        $this->perpage = 25;
+        $this->defaultValues();
     }
 
     public function getSupplierProperty()
@@ -79,13 +58,6 @@ class InputMinmaxStok extends Component
             ->layout(BaseLayout::class, ['title' => 'Stok Minmax Barang Logistik']);
     }
 
-    public function exportToExcel()
-    {
-        $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
-
-        $this->emit('beginExcelExport');
-    }
-
     public function simpan(string $kodeBarang, int $stokMin = 0, int $stokMax = 0, $kodeSupplier)
     {
         if (! auth()->user()->can('logistik.stok-minmax.update')) {
@@ -94,7 +66,9 @@ class InputMinmaxStok extends Component
             return;
         }
 
-        $kodeSupplier = $kodeSupplier != '-' ? $kodeSupplier : null;
+        $kodeSupplier = $kodeSupplier != '' ? $kodeSupplier : null;
+
+        tracker_start('mysql_smc');
 
         MinmaxStokBarangNonMedis::updateOrCreate([
             'kode_brng' => $kodeBarang,
@@ -104,24 +78,30 @@ class InputMinmaxStok extends Component
             'kode_suplier' => $kodeSupplier,
         ]);
 
+        tracker_end('mysql_smc');
+
         $this->resetFilters();
+        $this->dispatchBrowserEvent('data-tersimpan');
 
         $this->flashSuccess('Data berhasil disimpan!');
     }
 
-    public function beginExcelExport()
+    protected function defaultValues()
     {
-        $timestamp = now()->format('Ymd_His');
+        $this->cari = '';
+        $this->perpage = 25;
+    }
 
-        $filename = "{$timestamp}_logistik_stokminmax_barang.xlsx";
-
-        $titles = [
-            'RS Samarinda Medika Citra',
-            'Minmax Stok Barang Non Medis',
-            now()->format('d F Y'),
+    protected function dataPerSheet(): array
+    {
+        return [
+            BarangNonMedis::denganMinmax('', true)->get()
         ];
+    }
 
-        $columnHeaders = [
+    protected function columnHeaders(): array
+    {
+        return [
             'Kode',
             'Nama',
             'Satuan',
@@ -134,38 +114,14 @@ class InputMinmaxStok extends Component
             'Harga Per Unit (Rp)',
             'Total Harga (Rp)',
         ];
-
-        $data = BarangNonMedis::denganMinmax($this->cari, true)
-            ->cursor()
-            ->toArray();
-
-        $excel = ExcelExport::make($filename)
-            ->setPageHeaders($titles)
-            ->setColumnHeaders($columnHeaders)
-            ->setData($data);
-
-        return $excel->export();
     }
 
-    public function searchData()
+    protected function pageHeaders(): array
     {
-        $this->resetPage();
-
-        $this->emit('$refresh');
-    }
-
-    public function resetFilters()
-    {
-        $this->cari = '';
-        $this->perpage = 25;
-
-        $this->searchData();
-    }
-
-    public function fullRefresh()
-    {
-        $this->forgetComputed();
-
-        $this->resetFilters();
+        return [
+            'RS Samarinda Medika Citra',
+            'Minmax Stok Barang Non Medis',
+            now()->format('d F Y'),
+        ];
     }
 }

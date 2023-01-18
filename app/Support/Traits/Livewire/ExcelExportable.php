@@ -3,6 +3,7 @@
 namespace App\Support\Traits\Livewire;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 use Rizky92\Xlswriter\ExcelExport;
 
 trait ExcelExportable
@@ -53,7 +54,7 @@ trait ExcelExportable
             ? (string) array_keys($dataSheets)[0]
             : 'Sheet 1';
 
-        $firstData = is_iterable($dataSheets)
+        $firstData = Arr::isList($dataSheets)
             ? $dataSheets[0]
             : $dataSheets[$firstSheet];
 

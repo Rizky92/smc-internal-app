@@ -17,26 +17,45 @@
                 let inputStokSekarang
                 let inputSaranOrder
 
+                let buttonSimpan;
+                let buttonBatalSimpan;
+
                 $(document).ready(() => {
                     inputKodeBarang = $('#kode_barang')
                     inputNamaBarang = $('#nama_barang')
                     inputSupplier = $('#supplier').select2({
-                        dropdownCssClass: 'text-sm px-0',
+                        dropdownCssClass: 'text-sm px-0'
                     })
                     inputStokMin = $('#stok_min')
                     inputStokMax = $('#stok_max')
                     inputStokSekarang = $('#stok_sekarang')
                     inputSaranOrder = $('#saran_order')
 
+                    buttonSimpan = $('#simpan-data')
+                    buttonBatalSimpan = $('#batal-simpan')
+
+                    buttonSimpan.prop('disabled', true)
+                    buttonBatalSimpan.prop('disabled', true)
+
+                    buttonSimpan.click(e => @this.simpan(
+                        inputKodeBarang.val(),
+                        inputStokMin.val(),
+                        inputStokMax.val(),
+                        inputSupplier.val()
+                    ))
+
+                    buttonBatalSimpan.click(clearData)
+
                     Livewire.hook('element.updated', (el, component) => {
-                        console.log({el, component})
                         inputSupplier.select2({
                             dropdownCssClass: 'text-sm px-0',
                         })
                     })
+
+                    Livewire.on('data-tersimpan', clearData)
                 })
 
-                const loadData = ({
+                function loadData({
                     kodeBarang,
                     namaBarang,
                     kodeSupplier,
@@ -44,17 +63,7 @@
                     stokMax,
                     stokSekarang,
                     saranOrder
-                }) => {
-                    console.log({
-                        kodeBarang,
-                        namaBarang,
-                        kodeSupplier,
-                        stokMin,
-                        stokMax,
-                        stokSekarang,
-                        saranOrder
-                    })
-
+                }) {
                     inputKodeBarang.val(kodeBarang)
                     inputNamaBarang.val(namaBarang)
                     inputSupplier.val(kodeSupplier)
@@ -70,23 +79,19 @@
                     inputStokMax.trigger('change')
                     inputStokSekarang.trigger('change')
                     inputSaranOrder.trigger('change')
+
+                    buttonSimpan.prop('disabled', false)
+                    buttonBatalSimpan.prop('disabled', false)
                 }
 
-                $('#simpandata').click(() => {
-                    @this.simpan(
-                        inputKodeBarang.val(),
-                        inputStokMin.val(),
-                        inputStokMax.val(),
-                        inputSupplier.val()
-                    )
-
+                function clearData() {
                     inputKodeBarang.val('')
                     inputNamaBarang.val('')
                     inputSupplier.val('')
-                    inputStokMin.val(0)
-                    inputStokMax.val(0)
-                    inputStokSekarang.val(0)
-                    inputSaranOrder.val(0)
+                    inputStokMin.val('')
+                    inputStokMax.val('')
+                    inputStokSekarang.val('')
+                    inputSaranOrder.val('')
 
                     inputKodeBarang.trigger('change')
                     inputNamaBarang.trigger('change')
@@ -95,84 +100,87 @@
                     inputStokMax.trigger('change')
                     inputStokSekarang.trigger('change')
                     inputSaranOrder.trigger('change')
-                })
+
+                    buttonSimpan.prop('disabled', true)
+                    buttonBatalSimpan.prop('disabled', true)
+                }
             </script>
         @endpush
     @endonce
 
     <x-card>
         <x-slot name="header">
-            <x-card.row>
-                <div class="col-2">
-                    <div class="form-group">
-                        <label class="text-sm" for="kode_brng">Kode Barang</label>
-                        <input type="text" class="form-control form-control-sm" id="kode_barang" readonly autocomplete="off">
+            @canany(['logistik.input-minmax-stok.create', 'logistik.input-minmax-stok.update'])
+                <x-card.row>
+                    <div class="col-2">
+                        <div class="form-group">
+                            <label class="text-sm" for="kode_brng">Kode Barang</label>
+                            <input type="text" class="form-control form-control-sm" id="kode_barang" readonly autocomplete="off">
+                        </div>
                     </div>
-                </div>
-                <div class="col-4">
-                    <div class="form-group">
-                        <label class="text-sm" for="nama_brng">Nama Barang</label>
-                        <input type="text" class="form-control form-control-sm" id="nama_barang" readonly autocomplete="off">
+                    <div class="col-4">
+                        <div class="form-group">
+                            <label class="text-sm" for="nama_brng">Nama Barang</label>
+                            <input type="text" class="form-control form-control-sm" id="nama_barang" readonly autocomplete="off">
+                        </div>
                     </div>
-                </div>
-                <div class="col-6">
-                    <div class="form-group" wire:ignore>
-                        <label class="text-sm" for="supplier">Supplier</label>
-                        <select class="form-control form-control-sm simple-select2-sm input-sm" id="supplier" autocomplete="off">
-                            <option value="-">-</option>
-                            @foreach ($this->supplier as $kode => $nama)
-                                <option value="{{ $kode }}">{{ $nama }}</option>
-                            @endforeach
-                        </select>
+                    <div class="col-6">
+                        <div class="form-group" wire:ignore>
+                            <label class="text-sm" for="supplier">Supplier</label>
+                            <select class="form-control form-control-sm simple-select2-sm input-sm" id="supplier" autocomplete="off">
+                                <option value="">-</option>
+                                @foreach ($this->supplier as $kode => $nama)
+                                    <option value="{{ $kode }}">{{ $nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
-                </div>
-            </x-card.row>
-            <x-card.row>
-                <div class="col-3">
-                    <div class="form-group">
-                        <label class="text-sm" for="stok_min">Stok minimal</label>
-                        <input type="number" class="form-control form-control-sm" id="stok_min" min="0" autocomplete="off">
+                </x-card.row>
+
+                <x-card.row>
+                    <div class="col-3">
+                        <div class="form-group">
+                            <label class="text-sm" for="stok_min">Stok minimal</label>
+                            <input type="number" class="form-control form-control-sm" id="stok_min" min="0" autocomplete="off">
+                        </div>
                     </div>
-                </div>
-                <div class="col-3">
-                    <div class="form-group">
-                        <label class="text-sm" for="stok_max">Stok maksimal</label>
-                        <input type="number" class="form-control form-control-sm" id="stok_max" min="0" autocomplete="off">
+                    <div class="col-3">
+                        <div class="form-group">
+                            <label class="text-sm" for="stok_max">Stok maksimal</label>
+                            <input type="number" class="form-control form-control-sm" id="stok_max" min="0" autocomplete="off">
+                        </div>
                     </div>
-                </div>
-                <div class="col-3">
-                    <div class="form-group">
-                        <label class="text-sm" for="stok_saat_ini">Stok saat ini</label>
-                        <input type="text" class="form-control form-control-sm" id="stok_sekarang" readonly autocomplete="off">
+                    <div class="col-3">
+                        <div class="form-group">
+                            <label class="text-sm" for="stok_saat_ini">Stok saat ini</label>
+                            <input type="text" class="form-control form-control-sm" id="stok_sekarang" readonly autocomplete="off">
+                        </div>
                     </div>
-                </div>
-                <div class="col-3">
-                    <div class="form-group">
-                        <label class="text-sm" for="saran_order">Saran order</label>
-                        <input type="text" class="form-control form-control-sm" id="saran_order" readonly autocomplete="off">
+                    <div class="col-3">
+                        <div class="form-group">
+                            <label class="text-sm" for="saran_order">Saran order</label>
+                            <input type="text" class="form-control form-control-sm" id="saran_order" readonly autocomplete="off">
+                        </div>
                     </div>
-                </div>
-            </x-card.row>
+                </x-card.row>
+
+                <x-card.row-col class="pb-3 border-bottom">
+                    <x-button disabled class="btn-primary" id="simpan-data" title="Simpan" icon="fas fa-save" />
+                    <x-button disabled class="btn-default ml-2" id="batal-simpan" title="Batal" />
+                </x-card.row-col>
+            @endcanany
+
+            <x-card.row-col :class="Arr::toCssClasses(['mt-3' => auth()->user()->canAny(['logistik.input-minmax-stok.create', 'logistik.input-minmax-stok.update'])])">
+                <x-filter.button-export-excel class="ml-auto" />
+            </x-card.row-col>
+
             <x-card.row-col class="mt-2">
-                <button type="button" class="btn btn-primary btn-sm" id="simpandata">
-                    <i class="fas fa-save"></i>
-                    <span class="ml-1">Simpan</span>
-                </button>
-                <button type="button" wire:click="exportToExcel" class="ml-2 btn btn-default btn-sm">
-                    <i class="fas fa-file-excel"></i>
-                    <span class="ml-1">Export ke Excel</span>
-                </button>
-                <div class="ml-auto input-group input-group-sm" style="width: 20rem">
-                    <input type="search" class="form-control" wire:model.defer="cari" placeholder="Cari..." wire:keydown.enter.stop="searchData" />
-                    <div class="input-group-append">
-                        <button type="button" wire:click="searchData" class="btn btn-sm btn-default">
-                            <i class="fas fa-sync-alt"></i>
-                            <span class="ml-1">Refresh</span>
-                        </button>
-                    </div>
-                </div>
+                <x-filter.select-perpage />
+                <x-filter.button-reset-filters class="ml-auto" />
+                <x-filter.search class="ml-2" />
             </x-card.row-col>
         </x-slot>
+
         <x-slot name="body" class="table-responsive">
             <x-table>
                 <x-slot name="columns">

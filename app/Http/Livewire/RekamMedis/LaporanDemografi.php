@@ -3,15 +3,17 @@
 namespace App\Http\Livewire\RekamMedis;
 
 use App\Models\RekamMedis\DemografiPasien;
+use App\Support\Traits\Livewire\ExcelExportable;
+use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Rizky92\Xlswriter\ExcelExport;
 
 class LaporanDemografi extends Component
 {
-    use WithPagination, FlashComponent;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable;
 
     public $cari;
 
@@ -23,44 +25,25 @@ class LaporanDemografi extends Component
 
     protected $paginationTheme = 'bootstrap';
 
-    protected $listeners = [
-        'beginExcelExport',
-        'searchData',
-        'resetFilters',
-        'fullRefresh',
-    ];
-
     protected function queryString()
     {
         return [
-            'cari' => [
-                'except' => '',
-            ],
-            'periodeAwal' => [
-                'except' => now()->startOfMonth()->format('Y-m-d'),
-                'as' => 'periode_awal',
-            ],
-            'periodeAkhir' => [
-                'except' => now()->endOfMonth()->format('Y-m-d'),
-                'as' => 'periode_akhir',
-            ],
-            'perpage' => [
-                'except' => 25,
-            ],
+            'cari' => ['except' => ''],
+            'perpage' => ['except' => 25],
+            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'periode_awal'],
+            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'periode_akhir'],
         ];
     }
 
     public function mount()
     {
-        $this->cari = '';
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->perpage = 25;
+        $this->defaultValues();
     }
 
     public function getDemografiPasienProperty()
     {
         return DemografiPasien::query()
+            ->search(Str::lower($this->cari))
             ->whereBetween('tgl_registrasi', [$this->periodeAwal, $this->periodeAkhir])
             ->paginate($this->perpage);
     }
@@ -71,26 +54,24 @@ class LaporanDemografi extends Component
             ->layout(BaseLayout::class, ['title' => 'Laporan Demografi Pasien']);
     }
 
-    public function exportToExcel()
+    protected function defaultValues()
     {
-        $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
-
-        $this->emit('beginExcelExport');
+        $this->cari = '';
+        $this->perpage = 25;
+        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
-    public function beginExcelExport()
+    protected function dataPerSheet(): array
     {
-        $timestamp = now()->format('Ymd_His');
-
-        $filename = "{$timestamp}_laporan_demografi_pasien.xlsx";
-
-        $titles = [
-            'RS Samarinda Medika Citra',
-            'Laporan Demografi Pasien',
-            now()->format('d F Y'),
+        return [
+            DemografiPasien::laporanDemografiExcel($this->periodeAwal, $this->periodeAkhir)->get()
         ];
+    }
 
-        $columnHeaders = [
+    protected function columnHeaders(): array
+    {
+        return [
             'Kecamatan',
             'No. RM',
             'No. Registrasi',
@@ -112,36 +93,14 @@ class LaporanDemografi extends Component
             'Bahasa',
             'Suku',
         ];
-
-        $excel = ExcelExport::make($filename)
-            ->setPageHeaders($titles)
-            ->setColumnHeaders($columnHeaders)
-            ->setData(DemografiPasien::laporanDemografiExcel($this->periodeAwal, $this->periodeAkhir)->get());
-
-        return $excel->export();
     }
 
-    public function searchData()
+    protected function pageHeaders(): array
     {
-        $this->resetPage();
-
-        $this->emit('$refresh');
-    }
-
-    public function resetFilters()
-    {
-        $this->cari = '';
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->perpage = 25;
-
-        $this->searchData();
-    }
-
-    public function fullRefresh()
-    {
-        $this->forgetComputed();
-
-        $this->resetFilters();
+        return [
+            'RS Samarinda Medika Citra',
+            'Laporan Demografi Pasien',
+            now()->format('d F Y'),
+        ];
     }
 }

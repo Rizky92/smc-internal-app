@@ -4,16 +4,16 @@ namespace App\Http\Livewire\Farmasi;
 
 use App\Models\Farmasi\ResepDokter;
 use App\Models\Farmasi\ResepDokterRacikan;
+use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Rizky92\Xlswriter\ExcelExport;
 
 class KunjunganPerBentukObat extends Component
 {
-    use WithPagination, FlashComponent, Filterable;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable;
 
     private const OBAT_REGULAR_PAGE = 'obat_regular_page';
     private const OBAT_RACIKAN_PAGE = 'obat_racikan_page';
@@ -28,28 +28,13 @@ class KunjunganPerBentukObat extends Component
 
     protected $paginationTheme = 'bootstrap';
 
-    protected $listeners = [
-        'beginExcelExport',
-    ];
-
     protected function queryString()
     {
         return [
-            'perpage' => [
-                'except' => 25,
-            ],
-            'periodeAwal' => [
-                'except' => now()->startOfMonth()->format('Y-m-d'),
-                'as' => 'periode_awal',
-            ],
-            'periodeAkhir' => [
-                'except' => now()->endOfMonth()->format('Y-m-d'),
-                'as' => 'periode_akhir'
-            ],
-            'jenisPerawatan' => [
-                'except' => '',
-                'as' => 'jenis_perawatan',
-            ],
+            'jenisPerawatan' => ['except' => '', 'as' => 'jenis_perawatan'],
+            'perpage' => ['except' => 25],
+            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'periode_awal'],
+            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'periode_akhir'],
         ];
     }
 
@@ -84,49 +69,6 @@ class KunjunganPerBentukObat extends Component
             ->paginate($this->perpage, ['*'], self::OBAT_RACIKAN_PAGE);
     }
 
-    public function exportToExcel()
-    {
-        $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
-
-        $this->emit('beginExcelExport');
-    }
-
-    public function beginExcelExport()
-    {
-        $timestamp = now()->format('Ymd_His');
-
-        $filename = "{$timestamp}_farmasi_kunjungan_resep_pasien_per_bentuk_obat.xlsx";
-
-        $sheet1 = ResepDokter::kunjunganResepObatRegular($this->periodeAwal, $this->periodeAkhir, $this->jenisPerawatan)->get()->toArray();
-        $sheet2 = ResepDokterRacikan::kunjunganResepObatRacikan($this->periodeAwal, $this->periodeAkhir, $this->jenisPerawatan)->get()->toArray();
-
-        $titles = [
-            'RS Samarinda Medika Citra',
-            'Laporan Kunjungan Resep Pasien',
-            now()->format('d F Y'),
-        ];
-
-        $columnHeaders = [
-            'No. Resep',
-            'Dokter Peresep',
-            'Tgl. Validasi',
-            'Jam',
-            'Pasien',
-            'Jenis Perawatan',
-            'Total Pembelian (RP)',
-        ];
-
-        $excel = ExcelExport::make($filename, 'Obat Regular')
-            ->setPageHeaders($titles)
-            ->setColumnHeaders($columnHeaders)
-            ->setData($sheet1);
-
-        $excel->addSheet('Obat Racikan')
-            ->setData($sheet2);
-
-        return $excel->export();
-    }
-
     protected function defaultValues()
     {
         $this->perpage = 25;
@@ -141,5 +83,35 @@ class KunjunganPerBentukObat extends Component
         $this->resetPage(self::OBAT_RACIKAN_PAGE);
 
         $this->emit('$refresh');
+    }
+
+    protected function dataPerSheet(): array
+    {
+        return [
+            'Obat Regular' => ResepDokter::kunjunganResepObatRegular($this->periodeAwal, $this->periodeAkhir, $this->jenisPerawatan)->get(),
+            'Obat Racikan' => ResepDokterRacikan::kunjunganResepObatRacikan($this->periodeAwal, $this->periodeAkhir, $this->jenisPerawatan)->get(),
+        ];
+    }
+
+    protected function columnHeaders(): array
+    {
+        return [
+            'No. Resep',
+            'Dokter Peresep',
+            'Tgl. Validasi',
+            'Jam',
+            'Pasien',
+            'Jenis Perawatan',
+            'Total Pembelian (RP)',
+        ];
+    }
+
+    protected function pageHeaders(): array
+    {
+        return [
+            'RS Samarinda Medika Citra',
+            'Laporan Kunjungan Resep Farmasi per Bentuk Obat',
+            now()->format('d F Y'),
+        ];
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Livewire\Farmasi;
 
 use App\Models\Farmasi\Obat;
+use App\Support\Traits\Livewire\ExcelExportable;
+use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Str;
@@ -12,7 +14,7 @@ use Rizky92\Xlswriter\ExcelExport;
 
 class StokDaruratFarmasi extends Component
 {
-    use WithPagination, FlashComponent;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable;
 
     public $cari;
 
@@ -20,21 +22,11 @@ class StokDaruratFarmasi extends Component
 
     protected $paginationTheme = 'bootstrap';
 
-    protected $listeners = [
-        'beginExcelExport',
-        'searchData',
-        'resetFilters',
-        'fullRefresh',
-    ];
-
     protected function queryString()
     {
         return [
             'cari' => [
                 'except' => '',
-            ],
-            'page' => [
-                'except' => 1,
             ],
             'perpage' => [
                 'except' => 25,
@@ -44,8 +36,7 @@ class StokDaruratFarmasi extends Component
 
     public function mount()
     {
-        $this->perpage = 25;
-        $this->cari = '';
+        $this->DefaultValues();
     }
 
     public function getStokDaruratObatProperty()
@@ -60,26 +51,22 @@ class StokDaruratFarmasi extends Component
             ->layout(BaseLayout::class, ['title' => 'Darurat Stok Farmasi']);
     }
 
-    public function exportToExcel()
+    protected function defaultValues()
     {
-        $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
-
-        $this->emit('beginExcelExport');
+        $this->perpage = 25;
+        $this->cari = '';
     }
 
-    public function beginExcelExport()
+    protected function dataPerSheet(): array
     {
-        $timestamp = now()->format('Ymd_His');
-
-        $filename = "{$timestamp}_farmasi_daruratstok.xlsx";
-
-        $titles = [
-            'RS Samarinda Medika Citra',
-            'Laporan Darurat Stok Farmasi',
-            now()->format('d F Y'),
+        return [
+            Obat::daruratStok('', true)->get()
         ];
+    }
 
-        $columnHeaders = [
+    protected function columnHeaders(): array
+    {
+        return [
             // 'Kode',
             'Nama',
             'Satuan kecil',
@@ -91,38 +78,14 @@ class StokDaruratFarmasi extends Component
             'Harga Per Unit (Rp)',
             'Total Harga (Rp)',
         ];
-
-        $data = Obat::daruratStok('', true)
-            ->get()
-            ->toArray();
-
-        $excel = ExcelExport::make($filename)
-            ->setPageHeaders($titles)
-            ->setColumnHeaders($columnHeaders)
-            ->setData($data);
-
-        return $excel->export();
     }
 
-    public function searchData()
+    protected function pageHeaders(): array
     {
-        $this->resetPage();
-
-        $this->emit('$refresh');
-    }
-
-    public function resetFilters()
-    {
-        $this->cari = '';
-        $this->perpage = 25;
-
-        $this->searchData();
-    }
-
-    public function fullRefresh()
-    {
-        $this->forgetComputed();
-
-        $this->resetFilters();
+        return [
+            'RS Samarinda Medika Citra',
+            'Laporan Darurat Stok Farmasi',
+            now()->format('d F Y'),
+        ];
     }
 }

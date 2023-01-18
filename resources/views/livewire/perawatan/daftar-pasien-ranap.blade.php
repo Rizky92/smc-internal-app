@@ -49,7 +49,7 @@
                                     let hargaKamarBaru = inputHargaKamar.val()
                                     let lamaInap = inputLamaInap.val()
 
-                                    @this.emit('updateHargaKamar', noRawat, kdKamar, tglMasuk, jamMasuk, hargaKamarBaru, lamaInap)
+                                    @this.updateHargaKamar(noRawat, kdKamar, tglMasuk, jamMasuk, hargaKamarBaru, lamaInap)
                                 })
 
                                 inputHargaKamar.keyup(updateTotalHarga)
@@ -58,7 +58,7 @@
                                 inputLamaInap.keyup(updateTotalHarga)
                                 inputLamaInap.change(updateTotalHarga)
 
-                                Livewire.on('updateHargaKamar', clearData)
+                                Livewire.on('data-tersimpan', clearData)
 
                                 buttonBatalSimpan.click(clearData)
                             })

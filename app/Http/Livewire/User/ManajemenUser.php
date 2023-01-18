@@ -6,6 +6,7 @@ use App\Models\Aplikasi\User;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -13,28 +14,17 @@ class ManajemenUser extends Component
 {
     use WithPagination, FlashComponent, Filterable;
 
-    public $perpage;
-
     public $cari;
 
-    protected $paginationTheme = 'bootstrap';
+    public $perpage;
 
-    protected $listeners = [
-        'beginExcelExport',
-    ];
+    protected $paginationTheme = 'bootstrap';
 
     protected function queryString(): array
     {
         return [
-            'cari' => [
-                'except' => '',
-            ],
-            'page' => [
-                'except' => 1,
-            ],
-            'perpage' => [
-                'except' => 25,
-            ],
+            'cari' => ['except' => ''],
+            'perpage' => ['except' => 25],
         ];
     }
 
@@ -46,7 +36,7 @@ class ManajemenUser extends Component
     public function getUsersProperty()
     {
         return User::query()
-            ->search($this->cari)
+            ->search(Str::lower($this->cari))
             ->paginate($this->perpage);
     }
 

@@ -44,12 +44,6 @@ class RekapPiutangPasien extends Component
         $this->defaultValues();
     }
 
-    public function render()
-    {
-        return view('livewire.keuangan.rekap-piutang-pasien')
-            ->layout(BaseLayout::class, ['title' => 'Rekap Data Tagihan Piutang Pasien']);
-    }
-
     public function getPenjaminProperty()
     {
         return Penjamin::where('status', '1')->pluck('png_jawab', 'kd_pj');
@@ -78,6 +72,12 @@ class RekapPiutangPasien extends Component
             ->sum(DB::raw('round(piutang_pasien.sisapiutang - ifnull(sisa_piutang.sisa, 0))'));
     }
 
+    public function render()
+    {
+        return view('livewire.keuangan.rekap-piutang-pasien')
+            ->layout(BaseLayout::class, ['title' => 'Rekap Data Tagihan Piutang Pasien']);
+    }
+
     protected function dataPerSheet()
     {
         $query = PiutangPasien::rekapPiutangPasien($this->periodeAwal, $this->periodeAkhir, $this->caraBayar, '');
@@ -86,20 +86,20 @@ class RekapPiutangPasien extends Component
             // TODO: ubah cara berikut dengan callback
             collect($query->orderBy('penjab.png_jawab')->get()->toArray())
                 ->merge([
-                [
-                    'no_rawat' => 'TOTAL',
-                    'no_rkm_medis' => '',
-                    'nm_pasien' => '',
-                    'tgl_piutang' => '',
-                    'status' => '',
-                    'total' => $query->sum(DB::raw('round(piutang_pasien.totalpiutang, 2)')),
-                    'uang_muka' => $query->sum(DB::raw('round(piutang_pasien.uangmuka, 2)')),
-                    'terbayar' => $query->sum(DB::raw('round(ifnull(sisa_piutang.sisa, 0), 2)')),
-                    'sisa' => $query->sum(DB::raw('round(piutang_pasien.sisapiutang - ifnull(sisa_piutang.sisa, 0), 2)')),
-                    'tgltempo' => '',
-                    'penjamin' => '',
-                ]
-            ])
+                    [
+                        'no_rawat' => 'TOTAL',
+                        'no_rkm_medis' => '',
+                        'nm_pasien' => '',
+                        'tgl_piutang' => '',
+                        'status' => '',
+                        'total' => $query->sum(DB::raw('round(piutang_pasien.totalpiutang, 2)')),
+                        'uang_muka' => $query->sum(DB::raw('round(piutang_pasien.uangmuka, 2)')),
+                        'terbayar' => $query->sum(DB::raw('round(ifnull(sisa_piutang.sisa, 0), 2)')),
+                        'sisa' => $query->sum(DB::raw('round(piutang_pasien.sisapiutang - ifnull(sisa_piutang.sisa, 0), 2)')),
+                        'tgltempo' => '',
+                        'penjamin' => '',
+                    ]
+                ])
         ];
     }
 
@@ -111,10 +111,10 @@ class RekapPiutangPasien extends Component
             'Pasien',
             'Tgl. Piutang',
             'Status',
-            'Total',
-            'Uang Muka',
-            'Terbayar',
-            'Sisa',
+            'Total (RP)',
+            'Uang Muka (RP)',
+            'Terbayar (RP)',
+            'Sisa (RP)',
             'Tgl. Jatuh Tempo',
             'Penjamin',
         ];

@@ -2,9 +2,9 @@
 
 namespace App\Http\Livewire\Perawatan;
 
-use App\Models\Perawatan\Kamar;
 use App\Models\Perawatan\RawatInap;
 use App\Models\Perawatan\RegistrasiPasien;
+use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
@@ -12,11 +12,10 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Rizky92\Xlswriter\ExcelExport;
 
 class DaftarPasienRanap extends Component
 {
-    use WithPagination, FlashComponent, Filterable;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable;
 
     public $cari;
 
@@ -30,42 +29,15 @@ class DaftarPasienRanap extends Component
 
     protected $paginationTheme = 'bootstrap';
 
-    protected $listeners = [
-        'updateHargaKamar',
-        'beginExcelExport',
-    ];
-
     protected function queryString()
     {
         return [
-            'cari' => [
-                'except' => '',
-            ],
-            'perpage' => [
-                'except' => 25,
-            ],
-            'statusPerawatan' => [
-                'except' => '-',
-                'as' => 'status_perawatan'
-            ],
-            'periodeAwal' => [
-                'except' => now()->format('Y-m-d'),
-                'as' => 'periode_awal',
-            ],
-            'periodeAkhir' => [
-                'except' => now()->format('Y-m-d'),
-                'as' => 'periode_akhir',
-            ],
+            'cari' => ['except' => ''],
+            'perpage' => ['except' => 25],
+            'statusPerawatan' => ['except' => '-', 'as' => 'status'],
+            'periodeAwal' => ['except' => now()->format('Y-m-d'), 'as' => 'periode_awal'],
+            'periodeAkhir' => ['except' => now()->format('Y-m-d'), 'as' => 'periode_akhir'],
         ];
-    }
-
-    protected function defaultValues()
-    {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->statusPerawatan = '-';
-        $this->periodeAwal = now()->format('Y-m-d');
-        $this->periodeAkhir = now()->format('Y-m-d');
     }
 
     public function mount()
@@ -91,100 +63,42 @@ class DaftarPasienRanap extends Component
             ->layout(BaseLayout::class, ['title' => 'Daftar Pasien Rawat Inap']);
     }
 
-    public function exportToExcel()
-    {
-        $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+    // public function batalkanRanapPasien(string $noRawat, string $tglMasuk, string $jamMasuk, string $kamar)
+    // {
+    //     if (!auth()->user()->can('perawatan.rawat-inap.batal-ranap')) {
+    //         $this->flashError('Anda tidak dapat melakukan aksi ini');
 
-        $this->emit('beginExcelExport');
-    }
+    //         return;
+    //     }
 
-    public function beginExcelExport()
-    {
-        $timestamp = now()->format('Ymd_His');
+    //     tracker_start();
 
-        $filename = "{$timestamp}_daftar_pasien_ranap";
+    //     RawatInap::where([
+    //         ['no_rawat', '=', $noRawat],
+    //         ['tgl_masuk', '=', $tglMasuk],
+    //         ['jam_masuk', '=', $jamMasuk],
+    //         ['kd_kamar', '=', $kamar]
+    //     ])
+    //         ->delete();
 
-        $titles = [
-            'RS Samarinda Medika Citra',
-            'Daftar Pasien Rawat Inap',
-            Carbon::parse($this->periodeAwal)->format('d F Y') . ' - ' . Carbon::parse($this->periodeAkhir)->format('d F Y'),
-        ];
+    //     Kamar::find($kamar)->update(['status' => 'KOSONG']);
 
-        $columnHeaders = [
-            'No. Rawat',
-            'No. RM',
-            'Kamar',
-            'Pasien',
-            'Alamat',
-            'Agama',
-            'P.J.',
-            'Jenis Bayar',
-            'Asal Poli',
-            'Dokter Poli',
-            'Status',
-            'Tgl. Masuk',
-            'Jam Masuk',
-            'Tgl. Keluar',
-            'Jam Keluar',
-            'Tarif',
-            'Dokter P.J.',
-            'No. HP',
-        ];
+    //     if (!RawatInap::where('no_rawat', $noRawat)->exists()) {
+    //         RegistrasiPasien::find($noRawat)->update([
+    //             'status_lanjut' => 'Ralan',
+    //             'stts' => 'Sudah',
+    //         ]);
+    //     }
 
-        $data = RegistrasiPasien::daftarPasienRanap(
-            '',
-            $this->statusPerawatan,
-            $this->periodeAwal,
-            $this->periodeAkhir,
-            true
-        )
-            ->orderBy('no_rawat')
-            ->get();
+    //     tracker_end();
 
-        $excel = ExcelExport::make($filename)
-            ->setPageHeaders($titles)
-            ->setColumnHeaders($columnHeaders)
-            ->setData($data);
-
-        return $excel->export();
-    }
-
-    public function batalkanRanapPasien(string $noRawat, string $tglMasuk, string $jamMasuk, string $kamar)
-    {
-        if (!auth()->user()->can('perawatan.rawat-inap.batal-ranap')) {
-            $this->flashError('Anda tidak dapat melakukan aksi ini');
-
-            return;
-        }
-
-        tracker_start();
-
-        RawatInap::where([
-            ['no_rawat', '=', $noRawat],
-            ['tgl_masuk', '=', $tglMasuk],
-            ['jam_masuk', '=', $jamMasuk],
-            ['kd_kamar', '=', $kamar]
-        ])
-            ->delete();
-
-        Kamar::find($kamar)->update(['status' => 'KOSONG']);
-
-        if (!RawatInap::where('no_rawat', $noRawat)->exists()) {
-            RegistrasiPasien::find($noRawat)->update([
-                'status_lanjut' => 'Ralan',
-                'stts' => 'Sudah',
-            ]);
-        }
-
-        tracker_end();
-
-        $this->flashSuccess("Data pasien dengan No. Rawat {$noRawat} sudah kembali ke rawat jalan!");
-    }
+    //     $this->flashSuccess("Data pasien dengan No. Rawat {$noRawat} sudah kembali ke rawat jalan!");
+    // }
 
     public function updateHargaKamar(string $noRawat, string $kdKamar, string $tglMasuk, string $jamMasuk, int $hargaKamarBaru, int $lamaInap)
     {
         if (!auth()->user()->can('perawatan.daftar-pasien-ranap.update-harga-kamar')) {
-            $this->emitTo('user.manajemen-user', 'flashError', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
         }
@@ -205,7 +119,7 @@ class DaftarPasienRanap extends Component
 
         tracker_start();
 
-        $perawatan = RawatInap::where([
+        RawatInap::where([
             ['no_rawat', '=', $noRawat],
             ['kd_kamar', '=', $kdKamar],
             ['tgl_masuk', '=', Carbon::parse($tglMasuk)->format('Y-m-d')],
@@ -218,6 +132,61 @@ class DaftarPasienRanap extends Component
 
         tracker_end();
 
+        $this->resetFilters();
+        $this->dispatchBrowserEvent('data-tersimpan');
+
         $this->flashSuccess('Harga kamar berhasil diupdate!');
+    }
+
+    protected function defaultValues()
+    {
+        $this->cari = '';
+        $this->perpage = 25;
+        $this->statusPerawatan = '-';
+        $this->periodeAwal = now()->format('Y-m-d');
+        $this->periodeAkhir = now()->format('Y-m-d');
+    }
+
+    protected function dataPerSheet(): array
+    {
+        return [
+            RegistrasiPasien::query()
+                ->daftarPasienRanap('', $this->statusPerawatan, $this->periodeAwal, $this->periodeAkhir, true)
+                ->orderBy('no_rawat')
+                ->get()
+        ];
+    }
+
+    protected function columnHeaders(): array
+    {
+        return [
+            'No. Rawat',
+            'No. RM',
+            'Kamar',
+            'Pasien',
+            'Alamat',
+            'Agama',
+            'P.J.',
+            'Jenis Bayar',
+            'Asal Poli',
+            'Dokter Poli',
+            'Status',
+            'Tgl. Masuk',
+            'Jam Masuk',
+            'Tgl. Keluar',
+            'Jam Keluar',
+            'Tarif (RP)',
+            'Dokter P.J.',
+            'No. HP',
+        ];
+    }
+
+    protected function pageHeaders(): array
+    {
+        return [
+            'RS Samarinda Medika Citra',
+            'Daftar Pasien Rawat Inap',
+            Carbon::parse($this->periodeAwal)->format('d F Y') . ' - ' . Carbon::parse($this->periodeAkhir)->format('d F Y'),
+        ];
     }
 }

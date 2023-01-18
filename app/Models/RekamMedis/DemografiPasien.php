@@ -2,11 +2,14 @@
 
 namespace App\Models\RekamMedis;
 
+use App\Support\Traits\Eloquent\Searchable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class DemografiPasien extends Model
 {
+    use Searchable;
+
     protected $connection = 'mysql_smc';
 
     protected $primaryKey = 'no_rawat';
@@ -18,6 +21,22 @@ class DemografiPasien extends Model
     public $incrementing = false;
 
     public $timestamps = false;
+
+    protected function searchColumns()
+    {
+        return [
+            'kecamatan',
+            'no_rm',
+            'no_rawat',
+            'nm_pasien',
+            'almt',
+            'diagnosa',
+            'agama',
+            'pendidikan',
+            'bahasa',
+            'suku',
+        ];
+    }
 
     public function scopeLaporanDemografiExcel(Builder $query, string $periodeAwal = '', string $periodeAkhir = ''): Builder
     {

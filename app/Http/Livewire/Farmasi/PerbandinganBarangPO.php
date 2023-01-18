@@ -3,16 +3,17 @@
 namespace App\Http\Livewire\Farmasi;
 
 use App\Models\Farmasi\Inventaris\SuratPemesananObat;
+use App\Support\Traits\Livewire\ExcelExportable;
+use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Rizky92\Xlswriter\ExcelExport;
 
 class PerbandinganBarangPO extends Component
 {
-    use WithPagination, FlashComponent;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable;
 
     public $cari;
 
@@ -26,44 +27,20 @@ class PerbandinganBarangPO extends Component
 
     protected $paginationTheme = 'bootstrap';
 
-    protected $listeners = [
-        'beginExcelExport',
-        'searchData',
-        'resetFilters',
-        'fullRefresh',
-    ];
-
     protected function queryString()
     {
         return [
-            'cari' => [
-                'except' => '',
-            ],
-            'perpage' => [
-                'except' => 25,
-            ],
-            'periodeAwal' => [
-                'except' => now()->startOfMonth()->format('Y-m-d'),
-                'as' => 'periode_awal',
-            ],
-            'periodeAkhir' => [
-                'except' => now()->endOfMonth()->format('Y-m-d'),
-                'as' => 'periode_akhir',
-            ],
-            'hanyaTampilkanBarangSelisih' => [
-                'except' => false,
-                'as' => 'barang_selisih',
-            ],
+            'cari' => ['except' => ''],
+            'perpage' => ['except' => 25],
+            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'periode_awal'],
+            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'periode_akhir'],
+            'hanyaTampilkanBarangSelisih' => ['except' => false, 'as' => 'barang_selisih'],
         ];
     }
 
     public function mount()
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->hanyaTampilkanBarangSelisih = false;
+        $this->defaultValues();
     }
 
     public function getPerbandinganOrderObatPOProperty()
@@ -83,26 +60,27 @@ class PerbandinganBarangPO extends Component
             ->layout(BaseLayout::class, ['title' => 'Ringkasan Perbandingan Barang PO Farmasi']);
     }
 
-    public function exportToExcel()
+    protected function defaultValues()
     {
-        $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
-
-        $this->emit('beginExcelExport');
+        $this->cari = '';
+        $this->perpage = 25;
+        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->hanyaTampilkanBarangSelisih = false;
     }
 
-    public function beginExcelExport()
+    protected function dataPerSheet(): array
     {
-        $timestamp = now()->format('Ymd_His');
-
-        $filename = "{$timestamp}_farmasi_perbandingan_po_obat.xlsx";
-
-        $titles = [
-            'RS Samarinda Medika Citra',
-            'Ringkasan Perbandingan PO Obat',
-            now()->format('d F Y'),
+        return [
+            SuratPemesananObat::query()
+                ->perbandinganPemesananObatPO($this->periodeAwal, $this->periodeAkhir, '', $this->hanyaTampilkanBarangSelisih)
+                ->get()
         ];
+    }
 
-        $columnHeaders = [
+    protected function columnHeaders(): array
+    {
+        return [
             'No. Pemesanan',
             'Nama',
             'Supplier Tujuan',
@@ -111,45 +89,14 @@ class PerbandinganBarangPO extends Component
             'Jumlah yang Datang',
             'Selisih',
         ];
-
-        $data = SuratPemesananObat::perbandinganPemesananObatPO(
-            $this->periodeAwal,
-            $this->periodeAkhir,
-            '',
-            $this->hanyaTampilkanBarangSelisih
-        )
-            ->get()
-            ->toArray();
-
-        $excel = ExcelExport::make($filename)
-            ->setPageHeaders($titles)
-            ->setColumnHeaders($columnHeaders)
-            ->setData($data);
-
-        return $excel->export();
     }
 
-    public function searchData()
+    protected function pageHeaders(): array
     {
-        $this->resetPage();
-
-        $this->emit('$refresh');
-    }
-
-    public function resetFilters()
-    {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
-
-        $this->searchData();
-    }
-
-    public function fullRefresh()
-    {
-        $this->forgetComputed();
-
-        $this->resetFilters();
+        return [
+            'RS Samarinda Medika Citra',
+            'Ringkasan Perbandingan PO Obat',
+            now()->format('d F Y'),
+        ];
     }
 }
