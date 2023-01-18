@@ -80,10 +80,26 @@ class RekapPiutangPasien extends Component
 
     protected function dataPerSheet()
     {
+        $query = PiutangPasien::rekapPiutangPasien($this->periodeAwal, $this->periodeAkhir, $this->caraBayar, '');
+
         return [
-            PiutangPasien::rekapPiutangPasien($this->periodeAwal, $this->periodeAkhir, $this->caraBayar, '')
-                ->orderBy('tgl_piutang')
-                ->get()
+            // TODO: ubah cara berikut dengan callback
+            collect($query->orderBy('tgl_piutang')->get()->toArray())
+                ->merge([
+                [
+                    'no_rawat' => 'TOTAL',
+                    'no_rkm_medis' => '',
+                    'nm_pasien' => '',
+                    'tgl_piutang' => '',
+                    'status' => '',
+                    'total' => $query->sum(DB::raw('round(piutang_pasien.totalpiutang, 2)')),
+                    'uang_muka' => $query->sum(DB::raw('round(piutang_pasien.uangmuka, 2)')),
+                    'terbayar' => $query->sum(DB::raw('round(ifnull(sisa_piutang.sisa, 0), 2)')),
+                    'sisa' => $query->sum(DB::raw('round(piutang_pasien.sisapiutang - ifnull(sisa_piutang.sisa, 0), 2)')),
+                    'tgltempo' => '',
+                    'penjamin' => '',
+                ]
+            ])
         ];
     }
 
