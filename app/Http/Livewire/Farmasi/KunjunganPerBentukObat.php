@@ -53,6 +53,11 @@ class KunjunganPerBentukObat extends Component
         ];
     }
 
+    public function mount()
+    {
+        $this->defaultValues();
+    }
+
     public function render()
     {
         return view('livewire.farmasi.kunjungan-per-bentuk-obat')
