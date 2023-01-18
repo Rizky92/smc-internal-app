@@ -45,7 +45,7 @@
                 <x-filter.label class="ml-auto" constant-width>Penjamin:</x-filter.label>
                 <div wire:ignore style="width: 16rem">
                     <select class="form-control form-control-sm simple-select2-sm input-sm" id="caraBayar" autocomplete="off">
-                        <option value="">-</option>
+                        <option value=""></option>
                         @foreach ($this->penjamin as $kode => $nama)
                             <option value="{{ $kode }}">{{ $nama }}</option>
                         @endforeach
