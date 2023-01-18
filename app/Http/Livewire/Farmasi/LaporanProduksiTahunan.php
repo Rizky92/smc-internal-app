@@ -10,33 +10,36 @@ use App\Models\Farmasi\ResepObat;
 use App\Models\Farmasi\ReturPenjualanObat;
 use App\Models\Farmasi\Inventaris\PemesananObat;
 use App\Models\Farmasi\Inventaris\ReturSupplierObat;
+use App\Support\Traits\Livewire\ExcelExportable;
+use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
 use Rizky92\Xlswriter\ExcelExport;
+use View;
 
 class LaporanProduksiTahunan extends Component
 {
-    use FlashComponent;
+    use FlashComponent, Filterable, ExcelExportable;
 
     public $tahun;
-
-    protected $listeners = [
-        'beginExcelExport',
-    ];
 
     protected function queryString()
     {
         return [
-            'tahun' => [
-                'except' => now()->format('Y'),
-            ],
+            'tahun' => ['except' => now()->format('Y')],
         ];
     }
 
     public function mount()
     {
-        $this->tahun = now()->format('Y');
+        $this->defaultValues();
+    }
+
+    public function render()
+    {
+        return view('livewire.farmasi.laporan-produksi-tahunan')
+            ->layout(BaseLayout::class, ['title' => 'Laporan Produksi Tahunan Farmasi']);
     }
 
     public function getDataTahunProperty()
@@ -151,47 +154,13 @@ class LaporanProduksiTahunan extends Component
         return MutasiObat::transferOrder($this->tahun);
     }
 
-    public function render()
+    protected function defaultValues()
     {
-        return view('livewire.farmasi.laporan-produksi-tahunan')
-            ->layout(BaseLayout::class, ['title' => 'Laporan Produksi Tahunan Farmasi']);
+        $this->tahun = now()->format('Y');
     }
 
-    public function exportToExcel()
+    protected function dataPerSheet(): array
     {
-        $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
-
-        $this->emit('beginExcelExport');
-    }
-
-    public function beginExcelExport()
-    {
-        $timestamp = now()->format('Ymd_His');
-
-        $filename = "{$timestamp}_farmasi_laporan_produksi_farmasi_tahun_{$this->tahun}.xlsx";
-
-        $titles = [
-            'RS Samarinda Medika Citra',
-            "Laporan Produksi Farmasi Tahun {$this->tahun}",
-            now()->format('d F Y'),
-        ];
-
-        $columnHeaders = [
-            'Laporan',
-            'Januari',
-            'Februari',
-            'Maret',
-            'April',
-            'Mei',
-            'Juni',
-            'Juli',
-            'Agustus',
-            'September',
-            'Oktober',
-            'November',
-            'Desember',
-        ];
-
         $data = [
             array_merge(['TOTAL KUNJUNGAN'], $this->kunjunganTotal),
             array_merge(['Kunjungan Rawat Jalan'], $this->kunjunganRalan),
@@ -212,11 +181,34 @@ class LaporanProduksiTahunan extends Component
             array_merge(['Transfer Order'], $this->transferOrder),
         ];
 
-        $excel = ExcelExport::make($filename)
-            ->setPageHeaders($titles)
-            ->setColumnHeaders($columnHeaders)
-            ->setData($data);
+        return [$data];
+    }
 
-        return $excel->export();
+    protected function columnHeaders(): array
+    {
+        return [
+            'LAPORAN',
+            'Januari',
+            'Februari',
+            'Maret',
+            'April',
+            'Mei',
+            'Juni',
+            'Juli',
+            'Agustus',
+            'September',
+            'Oktober',
+            'November',
+            'Desember',
+        ];
+    }
+
+    protected function pageHeaders(): array
+    {
+        return [
+            'RS Samarinda Medika Citra',
+            "Laporan Produksi Farmasi Tahun {$this->tahun}",
+            now()->format('d F Y'),
+        ];
     }
 }

@@ -102,23 +102,22 @@
                 </x-slot>
                 <x-slot name="body">
                     @foreach ($this->roles as $role)
-                        <x-table.tr>
+                        <x-table.tr :class="Arr::toCssClasses(['bg-dark text-light' => $role->name == config('permission.superadmin_name')])">
                             <x-table.td>
-                                {{ Str::upper($role->name) }}
+                                {{ $role->name }}
                                 @unless ($role->name == config('permission.superadmin_name'))
                                     <x-slot name="clickable" data-role-id="{{ $role->id }}" data-permission-ids="{{ $role->permissions->pluck('id')->join(',') }}" data-toggle="modal" data-target="#permission-modal"></x-slot>
                                 @endunless
                             </x-table.td>
                             <x-table.td>
-                                <p>
-                                    @if ($role->name === config('permission.superadmin_name'))
-                                        *
-                                    @endif
+                                @unless ($role->name === config('permission.superadmin_name'))    
                                     @foreach ($role->permissions as $permission)
-                                        @php($br = $loop->last ? '' : '<br>')
+                                        @php($br = !$loop->last ? '<br>' : '')
                                         {{ $permission->name }} {!! $br !!}
                                     @endforeach
-                                </p>
+                                @else
+                                    *
+                                @endunless
                             </x-table.td>
                         </x-table.tr>
                     @endforeach

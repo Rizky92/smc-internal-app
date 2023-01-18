@@ -4,9 +4,11 @@ namespace Database\Seeders;
 
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
+use App\Models\Aplikasi\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Schema;
+use Spatie\Permission\PermissionRegistrar;
 
 class PermissionSeeder extends Seeder
 {
@@ -22,6 +24,8 @@ class PermissionSeeder extends Seeder
 
         Permission::truncate();
         Role::truncate();
+
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         DB::table('model_has_roles')->truncate();
         DB::table('model_has_permissions')->truncate();
@@ -68,7 +72,7 @@ class PermissionSeeder extends Seeder
         ];
 
         // Superadmin role name, bypasses all permissions
-        Role::create(['name' => config('permission.superadmin_name'), 'guard_name' => 'web']);
+        $superadminRole = Role::create(['name' => config('permission.superadmin_name'), 'guard_name' => 'web']);
         
         $perawatanRole = Role::create(['name' => 'Perawatan', 'guard_name' => 'web']);
         $keuanganRole = Role::create(['name' => 'Keuangan', 'guard_name' => 'web']);
@@ -85,8 +89,12 @@ class PermissionSeeder extends Seeder
         $logistikRole->givePermissionTo($logistikPermissions);
         $kasirRole->givePermissionTo($kasirPermissions);
         $manajemenRole->givePermissionTo($manajemenPermissions);
-
+        
         Schema::connection('mysql_smc')->enableForeignKeyConstraints();
         DB::setDefaultConnection('mysql_sik');
+
+        $user = User::findByNRP('88888888');
+
+        $user->assignRole($superadminRole);
     }
 }

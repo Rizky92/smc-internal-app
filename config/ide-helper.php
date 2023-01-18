@@ -107,7 +107,7 @@ return [
     |
     */
 
-    'write_eloquent_model_mixins' => false,
+    'write_eloquent_model_mixins' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -183,7 +183,7 @@ return [
     'extra' => [
         'Eloquent' => ['Illuminate\Database\Eloquent\Builder', 'Illuminate\Database\Query\Builder'],
         'Session' => ['Illuminate\Session\Store'],
-        'View' => ['Illuminate\View\View'],
+        'View' => ['Illuminate\View\View', 'Livewire\Macros\ViewMacros'],
     ],
 
     'magic' => [],
@@ -280,7 +280,7 @@ return [
     | magic methods and properties.
     |
     */
-    'include_class_docblocks' => false,
+    'include_class_docblocks' => true,
 
     /*
     |--------------------------------------------------------------------------

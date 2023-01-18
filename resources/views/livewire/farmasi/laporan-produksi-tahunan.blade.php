@@ -30,108 +30,108 @@
                     <x-table.th class="text-center px-0" width="150">Desember</x-table.th>
                 </x-slot>
                 <x-slot name="body">
-                    <tr>
-                        <th scope="row" width="250">TOTAL KUNJUNGAN</th>
+                    <x-table.tr>
+                        <th scope="row">TOTAL KUNJUNGAN</th>
                         @foreach ($this->kunjunganTotal as $item)
                             <th class="text-center px-0" scope="col" width="150">{{ $item }}</th>
                         @endforeach
-                    </tr>
-                    <tr>
-                        <th scope="row" width="250">Kunjungan Rawat Jalan</th>
+                    </x-table.tr>
+                    <x-table.tr>
+                        <th scope="row">Kunjungan Rawat Jalan</th>
                         @foreach ($this->kunjunganRalan as $item)
                             <td class="text-center px-0" width="150">{{ $item }}</td>
                         @endforeach
-                    </tr>
-                    <tr>
-                        <th scope="row" width="250">Kunjungan Rawat Inap</th>
+                    </x-table.tr>
+                    <x-table.tr>
+                        <th scope="row">Kunjungan Rawat Inap</th>
                         @foreach ($this->kunjunganRanap as $item)
                             <td class="text-center px-0" width="150">{{ $item }}</td>
                         @endforeach
-                    </tr>
-                    <tr>
+                    </x-table.tr>
+                    <x-table.tr>
                         <th>Kunjungan IGD</th>
                         @foreach ($this->kunjunganIGD as $item)
                             <td class="text-center px-0" width="150">{{ $item }}</td>
                         @endforeach
-                    </tr>
-                    <tr>
-                        <th width="250">Kunjungan <i>Walk in</i></th>
+                    </x-table.tr>
+                    <x-table.tr>
+                        <th>Kunjungan <i>Walk in</i></th>
                         @foreach ($this->kunjunganWalkIn as $item)
                             <td class="text-center px-0" width="150">{{ $item }}</td>
                         @endforeach
-                    </tr>
-                    <tr>
-                        <th width="250">TOTAL PENDAPATAN</th>
+                    </x-table.tr>
+                    <x-table.tr>
+                        <th>TOTAL PENDAPATAN</th>
                         @foreach ($this->pendapatanObatTotal as $item)
                             <th class="text-center px-0" width="150">{{ rp($item) }}</th>
                         @endforeach
-                    </tr>
-                    <tr>
-                        <th width="250">Pendapatan Obat Rawat Jalan</th>
+                    </x-table.tr>
+                    <x-table.tr>
+                        <th>Pendapatan Obat Rawat Jalan</th>
                         @foreach ($this->pendapatanObatRalan as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
-                    </tr>
-                    <tr>
-                        <th width="250">Pendapatan Obat Rawat Inap</th>
+                    </x-table.tr>
+                    <x-table.tr>
+                        <th>Pendapatan Obat Rawat Inap</th>
                         @foreach ($this->pendapatanObatRanap as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
-                    </tr>
-                    <tr>
-                        <th width="250">Pendapatan Obat IGD</th>
+                    </x-table.tr>
+                    <x-table.tr>
+                        <th>Pendapatan Obat IGD</th>
                         @foreach ($this->pendapatanObatIGD as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
-                    </tr>
-                    <tr>
-                        <th width="250">Pendapatan Obat <i>Walk in</i></th>
+                    </x-table.tr>
+                    <x-table.tr>
+                        <th>Pendapatan Obat <i>Walk in</i></th>
                         @foreach ($this->pendapatanObatWalkIn as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
-                    </tr>
-                    <tr>
-                        <th width="250">Pendapatan Alkes Farmasi dan Unit</th>
+                    </x-table.tr>
+                    <x-table.tr>
+                        <th>Pendapatan Alkes Farmasi dan Unit</th>
                         @foreach ($this->pendapatanAlkesFarmasiDanUnit as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
-                    </tr>
-                    <tr>
-                        <th width="250">Retur Obat</th>
+                    </x-table.tr>
+                    <x-table.tr>
+                        <th>Retur Obat</th>
                         @foreach ($this->returObat as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
-                    </tr>
-                    <tr>
-                        <th width="250">Pembelian Farmasi</th>
+                    </x-table.tr>
+                    <x-table.tr>
+                        <th>Pembelian Farmasi</th>
                         @foreach ($this->pembelianFarmasi as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
-                    </tr>
-                    <tr>
-                        <th width="250">Retur Supplier</th>
+                    </x-table.tr>
+                    <x-table.tr>
+                        <th>Retur Supplier</th>
                         @foreach ($this->returSupplier as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
-                    </tr>
-                    <tr>
-                        <th width="250">TOTAL PEMBELIAN<br> (<i>Pembelian Farmasi - Retur Supplier</i>)</th>
+                    </x-table.tr>
+                    <x-table.tr>
+                        <th>TOTAL PEMBELIAN<br> (<i>Pembelian Farmasi - Retur Supplier</i>)</th>
                         @foreach ($this->totalBersihPembelianFarmasi as $item)
                             <th class="text-center px-0" width="150">{{ rp($item) }}</th>
                         @endforeach
-                    </tr>
-                    <tr>
-                        <th width="250">Pemakaian BHP</th>
+                    </x-table.tr>
+                    <x-table.tr>
+                        <th>Pemakaian BHP</th>
                         @foreach ($this->stokKeluarMedis as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
-                    </tr>
-                    <tr>
-                        <th width="250">Transfer Order</th>
+                    </x-table.tr>
+                    <x-table.tr>
+                        <th>Transfer Order</th>
                         @foreach ($this->transferOrder as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
-                    </tr>
+                    </x-table.tr>
                 </x-slot>
             </x-table>
         </x-slot>

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateKhanzaMappingAksesTable extends Migration
+class CreateTrackersqlTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class CreateKhanzaMappingAksesTable extends Migration
      */
     public function up()
     {
-        Schema::create('khanza_mapping_akses', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::connection('mysql_smc')->create('trackersql', function (Blueprint $table) {
+            $table->timestamp('tanggal')->index();
+            $table->text('sqle')->index();
+            $table->string('usere', 20)->index();
         });
     }
 
@@ -26,6 +27,6 @@ class CreateKhanzaMappingAksesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('khanza_mapping_akses');
+        Schema::connection('mysql_smc')->dropIfExists('trackersql');
     }
 }
