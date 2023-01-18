@@ -68,6 +68,11 @@ class DaftarPasienRanap extends Component
         $this->periodeAkhir = now()->format('Y-m-d');
     }
 
+    public function mount()
+    {
+        $this->defaultValues();
+    }
+
     public function getDaftarPasienRanapProperty()
     {
         return RegistrasiPasien::daftarPasienRanap(
