@@ -63,7 +63,7 @@ class RekapPiutangPasien extends Component
             $this->caraBayar,
             $this->cari
         )
-            ->orderBy('png_jaawb')
+            ->orderBy('penjab.png_jawab')
             ->paginate($this->perpage);
     }
 
@@ -84,7 +84,7 @@ class RekapPiutangPasien extends Component
 
         return [
             // TODO: ubah cara berikut dengan callback
-            collect($query->orderBy('png_jawab')->get()->toArray())
+            collect($query->orderBy('penjab.png_jawab')->get()->toArray())
                 ->merge([
                 [
                     'no_rawat' => 'TOTAL',
