@@ -29,6 +29,8 @@
             <x-table style="width: 160rem">
                 <x-slot name="columns">
                     <x-table.th style="width: 20ch">No. Rawat</x-table.th>
+                    <x-table.th style="width: 12ch">Tgl. Registrasi</x-table.th>
+                    <x-table.th style="width: 12ch">Jam Registrasi</x-table.th>
                     <x-table.th style="width: 35ch">Kamar</x-table.th>
                     <x-table.th style="width: 10ch">Kelas</x-table.th>
                     <x-table.th style="width: 10ch">No. RM</x-table.th>
@@ -47,6 +49,8 @@
                     @foreach ($this->daftarPasienRanap as $pasien)
                         <x-table.tr>
                             <x-table.td>{{ $pasien->no_rawat }}</x-table.td>
+                            <x-table.td>{{ $pasien->tgl_registrasi }}</x-table.td>
+                            <x-table.td>{{ $pasien->jam_reg }}</x-table.td>
                             <x-table.td>{{ $pasien->ruangan }}</x-table.td>
                             <x-table.td>{{ $pasien->kelas }}</x-table.td>
                             <x-table.td>{{ $pasien->no_rkm_medis }}</x-table.td>

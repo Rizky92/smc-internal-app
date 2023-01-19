@@ -67,6 +67,8 @@ class RegistrasiPasien extends Model
     {
         return $query->selectRaw("
                 reg_periksa.no_rawat,
+                reg_periksa.tgl_registrasi,
+                reg_periksa.jam_reg,
                 reg_periksa.no_rkm_medis,
                 kamar.kelas,
                 concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal) ruangan,

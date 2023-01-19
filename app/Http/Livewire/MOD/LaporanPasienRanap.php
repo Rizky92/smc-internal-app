@@ -113,6 +113,8 @@ class LaporanPasienRanap extends Component
     {
         return [
             'No. Rawat',
+            'Tgl. Reg.',
+            'Jam Reg.',
             'Kamar',
             'Kelas',
             'No. RM',
