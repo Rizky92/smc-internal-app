@@ -179,8 +179,8 @@ class RegistrasiPasien extends Model
                     return $query->whereBetween('kamar_inap.tgl_keluar', [$tglAwal, $tglAkhir])
                         ->where(
                             fn ($query) => $query
-                                ->where('kamar_inap.jam_masuk', '>=', $jamAwal)
-                                ->orWhere('kamar_inap.jam_masuk', '<=', $jamAkhir)
+                                ->where('kamar_inap.jam_keluar', '>=', $jamAwal)
+                                ->orWhere('kamar_inap.jam_keluar', '<=', $jamAkhir)
                         );
             }
         };
@@ -189,11 +189,17 @@ class RegistrasiPasien extends Model
 
         return $query
             ->where($subQueryTglDanJamPerawatan)
-            ->when(!$pasienPindahKamar, fn (Builder $query) => $query->whereNotIn('reg_periksa.no_rawat', fn ($query) => $query
-                ->select('no_rawat')
-                ->from('kamar_inap')
-                ->where($subQueryTglDanJamPerawatan)
-                ->where($subQueryStatusPindahKamar)))
+            ->when(
+                $pasienPindahKamar,
+                fn (Builder $query) => $query->whereIn('reg_periksa.no_rawat', fn ($query) => $query
+                    ->select('no_rawat')
+                    ->from('kamar_inap')
+                    ->where($subQueryStatusPindahKamar)),
+                fn (Builder $query) => $query->whereNotIn('reg_periksa.no_rawat', fn ($query) => $query
+                    ->select('no_rawat')
+                    ->from('kamar_inap')
+                    ->where($subQueryStatusPindahKamar)),
+            )
             ->when(!empty($cari), function (Builder $query) use ($cari) {
                 return $query->whereRaw("concat(
                     reg_periksa.no_rawat, ' ',

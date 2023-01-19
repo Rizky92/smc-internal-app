@@ -33,15 +33,15 @@ class LaporanPasienRanap extends Component
 
     protected $paginationTheme = 'bootstrap';
 
-    protected const JAM_AWAL = '18:00:00';
-    protected const JAM_AKHIR = '06:00:00';
+    protected const JAM_AWAL = '00:00:00';
+    protected const JAM_AKHIR = '00:00:00';
 
     protected function queryString()
     {
         return [
             'cari' => ['except' => ''],
             'perpage' => ['except' => 25],
-            'tglAwal' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAwal' => ['except' => now()->subDay()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
             'jamAwal' => ['except' => $this::JAM_AWAL, 'as' => 'jam_awal'],
             'jamAkhir' => ['except' => $this::JAM_AKHIR, 'as' => 'jam_akhir'],
@@ -82,7 +82,7 @@ class LaporanPasienRanap extends Component
     {
         $this->cari = '';
         $this->perpage = 25;
-        $this->tglAwal = now()->format('Y-m-d');
+        $this->tglAwal = now()->subDay()->format('Y-m-d');
         $this->tglAkhir = now()->format('Y-m-d');
         $this->jamAwal = $this::JAM_AWAL;
         $this->jamAkhir = $this::JAM_AKHIR;
