@@ -16,6 +16,7 @@ use App\Http\Livewire\Keuangan\RekapPiutangPasien;
 use App\Http\Livewire\Keuangan\StokObatRuangan;
 use App\Http\Livewire\Logistik\InputMinmaxStok;
 use App\Http\Livewire\Logistik\StokDaruratLogistik;
+use App\Http\Livewire\MOD\LaporanPasienRanap;
 use App\Http\Livewire\Perawatan\DaftarPasienRanap;
 use App\Http\Livewire\RekamMedis\LaporanDemografi;
 use App\Http\Livewire\RekamMedis\LaporanStatistik;
@@ -49,6 +50,14 @@ Route::prefix('admin')
     ->middleware('auth')
     ->group(function () {
         Route::get('/', DashboardController::class)->name('dashboard');
+
+        Route::prefix('mod')
+            ->as('mod.')
+            ->group(function () {
+                Route::get('laporan-pasien-ranap', LaporanPasienRanap::class)
+                    ->middleware('can:mod.laporan-pasien-ranap.read')
+                    ->name('laporan-pasien-ranap');
+            });
 
         Route::prefix('perawatan')
             ->as('perawatan.')

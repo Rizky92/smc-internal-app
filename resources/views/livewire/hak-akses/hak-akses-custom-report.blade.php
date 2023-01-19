@@ -20,11 +20,6 @@
 
                     let permissions = Array.from(permissionIds.split(','))
 
-                    console.log({
-                        permissionIds,
-                        roleId
-                    });
-
                     inputPermissions.each((i, el) => el.checked = permissions.find(v => v === el.value))
                 }
 
@@ -102,7 +97,7 @@
                 </x-slot>
                 <x-slot name="body">
                     @foreach ($this->roles as $role)
-                        <x-table.tr :class="Arr::toCssClasses(['bg-dark text-light' => $role->name == config('permission.superadmin_name')])">
+                        <x-table.tr :class="Arr::toCssClasses(['text-muted' => $role->name == config('permission.superadmin_name')])">
                             <x-table.td>
                                 {{ $role->name }}
                                 @unless ($role->name == config('permission.superadmin_name'))

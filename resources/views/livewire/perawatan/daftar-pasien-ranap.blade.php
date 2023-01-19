@@ -21,6 +21,7 @@
 
                             let buttonSimpan
                             let buttonBatalSimpan
+                            let buttonResetFilters
 
                             $(document).ready(() => {
                                 inputNoRawat = $('#no_rawat')
@@ -37,6 +38,7 @@
 
                                 buttonSimpan = $('#simpan-data')
                                 buttonBatalSimpan = $('#batal-simpan')
+                                buttonResetFilters = $('#reset-filters')
 
                                 buttonSimpan.prop('disabled', true)
                                 buttonBatalSimpan.prop('disabled', true)
@@ -52,13 +54,15 @@
                                     @this.updateHargaKamar(noRawat, kdKamar, tglMasuk, jamMasuk, hargaKamarBaru, lamaInap)
                                 })
 
+                                buttonResetFilters.click(clearData)
+
                                 inputHargaKamar.keyup(updateTotalHarga)
                                 inputHargaKamar.change(updateTotalHarga)
 
                                 inputLamaInap.keyup(updateTotalHarga)
                                 inputLamaInap.change(updateTotalHarga)
 
-                                Livewire.on('data-tersimpan', clearData)
+                                document.addEventListener('data-tersimpan', clearData)
 
                                 buttonBatalSimpan.click(clearData)
                             })
@@ -199,7 +203,7 @@
 
             <x-card.row-col :class="Arr::toCssClasses(['mt-3' => auth()->user()->can('perawatan.daftar-pasien-ranap.update-harga-kamar')])">
                 <x-filter.range-date />
-                <x-filter.label class="ml-auto pr-3">Status:</x-filter.label>
+                <x-filter.label class="ml-auto pr-3">Berdasarkan:</x-filter.label>
                 <div class="input-group input-group-sm" style="width: max-content">
                     <x-filter.select model="statusPerawatan" :options="[
                         '-' => 'Sedang Dirawat',
@@ -217,26 +221,29 @@
         </x-slot>
 
         <x-slot name="body" class="table-responsive">
-            <x-table style="width: 180rem">
+            <x-table style="width: 250rem">
                 <x-slot name="columns">
                     <x-table.th style="width: 20ch">No. Rawat</x-table.th>
                     <x-table.th style="width: 10ch">No. RM</x-table.th>
-                    <x-table.th>Kamar</x-table.th>
-                    <x-table.th style="width: 25ch">Pasien</x-table.th>
+                    <x-table.th style="width: 35ch">Kamar</x-table.th>
+                    <x-table.th style="width: 10ch">Kelas</x-table.th>
+                    <x-table.th style="width: 50ch">Pasien</x-table.th>
                     <x-table.th>Alamat</x-table.th>
-                    <x-table.th style="width: 8ch">Agama</x-table.th>
-                    <x-table.th style="width: 25ch">P.J.</x-table.th>
-                    <x-table.th style="width: 20ch">Jenis Bayar</x-table.th>
-                    <x-table.th style="width: 10ch">Asal Poli</x-table.th>
-                    <x-table.th style="width: 25ch">Dokter Poli</x-table.th>
+                    <x-table.th style="width: 10ch">Agama</x-table.th>
+                    <x-table.th style="width: 30ch">P.J.</x-table.th>
+                    <x-table.th style="width: 25ch">Jenis Bayar</x-table.th>
+                    <x-table.th style="width: 20ch">Asal Poli</x-table.th>
+                    <x-table.th style="width: 40ch">Dokter Poli</x-table.th>
                     <x-table.th style="width: 15ch">Status</x-table.th>
                     <x-table.th style="width: 12ch">Tgl. Masuk</x-table.th>
                     <x-table.th style="width: 12ch">Jam Masuk</x-table.th>
                     <x-table.th style="width: 12ch">Tgl. Keluar</x-table.th>
                     <x-table.th style="width: 12ch">Jam Keluar</x-table.th>
-                    <x-table.th style="width: 15ch">Tarif</x-table.th>
-                    <x-table.th>Dokter P.J.</x-table.th>
-                    <x-table.th>No. HP</x-table.th>
+                    <x-table.th style="width: 15ch">Tarif Kamar</x-table.th>
+                    <x-table.th style="width: 10ch">Lama</x-table.th>
+                    <x-table.th style="width: 20ch">Total</x-table.th>
+                    <x-table.th style="width: 35ch">DPJP</x-table.th>
+                    <x-table.th style="width: 15ch">No. HP</x-table.th>
                 </x-slot>
                 <x-slot name="body">
                     @foreach ($this->daftarPasienRanap as $pasien)
@@ -247,6 +254,7 @@
                             </x-table.td>
                             <x-table.td>{{ $pasien->no_rkm_medis }}</x-table.td>
                             <x-table.td>{{ $pasien->ruangan }}</x-table.td>
+                            <x-table.td>{{ $pasien->kelas }}</x-table.td>
                             <x-table.td>{{ $pasien->data_pasien }}</x-table.td>
                             <x-table.td>{{ $pasien->alamat_pasien }}</x-table.td>
                             <x-table.td>{{ $pasien->agama }}</x-table.td>
@@ -260,6 +268,8 @@
                             <x-table.td>{{ $pasien->tgl_keluar }}</x-table.td>
                             <x-table.td>{{ $pasien->jam_keluar }}</x-table.td>
                             <x-table.td>{{ rp($pasien->trf_kamar) }}</x-table.td>
+                            <x-table.td>{{ $pasien->lama }}</x-table.td>
+                            <x-table.td>{{ rp($pasien->ttl_biaya) }}</x-table.td>
                             <x-table.td>{{ $pasien->nama_dokter }}</x-table.td>
                             <x-table.td>{{ $pasien->no_tlp }}</x-table.td>
                         </x-table.tr>

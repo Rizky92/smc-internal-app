@@ -4,7 +4,7 @@
 ])
 
 <div {{ $attributes }}>
-    <button class="btn btn-sm btn-link text-secondary" type="button" wire:click="{{ $method }}">
+    <button class="btn btn-sm btn-link text-secondary" type="button" id="{{ Str::of($title)->plural()->kebab() }}" wire:click="{{ $method }}">
         {{ $title }}
     </button>
 </div>

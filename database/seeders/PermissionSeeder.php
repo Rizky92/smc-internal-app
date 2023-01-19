@@ -67,7 +67,7 @@ class PermissionSeeder extends Seeder
             Permission::create(['name' => 'perawatan.daftar-pasien-ranap.update-harga-kamar', 'guard_name' => 'web']),
         ];
 
-        $manajemenPermissions = [
+        $MODPermissions = [
             Permission::create(['name' => 'mod.laporan-pasien-ranap.read', 'guard_name' => 'web']),
         ];
 
@@ -80,7 +80,7 @@ class PermissionSeeder extends Seeder
         $rekamMedisRole = Role::create(['name' => 'Rekam Medis', 'guard_name' => 'web']);
         $logistikRole = Role::create(['name' => 'Logistik', 'guard_name' => 'web']);
         $kasirRole = Role::create(['name' => 'Kasir', 'guard_name' => 'web']);
-        $manajemenRole = Role::create(['name' => 'MOD', 'guard_name' => 'web']);
+        $MODRole = Role::create(['name' => 'MOD', 'guard_name' => 'web']);
 
         $keuanganRole->givePermissionTo($keuanganPermissions);
         $perawatanRole->givePermissionTo($perawatanPermissions);
@@ -88,7 +88,7 @@ class PermissionSeeder extends Seeder
         $rekamMedisRole->givePermissionTo($rekamMedisPermissions);
         $logistikRole->givePermissionTo($logistikPermissions);
         $kasirRole->givePermissionTo($kasirPermissions);
-        $manajemenRole->givePermissionTo($manajemenPermissions);
+        $MODRole->givePermissionTo($MODPermissions);
         
         Schema::connection('mysql_smc')->enableForeignKeyConstraints();
         DB::setDefaultConnection('mysql_sik');

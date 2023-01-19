@@ -9,6 +9,17 @@ Breadcrumbs::for('admin.dashboard', function (Trail $trail) {
 });
 
 
+Breadcrumbs::for('admin.mod', function (Trail $trail) {
+    $trail->parent('admin.dashboard');
+    $trail->push('MOD');
+});
+
+Breadcrumbs::for('admin.mod.laporan-pasien-ranap', function (Trail $trail) {
+    $trail->parent('admin.mod');
+    $trail->push('Laporan Pasien Ranap', route('admin.mod.laporan-pasien-ranap'));
+});
+
+
 Breadcrumbs::for('admin.perawatan', function (Trail $trail) {
     $trail->parent('admin.dashboard');
     $trail->push('Perawatan');

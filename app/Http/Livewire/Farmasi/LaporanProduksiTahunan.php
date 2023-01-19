@@ -15,8 +15,6 @@ use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
-use Rizky92\Xlswriter\ExcelExport;
-use View;
 
 class LaporanProduksiTahunan extends Component
 {

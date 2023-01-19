@@ -48,6 +48,23 @@ class BaseLayout extends Component
                 'hasAnyPermissions' => true,
             ],
             [
+                'name' => 'MOD',
+                'icon' => 'far fa-circle',
+                'type' => 'dropdown',
+                'hasAnyPermissions' => $user->canAny([
+                    'mod.laporan-pasien-ranap.read',
+                ]),
+                'items' => [
+                    [
+                        'name' => 'Laporan Pasien Ranap',
+                        'url' => route('admin.mod.laporan-pasien-ranap'),
+                        'icon' => "fas fa-procedures",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('mod.laporan-pasien-ranap.read'),
+                    ],
+                ]
+            ],
+            [
                 'name' => 'Perawatan',
                 'icon' => 'far fa-circle',
                 'type' => 'dropdown',
@@ -187,13 +204,6 @@ class BaseLayout extends Component
                 ],
             ],
             [
-                'name' => 'Manajemen User',
-                'url' => route('admin.manajemen-user'),
-                'icon' => "fas fa-users",
-                'type' => 'link',
-                'hasAnyPermissions' => $user->hasRole($su),
-            ],
-            [
                 'name' => 'Hak Akses',
                 'icon' => "far fa-circle",
                 'type' => 'dropdown',
@@ -215,6 +225,20 @@ class BaseLayout extends Component
                         'hasAnyPermissions' => $user->hasRole($su),
                     ],
                 ],
+            ],
+            [
+                'name' => 'Manajemen User',
+                'url' => route('admin.manajemen-user'),
+                'icon' => "fas fa-users",
+                'type' => 'link',
+                'hasAnyPermissions' => $user->hasRole($su),
+            ],
+            [
+                'name' => 'Log Viewer',
+                'url' => route('admin.log-viewer'),
+                'icon' => "fas fa-scroll",
+                'type' => 'link',
+                'hasAnyPermissions' => $user->hasRole($su),
             ],
         ]);
     }

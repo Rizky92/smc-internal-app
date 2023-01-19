@@ -9,11 +9,21 @@
                 let inputRoles
                 let inputPermissions
 
+                let buttonResetFilters
+
                 $(document).ready(() => {
                     inputNRP = $('#user')
                     inputNama = $('#nama')
                     inputRoles = $('input[name=roles]')
                     inputPermissions = $('input[name=permissions]')
+                    buttonResetFilters = $('button#reset-filters')
+
+                    buttonResetFilters.click(e => {
+                        inputNRP.val('')
+                        inputNama.val('')
+                        inputRoles.each((i, el) => el.checked = false)
+                        inputPermissions.each((i, el) => el.checked = false)
+                    })
                 })
 
                 function loadData({

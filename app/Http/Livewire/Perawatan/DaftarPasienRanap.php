@@ -27,6 +27,8 @@ class DaftarPasienRanap extends Component
 
     public $statusPerawatan;
 
+    public $hanyaPasienBaru;
+
     protected $paginationTheme = 'bootstrap';
 
     protected function queryString()
@@ -34,9 +36,10 @@ class DaftarPasienRanap extends Component
         return [
             'cari' => ['except' => ''],
             'perpage' => ['except' => 25],
-            'statusPerawatan' => ['except' => '-', 'as' => 'status'],
             'periodeAwal' => ['except' => now()->format('Y-m-d'), 'as' => 'periode_awal'],
             'periodeAkhir' => ['except' => now()->format('Y-m-d'), 'as' => 'periode_akhir'],
+            'statusPerawatan' => ['except' => '-', 'as' => 'status'],
+            'hanyaPasienBaru' => ['except' => false, 'as' => 'pasien_baru'],
         ];
     }
 
@@ -47,12 +50,14 @@ class DaftarPasienRanap extends Component
 
     public function getDaftarPasienRanapProperty()
     {
-        return RegistrasiPasien::daftarPasienRanap(
-            $this->cari,
-            $this->statusPerawatan,
-            $this->periodeAwal,
-            $this->periodeAkhir,
-        )
+        return RegistrasiPasien::query()
+            ->selectDaftarPasienRanap()
+            ->filterDaftarPasienRanap(
+                $this->cari,
+                $this->periodeAwal,
+                $this->periodeAkhir,
+                $this->statusPerawatan
+            )
             ->orderBy('no_rawat')
             ->paginate($this->perpage);
     }
@@ -151,7 +156,13 @@ class DaftarPasienRanap extends Component
     {
         return [
             RegistrasiPasien::query()
-                ->daftarPasienRanap('', $this->statusPerawatan, $this->periodeAwal, $this->periodeAkhir, true)
+                ->selectDaftarPasienRanap(true)
+                ->filterDaftarPasienRanap(
+                    $this->cari,
+                    $this->periodeAwal,
+                    $this->periodeAkhir,
+                    $this->statusPerawatan
+                )
                 ->orderBy('no_rawat')
                 ->get()
         ];
@@ -163,6 +174,7 @@ class DaftarPasienRanap extends Component
             'No. Rawat',
             'No. RM',
             'Kamar',
+            'Kelas',
             'Pasien',
             'Alamat',
             'Agama',
@@ -175,8 +187,10 @@ class DaftarPasienRanap extends Component
             'Jam Masuk',
             'Tgl. Keluar',
             'Jam Keluar',
-            'Tarif (RP)',
-            'Dokter P.J.',
+            'Tarif Kamar (RP)',
+            'Lama (RP)',
+            'Total (RP)',
+            'DPJP',
             'No. HP',
         ];
     }
