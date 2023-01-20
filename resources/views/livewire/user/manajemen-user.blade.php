@@ -134,10 +134,10 @@
         <x-slot name="body" class="table-responsive p-0">
             <x-table>
                 <x-slot name="columns">
-                    <x-table.th>NRP</x-table.th>
-                    <x-table.th>Nama</x-table.th>
-                    <x-table.th>Jabatan</x-table.th>
-                    <x-table.th>Jenis</x-table.th>
+                    <x-table.th style="width: 15ch">NRP</x-table.th>
+                    <x-table.th style="width: 50ch">Nama</x-table.th>
+                    <x-table.th style="width: 30ch">Jabatan</x-table.th>
+                    <x-table.th style="width: 10ch">Jenis</x-table.th>
                     <x-table.th>Hak Akses</x-table.th>
                 </x-slot>
                 <x-slot name="body">
@@ -158,6 +158,9 @@
                             <x-table.td>
                                 @foreach ($user->roles as $role)
                                     <x-badge :class="Arr::toCssClasses(['badge-dark', 'ml-1' => $loop->first], ' ')">{{ $role->name }}</x-badge>
+                                @endforeach
+                                @foreach ($user->permissions as $permission)
+                                    <x-badge :class="Arr::toCssClasses(['badge-info', 'ml-1' => ($loop->first && $user->roles->count() > 0)], ' ')">{{ $permission->name }}</x-badge>
                                 @endforeach
                             </x-table.td>
                         </x-table.tr>
