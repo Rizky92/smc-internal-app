@@ -15,8 +15,8 @@
                 <x-filter.label constant-width>Per:</x-filter.label>
                 <div class="input-group input-group-sm" style="width: 9rem">
                     <x-filter.select model="statusPerawatan" :options="[
-                        'tanggal_masuk' => 'Tgl. Masuk',
-                        'tanggal_keluar' => 'Tgl. Keluar',
+                        'tanggal_masuk' => 'Tgl. Masuk Ranap',
+                        'tanggal_keluar' => 'Tgl. Keluar Ranap',
                     ]" />
                 </div>
                 <x-filter.toggle class="ml-3" model="pasienPindahKamar" title="Tampilkan Pasien Pindah Kamar" />
