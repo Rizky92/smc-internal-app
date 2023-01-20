@@ -96,7 +96,6 @@ class RegistrasiPasien extends Model
             ->join('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter');
     }
 
-    // TODO: simplify scope yang ini
     public function scopeFilterDaftarPasienRanap(
         Builder $query,
         string $cari = '',
@@ -187,8 +186,6 @@ class RegistrasiPasien extends Model
             }
         };
 
-        $subQueryStatusPindahKamar = fn ($query) => $query->where('stts_pulang', 'Pindah Kamar');
-
         return $query
             ->where($subQueryTglDanJamPerawatan)
             ->when(
@@ -196,11 +193,20 @@ class RegistrasiPasien extends Model
                 fn (Builder $query) => $query->whereIn('reg_periksa.no_rawat', fn ($query) => $query
                     ->select('no_rawat')
                     ->from('kamar_inap')
-                    ->where($subQueryStatusPindahKamar)),
+                    ->where('stts_pulang', 'Pindah Kamar')),
                 fn (Builder $query) => $query->whereNotIn('reg_periksa.no_rawat', fn ($query) => $query
                     ->select('no_rawat')
                     ->from('kamar_inap')
-                    ->where($subQueryStatusPindahKamar)),
+                    ->where('stts_pulang', 'Pindah Kamar')
+                    ->when(!empty($statusPerawatan), function ($query) use ($statusPerawatan, $tglAwal) {
+                        switch (Str::snake($statusPerawatan)) {
+                            case 'tanggal_masuk':
+                                return $query->where('kamar_inap.tgl_masuk', '<=', $tglAwal);
+
+                            case 'tanggal_keluar':
+                                return $query->where('kamar_inap.tgl_keluar', '<=', $tglAwal);
+                        }
+                    })),
             )
             ->when(!empty($cari), function (Builder $query) use ($cari) {
                 return $query->whereRaw("concat(
@@ -224,6 +230,20 @@ class RegistrasiPasien extends Model
                     poliklinik.nm_poli, ' ',
                     dokter.nm_dokter
                 ) like ?", "%{$cari}%");
+            });
+    }
+
+    public function scopeOrderByColumnsFilterLaporanPasienRanap(Builder $query, string $statusPerawatan = ''): Builder
+    {
+        return $query
+            ->orderBy('no_rawat')
+            ->when(!empty($statusPerawatan), function (Builder $query) use ($statusPerawatan) {
+                switch (Str::lower($statusPerawatan)) {
+                    case 'tanggal_masuk':
+                        return $query->orderBy('tgl_masuk')->orderBy('jam_masuk');
+                    case 'tanggal_keluar':
+                        return $query->orderBy('tgl_keluar')->orderBy('jam_keluar');
+                }
             });
     }
 }

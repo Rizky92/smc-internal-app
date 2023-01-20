@@ -68,7 +68,7 @@ class LaporanPasienRanap extends Component
                 $this->statusPerawatan,
                 $this->pasienPindahKamar
             )
-            ->orderBy('no_rawat')
+            ->orderByColumnsFilterLaporanPasienRanap($this->statusPerawatan)
             ->paginate($this->perpage);
     }
 
