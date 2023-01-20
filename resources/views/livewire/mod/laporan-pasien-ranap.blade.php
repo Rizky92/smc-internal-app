@@ -4,11 +4,11 @@
     <x-card>
         <x-slot name="header">
             <x-card.row-col>
-                <x-filter.range-date model-start="tglAwal" model-end="tglAkhir" />
+                <x-filter.toggle model="pasienPindahKamar" title="Tampilkan Pasien Pindah Kamar" />
                 <x-filter.button-export-excel class="ml-auto" />
             </x-card.row-col>
             <x-card.row-col class="mt-2">
-                <x-filter.range-time />
+                <x-filter.range-datetime />
                 <x-filter.select-perpage class="pr-3 ml-auto" :constantWidth="false" />
             </x-card.row-col>
             <x-card.row-col class="mt-2">
@@ -19,7 +19,6 @@
                         'tanggal_keluar' => 'Tgl. Keluar Ranap',
                     ]" />
                 </div>
-                <x-filter.toggle class="ml-3" model="pasienPindahKamar" title="Tampilkan Pasien Pindah Kamar" />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search />
             </x-card.row-col>
@@ -29,8 +28,8 @@
             <x-table style="width: 160rem">
                 <x-slot name="columns">
                     <x-table.th style="width: 20ch">No. Rawat</x-table.th>
-                    <x-table.th style="width: 12ch">Tgl. Registrasi</x-table.th>
-                    <x-table.th style="width: 12ch">Jam Registrasi</x-table.th>
+                    <x-table.th style="width: 15ch">Tgl. Registrasi</x-table.th>
+                    <x-table.th style="width: 15ch">Jam Registrasi</x-table.th>
                     <x-table.th style="width: 35ch">Kamar</x-table.th>
                     <x-table.th style="width: 10ch">Kelas</x-table.th>
                     <x-table.th style="width: 10ch">No. RM</x-table.th>

@@ -4,6 +4,7 @@ namespace App\Models\Perawatan;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class RegistrasiPasien extends Model
@@ -169,20 +170,10 @@ class RegistrasiPasien extends Model
         $subQueryTglDanJamPerawatan = function ($query) use ($statusPerawatan, $tglAwal, $tglAkhir, $jamAwal, $jamAkhir) {
             switch (Str::snake($statusPerawatan)) {
                 case 'tanggal_masuk':
-                    return $query->whereBetween('kamar_inap.tgl_masuk', [$tglAwal, $tglAkhir])
-                        ->where(
-                            fn ($query) => $query
-                                ->where('kamar_inap.jam_masuk', '>=', $jamAwal)
-                                ->orWhere('kamar_inap.jam_masuk', '<=', $jamAkhir)
-                        );
+                    return $query->whereBetween(DB::raw("concat(kamar_inap.tgl_masuk, ' ', kamar_inap.jam_masuk)"), ["{$tglAwal} {$jamAwal}", "{$tglAkhir} {$jamAkhir}"]);
 
                 case 'tanggal_keluar':
-                    return $query->whereBetween('kamar_inap.tgl_keluar', [$tglAwal, $tglAkhir])
-                        ->where(
-                            fn ($query) => $query
-                                ->where('kamar_inap.jam_keluar', '>=', $jamAwal)
-                                ->orWhere('kamar_inap.jam_keluar', '<=', $jamAkhir)
-                        );
+                    return $query->whereBetween(DB::raw("concat(kamar_inap.tgl_keluar, ' ', kamar_inap.jam_keluar)"), ["{$tglAwal} {$jamAwal}", "{$tglAkhir} {$jamAkhir}"]);
             }
         };
 
@@ -194,19 +185,21 @@ class RegistrasiPasien extends Model
                     ->select('no_rawat')
                     ->from('kamar_inap')
                     ->where('stts_pulang', 'Pindah Kamar')),
-                fn (Builder $query) => $query->whereNotIn('reg_periksa.no_rawat', fn ($query) => $query
-                    ->select('no_rawat')
-                    ->from('kamar_inap')
-                    ->where('stts_pulang', 'Pindah Kamar')
-                    ->when(!empty($statusPerawatan), function ($query) use ($statusPerawatan, $tglAwal) {
-                        switch (Str::snake($statusPerawatan)) {
-                            case 'tanggal_masuk':
-                                return $query->where('kamar_inap.tgl_masuk', '<=', $tglAwal);
+                fn (Builder $query) => $query
+                    ->where('kamar_inap.stts_pulang', '!=', 'Pindah Kamar')
+                    ->whereNotIn('reg_periksa.no_rawat', fn ($query) => $query
+                        ->select('no_rawat')
+                        ->from('kamar_inap')
+                        ->where('stts_pulang', 'Pindah Kamar')
+                        ->when(!empty($statusPerawatan), function ($query) use ($statusPerawatan, $tglAwal) {
+                            switch (Str::snake($statusPerawatan)) {
+                                case 'tanggal_masuk':
+                                    return $query->where('kamar_inap.tgl_masuk', '<=', $tglAwal);
 
-                            case 'tanggal_keluar':
-                                return $query->where('kamar_inap.tgl_keluar', '<=', $tglAwal);
-                        }
-                    })),
+                                case 'tanggal_keluar':
+                                    return $query->where('kamar_inap.tgl_keluar', '<=', $tglAwal);
+                            }
+                        })),
             )
             ->when(!empty($cari), function (Builder $query) use ($cari) {
                 return $query->whereRaw("concat(

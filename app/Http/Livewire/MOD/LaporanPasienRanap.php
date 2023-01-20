@@ -34,7 +34,7 @@ class LaporanPasienRanap extends Component
     protected $paginationTheme = 'bootstrap';
 
     protected const JAM_AWAL = '00:00:00';
-    protected const JAM_AKHIR = '00:00:00';
+    protected const JAM_AKHIR = '23:59:59';
 
     protected function queryString()
     {
