@@ -4,11 +4,11 @@
     <x-card>
         <x-slot name="header">
             <x-card.row-col>
-                <x-filter.toggle model="pasienPindahKamar" title="Tampilkan Pasien Pindah Kamar" />
+                <x-filter.toggle model="riwayatPindahKamar" title="Tampilkan Riwayat Pindah Kamar Pasien" />
                 <x-filter.button-export-excel class="ml-auto" />
             </x-card.row-col>
             <x-card.row-col class="mt-2">
-                <x-filter.range-datetime />
+                <x-filter.date />
                 <x-filter.select-perpage class="pr-3 ml-auto" :constantWidth="false" />
             </x-card.row-col>
             <x-card.row-col class="mt-2">

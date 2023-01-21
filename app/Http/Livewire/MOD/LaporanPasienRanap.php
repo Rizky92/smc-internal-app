@@ -19,34 +19,22 @@ class LaporanPasienRanap extends Component
 
     public $perpage;
 
-    public $tglAwal;
-
-    public $tglAkhir;
-
-    public $jamAwal;
-
-    public $jamAkhir;
+    public $tanggal;
 
     public $statusPerawatan;
 
-    public $pasienPindahKamar;
+    public $riwayatPindahKamar;
 
     protected $paginationTheme = 'bootstrap';
-
-    protected const JAM_AWAL = '00:00:00';
-    protected const JAM_AKHIR = '23:59:59';
 
     protected function queryString()
     {
         return [
             'cari' => ['except' => ''],
             'perpage' => ['except' => 25],
-            'tglAwal' => ['except' => now()->subDay()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
-            'jamAwal' => ['except' => $this::JAM_AWAL, 'as' => 'jam_awal'],
-            'jamAkhir' => ['except' => $this::JAM_AKHIR, 'as' => 'jam_akhir'],
+            'tanggal' => ['except' => now()->format('Y-m-d')],
             'statusPerawatan' => ['except' => 'tanggal_masuk', 'as' => 'status_perawatan'],
-            'pasienPindahKamar' => ['except' => false, 'as' => 'pindah_kamar'],
+            'riwayatPindahKamar' => ['except' => false, 'as' => 'pindah_kamar'],
         ];
     }
 
@@ -58,15 +46,11 @@ class LaporanPasienRanap extends Component
     public function getDaftarPasienRanapProperty()
     {
         return RegistrasiPasien::query()
-            ->selectLaporanPasienRanap()
-            ->filterLaporanPasienRanap(
+            ->laporanPasienRanap(
                 $this->cari,
-                $this->tglAwal,
-                $this->tglAkhir,
-                $this->jamAwal,
-                $this->jamAkhir,
+                $this->tanggal,
                 $this->statusPerawatan,
-                $this->pasienPindahKamar
+                $this->riwayatPindahKamar
             )
             ->orderByColumnsFilterLaporanPasienRanap($this->statusPerawatan)
             ->paginate($this->perpage);
@@ -82,29 +66,22 @@ class LaporanPasienRanap extends Component
     {
         $this->cari = '';
         $this->perpage = 25;
-        $this->tglAwal = now()->subDay()->format('Y-m-d');
-        $this->tglAkhir = now()->format('Y-m-d');
-        $this->jamAwal = $this::JAM_AWAL;
-        $this->jamAkhir = $this::JAM_AKHIR;
+        $this->tanggal = now()->format('Y-m-d');
         $this->statusPerawatan = 'tanggal_masuk';
-        $this->pasienPindahKamar = false;
+        $this->riwayatPindahKamar = false;
     }
 
     protected function dataPerSheet(): array
     {
         return [
             RegistrasiPasien::query()
-                ->selectLaporanPasienRanap()
-                ->filterLaporanPasienRanap(
+                ->laporanPasienRanap(
                     '',
-                    $this->tglAwal,
-                    $this->tglAkhir,
-                    $this->jamAwal,
-                    $this->jamAkhir,
+                    $this->tanggal,
                     $this->statusPerawatan,
-                    $this->pasienPindahKamar
+                    $this->riwayatPindahKamar
                 )
-                ->orderBy('no_rawat')
+                ->orderByColumnsFilterLaporanPasienRanap($this->statusPerawatan)
                 ->get(),
         ];
     }
@@ -136,7 +113,7 @@ class LaporanPasienRanap extends Component
         return [
             'RS Samarinda Medika Citra',
             'Laporan Pasien Masuk Rawat Inap',
-            Carbon::parse($this->tglAwal)->format('d F Y'),
+            Carbon::parse($this->tanggal)->format('d F Y'),
         ];
     }
 }
