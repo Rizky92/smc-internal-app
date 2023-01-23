@@ -46,7 +46,8 @@ class LaporanPasienRanap extends Component
     public function getDaftarPasienRanapProperty()
     {
         return RegistrasiPasien::query()
-            ->laporanPasienRanap(
+            ->selectLaporanPasienRanap()
+            ->filterLaporanPasienRanap(
                 $this->cari,
                 $this->tanggal,
                 $this->statusPerawatan,
