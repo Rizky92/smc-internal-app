@@ -53,7 +53,7 @@ class LaporanPasienRanap extends Component
                 $this->statusPerawatan,
                 $this->riwayatPindahKamar
             )
-            ->orderByColumnsFilterLaporanPasienRanap($this->statusPerawatan)
+            ->urutkanLaporanPasienRanapBerdasarkan($this->statusPerawatan)
             ->paginate($this->perpage);
     }
 
@@ -76,13 +76,9 @@ class LaporanPasienRanap extends Component
     {
         return [
             RegistrasiPasien::query()
-                ->laporanPasienRanap(
-                    '',
-                    $this->tanggal,
-                    $this->statusPerawatan,
-                    $this->riwayatPindahKamar
-                )
-                ->orderByColumnsFilterLaporanPasienRanap($this->statusPerawatan)
+                ->selectLaporanPasienRanap(true)
+                ->filterLaporanPasienRanap('', $this->tanggal, $this->statusPerawatan, $this->riwayatPindahKamar)
+                ->urutkanLaporanPasienRanapBerdasarkan($this->statusPerawatan)
                 ->get(),
         ];
     }

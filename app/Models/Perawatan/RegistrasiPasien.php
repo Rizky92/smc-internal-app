@@ -117,36 +117,28 @@ class RegistrasiPasien extends Model
             });
     }
 
-    public function scopeSelectLaporanPasienRanap(Builder $query, string $statusPerawatan = 'tanggal_masuk', bool $exportToExcel = false): Builder
+    public function scopeSelectLaporanPasienRanap(Builder $query, bool $exportToExcel = false): Builder
     {
-        $sqlSelect = collect([
-            0  => "reg_periksa.no_rawat",
-            1  => "reg_periksa.tgl_registrasi",
-            2  => "reg_periksa.jam_reg",
-            3  => "concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal) ruangan",
-            4  => "kamar.kelas",
-            5  => "reg_periksa.no_rkm_medis",
-            6  => "concat(pasien.nm_pasien, ' (', reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur, ')') data_pasien",
-            7  => "penjab.png_jawab",
-            8  => "poliklinik.nm_poli",
-            9  => "dokter.nm_dokter dokter_poli",
-            10 => "kamar_inap.stts_pulang",
-            11 => "kamar_inap.tgl_masuk",
-            12 => "kamar_inap.jam_masuk",
-            13 => "if(kamar_inap.tgl_keluar = '0000-00-00', '-', kamar_inap.tgl_keluar) tgl_keluar",
-            14 => "if(kamar_inap.jam_keluar = '00:00:00', '-', kamar_inap.jam_keluar) jam_keluar",
-            15 => "( SELECT dokter.nm_dokter FROM dokter JOIN dpjp_ranap ON dpjp_ranap.kd_dokter = dokter.kd_dokter WHERE dpjp_ranap.no_rawat = reg_periksa.no_rawat LIMIT 1 ) nama_dokter",
-        ]);
+        $sqlSelect = "
+            reg_periksa.no_rawat,
+            reg_periksa.tgl_registrasi,
+            reg_periksa.jam_reg,
+            concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal) ruangan,
+            kamar.kelas,
+            reg_periksa.no_rkm_medis,
+            concat(pasien.nm_pasien, ' (', reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur, ')') data_pasien,
+            penjab.png_jawab,
+            poliklinik.nm_poli,
+            dokter.nm_dokter dokter_poli,
+            kamar_inap.stts_pulang,
+            kamar_inap.tgl_masuk,
+            kamar_inap.jam_masuk,
+            if(kamar_inap.tgl_keluar = '0000-00-00', '-', kamar_inap.tgl_keluar) tgl_keluar,
+            if(kamar_inap.jam_keluar = '00:00:00', '-', kamar_inap.jam_keluar) jam_keluar,
+            ( SELECT dokter.nm_dokter FROM dokter JOIN dpjp_ranap ON dpjp_ranap.kd_dokter = dokter.kd_dokter WHERE dpjp_ranap.no_rawat = reg_periksa.no_rawat LIMIT 1 ) nama_dokter
+        ";
 
-        if ($statusPerawatan === 'tanggal_masuk') {
-            $sqlSelect = $sqlSelect->replace([11 => 'max(kamar_inap.tgl_masuk) tgl_masuk']);
-        }
-
-        if ($statusPerawatan === 'tanggal_keluar') {
-            $sqlSelect = $sqlSelect->replace([12 => "if(kamar_inap.tgl_keluar = '0000-00-00', '-', max(kamar_inap.tgl_keluar)) tgl_keluar"]);
-        }
-
-        return $query->selectRaw($sqlSelect->join(', '))
+        return $query->selectRaw($sqlSelect)
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join('kamar_inap', 'reg_periksa.no_rawat', '=', 'kamar_inap.no_rawat')
             ->join('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
@@ -165,22 +157,11 @@ class RegistrasiPasien extends Model
         string $cari = '',
         string $tanggal = '',
         string $statusPerawatan = 'tanggal_masuk',
-        bool $riwayatPindahKamar = false
+        bool $hanyaPasienBaru = false
     ): Builder {
         if (empty($tanggal)) {
             $tanggal = now()->format('Y-m-d');
         }
-
-        $subQueryTglPerawatan = function ($query) use ($statusPerawatan, $tanggal) {
-            switch (Str::snake($statusPerawatan)) {
-                case 'tanggal_masuk':
-                    return $query
-                        ->whereBetween('kamar_inap.tgl_masuk', [$tanggal, $tanggal]);
-                case 'tanggal_keluar':
-                    return $query
-                        ->whereBetween('kamar_inap.tgl_keluar', [$tanggal, $tanggal]);
-            }
-        };
 
         return $query
             ->when(!empty($cari), fn (Builder $query) => $query->whereRaw(
@@ -207,21 +188,29 @@ class RegistrasiPasien extends Model
                 ) like ?",
                 "%{$cari}%"
             ))
-            ->when(!empty($statusPerawatan), $subQueryTglPerawatan)
+            ->where(function (Builder $query) use ($statusPerawatan, $tanggal) {
+                switch (Str::snake($statusPerawatan)) {
+                    case 'tanggal_masuk':
+                        return $query->whereBetween('kamar_inap.tgl_masuk', [$tanggal, $tanggal]);
+                    case 'tanggal_keluar':
+                        return $query->whereBetween('kamar_inap.tgl_keluar', [$tanggal, $tanggal]);
+                }
+            })
             ->when(
-                !$riwayatPindahKamar,
+                !$hanyaPasienBaru,
                 fn (Builder $query) => $query
-                    ->whereNotIn('reg_periksa.no_rawat', fn (QueryBuilder $query) => $query
-                        ->select('no_rawat')
-                        ->from('kamar_inap')
-                        ->where('stts_pulang', 'Pindah Kamar')
-                        ->groupBy('no_rawat')
-                        ->havingRaw('min(tgl_masuk) < ?', [$tanggal]))
-            )
-            ->groupBy('reg_periksa.no_rawat');
+                    ->where('stts_pulang', '!=', 'Pindah Kamar')
+                    ->whereNotIn(
+                        'reg_periksa.no_rawat',
+                        fn (QueryBuilder $query) => $query
+                            ->select('no_rawat')
+                            ->from('kamar_inap')
+                            ->where('stts_pulang', 'Pindah Kamar')
+                    ),
+            );
     }
 
-    public function scopeOrderByColumnsFilterLaporanPasienRanap(Builder $query, string $statusPerawatan = ''): Builder
+    public function scopeUrutkanLaporanPasienRanapBerdasarkan(Builder $query, string $statusPerawatan = 'tanggal_masuk'): Builder
     {
         return $query
             ->orderBy('no_rawat')
