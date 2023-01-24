@@ -16,8 +16,8 @@ use App\Http\Livewire\Keuangan\RekapPiutangPasien;
 use App\Http\Livewire\Keuangan\StokObatRuangan;
 use App\Http\Livewire\Logistik\InputMinmaxStok;
 use App\Http\Livewire\Logistik\StokDaruratLogistik;
-use App\Http\Livewire\MOD\LaporanPasienRanap;
 use App\Http\Livewire\Perawatan\DaftarPasienRanap;
+use App\Http\Livewire\Perawatan\LaporanPasienRanap;
 use App\Http\Livewire\RekamMedis\LaporanDemografi;
 use App\Http\Livewire\RekamMedis\LaporanStatistik;
 use App\Http\Livewire\User\ManajemenUser;
@@ -51,20 +51,16 @@ Route::prefix('admin')
     ->group(function () {
         Route::get('/', DashboardController::class)->name('dashboard');
 
-        Route::prefix('mod')
-            ->as('mod.')
-            ->group(function () {
-                Route::get('laporan-pasien-ranap', LaporanPasienRanap::class)
-                    ->middleware('can:mod.laporan-pasien-ranap.read')
-                    ->name('laporan-pasien-ranap');
-            });
-
         Route::prefix('perawatan')
             ->as('perawatan.')
             ->group(function () {
                 Route::get('daftar-pasien-ranap', DaftarPasienRanap::class)
                     ->middleware('can:perawatan.daftar-pasien-ranap.read')
                     ->name('daftar-pasien-ranap');
+
+                Route::get('laporan-pasien-ranap', LaporanPasienRanap::class)
+                    ->middleware('can:mod.laporan-pasien-ranap.read')
+                    ->name('laporan-pasien-ranap');
             });
 
         Route::prefix('keuangan')

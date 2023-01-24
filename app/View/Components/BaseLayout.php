@@ -47,23 +47,23 @@ class BaseLayout extends Component
                 'type' => 'link',
                 'hasAnyPermissions' => true,
             ],
-            [
-                'name' => 'MOD',
-                'icon' => 'far fa-circle',
-                'type' => 'dropdown',
-                'hasAnyPermissions' => $user->canAny([
-                    'mod.laporan-pasien-ranap.read',
-                ]),
-                'items' => [
-                    [
-                        'name' => 'Laporan Pasien Ranap',
-                        'url' => route('admin.mod.laporan-pasien-ranap'),
-                        'icon' => "fas fa-procedures",
-                        'type' => 'link',
-                        'hasAnyPermissions' => $user->can('mod.laporan-pasien-ranap.read'),
-                    ],
-                ]
-            ],
+            // [
+            //     'name' => 'MOD',
+            //     'icon' => 'far fa-circle',
+            //     'type' => 'dropdown',
+            //     'hasAnyPermissions' => $user->canAny([
+            //         'mod.laporan-pasien-ranap.read',
+            //     ]),
+            //     'items' => [
+            //         [
+            //             'name' => 'Laporan Pasien Ranap',
+            //             'url' => route('admin.mod.laporan-pasien-ranap'),
+            //             'icon' => "fas fa-procedures",
+            //             'type' => 'link',
+            //             'hasAnyPermissions' => $user->can('mod.laporan-pasien-ranap.read'),
+            //         ],
+            //     ]
+            // ],
             [
                 'name' => 'Perawatan',
                 'icon' => 'far fa-circle',
@@ -78,6 +78,16 @@ class BaseLayout extends Component
                         'icon' => "fas fa-procedures",
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('perawatan.daftar-pasien-ranap.read'),
+                    ],
+                    [
+                        'name' => 'Laporan Pasien Ranap',
+                        'url' => route('admin.perawatan.laporan-pasien-ranap'),
+                        'icon' => "fas fa-newspaper",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->canAny([
+                            'mod.laporan-pasien-ranap.read',
+                            'perawatan.laporan-pasien-ranap.read',
+                        ]),
                     ],
                 ]
             ],

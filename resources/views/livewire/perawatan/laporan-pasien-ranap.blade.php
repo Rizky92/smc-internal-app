@@ -4,21 +4,19 @@
     <x-card>
         <x-slot name="header">
             <x-card.row-col>
-                <x-filter.toggle model="riwayatPindahKamar" title="Tampilkan Riwayat Pindah Kamar Pasien" />
+                <x-filter.date />
+                <x-filter.toggle class="ml-3" model="tampilkanSemuaPasienPerTanggal" title="Tampilkan Semua Pasien" />
                 <x-filter.button-export-excel class="ml-auto" />
             </x-card.row-col>
             <x-card.row-col class="mt-2">
-                <x-filter.date />
-                <x-filter.select-perpage class="pr-3 ml-auto" :constantWidth="false" />
-            </x-card.row-col>
-            <x-card.row-col class="mt-2">
-                <x-filter.label constant-width>Per:</x-filter.label>
+                <x-filter.select-perpage :constantWidth="true" />
+                {{-- <x-filter.label constant-width>Per:</x-filter.label>
                 <div class="input-group input-group-sm" style="width: 10rem">
                     <x-filter.select model="statusPerawatan" :options="[
                         'tanggal_masuk' => 'Tgl. Masuk Ranap',
                         'tanggal_keluar' => 'Tgl. Keluar Ranap',
                     ]" />
-                </div>
+                </div> --}}
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search />
             </x-card.row-col>
@@ -62,7 +60,7 @@
                             <x-table.td>{{ $pasien->jam_masuk }}</x-table.td>
                             <x-table.td>{{ $pasien->tgl_keluar }}</x-table.td>
                             <x-table.td>{{ $pasien->jam_keluar }}</x-table.td>
-                            <x-table.td>{{ $pasien->nama_dokter }}</x-table.td>
+                            <x-table.td>{{ $pasien->dpjp }}</x-table.td>
                         </x-table.tr>
                     @endforeach
                 </x-slot>

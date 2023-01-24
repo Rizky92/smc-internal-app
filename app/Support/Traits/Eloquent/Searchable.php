@@ -3,6 +3,7 @@
 namespace App\Support\Traits\Eloquent;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use LogicException;
 
@@ -18,6 +19,10 @@ trait Searchable
      */
     public function scopeSearch(Builder $query, string $search, $columns = []): Builder
     {
+        if (property_exists($this, 'searchColumns') && is_array($this->searchColumns)) {
+            $columns = array_merge($columns, $this->searchColumns);
+        }
+
         if (method_exists($this, 'searchColumns')) {
             $columns = array_merge($columns, $this->searchColumns());
         }
@@ -28,13 +33,10 @@ trait Searchable
 
         $search = Str::lower($search);
 
-        return $query->where(function (Builder $query) use ($columns, $search) {
-            $query->where(array_shift($columns), 'LIKE', "%{$search}%");
-            foreach ($columns as $column) {
-                $query->orWhere($column, 'LIKE', "%{$search}%");
-            }
+        $concatenatedColumns = 'concat(' . collect($columns)->join(", ' ', ") . ')';
 
-            return $query;
+        return $query->where(function (Builder $query) use ($concatenatedColumns, $search) {
+            return $query->where(DB::raw($concatenatedColumns), 'LIKE', "%{$search}%");
         });
     }
 }
