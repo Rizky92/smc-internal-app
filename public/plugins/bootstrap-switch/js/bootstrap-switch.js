@@ -17,7 +17,7 @@
       exports: {}
     };
     factory(global.jquery);
-    global.bootstrapSwitch = mod.exports;
+    global.bootstrapSwitch = perawatan.exports;
   }
 })(this, function (_jquery) {
   'use strict';
@@ -778,7 +778,7 @@
     labelWidth: 'auto',
     baseClass: 'bootstrap-switch',
     wrapperClass: 'wrapper',
-    onInit: function onInit() {},
-    onSwitchChange: function onSwitchChange() {}
+    onInit: function onInit() { },
+    onSwitchChange: function onSwitchChange() { }
   };
 });

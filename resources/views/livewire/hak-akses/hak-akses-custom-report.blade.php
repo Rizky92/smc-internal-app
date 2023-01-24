@@ -37,48 +37,31 @@
         @endpush
     @endonce
 
-    <div class="modal fade" id="permission-modal">
-        <div class="modal-dialog modal-dialog-scrollable modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Set perizinan per hak akses</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+    <x-modal :livewire="true" id="modal-role-permissions" title="Set Permission untuk Role">
+        <x-slot name="body" class="position-relative py-0">
+            <x-row-col class="sticky-top bg-white py-3 mx-0">
+                <div class="d-flex justify-content-start align-items-center">
+                    <label for="cari_permission" class="pr-5 mt-1 text-sm">Cari permission: </label>
+                    <input type="text" wire:model.defer="searchPermissions" id="cari_permission" class="form-control form-control-sm w-50">
                 </div>
-                <div class="modal-body position-relative py-0">
-                    <div class="row sticky-top bg-white py-3 px-3 mx-0">
-                        <div class="col-12">
-                            <div class="d-flex justify-content-start align-items-center">
-                                <label for="cari_permission" class="pr-2 mt-1 text-sm">Cari permission: </label>
-                                <input type="text" wire:model.defer="searchPermissions" id="cari_permission" class="form-control form-control-sm w-50">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <ul class="form-group" id="role_permissions">
-                                <input type="hidden" name="role" class="d-none">
-                                @foreach ($this->permissions as $key => $name)
-                                    <li class="custom-control custom-checkbox">
-                                        <input class="custom-control-input" type="checkbox" id="permission-{{ $key }}" value="{{ $key }}" name="permissions">
-                                        <label for="permission-{{ $key }}" class="custom-control-label font-weight-normal">{{ $name }}</label>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer justify-content-end">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" id="batalsimpan">Batal</button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="simpandata">
-                        <i class="fas fa-save"></i>
-                        <span class="ml-1">Simpan</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+            </x-row-col>
+            <x-row-col>
+                <ul class="form-group" id="role_permissions">
+                    <input type="hidden" name="role" class="d-none">
+                    @foreach ($this->permissions as $key => $name)
+                        <li class="custom-control custom-checkbox">
+                            <input class="custom-control-input" type="checkbox" id="permission-{{ $key }}" value="{{ $key }}" name="permissions">
+                            <label for="permission-{{ $key }}" class="custom-control-label font-weight-normal">{{ $name }}</label>
+                        </li>
+                    @endforeach
+                </ul>
+            </x-row-col>
+        </x-slot>
+        <x-slot name="footer" class="justify-content-end">
+            <x-button class="btn-default" data-dismiss="modal" id="batalsimpan" title="Batal" />
+            <x-button class="btn-primary" data-dismiss="modal" id="simpandata" title="Simpan" icon="fas fa-save" />
+        </x-slot>
+    </x-modal>
 
     <x-card>
         <x-slot name="header">
@@ -100,12 +83,12 @@
                         <x-table.tr :class="Arr::toCssClasses(['text-muted' => $role->name == config('permission.superadmin_name')])">
                             <x-table.td>
                                 {{ $role->name }}
-                                @unless ($role->name == config('permission.superadmin_name'))
-                                    <x-slot name="clickable" data-role-id="{{ $role->id }}" data-permission-ids="{{ $role->permissions->pluck('id')->join(',') }}" data-toggle="modal" data-target="#permission-modal"></x-slot>
+                                @unless($role->name == config('permission.superadmin_name'))
+                                    <x-slot name="clickable" data-role-id="{{ $role->id }}" data-permission-ids="{{ $role->permissions->pluck('id')->join(',') }}" data-toggle="modal" data-target="#modal-role-permissions"></x-slot>
                                 @endunless
                             </x-table.td>
                             <x-table.td>
-                                @unless ($role->name === config('permission.superadmin_name'))    
+                                @unless($role->name === config('permission.superadmin_name'))
                                     @foreach ($role->permissions as $permission)
                                         @php($br = !$loop->last ? '<br>' : '')
                                         {{ $permission->name }} {!! $br !!}

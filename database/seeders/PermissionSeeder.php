@@ -68,7 +68,7 @@ class PermissionSeeder extends Seeder
         ];
 
         $MODPermissions = [
-            Permission::create(['name' => 'mod.laporan-pasien-ranap.read', 'guard_name' => 'web']),
+            Permission::create(['name' => 'perawatan.laporan-pasien-ranap.read', 'guard_name' => 'web']),
         ];
 
         // Superadmin role name, bypasses all permissions

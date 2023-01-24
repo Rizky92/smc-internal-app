@@ -59,7 +59,7 @@ Route::prefix('admin')
                     ->name('daftar-pasien-ranap');
 
                 Route::get('laporan-pasien-ranap', LaporanPasienRanap::class)
-                    ->middleware('can:mod.laporan-pasien-ranap.read')
+                    ->middleware('can:perawatan.laporan-pasien-ranap.read')
                     ->name('laporan-pasien-ranap');
             });
 

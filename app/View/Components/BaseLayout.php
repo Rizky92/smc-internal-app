@@ -47,29 +47,13 @@ class BaseLayout extends Component
                 'type' => 'link',
                 'hasAnyPermissions' => true,
             ],
-            // [
-            //     'name' => 'MOD',
-            //     'icon' => 'far fa-circle',
-            //     'type' => 'dropdown',
-            //     'hasAnyPermissions' => $user->canAny([
-            //         'mod.laporan-pasien-ranap.read',
-            //     ]),
-            //     'items' => [
-            //         [
-            //             'name' => 'Laporan Pasien Ranap',
-            //             'url' => route('admin.mod.laporan-pasien-ranap'),
-            //             'icon' => "fas fa-procedures",
-            //             'type' => 'link',
-            //             'hasAnyPermissions' => $user->can('mod.laporan-pasien-ranap.read'),
-            //         ],
-            //     ]
-            // ],
             [
                 'name' => 'Perawatan',
                 'icon' => 'far fa-circle',
                 'type' => 'dropdown',
                 'hasAnyPermissions' => $user->canAny([
                     'perawatan.daftar-pasien-ranap.read',
+                    'perawatan.laporan-pasien-ranap.read',
                 ]),
                 'items' => [
                     [
@@ -84,10 +68,7 @@ class BaseLayout extends Component
                         'url' => route('admin.perawatan.laporan-pasien-ranap'),
                         'icon' => "fas fa-newspaper",
                         'type' => 'link',
-                        'hasAnyPermissions' => $user->canAny([
-                            'mod.laporan-pasien-ranap.read',
-                            'perawatan.laporan-pasien-ranap.read',
-                        ]),
+                        'hasAnyPermissions' => $user->can('perawatan.laporan-pasien-ranap.read'),
                     ],
                 ]
             ],
@@ -219,7 +200,6 @@ class BaseLayout extends Component
                 'type' => 'dropdown',
                 'hasAnyPermissions' => $user->hasRole($su),
                 'items' => [
-                    
                     [
                         'name' => 'Khanza',
                         'url' => route('admin.hak-akses.khanza'),
