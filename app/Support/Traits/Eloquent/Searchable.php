@@ -3,7 +3,6 @@
 namespace App\Support\Traits\Eloquent;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use LogicException;
 
@@ -37,7 +36,7 @@ trait Searchable
 
         return $query->when(
             !empty($search),
-            fn (Builder $query) => $query->where(fn (Builder $query) => $query->whereRaw("{$concatenatedColumns} like ?", ["%{$search}%"]))
+            fn (Builder $query) => $query->whereRaw("{$concatenatedColumns} like ?", ["%{$search}%"])
         );
     }
 }
