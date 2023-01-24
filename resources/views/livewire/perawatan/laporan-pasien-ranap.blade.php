@@ -25,22 +25,22 @@
         <x-slot name="body" class="table-responsive">
             <x-table style="width: 160rem">
                 <x-slot name="columns">
-                    <x-table.th style="width: 20ch">No. Rawat</x-table.th>
-                    <x-table.th style="width: 15ch">Tgl. Registrasi</x-table.th>
-                    <x-table.th style="width: 15ch">Jam Registrasi</x-table.th>
-                    <x-table.th style="width: 35ch">Kamar</x-table.th>
-                    <x-table.th style="width: 10ch">Kelas</x-table.th>
-                    <x-table.th style="width: 10ch">No. RM</x-table.th>
-                    <x-table.th style="width: 50ch">Pasien</x-table.th>
-                    <x-table.th style="width: 25ch">Jenis Bayar</x-table.th>
-                    <x-table.th style="width: 20ch">Asal Poli</x-table.th>
-                    <x-table.th style="width: 40ch">Dokter Poli</x-table.th>
-                    <x-table.th style="width: 15ch">Status</x-table.th>
-                    <x-table.th style="width: 12ch">Tgl. Masuk</x-table.th>
-                    <x-table.th style="width: 12ch">Jam Masuk</x-table.th>
-                    <x-table.th style="width: 12ch">Tgl. Keluar</x-table.th>
-                    <x-table.th style="width: 12ch">Jam Keluar</x-table.th>
-                    <x-table.th style="width: 40ch">DPJP</x-table.th>
+                    <x-table.th sortable style="width: 20ch">No. Rawat</x-table.th>
+                    <x-table.th sortable style="width: 15ch">Tgl. Registrasi</x-table.th>
+                    <x-table.th sortable style="width: 15ch">Jam Registrasi</x-table.th>
+                    <x-table.th sortable style="width: 35ch">Kamar</x-table.th>
+                    <x-table.th sortable style="width: 10ch">Kelas</x-table.th>
+                    <x-table.th sortable style="width: 10ch">No. RM</x-table.th>
+                    <x-table.th sortable style="width: 50ch">Pasien</x-table.th>
+                    <x-table.th sortable style="width: 25ch">Jenis Bayar</x-table.th>
+                    <x-table.th sortable style="width: 20ch">Asal Poli</x-table.th>
+                    <x-table.th sortable style="width: 40ch">Dokter Poli</x-table.th>
+                    <x-table.th sortable style="width: 15ch">Status</x-table.th>
+                    <x-table.th sortable style="width: 12ch">Tgl. Masuk</x-table.th>
+                    <x-table.th sortable style="width: 12ch">Jam Masuk</x-table.th>
+                    <x-table.th sortable style="width: 12ch">Tgl. Keluar</x-table.th>
+                    <x-table.th sortable style="width: 12ch">Jam Keluar</x-table.th>
+                    <x-table.th sortable style="width: 40ch">DPJP</x-table.th>
                 </x-slot>
                 <x-slot name="body">
                     @foreach ($this->daftarPasienRanap as $pasien)

@@ -60,7 +60,7 @@
             </x-card.row-col>
         </x-slot>
         <x-slot name="body" class="table-responsive">
-            <x-table style="width: 100rem">
+            <x-table style="min-width: 100%; width: 100rem">
                 <x-slot name="columns">
                     <x-table.th>No. Rawat</x-table.th>
                     <x-table.th>Pasien</x-table.th>

@@ -51,12 +51,8 @@ class RekapPiutangPasien extends Component
 
     public function getPiutangPasienProperty()
     {
-        return PiutangPasien::rekapPiutangPasien(
-            $this->periodeAwal,
-            $this->periodeAkhir,
-            $this->caraBayar,
-            $this->cari
-        )
+        return PiutangPasien::query()
+            ->rekapPiutangPasien($this->periodeAwal, $this->periodeAkhir, $this->caraBayar, $this->cari)
             ->orderBy('penjab.png_jawab')
             ->paginate($this->perpage);
     }
@@ -76,6 +72,15 @@ class RekapPiutangPasien extends Component
     {
         return view('livewire.keuangan.rekap-piutang-pasien')
             ->layout(BaseLayout::class, ['title' => 'Rekap Data Tagihan Piutang Pasien']);
+    }
+    
+    protected function defaultValues()
+    {
+        $this->cari = '';
+        $this->perpage = 25;
+        $this->caraBayar = '';
+        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     protected function dataPerSheet()
@@ -127,14 +132,5 @@ class RekapPiutangPasien extends Component
             'Rekap Data Tagihan Piutang Pasien',
             now()->format('d F Y'),
         ];
-    }
-
-    protected function defaultValues()
-    {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->caraBayar = '';
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 }

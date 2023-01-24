@@ -21,7 +21,7 @@ class ReturSupplierObat extends Model
     {
         return $query->selectRaw("
             ceil(sum(detreturbeli.total)) jumlah,
-            month(returbeli.tgl_retur) total
+            month(returbeli.tgl_retur) bulan
         ")
             ->leftJoin('detreturbeli', 'returbeli.no_retur_beli', '=', 'detreturbeli.no_retur_beli')
             ->whereBetween('returbeli.tgl_retur', ["{$year}-01-01", "{$year}-12-31"])

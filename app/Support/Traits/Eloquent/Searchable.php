@@ -35,8 +35,9 @@ trait Searchable
 
         $concatenatedColumns = 'concat(' . collect($columns)->join(", ' ', ") . ')';
 
-        return $query->where(function (Builder $query) use ($concatenatedColumns, $search) {
-            return $query->where(DB::raw($concatenatedColumns), 'LIKE', "%{$search}%");
-        });
+        return $query->when(
+            !empty($search),
+            fn (Builder $query) => $query->where(fn (Builder $query) => $query->whereRaw("{$concatenatedColumns} like ?", ["%{$search}%"]))
+        );
     }
 }

@@ -5,7 +5,7 @@
 ])
 
 <div>
-    <ul class="nav nav-tabs nav-fill border-bottom-0" role="tablist">
+    <ul class="nav nav-pills border-bottom-0 px-3" role="tablist" style="gap: 0.5rem">
         {{ $tabs }}
     </ul>
     <div class="tab-content">

@@ -1214,26 +1214,26 @@
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",
-            "version": "2.6.5",
+            "version": "2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kirschbaum-development/eloquent-power-joins.git",
-                "reference": "e69c88349f89639a8d83f66741a2b31cf6baba4d"
+                "reference": "be1b04e754db238e0e07a18ae595cd7594c68a1d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kirschbaum-development/eloquent-power-joins/zipball/e69c88349f89639a8d83f66741a2b31cf6baba4d",
-                "reference": "e69c88349f89639a8d83f66741a2b31cf6baba4d",
+                "url": "https://api.github.com/repos/kirschbaum-development/eloquent-power-joins/zipball/be1b04e754db238e0e07a18ae595cd7594c68a1d",
+                "reference": "be1b04e754db238e0e07a18ae595cd7594c68a1d",
                 "shasum": ""
             },
             "require": {
-                "illuminate/database": "^6.0|^7.0|^8.0|^9.0",
-                "illuminate/support": "^6.0|^7.0|^8.0|^9.0",
+                "illuminate/database": "^6.0|^7.0|^8.0|^9.0|^10.0",
+                "illuminate/support": "^6.0|^7.0|^8.0|^9.0|^10.0",
                 "php": "^7.1|^8.0"
             },
             "require-dev": {
                 "laravel/legacy-factories": "^1.0@dev",
-                "orchestra/testbench": "4.*|5.*|6.*|7.*",
+                "orchestra/testbench": "^4.0|^5.0|^6.0|^7.0|^8.0",
                 "phpunit/phpunit": "^8.0|^9.0"
             },
             "type": "library",
@@ -1270,9 +1270,9 @@
             ],
             "support": {
                 "issues": "https://github.com/kirschbaum-development/eloquent-power-joins/issues",
-                "source": "https://github.com/kirschbaum-development/eloquent-power-joins/tree/2.6.5"
+                "source": "https://github.com/kirschbaum-development/eloquent-power-joins/tree/2.7.0"
             },
-            "time": "2022-12-09T10:31:12+00:00"
+            "time": "2023-01-23T11:00:47+00:00"
         },
         {
             "name": "laravel/framework",
@@ -2895,16 +2895,16 @@
         },
         {
             "name": "psy/psysh",
-            "version": "v0.11.10",
+            "version": "v0.11.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/psysh.git",
-                "reference": "e9eadffbed9c9deb5426fd107faae0452bf20a36"
+                "reference": "ba67f2d26278ec9266a5cfe0acba33a8ca1277ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/e9eadffbed9c9deb5426fd107faae0452bf20a36",
-                "reference": "e9eadffbed9c9deb5426fd107faae0452bf20a36",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/ba67f2d26278ec9266a5cfe0acba33a8ca1277ae",
+                "reference": "ba67f2d26278ec9266a5cfe0acba33a8ca1277ae",
                 "shasum": ""
             },
             "require": {
@@ -2965,9 +2965,9 @@
             ],
             "support": {
                 "issues": "https://github.com/bobthecow/psysh/issues",
-                "source": "https://github.com/bobthecow/psysh/tree/v0.11.10"
+                "source": "https://github.com/bobthecow/psysh/tree/v0.11.11"
             },
-            "time": "2022-12-23T17:47:18+00:00"
+            "time": "2023-01-23T16:14:59+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
