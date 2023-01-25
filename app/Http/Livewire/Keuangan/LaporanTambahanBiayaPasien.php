@@ -87,7 +87,7 @@ class LaporanTambahanBiayaPasien extends Component
             'No. RM',
             'No. Registrasi',
             'Nama Biaya',
-            'Nominal',
+            'Nominal (RP)',
             'Jenis Bayar',
             'Dokter Ralan',
             'Dokter Ranap',

@@ -32,11 +32,11 @@ trait Searchable
 
         $search = Str::lower($search);
 
-        $concatenatedColumns = 'concat(' . collect($columns)->join(", ' ', ") . ')';
+        $concatenatedColumns = 'lower(concat(' . collect($columns)->join(", ' ', ") . '))';
 
         return $query->when(
             !empty($search),
-            fn ($query) => $query->whereRaw("{$concatenatedColumns} like ?", ["%{$search}%"])
+            fn ($query) => $query->where(fn ($query) => $query->whereRaw("{$concatenatedColumns} like ?", ["%{$search}%"]))
         );
     }
 }
