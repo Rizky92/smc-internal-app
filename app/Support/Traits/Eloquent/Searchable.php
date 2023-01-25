@@ -32,7 +32,7 @@ trait Searchable
 
         $search = Str::lower($search);
 
-        $concatenatedColumns = 'lower(concat(' . collect($columns)->join(", ' ', ") . '))';
+        $concatenatedColumns = 'lower(convert(concat(' . collect($columns)->join(", ' ', ") . ') using latin1))';
 
         return $query->when(
             !empty($search),

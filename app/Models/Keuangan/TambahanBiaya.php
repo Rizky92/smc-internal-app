@@ -42,7 +42,7 @@ class TambahanBiaya extends Model
             tambahan_biaya.besar_biaya,
             penjab.png_jawab,
             dokter.nm_dokter dokter_ralan,
-            coalesce(ifnull(trim(dokter_pj.nm_dokter), ''), '-') dokter_ranap,
+            coalesce(nullif(trim(dokter_pj.nm_dokter), '-'), '-') dokter_ranap,
             poliklinik.nm_poli,
             reg_periksa.status_lanjut,
             reg_periksa.status_bayar

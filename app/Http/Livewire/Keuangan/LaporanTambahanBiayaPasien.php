@@ -45,14 +45,14 @@ class LaporanTambahanBiayaPasien extends Component
                 'tambahan_biaya.nama_biaya',
                 'penjab.png_jawab',
                 'dokter.nm_dokter',
-                'dokter_pj.nm_dokter',
+                "coalesce(nullif(trim(dokter_pj.nm_dokter), '-'), '-')",
                 'poliklinik.nm_poli',
                 'reg_periksa.status_lanjut',
                 'reg_periksa.status_bayar',
             ])
             ->sortWithColumns($this->sortColumns, [
                 'dokter_ralan' => DB::raw("dokter.nm_dokter"),
-                'dokter_ranap' => DB::raw("coalesce(ifnull(trim(dokter_pj.nm_dokter), ''), '-')"),
+                'dokter_ranap' => DB::raw("coalesce(nullif(trim(dokter_pj.nm_dokter), ''), '-')"),
             ])
             ->paginate($this->perpage);
     }
