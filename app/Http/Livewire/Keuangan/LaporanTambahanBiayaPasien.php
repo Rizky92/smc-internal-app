@@ -45,7 +45,7 @@ class LaporanTambahanBiayaPasien extends Component
                 'tambahan_biaya.nama_biaya',
                 'penjab.png_jawab',
                 'dokter.nm_dokter',
-                "coalesce(nullif(trim(dokter_pj.nm_dokter), '-'), '-')",
+                "coalesce(nullif(trim(dokter_pj.nm_dokter), ''), '-')",
                 'poliklinik.nm_poli',
                 'reg_periksa.status_lanjut',
                 'reg_periksa.status_bayar',
