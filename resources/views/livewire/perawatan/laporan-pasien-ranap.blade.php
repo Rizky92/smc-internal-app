@@ -10,37 +10,30 @@
             </x-card.row-col>
             <x-card.row-col class="mt-2">
                 <x-filter.select-perpage :constantWidth="true" />
-                {{-- <x-filter.label constant-width>Per:</x-filter.label>
-                <div class="input-group input-group-sm" style="width: 10rem">
-                    <x-filter.select model="statusPerawatan" :options="[
-                        'tanggal_masuk' => 'Tgl. Masuk Ranap',
-                        'tanggal_keluar' => 'Tgl. Keluar Ranap',
-                    ]" />
-                </div> --}}
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search />
             </x-card.row-col>
         </x-slot>
 
         <x-slot name="body" class="table-responsive">
-            <x-table style="width: 160rem">
+            <x-table style="width: 160rem" sortable :sortColumns="$sortColumns">
                 <x-slot name="columns">
-                    <x-table.th sortable style="width: 20ch">No. Rawat</x-table.th>
-                    <x-table.th sortable style="width: 15ch">Tgl. Registrasi</x-table.th>
-                    <x-table.th sortable style="width: 15ch">Jam Registrasi</x-table.th>
-                    <x-table.th sortable style="width: 35ch">Kamar</x-table.th>
-                    <x-table.th sortable style="width: 10ch">Kelas</x-table.th>
-                    <x-table.th sortable style="width: 10ch">No. RM</x-table.th>
-                    <x-table.th sortable style="width: 50ch">Pasien</x-table.th>
-                    <x-table.th sortable style="width: 25ch">Jenis Bayar</x-table.th>
-                    <x-table.th sortable style="width: 20ch">Asal Poli</x-table.th>
-                    <x-table.th sortable style="width: 40ch">Dokter Poli</x-table.th>
-                    <x-table.th sortable style="width: 15ch">Status</x-table.th>
-                    <x-table.th sortable style="width: 12ch">Tgl. Masuk</x-table.th>
-                    <x-table.th sortable style="width: 12ch">Jam Masuk</x-table.th>
-                    <x-table.th sortable style="width: 12ch">Tgl. Keluar</x-table.th>
-                    <x-table.th sortable style="width: 12ch">Jam Keluar</x-table.th>
-                    <x-table.th sortable style="width: 40ch">DPJP</x-table.th>
+                    <x-table.th name="no_rawat" title="No. Rawat" style="width: 20ch" />
+                    <x-table.th name="tgl_registrasi" title="Tgl. Registrasi" style="width: 20ch" />
+                    <x-table.th name="jam_reg" title="Jam Registrasi" style="width: 20ch" />
+                    <x-table.th name="ruangan" title="Kamar" style="width: 35ch" />
+                    <x-table.th name="kelas" title="Kelas" style="width: 10ch" />
+                    <x-table.th name="no_rkm_medis" title="No. RM" style="width: 15ch" />
+                    <x-table.th name="data_pasien" title="Pasien" style="width: 50ch" />
+                    <x-table.th name="png_jawab" title="Jenis Bayar" style="width: 25ch" />
+                    <x-table.th name="nm_poli" title="Asal Poli" style="width: 20ch" />
+                    <x-table.th name="dokter_poli" title="Dokter Poli" style="width: 40ch" />
+                    <x-table.th name="stts_pulang" title="Status" style="width: 15ch" />
+                    <x-table.th name="tgl_masuk" title="Tgl. Masuk" style="width: 15ch" />
+                    <x-table.th name="jam_masuk" title="Jam Masuk" style="width: 15ch" />
+                    <x-table.th name="tgl_keluar" title="Tgl. Keluar" style="width: 15ch" />
+                    <x-table.th name="jam_keluar" title="Jam Keluar" style="width: 15ch" />
+                    <x-table.th name="dpjp" title="DPJP" style="width: 40ch" />
                 </x-slot>
                 <x-slot name="body">
                     @foreach ($this->daftarPasienRanap as $pasien)

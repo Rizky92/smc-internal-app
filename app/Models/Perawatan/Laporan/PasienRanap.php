@@ -3,11 +3,12 @@
 namespace App\Models\Perawatan\Laporan;
 
 use App\Support\Traits\Eloquent\Searchable;
+use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Model;
 
 class PasienRanap extends Model
 {
-    use Searchable;
+    use Searchable, Sortable;
 
     protected $connection = 'mysql_smc';
 

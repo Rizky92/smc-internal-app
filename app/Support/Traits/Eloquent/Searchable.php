@@ -9,7 +9,7 @@ use LogicException;
 trait Searchable
 {
     /**
-     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder $query
      * @param  string $search
      * @param  array<int, string> $columns
      * 
@@ -36,7 +36,7 @@ trait Searchable
 
         return $query->when(
             !empty($search),
-            fn (Builder $query) => $query->whereRaw("{$concatenatedColumns} like ?", ["%{$search}%"])
+            fn ($query) => $query->whereRaw("{$concatenatedColumns} like ?", ["%{$search}%"])
         );
     }
 }

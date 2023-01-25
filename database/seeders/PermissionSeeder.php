@@ -39,6 +39,7 @@ class PermissionSeeder extends Seeder
         $keuanganPermissions = [
             Permission::create(['name' => 'keuangan.stok-obat-ruangan.read', 'guard_name' => 'web']),
             Permission::create(['name' => 'keuangan.piutang-pasien.read', 'guard_name' => 'web']),
+            Permission::create(['name' => 'keuangan.tambahan-biaya-pasien.read', 'guard_name' => 'web']),
         ];
 
         $farmasiPermissions = [

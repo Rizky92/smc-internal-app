@@ -12,9 +12,8 @@ trait LiveTable
 
     public $perpage;
 
-    public $sortBy;
-
-    public $sortDirection;
+    /** @var array $sortColumns */
+    public $sortColumns;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -23,8 +22,7 @@ trait LiveTable
         return [
             'cari' => ['except' => ''],
             'perpage' => ['except' => 25],
-            'sortBy' => ['except' => '', 'as' => 'sort'],
-            'sortDirection' => ['except' => 'asc', 'as' => 'dir'],
+            'sortColumns' => ['except' => '', 'as' => 'sort'],
         ];
     }
 
@@ -32,21 +30,30 @@ trait LiveTable
     {
         $this->cari = '';
         $this->perpage = 25;
-        $this->sortBy = collect();
+        $this->sortColumns = [];
     }
 
-    public function setSortByColumn(string $column, $direction = 'asc')
+    public function sortBy(string $column, string $direction = '')
     {
-        $this->sortBy = $column;
-        $this->sortDirection = $direction;
+        switch ($direction) {
+            case '':
+                $this->sortColumns = array_merge($this->sortColumns, [$column => 'asc']);
+                break;
+
+            case 'asc':
+                $this->sortColumns = array_merge($this->sortColumns, [$column => 'desc']);
+                break;
+            
+            default:
+                unset($this->sortColumns[$column]);
+                break;
+        }
+
+        $this->performSort();
     }
 
     protected function performSort()
     {
-        if (method_exists($this, 'searchData')) {
-            $this->searchData();
-        } else {
-            $this->emit('$refresh');
-        }
+        $this->emit('$refresh');
     }
 }

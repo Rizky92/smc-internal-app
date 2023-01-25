@@ -79,6 +79,7 @@ class BaseLayout extends Component
                 'hasAnyPermissions' => $user->canAny([
                     'keuangan.stok-obat-ruangan.read',
                     'keuangan.piutang-pasien.read',
+                    'keuangan.laporan-tambahan-biaya.read',
                 ]),
                 'items' => [
                     [
@@ -94,6 +95,13 @@ class BaseLayout extends Component
                         'icon' => "fas fa-file-invoice",
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.piutang-pasien.read'),
+                    ],
+                    [
+                        'name' => 'Laporan Tambahan Biaya',
+                        'url' => route('admin.keuangan.laporan-tambahan-biaya'),
+                        'icon' => "fas fa-file-invoice",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.laporan-tambahan-biaya.read'),
                     ],
                 ],
             ],

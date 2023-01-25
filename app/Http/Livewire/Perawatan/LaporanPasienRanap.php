@@ -6,6 +6,7 @@ use App\Models\Perawatan\Laporan\PasienRanap;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
+use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
@@ -14,11 +15,7 @@ use Livewire\WithPagination;
 
 class LaporanPasienRanap extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable;
-
-    public $cari;
-
-    public $perpage;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable;
 
     public $tanggal;
 
@@ -31,8 +28,6 @@ class LaporanPasienRanap extends Component
     protected function queryString()
     {
         return [
-            'cari' => ['except' => ''],
-            'perpage' => ['except' => 25],
             'tanggal' => ['except' => now()->format('Y-m-d')],
             'statusPerawatan' => ['except' => 'tanggal_masuk', 'as' => 'status_perawatan'],
             'tampilkanSemuaPasienPerTanggal' => ['except' => false, 'as' => 'tampilkan_semua_pasien'],
@@ -54,6 +49,7 @@ class LaporanPasienRanap extends Component
                 fn (Builder $query) => $query->where('status_ranap', '<=', '3'),
                 fn (Builder $query) => $query->where('status_ranap', '<=', '2')
             )
+            ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
     }
 
@@ -67,6 +63,7 @@ class LaporanPasienRanap extends Component
     {
         $this->cari = '';
         $this->perpage = 25;
+        $this->sortColumns = [];
         $this->tanggal = now()->format('Y-m-d');
         $this->statusPerawatan = 'tanggal_masuk';
         $this->tampilkanSemuaPasienPerTanggal = false;

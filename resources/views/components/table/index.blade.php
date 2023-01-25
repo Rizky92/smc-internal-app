@@ -2,7 +2,10 @@
     'columns' => null,
     'body' => null,
     'footer' => null,
+
     'responsive' => true,
+    'sortable' => false,
+    'sortColumns' => [],
 ])
 
 <table {{ $attributes->merge(['class' => 'table table-hover table-striped table-sm text-sm']) }}>
