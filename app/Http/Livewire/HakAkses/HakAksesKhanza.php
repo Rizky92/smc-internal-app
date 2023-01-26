@@ -23,6 +23,7 @@ class HakAksesKhanza extends Component
     {
         return MappingAksesKhanza::query()
             ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
     }
 
@@ -57,8 +58,6 @@ class HakAksesKhanza extends Component
         tracker_end('mysql_smc');
 
         $this->flashSuccess('Hak akses berhasil disimpan!');
-
-        $this->cari = '';
 
         $this->resetFilters();
     }

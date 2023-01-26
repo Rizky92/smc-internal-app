@@ -132,12 +132,12 @@
             </x-card.row-col>
         </x-slot>
         <x-slot name="body" class="table-responsive p-0">
-            <x-table>
+            <x-table sortable :sortColumns="$sortColumns">
                 <x-slot name="columns">
-                    <x-table.th style="width: 15ch">NRP</x-table.th>
-                    <x-table.th style="width: 50ch">Nama</x-table.th>
-                    <x-table.th style="width: 30ch">Jabatan</x-table.th>
-                    <x-table.th style="width: 10ch">Jenis</x-table.th>
+                    <x-table.th name="nik" title="NRP" style="width: 15ch" />
+                    <x-table.th name="nama" title="Nama" style="width: 50ch" />
+                    <x-table.th name="jbtn" title="Jabatan" style="width: 30ch" />
+                    <x-table.th name="jenis" title="Jenis" style="width: 10ch" />
                     <x-table.th>Hak Akses</x-table.th>
                 </x-slot>
                 <x-slot name="body">

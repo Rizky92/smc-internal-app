@@ -7,7 +7,7 @@ use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -31,7 +31,11 @@ class ManajemenUser extends Component
     public function getUsersProperty()
     {
         return User::query()
-            ->search(Str::lower($this->cari))
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns, [
+                'jbtn' => DB::raw("coalesce(jabatan.nm_jbtn, spesialis.nm_sps, pegawai.jbtn)"),
+                'jenis' => DB::raw("(case when petugas.nip is not null then 'Petugas' when dokter.kd_dokter is not null then 'Dokter' else '-' end)"),
+            ])
             ->paginate($this->perpage);
     }
 
@@ -43,7 +47,7 @@ class ManajemenUser extends Component
 
     protected function defaultValues()
     {
+        $this->cari = '';
         $this->perpage = 25;
-        $this->cari = '';        
     }
 }

@@ -5,11 +5,15 @@ namespace App\Http\Livewire\User\CustomReport;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
+use App\Support\Traits\Livewire\Filterable;
+use App\Support\Traits\Livewire\LiveTable;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 class TransferRolePermissions extends Component
 {
+    use Filterable, LiveTable;
+    
     public $deferLoading;
 
     public $nrp;
@@ -19,8 +23,6 @@ class TransferRolePermissions extends Component
     public $roles;
 
     public $permissions;
-
-    public $cari;
 
     public $checkedUsers;
 
@@ -48,11 +50,11 @@ class TransferRolePermissions extends Component
             : User::query()
             ->with('roles')
             ->where('pegawai.nik', '!=', $this->nrp)
-            ->where(function (Builder $query) {
-                return $query
-                    ->search($this->cari)
-                    ->orWhereIn('pegawai.nik', $this->checkedUsers);
-            })
+            ->when(!empty($this->checkedUsers), fn (Builder $query) => $query->orWhereIn('pegawai.nik', $this->checkedUsers))
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns, [
+                
+            ])
             ->get();
     }
 
@@ -97,14 +99,17 @@ class TransferRolePermissions extends Component
         $this->defaultValues();
     }
 
-    private function defaultValues()
+    protected function defaultValues()
     {
+        $this->cari = '';
+        $this->perpage = 25;
+        $this->sortColumns = [];
+
         $this->deferLoading = true;
         $this->nrp = '';
         $this->nama = '';
         $this->roles = [];
         $this->permissions = [];
-        $this->cari = '';
         $this->checkedUsers = [];
     }
 }
