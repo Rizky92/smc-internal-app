@@ -69,10 +69,10 @@
         </x-slot>
 
         <x-slot name="body" class="table-responsive">
-            <x-table sortable :sortColumns="$sortColumns">
+            <x-table>
                 <x-slot name="columns">
-                    <x-table.th name="nama_field" title="Nama Field" />
-                    <x-table.th name="judul_menu" title="Judul Menu" />
+                    <x-table.th>Nama Field</x-table.th>
+                    <x-table.th>Judul Menu</x-table.th>
                 </x-slot>
                 <x-slot name="body">
                     @foreach ($this->hakAksesKhanza as $hakAkses)

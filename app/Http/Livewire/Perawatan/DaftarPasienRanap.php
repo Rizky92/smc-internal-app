@@ -10,7 +10,6 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -47,33 +46,8 @@ class DaftarPasienRanap extends Component
                 $this->periodeAkhir,
                 $this->statusPerawatan
             )
-            ->search($this->cari, [
-                "kamar_inap.kd_kamar",
-                "reg_periksa.no_rawat",
-                "reg_periksa.no_rkm_medis",
-                "concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal)",
-                "kamar.kelas",
-                "concat(pasien.nm_pasien, ' (', reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur, ')')",
-                "concat(pasien.alamat, ', Kel. ', kelurahan.nm_kel, ', Kec. ', kecamatan.nm_kec, ', ', kabupaten.nm_kab, ', ', propinsi.nm_prop)",
-                "pasien.agama",
-                "concat(pasien.namakeluarga, ' (', pasien.keluarga, ')')",
-                "penjab.png_jawab",
-                "poliklinik.nm_poli",
-                "dokter.nm_dokter",
-                "kamar_inap.stts_pulang",
-                "group_concat(dokter_pj.nm_dokter separator ', ')",
-                "pasien.no_tlp",
-            ])
-            ->sortWithColumns($this->sortColumns, [
-                'ruangan'       => DB::raw("concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal)"),
-                'data_pasien'   => DB::raw("concat(pasien.nm_pasien, ' (', reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur, ')')"),
-                'alamat_pasien' => DB::raw("concat(pasien.alamat, ', Kel. ', kelurahan.nm_kel, ', Kec. ', kecamatan.nm_kec, ', ', kabupaten.nm_kab, ', ', propinsi.nm_prop)"),
-                'pj'            => DB::raw("concat(pasien.namakeluarga, ' (', pasien.keluarga, ')')"),
-                'dokter_poli'   => "dokter.nm_dokter",
-                'tgl_keluar'    => DB::raw("if(kamar_inap.tgl_keluar = '0000-00-00', '-', kamar_inap.tgl_keluar)"),
-                'jam_keluar'    => DB::raw("if(kamar_inap.jam_keluar = '00:00:00', '-', kamar_inap.jam_keluar)"),
-                'dokter_ranap'  => DB::raw("group_concat(dokter_pj.nm_dokter separator ', ')"),
-            ])
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
     }
 
@@ -164,7 +138,6 @@ class DaftarPasienRanap extends Component
     {
         $this->cari = '';
         $this->perpage = 25;
-        $this->sortColumns = [];
         $this->statusPerawatan = '-';
         $this->periodeAwal = now()->format('Y-m-d');
         $this->periodeAkhir = now()->format('Y-m-d');
@@ -174,11 +147,12 @@ class DaftarPasienRanap extends Component
     {
         return [
             RegistrasiPasien::query()
-                ->daftarPasienRanap(
+                ->selectDaftarPasienRanap(true)
+                ->filterDaftarPasienRanap(
+                    $this->cari,
                     $this->periodeAwal,
                     $this->periodeAkhir,
-                    $this->statusPerawatan,
-                    true
+                    $this->statusPerawatan
                 )
                 ->orderBy('no_rawat')
                 ->get()

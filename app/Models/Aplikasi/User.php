@@ -3,7 +3,6 @@
 namespace App\Models\Aplikasi;
 
 use App\Support\Traits\Eloquent\Searchable;
-use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -12,7 +11,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use Notifiable, HasRoles, Searchable, Sortable;
+    use Notifiable, HasRoles, Searchable;
 
     protected $primaryKey = 'id_user';
 
@@ -934,11 +933,14 @@ class User extends Authenticatable
         'permissions',
     ];
 
-    protected $searchColumns = [
-        'pegawai.nik',
-        'petugas.nama',
-        'jabatan.nm_jbtn',
-    ];
+    protected function searchColumns(): array
+    {
+        return [
+            'pegawai.nik',
+            'petugas.nama',
+            'jabatan.nm_jbtn',
+        ];
+    }
 
     protected static function booted()
     {

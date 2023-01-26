@@ -221,29 +221,29 @@
         </x-slot>
 
         <x-slot name="body" class="table-responsive">
-            <x-table style="width: 250rem" sortable :sortColumns="$sortColumns">
+            <x-table style="width: 250rem">
                 <x-slot name="columns">
-                    <x-table.th name="no_rawat" title="No. Rawat" style="width: 20ch" />
-                    <x-table.th name="no_rkm_medis" title="No. RM" style="width: 10ch" />
-                    <x-table.th name="ruangan" title="Kamar" style="width: 35ch" />
-                    <x-table.th name="kelas" title="Kelas" style="width: 10ch" />
-                    <x-table.th name="data_pasien" title="Pasien" style="width: 50ch" />
-                    <x-table.th name="alamat_pasien" title="Alamat" />
-                    <x-table.th name="agama" title="Agama" style="width: 10ch" />
-                    <x-table.th name="pj" title="P.J." style="width: 30ch" />
-                    <x-table.th name="png_jawab" title="Jenis Bayar" style="width: 25ch" />
-                    <x-table.th name="nm_poli" title="Asal Poli" style="width: 20ch" />
-                    <x-table.th name="dokter_poli" title="Dokter Poli" style="width: 40ch" />
-                    <x-table.th name="stts_pulang" title="Status" style="width: 15ch" />
-                    <x-table.th name="tgl_masuk" title="Tgl. Masuk" style="width: 12ch" />
-                    <x-table.th name="jam_masuk" title="Jam Masuk" style="width: 12ch" />
-                    <x-table.th name="tgl_keluar" title="Tgl. Keluar" style="width: 12ch" />
-                    <x-table.th name="jam_keluar" title="Jam Keluar" style="width: 12ch" />
-                    <x-table.th name="trf_kamar" title="Tarif Kamar" style="width: 15ch" />
-                    <x-table.th name="lama" title="Lama" style="width: 10ch" />
-                    <x-table.th name="ttl_biaya" title="Total" style="width: 20ch" />
-                    <x-table.th name="dokter_ranap" title="DPJP" style="width: 35ch" />
-                    <x-table.th name="no_tlp" title="No. HP" style="width: 15ch" />
+                    <x-table.th style="width: 20ch">No. Rawat</x-table.th>
+                    <x-table.th style="width: 10ch">No. RM</x-table.th>
+                    <x-table.th style="width: 35ch">Kamar</x-table.th>
+                    <x-table.th style="width: 10ch">Kelas</x-table.th>
+                    <x-table.th style="width: 50ch">Pasien</x-table.th>
+                    <x-table.th>Alamat</x-table.th>
+                    <x-table.th style="width: 10ch">Agama</x-table.th>
+                    <x-table.th style="width: 30ch">P.J.</x-table.th>
+                    <x-table.th style="width: 25ch">Jenis Bayar</x-table.th>
+                    <x-table.th style="width: 20ch">Asal Poli</x-table.th>
+                    <x-table.th style="width: 40ch">Dokter Poli</x-table.th>
+                    <x-table.th style="width: 15ch">Status</x-table.th>
+                    <x-table.th style="width: 12ch">Tgl. Masuk</x-table.th>
+                    <x-table.th style="width: 12ch">Jam Masuk</x-table.th>
+                    <x-table.th style="width: 12ch">Tgl. Keluar</x-table.th>
+                    <x-table.th style="width: 12ch">Jam Keluar</x-table.th>
+                    <x-table.th style="width: 15ch">Tarif Kamar</x-table.th>
+                    <x-table.th style="width: 10ch">Lama</x-table.th>
+                    <x-table.th style="width: 20ch">Total</x-table.th>
+                    <x-table.th style="width: 35ch">DPJP</x-table.th>
+                    <x-table.th style="width: 15ch">No. HP</x-table.th>
                 </x-slot>
                 <x-slot name="body">
                     @foreach ($this->daftarPasienRanap as $pasien)
@@ -270,7 +270,7 @@
                             <x-table.td>{{ rp($pasien->trf_kamar) }}</x-table.td>
                             <x-table.td>{{ $pasien->lama }}</x-table.td>
                             <x-table.td>{{ rp($pasien->ttl_biaya) }}</x-table.td>
-                            <x-table.td>{{ $pasien->dokter_ranap }}</x-table.td>
+                            <x-table.td>{{ $pasien->nama_dokter }}</x-table.td>
                             <x-table.td>{{ $pasien->no_tlp }}</x-table.td>
                         </x-table.tr>
                     @endforeach

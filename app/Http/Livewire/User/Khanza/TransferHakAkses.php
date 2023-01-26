@@ -45,8 +45,10 @@ class TransferHakAkses extends Component
             ? []
             : User::query()
             ->where('pegawai.nik', '!=', $this->nrp)
-            ->when(!empty($this->checkedUsers), fn (Builder $query) => $query->orWhereIn('pegawai.nik', $this->checkedUsers))
             ->search($this->cari)
+            ->when(!empty($this->checkedUsers), function (Builder $query) {
+                return $query->orWhereIn('pegawai.nik', $this->checkedUsers);
+            })
             ->get();
     }
 
