@@ -15,15 +15,15 @@
             </x-card.row-col>
         </x-slot>
         <x-slot name="body" class="table-responsive">
-            <x-table sortable :sortColumns="$sortColumns">
+            <x-table>
                 <x-slot name="columns">
-                    <x-table.th name="no_pemesanan" title="No. Pemesanan" />
-                    <x-table.th name="nama_brng" title="Nama" />
-                    <x-table.th name="suplier_pesan" title="Supplier Tujuan" />
-                    <x-table.th name="suplier_datang" title="Supplier yang Mendatangkan" />
-                    <x-table.th name="jumlah_pesan" title="Jumlah Dipesan" />
-                    <x-table.th name="jumlah_datang" title="Jumlah yang Datang" />
-                    <x-table.th name="selisih" title="Selisih" />
+                    <x-table.th>No. Pemesanan</x-table.th>
+                    <x-table.th>Nama</x-table.th>
+                    <x-table.th>Supplier Tujuan</x-table.th>
+                    <x-table.th>Supplier yang Mendatangkan</x-table.th>
+                    <x-table.th>Jumlah Dipesan</x-table.th>
+                    <x-table.th>Jumlah yang Datang</x-table.th>
+                    <x-table.th>Selisih</x-table.th>
                 </x-slot>
                 <x-slot name="body">
                     @foreach ($this->perbandinganOrderObatPO as $obat)

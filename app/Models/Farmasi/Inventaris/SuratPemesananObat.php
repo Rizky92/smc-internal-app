@@ -2,8 +2,6 @@
 
 namespace App\Models\Farmasi\Inventaris;
 
-use App\Support\Traits\Eloquent\Searchable;
-use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\JoinClause;
@@ -11,8 +9,6 @@ use Illuminate\Support\Facades\DB;
 
 class SuratPemesananObat extends Model
 {
-    use Searchable, Sortable;
-    
     protected $primaryKey = 'no_pemesanan';
 
     protected $keyType = 'string';
@@ -27,8 +23,10 @@ class SuratPemesananObat extends Model
         Builder $query,
         string $periodeAwal = '',
         string $periodeAkhir = '',
+        string $cari = '',
         bool $hanyaTampilkanYangBerbeda = false
-    ): Builder {
+    ): Builder
+    {
         if (empty($periodeAwal)) {
             $periodeAwal = now()->startOfMonth()->format('Y-m-d');
         }
@@ -51,8 +49,6 @@ class SuratPemesananObat extends Model
             inner join databarang on detailpesan.kode_brng = databarang.kode_brng
         ) pemesanan_datang");
 
-        $jumlahObatYangBerbeda = DB::raw('(detail_surat_pemesanan_medis.jumlah2 - ifnull(pemesanan_datang.jumlah, 0))');
-
         return $query->selectRaw("
             surat_pemesanan_medis.no_pemesanan,
             databarang.nama_brng,
@@ -65,10 +61,24 @@ class SuratPemesananObat extends Model
             ->join('datasuplier', 'surat_pemesanan_medis.kode_suplier', '=', 'datasuplier.kode_suplier')
             ->join('detail_surat_pemesanan_medis', 'surat_pemesanan_medis.no_pemesanan', '=', 'detail_surat_pemesanan_medis.no_pemesanan')
             ->join('databarang', 'detail_surat_pemesanan_medis.kode_brng', '=', 'databarang.kode_brng')
-            ->leftJoin($pemesananYangDatang, fn (JoinClause $join) => $join
-                ->on('surat_pemesanan_medis.no_pemesanan', '=', 'pemesanan_datang.no_order')
-                ->on('detail_surat_pemesanan_medis.kode_brng', '=', 'pemesanan_datang.kode_brng'))
+            ->leftJoin($pemesananYangDatang, function (JoinClause $join) {
+                return $join
+                    ->on('surat_pemesanan_medis.no_pemesanan', '=', 'pemesanan_datang.no_order')
+                    ->on('detail_surat_pemesanan_medis.kode_brng', '=', 'pemesanan_datang.kode_brng');
+            })
             ->whereBetween('surat_pemesanan_medis.tanggal', [$periodeAwal, $periodeAkhir])
-            ->when($hanyaTampilkanYangBerbeda, fn (Builder $query) => $query->where($jumlahObatYangBerbeda, '!=', 0));
+            ->when($hanyaTampilkanYangBerbeda, function (Builder $query) {
+                return $query->where(DB::raw('(detail_surat_pemesanan_medis.jumlah2 - ifnull(pemesanan_datang.jumlah, 0))'), '!=', 0);
+            })
+            ->when(!empty($cari), function (Builder $query) use ($cari) {
+                return $query->where(function (Builder $query) use ($cari) {
+                    return $query
+                        ->where('surat_pemesanan_medis.no_pemesanan', 'like', "%{$cari}%")
+                        ->orWhere('detail_surat_pemesanan_medis.kode_brng', 'like', "%{$cari}%")
+                        ->orWhere('databarang.nama_brng', 'like', "%{$cari}%")
+                        ->orWhere('datasuplier.nama_suplier', 'like', "%{$cari}%")
+                        ->orWhere('pemesanan_datang.nama_suplier', 'like', "%{$cari}%");
+                });
+            });
     }
 }

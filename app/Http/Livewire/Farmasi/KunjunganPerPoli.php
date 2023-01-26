@@ -6,23 +6,29 @@ use App\Models\Farmasi\ResepObat;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
-use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class KunjunganPerPoli extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable;
+
+    public $cari;
 
     public $periodeAwal;
 
     public $periodeAkhir;
 
+    public $perpage;
+
+    protected $paginationTheme = 'bootstrap';
+
     protected function queryString()
     {
         return [
+            'cari' => ['except' => ''],
+            'perpage' => ['except' => 25],
             'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'periode_awal'],
             'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'periode_akhir'],
         ];
@@ -35,23 +41,7 @@ class KunjunganPerPoli extends Component
 
     public function getDataKunjunganResepPasienProperty()
     {
-        return ResepObat::query()
-            ->kunjunganFarmasi($this->periodeAwal, $this->periodeAkhir)
-            ->search($this->cari, [
-                'resep_obat.no_rawat',
-                'resep_obat.no_resep',
-                'pasien.nm_pasien',
-                'dokter_peresep.nm_dokter',
-                'dokter_poli.nm_dokter',
-                'reg_periksa.status_lanjut',
-                'poliklinik.nm_poli',
-            ])
-            ->sortWithColumns($this->sortColumns, [
-                'umur' => DB::raw("concat(reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur)"),
-                'nm_dokter_peresep' => 'dokter_peresep.nm_dokter',
-                'nm_dokter_poli' => 'dokter_poli.nm_dokter',
-            ])
-            ->paginate($this->perpage);
+        return ResepObat::kunjunganFarmasi($this->periodeAwal, $this->periodeAkhir, $this->cari)->paginate($this->perpage);
     }
 
     public function render()
@@ -63,16 +53,15 @@ class KunjunganPerPoli extends Component
     protected function defaultValues()
     {
         $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->perpage = 25;
     }
 
     protected function dataPerSheet(): array
     {
         return [
-            ResepObat::kunjunganFarmasi($this->periodeAwal, $this->periodeAkhir)->get()
+            ResepObat::kunjunganFarmasi($this->periodeAwal, $this->periodeAkhir, '')->get()
         ];
     }
 

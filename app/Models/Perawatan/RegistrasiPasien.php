@@ -2,16 +2,12 @@
 
 namespace App\Models\Perawatan;
 
-use App\Support\Traits\Eloquent\Searchable;
-use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class RegistrasiPasien extends Model
 {
-    use Searchable, Sortable;
-
     protected $primaryKey = 'no_rawat';
 
     protected $keyType = 'string';
@@ -22,21 +18,8 @@ class RegistrasiPasien extends Model
 
     public $timestamps = false;
 
-    public function scopeDaftarPasienRanap(
-        Builder $query,
-        string $tglAwal = '',
-        string $tglAkhir = '',
-        string $statusPerawatan = '-',
-        bool $exportToExcel = false
-    ): Builder {
-        if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
-        }
-
-        if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
-        }
-
+    public function scopeSelectDaftarPasienRanap(Builder $query, bool $exportToExcel = false): Builder
+    {
         $sqlSelect = "
             kamar_inap.kd_kamar,
             reg_periksa.no_rawat,
@@ -77,9 +60,58 @@ class RegistrasiPasien extends Model
             ->join('propinsi', 'pasien.kd_prop', '=', 'propinsi.kd_prop')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
-            ->join('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
-            ->when($statusPerawatan === '-', fn (Builder $query) => $query->where('kamar_inap.stts_pulang', '-'))
-            ->when($statusPerawatan === 'tanggal_masuk', fn (Builder $query) => $query->whereBetween('kamar_inap.tgl_masuk', [$tglAwal, $tglAkhir]))
-            ->when($statusPerawatan === 'tanggal_keluar', fn (Builder $query) => $query->whereBetween('kamar_inap.tgl_keluar', [$tglAwal, $tglAkhir]));
+            ->join('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter');
+    }
+
+    public function scopeFilterDaftarPasienRanap(
+        Builder $query,
+        string $cari = '',
+        string $tglAwal = '',
+        string $tglAkhir = '',
+        string $statusPerawatan = '-'
+    ): Builder {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->format('Y-m-d');
+        }
+
+        return $query
+            ->when($statusPerawatan === '-', function (Builder $query) {
+                return $query->where('kamar_inap.stts_pulang', '-');
+            })
+            ->when($statusPerawatan !== '-', function (Builder $query) use ($statusPerawatan, $tglAwal, $tglAkhir) {
+                switch (Str::snake($statusPerawatan)) {
+                    case 'tanggal_masuk':
+                        return $query->whereBetween('kamar_inap.tgl_masuk', [$tglAwal, $tglAkhir]);
+                    case 'tanggal_keluar':
+                        return $query->whereBetween('kamar_inap.tgl_keluar', [$tglAwal, $tglAkhir]);
+                }
+            })
+            ->when(!empty($cari), function (Builder $query) use ($cari) {
+                return $query->whereRaw("concat(
+                    reg_periksa.no_rawat, ' ',
+                    reg_periksa.no_rkm_medis, ' ',
+                    kamar.kd_kamar, ' ',
+                    kamar.kelas, ' ',
+                    bangsal.kd_bangsal, ' ',
+                    bangsal.nm_bangsal, ' ',
+                    kamar_inap.stts_pulang, ' ',
+                    pasien.nm_pasien, ' ',
+                    pasien.agama, ' ',
+                    pasien.alamat, ' ',
+                    pasien.no_tlp, ' ',
+                    kelurahan.nm_kel, ' ',
+                    kecamatan.nm_kec, ' ',
+                    kabupaten.nm_kab, ' ',
+                    propinsi.nm_prop, ' ',
+                    penjab.png_jawab, ' ',
+                    poliklinik.kd_poli, ' ',
+                    poliklinik.nm_poli, ' ',
+                    dokter.nm_dokter
+                ) like ?", "%{$cari}%");
+            });
     }
 }

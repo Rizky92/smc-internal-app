@@ -6,40 +6,42 @@ use App\Models\Farmasi\Obat;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
-use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Rizky92\Xlswriter\ExcelExport;
 
 class StokDaruratFarmasi extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable;
+
+    public $cari;
+
+    public $perpage;
+
+    protected $paginationTheme = 'bootstrap';
+
+    protected function queryString()
+    {
+        return [
+            'cari' => [
+                'except' => '',
+            ],
+            'perpage' => [
+                'except' => 25,
+            ],
+        ];
+    }
 
     public function mount()
     {
-        $this->defaultValues();
+        $this->DefaultValues();
     }
 
     public function getStokDaruratObatProperty()
     {
-        return Obat::query()
-            ->daruratStok()
-            ->search($this->cari, [
-                'databarang.kode_brng',
-                'nama_brng',
-                'kodesatuan.satuan',
-                'kategori_barang.nama',
-                'industrifarmasi.nama_industri',
-            ])
-            ->sortWithColumns($this->sortColumns, [
-                'satuan_kecil'     => 'kodesatuan.satuan',
-                'kategori'         => 'kategori_barang.nama',
-                'stok_sekarang'    => DB::raw('ifnull(round(stok_gudang.stok_di_gudang, 2), 0)'),
-                'saran_order'      => DB::raw('(databarang.stokminimal - ifnull(stok_gudang.stok_di_gudang, 0))'),
-                'harga_beli'       => DB::raw('round(databarang.h_beli)'),
-                'harga_beli_total' => DB::raw('round((databarang.stokminimal - ifnull(stok_gudang.stok_di_gudang, 0)) * databarang.h_beli)'),
-            ], ['nama_brng' => 'asc'])
+        return Obat::daruratStok(Str::lower($this->cari))
             ->paginate($this->perpage);
     }
 
@@ -51,15 +53,14 @@ class StokDaruratFarmasi extends Component
 
     protected function defaultValues()
     {
-        $this->cari = '';
         $this->perpage = 25;
-        $this->sortColumns = [];
+        $this->cari = '';
     }
 
     protected function dataPerSheet(): array
     {
         return [
-            Obat::daruratStok(true)->get(),
+            Obat::daruratStok('', true)->get()
         ];
     }
 

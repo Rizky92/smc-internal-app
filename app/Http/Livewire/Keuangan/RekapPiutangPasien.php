@@ -7,7 +7,6 @@ use App\Models\RekamMedis\Penjamin;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
-use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -15,7 +14,11 @@ use Livewire\WithPagination;
 
 class RekapPiutangPasien extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable;
+
+    public $cari;
+
+    public $perpage;
 
     public $caraBayar;
 
@@ -23,9 +26,13 @@ class RekapPiutangPasien extends Component
 
     public $periodeAkhir;
 
+    protected $paginationTheme = 'bootstrap';
+
     protected function queryString()
     {
         return [
+            'cari' => ['except' => ''],
+            'perpage' => ['except' => 25],
             'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'periode_awal'],
             'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'periode_akhir'],
             'caraBayar' => ['except' => '', 'as' => 'kdpj'],
@@ -45,21 +52,8 @@ class RekapPiutangPasien extends Component
     public function getPiutangPasienProperty()
     {
         return PiutangPasien::query()
-            ->rekapPiutangPasien($this->periodeAwal, $this->periodeAkhir, $this->caraBayar)
-            ->search($this->cari, [
-                'piutang_pasien.no_rawat',
-                'piutang_pasien.no_rkm_medis',
-                'pasien.nm_pasien',
-                'piutang_pasien.status',
-                'penjab.png_jawab',
-            ])
-            ->sortWithColumns($this->sortColumns, [
-                'total'     => 'piutang_pasien.totalpiutang',
-                'uang_muka' => 'piutang_pasien.uangmuka',
-                'terbayar'  => DB::raw('ifnull(sisa_piutang.sisa, 0)'),
-                'sisa'      => DB::raw('(piutang_pasien.sisapiutang - ifnull(sisa_piutang.sisa, 0))'),
-                'penjamin'  => 'penjab.png_jawab',
-            ])
+            ->rekapPiutangPasien($this->periodeAwal, $this->periodeAkhir, $this->caraBayar, $this->cari)
+            ->orderBy('penjab.png_jawab')
             ->paginate($this->perpage);
     }
 
@@ -84,7 +78,6 @@ class RekapPiutangPasien extends Component
     {
         $this->cari = '';
         $this->perpage = 25;
-        $this->sortColumns = [];
         $this->caraBayar = '';
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');

@@ -6,23 +6,32 @@ use App\Models\RekamMedis\StatistikRekamMedis;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
-use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Rizky92\Xlswriter\ExcelExport;
 
 class LaporanStatistik extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable;
+
+    public $cari;
+
+    public $perpage;
 
     public $periodeAwal;
 
     public $periodeAkhir;
 
+    protected $paginationTheme = 'bootstrap';
+
     protected function queryString()
     {
         return [
+            'cari' => ['except' => ''],
+            'perpage' => ['except' => 25],
             'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'periode_awal'],
             'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'periode_akhir'],
         ];
@@ -36,7 +45,7 @@ class LaporanStatistik extends Component
     public function getDataLaporanStatistikProperty()
     {
         return StatistikRekamMedis::query()
-            ->search($this->cari)
+            ->search(Str::lower($this->cari))
             ->whereBetween('tgl_masuk', [$this->periodeAwal, $this->periodeAkhir])
             ->orderBy('no_rawat')
             ->paginate($this->perpage);

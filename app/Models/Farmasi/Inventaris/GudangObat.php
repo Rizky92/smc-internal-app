@@ -2,16 +2,12 @@
 
 namespace App\Models\Farmasi\Inventaris;
 
-use App\Support\Traits\Eloquent\Searchable;
-use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class GudangObat extends Model
 {
-    use Searchable, Sortable;
-    
     protected $primaryKey = false;
 
     protected $keyType = null;
@@ -31,7 +27,7 @@ class GudangObat extends Model
             ->join('bangsal', 'gudangbarang.kd_bangsal', '=', 'bangsal.kd_bangsal');
     }
 
-    public function scopeStokPerRuangan(Builder $query, string $kodeBangsal = '-'): Builder
+    public function scopeStokPerRuangan(Builder $query, string $kodeBangsal = '-', string $cari = ''): Builder
     {
         return $query->selectRaw("
             bangsal.nm_bangsal,
@@ -45,6 +41,17 @@ class GudangObat extends Model
             ->leftJoin('databarang', 'gudangbarang.kode_brng', '=', 'databarang.kode_brng')
             ->leftJoin('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
             ->leftJoin('bangsal', 'gudangbarang.kd_bangsal', '=', 'bangsal.kd_bangsal')
-            ->when($kodeBangsal !== '-', fn (Builder $query) => $query->where('gudangbarang.kd_bangsal', $kodeBangsal));
+            ->when($kodeBangsal !== '-', function (Builder $query) use ($kodeBangsal) {
+                return $query->where('gudangbarang.kd_bangsal', $kodeBangsal);
+            })
+            ->when(!empty($cari), function (Builder $query) use ($cari) {
+                return $query->where(function (Builder $query) use ($cari) {
+                    $cari = Str::lower($cari);
+
+                    return $query->where('databarang.kode_brng', 'like', "%{$cari}%")
+                        ->orWhere('databarang.nama_brng', 'like', "%{$cari}%");
+                });
+            })
+            ->orderBy('databarang.nama_brng');
     }
 }

@@ -6,7 +6,6 @@ use App\Models\RekamMedis\DemografiPasien;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
-use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -14,15 +13,23 @@ use Livewire\WithPagination;
 
 class LaporanDemografi extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable;
+
+    public $cari;
+
+    public $perpage;
 
     public $periodeAwal;
 
     public $periodeAkhir;
 
+    protected $paginationTheme = 'bootstrap';
+
     protected function queryString()
     {
         return [
+            'cari' => ['except' => ''],
+            'perpage' => ['except' => 25],
             'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'periode_awal'],
             'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'periode_akhir'],
         ];
@@ -36,7 +43,7 @@ class LaporanDemografi extends Component
     public function getDemografiPasienProperty()
     {
         return DemografiPasien::query()
-            ->search($this->cari)
+            ->search(Str::lower($this->cari))
             ->whereBetween('tgl_registrasi', [$this->periodeAwal, $this->periodeAkhir])
             ->paginate($this->perpage);
     }
