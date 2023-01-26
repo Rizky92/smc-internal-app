@@ -61,7 +61,7 @@ class DaftarPasienRanap extends Component
                 "poliklinik.nm_poli",
                 "dokter.nm_dokter",
                 "kamar_inap.stts_pulang",
-                "dokter_pj.nm_dokter",
+                "group_concat(dokter_pj.nm_dokter separator ', ')",
                 "pasien.no_tlp",
             ])
             ->sortWithColumns($this->sortColumns, [
