@@ -5,6 +5,7 @@ namespace App\Http\Livewire\User;
 use App\Models\Aplikasi\User;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
+use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -12,13 +13,7 @@ use Livewire\WithPagination;
 
 class ManajemenUser extends Component
 {
-    use WithPagination, FlashComponent, Filterable;
-
-    public $cari;
-
-    public $perpage;
-
-    protected $paginationTheme = 'bootstrap';
+    use WithPagination, FlashComponent, Filterable, LiveTable;
 
     protected function queryString(): array
     {

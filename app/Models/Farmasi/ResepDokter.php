@@ -2,12 +2,15 @@
 
 namespace App\Models\Farmasi;
 
+use App\Support\Traits\Eloquent\Searchable;
+use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ResepDokter extends Model
 {
+    use Searchable, Sortable;
+
     protected $primaryKey = 'no_resep';
 
     protected $keyType = 'string';
@@ -48,9 +51,7 @@ class ResepDokter extends Model
             ->join('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
             ->where('reg_periksa.status_bayar', 'Sudah Bayar')
             ->whereBetween('resep_obat.tgl_perawatan', [$periodeAwal, $periodeAkhir])
-            ->when(!empty($jenisPerawatan), function (Builder $query) use ($jenisPerawatan) {
-                return $query->where('reg_periksa.status_lanjut', $jenisPerawatan);
-            })
+            ->when(!empty($jenisPerawatan), fn (Builder $query) => $query->where('reg_periksa.status_lanjut', $jenisPerawatan))
             ->groupBy([
                 'resep_dokter.no_resep',
                 'dokter.nm_dokter',

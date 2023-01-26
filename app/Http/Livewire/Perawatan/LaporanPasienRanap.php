@@ -23,8 +23,6 @@ class LaporanPasienRanap extends Component
 
     public $tampilkanSemuaPasienPerTanggal;
 
-    protected $paginationTheme = 'bootstrap';
-
     protected function queryString()
     {
         return [

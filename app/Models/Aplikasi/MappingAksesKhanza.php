@@ -2,10 +2,13 @@
 
 namespace App\Models\Aplikasi;
 
+use App\Support\Traits\Eloquent\Searchable;
 use Illuminate\Database\Eloquent\Model;
 
 class MappingAksesKhanza extends Model
 {
+    use Searchable;
+    
     protected $connection = 'mysql_smc';
 
     protected $primaryKey = 'nama_field';
@@ -19,6 +22,11 @@ class MappingAksesKhanza extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'nama_field',
+        'judul_menu',
+    ];
+
+    protected $searchColumns = [
         'nama_field',
         'judul_menu',
     ];

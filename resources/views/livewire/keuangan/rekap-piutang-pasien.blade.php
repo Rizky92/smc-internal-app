@@ -60,24 +60,26 @@
             </x-card.row-col>
         </x-slot>
         <x-slot name="body" class="table-responsive">
-            <x-table style="min-width: 100%; width: 100rem">
+            <x-table style="min-width: 100%; width: 100rem" sortable :sortColumns="$sortColumns">
                 <x-slot name="columns">
-                    <x-table.th>No. Rawat</x-table.th>
-                    <x-table.th>Pasien</x-table.th>
-                    <x-table.th>Tgl. Piutang</x-table.th>
-                    <x-table.th>Status</x-table.th>
-                    <x-table.th>Total</x-table.th>
-                    <x-table.th>Uang Muka</x-table.th>
-                    <x-table.th>Terbayar</x-table.th>
-                    <x-table.th>Sisa</x-table.th>
-                    <x-table.th>Tgl. Jatuh Tempo</x-table.th>
-                    <x-table.th>Penjamin</x-table.th>
+                    <x-table.th name="no_rawat" title="No. Rawat" />
+                    <x-table.th name="no_rkm_medis" title="No. RM" />
+                    <x-table.th name="nm_pasien" title="Pasien" />
+                    <x-table.th name="tgl_piutang" title="Tgl. Piutang" />
+                    <x-table.th name="status" title="Status" />
+                    <x-table.th name="total" title="Total" />
+                    <x-table.th name="uang_muka" title="Uang Muka" />
+                    <x-table.th name="terbayar" title="Terbayar" />
+                    <x-table.th name="sisa" title="Sisa" />
+                    <x-table.th name="tgltempo" title="Tgl. Jatuh Tempo" />
+                    <x-table.th name="penjamin" title="Penjamin" />
                 </x-slot>
                 <x-slot name="body">
                     @foreach ($this->piutangPasien as $data)
                         <x-table.tr>
                             <x-table.td>{{ $data->no_rawat }}</x-table.td>
-                            <x-table.td>{{ "{$data->no_rkm_medis} {$data->nm_pasien}" }}</x-table.td>
+                            <x-table.td>{{ $data->no_rkm_medis }}</x-table.td>
+                            <x-table.td>{{ $data->nm_pasien }}</x-table.td>
                             <x-table.td>{{ $data->tgl_piutang }}</x-table.td>
                             <x-table.td>{{ $data->status }}</x-table.td>
                             <x-table.td>{{ rp($data->total) }}</x-table.td>

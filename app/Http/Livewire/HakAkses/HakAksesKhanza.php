@@ -3,51 +3,26 @@
 namespace App\Http\Livewire\HakAkses;
 
 use App\Models\Aplikasi\MappingAksesKhanza;
+use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
+use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
-use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class HakAksesKhanza extends Component
 {
-    use WithPagination, FlashComponent;
-
-    public $cari;
-
-    public $perpage;
-
-    protected $paginationTheme = 'bootstrap';
-
-    protected $listeners = [
-        'searchData',
-        'resetFilters',
-        'fullRefresh',
-    ];
-
-    protected function queryString()
-    {
-        return [
-            'cari' => ['except' => ''],
-            'perpage' => ['except' => 25],
-        ];
-    }
+    use WithPagination, FlashComponent, Filterable, LiveTable;
 
     public function mount()
     {
-        $this->cari = '';
-        $this->perpage = 25;
+        $this->defaultValues();
     }
 
     public function getHakAksesKhanzaProperty()
     {
-        $cari = $this->cari;
-
         return MappingAksesKhanza::query()
-            ->where(function (Builder $query) use ($cari) {
-                return $query->where('nama_field', 'like', "%{$cari}%")
-                    ->orWhere('judul_menu', 'like', "%{$cari}%");
-            })
+            ->search($this->cari)
             ->paginate($this->perpage);
     }
 
@@ -55,6 +30,13 @@ class HakAksesKhanza extends Component
     {
         return view('livewire.hak-akses.hak-akses-khanza')
             ->layout(BaseLayout::class, ['title' => 'Manajemen Hak Akses SIMRS Khanza']);
+    }
+
+    protected function defaultValues()
+    {
+        $this->cari = '';
+        $this->perpage = 25;
+        $this->sortColumns = [];
     }
 
     public function simpanHakAkses(string $field, string $judul)
@@ -65,16 +47,20 @@ class HakAksesKhanza extends Component
             return;
         }
 
+        tracker_start('mysql_smc');
+
         MappingAksesKhanza::updateOrCreate(
             ['nama_field' => $field],
             ['judul_menu' => $judul]
         );
 
+        tracker_end('mysql_smc');
+
         $this->flashSuccess('Hak akses berhasil disimpan!');
 
         $this->cari = '';
 
-        $this->searchData();
+        $this->resetFilters();
     }
 
     public function hapusHakAkses(string $field)
@@ -85,33 +71,13 @@ class HakAksesKhanza extends Component
             return;
         }
 
+        tracker_start('mysql_smc');
+
         MappingAksesKhanza::destroy($field);
 
+        tracker_end('mysql_smc');
+
         $this->flashSuccess('Hak akses berhasil dihapus!');
-
-        $this->cari = '';
-
-        $this->searchData();
-    }
-
-    public function searchData()
-    {
-        $this->resetPage();
-
-        $this->emit('$refresh');
-    }
-
-    public function resetFilters()
-    {
-        $this->cari = '';
-        $this->perpage = 25;
-
-        $this->searchData();
-    }
-
-    public function fullRefresh()
-    {
-        $this->forgetComputed();
 
         $this->resetFilters();
     }

@@ -2,12 +2,16 @@
 
 namespace App\Models\Keuangan;
 
+use App\Support\Traits\Eloquent\Searchable;
+use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class PiutangPasien extends Model
 {
+    Use Searchable, Sortable;
+
     protected $primaryKey = 'no_rawat';
 
     protected $keyType = 'string';
@@ -22,8 +26,7 @@ class PiutangPasien extends Model
         Builder $query,
         string $periodeAwal = '',
         string $periodeAkhir = '',
-        string $penjamin = '',
-        string $cari = ''
+        string $penjamin = ''
     ): Builder {
         if (empty($periodeAwal)) {
             $periodeAwal = now()->startOfMonth()->format('Y-m-d');
@@ -48,7 +51,7 @@ class PiutangPasien extends Model
         ";
 
         $sisaPiutang = "(
-            select ifnull(SUM(besar_cicilan), 0) sisa, no_rawat
+            select ifnull(sum(besar_cicilan), 0) sisa, no_rawat
             from bayar_piutang
             group by no_rawat
         ) sisa_piutang";
@@ -59,13 +62,6 @@ class PiutangPasien extends Model
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->leftJoin(DB::raw($sisaPiutang), 'piutang_pasien.no_rawat', '=', 'sisa_piutang.no_rawat')
             ->whereBetween('piutang_pasien.tgl_piutang', [$periodeAwal, $periodeAkhir])
-            ->when(!empty($penjamin), fn (Builder $query) => $query->where('reg_periksa.kd_pj', $penjamin))
-            ->when(!empty($cari), fn (Builder $query) => $query->where(function (Builder $query) use ($cari) {
-                return $query
-                    ->where('piutang_pasien.no_rawat', 'like', "%{$cari}%")
-                    ->orWhere('piutang_pasien.no_rkm_medis', 'like', "%{$cari}%")
-                    ->orWhere('pasien.nm_pasien', 'like', "%{$cari}%")
-                    ->orWhere('penjab.png_jawab', 'like', "%{$cari}%");
-            }));
+            ->when(!empty($penjamin), fn (Builder $query) => $query->where('reg_periksa.kd_pj', $penjamin));
     }
 }

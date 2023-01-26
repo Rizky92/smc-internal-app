@@ -152,9 +152,7 @@ return [
     |
     */
 
-    'ignored_models' => [
-
-    ],
+    'ignored_models' => [],
 
     /*
     |--------------------------------------------------------------------------
@@ -181,9 +179,20 @@ return [
     */
 
     'extra' => [
-        'Eloquent' => ['Illuminate\Database\Eloquent\Builder', 'Illuminate\Database\Query\Builder'],
-        'Session' => ['Illuminate\Session\Store'],
-        'View' => ['Illuminate\View\View', 'Livewire\Macros\ViewMacros'],
+        'Eloquent' => [
+            Illuminate\Database\Eloquent\Builder::class,
+            Illuminate\Database\Query\Builder::class,
+            AgliPanci\LaravelCase\Query\CaseBuilder::class,
+        ],
+
+        'Session' => [
+            Illuminate\Session\Store::class,
+        ],
+
+        'View' => [
+            Illuminate\View\View::class,
+            Livewire\Macros\ViewMacros::class,
+        ],
     ],
 
     'magic' => [],
@@ -198,9 +207,7 @@ return [
     |
     */
 
-    'interfaces' => [
-
-    ],
+    'interfaces' => [],
 
     /*
     |--------------------------------------------------------------------------
@@ -228,9 +235,7 @@ return [
     |  ),
     |
     */
-    'custom_db_types' => [
-
-    ],
+    'custom_db_types' => [],
 
     /*
      |--------------------------------------------------------------------------

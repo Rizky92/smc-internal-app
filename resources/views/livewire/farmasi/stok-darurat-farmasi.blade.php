@@ -13,18 +13,18 @@
             </x-card.row-col>
         </x-slot>
         <x-slot name="body" class="table-responsive">
-            <x-table>
+            <x-table sortable :sortColumns="$sortColumns">
                 <x-slot name="columns">
-                    <x-table.th>Kode</x-table.th>
-                    <x-table.th>Nama</x-table.th>
-                    <x-table.th>Satuan</x-table.th>
-                    <x-table.th>Kategori</x-table.th>
-                    <x-table.th>Stok minimal</x-table.th>
-                    <x-table.th>Stok saat ini</x-table.th>
-                    <x-table.th>Saran order</x-table.th>
-                    <x-table.th>Supplier</x-table.th>
-                    <x-table.th>Harga Per Unit</x-table.th>
-                    <x-table.th>Total Harga</x-table.th>
+                    <x-table.th name="kode_brng" title="Kode" />
+                    <x-table.th name="nama_brng" title="Nama" />
+                    <x-table.th name="satuan_kecil" title="Satuan" />
+                    <x-table.th name="kategori" title="Kategori" />
+                    <x-table.th name="stokminimal" title="Stok minimal" />
+                    <x-table.th name="stok_sekarang" title="Stok saat ini" />
+                    <x-table.th name="saran_order" title="Saran order" />
+                    <x-table.th name="nama_industri" title="Supplier" />
+                    <x-table.th name="harga_beli" title="Harga Per Unit" />
+                    <x-table.th name="harga_beli_total" title="Total Harga" />
                 </x-slot>
                 <x-slot name="body">
                     @foreach ($this->stokDaruratObat as $obat)

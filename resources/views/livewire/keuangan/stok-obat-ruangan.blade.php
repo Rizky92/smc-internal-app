@@ -55,15 +55,15 @@
             </x-card.row-col>
         </x-slot>
         <x-slot name="body" class="table-responsive">
-            <x-table>
+            <x-table sortable :sortColumns="$sortColumns">
                 <x-slot name="columns">
-                    <x-table.th>Ruangan</x-table.th>
-                    <x-table.th>Kode</x-table.th>
-                    <x-table.th>Nama</x-table.th>
-                    <x-table.th>Satuan</x-table.th>
-                    <x-table.th>Stok saat ini</x-table.th>
-                    <x-table.th>Harga</x-table.th>
-                    <x-table.th>Projeksi Harga</x-table.th>
+                    <x-table.th name="nm_bangsal" title="Ruangan" />
+                    <x-table.th name="kode_brng" title="Kode" />
+                    <x-table.th name="nama_brng" title="Nama" />
+                    <x-table.th name="satuan" title="Satuan" />
+                    <x-table.th name="stok" title="Stok saat ini" />
+                    <x-table.th name="h_beli" title="Harga" />
+                    <x-table.th name="projeksi_harga" title="Projeksi Harga" />
                 </x-slot>
                 <x-slot name="body">
                     @foreach ($this->stokObatPerRuangan as $obat)

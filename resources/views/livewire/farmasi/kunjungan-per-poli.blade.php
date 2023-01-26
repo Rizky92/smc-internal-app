@@ -3,18 +3,18 @@
 
     <x-card use-default-filter>
         <x-slot name="body" class="table-responsive">
-            <x-table>
+            <x-table sortable :sortColumns="$sortColumns">
                 <x-slot name="columns">
-                    <x-table.th>No. Rawat</x-table.th>
-                    <x-table.th>No. Resep</x-table.th>
-                    <x-table.th>Pasien</x-table.th>
-                    <x-table.th>Umur</x-table.th>
-                    <x-table.th>Tgl. Validasi</x-table.th>
-                    <x-table.th>Jam</x-table.th>
-                    <x-table.th>Dokter Peresep</x-table.th>
-                    <x-table.th>Dokter Poli</x-table.th>
-                    <x-table.th>Jenis Perawatan</x-table.th>
-                    <x-table.th>Asal Poli</x-table.th>
+                    <x-table.th name="no_rawat" title="No. Rawat" />
+                    <x-table.th name="no_resep" title="No. Resep" />
+                    <x-table.th name="nm_pasien" title="Pasien" />
+                    <x-table.th name="umur" title="Umur" />
+                    <x-table.th name="tgl_perawatan" title="Tgl. Validasi" />
+                    <x-table.th name="jam" title="Jam" />
+                    <x-table.th name="nm_dokter_peresep" title="Dokter Peresep" />
+                    <x-table.th name="nm_dokter_poli" title="Dokter Poli" />
+                    <x-table.th name="status_lanjut" title="Jenis Perawatan" />
+                    <x-table.th name="nm_poli" title="Asal Poli" />
                 </x-slot>
                 <x-slot name="body">
                     @foreach ($this->dataKunjunganResepPasien as $pasien)

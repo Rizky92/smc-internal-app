@@ -4,20 +4,16 @@ namespace App\Http\Livewire\HakAkses;
 
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
+use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
+use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class HakAksesCustomReport extends Component
 {
-    use WithPagination, FlashComponent;
-
-    public $cari;
-
-    public $perpage;
-
-    protected $paginationTheme = 'bootstrap';
+    use WithPagination, FlashComponent, Filterable, LiveTable;
 
     protected $listeners = [
         'permission.updated' => 'updatePermissions',
@@ -25,8 +21,7 @@ class HakAksesCustomReport extends Component
 
     public function mount()
     {
-        $this->cari = '';
-        $this->perpage = 25;
+        $this->defaultValues();
     }
 
     public function getRolesProperty()
@@ -44,6 +39,13 @@ class HakAksesCustomReport extends Component
     {
         return view('livewire.hak-akses.hak-akses-custom-report')
             ->layout(BaseLayout::class, ['title' => 'Pengaturan Hak Akses']);
+    }
+
+    protected function defaultValues()
+    {
+        $this->cari = '';
+        $this->perpage = 25;
+        $this->sortColumns = [];
     }
 
     public function createRole(string $role = '')
@@ -73,27 +75,5 @@ class HakAksesCustomReport extends Component
     public function deletePermissions($permissions = null)
     {
         
-    }
-
-    public function searchData()
-    {
-        $this->resetPage();
-
-        $this->emit('$refresh');
-    }
-
-    public function resetFilters()
-    {
-        $this->cari = '';
-        $this->perpage = 25;
-
-        $this->searchData();
-    }
-
-    public function fullRefresh()
-    {
-        $this->forgetComputed();
-
-        $this->resetFilters();
     }
 }

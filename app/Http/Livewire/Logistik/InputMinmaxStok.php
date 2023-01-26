@@ -8,34 +8,16 @@ use App\Models\Logistik\SupplierNonMedis;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
+use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class InputMinmaxStok extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable;
-
-    public $cari;
-
-    public $perpage;
-
-    protected $paginationTheme = 'bootstrap';
-
-    protected $rules = [
-        'stokMin' => ['required', 'numeric', 'min:0'],
-        'stokMax' => ['required', 'numeric', 'min:0'],
-        'kodeSupplier' => ['required', 'string'],
-    ];
-
-    protected function queryString()
-    {
-        return [
-            'cari' => ['except' => ''],
-            'perpage' => ['except' => 25],
-        ];
-    }
+    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable;
 
     public function mount()
     {
@@ -49,7 +31,26 @@ class InputMinmaxStok extends Component
 
     public function getBarangLogistikProperty()
     {
-        return BarangNonMedis::denganMinmax(Str::lower($this->cari))->paginate($this->perpage);
+        return BarangNonMedis::query()
+            ->denganMinmax()
+            ->search($this->cari, [
+                "ipsrsbarang.kode_brng",
+                "ipsrsbarang.nama_brng",
+                "IFNULL(ipsrssuplier.kode_suplier, '-')",
+                "IFNULL(ipsrssuplier.nama_suplier, '-')",
+                "ipsrsjenisbarang.nm_jenis",
+                "kodesatuan.satuan",
+            ])
+            ->sortWithColumns($this->sortColumns, [
+                'kode_supplier' => DB::raw("IFNULL(ipsrssuplier.kode_suplier, '-')"),
+                'nama_supplier' => DB::raw("IFNULL(ipsrssuplier.nama_suplier, '-')"),
+                'jenis'         => "ipsrsjenisbarang.nm_jenis",
+                'stokmin'       => DB::raw("IFNULL(smc.ipsrs_minmax_stok_barang.stok_min, 0)"),
+                'stokmax'       => DB::raw("IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0)"),
+                'saran_order'   => DB::raw("IF(ipsrsbarang.stok <= IFNULL(smc.ipsrs_minmax_stok_barang.stok_min, 0), IFNULL(IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, IFNULL(smc.ipsrs_minmax_stok_barang.stok_min, 0)) - ipsrsbarang.stok, 0), 0)"),
+                'total_harga'   => DB::raw("IF(ipsrsbarang.stok <= IFNULL(smc.ipsrs_minmax_stok_barang.stok_min, 0), ipsrsbarang.harga * (IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok), 0)"),
+            ])
+            ->paginate($this->perpage);
     }
 
     public function render()
@@ -58,7 +59,7 @@ class InputMinmaxStok extends Component
             ->layout(BaseLayout::class, ['title' => 'Stok Minmax Barang Logistik']);
     }
 
-    public function simpan(string $kodeBarang, int $stokMin = 0, int $stokMax = 0, $kodeSupplier)
+    public function simpan(string $kodeBarang, int $stokMin = 0, int $stokMax = 0, string $kodeSupplier = '')
     {
         if (! auth()->user()->can('logistik.stok-minmax.update')) {
             $this->flashError('Anda tidak memiliki izin untuk mengupdate barang');
@@ -90,12 +91,13 @@ class InputMinmaxStok extends Component
     {
         $this->cari = '';
         $this->perpage = 25;
+        $this->sortColumns = [];
     }
 
     protected function dataPerSheet(): array
     {
         return [
-            BarangNonMedis::denganMinmax('', true)->get()
+            BarangNonMedis::denganMinmax(true)->get()
         ];
     }
 

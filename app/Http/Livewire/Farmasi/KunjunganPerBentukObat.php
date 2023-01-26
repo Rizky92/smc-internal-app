@@ -7,18 +7,18 @@ use App\Models\Farmasi\ResepDokterRacikan;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
+use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class KunjunganPerBentukObat extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable;
 
     private const OBAT_REGULAR_PAGE = 'obat_regular_page';
     private const OBAT_RACIKAN_PAGE = 'obat_racikan_page';
-
-    public $perpage;
 
     public $periodeAwal;
 
@@ -26,13 +26,10 @@ class KunjunganPerBentukObat extends Component
 
     public $jenisPerawatan;
 
-    protected $paginationTheme = 'bootstrap';
-
     protected function queryString()
     {
         return [
             'jenisPerawatan' => ['except' => '', 'as' => 'jenis_perawatan'],
-            'perpage' => ['except' => 25],
             'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'periode_awal'],
             'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'periode_akhir'],
         ];
@@ -51,27 +48,37 @@ class KunjunganPerBentukObat extends Component
 
     public function getKunjunganResepObatRegularPasienProperty()
     {
-        return ResepDokter::kunjunganResepObatRegular(
-            $this->periodeAwal,
-            $this->periodeAkhir,
-            $this->jenisPerawatan
-        )
+        return ResepDokter::query()
+            ->kunjunganResepObatRegular($this->periodeAwal, $this->periodeAkhir, $this->jenisPerawatan)
+            ->search($this->cari, [
+                'resep_dokter.no_resep',
+                'dokter.nm_dokter',
+                'pasien.nm_pasien',
+                'reg_periksa.status_lanjut',
+            ])
+            ->sortWithColumns($this->sortColumns, ['total' => DB::raw('round(sum(resep_dokter.jml * databarang.h_beli))')])
             ->paginate($this->perpage, ['*'], self::OBAT_REGULAR_PAGE);
     }
 
     public function getKunjunganResepObatRacikanPasienProperty()
     {
-        return ResepDokterRacikan::kunjunganResepObatRacikan(
-            $this->periodeAwal,
-            $this->periodeAkhir,
-            $this->jenisPerawatan
-        )
+        return ResepDokterRacikan::query()
+            ->kunjunganResepObatRacikan($this->periodeAwal, $this->periodeAkhir, $this->jenisPerawatan)
+            ->search($this->cari, [
+                'resep_dokter_racikan.no_resep',
+                'dokter.nm_dokter',
+                'pasien.nm_pasien',
+                'reg_periksa.status_lanjut',
+            ])
+            ->sortWithColumns($this->sortColumns, ['total' => DB::raw('round(sum(resep_dokter_racikan_detail.jml * databarang.h_beli))')])
             ->paginate($this->perpage, ['*'], self::OBAT_RACIKAN_PAGE);
     }
 
     protected function defaultValues()
     {
+        $this->cari = '';
         $this->perpage = 25;
+        $this->sortColumns = [];
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
         $this->jenisPerawatan = '';        

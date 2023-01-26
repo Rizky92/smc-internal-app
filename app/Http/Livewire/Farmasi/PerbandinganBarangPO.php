@@ -6,32 +6,26 @@ use App\Models\Farmasi\Inventaris\SuratPemesananObat;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
+use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class PerbandinganBarangPO extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable;
-
-    public $cari;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable;
 
     public $periodeAwal;
 
     public $periodeAkhir;
 
-    public $perpage;
-
     public $hanyaTampilkanBarangSelisih;
-
-    protected $paginationTheme = 'bootstrap';
 
     protected function queryString()
     {
         return [
-            'cari' => ['except' => ''],
-            'perpage' => ['except' => 25],
             'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'periode_awal'],
             'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'periode_akhir'],
             'hanyaTampilkanBarangSelisih' => ['except' => false, 'as' => 'barang_selisih'],
@@ -45,12 +39,21 @@ class PerbandinganBarangPO extends Component
 
     public function getPerbandinganOrderObatPOProperty()
     {
-        return SuratPemesananObat::perbandinganPemesananObatPO(
-            $this->periodeAwal,
-            $this->periodeAkhir,
-            Str::lower($this->cari),
-            $this->hanyaTampilkanBarangSelisih
-        )
+        return SuratPemesananObat::query()
+            ->perbandinganPemesananObatPO($this->periodeAwal, $this->periodeAkhir, $this->hanyaTampilkanBarangSelisih)
+            ->search($this->cari, [
+                "surat_pemesanan_medis.no_pemesanan",
+                "databarang.nama_brng",
+                "datasuplier.nama_suplier",
+                "ifnull(pemesanan_datang.nama_suplier, '-')",
+            ])
+            ->sortWithColumns($this->sortColumns, [
+                'suplier_pesan' => "datasuplier.nama_suplier",
+                'suplier_datang' => DB::raw("ifnull(pemesanan_datang.nama_suplier, '-')"),
+                'jumlah_pesan' => "detail_surat_pemesanan_medis.jumlah2",
+                'jumlah_datang' => DB::raw("ifnull(pemesanan_datang.jumlah, 0)"),
+                'selisih' => DB::raw("ifnull((detail_surat_pemesanan_medis.jumlah2 - pemesanan_datang.jumlah), 'Barang belum datang')"),
+            ])
             ->paginate($this->perpage);
     }
 
@@ -64,6 +67,7 @@ class PerbandinganBarangPO extends Component
     {
         $this->cari = '';
         $this->perpage = 25;
+        $this->sortColumns = [];
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
         $this->hanyaTampilkanBarangSelisih = false;
@@ -73,7 +77,7 @@ class PerbandinganBarangPO extends Component
     {
         return [
             SuratPemesananObat::query()
-                ->perbandinganPemesananObatPO($this->periodeAwal, $this->periodeAkhir, '', $this->hanyaTampilkanBarangSelisih)
+                ->perbandinganPemesananObatPO($this->periodeAwal, $this->periodeAkhir, $this->hanyaTampilkanBarangSelisih)
                 ->get()
         ];
     }

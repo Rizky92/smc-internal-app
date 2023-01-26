@@ -7,6 +7,7 @@ use App\Models\Perawatan\RegistrasiPasien;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
+use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -15,11 +16,7 @@ use Livewire\WithPagination;
 
 class DaftarPasienRanap extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable;
-
-    public $cari;
-
-    public $perpage;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable;
 
     public $periodeAwal;
 
@@ -27,19 +24,12 @@ class DaftarPasienRanap extends Component
 
     public $statusPerawatan;
 
-    public $hanyaPasienBaru;
-
-    protected $paginationTheme = 'bootstrap';
-
     protected function queryString()
     {
         return [
-            'cari' => ['except' => ''],
-            'perpage' => ['except' => 25],
             'periodeAwal' => ['except' => now()->format('Y-m-d'), 'as' => 'periode_awal'],
             'periodeAkhir' => ['except' => now()->format('Y-m-d'), 'as' => 'periode_akhir'],
             'statusPerawatan' => ['except' => '-', 'as' => 'status'],
-            'hanyaPasienBaru' => ['except' => false, 'as' => 'pasien_baru'],
         ];
     }
 
@@ -51,14 +41,13 @@ class DaftarPasienRanap extends Component
     public function getDaftarPasienRanapProperty()
     {
         return RegistrasiPasien::query()
-            ->selectDaftarPasienRanap()
-            ->filterDaftarPasienRanap(
-                $this->cari,
+            ->daftarPasienRanap(
                 $this->periodeAwal,
                 $this->periodeAkhir,
                 $this->statusPerawatan
             )
-            ->orderBy('no_rawat')
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
     }
 
@@ -68,37 +57,39 @@ class DaftarPasienRanap extends Component
             ->layout(BaseLayout::class, ['title' => 'Daftar Pasien Rawat Inap']);
     }
 
-    // public function batalkanRanapPasien(string $noRawat, string $tglMasuk, string $jamMasuk, string $kamar)
-    // {
-    //     if (!auth()->user()->can('perawatan.rawat-inap.batal-ranap')) {
-    //         $this->flashError('Anda tidak dapat melakukan aksi ini');
+    /*
+    public function batalkanRanapPasien(string $noRawat, string $tglMasuk, string $jamMasuk, string $kamar)
+    {
+        if (!auth()->user()->can('perawatan.rawat-inap.batal-ranap')) {
+            $this->flashError('Anda tidak dapat melakukan aksi ini');
 
-    //         return;
-    //     }
+            return;
+        }
 
-    //     tracker_start();
+        tracker_start();
 
-    //     RawatInap::where([
-    //         ['no_rawat', '=', $noRawat],
-    //         ['tgl_masuk', '=', $tglMasuk],
-    //         ['jam_masuk', '=', $jamMasuk],
-    //         ['kd_kamar', '=', $kamar]
-    //     ])
-    //         ->delete();
+        RawatInap::where([
+            ['no_rawat', '=', $noRawat],
+            ['tgl_masuk', '=', $tglMasuk],
+            ['jam_masuk', '=', $jamMasuk],
+            ['kd_kamar', '=', $kamar]
+        ])
+            ->delete();
 
-    //     Kamar::find($kamar)->update(['status' => 'KOSONG']);
+        Kamar::find($kamar)->update(['status' => 'KOSONG']);
 
-    //     if (!RawatInap::where('no_rawat', $noRawat)->exists()) {
-    //         RegistrasiPasien::find($noRawat)->update([
-    //             'status_lanjut' => 'Ralan',
-    //             'stts' => 'Sudah',
-    //         ]);
-    //     }
+        if (!RawatInap::where('no_rawat', $noRawat)->exists()) {
+            RegistrasiPasien::find($noRawat)->update([
+                'status_lanjut' => 'Ralan',
+                'stts' => 'Sudah',
+            ]);
+        }
 
-    //     tracker_end();
+        tracker_end();
 
-    //     $this->flashSuccess("Data pasien dengan No. Rawat {$noRawat} sudah kembali ke rawat jalan!");
-    // }
+        $this->flashSuccess("Data pasien dengan No. Rawat {$noRawat} sudah kembali ke rawat jalan!");
+    }
+    */
 
     public function updateHargaKamar(string $noRawat, string $kdKamar, string $tglMasuk, string $jamMasuk, int $hargaKamarBaru, int $lamaInap)
     {

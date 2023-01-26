@@ -6,36 +6,22 @@ use App\Models\Farmasi\Inventaris\GudangObat;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
+use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Rizky92\Xlswriter\ExcelExport;
 
 class StokObatRuangan extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable;
-
-    public $cari;
-
-    public $perpage;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable;
 
     public $kodeBangsal;
-
-    protected $paginationTheme = 'bootstrap';
 
     protected function queryString()
     {
         return [
-            'cari' => [
-                'except' => '',
-            ],
-            'perpage' => [
-                'except' => 25,
-            ],
-            'kodeBangsal' => [
-                'except' => '-',
-                'as' => 'ruangan',
-            ],
+            'kodeBangsal' => ['except' => '-', 'as' => 'ruangan'],
         ];
     }
 
@@ -46,7 +32,20 @@ class StokObatRuangan extends Component
 
     public function getStokObatPerRuanganProperty()
     {
-        return GudangObat::stokPerRuangan($this->kodeBangsal, $this->cari)->paginate($this->perpage);
+        return GudangObat::query()
+            ->stokPerRuangan($this->kodeBangsal)
+            ->search($this->cari, [
+                'bangsal.nm_bangsal',
+                'gudangbarang.kode_brng',
+                'databarang.nama_brng',
+                'kodesatuan.satuan',
+            ])
+            ->sortWithColumns(
+                $this->sortColumns,
+                ['projeksi_harga' => DB::raw('round(databarang.h_beli * if(gudangbarang.stok < 0, 0, gudangbarang.stok))')],
+                ['databarang.nama_brng' => 'asc']
+            )
+            ->paginate($this->perpage);
     }
 
     public function getBangsalProperty()
@@ -64,13 +63,21 @@ class StokObatRuangan extends Component
     {
         $this->cari = '';
         $this->perpage = 25;
+        $this->sortColumns = [];
         $this->kodeBangsal = '-';
     }
 
     protected function dataPerSheet(): array
     {
         return [
-            GudangObat::stokPerRuangan($this->kodeBangsal)->get(),
+            GudangObat::query()
+                ->stokPerRuangan($this->kodeBangsal)
+                ->sortWithColumns(
+                    $this->sortColumns,
+                    ['projeksi_harga' => DB::raw('round(databarang.h_beli * if(gudangbarang.stok < 0, 0, gudangbarang.stok))')],
+                    ['databarang.nama_brng' => 'asc']
+                )
+                ->paginate($this->perpage)
         ];
     }
 

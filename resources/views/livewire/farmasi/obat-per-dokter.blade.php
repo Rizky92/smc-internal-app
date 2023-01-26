@@ -3,16 +3,16 @@
 
     <x-card use-default-filter>
         <x-slot name="body" class="table-responsive">
-            <x-table>
+            <x-table sortable :sortColumns="$sortColumns">
                 <x-slot name="columns">
-                    <x-table.th>No. Resep</x-table.th>
-                    <x-table.th>Tgl. Validasi</x-table.th>
-                    <x-table.th>Jam</x-table.th>
-                    <x-table.th>Nama Obat</x-table.th>
-                    <x-table.th>Jumlah</x-table.th>
-                    <x-table.th>Dokter Peresep</x-table.th>
-                    <x-table.th>Asal</x-table.th>
-                    <x-table.th>Asal Poli</x-table.th>
+                    <x-table.th name="no_resep" title="No. Resep" />
+                    <x-table.th name="tgl_perawatan" title="Tgl. Validasi" />
+                    <x-table.th name="jam" title="Jam" />
+                    <x-table.th name="nama_brng" title="Nama Obat" />
+                    <x-table.th name="jml" title="Jumlah" />
+                    <x-table.th name="nm_dokter" title="Dokter Peresep" />
+                    <x-table.th name="status" title="Asal" />
+                    <x-table.th name="nm_poli" title="Asal Poli" />
                 </x-slot>
                 <x-slot name="body">
                     @foreach ($this->obatPerDokter as $obat)

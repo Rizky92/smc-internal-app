@@ -6,28 +6,21 @@ use App\Models\Logistik\BarangNonMedis;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
+use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class StokDaruratLogistik extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable;
     
-    public $cari;
-
-    public $perpage;
-
     public $tampilkanSaranOrderNol;
-
-    protected $paginationTheme = 'bootstrap';
 
     protected function queryString()
     {
         return [
-            'cari' => ['except' => ''],
-            'perpage' => ['except' => 25],
             'tampilkanSaranOrderNol' => ['except' => true],
         ];
     }
@@ -38,8 +31,24 @@ class StokDaruratLogistik extends Component
     }
 
     public function getStokDaruratLogistikProperty()
-    {
-        return BarangNonMedis::daruratStok(Str::lower($this->cari), $this->tampilkanSaranOrderNol)
+    {   
+        return BarangNonMedis::query()
+            ->daruratStok($this->tampilkanSaranOrderNol)
+            ->search($this->cari, [
+                'ipsrsbarang.kode_brng',
+                'ipsrsbarang.nama_brng',
+                "IFNULL(ipsrssuplier.nama_suplier, '-')",
+                'ipsrsjenisbarang.nm_jenis',
+                'kodesatuan.satuan',
+            ])
+            ->sortWithColumns($this->sortColumns, [
+                'nama_supplier' => "IFNULL(ipsrssuplier.nama_suplier, '-')",
+                'jenis'         => 'ipsrsjenisbarang.nm_jenis',
+                'stokmin'       => 'IFNULL(smc.ipsrs_minmax_stok_barang.stok_min, 0)',
+                'stokmax'       => 'IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0)',
+                'saran_order'   => DB::raw("IFNULL(IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok, '0')"),
+                'total_harga'   => DB::raw("(ipsrsbarang.harga * (IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok))"),
+            ], ['ipsrsbarang.nama_brng' => 'asc'])
             ->paginate($this->perpage);
     }
 
@@ -59,7 +68,7 @@ class StokDaruratLogistik extends Component
     protected function dataPerSheet(): array
     {
         return [
-            BarangNonMedis::daruratStok('', $this->tampilkanSaranOrderNol)->get()
+            BarangNonMedis::daruratStok($this->tampilkanSaranOrderNol)->get()
         ];
     }
 
