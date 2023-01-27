@@ -70,7 +70,7 @@ class LaporanPotonganBiayaPasien extends Component
     protected function dataPerSheet(): array
     {
         return [
-            PenguranganBiaya::penguranganBiayaPasien($this->periodeAwal, $this->periodeAkhir)->get()
+            PenguranganBiaya::potonganBiayaPasien($this->periodeAwal, $this->periodeAkhir)->get()
         ];
     }
 
