@@ -85,27 +85,12 @@ class RegistrasiPasien extends Model
             ->when($statusPerawatan === 'tanggal_masuk', fn (Builder $query) => $query->whereBetween('kamar_inap.tgl_masuk', [$tglAwal, $tglAkhir]))
             ->when($statusPerawatan === 'tanggal_keluar', fn (Builder $query) => $query->whereBetween('kamar_inap.tgl_keluar', [$tglAwal, $tglAkhir]))
             ->groupByRaw("
-                kamar_inap.kd_kamar,
                 reg_periksa.no_rawat,
-                reg_periksa.no_rkm_medis,
-                concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal),
-                kamar.kelas,
-                concat(pasien.nm_pasien, ' (', reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur, ')'),
-                concat(pasien.alamat, ', Kel. ', kelurahan.nm_kel, ', Kec. ', kecamatan.nm_kec, ', ', kabupaten.nm_kab, ', ', propinsi.nm_prop),
-                pasien.agama,
-                concat(pasien.namakeluarga, ' (', pasien.keluarga, ')'),
-                penjab.png_jawab,
-                poliklinik.nm_poli,
-                dokter.nm_dokter,
-                kamar_inap.stts_pulang,
+                kamar_inap.kd_kamar,
                 kamar_inap.tgl_masuk,
                 kamar_inap.jam_masuk,
                 if(kamar_inap.tgl_keluar = '0000-00-00', '-', kamar_inap.tgl_keluar),
-                if(kamar_inap.jam_keluar = '00:00:00', '-', kamar_inap.jam_keluar),
-                kamar_inap.trf_kamar,
-                kamar_inap.lama,
-                kamar_inap.ttl_biaya,
-                pasien.no_tlp
+                if(kamar_inap.jam_keluar = '00:00:00', '-', kamar_inap.jam_keluar)
             ");
     }
 }
