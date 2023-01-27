@@ -157,10 +157,10 @@
                             <x-table.td>{{ $user->jenis }}</x-table.td>
                             <x-table.td>
                                 @foreach ($user->roles as $role)
-                                    <x-badge :class="Arr::toCssClasses(['badge-dark', 'ml-1' => $loop->first], ' ')">{{ $role->name }}</x-badge>
+                                    <x-badge :class="Arr::toCssClasses(['badge-dark', 'ml-1' => !$loop->first], ' ')">{{ $role->name }}</x-badge>
                                 @endforeach
                                 @foreach ($user->permissions as $permission)
-                                    <x-badge :class="Arr::toCssClasses(['badge-info', 'ml-1' => ($loop->first && $user->roles->count() > 0)], ' ')">{{ $permission->name }}</x-badge>
+                                    <x-badge :class="Arr::toCssClasses(['badge-info', 'ml-1' => (!$loop->first || $user->roles->count() > 0)], ' ')">{{ $permission->name }}</x-badge>
                                 @endforeach
                             </x-table.td>
                         </x-table.tr>
