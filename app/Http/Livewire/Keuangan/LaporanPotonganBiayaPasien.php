@@ -35,10 +35,10 @@ class LaporanPotonganBiayaPasien extends Component
             ->layout(BaseLayout::class, ['title' => 'Laporan Potongan Biaya Pasien']);
     }
 
-    public function getDataPenguranganBiayaPasienProperty()
+    public function getDataPotonganBiayaPasienProperty()
     {
         return PenguranganBiaya::query()
-            ->penguranganBiayaPasien($this->periodeAwal, $this->periodeAkhir)
+            ->potonganBiayaPasien($this->periodeAwal, $this->periodeAkhir)
             ->search($this->cari, [
                 "pasien.nm_pasien",
                 "reg_periksa.no_rkm_medis",

@@ -22,7 +22,7 @@ class PenguranganBiaya extends Model
 
     public $timestamps = false;
 
-    public function scopePenguranganBiayaPasien(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    public function scopePotonganBiayaPasien(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->format('Y-m-d');

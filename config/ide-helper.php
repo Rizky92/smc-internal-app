@@ -180,18 +180,18 @@ return [
 
     'extra' => [
         'Eloquent' => [
-            Illuminate\Database\Eloquent\Builder::class,
-            Illuminate\Database\Query\Builder::class,
-            AgliPanci\LaravelCase\Query\CaseBuilder::class,
+            \Illuminate\Database\Eloquent\Builder::class,
+            \Illuminate\Database\Query\Builder::class,
+            \AgliPanci\LaravelCase\Query\CaseBuilder::class,
         ],
 
         'Session' => [
-            Illuminate\Session\Store::class,
+            \Illuminate\Session\Store::class,
         ],
 
         'View' => [
-            Illuminate\View\View::class,
-            Livewire\Macros\ViewMacros::class,
+            \Illuminate\View\View::class,
+            \Livewire\Macros\ViewMacros::class,
         ],
     ],
 
