@@ -54,7 +54,7 @@
                                     </x-table.td>
                                     <x-table.td>{{ $user->nik }}</x-table.td>
                                     <x-table.td>{{ $user->nama }}</x-table.td>
-                                    <x-table.td>{{ $user->nm_jbtn }}</x-table.td>
+                                    <x-table.td>{{ $user->jbtn }}</x-table.td>
                                     <x-table.td>
                                         @foreach ($user->roles as $userRole)
                                             <span class="badge badge-dark text-sm font-weight-normal border">{{ $userRole->name }}</span>

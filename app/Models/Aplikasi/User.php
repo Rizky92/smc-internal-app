@@ -936,7 +936,7 @@ class User extends Authenticatable
 
     protected $searchColumns = [
         'pegawai.nik',
-        'petugas.nama',
+        'pegawai.nama',
         'jabatan.nm_jbtn',
     ];
 

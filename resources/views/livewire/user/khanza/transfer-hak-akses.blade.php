@@ -42,7 +42,7 @@
                                     </x-table.td>
                                     <x-table.td>{{ $user->nik }}</x-table.td>
                                     <x-table.td>{{ $user->nama }}</x-table.td>
-                                    <x-table.td>{{ $user->nm_jbtn }}</x-table.td>
+                                    <x-table.td>{{ $user->jbtn }}</x-table.td>
                                 </x-table.tr>
                             @endforeach
                         </x-slot>
