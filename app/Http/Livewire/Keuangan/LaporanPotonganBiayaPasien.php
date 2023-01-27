@@ -29,6 +29,11 @@ class LaporanPotonganBiayaPasien extends Component
         ];
     }
 
+    public function mount()
+    {
+        $this->defaultValues();
+    }
+
     public function render()
     {
         return view('livewire.keuangan.laporan-potongan-biaya-pasien')

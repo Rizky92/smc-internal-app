@@ -27,8 +27,8 @@
                             <x-table.td>{{ $item->nm_pasien }}</x-table.td>
                             <x-table.td>{{ $item->no_rkm_medis }}</x-table.td>
                             <x-table.td>{{ $item->no_rawat }}</x-table.td>
-                            <x-table.td>{{ $item->nama_biaya }}</x-table.td>
-                            <x-table.td>{{ rp($item->besar_biaya) }}</x-table.td>
+                            <x-table.td>{{ $item->nama_pengurangan }}</x-table.td>
+                            <x-table.td>{{ rp($item->besar_pengurangan) }}</x-table.td>
                             <x-table.td>{{ $item->png_jawab }}</x-table.td>
                             <x-table.td>{{ $item->dokter_ralan }}</x-table.td>
                             <x-table.td>{{ $item->dokter_ranap }}</x-table.td>
