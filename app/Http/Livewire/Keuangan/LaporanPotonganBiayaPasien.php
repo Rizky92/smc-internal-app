@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire\Keuangan;
 
-use App\Models\Keuangan\TambahanBiaya;
+use App\Models\Keuangan\PenguranganBiaya;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class LaporanTambahanBiayaPasien extends Component
+class LaporanPotonganBiayaPasien extends Component
 {
     use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable;
 
@@ -29,26 +29,27 @@ class LaporanTambahanBiayaPasien extends Component
         ];
     }
 
-    public function mount()
+    public function render()
     {
-        $this->defaultValues();
+        return view('livewire.keuangan.laporan-potongan-biaya-pasien')
+            ->layout(BaseLayout::class, ['title' => 'Laporan Potongan Biaya Pasien']);
     }
 
-    public function getDataTambahanBiayaPasienProperty()
+    public function getDataPenguranganBiayaPasienProperty()
     {
-        return TambahanBiaya::query()
-            ->biayaTambahanUntukHonorDokter($this->periodeAwal, $this->periodeAkhir)
+        return PenguranganBiaya::query()
+            ->penguranganBiayaPasien($this->periodeAwal, $this->periodeAkhir)
             ->search($this->cari, [
-                'pasien.nm_pasien',
-                'reg_periksa.no_rkm_medis',
-                'tambahan_biaya.no_rawat',
-                'tambahan_biaya.nama_biaya',
-                'penjab.png_jawab',
-                'dokter.nm_dokter',
+                "pasien.nm_pasien",
+                "reg_periksa.no_rkm_medis",
+                "pengurangan_biaya.no_rawat",
+                "pengurangan_biaya.nama_pengurangan",
+                "penjab.png_jawab",
+                "dokter.nm_dokter",
                 "coalesce(nullif(trim(dokter_pj.nm_dokter), ''), '-')",
-                'poliklinik.nm_poli',
-                'reg_periksa.status_lanjut',
-                'reg_periksa.status_bayar',
+                "poliklinik.nm_poli",
+                "reg_periksa.status_lanjut",
+                "reg_periksa.status_bayar",
             ])
             ->sortWithColumns($this->sortColumns, [
                 'dokter_ralan' => DB::raw("dokter.nm_dokter"),
@@ -57,16 +58,10 @@ class LaporanTambahanBiayaPasien extends Component
             ->paginate($this->perpage);
     }
 
-    public function render()
-    {
-        return view('livewire.keuangan.laporan-tambahan-biaya-pasien')
-            ->layout(BaseLayout::class, ['title' => 'Laporan Tambahan Biaya Pasien untuk Honor Dokter']);
-    }
-
     protected function defaultValues()
     {
         $this->cari = '';
-        $this->perpage = 25;
+        $this->perpage = '';
         $this->sortColumns = [];
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
@@ -75,7 +70,7 @@ class LaporanTambahanBiayaPasien extends Component
     protected function dataPerSheet(): array
     {
         return [
-            TambahanBiaya::biayaTambahanUntukHonorDokter($this->periodeAwal, $this->periodeAkhir)->get()
+            PenguranganBiaya::penguranganBiayaPasien($this->periodeAwal, $this->periodeAkhir)->get()
         ];
     }
 
@@ -87,7 +82,7 @@ class LaporanTambahanBiayaPasien extends Component
             'Nama Pasien',
             'No. RM',
             'No. Registrasi',
-            'Nama Biaya',
+            'Nama Potongan',
             'Nominal (RP)',
             'Jenis Bayar',
             'Dokter Ralan',
@@ -102,7 +97,7 @@ class LaporanTambahanBiayaPasien extends Component
     {
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Tambahan Biaya Pasien Untuk Honor Dokter',
+            'Laporan Pengurangan Biaya Pasien',
             Carbon::parse($this->periodeAwal)->format('d F Y') . ' s.d. ' . Carbon::parse($this->periodeAkhir)->format('d F Y'),
         ];
     }
