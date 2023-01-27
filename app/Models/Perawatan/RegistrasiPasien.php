@@ -59,7 +59,7 @@ class RegistrasiPasien extends Model
             kamar_inap.trf_kamar,
             kamar_inap.lama,
             kamar_inap.ttl_biaya,
-            group_concat(dokter_pj.nm_dokter separator ', ') dokter_ranap,
+            ifnull(group_concat(dokter_pj.nm_dokter separator ', '), '-') dokter_ranap,
             pasien.no_tlp
         ";
 
