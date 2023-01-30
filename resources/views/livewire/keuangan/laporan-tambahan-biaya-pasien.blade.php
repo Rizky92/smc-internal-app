@@ -44,5 +44,4 @@
             <x-paginator :data="$this->dataTambahanBiayaPasien" />
         </x-slot>
     </x-card>
-    {{-- Knowing others is intelligence; knowing yourself is true wisdom. --}}
 </div>

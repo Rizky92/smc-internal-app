@@ -80,6 +80,8 @@ class BaseLayout extends Component
                     'keuangan.stok-obat-ruangan.read',
                     'keuangan.piutang-pasien.read',
                     'keuangan.laporan-tambahan-biaya.read',
+                    'keuangan.laporan-potongan-biaya.read',
+                    'keuangan.laporan-selesai-billing.read',
                 ]),
                 'items' => [
                     [
@@ -103,6 +105,13 @@ class BaseLayout extends Component
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.laporan-tambahan-biaya.read'),
                     ],
+                    // [
+                    //     'name' => 'Laporan Selesai Billing',
+                    //     'url' => route('admin.keuangan.laporan-selesai-billing'),
+                    //     'icon' => "fas fa-book",
+                    //     'type' => 'link',
+                    //     'hasAnyPermissions' => $user->can('keuangan.laporan-selesai-billing.read'),
+                    // ],
                 ],
             ],
             [
