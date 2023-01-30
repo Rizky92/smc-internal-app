@@ -50,6 +50,11 @@ Breadcrumbs::for('admin.keuangan.laporan-potongan-biaya', function (Trail $trail
     $trail->push('Laporan Potongan Biaya', route('admin.keuangan.laporan-potongan-biaya'));
 });
 
+Breadcrumbs::for('admin.keuangan.laporan-selesai-billing', function (Trail $trail) {
+    $trail->parent('admin.keuangan');
+    $trail->push('Laporan Selesai Billing', route('admin.keuangan.laporan-selesai-billing'));
+});
+
 
 Breadcrumbs::for('admin.farmasi', function (Trail $trail) {
     $trail->parent('admin.dashboard');

@@ -12,6 +12,7 @@ use App\Http\Livewire\Farmasi\PerbandinganBarangPO;
 use App\Http\Livewire\Farmasi\StokDaruratFarmasi;
 use App\Http\Livewire\HakAkses\HakAksesCustomReport;
 use App\Http\Livewire\HakAkses\HakAksesKhanza;
+use App\Http\Livewire\Keuangan\LaporanPenyelesaianBillingPerPetugas;
 use App\Http\Livewire\Keuangan\LaporanPotonganBiayaPasien;
 use App\Http\Livewire\Keuangan\LaporanTambahanBiayaPasien;
 use App\Http\Livewire\Keuangan\RekapPiutangPasien;
@@ -83,6 +84,10 @@ Route::prefix('admin')
                 Route::get('laporan-potongan-biaya', LaporanPotonganBiayaPasien::class)
                     ->middleware('can:keuangan.laporan-potongan-biaya.read')
                     ->name('laporan-potongan-biaya');
+
+                Route::get('laporan-selesai-billing', LaporanPenyelesaianBillingPerPetugas::class)
+                    ->middleware('can:keuangan.laporan-selesai-billing.read')
+                    ->name('laporan-selesai-billing');
             });
 
         Route::prefix('farmasi')
