@@ -29,7 +29,7 @@
                             :name="$menu['name']"
                         >
                             @foreach ($menu['items'] as $submenu)
-                                <x-sidebar.link
+                                <x-sidebar.link 
                                     :hasPermissions="$submenu['hasAnyPermissions']"
                                     :current="$current"
                                     :url="$submenu['url']"

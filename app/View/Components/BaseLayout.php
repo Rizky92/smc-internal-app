@@ -32,7 +32,7 @@ class BaseLayout extends Component
         /** @var \App\Models\Aplikasi\User $user */
         $user = auth()->user();
 
-        $su = config('permission.superadmin_name');
+        $develop = config('permission.superadmin_name');
 
         $this->title = $title;
         $this->current = URL::current();
@@ -105,13 +105,13 @@ class BaseLayout extends Component
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.laporan-tambahan-biaya.read'),
                     ],
-                    // [
-                    //     'name' => 'Laporan Selesai Billing',
-                    //     'url' => route('admin.keuangan.laporan-selesai-billing'),
-                    //     'icon' => "fas fa-book",
-                    //     'type' => 'link',
-                    //     'hasAnyPermissions' => $user->can('keuangan.laporan-selesai-billing.read'),
-                    // ],
+                    [
+                        'name' => 'Laporan Selesai Billing',
+                        'url' => route('admin.keuangan.laporan-selesai-billing'),
+                        'icon' => "fas fa-book",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.laporan-selesai-billing.read'),
+                    ],
                 ],
             ],
             [
@@ -215,21 +215,21 @@ class BaseLayout extends Component
                 'name' => 'Hak Akses',
                 'icon' => "far fa-circle",
                 'type' => 'dropdown',
-                'hasAnyPermissions' => $user->hasRole($su),
+                'hasAnyPermissions' => $user->hasRole($develop),
                 'items' => [
                     [
                         'name' => 'Khanza',
                         'url' => route('admin.hak-akses.khanza'),
                         'icon' => "fas fa-key",
                         'type' => 'link',
-                        'hasAnyPermissions' => $user->hasRole($su),
+                        'hasAnyPermissions' => $user->hasRole($develop),
                     ],
                     [
                         'name' => 'Custom Report',
                         'url' => route('admin.hak-akses.custom-report'),
                         'icon' => 'fas fa-key',
                         'type' => 'link',
-                        'hasAnyPermissions' => $user->hasRole($su),
+                        'hasAnyPermissions' => $user->hasRole($develop),
                     ],
                 ],
             ],
@@ -238,14 +238,14 @@ class BaseLayout extends Component
                 'url' => route('admin.manajemen-user'),
                 'icon' => "fas fa-users",
                 'type' => 'link',
-                'hasAnyPermissions' => $user->hasRole($su),
+                'hasAnyPermissions' => $user->hasRole($develop),
             ],
             [
                 'name' => 'Log Viewer',
                 'url' => route('admin.log-viewer'),
                 'icon' => "fas fa-scroll",
                 'type' => 'link',
-                'hasAnyPermissions' => $user->hasRole($su),
+                'hasAnyPermissions' => $user->hasRole($develop),
             ],
         ]);
     }

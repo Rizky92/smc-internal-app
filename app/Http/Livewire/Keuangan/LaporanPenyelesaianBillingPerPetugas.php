@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Keuangan;
 
+use App\Models\Keuangan\NotaSelesai;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
@@ -29,6 +30,15 @@ class LaporanPenyelesaianBillingPerPetugas extends Component
     public function mount()
     {
         $this->defaultValues();
+    }
+
+    public function getBillingYangDiselesaikanProperty()
+    {
+        return NotaSelesai::query()
+            ->billingYangDiselesaikan()
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
+            ->paginate($this->perpage);
     }
 
     public function render()
