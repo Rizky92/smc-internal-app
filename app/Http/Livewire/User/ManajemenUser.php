@@ -50,4 +50,21 @@ class ManajemenUser extends Component
         $this->cari = '';
         $this->perpage = 25;
     }
+
+    public function impersonateAsUser(string $nrp = '')
+    {
+        if (empty($nrp)) {
+            return;
+        }
+
+        if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
+            return;
+        }
+
+        auth()->user()->impersonate(User::findByNRP($nrp));
+
+        $this->flashInfo("Anda sekarang sedang login sebagai {$nrp}");
+        
+        return redirect('admin/');
+    }
 }

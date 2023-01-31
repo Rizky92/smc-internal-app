@@ -10,19 +10,26 @@
                 let inputPermissions
 
                 let buttonResetFilters
+                let buttonImpersonate
 
                 $(document).ready(() => {
                     inputNRP = $('#user')
                     inputNama = $('#nama')
                     inputRoles = $('input[name=roles]')
                     inputPermissions = $('input[name=permissions]')
+
                     buttonResetFilters = $('button#reset-filters')
+                    buttonImpersonate = $('button#impersonate')
 
                     buttonResetFilters.click(e => {
                         inputNRP.val('')
                         inputNama.val('')
                         inputRoles.each((i, el) => el.checked = false)
                         inputPermissions.each((i, el) => el.checked = false)
+                    })
+
+                    buttonImpersonate.click(e => {
+                        @this.impersonateAsUser(inputNRP.val())
                     })
                 })
 
@@ -122,6 +129,8 @@
                                 </button>
                             </div>
                         </div>
+
+                        <x-button class="btn-outline-dark ml-3 mb-3" id="impersonate" title="Impersonasi" icon="fas fa-user-secret" />
                     </div>
                 </div>
             </x-card.row>

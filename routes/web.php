@@ -56,6 +56,8 @@ Route::prefix('admin')
     ->as('admin.')
     ->middleware('auth')
     ->group(function () {
+        Route::impersonate();
+        
         Route::get('/', DashboardController::class)->name('dashboard');
 
         Route::prefix('perawatan')
