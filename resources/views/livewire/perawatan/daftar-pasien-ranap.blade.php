@@ -13,6 +13,8 @@
                             let inputHargaKamar
                             let inputLamaInap
                             let inputTotalHarga
+                            
+                            let inputReadClipboard
 
                             let hiddenKdKamar
                             let hiddenTglMasuk
@@ -31,6 +33,8 @@
                                 inputLamaInap = $('#lama_inap')
                                 inputTotalHarga = $('#total_harga')
 
+                                inputReadClipboard = $('textarea#copy-to-clipboard')
+
                                 hiddenKdKamar = $('#kd_kamar')
                                 hiddenTglMasuk = $('#tgl_masuk')
                                 hiddenJamMasuk = $('#jam_masuk')
@@ -38,10 +42,12 @@
 
                                 buttonSimpan = $('#simpan-data')
                                 buttonBatalSimpan = $('#batal-simpan')
+                                buttonCopyData = $('button#copy-data')
                                 buttonResetFilters = $('#reset-filters')
 
                                 buttonSimpan.prop('disabled', true)
                                 buttonBatalSimpan.prop('disabled', true)
+                                buttonCopyData.prop('disabled', true)
 
                                 buttonSimpan.click(e => {
                                     let noRawat = inputNoRawat.val()
@@ -84,7 +90,8 @@
                                 totalHarga,
                                 kdKamar,
                                 tglMasuk,
-                                jamMasuk
+                                jamMasuk,
+                                clipboard
                             }) {
                                 inputNoRawat.val(noRawat)
                                 inputKamar.val(kamar)
@@ -92,6 +99,8 @@
                                 inputHargaKamar.val(hargaKamar)
                                 inputLamaInap.val(lamaInap)
                                 inputTotalHarga.val(totalHarga)
+
+                                inputReadClipboard.val(clipboard)
 
                                 hiddenKdKamar.val(kdKamar)
                                 hiddenTglMasuk.val(tglMasuk)
@@ -104,6 +113,8 @@
                                 inputHargaKamar.trigger('change')
                                 inputLamaInap.trigger('change')
                                 inputTotalHarga.trigger('change')
+
+                                inputReadClipboard.trigger('change')
 
                                 hiddenKdKamar.trigger('change')
                                 hiddenTglMasuk.trigger('change')
@@ -122,6 +133,8 @@
                                 inputLamaInap.val('')
                                 inputTotalHarga.val('')
 
+                                inputReadClipboard.val('')
+
                                 hiddenKdKamar.val('')
                                 hiddenTglMasuk.val('')
                                 hiddenJamMasuk.val('')
@@ -133,6 +146,8 @@
                                 inputHargaKamar.trigger('change')
                                 inputLamaInap.trigger('change')
                                 inputTotalHarga.trigger('change')
+
+                                inputReadClipboard.trigger('change')
 
                                 hiddenKdKamar.trigger('change')
                                 hiddenTglMasuk.trigger('change')
@@ -198,6 +213,7 @@
                 <x-card.row-col class="pb-3 border-bottom">
                     <x-button disabled class="btn-primary" id="simpan-data" title="Simpan" icon="fas fa-save" />
                     <x-button disabled class="btn-default ml-2" id="batal-simpan" title="Batal" />
+                    <textarea id="copy-to-clipboard" readonly rows="2" class="text-xs border-0 ml-2" style="font-family: monospace; resize: none; display: block; flex-grow: 1"></textarea>
                 </x-card.row-col>
             @endcan
 
@@ -250,7 +266,7 @@
                         <x-table.tr>
                             <x-table.td>
                                 {{ $pasien->no_rawat }}
-                                <x-slot name="clickable" data-no-rawat="{{ $pasien->no_rawat }}" data-kamar="{{ $pasien->ruangan }}" data-pasien="{{ $pasien->data_pasien }}" data-harga-kamar="{{ $pasien->trf_kamar }}" data-lama-inap="{{ $pasien->lama }}" data-total-harga="{{ $pasien->ttl_biaya }}" data-kd-kamar="{{ $pasien->kd_kamar }}" data-tgl-masuk="{{ $pasien->tgl_masuk }}" data-jam-masuk="{{ $pasien->jam_masuk }}"></x-slot>
+                                <x-slot name="clickable" data-no-rawat="{{ $pasien->no_rawat }}" data-kamar="{{ $pasien->ruangan }}" data-pasien="{{ $pasien->data_pasien }}" data-harga-kamar="{{ $pasien->trf_kamar }}" data-lama-inap="{{ $pasien->lama }}" data-total-harga="{{ $pasien->ttl_biaya }}" data-kd-kamar="{{ $pasien->kd_kamar }}" data-tgl-masuk="{{ $pasien->tgl_masuk }}" data-jam-masuk="{{ $pasien->jam_masuk }}" data-clipboard="{{ collect($pasien->getAttributes())->join(' ') }}"></x-slot>
                             </x-table.td>
                             <x-table.td>{{ $pasien->no_rkm_medis }}</x-table.td>
                             <x-table.td>{{ $pasien->ruangan }}</x-table.td>
