@@ -17,7 +17,7 @@
         <x-slot name="body" class="table-responsive">
             <x-table style="min-width: 100%; width: 140rem" sortable :sortColumns="$sortColumns">
                 <x-slot name="columns">
-                    <x-table.th name="id" title="#" style="width: 8ch" />
+                    <x-table.th name="id" title="#" style="width: 10ch" />
                     <x-table.th name="no_rawat" title="No. Rawat" style="width: 17ch" />
                     <x-table.th name="no_rkm_medis" title="No. RM" style="width: 12ch" />
                     <x-table.th name="nm_pasien" title="Pasien" />
