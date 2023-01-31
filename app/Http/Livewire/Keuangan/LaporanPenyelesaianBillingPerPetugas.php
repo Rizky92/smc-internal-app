@@ -8,6 +8,7 @@ use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -35,9 +36,25 @@ class LaporanPenyelesaianBillingPerPetugas extends Component
     public function getBillingYangDiselesaikanProperty()
     {
         return NotaSelesai::query()
-            ->billingYangDiselesaikan()
-            ->search($this->cari)
-            ->sortWithColumns($this->sortColumns)
+            ->billingYangDiselesaikan($this->periodeAwal, $this->periodeAkhir)
+            ->search($this->cari, [
+                "nota_selesai.no_rawat",
+                "pasien.no_rkm_medis",
+                "trim(pasien.nm_pasien)",
+                "nota_pasien.no_nota",
+                "ifnull(concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal), '-')",
+                "nota_selesai.status_pasien",
+                "nota_selesai.bentuk_bayar",
+                "nota_pasien.besar_bayar",
+                "penjab.png_jawab",
+                "nota_selesai.tgl_penyelesaian",
+                "concat(nota_selesai.user_id, ' ', pegawai.nama)",
+            ])
+            ->sortWithColumns($this->sortColumns, [
+                'nm_pasien' => DB::raw("trim(pasien.nm_pasien)"),
+                'ruangan' => DB::raw("ifnull(concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal), '-')"),
+                'nama_pegawai' => DB::raw("concat(nota_selesai.user_id, ' ', pegawai.nama)"),
+            ])
             ->paginate($this->perpage);
     }
 
@@ -47,8 +64,20 @@ class LaporanPenyelesaianBillingPerPetugas extends Component
             ->layout(BaseLayout::class, ['title' => 'Laporan Penyelesaian Billing Pasien per Petugas']);
     }
 
+    public function tarikDataTerbaru()
+    {
+        NotaSelesai::refreshModel();
+
+        $this->forgetComputed();
+        
+        $this->searchData();
+    }
+
     protected function defaultValues()
     {
+        $this->cari = '';
+        $this->perpage = 25;
+        $this->sortColumns = [];
         $this->periodeAwal = now()->format('Y-m-d');
         $this->periodeAkhir = now()->format('Y-m-d');
     }

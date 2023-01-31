@@ -22,7 +22,6 @@ class NotaSelesai extends Model
     protected $fillable = [
         'no_rawat',
         'tgl_penyelesaian',
-        'status_pasien',
         'bentuk_bayar',
         'user_id',
     ];
@@ -59,7 +58,7 @@ class NotaSelesai extends Model
                 nota_inap.no_nota,
                 timestamp(nota_inap.tanggal, nota_inap.jam) waktu,
                 detail_nota_inap.nama_bayar,
-                (sum(detail_nota_inap.besar_bayar) - nota_inap.uang_muka) besar_bayar
+                (sum(detail_nota_inap.besar_bayar) + nota_inap.uang_muka) besar_bayar
             from {$database}.nota_inap nota_inap
             join {$database}.detail_nota_inap detail_nota_inap on nota_inap.no_rawat = detail_nota_inap.no_rawat
             group by
@@ -71,6 +70,7 @@ class NotaSelesai extends Model
 
         return $query
             ->selectRaw("
+                nota_selesai.id,
                 nota_selesai.no_rawat,
                 pasien.no_rkm_medis,
                 trim(pasien.nm_pasien) nm_pasien,
@@ -108,7 +108,8 @@ class NotaSelesai extends Model
             ->table('jurnal')
             ->when(
                 !is_null($latest),
-                fn ($query) => $query->whereRaw("timestamp(tgl_jurnal, jam_jurnal) > ?", $latest->tgl_penyelesaian)
+                fn ($query) => $query->whereRaw("timestamp(tgl_jurnal, jam_jurnal) > ?", $latest->tgl_penyelesaian),
+                fn ($query) => $query->where('tgl_jurnal', '>=', '2022-10-31')
             )
             ->where(fn ($query) => $query
                 ->where('keterangan', 'like', '%PEMBAYARAN PASIEN RAWAT JALAN% %DIPOSTING OLEH%')
@@ -116,7 +117,9 @@ class NotaSelesai extends Model
                 ->orWhere('keterangan', 'like', '%PIUTANG PASIEN RAWAT RALAN% %DIPOSTING OLEH%')
                 ->orWhere('keterangan', 'like', '%PIUTANG PASIEN RAWAT INAP% %DIPOSTING OLEH%'))
             ->orderBy('no_jurnal')
-            ->chunk(500, function ($jurnal) {
+            ->chunk(1000, function ($jurnal) {
+                /** @var \Illuminate\Support\Collection $jurnal */
+
                 $data = $jurnal->map(function ($value, $key) {
                     $ket = Str::of($value->keterangan);
 
@@ -129,8 +132,8 @@ class NotaSelesai extends Model
                     return [
                         'no_rawat' => $noRawat,
                         'tgl_penyelesaian' => "{$value->tgl_jurnal} {$value->jam_jurnal}",
-                        'status_pasien' => $statusPasien,
                         'bentuk_bayar' => $bentukBayar,
+                        'status_pasien' => $statusPasien,
                         'user_id' => $petugas,
                     ];
                 });
