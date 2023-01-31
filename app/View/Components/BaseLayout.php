@@ -106,6 +106,13 @@ class BaseLayout extends Component
                         'hasAnyPermissions' => $user->can('keuangan.laporan-tambahan-biaya.read'),
                     ],
                     [
+                        'name' => 'Laporan Potongan Biaya',
+                        'url' => route('admin.keuangan.laporan-potongan-biaya'),
+                        'icon' => "fas fa-file-invoice",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.laporan-potongan-biaya.read'),
+                    ],
+                    [
                         'name' => 'Laporan Selesai Billing',
                         'url' => route('admin.keuangan.laporan-selesai-billing'),
                         'icon' => "fas fa-book",

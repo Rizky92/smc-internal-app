@@ -69,9 +69,9 @@ class LaporanPenyelesaianBillingPerPetugas extends Component
     {
         NotaSelesai::refreshModel();
 
-        $this->forgetComputed();
+        $this->fullRefresh();
 
-        $this->searchData();
+        $this->flashSuccess("Data Berhasil Diperbaharui!");
     }
 
     protected function defaultValues()

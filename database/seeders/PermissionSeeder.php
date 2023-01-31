@@ -40,6 +40,7 @@ class PermissionSeeder extends Seeder
             Permission::create(['name' => 'keuangan.stok-obat-ruangan.read', 'guard_name' => 'web']),
             Permission::create(['name' => 'keuangan.piutang-pasien.read', 'guard_name' => 'web']),
             Permission::create(['name' => 'keuangan.tambahan-biaya-pasien.read', 'guard_name' => 'web']),
+            Permission::create(['name' => 'keuangan.tambahan-potongan-pasien.read', 'guard_name' => 'web']),
         ];
 
         $farmasiPermissions = [
@@ -66,6 +67,7 @@ class PermissionSeeder extends Seeder
 
         $kasirPermissions = [
             Permission::create(['name' => 'perawatan.daftar-pasien-ranap.update-harga-kamar', 'guard_name' => 'web']),
+            Permission::create(['name' => 'keuangan.laporan-billing-pasien.read', 'guard_name' => 'web']),
         ];
 
         $MODPermissions = [
