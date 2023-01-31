@@ -79,8 +79,8 @@ class LaporanPenyelesaianBillingPerPetugas extends Component
         $this->cari = '';
         $this->perpage = 25;
         $this->sortColumns = [];
-        $this->periodeAwal = now()->format('Y-m-d');
-        $this->periodeAkhir = now()->format('Y-m-d');
+        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array
