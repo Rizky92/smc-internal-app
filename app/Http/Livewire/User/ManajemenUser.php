@@ -53,11 +53,15 @@ class ManajemenUser extends Component
 
     public function impersonateAsUser(string $nrp = '')
     {
-        if (empty($nrp)) {
+        if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
+            $this->flashError('Anda tidak memiliki izin untuk melakukan tindakan ini!');
+            
             return;
         }
 
-        if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
+        if (empty($nrp)) {
+            $this->flashError('Silahkan pilih user yang ingin diimpersonasikan!');
+
             return;
         }
 

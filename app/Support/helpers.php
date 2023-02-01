@@ -63,8 +63,7 @@ if (!function_exists('tracker_end')) {
     {
         foreach (DB::connection($connection)->getQueryLog() as $log) {
             $sql = Str::of($log['query'])
-                ->replaceArray('?', $log['bindings'])
-                ->replace('`', '');
+                ->replaceArray('?', $log['bindings']);
 
             DB::connection('mysql_smc')->table('trackersql')->insert([
                 'tanggal' => now(),

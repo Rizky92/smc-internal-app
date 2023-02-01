@@ -75,23 +75,13 @@ class TransferHakAkses extends Component
             ->whereRaw('AES_DECRYPT(user.id_user, "nur") = ?', $this->nrp)
             ->first();
 
-        $permittedUsers = User::query()
+        tracker_start();
+
+        User::query()
             ->withoutGlobalScopes()
             ->withHakAkses()
             ->whereIn(DB::raw('AES_DECRYPT(user.id_user, "nur")'), $this->checkedUsers)
-            ->get();
-
-        $hakAkses = MappingAksesKhanza::pluck('judul_menu', 'nama_field');
-
-        tracker_start();
-
-        foreach ($permittedUsers as $checkedUser) {
-            foreach ($hakAkses as $kolom => $judul) {
-                $checkedUser->setAttribute($kolom, $currentUser->getAttribute($kolom));
-            }
-
-            $checkedUser->save();
-        }
+            ->update(collect($currentUser->getAttributes())->except(['id_user', 'password'])->all());
 
         tracker_end();
 
