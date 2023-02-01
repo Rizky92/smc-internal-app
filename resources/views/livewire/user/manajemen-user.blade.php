@@ -100,37 +100,21 @@
                 </div>
                 <div class="col-6">
                     <div class="d-flex align-items-end h-100">
-                        <div class="dropdown mb-3">
-                            <button class="btn btn-sm btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-info-circle"></i>
-                                <span class="ml-1">Set hak akses</span>
-                            </button>
-                            <div class="dropdown-menu">
-                                <button class="dropdown-item text-sm" type="button" id="button-set-hak-akses" data-toggle="modal" data-target="#modal-set-hak-akses">
-                                    SIMRS Khanza
-                                </button>
-                                <button class="dropdown-item text-sm" type="button" id="button-set-role-permissions" data-toggle="modal" data-target="#modal-set-role-permissions">
-                                    Custom Report
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="dropdown mb-3 ml-3">
-                            <button class="btn btn-sm btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-share-square"></i>
-                                <span class="ml-1">Transfer hak akses</span>
-                            </button>
-                            <div class="dropdown-menu">
-                                <button class="dropdown-item text-sm" type="button" id="button-transfer-hak-akses" data-toggle="modal" data-target="#modal-transfer-hak-akses">
-                                    SIMRS Khanza
-                                </button>
-                                <button class="dropdown-item text-sm" type="button" id="button-transfer-role-permissions" data-toggle="modal" data-target="#modal-transfer-role-permissions">
-                                    Custom Report
-                                </button>
-                            </div>
-                        </div>
-
-                        <x-button class="btn-outline-dark ml-3 mb-3" id="impersonate" title="Impersonasi" icon="fas fa-user-secret" />
+                        <x-dropdown class="mb-3">
+                            <x-slot name="button" class="btn-sm btn-default" title="Set Hak Akses" icon="fas fa-info-circle"></x-slot>
+                            <x-slot name="menu" class="dropdown-menu-right">
+                                <x-dropdown.item-button class="text-sm" id="button-set-hak-akses" title="SIMRS Khanza" data-toggle="modal" data-target="#modal-set-hak-akses" />
+                                <x-dropdown.item-button class="text-sm" id="button-set-role-permissions" title="SIAP" data-toggle="modal" data-target="#modal-set-role-permissions" />
+                            </x-slot>
+                        </x-dropdown>
+                        <x-dropdown class="mb-3 ml-2">
+                            <x-slot name="button" class="btn-sm btn-default" title="Transfer Hak Akses" icon="fas fa-share-square"></x-slot>
+                            <x-slot name="menu" class="dropdown-menu-right">
+                                <x-dropdown.item-button class="text-sm" id="button-transfer-hak-akses" title="SIMRS Khanza" data-toggle="modal" data-target="#modal-transfer-hak-akses" />
+                                <x-dropdown.item-button class="text-sm" id="button-transfer-role-permissions" title="SIAP" data-toggle="modal" data-target="#modal-transfer-role-permissions" />
+                            </x-slot>
+                        </x-dropdown>
+                        <x-button class="btn-default ml-2 mb-3" id="impersonate" title="Impersonasi" icon="fas fa-user-secret" />
                     </div>
                 </div>
             </x-card.row>

@@ -7,9 +7,12 @@
     </ul>
 
     <ul class="navbar-nav ml-auto">
-        @impersonating()
+        @impersonating
             <li class="nav-item">
-                <a class="btn btn-outline-secondary btn-sm" href="{{ route('admin.impersonate.leave') }}">Keluar dari impersonasi</a>
+                <a class="btn btn-outline-secondary btn-sm" href="{{ route('admin.impersonate.leave') }}">
+                    <i class="fas fa-door-open"></i>
+                    <span class="ml-1">Keluar dari impersonasi</span>
+                </a>
             </li>
         @endImpersonating
         @auth('web')

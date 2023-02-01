@@ -49,7 +49,7 @@
             @endif
 
             <div {{ $body->attributes->merge(['class' => 'modal-body']) }}>
-                {{ $body ?? $slot }}
+                {{ $body }}
             </div>
             
             @if ($footer)
@@ -60,4 +60,3 @@
         </div>
     </div>
 </div>
-

@@ -13,8 +13,11 @@
                     <img src="{{ asset('img/avatar.png') }}" class="img-circle" alt="User Image">
                 </div>
                 <div class="info">
-                    <a href="#" class="d-block" style="line-height: 1.1">
-                        <span>{{ $nama }}</span> <br>
+                    <a href="#" class="d-flex flex-column" style="line-height: 1.2rem">
+                        @impersonating
+                            <span class="text-xs">Melihat sebagai :</span>
+                        @endImpersonating
+                        <span>{{ $nama }}</span>
                         <span class="text-xs">{{ $nik }}</span>
                     </a>
                 </div>

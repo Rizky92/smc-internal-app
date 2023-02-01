@@ -4,7 +4,6 @@
 ])
 
 @props([
-    'sortable' => false,
     'name' => (string) null,
     'title' => (string) null,
 ])
@@ -26,6 +25,6 @@
     </th>
 @else
     <th {{ $attributes->merge(['class' => 'py-2']) }}>
-        {{ $slot }}
+        {{ $title ?? $slot }}
     </th>
 @endif

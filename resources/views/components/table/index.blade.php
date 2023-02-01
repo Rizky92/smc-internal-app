@@ -3,7 +3,6 @@
     'body' => null,
     'footer' => null,
 
-    'responsive' => true,
     'sortable' => false,
     'sortColumns' => [],
 ])
