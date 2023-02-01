@@ -2,10 +2,15 @@
 
 namespace App\Models\Farmasi;
 
+use App\Models\Farmasi\Inventaris\GudangObat;
+use App\Models\Farmasi\Inventaris\IndustriFarmasi;
+use App\Models\Satuan;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
 class Obat extends Model
@@ -24,6 +29,12 @@ class Obat extends Model
 
     public function scopeDaruratStok(Builder $query, bool $exportExcel = false): Builder
     {
+        return $query
+            ->with(['satuanKecil', 'satuanBesar', 'kategori', 'industriFarmasi'])
+            ->withSum(['gudang' => fn (Builder $q) => $q->whereRelation('bangsal', 'status', '1')], 'stok')
+            ->where('status', '1')
+            ->where('stokminimal', '>', 0);
+
         $sqlSelect = [
             'databarang.kode_brng',
             'nama_brng',

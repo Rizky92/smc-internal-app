@@ -2,10 +2,13 @@
 
 namespace App\Models\Farmasi\Inventaris;
 
+use App\Models\Bangsal;
+use App\Models\Farmasi\Obat;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
 class GudangObat extends Model
@@ -21,6 +24,16 @@ class GudangObat extends Model
     public $incrementing = false;
 
     public $timestamps = false;
+
+    public function obat(): BelongsTo
+    {
+        return $this->belongsTo(Obat::class, 'kode_brng', 'kode_brng');
+    }
+
+    public function bangsal(): BelongsTo
+    {
+        return $this->belongsTo(Bangsal::class, 'kd_bangsal', 'kd_bangsal');
+    }
 
     public function scopeBangsalYangAda(Builder $query): Builder
     {
