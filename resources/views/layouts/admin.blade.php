@@ -51,6 +51,10 @@
                     @break
                 @endswitch
             @endforeach
+
+            <x-slot name="footer" class="justify-content-center align-items-center">
+                <span class="text-sm font-weight-bold text-muted">{{ request()->ip() }}</span>
+            </x-slot>
         </x-sidebar>
 
         <div class="content-wrapper">

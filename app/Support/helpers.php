@@ -63,12 +63,14 @@ if (!function_exists('tracker_end')) {
     {
         foreach (DB::connection($connection)->getQueryLog() as $log) {
             $sql = Str::of($log['query'])
-                ->replaceArray('?', $log['bindings']);
+                ->replaceArray('?', $log['bindings'])
+                ->replace('`', '');
 
             DB::connection('mysql_smc')->table('trackersql')->insert([
                 'tanggal' => now(),
                 'sqle' => (string) $sql,
                 'usere' => auth()->user()->nik,
+                'ip' => request()->ip(),
             ]);
         }
         
