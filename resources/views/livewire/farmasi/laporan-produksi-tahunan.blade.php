@@ -15,19 +15,19 @@
         <x-slot name="body" class="table-responsive">
             <x-table style="width: 150rem">
                 <x-slot name="columns">
-                    <x-table.th width="250">Laporan</x-table.th>
-                    <x-table.th class="text-center px-0" width="150">Januari</x-table.th>
-                    <x-table.th class="text-center px-0" width="150">Februari</x-table.th>
-                    <x-table.th class="text-center px-0" width="150">Maret</x-table.th>
-                    <x-table.th class="text-center px-0" width="150">April</x-table.th>
-                    <x-table.th class="text-center px-0" width="150">Mei</x-table.th>
-                    <x-table.th class="text-center px-0" width="150">Juni</x-table.th>
-                    <x-table.th class="text-center px-0" width="150">Juli</x-table.th>
-                    <x-table.th class="text-center px-0" width="150">Agustus</x-table.th>
-                    <x-table.th class="text-center px-0" width="150">September</x-table.th>
-                    <x-table.th class="text-center px-0" width="150">Oktober</x-table.th>
-                    <x-table.th class="text-center px-0" width="150">November</x-table.th>
-                    <x-table.th class="text-center px-0" width="150">Desember</x-table.th>
+                    <x-table.th width="250" title="Laporan" />
+                    <x-table.th class="text-center px-0" width="150" title="Januari" />
+                    <x-table.th class="text-center px-0" width="150" title="Februari" />
+                    <x-table.th class="text-center px-0" width="150" title="Maret" />
+                    <x-table.th class="text-center px-0" width="150" title="April" />
+                    <x-table.th class="text-center px-0" width="150" title="Mei" />
+                    <x-table.th class="text-center px-0" width="150" title="Juni" />
+                    <x-table.th class="text-center px-0" width="150" title="Juli" />
+                    <x-table.th class="text-center px-0" width="150" title="Agustus" />
+                    <x-table.th class="text-center px-0" width="150" title="September" />
+                    <x-table.th class="text-center px-0" width="150" title="Oktober" />
+                    <x-table.th class="text-center px-0" width="150" title="November" />
+                    <x-table.th class="text-center px-0" width="150" title="Desember" />
                 </x-slot>
                 <x-slot name="body">
                     <x-table.tr>
