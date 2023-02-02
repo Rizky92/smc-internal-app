@@ -29,12 +29,6 @@ class Obat extends Model
 
     public function scopeDaruratStok(Builder $query, bool $exportExcel = false): Builder
     {
-        return $query
-            ->with(['satuanKecil', 'satuanBesar', 'kategori', 'industriFarmasi'])
-            ->withSum(['gudang' => fn (Builder $q) => $q->whereRelation('bangsal', 'status', '1')], 'stok')
-            ->where('status', '1')
-            ->where('stokminimal', '>', 0);
-
         $sqlSelect = [
             'databarang.kode_brng',
             'nama_brng',
