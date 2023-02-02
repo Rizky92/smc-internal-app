@@ -39,15 +39,12 @@
 
     <x-modal :livewire="true" id="modal-role-permissions" title="Set Permission untuk Role">
         <x-slot name="body" class="position-relative py-0">
-            <x-row-col class="sticky-top bg-white py-3 mx-0">
-                <div class="d-flex justify-content-start align-items-center">
-                    <label for="cari_permission" class="pr-5 mt-1 text-sm">Cari permission: </label>
-                    <input type="text" wire:model.defer="searchPermissions" id="cari_permission" class="form-control form-control-sm w-50">
-                </div>
-            </x-row-col>
             <x-row-col>
                 <ul class="form-group" id="role_permissions">
                     <input type="hidden" name="role" class="d-none">
+                    @foreach ($this->permissions as $role => $permissions)
+                        
+                    @endforeach
                     @foreach ($this->permissions as $key => $name)
                         <li class="custom-control custom-checkbox">
                             <input class="custom-control-input" type="checkbox" id="permission-{{ $key }}" value="{{ $key }}" name="permissions">
@@ -75,27 +72,31 @@
         <x-slot name="body" class="table-responsive">
             <x-table>
                 <x-slot name="columns">
-                    <x-table.th title="Nama" />
+                    <x-table.th name="name" title="Nama" />
                     <x-table.th title="Perizinan yang Diberikan" />
                 </x-slot>
                 <x-slot name="body">
                     @foreach ($this->roles as $role)
-                        <x-table.tr :class="Arr::toCssClasses(['text-muted' => $role->name == config('permission.superadmin_name')])">
+                        @php($su = $role->name === config('permission.superadmin_name'))
+                        <x-table.tr :class="Arr::toCssClasses(['text-muted' => $su])">
                             <x-table.td>
                                 {{ $role->name }}
-                                @unless($role->name == config('permission.superadmin_name'))
-                                    <x-slot name="clickable" data-role-id="{{ $role->id }}" data-permission-ids="{{ $role->permissions->pluck('id')->join(',') }}" data-toggle="modal" data-target="#modal-role-permissions"></x-slot>
+                                @unless($su)
+                                    <x-slot
+                                        name="clickable"
+                                        data-role-id="{{ $role->id }}"
+                                        data-permission-ids="{{ $role->permissions->pluck('id')->join(',') }}"
+                                        data-toggle="modal"
+                                        data-target="#modal-role-permissions"
+                                    ></x-slot>
                                 @endunless
                             </x-table.td>
                             <x-table.td>
-                                @unless($role->name === config('permission.superadmin_name'))
-                                    @foreach ($role->permissions as $permission)
-                                        @php($br = !$loop->last ? '<br>' : '')
-                                        {{ $permission->name }} {!! $br !!}
-                                    @endforeach
-                                @else
-                                    *
-                                @endunless
+                                @if ($su) * @endif
+                                @foreach ($role->permissions as $permission)
+                                    @php($br = !$loop->last ? '<br>' : '')
+                                    {{ $permission->name }} {!! $br !!}
+                                @endforeach
                             </x-table.td>
                         </x-table.tr>
                     @endforeach

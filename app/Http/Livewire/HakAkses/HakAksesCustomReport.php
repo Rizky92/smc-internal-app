@@ -8,6 +8,7 @@ use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -26,13 +27,15 @@ class HakAksesCustomReport extends Component
 
     public function getRolesProperty()
     {
-        return Role::with('permissions')
-            ->paginate($this->perpage);
+        return Role::with('permissions')->paginate($this->perpage);
     }
 
     public function getPermissionsProperty()
     {
-        return Permission::orderBy('name')->pluck('name', 'id');
+        return Permission::pluck('name', 'id')
+            ->mapToGroups(fn (?string $item, int $key) => [
+                Str::before($item, '.') => [$key => $item]
+            ]);
     }
 
     public function render()
@@ -50,12 +53,10 @@ class HakAksesCustomReport extends Component
 
     public function createRole(string $role = '')
     {
-        
     }
 
     public function createPermission(string $permission = '')
     {
-        
     }
 
     public function updatePermissions(int $roleId, array $permissionIds)
@@ -69,11 +70,9 @@ class HakAksesCustomReport extends Component
 
     public function deleteRoles($roles = null)
     {
-        
     }
 
     public function deletePermissions($permissions = null)
     {
-        
     }
 }
