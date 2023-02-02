@@ -52,9 +52,6 @@ class TransferRolePermissions extends Component
             ->where('pegawai.nik', '!=', $this->nrp)
             ->when(!empty($this->checkedUsers), fn (Builder $query) => $query->orWhereIn('pegawai.nik', $this->checkedUsers))
             ->search($this->cari)
-            ->sortWithColumns($this->sortColumns, [
-                
-            ])
             ->get();
     }
 
