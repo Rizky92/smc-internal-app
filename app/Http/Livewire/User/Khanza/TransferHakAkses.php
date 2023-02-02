@@ -75,10 +75,14 @@ class TransferHakAkses extends Component
             ->map(fn ($value) => $value ??= 'false')
             ->all();
 
+        $checkedUsers = collect($this->checkedUsers)
+            ->map(fn ($value) => trim($value))
+            ->all();
+
         tracker_start();
 
         User::query()
-            ->whereIn(DB::raw('AES_DECRYPT(user.id_user, "nur")'), $this->checkedUsers)
+            ->whereIn(DB::raw('AES_DECRYPT(user.id_user, "nur")'), $checkedUsers)
             ->update($hakAkses);
 
         tracker_end();
