@@ -6,6 +6,14 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait Sortable
 {
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  array<string, string> $columns
+     * @param  array<string, \Illuminate\Database\Query\Expression<string>|string> $rawColumns
+     * @param  array<string, \Illuminate\Database\Query\Expression<string>|string> $initialColumnOrder
+     * 
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
     public function scopeSortWithColumns(Builder $query, array $columns = [], array $rawColumns = [], array $initialColumnOrder = []): Builder
     {
         if (!empty($initialColumnOrder) && empty($columns)) {
@@ -18,16 +26,14 @@ trait Sortable
 
         $query->reorder();
 
-        $mappedColumns = collect($columns)->flatMap(fn ($value, $key) => [$key => $key]);
+        $mappedColumns = collect($columns)->flatMap(fn ($_, $key) => [$key => $key]);
 
-        if (! empty($rawColumns)) {
+        if (!empty($rawColumns)) {
             $mappedColumns = $mappedColumns->merge($rawColumns);
         }
 
-        $mappedColumns = $mappedColumns->toArray();
-        
         foreach ($columns as $column => $direction) {
-            $query->orderBy($mappedColumns[$column], $direction);
+            $query->orderBy($mappedColumns->get($column), $direction);
         }
 
         return $query;

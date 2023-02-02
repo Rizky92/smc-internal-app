@@ -5,42 +5,42 @@
         <x-slot name="body" class="table-responsive">
             <x-table style="width: 450rem">
                 <x-slot name="columns">
-                    <x-table.th>No. Rawat</x-table.th>
-                    <x-table.th>No RM</x-table.th>
-                    <x-table.th>Pasien</x-table.th>
-                    <x-table.th>NIK</x-table.th>
-                    <x-table.th>L / P</x-table.th>
-                    <x-table.th>Tgl. Lahir</x-table.th>
-                    <x-table.th>Umur</x-table.th>
-                    <x-table.th>Agama</x-table.th>
-                    <x-table.th>Suku</x-table.th>
-                    <x-table.th>Jenis Perawatan</x-table.th>
-                    <x-table.th>Pasien Lama / Baru</x-table.th>
-                    <x-table.th>Asal Poli</x-table.th>
-                    <x-table.th>Dokter Poli</x-table.th>
-                    <x-table.th>Status Ralan</x-table.th>
-                    <x-table.th>Tgl. Masuk</x-table.th>
-                    <x-table.th>Jam Masuk</x-table.th>
-                    <x-table.th>Tgl. Pulang</x-table.th>
-                    <x-table.th>Jam Pulang</x-table.th>
-                    <x-table.th>Diagnosa Masuk</x-table.th>
-                    <x-table.th style="width: 30ch">ICD Diagnosa</x-table.th>
-                    <x-table.th style="width: 80ch">Diagnosa</x-table.th>
-                    <x-table.th style="width: 30ch">ICD Tindakan Ralan</x-table.th>
-                    <x-table.th style="width: 80ch">Tindakan Ralan</x-table.th>
-                    <x-table.th style="width: 30ch">ICD Tindakan Ranap</x-table.th>
-                    <x-table.th style="width: 80ch">Tindakan Ranap</x-table.th>
-                    <x-table.th>Lama Operasi</x-table.th>
-                    <x-table.th>Rujukan Masuk</x-table.th>
-                    <x-table.th>DPJP Ranap</x-table.th>
-                    <x-table.th>Kelas</x-table.th>
-                    <x-table.th>Penjamin</x-table.th>
-                    <x-table.th>Status Bayar</x-table.th>
-                    <x-table.th>Status Pulang</x-table.th>
-                    <x-table.th>Rujukan Keluar</x-table.th>
-                    <x-table.th>No. HP</x-table.th>
-                    <x-table.th>Alamat</x-table.th>
-                    <x-table.th>Kunjungan ke</x-table.th>
+                    <x-table.th style="width: 20ch" title="No. Rawat" />
+                    <x-table.th style="width: 10ch" title="No RM" />
+                    <x-table.th style="width: 50ch" title="Pasien" />
+                    <x-table.th style="width: 20ch" title="NIK" />
+                    <x-table.th style="width: 7ch" title="L / P" />
+                    <x-table.th style="width: 12ch" title="Tgl. Lahir" />
+                    <x-table.th style="width: 15ch" title="Umur" />
+                    <x-table.th style="width: 10ch" title="Agama" />
+                    <x-table.th style="width: 10ch" title="Suku" />
+                    <x-table.th style="width: 17ch" title="Jenis Perawatan" />
+                    <x-table.th style="width: 21ch" title="Pasien Lama / Baru" />
+                    <x-table.th style="width: 12ch" title="Asal Poli" />
+                    <x-table.th style="width: 50ch" title="Dokter Poli" />
+                    <x-table.th style="width: 15ch" title="Status Ralan" />
+                    <x-table.th style="width: 20ch" title="Tgl. Masuk" />
+                    <x-table.th style="width: 20ch" title="Jam Masuk" />
+                    <x-table.th style="width: 20ch" title="Tgl. Pulang" />
+                    <x-table.th style="width: 20ch" title="Jam Pulang" />
+                    <x-table.th style="width: 20ch" title="Diagnosa Masuk" />
+                    <x-table.th style="width: 25ch" title="ICD Diagnosa" />
+                    <x-table.th style="width: 75ch" title="Diagnosa" />
+                    <x-table.th style="width: 25ch" title="ICD Tindakan Ralan" />
+                    <x-table.th style="width: 75ch" title="Tindakan Ralan" />
+                    <x-table.th style="width: 25ch" title="ICD Tindakan Ranap" />
+                    <x-table.th style="width: 75ch" title="Tindakan Ranap" />
+                    <x-table.th style="width: 15ch" title="Lama Operasi" />
+                    <x-table.th style="width: 15ch" title="Rujukan Masuk" />
+                    <x-table.th style="width: 50ch" title="DPJP Ranap" />
+                    <x-table.th style="width: 8ch" title="Kelas" />
+                    <x-table.th style="width: 30ch" title="Penjamin" />
+                    <x-table.th style="width: 20ch" title="Status Bayar" />
+                    <x-table.th style="width: 20ch" title="Status Pulang" />
+                    <x-table.th style="width: 15ch" title="Rujukan Keluar" />
+                    <x-table.th style="width: 50ch" title="Alamat" />
+                    <x-table.th style="width: 16ch" title="No. HP" />
+                    <x-table.th style="width: 17ch" title="Kunjungan ke" />
                 </x-slot>
                 <x-slot name="body">
                     @foreach ($this->dataLaporanStatistik as $registrasi)

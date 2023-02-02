@@ -5,18 +5,18 @@
         <x-slot name="body" class="table-responsive">
             <x-table style="width: 150rem">
                 <x-slot name="columns">
-                    <x-table.th width="250">Kecamatan</x-table.th>
-                    <x-table.th width="70">No. RM</x-table.th>
-                    <x-table.th width="150">No. Registrasi</x-table.th>
-                    <x-table.th width="250">Nama Pasien</x-table.th>
-                    <x-table.th width="500">Alamat</x-table.th>
-                    <x-table.th width="50">Umur</x-table.th>
-                    <x-table.th width="50">L / P</x-table.th>
-                    <x-table.th>Diagnosa</x-table.th>
-                    <x-table.th width="100">Agama</x-table.th>
-                    <x-table.th width="100">Pendidikan</x-table.th>
-                    <x-table.th width="100">Bahasa</x-table.th>
-                    <x-table.th width="100">Suku</x-table.th>
+                    <x-table.th title="Kecamatan" width="250" />
+                    <x-table.th title="No. RM" width="70" />
+                    <x-table.th title="No. Registrasi" width="150" />
+                    <x-table.th title="Nama Pasien" width="250" />
+                    <x-table.th title="Alamat" width="500" />
+                    <x-table.th title="Umur" width="50" />
+                    <x-table.th title="L / P" width="50" />
+                    <x-table.th title="Diagnosa" />
+                    <x-table.th title="Agama" width="100" />
+                    <x-table.th title="Pendidikan" width="100" />
+                    <x-table.th title="Bahasa" width="100" />
+                    <x-table.th title="Suku" width="100" />
                 </x-slot>
                 <x-slot name="body">
                     @foreach ($this->demografiPasien as $pasien)

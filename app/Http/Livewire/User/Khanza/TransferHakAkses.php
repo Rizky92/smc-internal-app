@@ -3,12 +3,16 @@
 namespace App\Http\Livewire\User\Khanza;
 
 use App\Models\Aplikasi\User;
+use App\Support\Traits\Livewire\Filterable;
+use App\Support\Traits\Livewire\LiveTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class TransferHakAkses extends Component
 {
+    use Filterable, LiveTable;
+
     public $deferLoading;
 
     public $nrp;
@@ -17,21 +21,12 @@ class TransferHakAkses extends Component
 
     public $checkedUsers;
 
-    public $cari;
-
     protected $listeners = [
         'khanza.show-tha' => 'showModal',
         'khanza.hide-tha' => 'hideModal',
         'khanza.prepare-transfer' => 'prepareTransfer',
         'khanza.transfer' => 'transferHakAkses',
     ];
-
-    protected function queryString()
-    {
-        return [
-            'cari' => ['except' => '', 'as' => 'q'],
-        ];
-    }
 
     public function mount()
     {
@@ -75,14 +70,10 @@ class TransferHakAkses extends Component
             ->map(fn ($value) => $value ??= 'false')
             ->all();
 
-        $checkedUsers = collect($this->checkedUsers)
-            ->map(fn ($value) => trim($value))
-            ->all();
-
         tracker_start();
 
         User::query()
-            ->whereIn(DB::raw('AES_DECRYPT(user.id_user, "nur")'), $checkedUsers)
+            ->whereIn(DB::raw('AES_DECRYPT(user.id_user, "nur")'), $this->checkedUsers)
             ->update($hakAkses);
 
         tracker_end();
@@ -102,8 +93,8 @@ class TransferHakAkses extends Component
 
     private function defaultValues()
     {
-        $this->deferLoading = true;
         $this->cari = '';
+        $this->deferLoading = true;
         $this->nrp = '';
         $this->nama = '';
         $this->checkedUsers = [];

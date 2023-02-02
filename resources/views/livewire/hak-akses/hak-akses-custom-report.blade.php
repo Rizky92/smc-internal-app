@@ -75,8 +75,8 @@
         <x-slot name="body" class="table-responsive">
             <x-table>
                 <x-slot name="columns">
-                    <x-table.th>Nama</x-table.th>
-                    <x-table.th>Perizinan yang Diberikan</x-table.th>
+                    <x-table.th title="Nama" />
+                    <x-table.th title="Perizinan yang Diberikan" />
                 </x-slot>
                 <x-slot name="body">
                     @foreach ($this->roles as $role)

@@ -28,10 +28,10 @@
                 <div class="table-responsive">
                     <x-table>
                         <x-slot name="columns">
-                            <x-table.th>#</x-table.th>
-                            <x-table.th>NRP</x-table.th>
-                            <x-table.th>Nama</x-table.th>
-                            <x-table.th>Jabatan</x-table.th>
+                            <x-table.th title="#" />
+                            <x-table.th title="NRP" />
+                            <x-table.th title="Nama" />
+                            <x-table.th title="Jabatan" />
                         </x-slot>
                         <x-slot name="body">
                             @foreach ($this->availableUsers as $user)
@@ -51,7 +51,7 @@
             </x-row-col>
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
-            <x-filter.search method="$refresh" />
+            <x-filter.search />
             <x-button class="btn-default ml-auto" data-dismiss="modal" title="Batal" />
             <x-button class="btn-primary ml-2" data-dismiss="modal" wire:click="$emit('khanza.transfer')" title="Transfer" icon="fas fa-share-square" />
         </x-slot>

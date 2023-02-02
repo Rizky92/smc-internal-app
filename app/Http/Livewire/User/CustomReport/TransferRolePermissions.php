@@ -74,8 +74,7 @@ class TransferRolePermissions extends Component
             return;
         }
 
-        $permittedUsers = User::whereIn('pegawai.nik', $this->checkedUsers)
-            ->get();
+        $permittedUsers = User::whereIn('pegawai.nik', $this->checkedUsers)->get();
 
         tracker_start('mysql_smc');
 

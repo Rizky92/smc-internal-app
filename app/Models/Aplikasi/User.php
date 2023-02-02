@@ -46,7 +46,7 @@ class User extends Authenticatable
 
         static::addGlobalScope(function (Builder $query) {
             $sqlSelect = "
-                pegawai.nik nik,
+                trim(pegawai.nik) nik,
                 pegawai.nama nama,
                 coalesce(jabatan.nm_jbtn, spesialis.nm_sps, pegawai.jbtn) jbtn,
                 (case when petugas.nip is not null then 'Petugas' when dokter.kd_dokter is not null then 'Dokter' else '-' end) jenis,
@@ -55,12 +55,12 @@ class User extends Authenticatable
             ";
 
             return $query->selectRaw($sqlSelect)
-                ->join('pegawai', DB::raw('AES_DECRYPT(id_user, "nur")'), '=', 'pegawai.nik')
-                ->leftJoin('petugas', 'pegawai.nik', '=', 'petugas.nip')
+                ->join('pegawai', DB::raw('AES_DECRYPT(id_user, "nur")'), '=', DB::raw('trim(pegawai.nik)'))
+                ->leftJoin('petugas', DB::raw('trim(pegawai.nik)'), '=', DB::raw('trim(petugas.nip)'))
                 ->leftJoin('jabatan', 'petugas.kd_jbtn', '=', 'jabatan.kd_jbtn')
-                ->leftJoin('dokter', 'pegawai.nik', '=', 'dokter.kd_dokter')
+                ->leftJoin('dokter', DB::raw('trim(pegawai.nik)'), '=', DB::raw('trim(dokter.kd_dokter)'))
                 ->leftJoin('spesialis', 'dokter.kd_sps', '=', 'spesialis.kd_sps')
-                ->orderBy('pegawai.nik');
+                ->orderBy(DB::raw('trim(pegawai.nik)'));
         });
     }
 

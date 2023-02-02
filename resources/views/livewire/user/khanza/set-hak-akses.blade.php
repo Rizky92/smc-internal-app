@@ -28,9 +28,9 @@
                 <div class="col-12 table-responsive">
                     <x-table>
                         <x-slot name="columns">
-                            <x-table.th style="width: 2rem">#</x-table.th>
-                            <x-table.th>Nama Field</x-table.th>
-                            <x-table.th>Judul Menu</x-table.th>
+                            <x-table.th title="#" style="width: 2rem" />
+                            <x-table.th title="nama Field" />
+                            <x-table.th title="Judul Menu" />
                         </x-slot>
                         <x-slot name="body">
                             @foreach ($this->hakAksesKhanza as $field => $judul)
