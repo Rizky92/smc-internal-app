@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire\User\Khanza;
 
-use App\Models\Aplikasi\MappingAksesKhanza;
 use App\Models\Aplikasi\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -69,19 +68,18 @@ class TransferHakAkses extends Component
             return;
         }
 
-        $currentUser = User::query()
-            ->withoutGlobalScopes()
-            ->withHakAkses()
-            ->whereRaw('AES_DECRYPT(user.id_user, "nur") = ?', $this->nrp)
-            ->first();
+        $currentUser = User::rawFindByNRP($this->nrp);
+
+        $hakAkses = collect($currentUser->getAttributes())
+            ->except(['id_user', 'password'])
+            ->map(fn ($value) => $value ??= 'false')
+            ->all();
 
         tracker_start();
 
         User::query()
-            ->withoutGlobalScopes()
-            ->withHakAkses()
             ->whereIn(DB::raw('AES_DECRYPT(user.id_user, "nur")'), $this->checkedUsers)
-            ->update(collect($currentUser->getAttributes())->except(['id_user', 'password'])->all());
+            ->update($hakAkses);
 
         tracker_end();
 
