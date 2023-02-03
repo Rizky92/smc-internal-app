@@ -17,7 +17,7 @@
             <div>
                 <img class="mx-auto h-12 w-auto" src="{{ asset('img/logo.png') }}" alt="Samarinda Medika Citra">
                 <h1 class="text-center text-emerald-700 mt-2">Samarinda Medika Citra</h1>
-                <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-stone-900">Silahkan login ke {{ config('app.name') }}</h2>
+                <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-stone-900">Silahkan login ke <br> {{ config('app.name') }}</h2>
             </div>
             <form class="mt-8 space-y-6" action="#" method="POST" action="{{ route('login') }}" autocomplete="off">
                 @error('user')
