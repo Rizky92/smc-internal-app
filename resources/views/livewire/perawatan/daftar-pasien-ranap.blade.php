@@ -264,9 +264,20 @@
                 <x-slot name="body">
                     @foreach ($this->daftarPasienRanap as $pasien)
                         <x-table.tr>
-                            <x-table.td>
+                            <x-table.td
+                                clickable
+                                data-no-rawat="{{ $pasien->no_rawat }}"
+                                data-kamar="{{ $pasien->ruangan }}"
+                                data-pasien="{{ $pasien->data_pasien }}"
+                                data-harga-kamar="{{ $pasien->trf_kamar }}"
+                                data-lama-inap="{{ $pasien->lama }}"
+                                data-total-harga="{{ $pasien->ttl_biaya }}"
+                                data-kd-kamar="{{ $pasien->kd_kamar }}"
+                                data-tgl-masuk="{{ $pasien->tgl_masuk }}"
+                                data-jam-masuk="{{ $pasien->jam_masuk }}"
+                                data-clipboard="{{ collect($pasien->getAttributes())->except('kd_kamar')->join('   ') }}"
+                            >
                                 {{ $pasien->no_rawat }}
-                                <x-slot name="clickable" data-no-rawat="{{ $pasien->no_rawat }}" data-kamar="{{ $pasien->ruangan }}" data-pasien="{{ $pasien->data_pasien }}" data-harga-kamar="{{ $pasien->trf_kamar }}" data-lama-inap="{{ $pasien->lama }}" data-total-harga="{{ $pasien->ttl_biaya }}" data-kd-kamar="{{ $pasien->kd_kamar }}" data-tgl-masuk="{{ $pasien->tgl_masuk }}" data-jam-masuk="{{ $pasien->jam_masuk }}" data-clipboard="{{ collect($pasien->getAttributes())->except('kd_kamar')->join('   ') }}"></x-slot>
                             </x-table.td>
                             <x-table.td>{{ $pasien->no_rkm_medis }}</x-table.td>
                             <x-table.td>{{ $pasien->ruangan }}</x-table.td>

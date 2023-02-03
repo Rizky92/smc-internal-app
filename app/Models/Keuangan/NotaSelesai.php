@@ -142,7 +142,7 @@ class NotaSelesai extends Model
 
                 static::insert($data->all());
                 
-                tracker_start('mysql_smc');
+                tracker_end('mysql_smc');
             });
     }
 }

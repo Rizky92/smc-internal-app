@@ -104,14 +104,14 @@
                             <x-slot name="button" class="btn-sm btn-default" title="Set Hak Akses" icon="fas fa-info-circle"></x-slot>
                             <x-slot name="menu" class="dropdown-menu-right">
                                 <x-dropdown.item-button class="text-sm" id="button-set-hak-akses" title="SIMRS Khanza" data-toggle="modal" data-target="#modal-set-hak-akses" />
-                                <x-dropdown.item-button class="text-sm" id="button-set-role-permissions" title="SIAP" data-toggle="modal" data-target="#modal-set-role-permissions" />
+                                <x-dropdown.item-button class="text-sm" id="button-set-role-permissions" title="Custom Report" data-toggle="modal" data-target="#modal-set-role-permissions" />
                             </x-slot>
                         </x-dropdown>
                         <x-dropdown class="mb-3 ml-2">
                             <x-slot name="button" class="btn-sm btn-default" title="Transfer Hak Akses" icon="fas fa-share-square"></x-slot>
                             <x-slot name="menu" class="dropdown-menu-right">
                                 <x-dropdown.item-button class="text-sm" id="button-transfer-hak-akses" title="SIMRS Khanza" data-toggle="modal" data-target="#modal-transfer-hak-akses" />
-                                <x-dropdown.item-button class="text-sm" id="button-transfer-role-permissions" title="SIAP" data-toggle="modal" data-target="#modal-transfer-role-permissions" />
+                                <x-dropdown.item-button class="text-sm" id="button-transfer-role-permissions" title="Custom Report" data-toggle="modal" data-target="#modal-transfer-role-permissions" />
                             </x-slot>
                         </x-dropdown>
                         <x-button class="btn-default ml-2 mb-3" id="impersonate" title="Impersonasi" icon="fas fa-user-secret" />
@@ -136,14 +136,13 @@
                 <x-slot name="body">
                     @foreach ($this->users as $user)
                         <x-table.tr>
-                            <x-table.td>
+                            <x-table.td clickable
+                                data-nrp="{{ $user->nik }}"
+                                data-nama="{{ $user->nama }}"
+                                data-role-ids="{{ $user->roles->pluck('id')->join(',') }}"
+                                data-role-permission-ids="{{ $user->getPermissionsViaRoles()->pluck('id')->join(',') }}"
+                                data-permission-ids="{{ $user->permissions->pluck('id')->join(',') }}">
                                 {{ $user->nik }}
-                                <x-slot name="clickable"
-                                    data-nrp="{{ $user->nik }}"
-                                    data-nama="{{ $user->nama }}"
-                                    data-role-ids="{{ $user->roles->pluck('id')->join(',') }}"
-                                    data-role-permission-ids="{{ $user->getPermissionsViaRoles()->pluck('id')->join(',') }}"
-                                    data-permission-ids="{{ $user->permissions->pluck('id')->join(',') }}"></x-slot>
                             </x-table.td>
                             <x-table.td>{{ $user->nama }}</x-table.td>
                             <x-table.td>{{ $user->jbtn }}</x-table.td>

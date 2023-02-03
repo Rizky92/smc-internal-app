@@ -17,8 +17,9 @@
                 let inputStokSekarang
                 let inputSaranOrder
 
-                let buttonSimpan;
-                let buttonBatalSimpan;
+                let buttonSimpan
+                let buttonBatalSimpan
+                let buttonResetFilters
 
                 $(document).ready(() => {
                     inputKodeBarang = $('#kode_barang')
@@ -33,6 +34,7 @@
 
                     buttonSimpan = $('#simpan-data')
                     buttonBatalSimpan = $('#batal-simpan')
+                    buttonResetFilters = $('button#reset-filters')
 
                     buttonSimpan.prop('disabled', true)
                     buttonBatalSimpan.prop('disabled', true)
@@ -44,6 +46,7 @@
                         inputSupplier.val()
                     ))
 
+                    buttonResetFilters.click(clearData)
                     buttonBatalSimpan.click(clearData)
 
                     Livewire.hook('element.updated', (el, component) => {
@@ -128,7 +131,7 @@
                         <div class="form-group" wire:ignore>
                             <label class="text-sm" for="supplier">Supplier</label>
                             <select class="form-control form-control-sm simple-select2-sm input-sm" id="supplier" autocomplete="off">
-                                <option value="">-</option>
+                                <option value="-">-</option>
                                 @foreach ($this->supplier as $kode => $nama)
                                     <option value="{{ $kode }}">{{ $nama }}</option>
                                 @endforeach
@@ -199,9 +202,17 @@
                 <x-slot name="body">
                     @foreach ($this->barangLogistik as $barang)
                         <x-table.tr>
-                            <x-table.td>
+                            <x-table.td
+                                clickable
+                                data-kode-barang="{{ $barang->kode_brng }}"
+                                data-nama-barang="{{ $barang->nama_brng }}"
+                                data-kode-supplier="{{ $barang->kode_supplier }}"
+                                data-stok-min="{{ $barang->stokmin }}"
+                                data-stok-max="{{ $barang->stokmax }}"
+                                data-stok-sekarang="{{ $barang->stok }}"
+                                data-saran-order="{{ $barang->saran_order }}"
+                            >
                                 {{ $barang->kode_brng }}
-                                <x-slot name="clickable" data-kode-barang="{{ $barang->kode_brng }}" data-nama-barang="{{ $barang->nama_brng }}" data-kode-supplier="{{ $barang->kode_supplier }}" data-stok-min="{{ $barang->stokmin }}" data-stok-max="{{ $barang->stokmax }}" data-stok-sekarang="{{ $barang->stok }}" data-saran-order="{{ $barang->saran_order }}"></x-slot>
                             </x-table.td>
                             <x-table.td>{{ $barang->nama_brng }}</x-table.td>
                             <x-table.td>{{ $barang->satuan }}</x-table.td>

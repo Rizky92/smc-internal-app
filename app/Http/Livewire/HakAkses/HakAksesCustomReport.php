@@ -2,23 +2,17 @@
 
 namespace App\Http\Livewire\HakAkses;
 
-use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class HakAksesCustomReport extends Component
 {
     use WithPagination, FlashComponent, Filterable, LiveTable;
-
-    protected $listeners = [
-        'permission.updated' => 'updatePermissions',
-    ];
 
     public function mount()
     {
@@ -28,14 +22,6 @@ class HakAksesCustomReport extends Component
     public function getRolesProperty()
     {
         return Role::with('permissions')->paginate($this->perpage);
-    }
-
-    public function getPermissionsProperty()
-    {
-        return Permission::pluck('name', 'id')
-            ->mapToGroups(fn (?string $item, int $key) => [
-                Str::before($item, '.') => [$key => $item]
-            ]);
     }
 
     public function render()
@@ -49,30 +35,5 @@ class HakAksesCustomReport extends Component
         $this->cari = '';
         $this->perpage = 25;
         $this->sortColumns = [];
-    }
-
-    public function createRole(string $role = '')
-    {
-    }
-
-    public function createPermission(string $permission = '')
-    {
-    }
-
-    public function updatePermissions(int $roleId, array $permissionIds)
-    {
-        $role = Role::find($roleId);
-
-        $role->syncPermissions($permissionIds);
-
-        $this->flashSuccess('Hak akses berhasil diupdate');
-    }
-
-    public function deleteRoles($roles = null)
-    {
-    }
-
-    public function deletePermissions($permissions = null)
-    {
     }
 }

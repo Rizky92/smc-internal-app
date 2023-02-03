@@ -10,10 +10,8 @@ class BaseLayout extends Component
     /** @var \Illuminate\Support\Collection $sidebarMenu */
     public $sidebarMenu;
 
-    /** @var string $title */
     public $title;
 
-    /** @var string $current */
     public $current;
 
     public $nama;

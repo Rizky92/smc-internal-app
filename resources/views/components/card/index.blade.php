@@ -5,6 +5,8 @@
     'header' => null,
     'body' => null,
     'footer' => null,
+
+    'loadingTarget' => null,
 ])
 
 <div class="card">
@@ -34,6 +36,6 @@
         </div>
     @endif
     @if ($useLoading)
-        <x-card.loading />
+        <x-card.loading :target="$loadingTarget" />
     @endif
 </div>
