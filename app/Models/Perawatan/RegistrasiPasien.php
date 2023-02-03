@@ -41,9 +41,9 @@ class RegistrasiPasien extends Model
         $sqlSelect = "
             kamar_inap.kd_kamar,
             reg_periksa.no_rawat,
-            reg_periksa.no_rkm_medis,
             concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal) ruangan,
             kamar.kelas,
+            reg_periksa.no_rkm_medis,
             concat(pasien.nm_pasien, ' (', reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur, ')') data_pasien,
             concat(pasien.alamat, ', Kel. ', kelurahan.nm_kel, ', Kec. ', kecamatan.nm_kec, ', ', kabupaten.nm_kab, ', ', propinsi.nm_prop) alamat_pasien,
             pasien.agama,

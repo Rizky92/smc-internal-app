@@ -240,9 +240,9 @@
             <x-table style="width: 250rem" sortable :sortColumns="$sortColumns">
                 <x-slot name="columns">
                     <x-table.th name="no_rawat" title="No. Rawat" style="width: 20ch" />
-                    <x-table.th name="no_rkm_medis" title="No. RM" style="width: 10ch" />
                     <x-table.th name="ruangan" title="Kamar" style="width: 35ch" />
                     <x-table.th name="kelas" title="Kelas" style="width: 10ch" />
+                    <x-table.th name="no_rkm_medis" title="No. RM" style="width: 10ch" />
                     <x-table.th name="data_pasien" title="Pasien" style="width: 50ch" />
                     <x-table.th name="alamat_pasien" title="Alamat" />
                     <x-table.th name="agama" title="Agama" style="width: 10ch" />
@@ -279,9 +279,9 @@
                             >
                                 {{ $pasien->no_rawat }}
                             </x-table.td>
-                            <x-table.td>{{ $pasien->no_rkm_medis }}</x-table.td>
                             <x-table.td>{{ $pasien->ruangan }}</x-table.td>
                             <x-table.td>{{ $pasien->kelas }}</x-table.td>
+                            <x-table.td>{{ $pasien->no_rkm_medis }}</x-table.td>
                             <x-table.td>{{ $pasien->data_pasien }}</x-table.td>
                             <x-table.td>{{ $pasien->alamat_pasien }}</x-table.td>
                             <x-table.td>{{ $pasien->agama }}</x-table.td>

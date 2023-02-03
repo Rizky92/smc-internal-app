@@ -55,7 +55,7 @@
                         })
                     })
 
-                    Livewire.on('data-tersimpan', clearData)
+                    $(this).on('data-tersimpan', clearData)
                 })
 
                 function loadData({
