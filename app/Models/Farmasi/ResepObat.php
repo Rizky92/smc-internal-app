@@ -39,7 +39,7 @@ class ResepObat extends Model
                 resep_obat.tgl_perawatan,
                 resep_obat.jam,
                 databarang.nama_brng,
-                resep_dokter.jml,
+                detail_pemberian_obat.jml,
                 dokter.nm_dokter,
                 resep_obat.status,
                 poliklinik.nm_poli
