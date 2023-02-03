@@ -115,19 +115,19 @@
         <x-slot name="header">
             @canany(['logistik.input-minmax-stok.create', 'logistik.input-minmax-stok.update'])
                 <x-card.row>
-                    <div class="col-2">
+                    <div class="col-12 col-md-6 col-lg-2">
                         <div class="form-group">
                             <label class="text-sm" for="kode_brng">Kode Barang</label>
                             <input type="text" class="form-control form-control-sm" id="kode_barang" readonly autocomplete="off">
                         </div>
                     </div>
-                    <div class="col-4">
+                    <div class="col-12 col-md-6 col-lg-4">
                         <div class="form-group">
                             <label class="text-sm" for="nama_brng">Nama Barang</label>
                             <input type="text" class="form-control form-control-sm" id="nama_barang" readonly autocomplete="off">
                         </div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-12 col-md-6 col-lg-6">
                         <div class="form-group" wire:ignore>
                             <label class="text-sm" for="supplier">Supplier</label>
                             <select class="form-control form-control-sm simple-select2-sm input-sm" id="supplier" autocomplete="off">
@@ -141,25 +141,25 @@
                 </x-card.row>
 
                 <x-card.row>
-                    <div class="col-3">
+                    <div class="col-12 col-md-6 col-lg-3">
                         <div class="form-group">
                             <label class="text-sm" for="stok_min">Stok minimal</label>
                             <input type="number" class="form-control form-control-sm" id="stok_min" min="0" autocomplete="off">
                         </div>
                     </div>
-                    <div class="col-3">
+                    <div class="col-12 col-md-6 col-lg-3">
                         <div class="form-group">
                             <label class="text-sm" for="stok_max">Stok maksimal</label>
                             <input type="number" class="form-control form-control-sm" id="stok_max" min="0" autocomplete="off">
                         </div>
                     </div>
-                    <div class="col-3">
+                    <div class="col-12 col-md-6 col-lg-3">
                         <div class="form-group">
                             <label class="text-sm" for="stok_saat_ini">Stok saat ini</label>
                             <input type="text" class="form-control form-control-sm" id="stok_sekarang" readonly autocomplete="off">
                         </div>
                     </div>
-                    <div class="col-3">
+                    <div class="col-12 col-md-6 col-lg-3">
                         <div class="form-group">
                             <label class="text-sm" for="saran_order">Saran order</label>
                             <input type="text" class="form-control form-control-sm" id="saran_order" readonly autocomplete="off">

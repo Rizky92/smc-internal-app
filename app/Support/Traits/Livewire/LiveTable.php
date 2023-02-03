@@ -25,6 +25,14 @@ trait LiveTable
         'sortColumns' => ['except' => '', 'as' => 'sort'],
     ];
 
+    public function initializeLiveTable()
+    {
+        $this->listeners = array_merge($this->listeners, [
+            'sortBy',
+            'performSort',
+        ]);
+    }
+
     public function mountLiveTable()
     {
         $this->cari = '';

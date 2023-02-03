@@ -132,7 +132,7 @@ Breadcrumbs::for('admin.manajemen-user', function (Trail $trail) {
 
 Breadcrumbs::for('admin.hak-akses', function (Trail $trail) {
     $trail->parent('admin.dashboard');
-    $trail->push('Pengaturan Hak Akses');
+    $trail->push('Hak Akses');
 });
 
 Breadcrumbs::for('admin.hak-akses.custom-report', function (Trail $trail) {

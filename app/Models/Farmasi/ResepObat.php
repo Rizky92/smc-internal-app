@@ -47,11 +47,11 @@ class ResepObat extends Model
             ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
             ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->leftJoin('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
-            ->leftJoin('resep_dokter', 'resep_obat.no_resep', '=', 'resep_dokter.no_resep')
-            ->leftJoin('databarang', 'resep_dokter.kode_brng', '=', 'databarang.kode_brng')
+            ->leftJoin('detail_pemberian_obat', 'reg_periksa.no_rawat', '=', 'detail_pemberian_obat.no_rawat')
+            ->leftJoin('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
+            ->whereRaw('detail_pemberian_obat.tgl_perawatan = resep_obat.tgl_perawatan')
+            ->whereRaw('detail_pemberian_obat.jam = resep_obat.jam')
             ->whereBetween('resep_obat.tgl_perawatan', [$periodeAwal, $periodeAkhir])
-            ->where('reg_periksa.status_bayar', 'Sudah Bayar')
-            ->where('reg_periksa.stts', '!=', 'Batal')
             ->whereNotNull('resep_dokter.kode_brng');
     }
 

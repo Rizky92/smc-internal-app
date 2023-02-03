@@ -14,17 +14,6 @@
                         inputPermissions = $('input[name=permissions]')
                     })
 
-                    function loadData({
-                        roleId,
-                        permissionIds,
-                    }) {
-                        inputRole.val(roleId)
-
-                        let permissions = checkedPermissions = Array.from(permissionIds.split(','))
-
-                        inputPermissions.each((i, el) => el.checked = permissions.find(v => v === el.value))
-                    }
-
                     $('#simpandata').click(() => {
                         let currentRoleId = inputRole.val()
                         let currentPermissionsIds = []

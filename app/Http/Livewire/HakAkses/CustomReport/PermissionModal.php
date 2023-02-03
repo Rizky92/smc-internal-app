@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\HakAkses\CustomReport;
 
 use App\Models\Aplikasi\Permission;
+use App\Models\Aplikasi\Role;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\Modal;
@@ -18,6 +19,15 @@ class PermissionModal extends Component
 
     /** @var array<int, int> $permissionIds */
     public $permissionIds;
+
+    protected $listeners = [
+        'permissions.creating',
+        'permissions.created',
+        'permissions.updating',
+        'permissions.updated',
+        'permissions.deleting',
+        'permissions.deleted',
+    ];
 
     public function mount()
     {
@@ -48,5 +58,14 @@ class PermissionModal extends Component
         $this->cari = '';
         $this->roleId = -1;
         $this->permissionIds = [];
+    }
+
+    public function updatePermissions()
+    {
+        $role = Role::find($this->roleId);
+
+        $role->syncPermissions($this->permissionIds);
+
+        $this->emitUp('flashSuccess', "Permission untuk {$role->name} berhasil diupdate!");
     }
 }
