@@ -39,7 +39,7 @@ class ResepObat extends Model
                 resep_obat.tgl_perawatan,
                 resep_obat.jam,
                 databarang.nama_brng,
-                resep_dokter.jml,
+                detail_pemberian_obat.jml,
                 dokter.nm_dokter,
                 resep_obat.status,
                 poliklinik.nm_poli
@@ -51,8 +51,7 @@ class ResepObat extends Model
             ->leftJoin('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
             ->whereRaw('detail_pemberian_obat.tgl_perawatan = resep_obat.tgl_perawatan')
             ->whereRaw('detail_pemberian_obat.jam = resep_obat.jam')
-            ->whereBetween('resep_obat.tgl_perawatan', [$periodeAwal, $periodeAkhir])
-            ->whereNotNull('resep_dokter.kode_brng');
+            ->whereBetween('resep_obat.tgl_perawatan', [$periodeAwal, $periodeAkhir]);
     }
 
     public function scopeKunjunganFarmasi(Builder $query, string $periodeAwal = '', string $periodeAkhir = ''): Builder
