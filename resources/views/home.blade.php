@@ -27,7 +27,7 @@
         <main>
             <div class="relative px-6 lg:px-8 grid place-content-center h-screen">
                 <div class="max-w-3xl">
-                    <h1 class="text-4xl font-bold tracking-tight sm:text-center sm:text-6xl text-emerald-900">{{ config('app.name') }}</h1>
+                    <h1 class="text-4xl font-bold tracking-tight sm:text-center sm:text-6xl text-emerald-900">SMC Internal App (SIAP)</h1>
                     <div class="mt-8 flex gap-x-4 sm:justify-center">
                         @auth
                             <a href="{{ route('admin.dashboard') }}" class="inline-block rounded-full bg-emerald-600 px-8 py-4 text-2xl font-semibold uppercase leading-7 text-white shadow-sm ring-1 ring-emerald-600 hover:bg-emerald-700 hover:ring-emerald-700"> Dashboard </a>
