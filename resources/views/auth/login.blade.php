@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" type="image/x-icon" href="{{ asset('logo.ico') }}">
     <title>Login - {{ config('app.name') }}</title>
 
     <link rel="stylesheet" href="{{ asset('css/login.a1.css') }}">
@@ -16,7 +17,7 @@
             <div>
                 <img class="mx-auto h-12 w-auto" src="{{ asset('img/logo.png') }}" alt="Samarinda Medika Citra">
                 <h1 class="text-center text-emerald-700 mt-2">Samarinda Medika Citra</h1>
-                <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-stone-900">Silahkan login terlebih dahulu</h2>
+                <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-stone-900">Silahkan login ke {{ config('app.name') }}</h2>
             </div>
             <form class="mt-8 space-y-6" action="#" method="POST" action="{{ route('login') }}" autocomplete="off">
                 @error('user')
