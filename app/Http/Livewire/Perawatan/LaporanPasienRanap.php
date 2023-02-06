@@ -37,7 +37,7 @@ class LaporanPasienRanap extends Component
         $this->defaultValues();
     }
 
-    public function getDaftarPasienRanapProperty()
+    public function getLaporanPasienRanapProperty()
     {
         return PasienRanap::query()
             ->search($this->cari)
@@ -71,14 +71,31 @@ class LaporanPasienRanap extends Component
     {
         return [
             PasienRanap::query()
-                ->search($this->cari)
                 ->whereBetween('tgl_masuk', [$this->tanggal, $this->tanggal])
                 ->when(
                     $this->tampilkanSemuaPasienPerTanggal,
                     fn (Builder $query) => $query->where('status_ranap', '<=', '3'),
                     fn (Builder $query) => $query->where('status_ranap', '<=', '2')
                 )
-                ->get(),
+                ->get([
+                    'no_rawat',
+                    'tgl_registrasi',
+                    'jam_reg',
+                    'kelas',
+                    'ruangan',
+                    'trf_kamar',
+                    'no_rkm_medis',
+                    'data_pasien',
+                    'png_jawab',
+                    'nm_poli',
+                    'dokter_poli',
+                    'stts_pulang',
+                    'tgl_masuk',
+                    'jam_masuk',
+                    'tgl_keluar',
+                    'jam_keluar',
+                    'dpjp',
+                ]),
         ];
     }
 
@@ -88,8 +105,9 @@ class LaporanPasienRanap extends Component
             'No. Rawat',
             'Tgl. Reg.',
             'Jam Reg.',
-            'Kamar',
             'Kelas',
+            'Kamar',
+            'Tarif',
             'No. RM',
             'Pasien',
             'Jenis Bayar',

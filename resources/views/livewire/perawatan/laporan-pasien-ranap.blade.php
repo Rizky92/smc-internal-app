@@ -21,8 +21,9 @@
                     <x-table.th name="no_rawat" title="No. Rawat" style="width: 20ch" />
                     <x-table.th name="tgl_registrasi" title="Tgl. Registrasi" style="width: 20ch" />
                     <x-table.th name="jam_reg" title="Jam Registrasi" style="width: 20ch" />
-                    <x-table.th name="ruangan" title="Kamar" style="width: 35ch" />
                     <x-table.th name="kelas" title="Kelas" style="width: 10ch" />
+                    <x-table.th name="ruangan" title="Kamar" style="width: 35ch" />
+                    <x-table.th name="trf_kamar" title="Tarif" style="width: 15ch" />
                     <x-table.th name="no_rkm_medis" title="No. RM" style="width: 15ch" />
                     <x-table.th name="data_pasien" title="Pasien" style="width: 50ch" />
                     <x-table.th name="png_jawab" title="Jenis Bayar" style="width: 25ch" />
@@ -36,13 +37,14 @@
                     <x-table.th name="dpjp" title="DPJP" style="width: 40ch" />
                 </x-slot>
                 <x-slot name="body">
-                    @foreach ($this->daftarPasienRanap as $pasien)
+                    @foreach ($this->laporanPasienRanap as $pasien)
                         <x-table.tr>
                             <x-table.td>{{ $pasien->no_rawat }}</x-table.td>
                             <x-table.td>{{ $pasien->tgl_registrasi }}</x-table.td>
                             <x-table.td>{{ $pasien->jam_reg }}</x-table.td>
-                            <x-table.td>{{ $pasien->ruangan }}</x-table.td>
                             <x-table.td>{{ $pasien->kelas }}</x-table.td>
+                            <x-table.td>{{ $pasien->ruangan }}</x-table.td>
+                            <x-table.td>{{ rp($pasien->trf_kamar) }}</x-table.td>
                             <x-table.td>{{ $pasien->no_rkm_medis }}</x-table.td>
                             <x-table.td>{{ $pasien->data_pasien }}</x-table.td>
                             <x-table.td>{{ $pasien->png_jawab }}</x-table.td>
@@ -61,7 +63,7 @@
         </x-slot>
 
         <x-slot name="footer">
-            <x-paginator :data="$this->daftarPasienRanap" />
+            <x-paginator :data="$this->laporanPasienRanap" />
         </x-slot>
     </x-card>
 </div>
