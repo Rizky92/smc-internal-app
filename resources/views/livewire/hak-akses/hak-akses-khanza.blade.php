@@ -77,9 +77,8 @@
                 <x-slot name="body">
                     @foreach ($this->hakAksesKhanza as $hakAkses)
                         <x-table.tr>
-                            <x-table.td>
+                            <x-table.td clickable data-nama-field="{{ $hakAkses->nama_field }}" data-judul-menu="{{ $hakAkses->judul_menu }}">
                                 {{ $hakAkses->nama_field }}
-                                <x-slot name="clickable" data-nama-field="{{ $hakAkses->nama_field }}" data-judul-menu="{{ $hakAkses->judul_menu }}"></x-slot>
                             </x-table.td>
                             <x-table.td>{{ $hakAkses->judul_menu }}</x-table.td>
                         </x-table.tr>

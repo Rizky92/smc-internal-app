@@ -4,100 +4,68 @@
     @once
         @push('js')
             <script>
-                let buttonSimpan
-                let buttonBatalSimpan
-                let buttonResetFilter
-                let buttonSetPermission
-                let buttonDeleteRole
-
-                let inputNamaRole
-                let hiddenIdRole
+                let inputRole
+                let inputPermissions
 
                 $(document).ready(() => {
-                    buttonSimpan = $('button#simpan')
-                    buttonBatalSimpan = $('button#batal-simpan')
-                    buttonResetFilter = $('button#reset-filter')
-                    buttonSetPermission = $('button#set-permission')
-                    buttonDeleteRole = $('button#hapus-role')
-
-                    inputNamaRole = $('input#nama_role')
-                    hiddenIdRole = $('input#id_role')
-
-                    buttonResetFilter.click(clearData)
-                    buttonBatalSimpan.click(clearData)
-                })
-
-                $('input#nama_role').on('input', e => {
-                    if (e.target.value !== "") {
-                        buttonSimpan.prop('disabled', false)
-                        buttonBatalSimpan.prop('disabled', false)
-                    } else {
-                        buttonSimpan.prop('disabled', true)
-                        buttonBatalSimpan.prop('disabled', true)
-                    }
+                    inputRole = $('input[type=hidden][name=role]')
+                    inputPermissions = $('input[name=permissions]')
                 })
 
                 function loadData({
                     roleId,
-                    roleName,
-                    permissionIds
+                    permissionIds,
                 }) {
-                    permissionIds = Array.from(permissionIds.split(','))
+                    inputRole.val(roleId)
 
-                    buttonSimpan.prop('disabled', false)
-                    buttonBatalSimpan.prop('disabled', false)
+                    let permissions = Array.from(permissionIds.split(','))
 
-                    buttonSetPermission.toggleClass('d-none', false)
-                    buttonDeleteRole.toggleClass('d-none', false)
-
-                    inputNamaRole.val(roleName)
-                    inputNamaRole.trigger('change')
-
-                    hiddenIdRole.val(roleId)
-                    hiddenIdRole.trigger('change')
-
-                    @this.emit('permissions.prepare', roleId, roleName, permissionIds)
+                    inputPermissions.each((i, el) => el.checked = permissions.find(v => v === el.value))
                 }
 
-                function clearData() {
-                    inputNamaRole.val('')
-                    inputNamaRole.trigger('change')
+                $('#simpandata').click(() => {
+                    let currentRoleId = inputRole.val()
+                    let currentPermissionsIds = []
 
-                    hiddenIdRole.val(null)
-                    hiddenIdRole.trigger('change')
+                    inputPermissions.each((i, el) => {
+                        currentPermissionsIds.push(el.checked && el.value)
+                    })
 
-                    buttonSimpan.prop('disabled', true)
-                    buttonBatalSimpan.prop('disabled', true)
-
-                    buttonSetPermission.toggleClass('d-none', true)
-                    buttonDeleteRole.toggleClass('d-none', true)
-                }
+                    @this.updatePermissions(currentRoleId, currentPermissionsIds)
+                })
             </script>
         @endpush
     @endonce
 
-    <livewire:hak-akses.custom-report.permission-modal />
+    <x-modal :livewire="true" id="modal-role-permissions" title="Set Permission untuk Role">
+        <x-slot name="body" class="position-relative py-0">
+            <x-row-col class="sticky-top bg-white py-3 mx-0">
+                <div class="d-flex justify-content-start align-items-center">
+                    <label for="cari_permission" class="pr-5 mt-1 text-sm">Cari permission: </label>
+                    <input type="text" wire:model.defer="searchPermissions" id="cari_permission" class="form-control form-control-sm w-50">
+                </div>
+            </x-row-col>
+            <x-row-col>
+                <ul class="form-group" id="role_permissions">
+                    <input type="hidden" name="role" class="d-none">
+                    @foreach ($this->permissions as $key => $name)
+                        <li class="custom-control custom-checkbox">
+                            <input class="custom-control-input" type="checkbox" id="permission-{{ $key }}" value="{{ $key }}" name="permissions">
+                            <label for="permission-{{ $key }}" class="custom-control-label font-weight-normal">{{ $name }}</label>
+                        </li>
+                    @endforeach
+                </ul>
+            </x-row-col>
+        </x-slot>
+        <x-slot name="footer" class="justify-content-end">
+            <x-button class="btn-default" data-dismiss="modal" id="batalsimpan" title="Batal" />
+            <x-button class="btn-primary" data-dismiss="modal" id="simpandata" title="Simpan" icon="fas fa-save" />
+        </x-slot>
+    </x-modal>
 
     <x-card>
         <x-slot name="header">
-            <x-card.row :livewire="true">
-                <div class="col-6">
-                    <div class="form-group">
-                        <label class="text-sm" for="nama_role">Nama Role</label>
-                        <input class="form-control form-control-sm" id="nama_role" type="text" autocomplete="off" wire:model="roleName">
-                        <input type="hidden" id="id_role" wire:model="roleId">
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="d-flex justify-content-start align-items-end h-100">
-                        <x-button disabled class="btn-sm btn-default mb-3" title="Batal" id="batal-simpan" />
-                        <x-button disabled class="btn-sm btn-primary mb-3 ml-2" title="Simpan" icon="fas fa-save" wire:click="createOrUpdateRole" />
-                        <x-button class="btn-sm btn-default mb-3 ml-2 d-none" title="Set Permission" icon="fas fa-edit" data-toggle="modal" data-target="#modal-role-permissions" />
-                        <x-button class="btn-sm btn-danger mb-3 ml-auto d-none" title="Hapus Role" icon="fas fa-trash-alt" />
-                    </div>
-                </div>
-            </x-card.row>
-            <x-card.row-col class="mt-3">
+            <x-card.row-col>
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
@@ -107,23 +75,22 @@
         <x-slot name="body" class="table-responsive">
             <x-table>
                 <x-slot name="columns">
-                    <x-table.th name="name" title="Nama" />
+                    <x-table.th title="Nama" />
                     <x-table.th title="Perizinan yang Diberikan" />
                 </x-slot>
                 <x-slot name="body">
                     @foreach ($this->roles as $role)
-                        @php($develop = $role->name === config('permission.superadmin_name'))
-                        <x-table.tr :class="Arr::toCssClasses(['text-muted' => $develop])">
-                            <x-table.td :clickable="!$develop" data-role-id="{{ $role->id }}" data-role-name="{{ $role->name }}" data-permission-ids="{{ $role->permissions->pluck('id')->join(',') }}">
+                        @php($superadmin = $role->name === config('permission.superadmin_name'))
+                        <x-table.tr :class="Arr::toCssClasses(['text-muted' => $superadmin])">
+                            <x-table.td :clickable="!$superadmin" data-role-id="{{ $role->id }}" data-permission-ids="{{ $role->permissions->pluck('id')->join(',') }}" data-toggle="modal" data-target="#modal-role-permissions">
                                 {{ $role->name }}
                             </x-table.td>
                             <x-table.td>
-                                @if ($develop)
+                                @if($superadmin)
                                     *
-                                @endif
+                                @endunless
                                 @foreach ($role->permissions as $permission)
-                                    @php($br = !$loop->last ? '<br>' : '')
-                                    {{ $permission->name }} {!! $br !!}
+                                    {{ $permission->name }} @if(!$loop->last) <br> @endif
                                 @endforeach
                             </x-table.td>
                         </x-table.tr>

@@ -66,19 +66,19 @@ class BarangNonMedis extends Model
             IFNULL(ipsrssuplier.nama_suplier, '-') nama_supplier,
             ipsrsjenisbarang.nm_jenis jenis,
             kodesatuan.satuan,
-            IFNULL({$db}ipsrs_minmax_stok_barang.stok_min, 0) stokmin,
-            IFNULL({$db}ipsrs_minmax_stok_barang.stok_max, 0) stokmax,
+            IFNULL({$db}.ipsrs_minmax_stok_barang.stok_min, 0) stokmin,
+            IFNULL({$db}.ipsrs_minmax_stok_barang.stok_max, 0) stokmax,
             ipsrsbarang.stok,
-            IFNULL(IFNULL({$db}ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok, '0') saran_order,
+            IFNULL(IFNULL({$db}.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok, '0') saran_order,
             ipsrsbarang.harga,
-            (ipsrsbarang.harga * (IFNULL({$db}ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok)) total_harga
+            (ipsrsbarang.harga * (IFNULL({$db}.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok)) total_harga
         ")
             ->leftJoin('ipsrsjenisbarang', 'ipsrsbarang.jenis', '=', 'ipsrsjenisbarang.kd_jenis')
             ->leftJoin('kodesatuan', 'ipsrsbarang.kode_sat', '=', 'kodesatuan.kode_sat')
-            ->leftJoin("{$db}ipsrs_minmax_stok_barang", 'ipsrsbarang.kode_brng', '=', "{$db}ipsrs_minmax_stok_barang.kode_brng")
-            ->leftJoin('ipsrssuplier', "{$db}ipsrs_minmax_stok_barang.kode_suplier", '=', 'ipsrssuplier.kode_suplier')
+            ->leftJoin("{$db}.ipsrs_minmax_stok_barang", 'ipsrsbarang.kode_brng', '=', "{$db}.ipsrs_minmax_stok_barang.kode_brng")
+            ->leftJoin('ipsrssuplier', "{$db}.ipsrs_minmax_stok_barang.kode_suplier", '=', 'ipsrssuplier.kode_suplier')
             ->where('ipsrsbarang.status', '1')
-            ->where('ipsrsbarang.stok', '<=', DB::raw("IFNULL({$db}ipsrs_minmax_stok_barang.stok_min, 0)"))
-            ->when(!$saranOrderNol, fn (Builder $query) => $query->whereRaw("IFNULL(IFNULL({$db}ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok, '0') > 0"));
+            ->where('ipsrsbarang.stok', '<=', DB::raw("IFNULL({$db}.ipsrs_minmax_stok_barang.stok_min, 0)"))
+            ->when(!$saranOrderNol, fn (Builder $query) => $query->whereRaw("IFNULL(IFNULL({$db}.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok, '0') > 0"));
     }
 }

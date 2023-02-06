@@ -2,23 +2,22 @@
 
 namespace App\Http\Livewire\HakAkses;
 
+use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Spatie\Permission\Exceptions\RoleAlreadyExists;
 
 class HakAksesCustomReport extends Component
 {
     use WithPagination, FlashComponent, Filterable, LiveTable;
 
-    public $roleId;
-
-    public $roleName;
+    protected $listeners = [
+        'permission.updated' => 'updatePermissions',
+    ];
 
     public function mount()
     {
@@ -27,9 +26,14 @@ class HakAksesCustomReport extends Component
 
     public function getRolesProperty()
     {
-        return Role::with('permissions')
-            ->orderBy('name')
+        return Role::query()
+            ->with('permissions')
             ->paginate($this->perpage);
+    }
+
+    public function getPermissionsProperty()
+    {
+        return Permission::orderBy('name')->pluck('name', 'id');
     }
 
     public function render()
@@ -43,38 +47,14 @@ class HakAksesCustomReport extends Component
         $this->cari = '';
         $this->perpage = 25;
         $this->sortColumns = [];
-        $this->roleName = '';
     }
 
-    public function createOrUpdateRole()
+    public function updatePermissions(int $roleId, array $permissionIds)
     {
-        $validator = Validator::make(
-            ['name' => $this->roleName],
-            ['name' => 'required|string|max:255'],
-            ['name.string' => 'Nama role harus berupa string!']
-        );
+        $role = Role::find($roleId);
 
-        if ($validator->fails()) {
-            $this->flashError($validator->messages()->get('name')[0]);
+        $role->syncPermissions($permissionIds);
 
-            return;
-        }
-
-        try {
-            Role::create(['name' => $this->roleName, 'guard_name' => 'web']);
-        } catch (RoleAlreadyExists $e) {
-            $this->flashError($e->getMessage());
-
-            return;
-        }
-
-        $this->flashSuccess("Role {$this->roleName} berhasil dibuat!");
-
-        $this->resetFilters();
-    }
-
-    public function deleteRole()
-    {
-
+        $this->flashSuccess('Hak akses berhasil diupdate');
     }
 }
