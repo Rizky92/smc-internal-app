@@ -14,17 +14,26 @@
                         inputPermissions = $('input[name=permissions]')
                     })
 
-                    $('#simpandata').click(() => {
+                    $('button#simpan').click(() => {
                         let currentRoleId = inputRole.val()
                         let currentPermissionsIds = []
 
                         inputPermissions.each((i, el) => currentPermissionsIds.push(el.checked && el.value))
 
-                        @this.updatePermissions(currentRoleId, currentPermissionsIds)
+                        console.log({ inputPermissions })
+
+                        @this.set('roleId', currentRoleId)
+                        @this.set('permissionIds', currentPermissionsIds)
+
+                        @this.updatePermissions()
                     })
 
                     $('#modal-role-permissions').on('shown.bs.modal', e => {
                         @this.emit('showModal')
+
+                        let checkedPermissionsIds = @this.get('permissionIds')
+
+                        inputPermissions.each((i, el) => checkedPermissionsIds.find(v => v === el.value))
                     })
 
                     $('#modal-role-permissions').on('hide.bs.modal', e => {
@@ -35,7 +44,7 @@
         @endpush
     @endonce
 
-    <x-modal :livewire="true" id="modal-role-permissions" title="Set Permission untuk Role">
+    <x-modal :livewire="true" id="modal-role-permissions" :title="'Set Permission untuk Role ' . $this->roleName">
         <x-slot name="body" class="position-relative py-0">
             <x-row-col>
                 <ul class="form-group" id="role_permissions">
@@ -53,8 +62,8 @@
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
             <x-filter.search />
-            <x-button class="btn-default ml-auto" data-dismiss="modal" id="batalsimpan" title="Batal" />
-            <x-button class="btn-primary ml-2" data-dismiss="modal" id="simpandata" title="Simpan" icon="fas fa-save" />
+            <x-button class="btn-default ml-auto" data-dismiss="modal" title="Batal" />
+            <x-button class="btn-primary ml-2" data-dismiss="modal" title="Simpan" icon="fas fa-save" />
         </x-slot>
     </x-modal>
 </div>

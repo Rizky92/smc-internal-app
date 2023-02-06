@@ -17,16 +17,16 @@ class PermissionModal extends Component
     /** @var int $roleId */
     public $roleId;
 
+    /** @var string $roleName */
+    public $roleName;
+
     /** @var array<int, int> $permissionIds */
     public $permissionIds;
 
     protected $listeners = [
-        'permissions.creating',
-        'permissions.created',
+        'permissions.prepare' => 'prepareRole',
         'permissions.updating',
         'permissions.updated',
-        'permissions.deleting',
-        'permissions.deleted',
     ];
 
     public function mount()
@@ -57,7 +57,15 @@ class PermissionModal extends Component
         $this->isDeferred = true;
         $this->cari = '';
         $this->roleId = -1;
+        $this->roleName = '';
         $this->permissionIds = [];
+    }
+
+    public function prepareRole(int $roleId = -1, string $roleName = '', array $permissionIds = [])
+    {
+        $this->roleId = $roleId;
+        $this->roleName = $roleName;
+        $this->permissionIds = $permissionIds;
     }
 
     public function updatePermissions()
@@ -66,6 +74,8 @@ class PermissionModal extends Component
 
         $role->syncPermissions($this->permissionIds);
 
-        $this->emitUp('flashSuccess', "Permission untuk {$role->name} berhasil diupdate!");
+        $this->emitUp('flash.success', "Permission untuk {$role->name} berhasil diupdate!");
+
+        $this->resetFilters();
     }
 }

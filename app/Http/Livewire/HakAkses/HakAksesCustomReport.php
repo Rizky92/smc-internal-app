@@ -7,12 +7,18 @@ use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Spatie\Permission\Exceptions\RoleAlreadyExists;
 
 class HakAksesCustomReport extends Component
 {
     use WithPagination, FlashComponent, Filterable, LiveTable;
+
+    public $roleId;
+
+    public $roleName;
 
     public function mount()
     {
@@ -21,7 +27,9 @@ class HakAksesCustomReport extends Component
 
     public function getRolesProperty()
     {
-        return Role::with('permissions')->paginate($this->perpage);
+        return Role::with('permissions')
+            ->orderBy('name')
+            ->paginate($this->perpage);
     }
 
     public function render()
@@ -35,5 +43,38 @@ class HakAksesCustomReport extends Component
         $this->cari = '';
         $this->perpage = 25;
         $this->sortColumns = [];
+        $this->roleName = '';
+    }
+
+    public function createOrUpdateRole()
+    {
+        $validator = Validator::make(
+            ['name' => $this->roleName],
+            ['name' => 'required|string|max:255'],
+            ['name.string' => 'Nama role harus berupa string!']
+        );
+
+        if ($validator->fails()) {
+            $this->flashError($validator->messages()->get('name')[0]);
+
+            return;
+        }
+
+        try {
+            Role::create(['name' => $this->roleName, 'guard_name' => 'web']);
+        } catch (RoleAlreadyExists $e) {
+            $this->flashError($e->getMessage());
+
+            return;
+        }
+
+        $this->flashSuccess("Role {$this->roleName} berhasil dibuat!");
+
+        $this->resetFilters();
+    }
+
+    public function deleteRole()
+    {
+
     }
 }

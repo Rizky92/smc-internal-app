@@ -51,7 +51,7 @@ if (!function_exists('map_bulan')) {
     }
 }
 
-if (! function_exists('tracker_start')) {
+if (!function_exists('tracker_start')) {
     function tracker_start(string $connection = 'mysql_sik')
     {
         DB::connection($connection)->enableQueryLog();
@@ -72,7 +72,7 @@ if (!function_exists('tracker_end')) {
                 'ip' => request()->ip(),
             ]);
         }
-        
+
         DB::connection($connection)->disableQueryLog();
     }
 }

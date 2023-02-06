@@ -191,6 +191,7 @@ return [
 
         'View' => [
             \Illuminate\View\View::class,
+            \Illuminate\Contracts\View\Factory::class,
             \Livewire\Macros\ViewMacros::class,
         ],
     ],
