@@ -67,8 +67,8 @@ class ManajemenUser extends Component
 
         auth()->user()->impersonate(User::findByNRP($nrp));
 
-        $this->flashInfo("Anda sekarang sedang login sebagai {$nrp}");
-        
-        return redirect('admin/');
+        return redirect('admin/')
+            ->with('flash.type', 'dark')
+            ->with('flash.message', "Anda sekarang sedang login sebagai {$nrp}");
     }
 }
