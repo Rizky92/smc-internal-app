@@ -8,17 +8,19 @@
             <script>
                 $(document).on('DOMContentLoaded', () => {
                     $('#modal-set-hak-akses').on('shown.bs.modal', e => {
-                        $('select[duallistbox]').bootstrapDualListbox({
+                        @this.emit('khanza.show-sha')
+
+                        $('select[multiple][duallistbox]').bootstrapDualListbox({
                             selectorMinimalHeight: 450
                         }).refresh()
-
-                        @this.emit('khanza.show-sha')
                     })
 
                     $('#modal-set-hak-akses').on('hide.bs.modal', e => {
                         @this.emit('khanza.hide-sha')
+                    })
 
-                        $('select[duallistbox]').bootstrapDualListbox().destroy()
+                    $('#modal-set-hak-akses').on('hidden.bs.modal', e => {
+                        $('select[duallistbox]').bootstrapDualListbox(destroy)
                     })
                 })
             </script>
@@ -27,10 +29,10 @@
 
     <x-modal livewire id="modal-set-hak-akses" title="Set Hak Akses untuk SIMRS Khanza">
         <x-slot name="body">
-            <x-row-col class="text-sm">
+            <x-row-col class="text-sm" wire:ignore>
                 <select multiple duallistbox>
                     @foreach ($this->hakAksesKhanza as $field => $judul)
-                        <option value="{{ $field }}" @selected()>{{ $judul }}</option>
+                        <option value="{{ $field }}">{{ $judul }}</option>
                     @endforeach
                 </select>
             </x-row-col>

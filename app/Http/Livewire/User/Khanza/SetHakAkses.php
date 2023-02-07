@@ -95,7 +95,7 @@ class SetHakAkses extends Component
         $this->defaultValues();
     }
 
-    public function defaultValues()
+    protected function defaultValues()
     {
         $this->deferLoading = true;
         $this->nrp = '';
