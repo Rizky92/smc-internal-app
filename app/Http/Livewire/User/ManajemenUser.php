@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\User;
 
+use App\Models\Aplikasi\MappingAksesKhanza;
 use App\Models\Aplikasi\User;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
@@ -26,6 +27,11 @@ class ManajemenUser extends Component
     public function mount()
     {
         $this->defaultValues();
+    }
+
+    public function getMappingAksesKhanzaProperty()
+    {
+        return MappingAksesKhanza::pluck('judul_menu', 'nama_field');
     }
 
     public function getUsersProperty()

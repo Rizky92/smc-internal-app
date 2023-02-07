@@ -1,5 +1,48 @@
 <div>
     @once
+        @push('css')
+            <link rel="stylesheet" href="{{ asset('plugins/bootstrap4-duallistbox/bootstrap-duallistbox.min.css') }}">
+        @endpush
+        @push('js')
+            <script src="{{ asset('plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js') }}"></script>
+            <script>
+                $(document).on('DOMContentLoaded', () => {
+                    $('#modal-set-hak-akses').on('shown.bs.modal', e => {
+                        $('select[duallistbox]').bootstrapDualListbox({
+                            selectorMinimalHeight: 450
+                        }).refresh()
+
+                        @this.emit('khanza.show-sha')
+                    })
+
+                    $('#modal-set-hak-akses').on('hide.bs.modal', e => {
+                        @this.emit('khanza.hide-sha')
+
+                        $('select[duallistbox]').bootstrapDualListbox().destroy()
+                    })
+                })
+            </script>
+        @endpush
+    @endonce
+
+    <x-modal livewire id="modal-set-hak-akses" title="Set Hak Akses untuk SIMRS Khanza">
+        <x-slot name="body">
+            <x-row-col class="text-sm">
+                <select multiple duallistbox>
+                    @foreach ($this->hakAksesKhanza as $field => $judul)
+                        <option value="{{ $field }}" @selected()>{{ $judul }}</option>
+                    @endforeach
+                </select>
+            </x-row-col>
+        </x-slot>
+        <x-slot name="footer" class="justify-content-start">
+            <x-button class="btn-default ml-auto" data-dismiss="modal" title="Batal" />
+            <x-button class="btn-primary ml-2" data-dismiss="modal" wire:click="$emit('khanza.simpan')" title="Simpan" icon="fas fa-save" />
+        </x-slot>
+    </x-modal>
+
+
+    {{-- @once
         @push('js')
             <script>
                 document.addEventListener('DOMContentLoaded', () => {
@@ -53,5 +96,5 @@
             <x-button class="btn-default ml-auto" data-dismiss="modal" title="Batal" />
             <x-button class="btn-primary ml-2" data-dismiss="modal" wire:click="$emit('khanza.simpan')" title="Simpan" icon="fas fa-save" />
         </x-slot>
-    </x-modal>
+    </x-modal> --}}
 </div>

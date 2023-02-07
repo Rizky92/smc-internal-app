@@ -6,6 +6,7 @@
     'scrollable' => true,
     'dismissable' => true,
     'centered' => false,
+    'show' => false,
 
     'header' => null,
     'body' => null,
@@ -32,7 +33,7 @@
     $finalClass = collect($finalClass)->join(' ');
 @endphp
 
-<div class="modal fade" id="{{ $id }}" {{ $livewire ? 'wire:ignore.self' : null }}>
+<div class="modal fade" id="{{ $id }}" {{ $livewire ? 'wire:ignore.self' : null }} {{ $attributes->only('style') }}>
     <div class="modal-dialog {{ $finalClass }}">
         <div {{ $attributes->merge(['class' => 'modal-content']) }}>
 

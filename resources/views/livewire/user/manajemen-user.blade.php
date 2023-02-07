@@ -9,8 +9,11 @@
                 let inputRoles
                 let inputPermissions
 
-                let buttonResetFilters
+                let buttonResetFilter
                 let buttonImpersonate
+
+                let dropdownButtonSet
+                let dropdownButtonTransfer
 
                 $(document).ready(() => {
                     inputNRP = $('#user')
@@ -18,20 +21,29 @@
                     inputRoles = $('input[name=roles]')
                     inputPermissions = $('input[name=permissions]')
 
-                    buttonResetFilters = $('button#reset-filters')
+                    buttonResetFilter = $('button#reset-filter')
                     buttonImpersonate = $('button#impersonate')
 
-                    buttonResetFilters.click(e => {
+                    dropdownButtonSet = $('button#set-hak-akses')
+                    dropdownButtonTransfer = $('button#transfer-hak-akses')
+
+                    buttonResetFilter.click(e => {
                         inputNRP.val('')
                         inputNama.val('')
                         inputRoles.each((i, el) => el.checked = false)
                         inputPermissions.each((i, el) => el.checked = false)
+
+                        toggleButton(false)
                     })
 
-                    buttonImpersonate.click(e => {
-                        @this.impersonateAsUser(inputNRP.val())
-                    })
+                    buttonImpersonate.click(e => @this.impersonateAsUser(inputNRP.val()))
                 })
+
+                function toggleButton(state) {
+                    buttonImpersonate.prop('disabled', !state)
+                    dropdownButtonSet.prop('disabled', !state)
+                    dropdownButtonTransfer.prop('disabled', !state)
+                }
 
                 function loadData({
                     nrp,
@@ -42,6 +54,8 @@
                 }) {
                     inputNRP.val(nrp)
                     inputNama.val(nama)
+
+                    toggleButton(true)
 
                     let roles = []
                     let rolePermissions = []
@@ -101,20 +115,20 @@
                 <div class="col-6">
                     <div class="d-flex align-items-end h-100">
                         <x-dropdown class="mb-3">
-                            <x-slot name="button" class="btn-sm btn-default" title="Set Hak Akses" icon="fas fa-info-circle"></x-slot>
+                            <x-slot name="button" disabled class="btn-sm btn-default" title="Set Hak Akses" icon="fas fa-info-circle"></x-slot>
                             <x-slot name="menu" class="dropdown-menu-right">
                                 <x-dropdown.item-button class="text-sm" id="button-set-hak-akses" title="SIMRS Khanza" data-toggle="modal" data-target="#modal-set-hak-akses" />
-                                <x-dropdown.item-button class="text-sm" id="button-set-role-permissions" title="Custom Report" data-toggle="modal" data-target="#modal-set-role-permissions" />
+                                <x-dropdown.item-button class="text-sm" id="button-set-role-permissions" title="SMC Internal App" data-toggle="modal" data-target="#modal-set-role-permissions" />
                             </x-slot>
                         </x-dropdown>
                         <x-dropdown class="mb-3 ml-2">
-                            <x-slot name="button" class="btn-sm btn-default" title="Transfer Hak Akses" icon="fas fa-share-square"></x-slot>
+                            <x-slot name="button" disabled class="btn-sm btn-default" title="Transfer Hak Akses" icon="fas fa-share-square"></x-slot>
                             <x-slot name="menu" class="dropdown-menu-right">
                                 <x-dropdown.item-button class="text-sm" id="button-transfer-hak-akses" title="SIMRS Khanza" data-toggle="modal" data-target="#modal-transfer-hak-akses" />
-                                <x-dropdown.item-button class="text-sm" id="button-transfer-role-permissions" title="Custom Report" data-toggle="modal" data-target="#modal-transfer-role-permissions" />
+                                <x-dropdown.item-button class="text-sm" id="button-transfer-role-permissions" title="SMC Internal App" data-toggle="modal" data-target="#modal-transfer-role-permissions" />
                             </x-slot>
                         </x-dropdown>
-                        <x-button class="btn-default ml-2 mb-3" id="impersonate" title="Impersonasi" icon="fas fa-user-secret" />
+                        <x-button disabled class="btn-default ml-2 mb-3" id="impersonate" title="Impersonasi" icon="fas fa-user-secret" />
                     </div>
                 </div>
             </x-card.row>

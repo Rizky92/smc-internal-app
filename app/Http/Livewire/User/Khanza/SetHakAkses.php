@@ -14,8 +14,6 @@ class SetHakAkses extends Component
 
     public $nama;
 
-    public $cari;
-
     public $checkedHakAkses;
 
     protected $listeners = [
@@ -24,13 +22,6 @@ class SetHakAkses extends Component
         'khanza.prepare-user' => 'prepareUser',
         'khanza.simpan' => 'setHakAkses',
     ];
-
-    protected function queryString()
-    {
-        return [
-            'cari' => ['except' => '', 'as' => 'q'],
-        ];
-    }
 
     public function mount()
     {
@@ -41,11 +32,7 @@ class SetHakAkses extends Component
     {
         return $this->deferLoading
             ? []
-            : MappingAksesKhanza::query()
-            ->where('nama_field', 'like', "%{$this->cari}%")
-            ->orWhere('judul_menu', 'like', "%{$this->cari}%")
-            ->orWhereIn('nama_field', $this->checkedHakAkses)
-            ->pluck('judul_menu', 'nama_field');
+            : MappingAksesKhanza::pluck('judul_menu', 'nama_field');
     }
 
     public function render()
@@ -59,11 +46,11 @@ class SetHakAkses extends Component
 
         $user = User::rawFindByNRP($this->nrp);
 
-        if (! $this->deferLoading) {
-            $this->checkedHakAkses = $this->hakAksesKhanza->keys()->filter(function ($field) use ($user) {
-                return $user->getAttribute($field) === 'true';
-            })->flatten()->toArray();
-        }
+        // if (! $this->deferLoading) {
+        //     $this->checkedHakAkses = $this->hakAksesKhanza->keys()->filter(function ($field) use ($user) {
+        //         return $user->getAttribute($field) === 'true';
+        //     })->flatten()->toArray();
+        // }
     }
 
     public function prepareUser(string $nrp = '', string $nama = '')
@@ -113,7 +100,6 @@ class SetHakAkses extends Component
         $this->deferLoading = true;
         $this->nrp = '';
         $this->nama = '';
-        $this->cari = '';
         $this->checkedHakAkses = [];
     }
 }
