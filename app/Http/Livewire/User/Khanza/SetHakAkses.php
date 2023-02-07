@@ -8,13 +8,13 @@ use Livewire\Component;
 
 class SetHakAkses extends Component
 {
-    public $deferLoading;
+    public $isDeffered;
 
     public $nrp;
 
     public $nama;
 
-    public $checkedHakAkses;
+    public $selectedHakAkses;
 
     protected $listeners = [
         'khanza.show-sha' => 'showModal',
@@ -30,7 +30,7 @@ class SetHakAkses extends Component
 
     public function getHakAksesKhanzaProperty()
     {
-        return $this->deferLoading
+        return $this->isDeffered
             ? []
             : MappingAksesKhanza::pluck('judul_menu', 'nama_field');
     }
@@ -42,12 +42,12 @@ class SetHakAkses extends Component
 
     public function showModal()
     {
-        $this->deferLoading = false;
+        $this->isDeffered = false;
 
         $user = User::rawFindByNRP($this->nrp);
 
-        // if (! $this->deferLoading) {
-        //     $this->checkedHakAkses = $this->hakAksesKhanza->keys()->filter(function ($field) use ($user) {
+        // if (! $this->isDeffered) {
+        //     $this->selectedHakAkses = $this->hakAksesKhanza->keys()->filter(function ($field) use ($user) {
         //         return $user->getAttribute($field) === 'true';
         //     })->flatten()->toArray();
         // }
@@ -71,12 +71,12 @@ class SetHakAkses extends Component
 
         tracker_start();
 
-        foreach ($this->checkedHakAkses as $hakAkses) {
+        foreach ($this->selectedHakAkses as $hakAkses) {
             $user->setAttribute($hakAkses, 'true');
         }
 
         $falsyHakAkses = $this->hakAksesKhanza->reject(function ($value, $key) {
-            return in_array($key, $this->checkedHakAkses);
+            return in_array($key, $this->selectedHakAkses);
         });
 
         foreach ($falsyHakAkses as $field => $judul) {
@@ -97,9 +97,9 @@ class SetHakAkses extends Component
 
     protected function defaultValues()
     {
-        $this->deferLoading = true;
+        $this->isDeffered = true;
         $this->nrp = '';
         $this->nama = '';
-        $this->checkedHakAkses = [];
+        $this->selectedHakAkses = [];
     }
 }

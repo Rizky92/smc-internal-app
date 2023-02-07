@@ -11,8 +11,8 @@
                         @this.emit('khanza.show-sha')
 
                         $('select[multiple][duallistbox]').bootstrapDualListbox({
-                            selectorMinimalHeight: 450
-                        }).refresh()
+                            selectorMinimalHeight: 360
+                        }).refresh(true)
                     })
 
                     $('#modal-set-hak-akses').on('hide.bs.modal', e => {
@@ -32,7 +32,7 @@
             <x-row-col class="text-sm" wire:ignore>
                 <select multiple duallistbox>
                     @foreach ($this->hakAksesKhanza as $field => $judul)
-                        <option value="{{ $field }}">{{ $judul }}</option>
+                        <option value="{{ $field }}" @selected(in_array($field, $selectedHakAkses, true))>{{ $judul }}</option>
                     @endforeach
                 </select>
             </x-row-col>
