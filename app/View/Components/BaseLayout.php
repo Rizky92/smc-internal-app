@@ -252,6 +252,13 @@ class BaseLayout extends Component
                 'type' => 'link',
                 'hasAnyPermissions' => $user->hasRole($develop),
             ],
+            [
+                'name' => 'Route List',
+                'url' => route('admin.route-list'),
+                'icon' => "fas fa-list-ul",
+                'type' => 'link',
+                'hasAnyPermissions' => $user->hasRole($develop),
+            ],
         ]);
     }
 

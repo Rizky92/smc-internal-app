@@ -25,6 +25,7 @@ use App\Http\Livewire\RekamMedis\LaporanDemografi;
 use App\Http\Livewire\RekamMedis\LaporanStatistik;
 use App\Http\Livewire\User\ManajemenUser;
 use Illuminate\Support\Facades\Route;
+use InfyOm\RoutesExplorer\RoutesExplorer;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 
 /*
@@ -161,5 +162,8 @@ Route::prefix('admin')
 
                 Route::get('logs', [LogViewerController::class, 'index'])
                     ->name('log-viewer');
+
+                Route::get('route-list', [RoutesExplorer::class, 'showRoutes'])
+                    ->name('route-list');
             });
     });

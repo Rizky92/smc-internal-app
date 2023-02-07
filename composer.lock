@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "254c641c48071d0df582de78ca6c64bd",
+    "content-hash": "9659dba44d2385888fda16502755c5c5",
     "packages": [
         {
             "name": "aglipanci/laravel-eloquent-case",
@@ -1211,6 +1211,71 @@
                 }
             ],
             "time": "2022-10-26T14:07:24+00:00"
+        },
+        {
+            "name": "infyomlabs/routes-explorer",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/InfyOmLabs/laravel-routes-explorer.git",
+                "reference": "9382061548123e6ddbc95513c04ab98bd2b92961"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/InfyOmLabs/laravel-routes-explorer/zipball/9382061548123e6ddbc95513c04ab98bd2b92961",
+                "reference": "9382061548123e6ddbc95513c04ab98bd2b92961",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": ">=5.0",
+                "php": ">=5.5.9"
+            },
+            "require-dev": {
+                "mockery/mockery": ">=0.9",
+                "phpunit/phpunit": ">=5.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "\\InfyOm\\RoutesExplorer\\RoutesExplorerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "InfyOm\\RoutesExplorer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mitul Golakiya",
+                    "email": "me@mitul.me"
+                }
+            ],
+            "description": "Laravel Routes Explorer",
+            "keywords": [
+                "api",
+                "explorer",
+                "infyom",
+                "laravel",
+                "routes"
+            ],
+            "support": {
+                "issues": "https://github.com/InfyOmLabs/laravel-routes-explorer/issues",
+                "source": "https://github.com/InfyOmLabs/laravel-routes-explorer/tree/v1.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://opencollective.com/infyomlabs",
+                    "type": "opencollective"
+                }
+            ],
+            "time": "2022-02-22T06:43:31+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",

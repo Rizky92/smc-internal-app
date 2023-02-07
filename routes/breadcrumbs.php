@@ -144,3 +144,9 @@ Breadcrumbs::for('admin.hak-akses.khanza', function (Trail $trail) {
     $trail->parent('admin.hak-akses');
     $trail->push('Khanza', route('admin.hak-akses.khanza'));
 });
+
+
+Breadcrumbs::for('admin.route-list', function (Trail $trail) {
+    $trail->parent('admin.dashboard');
+    $trail->push('Route List', route('admin.route-list'));
+});
