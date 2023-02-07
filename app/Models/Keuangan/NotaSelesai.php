@@ -138,11 +138,7 @@ class NotaSelesai extends Model
                     ];
                 });
 
-                tracker_start('mysql_smc');
-
                 static::insert($data->all());
-                
-                tracker_end('mysql_smc');
             });
     }
 }

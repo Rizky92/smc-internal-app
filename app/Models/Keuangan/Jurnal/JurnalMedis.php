@@ -31,13 +31,13 @@ class JurnalMedis extends Model
             ->table('jurnal')
             ->when(
                 !is_null($latest),
-                fn ($query) => $query->whereRaw("timestamp(tgl_jurnal, jam_jurnal) > ?", $latest->tgl_penyelesaian),
+                fn ($query) => $query->whereRaw("timestamp(tgl_jurnal, jam_jurnal) > ?", $latest->waktu_jurnal),
                 fn ($query) => $query->where('tgl_jurnal', '>=', '2022-10-31')
             )
-            ->where('keterangan', 'like', '%BAYAR PELUNASAN %% BARANG NON MEDIS NO.FAKTUR %%, OLEH %')
+            ->where('keterangan', 'like', '%BAYAR PELUNASAN HUTANG OBAT/BHP/ALKES NO.FAKTUR %%, OLEH %')
             ->where('keterangan', 'not like', '%adjustmen%')
             ->orderBy('no_jurnal')
-            ->chunk(500, function ($jurnal) {
+            ->chunk(100, function ($jurnal) {
                 /** @var \Illuminate\Support\Collection $jurnal */
 
                 $data = $jurnal->map(function ($value, $key) {
@@ -57,11 +57,7 @@ class JurnalMedis extends Model
                     ];
                 });
 
-                tracker_start('mysql_smc');
-
                 static::insert($data->all());
-                
-                tracker_end('mysql_smc');
             });
     }
 }
