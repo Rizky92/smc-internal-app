@@ -80,6 +80,7 @@ class BaseLayout extends Component
                     'keuangan.laporan-tambahan-biaya.read',
                     'keuangan.laporan-potongan-biaya.read',
                     'keuangan.laporan-selesai-billing.read',
+                    'keuangan.jurnal-po-supplier.read',
                 ]),
                 'items' => [
                     [
@@ -116,6 +117,13 @@ class BaseLayout extends Component
                         'icon' => "fas fa-book",
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.laporan-selesai-billing.read'),
+                    ],
+                    [
+                        'name' => 'Jurnal PO Supplier',
+                        'url' => route('admin.keuangan.jurnal-po-supplier'),
+                        'icon' => "fas fa-book",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.jurnal-po-supplier.read'),
                     ],
                 ],
             ],

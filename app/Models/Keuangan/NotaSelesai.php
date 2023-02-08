@@ -117,7 +117,7 @@ class NotaSelesai extends Model
                 ->orWhere('keterangan', 'like', '%PIUTANG PASIEN RAWAT RALAN% %DIPOSTING OLEH%')
                 ->orWhere('keterangan', 'like', '%PIUTANG PASIEN RAWAT INAP% %DIPOSTING OLEH%'))
             ->orderBy('no_jurnal')
-            ->chunk(1000, function ($jurnal) {
+            ->chunk(500, function ($jurnal) {
                 /** @var \Illuminate\Support\Collection $jurnal */
 
                 $data = $jurnal->map(function ($value, $key) {

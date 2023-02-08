@@ -15,6 +15,7 @@ use App\Http\Livewire\HakAkses\HakAksesKhanza;
 use App\Http\Livewire\Keuangan\LaporanPenyelesaianBillingPerPetugas;
 use App\Http\Livewire\Keuangan\LaporanPotonganBiayaPasien;
 use App\Http\Livewire\Keuangan\LaporanTambahanBiayaPasien;
+use App\Http\Livewire\Keuangan\PenarikanDataSuplierPO;
 use App\Http\Livewire\Keuangan\RekapPiutangPasien;
 use App\Http\Livewire\Keuangan\StokObatRuangan;
 use App\Http\Livewire\Logistik\InputMinmaxStok;
@@ -95,6 +96,10 @@ Route::prefix('admin')
                 Route::get('laporan-selesai-billing', LaporanPenyelesaianBillingPerPetugas::class)
                     ->middleware('can:keuangan.laporan-selesai-billing.read')
                     ->name('laporan-selesai-billing');
+
+                Route::get('jurnal-po-supplier', PenarikanDataSuplierPO::class)
+                    ->middleware('can:keuangan.jurnal-po-supplier.read')
+                    ->name('jurnal-po-supplier');
             });
 
         Route::prefix('farmasi')

@@ -2,12 +2,17 @@
 
 namespace App\Models\Keuangan\Jurnal;
 
+use App\Support\Traits\Eloquent\Searchable;
+use App\Support\Traits\Eloquent\Sortable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class JurnalNonMedis extends Model
 {
+    use Sortable, Searchable;
+    
     protected $connection = 'mysql_smc';
 
     protected $table = 'jurnal_non_medis';
@@ -23,6 +28,44 @@ class JurnalNonMedis extends Model
         'nik',
     ];
 
+    public function scopeJurnalPenerimaanBarang(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        }
+
+        $db = DB::connection('mysql_sik')->getDatabaseName();
+
+        $sqlSelect = "
+            jurnal_non_medis.id,
+            jurnal_non_medis.no_jurnal,
+            jurnal_non_medis.waktu_jurnal,
+            jurnal_non_medis.no_faktur,
+            jurnal_non_medis.ket,
+            jurnal_non_medis.status,
+            bayar_pemesanan_non_medis.besar_bayar,
+            bayar_pemesanan_non_medis.nama_bayar,
+            rekening.kd_rek,
+            rekening.nm_rek,
+            ipsrssuplier.nama_suplier,
+            trim(concat(jurnal_non_medis.nik, ' ', coalesce(pegawai.nama, ''))) nm_pegawai
+        ";
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join(DB::raw("{$db}.bayar_pemesanan_non_medis bayar_pemesanan_non_medis"), 'jurnal_non_medis.no_faktur', '=', 'bayar_pemesanan_non_medis.no_faktur')
+            ->leftJoin(DB::raw("{$db}.ipsrspemesanan ipsrspemesanan"), 'jurnal_non_medis.no_faktur', '=', 'ipsrspemesanan.no_faktur')
+            ->leftJoin(DB::raw("{$db}.ipsrssuplier ipsrssuplier"), 'ipsrspemesanan.kode_suplier', '=', 'ipsrssuplier.kode_suplier')
+            ->leftJoin(DB::raw("{$db}.akun_bayar_hutang akun_bayar_hutang"), 'bayar_pemesanan_non_medis.nama_bayar', '=', 'akun_bayar_hutang.nama_bayar')
+            ->leftJoin(DB::raw("{$db}.rekening rekening"), 'akun_bayar_hutang.kd_rek', '=', 'rekening.kd_rek')
+            ->leftJoin(DB::raw("{$db}.pegawai pegawai"), 'jurnal_non_medis.nik', '=', 'pegawai.nik')
+            ->whereBetween(DB::raw('date(jurnal_non_medis.waktu_jurnal)'), [$tglAwal, $tglAkhir]);
+    }
+
     public static function refreshModel()
     {
         $latest = static::latest('waktu_jurnal')->first();
@@ -34,10 +77,12 @@ class JurnalNonMedis extends Model
                 fn ($query) => $query->whereRaw("timestamp(tgl_jurnal, jam_jurnal) > ?", $latest->waktu_jurnal),
                 fn ($query) => $query->where('tgl_jurnal', '>=', '2022-10-31')
             )
-            ->where('keterangan', 'like', '%BAYAR PELUNASAN %% BARANG NON MEDIS NO.FAKTUR %%, OLEH %')
+            ->where(fn ($query) => $query
+                ->where('keterangan', 'like', '%BAYAR PELUNASAN HUTANG BARANG NON MEDIS NO.FAKTUR %%, OLEH %')
+                ->orWhere('keterangan', 'like', '%BATAL BAYAR PELUNASAN BARANG NON MEDIS NO.FAKTUR %%, OLEH %'))
             ->where('keterangan', 'not like', '%adjustmen%')
             ->orderBy('no_jurnal')
-            ->chunk(100, function ($jurnal) {
+            ->chunk(500, function ($jurnal) {
                 /** @var \Illuminate\Support\Collection $jurnal */
 
                 $data = $jurnal->map(function ($value, $key) {
