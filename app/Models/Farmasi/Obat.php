@@ -2,15 +2,10 @@
 
 namespace App\Models\Farmasi;
 
-use App\Models\Farmasi\Inventaris\GudangObat;
-use App\Models\Farmasi\Inventaris\IndustriFarmasi;
-use App\Models\Satuan;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
 class Obat extends Model
@@ -40,6 +35,9 @@ class Obat extends Model
             'industrifarmasi.nama_industri',
             'round(databarang.h_beli) harga_beli',
             'round((databarang.stokminimal - ifnull(stok_gudang.stok_di_gudang, 0)) * databarang.h_beli) harga_beli_total',
+            "(select ifnull(round(dp.h_pesan/databarang.isi,2), 0) from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1) harga_beli_terakhir",
+            "(select ifnull(dp.dis, 0) from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1) diskon_terakhir",
+            "(select ds.nama_suplier from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur left join datasuplier ds on p.kode_suplier = ds.kode_suplier where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1) supplier_terakhir"
         ];
 
         $stokGudang = DB::raw("(

@@ -4,6 +4,7 @@ namespace App\Models\Farmasi\Inventaris;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 class PemesananObat extends Model
 {
@@ -26,6 +27,12 @@ class PemesananObat extends Model
             ->join('detailpesan', 'pemesanan.no_faktur', '=', 'detailpesan.no_faktur')
             ->whereBetween('pemesanan.tgl_pesan', ["{$year}-01-01", "{$year}-12-31"])
             ->groupByRaw("month(pemesanan.tgl_pesan)");
+    }
+
+    public static function mapDataPemesananObatTerbaru(): Collection
+    {
+        $sqlSelect = "
+        ";
     }
 
     public static function totalPembelianDariFarmasi(string $year = '2022'): array
