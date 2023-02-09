@@ -92,11 +92,9 @@ class PenarikanDataSuplierPO extends Component
 
     public function tarikDataTerbaru()
     {
-        if (! (JurnalMedis::refreshModel() && JurnalNonMedis::refreshModel())) {
-            $this->flashError('Tidak dapat memperbaharui data! Silahkan coba lagi nanti.');
-
-            return;
-        }
+        JurnalMedis::refreshModel();
+        
+        JurnalNonMedis::refreshModel();
 
         $this->fullRefresh();
 
