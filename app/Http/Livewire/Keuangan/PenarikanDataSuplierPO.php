@@ -90,6 +90,19 @@ class PenarikanDataSuplierPO extends Component
             ->layout(BaseLayout::class, ['title' => 'Penarikan Data Suplier Penerimaan Barang']);
     }
 
+    public function tarikDataTerbaru()
+    {
+        if (! (JurnalMedis::refreshModel() && JurnalNonMedis::refreshModel())) {
+            $this->flashError('Tidak dapat memperbaharui data! Silahkan coba lagi nanti.');
+
+            return;
+        }
+
+        $this->fullRefresh();
+
+        $this->flashSuccess('Data Berhasil Diperbaharui!');
+    }
+
     protected function defaultValues()
     {
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');

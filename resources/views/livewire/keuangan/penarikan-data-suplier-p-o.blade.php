@@ -1,7 +1,19 @@
 <div>
     <x-flash />
 
-    <x-card use-default-filter use-loading>
+    <x-card use-loading loading-target="tarikDataTerbaru">
+        <x-slot name="header">
+            <x-card.row-col>
+                <x-filter.range-date />
+                <x-filter.button method="tarikDataTerbaru" title="Tarik Data Terbaru" icon="fas fa-sync-alt" class="ml-auto" />
+                <x-filter.button-export-excel class="ml-2" />
+            </x-card.row-col>
+            <x-card.row-col class="mt-2">
+                <x-filter.select-perpage />
+                <x-filter.button-reset-filters class="ml-auto" />
+                <x-filter.search class="ml-2" />
+            </x-card.row-col>
+        </x-slot>
         <x-slot name="body">
             <x-navtabs livewire>
                 <x-slot name="tabs">
