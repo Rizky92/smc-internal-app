@@ -55,6 +55,11 @@ Breadcrumbs::for('admin.keuangan.laporan-selesai-billing', function (Trail $trai
     $trail->push('Laporan Selesai Billing', route('admin.keuangan.laporan-selesai-billing'));
 });
 
+Breadcrumbs::for('admin.keuangan.jurnal-po-supplier', function (Trail $trail) {
+    $trail->parent('admin.keuangan');
+    $trail->push('Jurnal PO Supplier', route('admin.keuangan.jurnal-po-supplier'));
+});
+
 
 Breadcrumbs::for('admin.farmasi', function (Trail $trail) {
     $trail->parent('admin.dashboard');

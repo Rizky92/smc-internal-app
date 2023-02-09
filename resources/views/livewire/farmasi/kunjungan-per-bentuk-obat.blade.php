@@ -28,7 +28,7 @@
                     <x-navtabs.tab id="obat-racikan" title="Obat Racikan" />
                 </x-slot>
                 <x-slot name="contents">
-                    <x-navtabs.content id="obat-regular" title="Obat Regular" selected class="table-responsive">
+                    <x-navtabs.content id="obat-regular" selected class="table-responsive">
                         <x-table class="mb-0" sortable :sortColumns="$sortColumns">
                             <x-slot name="columns">
                                 <x-table.th name="no_resep" title="No. Resep" />
@@ -55,7 +55,7 @@
                         </x-table>
                         <x-paginator class="px-4 py-3 bg-light" :data="$this->kunjunganResepObatRegularPasien" />
                     </x-navtabs.content>
-                    <x-navtabs.content id="obat-racikan" title="Obat Racikan" class="table-responsive">
+                    <x-navtabs.content id="obat-racikan" class="table-responsive">
                         <x-table class="mb-0" sortable :sortColumns="$sortColumns">
                             <x-slot name="columns">
                                 <x-table.th name="no_resep" title="No. Resep" />
