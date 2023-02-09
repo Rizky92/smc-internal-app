@@ -62,7 +62,7 @@ class StokDaruratFarmasi extends Component
     protected function dataPerSheet(): array
     {
         return [
-            Obat::daruratStok(true)->get(),
+            Obat::daruratStok(true)->sortWithColumns([], [], ['nama_brng' => 'asc'])->get(),
         ];
     }
 
@@ -78,9 +78,9 @@ class StokDaruratFarmasi extends Component
             'Saran order',
             'Supplier',
             'Harga Per Unit (Rp)',
+            'Total Harga (Rp)',
             'Harga Beli Terakhir (Rp)',
             'Diskon Terakhir (%)',
-            'Total Harga (Rp)',
             'Supplier Terakhir',
         ];
     }

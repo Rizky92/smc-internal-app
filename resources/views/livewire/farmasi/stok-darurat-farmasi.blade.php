@@ -24,9 +24,9 @@
                     <x-table.th name="saran_order" title="Saran order" style="width: 14ch" />
                     <x-table.th name="nama_industri" title="Supplier" style="width: 40ch" />
                     <x-table.th name="harga_beli" title="Harga Per Unit" style="width: 18ch" />
+                    <x-table.th name="harga_beli_total" title="Total Harga" style="width: 15ch" />
                     <x-table.th name="harga_beli_terakhir" title="Harga Beli Terakhir" style="width: 25ch" />
                     <x-table.th name="diskon_terakhir" title="Diskon Terakhir (%)" style="width: 24ch" />
-                    <x-table.th name="harga_beli_total" title="Total Harga" style="width: 15ch" />
                     <x-table.th name="supplier_terakhir" title="Supplier Terakhir" style="width: 40ch" />
                 </x-slot>
                 <x-slot name="body">
@@ -41,9 +41,9 @@
                             <x-table.td>{{ $obat->saran_order }}</x-table.td>
                             <x-table.td>{{ $obat->nama_industri }}</x-table.td>
                             <x-table.td>{{ rp($obat->harga_beli) }}</x-table.td>
+                            <x-table.td>{{ rp($obat->harga_beli_total) }}</x-table.td>
                             <x-table.td>{{ rp($obat->harga_beli_terakhir) }}</x-table.td>
                             <x-table.td>{{ $obat->diskon_terakhir }}</x-table.td>
-                            <x-table.td>{{ rp($obat->harga_beli_total) }}</x-table.td>
                             <x-table.td>{{ $obat->supplier_terakhir }}</x-table.td>
                         </x-table.tr>
                     @endforeach
