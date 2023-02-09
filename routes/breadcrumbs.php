@@ -155,3 +155,8 @@ Breadcrumbs::for('admin.route-list', function (Trail $trail) {
     $trail->parent('admin.dashboard');
     $trail->push('Route List', route('admin.route-list'));
 });
+
+Breadcrumbs::for('admin.log-viewer', function (Trail $trail) {
+    $trail->parent('admin.dashboard');
+    $trail->push('Log Viewer', route('admin.log-viewer'));
+});
