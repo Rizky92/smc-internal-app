@@ -33,12 +33,15 @@ class StokDaruratFarmasi extends Component
                 'industrifarmasi.nama_industri',
             ])
             ->sortWithColumns($this->sortColumns, [
-                'satuan_kecil'     => 'kodesatuan.satuan',
-                'kategori'         => 'kategori_barang.nama',
-                'stok_sekarang'    => DB::raw('ifnull(round(stok_gudang.stok_di_gudang, 2), 0)'),
-                'saran_order'      => DB::raw('(databarang.stokminimal - ifnull(stok_gudang.stok_di_gudang, 0))'),
-                'harga_beli'       => DB::raw('round(databarang.h_beli)'),
-                'harga_beli_total' => DB::raw('round((databarang.stokminimal - ifnull(stok_gudang.stok_di_gudang, 0)) * databarang.h_beli)'),
+                'satuan_kecil'        => 'kodesatuan.satuan',
+                'kategori'            => 'kategori_barang.nama',
+                'stok_sekarang'       => DB::raw('ifnull(round(stok_gudang.stok_di_gudang, 2), 0)'),
+                'saran_order'         => DB::raw('(databarang.stokminimal - ifnull(stok_gudang.stok_di_gudang, 0))'),
+                'harga_beli'          => DB::raw('round(databarang.h_beli)'),
+                'harga_beli_total'    => DB::raw('round((databarang.stokminimal - ifnull(stok_gudang.stok_di_gudang, 0)) * databarang.h_beli)'),
+                'harga_beli_terakhir' => DB::raw("(select ifnull(round(dp.h_pesan / databarang.isi, 2), 0) from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1)"),
+                'diskon_terakhir'     => DB::raw("(select ifnull(dp.dis, '0') from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1)"),
+                'supplier_terakhir'   => DB::raw("(select ifnull(ds.nama_suplier, '-') from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur left join datasuplier ds on p.kode_suplier = ds.kode_suplier where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1)")
             ], ['nama_brng' => 'asc'])
             ->paginate($this->perpage);
     }
@@ -75,7 +78,10 @@ class StokDaruratFarmasi extends Component
             'Saran order',
             'Supplier',
             'Harga Per Unit (Rp)',
+            'Harga Beli Terakhir (Rp)',
+            'Diskon Terakhir (%)',
             'Total Harga (Rp)',
+            'Supplier Terakhir',
         ];
     }
 
