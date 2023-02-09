@@ -29,12 +29,6 @@ class PemesananObat extends Model
             ->groupByRaw("month(pemesanan.tgl_pesan)");
     }
 
-    public static function mapDataPemesananObatTerbaru(): Collection
-    {
-        $sqlSelect = "
-        ";
-    }
-
     public static function totalPembelianDariFarmasi(string $year = '2022'): array
     {
         $data = static::pembelianFarmasi($year)->pluck('jumlah', 'bulan');
