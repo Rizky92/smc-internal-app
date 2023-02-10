@@ -8,6 +8,7 @@ use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
+use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -15,7 +16,7 @@ use Livewire\WithPagination;
 
 class KunjunganPerBentukObat extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
     private const OBAT_REGULAR_PAGE = 'obat_regular_page';
     private const OBAT_RACIKAN_PAGE = 'obat_racikan_page';

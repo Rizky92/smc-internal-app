@@ -13,12 +13,13 @@ use App\Models\Farmasi\Inventaris\ReturSupplierObat;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
+use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
 
 class LaporanProduksiTahunan extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable;
+    use FlashComponent, Filterable, ExcelExportable, MenuTracker;
 
     public $tahun;
 
