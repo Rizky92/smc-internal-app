@@ -19,7 +19,7 @@
                         @impersonating
                             <span class="text-xs">Melihat sebagai :</span>
                         @endImpersonating
-                        <span>{{ $nama }}</span>
+                        <span class="text-sm">{{ $nama }}</span>
                         <span class="text-xs">{{ $nik }}</span>
                     </a>
                 </div>
