@@ -4,7 +4,7 @@
 ])
 
 <div {{ $attributes }}>
-    <button class="btn btn-outline-dark btn-sm" type="button" wire:click="{{ $method }}">
+    <button class="btn btn-outline-dark btn-sm" type="button" wire:click.prevent="{{ $method }}">
         <i class="fas fa-file-excel"></i>
         <span class="ml-1">{{ $title }}</span>
     </button>

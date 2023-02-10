@@ -22,6 +22,10 @@ class PenarikanDataSuplierPO extends Component
 
     public $periodeAkhir;
 
+    protected $listeners = [
+        //
+    ];
+
     protected function queryString()
     {
         return [
@@ -88,7 +92,7 @@ class PenarikanDataSuplierPO extends Component
     public function render()
     {
         return view('livewire.keuangan.penarikan-data-suplier-p-o')
-            ->layout(BaseLayout::class, ['title' => 'Penarikan Data Suplier Penerimaan Barang']);
+            ->layout(BaseLayout::class, ['title' => 'Penarikan Data Suplier Penerimaan Barang Medis / Non Medis']);
     }
 
     public function tarikDataTerbaru()
@@ -111,8 +115,8 @@ class PenarikanDataSuplierPO extends Component
     protected function dataPerSheet(): array
     {
         return [
-            'Obat/BHP/Alkes' => JurnalMedis::jurnalPenerimaanBarang($this->periodeAwal, $this->periodeAkhir)->get(),
-            'Non Medis' => JurnalNonMedis::jurnalPenerimaanBarang($this->periodeAwal, $this->periodeAkhir)->get(),
+            'Obat/BHP/Alkes' => JurnalMedis::jurnalPenerimaanBarang($this->periodeAwal, $this->periodeAkhir)->get()->toArray(),
+            'Non Medis' => JurnalNonMedis::jurnalPenerimaanBarang($this->periodeAwal, $this->periodeAkhir)->get()->toArray(),
         ];
     }
 
@@ -122,9 +126,10 @@ class PenarikanDataSuplierPO extends Component
             '#',
             'No. Jurnal',
             'Waktu',
-            'Statement',
+            'No. Faktur',
+            'Keterangan',
             'Status',
-            'Nominal',
+            'Nominal (Rp)',
             'Akun Bayar',
             'Kode Rekening',
             'Nama Rekening',
@@ -138,6 +143,7 @@ class PenarikanDataSuplierPO extends Component
         return [
             'RS Samarinda Medika Citra',
             'Penarikan Data Supplier PO Medis/Non Medis',
+            // now()->format('d F Y'),
             Carbon::parse($this->periodeAwal)->format('d F Y') . ' - ' . Carbon::parse($this->periodeAkhir)->format('d F Y'),
         ];
     }

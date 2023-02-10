@@ -1,7 +1,7 @@
 <div>
     <x-flash />
 
-    <x-card use-loading loading-target="tarikDataTerbaru">
+    <x-card>
         <x-slot name="header">
             <x-card.row-col>
                 <x-filter.range-date />
