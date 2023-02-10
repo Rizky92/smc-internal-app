@@ -11,12 +11,14 @@ use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Rizky92\Xlswriter\ExcelExport;
 
 class PenarikanDataSuplierPO extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
+    use WithPagination, FlashComponent, Filterable, LiveTable, MenuTracker;
 
     public $periodeAwal;
 
@@ -106,45 +108,78 @@ class PenarikanDataSuplierPO extends Component
         $this->flashSuccess('Data Berhasil Diperbaharui!');
     }
 
+    public function exportToExcel()
+    {
+        // Patch untuk menggantikan trait ExcelExportable
+        
+        $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+
+        $filename = Str::of(class_basename($this))
+            ->snake()
+            ->prepend(now()->format('Ymd_His_'))
+            ->trim();
+
+        $excel = ExcelExport::make((string) $filename, 'Medis')
+            ->setColumnHeaders([
+                '#',
+                'No. Jurnal',
+                'Waktu',
+                'No. Faktur',
+                'Keterangan',
+                'Status',
+                'Nominal (Rp)',
+                'Akun Bayar',
+                'Kode Rekening',
+                'Nama Rekening',
+                'Supplier',
+                'Nama Pegawai',
+            ])
+            ->setData(JurnalMedis::jurnalPenerimaanBarang($this->periodeAwal, $this->periodeAkhir)->get()->toArray())
+            ->addSheet('Non Medis')
+            ->setData(JurnalNonMedis::jurnalPenerimaanBarang($this->periodeAwal, $this->periodeAkhir)->get()->toArray());
+
+        return $excel->export();
+    }
+
     protected function defaultValues()
     {
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
-    protected function dataPerSheet(): array
-    {
-        return [
-            'Obat/BHP/Alkes' => JurnalMedis::jurnalPenerimaanBarang($this->periodeAwal, $this->periodeAkhir)->get()->toArray(),
-            'Non Medis' => JurnalNonMedis::jurnalPenerimaanBarang($this->periodeAwal, $this->periodeAkhir)->get()->toArray(),
-        ];
-    }
+    // protected function dataPerSheet(): array
+    // {
+    //     return [
+    //         'Obat/BHP/Alkes' => JurnalMedis::jurnalPenerimaanBarang($this->periodeAwal, $this->periodeAkhir)->get()->toArray(),
+    //         'Non Medis' => JurnalNonMedis::jurnalPenerimaanBarang($this->periodeAwal, $this->periodeAkhir)->get()->toArray(),
+    //     ];
+    // }
 
-    protected function columnHeaders(): array
-    {
-        return [
-            '#',
-            'No. Jurnal',
-            'Waktu',
-            'No. Faktur',
-            'Keterangan',
-            'Status',
-            'Nominal (Rp)',
-            'Akun Bayar',
-            'Kode Rekening',
-            'Nama Rekening',
-            'Supplier',
-            'Nama Pegawai',
-        ];
-    }
+    // protected function columnHeaders(): array
+    // {
+    //     return [
+    //         '#',
+    //         'No. Jurnal',
+    //         'Waktu',
+    //         'No. Faktur',
+    //         'Keterangan',
+    //         'Status',
+    //         'Nominal (Rp)',
+    //         'Akun Bayar',
+    //         'Kode Rekening',
+    //         'Nama Rekening',
+    //         'Supplier',
+    //         'Nama Pegawai',
+    //     ];
+    // }
 
-    protected function pageHeaders(): array
-    {
-        return [
-            'RS Samarinda Medika Citra',
-            'Penarikan Data Supplier PO Medis/Non Medis',
-            // now()->format('d F Y'),
-            Carbon::parse($this->periodeAwal)->format('d F Y') . ' - ' . Carbon::parse($this->periodeAkhir)->format('d F Y'),
-        ];
-    }
+    // protected function pageHeaders(): array
+    // {
+    //     return [
+    //         'RS Samarinda Medika Citra',
+    //         'Penarikan Data Supplier PO Medis/Non Medis',
+    //         // now()->format('d F Y'),
+    //         Carbon::parse($this->periodeAwal)->format('d F Y') . ' - ' . Carbon::parse($this->periodeAkhir)->format('d F Y'),
+    //     ];
+    // }
 }
