@@ -62,7 +62,7 @@ class SetHakAkses extends Component
     public function setHakAkses()
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
-            $this->emitTo('user.manajemen-user', 'flashError', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->emitUp('flashError', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
         }
@@ -75,11 +75,12 @@ class SetHakAkses extends Component
             $user->setAttribute($hakAkses, 'true');
         }
 
-        $falsyHakAkses = $this->hakAksesKhanza->reject(function ($value, $key) {
-            return in_array($key, $this->selectedHakAkses);
-        });
+        $falsyHakAkses = $this->hakAksesKhanza
+            ->reject(fn ($value, $key) => in_array($key, $this->selectedHakAkses))
+            ->flip()
+            ->values();
 
-        foreach ($falsyHakAkses as $field => $judul) {
+        foreach ($falsyHakAkses as $field) {
             $user->setAttribute($field, 'false');
         }
 
@@ -87,7 +88,7 @@ class SetHakAkses extends Component
 
         tracker_end();
 
-        $this->emitTo('user.manajemen-user', 'flashSuccess', "Hak akses SIMRS Khanza untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
+        $this->emitUp('flashSuccess', "Hak akses SIMRS Khanza untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
     }
 
     public function hideModal()

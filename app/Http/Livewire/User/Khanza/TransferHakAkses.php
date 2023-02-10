@@ -13,7 +13,7 @@ class TransferHakAkses extends Component
 {
     use Filterable, LiveTable;
 
-    public $deferLoading;
+    public $isDeferred;
 
     public $nrp;
 
@@ -35,13 +35,13 @@ class TransferHakAkses extends Component
 
     public function getAvailableUsersProperty()
     {
-        return $this->deferLoading
+        return $this->isDeferred
             ? []
             : User::query()
-            ->where('pegawai.nik', '!=', $this->nrp)
-            ->when(!empty($this->checkedUsers), fn (Builder $query) => $query->orWhereIn('pegawai.nik', $this->checkedUsers))
-            ->search($this->cari)
-            ->get();
+                ->where('pegawai.nik', '!=', $this->nrp)
+                ->when(!empty($this->checkedUsers), fn (Builder $query) => $query->orWhereIn('pegawai.nik', $this->checkedUsers))
+                ->search($this->cari)
+                ->get();
     }
 
     public function render()
@@ -83,18 +83,26 @@ class TransferHakAkses extends Component
 
     public function showModal()
     {
-        $this->deferLoading = false;
+        $this->isDeferred = false;
+
+        $this->forgetComputed();
+
+        $this->emit('$refresh');
     }
 
     public function hideModal()
     {
         $this->defaultValues();
+
+        $this->forgetComputed();
+
+        $this->emit('$refresh');
     }
 
     private function defaultValues()
     {
         $this->cari = '';
-        $this->deferLoading = true;
+        $this->isDeferred = true;
         $this->nrp = '';
         $this->nama = '';
         $this->checkedUsers = [];

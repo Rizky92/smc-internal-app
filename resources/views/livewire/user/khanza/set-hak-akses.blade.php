@@ -7,14 +7,18 @@
             <script src="{{ asset('plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js') }}"></script>
             <script>
                 $(document).on('DOMContentLoaded', () => {
+                    let selectNode = $('select[multiple][duallistbox]')
+
+                    let selectDSB = selectNode.bootstrapDualListbox({
+                        selectorMinimalHeight: 360
+                    })
+
                     $('#modal-set-hak-akses').on('show.bs.modal', e => {
-                        $('select[multiple][duallistbox]').bootstrapDualListbox({
-                            selectorMinimalHeight: 360
-                        })
+                        @this.emit('khanza.show-sha')
                     })
 
                     $('#modal-set-hak-akses').on('shown.bs.modal', e => {
-                        @this.emit('khanza.show-sha')
+                        selectNode.bootstrapDualListbox('refresh', true)
                     })
 
                     $('#modal-set-hak-akses').on('hide.bs.modal', e => {
@@ -22,7 +26,9 @@
                     })
 
                     $('#modal-set-hak-akses').on('hidden.bs.modal', e => {
-                        $('select[multiple][duallistbox]').bootstrapDualListbox().destroy()
+                        selectNode.append(@this.get('hakAksesKhanza'))
+
+                        selectNode.bootstrapDualListbox('destroy')
                     })
                 })
             </script>
@@ -34,7 +40,7 @@
             <x-row-col class="text-sm" wire:ignore>
                 <select multiple duallistbox>
                     @foreach ($this->hakAksesKhanza as $field => $judul)
-                        <option value="{{ $field }}" @selected(in_array($field, $selectedHakAkses, true))>{{ $judul }}</option>
+                        <option value="{{ $field }}" {{ in_array($field, $selectedHakAkses, true) ? 'selected' : null }}>{{ $judul }}</option>
                     @endforeach
                 </select>
             </x-row-col>
