@@ -124,7 +124,7 @@ class PenarikanDataSuplierPO extends Component
                 'RS Samarinda Medika Citra',
                 'Penarikan Data Supplier PO Medis/Non Medis',
                 now()->format('d F Y'),
-                Carbon::parse($this->periodeAwal)->format('d F Y') . ' - ' . Carbon::parse($this->periodeAkhir)->format('d F Y'),
+                'Periode ' . Carbon::parse($this->periodeAwal)->format('d F Y') . ' - ' . Carbon::parse($this->periodeAkhir)->format('d F Y'),
             ])
             ->setColumnHeaders([
                 '#',
