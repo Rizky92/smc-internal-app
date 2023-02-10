@@ -7,12 +7,14 @@
             <script src="{{ asset('plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js') }}"></script>
             <script>
                 $(document).on('DOMContentLoaded', () => {
-                    $('#modal-set-hak-akses').on('shown.bs.modal', e => {
-                        @this.emit('khanza.show-sha')
-
+                    $('#modal-set-hak-akses').on('show.bs.modal', e => {
                         $('select[multiple][duallistbox]').bootstrapDualListbox({
                             selectorMinimalHeight: 360
-                        }).refresh(true)
+                        })
+                    })
+
+                    $('#modal-set-hak-akses').on('shown.bs.modal', e => {
+                        @this.emit('khanza.show-sha')
                     })
 
                     $('#modal-set-hak-akses').on('hide.bs.modal', e => {
@@ -20,7 +22,7 @@
                     })
 
                     $('#modal-set-hak-akses').on('hidden.bs.modal', e => {
-                        $('select[duallistbox]').bootstrapDualListbox(destroy)
+                        $('select[multiple][duallistbox]').bootstrapDualListbox().destroy()
                     })
                 })
             </script>
