@@ -14,8 +14,28 @@
             <script src="{{ asset('plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
             <script>
                 $(document).ready(function() {
-                    $('#logviewer-table').DataTable();
-                });
+                    $('#logviewer-table tr').click(e => {
+                        let asd = e.target.querySelector('.stack')
+
+                        asd.style['display'] = (asd.style['display'] === 'none')
+                            ? 'block'
+                            : 'none'
+                    })
+
+                    $('#logviewer-table').DataTable({
+                        order: [$('#logviewer-table').data('orderingIndex'), 'desc'],
+                        stateSave: true,
+                        stateSaveCallback: (settings, data) => {
+                            window.localStorage.setItem("datatable", JSON.stringify(data))
+                        },
+                        stateLoadCallback: (settings) => {
+                            var data = JSON.parse(window.localStorage.getItem("datatable"))
+                            if (data) data.start = 0
+
+                            return data
+                        }
+                    })
+                })
             </script>
         @endpush
     @endonce
@@ -25,7 +45,7 @@
                 <p>Log file exceeds configured limit ({{ config('logviewer.max_file_size') / 1024 / 1024 }} MB)!</p>
             @endif
             <div class="p-3 table-responsive">
-                <table id="logviewer-table" class="table table-bordered table-sm text-sm" data-ordering-index="{{ $standardFormat ? 2 : 0 }}">
+                <table id="logviewer-table" class="table table-hover table-sm text-sm" data-ordering-index="{{ $standardFormat ? 2 : 0 }}">
                     <thead>
                         <tr>
                             @if ($standardFormat)
@@ -49,12 +69,7 @@
                                     <td class="text">{{ $log['context'] }}</td>
                                 @endif
                                 <td class="date">{{ $log['date'] }}</td>
-                                <td class="text">
-                                    @if ($log['stack'])
-                                        <button type="button" class="float-right expand btn btn-outline-dark btn-sm mb-2 ml-2" data-display="stack{{ $key }}">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                    @endif
+                                <td class="text" style="cursor: pointer">
                                     {{ $log['text'] }}
                                     @if (isset($log['in_file']))
                                         <br />
