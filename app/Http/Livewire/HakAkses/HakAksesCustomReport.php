@@ -7,13 +7,14 @@ use App\Models\Aplikasi\Role;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
+use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
 class HakAksesCustomReport extends Component
 {
-    use WithPagination, FlashComponent, Filterable, LiveTable;
+    use WithPagination, FlashComponent, Filterable, LiveTable, MenuTracker;
 
     protected $listeners = [
         'permission.updated' => 'updatePermissions',

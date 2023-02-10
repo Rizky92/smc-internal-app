@@ -9,6 +9,7 @@ use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
+use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -16,7 +17,7 @@ use Livewire\WithPagination;
 
 class InputMinmaxStok extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
     public function mount()
     {
