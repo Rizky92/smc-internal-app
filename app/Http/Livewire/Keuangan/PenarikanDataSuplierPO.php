@@ -111,7 +111,7 @@ class PenarikanDataSuplierPO extends Component
     public function exportToExcel()
     {
         // Patch untuk menggantikan trait ExcelExportable
-        
+
         $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
 
         $filename = Str::of(class_basename($this))
@@ -120,6 +120,12 @@ class PenarikanDataSuplierPO extends Component
             ->trim();
 
         $excel = ExcelExport::make((string) $filename, 'Medis')
+            ->setPageHeaders([
+                'RS Samarinda Medika Citra',
+                'Penarikan Data Supplier PO Medis/Non Medis',
+                now()->format('d F Y'),
+                Carbon::parse($this->periodeAwal)->format('d F Y') . ' - ' . Carbon::parse($this->periodeAkhir)->format('d F Y'),
+            ])
             ->setColumnHeaders([
                 '#',
                 'No. Jurnal',
