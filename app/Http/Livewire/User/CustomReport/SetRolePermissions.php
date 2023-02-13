@@ -71,6 +71,7 @@ class SetRolePermissions extends Component
 
         tracker_end('mysql_smc');
 
+        $this->dispatchBrowserEvent('saved');
         $this->emitTo('user.manajemen-user', 'flashSuccess', "Hak akses untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
     }
 

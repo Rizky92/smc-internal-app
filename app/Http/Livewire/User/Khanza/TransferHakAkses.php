@@ -78,6 +78,7 @@ class TransferHakAkses extends Component
 
         tracker_end();
 
+        $this->dispatchBrowserEvent('saved');
         $this->emitTo('user.manajemen-user', 'flashSuccess', "Transfer hak akses SIMRS Khanza berhasil!");
     }
 

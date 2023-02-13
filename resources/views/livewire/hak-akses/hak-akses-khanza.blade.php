@@ -49,17 +49,6 @@
                         <input class="form-control form-control-sm" id="judul_menu" type="text" autocomplete="off">
                     </div>
                 </div>
-                {{-- <div class="col-2">
-                    <div class="d-flex justify-content-end align-items-end h-100">
-                        <button class="btn btn-sm btn-default mb-3" type="button" onclick="resetInput()">
-                            Batal
-                        </button>
-                        <button class="btn btn-sm btn-primary mb-3 ml-2" type="button" wire:click="simpandata">
-                            <i class="fas fa-save"></i>
-                            <span class="ml-1">Simpan</span>
-                        </button>
-                    </div>
-                </div> --}}
             </x-card.row>
             <x-card.row-col class="mt-2">
                 <x-filter.select-perpage />

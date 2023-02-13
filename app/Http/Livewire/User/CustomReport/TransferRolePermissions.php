@@ -82,6 +82,7 @@ class TransferRolePermissions extends Component
 
         tracker_end('mysql_smc');
 
+        $this->dispatchBrowserEvent('saved');
         $this->emitTo('user.manajemen-user', 'flashSuccess', "Transfer hak akses Custom Report berhasil!");
     }
 

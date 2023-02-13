@@ -1,1 +1,1 @@
-<x-button :attributes="$attributes->merge(['class' => 'dropdown-item'])" />
+<x-button :attributes="$attributes->merge(['as' => 'button', 'class' => 'dropdown-item'])" />

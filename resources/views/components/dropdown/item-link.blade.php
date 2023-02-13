@@ -1,0 +1,1 @@
+<x-button :attributes="$attributes->merge(['as' => 'link', 'class' => 'dropdown-item'])" />
