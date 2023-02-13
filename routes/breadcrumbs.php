@@ -60,6 +60,11 @@ Breadcrumbs::for('admin.keuangan.jurnal-po-supplier', function (Trail $trail) {
     $trail->push('Jurnal PO Supplier', route('admin.keuangan.jurnal-po-supplier'));
 });
 
+Breadcrumbs::for('admin.keuangan.laba-rugi-rekening', function (Trail $trail) {
+    $trail->parent('admin.keuangan');
+    $trail->push('Laba Rugi Rekening', route('admin.keuangan.laba-rugi-rekening'));
+});
+
 
 Breadcrumbs::for('admin.farmasi', function (Trail $trail) {
     $trail->parent('admin.dashboard');

@@ -12,6 +12,7 @@ use App\Http\Livewire\Farmasi\PerbandinganBarangPO;
 use App\Http\Livewire\Farmasi\StokDaruratFarmasi;
 use App\Http\Livewire\HakAkses\HakAksesCustomReport;
 use App\Http\Livewire\HakAkses\HakAksesKhanza;
+use App\Http\Livewire\Keuangan\LabaRugiRekeningPerPeriode;
 use App\Http\Livewire\Keuangan\LaporanPenyelesaianBillingPerPetugas;
 use App\Http\Livewire\Keuangan\LaporanPotonganBiayaPasien;
 use App\Http\Livewire\Keuangan\LaporanTambahanBiayaPasien;
@@ -100,6 +101,10 @@ Route::prefix('admin')
                 Route::get('jurnal-po-supplier', PenarikanDataSuplierPO::class)
                     ->middleware('can:keuangan.jurnal-po-supplier.read')
                     ->name('jurnal-po-supplier');
+                
+                Route::get('laba-rugi-rekening', LabaRugiRekeningPerPeriode::class)
+                    ->middleware('can:keuangan.laba-rugi-rekening.read')
+                    ->name('laba-rugi-rekening');
             });
 
         Route::prefix('farmasi')
