@@ -60,14 +60,14 @@
         <x-slot name="body" class="table-responsive">
             <x-table sortable :sortColumns="$sortColumns" style="min-width: 100%">
                 <x-slot name="columns">
-                    <x-table.th name="tgl_jurnal" title="Tgl." />
-                    <x-table.th name="jam_jurnal" title="Jam" />
-                    <x-table.th name="no_jurnal" title="No. Jurnal" />
-                    <x-table.th name="no_bukti" title="No. Bukti" />
+                    <x-table.th name="tgl_jurnal" title="Tgl." style="width: 13ch" />
+                    <x-table.th name="jam_jurnal" title="Jam" style="width: 9ch" />
+                    <x-table.th name="no_jurnal" title="No. Jurnal" style="width: 15ch" />
+                    <x-table.th name="no_bukti" title="No. Bukti" style="width: 17ch" />
                     <x-table.th name="keterangan" title="Keterangan" />
-                    <x-table.th name="kd_rek" title="Rekening" />
-                    <x-table.th name="debet" title="Debet" />
-                    <x-table.th name="kredit" title="Kredit" />
+                    <x-table.th name="kd_rek" title="Rekening" style="width: 12ch" />
+                    <x-table.th name="debet" title="Debet" style="width: 20ch" />
+                    <x-table.th name="kredit" title="Kredit" style="width: 20ch" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->bukuBesar as $jurnal)
@@ -87,10 +87,10 @@
                 </x-slot>
                 <x-slot name="footer">
                     <x-table.tr>
-                        <x-table.td colspan="5"></x-table.td>
-                        <x-table.td class="font-weight-bold">TOTAL&nbsp;:</x-table.td>
-                        <x-table.td class="font-weight-bold">{{ rp(optional($this->totalDebetDanKredit)->debet) }}</x-table.td>
-                        <x-table.td class="font-weight-bold">{{ rp(optional($this->totalDebetDanKredit)->kredit) }}</x-table.td>
+                        <x-table.th colspan="5" />
+                        <x-table.th title="TOTAL :" />
+                        <x-table.th :title="rp(optional($this->totalDebetDanKredit)->debet)" />
+                        <x-table.th :title="rp(optional($this->totalDebetDanKredit)->kredit)" />
                     </x-table.tr>
                 </x-slot>
             </x-table>
