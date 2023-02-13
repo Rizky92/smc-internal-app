@@ -87,7 +87,8 @@
                 </x-slot>
                 <x-slot name="footer">
                     <x-table.tr>
-                        <x-table.td class="font-weight-bold" colspan="6" class="text-right">TOTAL&nbsp;:</x-table.td>
+                        <x-table.td colspan="5"></x-table.td>
+                        <x-table.td class="font-weight-bold">TOTAL&nbsp;:</x-table.td>
                         <x-table.td class="font-weight-bold">{{ rp(optional($this->totalDebetDanKredit)->debet) }}</x-table.td>
                         <x-table.td class="font-weight-bold">{{ rp(optional($this->totalDebetDanKredit)->kredit) }}</x-table.td>
                     </x-table.tr>

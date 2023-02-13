@@ -9,6 +9,7 @@ use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -95,22 +96,47 @@ class BukuBesar extends Component
 
     protected function dataPerSheet(): array
     {
+        $bukuBesar = Jurnal::bukuBesar($this->kodeRekening, $this->periodeAwal, $this->periodeAkhir)->get();
+
         return [
-            //
+            collect($bukuBesar->toArray())
+                ->merge([
+                    [
+                        'tgl_jurnal' => '',
+                        'jam_jurnal' => '',
+                        'no_jurnal' => '',
+                        'no_bukti' => '',
+                        'keterangan' => '',
+                        'kd_rek' => 'TOTAL :',
+                        'debet' => optional($this->totalDebetDanKredit)->debet,
+                        'kredit' => optional($this->totalDebetDanKredit)->kredit,
+                    ]
+                ])
+                ->toArray(),
         ];
     }
 
     protected function columnHeaders(): array
     {
         return [
-            //
+            'Tgl.',
+            'Jam',
+            'No. Jurnal',
+            'No. Bukti',
+            'Keterangan',
+            'Rekening',
+            'Debet',
+            'Kredit',
         ];
     }
 
     protected function pageHeaders(): array
     {
         return [
-            //
+            'RS Samarinda Medika Citra',
+            'Buku Besar rekening' . $this->kodeRekening,
+            now()->format('d F Y'),
+            'Periode ' . Carbon::parse($this->periodeAwal)->format('d F Y') . ' - ' . Carbon::parse($this->periodeAkhir)->format('d F Y'),
         ];
     }
 }
