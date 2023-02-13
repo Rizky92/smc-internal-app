@@ -47,9 +47,7 @@ class Jurnal extends Model
             ->selectRaw($sqlSelect)
             ->join('detailjurnal', 'jurnal.no_jurnal', '=', 'detailjurnal.no_jurnal')
             ->where('detailjurnal.kd_rek', $kodeRekening)
-            ->whereBetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir])
-            ->orderBy('jurnal.tgl_jurnal')
-            ->orderBy('jurnal.jam_jurnal');
+            ->whereBetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir]);
     }
 
     public function scopeJumlahDebetDanKreditBukuBesar(Builder $query, string $kodeRekening, string $tglAwal = '', string $tglAkhir = ''): Builder

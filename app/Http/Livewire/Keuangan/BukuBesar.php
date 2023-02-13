@@ -58,7 +58,10 @@ class BukuBesar extends Component
                 'detailjurnal.debet',
                 'detailjurnal.kredit',
             ])
-            ->sortWithColumns($this->sortColumns)
+            ->sortWithColumns($this->sortColumns, [], [
+                'tgl_jurnal' => 'asc',
+                'jam_jurnal' => 'asc',
+            ])
             ->paginate($this->perpage);
     }
 
