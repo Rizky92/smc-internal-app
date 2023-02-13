@@ -35,7 +35,7 @@ class LabaRugiRekeningPerPeriode extends Component
     public function render()
     {
         return view('livewire.keuangan.laba-rugi-rekening-per-periode')
-            ->layout(BaseLayout::class, ['title' => Str::title('LabaRugiRekeningPerPeriode')]);
+            ->layout(BaseLayout::class, ['title' => 'Laporan Laba Rugi']);
     }
 
     protected function defaultValues()
