@@ -81,6 +81,7 @@ class BaseLayout extends Component
                     'keuangan.laporan-potongan-biaya.read',
                     'keuangan.laporan-selesai-billing.read',
                     'keuangan.jurnal-po-supplier.read',
+                    'keuangan.buku-besar.read',
                     'keuangan.laba-rugi-rekening.read',
                 ]),
                 'items' => [
@@ -125,6 +126,13 @@ class BaseLayout extends Component
                         'icon' => "fas fa-book",
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.jurnal-po-supplier.read'),
+                    ],
+                    [
+                        'name' => 'Buku Besar',
+                        'url' => route('admin.keuangan.buku-besar'),
+                        'icon' => "fas fa-book",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.buku-besar.read'),
                     ],
                     [
                         'name' => 'Laba Rugi Rekening',
