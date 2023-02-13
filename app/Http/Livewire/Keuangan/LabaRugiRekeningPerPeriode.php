@@ -22,8 +22,8 @@ class LabaRugiRekeningPerPeriode extends Component
     protected function queryString()
     {
         return [
-            'periodeAwal' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'periodeAkhir' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -40,8 +40,8 @@ class LabaRugiRekeningPerPeriode extends Component
 
     protected function defaultValues()
     {
-        $this->periodeAwal = now()->format('Y-m-d');
-        $this->periodeAkhir = now()->format('Y-m-d');
+        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array
