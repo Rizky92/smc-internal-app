@@ -43,7 +43,7 @@
             <x-card.row-col class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.label class="ml-auto" constant-width>Rekening :</x-filter.label>
-                <div wire:ignore style="width: 16rem">
+                <div wire:ignore style="width: 24rem">
                     <select class="form-control form-control-sm simple-select2-sm input-sm" id="kode-rekening" autocomplete="off">
                         <option value="">&nbsp;</option>
                         @foreach ($this->rekening as $kode => $nama)

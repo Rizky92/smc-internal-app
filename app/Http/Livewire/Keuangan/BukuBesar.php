@@ -78,7 +78,9 @@ class BukuBesar extends Component
 
     public function getRekeningProperty()
     {
-        return Rekening::pluck('nm_rek', 'kd_rek');
+        return Rekening::query()
+            ->orderBy('kd_rek')
+            ->pluck('nm_rek', 'kd_rek');
     }
 
     public function render()
