@@ -47,7 +47,7 @@
                     <select class="form-control form-control-sm simple-select2-sm input-sm" id="kode-rekening" autocomplete="off">
                         <option value="">&nbsp;</option>
                         @foreach ($this->rekening as $kode => $nama)
-                            <option value="{{ $kode }}">{{ $nama }}</option>
+                            <option value="{{ $kode }}">{{ $kode }} - {{ $nama }}</option>
                         @endforeach
                     </select>
                 </div>
