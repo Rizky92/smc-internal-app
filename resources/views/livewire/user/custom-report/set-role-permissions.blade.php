@@ -25,6 +25,12 @@
                             }
                         })
 
+                        inputPermissions.each((i, el) => {
+                            if (el.checked) {
+                                selectedPermissions.push(el.value)
+                            }
+                        })
+
                         @this.set('checkedRoles', selectedRoles)
                         @this.set('checkedPermissions', selectedPermissions)
 
