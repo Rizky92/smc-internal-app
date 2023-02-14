@@ -3,15 +3,12 @@
 namespace App\Http\Livewire\Keuangan;
 
 use App\Models\Keuangan\Rekening;
-use App\Models\Keuangan\RekeningTahun;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -41,6 +38,10 @@ class LabaRugiRekeningPerPeriode extends Component
 
     public function getLabaRugiPerRekeningProperty()
     {
+        if (!$this->isReadyToLoad) {
+            return collect(['D' => [], 'K' => []]);
+        }
+        
         return Rekening::query()
             ->perhitunganLabaRugiTahunan($this->tahun)
             ->search($this->cari, [
@@ -68,7 +69,11 @@ class LabaRugiRekeningPerPeriode extends Component
 
     public function getDataTahunProperty()
     {
-        return RekeningTahun::tahun()->pluck('thn');
+        return collect(range((int) now()->format('Y'), 2022, -1))
+            ->mapWithKeys(function ($value, $key) {
+                return [$value => $value];
+            })
+            ->toArray();
     }
 
     public function render()

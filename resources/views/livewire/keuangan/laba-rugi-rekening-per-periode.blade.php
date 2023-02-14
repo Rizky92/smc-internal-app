@@ -1,7 +1,7 @@
 <div>
     <x-flash />
 
-    <x-card>
+    <x-card use-loading wire:init="loadProperties" loading-target="loadProperties">
         <x-slot name="header">
             <x-card.row-col>
                 <x-filter.label constant-width>Tahun:</x-filter.label>
@@ -22,7 +22,7 @@
                     {{-- <x-table.th name="id" title="#" /> --}}
                     <x-table.th name="thn" title="Tahun" />
                     <x-table.th name="kd_rek" title="Kode Akun" />
-                    <x-table.th name="nm_rek" title="Nama AKun" />
+                    <x-table.th name="nm_rek" title="Nama Akun" />
                     <x-table.th name="tipe" title="Tipe" />
                     <x-table.th name="saldo_awal" title="Saldo Awal" />
                     <x-table.th name="debet" title="Total Debet" />
@@ -35,7 +35,7 @@
                         <x-table.td class="font-weight-bold">PENDAPATAN</x-table.td>
                         <x-table.td colspan="5"></x-table.td>
                     </x-table.tr>
-                    @foreach ($this->labaRugiPerRekening->get('K') as $rekening)
+                    @forelse ($this->labaRugiPerRekening->get('K') as $rekening)
                         <x-table.tr>
                             <x-table.td>{{ $rekening->thn }}</x-table.td>
                             <x-table.td>{{ $rekening->kd_rek }}</x-table.td>
@@ -46,13 +46,15 @@
                             <x-table.td>{{ rp($rekening->kredit) }}</x-table.td>
                             <x-table.td>{{ rp($rekening->saldo_akhir) }}</x-table.td>
                         </x-table.tr>
-                    @endforeach
+                    @empty
+                        <x-table.tr-empty :colspan="8" />
+                    @endforelse
                     <x-table.tr>
                         <x-table.td colspan="2"></x-table.td>
                         <x-table.td class="font-weight-bold">BEBAN & BIAYA</x-table.td>
                         <x-table.td colspan="5"></x-table.td>
                     </x-table.tr>
-                    @foreach ($this->labaRugiPerRekening->get('D') as $rekening)
+                    @forelse ($this->labaRugiPerRekening->get('D') as $rekening)
                         <x-table.tr>
                             <x-table.td>{{ $rekening->thn }}</x-table.td>
                             <x-table.td>{{ $rekening->kd_rek }}</x-table.td>
@@ -63,7 +65,9 @@
                             <x-table.td>{{ rp($rekening->kredit) }}</x-table.td>
                             <x-table.td>{{ rp($rekening->saldo_akhir) }}</x-table.td>
                         </x-table.tr>
-                    @endforeach
+                    @empty
+                        <x-table.tr-empty :colspan="8" />
+                    @endforelse
                 </x-slot>
             </x-table>
         </x-slot>

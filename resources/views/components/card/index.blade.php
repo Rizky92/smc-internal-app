@@ -9,7 +9,7 @@
     'loadingTarget' => null,
 ])
 
-<div class="card">
+<div {{ $attributes->merge(['class' => 'card']) }}>
     @if ($useDefaultFilter)
         <div class="card-body">
             <x-card.row-col>

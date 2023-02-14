@@ -8,14 +8,17 @@ trait LiveTable
 {
     use WithPagination;
 
-    /** @var string $cari */
+    /** @var string $cari = '' */
     public $cari;
 
-    /** @var int $perpage */
+    /** @var int $perpage = 25 */
     public $perpage;
 
-    /** @var array<string, string> $sortColumns */
+    /** @var array<string, string> $sortColumns = [] */
     public $sortColumns;
+
+    /** @var bool $isReadyToLoad = true */
+    public $isReadyToLoad;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -38,6 +41,7 @@ trait LiveTable
         $this->cari = '';
         $this->perpage = 25;
         $this->sortColumns = [];
+        $this->isReadyToLoad = false;
     }
 
     public function sortBy(string $column, ?string $direction)
@@ -58,6 +62,13 @@ trait LiveTable
         }
 
         $this->performSort();
+    }
+
+    public function loadProperties()
+    {
+        $this->isReadyToLoad = true;
+
+        $this->emit('$refresh');
     }
 
     protected function performSort()

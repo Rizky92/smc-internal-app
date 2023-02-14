@@ -46,6 +46,7 @@ class Rekening extends Model
             ->leftJoin('detailjurnal', 'rekening.kd_rek', '=', 'detailjurnal.kd_rek')
             ->leftJoin('jurnal', 'detailjurnal.no_jurnal', '=', 'jurnal.no_jurnal')
             ->where('rekening.tipe', 'R')
+            ->where('rekeningtahun.thn', $tahun)
             ->whereBetween('jurnal.tgl_jurnal', ["{$tahun}-01-01", "{$tahun}-12-31"])
             ->groupBy([
                 'rekeningtahun.thn',

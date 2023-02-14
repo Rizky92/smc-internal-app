@@ -3,29 +3,17 @@
 namespace App\Models\Keuangan;
 
 use Illuminate\Database\Eloquent\Model;
-use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SubRekening extends Model
 {
-    use HasRecursiveRelationships;
+    protected $primaryKey = 'kd_rek';
 
-    protected $primaryKey = false;
-
-    protected $keyType = false;
+    protected $keyType = 'string';
 
     protected $table = 'subrekening';
 
     public $incrementing = false;
 
     public $timestamps = false;
-
-    public function getLocalKeyName()
-    {
-        return 'kd_rek2';
-    }
-
-    public function getParentKeyName()
-    {
-        return 'kd_rek';
-    }
 }
