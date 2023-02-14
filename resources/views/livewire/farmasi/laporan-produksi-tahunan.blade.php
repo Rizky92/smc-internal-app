@@ -4,7 +4,7 @@
     <x-card>
         <x-slot name="header">
             <x-card.row-col>
-                <x-filter.label>Tahun:</x-filter.label>
+                <x-filter.label>Tahun :</x-filter.label>
                 <div class="input-group input-group-sm ml-2" style="width: 5rem">
                     <x-filter.select model="tahun" :options="$this->dataTahun" constant-width />
                 </div>

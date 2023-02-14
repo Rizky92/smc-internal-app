@@ -24,7 +24,8 @@
         "rap2hpoutre/laravel-log-viewer": "^2.2",
         "rizky92/laravel-xlswriter": "*",
         "spatie/laravel-permission": "^5.8",
-        "staudenmeir/eloquent-eager-limit": "^1.6.1"
+        "staudenmeir/eloquent-eager-limit": "^1.6.1",
+        "staudenmeir/laravel-adjacency-list": "^1.9"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.7",

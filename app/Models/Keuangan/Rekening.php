@@ -2,11 +2,15 @@
 
 namespace App\Models\Keuangan;
 
+use App\Support\Traits\Eloquent\Searchable;
+use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Rekening extends Model
 {
+    use Sortable, Searchable;
+
     protected $primaryKey = 'kd_rek';
 
     protected $keyType = 'string';
@@ -25,20 +29,20 @@ class Rekening extends Model
             rekening.tipe,
             rekening.balance,
             rekeningtahun.thn,
-            rekeningtahun.saldo_awal,
-            sum(detailjurnal.debet) debet,
-            sum(detailjurnal.kredit) kredit,
+            ifnull(rekeningtahun.saldo_awal, 0) saldo_awal,
+            round(sum(detailjurnal.debet), 2) debet,
+            round(sum(detailjurnal.kredit), 2) kredit,
             (
                 case 
-                    when upper(rekening.balance) = 'K'  then round((sum(detailjurnal.kredit) - sum(detailjurnal.debet)) + rekeningtahun.saldo_awal, 2)
-                    when upper(rekening.balance) = 'D'  then round((sum(detailjurnal.debet) - sum(detailjurnal.kredit)) + rekeningtahun.saldo_awal, 2)
+                    when upper(rekening.balance) = 'K'  then round((sum(detailjurnal.kredit) - sum(detailjurnal.debet)) + ifnull(rekeningtahun.saldo_awal, 0), 2)
+                    when upper(rekening.balance) = 'D'  then round((sum(detailjurnal.debet) - sum(detailjurnal.kredit)) + ifnull(rekeningtahun.saldo_awal, 0), 2)
                 end
             ) saldo_akhir
         ";
 
         return $query
             ->selectRaw($sqlSelect)
-            ->leftJoin('rekeningtahun', 'rekening.kd_rek', '=', 'rekeningtahun.kd_rek')
+            ->join('rekeningtahun', 'rekening.kd_rek', '=', 'rekeningtahun.kd_rek')
             ->leftJoin('detailjurnal', 'rekening.kd_rek', '=', 'detailjurnal.kd_rek')
             ->leftJoin('jurnal', 'detailjurnal.no_jurnal', '=', 'jurnal.no_jurnal')
             ->where('rekening.tipe', 'R')
@@ -47,25 +51,5 @@ class Rekening extends Model
                 'rekeningtahun.thn',
                 'rekeningtahun.kd_rek',
             ]);
-    }
-
-    public function scopePerhitunganLabaRugi(Builder $query, string $tahun = '2022'): Builder
-    {
-        // select 
-        //     rekening.*,
-        //     rekeningtahun.thn,
-        //     rekeningtahun.saldo_awal 
-        // from rekening
-        // left join rekeningtahun on rekening.kd_rek = rekeningtahun.kd_rek
-        // where rekening.tipe = 'R'
-        // order by rekening.kd_rek
-        $sqlSelect = "
-            rekeningtahun.thn,
-            rekening.kd_rek,
-            rekening.nm_rek,
-            rekeningtahun.saldo_awal,
-        ";
-
-        return $query;
     }
 }

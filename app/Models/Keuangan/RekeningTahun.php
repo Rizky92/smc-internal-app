@@ -39,4 +39,11 @@ class RekeningTahun extends Model
             ->where('rekeningtahun.kd_rek', $kodeRekening)
             ->where('rekeningtahun.thn', $tahun);
     }
+
+    public function scopeTahun(Builder $query): Builder
+    {
+        return $query
+            ->selectRaw('rekeningtahun.thn')
+            ->groupBy('rekeningtahun.thn');
+    }
 }
