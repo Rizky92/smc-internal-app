@@ -1,7 +1,7 @@
 <div>
     <x-flash />
 
-    <x-card use-default-filter use-loading>
+    <x-card use-default-filter use-loading wire:init="loadProperties">
         <x-slot name="body" class="table-responsive">
             <x-table style="width: 450rem">
                 <x-slot name="columns">
