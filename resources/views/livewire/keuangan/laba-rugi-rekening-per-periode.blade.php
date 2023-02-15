@@ -1,7 +1,17 @@
 <div>
     <x-flash />
 
-    <x-card use-default-filter use-loading wire:init="loadProperties">
+    <x-card use-loading wire:init="loadProperties">
+        <x-slot name="header">
+            <x-card.row-col>
+                <x-filter.range-date />
+                <x-filter.button-export-excel class="ml-auto" />
+            </x-card.row-col>
+            <x-card.row-col class="mt-2">
+                <x-filter.button-reset-filters class="ml-auto" />
+                <x-filter.search class="ml-2" />
+            </x-card.row-col>
+        </x-slot>
         <x-slot name="body" class="table-responsive">
             <x-table style="min-width: 100%">
                 <x-slot name="columns">
