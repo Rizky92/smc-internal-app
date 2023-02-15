@@ -76,3 +76,17 @@ if (!function_exists('tracker_end')) {
         DB::connection($connection)->disableQueryLog();
     }
 }
+
+if (! function_exists('func_get_named_args')) {
+    function func_get_named_args($object, $name, $args)
+    {
+        $func = new ReflectionMethod($object, $name);
+        $res = [];
+
+        foreach ($func->getParameters() as $param) {
+            $res[$param->name] = $args[$param->getPosition()] ?? $param->getDefaultValue();
+        }
+
+        return $res;
+    }
+}

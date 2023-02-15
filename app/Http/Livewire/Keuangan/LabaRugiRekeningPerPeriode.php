@@ -3,13 +3,17 @@
 namespace App\Http\Livewire\Keuangan;
 
 use App\Models\Keuangan\Rekening;
+use App\Models\Keuangan\RekeningTahun;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Facades\DB;
+use Carbon\CarbonImmutable;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Fluent;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -42,39 +46,64 @@ class LabaRugiRekeningPerPeriode extends Component
         if (!$this->isReadyToLoad) {
             return collect(['D' => [], 'K' => []]);
         }
-        
-        return Rekening::query()
-            ->perhitunganLabaRugiTahunan($this->tahun)
-            ->search($this->cari, [
-                'rekening.kd_rek',
-                'rekening.nm_rek',
-                'rekening.tipe',
-                'rekening.balance',
-                'rekeningtahun.thn',
-            ])
-            ->sortWithColumns($this->sortColumns, [
-                'saldo_awal' => DB::raw('ifnull(rekeningtahun.saldo_awal, 0)'),
-                'debet' => DB::raw('round(sum(detailjurnal.debet), 2)'),
-                'kredit' => DB::raw('round(sum(detailjurnal.kredit), 2)'),
-                'saldo_akhir' => DB::raw("case 
-                    when upper(rekening.balance) = 'K'  then round((sum(detailjurnal.kredit) - sum(detailjurnal.debet)) + rekeningtahun.saldo_awal, 2)
-                    when upper(rekening.balance) = 'D'  then round((sum(detailjurnal.debet) - sum(detailjurnal.kredit)) + rekeningtahun.saldo_awal, 2)
-                end"),
-            ], [
-                'thn' => 'asc',
-                'kd_rek' => 'asc',
-            ])
-            ->get()
-            ->mapToGroups(fn ($rekening) => [$rekening->balance => $rekening]);
+
+        $rekeningYangDigunakan = Rekening::query()
+            ->where('tipe', 'R')
+            ->get(['kd_rek', 'nm_rek', 'tipe', 'balance']);
+
+        $kodeRekening = $rekeningYangDigunakan->map(fn ($r) => $r->kd_rek)->values();
+
+        $debetKredit = Rekening::query()
+            ->hitungDebetKreditPerPeriode($this->periodeAwal, $this->periodeAkhir, $kodeRekening)
+            ->get();
+
+        return $rekeningYangDigunakan->map(function (Rekening $rekening, $key) use ($debetKredit) {
+            $total = 0;
+
+            $mutasi = $debetKredit->find($rekening->kd_rek);
+
+            $debet = $mutasi->debet ?? 0;
+            $kredit = $mutasi->kredit ?? 0;
+
+            if ($rekening->balance === 'K') {
+                $total = $kredit - $debet;
+            }
+
+            if ($rekening->balance === 'D') {
+                $total = $debet - $kredit;
+            }
+
+            return new Fluent(array_merge(
+                $rekening->only('kd_rek', 'nm_rek', 'balance'),
+                ['debet' => $debet],
+                ['kredit' => $kredit],
+                ['total' => $total],
+            ));
+        })
+            ->mapToGroups(fn ($item) => [$item->balance => $item]);
     }
 
-    public function getDataTahunProperty()
+    public function getTotalLabaRugiPerRekeningProperty()
     {
-        return collect(range((int) now()->format('Y'), 2022, -1))
-            ->mapWithKeys(function ($value, $key) {
-                return [$value => $value];
-            })
-            ->toArray();
+        $pendapatan = collect($this->labaRugiPerRekening->get('K'));
+
+        $bebanDanBiaya = collect($this->labaRugiPerRekening->get('D'));
+
+        $totalDebetPendapatan = $pendapatan->sum('debet');
+        $totalKreditPendapatan = $pendapatan->sum('kredit');
+        $totalPendapatan = $totalKreditPendapatan - $totalDebetPendapatan;
+
+        $totalDebetBeban = $bebanDanBiaya->sum('debet');
+        $totalKreditBeban = $bebanDanBiaya->sum('kredit');
+        $totalBebanDanBiaya = $totalDebetBeban - $totalKreditBeban;
+
+        $labaRugi = $totalPendapatan - $totalBebanDanBiaya;
+
+        return compact(
+            'totalPendapatan', 'totalDebetPendapatan', 'totalKreditPendapatan',
+            'totalBebanDanBiaya', 'totalDebetBeban', 'totalKreditBeban',
+            'labaRugi'
+        );
     }
 
     public function render()
@@ -90,24 +119,52 @@ class LabaRugiRekeningPerPeriode extends Component
         $this->tahun = now()->format('Y');
     }
 
+    protected function mapDataForExcelExport()
+    {
+        $pendapatanRowHeader = $this->insertExcelRow('', 'PENDAPATAN');
+        $bebanRowHeader = $this->insertExcelRow('', 'BEBAN & BIAYA');
+        $empty = $this->insertExcelRow();
+
+        $pendapatan = $this->labaRugiPerRekening->get('K');
+        $beban = $this->labaRugiPerRekening->get('D');
+
+        $total = $this->totalLabaRugiPerRekening;
+
+        $totalPendapatanRow = $this->insertExcelRow('', 'TOTAL', '', $total['totalDebetPendapatan'], $total['totalKreditPendapatan'], $total['totalPendapatan']);
+        $totalBebanRow = $this->insertExcelRow('', 'TOTAL', '', $total['totalDebetBeban'], $total['totalKreditBeban'], $total['totalBebanDanBiaya']);
+
+        $pendapatanBersih = $this->insertExcelRow('', 'PENDAPATAN BERSIH', '', $total['totalPendapatan'], $total['totalBebanDanBiaya'], $total['labaRugi']);
+
+        return collect([$pendapatanRowHeader])
+            ->merge($pendapatan)
+            ->merge([$totalPendapatanRow, $empty])
+            ->merge([$bebanRowHeader])
+            ->merge($beban)
+            ->merge([$totalBebanRow, $empty])
+            ->merge([$pendapatanBersih]);
+    }
+
+    protected function insertExcelRow($kd_rek = '', $nm_rek = '', $balance = '', $debet = '', $kredit = '', $total = '')
+    {
+        return new Fluent(func_get_named_args($this, 'insertExcelRow', func_get_args()));
+    }
+
     protected function dataPerSheet(): array
     {
         return [
-            //
+            $this->mapDataForExcelExport(),
         ];
     }
 
     protected function columnHeaders(): array
     {
         return [
-            'Tahun',
             'Kode Akun',
-            'Nama AKun',
-            'Tipe',
-            'Saldo Awal',
-            'Total Debet',
-            'Total Kredit',
-            'Saldo Akhir',
+            'Nama Akun',
+            'Jenis',
+            'Debet',
+            'Kredit',
+            'Total',
         ];
     }
 

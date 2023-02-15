@@ -1,23 +1,24 @@
 <?php
 
-namespace App\Models\Keuangan;
+namespace App\Models\Keuangan\Jurnal;
 
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class RekeningTahun extends Model
+class DetailJurnal extends Model
 {
     use Sortable, Searchable;
 
-    protected $primaryKey = false;
+    protected $primaryKey = 'no_jurnal';
 
-    protected $keyType = false;
+    protected $keyType = 'string';
 
-    protected $table = 'rekeningtahun';
+    protected $table = 'detailjurnal';
 
     public $incrementing = false;
 
     public $timestamps = false;
+
+    
 }
