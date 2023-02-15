@@ -3,7 +3,6 @@
 namespace App\Http\Livewire\Keuangan;
 
 use App\Models\Keuangan\Rekening;
-use App\Models\Keuangan\RekeningTahun;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
@@ -11,9 +10,7 @@ use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Carbon\CarbonImmutable;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Fluent;
-use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -25,14 +22,11 @@ class LabaRugiRekeningPerPeriode extends Component
 
     public $periodeAkhir;
 
-    public $tahun;
-
     protected function queryString()
     {
         return [
             'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
-            'tahun' => ['except' => now()->format('Y')],
         ];
     }
 
@@ -116,7 +110,6 @@ class LabaRugiRekeningPerPeriode extends Component
     {
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->tahun = now()->format('Y');
     }
 
     protected function mapDataForExcelExport()
@@ -171,7 +164,10 @@ class LabaRugiRekeningPerPeriode extends Component
     protected function pageHeaders(): array
     {
         return [
-            //
+            'RS Samarinda Medika Citra',
+            'Laporan Laba Rugi Keuangan',
+            now()->format('d F Y'),
+            'Periode ' . CarbonImmutable::parse($this->periodeAwal)->format('d F Y') . ' - ' . CarbonImmutable::parse($this->periodeAkhir)->format('d F Y'),
         ];
     }
 }
