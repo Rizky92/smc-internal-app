@@ -75,7 +75,8 @@ class SetHakAkses extends Component
     public function setHakAkses()
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
-            $this->emitTo('user.manajemen-user', 'flashError', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->emitUp('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->emitUp('resetFilters');
 
             return;
         }
@@ -100,7 +101,8 @@ class SetHakAkses extends Component
 
         tracker_end();
 
-        $this->emitTo('user.manajemen-user', 'flashSuccess', "Hak akses SIMRS Khanza untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
+        $this->emitUp('flash.success', "Hak akses SIMRS Khanza untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
+        $this->emitUp('resetFilters');
     }
 
     public function hideModal()

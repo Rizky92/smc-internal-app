@@ -9,7 +9,8 @@
                 let inputRoles
                 let inputPermissions
 
-                let buttonResetFilters
+                let buttonDropdownSetHakAkses
+                let buttonDropdownTransferHakAkses
                 let buttonImpersonate
 
                 $(document).ready(() => {
@@ -18,20 +19,25 @@
                     inputRoles = $('input[name=roles]')
                     inputPermissions = $('input[name=permissions]')
 
-                    buttonResetFilters = $('button#reset-filters')
+                    buttonDropdownSetHakAkses = $('button#set-hak-akses')
+                    buttonDropdownTransferHakAkses = $('button#transfer-hak-akses')
                     buttonImpersonate = $('button#impersonate')
 
-                    buttonResetFilters.click(e => {
+                    $('button#reset-filter').click(e => {
                         inputNRP.val('')
                         inputNama.val('')
                         inputRoles.each((i, el) => el.checked = false)
                         inputPermissions.each((i, el) => el.checked = false)
+
+                        setButtonState('disabled', true)
                     })
 
                     buttonImpersonate.click(e => {
                         @this.impersonateAsUser(inputNRP.val())
                     })
                 })
+
+                $(document).on('saved', e => setButtonState('disabled', true))
 
                 function loadData({
                     nrp,
@@ -40,6 +46,8 @@
                     rolePermissionIds,
                     permissionIds
                 }) {
+                    setButtonState('disabled', false)
+
                     inputNRP.val(nrp)
                     inputNama.val(nama)
 
@@ -71,6 +79,12 @@
                     @this.emit('khanza.prepare-user', nrp, nama)
                     @this.emit('khanza.prepare-transfer', nrp, nama)
                 }
+
+                function setButtonState(prop, state) {
+                    buttonDropdownSetHakAkses.prop(prop, state)
+                    buttonDropdownTransferHakAkses.prop(prop, state)
+                    buttonImpersonate.prop(prop, state)
+                }
             </script>
         @endpush
     @endonce
@@ -101,20 +115,20 @@
                 <div class="col-6">
                     <div class="d-flex align-items-end h-100">
                         <x-dropdown class="mb-3">
-                            <x-slot name="button" class="btn-sm btn-default" title="Set Hak Akses" icon="fas fa-info-circle"></x-slot>
+                            <x-slot name="button" class="btn-default" title="Set Hak Akses" icon="fas fa-info-circle" disabled></x-slot>
                             <x-slot name="menu" class="dropdown-menu-right">
-                                <x-dropdown.item-button class="text-sm" id="button-set-hak-akses" title="SIMRS Khanza" data-toggle="modal" data-target="#modal-set-hak-akses" />
-                                <x-dropdown.item-button class="text-sm" id="button-set-role-permissions" title="Custom Report" data-toggle="modal" data-target="#modal-set-role-permissions" />
+                                <x-dropdown.item-button class="text-sm" id="button-set-khanza" title="SIMRS Khanza" data-toggle="modal" data-target="#modal-set-hak-akses" />
+                                <x-dropdown.item-button class="text-sm" id="button-set-siap" title="SMC Internal App" data-toggle="modal" data-target="#modal-set-role-permissions" />
                             </x-slot>
                         </x-dropdown>
                         <x-dropdown class="mb-3 ml-2">
-                            <x-slot name="button" class="btn-sm btn-default" title="Transfer Hak Akses" icon="fas fa-share-square"></x-slot>
+                            <x-slot name="button" class="btn-default" title="Transfer Hak Akses" icon="fas fa-share-square" disabled></x-slot>
                             <x-slot name="menu" class="dropdown-menu-right">
-                                <x-dropdown.item-button class="text-sm" id="button-transfer-hak-akses" title="SIMRS Khanza" data-toggle="modal" data-target="#modal-transfer-hak-akses" />
-                                <x-dropdown.item-button class="text-sm" id="button-transfer-role-permissions" title="Custom Report" data-toggle="modal" data-target="#modal-transfer-role-permissions" />
+                                <x-dropdown.item-button class="text-sm" id="button-transfer-khanza" title="SIMRS Khanza" data-toggle="modal" data-target="#modal-transfer-hak-akses" />
+                                <x-dropdown.item-button class="text-sm" id="button-transfer-siap" title="SMC Internal App" data-toggle="modal" data-target="#modal-transfer-role-permissions" />
                             </x-slot>
                         </x-dropdown>
-                        <x-button class="btn-default ml-2 mb-3" id="impersonate" title="Impersonasi" icon="fas fa-user-secret" />
+                        <x-button disabled class="btn-default ml-2 mb-3" id="impersonate" title="Impersonasi" icon="fas fa-user-secret" />
                     </div>
                 </div>
             </x-card.row>

@@ -25,6 +25,12 @@
                             }
                         })
 
+                        inputPermissions.each((i, el) => {
+                            if (el.checked) {
+                                selectedPermissions.push(el.value)
+                            }
+                        })
+
                         @this.set('checkedRoles', selectedRoles)
                         @this.set('checkedPermissions', selectedPermissions)
 
@@ -118,15 +124,6 @@
             </x-row-col>
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
-            {{-- <div class="input-group input-group-sm" style="width: 16rem">
-                <input class="form-control" type="search" id="search-role-permissions" />
-                <div class="input-group-append">
-                    <button class="btn btn-sm btn-default" type="button" id="perform-search">
-                        <i class="fas fa-search"></i>
-                        <span class="ml-1">Cari</span>
-                    </button>
-                </div>
-            </div> --}}
             <x-button class="btn-default ml-auto" data-dismiss="modal" title="Batal" />
             <x-button class="btn-primary ml-2" data-dismiss="modal" id="set-role-permissions" title="Simpan" icon="fas fa-save" />
         </x-slot>
