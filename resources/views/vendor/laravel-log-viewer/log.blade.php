@@ -15,7 +15,7 @@
             <script>
                 $(document).ready(function() {
                     $('#logviewer-table tr').click(e => {
-                        let asd = e.target.querySelector('.stack')
+                        let asd = e.currentTarget.querySelector('.stack')
 
                         asd.style['display'] = (asd.style['display'] === 'none')
                             ? 'block'
@@ -60,7 +60,7 @@
                     </thead>
                     <tbody>
                         @foreach ($logs as $key => $log)
-                            <tr data-display="stack{{ $key }}">
+                            <tr data-display="stack{{ $key }}" style="cursor: pointer">
                                 @if ($standardFormat)
                                     <td class="nowrap text-{{ $log['level_class'] }}">
                                         <i class="fas fa-{{ $log['level_img'] }}"></i>
@@ -69,7 +69,10 @@
                                     <td class="text">{{ $log['context'] }}</td>
                                 @endif
                                 <td class="date">{{ $log['date'] }}</td>
-                                <td class="text" style="cursor: pointer">
+                                <td class="text">
+                                    @if ($log['stack'])
+                                        <x-button class="btn-outline-info float-right mb-2 ml-2" data-display="stack{{ $key }}" icon="fas fa-search" />
+                                    @endif
                                     {{ $log['text'] }}
                                     @if (isset($log['in_file']))
                                         <br />
@@ -120,14 +123,3 @@
         </x-slot>
     </x-card>
 </x-base-layout>
-
-{{-- @foreach ($folders as $folder)
-    <div class="list-group-item">
-        @php(\Rap2hpoutre\LaravelLogViewer\LaravelLogViewer::DirectoryTreeStructure($storage_path, $structure))
-    </div>
-@endforeach
-@foreach ($files as $file)
-    <a href="?l={{ \Illuminate\Support\Facades\Crypt::encrypt($file) }}" @class(['list-group-item', 'llv-active' => $current_file == $file])>
-        {{ $file }}
-    </a>
-@endforeach --}}
