@@ -51,7 +51,7 @@ class LabaRugiRekeningPerPeriode extends Component
             ->hitungDebetKreditPerPeriode($this->periodeAwal, $this->periodeAkhir, $kodeRekening)
             ->get();
 
-        return $rekeningYangDigunakan->map(function (Rekening $rekening, $key) use ($debetKredit) {
+        return $rekeningYangDigunakan->map(function (Rekening $rekening) use ($debetKredit) {
             $total = 0;
 
             $mutasi = $debetKredit->find($rekening->kd_rek);
