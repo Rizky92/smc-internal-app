@@ -5,11 +5,8 @@
         <x-slot name="header">
             <x-card.row-col>
                 <x-filter.range-date />
+                <x-filter.button-search class="ml-3" title="Refresh" icon="fas fa-sync-alt" />
                 <x-filter.button-export-excel class="ml-auto" />
-            </x-card.row-col>
-            <x-card.row-col class="mt-2">
-                <x-filter.button-reset-filters class="ml-auto" />
-                <x-filter.search class="ml-2" />
             </x-card.row-col>
         </x-slot>
         <x-slot name="body" class="table-responsive">
