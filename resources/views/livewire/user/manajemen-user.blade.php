@@ -9,8 +9,7 @@
                 const inputRoles = $('input[name=roles]')
                 const inputPermissions = $('input[name=permissions]')
 
-                const buttonDropdownSetHakAkses = $('button#set-hak-akses')
-                const buttonDropdownTransferHakAkses = $('button#transfer-hak-akses')
+                const buttonDropdownPilihan = $('button#pilihan')
                 const buttonImpersonate = $('button#impersonate')
 
                 const buttonResetFilter = $('button#reset-filter')
@@ -70,9 +69,7 @@
                 }
 
                 function setButtonState(prop, state) {
-                    buttonDropdownSetHakAkses.prop(prop, state)
-                    buttonDropdownTransferHakAkses.prop(prop, state)
-                    buttonImpersonate.prop(prop, state)
+                    buttonDropdownPilihan.prop(prop, state)
                 }
             </script>
         @endpush
@@ -101,23 +98,23 @@
                         <input class="form-control form-control-sm" id="nama" type="text" readonly autocomplete="off">
                     </div>
                 </div>
-                <div class="col-6" wire:ignore>
+                <div class="col-6">
                     <div class="d-flex align-items-end h-100">
-                        <x-dropdown class="mb-3">
-                            <x-slot name="button" class="btn-default" title="Set Hak Akses" icon="fas fa-info-circle" disabled></x-slot>
+                        <x-dropdown class="mb-3" livewire>
+                            <x-slot name="button" class="btn-default" title="Pilihan" icon="fas fa-cogs" disabled></x-slot>
                             <x-slot name="menu" class="dropdown-menu-right">
-                                <x-dropdown.item-button class="text-sm" id="button-set-khanza" title="SIMRS Khanza" data-toggle="modal" data-target="#modal-set-hak-akses" />
-                                <x-dropdown.item-button class="text-sm" id="button-set-siap" title="SMC Internal App" data-toggle="modal" data-target="#modal-set-role-permissions" />
+                                <x-dropdown.header class="text-left">SIMRS Khanza</x-dropdown.header>
+                                <x-dropdown.item-button class="text-sm" id="button-set-khanza" icon="fas fa-user-cog" title="Set Hak Akses" data-toggle="modal" data-target="#modal-set-hak-akses" />
+                                <x-dropdown.item-button class="text-sm" id="button-transfer-khanza" icon="fas fa-exchange-alt" title="Transfer Hak Akses" data-toggle="modal" data-target="#modal-transfer-hak-akses" />
+                                <x-dropdown.divider />
+                                <x-dropdown.header class="text-left">SMC Internal App</x-dropdown.header>
+                                <x-dropdown.item-button class="text-sm" id="button-set-siap" icon="fas fa-user-cog" title="Set Perizinan" data-toggle="modal" data-target="#modal-set-role-permissions" />
+                                <x-dropdown.item-button class="text-sm" id="button-transfer-siap" icon="fas fa-exchange-alt" title="Transfer Perizinan" data-toggle="modal" data-target="#modal-transfer-role-permissions" />
+                                <x-dropdown.divider />
+                                <x-dropdown.header class="text-left">Lainnya</x-dropdown.header>
+                                <x-dropdown.item-button class="text-sm" id="impersonate" icon="fas fa-user-secret" title="Impersonasi" />
                             </x-slot>
                         </x-dropdown>
-                        <x-dropdown class="mb-3 ml-2">
-                            <x-slot name="button" class="btn-default" title="Transfer Hak Akses" icon="fas fa-share-square" disabled></x-slot>
-                            <x-slot name="menu" class="dropdown-menu-right">
-                                <x-dropdown.item-button class="text-sm" id="button-transfer-khanza" title="SIMRS Khanza" data-toggle="modal" data-target="#modal-transfer-hak-akses" />
-                                <x-dropdown.item-button class="text-sm" id="button-transfer-siap" title="SMC Internal App" data-toggle="modal" data-target="#modal-transfer-role-permissions" />
-                            </x-slot>
-                        </x-dropdown>
-                        <x-button disabled class="btn-default ml-2 mb-3" id="impersonate" title="Impersonasi" icon="fas fa-user-secret" />
                     </div>
                 </div>
             </x-card.row>
