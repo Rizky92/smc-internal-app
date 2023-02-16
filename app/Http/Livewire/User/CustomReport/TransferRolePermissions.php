@@ -66,8 +66,7 @@ class TransferRolePermissions extends Component
     public function transferRolePermissions()
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
-            $this->emitUp('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->emitUp('resetFilters');
+            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
         }
@@ -83,8 +82,7 @@ class TransferRolePermissions extends Component
 
         tracker_end('mysql_smc');
 
-        $this->emitUp('flash.success', "Transfer hak akses Custom Report berhasil!");
-        $this->emitUp('resetFilters');
+        $this->emit('flash.success', "Transfer hak akses Custom Report berhasil!");
     }
 
     public function showModal()

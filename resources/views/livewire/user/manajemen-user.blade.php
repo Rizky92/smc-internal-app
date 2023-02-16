@@ -4,32 +4,20 @@
     @once
         @push('js')
             <script>
-                let inputNRP
-                let inputNama
-                let inputRoles
-                let inputPermissions
+                const inputNRP = $('input#user')
+                const inputNama = $('input#nama')
+                const inputRoles = $('input[name=roles]')
+                const inputPermissions = $('input[name=permissions]')
 
-                let buttonDropdownSetHakAkses
-                let buttonDropdownTransferHakAkses
-                let buttonImpersonate
+                const buttonDropdownSetHakAkses = $('button#set-hak-akses')
+                const buttonDropdownTransferHakAkses = $('button#transfer-hak-akses')
+                const buttonImpersonate = $('button#impersonate')
 
-                $(document).ready(() => {
-                    inputNRP = $('#user')
-                    inputNama = $('#nama')
-                    inputRoles = $('input[name=roles]')
-                    inputPermissions = $('input[name=permissions]')
+                const buttonResetFilter = $('button#reset-filter')
 
-                    buttonDropdownSetHakAkses = $('button#set-hak-akses')
-                    buttonDropdownTransferHakAkses = $('button#transfer-hak-akses')
-                    buttonImpersonate = $('button#impersonate')
-
+                $(document).on('DOMContentLoaded', e => {
                     $('button#reset-filter').click(e => {
-                        inputNRP.val('')
-                        inputNama.val('')
-                        inputRoles.each((i, el) => el.checked = false)
-                        inputPermissions.each((i, el) => el.checked = false)
-
-                        setButtonState('disabled', true)
+                        clearData()
                     })
 
                     buttonImpersonate.click(e => {
@@ -37,15 +25,7 @@
                     })
                 })
 
-                $(document).on('saved', e => setButtonState('disabled', true))
-
-                function loadData({
-                    nrp,
-                    nama,
-                    roleIds,
-                    rolePermissionIds,
-                    permissionIds
-                }) {
+                function loadData({ nrp, nama, roleIds, rolePermissionIds, permissionIds }) {
                     setButtonState('disabled', false)
 
                     inputNRP.val(nrp)
@@ -80,6 +60,15 @@
                     @this.emit('khanza.prepare-transfer', nrp, nama)
                 }
 
+                function clearData() {
+                    setButtonState('disabled', true)
+
+                    inputNRP.val('')
+                    inputNama.val('')
+                    inputRoles.each((i, el) => el.checked = false)
+                    inputPermissions.each((i, el) => el.checked = false)
+                }
+
                 function setButtonState(prop, state) {
                     buttonDropdownSetHakAkses.prop(prop, state)
                     buttonDropdownTransferHakAkses.prop(prop, state)
@@ -99,7 +88,7 @@
 
     <x-card>
         <x-slot name="header">
-            <x-card.row :livewire="true">
+            <x-card.row>
                 <div class="col-2">
                     <div class="form-group">
                         <label class="text-sm" for="user">NRP</label>
@@ -112,7 +101,7 @@
                         <input class="form-control form-control-sm" id="nama" type="text" readonly autocomplete="off">
                     </div>
                 </div>
-                <div class="col-6">
+                <div class="col-6" wire:ignore>
                     <div class="d-flex align-items-end h-100">
                         <x-dropdown class="mb-3">
                             <x-slot name="button" class="btn-default" title="Set Hak Akses" icon="fas fa-info-circle" disabled></x-slot>

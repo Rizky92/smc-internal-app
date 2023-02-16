@@ -57,8 +57,7 @@ class SetRolePermissions extends Component
     public function setRolePermissions()
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
-            $this->emitUp('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->emitUp('resetFilters');
+            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
         }
@@ -72,8 +71,7 @@ class SetRolePermissions extends Component
 
         tracker_end('mysql_smc');
 
-        $this->emitUp('flash.success', "Hak akses untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
-        $this->emitUp('resetFilters');
+        $this->emit('flash.success', "Hak akses untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
     }
 
     public function showModal()

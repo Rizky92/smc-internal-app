@@ -58,8 +58,7 @@ class TransferHakAkses extends Component
     public function transferHakAkses()
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
-            $this->emitUp('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->emitUp('resetFilters');
+            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
         }
@@ -79,8 +78,7 @@ class TransferHakAkses extends Component
 
         tracker_end();
 
-        $this->emitUp('flash.success', "Transfer hak akses SIMRS Khanza berhasil!");
-        $this->emitUp('resetFilters');
+        $this->emit('flash.success', "Transfer hak akses SIMRS Khanza berhasil!");
     }
 
     public function showModal()
