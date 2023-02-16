@@ -31,6 +31,6 @@ class CreateJobsTable extends Migration
      */
     public function down()
     {
-        Schema::connection('mysql_smc')->dropIfExists('jobs');
+        
     }
 }
