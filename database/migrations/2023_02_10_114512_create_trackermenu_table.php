@@ -15,8 +15,8 @@ class CreateTrackermenuTable extends Migration
     {
         Schema::connection('mysql_smc')->create('trackermenu', function (Blueprint $table) {
             $table->timestamp('waktu')->useCurrent();
-            $table->string('breadcrumbs')->nullable();
-            $table->string('route')->nullable();
+            $table->string('breadcrumbs', 100)->nullable();
+            $table->string('route_name', 100)->nullable();
             $table->string('user_id', 20)->index();
             $table->ipAddress('ip_address');
         });
