@@ -57,6 +57,7 @@ class SetPerizinan extends Component
     public function setRolePermissions()
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
+            $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
@@ -71,7 +72,8 @@ class SetPerizinan extends Component
 
         tracker_end('mysql_smc');
 
-        $this->emit('flash.success', "Hak akses untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
+        $this->dispatchBrowserEvent('data-saved');
+        $this->emit('flash.success', "Perizinan SIAP untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
     }
 
     public function showModal()

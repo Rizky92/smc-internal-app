@@ -66,6 +66,7 @@ class TransferPerizinan extends Component
     public function transferRolePermissions()
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
+            $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
@@ -82,7 +83,8 @@ class TransferPerizinan extends Component
 
         tracker_end('mysql_smc');
 
-        $this->emit('flash.success', "Transfer hak akses Custom Report berhasil!");
+        $this->dispatchBrowserEvent('data-saved');
+        $this->emit('flash.success', "Transfer perizinan SIAP berhasil!");
     }
 
     public function showModal()

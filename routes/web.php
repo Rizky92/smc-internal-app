@@ -10,8 +10,8 @@ use App\Http\Livewire\Farmasi\LaporanProduksiTahunan;
 use App\Http\Livewire\Farmasi\ObatPerDokter;
 use App\Http\Livewire\Farmasi\PerbandinganBarangPO;
 use App\Http\Livewire\Farmasi\StokDaruratFarmasi;
-use App\Http\Livewire\HakAkses\HakAksesCustomReport;
-use App\Http\Livewire\HakAkses\HakAksesKhanza;
+use App\Http\Livewire\HakAkses\Siap;
+use App\Http\Livewire\HakAkses\Khanza;
 use App\Http\Livewire\Keuangan\BukuBesar;
 use App\Http\Livewire\Keuangan\LabaRugiRekeningPerPeriode;
 use App\Http\Livewire\Keuangan\LaporanPenyelesaianBillingPerPetugas;
@@ -169,10 +169,10 @@ Route::prefix('admin')
                 Route::get('manajemen-user', ManajemenUser::class)
                     ->name('manajemen-user');
 
-                Route::get('hak-akses/custom-report', HakAksesCustomReport::class)
+                Route::get('hak-akses/custom-report', Siap::class)
                     ->name('hak-akses.custom-report');
 
-                Route::get('hak-akses/khanza', HakAksesKhanza::class)
+                Route::get('hak-akses/khanza', Khanza::class)
                     ->name('hak-akses.khanza');
 
                 Route::get('logs', [LogViewerController::class, 'index'])

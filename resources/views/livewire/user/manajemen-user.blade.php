@@ -10,7 +10,7 @@
                 const inputPermissions = $('input[name=permissions]')
 
                 const buttonDropdownPilihan = $('button#pilihan')
-                const buttonImpersonate = $('button#impersonate')
+                const buttonImpersonate = $('button#siap-impersonate')
 
                 const buttonResetFilter = $('button#reset-filter')
 
@@ -22,6 +22,14 @@
                     buttonImpersonate.click(e => {
                         @this.impersonateAsUser(inputNRP.val())
                     })
+                })
+
+                $(document).on('data-saved', e => {
+                    clearData()
+                })
+
+                $(document).on('data-denied', e => {
+                    clearData()
                 })
 
                 function loadData({ nrp, nama, roleIds, rolePermissionIds, permissionIds }) {

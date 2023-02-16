@@ -12,7 +12,7 @@ use App\View\Components\BaseLayout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class HakAksesCustomReport extends Component
+class Siap extends Component
 {
     use WithPagination, FlashComponent, Filterable, LiveTable, MenuTracker;
 
@@ -39,7 +39,7 @@ class HakAksesCustomReport extends Component
 
     public function render()
     {
-        return view('livewire.hak-akses.hak-akses-custom-report')
+        return view('livewire.hak-akses.siap')
             ->layout(BaseLayout::class, ['title' => 'Pengaturan Hak Akses']);
     }
 

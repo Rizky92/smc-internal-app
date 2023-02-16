@@ -77,6 +77,7 @@ class SetHakAkses extends Component
     public function setHakAkses()
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
+            $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
@@ -102,6 +103,7 @@ class SetHakAkses extends Component
 
         tracker_end();
 
+        $this->dispatchBrowserEvent('data-saved');
         $this->emit('flash.success', "Hak akses SIMRS Khanza untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
     }
 
