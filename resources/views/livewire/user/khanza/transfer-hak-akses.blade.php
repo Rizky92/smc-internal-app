@@ -14,7 +14,7 @@
             </script>
         @endpush
     @endonce
-    <x-modal id="modal-transfer-hak-akses" title="Transfer Hak Akses Khanza ke User Lainnya" :livewire="true">
+    <x-modal livewire title="Transfer Hak Akses Khanza ke User Lainnya" id="modal-khanza-transfer">
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-row-col class="px-3 pt-3">
                 <div class="d-flex justify-content-start">

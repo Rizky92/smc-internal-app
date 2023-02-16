@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Livewire\User\CustomReport;
+namespace App\Http\Livewire\User\Siap;
 
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
 use Livewire\Component;
 
-class SetRolePermissions extends Component
+class SetPerizinan extends Component
 {
     public $deferLoading;
 
@@ -33,7 +33,7 @@ class SetRolePermissions extends Component
 
     public function render()
     {
-        return view('livewire.user.custom-report.set-role-permissions');
+        return view('livewire.user.siap.set-perizinan');
     }
 
     public function getAvailableRolesProperty()

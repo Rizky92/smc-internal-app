@@ -1,19 +1,20 @@
 <?php
 
-namespace App\Http\Livewire\User;
+namespace App\Http\Livewire\User\Modal;
 
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
+use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class DeactivateUserModal extends Component
+class Pengaturan extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
     public $periodeAwal;
 
@@ -22,8 +23,8 @@ class DeactivateUserModal extends Component
     protected function queryString()
     {
         return [
-            'periodeAwal' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'periodeAkhir' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -34,14 +35,14 @@ class DeactivateUserModal extends Component
 
     public function render()
     {
-        return view('livewire.user.deactivate-user-modal')
-            ->layout(BaseLayout::class, ['title' => Str::title('DeactivateUserModal')]);
+        return view('livewire.user.modal.pengaturan')
+            ->layout(BaseLayout::class, ['title' => 'Pengaturan']);
     }
 
     protected function defaultValues()
     {
-        $this->periodeAwal = now()->format('Y-m-d');
-        $this->periodeAkhir = now()->format('Y-m-d');
+        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array

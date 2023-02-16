@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\User\CustomReport;
+namespace App\Http\Livewire\User\Siap;
 
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
@@ -10,10 +10,10 @@ use App\Support\Traits\Livewire\LiveTable;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
-class TransferRolePermissions extends Component
+class TransferPerizinan extends Component
 {
     use Filterable, LiveTable;
-    
+
     public $deferLoading;
 
     public $nrp;
@@ -40,7 +40,7 @@ class TransferRolePermissions extends Component
 
     public function render()
     {
-        return view('livewire.user.custom-report.transfer-role-permissions');
+        return view('livewire.user.siap.transfer-perizinan');
     }
 
     public function getAvailableUsersProperty()

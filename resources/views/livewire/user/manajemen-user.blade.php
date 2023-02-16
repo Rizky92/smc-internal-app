@@ -75,12 +75,9 @@
         @endpush
     @endonce
 
-    <livewire:user.custom-report.set-role-permissions />
-
-    <livewire:user.custom-report.transfer-role-permissions />
-
+    <livewire:user.siap.set-perizinan />
+    <livewire:user.siap.transfer-perizinan />
     <livewire:user.khanza.set-hak-akses />
-
     <livewire:user.khanza.transfer-hak-akses />
 
     <x-card>
@@ -104,15 +101,15 @@
                             <x-slot name="button" class="btn-default" title="Pilihan" icon="fas fa-cogs" disabled></x-slot>
                             <x-slot name="menu" class="dropdown-menu-right">
                                 <x-dropdown.header class="text-left">SIMRS Khanza</x-dropdown.header>
-                                <x-dropdown.item-button class="text-sm" id="button-set-khanza" icon="fas fa-user-cog" title="Set Hak Akses" data-toggle="modal" data-target="#modal-set-hak-akses" />
-                                <x-dropdown.item-button class="text-sm" id="button-transfer-khanza" icon="fas fa-exchange-alt" title="Transfer Hak Akses" data-toggle="modal" data-target="#modal-transfer-hak-akses" />
+                                <x-dropdown.item-button id="khanza-set" icon="fas fa-user-cog fa-fw" title="Set Hak Akses" data-toggle="modal" data-target="#modal-khanza-set" />
+                                <x-dropdown.item-button id="khanza-transfer" icon="fas fa-exchange-alt fa-fw" title="Transfer Hak Akses" data-toggle="modal" data-target="#modal-khanza-transfer" />
                                 <x-dropdown.divider />
                                 <x-dropdown.header class="text-left">SMC Internal App</x-dropdown.header>
-                                <x-dropdown.item-button class="text-sm" id="button-set-siap" icon="fas fa-user-cog" title="Set Perizinan" data-toggle="modal" data-target="#modal-set-role-permissions" />
-                                <x-dropdown.item-button class="text-sm" id="button-transfer-siap" icon="fas fa-exchange-alt" title="Transfer Perizinan" data-toggle="modal" data-target="#modal-transfer-role-permissions" />
+                                <x-dropdown.item-button id="siap-set" icon="fas fa-user-cog fa-fw" title="Set Perizinan" data-toggle="modal" data-target="#modal-siap-set" />
+                                <x-dropdown.item-button id="siap-transfer" icon="fas fa-exchange-alt fa-fw" title="Transfer Perizinan" data-toggle="modal" data-target="#modal-siap-transfer" />
                                 <x-dropdown.divider />
                                 <x-dropdown.header class="text-left">Lainnya</x-dropdown.header>
-                                <x-dropdown.item-button class="text-sm" id="impersonate" icon="fas fa-user-secret" title="Impersonasi" />
+                                <x-dropdown.item-button id="siap-impersonate" icon="fas fa-user-secret fa-fw" title="Impersonasi" />
                             </x-slot>
                         </x-dropdown>
                     </div>

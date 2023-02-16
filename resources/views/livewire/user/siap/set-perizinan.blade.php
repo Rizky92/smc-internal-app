@@ -91,7 +91,7 @@
             </script>
         @endpush
     @endonce
-    <x-modal :livewire="true" title="Set Role Permission untuk Custom Report" id="modal-set-role-permissions">
+    <x-modal livewire title="Set Role Permission untuk Custom Report" id="modal-siap-set">
         <x-slot name="body">
             <x-row-col>
                 <ul class="form-group" id="role_permissions" style="list-style: none">
