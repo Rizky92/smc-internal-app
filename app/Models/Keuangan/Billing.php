@@ -48,7 +48,7 @@ class Billing extends Model
 
         return $query
             ->selectRaw($sqlSelect)
-            ->whereIn('no_rawat', $noRawat)
+            ->when(!is_null($noRawat), fn (Builder $query) => $query->whereIn('no_rawat', $noRawat))
             ->whereIn('status', $kategoriBilling)
             ->groupBy(['no_rawat', 'status']);
     }

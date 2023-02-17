@@ -2,8 +2,13 @@
 
 namespace App\Models\Perawatan;
 
+use App\Models\Dokter;
+use App\Models\Keuangan\Billing;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class RawatInap extends Model
 {
@@ -75,5 +80,15 @@ class RawatInap extends Model
             ->whereBetween('kamar_inap.tgl_keluar', [$tglAwal, $tglAkhir])
             ->where('piutang_pasien.status', $status)
             ->where('reg_periksa.kd_pj', $jenisBayar);
+    }
+
+    public function dpjpRanap(): BelongsToMany
+    {
+        return $this->belongsToMany(Dokter::class, 'dpjp_ranap', 'kd_dokter', 'no_rawat');
+    }
+
+    public function billing(): HasMany
+    {
+        return $this->hasMany(Billing::class, 'no_rawat', 'no_rawat');
     }
 }
