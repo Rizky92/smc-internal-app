@@ -43,46 +43,48 @@
                     <x-table.th style="width: 17ch" title="Kunjungan ke" />
                 </x-slot>
                 <x-slot name="body">
-                    @foreach ($this->dataLaporanStatistik as $registrasi)
+                    @forelse ($this->dataLaporanStatistik as $registrasi)
                         <x-table.tr>
-                            <x-table.td>{{ $registrasi->no_rawat }}</x-table.td>
-                            <x-table.td>{{ $registrasi->no_rm }}</x-table.td>
-                            <x-table.td>{{ $registrasi->pasien }}</x-table.td>
-                            <x-table.td>{{ $registrasi->nik }}</x-table.td>
-                            <x-table.td>{{ $registrasi->jk }}</x-table.td>
-                            <x-table.td>{{ $registrasi->tgl_lahir }}</x-table.td>
-                            <x-table.td>{{ $registrasi->umur }}</x-table.td>
-                            <x-table.td>{{ $registrasi->agama }}</x-table.td>
-                            <x-table.td>{{ $registrasi->suku }}</x-table.td>
-                            <x-table.td>{{ $registrasi->status_rawat }}</x-table.td>
-                            <x-table.td>{{ $registrasi->status_poli }}</x-table.td>
-                            <x-table.td>{{ $registrasi->asal_poli }}</x-table.td>
-                            <x-table.td>{{ $registrasi->dokter_poli }}</x-table.td>
-                            <x-table.td>{{ $registrasi->status_ralan }}</x-table.td>
-                            <x-table.td>{{ $registrasi->tgl_masuk }}</x-table.td>
-                            <x-table.td>{{ $registrasi->jam_masuk }}</x-table.td>
-                            <x-table.td>{{ $registrasi->tgl_keluar }}</x-table.td>
-                            <x-table.td>{{ $registrasi->jam_keluar }}</x-table.td>
-                            <x-table.td>{{ $registrasi->diagnosa_awal }}</x-table.td>
-                            <x-table.td>{{ $registrasi->kd_diagnosa }}</x-table.td>
-                            <x-table.td>{{ $registrasi->nm_diagnosa }}</x-table.td>
-                            <x-table.td>{{ $registrasi->kd_tindakan_ralan }}</x-table.td>
-                            <x-table.td>{{ $registrasi->nm_tindakan_ralan }}</x-table.td>
-                            <x-table.td>{{ $registrasi->kd_tindakan_ranap }}</x-table.td>
-                            <x-table.td>{{ $registrasi->nm_tindakan_ranap }}</x-table.td>
-                            <x-table.td>{{ $registrasi->lama_operasi }}</x-table.td>
-                            <x-table.td>{{ $registrasi->rujukan_masuk }}</x-table.td>
-                            <x-table.td>{{ $registrasi->dokter_pj }}</x-table.td>
-                            <x-table.td>{{ $registrasi->kelas }}</x-table.td>
-                            <x-table.td>{{ $registrasi->jenis_bayar }}</x-table.td>
-                            <x-table.td>{{ $registrasi->status_bayar }}</x-table.td>
-                            <x-table.td>{{ $registrasi->status_pulang_ranap }}</x-table.td>
-                            <x-table.td>{{ $registrasi->rujuk_keluar_rs }}</x-table.td>
-                            <x-table.td>{{ $registrasi->alamat }}</x-table.td>
-                            <x-table.td>{{ $registrasi->no_hp }}</x-table.td>
-                            <x-table.td>{{ $registrasi->kunjungan_ke }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->no_rawat }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->no_rm }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->pasien }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->nik }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->jk }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->tgl_lahir }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->umur }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->agama }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->suku }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->status_rawat }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->status_poli }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->asal_poli }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->dokter_poli }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->status_ralan }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->tgl_masuk }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->jam_masuk }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->tgl_keluar }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->jam_keluar }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->diagnosa_awal }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->kd_diagnosa }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->nm_diagnosa }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->kd_tindakan_ralan }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->nm_tindakan_ralan }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->kd_tindakan_ranap }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->nm_tindakan_ranap }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->lama_operasi }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->rujukan_masuk }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->dokter_pj }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->kelas }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->jenis_bayar }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->status_bayar }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->status_pulang_ranap }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->rujuk_keluar_rs }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->alamat }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->no_hp }}</x-table.td>
+                            <x-table.td>{{ optional($registrasi)->kunjungan_ke }}</x-table.td>
                         </x-table.tr>
-                    @endforeach
+                    @empty
+                        <x-table.tr-empty colspan="36" />
+                    @endforelse
                 </x-slot>
             </x-table>
         </x-slot>

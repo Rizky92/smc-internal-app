@@ -36,11 +36,13 @@ class LaporanStatistik extends Component
 
     public function getDataLaporanStatistikProperty()
     {
-        return StatistikRekamMedis::query()
-            ->search($this->cari)
-            ->whereBetween('tgl_masuk', [$this->periodeAwal, $this->periodeAkhir])
-            ->orderBy('no_rawat')
-            ->paginate($this->perpage);
+        return !$this->isReadyToLoad
+            ? []
+            : StatistikRekamMedis::query()
+                ->search($this->cari)
+                ->whereBetween('tgl_masuk', [$this->periodeAwal, $this->periodeAkhir])
+                ->orderBy('no_rawat')
+                ->paginate($this->perpage);
     }
 
     public function render()
@@ -51,8 +53,6 @@ class LaporanStatistik extends Component
 
     protected function defaultValues()
     {
-        $this->cari = '';
-        $this->perpage = 25;
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
     }

@@ -36,10 +36,12 @@ class LaporanDemografi extends Component
 
     public function getDemografiPasienProperty()
     {
-        return DemografiPasien::query()
-            ->search($this->cari)
-            ->whereBetween('tgl_registrasi', [$this->periodeAwal, $this->periodeAkhir])
-            ->paginate($this->perpage);
+        return !$this->isReadyToLoad
+            ? []
+            : DemografiPasien::query()
+                ->search($this->cari)
+                ->whereBetween('tgl_registrasi', [$this->periodeAwal, $this->periodeAkhir])
+                ->paginate($this->perpage);
     }
 
     public function render()
@@ -50,8 +52,6 @@ class LaporanDemografi extends Component
 
     protected function defaultValues()
     {
-        $this->cari = '';
-        $this->perpage = 25;
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
     }
@@ -59,7 +59,7 @@ class LaporanDemografi extends Component
     protected function dataPerSheet(): array
     {
         return [
-            DemografiPasien::laporanDemografiExcel($this->periodeAwal, $this->periodeAkhir)->get()
+            DemografiPasien::laporanDemografiExcel($this->periodeAwal, $this->periodeAkhir)->get(),
         ];
     }
 

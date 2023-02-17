@@ -1,7 +1,7 @@
 <div>
     <x-flash />
 
-    <x-card use-default-filter use-loading>
+    <x-card use-default-filter use-loading wire:init="loadProperties">
         <x-slot name="body" class="table-responsive">
             <x-table style="width: 150rem">
                 <x-slot name="columns">
@@ -19,7 +19,7 @@
                     <x-table.th title="Suku" width="100" />
                 </x-slot>
                 <x-slot name="body">
-                    @foreach ($this->demografiPasien as $pasien)
+                    @forelse ($this->demografiPasien as $pasien)
                         <x-table.tr>
                             <x-table.td>{{ $pasien->kecamatan }}</x-table.td>
                             <x-table.td>{{ $pasien->no_rm }}</x-table.td>
@@ -34,7 +34,9 @@
                             <x-table.td>{{ $pasien->bahasa }}</x-table.td>
                             <x-table.td>{{ $pasien->suku }}</x-table.td>
                         </x-table.tr>
-                    @endforeach
+                    @empty
+                        <x-table.tr-empty colspan="12" />
+                    @endforelse
                 </x-slot>
             </x-table>
         </x-slot>
