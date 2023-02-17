@@ -7,59 +7,40 @@
                 @once
                     @push('js')
                         <script>
-                            let inputNoRawat
-                            let inputKamar
-                            let inputPasien
-                            let inputHargaKamar
-                            let inputLamaInap
-                            let inputTotalHarga
+                            const inputNoRawat = $('input#no_rawat')
+                            const inputKamar = $('input#kamar')
+                            const inputPasien = $('input#pasien')
+                            const inputHargaKamar = $('input#harga_kamar')
+                            const inputLamaInap = $('input#lama_inap')
+                            const inputTotalHarga = $('input#total_harga')
                             
-                            let inputReadClipboard
+                            const inputReadClipboard = $('textarea#copy-to-clipboard')
 
-                            let hiddenKdKamar
-                            let hiddenTglMasuk
-                            let hiddenJamMasuk
-                            let hiddenTarifKamar
+                            const hiddenKdKamar = $('input#kd_kamar')
+                            const hiddenTglMasuk = $('input#tgl_masuk')
+                            const hiddenJamMasuk = $('input#jam_masuk')
+                            const hiddenTarifKamar = $('input#trf_kamar')
 
-                            let buttonSimpan
-                            let buttonBatalSimpan
-                            let buttonResetFilters
+                            const buttonSimpan = $('button#simpan-data')
+                            const buttonBatalSimpan = $('button#batal-simpan')
+                            const buttonResetFilters = $('button#reset-filter')
 
-                            $(document).ready(() => {
-                                inputNoRawat = $('#no_rawat')
-                                inputKamar = $('#kamar')
-                                inputPasien = $('#pasien')
-                                inputHargaKamar = $('#harga_kamar')
-                                inputLamaInap = $('#lama_inap')
-                                inputTotalHarga = $('#total_harga')
-
-                                inputReadClipboard = $('textarea#copy-to-clipboard')
-
-                                hiddenKdKamar = $('#kd_kamar')
-                                hiddenTglMasuk = $('#tgl_masuk')
-                                hiddenJamMasuk = $('#jam_masuk')
-                                hiddenTarifKamar = $('#trf_kamar')
-
-                                buttonSimpan = $('#simpan-data')
-                                buttonBatalSimpan = $('#batal-simpan')
-                                buttonCopyData = $('button#copy-data')
-                                buttonResetFilters = $('#reset-filters')
-
+                            $(document).on('DOMContentLoaded', e => {
                                 buttonSimpan.prop('disabled', true)
                                 buttonBatalSimpan.prop('disabled', true)
-                                buttonCopyData.prop('disabled', true)
 
                                 buttonSimpan.click(e => {
-                                    let noRawat = inputNoRawat.val()
-                                    let kdKamar = hiddenKdKamar.val()
-                                    let tglMasuk = hiddenTglMasuk.val()
-                                    let jamMasuk = hiddenJamMasuk.val()
-                                    let hargaKamarBaru = inputHargaKamar.val()
-                                    let lamaInap = inputLamaInap.val()
-
-                                    @this.updateHargaKamar(noRawat, kdKamar, tglMasuk, jamMasuk, hargaKamarBaru, lamaInap)
+                                    @this.updateHargaKamar(
+                                        inputNoRawat.val(),
+                                        hiddenKdKamar.val(),
+                                        hiddenTglMasuk.val(),
+                                        hiddenJamMasuk.val(),
+                                        inputHargaKamar.val(),
+                                        inputLamaInap.val()
+                                    )
                                 })
 
+                                buttonBatalSimpan.click(clearData)
                                 buttonResetFilters.click(clearData)
 
                                 inputHargaKamar.keyup(updateTotalHarga)
@@ -67,10 +48,6 @@
 
                                 inputLamaInap.keyup(updateTotalHarga)
                                 inputLamaInap.change(updateTotalHarga)
-
-                                document.addEventListener('data-tersimpan', clearData)
-
-                                buttonBatalSimpan.click(clearData)
                             })
 
                             function updateTotalHarga(e) {
@@ -81,18 +58,7 @@
                                 inputTotalHarga.trigger('change')
                             }
 
-                            function loadData({
-                                noRawat,
-                                kamar,
-                                pasien,
-                                hargaKamar,
-                                lamaInap,
-                                totalHarga,
-                                kdKamar,
-                                tglMasuk,
-                                jamMasuk,
-                                clipboard
-                            }) {
+                            function loadData({ noRawat, kamar, pasien, hargaKamar, lamaInap, totalHarga, kdKamar, tglMasuk, jamMasuk, clipboard }) {
                                 inputNoRawat.val(noRawat)
                                 inputKamar.val(kamar)
                                 inputPasien.val(pasien)
@@ -125,20 +91,22 @@
                                 buttonBatalSimpan.prop('disabled', false)
                             }
 
-                            function clearData() {
-                                inputNoRawat.val('')
-                                inputKamar.val('')
-                                inputPasien.val('')
-                                inputHargaKamar.val('')
-                                inputLamaInap.val('')
-                                inputTotalHarga.val('')
+                            function clearData(e) {
+                                e.preventDefault()
 
-                                inputReadClipboard.val('')
+                                inputNoRawat.val(null)
+                                inputKamar.val(null)
+                                inputPasien.val(null)
+                                inputHargaKamar.val(null)
+                                inputLamaInap.val(null)
+                                inputTotalHarga.val(null)
 
-                                hiddenKdKamar.val('')
-                                hiddenTglMasuk.val('')
-                                hiddenJamMasuk.val('')
-                                hiddenTarifKamar.val('')
+                                inputReadClipboard.val(null)
+
+                                hiddenKdKamar.val(null)
+                                hiddenTglMasuk.val(null)
+                                hiddenJamMasuk.val(null)
+                                hiddenTarifKamar.val(null)
 
                                 inputKamar.trigger('change')
                                 inputNoRawat.trigger('change')

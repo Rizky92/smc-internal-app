@@ -60,9 +60,11 @@ class SetHakAkses extends Component
         $user = User::rawFindByNRP($this->nrp);
 
         if (! $this->deferLoading) {
-            $this->checkedHakAkses = $this->hakAksesKhanza->keys()->filter(function ($field) use ($user) {
-                return $user->getAttribute($field) === 'true';
-            })->flatten()->toArray();
+            $this->checkedHakAkses = $this->hakAksesKhanza
+                ->keys()
+                ->filter(fn ($field) => $user->gettAttribute($field) === 'true')
+                ->flatten()
+                ->toArray();
         }
     }
 
@@ -75,8 +77,8 @@ class SetHakAkses extends Component
     public function setHakAkses()
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
-            $this->emitUp('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->emitUp('resetFilters');
+            $this->dispatchBrowserEvent('data-denied');
+            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
         }
@@ -101,8 +103,8 @@ class SetHakAkses extends Component
 
         tracker_end();
 
-        $this->emitUp('flash.success', "Hak akses SIMRS Khanza untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
-        $this->emitUp('resetFilters');
+        $this->dispatchBrowserEvent('data-saved');
+        $this->emit('flash.success', "Hak akses SIMRS Khanza untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
     }
 
     public function hideModal()

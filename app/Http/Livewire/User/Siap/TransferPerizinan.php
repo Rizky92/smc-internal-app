@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\User\CustomReport;
+namespace App\Http\Livewire\User\Siap;
 
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
@@ -10,10 +10,10 @@ use App\Support\Traits\Livewire\LiveTable;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
-class TransferRolePermissions extends Component
+class TransferPerizinan extends Component
 {
     use Filterable, LiveTable;
-    
+
     public $deferLoading;
 
     public $nrp;
@@ -40,7 +40,7 @@ class TransferRolePermissions extends Component
 
     public function render()
     {
-        return view('livewire.user.custom-report.transfer-role-permissions');
+        return view('livewire.user.siap.transfer-perizinan');
     }
 
     public function getAvailableUsersProperty()
@@ -66,8 +66,8 @@ class TransferRolePermissions extends Component
     public function transferRolePermissions()
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
-            $this->emitUp('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->emitUp('resetFilters');
+            $this->dispatchBrowserEvent('data-denied');
+            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
         }
@@ -83,8 +83,8 @@ class TransferRolePermissions extends Component
 
         tracker_end('mysql_smc');
 
-        $this->emitUp('flash.success', "Transfer hak akses Custom Report berhasil!");
-        $this->emitUp('resetFilters');
+        $this->dispatchBrowserEvent('data-saved');
+        $this->emit('flash.success', "Transfer perizinan SIAP berhasil!");
     }
 
     public function showModal()

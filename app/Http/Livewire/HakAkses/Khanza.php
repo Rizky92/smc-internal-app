@@ -11,7 +11,7 @@ use App\View\Components\BaseLayout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class HakAksesKhanza extends Component
+class Khanza extends Component
 {
     use WithPagination, FlashComponent, Filterable, LiveTable, MenuTracker;
 
@@ -30,7 +30,7 @@ class HakAksesKhanza extends Component
 
     public function render()
     {
-        return view('livewire.hak-akses.hak-akses-khanza')
+        return view('livewire.hak-akses.khanza')
             ->layout(BaseLayout::class, ['title' => 'Manajemen Hak Akses SIMRS Khanza']);
     }
 

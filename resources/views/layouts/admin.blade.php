@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="utf-8">
@@ -53,7 +53,7 @@
             @endforeach
 
             <x-slot name="footer" class="justify-content-center align-items-center">
-                <span class="text-sm font-weight-bold text-muted">{{ request()->ip() }}</span>
+                <span class="text-sm font-weight-bold text-muted hide-on-collapse">{{ request()->ip() }}</span>
             </x-slot>
         </x-sidebar>
 

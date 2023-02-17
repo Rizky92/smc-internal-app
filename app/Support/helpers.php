@@ -62,6 +62,12 @@ if (!function_exists('tracker_end')) {
     function tracker_end(string $connection = 'mysql_sik')
     {
         foreach (DB::connection($connection)->getQueryLog() as $log) {
+            foreach ($log['bindings'] as $pos => $value) {
+                if (is_string($value)) {
+                    $log['bindings'][$pos] = "'{$value}'";
+                }
+            }
+
             $sql = Str::of($log['query'])
                 ->replaceArray('?', $log['bindings']);
 
