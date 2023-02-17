@@ -13,10 +13,10 @@ class KhanzaHakAksesBaru extends Component
 
     public $judulMenu;
 
-    protected $rules = [
-        'namaField' => ['required', 'string', 'max:255', Rule::unique('khanza_mapping_akses', 'nama_field')->ignore($this->namaField, 'nama_field')],
-        'judulMenu' => ['required', 'string', 'max:255', Rule::unique('khanza_mapping_akses', 'nama_field')->ignore($this->namaField, 'nama_field')],
-    ];
+    // protected $rules = [
+    //     'namaField' => ['required', 'string', 'max:255', Rule::unique('khanza_mapping_akses', 'nama_field')->ignore($this->namaField, 'nama_field')],
+    //     'judulMenu' => ['required', 'string', 'max:255', Rule::unique('khanza_mapping_akses', 'nama_field')->ignore($this->namaField, 'nama_field')],
+    // ];
 
     public function render()
     {
