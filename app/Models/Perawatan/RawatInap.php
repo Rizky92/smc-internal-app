@@ -4,11 +4,15 @@ namespace App\Models\Perawatan;
 
 use App\Models\Dokter;
 use App\Models\Keuangan\Billing;
+use App\Models\Keuangan\DetailNotaRanap;
+use App\Models\Keuangan\NotaRanap;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class RawatInap extends Model
 {
@@ -90,5 +94,10 @@ class RawatInap extends Model
     public function billing(): HasMany
     {
         return $this->hasMany(Billing::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function nota(): HasOne
+    {
+        return $this->hasOne(NotaRanap::class, 'no_rawat', 'no_rawat');
     }
 }
