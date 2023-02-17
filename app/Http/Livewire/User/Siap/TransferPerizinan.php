@@ -27,10 +27,10 @@ class TransferPerizinan extends Component
     public $checkedUsers;
 
     protected $listeners = [
-        'custom-report.show-trp' => 'showModal',
-        'custom-report.hide-trp' => 'hideModal',
-        'custom-report.prepare-transfer' => 'prepareTransfer',
-        'custom-report.transfer' => 'transferRolePermissions',
+        'siap.show-tp' => 'showModal',
+        'siap.hide-tp' => 'hideModal',
+        'siap.prepare-transfer' => 'prepareTransfer',
+        'siap.transfer' => 'transferRolePermissions',
     ];
 
     public function mount()
