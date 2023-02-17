@@ -25,6 +25,6 @@ class KhanzaHakAksesBaru extends Component
 
     public function save()
     {
-        MappingAksesKhanza::updateOrCreate(['nama_field' => $this->namaField], ['judul_menu' => $this->judulMenu])
+        MappingAksesKhanza::updateOrCreate(['nama_field' => $this->namaField], ['judul_menu' => $this->judulMenu]);
     }
 }
