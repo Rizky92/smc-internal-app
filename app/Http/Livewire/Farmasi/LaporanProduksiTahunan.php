@@ -13,13 +13,14 @@ use App\Models\Farmasi\Inventaris\ReturSupplierObat;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
+use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
 
 class LaporanProduksiTahunan extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, MenuTracker;
+    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
     public $tahun;
 
@@ -52,26 +53,30 @@ class LaporanProduksiTahunan extends Component
 
     public function getKunjunganRalanProperty()
     {
-        return ResepObat::kunjunganPasienRalan($this->tahun);
+        return !$this->isReadyToLoad ? [] : ResepObat::kunjunganPasienRalan($this->tahun);
     }
 
     public function getKunjunganRanapProperty()
     {
-        return ResepObat::kunjunganPasienRanap($this->tahun);
+        return !$this->isReadyToLoad ? [] : ResepObat::kunjunganPasienRanap($this->tahun);
     }
 
     public function getKunjunganIGDProperty()
     {
-        return ResepObat::kunjunganPasienIGD($this->tahun);
+        return !$this->isReadyToLoad ? [] : ResepObat::kunjunganPasienIGD($this->tahun);
     }
 
     public function getKunjunganWalkInProperty()
     {
-        return PenjualanWalkInObat::totalKunjunganWalkIn($this->tahun);
+        return !$this->isReadyToLoad ? [] : PenjualanWalkInObat::totalKunjunganWalkIn($this->tahun);
     }
 
     public function getKunjunganTotalProperty()
     {
+        if (!$this->isReadyToLoad) {
+            return [];
+        }
+        
         $kunjunganTotal = [];
 
         foreach ($this->kunjunganRalan as $key => $data) {
@@ -83,31 +88,35 @@ class LaporanProduksiTahunan extends Component
 
     public function getPendapatanObatRalanProperty()
     {
-        return PemberianObat::pendapatanObatRalan($this->tahun);
+        return !$this->isReadyToLoad ? [] : PemberianObat::pendapatanObatRalan($this->tahun);
     }
 
     public function getPendapatanObatRanapProperty()
     {
-        return PemberianObat::pendapatanObatRanap($this->tahun);
+        return !$this->isReadyToLoad ? [] : PemberianObat::pendapatanObatRanap($this->tahun);
     }
 
     public function getPendapatanObatIGDProperty()
     {
-        return PemberianObat::pendapatanObatIGD($this->tahun);
+        return !$this->isReadyToLoad ? [] : PemberianObat::pendapatanObatIGD($this->tahun);
     }
 
     public function getPendapatanObatWalkInProperty()
     {
-        return PenjualanWalkInObat::totalPendapatanWalkIn($this->tahun);
+        return !$this->isReadyToLoad ? [] : PenjualanWalkInObat::totalPendapatanWalkIn($this->tahun);
     }
 
     public function getPendapatanAlkesFarmasiDanUnitProperty()
     {
-        return PemberianObat::pendapatanAlkesUnit($this->tahun);
+        return !$this->isReadyToLoad ? [] : PemberianObat::pendapatanAlkesUnit($this->tahun);
     }
 
     public function getPendapatanObatTotalProperty()
     {
+        if (!$this->isReadyToLoad) {
+            return [];
+        }
+
         $pendapatanObat = [];
 
         foreach ($this->pendapatanObatRalan as $key => $data) {
@@ -119,21 +128,25 @@ class LaporanProduksiTahunan extends Component
 
     public function getReturObatProperty()
     {
-        return ReturPenjualanObat::totalReturObat($this->tahun);
+        return !$this->isReadyToLoad ? [] : ReturPenjualanObat::totalReturObat($this->tahun);
     }
 
     public function getPembelianFarmasiProperty()
     {
-        return PemesananObat::totalPembelianDariFarmasi($this->tahun);
+        return !$this->isReadyToLoad ? [] : PemesananObat::totalPembelianDariFarmasi($this->tahun);
     }
 
     public function getReturSupplierProperty()
     {
-        return ReturSupplierObat::totalBarangRetur($this->tahun);
+        return !$this->isReadyToLoad ? [] : ReturSupplierObat::totalBarangRetur($this->tahun);
     }
 
     public function getTotalBersihPembelianFarmasiProperty()
     {
+        if (!$this->isReadyToLoad) {
+            return [];
+        }
+
         $totalBersih = $this->pembelianFarmasi;
 
         foreach ($totalBersih as $key => $data) {
@@ -145,12 +158,12 @@ class LaporanProduksiTahunan extends Component
 
     public function getStokKeluarMedisProperty()
     {
-        return PengeluaranStokObat::stokPengeluaranMedisFarmasi($this->tahun);
+        return !$this->isReadyToLoad ? [] : PengeluaranStokObat::stokPengeluaranMedisFarmasi($this->tahun);
     }
 
     public function getTransferOrderProperty()
     {
-        return MutasiObat::transferOrder($this->tahun);
+        return !$this->isReadyToLoad ? [] : MutasiObat::transferOrder($this->tahun);
     }
 
     protected function defaultValues()
@@ -160,6 +173,10 @@ class LaporanProduksiTahunan extends Component
 
     protected function dataPerSheet(): array
     {
+        if (!$this->isReadyToLoad) {
+            
+        }
+        
         $data = [
             array_merge(['TOTAL KUNJUNGAN'], $this->kunjunganTotal),
             array_merge(['Kunjungan Rawat Jalan'], $this->kunjunganRalan),
