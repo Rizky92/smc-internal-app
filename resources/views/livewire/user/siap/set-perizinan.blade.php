@@ -110,7 +110,7 @@
                         </li>
                     @endforeach
                     <li>
-                        <h6 class="font-weight-bold">Hak akses lainnya</h6>
+                        <h6 class="font-weight-bold">Perizinan lainnya</h6>
                         <ul class="form-group px-0" style="list-style: none">
                             @foreach ($this->otherPermissions as $op)
                                 <li class="custom-control custom-checkbox">
