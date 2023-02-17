@@ -80,18 +80,18 @@
                         checkSiblings(container)
                     })
 
-                    $('#modal-set-role-permissions').on('shown.bs.modal', e => {
-                        @this.emit('custom-report.show-srp')
+                    $('#modal-siap-set').on('shown.bs.modal', e => {
+                        @this.emit('siap.show-sp')
                     })
 
-                    $('#modal-set-role-permissions').on('hide.bs.modal', e => {
-                        @this.emit('custom-report.hide-srp')
+                    $('#modal-siap-set').on('hide.bs.modal', e => {
+                        @this.emit('siap.hide-sp')
                     })
                 })
             </script>
         @endpush
     @endonce
-    <x-modal livewire title="Set Role Permission untuk Custom Report" id="modal-siap-set">
+    <x-modal livewire title="Set perizinan user untuk SIAP" id="modal-siap-set">
         <x-slot name="body">
             <x-row-col>
                 <ul class="form-group" id="role_permissions" style="list-style: none">

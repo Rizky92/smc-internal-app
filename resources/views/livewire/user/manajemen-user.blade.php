@@ -61,8 +61,8 @@
                         el.checked = allPermissions.find(v => v === el.value)
                     })
 
-                    @this.emit('custom-report.prepare-user', nrp, nama, roles, permissions)
-                    @this.emit('custom-report.prepare-transfer', nrp, nama, roles, permissions)
+                    @this.emit('siap.prepare-user', nrp, nama, roles, permissions)
+                    @this.emit('siap.prepare-transfer', nrp, nama, roles, permissions)
                     @this.emit('khanza.prepare-user', nrp, nama)
                     @this.emit('khanza.prepare-transfer', nrp, nama)
                 }

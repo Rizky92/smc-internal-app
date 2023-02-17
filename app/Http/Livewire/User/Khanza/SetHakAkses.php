@@ -62,7 +62,7 @@ class SetHakAkses extends Component
         if (! $this->deferLoading) {
             $this->checkedHakAkses = $this->hakAksesKhanza
                 ->keys()
-                ->filter(fn ($field) => $user->gettAttribute($field) === 'true')
+                ->filter(fn ($field) => $user->getAttribute($field) === 'true')
                 ->flatten()
                 ->toArray();
         }

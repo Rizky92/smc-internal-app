@@ -20,10 +20,10 @@ class SetPerizinan extends Component
     public $checkedPermissions;
 
     protected $listeners = [
-        'custom-report.show-srp' => 'showModal',
-        'custom-report.hide-srp' => 'hideModal',
-        'custom-report.prepare-user' => 'prepareUser',
-        'custom-report.save' => 'setRolePermissions',
+        'siap.show-sp' => 'showModal',
+        'siap.hide-sp' => 'hideModal',
+        'siap.prepare-user' => 'prepareUser',
+        'siap.save' => 'setRolePermissions',
     ];
 
     public function mount()

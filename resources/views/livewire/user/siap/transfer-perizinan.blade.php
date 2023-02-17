@@ -3,18 +3,18 @@
         @push('js')
             <script>
                 document.addEventListener('DOMContentLoaded', () => {
-                    $('#modal-transfer-role-permissions').on('shown.bs.modal', e => {
-                        @this.emit('custom-report.show-trp')
+                    $('#modal-siap-transfer').on('shown.bs.modal', e => {
+                        @this.emit('siap.show-tp')
                     })
 
-                    $('#modal-transfer-role-permissions').on('hide.bs.modal', e => {
-                        @this.emit('custom-report.hide-trp')
+                    $('#modal-siap-transfer').on('hide.bs.modal', e => {
+                        @this.emit('siap.hide-tp')
                     })
                 })
             </script>
         @endpush
     @endonce
-    <x-modal livewire title="Transfer Role Permission untuk Custom Report" id="modal-siap-transfer">
+    <x-modal livewire title="Transfer perizinan SIAP ke user lainnya" id="modal-siap-transfer">
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-row-col>
                 <div class="d-flex justify-content-start px-3 pt-3">
