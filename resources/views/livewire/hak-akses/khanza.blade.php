@@ -11,6 +11,11 @@
                 const buttonBatalSimpan = $('button#batal')
                 const buttonResetFilter = $('button#reset-filter')
 
+                buttonSimpan.click(e => {
+                    @this.simpanHakAkses(inputNamaField.val(), inputJudulMenu.val())
+
+                    resetInput(e)
+                })
                 buttonBatalSimpan.click(resetInput)
                 buttonResetFilter.click(resetInput)
 
@@ -65,7 +70,7 @@
 
     <x-card>
         <x-slot name="header">
-            <x-card.row :livewire="true">
+            <x-card.row livewire>
                 <div class="col-5">
                     <div class="form-group">
                         <label class="text-sm" for="field">Nama Field</label>
@@ -89,6 +94,7 @@
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
+                <x-filter.button method="syncHakAkses" class="ml-3" icon="fas fa-sync-alt" title="Sync Hak Akses" />
             </x-card.row-col>
         </x-slot>
 

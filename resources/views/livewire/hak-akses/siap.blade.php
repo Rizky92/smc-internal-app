@@ -47,12 +47,14 @@
             </x-row-col>
             <x-row-col>
                 <ul class="form-group" id="role_permissions">
-                    <input type="hidden" name="role" class="d-none">
-                    @foreach ($this->permissions as $key => $name)
-                        <li class="custom-control custom-checkbox">
-                            <input class="custom-control-input" type="checkbox" id="permission-{{ $key }}" value="{{ $key }}" name="permissions">
-                            <label for="permission-{{ $key }}" class="custom-control-label font-weight-normal">{{ $name }}</label>
-                        </li>
+                    <input type="hidden" name="role" class="d-none">                    
+                    @foreach ($this->permissions as $group => $items)
+                        @foreach ($items as $key => $name)    
+                            <li class="{{ Arr::toCssClasses(['custom-control custom-checkbox', 'mt-3' => ($loop->first && !$loop->parent->first)]) }}">
+                                <input class="custom-control-input" type="checkbox" id="permission-{{ $key }}" value="{{ $key }}" name="permissions">
+                                <label for="permission-{{ $key }}" class="custom-control-label font-weight-normal">{{ $name }}</label>
+                            </li>
+                        @endforeach
                     @endforeach
                 </ul>
             </x-row-col>

@@ -25,6 +25,7 @@ class MappingAksesKhanza extends Model
     protected $fillable = [
         'nama_field',
         'judul_menu',
+        'default_value',
     ];
 
     protected $searchColumns = [

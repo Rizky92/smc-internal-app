@@ -2,13 +2,16 @@
 
 namespace App\Http\Livewire\HakAkses;
 
+use App\Models\Aplikasi\MappingAksesKhanza;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
+use App\Models\Aplikasi\User;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -34,7 +37,9 @@ class Siap extends Component
 
     public function getPermissionsProperty()
     {
-        return Permission::orderBy('name')->pluck('name', 'id');
+        return Permission::orderBy('name')
+            ->pluck('name', 'id')
+            ->groupBy(fn ($permission, $id) => Str::before($permission, '.'), $preserveKeys = true);
     }
 
     public function render()

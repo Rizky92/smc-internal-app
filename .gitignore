@@ -6,9 +6,8 @@
 /.vscode
 /_packages
 .env
-.env.local
-.env.production
-.env.backup
+.env.*
+!.env.example
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
