@@ -1,7 +1,7 @@
 <div>
     <x-flash />
 
-    <x-card>
+    <x-card use-loading wire:init="loadProperties">
         <x-slot name="header">
             <x-card.row-col>
                 <x-filter.label>Tahun :</x-filter.label>
@@ -32,103 +32,103 @@
                 <x-slot name="body">
                     <x-table.tr>
                         <th scope="row">TOTAL KUNJUNGAN</th>
-                        @foreach ($this->kunjunganTotal as $item)
+                        @forelse ($this->kunjunganTotal as $item)
                             <th class="text-center px-0" scope="col" width="150">{{ $item }}</th>
                         @endforeach
                     </x-table.tr>
                     <x-table.tr>
                         <th scope="row">Kunjungan Rawat Jalan</th>
-                        @foreach ($this->kunjunganRalan as $item)
+                        @forelse ($this->kunjunganRalan as $item)
                             <td class="text-center px-0" width="150">{{ $item }}</td>
                         @endforeach
                     </x-table.tr>
                     <x-table.tr>
                         <th scope="row">Kunjungan Rawat Inap</th>
-                        @foreach ($this->kunjunganRanap as $item)
+                        @forelse ($this->kunjunganRanap as $item)
                             <td class="text-center px-0" width="150">{{ $item }}</td>
                         @endforeach
                     </x-table.tr>
                     <x-table.tr>
                         <th>Kunjungan IGD</th>
-                        @foreach ($this->kunjunganIGD as $item)
+                        @forelse ($this->kunjunganIGD as $item)
                             <td class="text-center px-0" width="150">{{ $item }}</td>
                         @endforeach
                     </x-table.tr>
                     <x-table.tr>
                         <th>Kunjungan <i>Walk in</i></th>
-                        @foreach ($this->kunjunganWalkIn as $item)
+                        @forelse ($this->kunjunganWalkIn as $item)
                             <td class="text-center px-0" width="150">{{ $item }}</td>
                         @endforeach
                     </x-table.tr>
                     <x-table.tr>
                         <th>TOTAL PENDAPATAN</th>
-                        @foreach ($this->pendapatanObatTotal as $item)
+                        @forelse ($this->pendapatanObatTotal as $item)
                             <th class="text-center px-0" width="150">{{ rp($item) }}</th>
                         @endforeach
                     </x-table.tr>
                     <x-table.tr>
                         <th>Pendapatan Obat Rawat Jalan</th>
-                        @foreach ($this->pendapatanObatRalan as $item)
+                        @forelse ($this->pendapatanObatRalan as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
                     </x-table.tr>
                     <x-table.tr>
                         <th>Pendapatan Obat Rawat Inap</th>
-                        @foreach ($this->pendapatanObatRanap as $item)
+                        @forelse ($this->pendapatanObatRanap as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
                     </x-table.tr>
                     <x-table.tr>
                         <th>Pendapatan Obat IGD</th>
-                        @foreach ($this->pendapatanObatIGD as $item)
+                        @forelse ($this->pendapatanObatIGD as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
                     </x-table.tr>
                     <x-table.tr>
                         <th>Pendapatan Obat <i>Walk in</i></th>
-                        @foreach ($this->pendapatanObatWalkIn as $item)
+                        @forelse ($this->pendapatanObatWalkIn as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
                     </x-table.tr>
                     <x-table.tr>
                         <th>Pendapatan Alkes Farmasi dan Unit</th>
-                        @foreach ($this->pendapatanAlkesFarmasiDanUnit as $item)
+                        @forelse ($this->pendapatanAlkesFarmasiDanUnit as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
                     </x-table.tr>
                     <x-table.tr>
                         <th>Retur Obat</th>
-                        @foreach ($this->returObat as $item)
+                        @forelse ($this->returObat as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
                     </x-table.tr>
                     <x-table.tr>
                         <th>Pembelian Farmasi</th>
-                        @foreach ($this->pembelianFarmasi as $item)
+                        @forelse ($this->pembelianFarmasi as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
                     </x-table.tr>
                     <x-table.tr>
                         <th>Retur Supplier</th>
-                        @foreach ($this->returSupplier as $item)
+                        @forelse ($this->returSupplier as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
                     </x-table.tr>
                     <x-table.tr>
                         <th>TOTAL PEMBELIAN<br> (<i>Pembelian Farmasi - Retur Supplier</i>)</th>
-                        @foreach ($this->totalBersihPembelianFarmasi as $item)
+                        @forelse ($this->totalBersihPembelianFarmasi as $item)
                             <th class="text-center px-0" width="150">{{ rp($item) }}</th>
                         @endforeach
                     </x-table.tr>
                     <x-table.tr>
                         <th>Pemakaian BHP</th>
-                        @foreach ($this->stokKeluarMedis as $item)
+                        @forelse ($this->stokKeluarMedis as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
                     </x-table.tr>
                     <x-table.tr>
                         <th>Transfer Order</th>
-                        @foreach ($this->transferOrder as $item)
+                        @forelse ($this->transferOrder as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @endforeach
                     </x-table.tr>

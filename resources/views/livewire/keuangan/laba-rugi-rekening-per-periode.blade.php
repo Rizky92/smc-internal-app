@@ -5,7 +5,7 @@
         <x-slot name="header">
             <x-card.row-col>
                 <x-filter.label constant-width>Tahun:</x-filter.label>
-                <div class="input-group input-group-sm ml-2" style="width: 5rem">
+                <div class="input-group input-group-sm" style="width: 4.25rem">
                     <x-filter.select model="tahun" :options="$this->dataTahun" constant-width />
                 </div>
                 <x-filter.button-export-excel class="ml-auto" />

@@ -9,7 +9,6 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -36,7 +35,7 @@ class LaporanDemografi extends Component
 
     public function getDemografiPasienProperty()
     {
-        return !$this->isReadyToLoad
+        return $this->isDeferred
             ? []
             : DemografiPasien::query()
                 ->search($this->cari)

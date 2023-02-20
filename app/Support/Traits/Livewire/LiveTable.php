@@ -2,6 +2,8 @@
 
 namespace App\Support\Traits\Livewire;
 
+use Closure;
+use Illuminate\Contracts\Support\Arrayable;
 use Livewire\WithPagination;
 
 trait LiveTable
@@ -17,8 +19,8 @@ trait LiveTable
     /** @var array<string, string> $sortColumns = [] */
     public $sortColumns;
 
-    /** @var bool $isReadyToLoad = true */
-    public $isReadyToLoad;
+    /** @var bool $isDeferred = true */
+    public $isDeferred;
 
     protected $paginationTheme = 'bootstrap';
 
@@ -41,7 +43,7 @@ trait LiveTable
         $this->cari = '';
         $this->perpage = 25;
         $this->sortColumns = [];
-        $this->isReadyToLoad = false;
+        $this->isDeferred = true;
     }
 
     public function sortBy(string $column, ?string $direction)
@@ -66,7 +68,7 @@ trait LiveTable
 
     public function loadProperties()
     {
-        $this->isReadyToLoad = true;
+        $this->isDeferred = false;
 
         $this->emit('$refresh');
     }

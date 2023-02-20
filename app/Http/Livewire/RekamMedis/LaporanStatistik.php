@@ -36,7 +36,7 @@ class LaporanStatistik extends Component
 
     public function getDataLaporanStatistikProperty()
     {
-        return !$this->isReadyToLoad
+        return $this->isDeferred
             ? []
             : StatistikRekamMedis::query()
                 ->search($this->cari)

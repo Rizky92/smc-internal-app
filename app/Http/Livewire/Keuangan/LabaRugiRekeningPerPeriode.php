@@ -39,33 +39,35 @@ class LabaRugiRekeningPerPeriode extends Component
 
     public function getLabaRugiPerRekeningProperty()
     {
-        if (!$this->isReadyToLoad) {
+        if ($this->isDeferred) {
             return collect(['D' => [], 'K' => []]);
         }
-        
-        return Rekening::query()
-            ->perhitunganLabaRugiTahunan($this->tahun)
-            ->search($this->cari, [
-                'rekening.kd_rek',
-                'rekening.nm_rek',
-                'rekening.tipe',
-                'rekening.balance',
-                'rekeningtahun.thn',
-            ])
-            ->sortWithColumns($this->sortColumns, [
-                'saldo_awal' => DB::raw('ifnull(rekeningtahun.saldo_awal, 0)'),
-                'debet' => DB::raw('round(sum(detailjurnal.debet), 2)'),
-                'kredit' => DB::raw('round(sum(detailjurnal.kredit), 2)'),
-                'saldo_akhir' => DB::raw("case 
-                    when upper(rekening.balance) = 'K'  then round((sum(detailjurnal.kredit) - sum(detailjurnal.debet)) + rekeningtahun.saldo_awal, 2)
-                    when upper(rekening.balance) = 'D'  then round((sum(detailjurnal.debet) - sum(detailjurnal.kredit)) + rekeningtahun.saldo_awal, 2)
-                end"),
-            ], [
-                'thn' => 'asc',
-                'kd_rek' => 'asc',
-            ])
-            ->get()
-            ->mapToGroups(fn ($rekening) => [$rekening->balance => $rekening]);
+
+        return $this->isDeferred
+            ? collect(['D' => [], 'K' => []])
+            : Rekening::query()
+                ->perhitunganLabaRugiTahunan($this->tahun)
+                ->search($this->cari, [
+                    'rekening.kd_rek',
+                    'rekening.nm_rek',
+                    'rekening.tipe',
+                    'rekening.balance',
+                    'rekeningtahun.thn',
+                ])
+                ->sortWithColumns($this->sortColumns, [
+                    'saldo_awal'  => DB::raw('ifnull(rekeningtahun.saldo_awal, 0)'),
+                    'debet'       => DB::raw('round(sum(detailjurnal.debet), 2)'),
+                    'kredit'      => DB::raw('round(sum(detailjurnal.kredit), 2)'),
+                    'saldo_akhir' => DB::raw("case 
+                        when upper(rekening.balance) = 'K'  then round((sum(detailjurnal.kredit) - sum(detailjurnal.debet)) + rekeningtahun.saldo_awal, 2)
+                        when upper(rekening.balance) = 'D'  then round((sum(detailjurnal.debet) - sum(detailjurnal.kredit)) + rekeningtahun.saldo_awal, 2)
+                    end"),
+                ], [
+                    'thn' => 'asc',
+                    'kd_rek' => 'asc',
+                ])
+                ->get()
+                ->mapToGroups(fn ($rekening) => [$rekening->balance => $rekening]);
     }
 
     public function getDataTahunProperty()

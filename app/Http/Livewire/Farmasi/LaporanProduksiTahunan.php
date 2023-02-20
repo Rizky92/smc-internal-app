@@ -53,27 +53,27 @@ class LaporanProduksiTahunan extends Component
 
     public function getKunjunganRalanProperty()
     {
-        return !$this->isReadyToLoad ? [] : ResepObat::kunjunganPasienRalan($this->tahun);
+        return $this->isDeferred ? [] : ResepObat::kunjunganPasienRalan($this->tahun);
     }
 
     public function getKunjunganRanapProperty()
     {
-        return !$this->isReadyToLoad ? [] : ResepObat::kunjunganPasienRanap($this->tahun);
+        return $this->isDeferred ? [] : ResepObat::kunjunganPasienRanap($this->tahun);
     }
 
     public function getKunjunganIGDProperty()
     {
-        return !$this->isReadyToLoad ? [] : ResepObat::kunjunganPasienIGD($this->tahun);
+        return $this->isDeferred ? [] : ResepObat::kunjunganPasienIGD($this->tahun);
     }
 
     public function getKunjunganWalkInProperty()
     {
-        return !$this->isReadyToLoad ? [] : PenjualanWalkInObat::totalKunjunganWalkIn($this->tahun);
+        return $this->isDeferred ? [] : PenjualanWalkInObat::totalKunjunganWalkIn($this->tahun);
     }
 
     public function getKunjunganTotalProperty()
     {
-        if (!$this->isReadyToLoad) {
+        if ($this->isDeferred) {
             return [];
         }
         
@@ -88,32 +88,32 @@ class LaporanProduksiTahunan extends Component
 
     public function getPendapatanObatRalanProperty()
     {
-        return !$this->isReadyToLoad ? [] : PemberianObat::pendapatanObatRalan($this->tahun);
+        return $this->isDeferred ? [] : PemberianObat::pendapatanObatRalan($this->tahun);
     }
 
     public function getPendapatanObatRanapProperty()
     {
-        return !$this->isReadyToLoad ? [] : PemberianObat::pendapatanObatRanap($this->tahun);
+        return $this->isDeferred ? [] : PemberianObat::pendapatanObatRanap($this->tahun);
     }
 
     public function getPendapatanObatIGDProperty()
     {
-        return !$this->isReadyToLoad ? [] : PemberianObat::pendapatanObatIGD($this->tahun);
+        return $this->isDeferred ? [] : PemberianObat::pendapatanObatIGD($this->tahun);
     }
 
     public function getPendapatanObatWalkInProperty()
     {
-        return !$this->isReadyToLoad ? [] : PenjualanWalkInObat::totalPendapatanWalkIn($this->tahun);
+        return $this->isDeferred ? [] : PenjualanWalkInObat::totalPendapatanWalkIn($this->tahun);
     }
 
     public function getPendapatanAlkesFarmasiDanUnitProperty()
     {
-        return !$this->isReadyToLoad ? [] : PemberianObat::pendapatanAlkesUnit($this->tahun);
+        return $this->isDeferred ? [] : PemberianObat::pendapatanAlkesUnit($this->tahun);
     }
 
     public function getPendapatanObatTotalProperty()
     {
-        if (!$this->isReadyToLoad) {
+        if ($this->isDeferred) {
             return [];
         }
 
@@ -128,22 +128,22 @@ class LaporanProduksiTahunan extends Component
 
     public function getReturObatProperty()
     {
-        return !$this->isReadyToLoad ? [] : ReturPenjualanObat::totalReturObat($this->tahun);
+        return $this->isDeferred ? [] : ReturPenjualanObat::totalReturObat($this->tahun);
     }
 
     public function getPembelianFarmasiProperty()
     {
-        return !$this->isReadyToLoad ? [] : PemesananObat::totalPembelianDariFarmasi($this->tahun);
+        return $this->isDeferred ? [] : PemesananObat::totalPembelianDariFarmasi($this->tahun);
     }
 
     public function getReturSupplierProperty()
     {
-        return !$this->isReadyToLoad ? [] : ReturSupplierObat::totalBarangRetur($this->tahun);
+        return $this->isDeferred ? [] : ReturSupplierObat::totalBarangRetur($this->tahun);
     }
 
     public function getTotalBersihPembelianFarmasiProperty()
     {
-        if (!$this->isReadyToLoad) {
+        if ($this->isDeferred) {
             return [];
         }
 
@@ -158,12 +158,12 @@ class LaporanProduksiTahunan extends Component
 
     public function getStokKeluarMedisProperty()
     {
-        return !$this->isReadyToLoad ? [] : PengeluaranStokObat::stokPengeluaranMedisFarmasi($this->tahun);
+        return $this->isDeferred ? [] : PengeluaranStokObat::stokPengeluaranMedisFarmasi($this->tahun);
     }
 
     public function getTransferOrderProperty()
     {
-        return !$this->isReadyToLoad ? [] : MutasiObat::transferOrder($this->tahun);
+        return $this->isDeferred ? [] : MutasiObat::transferOrder($this->tahun);
     }
 
     protected function defaultValues()
@@ -173,10 +173,6 @@ class LaporanProduksiTahunan extends Component
 
     protected function dataPerSheet(): array
     {
-        if (!$this->isReadyToLoad) {
-            
-        }
-        
         $data = [
             array_merge(['TOTAL KUNJUNGAN'], $this->kunjunganTotal),
             array_merge(['Kunjungan Rawat Jalan'], $this->kunjunganRalan),
