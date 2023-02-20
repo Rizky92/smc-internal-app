@@ -42,17 +42,15 @@ class DPJPPiutangRanap extends Component
 
     public function getPiutangRanapProperty()
     {
-        return !$this->isReadyToLoad
-            ? []
-            : RawatInap::query()
-                ->piutangRanap($this->periodeAwal, $this->periodeAkhir, $this->status, $this->jenisBayar)
-                ->with([
-                    'nota',
-                    'dpjpRanap',
-                    'billing' => fn ($q) => $q->totalBillingan(),
-                ])
-                ->withSum('cicilanPiutang as dibayar', 'besar_cicilan')
-                ->paginate($this->perpage);
+        return RawatInap::query()
+            ->piutangRanap($this->periodeAwal, $this->periodeAkhir, $this->status, $this->jenisBayar)
+            ->with([
+                'nota',
+                'dpjpRanap',
+                'billing' => fn ($q) => $q->totalBillingan(),
+            ])
+            ->withSum('cicilanPiutang as dibayar', 'besar_cicilan')
+            ->paginate($this->perpage);
     }
 
     public function render()
@@ -64,7 +62,7 @@ class DPJPPiutangRanap extends Component
     protected function defaultValues()
     {
         $this->status = 'Belum Lunas';
-        $this->jenisBayar = '';
+        $this->jenisBayar = 'C33';
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
     }
