@@ -66,7 +66,8 @@ trait ExcelExportable
         array_shift($dataSheets);
 
         foreach ($dataSheets as $sheet => $data) {
-            $excel->addSheet($sheet)
+            $excel
+                ->addSheet($sheet)
                 ->setData($data);
         }
 

@@ -8,7 +8,7 @@
         <span class="brand-text">{{ config('app.name') }}</span>
     </a>
 
-    <div class="sidebar">
+    <div class="sidebar" style="height: calc(100% - ((3.5rem + 2rem) + 1px))">
         @auth('web')
             <div class="user-panel mt-3 pb-3 mb-3 d-flex align-items-center">
                 <div class="image">
@@ -34,7 +34,7 @@
     </div>
 
     @if ($footer)
-        <div {{ $footer->attributes->merge(['class' => 'sidebar-custom d-flex']) }}>
+        <div {{ $footer->attributes->merge(['class' => 'sidebar-custom d-flex', 'style' => 'height: 2rem']) }}>
             {{ $footer }}
         </div>
     @endif

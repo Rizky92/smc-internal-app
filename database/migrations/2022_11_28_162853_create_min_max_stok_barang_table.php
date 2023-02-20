@@ -20,11 +20,6 @@ class CreateMinMaxStokBarangTable extends Migration
             $table->char('kode_suplier', 5)->nullable()->index();
             $table->timestamps();
             $table->softDeletes();
-            $table->string('created_by', 700)->nullable();
-            $table->string('updated_by', 700)->nullable();
-            $table->string('deleted_by', 700)->nullable();
-
-            $table->index(['created_by', 'updated_by', 'deleted_by']);
         });
     }
 
@@ -35,6 +30,6 @@ class CreateMinMaxStokBarangTable extends Migration
      */
     public function down()
     {
-        Schema::connection('mysql_smc')->dropIfExists('ipsrs_minmax_stok_barang');
+        
     }
 }

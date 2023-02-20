@@ -25,6 +25,12 @@
                             }
                         })
 
+                        inputPermissions.each((i, el) => {
+                            if (el.checked) {
+                                selectedPermissions.push(el.value)
+                            }
+                        })
+
                         @this.set('checkedRoles', selectedRoles)
                         @this.set('checkedPermissions', selectedPermissions)
 
@@ -74,18 +80,18 @@
                         checkSiblings(container)
                     })
 
-                    $('#modal-set-role-permissions').on('shown.bs.modal', e => {
-                        @this.emit('custom-report.show-srp')
+                    $('#modal-siap-set').on('shown.bs.modal', e => {
+                        @this.emit('siap.show-sp')
                     })
 
-                    $('#modal-set-role-permissions').on('hide.bs.modal', e => {
-                        @this.emit('custom-report.hide-srp')
+                    $('#modal-siap-set').on('hide.bs.modal', e => {
+                        @this.emit('siap.hide-sp')
                     })
                 })
             </script>
         @endpush
     @endonce
-    <x-modal :livewire="true" title="Set Role Permission untuk Custom Report" id="modal-set-role-permissions">
+    <x-modal livewire title="Set perizinan user untuk SIAP" id="modal-siap-set">
         <x-slot name="body">
             <x-row-col>
                 <ul class="form-group" id="role_permissions" style="list-style: none">
@@ -104,7 +110,7 @@
                         </li>
                     @endforeach
                     <li>
-                        <h6 class="font-weight-bold">Hak akses lainnya</h6>
+                        <h6 class="font-weight-bold">Perizinan lainnya</h6>
                         <ul class="form-group px-0" style="list-style: none">
                             @foreach ($this->otherPermissions as $op)
                                 <li class="custom-control custom-checkbox">
@@ -118,15 +124,6 @@
             </x-row-col>
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
-            {{-- <div class="input-group input-group-sm" style="width: 16rem">
-                <input class="form-control" type="search" id="search-role-permissions" />
-                <div class="input-group-append">
-                    <button class="btn btn-sm btn-default" type="button" id="perform-search">
-                        <i class="fas fa-search"></i>
-                        <span class="ml-1">Cari</span>
-                    </button>
-                </div>
-            </div> --}}
             <x-button class="btn-default ml-auto" data-dismiss="modal" title="Batal" />
             <x-button class="btn-primary ml-2" data-dismiss="modal" id="set-role-permissions" title="Simpan" icon="fas fa-save" />
         </x-slot>

@@ -4,6 +4,7 @@ namespace App\Models\Keuangan;
 
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,36 +22,32 @@ class Rekening extends Model
 
     public $timestamps = false;
 
-    public function scopePerhitunganLabaRugiTahunan(Builder $query, string $tahun = '2022'): Builder
+    public function scopeHitungDebetKreditPerPeriode(Builder $query, string $tglAwal = '', string $tglAkhir = '', $kodeRekening = null): Builder
     {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->format('Y-m-d');
+        }
+
         $sqlSelect = "
             rekening.kd_rek,
-            rekening.nm_rek,
-            rekening.tipe,
-            rekening.balance,
-            rekeningtahun.thn,
-            ifnull(rekeningtahun.saldo_awal, 0) saldo_awal,
             round(sum(detailjurnal.debet), 2) debet,
-            round(sum(detailjurnal.kredit), 2) kredit,
-            (
-                case 
-                    when upper(rekening.balance) = 'K'  then round((sum(detailjurnal.kredit) - sum(detailjurnal.debet)) + ifnull(rekeningtahun.saldo_awal, 0), 2)
-                    when upper(rekening.balance) = 'D'  then round((sum(detailjurnal.debet) - sum(detailjurnal.kredit)) + ifnull(rekeningtahun.saldo_awal, 0), 2)
-                end
-            ) saldo_akhir
+            round(sum(detailjurnal.kredit), 2) kredit
         ";
 
         return $query
             ->selectRaw($sqlSelect)
-            ->join('rekeningtahun', 'rekening.kd_rek', '=', 'rekeningtahun.kd_rek')
             ->leftJoin('detailjurnal', 'rekening.kd_rek', '=', 'detailjurnal.kd_rek')
             ->leftJoin('jurnal', 'detailjurnal.no_jurnal', '=', 'jurnal.no_jurnal')
-            ->where('rekening.tipe', 'R')
-            ->where('rekeningtahun.thn', $tahun)
-            ->whereBetween('jurnal.tgl_jurnal', ["{$tahun}-01-01", "{$tahun}-12-31"])
-            ->groupBy([
-                'rekeningtahun.thn',
-                'rekeningtahun.kd_rek',
-            ]);
+            ->when(
+                !is_null($kodeRekening) && $kodeRekening instanceof Arrayable,
+                fn (Builder $query) => $query->whereIn('rekening.kd_rek', $kodeRekening->toArray()),
+                fn (Builder $query) => $query->where('tipe', 'R')
+            )
+            ->whereBetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir])
+            ->groupBy('rekening.kd_rek');
     }
 }

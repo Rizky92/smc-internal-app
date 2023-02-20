@@ -22,7 +22,7 @@
     <x-card>
         <x-slot name="body">
             <div class="table-responsive p-3">
-                <table class="table table-sm table-bordered table-hover" id="routes-table">
+                <table class="table table-bordered table-hover" id="routes-table">
                     <thead>
                         <th>Name</th>
                         <th>URL</th>
@@ -34,9 +34,9 @@
                     <tbody>
                         @foreach ($routes as $route)
                             <tr>
-                                <td>{!! $route['name'] !!}</td>
+                                <td class="text-monospace">{!! $route['name'] !!}</td>
                                 <td>{!! $route['url'] !!}</td>
-                                <td>{!! $route['methods'] !!}</td>
+                                <td class="text-monospace">{!! $route['methods'] !!}</td>
                             </tr>
                         @endforeach
                     </tbody>

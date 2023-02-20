@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\User\CustomReport;
+namespace App\Http\Livewire\User\Siap;
 
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
@@ -10,10 +10,10 @@ use App\Support\Traits\Livewire\LiveTable;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
-class TransferRolePermissions extends Component
+class TransferPerizinan extends Component
 {
     use Filterable, LiveTable;
-    
+
     public $deferLoading;
 
     public $nrp;
@@ -27,10 +27,10 @@ class TransferRolePermissions extends Component
     public $checkedUsers;
 
     protected $listeners = [
-        'custom-report.show-trp' => 'showModal',
-        'custom-report.hide-trp' => 'hideModal',
-        'custom-report.prepare-transfer' => 'prepareTransfer',
-        'custom-report.transfer' => 'transferRolePermissions',
+        'siap.show-tp' => 'showModal',
+        'siap.hide-tp' => 'hideModal',
+        'siap.prepare-transfer' => 'prepareTransfer',
+        'siap.transfer' => 'transferRolePermissions',
     ];
 
     public function mount()
@@ -40,7 +40,7 @@ class TransferRolePermissions extends Component
 
     public function render()
     {
-        return view('livewire.user.custom-report.transfer-role-permissions');
+        return view('livewire.user.siap.transfer-perizinan');
     }
 
     public function getAvailableUsersProperty()
@@ -66,7 +66,8 @@ class TransferRolePermissions extends Component
     public function transferRolePermissions()
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
-            $this->emitTo('user.manajemen-user', 'flashError', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatchBrowserEvent('data-denied');
+            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
         }
@@ -82,7 +83,8 @@ class TransferRolePermissions extends Component
 
         tracker_end('mysql_smc');
 
-        $this->emitTo('user.manajemen-user', 'flashSuccess', "Transfer hak akses Custom Report berhasil!");
+        $this->dispatchBrowserEvent('data-saved');
+        $this->emit('flash.success', "Transfer perizinan SIAP berhasil!");
     }
 
     public function showModal()

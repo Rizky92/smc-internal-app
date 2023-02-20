@@ -30,6 +30,6 @@ class CreateFailedJobsTable extends Migration
      */
     public function down()
     {
-        Schema::connection('mysql_smc')->dropIfExists('failed_jobs');
+        
     }
 }

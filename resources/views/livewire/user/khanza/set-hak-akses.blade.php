@@ -3,18 +3,18 @@
         @push('js')
             <script>
                 document.addEventListener('DOMContentLoaded', () => {
-                    $('#modal-set-hak-akses').on('shown.bs.modal', e => {
+                    $('#modal-khanza-set').on('shown.bs.modal', e => {
                         @this.emit('khanza.show-sha')
                     })
 
-                    $('#modal-set-hak-akses').on('hide.bs.modal', e => {
+                    $('#modal-khanza-set').on('hide.bs.modal', e => {
                         @this.emit('khanza.hide-sha')
                     })
                 })
             </script>
         @endpush
     @endonce
-    <x-modal :livewire="true" id="modal-set-hak-akses" title="Set Hak Akses User untuk SIMRS Khanza">
+    <x-modal livewire title="Set hak akses user untuk SIMRS Khanza" id="modal-khanza-set">
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-row-col class="px-3 pt-3">
                 <div class="d-flex justify-content-start">

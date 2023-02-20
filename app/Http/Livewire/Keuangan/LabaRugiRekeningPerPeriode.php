@@ -9,7 +9,8 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Facades\DB;
+use Carbon\CarbonImmutable;
+use Illuminate\Support\Fluent;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -21,14 +22,11 @@ class LabaRugiRekeningPerPeriode extends Component
 
     public $periodeAkhir;
 
-    public $tahun;
-
     protected function queryString()
     {
         return [
             'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
-            'tahun' => ['except' => now()->format('Y')],
         ];
     }
 
@@ -70,13 +68,27 @@ class LabaRugiRekeningPerPeriode extends Component
                 ->mapToGroups(fn ($rekening) => [$rekening->balance => $rekening]);
     }
 
-    public function getDataTahunProperty()
+    public function getTotalLabaRugiPerRekeningProperty()
     {
-        return collect(range((int) now()->format('Y'), 2022, -1))
-            ->mapWithKeys(function ($value, $key) {
-                return [$value => $value];
-            })
-            ->toArray();
+        $pendapatan = collect($this->labaRugiPerRekening->get('K'));
+
+        $bebanDanBiaya = collect($this->labaRugiPerRekening->get('D'));
+
+        $totalDebetPendapatan = $pendapatan->sum('debet');
+        $totalKreditPendapatan = $pendapatan->sum('kredit');
+        $totalPendapatan = $totalKreditPendapatan - $totalDebetPendapatan;
+
+        $totalDebetBeban = $bebanDanBiaya->sum('debet');
+        $totalKreditBeban = $bebanDanBiaya->sum('kredit');
+        $totalBebanDanBiaya = $totalDebetBeban - $totalKreditBeban;
+
+        $labaRugi = $totalPendapatan - $totalBebanDanBiaya;
+
+        return compact(
+            'totalPendapatan', 'totalDebetPendapatan', 'totalKreditPendapatan',
+            'totalBebanDanBiaya', 'totalDebetBeban', 'totalKreditBeban',
+            'labaRugi'
+        );
     }
 
     public function render()
@@ -89,34 +101,64 @@ class LabaRugiRekeningPerPeriode extends Component
     {
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->tahun = now()->format('Y');
+    }
+
+    protected function mapDataForExcelExport()
+    {
+        $pendapatanRowHeader = $this->insertExcelRow('', 'PENDAPATAN');
+        $bebanRowHeader = $this->insertExcelRow('', 'BEBAN & BIAYA');
+        $empty = $this->insertExcelRow();
+
+        $pendapatan = $this->labaRugiPerRekening->get('K');
+        $beban = $this->labaRugiPerRekening->get('D');
+
+        $total = $this->totalLabaRugiPerRekening;
+
+        $totalPendapatanRow = $this->insertExcelRow('', 'TOTAL', '', $total['totalDebetPendapatan'], $total['totalKreditPendapatan'], $total['totalPendapatan']);
+        $totalBebanRow = $this->insertExcelRow('', 'TOTAL', '', $total['totalDebetBeban'], $total['totalKreditBeban'], $total['totalBebanDanBiaya']);
+
+        $pendapatanBersih = $this->insertExcelRow('', 'PENDAPATAN BERSIH', '', $total['totalPendapatan'], $total['totalBebanDanBiaya'], $total['labaRugi']);
+
+        return collect([$pendapatanRowHeader])
+            ->merge($pendapatan)
+            ->merge([$totalPendapatanRow, $empty])
+            ->merge([$bebanRowHeader])
+            ->merge($beban)
+            ->merge([$totalBebanRow, $empty])
+            ->merge([$pendapatanBersih]);
+    }
+
+    protected function insertExcelRow($kd_rek = '', $nm_rek = '', $balance = '', $debet = '', $kredit = '', $total = '')
+    {
+        return new Fluent(func_get_named_args($this, 'insertExcelRow', func_get_args()));
     }
 
     protected function dataPerSheet(): array
     {
         return [
-            //
+            $this->mapDataForExcelExport(),
         ];
     }
 
     protected function columnHeaders(): array
     {
         return [
-            'Tahun',
             'Kode Akun',
-            'Nama AKun',
-            'Tipe',
-            'Saldo Awal',
-            'Total Debet',
-            'Total Kredit',
-            'Saldo Akhir',
+            'Nama Akun',
+            'Jenis',
+            'Debet',
+            'Kredit',
+            'Total',
         ];
     }
 
     protected function pageHeaders(): array
     {
         return [
-            //
+            'RS Samarinda Medika Citra',
+            'Laporan Laba Rugi Keuangan',
+            now()->format('d F Y'),
+            'Periode ' . CarbonImmutable::parse($this->periodeAwal)->format('d F Y') . ' - ' . CarbonImmutable::parse($this->periodeAkhir)->format('d F Y'),
         ];
     }
 }

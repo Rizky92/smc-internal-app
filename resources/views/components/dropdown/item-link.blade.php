@@ -3,11 +3,11 @@
     'icon' => null,
 ])
 
-<button {{ $attributes->merge(['class' => 'dropdown-item', 'type' => 'button', 'id' => Str::slug($title)]) }}>
+<a {{ $attributes->merge(['class' => 'dropdown-item', 'role' => 'button', 'id' => Str::slug($title)]) }}>
     @if ($icon)
         <i class="{{ $icon }}"></i>
         <span class="ml-1">{{ $title ?? $slot }}</span>
     @else
         {{ $title ?? $slot }}
     @endif
-</button>
+</a>

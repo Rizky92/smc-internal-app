@@ -4,28 +4,19 @@
     @once
         @push('js')
             <script>
-                let inputNRP
-                let inputNama
-                let inputRoles
-                let inputPermissions
+                const inputNRP = $('input#user')
+                const inputNama = $('input#nama')
+                const inputRoles = $('input[name=roles]')
+                const inputPermissions = $('input[name=permissions]')
 
-                let buttonResetFilters
-                let buttonImpersonate
+                const buttonDropdownPilihan = $('button#pilihan')
+                const buttonImpersonate = $('button#siap-impersonate')
 
-                $(document).ready(() => {
-                    inputNRP = $('#user')
-                    inputNama = $('#nama')
-                    inputRoles = $('input[name=roles]')
-                    inputPermissions = $('input[name=permissions]')
+                const buttonResetFilter = $('button#reset-filter')
 
-                    buttonResetFilters = $('button#reset-filters')
-                    buttonImpersonate = $('button#impersonate')
-
-                    buttonResetFilters.click(e => {
-                        inputNRP.val('')
-                        inputNama.val('')
-                        inputRoles.each((i, el) => el.checked = false)
-                        inputPermissions.each((i, el) => el.checked = false)
+                $(document).on('DOMContentLoaded', e => {
+                    $('button#reset-filter').click(e => {
+                        clearData()
                     })
 
                     buttonImpersonate.click(e => {
@@ -33,13 +24,17 @@
                     })
                 })
 
-                function loadData({
-                    nrp,
-                    nama,
-                    roleIds,
-                    rolePermissionIds,
-                    permissionIds
-                }) {
+                $(document).on('data-saved', e => {
+                    clearData()
+                })
+
+                $(document).on('data-denied', e => {
+                    clearData()
+                })
+
+                function loadData({ nrp, nama, roleIds, rolePermissionIds, permissionIds }) {
+                    setButtonState('disabled', false)
+
                     inputNRP.val(nrp)
                     inputNama.val(nama)
 
@@ -66,26 +61,36 @@
                         el.checked = allPermissions.find(v => v === el.value)
                     })
 
-                    @this.emit('custom-report.prepare-user', nrp, nama, roles, permissions)
-                    @this.emit('custom-report.prepare-transfer', nrp, nama, roles, permissions)
+                    @this.emit('siap.prepare-user', nrp, nama, roles, permissions)
+                    @this.emit('siap.prepare-transfer', nrp, nama, roles, permissions)
                     @this.emit('khanza.prepare-user', nrp, nama)
                     @this.emit('khanza.prepare-transfer', nrp, nama)
+                }
+
+                function clearData() {
+                    setButtonState('disabled', true)
+
+                    inputNRP.val('')
+                    inputNama.val('')
+                    inputRoles.each((i, el) => el.checked = false)
+                    inputPermissions.each((i, el) => el.checked = false)
+                }
+
+                function setButtonState(prop, state) {
+                    buttonDropdownPilihan.prop(prop, state)
                 }
             </script>
         @endpush
     @endonce
 
-    <livewire:user.custom-report.set-role-permissions />
-
-    <livewire:user.custom-report.transfer-role-permissions />
-
+    <livewire:user.siap.set-perizinan />
+    <livewire:user.siap.transfer-perizinan />
     <livewire:user.khanza.set-hak-akses />
-
     <livewire:user.khanza.transfer-hak-akses />
 
     <x-card>
         <x-slot name="header">
-            <x-card.row :livewire="true">
+            <x-card.row>
                 <div class="col-2">
                     <div class="form-group">
                         <label class="text-sm" for="user">NRP</label>
@@ -100,21 +105,21 @@
                 </div>
                 <div class="col-6">
                     <div class="d-flex align-items-end h-100">
-                        <x-dropdown class="mb-3">
-                            <x-slot name="button" class="btn-sm btn-default" title="Set Hak Akses" icon="fas fa-info-circle"></x-slot>
+                        <x-dropdown class="mb-3" livewire>
+                            <x-slot name="button" class="btn-default" title="Pilihan" icon="fas fa-cogs" disabled></x-slot>
                             <x-slot name="menu" class="dropdown-menu-right">
-                                <x-dropdown.item-button class="text-sm" id="button-set-hak-akses" title="SIMRS Khanza" data-toggle="modal" data-target="#modal-set-hak-akses" />
-                                <x-dropdown.item-button class="text-sm" id="button-set-role-permissions" title="Custom Report" data-toggle="modal" data-target="#modal-set-role-permissions" />
+                                <x-dropdown.header class="text-left">SIMRS Khanza</x-dropdown.header>
+                                <x-dropdown.item-button id="khanza-set" icon="fas fa-user-cog fa-fw" title="Set Hak Akses" data-toggle="modal" data-target="#modal-khanza-set" />
+                                <x-dropdown.item-button id="khanza-transfer" icon="fas fa-exchange-alt fa-fw" title="Transfer Hak Akses" data-toggle="modal" data-target="#modal-khanza-transfer" />
+                                <x-dropdown.divider />
+                                <x-dropdown.header class="text-left">SMC Internal App</x-dropdown.header>
+                                <x-dropdown.item-button id="siap-set" icon="fas fa-user-cog fa-fw" title="Set Perizinan" data-toggle="modal" data-target="#modal-siap-set" />
+                                <x-dropdown.item-button id="siap-transfer" icon="fas fa-exchange-alt fa-fw" title="Transfer Perizinan" data-toggle="modal" data-target="#modal-siap-transfer" />
+                                <x-dropdown.divider />
+                                <x-dropdown.header class="text-left">Lainnya</x-dropdown.header>
+                                <x-dropdown.item-button id="siap-impersonate" icon="fas fa-user-secret fa-fw" title="Impersonasi" />
                             </x-slot>
                         </x-dropdown>
-                        <x-dropdown class="mb-3 ml-2">
-                            <x-slot name="button" class="btn-sm btn-default" title="Transfer Hak Akses" icon="fas fa-share-square"></x-slot>
-                            <x-slot name="menu" class="dropdown-menu-right">
-                                <x-dropdown.item-button class="text-sm" id="button-transfer-hak-akses" title="SIMRS Khanza" data-toggle="modal" data-target="#modal-transfer-hak-akses" />
-                                <x-dropdown.item-button class="text-sm" id="button-transfer-role-permissions" title="Custom Report" data-toggle="modal" data-target="#modal-transfer-role-permissions" />
-                            </x-slot>
-                        </x-dropdown>
-                        <x-button class="btn-default ml-2 mb-3" id="impersonate" title="Impersonasi" icon="fas fa-user-secret" />
                     </div>
                 </div>
             </x-card.row>
