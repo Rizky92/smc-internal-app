@@ -3,15 +3,13 @@
 namespace App\Models\Perawatan;
 
 use App\Models\Dokter;
+use App\Models\Keuangan\BayarPiutang;
 use App\Models\Keuangan\Billing;
-use App\Models\Keuangan\DetailNotaRanap;
 use App\Models\Keuangan\NotaRanap;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class RawatInap extends Model
@@ -62,9 +60,11 @@ class RawatInap extends Model
 
         $sqlSelect = "
             kamar_inap.no_rawat,
+            rujuk_masuk.perujuk,
             reg_periksa.no_rkm_medis,
             pasien.nm_pasien,
             kamar_inap.tgl_keluar,
+            kamar_inap.jam_keluar,
             penjab.png_jawab,
             kamar_inap.stts_pulang,
             kamar.kd_kamar,
@@ -76,6 +76,7 @@ class RawatInap extends Model
         return $query
             ->selectRaw($sqlSelect)
             ->join('reg_periksa', 'kamar_inap.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->leftJoin('rujuk_masuk', 'kamar_inap.no_rawat', '=', 'rujuk_masuk.no_rawat')
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->join('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
@@ -99,5 +100,10 @@ class RawatInap extends Model
     public function nota(): HasOne
     {
         return $this->hasOne(NotaRanap::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function cicilanPiutang(): HasMany
+    {
+        return $this->hasMany(BayarPiutang::class, 'no_rawat', 'no_rawat');
     }
 }

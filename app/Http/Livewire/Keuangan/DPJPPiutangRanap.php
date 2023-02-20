@@ -29,7 +29,7 @@ class DPJPPiutangRanap extends Component
     {
         return [
             'status' => ['except' => 'Belum Lunas'],
-            'jenisBayar' => ['except' => '-', 'as' => 'kd_pj'],
+            'jenisBayar' => ['except' => '', 'as' => 'kd_pj'],
             'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
@@ -46,7 +46,12 @@ class DPJPPiutangRanap extends Component
             ? []
             : RawatInap::query()
                 ->piutangRanap($this->periodeAwal, $this->periodeAkhir, $this->status, $this->jenisBayar)
-                ->with(['dpjpRanap', 'billing' => fn ($query) => $query->totalBillingan()])
+                ->with([
+                    'nota',
+                    'dpjpRanap',
+                    'billing' => fn ($q) => $q->totalBillingan(),
+                ])
+                ->withSum('cicilanPiutang as dibayar', 'besar_cicilan')
                 ->paginate($this->perpage);
     }
 
@@ -59,7 +64,7 @@ class DPJPPiutangRanap extends Component
     protected function defaultValues()
     {
         $this->status = 'Belum Lunas';
-        $this->jenisBayar = '-';
+        $this->jenisBayar = '';
         $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
     }
@@ -74,8 +79,6 @@ class DPJPPiutangRanap extends Component
 
         $this->piutangRanap->map(function (RawatInap $ranap) {
             $billing = $ranap->getAttribute('billing')->sum('total');
-
-            
         });
     }
 
