@@ -3,6 +3,7 @@
 namespace App\Support\Menu;
 
 use Illuminate\Support\Facades\App;
+use Route;
 
 class Generator
 {
@@ -33,5 +34,10 @@ class Generator
     public function __construct(App $app)
     {
         $this->app = $app;
+    }
+
+    public function getRoutes()
+    {
+        return Route::getRoutes()->getRoutes();
     }
 }
