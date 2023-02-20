@@ -5,6 +5,10 @@ namespace App\Providers;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
+use App\Support\Menu\Contracts\GenerateBreadcrumbs;
+use App\Support\Menu\Contracts\GenerateRoutes;
+use App\Support\Menu\Contracts\GenerateViewComponents;
+use App\Support\Menu\Generator;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -55,5 +59,12 @@ class AppServiceProvider extends ServiceProvider
 
             return $this->map(fn ($value) => $value[$key]);
         });
+    }
+
+    public function registerMenuServiceProvider()
+    {
+        $this->app->bind(Generator::class, fn ($app) => new Generator($app));
+        
+        $this->app->alias(Generator::class, 'menu');
     }
 }
