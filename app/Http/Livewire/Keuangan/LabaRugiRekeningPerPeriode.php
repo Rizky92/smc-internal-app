@@ -41,31 +41,32 @@ class LabaRugiRekeningPerPeriode extends Component
             return collect(['D' => [], 'K' => []]);
         }
 
-        return $this->isDeferred
-            ? collect(['D' => [], 'K' => []])
-            : Rekening::query()
-                ->perhitunganLabaRugiTahunan($this->tahun)
-                ->search($this->cari, [
-                    'rekening.kd_rek',
-                    'rekening.nm_rek',
-                    'rekening.tipe',
-                    'rekening.balance',
-                    'rekeningtahun.thn',
-                ])
-                ->sortWithColumns($this->sortColumns, [
-                    'saldo_awal'  => DB::raw('ifnull(rekeningtahun.saldo_awal, 0)'),
-                    'debet'       => DB::raw('round(sum(detailjurnal.debet), 2)'),
-                    'kredit'      => DB::raw('round(sum(detailjurnal.kredit), 2)'),
-                    'saldo_akhir' => DB::raw("case 
-                        when upper(rekening.balance) = 'K'  then round((sum(detailjurnal.kredit) - sum(detailjurnal.debet)) + rekeningtahun.saldo_awal, 2)
-                        when upper(rekening.balance) = 'D'  then round((sum(detailjurnal.debet) - sum(detailjurnal.kredit)) + rekeningtahun.saldo_awal, 2)
-                    end"),
-                ], [
-                    'thn' => 'asc',
-                    'kd_rek' => 'asc',
-                ])
-                ->get()
-                ->mapToGroups(fn ($rekening) => [$rekening->balance => $rekening]);
+        $debetKredit = Rekening::query()
+            ->hitungDebetKreditPerPeriode($this->periodeAwal, $this->periodeAkhir)
+            ->get();
+
+        return $debetKredit->map(function (Rekening $rekening) {
+            $total = 0;
+
+            $debet = $rekening->debet ?? 0;
+            $kredit = $rekening->kredit ?? 0;
+
+            if ($rekening->balance === 'K') {
+                $total = $kredit - $debet;
+            }
+
+            if ($rekening->balance === 'D') {
+                $total = $debet - $kredit;
+            }
+
+            return new Fluent(array_merge(
+                $rekening->only('kd_rek', 'nm_rek', 'balance'),
+                ['debet' => $debet],
+                ['kredit' => $kredit],
+                ['total' => $total],
+            ));
+        })
+            ->mapToGroups(fn ($item) => [$item->balance => $item]);
     }
 
     public function getTotalLabaRugiPerRekeningProperty()
@@ -85,8 +86,12 @@ class LabaRugiRekeningPerPeriode extends Component
         $labaRugi = $totalPendapatan - $totalBebanDanBiaya;
 
         return compact(
-            'totalPendapatan', 'totalDebetPendapatan', 'totalKreditPendapatan',
-            'totalBebanDanBiaya', 'totalDebetBeban', 'totalKreditBeban',
+            'totalPendapatan',
+            'totalDebetPendapatan',
+            'totalKreditPendapatan',
+            'totalBebanDanBiaya',
+            'totalDebetBeban',
+            'totalKreditBeban',
             'labaRugi'
         );
     }

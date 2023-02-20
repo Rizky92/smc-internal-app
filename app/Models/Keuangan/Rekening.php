@@ -22,7 +22,7 @@ class Rekening extends Model
 
     public $timestamps = false;
 
-    public function scopeHitungDebetKreditPerPeriode(Builder $query, string $tglAwal = '', string $tglAkhir = '', $kodeRekening = null): Builder
+    public function scopeHitungDebetKreditPerPeriode(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->format('Y-m-d');
@@ -34,6 +34,8 @@ class Rekening extends Model
 
         $sqlSelect = "
             rekening.kd_rek,
+            rekening.nm_rek,
+            rekening.balance,
             round(sum(detailjurnal.debet), 2) debet,
             round(sum(detailjurnal.kredit), 2) kredit
         ";
@@ -42,11 +44,7 @@ class Rekening extends Model
             ->selectRaw($sqlSelect)
             ->leftJoin('detailjurnal', 'rekening.kd_rek', '=', 'detailjurnal.kd_rek')
             ->leftJoin('jurnal', 'detailjurnal.no_jurnal', '=', 'jurnal.no_jurnal')
-            ->when(
-                !is_null($kodeRekening) && $kodeRekening instanceof Arrayable,
-                fn (Builder $query) => $query->whereIn('rekening.kd_rek', $kodeRekening->toArray()),
-                fn (Builder $query) => $query->where('tipe', 'R')
-            )
+            ->where('rekening.tipe', 'R')
             ->whereBetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir])
             ->groupBy('rekening.kd_rek');
     }
