@@ -34,103 +34,137 @@
                         <th scope="row">TOTAL KUNJUNGAN</th>
                         @forelse ($this->kunjunganTotal as $item)
                             <th class="text-center px-0" scope="col" width="150">{{ $item }}</th>
-                        @endforeach
+                        @empty
+                            <x-table.td-empty colspan="12" />
+                        @endforelse
                     </x-table.tr>
                     <x-table.tr>
                         <th scope="row">Kunjungan Rawat Jalan</th>
                         @forelse ($this->kunjunganRalan as $item)
                             <td class="text-center px-0" width="150">{{ $item }}</td>
-                        @endforeach
+                        @empty
+                            <x-table.td-empty colspan="12" />
+                        @endforelse
                     </x-table.tr>
                     <x-table.tr>
                         <th scope="row">Kunjungan Rawat Inap</th>
                         @forelse ($this->kunjunganRanap as $item)
                             <td class="text-center px-0" width="150">{{ $item }}</td>
-                        @endforeach
+                        @empty
+                            <x-table.td-empty colspan="12" />
+                        @endforelse
                     </x-table.tr>
                     <x-table.tr>
                         <th>Kunjungan IGD</th>
                         @forelse ($this->kunjunganIGD as $item)
                             <td class="text-center px-0" width="150">{{ $item }}</td>
-                        @endforeach
+                        @empty
+                            <x-table.td-empty colspan="12" />
+                        @endforelse
                     </x-table.tr>
                     <x-table.tr>
                         <th>Kunjungan <i>Walk in</i></th>
                         @forelse ($this->kunjunganWalkIn as $item)
                             <td class="text-center px-0" width="150">{{ $item }}</td>
-                        @endforeach
+                        @empty
+                            <x-table.td-empty colspan="12" />
+                        @endforelse
                     </x-table.tr>
                     <x-table.tr>
                         <th>TOTAL PENDAPATAN</th>
                         @forelse ($this->pendapatanObatTotal as $item)
                             <th class="text-center px-0" width="150">{{ rp($item) }}</th>
-                        @endforeach
+                        @empty
+                            <x-table.td-empty colspan="12" />
+                        @endforelse
                     </x-table.tr>
                     <x-table.tr>
                         <th>Pendapatan Obat Rawat Jalan</th>
                         @forelse ($this->pendapatanObatRalan as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
-                        @endforeach
+                        @empty
+                            <x-table.td-empty colspan="12" />
+                        @endforelse
                     </x-table.tr>
                     <x-table.tr>
                         <th>Pendapatan Obat Rawat Inap</th>
                         @forelse ($this->pendapatanObatRanap as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
-                        @endforeach
+                        @empty
+                            <x-table.td-empty colspan="12" />
+                        @endforelse
                     </x-table.tr>
                     <x-table.tr>
                         <th>Pendapatan Obat IGD</th>
                         @forelse ($this->pendapatanObatIGD as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
-                        @endforeach
+                        @empty
+                            <x-table.td-empty colspan="12" />
+                        @endforelse
                     </x-table.tr>
                     <x-table.tr>
                         <th>Pendapatan Obat <i>Walk in</i></th>
                         @forelse ($this->pendapatanObatWalkIn as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
-                        @endforeach
+                        @empty
+                            <x-table.td-empty colspan="12" />
+                        @endforelse
                     </x-table.tr>
                     <x-table.tr>
                         <th>Pendapatan Alkes Farmasi dan Unit</th>
                         @forelse ($this->pendapatanAlkesFarmasiDanUnit as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
-                        @endforeach
+                        @empty
+                            <x-table.td-empty colspan="12" />
+                        @endforelse
                     </x-table.tr>
                     <x-table.tr>
                         <th>Retur Obat</th>
                         @forelse ($this->returObat as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
-                        @endforeach
+                        @empty
+                            <x-table.td-empty colspan="12" />
+                        @endforelse
                     </x-table.tr>
                     <x-table.tr>
                         <th>Pembelian Farmasi</th>
                         @forelse ($this->pembelianFarmasi as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
-                        @endforeach
+                        @empty
+                            <x-table.td-empty colspan="12" />
+                        @endforelse
                     </x-table.tr>
                     <x-table.tr>
                         <th>Retur Supplier</th>
                         @forelse ($this->returSupplier as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
-                        @endforeach
+                        @empty
+                            <x-table.td-empty colspan="12" />
+                        @endforelse
                     </x-table.tr>
                     <x-table.tr>
                         <th>TOTAL PEMBELIAN<br> (<i>Pembelian Farmasi - Retur Supplier</i>)</th>
                         @forelse ($this->totalBersihPembelianFarmasi as $item)
                             <th class="text-center px-0" width="150">{{ rp($item) }}</th>
-                        @endforeach
+                        @empty
+                            <x-table.td-empty colspan="12" />
+                        @endforelse
                     </x-table.tr>
                     <x-table.tr>
                         <th>Pemakaian BHP</th>
                         @forelse ($this->stokKeluarMedis as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
-                        @endforeach
+                        @empty
+                            <x-table.td-empty colspan="12" />
+                        @endforelse
                     </x-table.tr>
                     <x-table.tr>
                         <th>Transfer Order</th>
                         @forelse ($this->transferOrder as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
-                        @endforeach
+                        @empty
+                            <x-table.td-empty colspan="12" />
+                        @endforelse
                     </x-table.tr>
                 </x-slot>
             </x-table>

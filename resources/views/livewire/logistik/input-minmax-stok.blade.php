@@ -34,7 +34,7 @@
 
                     buttonSimpan = $('#simpan-data')
                     buttonBatalSimpan = $('#batal-simpan')
-                    buttonResetFilters = $('button#reset-filters')
+                    buttonResetFilters = $('button#reset-filter')
 
                     buttonSimpan.prop('disabled', true)
                     buttonBatalSimpan.prop('disabled', true)
