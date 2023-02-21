@@ -6,6 +6,8 @@ use App\Models\Dokter;
 use App\Models\Keuangan\BayarPiutang;
 use App\Models\Keuangan\Billing;
 use App\Models\Keuangan\NotaRanap;
+use App\Support\Traits\Eloquent\Searchable;
+use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -14,6 +16,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class RawatInap extends Model
 {
+    use Sortable, Searchable;
+
     protected $primaryKey = false;
 
     protected $keyType = false;
@@ -30,24 +34,11 @@ class RawatInap extends Model
         'ttl_biaya',
     ];
 
-    public static $pivotColumns = [
-        'trf_kamar',
-        'diagnosa_awal',
-        'diagnosa_akhir',
-        'tgl_masuk',
-        'jam_masuk',
-        'tgl_keluar',
-        'jam_keluar',
-        'lama',
-        'ttl_biaya',
-        'stts_pulang',
-    ];
-
     public function scopePiutangRanap(
         Builder $query,
         string $tglAwal = '',
         string $tglAkhir = '',
-        string $status = 'Belum Lunas',
+        string $status = '',
         string $jenisBayar = ''
     ): Builder {
         if (empty($tglAwal)) {
@@ -60,15 +51,13 @@ class RawatInap extends Model
 
         $sqlSelect = "
             kamar_inap.no_rawat,
-            rujuk_masuk.perujuk,
+            nota_inap.no_nota,
+            ifnull(rujuk_masuk.perujuk, '-') as perujuk,
             reg_periksa.no_rkm_medis,
             pasien.nm_pasien,
-            kamar_inap.tgl_keluar,
-            kamar_inap.jam_keluar,
+            timestamp(kamar_inap.tgl_keluar, kamar_inap.jam_keluar) as waktu_keluar,
             penjab.png_jawab,
-            kamar_inap.stts_pulang,
-            kamar.kd_kamar,
-            bangsal.nm_bangsal,
+            concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal) as ruangan,
             piutang_pasien.uangmuka,
             piutang_pasien.totalpiutang
         ";
@@ -77,13 +66,15 @@ class RawatInap extends Model
             ->selectRaw($sqlSelect)
             ->join('reg_periksa', 'kamar_inap.no_rawat', '=', 'reg_periksa.no_rawat')
             ->leftJoin('rujuk_masuk', 'kamar_inap.no_rawat', '=', 'rujuk_masuk.no_rawat')
+            ->leftJoin('nota_inap', 'reg_periksa.no_rawat', '=', 'nota_inap.no_rawat')
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->join('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
             ->join('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
             ->join('piutang_pasien', 'kamar_inap.no_rawat', '=', 'piutang_pasien.no_rawat')
+            ->whereNotIn('kamar_inap.stts_pulang', ['-', 'Pindah Kamar'])
             ->whereBetween('kamar_inap.tgl_keluar', [$tglAwal, $tglAkhir])
-            ->where('piutang_pasien.status', $status)
+            ->when(!empty($status), fn ($query) => $query->where('piutang_pasien.status', $status))
             ->where('reg_periksa.kd_pj', $jenisBayar);
     }
 
