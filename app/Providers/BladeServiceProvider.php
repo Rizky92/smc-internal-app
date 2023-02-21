@@ -25,5 +25,9 @@ class BladeServiceProvider extends ServiceProvider
     public function boot()
     {
         Blade::if('inarray', fn (mixed $needle, array $haystack, bool $strict = false) => in_array($needle, $haystack, $strict));
+
+        Blade::if('null', fn ($expr) => is_null($expr));
+
+        Blade::if('notnull', fn ($expr) => !is_null($expr));
     }
 }

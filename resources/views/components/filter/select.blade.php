@@ -2,7 +2,7 @@
 
 @php
     $attrs = [
-        'class' => 'custom-control custom-select',
+        'class' => 'custom-control custom-select text-sm',
         'wire:model.defer' => $model,
     ];
     if ($constantWidth) {
