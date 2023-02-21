@@ -8,8 +8,7 @@ use App\Models\Aplikasi\User;
 use App\Support\Menu\Generator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -32,33 +31,51 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->registerBladeDirectives();
+        $this->registerModelConfigurations();
+        $this->registerMorphRelations();
+        $this->registerSuperadminRole();
+        $this->registerCollectionMacros();
+        $this->registerMenuProvider();
+    }
+
+    public function registerBladeDirectives()
+    {
+        Blade::if('inarray', fn (mixed $needle, array $haystack, bool $strict = false) => in_array($needle, $haystack, $strict));
+
+        Blade::if('null', fn ($expr) => is_null($expr));
+
+        Blade::if('notnull', fn ($expr) => !is_null($expr));
+    }
+
+    public function registerModelConfigurations()
+    {
+        Model::preventLazyLoading(! app()->isProduction());
+    }
+
+    public function registerMorphRelations()
+    {
         Relation::morphMap([
             'User' => User::class,
             'Role' => Role::class,
             'Permission' => Permission::class,
         ]);
+    }
 
+    public function registerSuperadminRole()
+    {
         Gate::before(function (User $user) {
             return $user->hasRole(config('permission.superadmin_name')) ? true : null;
         });
-
-        Model::preventLazyLoading(! app()->isProduction());
-
-        Collection::macro('takeEach', function ($key) {
-            /** @var \Illuminate\Support\Collection $this */
-
-            if (Arr::isAssoc($this->all())) {
-                throw new Exception("Collection must be an array list, array associative found.");
-            }
-
-            return $this->map(fn ($value) => $value[$key]);
-        });
     }
 
-    public function registerMenuServiceProvider()
+    public function registerCollectionMacros()
     {
-        $this->app->bind(Generator::class, fn ($app) => new Generator($app));
-        
-        $this->app->alias(Generator::class, 'menu');
+        //
+    }
+
+    public function registerMenuProvider()
+    {
+        $this->app->bind('menu', fn ($app) => new Generator($app));
     }
 }
