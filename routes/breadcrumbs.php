@@ -70,6 +70,11 @@ Breadcrumbs::for('admin.keuangan.laba-rugi-rekening', function (Trail $trail) {
     $trail->push('Laba Rugi Rekening', route('admin.keuangan.laba-rugi-rekening'));
 });
 
+Breadcrumbs::for('admin.keuangan.dpjp-piutang-ranap', function (Trail $trail) {
+    $trail->parent('admin.keuangan');
+    $trail->push('DPJP Piutang Ranap', route('admin.keuangan.dpjp-piutang-ranap'));
+});
+
 
 Breadcrumbs::for('admin.farmasi', function (Trail $trail) {
     $trail->parent('admin.dashboard');

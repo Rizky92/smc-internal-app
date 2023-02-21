@@ -13,6 +13,7 @@ use App\Http\Livewire\Farmasi\StokDaruratFarmasi;
 use App\Http\Livewire\HakAkses\Siap;
 use App\Http\Livewire\HakAkses\Khanza;
 use App\Http\Livewire\Keuangan\BukuBesar;
+use App\Http\Livewire\Keuangan\DPJPPiutangRanap;
 use App\Http\Livewire\Keuangan\LabaRugiRekeningPerPeriode;
 use App\Http\Livewire\Keuangan\LaporanPenyelesaianBillingPerPetugas;
 use App\Http\Livewire\Keuangan\LaporanPotonganBiayaPasien;
@@ -110,6 +111,10 @@ Route::prefix('admin')
                 Route::get('laba-rugi-rekening', LabaRugiRekeningPerPeriode::class)
                     ->middleware('can:keuangan.laba-rugi-rekening.read')
                     ->name('laba-rugi-rekening');
+
+                Route::get('dpjp-piutang-ranap', DPJPPiutangRanap::class)
+                    ->middleware('can:keuangan.dpjp-piutang-ranap.read')
+                    ->name('dpjp-piutang-ranap');
             });
 
         Route::prefix('farmasi')
