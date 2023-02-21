@@ -80,7 +80,7 @@ class RawatInap extends Model
 
     public function dpjpRanap(): BelongsToMany
     {
-        return $this->belongsToMany(Dokter::class, 'dpjp_ranap', 'kd_dokter', 'no_rawat');
+        return $this->belongsToMany(Dokter::class, 'dpjp_ranap', 'no_rawat', 'kd_dokter', 'no_rawat', 'kd_dokter');
     }
 
     public function billing(): HasMany
