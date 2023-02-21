@@ -1,7 +1,7 @@
 <div>
     <x-flash />
 
-    <x-card wire:init="loadProperties">
+    <x-card use-loading wire:init="loadProperties">
         <x-slot name="header">
             <x-card.row-col>
                 <x-filter.range-date />

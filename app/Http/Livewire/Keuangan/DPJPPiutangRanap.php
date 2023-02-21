@@ -54,19 +54,21 @@ class DPJPPiutangRanap extends Component
 
     public function getPiutangRanapProperty()
     {
-        return RawatInap::query()
-            ->piutangRanap($this->periodeAwal, $this->periodeAkhir, $this->status, $this->jenisBayar)
-            ->with([
-                'dpjpRanap',
-                'billing' => fn ($q) => $q->totalBillingan(),
-            ])
-            ->withSum('cicilanPiutang as dibayar', 'besar_cicilan')
-            ->sortWithColumns($this->sortColumns, [
-                'perujuk' => DB::raw("ifnull(rujuk_masuk.perujuk, '-')"),
-                'waktu_keluar' => DB::raw("timestamp(kamar_inap.tgl_keluar, kamar_inap.jam_keluar)"),
-                'ruangan' => DB::raw("concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal)"),
-            ])
-            ->paginate($this->perpage);
+        return $this->isDeferred
+            ? []
+            : RawatInap::query()
+                ->piutangRanap($this->periodeAwal, $this->periodeAkhir, $this->status, $this->jenisBayar)
+                ->with([
+                    'dpjpRanap',
+                    'billing' => fn ($q) => $q->totalBillingan(),
+                ])
+                ->withSum('cicilanPiutang as dibayar', 'besar_cicilan')
+                ->sortWithColumns($this->sortColumns, [
+                    'perujuk' => DB::raw("ifnull(rujuk_masuk.perujuk, '-')"),
+                    'waktu_keluar' => DB::raw("timestamp(kamar_inap.tgl_keluar, kamar_inap.jam_keluar)"),
+                    'ruangan' => DB::raw("concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal)"),
+                ])
+                ->paginate($this->perpage);
     }
 
     public function render()

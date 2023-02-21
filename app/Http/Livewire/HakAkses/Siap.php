@@ -45,7 +45,7 @@ class Siap extends Component
     public function render()
     {
         return view('livewire.hak-akses.siap')
-            ->layout(BaseLayout::class, ['title' => 'Pengaturan Hak Akses']);
+            ->layout(BaseLayout::class, ['title' => 'Pengaturan perizinan SMC Internal App']);
     }
 
     protected function defaultValues()

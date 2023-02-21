@@ -28,7 +28,7 @@ trait ExcelExportable
     public function exportToExcel()
     {
         if (method_exists($this, 'flashInfo')) {
-            $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+            $this->emit('flash.info', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
         }
 
         $this->emit('beginExcelExport');

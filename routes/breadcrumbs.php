@@ -155,14 +155,14 @@ Breadcrumbs::for('admin.hak-akses', function (Trail $trail) {
     $trail->push('Hak Akses');
 });
 
-Breadcrumbs::for('admin.hak-akses.custom-report', function (Trail $trail) {
+Breadcrumbs::for('admin.hak-akses.siap', function (Trail $trail) {
     $trail->parent('admin.hak-akses');
-    $trail->push('Custom Report', route('admin.hak-akses.custom-report'));
+    $trail->push('SMC Internal App', route('admin.hak-akses.siap'));
 });
 
 Breadcrumbs::for('admin.hak-akses.khanza', function (Trail $trail) {
     $trail->parent('admin.hak-akses');
-    $trail->push('Khanza', route('admin.hak-akses.khanza'));
+    $trail->push('SIMRS Khanza', route('admin.hak-akses.khanza'));
 });
 
 

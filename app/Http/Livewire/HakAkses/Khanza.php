@@ -32,7 +32,7 @@ class Khanza extends Component
     public function render()
     {
         return view('livewire.hak-akses.khanza')
-            ->layout(BaseLayout::class, ['title' => 'Manajemen Hak Akses SIMRS Khanza']);
+            ->layout(BaseLayout::class, ['title' => 'Pengaturan perizinan SIMRS Khanza']);
     }
 
     protected function defaultValues()

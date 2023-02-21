@@ -34,7 +34,7 @@
         @endpush
     @endonce
 
-    <x-card>
+    <x-card use-loading>
         <x-slot name="header">
             <x-card.row-col>
                 <x-filter.range-date />

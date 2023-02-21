@@ -174,10 +174,10 @@ Route::prefix('admin')
                 Route::get('manajemen-user', ManajemenUser::class)
                     ->name('manajemen-user');
 
-                Route::get('hak-akses/custom-report', Siap::class)
-                    ->name('hak-akses.custom-report');
+                Route::get('hak-akses/smc-internal-app', Siap::class)
+                    ->name('hak-akses.siap');
 
-                Route::get('hak-akses/khanza', Khanza::class)
+                Route::get('hak-akses/simrs-khanza', Khanza::class)
                     ->name('hak-akses.khanza');
 
                 Route::get('logs', [LogViewerController::class, 'index'])

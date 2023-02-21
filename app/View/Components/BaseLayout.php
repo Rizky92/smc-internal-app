@@ -142,13 +142,13 @@ class BaseLayout extends Component
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.laba-rugi-rekening.read'),
                     ],
-                    [
-                        'name' => 'DPJP Piutang Ranap',
-                        'url' => route('admin.keuangan.dpjp-piutang-ranap'),
-                        'icon' => "fas fa-file-invoice",
-                        'type' => 'link',
-                        'hasAnyPermissions' => $user->can('keuangan.dpjp-piutang-ranap.read'),
-                    ],
+                    // [
+                    //     'name' => 'DPJP Piutang Ranap',
+                    //     'url' => route('admin.keuangan.dpjp-piutang-ranap'),
+                    //     'icon' => "fas fa-file-invoice",
+                    //     'type' => 'link',
+                    //     'hasAnyPermissions' => $user->can('keuangan.dpjp-piutang-ranap.read'),
+                    // ],
                 ],
             ],
             [
@@ -255,15 +255,15 @@ class BaseLayout extends Component
                 'hasAnyPermissions' => $user->hasRole($develop),
                 'items' => [
                     [
-                        'name' => 'Khanza',
+                        'name' => 'SIMRS Khanza',
                         'url' => route('admin.hak-akses.khanza'),
                         'icon' => "fas fa-key",
                         'type' => 'link',
                         'hasAnyPermissions' => $user->hasRole($develop),
                     ],
                     [
-                        'name' => 'Custom Report',
-                        'url' => route('admin.hak-akses.custom-report'),
+                        'name' => 'SMC Internal App',
+                        'url' => route('admin.hak-akses.siap'),
                         'icon' => 'fas fa-key',
                         'type' => 'link',
                         'hasAnyPermissions' => $user->hasRole($develop),
