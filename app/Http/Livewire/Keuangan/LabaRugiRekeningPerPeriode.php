@@ -41,31 +41,35 @@ class LabaRugiRekeningPerPeriode extends Component
             return collect(['D' => [], 'K' => []]);
         }
 
+        $semuaRekening = Rekening::semuaRekening()->get();
+
         $debetKredit = Rekening::query()
             ->hitungDebetKreditPerPeriode($this->periodeAwal, $this->periodeAkhir)
             ->get();
 
-        return $debetKredit->map(function (Rekening $rekening) {
-            $total = 0;
+        return $semuaRekening
+            ->merge($debetKredit)
+            ->map(function (Rekening $rekening) {
+                $total = 0;
 
-            $debet = $rekening->debet ?? 0;
-            $kredit = $rekening->kredit ?? 0;
+                $debet = $rekening->debet ?? 0;
+                $kredit = $rekening->kredit ?? 0;
 
-            if ($rekening->balance === 'K') {
-                $total = $kredit - $debet;
-            }
+                if ($rekening->balance === 'K') {
+                    $total = $kredit - $debet;
+                }
 
-            if ($rekening->balance === 'D') {
-                $total = $debet - $kredit;
-            }
+                if ($rekening->balance === 'D') {
+                    $total = $debet - $kredit;
+                }
 
-            return new Fluent(array_merge(
-                $rekening->only('kd_rek', 'nm_rek', 'balance'),
-                ['debet' => $debet],
-                ['kredit' => $kredit],
-                ['total' => $total],
-            ));
-        })
+                return new Fluent(array_merge(
+                    $rekening->only('kd_rek', 'nm_rek', 'balance'),
+                    ['debet' => $debet],
+                    ['kredit' => $kredit],
+                    ['total' => $total],
+                ));
+            })
             ->mapToGroups(fn ($item) => [$item->balance => $item]);
     }
 

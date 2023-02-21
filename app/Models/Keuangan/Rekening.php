@@ -22,6 +22,11 @@ class Rekening extends Model
 
     public $timestamps = false;
 
+    public function scopeSemuaRekening(Builder $query): Builder
+    {
+        return $query->select(['kd_rek', 'nm_rek', 'balance'])->where('tipe', 'R');
+    }
+
     public function scopeHitungDebetKreditPerPeriode(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
