@@ -1,39 +1,6 @@
 <div>
     <x-flash />
 
-    @once
-        @push('css')
-            <link href="{{ asset('plugins/select2/css/select2.min.css') }}" rel="stylesheet">
-            <link href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}" rel="stylesheet">
-        @endpush
-        @push('js')
-            <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
-            <script>
-                let filterPenjamin = $('select#penjamin')
-
-                $(document).ready(() => {
-                    filterPenjamin.select2({
-                        dropdownCssClass: 'text-sm px-0',
-                    })
-
-                    Livewire.hook('element.updated', (el, component) => {
-                        filterPenjamin.select2({
-                            dropdownCssClass: 'text-sm px-0',
-                        })
-                    })
-
-                    filterPenjamin.on('select2:select', e => {
-                        @this.set('jenisBayar', filterPenjamin.val(), true)
-                    })
-
-                    filterPenjamin.on('select2:unselect', e => {
-                        @this.set('jenisBayar', filterPenjamin.val(), true)
-                    })
-                })
-            </script>
-        @endpush
-    @endonce
-
     <x-card wire:init="loadProperties">
         <x-slot name="header">
             <x-card.row-col>
@@ -41,18 +8,15 @@
                 <x-filter.button-export-excel class="ml-auto" />
             </x-card.row-col>
             <x-card.row-col class="mt-2">
-                <x-filter.select-perpage />
-                <x-filter.label class="ml-auto" constant-width>Jenis Bayar :</x-filter.label>
-                <div wire:ignore style="width: 24rem">
-                    <select class="form-control form-control-sm simple-select2-sm input-sm" id="penjamin" autocomplete="off">
-                        <option value="">&nbsp;</option>
-                        @foreach ($this->penjamin as $kode => $nama)
-                            <option value="{{ $kode }}">{{ $kode }} - {{ $nama }}</option>
-                        @endforeach
-                    </select>
+                <x-filter.label constant-width>Status :</x-filter.label>
+                <div class="input-group input-group-sm" style="width: 9rem">
+                    <x-filter.select model="status" :options="['' => 'Semua', 'Belum Lunas' => 'Belum Lunas', 'Lunas' => 'Lunas']" />
                 </div>
+                <x-filter.label class="ml-auto mr-3" constant-width>Jenis Bayar :</x-filter.label>
+                <x-filter.select2 title="Penjamin" model="jenisBayar" :collection="$this->penjamin" />
             </x-card.row-col>
             <x-card.row-col class="mt-2">
+                <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
             </x-card.row-col>
