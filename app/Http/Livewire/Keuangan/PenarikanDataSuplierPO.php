@@ -115,8 +115,8 @@ class PenarikanDataSuplierPO extends Component
     protected function dataPerSheet(): array
     {
         return [
-            'Obat/BHP/Alkse' => JurnalMedis::jurnalPenerimaanBarang($this->periodeAwal, $this->periodeAkhir)->get()->toArray(),
-            'Non Medis' => JurnalNonMedis::jurnalPenerimaanBarang($this->periodeAwal, $this->periodeAkhir)->get()->toArray(),
+            'Medis' => JurnalMedis::jurnalPenerimaanBarang($this->periodeAwal, $this->periodeAkhir)->get(),
+            'Non Medis' => JurnalNonMedis::jurnalPenerimaanBarang($this->periodeAwal, $this->periodeAkhir)->get(),
         ];
     }
 
