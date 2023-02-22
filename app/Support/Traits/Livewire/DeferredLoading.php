@@ -2,18 +2,18 @@
 
 namespace App\Support\Traits\Livewire;
 
-trait DefferedLoading
+trait DeferredLoading
 {
-    public $isDeffered;
+    public $isDeferred;
 
-    public function mountDefferedLoading()
+    public function mountDeferredLoading()
     {
-        $this->isDeffered = true;
+        $this->isDeferred = true;
     }
 
     public function loadProperties()
     {
-        $this->isDeffered = false;
+        $this->isDeferred = false;
 
         $this->emit('$refresh');
     }

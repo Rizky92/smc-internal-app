@@ -2,13 +2,13 @@
 
 namespace App\Http\Livewire\HakAkses\Modal;
 
-use App\Support\Traits\Livewire\DefferedLoading;
+use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\Filterable;
 use Livewire\Component;
 
 class Siap extends Component
 {
-    use Filterable, DefferedLoading;
+    use Filterable, DeferredLoading;
 
     public function mount()
     {
@@ -22,6 +22,5 @@ class Siap extends Component
 
     protected function defaultValues()
     {
-        
     }
 }

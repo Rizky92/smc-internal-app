@@ -2,13 +2,10 @@
 
 namespace App\Models\Logistik;
 
-use App\Models\Satuan;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\DB;
 
 class BarangNonMedis extends Model
@@ -32,20 +29,20 @@ class BarangNonMedis extends Model
         $selectQuery = "
             ipsrsbarang.kode_brng,
             ipsrsbarang.nama_brng,
-            IFNULL(ipsrssuplier.kode_suplier, '-') kode_supplier,
-            IFNULL(ipsrssuplier.nama_suplier, '-') nama_supplier,
+            ifnull(ipsrssuplier.kode_suplier, '-') kode_supplier,
+            ifnull(ipsrssuplier.nama_suplier, '-') nama_supplier,
             ipsrsjenisbarang.nm_jenis jenis,
             kodesatuan.satuan,
-            IFNULL({$db}.ipsrs_minmax_stok_barang.stok_min, 0) stokmin,
-            IFNULL({$db}.ipsrs_minmax_stok_barang.stok_max, 0) stokmax,
+            ifnull({$db}.ipsrs_minmax_stok_barang.stok_min, 0) stokmin,
+            ifnull({$db}.ipsrs_minmax_stok_barang.stok_max, 0) stokmax,
             ipsrsbarang.stok,
-            IF(ipsrsbarang.stok <= IFNULL({$db}.ipsrs_minmax_stok_barang.stok_min, 0), IFNULL(IFNULL({$db}.ipsrs_minmax_stok_barang.stok_max, IFNULL({$db}.ipsrs_minmax_stok_barang.stok_min, 0)) - ipsrsbarang.stok, 0), 0) saran_order,
+            if(ipsrsbarang.stok <= ifnull({$db}.ipsrs_minmax_stok_barang.stok_min, 0), ifnull(ifnull({$db}.ipsrs_minmax_stok_barang.stok_max, ifnull({$db}.ipsrs_minmax_stok_barang.stok_min, 0)) - ipsrsbarang.stok, 0), 0) saran_order,
             ipsrsbarang.harga,
-            IF(ipsrsbarang.stok <= IFNULL({$db}.ipsrs_minmax_stok_barang.stok_min, 0), ipsrsbarang.harga * (IFNULL({$db}.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok), 0) total_harga
+            if(ipsrsbarang.stok <= ifnull({$db}.ipsrs_minmax_stok_barang.stok_min, 0), ipsrsbarang.harga * (ifnull({$db}.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok), 0) total_harga
         ";
 
         if ($export) {
-            $selectQuery = str_replace("IFNULL(ipsrssuplier.kode_suplier, '-') kode_supplier,", '', $selectQuery);
+            $selectQuery = str_replace("ifnull(ipsrssuplier.kode_suplier, '-') kode_supplier,", '', $selectQuery);
         }
 
         return $query->selectRaw($selectQuery)
@@ -63,22 +60,22 @@ class BarangNonMedis extends Model
         return $query->selectRaw("
             ipsrsbarang.kode_brng,
             ipsrsbarang.nama_brng,
-            IFNULL(ipsrssuplier.nama_suplier, '-') nama_supplier,
+            ifnull(ipsrssuplier.nama_suplier, '-') nama_supplier,
             ipsrsjenisbarang.nm_jenis jenis,
             kodesatuan.satuan,
-            IFNULL({$db}.ipsrs_minmax_stok_barang.stok_min, 0) stokmin,
-            IFNULL({$db}.ipsrs_minmax_stok_barang.stok_max, 0) stokmax,
+            ifnull({$db}.ipsrs_minmax_stok_barang.stok_min, 0) stokmin,
+            ifnull({$db}.ipsrs_minmax_stok_barang.stok_max, 0) stokmax,
             ipsrsbarang.stok,
-            IFNULL(IFNULL({$db}.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok, '0') saran_order,
+            ifnull(ifnull({$db}.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok, '0') saran_order,
             ipsrsbarang.harga,
-            (ipsrsbarang.harga * (IFNULL({$db}.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok)) total_harga
+            (ipsrsbarang.harga * (ifnull({$db}.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok)) total_harga
         ")
             ->leftJoin('ipsrsjenisbarang', 'ipsrsbarang.jenis', '=', 'ipsrsjenisbarang.kd_jenis')
             ->leftJoin('kodesatuan', 'ipsrsbarang.kode_sat', '=', 'kodesatuan.kode_sat')
             ->leftJoin("{$db}.ipsrs_minmax_stok_barang", 'ipsrsbarang.kode_brng', '=', "{$db}.ipsrs_minmax_stok_barang.kode_brng")
             ->leftJoin('ipsrssuplier', "{$db}.ipsrs_minmax_stok_barang.kode_suplier", '=', 'ipsrssuplier.kode_suplier')
             ->where('ipsrsbarang.status', '1')
-            ->where('ipsrsbarang.stok', '<=', DB::raw("IFNULL({$db}.ipsrs_minmax_stok_barang.stok_min, 0)"))
-            ->when(!$saranOrderNol, fn (Builder $query) => $query->whereRaw("IFNULL(IFNULL({$db}.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok, '0') > 0"));
+            ->where('ipsrsbarang.stok', '<=', DB::raw("ifnull({$db}.ipsrs_minmax_stok_barang.stok_min, 0)"))
+            ->when(!$saranOrderNol, fn (Builder $query) => $query->whereRaw("ifnull(ifnull({$db}.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok, '0') > 0"));
     }
 }

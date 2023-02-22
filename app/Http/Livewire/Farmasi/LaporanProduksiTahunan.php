@@ -10,6 +10,7 @@ use App\Models\Farmasi\ResepObat;
 use App\Models\Farmasi\ReturPenjualanObat;
 use App\Models\Farmasi\Inventaris\PemesananObat;
 use App\Models\Farmasi\Inventaris\ReturSupplierObat;
+use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
@@ -20,7 +21,7 @@ use Livewire\Component;
 
 class LaporanProduksiTahunan extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
+    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
     public $tahun;
 

@@ -36,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
         $this->registerMorphRelations();
         $this->registerSuperadminRole();
         $this->registerCollectionMacros();
+        $this->registerQueryBuilderMacros();
         $this->registerMenuProvider();
     }
 
@@ -77,5 +78,10 @@ class AppServiceProvider extends ServiceProvider
     public function registerMenuProvider()
     {
         $this->app->bind('menu', fn ($app) => new Generator($app));
+    }
+
+    public function registerQueryBuilderMacros()
+    {
+        
     }
 }

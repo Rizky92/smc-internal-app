@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\RekamMedis;
 
 use App\Models\RekamMedis\DemografiPasien;
+use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
@@ -14,7 +15,7 @@ use Livewire\WithPagination;
 
 class LaporanDemografi extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
     public $periodeAwal;
 

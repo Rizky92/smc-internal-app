@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Keuangan;
 
 use App\Models\Perawatan\RawatInap;
 use App\Models\RekamMedis\Penjamin;
+use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
@@ -19,7 +20,7 @@ use Livewire\WithPagination;
 
 class DPJPPiutangRanap extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
+    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
     public $status;
 
@@ -57,18 +58,18 @@ class DPJPPiutangRanap extends Component
         return $this->isDeferred
             ? []
             : RawatInap::query()
-                ->piutangRanap($this->periodeAwal, $this->periodeAkhir, $this->status, $this->jenisBayar)
-                ->with([
-                    'dpjpRanap',
-                    'billing' => fn ($q) => $q->totalBillingan(),
-                ])
-                ->withSum('cicilanPiutang as dibayar', 'besar_cicilan')
-                ->sortWithColumns($this->sortColumns, [
-                    'perujuk' => DB::raw("ifnull(rujuk_masuk.perujuk, '-')"),
-                    'waktu_keluar' => DB::raw("timestamp(kamar_inap.tgl_keluar, kamar_inap.jam_keluar)"),
-                    'ruangan' => DB::raw("concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal)"),
-                ])
-                ->paginate($this->perpage);
+            ->piutangRanap($this->periodeAwal, $this->periodeAkhir, $this->status, $this->jenisBayar)
+            ->with([
+                'dpjpRanap',
+                'billing' => fn ($q) => $q->totalBillingan(),
+            ])
+            ->withSum('cicilanPiutang as dibayar', 'besar_cicilan')
+            ->sortWithColumns($this->sortColumns, [
+                'perujuk' => DB::raw("ifnull(rujuk_masuk.perujuk, '-')"),
+                'waktu_keluar' => DB::raw("timestamp(kamar_inap.tgl_keluar, kamar_inap.jam_keluar)"),
+                'ruangan' => DB::raw("concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal)"),
+            ])
+            ->paginate($this->perpage);
     }
 
     public function render()

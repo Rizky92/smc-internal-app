@@ -8,6 +8,10 @@ use Rizky92\Xlswriter\ExcelExport;
 
 trait ExcelExportable
 {
+    private $invalidSheetCharacters = [
+        '/',
+    ];
+
     public function initializeExcelExportable()
     {
         $this->listeners = array_merge($this->listeners, [
@@ -25,11 +29,21 @@ trait ExcelExportable
         return [];
     }
 
+    protected function validateSheetNames(): void
+    {
+        $sheets = collect(array_keys($this->dataPerSheet()));
+
+        throw_if($sheets->contains(function ($value) {
+            return Str::containsAll($value, $this->invalidSheetCharacters);
+        }), 'Exception', "Invalid characters found.");
+    }
+
     public function exportToExcel()
     {
-        if (method_exists($this, 'flashInfo')) {
-            $this->emit('flash.info', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
-        }
+        $this->emit('flash.info', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+
+        // Validasi sebelum proses export dimulai
+        $this->validateSheetNames();
 
         $this->emit('beginExcelExport');
     }
