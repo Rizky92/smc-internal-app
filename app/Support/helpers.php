@@ -1,15 +1,15 @@
 <?php
 
-use Illuminate\Auth\AuthenticationException;
+use Carbon\CarbonImmutable;
 
 if (!function_exists('rp')) {
     /**
-     * @param  int|float $nominal
-     * @param  int $decimalCount
+     * @param  int|float $nominal = 0
+     * @param  int $decimalCount = 0
      * 
      * @return string
      */
-    function rp($nominal, $decimalCount = 0)
+    function rp($nominal = 0, $decimalCount = 0)
     {
         return 'Rp. ' . number_format($nominal, $decimalCount, ',', '.');
     }
@@ -17,10 +17,10 @@ if (!function_exists('rp')) {
 
 if (!function_exists('map_bulan')) {
     /**
-     * @param  \Illuminate\Contracts\Support\Arrayable<int,mixed>|array<int,mixed>|null $data
-     * @param  mixed $default
+     * @param  \Illuminate\Contracts\Support\Arrayable<int, mixed>|array<int, mixed>|null $data = []
+     * @param  mixed $default = 0
      * 
-     * @return array<int,mixed>
+     * @return array<int, mixed>
      */
     function map_bulan($data = [], $default = 0)
     {
@@ -84,6 +84,13 @@ if (!function_exists('tracker_end')) {
 }
 
 if (! function_exists('func_get_named_args')) {
+    /**
+     * @param  object $object
+     * @param  string $name
+     * @param  array $args<string|int, mixed>
+     * 
+     * @return array<string|int, mixed>
+     */
     function func_get_named_args($object, $name, $args)
     {
         $func = new ReflectionMethod($object, $name);
@@ -94,5 +101,18 @@ if (! function_exists('func_get_named_args')) {
         }
 
         return $res;
+    }
+}
+
+if (! function_exists('carbon')) {
+    /**
+     * @param  string|\DateTimeInterface|null $time
+     * @param  \DateTimeZone|string|null $tz
+     * 
+     * @return \Carbon\CarbonImmutable
+     */
+    function carbon($time = null, $tz = null)
+    {
+        return CarbonImmutable::parse($time, $tz);
     }
 }

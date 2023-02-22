@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title ?? 'Dashboard' }} - {{ config('app.name') }}</title>
+    <title>{{ $title }} - {{ config('app.name') }}</title>
 
     <link href="{{ asset('plugins/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/adminlte.min.css') }}" rel="stylesheet">
