@@ -1,4 +1,9 @@
-@props(['title', 'collection', 'model' => null, 'placeholder' => null, 'placeholderValue' => null, 'resetOn' => 'button#reset-filter'])
+@props(['name', 'collection', 'model' => null, 'placeholder' => null, 'placeholderValue' => null, 'resetOn' => 'button#reset-filter'])
+
+@php
+    $id = Str::slug($name);
+    $title = Str::title($name);
+@endphp
 
 @once
     @push('css')
@@ -8,7 +13,7 @@
     @push('js')
         <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
         <script>
-            let dropdownSelect2 = $('select#{{ Str::slug($title) }}')
+            let dropdownSelect2 = $('select#{{ Str::slug($name) }}')
 
             $(document).ready(() => {
                 dropdownSelect2.select2({
@@ -44,7 +49,7 @@
 @endonce
 
 <div wire:ignore style="width: 24rem">
-    <select class="form-control form-control-sm simple-select2-sm input-sm" id="{{ Str::slug($title) }}" autocomplete="off" name="{{ Str::camel($title) }}">
+    <select class="form-control form-control-sm simple-select2-sm input-sm" id="{{ $id }}" autocomplete="off" name="{{ $name }}">
         @notnull($placeholder)
             <option value="{{ $placeholderValue }}">{{ $placeholder }}</option>
         @else
