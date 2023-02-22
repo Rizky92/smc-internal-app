@@ -87,6 +87,7 @@
     <livewire:user.siap.transfer-perizinan />
     <livewire:user.khanza.set-hak-akses />
     <livewire:user.khanza.transfer-hak-akses />
+    <livewire:user.siap.lihat-aktivitas />
 
     <x-card>
         <x-slot name="header">
@@ -118,6 +119,7 @@
                                 <x-dropdown.divider />
                                 <x-dropdown.header class="text-left">Lainnya</x-dropdown.header>
                                 <x-dropdown.item-button id="siap-impersonate" icon="fas fa-user-secret fa-fw" title="Impersonasi" />
+                                <x-dropdown.item-button id="siap-aktivitas" icon="fas fa-binoculars fa-fw" title="Impersonasi" data-toggle="modal" data-target="#modal-aktivitas" />
                             </x-slot>
                         </x-dropdown>
                     </div>

@@ -17,4 +17,11 @@ trait DeferredLoading
 
         $this->emit('$refresh');
     }
+
+    public function resetState()
+    {
+        $this->isDeferred = true;
+
+        $this->emit('$refresh');
+    }
 }
