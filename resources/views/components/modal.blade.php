@@ -35,7 +35,6 @@
 <div class="modal fade" id="{{ $id }}" {{ $livewire ? 'wire:ignore.self' : null }}>
     <div class="modal-dialog {{ $finalClass }}">
         <div {{ $attributes->merge(['class' => 'modal-content']) }}>
-
             @if ($header || $title)
                 <div class="modal-header">
                     <h4 class="modal-title">{{ $title }}</h4>
