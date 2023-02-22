@@ -29,7 +29,7 @@
                 <div class="-space-y-px rounded-md shadow-sm">
                     <div>
                         <label for="username" class="sr-only">Username</label>
-                        <input id="username" name="user" type="password" autocomplete="off" required class="relative block w-full appearance-none rounded-none rounded-t-md border border-stone-300 px-3 py-2 text-stone-900 placeholder-stone-500 focus:z-10 focus:border-emerald-500 focus:outline-none focus:ring-emerald-500 sm:text-sm" placeholder="Username">
+                        <input id="username" name="user" type="password" autocomplete="off" autofocus required class="relative block w-full appearance-none rounded-none rounded-t-md border border-stone-300 px-3 py-2 text-stone-900 placeholder-stone-500 focus:z-10 focus:border-emerald-500 focus:outline-none focus:ring-emerald-500 sm:text-sm" placeholder="Username">
                     </div>
                     <div>
                         <label for="password" class="sr-only">Password</label>

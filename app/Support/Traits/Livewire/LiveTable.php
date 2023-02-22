@@ -19,9 +19,6 @@ trait LiveTable
     /** @var array<string, string> $sortColumns = [] */
     public $sortColumns;
 
-    /** @var bool $isDeferred = true */
-    public $isDeferred;
-
     protected $paginationTheme = 'bootstrap';
 
     protected $queryStringLiveTable = [
@@ -43,7 +40,6 @@ trait LiveTable
         $this->cari = '';
         $this->perpage = 25;
         $this->sortColumns = [];
-        $this->isDeferred = true;
     }
 
     public function sortBy(string $column, ?string $direction)
@@ -64,13 +60,6 @@ trait LiveTable
         }
 
         $this->performSort();
-    }
-
-    public function loadProperties()
-    {
-        $this->isDeferred = false;
-
-        $this->emit('$refresh');
     }
 
     protected function performSort()
