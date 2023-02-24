@@ -42,10 +42,9 @@ class SetHakAkses extends Component
         return $this->deferLoading
             ? []
             : MappingAksesKhanza::query()
-            ->where('nama_field', 'like', "%{$this->cari}%")
-            ->orWhere('judul_menu', 'like', "%{$this->cari}%")
-            ->orWhereIn('nama_field', $this->checkedHakAkses)
-            ->pluck('judul_menu', 'nama_field');
+                ->search($this->cari, ['nama_field', 'judul_menu'])
+                // ->orWhereIn('nama_field', $this->checkedHakAkses)
+                ->pluck('judul_menu', 'nama_field');
     }
 
     public function render()
