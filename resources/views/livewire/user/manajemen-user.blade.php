@@ -117,9 +117,8 @@
                                 <x-dropdown.item-button id="siap-set" icon="fas fa-user-cog fa-fw" title="Set Perizinan" data-toggle="modal" data-target="#modal-siap-set" />
                                 <x-dropdown.item-button id="siap-transfer" icon="fas fa-exchange-alt fa-fw" title="Transfer Perizinan" data-toggle="modal" data-target="#modal-siap-transfer" />
                                 <x-dropdown.divider />
-                                <x-dropdown.header class="text-left">Lainnya</x-dropdown.header>
                                 <x-dropdown.item-button id="siap-impersonate" icon="fas fa-user-secret fa-fw" title="Impersonasi" />
-                                <x-dropdown.item-button id="siap-aktivitas" icon="fas fa-binoculars fa-fw" title="Impersonasi" data-toggle="modal" data-target="#modal-aktivitas" />
+                                <x-dropdown.item-button id="siap-aktivitas" icon="fas fa-binoculars fa-fw" title="Lihat Aktivitias" data-toggle="modal" data-target="#modal-aktivitas" />
                             </x-slot>
                         </x-dropdown>
                     </div>

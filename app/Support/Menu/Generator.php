@@ -2,26 +2,34 @@
 
 namespace App\Support\Menu;
 
-use App\Support\Menu\Contracts\MakeBreadcrumbs;
-use App\Support\Menu\Contracts\MakeMenu;
-use App\Support\Menu\Contracts\MakeRoutes;
 use Illuminate\Support\Collection;
-use Illuminate\View\View;
+use Route;
 
 class Generator
 {
-    protected ?Collection $collection = null;
+    protected ?Collection $menu;
 
-    public function __construct() {
+    protected ?Collection $routes;
+    
+    public function __construct()
+    {
+        $this->routes = collect(Route::getRoutes()->getRoutes());
     }
 
     public static function make()
     {
-        
+        //
     }
 
     public function fromRoute(string $name)
     {
-        
+        if ($this->menuExists($name)) {
+            
+        }
+    }
+
+    protected function menuExists(string $name)
+    {
+        return $this->menu->has($name);
     }
 }

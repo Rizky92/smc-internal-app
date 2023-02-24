@@ -39,8 +39,12 @@ class PermissionSeeder extends Seeder
         $keuanganPermissions = [
             Permission::create(['name' => 'keuangan.stok-obat-ruangan.read', 'guard_name' => 'web']),
             Permission::create(['name' => 'keuangan.piutang-pasien.read', 'guard_name' => 'web']),
-            Permission::create(['name' => 'keuangan.tambahan-biaya-pasien.read', 'guard_name' => 'web']),
-            Permission::create(['name' => 'keuangan.tambahan-potongan-pasien.read', 'guard_name' => 'web']),
+            Permission::create(['name' => 'keuangan.laporan-potongan-biaya.read', 'guard_name' => 'web']),
+            Permission::create(['name' => 'keuangan.laporan-tambahan-pasien.read', 'guard_name' => 'web']),
+            Permission::create(['name' => 'keuangan.jurnal-po-supplier.read', 'guard_name' => 'web']),
+            Permission::create(['name' => 'keuangan.buku-besar.read', 'guard_name' => 'web']),
+            Permission::create(['name' => 'keuangan.laba-rugi-rekening.read', 'guard_name' => 'web']),
+            Permission::create(['name' => 'keuangan.dpjp-piutang-ranap.read', 'guard_name' => 'web']),
         ];
 
         $farmasiPermissions = [
@@ -48,7 +52,7 @@ class PermissionSeeder extends Seeder
             Permission::create(['name' => 'farmasi.obat-per-dokter.read', 'guard_name' => 'web']),
             Permission::create(['name' => 'farmasi.kunjungan-per-bentuk-obat.read', 'guard_name' => 'web']),
             Permission::create(['name' => 'farmasi.kunjungan-per-poli.read', 'guard_name' => 'web']),
-            Permission::create(['name' => 'farmasi.laporan-produksi-tahunan.read', 'guard_name' => 'web']),
+            Permission::create(['name' => 'farmasi.laporan-produksi.read', 'guard_name' => 'web']),
             Permission::create(['name' => 'farmasi.perbandingan-po-obat.read', 'guard_name' => 'web']),
         ];
 
@@ -67,7 +71,7 @@ class PermissionSeeder extends Seeder
 
         $kasirPermissions = [
             Permission::create(['name' => 'perawatan.daftar-pasien-ranap.update-harga-kamar', 'guard_name' => 'web']),
-            Permission::create(['name' => 'keuangan.laporan-billing-pasien.read', 'guard_name' => 'web']),
+            Permission::create(['name' => 'keuangan.laporan-selesai-billing.read', 'guard_name' => 'web']),
         ];
 
         $MODPermissions = [

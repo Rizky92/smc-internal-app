@@ -10,6 +10,21 @@
     <link href="{{ asset('css/adminlte.min.css') }}" rel="stylesheet">
     <link href="{{ asset('plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="{{ asset('logo.ico') }}">
+    <style>
+        .sidebar-search-results .list-group-item {
+            color: #111827 !important;
+            background-color: #fff !important;
+        }
+
+        .sidebar-search-results .list-group-item .text-light {
+            color: #111827 !important;
+            font-weight: 700 !important;
+        }
+
+        .sidebar-search-results .list-group-item:hover, .sidebar-search-results .list-group-item:focus {
+            background-color: #e5e7eb !important
+        }
+    </style>
     @livewireStyles
 
     @stack('css')
