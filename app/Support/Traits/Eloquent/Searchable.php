@@ -35,13 +35,22 @@ trait Searchable
             throw new LogicException("No columns are defined to perform search.");
         }
 
-        $search = Str::lower($search);
+        $search = Str::of($search)
+            ->lower()
+            ->split('/\s+/')
+            ->filter();
 
-        $concatenatedColumns = 'lower(convert(concat(' . $columns->join(", ' ', ") . ') using latin1))';
+        $concatenatedColumns = 'lower(concat(' . $columns->join(", ' ', ") . '))';
 
         return $query->when(
-            !empty($search),
-            fn ($query) => $query->where(fn ($query) => $query->whereRaw("{$concatenatedColumns} like ?", ["%{$search}%"]))
+            $search->isNotEmpty(),
+            function ($query) use ($search, $concatenatedColumns) {
+                foreach ($search as $word) {
+                    $query->orWhereRaw("{$concatenatedColumns} like ?", ["%{$word}%"]);
+                }
+
+                return $query;
+            }
         );
     }
 }
