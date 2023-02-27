@@ -1,7 +1,22 @@
 <div>
+    @once
+        @push('js')
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    $('#modal-aktivitas').on('shown.bs.modal', e => {
+                        @this.emit('siap.show-la')
+                    })
+
+                    $('#modal-aktivitas').on('hide.bs.modal', e => {
+                        @this.emit('siap.hide-la')
+                    })
+                })
+            </script>
+        @endpush
+    @endonce
     <x-modal livewire id="modal-aktivitas" title="Lihat Aktivitas">
         <x-slot name="body">
-            <div class="timeline" wire:ignore>
+            <div class="timeline">
                 @forelse ($this->aktivitasUser as $date => $timeline)
                     <div class="time-label">
                         <span class="bg-white text-dark text-sm px-3 border font-weight-bold">{{ carbon($date)->format('d F Y') }}</span>
@@ -15,7 +30,7 @@
                                     <span class="badge badge-secondary text-xs" style="margin-inline-end: 1.25rem">{{ carbon($item->waktu)->format('H:i') }}</span>
                                     <div class="mt-n1">
                                         <h6 style="margin-top: 0.2rem; margin-bottom: 0.25rem">
-                                            Mengunjungi <a href="{{ route($item->route_name) }}">{{ Str::of($item->breadcrumbs)->afterLast('/')->trim() }}</a>
+                                            Mengunjungi <a href="{{ Route::has($item->route_name) ? route($item->route_name) : '#' }}">{{ Str::of($item->breadcrumbs)->afterLast('/')->trim() }}</a>
                                         </h6>
                                         <p class="m-0">{{ $item->breadcrumbs }}</p>
                                     </div>
@@ -46,7 +61,7 @@
             </div>
         </x-slot>
         <x-slot name="footer">
-            <x-filter.search />
+            {{-- <x-filter.search /> --}}
             <x-button class="btn-default" title="Keluar" data-dismiss="modal" />
         </x-slot>
     </x-modal>

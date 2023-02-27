@@ -21,6 +21,8 @@ class TrackerMenu extends Model
 
     public function scopeLihatAktivitasUser(Builder $query, string $userId): Builder
     {
-        return $query->where('user_id', $userId);
+        return $query
+            ->where('user_id', $userId)
+            ->orderByDesc('waktu');
     }
 }

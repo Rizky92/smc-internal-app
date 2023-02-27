@@ -23,7 +23,7 @@ return [
     |
     */
 
-    'route' => 'admin/develop/route-list',
+    'route' => 'admin/route-list',
 
     /*
     |--------------------------------------------------------------------------

@@ -3,15 +3,22 @@
 namespace App\Http\Livewire\User\Siap;
 
 use App\Models\Aplikasi\TrackerMenu;
-use App\Support\Traits\Livewire\DeferredLoading;
-use App\Support\Traits\Livewire\Filterable;
+use App\Support\Traits\Livewire\DeferredModal;
 use Livewire\Component;
 
 class LihatAktivitas extends Component
 {
-    use Filterable, DeferredLoading;
+    use DeferredModal;
 
     public $userId;
+
+    public $nama;
+
+    protected $listeners = [
+        'siap.prepare-la' => 'prepare',
+        'siap.show-la' => 'showModal',
+        'siap.hide-la' => 'hideModal',
+    ];
 
     public function mount()
     {
@@ -22,8 +29,7 @@ class LihatAktivitas extends Component
     {
         return $this->isDeferred || empty($this->userId)
             ? []
-            : TrackerMenu::query()
-                ->lihatAktivitasUser($this->userId)
+            : TrackerMenu::lihatAktivitasUser($this->userId)
                 ->get()
                 ->groupBy(fn ($model) => carbon($model->waktu)->format('Y-m-d'));
     }
@@ -33,8 +39,15 @@ class LihatAktivitas extends Component
         return view('livewire.user.siap.lihat-aktivitas');
     }
 
+    public function prepare(?string $userId = null, ?string $nama = null)
+    {
+        $this->userId = $userId;
+        $this->nama = $nama;
+    }
+
     protected function defaultValues()
     {
-        $this->userId = '';
+        $this->userId = null;
+        $this->nama = null;
     }
 }

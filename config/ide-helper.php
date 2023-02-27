@@ -1,5 +1,9 @@
 <?php
 
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\View;
+
 return [
 
     /*
@@ -180,20 +184,23 @@ return [
     */
 
     'extra' => [
-        'Eloquent' => [
+        Eloquent::class => [
             \Illuminate\Database\Eloquent\Builder::class,
             \Illuminate\Database\Query\Builder::class,
-            \AgliPanci\LaravelCase\Query\CaseBuilder::class,
         ],
 
-        'Session' => [
+        Session::class => [
             \Illuminate\Session\Store::class,
         ],
 
-        'View' => [
+        View::class => [
             \Illuminate\View\View::class,
             \Illuminate\Contracts\View\Factory::class,
             \Livewire\Macros\ViewMacros::class,
+        ],
+
+        Authenticatable::class => [
+            \App\Models\Aplikasi\User::class,
         ],
     ],
 
