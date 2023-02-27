@@ -15,6 +15,8 @@ class User extends Authenticatable
 {
     use Notifiable, HasRoles, Searchable, Sortable, Impersonate;
 
+    protected $connection = 'mysql_sik';
+
     protected $primaryKey = 'id_user';
 
     protected $keyType = 'string';

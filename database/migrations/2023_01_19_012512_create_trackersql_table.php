@@ -20,14 +20,4 @@ class CreateTrackersqlTable extends Migration
             $table->ipAddress('ip');
         });
     }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        //
-    }
 }

@@ -13,6 +13,8 @@ class ResepObat extends Model
 {
     use Searchable, Sortable;
 
+    protected $connection = 'mysql_sik';
+
     protected $primaryKey = 'no_resep';
 
     protected $keyType = 'string';

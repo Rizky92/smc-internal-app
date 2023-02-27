@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Poliklinik extends Model
 {
+    protected $connection = 'mysql_sik';
+    
     protected $primaryKey = 'kd_poli';
 
     protected $keyType = 'string';

@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class MutasiObat extends Model
 {
+    protected $connection = 'mysql_sik';
+    
     protected $primaryKey = 'kode_brng';
 
     protected $keyType = 'string';

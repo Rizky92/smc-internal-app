@@ -52,14 +52,14 @@ if (!function_exists('map_bulan')) {
 }
 
 if (!function_exists('tracker_start')) {
-    function tracker_start(string $connection = 'mysql_sik')
+    function tracker_start(string $connection = 'mysql_smc')
     {
         DB::connection($connection)->enableQueryLog();
     }
 }
 
 if (!function_exists('tracker_end')) {
-    function tracker_end(string $connection = 'mysql_sik')
+    function tracker_end(string $connection = 'mysql_smc')
     {
         foreach (DB::connection($connection)->getQueryLog() as $log) {
             foreach ($log['bindings'] as $pos => $value) {

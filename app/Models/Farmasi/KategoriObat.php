@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class KategoriObat extends Model
 {
-    //
+    protected $connection = 'mysql_sik';
 }

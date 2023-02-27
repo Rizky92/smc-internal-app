@@ -12,6 +12,8 @@ class Billing extends Model
 {
     use Searchable, Sortable;
 
+    protected $connection = 'mysql_sik';
+
     protected $primaryKey = false;
 
     protected $keyType = false;
@@ -22,9 +24,6 @@ class Billing extends Model
 
     public $timestamps = false;
 
-    /**
-     * @param  \Illuminate\Support\Collection<int, \App\Models\Perawatan\RegistrasiPasien|string>array<int, string>|string|null $noRawat
-     */
     public function scopeTotalBillingan(Builder $query, $noRawat = null): Builder
     {
         if ($noRawat instanceof Collection) {

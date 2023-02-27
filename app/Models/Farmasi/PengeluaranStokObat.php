@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class PengeluaranStokObat extends Model
 {
+    protected $connection = 'mysql_sik';
+    
     protected $primaryKey = 'no_keluar';
 
     protected $keyType = 'string';

@@ -2,12 +2,14 @@
 
 namespace App\Models\Perawatan;
 
-use App\Models\Dokter;
+use App\Models\Kepegawaian\Dokter;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class TindakanRanapDokter extends Pivot
 {
+    protected $connection = 'mysql_sik';
+
     protected $table = 'rawat_inap_dr';
 
     public $incrementing = false;

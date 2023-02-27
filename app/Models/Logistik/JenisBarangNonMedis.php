@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class JenisBarangNonMedis extends Model
 {
+    protected $connection = 'mysql_sik';
+    
     protected $primaryKey = 'kd_jenis';
 
     protected $keyType = 'string';

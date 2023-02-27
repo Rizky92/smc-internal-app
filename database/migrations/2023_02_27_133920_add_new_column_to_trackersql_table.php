@@ -17,14 +17,4 @@ class AddNewColumnToTrackersqlTable extends Migration
             $table->string('connection', 20)->nullable();
         });
     }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        //
-    }
 }

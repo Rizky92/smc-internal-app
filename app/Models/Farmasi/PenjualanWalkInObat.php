@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class PenjualanWalkInObat extends Model
 {
+    protected $connection = 'mysql_sik';
+    
     protected $primaryKey = 'nota_jual';
 
     protected $keyType = 'string';

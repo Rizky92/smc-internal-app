@@ -13,6 +13,8 @@ class RegistrasiPasien extends Model
 {
     use Searchable, Sortable;
 
+    protected $connection = 'mysql_sik';
+
     protected $primaryKey = 'no_rawat';
 
     protected $keyType = 'string';

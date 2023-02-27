@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\DB;
 class SuratPemesananObat extends Model
 {
     use Searchable, Sortable;
+
+    protected $connection = 'mysql_sik';
     
     protected $primaryKey = 'no_pemesanan';
 

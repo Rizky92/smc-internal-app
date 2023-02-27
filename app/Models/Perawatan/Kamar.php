@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Kamar extends Model
 {
+    protected $connection = 'mysql_sik';
+    
     protected $primaryKey = 'kd_kamar';
 
     protected $keyType = 'string';

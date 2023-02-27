@@ -4,13 +4,14 @@ namespace App\Models\Keuangan\Jurnal;
 
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Jurnal extends Model
 {
     use Searchable, Sortable;
+
+    protected $connection = 'mysql_sik';
 
     protected $primaryKey = 'no_jurnal';
 

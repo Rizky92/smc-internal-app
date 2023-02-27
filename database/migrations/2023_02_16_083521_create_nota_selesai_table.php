@@ -20,18 +20,8 @@ class CreateNotaSelesaiTable extends Migration
             $table->string('bentuk_bayar', 20)->nullable();
             $table->timestamp('tgl_penyelesaian')->nullable();
             $table->string('user_id', 20)->nullable();
-            
+
             $table->index(['no_rawat', 'user_id']);
         });
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        
     }
 }

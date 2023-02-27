@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class RujukanMasuk extends Model
 {
-    //
+    protected $connection = 'mysql_sik';
 }

@@ -9,6 +9,7 @@ use App\Support\Menu\Generator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -82,6 +83,6 @@ class AppServiceProvider extends ServiceProvider
 
     public function registerQueryBuilderMacros()
     {
-        
+        //
     }
 }

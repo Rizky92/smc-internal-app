@@ -6,11 +6,12 @@ use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ResepDokterRacikan extends Model
 {
     use Searchable, Sortable;
+
+    protected $connection = 'mysql_sik';
 
     protected $primaryKey = 'no_resep';
 

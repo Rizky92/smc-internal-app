@@ -25,14 +25,4 @@ class CreateJurnalMedisTable extends Migration
             $table->index(['no_jurnal', 'no_faktur', 'nik']);
         });
     }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        
-    }
 }

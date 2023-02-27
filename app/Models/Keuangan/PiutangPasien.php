@@ -12,6 +12,8 @@ class PiutangPasien extends Model
 {
     Use Searchable, Sortable;
 
+    protected $connection = 'mysql_sik';
+
     protected $primaryKey = 'no_rawat';
 
     protected $keyType = 'string';

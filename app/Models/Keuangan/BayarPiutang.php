@@ -10,6 +10,8 @@ class BayarPiutang extends Model
 {
     use Searchable, Sortable;
 
+    protected $connection = 'mysql_sik';
+
     protected $primaryKey = false;
 
     protected $keyType = false;

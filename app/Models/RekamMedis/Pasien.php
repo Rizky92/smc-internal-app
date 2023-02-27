@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Pasien extends Model
 {
+    protected $connection = 'mysql_sik';
+    
     protected $primaryKey = 'no_rkm_medis';
 
     protected $keyType = 'string';

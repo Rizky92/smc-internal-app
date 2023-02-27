@@ -16,18 +16,9 @@ class CreateKhanzaMappingAksesTable extends Migration
         Schema::connection('mysql_smc')->create('khanza_mapping_akses', function (Blueprint $table) {
             $table->string('nama_field', 100);
             $table->string('judul_menu', 100);
+            $table->enum('default_value', ['true', 'false'])->default('false');
 
             $table->index(['nama_field', 'judul_menu']);
         });
-    }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        
     }
 }

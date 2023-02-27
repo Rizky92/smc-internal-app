@@ -21,14 +21,4 @@ class CreateTrackermenuTable extends Migration
             $table->ipAddress('ip_address');
         });
     }
-
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        //
-    }
 }

@@ -2,11 +2,12 @@
 
 namespace App\Models\Keuangan;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class NotaRalan extends Model
 {
+    protected $connection = 'mysql_sik';
+
     protected $primaryKey = 'no_rawat';
 
     protected $keyType = 'string';

@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 class BarangNonMedis extends Model
 {
     use Searchable, Sortable;
+
+    protected $connection = 'mysql_sik';
     
     protected $primaryKey = 'kode_brng';
 

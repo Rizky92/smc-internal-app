@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Penyakit extends Model
 {
+    protected $connection = 'mysql_sik';
+    
     protected $primaryKey = 'kd_penyakit';
 
     protected $keyType = 'string';

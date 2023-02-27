@@ -8,6 +8,8 @@ use Illuminate\Support\Str;
 
 class PemberianObat extends Model
 {
+    protected $connection = 'mysql_sik';
+    
     protected $primaryKey = false;
 
     protected $keyType = null;

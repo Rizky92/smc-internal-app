@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ReturSupplierObat extends Model
 {
+    protected $connection = 'mysql_sik';
+    
     protected $primaryKey = 'no_retur_beli';
 
     protected $keyType = 'string';

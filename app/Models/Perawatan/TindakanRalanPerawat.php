@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class TindakanRalanPerawat extends Pivot
 {
+    protected $connection = 'mysql_sik';
+    
     protected $table = 'rawat_jl_drpr';
 
     public $incrementing = false;

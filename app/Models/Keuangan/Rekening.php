@@ -4,13 +4,14 @@ namespace App\Models\Keuangan;
 
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Rekening extends Model
 {
     use Sortable, Searchable;
+
+    protected $connection = 'mysql_sik';
 
     protected $primaryKey = 'kd_rek';
 

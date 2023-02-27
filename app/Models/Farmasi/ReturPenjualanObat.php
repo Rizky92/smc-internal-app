@@ -4,10 +4,11 @@ namespace App\Models\Farmasi;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ReturPenjualanObat extends Model
 {
+    protected $connection = 'mysql_sik';
+
     protected $primaryKey = 'no_retur_jual';
 
     protected $keyType = 'string';

@@ -4,10 +4,11 @@ namespace App\Models\Farmasi\Inventaris;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 
 class PemesananObat extends Model
 {
+    protected $connection = 'mysql_sik';
+
     protected $primaryKey = 'no_faktur';
 
     protected $keyType = 'string';

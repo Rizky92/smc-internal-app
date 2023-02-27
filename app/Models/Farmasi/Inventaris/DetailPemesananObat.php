@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class DetailPemesananObat extends Model
 {
+    protected $connection = 'mysql_sik';
+    
     protected $primaryKey = false;
 
     protected $keyType = null;

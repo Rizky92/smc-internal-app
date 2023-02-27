@@ -10,6 +10,8 @@ class DetailJurnal extends Model
 {
     use Sortable, Searchable;
 
+    protected $connection = 'mysql_sik';
+
     protected $primaryKey = 'no_jurnal';
 
     protected $keyType = 'string';
@@ -19,6 +21,4 @@ class DetailJurnal extends Model
     public $incrementing = false;
 
     public $timestamps = false;
-
-    
 }

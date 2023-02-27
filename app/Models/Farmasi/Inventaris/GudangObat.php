@@ -14,6 +14,8 @@ use Illuminate\Support\Str;
 class GudangObat extends Model
 {
     use Searchable, Sortable;
+
+    protected $connection = 'mysql_sik';
     
     protected $primaryKey = false;
 

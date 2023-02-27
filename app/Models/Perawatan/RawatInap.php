@@ -2,7 +2,7 @@
 
 namespace App\Models\Perawatan;
 
-use App\Models\Dokter;
+use App\Models\Kepegawaian\Dokter;
 use App\Models\Keuangan\BayarPiutang;
 use App\Models\Keuangan\Billing;
 use App\Models\Keuangan\NotaRanap;
@@ -17,6 +17,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class RawatInap extends Model
 {
     use Sortable, Searchable;
+
+    protected $connection = 'mysql_sik';
 
     protected $primaryKey = false;
 
