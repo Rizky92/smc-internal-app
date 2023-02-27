@@ -5,12 +5,13 @@ namespace App\Http\Livewire\User\Siap;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
+use App\Support\Traits\Livewire\DeferredLoading;
 use Livewire\Component;
 
 class SetPerizinan extends Component
 {
-    public $deferLoading;
-
+    use DeferredLoading;
+    
     public $nrp;
 
     public $nama;
@@ -56,6 +57,13 @@ class SetPerizinan extends Component
 
     public function setRolePermissions()
     {
+        // dd(
+        //     $this->checkedRoles,
+        //     $this->availableRoles->whereIn('id', $this->checkedRoles)->pluck('permissions.id')->values(),
+        //     $this->checkedPermissions,
+        //     collect($this->checkedPermissions)->flip()->flip()->values()
+        // );
+
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
@@ -78,17 +86,18 @@ class SetPerizinan extends Component
 
     public function showModal()
     {
-        $this->deferLoading = false;
+        $this->loadProperties();
     }
 
     public function hideModal()
     {
         $this->defaultValues();
+
+        $this->resetState();
     }
 
     public function defaultValues()
     {
-        $this->deferLoading = true;
         $this->nrp = '';
         $this->nama = '';
         $this->checkedRoles = [];
