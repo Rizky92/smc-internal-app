@@ -2,8 +2,6 @@
 
 namespace App\Support\Traits\Livewire;
 
-use Closure;
-use Illuminate\Contracts\Support\Arrayable;
 use Livewire\WithPagination;
 
 trait LiveTable
