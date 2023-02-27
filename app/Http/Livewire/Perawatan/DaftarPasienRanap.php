@@ -52,12 +52,18 @@ class DaftarPasienRanap extends Component
                 "kamar_inap.kd_kamar",
                 "reg_periksa.no_rawat",
                 "reg_periksa.no_rkm_medis",
-                "concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal)",
+                "kamar.kd_kamar",
+                "bangsal.nm_bangsal",
                 "kamar.kelas",
-                "concat(pasien.nm_pasien, ' (', reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur, ')')",
-                "concat(pasien.alamat, ', Kel. ', kelurahan.nm_kel, ', Kec. ', kecamatan.nm_kec, ', ', kabupaten.nm_kab, ', ', propinsi.nm_prop)",
+                "pasien.nm_pasien",
+                "pasien.alamat",
+                "kelurahan.nm_kel",
+                "kecamatan.nm_kec",
+                "kabupaten.nm_kab",
+                "propinsi.nm_prop",
                 "pasien.agama",
-                "concat(pasien.namakeluarga, ' (', pasien.keluarga, ')')",
+                "pasien.namakeluarga",
+                "pasien.keluarga",
                 "penjab.png_jawab",
                 "poliklinik.nm_poli",
                 "dokter.nm_dokter",
@@ -179,7 +185,7 @@ class DaftarPasienRanap extends Component
                     $this->periodeAwal,
                     $this->periodeAkhir,
                     $this->statusPerawatan,
-                    true
+                    $exportToExcel = true
                 )
                 ->orderBy('no_rawat')
                 ->get()
