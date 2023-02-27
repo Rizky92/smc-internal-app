@@ -53,6 +53,7 @@ class DaftarPasienRanap extends Component
                 "reg_periksa.no_rawat",
                 "reg_periksa.no_rkm_medis",
                 "kamar.kd_kamar",
+                "bangsal.kd_bangsal",
                 "bangsal.nm_bangsal",
                 "kamar.kelas",
                 "pasien.nm_pasien",

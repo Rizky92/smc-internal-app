@@ -15,10 +15,11 @@
                             if (el.indeterminate) {
                                 let inputRolePermissions = Array.from(el.nextElementSibling.nextElementSibling.children)
 
-                                inputRolePermissions.forEach(el => {
-                                    let permissionCheckbox = el.children[0]
+                                inputRolePermissions.forEach(permEl => {
+                                    let permissionCheckbox = permEl.children[0]
+                                    let permissionRoleId = permEl.id.split('-').pop()
 
-                                    if (permissionCheckbox.checked) {
+                                    if (permissionCheckbox.checked && (el.value !== permissionRoleId)) {
                                         selectedPermissions.push(permissionCheckbox.value)
                                     }
                                 })
@@ -34,7 +35,7 @@
                         @this.set('checkedRoles', selectedRoles)
                         @this.set('checkedPermissions', selectedPermissions)
 
-                        @this.emit('custom-report.save')
+                        @this.emit('siap.save')
                     })
 
                     $('input[type=checkbox]').change(function(e) {

@@ -31,13 +31,13 @@
                     <x-navtabs.content id="obat-regular" selected class="table-responsive">
                         <x-table class="mb-0" sortable :sortColumns="$sortColumns">
                             <x-slot name="columns">
-                                <x-table.th name="no_resep" title="No. Resep" />
-                                <x-table.th name="nm_dokter" title="Dokter Peresep" />
-                                <x-table.th name="tgl_perawatan" title="Tgl. Validasi" />
-                                <x-table.th name="jam" title="Jam" />
-                                <x-table.th name="nm_pasien" title="Pasien" />
-                                <x-table.th name="status_lanjut" title="Jenis Perawatan" />
-                                <x-table.th name="total" title="Total Pembelian" />
+                                <x-table.th style="width: 20ch" name="no_resep" title="No. Resep" />
+                                <x-table.th style="width: 50ch" name="nm_dokter" title="Dokter Peresep" />
+                                <x-table.th style="width: 20ch" name="tgl_perawatan" title="Tgl. Validasi" />
+                                <x-table.th style="width: 15ch" name="jam" title="Jam" />
+                                <x-table.th style="width: 50ch" name="nm_pasien" title="Pasien" />
+                                <x-table.th style="width: 15ch" name="status_lanjut" title="Jenis Perawatan" />
+                                <x-table.th style="width: 20ch" name="total" title="Total Pembelian" />
                             </x-slot>
                             <x-slot name="body">
                                 @foreach ($this->kunjunganResepObatRegularPasien as $resep)
@@ -58,13 +58,13 @@
                     <x-navtabs.content id="obat-racikan" class="table-responsive">
                         <x-table class="mb-0" sortable :sortColumns="$sortColumns">
                             <x-slot name="columns">
-                                <x-table.th name="no_resep" title="No. Resep" />
-                                <x-table.th name="nm_dokter" title="Dokter Peresep" />
-                                <x-table.th name="tgl_perawatan" title="Tgl. Validasi" />
-                                <x-table.th name="jam" title="Jam" />
-                                <x-table.th name="nm_pasien" title="Pasien" />
-                                <x-table.th name="status_lanjut" title="Jenis Perawatan" />
-                                <x-table.th name="total" title="Total Pembelian" />
+                                <x-table.th style="width: 20ch" name="no_resep" title="No. Resep" />
+                                <x-table.th style="width: 50ch" name="nm_dokter" title="Dokter Peresep" />
+                                <x-table.th style="width: 20ch" name="tgl_perawatan" title="Tgl. Validasi" />
+                                <x-table.th style="width: 15ch" name="jam" title="Jam" />
+                                <x-table.th style="width: 50ch" name="nm_pasien" title="Pasien" />
+                                <x-table.th style="width: 15ch" name="status_lanjut" title="Jenis Perawatan" />
+                                <x-table.th style="width: 20ch" name="total" title="Total Pembelian" />
                             </x-slot>
                             <x-slot name="body">
                                 @foreach ($this->kunjunganResepObatRacikanPasien as $resep)

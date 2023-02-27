@@ -45,7 +45,7 @@ trait Searchable
             $search->isNotEmpty(),
             function ($query) use ($search, $concatenatedColumns) {
                 foreach ($search as $word) {
-                    $query->orWhereRaw("{$concatenatedColumns} like ?", ["%{$word}%"]);
+                    $query->whereRaw("{$concatenatedColumns} like ?", ["%{$word}%"]);
                 }
 
                 return $query;
