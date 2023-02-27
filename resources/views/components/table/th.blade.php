@@ -4,8 +4,8 @@
 ])
 
 @props([
-    'name' => (string) null,
-    'title' => (string) null,
+    'name' => null,
+    'title' => null,
 ])
 
 @if ($sortable && !empty($name))

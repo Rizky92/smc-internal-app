@@ -35,7 +35,7 @@ trait ExcelExportable
 
         throw_if($sheets->contains(function ($value) {
             return Str::containsAll($value, $this->invalidSheetCharacters);
-        }), 'Exception', "Invalid characters found.");
+        }), 'RuntimeException', "Invalid characters found.");
     }
 
     public function exportToExcel()

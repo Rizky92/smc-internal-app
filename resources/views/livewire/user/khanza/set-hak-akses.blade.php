@@ -10,6 +10,14 @@
                     $('#modal-khanza-set').on('hide.bs.modal', e => {
                         @this.emit('khanza.hide-sha')
                     })
+
+                    $('#checkbox-utama').change(e => {
+                        let els = $('input[type=checkbox][id*=hak-akses-]')
+
+                        els.each((i, el) => {
+                            el.checked = e.target.checked
+                        })
+                    })
                 })
             </script>
         @endpush
@@ -28,8 +36,11 @@
                 <div class="col-12 table-responsive">
                     <x-table>
                         <x-slot name="columns">
-                            <x-table.th title="#" style="width: 2rem" />
-                            <x-table.th title="nama Field" />
+                            <x-table.th>
+                                <input id="checkbox-utama" type="checkbox" name="__checkbox_utama" value="null">
+                                <label for="checkbox-utama"></label>
+                            </x-table.th>
+                            <x-table.th title="Nama Field" />
                             <x-table.th title="Judul Menu" />
                         </x-slot>
                         <x-slot name="body">
