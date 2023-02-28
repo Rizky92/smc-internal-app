@@ -21,6 +21,6 @@ trait DeferredModal
 
     public function hideModal()
     {
-        $this->resetState();
+        $this->undefer();
     }
 }

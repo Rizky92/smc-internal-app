@@ -18,7 +18,7 @@ trait DeferredLoading
         $this->emit('$refresh');
     }
 
-    public function resetState()
+    public function undefer()
     {
         $this->isDeferred = true;
 

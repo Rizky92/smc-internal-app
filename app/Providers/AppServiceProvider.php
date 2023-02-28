@@ -8,6 +8,7 @@ use App\Models\Aplikasi\User;
 use App\Support\Menu\Generator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -73,7 +74,23 @@ class AppServiceProvider extends ServiceProvider
 
     public function registerCollectionMacros()
     {
-        //
+        Collection::macro('whereLike', function ($search, $looseRange = 1) {
+            /** @var \Illuminate\Support\Collection $this */
+
+            return $this->filter(function ($v) use ($search, $looseRange) {
+                return levenshtein($v, $search) <= $looseRange;
+            });
+        });
+
+        Collection::macro('containsLike', function ($search = '', $looseRange = 1) {
+            /** @var \Illuminate\Support\Collection $this */
+
+            return $this->contains(function ($v) use ($search, $looseRange) {
+                if (empty($search)) return false;
+                
+                return levenshtein($v, $search) <= $looseRange;
+            });
+        });
     }
 
     public function registerMenuProvider()

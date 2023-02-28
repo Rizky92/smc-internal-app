@@ -10,6 +10,7 @@ trait Filterable
     {
         $this->listeners = array_merge($this->listeners, [
             'searchData',
+            'resetState',
             'resetFilters',
             'fullRefresh',
         ]);
@@ -25,6 +26,13 @@ trait Filterable
         if (method_exists($this, 'resetPage')) {
             $this->resetPage($this->pageName());
         }
+
+        $this->emit('$refresh');
+    }
+
+    public function resetState()
+    {
+        $this->defaultValues();
 
         $this->emit('$refresh');
     }

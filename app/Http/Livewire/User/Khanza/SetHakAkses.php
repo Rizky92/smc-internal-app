@@ -4,12 +4,13 @@ namespace App\Http\Livewire\User\Khanza;
 
 use App\Models\Aplikasi\MappingAksesKhanza;
 use App\Models\Aplikasi\User;
+use App\Support\Traits\Livewire\DeferredModal;
 use Livewire\Component;
 
 class SetHakAkses extends Component
 {
-    public $deferLoading;
-
+    use DeferredModal;
+    
     public $nrp;
 
     public $nama;
@@ -39,7 +40,7 @@ class SetHakAkses extends Component
 
     public function getHakAksesKhanzaProperty()
     {
-        return $this->deferLoading
+        return $this->isDeferred
             ? []
             : MappingAksesKhanza::query()
                 ->search($this->cari, ['nama_field', 'judul_menu'])
@@ -50,21 +51,6 @@ class SetHakAkses extends Component
     public function render()
     {
         return view('livewire.user.khanza.set-hak-akses');
-    }
-
-    public function showModal()
-    {
-        $this->deferLoading = false;
-
-        $user = User::rawFindByNRP($this->nrp);
-
-        if (! $this->deferLoading) {
-            $this->checkedHakAkses = $this->hakAksesKhanza
-                ->keys()
-                ->filter(fn ($field) => $user->getAttribute($field) === 'true')
-                ->flatten()
-                ->toArray();
-        }
     }
 
     public function prepareUser(string $nrp = '', string $nama = '')
@@ -90,9 +76,7 @@ class SetHakAkses extends Component
             $user->setAttribute($hakAkses, 'true');
         }
 
-        $falsyHakAkses = $this->hakAksesKhanza->reject(function ($value, $key) {
-            return in_array($key, $this->checkedHakAkses);
-        });
+        $falsyHakAkses = $this->hakAksesKhanza->reject(fn ($_, $key) => in_array($key, $this->checkedHakAkses));
 
         foreach ($falsyHakAkses as $field => $judul) {
             $user->setAttribute($field, 'false');
@@ -106,14 +90,30 @@ class SetHakAkses extends Component
         $this->emit('flash.success', "Hak akses SIMRS Khanza untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
     }
 
+    public function showModal()
+    {
+        $this->isDeferred = false;
+
+        $user = User::rawFindByNRP($this->nrp);
+
+        if (! $this->isDeferred) {
+            $this->checkedHakAkses = $this->hakAksesKhanza
+                ->keys()
+                ->filter(fn ($field) => $user->getAttribute($field) === 'true')
+                ->flatten()
+                ->toArray();
+        }
+    }
+
     public function hideModal()
     {
         $this->defaultValues();
+
+        $this->emitUp('resetState');
     }
 
     public function defaultValues()
     {
-        $this->deferLoading = true;
         $this->nrp = '';
         $this->nama = '';
         $this->cari = '';

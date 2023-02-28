@@ -93,7 +93,7 @@ class SetPerizinan extends Component
     {
         $this->defaultValues();
 
-        $this->resetState();
+        $this->undefer();
     }
 
     public function defaultValues()

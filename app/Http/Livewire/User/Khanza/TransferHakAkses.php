@@ -38,10 +38,10 @@ class TransferHakAkses extends Component
         return $this->deferLoading
             ? []
             : User::query()
-            ->where('pegawai.nik', '!=', $this->nrp)
-            ->when(!empty($this->checkedUsers), fn (Builder $query) => $query->orWhereIn('pegawai.nik', $this->checkedUsers))
-            ->search($this->cari)
-            ->get();
+                ->where('pegawai.nik', '!=', $this->nrp)
+                ->when(!empty($this->checkedUsers), fn (Builder $query) => $query->orWhereIn('pegawai.nik', $this->checkedUsers))
+                ->search($this->cari)
+                ->get();
     }
 
     public function render()
@@ -74,7 +74,7 @@ class TransferHakAkses extends Component
         tracker_start();
 
         User::query()
-            ->whereIn(DB::raw('AES_DECRYPT(user.id_user, "nur")'), $this->checkedUsers)
+            ->whereIn('pegawai.nik', $this->checkedUsers)
             ->update($hakAkses);
 
         tracker_end();
