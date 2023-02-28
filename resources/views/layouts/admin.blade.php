@@ -11,6 +11,11 @@
     <link href="{{ asset('plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="{{ asset('logo.ico') }}">
     <style>
+        .btn {
+            display: inline-flex !important;
+            align-items: baseline !important;
+        }
+
         .sidebar-search-results .list-group-item {
             color: #111827 !important;
             background-color: #fff !important;

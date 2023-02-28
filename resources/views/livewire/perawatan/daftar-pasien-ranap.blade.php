@@ -14,7 +14,7 @@
                             const inputLamaInap = $('input#lama_inap')
                             const inputTotalHarga = $('input#total_harga')
                             
-                            const inputReadClipboard = $('textarea#copy-to-clipboard')
+                            const elReadClipboard = $('#copy-to-clipboard')
 
                             const hiddenKdKamar = $('input#kd_kamar')
                             const hiddenTglMasuk = $('input#tgl_masuk')
@@ -70,7 +70,7 @@
                                 inputLamaInap.val(lamaInap)
                                 inputTotalHarga.val(totalHarga)
 
-                                inputReadClipboard.val(clipboard)
+                                elReadClipboard.text(clipboard)
 
                                 hiddenKdKamar.val(kdKamar)
                                 hiddenTglMasuk.val(tglMasuk)
@@ -84,7 +84,7 @@
                                 inputLamaInap.trigger('change')
                                 inputTotalHarga.trigger('change')
 
-                                inputReadClipboard.trigger('change')
+                                elReadClipboard.trigger('change')
 
                                 hiddenKdKamar.trigger('change')
                                 hiddenTglMasuk.trigger('change')
@@ -105,7 +105,7 @@
                                 inputLamaInap.val(null)
                                 inputTotalHarga.val(null)
 
-                                inputReadClipboard.val(null)
+                                elReadClipboard.text(null)
 
                                 hiddenKdKamar.val(null)
                                 hiddenTglMasuk.val(null)
@@ -119,7 +119,7 @@
                                 inputLamaInap.trigger('change')
                                 inputTotalHarga.trigger('change')
 
-                                inputReadClipboard.trigger('change')
+                                elReadClipboard.trigger('change')
 
                                 hiddenKdKamar.trigger('change')
                                 hiddenTglMasuk.trigger('change')
@@ -185,7 +185,7 @@
                 <x-card.row-col class="pb-3 border-bottom">
                     <x-button disabled class="btn-primary" id="simpan-data" title="Simpan" icon="fas fa-save" />
                     <x-button disabled class="btn-default ml-2" id="batal-simpan" title="Batal" />
-                    <textarea id="copy-to-clipboard" readonly rows="2" class="text-xs border-0 ml-2" style="font-family: monospace; resize: none; display: block; flex-grow: 1; white-space: pre-wrap"></textarea>
+                    <div id="copy-to-clipboard" class="text-xs border-0 ml-2" style="flex-grow: 1; user-select: all; font-family: monospace; white-space: pre-wrap"></div>
                 </x-card.row-col>
             @endcan
 

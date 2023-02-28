@@ -1,6 +1,7 @@
 <?php
 
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\DB;
 
 if (!function_exists('rp')) {
     /**
@@ -54,6 +55,10 @@ if (!function_exists('map_bulan')) {
 if (!function_exists('tracker_start')) {
     function tracker_start(string $connection = 'mysql_smc')
     {
+        if (app('impersonate')->isImpersonating()) {
+            return;
+        }
+        
         DB::connection($connection)->enableQueryLog();
     }
 }
@@ -61,6 +66,13 @@ if (!function_exists('tracker_start')) {
 if (!function_exists('tracker_end')) {
     function tracker_end(string $connection = 'mysql_smc')
     {
+        // matikan trackersql ketika sedang impersonasi
+        if (app('impersonate')->isImpersonating()) {
+            DB::connection($connection)->disableQueryLog();
+
+            return;
+        }
+
         foreach (DB::connection($connection)->getQueryLog() as $log) {
             foreach ($log['bindings'] as $pos => $value) {
                 if (is_string($value)) {
