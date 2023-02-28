@@ -12,10 +12,9 @@
                     inputPermissions = $('input[name=permissions]')
                 })
 
-                function loadData({
-                    roleId,
-                    permissionIds,
-                }) {
+                function loadData(e) {
+                    let { roleId, permissionIds } = e.dataset
+                    
                     inputRole.val(roleId)
 
                     let permissions = Array.from(permissionIds.split(','))

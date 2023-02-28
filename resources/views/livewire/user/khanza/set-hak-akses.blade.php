@@ -22,7 +22,7 @@
             </script>
         @endpush
     @endonce
-    <x-modal livewire title="Set hak akses user untuk SIMRS Khanza" id="modal-khanza-set">
+    <x-modal livewire title="Set hak akses user untuk SIMRS Khanza" id="modal-khanza-set" size="xl">
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-row-col class="px-3 pt-3">
                 <div class="d-flex justify-content-start">

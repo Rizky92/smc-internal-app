@@ -47,10 +47,9 @@
                     setFormState('disabled', true)
                 }
 
-                function loadData({
-                    namaField,
-                    judulMenu
-                }) {
+                function loadData(e) {
+                    let { namaField, judulMenu } = e.dataset
+                    
                     setFormState('disabled', false)
 
                     inputNamaField.val(namaField)

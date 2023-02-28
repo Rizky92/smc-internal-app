@@ -163,7 +163,7 @@ class DaftarPasienRanap extends Component
         tracker_end();
 
         $this->resetFilters();
-        $this->dispatchBrowserEvent('data-tersimpan');
+        $this->dispatchBrowserEvent('data-updated');
 
         $this->flashSuccess('Harga kamar berhasil diupdate!');
     }

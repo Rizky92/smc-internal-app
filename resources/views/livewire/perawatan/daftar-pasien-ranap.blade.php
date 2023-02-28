@@ -40,6 +40,8 @@
                                     )
                                 })
 
+                                $(document).on('data-updated', clearData)
+
                                 buttonBatalSimpan.click(clearData)
                                 buttonResetFilters.click(clearData)
 
@@ -58,7 +60,9 @@
                                 inputTotalHarga.trigger('change')
                             }
 
-                            function loadData({ noRawat, kamar, pasien, hargaKamar, lamaInap, totalHarga, kdKamar, tglMasuk, jamMasuk, clipboard }) {
+                            function loadData(e) {
+                                let { noRawat, kamar, pasien, hargaKamar, lamaInap, totalHarga, kdKamar, tglMasuk, jamMasuk, clipboard } = e.dataset
+
                                 inputNoRawat.val(noRawat)
                                 inputKamar.val(kamar)
                                 inputPasien.val(pasien)

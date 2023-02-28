@@ -58,15 +58,9 @@
                     $(this).on('data-tersimpan', clearData)
                 })
 
-                function loadData({
-                    kodeBarang,
-                    namaBarang,
-                    kodeSupplier,
-                    stokMin,
-                    stokMax,
-                    stokSekarang,
-                    saranOrder
-                }) {
+                function loadData(e) {
+                    let { kodeBarang, namaBarang, kodeSupplier, stokMin, stokMax, stokSekarang, saranOrder } = e.dataset
+                    
                     inputKodeBarang.val(kodeBarang)
                     inputNamaBarang.val(namaBarang)
                     inputSupplier.val(kodeSupplier)

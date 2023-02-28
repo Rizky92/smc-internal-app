@@ -32,7 +32,9 @@
                     clearData()
                 })
 
-                function loadData({ nrp, nama, roleIds, rolePermissionIds, permissionIds }) {
+                function loadData(e) {
+                    let { nrp, nama, roleIds, rolePermissionIds, permissionIds } = e.dataset
+                    
                     setButtonState('disabled', false)
 
                     inputNRP.val(nrp)
