@@ -5,15 +5,7 @@
         <x-slot name="header">
             <x-card.row-col>
                 <x-filter.label constant-width>Ruangan :</x-filter.label>
-                <x-filter.select2 name="bangsal" />
-                <div class="w-25" wire:ignore>
-                    <select class="form-control form-control-sm simple-select2-sm input-sm" id="bangsal" autocomplete="off">
-                        <option value="-">-</option>
-                        @foreach ($this->bangsal as $kode => $nama)
-                            <option value="{{ $kode }}">{{ $nama }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                <x-filter.select2 name="bangsal" placeholder="-" :collection="$this->bangsal" />
                 <x-filter.button-export-excel class="ml-auto" />
             </x-card.row-col>
             <x-card.row-col class="mt-2">

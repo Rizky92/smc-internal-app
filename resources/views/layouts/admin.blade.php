@@ -13,7 +13,24 @@
     <style>
         .btn {
             display: inline-flex !important;
-            align-items: baseline !important;
+            align-items: center !important;
+        }
+
+        .btn::after {
+            margin-top: 0.125rem
+        }
+
+        .select2-selection__arrow {
+            top: 0 !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 30px !important;
+        }
+
+        .select2-container .select2-selection--single .select2-selection__rendered {
+            padding-left: 0 !important;
+            margin-left: -0.125rem !important;
         }
 
         .sidebar-search-results .list-group-item {

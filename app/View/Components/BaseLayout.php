@@ -84,6 +84,8 @@ class BaseLayout extends Component
                     'keuangan.buku-besar.read',
                     'keuangan.laba-rugi-rekening.read',
                     'keuangan.dpjp-piutang-ranap.read',
+                    'keuangan.laporan-tindakan-lab.read',
+                    'keuangan.laporan-tindakan-radiologi.read',
                 ]),
                 'items' => [
                     [
@@ -141,6 +143,20 @@ class BaseLayout extends Component
                         'icon' => "fas fa-book",
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.laba-rugi-rekening.read'),
+                    ],
+                    [
+                        'name' => 'Laporan Tindakan Lab',
+                        'url' => route('admin.keuangan.laporan-tindakan-lab'),
+                        'icon' => "fas fa-file-invoice",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.laporan-tindakan-lab.read'),
+                    ],
+                    [
+                        'name' => 'Laporan Tindakan Rdlg.',
+                        'url' => route('admin.keuangan.laporan-tindakan-radiologi'),
+                        'icon' => "fas fa-file-invoice",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.laporan-tindakan-radiologi.read'),
                     ],
                     // [
                     //     'name' => 'DPJP Piutang Ranap',

@@ -75,6 +75,16 @@ Breadcrumbs::for('admin.keuangan.dpjp-piutang-ranap', function (Trail $trail) {
     $trail->push('DPJP Piutang Ranap', route('admin.keuangan.dpjp-piutang-ranap'));
 });
 
+Breadcrumbs::for('admin.keuangan.laporan-tindakan-lab', function (Trail $trail) {
+    $trail->parent('admin.keuangan');
+    $trail->push('Laporan Tindakan Lab', route('admin.keuangan.laporan-tindakan-lab'));
+});
+
+Breadcrumbs::for('admin.keuangan.laporan-tindakan-radiologi', function (Trail $trail) {
+    $trail->parent('admin.keuangan');
+    $trail->push('Laporan Tindakan Rdlg.', route('admin.keuangan.laporan-tindakan-radiologi'));
+});
+
 
 Breadcrumbs::for('admin.farmasi', function (Trail $trail) {
     $trail->parent('admin.dashboard');

@@ -18,6 +18,8 @@ use App\Http\Livewire\Keuangan\LabaRugiRekeningPerPeriode;
 use App\Http\Livewire\Keuangan\LaporanPenyelesaianBillingPerPetugas;
 use App\Http\Livewire\Keuangan\LaporanPotonganBiayaPasien;
 use App\Http\Livewire\Keuangan\LaporanTambahanBiayaPasien;
+use App\Http\Livewire\Keuangan\LaporanTindakanLab;
+use App\Http\Livewire\Keuangan\LaporanTindakanRadiologi;
 use App\Http\Livewire\Keuangan\PenarikanDataSuplierPO;
 use App\Http\Livewire\Keuangan\RekapPiutangPasien;
 use App\Http\Livewire\Keuangan\StokObatRuangan;
@@ -111,6 +113,14 @@ Route::prefix('admin')
                 Route::get('dpjp-piutang-ranap', DPJPPiutangRanap::class)
                     ->middleware('can:keuangan.dpjp-piutang-ranap.read')
                     ->name('dpjp-piutang-ranap');
+
+                Route::get('laporan-tindakan-lab', LaporanTindakanLab::class)
+                    ->middleware('can:keuangan.laporan-tindakan-lab.read')
+                    ->name('laporan-tindakan-lab');
+
+                Route::get('laporan-tindakan-radiologi', LaporanTindakanRadiologi::class)
+                    ->middleware('can:keuangan.laporan-tindakan-radiologi.read')
+                    ->name('laporan-tindakan-radiologi');
             });
 
         Route::prefix('farmasi')
