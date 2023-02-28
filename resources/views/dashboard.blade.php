@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="row"></div>
-        <div class="row">
+        {{-- <div class="row">
             @once
                 @push('js')
                     <script>
@@ -71,6 +71,6 @@
                     </x-table>
                 </div>
             </div>
-        </div>
+        </div> --}}
     </div>
 </x-base-layout>
