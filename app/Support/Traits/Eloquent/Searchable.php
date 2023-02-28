@@ -39,7 +39,7 @@ trait Searchable
             ->split('/\s+/')
             ->filter();
 
-        $concatenatedColumns = 'lower(concat(' . $columns->join(", ' ', ") . '))';
+        $concatenatedColumns = 'concat(' . $columns->join(", ' ', ") . ')';
 
         return $query->when(
             $search->isNotEmpty(),

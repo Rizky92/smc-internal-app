@@ -35,13 +35,6 @@ class Siap extends Component
             ->paginate($this->perpage);
     }
 
-    public function getPermissionsProperty()
-    {
-        return Permission::orderBy('name')
-            ->pluck('name', 'id')
-            ->groupBy(fn ($permission, $id) => Str::before($permission, '.'), $preserveKeys = true);
-    }
-
     public function render()
     {
         return view('livewire.hak-akses.siap')

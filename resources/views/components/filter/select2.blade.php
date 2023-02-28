@@ -2,7 +2,7 @@
 
 @php
     $id = Str::slug($name);
-    $title = Str::title($name);
+    $title = Str::camel($name);
 @endphp
 
 @once
@@ -48,7 +48,7 @@
     @endpush
 @endonce
 
-<div wire:ignore style="width: 24rem">
+<div wire:ignore {{ $attributes->whereDoesntStartWith('wire:') }}>
     <select class="form-control form-control-sm simple-select2-sm input-sm" id="{{ $id }}" autocomplete="off" name="{{ $name }}">
         @notnull($placeholder)
             <option value="{{ $placeholderValue }}">{{ $placeholder }}</option>

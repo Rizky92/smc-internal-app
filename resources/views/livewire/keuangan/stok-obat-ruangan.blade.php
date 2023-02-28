@@ -1,43 +1,11 @@
 <div>
     <x-flash />
 
-    @once
-        @push('css')
-            <link href="{{ asset('plugins/select2/css/select2.min.css') }}" rel="stylesheet">
-            <link href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}" rel="stylesheet">
-        @endpush
-        @push('js')
-            <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
-            <script>
-                let inputBangsal
-
-                $(document).ready(() => {
-                    inputBangsal = $('#bangsal').select2({
-                        dropdownCssClass: 'text-sm px-0',
-                    })
-
-                    Livewire.hook('element.updated', (el, component) => {
-                        inputBangsal.select2({
-                            dropdownCssClass: 'text-sm px-0',
-                        })
-                    })
-
-                    inputBangsal.on('select2:select', e => {
-                        @this.set('kodeBangsal', inputBangsal.val(), true)
-                    })
-
-                    inputBangsal.on('select2:unselect', e => {
-                        @this.set('kodeBangsal', inputBangsal.val(), true)
-                    })
-                })
-            </script>
-        @endpush
-    @endonce
-
     <x-card>
         <x-slot name="header">
             <x-card.row-col>
-                <x-filter.label constant-width>Ruangan:</x-filter.label>
+                <x-filter.label constant-width>Ruangan :</x-filter.label>
+                <x-filter.select2 name="bangsal" />
                 <div class="w-25" wire:ignore>
                     <select class="form-control form-control-sm simple-select2-sm input-sm" id="bangsal" autocomplete="off">
                         <option value="-">-</option>

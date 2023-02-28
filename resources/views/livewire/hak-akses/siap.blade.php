@@ -4,39 +4,23 @@
     @once
         @push('js')
             <script>
-                let inputRole
-                let inputPermissions
-
-                $(document).ready(() => {
-                    inputRole = $('input[type=hidden][name=role]')
-                    inputPermissions = $('input[name=permissions]')
-                })
+                const inputRole = $('input[type=hidden][name=role]')
+                const inputPermissions = $('input[name=permissions]')
 
                 function loadData(e) {
                     let { roleId, permissionIds } = e.dataset
                     
                     inputRole.val(roleId)
 
-                    let permissions = Array.from(permissionIds.split(','))
+                    permissionIds = Array.from(permissionIds.split(','))
 
-                    inputPermissions.each((i, el) => el.checked = permissions.find(v => v === el.value))
+                    @this.emit('siap.prepare', roleId, permissionIds)
                 }
-
-                $('#simpandata').click(() => {
-                    let currentRoleId = inputRole.val()
-                    let currentPermissionsIds = []
-
-                    inputPermissions.each((i, el) => {
-                        currentPermissionsIds.push(el.checked && el.value)
-                    })
-
-                    @this.updatePermissions(currentRoleId, currentPermissionsIds)
-                })
             </script>
         @endpush
     @endonce
 
-    
+    <livewire:hak-akses.modal.siap />
 
     <x-card>
         <x-slot name="header">

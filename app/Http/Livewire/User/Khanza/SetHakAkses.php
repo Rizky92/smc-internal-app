@@ -5,11 +5,13 @@ namespace App\Http\Livewire\User\Khanza;
 use App\Models\Aplikasi\MappingAksesKhanza;
 use App\Models\Aplikasi\User;
 use App\Support\Traits\Livewire\DeferredModal;
+use App\Support\Traits\Livewire\Filterable;
+use App\Support\Traits\Livewire\LiveTable;
 use Livewire\Component;
 
 class SetHakAkses extends Component
 {
-    use DeferredModal;
+    use Filterable, LiveTable, DeferredModal;
     
     public $nrp;
 
@@ -92,7 +94,7 @@ class SetHakAkses extends Component
 
     public function showModal()
     {
-        $this->isDeferred = false;
+        $this->loadProperties();
 
         $user = User::rawFindByNRP($this->nrp);
 
@@ -105,18 +107,13 @@ class SetHakAkses extends Component
         }
     }
 
-    public function hideModal()
-    {
-        $this->defaultValues();
-
-        $this->emitUp('resetState');
-    }
-
     public function defaultValues()
     {
+        $this->undefer();
+
+        $this->cari = '';
         $this->nrp = '';
         $this->nama = '';
-        $this->cari = '';
         $this->checkedHakAkses = [];
     }
 }

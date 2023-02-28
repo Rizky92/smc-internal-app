@@ -57,13 +57,6 @@ class SetPerizinan extends Component
 
     public function setRolePermissions()
     {
-        // dd(
-        //     $this->checkedRoles,
-        //     $this->availableRoles->whereIn('id', $this->checkedRoles)->pluck('permissions.id')->values(),
-        //     $this->checkedPermissions,
-        //     collect($this->checkedPermissions)->flip()->flip()->values()
-        // );
-
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
@@ -84,20 +77,10 @@ class SetPerizinan extends Component
         $this->emit('flash.success', "Perizinan SIAP untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
     }
 
-    public function showModal()
-    {
-        $this->loadProperties();
-    }
-
-    public function hideModal()
-    {
-        $this->defaultValues();
-
-        $this->undefer();
-    }
-
     public function defaultValues()
     {
+        $this->undefer();
+
         $this->nrp = '';
         $this->nama = '';
         $this->checkedRoles = [];

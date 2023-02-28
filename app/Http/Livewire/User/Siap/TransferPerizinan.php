@@ -5,6 +5,7 @@ namespace App\Http\Livewire\User\Siap;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
+use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\LiveTable;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,9 +13,7 @@ use Livewire\Component;
 
 class TransferPerizinan extends Component
 {
-    use Filterable, LiveTable;
-
-    public $deferLoading;
+    use Filterable, LiveTable, DeferredModal;
 
     public $nrp;
 
@@ -45,14 +44,14 @@ class TransferPerizinan extends Component
 
     public function getAvailableUsersProperty()
     {
-        return $this->deferLoading
+        return $this->isDeferred
             ? []
             : User::query()
-            ->with('roles')
-            ->where('pegawai.nik', '!=', $this->nrp)
-            ->when(!empty($this->checkedUsers), fn (Builder $query) => $query->orWhereIn('pegawai.nik', $this->checkedUsers))
-            ->search($this->cari)
-            ->get();
+                ->with('roles')
+                ->where('pegawai.nik', '!=', $this->nrp)
+                ->when(!empty($this->checkedUsers), fn (Builder $query) => $query->orWhereIn('pegawai.nik', $this->checkedUsers))
+                ->search($this->cari)
+                ->get();
     }
 
     public function prepareTransfer(string $nrp = '', string $nama = '', array $roleIds = [], array $permissionIds = [])
@@ -89,21 +88,21 @@ class TransferPerizinan extends Component
 
     public function showModal()
     {
-        $this->deferLoading = false;
+        $this->loadProperties();
     }
 
     public function hideModal()
     {
         $this->defaultValues();
+
+        $this->emitUp('resetState');
     }
 
     protected function defaultValues()
     {
+        $this->undefer();
+        
         $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
-
-        $this->deferLoading = true;
         $this->nrp = '';
         $this->nama = '';
         $this->roles = [];

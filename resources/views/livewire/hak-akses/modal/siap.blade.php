@@ -1,6 +1,21 @@
 <div>
-    <x-modal id="modal-role-permissions" title="Set Permission untuk Role" livewire>
-        <x-slot name="body" class="position-relative py-0">
+    @once
+        @push('js')
+            <script>
+                $(document).on('DOMContentLoaded', e => {
+                    $('#modal-role-permissions').on('shown.bs.modal', e => {
+                        @this.emit('siap.show')
+                    })
+
+                    $('#modal-role-permissions').on('hide.bs.modal', e => {
+                        @this.emit('siap.hide')
+                    })
+                })
+            </script>
+        @endpush
+    @endonce
+    <x-modal id="modal-role-permissions" title="Set perizinan untuk {{ $roleName }}" livewire>
+        <x-slot name="body">
             <x-row-col>
                 <ul class="form-group" id="role_permissions">
                     <input type="hidden" name="role" class="d-none">
@@ -15,10 +30,10 @@
                 </ul>
             </x-row-col>
         </x-slot>
-        <x-slot name="footer" class="justify-content-end">
+        <x-slot name="footer" class="justify-content-start">
             <x-filter.search />
-            <x-button class="btn-default" data-dismiss="modal" id="batalsimpan" title="Batal" />
-            <x-button class="btn-primary" data-dismiss="modal" id="simpandata" title="Simpan" icon="fas fa-save" />
+            <x-button class="btn-default ml-auto" data-dismiss="modal" id="batalsimpan" title="Batal" />
+            <x-button class="ml-2 btn-primary" data-dismiss="modal" id="simpandata" title="Simpan" icon="fas fa-save" wire:click="$emit('siap.simpan')" />
         </x-slot>
     </x-modal>
 </div>

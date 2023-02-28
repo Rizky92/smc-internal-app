@@ -3,17 +3,14 @@
 namespace App\Http\Livewire\User\Khanza;
 
 use App\Models\Aplikasi\User;
+use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\LiveTable;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class TransferHakAkses extends Component
 {
-    use Filterable, LiveTable;
-
-    public $deferLoading;
+    use Filterable, LiveTable, DeferredModal;
 
     public $nrp;
 
@@ -35,11 +32,11 @@ class TransferHakAkses extends Component
 
     public function getAvailableUsersProperty()
     {
-        return $this->deferLoading
+        return $this->isDeferred
             ? []
             : User::query()
                 ->where('pegawai.nik', '!=', $this->nrp)
-                ->when(!empty($this->checkedUsers), fn (Builder $query) => $query->orWhereIn('pegawai.nik', $this->checkedUsers))
+                // ->when(!empty($this->checkedUsers), fn (Builder $query) => $query->orWhereIn('pegawai.nik', $this->checkedUsers))
                 ->search($this->cari)
                 ->get();
     }
@@ -83,20 +80,11 @@ class TransferHakAkses extends Component
         $this->emit('flash.success', "Transfer hak akses SIMRS Khanza berhasil!");
     }
 
-    public function showModal()
-    {
-        $this->deferLoading = false;
-    }
-
-    public function hideModal()
-    {
-        $this->defaultValues();
-    }
-
     private function defaultValues()
     {
+        $this->undefer();
+
         $this->cari = '';
-        $this->deferLoading = true;
         $this->nrp = '';
         $this->nama = '';
         $this->checkedUsers = [];

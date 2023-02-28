@@ -28,6 +28,11 @@ trait MenuTracker
 
     private function recordVisitor(): void
     {
+        // Jangan melakukan tracking ketika sedang impersonasi user
+        if (! app('impersonate')->isImpersonating()) {
+            return;
+        }
+
         $breadcrumbs = $this->menuPath();
         $route = $this->currentRoute();
 

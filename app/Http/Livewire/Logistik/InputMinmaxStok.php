@@ -71,8 +71,6 @@ class InputMinmaxStok extends Component
 
         $kodeSupplier = $kodeSupplier !== '-' ? $kodeSupplier : null;
 
-        // dd($kodeSupplier);
-
         tracker_start('mysql_smc');
 
         MinmaxStokBarangNonMedis::updateOrCreate([

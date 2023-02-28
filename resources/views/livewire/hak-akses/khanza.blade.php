@@ -100,8 +100,8 @@
         <x-slot name="body" class="table-responsive">
             <x-table sortable :sortColumns="$sortColumns">
                 <x-slot name="columns">
-                    <x-table.th name="nama_field" title="Nama Field" />
-                    <x-table.th name="judul_menu" title="Judul Menu" />
+                    <x-table.th style="width: 50%" name="nama_field" title="Nama Field" />
+                    <x-table.th style="width: 50%" name="judul_menu" title="Judul Menu" />
                 </x-slot>
                 <x-slot name="body">
                     @foreach ($this->hakAksesKhanza as $hakAkses)
