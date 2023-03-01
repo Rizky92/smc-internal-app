@@ -57,7 +57,7 @@
                             <x-table.th title="Role" />
                         </x-slot>
                         <x-slot name="body">
-                            @foreach ($this->availableUsers as $user)
+                            @forelse ($this->availableUsers as $user)
                                 <x-table.tr>
                                     <x-table.td>
                                         <input id="user-{{ $user->nik }}" type="checkbox" wire:model.defer="checkedUsers" value="{{ $user->nik }}">
@@ -72,7 +72,9 @@
                                         @endforeach
                                     </x-table.td>
                                 </x-table.tr>
-                            @endforeach
+                            @empty
+                                <x-table.tr-empty colspan="5" />
+                            @endforelse
                         </x-slot>
                     </x-table>
                 </div>

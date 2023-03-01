@@ -44,7 +44,7 @@
                             <x-table.th title="Judul Menu" />
                         </x-slot>
                         <x-slot name="body">
-                            @foreach ($this->hakAksesKhanza as $field => $judul)
+                            @forelse ($this->hakAksesKhanza as $field => $judul)
                                 <x-table.tr>
                                     <x-table.td>
                                         <input id="hak-akses-{{ $field }}" type="checkbox" wire:model.defer="checkedHakAkses" value="{{ $field }}">
@@ -53,7 +53,9 @@
                                     <x-table.td>{{ $field }}</x-table.td>
                                     <x-table.td>{{ $judul }}</x-table.td>
                                 </x-table.tr>
-                            @endforeach
+                            @empty
+                                <x-table.tr-empty colspan="3" />
+                            @endforelse
                         </x-slot>
                     </x-table>
                 </div>
