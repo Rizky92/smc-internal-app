@@ -19,6 +19,8 @@ class SetHakAkses extends Component
 
     public $cari;
 
+    public $showChecked;
+
     public $checkedHakAkses;
 
     protected $listeners = [
@@ -46,7 +48,7 @@ class SetHakAkses extends Component
             ? []
             : MappingAksesKhanza::query()
                 ->search($this->cari, ['nama_field', 'judul_menu'])
-                // ->orWhereIn('nama_field', $this->checkedHakAkses)
+                ->when($this->showChecked, fn ($q) => $q->orWhereIn('nama_field', $this->checkedHakAkses))
                 ->pluck('judul_menu', 'nama_field');
     }
 
@@ -114,6 +116,7 @@ class SetHakAkses extends Component
         $this->cari = '';
         $this->nrp = '';
         $this->nama = '';
+        $this->showChecked = false;
         $this->checkedHakAkses = [];
     }
 }

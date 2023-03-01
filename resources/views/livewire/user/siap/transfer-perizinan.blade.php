@@ -70,7 +70,7 @@
         <x-slot name="footer" class="justify-content-start">
             <x-filter.search />
             <x-button class="btn-default ml-auto" data-dismiss="modal" title="Batal" />
-            <x-button class="btn-primary ml-2" data-dismiss="modal" wire:click="$emit('custom-report.transfer')" title="Simpan" icon="fas fa-save" />
+            <x-button class="btn-primary ml-2" data-dismiss="modal" wire:click="$emit('siap.transfer')" title="Simpan" icon="fas fa-save" />
         </x-slot>
     </x-modal>
 </div>

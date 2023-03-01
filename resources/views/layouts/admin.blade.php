@@ -11,6 +11,10 @@
     <link href="{{ asset('plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="{{ asset('logo.ico') }}">
     <style>
+        .custom-control-label {
+            user-select: none !important;
+        }
+
         .btn {
             display: inline-flex !important;
             align-items: center !important;

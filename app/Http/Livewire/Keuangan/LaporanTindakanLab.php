@@ -10,6 +10,7 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Carbon\CarbonImmutable;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -79,21 +80,39 @@ class LaporanTindakanLab extends Component
     protected function dataPerSheet(): array
     {
         return [
-            //
+            HasilPeriksaLab::laporanTindakanLab($this->periodeAwal, $this->periodeAkhir)->get(),
         ];
     }
 
     protected function columnHeaders(): array
     {
         return [
-            //
+            "No. Rawat",
+            "No. RM",
+            "Pasien",
+            "Jenis Bayar",
+            "Petugas",
+            "Tgl. Periksa",
+            "Jam",
+            "Perujuk",
+            "Kode Tindakan",
+            "Nama Tindakan",
+            "Kategori",
+            "Biaya (Rp)",
+            "Status Bayar",
+            "Jenis Perawatan",
+            "Kode Dokter",
+            "Nama Dokter Pemeriksa",
         ];
     }
 
     protected function pageHeaders(): array
     {
         return [
-            //
+            'RS Samarinda Medika Citra',
+            'Laporan Jumlah Tindakan Laboratorium',
+            now()->format('d F Y'),
+            CarbonImmutable::parse($this->periodeAwal)->format('d F Y') . ' - ' . CarbonImmutable::parse($this->periodeAkhir)->format('d F Y'),
         ];
     }
 }

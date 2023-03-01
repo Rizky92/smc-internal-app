@@ -61,6 +61,7 @@
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
             <x-filter.search method="$refresh" />
+            <x-filter.toggle class="ml-1" title="Tampilkan yang dipilih" model="showChecked" />
             <x-button class="btn-default ml-auto" data-dismiss="modal" title="Batal" />
             <x-button class="btn-primary ml-2" data-dismiss="modal" wire:click="$emit('khanza.simpan')" title="Simpan" icon="fas fa-save" />
         </x-slot>

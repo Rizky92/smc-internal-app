@@ -3,7 +3,7 @@
 
     <x-card use-default-filter>
         <x-slot name="body" class="table-responsive">
-            <x-table sortable :sortColumns="$sortColumns" style="min-width: 100%; width: 135rem">
+            <x-table sortable :sortColumns="$sortColumns" style="min-width: 100%; width: 150rem">
                 <x-slot name="columns">
                     <x-table.th style="width: 20ch" name="no_rawat" title="No. Rawat" />
                     <x-table.th style="width: 12ch" name="no_rkm_medis" title="No. RM" />
@@ -18,8 +18,8 @@
                     <x-table.th style="width: 10ch" name="kategori" title="Kategori" />
                     <x-table.th style="width: 13ch" name="biaya" title="Biaya" />
                     <x-table.th style="width: 15ch" name="status_bayar" title="Status Bayar" />
-                    <x-table.th style="width: 10ch" name="status" title="Status" />
-                    <x-table.th style="width: 15ch" name="kd_dokter" title="Dokter Poli" />
+                    <x-table.th style="width: 18ch" name="status" title="Jenis Perawatan" />
+                    <x-table.th style="width: 15ch" name="kd_dokter" title="Kode Dokter" />
                     <x-table.th style="width: 30ch" name="nm_dokter" title="Nama Dokter Pemeriksa" />
                 </x-slot>
                 <x-slot name="body">
@@ -36,7 +36,7 @@
                             <x-table.td>{{ $item->kd_jenis_prw }}</x-table.td>
                             <x-table.td>{{ $item->nm_perawatan }}</x-table.td>
                             <x-table.td>{{ $item->kategori }}</x-table.td>
-                            <x-table.td>{{ $item->biaya }}</x-table.td>
+                            <x-table.td>{{ rp($item->biaya) }}</x-table.td>
                             <x-table.td>{{ $item->status_bayar }}</x-table.td>
                             <x-table.td>{{ $item->status }}</x-table.td>
                             <x-table.td>{{ $item->kd_dokter }}</x-table.td>
