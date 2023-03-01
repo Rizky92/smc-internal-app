@@ -108,6 +108,13 @@ class SetHakAkses extends Component
                 ->toArray();
         }
     }
+    
+    public function hideModal()
+    {
+        $this->defaultValues();
+
+        $this->emitUp('resetState');
+    }
 
     public function defaultValues()
     {

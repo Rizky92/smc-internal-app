@@ -6,6 +6,7 @@ use App\Models\Aplikasi\User;
 use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\LiveTable;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 
 class TransferHakAkses extends Component
@@ -15,6 +16,8 @@ class TransferHakAkses extends Component
     public $nrp;
 
     public $nama;
+
+    public $showChecked;
 
     public $checkedUsers;
 
@@ -36,7 +39,7 @@ class TransferHakAkses extends Component
             ? []
             : User::query()
                 ->where('pegawai.nik', '!=', $this->nrp)
-                // ->when(!empty($this->checkedUsers), fn (Builder $query) => $query->orWhereIn('pegawai.nik', $this->checkedUsers))
+                ->when($this->showChecked, fn (Builder $query) => $query->orWhereIn('pegawai.nik', $this->checkedUsers))
                 ->search($this->cari)
                 ->get();
     }
@@ -79,6 +82,13 @@ class TransferHakAkses extends Component
         $this->dispatchBrowserEvent('data-saved');
         $this->emit('flash.success', "Transfer hak akses SIMRS Khanza berhasil!");
     }
+    
+    public function hideModal()
+    {
+        $this->defaultValues();
+
+        $this->emitUp('resetState');
+    }
 
     private function defaultValues()
     {
@@ -87,6 +97,7 @@ class TransferHakAkses extends Component
         $this->cari = '';
         $this->nrp = '';
         $this->nama = '';
+        $this->showChecked = false;
         $this->checkedUsers = [];
     }
 }

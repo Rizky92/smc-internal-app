@@ -77,6 +77,13 @@ class SetPerizinan extends Component
         $this->dispatchBrowserEvent('data-saved');
         $this->emit('flash.success', "Perizinan SIAP untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
     }
+    
+    public function hideModal()
+    {
+        $this->defaultValues();
+
+        $this->emitUp('resetState');
+    }
 
     public function defaultValues()
     {

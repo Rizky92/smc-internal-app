@@ -23,6 +23,8 @@ class TransferPerizinan extends Component
 
     public $permissions;
 
+    public $showChecked;
+
     public $checkedUsers;
 
     protected $listeners = [
@@ -49,7 +51,7 @@ class TransferPerizinan extends Component
             : User::query()
                 ->with('roles')
                 ->where('pegawai.nik', '!=', $this->nrp)
-                ->when(!empty($this->checkedUsers), fn (Builder $query) => $query->orWhereIn('pegawai.nik', $this->checkedUsers))
+                ->when($this->showChecked, fn (Builder $query) => $query->orWhereIn('pegawai.nik', $this->checkedUsers))
                 ->search($this->cari)
                 ->get();
     }
@@ -105,6 +107,7 @@ class TransferPerizinan extends Component
         $this->cari = '';
         $this->nrp = '';
         $this->nama = '';
+        $this->showChecked = false;
         $this->roles = [];
         $this->permissions = [];
         $this->checkedUsers = [];
