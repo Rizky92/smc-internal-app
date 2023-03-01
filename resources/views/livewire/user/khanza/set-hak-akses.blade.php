@@ -11,7 +11,7 @@
                         @this.emit('khanza.hide-sha')
                     })
 
-                    $('#checkbox-utama').change(e => {
+                    $('#checkbox-utama-khanza-set').change(e => {
                         let els = $('input[type=checkbox][id*=hak-akses-]')
 
                         els.each((i, el) => {
@@ -37,8 +37,8 @@
                     <x-table>
                         <x-slot name="columns">
                             <x-table.th>
-                                <input id="checkbox-utama" type="checkbox" name="__checkbox_utama" value="null">
-                                <label for="checkbox-utama"></label>
+                                <input id="checkbox-utama-khanza-set" type="checkbox" name="__checkbox_utama" value="null">
+                                <label for="checkbox-utama-khanza-set"></label>
                             </x-table.th>
                             <x-table.th title="Nama Field" />
                             <x-table.th title="Judul Menu" />

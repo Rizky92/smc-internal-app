@@ -11,7 +11,7 @@
                         @this.emit('siap.hide-tp')
                     })
 
-                    $('#checkbox-utama').change(e => {
+                    $('#checkbox-utama-siap-transfer').change(e => {
                         let els = $('input[type=checkbox][id*=user-]')
 
                         els.each((i, el) => {
@@ -48,8 +48,8 @@
                     <x-table>
                         <x-slot name="columns">
                             <x-table.th>
-                                <input id="checkbox-utama" type="checkbox" name="__checkbox_utama" value="null">
-                                <label for="checkbox-utama"></label>
+                                <input id="checkbox-utama-siap-transfer" type="checkbox" name="__checkbox_utama" value="null">
+                                <label for="checkbox-utama-siap-transfer"></label>
                             </x-table.th>
                             <x-table.th title="NRP" />
                             <x-table.th title="Nama" />
