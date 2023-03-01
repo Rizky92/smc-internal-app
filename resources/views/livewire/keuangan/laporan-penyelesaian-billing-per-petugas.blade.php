@@ -30,7 +30,7 @@
                     <x-table.th name="nama_pegawai" title="Oleh Petugas" style="width: 40ch" />
                 </x-slot>
                 <x-slot name="body">
-                    @foreach ($this->billingYangDiselesaikan as $billing)
+                    @forelse ($this->billingYangDiselesaikan as $billing)
                         <x-table.tr>
                             @php
                                 $currentPage = $this->billingYangDiselesaikan->currentPage() - 1;
@@ -55,7 +55,9 @@
                             <x-table.td>{{ $billing->tgl_penyelesaian }}</x-table.td>
                             <x-table.td>{{ $billing->nama_pegawai }}</x-table.td>
                         </x-table.tr>
-                    @endforeach
+                    @empty
+                        <x-table.tr-empty colspan="11" />
+                    @endforelse
                 </x-slot>
             </x-table>
         </x-slot>

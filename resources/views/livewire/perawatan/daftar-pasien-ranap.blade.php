@@ -185,7 +185,7 @@
                 <x-card.row-col class="pb-3 border-bottom">
                     <x-button disabled class="btn-primary" id="simpan-data" title="Simpan" icon="fas fa-save" />
                     <x-button disabled class="btn-default ml-2" id="batal-simpan" title="Batal" />
-                    <div id="copy-to-clipboard" class="text-xs border-0 ml-2" style="flex-grow: 1; user-select: all; font-family: monospace; white-space: pre-wrap"></div>
+                    <div id="copy-to-clipboard" class="text-xs border-0 ml-2" style="flex-grow: 1; user-select: all; font-family: monospace; white-space: pre-wrap; line-height: 1.25"></div>
                 </x-card.row-col>
             @endcan
 
@@ -215,26 +215,31 @@
                     <x-table.th name="ruangan" title="Kamar" style="width: 35ch" />
                     <x-table.th name="kelas" title="Kelas" style="width: 10ch" />
                     <x-table.th name="no_rkm_medis" title="No. RM" style="width: 10ch" />
+
                     <x-table.th name="data_pasien" title="Pasien" style="width: 50ch" />
                     <x-table.th name="alamat_pasien" title="Alamat" />
                     <x-table.th name="agama" title="Agama" style="width: 10ch" />
                     <x-table.th name="pj" title="P.J." style="width: 30ch" />
+
                     <x-table.th name="png_jawab" title="Jenis Bayar" style="width: 25ch" />
                     <x-table.th name="nm_poli" title="Asal Poli" style="width: 20ch" />
                     <x-table.th name="dokter_poli" title="Dokter Poli" style="width: 40ch" />
                     <x-table.th name="stts_pulang" title="Status" style="width: 15ch" />
+                    
                     <x-table.th name="tgl_masuk" title="Tgl. Masuk" style="width: 12ch" />
                     <x-table.th name="jam_masuk" title="Jam Masuk" style="width: 12ch" />
                     <x-table.th name="tgl_keluar" title="Tgl. Keluar" style="width: 12ch" />
                     <x-table.th name="jam_keluar" title="Jam Keluar" style="width: 12ch" />
+                    
                     <x-table.th name="trf_kamar" title="Tarif Kamar" style="width: 15ch" />
                     <x-table.th name="lama" title="Lama" style="width: 10ch" />
                     <x-table.th name="ttl_biaya" title="Total" style="width: 20ch" />
                     <x-table.th name="dokter_ranap" title="DPJP" style="width: 35ch" />
+                    
                     <x-table.th name="no_tlp" title="No. HP" style="width: 15ch" />
                 </x-slot>
                 <x-slot name="body">
-                    @foreach ($this->daftarPasienRanap as $pasien)
+                    @forelse ($this->daftarPasienRanap as $pasien)
                         <x-table.tr>
                             <x-table.td
                                 clickable
@@ -272,7 +277,9 @@
                             <x-table.td>{{ $pasien->dokter_ranap }}</x-table.td>
                             <x-table.td>{{ $pasien->no_tlp }}</x-table.td>
                         </x-table.tr>
-                    @endforeach
+                    @empty
+                        <x-table.tr-empty colspan="21" />
+                    @endforelse
                 </x-slot>
             </x-table>
         </x-slot>

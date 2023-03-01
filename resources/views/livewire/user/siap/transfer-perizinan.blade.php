@@ -10,6 +10,14 @@
                     $('#modal-siap-transfer').on('hide.bs.modal', e => {
                         @this.emit('siap.hide-tp')
                     })
+
+                    $('#checkbox-utama').change(e => {
+                        let els = $('input[type=checkbox][id*=user-]')
+
+                        els.each((i, el) => {
+                            el.checked = e.target.checked
+                        })
+                    })
                 })
             </script>
         @endpush
@@ -39,7 +47,10 @@
                 <div class="table-responsive">
                     <x-table>
                         <x-slot name="columns">
-                            <x-table.th title="#" />
+                            <x-table.th>
+                                <input id="checkbox-utama" type="checkbox" name="__checkbox_utama" value="null">
+                                <label for="checkbox-utama"></label>
+                            </x-table.th>
                             <x-table.th title="NRP" />
                             <x-table.th title="Nama" />
                             <x-table.th title="Jabatan" />
@@ -69,6 +80,7 @@
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
             <x-filter.search />
+            <x-filter.toggle class="ml-1" title="Tampilkan yang dipilih" model="showChecked" />
             <x-button class="btn-default ml-auto" data-dismiss="modal" title="Batal" />
             <x-button class="btn-primary ml-2" data-dismiss="modal" wire:click="$emit('siap.transfer')" title="Simpan" icon="fas fa-save" />
         </x-slot>

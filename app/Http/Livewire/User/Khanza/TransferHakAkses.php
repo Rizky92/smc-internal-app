@@ -71,13 +71,13 @@ class TransferHakAkses extends Component
             ->map(fn ($value) => $value ??= 'false')
             ->all();
 
-        tracker_start();
+        tracker_start('mysql_sik');
 
         User::query()
             ->whereIn('pegawai.nik', $this->checkedUsers)
             ->update($hakAkses);
 
-        tracker_end();
+        tracker_end('mysql_sik');
 
         $this->dispatchBrowserEvent('data-saved');
         $this->emit('flash.success', "Transfer hak akses SIMRS Khanza berhasil!");

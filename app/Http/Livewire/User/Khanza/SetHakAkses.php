@@ -74,7 +74,7 @@ class SetHakAkses extends Component
 
         $user = User::rawFindByNRP($this->nrp);
 
-        tracker_start();
+        tracker_start('mysql_sik');
 
         foreach ($this->checkedHakAkses as $hakAkses) {
             $user->setAttribute($hakAkses, 'true');
@@ -88,7 +88,7 @@ class SetHakAkses extends Component
 
         $user->save();
 
-        tracker_end();
+        tracker_end('mysql_sik');
 
         $this->dispatchBrowserEvent('data-saved');
         $this->emit('flash.success', "Hak akses SIMRS Khanza untuk user {$this->nrp} {$this->nama} berhasil diupdate!");

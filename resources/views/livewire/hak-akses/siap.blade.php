@@ -8,13 +8,13 @@
                 const inputPermissions = $('input[name=permissions]')
 
                 function loadData(e) {
-                    let { roleId, permissionIds } = e.dataset
+                    let { roleId, roleName, permissionIds } = e.dataset
                     
                     inputRole.val(roleId)
 
                     permissionIds = Array.from(permissionIds.split(','))
 
-                    @this.emit('siap.prepare', roleId, permissionIds)
+                    @this.emit('siap.prepare', roleId, roleName, permissionIds)
                 }
             </script>
         @endpush
@@ -41,7 +41,7 @@
                     @foreach ($this->roles as $role)
                         @php($superadmin = $role->name === config('permission.superadmin_name'))
                         <x-table.tr :class="Arr::toCssClasses(['text-muted' => $superadmin])">
-                            <x-table.td :clickable="!$superadmin" data-role-id="{{ $role->id }}" data-permission-ids="{{ $role->permissions->pluck('id')->join(',') }}" data-toggle="modal" data-target="#modal-role-permissions">
+                            <x-table.td :clickable="!$superadmin" data-role-id="{{ $role->id }}" data-role-name="{{ $role->name }}" data-permission-ids="{{ $role->permissions->pluck('id')->join(',') }}" data-toggle="modal" data-target="#modal-role-permissions">
                                 {{ $role->name }}
                             </x-table.td>
                             <x-table.td>

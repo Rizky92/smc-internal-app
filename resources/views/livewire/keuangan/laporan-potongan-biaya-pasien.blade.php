@@ -20,7 +20,7 @@
                     <x-table.th name="status_bayar" title="Status Pembayaran" style="width: 25ch" />
                 </x-slot>
                 <x-slot name="body">
-                    @foreach ($this->dataPotonganBiayaPasien as $item)
+                    @forelse ($this->dataPotonganBiayaPasien as $item)
                         <x-table.tr>
                             <x-table.td>{{ $item->tgl_registrasi }}</x-table.td>
                             <x-table.td>{{ $item->jam_reg }}</x-table.td>
@@ -36,7 +36,9 @@
                             <x-table.td>{{ $item->status_lanjut }}</x-table.td>
                             <x-table.td>{{ $item->status_bayar }}</x-table.td>
                         </x-table.tr>
-                    @endforeach
+                    @empty
+                        <x-table.tr-empty colspan="13" />
+                    @endforelse
                 </x-slot>
             </x-table>
         </x-slot>

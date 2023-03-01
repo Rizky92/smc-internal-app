@@ -36,7 +36,7 @@
                                 <x-table.th name="nm_pegawai" title="Petugas" />
                             </x-slot>
                             <x-slot name="body">
-                                @foreach ($this->jurnalBarangMedis as $jurnal)
+                                @forelse ($this->jurnalBarangMedis as $jurnal)
                                     @php
                                         $currentPage = $this->jurnalBarangMedis->currentPage() - 1;
                                         $perpage = $this->jurnalBarangMedis->perPage();
@@ -60,7 +60,9 @@
                                         <x-table.td>{{ $jurnal->nama_suplier }}</x-table.td>
                                         <x-table.td>{{ $jurnal->nm_pegawai }}</x-table.td>
                                     </x-table.tr>
-                                @endforeach
+                                @empty
+                                    <x-table.tr-empty colspan="10" />
+                                @endforelse
                             </x-slot>
                         </x-table>
                         <x-paginator class="px-4 py-3 bg-light" :data="$this->jurnalBarangMedis" />
@@ -80,7 +82,7 @@
                                 <x-table.th name="nm_pegawai" title="Petugas" />
                             </x-slot>
                             <x-slot name="body">
-                                @foreach ($this->jurnalBarangNonMedis as $jurnal)
+                                @forelse ($this->jurnalBarangNonMedis as $jurnal)
                                     @php
                                         $currentPage = $this->jurnalBarangNonMedis->currentPage() - 1;
                                         $perpage = $this->jurnalBarangNonMedis->perPage();
@@ -104,7 +106,9 @@
                                         <x-table.td>{{ $jurnal->nama_suplier }}</x-table.td>
                                         <x-table.td>{{ $jurnal->nm_pegawai }}</x-table.td>
                                     </x-table.tr>
-                                @endforeach
+                                @empty
+                                    <x-table.tr-empty colspan="10" />
+                                @endforelse
                             </x-slot>
                         </x-table>
                         <x-paginator class="px-4 py-3 bg-light" :data="$this->jurnalBarangNonMedis" />

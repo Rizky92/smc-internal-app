@@ -9,21 +9,24 @@
                     <x-table.th style="width: 12ch" name="no_rkm_medis" title="No. RM" />
                     <x-table.th style="width: 42ch" name="nm_pasien" title="Pasien" />
                     <x-table.th style="width: 20ch" name="png_jawab" title="Jenis Bayar" />
+                    
                     <x-table.th style="width: 15ch" name="nama_petugas" title="Petugas" />
                     <x-table.th style="width: 13ch" name="tgl_periksa" title="Tgl. Periksa" />
                     <x-table.th style="width: 10ch" name="jam" title="Jam" />
                     <x-table.th style="width: 10ch" name="dokter_perujuk" title="Perujuk" />
+                    
                     <x-table.th style="width: 17ch" name="kd_jenis_prw" title="Kode Tindakan" />
                     <x-table.th style="width: 30ch" name="nm_perawatan" title="Nama Tindakan" />
                     <x-table.th style="width: 10ch" name="kategori" title="Kategori" />
                     <x-table.th style="width: 13ch" name="biaya" title="Biaya" />
+                    
                     <x-table.th style="width: 15ch" name="status_bayar" title="Status Bayar" />
                     <x-table.th style="width: 18ch" name="status" title="Jenis Perawatan" />
                     <x-table.th style="width: 15ch" name="kd_dokter" title="Kode Dokter" />
                     <x-table.th style="width: 30ch" name="nm_dokter" title="Nama Dokter Pemeriksa" />
                 </x-slot>
                 <x-slot name="body">
-                    @foreach ($this->dataLaporanTindakanLab as $item)
+                    @forelse ($this->dataLaporanTindakanLab as $item)
                         <x-table.tr>
                             <x-table.td>{{ $item->no_rawat }}</x-table.td>
                             <x-table.td>{{ $item->no_rkm_medis }}</x-table.td>
@@ -42,7 +45,9 @@
                             <x-table.td>{{ $item->kd_dokter }}</x-table.td>
                             <x-table.td>{{ $item->nm_dokter }}</x-table.td>
                         </x-table.tr>
-                    @endforeach
+                    @empty
+                        <x-table.tr-empty colspan="16" />
+                    @endforelse
                 </x-slot>
             </x-table>
         </x-slot>

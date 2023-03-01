@@ -29,21 +29,25 @@
                     <x-table.th name="total_harga" title="Total Harga" />
                 </x-slot>
                 <x-slot name="body">
-                    @foreach ($this->stokDaruratLogistik as $barang)
+                    @forelse ($this->stokDaruratLogistik as $barang)
                         <x-table.tr>
                             <x-table.td>{{ $barang->kode_brng }}</x-table.td>
                             <x-table.td>{{ $barang->nama_brng }}</x-table.td>
                             <x-table.td>{{ $barang->satuan }}</x-table.td>
                             <x-table.td>{{ $barang->jenis }}</x-table.td>
+
                             <x-table.td>{{ $barang->nama_supplier }}</x-table.td>
                             <x-table.td>{{ $barang->stokmin }}</x-table.td>
                             <x-table.td>{{ $barang->stokmax }}</x-table.td>
                             <x-table.td>{{ $barang->stok }}</x-table.td>
+
                             <x-table.td>{{ $barang->saran_order }}</x-table.td>
                             <x-table.td>{{ rp($barang->harga) }}</x-table.td>
                             <x-table.td>{{ rp($barang->total_harga) }}</x-table.td>
                         </x-table.tr>
-                    @endforeach
+                    @empty
+                        <x-table.tr-empty colspan="11" />
+                    @endforelse
                 </x-slot>
             </x-table>
         </x-slot>

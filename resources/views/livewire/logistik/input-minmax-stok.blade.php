@@ -180,16 +180,18 @@
                     <x-table.th name="nama_brng" title="Nama" />
                     <x-table.th name="satuan" title="Satuan" />
                     <x-table.th name="jenis" title="Jenis" />
+
                     <x-table.th name="nama_supplier" title="Supplier" />
                     <x-table.th name="stokmin" title="Min" />
                     <x-table.th name="stokmax" title="Max" />
                     <x-table.th name="stok" title="Saat ini" />
+
                     <x-table.th name="saran_order" title="Saran order" />
                     <x-table.th name="harga" title="Harga Per Unit" />
                     <x-table.th name="total_harga" title="Total Harga" />
                 </x-slot>
                 <x-slot name="body">
-                    @foreach ($this->barangLogistik as $barang)
+                    @forelse ($this->barangLogistik as $barang)
                         <x-table.tr>
                             <x-table.td
                                 clickable
@@ -214,7 +216,9 @@
                             <x-table.td>{{ rp($barang->harga) }}</x-table.td>
                             <x-table.td>{{ rp($barang->total_harga) }}</x-table.td>
                         </x-table.tr>
-                    @endforeach
+                    @empty
+                        <x-table.tr-empty colspan="11" />
+                    @endforelse
                 </x-slot>
             </x-table>
         </x-slot>

@@ -5,7 +5,7 @@
         <x-slot name="header">
             <x-card.row-col>
                 <x-filter.label constant-width>Ruangan :</x-filter.label>
-                <x-filter.select2 name="bangsal" placeholder="-" :collection="$this->bangsal" />
+                <x-filter.select2 name="bangsal" model="kodeBangsal" placeholder="-" :collection="$this->bangsal" />
                 <x-filter.button-export-excel class="ml-auto" />
             </x-card.row-col>
             <x-card.row-col class="mt-2">
@@ -26,7 +26,7 @@
                     <x-table.th name="projeksi_harga" title="Projeksi Harga" />
                 </x-slot>
                 <x-slot name="body">
-                    @foreach ($this->stokObatPerRuangan as $obat)
+                    @forelse ($this->stokObatPerRuangan as $obat)
                         <x-table.tr>
                             <x-table.td>{{ $obat->nm_bangsal }}</x-table.td>
                             <x-table.td>{{ $obat->kode_brng }}</x-table.td>
@@ -36,7 +36,7 @@
                             <x-table.td>{{ rp($obat->h_beli) }}</x-table.td>
                             <x-table.td>{{ rp($obat->projeksi_harga) }}</x-table.td>
                         </x-table.tr>
-                    @endforeach
+                    @endforelse
                 </x-slot>
             </x-table>
         </x-slot>

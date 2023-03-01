@@ -23,7 +23,7 @@
                     <x-table.th style="width: 80ch" name="hasil_pemeriksaan" title="Hasil Pemeriksaan" />
                 </x-slot>
                 <x-slot name="body">
-                    @foreach ($this->dataLaporanTindakanRadiologi as $item)
+                    @forelse ($this->dataLaporanTindakanRadiologi as $item)
                         <x-table.tr>
                             <x-table.td>{{ $item->no_rawat }}</x-table.td>
                             <x-table.td>{{ $item->no_rkm_medis }}</x-table.td>
@@ -42,7 +42,9 @@
                             <x-table.td>{{ $item->nm_dokter }}</x-table.td>
                             <x-table.td>{{ $item->hasil_pemeriksaan }}</x-table.td>
                         </x-table.tr>
-                    @endforeach
+                    @empty
+                        <x-table.tr-empty colspan="16" />
+                    @endforelse
                 </x-slot>
             </x-table>
         </x-slot>

@@ -1,39 +1,6 @@
 <div>
     <x-flash />
 
-    @once
-        @push('css')
-            <link href="{{ asset('plugins/select2/css/select2.min.css') }}" rel="stylesheet">
-            <link href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}" rel="stylesheet">
-        @endpush
-        @push('js')
-            <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
-            <script>
-                let inputKodeRekening
-
-                $(document).ready(() => {
-                    inputKodeRekening = $('#kode-rekening').select2({
-                        dropdownCssClass: 'text-sm px-0',
-                    })
-
-                    Livewire.hook('element.updated', (el, component) => {
-                        inputKodeRekening.select2({
-                            dropdownCssClass: 'text-sm px-0',
-                        })
-                    })
-
-                    inputKodeRekening.on('select2:select', e => {
-                        @this.set('kodeRekening', inputKodeRekening.val(), true)
-                    })
-
-                    inputKodeRekening.on('select2:unselect', e => {
-                        @this.set('kodeRekening', inputKodeRekening.val(), true)
-                    })
-                })
-            </script>
-        @endpush
-    @endonce
-
     <x-card use-loading>
         <x-slot name="header">
             <x-card.row-col>
@@ -43,14 +10,7 @@
             <x-card.row-col class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.label class="ml-auto" constant-width>Rekening :</x-filter.label>
-                <div wire:ignore style="width: 24rem">
-                    <select class="form-control form-control-sm simple-select2-sm input-sm" id="kode-rekening" autocomplete="off">
-                        <option value="">&nbsp;</option>
-                        @foreach ($this->rekening as $kode => $nama)
-                            <option value="{{ $kode }}">{{ $kode }} - {{ $nama }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                <x-filter.select2 name="Kode Rekening" model="kodeRekening" :collection="$this->rekening" placeholder="" />
             </x-card.row-col>
             <x-card.row-col class="mt-2">
                 <x-filter.button-reset-filters class="ml-auto" />
