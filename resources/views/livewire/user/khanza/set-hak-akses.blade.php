@@ -12,7 +12,7 @@
                     })
 
                     $('#checkbox-utama-khanza-set').change(e => {
-                        let els = $('input[type=checkbox][id*=hak-akses-]')
+                        let els = $('input[type=checkbox][id*=hak-]')
 
                         els.each((i, el) => {
                             el.checked = e.target.checked
@@ -47,8 +47,8 @@
                             @forelse ($this->hakAksesKhanza as $field => $judul)
                                 <x-table.tr>
                                     <x-table.td>
-                                        <input id="hak-akses-{{ $field }}" type="checkbox" wire:model.defer="checkedHakAkses" value="{{ $field }}">
-                                        <label for="hak-akses-{{ $field }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer; margin: 0"></label>
+                                        <input id="sk-{{ $field }}" type="checkbox" wire:model.defer="checkedHakAkses">
+                                        <label for="sk-{{ $field }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer; margin: 0"></label>
                                     </x-table.td>
                                     <x-table.td>{{ $field }}</x-table.td>
                                     <x-table.td>{{ $judul }}</x-table.td>

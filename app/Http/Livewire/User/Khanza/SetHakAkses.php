@@ -48,7 +48,7 @@ class SetHakAkses extends Component
             ? []
             : MappingAksesKhanza::query()
                 ->search($this->cari, ['nama_field', 'judul_menu'])
-                ->when($this->showChecked, fn ($q) => $q->orWhereIn('nama_field', $this->checkedHakAkses))
+                ->when($this->showChecked, fn ($q) => $q->orWhereIn('nama_field', array_keys($this->checkedHakAkses)))
                 ->pluck('judul_menu', 'nama_field');
     }
 
@@ -74,17 +74,28 @@ class SetHakAkses extends Component
 
         $user = User::rawFindByNRP($this->nrp);
 
+        $hakAksesBaru = collect($user->getAttributes())->except('id_user', 'password')
+            ->keys()
+            ->mapWithkeys(fn ($field) => [$field => true]);
+
         tracker_start('mysql_sik');
 
-        foreach ($this->checkedHakAkses as $hakAkses) {
-            $user->setAttribute($hakAkses, 'true');
+        foreach ($this->checkedHakAkses as $field => $hakAkses) {
+            $user->setAttribute($field, $hakAkses ? 'true' : 'false');
         }
 
-        $falsyHakAkses = $this->hakAksesKhanza->reject(fn ($_, $key) => in_array($key, $this->checkedHakAkses));
+        $falsyHakAkses = $this->hakAksesKhanza->reject(fn ($_, $key) => in_array($key, $this->checkedHakAkses), true);
 
-        foreach ($falsyHakAkses as $field => $judul) {
+        dump(
+            $this->checkedHakAkses,
+            $falsyHakAkses->keys()->all()
+        );
+
+        foreach ($falsyHakAkses->keys()->all() as $field) {
             $user->setAttribute($field, 'false');
         }
+
+        dd($user);
 
         $user->save();
 
@@ -96,17 +107,21 @@ class SetHakAkses extends Component
 
     public function showModal()
     {
-        $this->loadProperties();
+        $this->isDeferred = false;
 
         $user = User::rawFindByNRP($this->nrp);
 
         if (! $this->isDeferred) {
-            $this->checkedHakAkses = $this->hakAksesKhanza
+            $this->checkedHakAkses = collect($user->getAttributes())->except('id_user', 'password')
+                ->filter(fn ($field) => $field === 'true')
                 ->keys()
-                ->filter(fn ($field) => $user->getAttribute($field) === 'true')
-                ->flatten()
-                ->toArray();
+                ->mapWithKeys(fn ($field) => [$field => true])
+                ->all();
+
+            dd($this->checkedHakAkses);
         }
+
+        $this->emit('$refresh');
     }
     
     public function hideModal()

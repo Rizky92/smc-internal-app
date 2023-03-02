@@ -52,7 +52,11 @@ class Siap extends Component
     {
         $role = Role::find($roleId);
 
+        tracker_start('mysql_smc');
+
         $role->syncPermissions($permissionIds);
+
+        tracker_end('mysql_smc');
 
         $this->flashSuccess('Hak akses berhasil diupdate');
     }

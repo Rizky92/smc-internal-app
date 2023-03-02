@@ -12,7 +12,7 @@
                     })
 
                     $('#checkbox-utama-khanza-transfer').change(e => {
-                        let els = $('input[type=checkbox][id*=user-]')
+                        let els = $('input[type=checkbox][id*=tk-]')
 
                         els.each((i, el) => {
                             el.checked = e.target.checked
@@ -48,8 +48,8 @@
                             @forelse ($this->availableUsers as $user)
                                 <x-table.tr>
                                     <x-table.td>
-                                        <input id="user-{{ $user->nik }}" type="checkbox" wire:model.defer="checkedUsers" value="{{ $user->nik }}">
-                                        <label for="user-{{ $user->nik }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer; margin: 0"></label>
+                                        <input id="tk-{{ $user->nik }}" type="checkbox" wire:model.defer="checkedUsers.{{ $user->nik }}" value="true">
+                                        <label for="tk-{{ $user->nik }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer; margin: 0"></label>
                                     </x-table.td>
                                     <x-table.td>{{ $user->nik }}</x-table.td>
                                     <x-table.td>{{ $user->nama }}</x-table.td>
