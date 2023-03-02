@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
 
 return [
@@ -189,22 +188,20 @@ return [
             \Illuminate\Database\Query\Builder::class,
         ],
 
-        Session::class => [
+        \Illuminate\Support\Facade\Session::class => [
             \Illuminate\Session\Store::class,
         ],
 
-        View::class => [
-            \Illuminate\View\View::class,
-            \Illuminate\Contracts\View\Factory::class,
+        \Illuminate\View\View::class => [
             \Livewire\Macros\ViewMacros::class,
-        ],
-
-        Authenticatable::class => [
-            \App\Models\Aplikasi\User::class,
-        ],
+        ]
     ],
 
-    'magic' => [],
+    'magic' => [
+        \Illuminate\Support\Collection::class => [
+            \App\Support\Mixins\Collections\CustomCollections::class,
+        ],
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -216,7 +213,9 @@ return [
     |
     */
 
-    'interfaces' => [],
+    'interfaces' => [
+        //
+    ],
 
     /*
     |--------------------------------------------------------------------------

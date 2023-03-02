@@ -8,14 +8,18 @@ use App\Models\Aplikasi\User;
 use App\Support\Menu\Generator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
+    protected $mixins = [
+        \Illuminate\Support\Collection::class => [
+            \App\Support\Mixins\Collections\CustomCollections::class,
+        ],
+    ];
+
     /**
      * Register any application services.
      *
@@ -38,6 +42,7 @@ class AppServiceProvider extends ServiceProvider
         $this->registerMorphRelations();
         $this->registerSuperadminRole();
         $this->registerCollectionMacros();
+        $this->registerCollectionMixins();
         $this->registerQueryBuilderMacros();
         $this->registerMenuProvider();
     }
@@ -74,23 +79,20 @@ class AppServiceProvider extends ServiceProvider
 
     public function registerCollectionMacros()
     {
-        Collection::macro('whereLike', function ($search, $looseRange = 1) {
-            /** @var \Illuminate\Support\Collection $this */
+        //
+    }
 
-            return $this->filter(function ($v) use ($search, $looseRange) {
-                return levenshtein($v, $search) <= $looseRange;
-            });
-        });
+    public function registerCollectionMixins()
+    {
+        foreach ($this->mixins as $class => $mixins) {
+            if (! in_array('mixin', get_class_methods($class), true)) {
+                continue;
+            }
 
-        Collection::macro('containsLike', function ($search = '', $looseRange = 1) {
-            /** @var \Illuminate\Support\Collection $this */
-
-            return $this->contains(function ($v) use ($search, $looseRange) {
-                if (empty($search)) return false;
-                
-                return levenshtein($v, $search) <= $looseRange;
-            });
-        });
+            foreach ($mixins as $mixinClass) {
+                $class::mixin(new $mixinClass);
+            }
+        }
     }
 
     public function registerMenuProvider()

@@ -2,7 +2,7 @@
 
 namespace App\Models\Perawatan;
 
-use App\Models\Petugas;
+use App\Models\Kepegawaian\Petugas;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 

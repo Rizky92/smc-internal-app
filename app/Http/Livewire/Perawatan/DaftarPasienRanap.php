@@ -147,7 +147,7 @@ class DaftarPasienRanap extends Component
             return;
         }
 
-        tracker_start();
+        tracker_start('mysql_sik');
 
         RawatInap::where([
             ['no_rawat', '=', $noRawat],
@@ -160,7 +160,7 @@ class DaftarPasienRanap extends Component
             'ttl_biaya' => $hargaKamarBaru * $lamaInap
         ]);
 
-        tracker_end();
+        tracker_end('mysql_sik');
 
         $this->resetFilters();
         $this->dispatchBrowserEvent('data-updated');
