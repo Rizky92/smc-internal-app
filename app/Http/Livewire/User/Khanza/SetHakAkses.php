@@ -72,32 +72,16 @@ class SetHakAkses extends Component
             return;
         }
 
-        $user = User::rawFindByNRP($this->nrp);
+        $hakAksesUser = $this->hakAksesKhanza
+            ->mapWithKeys(fn ($_, $field) => [$field => false])
+            ->merge($this->checkedHakAkses)
+            ->mapWithKeys(fn ($val, $field) => [$field => $val ? 'true' : 'false']);
 
-        $hakAksesBaru = collect($user->getAttributes())->except('id_user', 'password')
-            ->keys()
-            ->mapWithkeys(fn ($field) => [$field => true]);
+        dd($hakAksesUser);
 
         tracker_start('mysql_sik');
 
-        foreach ($this->checkedHakAkses as $field => $hakAkses) {
-            $user->setAttribute($field, $hakAkses ? 'true' : 'false');
-        }
-
-        $falsyHakAkses = $this->hakAksesKhanza->reject(fn ($_, $key) => in_array($key, $this->checkedHakAkses), true);
-
-        dump(
-            $this->checkedHakAkses,
-            $falsyHakAkses->keys()->all()
-        );
-
-        foreach ($falsyHakAkses->keys()->all() as $field) {
-            $user->setAttribute($field, 'false');
-        }
-
-        dd($user);
-
-        $user->save();
+        User::rawFindByNRP($this->nrp)->update($hakAksesUser);
 
         tracker_end('mysql_sik');
 
@@ -117,8 +101,6 @@ class SetHakAkses extends Component
                 ->keys()
                 ->mapWithKeys(fn ($field) => [$field => true])
                 ->all();
-
-            dd($this->checkedHakAkses);
         }
 
         $this->emit('$refresh');

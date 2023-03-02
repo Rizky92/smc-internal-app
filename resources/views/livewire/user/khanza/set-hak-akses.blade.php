@@ -37,7 +37,7 @@
                     <x-table>
                         <x-slot name="columns">
                             <x-table.th>
-                                <input id="checkbox-utama-khanza-set" type="checkbox" name="__checkbox_utama" value="null">
+                                <input id="checkbox-utama-khanza-set" type="checkbox" name="__checkbox_utama">
                                 <label for="checkbox-utama-khanza-set"></label>
                             </x-table.th>
                             <x-table.th title="Nama Field" />
@@ -47,7 +47,7 @@
                             @forelse ($this->hakAksesKhanza as $field => $judul)
                                 <x-table.tr>
                                     <x-table.td>
-                                        <input id="sk-{{ $field }}" type="checkbox" wire:model.defer="checkedHakAkses">
+                                        <input id="sk-{{ $field }}" type="checkbox" wire:model.defer="checkedHakAkses.{{ $field }}">
                                         <label for="sk-{{ $field }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer; margin: 0"></label>
                                     </x-table.td>
                                     <x-table.td>{{ $field }}</x-table.td>
