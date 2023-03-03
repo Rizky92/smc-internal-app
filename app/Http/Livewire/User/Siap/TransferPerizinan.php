@@ -9,6 +9,7 @@ use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\LiveTable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class TransferPerizinan extends Component
@@ -46,13 +47,19 @@ class TransferPerizinan extends Component
 
     public function getAvailableUsersProperty()
     {
+        $checkedUsers = collect($this->checkedUsers)
+            ->filter()
+            ->keys()
+            ->all();
+
         return $this->isDeferred
             ? []
             : User::query()
                 ->with('roles')
-                ->where('pegawai.nik', '!=', $this->nrp)
-                ->when($this->showChecked, fn (Builder $query) => $query->orWhereIn('pegawai.nik', $this->checkedUsers))
-                ->search($this->cari)
+                ->where(DB::raw('trim(pegawai.nik)'), '!=', $this->nrp)
+                ->where(fn ($q) => $q
+                    ->search($this->cari)
+                    ->when($this->showChecked, fn (Builder $query) => $query->orWhereIn(DB::raw('trim(pegawai.nik)'), $checkedUsers)))
                 ->get();
     }
 
@@ -73,7 +80,7 @@ class TransferPerizinan extends Component
             return;
         }
 
-        $permittedUsers = User::whereIn('pegawai.nik', $this->checkedUsers)->get();
+        $permittedUsers = User::whereIn(DB::raw('trim(pegawai.nik)'), $this->checkedUsers)->get();
 
         tracker_start('mysql_smc');
 
@@ -103,7 +110,7 @@ class TransferPerizinan extends Component
     protected function defaultValues()
     {
         $this->undefer();
-        
+
         $this->cari = '';
         $this->nrp = '';
         $this->nama = '';

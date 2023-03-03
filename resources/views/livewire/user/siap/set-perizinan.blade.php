@@ -10,9 +10,7 @@
                         inputRoles.each((i, el) => {
                             if (el.checked) {
                                 selectedRoles.push(el.value)
-                            }
-
-                            if (el.indeterminate) {
+                            } else if (el.indeterminate) {
                                 let inputRolePermissions = Array.from(el.nextElementSibling.nextElementSibling.children)
 
                                 inputRolePermissions.forEach(permEl => {

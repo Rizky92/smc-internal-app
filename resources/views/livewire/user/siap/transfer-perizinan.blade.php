@@ -11,12 +11,28 @@
                         @this.emit('siap.hide-tp')
                     })
 
+                    $('#modal-siap-transfer').on('hidden.bs.modal', e => {
+                        $('#checkbox-utama-khanza-set').prop('checked', false)
+                        $('#checkbox-utama-khanza-set').trigger('change')
+                    })
+
                     $('#checkbox-utama-siap-transfer').change(e => {
-                        let els = $('input[type=checkbox][id*=user-]')
+                        let isChecked = e.target.checked
+                        let els = $('input[type=checkbox][id*=tp-]')
+
+                        let checkedUsers = new Map()
 
                         els.each((i, el) => {
-                            el.checked = e.target.checked
+                            el.checked = isChecked
+
+                            checkedUsers.set(el.value, isChecked)
                         })
+
+                        if (! isChecked) {
+                            checkedUsers.clear()
+                        }
+
+                        @this.set('checkedUsers', Object.fromEntries(checkedUsers), true)
                     })
                 })
             </script>
@@ -81,7 +97,7 @@
             </x-row-col>
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
-            <x-filter.search />
+            <x-filter.search method="$refresh" />
             <x-filter.toggle class="ml-1" id="show-checked-siap-transfer" title="Tampilkan yang dipilih" model="showChecked" />
             <x-button class="btn-default ml-auto" data-dismiss="modal" title="Batal" />
             <x-button class="btn-primary ml-2" data-dismiss="modal" wire:click="$emit('siap.transfer')" title="Simpan" icon="fas fa-save" />

@@ -36,7 +36,10 @@ class TransferHakAkses extends Component
 
     public function getAvailableUsersProperty()
     {
-        $checkedUsers = collect($this->checkedUsers)->filter()->keys()->all();
+        $checkedUsers = collect($this->checkedUsers)
+            ->filter()
+            ->keys()
+            ->all();
 
         return $this->isDeferred
             ? []
