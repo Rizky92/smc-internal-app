@@ -11,12 +11,28 @@
                         @this.emit('khanza.hide-tha')
                     })
 
+                    $('#modal-khanza-transfer').on('hidden.bs.modal', e => {
+                        $('#checkbox-utama-khanza-set').prop('checked', false)
+                        $('#checkbox-utama-khanza-set').trigger('change')
+                    })
+
                     $('#checkbox-utama-khanza-transfer').change(e => {
+                        let isChecked = e.target.checked
                         let els = $('input[type=checkbox][id*=tk-]')
 
+                        let checkedUsers = new Map()
+
                         els.each((i, el) => {
-                            el.checked = e.target.checked
+                            el.checked = isChecked
+
+                            checkedUsers.set(el.value, isChecked)
                         })
+
+                        if (! isChecked) {
+                            checkedUsers.clear()
+                        }
+
+                        @this.set('checkedUsers', Object.fromEntries(checkedUsers), true)
                     })
                 })
             </script>
@@ -48,7 +64,7 @@
                             @forelse ($this->availableUsers as $user)
                                 <x-table.tr>
                                     <x-table.td>
-                                        <input id="tk-{{ $user->nik }}" type="checkbox" wire:model.defer="checkedUsers.{{ $user->nik }}" value="true">
+                                        <input id="tk-{{ $user->nik }}" type="checkbox" wire:model.defer="checkedUsers.{{ $user->nik }}" value="{{ $user->nik }}">
                                         <label for="tk-{{ $user->nik }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer; margin: 0"></label>
                                     </x-table.td>
                                     <x-table.td>{{ $user->nik }}</x-table.td>
@@ -64,7 +80,7 @@
             </x-row-col>
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
-            <x-filter.search />
+            <x-filter.search method="$refresh" />
             <x-filter.toggle class="ml-1" id="show-checked-khanza-transfer" title="Tampilkan yang dipilih" model="showChecked" />
             <x-button class="btn-default ml-auto" data-dismiss="modal" title="Batal" />
             <x-button class="btn-primary ml-2" data-dismiss="modal" wire:click="$emit('khanza.transfer')" title="Transfer" icon="fas fa-share-square" />

@@ -88,6 +88,7 @@ if (!function_exists('tracker_end')) {
                 'sqle' => (string) $sql,
                 'usere' => auth()->user()->nik,
                 'ip' => request()->ip(),
+                'connection' => $connection,
             ]);
         }
 

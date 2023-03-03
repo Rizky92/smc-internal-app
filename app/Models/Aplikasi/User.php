@@ -76,7 +76,7 @@ class User extends Authenticatable
         if (empty($nrp)) return new static;
 
         return static::query()
-            ->where('pegawai.nik', $nrp)
+            ->where(DB::raw('trim(pegawai.nik)'), $nrp)
             ->first($columns);
     }
 

@@ -46,7 +46,7 @@ class SetHakAkses extends Component
             ? []
             : MappingAksesKhanza::query()
                 ->search($this->cari, ['nama_field', 'judul_menu'])
-                ->when($this->showChecked, fn ($q) => $q->orWhereIn('nama_field', collect($this->checkedHakAkses)->filter()->all()))
+                ->when($this->showChecked, fn ($q) => $q->orWhereIn('nama_field', collect($this->checkedHakAkses)->filter()->keys()->all()))
                 ->pluck('judul_menu', 'nama_field');
     }
 

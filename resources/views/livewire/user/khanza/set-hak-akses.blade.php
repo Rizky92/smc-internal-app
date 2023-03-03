@@ -18,7 +18,7 @@
 
                     $('#checkbox-utama-khanza-set').change(e => {
                         let isChecked = e.target.checked
-                        let els = $('[id*=sk-]')
+                        let els = $('input[type=checkbox][id*=sk-]')
 
                         let checkedHakAkses = new Map()
 

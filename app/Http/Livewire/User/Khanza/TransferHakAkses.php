@@ -7,6 +7,7 @@ use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\LiveTable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class TransferHakAkses extends Component
@@ -35,12 +36,15 @@ class TransferHakAkses extends Component
 
     public function getAvailableUsersProperty()
     {
+        $checkedUsers = collect($this->checkedUsers)->filter()->keys()->all();
+
         return $this->isDeferred
             ? []
             : User::query()
-                ->where('pegawai.nik', '!=', $this->nrp)
-                ->when($this->showChecked, fn (Builder $query) => $query->orWhereIn('pegawai.nik', $this->checkedUsers))
-                ->search($this->cari)
+                ->where(DB::raw('trim(pegawai.nik)'), '!=', $this->nrp)
+                ->where(fn ($q) => $q
+                    ->search($this->cari)
+                    ->when($this->showChecked, fn ($q) => $q->orWhereIn(DB::raw('trim(pegawai.nik)'), $checkedUsers)))
                 ->get();
     }
 
@@ -68,13 +72,12 @@ class TransferHakAkses extends Component
 
         $hakAkses = collect($currentUser->getAttributes())
             ->except(['id_user', 'password'])
-            ->map(fn ($value) => $value ??= 'false')
             ->all();
 
         tracker_start('mysql_sik');
 
         User::query()
-            ->whereIn('pegawai.nik', $this->checkedUsers)
+            ->whereIn('pegawai.nik', collect($this->checkedUsers)->filter()->all())
             ->update($hakAkses);
 
         tracker_end('mysql_sik');
@@ -82,7 +85,7 @@ class TransferHakAkses extends Component
         $this->dispatchBrowserEvent('data-saved');
         $this->emit('flash.success', "Transfer hak akses SIMRS Khanza berhasil!");
     }
-    
+
     public function hideModal()
     {
         $this->defaultValues();
