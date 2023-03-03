@@ -36,6 +36,8 @@
                             <x-table.td>{{ rp($obat->h_beli) }}</x-table.td>
                             <x-table.td>{{ rp($obat->projeksi_harga) }}</x-table.td>
                         </x-table.tr>
+                    @empty
+                        <x-table.tr-empty colspan="7" />
                     @endforelse
                 </x-slot>
             </x-table>
