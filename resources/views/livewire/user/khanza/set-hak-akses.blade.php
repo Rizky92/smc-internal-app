@@ -11,12 +11,28 @@
                         @this.emit('khanza.hide-sha')
                     })
 
+                    $('#modal-khanza-set').on('hidden.bs.modal', e => {
+                        $('#checkbox-utama-khanza-set').prop('checked', false)
+                        $('#checkbox-utama-khanza-set').trigger('change')
+                    })
+
                     $('#checkbox-utama-khanza-set').change(e => {
-                        let els = $('input[type=checkbox][id*=hak-]')
+                        let isChecked = e.target.checked
+                        let els = $('[id*=sk-]')
+
+                        let checkedHakAkses = new Map()
 
                         els.each((i, el) => {
-                            el.checked = e.target.checked
+                            el.checked = isChecked
+
+                            checkedHakAkses.set(el.value, isChecked)
                         })
+                        
+                        if (! isChecked) {
+                            checkedHakAkses.clear()
+                        }
+
+                        @this.set('checkedHakAkses', Object.fromEntries(checkedHakAkses), true)
                     })
                 })
             </script>
@@ -47,7 +63,7 @@
                             @forelse ($this->hakAksesKhanza as $field => $judul)
                                 <x-table.tr>
                                     <x-table.td>
-                                        <input id="sk-{{ $field }}" type="checkbox" wire:model.defer="checkedHakAkses.{{ $field }}">
+                                        <input id="sk-{{ $field }}" type="checkbox" wire:model.defer="checkedHakAkses.{{ $field }}" value="{{ $field }}">
                                         <label for="sk-{{ $field }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer; margin: 0"></label>
                                     </x-table.td>
                                     <x-table.td>{{ $field }}</x-table.td>

@@ -12,12 +12,10 @@ use Livewire\Component;
 class SetHakAkses extends Component
 {
     use Filterable, LiveTable, DeferredModal;
-    
+
     public $nrp;
 
     public $nama;
-
-    public $cari;
 
     public $showChecked;
 
@@ -48,7 +46,7 @@ class SetHakAkses extends Component
             ? []
             : MappingAksesKhanza::query()
                 ->search($this->cari, ['nama_field', 'judul_menu'])
-                ->when($this->showChecked, fn ($q) => $q->orWhereIn('nama_field', array_keys($this->checkedHakAkses)))
+                ->when($this->showChecked, fn ($q) => $q->orWhereIn('nama_field', collect($this->checkedHakAkses)->filter()->all()))
                 ->pluck('judul_menu', 'nama_field');
     }
 
@@ -72,12 +70,13 @@ class SetHakAkses extends Component
             return;
         }
 
+        $this->forgetComputed();
+
         $hakAksesUser = $this->hakAksesKhanza
             ->mapWithKeys(fn ($_, $field) => [$field => false])
             ->merge($this->checkedHakAkses)
-            ->mapWithKeys(fn ($val, $field) => [$field => $val ? 'true' : 'false']);
-
-        dd($hakAksesUser);
+            ->mapWithKeys(fn ($val, $field) => [$field => $val ? 'true' : 'false'])
+            ->all();
 
         tracker_start('mysql_sik');
 
@@ -95,7 +94,7 @@ class SetHakAkses extends Component
 
         $user = User::rawFindByNRP($this->nrp);
 
-        if (! $this->isDeferred) {
+        if (!$this->isDeferred) {
             $this->checkedHakAkses = collect($user->getAttributes())->except('id_user', 'password')
                 ->filter(fn ($field) => $field === 'true')
                 ->keys()
@@ -105,7 +104,7 @@ class SetHakAkses extends Component
 
         $this->emit('$refresh');
     }
-    
+
     public function hideModal()
     {
         $this->defaultValues();
