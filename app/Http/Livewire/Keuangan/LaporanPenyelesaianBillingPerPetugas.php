@@ -46,6 +46,7 @@ class LaporanPenyelesaianBillingPerPetugas extends Component
                 "pasien.nm_pasien",
                 "ifnull(nota_pasien.no_nota, '-')",
                 "ifnull(kamar.kd_kamar, '-')",
+                "ifnull(bangsal.kd_bangsal, '-')",
                 "ifnull(bangsal.nm_bangsal, '-')",
                 "nota_selesai.status_pasien",
                 "nota_selesai.bentuk_bayar",
