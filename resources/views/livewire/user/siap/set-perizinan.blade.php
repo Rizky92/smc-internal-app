@@ -15,9 +15,8 @@
 
                                 inputRolePermissions.forEach(permEl => {
                                     let permissionCheckbox = permEl.children[0]
-                                    let permissionRoleId = permEl.id.split('-').pop()
 
-                                    if (permissionCheckbox.checked && (el.value !== permissionRoleId)) {
+                                    if (permissionCheckbox.checked) {
                                         selectedPermissions.push(permissionCheckbox.value)
                                     }
                                 })

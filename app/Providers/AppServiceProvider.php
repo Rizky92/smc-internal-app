@@ -97,7 +97,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function registerMenuProvider()
     {
-        $this->app->bind('menu', fn ($app) => new Generator($app));
+        // $this->app->bind('menu', fn ($app) => new Generator($app));
     }
 
     public function registerQueryBuilderMacros()

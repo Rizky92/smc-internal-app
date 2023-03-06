@@ -7,7 +7,8 @@
                 const inputNRP = $('input#user')
                 const inputNama = $('input#nama')
                 const inputRoles = $('input[name=roles]')
-                const inputPermissions = $('input[name=permissions]')
+                const inputRolePermissions = $('input[name=permissions][data-role-id]')
+                const inputPermissions = $('input[name=permissions]:not([data-role-id])')
 
                 const buttonDropdownPilihan = $('button#pilihan')
                 const buttonImpersonate = $('button#siap-impersonate')
@@ -56,12 +57,12 @@
                         permissions = Array.from(permissionIds.split(','))
                     }
 
+                    permissions = permissions.concat(rolePermissions)
+                    permissions = removeDuplicates(permissions)
+
                     inputRoles.each((i, el) => el.checked = roles.find(v => v === el.value))
-                    inputPermissions.each((i, el) => {
-                        let allPermissions = permissions.concat(rolePermissions)
-                        
-                        el.checked = allPermissions.find(v => v === el.value)
-                    })
+                    inputRolePermissions.each((i, el) => el.checked = permissions.find(v => v === el.value))
+                    inputPermissions.each((i, el) => el.checked = permissions.find(v => v === el.value))                    
 
                     @this.emit('siap.prepare-la', nrp, nama)
                     @this.emit('siap.prepare-user', nrp, nama, roles, permissions)
@@ -76,7 +77,12 @@
                     inputNRP.val('')
                     inputNama.val('')
                     inputRoles.each((i, el) => el.checked = false)
+                    inputRolePermissions.each((i, el) => el.checked = false)
                     inputPermissions.each((i, el) => el.checked = false)
+                }
+
+                function removeDuplicates(arr) {
+                    return Array.from(new Set(arr))
                 }
 
                 function setButtonState(prop, state) {
@@ -157,12 +163,14 @@
                             <x-table.td>{{ $user->jbtn }}</x-table.td>
                             <x-table.td>{{ $user->jenis }}</x-table.td>
                             <x-table.td>
-                                @foreach ($user->roles as $role)
-                                    <x-badge :class="Arr::toCssClasses(['badge-dark', 'ml-1' => !$loop->first], ' ')">{{ $role->name }}</x-badge>
-                                @endforeach
-                                @foreach ($user->permissions as $permission)
-                                    <x-badge :class="Arr::toCssClasses(['badge-info', 'ml-1' => (!$loop->first || $user->roles->count() > 0)], ' ')">{{ $permission->name }}</x-badge>
-                                @endforeach
+                                <div style="display: inline-flex; flex-wrap: wrap; gap: 0.25rem">
+                                    @foreach ($user->roles as $role)
+                                        <x-badge class="badge-dark">{{ $role->name }}</x-badge>
+                                    @endforeach
+                                    @foreach ($user->permissions as $permission)
+                                        <x-badge class="badge-secondary">{{ $permission->name }}</x-badge>
+                                    @endforeach
+                                </div>
                             </x-table.td>
                         </x-table.tr>
                     @endforeach
