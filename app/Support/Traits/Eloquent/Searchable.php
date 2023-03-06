@@ -43,13 +43,13 @@ trait Searchable
 
         return $query->when(
             $search->isNotEmpty(),
-            function ($query) use ($search, $concatenatedColumns) {
+            fn ($query) => $query->where(function ($query) use ($search, $concatenatedColumns) {
                 foreach ($search as $word) {
                     $query->whereRaw("{$concatenatedColumns} like ?", ["%{$word}%"]);
                 }
 
                 return $query;
-            }
+            })
         );
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models\Aplikasi;
 
+use App\Casts\BooleanCast;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Model;
@@ -31,5 +32,9 @@ class MappingAksesKhanza extends Model
     protected $searchColumns = [
         'nama_field',
         'judul_menu',
+    ];
+
+    protected $casts = [
+        'default_value' => BooleanCast::class,
     ];
 }

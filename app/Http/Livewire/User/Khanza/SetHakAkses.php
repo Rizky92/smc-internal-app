@@ -45,9 +45,9 @@ class SetHakAkses extends Component
         return $this->isDeferred
             ? []
             : MappingAksesKhanza::query()
-                ->search($this->cari, ['nama_field', 'judul_menu'])
-                ->when($this->showChecked, fn ($q) => $q->orWhereIn('nama_field', collect($this->checkedHakAkses)->filter()->keys()->all()))
-                ->pluck('judul_menu', 'nama_field');
+            ->search($this->cari, ['nama_field', 'judul_menu'])
+            ->when($this->showChecked, fn ($q) => $q->orWhereIn('nama_field', collect($this->checkedHakAkses)->filter()->keys()->all()))
+            ->get();
     }
 
     public function render()
@@ -73,14 +73,15 @@ class SetHakAkses extends Component
         $this->forgetComputed();
 
         $hakAksesUser = $this->hakAksesKhanza
-            ->mapWithKeys(fn ($_, $field) => [$field => false])
+            ->mapWithKeys(fn ($hakAkses) => [$hakAkses->nama_field => $hakAkses->default_value])
             ->merge($this->checkedHakAkses)
-            ->mapWithKeys(fn ($val, $field) => [$field => $val ? 'true' : 'false'])
             ->all();
 
         tracker_start('mysql_sik');
 
-        User::rawFindByNRP($this->nrp)->update($hakAksesUser);
+        User::rawFindByNRP($this->nrp)
+            ->fill($hakAksesUser)
+            ->save();
 
         tracker_end('mysql_sik');
 

@@ -19,10 +19,6 @@ class Siap extends Component
 {
     use WithPagination, FlashComponent, Filterable, LiveTable, MenuTracker;
 
-    protected $listeners = [
-        'permission.updated' => 'updatePermissions',
-    ];
-
     public function mount()
     {
         $this->defaultValues();
@@ -46,18 +42,5 @@ class Siap extends Component
         $this->cari = '';
         $this->perpage = 25;
         $this->sortColumns = [];
-    }
-
-    public function updatePermissions(int $roleId, array $permissionIds)
-    {
-        $role = Role::find($roleId);
-
-        tracker_start('mysql_smc');
-
-        $role->syncPermissions($permissionIds);
-
-        tracker_end('mysql_smc');
-
-        $this->flashSuccess('Hak akses berhasil diupdate');
     }
 }

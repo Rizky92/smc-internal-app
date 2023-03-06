@@ -4,13 +4,8 @@
     @once
         @push('js')
             <script>
-                const inputRole = $('input[type=hidden][name=role]')
-                const inputPermissions = $('input[name=permissions]')
-
                 function loadData(e) {
                     let { roleId, roleName, permissionIds } = e.dataset
-                    
-                    inputRole.val(roleId)
 
                     permissionIds = Array.from(permissionIds.split(','))
 
@@ -47,7 +42,7 @@
                             <x-table.td>
                                 @if($superadmin)
                                     *
-                                @endunless
+                                @endif
                                 @foreach ($role->permissions as $permission)
                                     {{ $permission->name }} @if(!$loop->last) <br> @endif
                                 @endforeach

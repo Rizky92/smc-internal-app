@@ -18,11 +18,11 @@
         <x-slot name="body">
             <x-row-col>
                 <ul class="form-group" id="role_permissions">
-                    <input type="hidden" name="role" class="d-none">
+                    <input type="hidden" name="role" class="d-none" wire:model.defer="roleId">
                     @foreach ($this->permissions as $group => $items)
                         @foreach ($items as $key => $name)
                             <li class="{{ Arr::toCssClasses(['custom-control custom-checkbox', 'mt-3' => $loop->first && !$loop->parent->first]) }}">
-                                <input class="custom-control-input" type="checkbox" id="permission-{{ $key }}" value="{{ $key }}" name="permissions">
+                                <input class="custom-control-input" type="checkbox" id="permission-{{ $key }}" name="permissions" wire:model.defer="checkedPermissions.{{ $key }}" value="{{ $key }}">
                                 <label for="permission-{{ $key }}" class="custom-control-label font-weight-normal">{{ $name }}</label>
                             </li>
                         @endforeach
@@ -31,9 +31,9 @@
             </x-row-col>
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
-            <x-filter.search />
+            <x-filter.search method="$refresh" />
             <x-button class="btn-default ml-auto" data-dismiss="modal" id="batalsimpan" title="Batal" />
-            <x-button class="ml-2 btn-primary" data-dismiss="modal" id="simpandata" title="Simpan" icon="fas fa-save" wire:click="$emit('siap.simpan')" />
+            <x-button class="ml-2 btn-primary" data-dismiss="modal" id="simpandata" title="Simpan" icon="fas fa-save" wire:click="$emit('siap.save')" />
         </x-slot>
     </x-modal>
 </div>

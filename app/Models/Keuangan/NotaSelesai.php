@@ -36,7 +36,7 @@ class NotaSelesai extends Model
             $periodeAkhir = now()->addDay()->format('Y-m-d');
         }
 
-        $database = DB::connection('mysql_sik')->getDatabaseName();
+        $sik = DB::connection('mysql_sik')->getDatabaseName();
 
         $notaPasien = DB::raw("(
             select
@@ -45,8 +45,8 @@ class NotaSelesai extends Model
                 timestamp(nota_jalan.tanggal, nota_jalan.jam) waktu,
                 detail_nota_jalan.nama_bayar,
                 sum(detail_nota_jalan.besar_bayar) besar_bayar
-            from {$database}.nota_jalan nota_jalan
-            join {$database}.detail_nota_jalan detail_nota_jalan on nota_jalan.no_rawat = detail_nota_jalan.no_rawat
+            from {$sik}.nota_jalan nota_jalan
+            join {$sik}.detail_nota_jalan detail_nota_jalan on nota_jalan.no_rawat = detail_nota_jalan.no_rawat
             group by 
                 nota_jalan.no_rawat,
                 nota_jalan.no_nota,
@@ -59,8 +59,8 @@ class NotaSelesai extends Model
                 timestamp(nota_inap.tanggal, nota_inap.jam) waktu,
                 detail_nota_inap.nama_bayar,
                 (sum(detail_nota_inap.besar_bayar) + nota_inap.uang_muka) besar_bayar
-            from {$database}.nota_inap nota_inap
-            join {$database}.detail_nota_inap detail_nota_inap on nota_inap.no_rawat = detail_nota_inap.no_rawat
+            from {$sik}.nota_inap nota_inap
+            join {$sik}.detail_nota_inap detail_nota_inap on nota_inap.no_rawat = detail_nota_inap.no_rawat
             group by
                 nota_inap.no_rawat,
                 nota_inap.no_nota,
@@ -83,15 +83,15 @@ class NotaSelesai extends Model
                 nota_selesai.tgl_penyelesaian,
                 concat(nota_selesai.user_id, ' ', pegawai.nama) nama_pegawai
             ")
-            ->leftJoin(DB::raw($database . '.reg_periksa reg_periksa'), 'nota_selesai.no_rawat', '=', 'reg_periksa.no_rawat')
-            ->leftJoin(DB::raw($database . '.kamar_inap kamar_inap'), 'nota_selesai.no_rawat', '=', 'kamar_inap.no_rawat')
+            ->leftJoin(DB::raw($sik . '.reg_periksa reg_periksa'), 'nota_selesai.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->leftJoin(DB::raw($sik . '.kamar_inap kamar_inap'), 'nota_selesai.no_rawat', '=', 'kamar_inap.no_rawat')
             ->leftJoin($notaPasien, 'nota_selesai.no_rawat', '=', 'nota_pasien.no_rawat')
-            ->leftJoin(DB::raw($database . '.penjab penjab'), 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
-            ->leftJoin(DB::raw($database . '.kamar kamar'), 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
-            ->leftJoin(DB::raw($database . '.bangsal bangsal'), 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
-            ->leftJoin(DB::raw($database . '.pasien pasien'), 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
-            ->leftJoin(DB::raw($database . '.pegawai'), 'nota_selesai.user_id', '=', 'pegawai.nik')
-            ->whereBetween('nota_selesai.tgl_penyelesaian', [$periodeAwal, $periodeAkhir])
+            ->leftJoin(DB::raw($sik . '.penjab penjab'), 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+            ->leftJoin(DB::raw($sik . '.kamar kamar'), 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
+            ->leftJoin(DB::raw($sik . '.bangsal bangsal'), 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
+            ->leftJoin(DB::raw($sik . '.pasien pasien'), 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->leftJoin(DB::raw($sik . '.pegawai'), 'nota_selesai.user_id', '=', 'pegawai.nik')
+            ->whereBetween(DB::raw("date(nota_selesai.tgl_penyelesaian)"), [$periodeAwal, $periodeAkhir])
             ->groupByRaw("
                 nota_selesai.no_rawat,
                 nota_selesai.status_pasien,

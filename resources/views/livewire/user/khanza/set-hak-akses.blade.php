@@ -16,24 +16,24 @@
                         $('#checkbox-utama-khanza-set').trigger('change')
                     })
 
-                    $('#checkbox-utama-khanza-set').change(e => {
-                        let isChecked = e.target.checked
-                        let els = $('input[type=checkbox][id*=sk-]')
+                    // $('#checkbox-utama-khanza-set').change(e => {
+                    //     let isChecked = e.target.checked
+                    //     let els = $('input[type=checkbox][id*=sk-]')
 
-                        let checkedHakAkses = new Map()
+                    //     let checkedHakAkses = new Map()
 
-                        els.each((i, el) => {
-                            el.checked = isChecked
+                    //     els.each((i, el) => {
+                    //         el.checked = isChecked
 
-                            checkedHakAkses.set(el.value, isChecked)
-                        })
+                    //         checkedHakAkses.set(el.value, isChecked)
+                    //     })
                         
-                        if (! isChecked) {
-                            checkedHakAkses.clear()
-                        }
+                    //     if (! isChecked) {
+                    //         checkedHakAkses.clear()
+                    //     }
 
-                        @this.set('checkedHakAkses', Object.fromEntries(checkedHakAkses), true)
-                    })
+                    //     @this.set('checkedHakAkses', Object.fromEntries(checkedHakAkses), true)
+                    // })
                 })
             </script>
         @endpush
@@ -60,14 +60,14 @@
                             <x-table.th title="Judul Menu" />
                         </x-slot>
                         <x-slot name="body">
-                            @forelse ($this->hakAksesKhanza as $field => $judul)
+                            @forelse ($this->hakAksesKhanza as $hakAkses)
                                 <x-table.tr>
                                     <x-table.td>
-                                        <input id="sk-{{ $field }}" type="checkbox" wire:model.defer="checkedHakAkses.{{ $field }}" value="{{ $field }}">
-                                        <label for="sk-{{ $field }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer; margin: 0"></label>
+                                        <input id="sk-{{ $hakAkses->nama_field }}" type="checkbox" wire:model.defer="checkedHakAkses.{{ $hakAkses->nama_field }}">
+                                        <label for="sk-{{ $hakAkses->nama_field }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer; margin: 0"></label>
                                     </x-table.td>
-                                    <x-table.td>{{ $field }}</x-table.td>
-                                    <x-table.td>{{ $judul }}</x-table.td>
+                                    <x-table.td>{{ $hakAkses->nama_field }}</x-table.td>
+                                    <x-table.td>{{ $hakAkses->judul_menu }}</x-table.td>
                                 </x-table.tr>
                             @empty
                                 <x-table.tr-empty colspan="3" />

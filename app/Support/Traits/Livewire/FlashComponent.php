@@ -22,33 +22,33 @@ trait FlashComponent
         }
     }
 
-    public function flashSuccess(string $message)
+    public function flashSuccess(string $message = "Sukses melakukan perubahan data")
     {
-        $this->emit('flash', [
+        $this->flash([
             'flash.type' => 'success',
             'flash.message' => $message,
         ]);
     }
 
-    public function flashInfo(string $message)
+    public function flashInfo(string $message = "Terjadi sesuatu!")
     {
-        $this->emit('flash', [
+        $this->flash([
             'flash.type' => 'dark',
             'flash.message' => $message,
         ]);
     }
 
-    public function flashWarning(string $message)
+    public function flashWarning(string $message = "Terjadi sesuatu!")
     {
-        $this->emit('flash', [
+        $this->flash([
             'flash.type' => 'warning',
             'flash.message' => $message,
         ]);
     }
 
-    public function flashError(string $message)
+    public function flashError(string $message = "Anda tidak diizinkan untuk melakukan aksi ini!")
     {
-        $this->emit('flash', [
+        $this->flash([
             'flash.type' => 'danger',
             'flash.message' => $message,
         ]);

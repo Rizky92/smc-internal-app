@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\HakAkses\Modal;
 
 use App\Models\Aplikasi\Permission;
+use App\Models\Aplikasi\Role;
 use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\LiveTable;
@@ -48,6 +49,27 @@ class Siap extends Component
         $this->roleId = $roleId;
         $this->roleName = $roleName;
         $this->checkedPermissions = $permissionIds;
+    }
+
+    public function updateRolePermissions()
+    {
+        dd($this->checkedPermissions);
+        
+        if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
+            $this->emitUp('flash.error', 'Anda tidak diizinkan untuk melakukan aksi ini!');
+
+            return;
+        }
+
+        $role = Role::findById($this->roleId);
+
+        tracker_start('mysql_smc');
+
+        $role->syncPermissions($this->checkedPermissions);
+
+        tracker_end('mysql_smc');
+
+        $this->emitUp('flash.success', "Update perizinan untuk hak akses {$role->name} berhasil!");
     }
 
     protected function defaultValues()

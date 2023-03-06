@@ -40,17 +40,19 @@ class LaporanPenyelesaianBillingPerPetugas extends Component
         return NotaSelesai::query()
             ->billingYangDiselesaikan($this->periodeAwal, $this->periodeAkhir)
             ->search($this->cari, [
+                "nota_selesai.id",
                 "nota_selesai.no_rawat",
                 "pasien.no_rkm_medis",
-                "trim(pasien.nm_pasien)",
-                "nota_pasien.no_nota",
-                "ifnull(concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal), '-')",
+                "pasien.nm_pasien",
+                "ifnull(nota_pasien.no_nota, '-')",
+                "ifnull(kamar.kd_kamar, '-')",
+                "ifnull(bangsal.nm_bangsal, '-')",
                 "nota_selesai.status_pasien",
                 "nota_selesai.bentuk_bayar",
-                "nota_pasien.besar_bayar",
                 "penjab.png_jawab",
                 "nota_selesai.tgl_penyelesaian",
-                "concat(nota_selesai.user_id, ' ', pegawai.nama)",
+                "nota_selesai.user_id",
+                "pegawai.nama",
             ])
             ->sortWithColumns($this->sortColumns, [
                 'nm_pasien' => DB::raw("trim(pasien.nm_pasien)"),
