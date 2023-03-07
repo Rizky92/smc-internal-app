@@ -81,6 +81,7 @@ class BaseLayout extends Component
                     'keuangan.laporan-potongan-biaya.read',
                     'keuangan.laporan-selesai-billing.read',
                     'keuangan.jurnal-po-supplier.read',
+                    'keuangan.jurnal-piutang.read',
                     'keuangan.buku-besar.read',
                     'keuangan.laba-rugi-rekening.read',
                     'keuangan.dpjp-piutang-ranap.read',
@@ -129,6 +130,13 @@ class BaseLayout extends Component
                         'icon' => "fas fa-book",
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.jurnal-po-supplier.read'),
+                    ],
+                    [
+                        'name' => 'Jurnal Piutang',
+                        'url' => route('admin.keuangan.jurnal-piutang'),
+                        'icon' => "fas fa-book",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.jurnal-piutang.read'),
                     ],
                     [
                         'name' => 'Buku Besar',

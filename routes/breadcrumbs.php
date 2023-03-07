@@ -60,6 +60,11 @@ Breadcrumbs::for('admin.keuangan.jurnal-po-supplier', function (Trail $trail) {
     $trail->push('Jurnal PO Supplier', route('admin.keuangan.jurnal-po-supplier'));
 });
 
+Breadcrumbs::for('admin.keuangan.jurnal-piutang', function (Trail $trail) {
+    $trail->parent('admin.keuangan');
+    $trail->push('Jurnal Piutang', route('admin.keuangan.jurnal-piutang'));
+});
+
 Breadcrumbs::for('admin.keuangan.buku-besar', function (Trail $trail) {
     $trail->parent('admin.keuangan');
     $trail->push('Buku Besar', route('admin.keuangan.buku-besar'));

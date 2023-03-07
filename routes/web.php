@@ -14,6 +14,7 @@ use App\Http\Livewire\HakAkses\Siap;
 use App\Http\Livewire\HakAkses\Khanza;
 use App\Http\Livewire\Keuangan\BukuBesar;
 use App\Http\Livewire\Keuangan\DPJPPiutangRanap;
+use App\Http\Livewire\Keuangan\JurnalPiutang;
 use App\Http\Livewire\Keuangan\LabaRugiRekeningPerPeriode;
 use App\Http\Livewire\Keuangan\LaporanPenyelesaianBillingPerPetugas;
 use App\Http\Livewire\Keuangan\LaporanPotonganBiayaPasien;
@@ -101,6 +102,10 @@ Route::prefix('admin')
                 Route::get('jurnal-po-supplier', PenarikanDataSuplierPO::class)
                     ->middleware('can:keuangan.jurnal-po-supplier.read')
                     ->name('jurnal-po-supplier');
+
+                Route::get('jurnal-piutang', JurnalPiutang::class)
+                    ->middleware('can:keuangan.jurnal-piutang.read')
+                    ->name('jurnal-piutang');
                 
                 Route::get('buku-besar', BukuBesar::class)
                     ->middleware('can:keuangan.buku-besar.read')
