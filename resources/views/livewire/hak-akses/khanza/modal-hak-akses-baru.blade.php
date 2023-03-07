@@ -1,6 +1,4 @@
 <div>
-    <x-flash />
-
     <x-card use-default-filter>
         <x-slot name="body" class="table-responsive">
             <x-table sortable :sortColumns="$sortColumns" style="min-width: 100%">

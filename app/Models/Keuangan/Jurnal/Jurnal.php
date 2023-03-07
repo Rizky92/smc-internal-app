@@ -40,6 +40,7 @@ class Jurnal extends Model
             jurnal.no_bukti,
             jurnal.keterangan,
             detailjurnal.kd_rek,
+            rekening.nm_rek,
             detailjurnal.debet,
             detailjurnal.kredit
         ";
@@ -47,6 +48,7 @@ class Jurnal extends Model
         return $query
             ->selectRaw($sqlSelect)
             ->join('detailjurnal', 'jurnal.no_jurnal', '=', 'detailjurnal.no_jurnal')
+            ->join('rekening', 'detailjurnal.kd_rek', '=', 'rekening.kd_rek')
             ->where('detailjurnal.kd_rek', $kodeRekening)
             ->whereBetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir]);
     }

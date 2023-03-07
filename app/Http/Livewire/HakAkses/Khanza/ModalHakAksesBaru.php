@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Livewire\HakAkses\Modal;
+namespace App\Http\Livewire\HakAkses\Khanza;
 
 use App\Models\Aplikasi\MappingAksesKhanza;
 use App\View\Components\BaseLayout;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
-class KhanzaHakAksesBaru extends Component
+class ModalHakAksesBaru extends Component
 {
     public $namaField;
 
@@ -20,7 +20,7 @@ class KhanzaHakAksesBaru extends Component
 
     public function render()
     {
-        return view('livewire.hak-akses.modal.khanza-hak-akses-baru');
+        return view('livewire.hak-akses.khanza.modal-hak-akses-baru');
     }
 
     public function save()

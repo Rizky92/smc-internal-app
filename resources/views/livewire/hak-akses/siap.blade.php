@@ -5,7 +5,11 @@
         @push('js')
             <script>
                 function loadData(e) {
-                    let { roleId, roleName, permissionIds } = e.dataset
+                    let {
+                        roleId,
+                        roleName,
+                        permissionIds
+                    } = e.dataset
 
                     permissionIds = Array.from(permissionIds.split(','))
 
@@ -40,11 +44,13 @@
                                 {{ $role->name }}
                             </x-table.td>
                             <x-table.td>
-                                @if($superadmin)
+                                @if ($superadmin)
                                     *
                                 @endif
                                 @foreach ($role->permissions as $permission)
-                                    {{ $permission->name }} @if(!$loop->last) <br> @endif
+                                    {{ $permission->name }} @if (!$loop->last)
+                                        <br>
+                                    @endif
                                 @endforeach
                             </x-table.td>
                         </x-table.tr>

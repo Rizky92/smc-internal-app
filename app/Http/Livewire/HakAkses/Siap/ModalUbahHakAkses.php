@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\HakAkses\Modal;
+namespace App\Http\Livewire\HakAkses\Siap;
 
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
@@ -10,7 +10,7 @@ use App\Support\Traits\Livewire\LiveTable;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
-class Siap extends Component
+class ModalUbahHakAkses extends Component
 {
     use Filterable, LiveTable, DeferredModal;
 
@@ -34,7 +34,7 @@ class Siap extends Component
 
     public function render()
     {
-        return view('livewire.hak-akses.modal.siap');
+        return view('livewire.hak-akses.siap.modal-ubah-hak-akses');
     }
 
     public function getPermissionsProperty()

@@ -56,6 +56,7 @@ class BukuBesar extends Component
                 'jurnal.no_bukti',
                 'jurnal.keterangan',
                 'detailjurnal.kd_rek',
+                'rekening.nm_rek',
                 'detailjurnal.debet',
                 'detailjurnal.kredit',
             ])
@@ -93,6 +94,22 @@ class BukuBesar extends Component
             ->layout(BaseLayout::class, ['title' => 'Jurnal Buku Besar']);
     }
 
+    public function exportToExcel()
+    {
+        if (empty($this->kodeRekening)) {
+            $this->flashError('Silahkan pilih rekening terlebih dahulu!');
+
+            return;
+        }
+
+        $this->emit('flash.info', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+
+        // Validasi sebelum proses export dimulai
+        $this->validateSheetNames();
+
+        $this->emit('beginExcelExport');
+    }
+
     protected function defaultValues()
     {
         $this->kodeRekening = '';
@@ -113,7 +130,8 @@ class BukuBesar extends Component
                         'no_jurnal' => '',
                         'no_bukti' => '',
                         'keterangan' => '',
-                        'kd_rek' => 'TOTAL :',
+                        'kd_rek' => '',
+                        'nm_rek' => 'TOTAL :',
                         'debet' => optional($this->totalDebetDanKredit)->debet,
                         'kredit' => optional($this->totalDebetDanKredit)->kredit,
                     ]
@@ -130,6 +148,7 @@ class BukuBesar extends Component
             'No. Jurnal',
             'No. Bukti',
             'Keterangan',
+            'Kode',
             'Rekening',
             'Debet',
             'Kredit',

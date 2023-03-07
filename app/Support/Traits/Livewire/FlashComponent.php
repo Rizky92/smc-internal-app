@@ -27,6 +27,7 @@ trait FlashComponent
         $this->flash([
             'flash.type' => 'success',
             'flash.message' => $message,
+            'flash.icon' => 'check-circle',
         ]);
     }
 
@@ -35,6 +36,7 @@ trait FlashComponent
         $this->flash([
             'flash.type' => 'dark',
             'flash.message' => $message,
+            'flash.icon' => 'info-circle',
         ]);
     }
 
@@ -43,6 +45,7 @@ trait FlashComponent
         $this->flash([
             'flash.type' => 'warning',
             'flash.message' => $message,
+            'flash.icon' => 'exclamation-triangle',
         ]);
     }
 
@@ -51,6 +54,7 @@ trait FlashComponent
         $this->flash([
             'flash.type' => 'danger',
             'flash.message' => $message,
+            'flash.icon' => 'times-circle',
         ]);
     }
 }
