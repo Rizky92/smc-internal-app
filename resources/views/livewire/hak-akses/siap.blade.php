@@ -19,7 +19,7 @@
         @endpush
     @endonce
 
-    <livewire:hak-akses.modal.siap />
+    <livewire:hak-akses.siap.modal-ubah-hak-akses />
 
     <x-card>
         <x-slot name="header">

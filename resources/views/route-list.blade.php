@@ -3,15 +3,12 @@
         @push('css')
             <link rel="stylesheet" href="{{ asset('plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
             <link rel="stylesheet" href="{{ asset('plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
-            <link rel="stylesheet" href="{{ asset('plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
         @endpush
         @push('js')
             <script src="{{ asset('plugins/datatables/jquery.dataTables.min.js') }}"></script>
             <script src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
             <script src="{{ asset('plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
             <script src="{{ asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
-            <script src="{{ asset('plugins/datatables-buttons/js/dataTables.buttons.js') }}"></script>
-            <script src="{{ asset('plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
             <script>
                 $(document).ready(function() {
                     $('#routes-table').DataTable();
@@ -32,11 +29,11 @@
                         @endif
                     </thead>
                     <tbody>
-                        @foreach ($routes as $route)
+                        @foreach ($routes as ['url' => $url, 'name' => $name, 'methods' => $methods])
                             <tr>
-                                <td class="text-monospace">{!! $route['name'] !!}</td>
-                                <td>{!! $route['url'] !!}</td>
-                                <td class="text-monospace">{!! $route['methods'] !!}</td>
+                                <td class="text-monospace">{{ $name }}</td>
+                                <td> {{ $url }}</td>
+                                <td class="text-monospace">{{ $methods }}</td>
                             </tr>
                         @endforeach
                     </tbody>

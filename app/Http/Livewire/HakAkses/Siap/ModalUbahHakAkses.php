@@ -48,13 +48,11 @@ class ModalUbahHakAkses extends Component
     {
         $this->roleId = $roleId;
         $this->roleName = $roleName;
-        $this->checkedPermissions = $permissionIds;
+        $this->checkedPermissions = collect($permissionIds)->mapWithKeys(fn ($v, $k) => [$v => $v])->toArray();
     }
 
     public function updateRolePermissions()
     {
-        dd($this->checkedPermissions);
-        
         if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->emitUp('flash.error', 'Anda tidak diizinkan untuk melakukan aksi ini!');
 

@@ -159,7 +159,7 @@ class BukuBesar extends Component
     {
         return [
             'RS Samarinda Medika Citra',
-            'Buku Besar rekening' . $this->kodeRekening,
+            'Buku Besar rekening ' . $this->rekening[$this->kodeRekening],
             now()->format('d F Y'),
             'Periode ' . Carbon::parse($this->periodeAwal)->format('d F Y') . ' - ' . Carbon::parse($this->periodeAkhir)->format('d F Y'),
         ];

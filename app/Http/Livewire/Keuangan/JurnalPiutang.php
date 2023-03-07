@@ -35,7 +35,7 @@ class JurnalPiutang extends Component
     public function render()
     {
         return view('livewire.keuangan.jurnal-piutang')
-            ->layout(BaseLayout::class, ['title' => 'JurnalInvoicePiutang']);
+            ->layout(BaseLayout::class, ['title' => 'Jurnal Piutang']);
     }
 
     protected function defaultValues()

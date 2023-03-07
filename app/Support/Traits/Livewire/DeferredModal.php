@@ -22,5 +22,9 @@ trait DeferredModal
     public function hideModal()
     {
         $this->undefer();
+
+        if (method_exists($this, 'defaultValues')) {
+            $this->defaultValues();
+        }
     }
 }
