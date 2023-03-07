@@ -19,7 +19,7 @@
             <div class="timeline">
                 @forelse ($this->aktivitasUser as $date => $timeline)
                     <div class="time-label">
-                        <span class="bg-white text-dark text-sm px-3 border font-weight-bold">{{ carbon($date)->format('d F Y') }}</span>
+                        <span class="bg-white text-dark text-sm px-3 border font-weight-bold">{{ carbon_immutable($date)->format('d F Y') }}</span>
                     </div>
 
                     @foreach ($timeline as $item)
@@ -27,7 +27,7 @@
                             <i class="fas fa-angle-right bg-dark"></i>
                             <div class="timeline-item border-0 shadow-none bg-transparent" style="margin-top: -0.2rem">
                                 <div class="timeline-body mt-n1 d-flex justify-content-start align-items-start">
-                                    <span class="badge badge-secondary text-xs" style="margin-inline-end: 1.25rem">{{ carbon($item->waktu)->format('H:i') }}</span>
+                                    <span class="badge badge-secondary text-xs" style="margin-inline-end: 1.25rem">{{ carbon_immutable($item->waktu)->format('H:i') }}</span>
                                     <div class="mt-n1 flex-fill">
                                         <h6 style="margin-top: 0.2rem; margin-bottom: 0.25rem">
                                             Mengunjungi <a href="{{ Route::has($item->route_name) ? route($item->route_name) : '#' }}">{{ Str::of($item->breadcrumbs)->afterLast('/')->trim() }}</a>
@@ -53,7 +53,7 @@
                         <div class="timeline-item border-0 shadow-none bg-transparent" style="margin-top: -0.2rem">
                             <div class="timeline-body mt-n1 d-flex justify-content-start align-items-start">
                                 <div class="mt-n1">
-                                    <p class="m-0">User ini belum pernah membuka SMC Internal App!</p>
+                                    <p class="m-0">User ini belum pernah membuka {{ config('app.name') }}!</p>
                                 </div>
                             </div>
                         </div>

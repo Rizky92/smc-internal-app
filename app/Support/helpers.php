@@ -116,16 +116,3 @@ if (! function_exists('func_get_named_args')) {
         return $res;
     }
 }
-
-if (! function_exists('carbon')) {
-    /**
-     * @param  string|\DateTimeInterface|null $time
-     * @param  \DateTimeZone|string|null $tz
-     * 
-     * @return \Carbon\CarbonImmutable
-     */
-    function carbon($time = null, $tz = null)
-    {
-        return CarbonImmutable::parse($time, $tz);
-    }
-}

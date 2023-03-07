@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4c30dc54d57a837e338787ea039393ff",
+    "content-hash": "6a5e83f30badb767de337dadd9665cf5",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3270,6 +3270,46 @@
                 "source": "https://github.com/rap2hpoutre/laravel-log-viewer/tree/v2.3.0"
             },
             "time": "2023-02-15T07:36:34+00:00"
+        },
+        {
+            "name": "rizky92/carbon-helper",
+            "version": "0.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Rizky92/carbon-helper.git",
+                "reference": "0151513fe4c8e7a0cba672d993fb7db7a5b63378"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Rizky92/carbon-helper/zipball/0151513fe4c8e7a0cba672d993fb7db7a5b63378",
+                "reference": "0151513fe4c8e7a0cba672d993fb7db7a5b63378",
+                "shasum": ""
+            },
+            "require": {
+                "nesbot/carbon": "^2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rizky92",
+                    "email": "myquinn489@gmail.com"
+                }
+            ],
+            "description": "Helper for nesbot/carbon",
+            "support": {
+                "issues": "https://github.com/Rizky92/carbon-helper/issues",
+                "source": "https://github.com/Rizky92/carbon-helper/tree/0.0.2"
+            },
+            "time": "2023-03-07T00:26:02+00:00"
         },
         {
             "name": "rizky92/laravel-xlswriter",

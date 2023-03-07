@@ -31,7 +31,7 @@ class LihatAktivitas extends Component
             ? []
             : TrackerMenu::lihatAktivitasUser($this->userId)
                 ->get()
-                ->groupBy(fn ($model) => carbon($model->waktu)->format('Y-m-d'));
+                ->groupBy(fn ($model) => carbon_immutable($model->waktu)->format('Y-m-d'));
     }
 
     public function render()
