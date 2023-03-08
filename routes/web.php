@@ -14,13 +14,13 @@ use App\Http\Livewire\HakAkses\Siap;
 use App\Http\Livewire\HakAkses\Khanza;
 use App\Http\Livewire\Keuangan\BukuBesar;
 use App\Http\Livewire\Keuangan\DPJPPiutangRanap;
-use App\Http\Livewire\Keuangan\JurnalPiutang;
 use App\Http\Livewire\Keuangan\LabaRugiRekeningPerPeriode;
 use App\Http\Livewire\Keuangan\LaporanPenyelesaianBillingPerPetugas;
 use App\Http\Livewire\Keuangan\LaporanPotonganBiayaPasien;
 use App\Http\Livewire\Keuangan\LaporanTambahanBiayaPasien;
 use App\Http\Livewire\Keuangan\LaporanTindakanLab;
 use App\Http\Livewire\Keuangan\LaporanTindakanRadiologi;
+use App\Http\Livewire\Keuangan\PenarikanDataPiutangDibayar;
 use App\Http\Livewire\Keuangan\PenarikanDataSuplierPO;
 use App\Http\Livewire\Keuangan\RekapPiutangPasien;
 use App\Http\Livewire\Keuangan\StokObatRuangan;
@@ -61,7 +61,7 @@ Route::prefix('admin')
     ->middleware('auth')
     ->group(function () {
         Route::impersonate();
-        
+
         Route::get('/', DashboardController::class)->name('dashboard');
 
         Route::prefix('perawatan')
@@ -103,10 +103,10 @@ Route::prefix('admin')
                     ->middleware('can:keuangan.jurnal-po-supplier.read')
                     ->name('jurnal-po-supplier');
 
-                Route::get('jurnal-piutang', JurnalPiutang::class)
-                    ->middleware('can:keuangan.jurnal-piutang.read')
-                    ->name('jurnal-piutang');
-                
+                Route::get('jurnal-piutang-lunas', PenarikanDataPiutangDibayar::class)
+                    ->middleware('can:keuangan.jurnal-piutang-lunas.read')
+                    ->name('jurnal-piutang-lunas');
+
                 Route::get('buku-besar', BukuBesar::class)
                     ->middleware('can:keuangan.buku-besar.read')
                     ->name('buku-besar');

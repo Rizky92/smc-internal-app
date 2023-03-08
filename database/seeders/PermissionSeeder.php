@@ -42,7 +42,7 @@ class PermissionSeeder extends Seeder
             Permission::create(['name' => 'keuangan.laporan-potongan-biaya.read', 'guard_name' => 'web']),
             Permission::create(['name' => 'keuangan.laporan-tambahan-pasien.read', 'guard_name' => 'web']),
             Permission::create(['name' => 'keuangan.jurnal-po-supplier.read', 'guard_name' => 'web']),
-            Permission::create(['name' => 'keuangan.jurnal-piutang.read', 'guard_name' => 'web']),
+            Permission::create(['name' => 'keuangan.jurnal-piutang-lunas.read', 'guard_name' => 'web']),
             Permission::create(['name' => 'keuangan.buku-besar.read', 'guard_name' => 'web']),
             Permission::create(['name' => 'keuangan.laba-rugi-rekening.read', 'guard_name' => 'web']),
             Permission::create(['name' => 'keuangan.dpjp-piutang-ranap.read', 'guard_name' => 'web']),

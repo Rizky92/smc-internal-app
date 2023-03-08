@@ -22,10 +22,6 @@ class PenarikanDataSuplierPO extends Component
 
     public $periodeAkhir;
 
-    protected $listeners = [
-        //
-    ];
-
     protected function queryString()
     {
         return [
@@ -92,7 +88,7 @@ class PenarikanDataSuplierPO extends Component
     public function render()
     {
         return view('livewire.keuangan.penarikan-data-suplier-p-o')
-            ->layout(BaseLayout::class, ['title' => 'Penarikan Data Suplier Penerimaan Barang Medis / Non Medis']);
+            ->layout(BaseLayout::class, ['title' => 'Penarikan Data Suplier Penerimaan Barang Medis / Non Medis dari Jurnal']);
     }
 
     public function tarikDataTerbaru()

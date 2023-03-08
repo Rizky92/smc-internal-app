@@ -9,9 +9,10 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
-class JurnalPiutang extends Component
+class PenarikanDataPiutangDibayar extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
@@ -34,8 +35,13 @@ class JurnalPiutang extends Component
 
     public function render()
     {
-        return view('livewire.keuangan.jurnal-piutang')
-            ->layout(BaseLayout::class, ['title' => 'Jurnal Piutang']);
+        return view('livewire.keuangan.penarikan-data-piutang-dibayar')
+            ->layout(BaseLayout::class, ['title' => 'Penarikan Data Penagihan Piutang Dibayar dari Jurnal']);
+    }
+
+    public function getAkunPenagihanPiutangProperty()
+    {
+        return DB::connection('mysql_sik')->table('akun_penagihan_piutang')->first();
     }
 
     protected function defaultValues()
@@ -54,7 +60,18 @@ class JurnalPiutang extends Component
     protected function columnHeaders(): array
     {
         return [
-            //
+            '#',
+            'No. Jurnal',
+            'Waktu',
+            'No. Penagihan',
+            'Keterangan',
+            'Status',
+            'Nominal (Rp)',
+            'Akun Bayar',
+            'Kode Rekening',
+            'Nama Rekening',
+            'Supplier',
+            'Nama Pegawai',
         ];
     }
 
