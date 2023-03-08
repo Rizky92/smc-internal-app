@@ -7,6 +7,8 @@ use Spatie\Permission\PermissionRegistrar;
 
 class CreatePermissionTables extends Migration
 {
+    protected $connection = 'mysql_smc';
+    
     /**
      * Run the migrations.
      *

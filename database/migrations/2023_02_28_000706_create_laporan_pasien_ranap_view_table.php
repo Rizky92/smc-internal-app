@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateLaporanPasienRanapViewTable extends Migration
 {
+    protected $connection = 'mysql_smc';
+    
     /**
      * Run the migrations.
      *

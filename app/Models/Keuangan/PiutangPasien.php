@@ -6,6 +6,7 @@ use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
 class PiutangPasien extends Model
@@ -23,6 +24,47 @@ class PiutangPasien extends Model
     public $incrementing = false;
 
     public $timestamps = false;
+
+    public function scopePiutangPasienSudahLunas(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $penjamin = '', string $rekening = '112010'): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->format('Y-m-d');
+        }
+
+        $sqlSelect = <<<SQL
+            piutang_pasien.no_rawat,
+            piutang_pasien.no_rkm_medis,
+            pasien.nm_pasien,
+            penjab.png_jawab,
+            piutang_pasien.tgl_piutang,
+            piutang_pasien.totalpiutang,
+            bayar_piutang.besar_cicilan,
+            piutang_pasien.status,
+            piutang_pasien.tgltempo,
+            bayar_piutang.tgl_bayar,
+            bayar_piutang.kd_rek,
+            rekening.nm_rek,
+            bayar_piutang.catatan
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join('pasien', 'piutang_pasien.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->join('reg_periksa', 'piutang_pasien.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+            ->leftJoin('bayar_piutang', fn (JoinClause $join) => $join
+                ->on('piutang_pasien.no_rawat', '=', 'bayar_piutang.no_rawat')
+                ->on('piutang_pasien.no_rkm_medis', '=', 'bayar_piutang.no_rkm_medis'))
+            ->leftJoin('rekening', 'bayar_piutang.kd_rek', '=', 'rekening.kd_rek')
+            ->where('piutang_pasien.status', 'Lunas')
+            ->wherebetween('bayar_piutang.tgl_bayar', [$tglAwal, $tglAkhir])
+            ->where('bayar_piutang.kd_rek', $rekening)
+            ->when(!empty($penjamin), fn (Builder $q) => $q->where('reg_periksa.kd_pj', $penjamin));
+    }
 
     public function scopeRekapPiutangPasien(
         Builder $query,

@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateJobsTable extends Migration
 {
+    protected $connection = 'mysql_smc';
+    
     /**
      * Run the migrations.
      *
