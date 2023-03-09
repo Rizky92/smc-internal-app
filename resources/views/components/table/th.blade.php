@@ -14,11 +14,11 @@
             <span class="text-dark mr-1">{{ $title }}</span>
             @switch(optional($sortColumns)[$name])
                 @case('asc')
-                    <i class="fas fa-arrow-up"></i>
+                    <i class="fas fa-arrow-up" style="margin-top: 0.0625rem"></i>
                 @break
 
                 @case('desc')
-                    <i class="fas fa-arrow-down"></i>
+                    <i class="fas fa-arrow-down" style="margin-top: 0.0625rem"></i>
                 @break
             @endswitch
         </button>

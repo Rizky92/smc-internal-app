@@ -2,9 +2,15 @@
 
 namespace App\Models\Keuangan;
 
+use App\Models\Kepegawaian\Pegawai;
+use App\Models\Keuangan\Jurnal\Jurnal;
+use App\Models\Perawatan\RegistrasiPasien;
+use App\Models\RekamMedis\Penjamin;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -34,6 +40,8 @@ class PiutangDilunaskan extends Model
             bayar_piutang.tgl_bayar,
             penagihan_piutang.kd_rek,
             akun_penagihan_piutang.nama_bank,
+            penagihan_piutang.nip,
+            penagihan_piutang.nip_menyetujui,
             jurnal.keterangan
         SQL;
 
@@ -77,9 +85,11 @@ class PiutangDilunaskan extends Model
                         'tgl_penagihan' => $jurnal->tgl_penagihan,
                         'tgl_jatuh_tempo' => $jurnal->tgl_jatuh_tempo,
                         'tgl_bayar' => $jurnal->tgl_bayar,
-                        'status' => $status ? 'Bayar' : 'Batal Bayar',
+                        'status' => $status ? 'Batal Bayar' : 'Bayar',
                         'kd_rek' => $jurnal->kd_rek,
                         'nm_rek' => $jurnal->nama_bank,
+                        'nik_penagih' => $jurnal->nip,
+                        'nik_menyetujui' => $jurnal->nip_menyetujui,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];
@@ -87,5 +97,67 @@ class PiutangDilunaskan extends Model
 
                 static::insert($data->all());
             });
+    }
+
+    public function scopeDataPiutangDilunaskan(
+        Builder $query,
+        string $tglAwal = '',
+        string $tglAkhir = '',
+        string $rekening = '112010',
+        string $berdasarkanTgl = 'jurnal'
+    ): Builder {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        }
+
+        $filterTgl = [
+            'jurnal' => 'waktu_jurnal',
+            'penagihan' => 'tgl_penagihan',
+            'bayar' => 'tgl_bayar',
+        ][$berdasarkanTgl];
+
+        return $query
+            ->with(['jurnal:no_jurnal,keterangan', 'registrasi:no_rawat,no_rkm_medis,umurdaftar,sttsumur', 'registrasi.pasien:no_rkm_medis,nm_pasien', 'tagihan', 'penjamin:kd_pj,nama_perusahaan,png_jawab', 'rekening:kd_rek,nm_rek', 'penagih:nik,nama', 'penyetuju:nik,nama'])
+            ->where('kd_rek', $rekening)
+            ->whereBetween($filterTgl, [$tglAwal, $tglAkhir]);
+    }
+
+    public function penagih(): BelongsTo
+    {
+        return $this->belongsTo(Pegawai::class, 'nik_penagih', 'nik');
+    }
+
+    public function penyetuju(): BelongsTo
+    {
+        return $this->belongsTo(Pegawai::class, 'nik_menyetujui', 'nik');
+    }
+
+    public function jurnal(): BelongsTo
+    {
+        return $this->belongsTo(Jurnal::class, 'no_jurnal', 'no_jurnal');
+    }
+
+    public function penjamin(): BelongsTo
+    {
+        return $this->belongsTo(Penjamin::class, 'kd_pj', 'kd_pj');
+    }
+
+    public function tagihan(): BelongsTo
+    {
+        return $this->belongsTo(PenagihanPiutang::class, 'no_tagihan', 'no_tagihan');
+    }
+
+    public function registrasi(): BelongsTo
+    {
+        return $this->belongsTo(RegistrasiPasien::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function rekening(): BelongsTo
+    {
+        return $this->belongsTo(Rekening::class, 'kd_rek', 'kd_rek');
     }
 }

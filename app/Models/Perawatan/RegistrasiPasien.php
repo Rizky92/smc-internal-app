@@ -2,10 +2,12 @@
 
 namespace App\Models\Perawatan;
 
+use App\Models\RekamMedis\Pasien;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -24,6 +26,11 @@ class RegistrasiPasien extends Model
     public $incrementing = false;
 
     public $timestamps = false;
+
+    public function pasien(): BelongsTo
+    {
+        return $this->belongsTo(Pasien::class, 'no_rkm_medis', 'no_rkm_medis');
+    }
 
     public function scopeDaftarPasienRanap(
         Builder $query,

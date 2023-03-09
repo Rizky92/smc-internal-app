@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Keuangan;
 
+use App\Models\Keuangan\PiutangDilunaskan;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
@@ -42,6 +43,15 @@ class PenarikanDataPiutangDibayar extends Component
     public function getAkunPenagihanPiutangProperty()
     {
         return DB::connection('mysql_sik')->table('akun_penagihan_piutang')->first();
+    }
+
+    public function getDataPiutangDilunaskanProperty()
+    {
+        return PiutangDilunaskan::query()
+            ->dataPiutangDilunaskan($this->periodeAwal, $this->periodeAkhir)
+            // ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
+            ->paginate($this->perpage);
     }
 
     protected function defaultValues()
