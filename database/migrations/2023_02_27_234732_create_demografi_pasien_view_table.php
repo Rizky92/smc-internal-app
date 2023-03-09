@@ -18,39 +18,39 @@ return new class extends Migration
         $db = DB::connection('mysql_sik')->getDatabaseName();
 
         $sqlSelect = <<<SQL
-            $db.kecamatan.nm_kec as kecamatan,
-            $db.reg_periksa.no_rkm_medis as no_rm,
-            $db.reg_periksa.no_rawat as no_rawat,
-            $db.pasien.nm_pasien as nm_pasien,
-            $db.pasien.alamat as almt,
-            $db.reg_periksa.umurdaftar as umurdaftar,
-            $db.reg_periksa.sttsumur as sttsumur,
-            $db.reg_periksa.tgl_registrasi as tgl_registrasi,
-            concat($db.reg_periksa.umurdaftar, ' ', $db.reg_periksa.sttsumur) as umur,
-            $db.pasien.jk as jk,
-            $db.penyakit.nm_penyakit as diagnosa,
-            $db.pasien.agama as agama,
-            $db.pasien.pnd as pendidikan,
-            $db.bahasa_pasien.nama_bahasa as bahasa,
-            $db.suku_bangsa.nama_suku_bangsa as suku
+            kecamatan.nm_kec as kecamatan,
+            reg_periksa.no_rkm_medis as no_rm,
+            reg_periksa.no_rawat as no_rawat,
+            pasien.nm_pasien as nm_pasien,
+            pasien.alamat as almt,
+            reg_periksa.umurdaftar as umurdaftar,
+            reg_periksa.sttsumur as sttsumur,
+            reg_periksa.tgl_registrasi as tgl_registrasi,
+            concat(reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur) as umur,
+            pasien.jk as jk,
+            penyakit.nm_penyakit as diagnosa,
+            pasien.agama as agama,
+            pasien.pnd as pendidikan,
+            bahasa_pasien.nama_bahasa as bahasa,
+            suku_bangsa.nama_suku_bangsa as suku
         SQL;
 
         $query = DB::connection('mysql_sik')
-            ->table('reg_periksa')
+            ->table("{$db}.reg_periksa", 'reg_periksa')
             ->selectRaw($sqlSelect)
-            ->join("{$db}.pasien", "{$db}.reg_periksa.no_rkm_medis", '=', "{$db}.pasien.no_rkm_medis")
-            ->leftJoin("{$db}.kecamatan", "{$db}.pasien.kd_kec", '=', "{$db}.kecamatan.kd_kec")
-            ->leftJoin("{$db}.bahasa_pasien", "{$db}.pasien.bahasa_pasien", '=', "{$db}.bahasa_pasien.id")
-            ->leftJoin("{$db}.suku_bangsa", "{$db}.pasien.suk_bangsa", '=', "{$db}.suku_bangsa.id")
-            ->leftJoin("{$db}.diagnosa_pasien", "{$db}.reg_periksa.no_rawat", '=', "{$db}.diagnosa_pasien.no_rawat")
-            ->leftJoin("{$db}.penyakit", "{$db}.diagnosa_pasien.kd_penyakit", '=', "{$db}.penyakit.kd_penyakit")
-            ->whereNotIn("{$db}.reg_periksa.stts", ['batal', 'belum'])
+            ->join(DB::raw("{$db}.pasien pasien"), "reg_periksa.no_rkm_medis", '=', "pasien.no_rkm_medis")
+            ->leftJoin(DB::raw("{$db}.kecamatan kecamatan"), "pasien.kd_kec", '=', "kecamatan.kd_kec")
+            ->leftJoin(DB::raw("{$db}.bahasa_pasien bahasa_pasien"), "pasien.bahasa_pasien", '=', "bahasa_pasien.id")
+            ->leftJoin(DB::raw("{$db}.suku_bangsa suku_bangsa"), "pasien.suku_bangsa", '=', "suku_bangsa.id")
+            ->leftJoin(DB::raw("{$db}.diagnosa_pasien diagnosa_pasien"), "reg_periksa.no_rawat", '=', "diagnosa_pasien.no_rawat")
+            ->leftJoin(DB::raw("{$db}.penyakit penyakit"), "diagnosa_pasien.kd_penyakit", '=', "penyakit.kd_penyakit")
+            ->whereNotIn("reg_periksa.stts", ['batal', 'belum'])
             ->groupBy([
-                "{$db}.kecamatan.nm_kec",
-                "{$db}.reg_periksa.no_rkm_medis",
-                "{$db}.reg_periksa.no_rawat",
+                "kecamatan.nm_kec",
+                "reg_periksa.no_rkm_medis",
+                "reg_periksa.no_rawat",
             ]);
 
-        Schema::connection('mysql_smc')->createView('demografi_pasien', $query);
+        Schema::connection('mysql_smc')->createOrReplaceView('demografi_pasien', $query);
     }
 };
