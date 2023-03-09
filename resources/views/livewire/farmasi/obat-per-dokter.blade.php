@@ -15,7 +15,7 @@
                     <x-table.th name="nm_poli" title="Asal Poli" />
                 </x-slot>
                 <x-slot name="body">
-                    @foreach ($this->obatPerDokter as $obat)
+                    @forelse ($this->obatPerDokter as $obat)
                         <x-table.tr>
                             <x-table.td>{{ $obat->no_resep }}</x-table.td>
                             <x-table.td>{{ $obat->tgl_perawatan }}</x-table.td>
@@ -26,7 +26,9 @@
                             <x-table.td>{{ $obat->status }}</x-table.td>
                             <x-table.td>{{ $obat->nm_poli }}</x-table.td>
                         </x-table.tr>
-                    @endforeach
+                    @empty
+                        <x-table.tr-empty :colspan="8" />
+                    @endforelse
                 </x-slot>
             </x-table>
         </x-slot>

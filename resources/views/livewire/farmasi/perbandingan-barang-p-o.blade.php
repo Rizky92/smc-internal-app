@@ -26,7 +26,7 @@
                     <x-table.th name="selisih" title="Selisih" />
                 </x-slot>
                 <x-slot name="body">
-                    @foreach ($this->perbandinganOrderObatPO as $obat)
+                    @forelse ($this->perbandinganOrderObatPO as $obat)
                         <x-table.tr>
                             <x-table.td>{{ $obat->no_pemesanan }}</x-table.td>
                             <x-table.td>{{ $obat->nama_brng }}</x-table.td>
@@ -36,7 +36,9 @@
                             <x-table.td>{{ $obat->jumlah_datang }}</x-table.td>
                             <x-table.td>{{ $obat->selisih }}</x-table.td>
                         </x-table.tr>
-                    @endforeach
+                    @empty
+                        <x-table.tr-empty :colspan="7" />
+                    @endforelse
                 </x-slot>
             </x-table>
         </x-slot>

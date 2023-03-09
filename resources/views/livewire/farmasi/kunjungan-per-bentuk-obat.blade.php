@@ -40,7 +40,7 @@
                                 <x-table.th style="width: 20ch" name="total" title="Total Pembelian" />
                             </x-slot>
                             <x-slot name="body">
-                                @foreach ($this->kunjunganResepObatRegularPasien as $resep)
+                                @forelse ($this->kunjunganResepObatRegularPasien as $resep)
                                     <x-table.tr>
                                         <x-table.td>{{ $resep->no_resep }}</x-table.td>
                                         <x-table.td>{{ $resep->nm_dokter }}</x-table.td>
@@ -50,7 +50,9 @@
                                         <x-table.td>{{ $resep->status_lanjut }}</x-table.td>
                                         <x-table.td>{{ rp($resep->total) }}</x-table.td>
                                     </x-table.tr>
-                                @endforeach
+                                @empty
+                                    <x-table.tr-empty :colspan="7" />
+                                @endforelse
                             </x-slot>
                         </x-table>
                         <x-paginator class="px-4 py-3 bg-light" :data="$this->kunjunganResepObatRegularPasien" />
@@ -67,7 +69,7 @@
                                 <x-table.th style="width: 20ch" name="total" title="Total Pembelian" />
                             </x-slot>
                             <x-slot name="body">
-                                @foreach ($this->kunjunganResepObatRacikanPasien as $resep)
+                                @forelse ($this->kunjunganResepObatRacikanPasien as $resep)
                                     <x-table.tr>
                                         <x-table.td>{{ $resep->no_resep }}</x-table.td>
                                         <x-table.td>{{ $resep->nm_dokter }}</x-table.td>
@@ -77,7 +79,9 @@
                                         <x-table.td>{{ $resep->status_lanjut }}</x-table.td>
                                         <x-table.td>{{ rp($resep->total) }}</x-table.td>
                                     </x-table.tr>
-                                @endforeach
+                                @empty
+                                    <x-table.tr-empty :colspan="7" />
+                                @endforelse
                             </x-slot>
                         </x-table>
                         <x-paginator class="px-4 py-3 bg-light" :data="$this->kunjunganResepObatRacikanPasien" />
