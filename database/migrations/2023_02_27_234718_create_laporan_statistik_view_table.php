@@ -2,9 +2,9 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
+use Staudenmeir\LaravelMigrationViews\Facades\Schema;
 
-class CreateLaporanStatistikViewTable extends Migration
+return new class extends Migration
 {
     protected $connection = 'mysql_smc';
     
@@ -136,7 +136,7 @@ class CreateLaporanStatistikViewTable extends Migration
             ) tindakan_ranap
         SQL;
 
-        DB::connection('mysql_sik')
+        $query = DB::connection('mysql_sik')
             ->table('reg_periksa')
             ->selectRaw($sqlSelect)
             ->join("{$db}.pasien", "{$db}.reg_periksa.no_rkm_medis", '=', "{$db}.pasien.no_rkm_medis")
@@ -153,6 +153,6 @@ class CreateLaporanStatistikViewTable extends Migration
             ->leftJoin("{$db}.jns_perawatan_inap", 'tindakan_ranap.kd_jenis_prw', '=', "{$db}.jns_perawatan_inap.kd_jenis_prw")
             ->groupBy('{$db}.reg_periksa.no_rawat');
 
-        Schema::connection('mysql_smc')->createView('laporan_statistik');
+        Schema::connection('mysql_smc')->createView('laporan_statistik', $query);
     }
-}
+};

@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\Schema;
+use Staudenmeir\LaravelMigrationViews\Facades\Schema;
 
-class CreateLaporanPasienRanapViewTable extends Migration
+return new class extends Migration
 {
     protected $connection = 'mysql_smc';
     
@@ -134,6 +134,6 @@ class CreateLaporanPasienRanapViewTable extends Migration
         //     `sik`.`kamar_inap`.`kd_kamar`,
         //     `sik`.`kamar_inap`.`tgl_keluar`,
         //     `sik`.`kamar_inap`.`jam_keluar`;
-        Schema::connection('mysql_smc')->createView('laporan_pasien_ranap');
+        // Schema::connection('mysql_smc')->createView('laporan_pasien_ranap');
     }
-}
+};

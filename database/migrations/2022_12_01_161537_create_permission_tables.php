@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 use Spatie\Permission\PermissionRegistrar;
 
-class CreatePermissionTables extends Migration
+return new class extends Migration
 {
     protected $connection = 'mysql_smc';
     
@@ -147,4 +147,4 @@ class CreatePermissionTables extends Migration
         Schema::connection('mysql_smc')->drop($tableNames['roles']);
         Schema::connection('mysql_smc')->drop($tableNames['permissions']);
     }
-}
+};

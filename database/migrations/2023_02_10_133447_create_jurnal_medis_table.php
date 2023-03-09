@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateJurnalMedisTable extends Migration
+return new class extends Migration
 {
     protected $connection = 'mysql_smc';
     
@@ -27,4 +27,4 @@ class CreateJurnalMedisTable extends Migration
             $table->index(['no_jurnal', 'no_faktur', 'nik']);
         });
     }
-}
+};

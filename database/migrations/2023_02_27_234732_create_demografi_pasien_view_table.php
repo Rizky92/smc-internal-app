@@ -1,11 +1,10 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
+use Staudenmeir\LaravelMigrationViews\Facades\Schema;
 
-class CreateDemografiPasienViewTable extends Migration
+return new class extends Migration
 {
     protected $connection = 'mysql_smc';
     
@@ -54,4 +53,4 @@ class CreateDemografiPasienViewTable extends Migration
 
         Schema::connection('mysql_smc')->createView('demografi_pasien', $query);
     }
-}
+};

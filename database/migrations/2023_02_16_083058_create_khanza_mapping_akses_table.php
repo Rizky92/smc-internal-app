@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateKhanzaMappingAksesTable extends Migration
+return new class extends Migration
 {
     protected $connection = 'mysql_smc';
     
@@ -23,4 +23,4 @@ class CreateKhanzaMappingAksesTable extends Migration
             $table->index(['nama_field', 'judul_menu']);
         });
     }
-}
+};

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddNewColumnToTrackersqlTable extends Migration
+return new class extends Migration
 {
     protected $connection = 'mysql_smc';
     
@@ -19,4 +19,4 @@ class AddNewColumnToTrackersqlTable extends Migration
             $table->string('connection', 20)->nullable();
         });
     }
-}
+};
