@@ -24,7 +24,6 @@
                     <x-navtabs.content id="medis" class="table-responsive" selected>
                         <x-table sortable :sortColumns="$sortColumns" style="min-width: 100%">
                             <x-slot name="columns">
-                                <x-table.th name="id" title="#" />
                                 <x-table.th name="no_jurnal" title="No. Jurnal" />
                                 <x-table.th name="waktu_jurnal" title="Waktu" />
                                 <x-table.th name="no_faktur" title="No. Faktur" />
@@ -37,19 +36,7 @@
                             </x-slot>
                             <x-slot name="body">
                                 @forelse ($this->jurnalBarangMedis as $jurnal)
-                                    @php
-                                        $currentPage = $this->jurnalBarangMedis->currentPage() - 1;
-                                        $perpage = $this->jurnalBarangMedis->perPage();
-                                        $id = $currentPage * $perpage + $loop->iteration;
-                                        
-                                        $sortByIdDirection = $sortColumns['id'] ?? 'asc';
-                                        
-                                        if ($sortByIdDirection === 'desc') {
-                                            $id = $this->jurnalBarangMedis->total() - $currentPage * $perpage - $loop->index;
-                                        }
-                                    @endphp
                                     <x-table.tr>
-                                        <x-table.td>{{ $id }}</x-table.td>
                                         <x-table.td>{{ $jurnal->no_jurnal }}</x-table.td>
                                         <x-table.td>{{ $jurnal->waktu_jurnal }}</x-table.td>
                                         <x-table.td>{{ $jurnal->no_faktur }}</x-table.td>
@@ -70,7 +57,6 @@
                     <x-navtabs.content id="nonmedis" class="table-responsive">
                         <x-table sortable :sortColumns="$sortColumns" style="min-width: 100%">
                             <x-slot name="columns">
-                                <x-table.th name="id" title="#" />
                                 <x-table.th name="no_jurnal" title="No. Jurnal" />
                                 <x-table.th name="waktu_jurnal" title="Waktu" />
                                 <x-table.th name="no_faktur" title="No. Faktur" />
@@ -83,19 +69,7 @@
                             </x-slot>
                             <x-slot name="body">
                                 @forelse ($this->jurnalBarangNonMedis as $jurnal)
-                                    @php
-                                        $currentPage = $this->jurnalBarangNonMedis->currentPage() - 1;
-                                        $perpage = $this->jurnalBarangNonMedis->perPage();
-                                        $id = $currentPage * $perpage + $loop->iteration;
-                                        
-                                        $sortByIdDirection = $sortColumns['id'] ?? 'asc';
-                                        
-                                        if ($sortByIdDirection === 'desc') {
-                                            $id = $this->jurnalBarangNonMedis->total() - $currentPage * $perpage - $loop->index;
-                                        }
-                                    @endphp
                                     <x-table.tr>
-                                        <x-table.td>{{ $id }}</x-table.td>
                                         <x-table.td>{{ $jurnal->no_jurnal }}</x-table.td>
                                         <x-table.td>{{ $jurnal->waktu_jurnal }}</x-table.td>
                                         <x-table.td>{{ $jurnal->no_faktur }}</x-table.td>

@@ -6,6 +6,7 @@ use App\Models\RekamMedis\Pasien;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
@@ -32,6 +33,38 @@ class RegistrasiPasien extends Model
         return $this->belongsTo(Pasien::class, 'no_rkm_medis', 'no_rkm_medis');
     }
 
+    public function umur(): Attribute
+    {
+        return Attribute::get(function () {
+            $umur = $this->umurdaftar;
+            $satuan = $this->sttsumur;
+
+            return "({$umur} {$satuan})";
+        });
+    }
+
+    public function alamatLengkap(): Attribute
+    {
+        return Attribute::get(function () {
+            if (!(
+                $this->relationLoaded('kelurahan') ||
+                $this->relationLoaded('kecamatan') ||
+                $this->relationLoaded('kabupaten') ||
+                $this->relationLoaded('provinsi')
+            )) {
+                return $this->alamat;
+            }
+
+            $alamat = $this->alamat;
+            $kelurahan = optional($this->kelurahan)->nm_kel ?? '-';
+            $kecamatan = optional($this->kecamatan)->nm_kec ?? '-';
+            $kabupaten = optional($this->kabupaten)->nm_kab ?? '-';
+            $provinsi = optional($this->provinsi)->nm_prop ?? '-';
+
+            return "{$alamat}, Kel. {$kelurahan}, Kec. {$kecamatan}, {$kabupaten}, {$provinsi}";
+        });
+    }
+
     public function scopeDaftarPasienRanap(
         Builder $query,
         string $tglAwal = '',
@@ -53,8 +86,14 @@ class RegistrasiPasien extends Model
             concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal) ruangan,
             kamar.kelas,
             reg_periksa.no_rkm_medis,
-            concat(pasien.nm_pasien, ' (', reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur, ')') data_pasien,
-            concat(pasien.alamat, ', Kel. ', kelurahan.nm_kel, ', Kec. ', kecamatan.nm_kec, ', ', kabupaten.nm_kab, ', ', propinsi.nm_prop) alamat_pasien,
+            pasien.nm_pasien,
+            reg_periksa.umurdaftar,
+            reg_periksa.sttsumur,
+            pasien.alamat,
+            kelurahan.nm_kel,
+            kecamatan.nm_kec,
+            kabupaten.nm_kab,
+            propinsi.nm_prop,
             pasien.agama,
             concat(pasien.namakeluarga, ' (', pasien.keluarga, ')') pj,
             penjab.png_jawab,

@@ -35,12 +35,12 @@
                             @php
                                 $currentPage = $this->billingYangDiselesaikan->currentPage() - 1;
                                 $perpage = $this->billingYangDiselesaikan->perPage();
-                                $id = ($currentPage * $perpage) + $loop->iteration;
-
+                                $id = $currentPage * $perpage + $loop->iteration;
+                                
                                 $sortByIdDirection = $sortColumns['id'] ?? 'asc';
-
+                                
                                 if ($sortByIdDirection === 'desc') {
-                                    $id = $this->billingYangDiselesaikan->total() - ($currentPage * $perpage) - $loop->index;
+                                    $id = $this->billingYangDiselesaikan->total() - $currentPage * $perpage - $loop->index;
                                 }
                             @endphp
                             <x-table.td>{{ $id }}</x-table.td>

@@ -91,7 +91,7 @@ class RekapPiutangPasien extends Component
         $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
-    protected function dataPerSheet()
+    protected function dataPerSheet(): array
     {
         $query = PiutangPasien::rekapPiutangPasien($this->periodeAwal, $this->periodeAkhir, $this->caraBayar, '');
 

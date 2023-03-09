@@ -16,19 +16,25 @@ return new class extends Migration
     public function up()
     {
         Schema::connection('mysql_smc')->table('piutang_dilunaskan', function (Blueprint $table) {
+            $table->string('no_rkm_medis', 15)
+                ->nullable()
+                ->index()
+                ->after('no_rawat');
+                
             $table->string('nik_penagih', 20)
                 ->nullable()
+                ->index()
                 ->after('nm_rek');
 
             $table->string('nik_menyetujui', 20)
                 ->nullable()
+                ->index()
                 ->after('nik_penagih');
 
             $table->string('nik_validasi', 20)
                 ->nullable()
+                ->index()
                 ->after('nik_menyetujui');
-
-            $table->index(['nik_penagih', 'nik_menyetujui', 'nik_validasi']);
         });
     }
 };

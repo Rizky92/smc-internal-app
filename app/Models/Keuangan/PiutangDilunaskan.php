@@ -32,6 +32,7 @@ class PiutangDilunaskan extends Model
             jurnal.no_jurnal,
             timestamp(jurnal.tgl_jurnal, jurnal.jam_jurnal) waktu_jurnal,
             detail_penagihan_piutang.no_rawat,
+            bayar_piutang.no_rkm_medis,
             penagihan_piutang.no_tagihan,
             penagihan_piutang.kd_pj,
             bayar_piutang.besar_cicilan,
@@ -76,12 +77,11 @@ class PiutangDilunaskan extends Model
                     $status = $ket->startsWith('PEMBATALAN');
                     $verifikator = $ket->afterLast('OLEH ');
 
-                    // dd($verifikator);
-
                     return [
                         'no_jurnal' => $jurnal->no_jurnal,
                         'waktu_jurnal' => $jurnal->waktu_jurnal,
                         'no_rawat' => $jurnal->no_rawat,
+                        'no_rkm_medis' => $jurnal->no_rkm_medis,
                         'no_tagihan' => $jurnal->no_tagihan,
                         'kd_pj' => $jurnal->kd_pj,
                         'piutang_dibayar' => $jurnal->besar_cicilan,
@@ -127,11 +127,9 @@ class PiutangDilunaskan extends Model
         return $query
             ->with([
                 'jurnal:no_jurnal,keterangan',
-                'registrasi:no_rawat,no_rkm_medis,umurdaftar,sttsumur',
-                'registrasi.pasien:no_rkm_medis,nm_pasien',
-                'tagihan',
+                'registrasi:no_rawat,umurdaftar,sttsumur',
+                'pasien:no_rkm_medis,nm_pasien',
                 'penjamin:kd_pj,nama_perusahaan,png_jawab',
-                'rekening:kd_rek,nm_rek',
                 'penagih:nik,nama',
                 'penyetuju:nik,nama',
                 'pemvalidasi:nik,nama',
