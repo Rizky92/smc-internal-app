@@ -10,7 +10,6 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
@@ -152,8 +151,8 @@ class DaftarPasienRanap extends Component
         RawatInap::where([
             ['no_rawat', '=', $noRawat],
             ['kd_kamar', '=', $kdKamar],
-            ['tgl_masuk', '=', Carbon::parse($tglMasuk)->format('Y-m-d')],
-            ['jam_masuk', '=', Carbon::parse($jamMasuk)->format('H:i:s')],
+            ['tgl_masuk', '=', carbon($tglMasuk)->format('Y-m-d')],
+            ['jam_masuk', '=', carbon($jamMasuk)->format('H:i:s')],
         ])->update([
             'trf_kamar' => $hargaKamarBaru,
             'lama' => $lamaInap,
@@ -225,7 +224,7 @@ class DaftarPasienRanap extends Component
         return [
             'RS Samarinda Medika Citra',
             'Daftar Pasien Rawat Inap',
-            Carbon::parse($this->periodeAwal)->format('d F Y') . ' - ' . Carbon::parse($this->periodeAkhir)->format('d F Y'),
+            carbon($this->periodeAwal)->format('d F Y') . ' - ' . carbon($this->periodeAkhir)->format('d F Y'),
         ];
     }
 }

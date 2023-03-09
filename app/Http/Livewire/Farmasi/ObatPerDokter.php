@@ -9,7 +9,6 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -87,8 +86,8 @@ class ObatPerDokter extends Component
 
     protected function pageHeaders(): array
     {
-        $headerTglAwal = Carbon::parse($this->periodeAwal)->format('d F Y');
-        $headerTglAkhir = Carbon::parse($this->periodeAkhir)->format('d F Y');
+        $headerTglAwal = carbon($this->periodeAwal)->format('d F Y');
+        $headerTglAkhir = carbon($this->periodeAkhir)->format('d F Y');
 
         return [
             'RS Samarinda Medika Citra',

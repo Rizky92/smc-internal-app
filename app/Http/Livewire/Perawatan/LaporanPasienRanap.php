@@ -10,7 +10,6 @@ use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -128,7 +127,7 @@ class LaporanPasienRanap extends Component
         return [
             'RS Samarinda Medika Citra',
             'Laporan Pasien Masuk Rawat Inap',
-            Carbon::parse($this->tanggal)->format('d F Y'),
+            carbon($this->tanggal)->format('d F Y'),
         ];
     }
 }

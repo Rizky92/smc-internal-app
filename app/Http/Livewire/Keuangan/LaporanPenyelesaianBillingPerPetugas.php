@@ -9,7 +9,6 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -119,7 +118,7 @@ class LaporanPenyelesaianBillingPerPetugas extends Component
         return [
             'RS Samarinda Medika Citra',
             'Laporan Penyelesaian Billing Pasien Per Petugas',
-            Carbon::parse($this->periodeAwal)->format('d F Y') . ' s.d. ' . Carbon::parse($this->periodeAkhir)->format('d F Y'),
+            carbon($this->periodeAwal)->format('d F Y') . ' s.d. ' . carbon($this->periodeAkhir)->format('d F Y'),
         ];
     }
 }

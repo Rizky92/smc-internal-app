@@ -10,7 +10,6 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -94,7 +93,7 @@ class PenarikanDataSuplierPO extends Component
     public function tarikDataTerbaru()
     {
         JurnalMedis::refreshModel();
-        
+
         JurnalNonMedis::refreshModel();
 
         $this->fullRefresh();
@@ -140,7 +139,7 @@ class PenarikanDataSuplierPO extends Component
             'RS Samarinda Medika Citra',
             'Penarikan Data Supplier PO Medis/Non Medis',
             now()->format('d F Y'),
-            Carbon::parse($this->periodeAwal)->format('d F Y') . ' - ' . Carbon::parse($this->periodeAkhir)->format('d F Y'),
+            carbon($this->periodeAwal)->format('d F Y') . ' - ' . carbon($this->periodeAkhir)->format('d F Y'),
         ];
     }
 }

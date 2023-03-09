@@ -40,10 +40,10 @@ class LaporanStatistik extends Component
         return $this->isDeferred
             ? []
             : StatistikRekamMedis::query()
-                ->search($this->cari)
-                ->whereBetween('tgl_masuk', [$this->periodeAwal, $this->periodeAkhir])
-                ->orderBy('no_rawat')
-                ->paginate($this->perpage);
+            ->search($this->cari)
+            ->whereBetween('tgl_masuk', [$this->periodeAwal, $this->periodeAkhir])
+            ->orderBy('no_rawat')
+            ->paginate($this->perpage);
     }
 
     public function render()
@@ -112,8 +112,8 @@ class LaporanStatistik extends Component
 
     protected function pageHeaders(): array
     {
-        $dateStart = Carbon::parse($this->periodeAwal)->format('d F Y');
-        $dateEnd = Carbon::parse($this->periodeAkhir)->format('d F Y');
+        $dateStart = carbon($this->periodeAwal)->format('d F Y');
+        $dateEnd = carbon($this->periodeAkhir)->format('d F Y');
 
         return [
             'RS Samarinda Medika Citra',
