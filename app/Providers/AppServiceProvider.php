@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Stringable;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -44,7 +45,6 @@ class AppServiceProvider extends ServiceProvider
         $this->registerCollectionMacros();
         $this->registerCollectionMixins();
         $this->registerQueryBuilderMacros();
-        $this->registerMenuProvider();
     }
 
     public function registerBladeDirectives()

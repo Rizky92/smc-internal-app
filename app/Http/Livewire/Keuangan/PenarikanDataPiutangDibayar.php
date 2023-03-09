@@ -21,6 +21,10 @@ class PenarikanDataPiutangDibayar extends Component
 
     public $periodeAkhir;
 
+    public $kodeRekening;
+
+    public $jenisPeriode;
+
     protected function queryString()
     {
         return [
@@ -63,32 +67,63 @@ class PenarikanDataPiutangDibayar extends Component
     protected function dataPerSheet(): array
     {
         return [
-            //
+            PiutangDilunaskan::query()
+                ->dataPiutangDilunaskan($this->periodeAwal, $this->periodeAkhir)
+                ->cursor()
+                ->map(function (PiutangDilunaskan $piutang) {
+                    return [
+                        'no_jurnal' => $piutang->no_jurnal,
+                        'waktu_jurnal' => carbon($piutang->waktu_jurnal)->format('Y-m-d'),
+                        'no_rawat' => $piutang->no_rawat,
+                        'pasien' => "{$piutang->pasien->nm_pasien} ({$piutang->registrasi->umurdaftar} {$piutang->registrasi->sttsumur})",
+                        'penjamin' => $piutang->kd_pj . ' ' . optional($piutang->penjamin->nama_penjamin),
+                        'no_tagihan' => $piutang->no_tagihan,
+                        'penagih' => $piutang->nik_penagih . ' ' . optional($piutang->penagih)->nama,
+                        'verifikasi' => $piutang->nik_menyetujui . ' ' . optional($piutang->penyetuju)->nama,
+                        'nominal' => $piutang->piutang_dibayar,
+                        'tgl_tagihan' => carbon($piutang->tgl_tagihan)->format('Y-m-d'),
+                        'tgl_jatuh_tempo' => carbon($piutang->tgl_jatuh_tempo)->format('Y-m-d'),
+                        'tgl_dibayar' => carbon($piutang->tgl_bayar)->format('Y-m-d'),
+                        'status' => $piutang->status,
+                        'keterangan' => $piutang->jurnal->keterangan,
+                        'validasi' => $piutang->nik_validasi . ' ' . optional($piutang->pemvalidasi)->nama,
+                        'kd_rek' => $piutang->kd_rek,
+                        'nm_rek' => $piutang->nm_akun,                        
+                    ];
+                }),
         ];
     }
 
     protected function columnHeaders(): array
     {
         return [
-            '#',
             'No. Jurnal',
-            'Waktu',
-            'No. Penagihan',
-            'Keterangan',
-            'Status',
+            'Tgl. Jurnal',
+            'No. Rawat',
+            'Pasien',
+            'Penjamin',
+            'No. Tagihan',
+            'Penagih',
+            'Verifikasi oleh',
             'Nominal (Rp)',
-            'Akun Bayar',
+            'Tgl. Tagihan',
+            'Tgl. Jatuh Tempo',
+            'Tgl. Dibayar',
+            'Status',
+            'Keterangan',
+            'Validasi oleh',
             'Kode Rekening',
             'Nama Rekening',
-            'Supplier',
-            'Nama Pegawai',
         ];
     }
 
     protected function pageHeaders(): array
     {
         return [
-            //
+            'RS Samarinda Medika Citra',
+            'Penarikan Data Penagihan Piutang Dibayar dari Jurnal',
+            now()->format('d F Y'),
+            carbon($this->periodeAwal)->format('d F Y') . ' - ' . carbon($this->periodeAkhir)->format('d F Y'),
         ];
     }
 }

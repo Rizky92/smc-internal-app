@@ -74,6 +74,9 @@ class PiutangDilunaskan extends Model
                     $ket = Str::of($jurnal->keterangan);
 
                     $status = $ket->startsWith('PEMBATALAN');
+                    $verifikator = $ket->afterLast('OLEH ');
+
+                    // dd($verifikator);
 
                     return [
                         'no_jurnal' => $jurnal->no_jurnal,
@@ -90,6 +93,7 @@ class PiutangDilunaskan extends Model
                         'nm_rek' => $jurnal->nama_bank,
                         'nik_penagih' => $jurnal->nip,
                         'nik_menyetujui' => $jurnal->nip_menyetujui,
+                        'nik_validasi' => (string) $verifikator,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];
@@ -121,7 +125,17 @@ class PiutangDilunaskan extends Model
         ][$berdasarkanTgl];
 
         return $query
-            ->with(['jurnal:no_jurnal,keterangan', 'registrasi:no_rawat,no_rkm_medis,umurdaftar,sttsumur', 'registrasi.pasien:no_rkm_medis,nm_pasien', 'tagihan', 'penjamin:kd_pj,nama_perusahaan,png_jawab', 'rekening:kd_rek,nm_rek', 'penagih:nik,nama', 'penyetuju:nik,nama'])
+            ->with([
+                'jurnal:no_jurnal,keterangan',
+                'registrasi:no_rawat,no_rkm_medis,umurdaftar,sttsumur',
+                'registrasi.pasien:no_rkm_medis,nm_pasien',
+                'tagihan',
+                'penjamin:kd_pj,nama_perusahaan,png_jawab',
+                'rekening:kd_rek,nm_rek',
+                'penagih:nik,nama',
+                'penyetuju:nik,nama',
+                'pemvalidasi:nik,nama',
+            ])
             ->where('kd_rek', $rekening)
             ->whereBetween($filterTgl, [$tglAwal, $tglAkhir]);
     }
@@ -134,6 +148,11 @@ class PiutangDilunaskan extends Model
     public function penyetuju(): BelongsTo
     {
         return $this->belongsTo(Pegawai::class, 'nik_menyetujui', 'nik');
+    }
+
+    public function pemvalidasi(): BelongsTo
+    {
+        return $this->belongsTo(Pegawai::class, 'nik_validasi', 'nik');
     }
 
     public function jurnal(): BelongsTo

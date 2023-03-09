@@ -24,7 +24,11 @@ return new class extends Migration
                 ->nullable()
                 ->after('nik_penagih');
 
-            $table->index(['nik_penagih', 'nik_menyetujui']);
+            $table->string('nik_validasi', 20)
+                ->nullable()
+                ->after('nik_menyetujui');
+
+            $table->index(['nik_penagih', 'nik_menyetujui', 'nik_validasi']);
         });
     }
 };
