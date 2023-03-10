@@ -5,6 +5,7 @@ namespace App\Models\Keuangan;
 use App\Models\Kepegawaian\Pegawai;
 use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Perawatan\RegistrasiPasien;
+use App\Models\RekamMedis\Pasien;
 use App\Models\RekamMedis\Penjamin;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
@@ -15,10 +16,11 @@ use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Kirschbaum\PowerJoins\PowerJoins;
 
 class PiutangDilunaskan extends Model
 {
-    use Sortable, Searchable;
+    use Sortable, Searchable, PowerJoins;
 
     protected $connection = 'mysql_smc';
 
@@ -119,23 +121,48 @@ class PiutangDilunaskan extends Model
         }
 
         $filterTgl = [
-            'jurnal' => 'waktu_jurnal',
+            'jurnal' => DB::raw("date(waktu_jurnal)"),
             'penagihan' => 'tgl_penagihan',
             'bayar' => 'tgl_bayar',
         ][$berdasarkanTgl];
 
+        $db = DB::connection('mysql_sik')->getDatabaseName();
+
+        $sqlSelect = "
+            piutang_dilunaskan.*,
+            jurnal.keterangan,
+            concat(registrasi.umurdaftar, ' ', registrasi.sttsumur) umur,
+            pasien.nm_pasien,
+            if(penjamin.nama_perusahaan = '' or penjamin.nama_perusahaan = '-', penjamin.png_jawab, penjamin.nama_perusahaan) nama_penjamin,
+            penagih.nama nama_penagih,
+            penyetuju.nama nama_penyetuju,
+            pemvalidasi.nama nama_pemvalidasi
+        ";
+
+        $jurnal = DB::raw("{$db}.jurnal jurnal");
+        $registrasi = DB::raw("{$db}.reg_periksa registrasi");
+        $pasien = DB::raw("{$db}.pasien pasien");
+        $penjamin = DB::raw("{$db}.penjab penjamin");
+        $penagih = DB::raw("{$db}.pegawai penagih");
+        $penyetuju = DB::raw("{$db}.pegawai penyetuju");
+        $pemvalidasi = DB::raw("{$db}.pegawai pemvalidasi");
+
         return $query
-            ->with([
-                'jurnal:no_jurnal,keterangan',
-                'registrasi:no_rawat,umurdaftar,sttsumur',
-                'pasien:no_rkm_medis,nm_pasien',
-                'penjamin:kd_pj,nama_perusahaan,png_jawab',
-                'penagih:nik,nama',
-                'penyetuju:nik,nama',
-                'pemvalidasi:nik,nama',
-            ])
+            ->selectRaw($sqlSelect)
+            ->leftJoin($jurnal, 'piutang_dilunaskan.no_jurnal', '=', 'jurnal.no_jurnal')
+            ->leftJoin($registrasi, 'piutang_dilunaskan.no_rawat', '=', 'registrasi.no_rawat')
+            ->leftJoin($pasien, 'piutang_dilunaskan.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->leftJoin($penjamin, 'piutang_dilunaskan.kd_pj', '=', 'penjamin.kd_pj')
+            ->leftJoin($penagih, 'piutang_dilunaskan.nik_penagih', '=', 'penagih.nik')
+            ->leftJoin($penyetuju, 'piutang_dilunaskan.nik_menyetujui', '=', 'penyetuju.nik')
+            ->leftJoin($pemvalidasi, 'piutang_dilunaskan.nik_validasi', '=', 'pemvalidasi.nik')
             ->where('kd_rek', $rekening)
             ->whereBetween($filterTgl, [$tglAwal, $tglAkhir]);
+    }
+
+    public function pasien(): BelongsTo
+    {
+        return $this->belongsTo(Pasien::class, 'no_rkm_medis', 'no_rkm_medis');
     }
 
     public function penagih(): BelongsTo

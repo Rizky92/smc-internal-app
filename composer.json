@@ -15,6 +15,7 @@
         "fruitcake/laravel-cors": "^2.2",
         "guzzlehttp/guzzle": "^6.3.1|^7.5.0",
         "infyomlabs/routes-explorer": "^1.0",
+        "kirschbaum-development/eloquent-power-joins": "^2.7",
         "lab404/laravel-impersonate": "^1.7.4",
         "laravel/framework": "^8.83.27",
         "laravel/tinker": "^2.8",

@@ -245,7 +245,7 @@
                                 clickable
                                 data-no-rawat="{{ $pasien->no_rawat }}"
                                 data-kamar="{{ $pasien->ruangan }}"
-                                data-pasien="{{ $pasien->data_pasien }}"
+                                data-pasien="{{ $pasien->nm_pasien }} {{ $pasien->umur }}"
                                 data-harga-kamar="{{ $pasien->trf_kamar }}"
                                 data-lama-inap="{{ $pasien->lama }}"
                                 data-total-harga="{{ $pasien->ttl_biaya }}"
@@ -259,8 +259,8 @@
                             <x-table.td>{{ $pasien->ruangan }}</x-table.td>
                             <x-table.td>{{ $pasien->kelas }}</x-table.td>
                             <x-table.td>{{ $pasien->no_rkm_medis }}</x-table.td>
-                            <x-table.td>{{ $pasien->data_pasien }}</x-table.td>
-                            <x-table.td>{{ $pasien->alamat_pasien }}</x-table.td>
+                            <x-table.td>{{ $pasien->nm_pasien }} {{ $pasien->umur }}</x-table.td>
+                            <x-table.td>{{ $pasien->alamat_lengkap }}</x-table.td>
                             <x-table.td>{{ $pasien->agama }}</x-table.td>
                             <x-table.td>{{ $pasien->pj }}</x-table.td>
                             <x-table.td>{{ $pasien->png_jawab }}</x-table.td>

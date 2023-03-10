@@ -1,4 +1,4 @@
-@props(['name', 'collection', 'model' => null, 'placeholder' => null, 'placeholderValue' => null, 'resetOn' => 'button#reset-filter'])
+@props(['name', 'collection', 'model' => null, 'placeholder' => null, 'placeholderValue' => null, 'resetOn' => 'button#reset-filter', 'selected' => null])
 
 @php
     $id = Str::slug($name);
@@ -15,7 +15,7 @@
         <script>
             let dropdownSelect2 = $('select#{{ Str::slug($name) }}')
 
-            $(document).ready(() => {
+            $(document).on('DOMContentLoaded', e => {
                 dropdownSelect2.select2({
                     dropdownCssClass: 'text-sm px-0',
                 })
@@ -52,8 +52,6 @@
     <select class="form-control form-control-sm simple-select2-sm input-sm" id="{{ $id }}" autocomplete="off" name="{{ $name }}">
         @notnull($placeholder)
             <option value="{{ $placeholderValue }}">{{ $placeholder }}</option>
-        @else
-            <option value="">&nbsp;</option>
         @endnotnull
         @forelse ($collection as $key => $value)
             <option value="{{ $key }}">{{ $key }} - {{ $value }}</option>
