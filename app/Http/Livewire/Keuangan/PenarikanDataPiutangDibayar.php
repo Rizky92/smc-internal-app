@@ -53,6 +53,15 @@ class PenarikanDataPiutangDibayar extends Component
             ->pluck('nm_rek', 'kd_rek');
     }
 
+    public function tarikDataTerbaru()
+    {
+        PiutangDilunaskan::refreshModel();
+
+        $this->fullRefresh();
+
+        $this->flashSuccess('Data Berhasil Diperbaharui!');
+    }
+
     public function getDataPiutangDilunaskanProperty()
     {
         return PiutangDilunaskan::query()

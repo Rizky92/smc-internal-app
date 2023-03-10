@@ -10,7 +10,8 @@
                 </div>
                 <x-filter.label class="px-3">dari</x-filter.label>
                 <x-filter.range-date title="" />
-                <x-filter.button-export-excel class="ml-auto" />
+                <x-filter.button method="tarikDataTerbaru" title="Tarik Data Terbaru" icon="fas fa-sync-alt" class="ml-auto" />
+                <x-filter.button-export-excel class="ml-3" />
             </x-card.row-col>
             <x-card.row-col class="mt-2">
                 <x-filter.select-perpage />
