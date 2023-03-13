@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('sqle')->index();
             $table->string('usere', 20)->index();
             $table->ipAddress('ip');
+            $table->string('connection', 20)->nullable();
         });
     }
 };

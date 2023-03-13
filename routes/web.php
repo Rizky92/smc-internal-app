@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\BPJS\MobileJKNController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Livewire\Farmasi\KunjunganPerBentukObat;
@@ -31,8 +32,10 @@ use App\Http\Livewire\Perawatan\LaporanPasienRanap;
 use App\Http\Livewire\RekamMedis\LaporanDemografi;
 use App\Http\Livewire\RekamMedis\LaporanStatistik;
 use App\Http\Livewire\User\ManajemenUser;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use InfyOm\RoutesExplorer\RoutesExplorer;
+use LZCompressor\LZString;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 
 /*
@@ -47,6 +50,8 @@ use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 */
 
 Route::get('/', HomeController::class);
+
+Route::get('tes-mobilejkn', MobileJKNController::class)->name('mobilejkn');
 
 Route::get('login', [LoginController::class, 'create'])->name('login');
 Route::post('login', [LoginController::class, 'store']);

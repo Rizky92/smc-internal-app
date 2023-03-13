@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire\HakAkses;
 
-use App\Models\Aplikasi\MappingAksesKhanza;
+use App\Models\Aplikasi\HakAkses;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;

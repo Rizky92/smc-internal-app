@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire\HakAkses;
 
-use App\Models\Aplikasi\MappingAksesKhanza;
+use App\Models\Aplikasi\HakAkses;
 use App\Models\Aplikasi\User;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
@@ -23,7 +23,7 @@ class Khanza extends Component
 
     public function getHakAksesKhanzaProperty()
     {
-        return MappingAksesKhanza::query()
+        return HakAkses::query()
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
@@ -44,7 +44,7 @@ class Khanza extends Component
 
     public function syncHakAkses()
     {
-        if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
+        if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
@@ -52,7 +52,7 @@ class Khanza extends Component
 
         $hakAksesUser = collect(User::rawFindByNRP('221203')->getAttributes())->except('id_user', 'password');
 
-        $hakAksesTersedia = MappingAksesKhanza::pluck('default_value', 'nama_field');
+        $hakAksesTersedia = HakAkses::pluck('default_value', 'nama_field');
 
         $hakAksesUser = $hakAksesUser->diffKeys($hakAksesTersedia);
 
@@ -70,7 +70,7 @@ class Khanza extends Component
 
         tracker_start('mysql_smc');
 
-        MappingAksesKhanza::insert($hakAksesBaru->toArray());
+        HakAkses::insert($hakAksesBaru->toArray());
 
         tracker_end('mysql_smc');
 
@@ -87,7 +87,7 @@ class Khanza extends Component
 
     public function simpanHakAkses(string $field, string $judul)
     {
-        if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
+        if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
@@ -95,7 +95,7 @@ class Khanza extends Component
 
         tracker_start('mysql_smc');
 
-        MappingAksesKhanza::updateOrCreate(
+        HakAkses::updateOrCreate(
             ['nama_field' => $field],
             ['judul_menu' => $judul, 'default_value' => 'false']
         );

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     protected $connection = 'mysql_smc';
-    
+
     /**
      * Run the migrations.
      *
@@ -15,8 +15,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::connection('mysql_smc')->table('trackersql', function (Blueprint $table) {
-            $table->string('connection', 20)->nullable();
+        Schema::connection('mysql_smc')->create('template_hak_akses', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama');
+            $table->timestamps();
         });
     }
 };

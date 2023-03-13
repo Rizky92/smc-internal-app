@@ -19,7 +19,8 @@
         @endpush
     @endonce
 
-    <livewire:hak-akses.siap.modal-ubah-hak-akses />
+    <livewire:hak-akses.siap.modal-perizinan-baru />
+    <livewire:hak-akses.siap.modal-ubah-perizinan />
 
     <x-card>
         <x-slot name="header">

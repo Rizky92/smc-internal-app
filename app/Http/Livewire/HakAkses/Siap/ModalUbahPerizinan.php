@@ -10,7 +10,7 @@ use App\Support\Traits\Livewire\LiveTable;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
-class ModalUbahHakAkses extends Component
+class ModalUbahPerizinan extends Component
 {
     use Filterable, LiveTable, DeferredModal;
 
@@ -34,7 +34,7 @@ class ModalUbahHakAkses extends Component
 
     public function render()
     {
-        return view('livewire.hak-akses.siap.modal-ubah-hak-akses');
+        return view('livewire.hak-akses.siap.modal-ubah-perizinan');
     }
 
     public function getPermissionsProperty()
