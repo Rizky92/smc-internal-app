@@ -28,6 +28,7 @@
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
+                <x-button title="Role Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-perizinan-baru" class="btn-primary ml-3" />
             </x-card.row-col>
         </x-slot>
 

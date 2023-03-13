@@ -17,7 +17,7 @@
 
     $finalClass = [];
 
-    if (in_array($size, $sizes)) {
+    if (in_array($size, $sizes) || $size !== 'default') {
         $finalClass = array_merge(['modal-' . $size], $finalClass);
     }
 

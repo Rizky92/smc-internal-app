@@ -14,7 +14,7 @@ class KhanzaHakAksesSeeder extends Seeder
      */
     public function run()
     {
-        $mapping = collect(cache('khanza.mapping_akses'));
+        $mapping = collect(config('khanza.mapping_akses'));
 
         $mapping->transform(function ($judul, $field) {
             return [
