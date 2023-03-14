@@ -165,10 +165,10 @@
                             <x-table.td>
                                 <div style="display: inline-flex; flex-wrap: wrap; gap: 0.25rem">
                                     @foreach ($user->roles as $role)
-                                        <x-badge class="badge-dark">{{ $role->name }}</x-badge>
+                                        <x-badge variant="dark">{{ $role->name }}</x-badge>
                                     @endforeach
                                     @foreach ($user->permissions as $permission)
-                                        <x-badge class="badge-secondary">{{ $permission->name }}</x-badge>
+                                        <x-badge variant="secondary">{{ $permission->name }}</x-badge>
                                     @endforeach
                                 </div>
                             </x-table.td>
