@@ -40,10 +40,10 @@ class LaporanStatistik extends Component
         return $this->isDeferred
             ? []
             : StatistikRekamMedis::query()
-            ->search($this->cari)
-            ->whereBetween('tgl_masuk', [$this->periodeAwal, $this->periodeAkhir])
-            ->orderBy('no_rawat')
-            ->paginate($this->perpage);
+                ->search($this->cari)
+                ->whereBetween('tgl_masuk', [$this->periodeAwal, $this->periodeAkhir])
+                ->orderBy('no_rawat')
+                ->paginate($this->perpage);
     }
 
     public function render()

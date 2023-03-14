@@ -50,7 +50,7 @@
                         <tr>
                             @if ($standardFormat)
                                 <th style="width: 8ch">Level</th>
-                                <th>Context</th>
+                                <th style="width: 10ch">Context</th>
                                 <th style="width: 15ch">Date</th>
                             @else
                                 <th>Line number</th>
@@ -70,16 +70,13 @@
                                 @endif
                                 <td class="date">{{ $log['date'] }}</td>
                                 <td class="text">
-                                    @if ($log['stack'])
-                                        <x-button size="xs" variant="info" outline class="float-right mb-2" icon="fas fa-search" data-display="stack{{ $key }}" />
-                                    @endif
                                     {{ $log['text'] }}
                                     @if (isset($log['in_file']))
                                         <br />
                                         {{ $log['in_file'] }}
                                     @endif
                                     @if ($log['stack'])
-                                        <div class="stack" id="stack{{ $key }}" style="display: none; white-space: pre-wrap;">
+                                        <div class="stack text-xs" id="stack{{ $key }}" style="display: none; white-space: pre-wrap; font-family: monospace">
                                             {{ trim($log['stack']) }}
                                         </div>
                                     @endif
