@@ -23,6 +23,7 @@ use App\Http\Livewire\Keuangan\LaporanTindakanLab;
 use App\Http\Livewire\Keuangan\LaporanTindakanRadiologi;
 use App\Http\Livewire\Keuangan\PenarikanDataPiutangDibayar;
 use App\Http\Livewire\Keuangan\PenarikanDataSuplierPO;
+use App\Http\Livewire\Keuangan\PerbaikanTanggalJurnal;
 use App\Http\Livewire\Keuangan\RekapPiutangPasien;
 use App\Http\Livewire\Keuangan\StokObatRuangan;
 use App\Http\Livewire\Logistik\InputMinmaxStok;
@@ -123,6 +124,10 @@ Route::prefix('admin')
                 Route::get('dpjp-piutang-ranap', DPJPPiutangRanap::class)
                     ->middleware('can:keuangan.dpjp-piutang-ranap.read')
                     ->name('dpjp-piutang-ranap');
+
+                Route::get('perbaikan-tgl-jurnal', PerbaikanTanggalJurnal::class)
+                    ->middleware('can:keuangan.perbaikan-tgl-jurnal.read')
+                    ->name('perbaikan-tgl-jurnal');
 
                 Route::get('laporan-tindakan-lab', LaporanTindakanLab::class)
                     ->middleware('can:keuangan.laporan-tindakan-lab.read')

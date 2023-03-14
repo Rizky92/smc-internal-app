@@ -46,7 +46,7 @@
                             <x-table.td>
                                 @unless($superadmin)
                                     <div style="display: inline-flex; flex-wrap: wrap; gap: 0.5rem">
-                                        <x-button size="xs" variant="link" title="Edit" icon="fas fa-pencil-alt" data-toggle="modal" data-target="#modal-role-permissions" data-role-id="{{ $role->id }}" data-role-name="{{ $role->name }}" data-permission-ids="{{ $role->permissions->pluck('id')->join(',') }}" onclick="loadData(this)" />
+                                        <x-button size="xs" variant="link" title="Edit" icon="fas fa-pencil-alt" data-toggle="modal" data-target="#modal-ubah-perizinan" data-role-id="{{ $role->id }}" data-role-name="{{ $role->name }}" data-permission-ids="{{ $role->permissions->pluck('id')->join(',') }}" onclick="loadData(this)" />
                                     </div>
                                 @endunless
                             </x-table.td>
