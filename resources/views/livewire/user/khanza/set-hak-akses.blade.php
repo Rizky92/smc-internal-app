@@ -15,25 +15,6 @@
                         $('#checkbox-utama-khanza-set').prop('checked', false)
                         $('#checkbox-utama-khanza-set').trigger('change')
                     })
-
-                    // $('#checkbox-utama-khanza-set').change(e => {
-                    //     let isChecked = e.target.checked
-                    //     let els = $('input[type=checkbox][id*=sk-]')
-
-                    //     let checkedHakAkses = new Map()
-
-                    //     els.each((i, el) => {
-                    //         el.checked = isChecked
-
-                    //         checkedHakAkses.set(el.value, isChecked)
-                    //     })
-                        
-                    //     if (! isChecked) {
-                    //         checkedHakAkses.clear()
-                    //     }
-
-                    //     @this.set('checkedHakAkses', Object.fromEntries(checkedHakAkses), true)
-                    // })
                 })
             </script>
         @endpush
@@ -80,8 +61,8 @@
         <x-slot name="footer" class="justify-content-start">
             <x-filter.search method="$refresh" />
             <x-filter.toggle class="ml-1" id="show-checked-khanza-set" title="Tampilkan yang dipilih" model="showChecked" />
-            <x-button class="btn-default ml-auto" data-dismiss="modal" title="Batal" />
-            <x-button class="btn-primary ml-2" data-dismiss="modal" wire:click="$emit('khanza.simpan')" title="Simpan" icon="fas fa-save" />
+            <x-button size="sm" class="ml-auto" data-dismiss="modal" title="Batal" />
+            <x-button size="sm" variant="primary" class="ml-2" data-dismiss="modal" wire:click="$emit('khanza.simpan')" title="Simpan" icon="fas fa-save" />
         </x-slot>
     </x-modal>
 </div>

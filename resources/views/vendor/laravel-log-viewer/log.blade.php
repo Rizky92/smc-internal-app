@@ -71,9 +71,7 @@
                                 <td class="date">{{ $log['date'] }}</td>
                                 <td class="text">
                                     @if ($log['stack'])
-                                        <x-button class="btn-outline-info float-right mb-2 ml-2" data-display="stack{{ $key }}">
-                                            <i class="fas fa-search"></i>
-                                        </x-button>
+                                        <x-button size="xs" variant="info" outline class="float-right mb-2" icon="fas fa-search" data-display="stack{{ $key }}" />
                                     @endif
                                     {{ $log['text'] }}
                                     @if (isset($log['in_file']))

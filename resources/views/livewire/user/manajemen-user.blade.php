@@ -116,7 +116,7 @@
                 <div class="col-6">
                     <div class="d-flex align-items-end h-100">
                         <x-dropdown class="mb-3" livewire>
-                            <x-slot name="button" class="btn-default" title="Pilihan" icon="fas fa-cogs" disabled></x-slot>
+                            <x-slot name="button" title="Pilihan" icon="fas fa-cogs" disabled></x-slot>
                             <x-slot name="menu" class="dropdown-menu-right">
                                 <x-dropdown.header class="text-left">SIMRS Khanza</x-dropdown.header>
                                 <x-dropdown.item-button id="khanza-set" icon="fas fa-user-cog fa-fw" title="Set Hak Akses" data-toggle="modal" data-target="#modal-khanza-set" />

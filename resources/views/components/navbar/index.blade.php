@@ -18,10 +18,7 @@
         @auth('web')
             <li class="nav-item ml-2">
                 <form action="{{ route('logout') }}" method="POST" id="logout-form" style="display: hidden">@csrf</form>
-                <button type="submit" form="logout-form" class="btn btn-outline-danger btn-sm">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span class="ml-2">Logout</span>
-                </button>
+                <x-button type="submit" form="logout-form" variant="danger" size="sm" outline title="Logout" icon="fas fa-sign-out-alt" />
             </li>
         @endauth
     </ul>

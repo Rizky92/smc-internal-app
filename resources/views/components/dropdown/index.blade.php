@@ -30,7 +30,7 @@
 
 
 <div {{ $attributes->merge(['class' => 'dropdown mb-3']) }} wire:ignore>
-    <x-button :attributes="$button->attributes->merge(['class' => 'dropdown-toggle', 'data-toggle' => 'dropdown'])" />
+    <x-button :attributes="$button->attributes->merge(['size' => 'sm', 'class' => 'dropdown-toggle', 'data-toggle' => 'dropdown'])" />
     <div {{ $menu->attributes->merge(['class' => 'dropdown-menu']) }}>
         {{ $menu }}
     </div>

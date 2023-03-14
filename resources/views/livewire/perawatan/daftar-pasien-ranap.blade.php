@@ -183,8 +183,8 @@
                 </x-card.row>
 
                 <x-card.row-col class="pb-3 border-bottom">
-                    <x-button disabled class="btn-primary" id="simpan-data" title="Simpan" icon="fas fa-save" />
-                    <x-button disabled class="btn-default ml-2" id="batal-simpan" title="Batal" />
+                    <x-button size="sm" variant="primary" disabled id="simpan-data" title="Simpan" icon="fas fa-save" />
+                    <x-button size="sm" disabled class="ml-2" id="batal-simpan" title="Batal" />
                     <div id="copy-to-clipboard" class="text-xs border-0 ml-2" style="flex-grow: 1; user-select: all; font-family: monospace; white-space: pre-wrap; line-height: 1.25"></div>
                 </x-card.row-col>
             @endcan

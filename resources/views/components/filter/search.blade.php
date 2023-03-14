@@ -10,9 +10,6 @@
 ]) }}>
     <input class="form-control" type="search" wire:model.defer="{{ $model }}" wire:keydown.enter.stop="{{ $method }}" />
     <div class="input-group-append">
-        <button class="btn btn-sm btn-default" type="button" wire:click="{{ $method }}">
-            <i class="fas fa-search"></i>
-            <span class="ml-1">{{ $title }}</span>
-        </button>
+        <x-button size="sm" wire:click.prevent="{{ $method }}" :title="$title" icon="fas fa-search" />
     </div>
 </div>

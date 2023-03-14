@@ -122,8 +122,8 @@
             </x-row-col>
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
-            <x-button class="btn-default ml-auto" data-dismiss="modal" title="Batal" />
-            <x-button class="btn-primary ml-2" data-dismiss="modal" id="set-role-permissions" title="Simpan" icon="fas fa-save" />
+            <x-button size="sm" class="ml-auto" data-dismiss="modal" title="Batal" />
+            <x-button size="sm" variant="primary" class="ml-2" data-dismiss="modal" id="set-role-permissions" title="Simpan" icon="fas fa-save" />
         </x-slot>
     </x-modal>
 </div>

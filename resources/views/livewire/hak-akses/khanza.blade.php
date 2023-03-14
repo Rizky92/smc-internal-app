@@ -84,8 +84,8 @@
                 </div>
                 <div class="col-2">
                     <div class="d-flex align-items-end h-100">
-                        <x-button class="btn-default mb-3" title="Batal" disabled />
-                        <x-button class="btn-primary mb-3 ml-2" title="Simpan" icon="fas fa-save" disabled />
+                        <x-button size="sm" class="mb-3" title="Batal" disabled />
+                        <x-button size="sm" variant="primary" class="mb-3 ml-2" title="Simpan" icon="fas fa-save" disabled />
                     </div>
                 </div>
             </x-card.row>
