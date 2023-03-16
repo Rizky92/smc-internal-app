@@ -47,7 +47,7 @@ class Obat extends Model
             from gudangbarang
             inner join bangsal on gudangbarang.kd_bangsal = bangsal.kd_bangsal
             where bangsal.status = '1'
-            and gudangbarang.kd_bangsal = 'ap'
+            and gudangbarang.kd_bangsal in ('ap', 'ifi')
             group by kode_brng
         ) stok_gudang");
 

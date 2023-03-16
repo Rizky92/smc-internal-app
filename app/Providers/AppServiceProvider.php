@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Stringable;
+use Illuminate\View\ComponentAttributeBag;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -54,6 +55,11 @@ class AppServiceProvider extends ServiceProvider
         Blade::if('null', fn ($expr) => is_null($expr));
 
         Blade::if('notnull', fn ($expr) => !is_null($expr));
+
+        Blade::directive('attr', function (string $name, mixed $value, $condition) {
+
+            return "<?php echo e({$name}) ?>";
+        });
     }
 
     public function registerModelConfigurations()

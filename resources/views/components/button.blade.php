@@ -1,5 +1,6 @@
 @props([
     'as' => 'button',
+    'id' => null,
     'title' => null,
     'icon' => null,
     'size' => 'default',
@@ -45,11 +46,13 @@
         ->push($buttonVariants[$variant])
         ->filter()
         ->join(' ');
+
+    $id ??= str($title)->slug();
 @endphp
 
 @switch($as)
     @case('button')
-        <button {{ $attributes->merge(['class' => $finalClass, 'type' => 'button', 'id' => Str::slug($title)]) }}>
+        <button {{ $attributes->merge(['class' => $finalClass, 'type' => 'button', 'id' => $id]) }}>
             @if ($icon)
                 <i class="{{ $icon }}"></i>
             @endif
@@ -60,7 +63,7 @@
     @break
 
     @case('link')
-        <a {{ $attributes->merge(['class' => $finalClass, 'role' => 'button', 'id' => Str::slug($title)]) }}>
+        <a {{ $attributes->merge(['class' => $finalClass, 'role' => 'button', 'id' => $id]) }}>
             @if ($icon)
                 <i class="{{ $icon }}"></i>
             @endif

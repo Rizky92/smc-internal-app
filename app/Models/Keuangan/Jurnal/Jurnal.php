@@ -26,7 +26,7 @@ class Jurnal extends Model
 
     public function detail(): HasMany
     {
-        return $this->hasMany(DetailJurnal::class, 'no_jurnal', 'no_jurnal');
+        return $this->hasMany(JurnalDetail::class, 'no_jurnal', 'no_jurnal');
     }
 
     public function scopeJurnalUmum(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
@@ -39,22 +39,9 @@ class Jurnal extends Model
             $tglAkhir = now()->format('Y-m-d');
         }
 
-        $sqlSelect = "
-            jurnal.no_jurnal,
-            jurnal.no_bukti,
-            jurnal.tgl_jurnal,
-            jurnal.jam_jurnal,
-            detailjurnal.kd_rek,
-            rekening.nm_rek,
-            jurnal.keterangan,
-            detailjurnal.debet,
-            detailjurnal.kredit
-        ";
-
         return $query
-            ->selectRaw($sqlSelect)
-            ->leftJoin('detailjurnal', 'jurnal.no_jurnal', '=', 'detailjurnal.no_jurnal')
-            ->leftJoin('rekening', 'detailjurnal.kd_rek', '=', 'rekening.kd_rek');
+            ->with(['detail', 'detail.rekening:kd_rek,nm_rek'])
+            ->whereBetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir]);
     }
 
     public function scopeBukuBesar(Builder $query, string $kodeRekening, string $tglAwal = '', string $tglAkhir = ''): Builder

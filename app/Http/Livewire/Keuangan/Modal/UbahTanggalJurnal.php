@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Livewire\Keuangan;
+namespace App\Http\Livewire\Keuangan\Modal;
 
-use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
@@ -12,7 +11,7 @@ use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
 
-class PerbaikanTanggalJurnal extends Component
+class UbahTanggalJurnal extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
@@ -23,8 +22,8 @@ class PerbaikanTanggalJurnal extends Component
     protected function queryString()
     {
         return [
-            'periodeAwal' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'periodeAkhir' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -33,29 +32,16 @@ class PerbaikanTanggalJurnal extends Component
         $this->defaultValues();
     }
 
-    public function getJurnalProperty()
-    {
-        return Jurnal::jurnalUmum($this->periodeAwal, $this->periodeAkhir)
-            ->search($this->cari, [
-                'jurnal.no_jurnal',
-                'jurnal.no_bukti',
-                'detailjurnal.kd_rek',
-                'rekening.nm_rek',
-                'jurnal.keterangan',
-            ])
-            ->paginate($this->perpage);
-    }
-
     public function render()
     {
-        return view('livewire.keuangan.perbaikan-tanggal-jurnal')
-            ->layout(BaseLayout::class, ['title' => 'Perbaikan Tanggal Jurnal Transaksi Keuangan']);
+        return view('livewire.keuangan.modal.ubah-tanggal-jurnal')
+            ->layout(BaseLayout::class, ['title' => 'UbahTanggalJurnal']);
     }
 
     protected function defaultValues()
     {
-        $this->periodeAwal = now()->format('Y-m-d');
-        $this->periodeAkhir = now()->format('Y-m-d');
+        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array
