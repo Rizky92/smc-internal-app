@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire\User\Khanza;
 
-use App\Models\Aplikasi\MappingAksesKhanza;
+use App\Models\Aplikasi\HakAkses;
 use App\Models\Aplikasi\User;
 use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
@@ -44,7 +44,7 @@ class SetHakAkses extends Component
     {
         return $this->isDeferred
             ? []
-            : MappingAksesKhanza::query()
+            : HakAkses::query()
             ->search($this->cari, ['nama_field', 'judul_menu'])
             ->when($this->showChecked, fn ($q) => $q->orWhereIn('nama_field', collect($this->checkedHakAkses)->filter()->keys()->all()))
             ->get();

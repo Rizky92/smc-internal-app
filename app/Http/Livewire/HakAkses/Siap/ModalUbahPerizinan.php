@@ -10,7 +10,7 @@ use App\Support\Traits\Livewire\LiveTable;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
-class ModalUbahHakAkses extends Component
+class ModalUbahPerizinan extends Component
 {
     use Filterable, LiveTable, DeferredModal;
 
@@ -34,7 +34,7 @@ class ModalUbahHakAkses extends Component
 
     public function render()
     {
-        return view('livewire.hak-akses.siap.modal-ubah-hak-akses');
+        return view('livewire.hak-akses.siap.modal-ubah-perizinan');
     }
 
     public function getPermissionsProperty()
@@ -67,7 +67,7 @@ class ModalUbahHakAkses extends Component
 
         tracker_end('mysql_smc');
 
-        $this->emitUp('flash.success', "Update perizinan untuk hak akses {$role->name} berhasil!");
+        $this->emitUp('flash.success', "Update perizinan untuk role \"{$role->name}\" berhasil!");
     }
 
     protected function defaultValues()

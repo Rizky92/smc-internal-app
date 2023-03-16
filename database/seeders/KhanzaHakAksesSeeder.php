@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Aplikasi\MappingAksesKhanza;
+use App\Models\Aplikasi\HakAkses;
 use Illuminate\Database\Seeder;
 
 class KhanzaHakAksesSeeder extends Seeder
@@ -14,7 +14,7 @@ class KhanzaHakAksesSeeder extends Seeder
      */
     public function run()
     {
-        $mapping = collect(cache('khanza.mapping_akses'));
+        $mapping = collect(config('khanza.mapping_akses'));
 
         $mapping->transform(function ($judul, $field) {
             return [
@@ -24,6 +24,6 @@ class KhanzaHakAksesSeeder extends Seeder
             ];
         });
 
-        MappingAksesKhanza::insert($mapping->toArray());
+        HakAkses::insert($mapping->toArray());
     }
 }

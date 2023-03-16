@@ -2,6 +2,7 @@
 
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 if (!function_exists('rp')) {
     /**
@@ -114,5 +115,17 @@ if (! function_exists('func_get_named_args')) {
         }
 
         return $res;
+    }
+}
+
+if (! function_exists('str')) {
+    /**
+     * @param  mixed $str = null
+     * 
+     * @return \Illuminate\Support\Stringable
+     */
+    function str($str = null)
+    {
+        return Str::of($str);
     }
 }

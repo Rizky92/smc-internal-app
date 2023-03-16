@@ -2,28 +2,72 @@
     'as' => 'button',
     'title' => null,
     'icon' => null,
+    'size' => 'default',
+    'variant' => 'default',
+    'outline' => false,
 ])
+
+@php
+    $finalClass = collect(['btn']);
+    
+    $buttonSizes = [
+        'xs' => 'btn-xs',
+        'sm' => 'btn-sm',
+        'default' => null,
+        'lg' => 'btn-lg',
+    ];
+    
+    $buttonVariants = [
+        'default' => 'default',
+        'primary' => 'primary',
+        'secondary' => 'secondary',
+        'success' => 'success',
+        'info' => 'info',
+        'warning' => 'warning',
+        'danger' => 'danger',
+        'light' => 'light',
+        'dark' => 'dark',
+        'link' => 'link',
+    ];
+    
+    $buttonVariants = collect($buttonVariants)
+        // {{-- blade-formatter-disable --}}
+        ->when(
+            $outline,
+            fn($cols) => $cols->map(fn($v, $k) => str($v)->prepend('btn-outline-'))->replace(['link' => 'btn-link']),
+            fn($cols) => $cols->map(fn($v, $k) => str($v)->prepend('btn-'))
+        )
+        // {{-- blade-formatter-enable --}}
+        ->all();
+    
+    $finalClass = $finalClass
+        ->push($buttonSizes[$size])
+        ->push($buttonVariants[$variant])
+        ->filter()
+        ->join(' ');
+@endphp
 
 @switch($as)
     @case('button')
-        <button {{ $attributes->merge(['class' => 'btn btn-sm', 'type' => 'button', 'id' => Str::slug($title)]) }}>
+        <button {{ $attributes->merge(['class' => $finalClass, 'type' => 'button', 'id' => Str::slug($title)]) }}>
             @if ($icon)
                 <i class="{{ $icon }}"></i>
-                <span class="ml-1">{{ $title ?? $slot }}</span>
-            @else
-                {{ $title ?? $slot }}
+            @endif
+            @if ($title)
+                <span class="{{ Arr::toCssClasses(['ml-1' => $icon]) }}">{{ $title ?? $slot }}</span>
             @endif
         </button>
     @break
 
     @case('link')
-        <a {{ $attributes->merge(['class' => 'btn btn-sm', 'role' => 'button', 'id' => Str::slug($title)]) }}>
+        <a {{ $attributes->merge(['class' => $finalClass, 'role' => 'button', 'id' => Str::slug($title)]) }}>
             @if ($icon)
                 <i class="{{ $icon }}"></i>
-                <span class="ml-1">{{ $title ?? $slot }}</span>
-            @else
-                {{ $title ?? $slot }}
+            @endif
+            @if ($title)
+                <span class="{{ Arr::toCssClasses(['ml-1' => $icon]) }}">{{ $title ?? $slot }}</span>
             @endif
         </a>
     @break
+
 @endswitch

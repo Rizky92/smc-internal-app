@@ -85,6 +85,7 @@ class BaseLayout extends Component
                     'keuangan.buku-besar.read',
                     'keuangan.laba-rugi-rekening.read',
                     'keuangan.dpjp-piutang-ranap.read',
+                    'keuangan.perbaikan-tgl-jurnal.read',
                     'keuangan.laporan-tindakan-lab.read',
                     'keuangan.laporan-tindakan-radiologi.read',
                 ]),
@@ -152,6 +153,20 @@ class BaseLayout extends Component
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.laba-rugi-rekening.read'),
                     ],
+                    // [
+                    //     'name' => 'DPJP Piutang Ranap',
+                    //     'url' => route('admin.keuangan.dpjp-piutang-ranap'),
+                    //     'icon' => "fas fa-file-invoice",
+                    //     'type' => 'link',
+                    //     'hasAnyPermissions' => $user->can('keuangan.dpjp-piutang-ranap.read'),
+                    // ],
+                    [
+                        'name' => 'Perbaikan Tgl. Jurnal',
+                        'url' => route('admin.keuangan.perbaikan-tgl-jurnal'),
+                        'icon' => "fas fa-book",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.perbaikan-tgl-jurnal.read'),
+                    ],
                     [
                         'name' => 'Laporan Tindakan Lab',
                         'url' => route('admin.keuangan.laporan-tindakan-lab'),
@@ -166,13 +181,6 @@ class BaseLayout extends Component
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.laporan-tindakan-radiologi.read'),
                     ],
-                    // [
-                    //     'name' => 'DPJP Piutang Ranap',
-                    //     'url' => route('admin.keuangan.dpjp-piutang-ranap'),
-                    //     'icon' => "fas fa-file-invoice",
-                    //     'type' => 'link',
-                    //     'hasAnyPermissions' => $user->can('keuangan.dpjp-piutang-ranap.read'),
-                    // ],
                 ],
             ],
             [

@@ -1,12 +1,12 @@
 @props([
     'method' => 'searchData',
     'title' => 'Cari',
-    'icon' => 'fas fa-search'
+    'icon' => 'fas fa-search',
 ])
 
-<div {{ $attributes }}>
-    <button class="btn btn-default btn-sm" type="button" wire:click="{{ $method }}">
-        <i class="{{ $icon }}"></i>
-        <span class="ml-1">{{ $title }}</span>
-    </button>
-</div>
+<x-button :attributes="$attributes->merge([
+    'size' => 'sm',
+    'title' => $title,
+    'icon' => $icon,
+    'wire:click.prevent' => $method,
+])" />

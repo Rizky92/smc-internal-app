@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire\HakAkses\Khanza;
 
-use App\Models\Aplikasi\MappingAksesKhanza;
+use App\Models\Aplikasi\HakAkses;
 use App\View\Components\BaseLayout;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
@@ -25,6 +25,6 @@ class ModalHakAksesBaru extends Component
 
     public function save()
     {
-        MappingAksesKhanza::updateOrCreate(['nama_field' => $this->namaField], ['judul_menu' => $this->judulMenu]);
+        HakAkses::updateOrCreate(['nama_field' => $this->namaField], ['judul_menu' => $this->judulMenu]);
     }
 }

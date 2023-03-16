@@ -82,8 +82,8 @@
         <x-slot name="footer" class="justify-content-start">
             <x-filter.search method="$refresh" />
             <x-filter.toggle class="ml-1" id="show-checked-khanza-transfer" title="Tampilkan yang dipilih" model="showChecked" />
-            <x-button class="btn-default ml-auto" data-dismiss="modal" title="Batal" />
-            <x-button class="btn-primary ml-2" data-dismiss="modal" wire:click="$emit('khanza.transfer')" title="Transfer" icon="fas fa-share-square" />
+            <x-button size="sm" class="ml-auto" data-dismiss="modal" title="Batal" />
+            <x-button size="sm" variant="primary" class="ml-2" data-dismiss="modal" wire:click="$emit('khanza.transfer')" title="Transfer" icon="fas fa-share-square" />
         </x-slot>
     </x-modal>
 </div>

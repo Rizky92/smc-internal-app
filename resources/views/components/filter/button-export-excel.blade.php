@@ -1,11 +1,14 @@
 @props([
     'method' => 'exportToExcel',
     'title' => 'Export ke Excel',
+    'icon' => 'fas fa-file-excel',
 ])
 
-<div {{ $attributes }}>
-    <button class="btn btn-outline-dark btn-sm" type="button" wire:click.prevent="{{ $method }}">
-        <i class="fas fa-file-excel"></i>
-        <span class="ml-1">{{ $title }}</span>
-    </button>
-</div>
+<x-button :attributes="$attributes->merge([
+    'size' => 'sm',
+    'variant' => 'dark',
+    'outline' => true,
+    'title' => $title,
+    'icon' => $icon,
+    'wire:click.prevent' => $method,
+])" />

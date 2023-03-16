@@ -3,6 +3,10 @@
     'title' => 'Reset Filter',
 ])
 
-<div {{ $attributes }}>
-    <x-button class="btn-sm btn-link text-secondary" title="{{ $title }}" wire:click="{{ $method }}" />
-</div>
+<x-button :attributes="$attributes->merge([
+    'size' => 'sm',
+    'variant' => 'link',
+    'class' => 'text-secondary',
+    'title' => $title,
+    'wire:click.prevent' => $method,
+])" />
