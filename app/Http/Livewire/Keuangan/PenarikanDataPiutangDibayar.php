@@ -102,8 +102,8 @@ class PenarikanDataPiutangDibayar extends Component
     {
         return [
             PiutangDilunaskan::query()
-                ->dataPiutangDilunaskan($this->periodeAwal, $this->periodeAkhir)
-                ->get()
+                ->dataPiutangDilunaskan($this->periodeAwal, $this->periodeAkhir, $this->kodeRekening, $this->jenisPeriode)
+                ->cursor()
                 ->map(function (PiutangDilunaskan $piutang) {
                     return [
                         'no_jurnal' => $piutang->no_jurnal,
