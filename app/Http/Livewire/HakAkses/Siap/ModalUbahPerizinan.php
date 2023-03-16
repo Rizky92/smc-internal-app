@@ -67,7 +67,7 @@ class ModalUbahPerizinan extends Component
 
         tracker_end('mysql_smc');
 
-        $this->emitUp('flash.success', "Update perizinan untuk hak akses {$role->name} berhasil!");
+        $this->emitUp('flash.success', "Update perizinan untuk role \"{$role->name}\" berhasil!");
     }
 
     protected function defaultValues()
