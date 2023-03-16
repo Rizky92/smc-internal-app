@@ -102,7 +102,7 @@ class PenarikanDataPiutangDibayar extends Component
     {
         return [
             PiutangDilunaskan::query()
-                ->dataPiutangDilunaskan($this->periodeAwal, $this->periodeAkhir)
+                ->dataPiutangDilunaskan($this->periodeAwal, $this->periodeAkhir, $this->kodeRekening, $this->jenisPeriode)
                 ->get()
                 ->map(function (PiutangDilunaskan $piutang) {
                     return [
@@ -155,7 +155,7 @@ class PenarikanDataPiutangDibayar extends Component
             'RS Samarinda Medika Citra',
             'Penarikan Data Penagihan Piutang Dibayar dari Jurnal',
             now()->format('d F Y'),
-            'Berdasarkan Tgl.' . Str::title($this->jenisPeriode) . ' periode ' . carbon($this->periodeAwal)->format('d F Y') . ' - ' . carbon($this->periodeAkhir)->format('d F Y'),
+            'Berdasarkan Tgl. ' . Str::title($this->jenisPeriode) . ' periode ' . carbon($this->periodeAwal)->format('d F Y') . ' - ' . carbon($this->periodeAkhir)->format('d F Y'),
         ];
     }
 }
