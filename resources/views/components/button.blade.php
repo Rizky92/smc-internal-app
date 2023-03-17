@@ -32,13 +32,11 @@
     ];
     
     $buttonVariants = collect($buttonVariants)
-        // {{-- blade-formatter-disable --}}
         ->when(
             $outline,
             fn($cols) => $cols->map(fn($v, $k) => str($v)->prepend('btn-outline-'))->replace(['link' => 'btn-link']),
             fn($cols) => $cols->map(fn($v, $k) => str($v)->prepend('btn-'))
         )
-        // {{-- blade-formatter-enable --}}
         ->all();
     
     $finalClass = $finalClass
