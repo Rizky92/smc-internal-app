@@ -5,7 +5,7 @@
         <x-slot name="header">
             <x-card.row-col>
                 <x-filter.label constant-width>Ruangan :</x-filter.label>
-                <x-filter.select2 name="bangsal" model="kodeBangsal" placeholder="-" :collection="$this->bangsal" />
+                <x-filter.select2 name="bangsal" model="kodeBangsal" placeholder="-" :options="$this->bangsal" />
                 <x-filter.button-export-excel class="ml-auto" />
             </x-card.row-col>
             <x-card.row-col class="mt-2">

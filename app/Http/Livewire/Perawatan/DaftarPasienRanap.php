@@ -19,17 +19,17 @@ class DaftarPasienRanap extends Component
 {
     use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
-    public $periodeAwal;
+    public $tglAwal;
 
-    public $periodeAkhir;
+    public $tglAkhir;
 
     public $statusPerawatan;
 
     protected function queryString()
     {
         return [
-            'periodeAwal' => ['except' => now()->format('Y-m-d'), 'as' => 'periode_awal'],
-            'periodeAkhir' => ['except' => now()->format('Y-m-d'), 'as' => 'periode_akhir'],
+            'tglAwal' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
             'statusPerawatan' => ['except' => '-', 'as' => 'status'],
         ];
     }
@@ -43,8 +43,8 @@ class DaftarPasienRanap extends Component
     {
         return RegistrasiPasien::query()
             ->daftarPasienRanap(
-                $this->periodeAwal,
-                $this->periodeAkhir,
+                $this->tglAwal,
+                $this->tglAkhir,
                 $this->statusPerawatan
             )
             ->search($this->cari, [
@@ -173,8 +173,8 @@ class DaftarPasienRanap extends Component
         $this->perpage = 25;
         $this->sortColumns = [];
         $this->statusPerawatan = '-';
-        $this->periodeAwal = now()->format('Y-m-d');
-        $this->periodeAkhir = now()->format('Y-m-d');
+        $this->tglAwal = now()->format('Y-m-d');
+        $this->tglAkhir = now()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array
@@ -182,8 +182,8 @@ class DaftarPasienRanap extends Component
         return [
             RegistrasiPasien::query()
                 ->daftarPasienRanap(
-                    $this->periodeAwal,
-                    $this->periodeAkhir,
+                    $this->tglAwal,
+                    $this->tglAkhir,
                     $this->statusPerawatan,
                     $exportToExcel = true
                 )
@@ -224,7 +224,7 @@ class DaftarPasienRanap extends Component
         return [
             'RS Samarinda Medika Citra',
             'Daftar Pasien Rawat Inap',
-            carbon($this->periodeAwal)->format('d F Y') . ' - ' . carbon($this->periodeAkhir)->format('d F Y'),
+            carbon($this->tglAwal)->format('d F Y') . ' - ' . carbon($this->tglAkhir)->format('d F Y'),
         ];
     }
 }

@@ -18,15 +18,15 @@ class LaporanTindakanLab extends Component
 {
     use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
-    public $periodeAwal;
+    public $tglAwal;
 
-    public $periodeAkhir;
+    public $tglAkhir;
 
     protected function queryString()
     {
         return [
-            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -38,7 +38,7 @@ class LaporanTindakanLab extends Component
     public function getDataLaporanTindakanLabProperty()
     {
         return HasilPeriksaLab::query()
-            ->laporanTindakanLab($this->periodeAwal, $this->periodeAkhir)
+            ->laporanTindakanLab($this->tglAwal, $this->tglAkhir)
             ->search($this->cari, [
                 'periksa_lab.no_rawat',
                 'reg_periksa.no_rkm_medis',
@@ -73,14 +73,14 @@ class LaporanTindakanLab extends Component
 
     protected function defaultValues()
     {
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array
     {
         return [
-            HasilPeriksaLab::laporanTindakanLab($this->periodeAwal, $this->periodeAkhir)->get(),
+            HasilPeriksaLab::laporanTindakanLab($this->tglAwal, $this->tglAkhir)->get(),
         ];
     }
 
@@ -112,7 +112,7 @@ class LaporanTindakanLab extends Component
             'RS Samarinda Medika Citra',
             'Laporan Jumlah Tindakan Laboratorium',
             now()->format('d F Y'),
-            CarbonImmutable::parse($this->periodeAwal)->format('d F Y') . ' - ' . CarbonImmutable::parse($this->periodeAkhir)->format('d F Y'),
+            CarbonImmutable::parse($this->tglAwal)->format('d F Y') . ' - ' . CarbonImmutable::parse($this->tglAkhir)->format('d F Y'),
         ];
     }
 }

@@ -19,15 +19,15 @@ class LaporanTindakanRadiologi extends Component
 {
     use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
-    public $periodeAwal;
+    public $tglAwal;
 
-    public $periodeAkhir;
+    public $tglAkhir;
 
     protected function queryString()
     {
         return [
-            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -39,7 +39,7 @@ class LaporanTindakanRadiologi extends Component
     public function getDataLaporanTindakanRadiologiProperty()
     {
         return HasilPeriksaRadiologi::query()
-            ->laporanTindakanRadiologi($this->periodeAwal, $this->periodeAkhir)
+            ->laporanTindakanRadiologi($this->tglAwal, $this->tglAkhir)
             ->search($this->cari, [
                 'periksa_radiologi.no_rawat',
                 'reg_periksa.no_rkm_medis',
@@ -87,14 +87,14 @@ class LaporanTindakanRadiologi extends Component
 
     protected function defaultValues()
     {
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array
     {
         return [
-            HasilPeriksaRadiologi::laporanTindakanRadiologi($this->periodeAwal, $this->periodeAkhir)->get(),
+            HasilPeriksaRadiologi::laporanTindakanRadiologi($this->tglAwal, $this->tglAkhir)->get(),
         ];
     }
 
@@ -126,7 +126,7 @@ class LaporanTindakanRadiologi extends Component
             'RS Samarinda Medika Citra',
             'Laporan Jumlah Tindakan Radiologi',
             now()->format('d F Y'),
-            CarbonImmutable::parse($this->periodeAwal)->format('d F Y') . ' - ' . CarbonImmutable::parse($this->periodeAkhir)->format('d F Y'),
+            CarbonImmutable::parse($this->tglAwal)->format('d F Y') . ' - ' . CarbonImmutable::parse($this->tglAkhir)->format('d F Y'),
         ];
     }
 }

@@ -1,6 +1,6 @@
 @props([
-    'modelStart' => 'periodeAwal',
-    'modelEnd' => 'periodeAkhir',
+    'modelStart' => 'tglAwal',
+    'modelEnd' => 'tglAkhir',
     'title' => 'Periode:',
 ])
 

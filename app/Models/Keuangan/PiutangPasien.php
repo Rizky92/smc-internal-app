@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class PiutangPasien extends Model
 {
-    Use Searchable, Sortable;
+    use Searchable, Sortable;
 
     protected $connection = 'mysql_sik';
 
@@ -68,16 +68,16 @@ class PiutangPasien extends Model
 
     public function scopeRekapPiutangPasien(
         Builder $query,
-        string $periodeAwal = '',
-        string $periodeAkhir = '',
+        string $tglAwal = '',
+        string $tglAkhir = '',
         string $penjamin = ''
     ): Builder {
-        if (empty($periodeAwal)) {
-            $periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
         }
 
-        if (empty($periodeAkhir)) {
-            $periodeAkhir = now()->endOfMont()->format('Y-m-d');
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMont()->format('Y-m-d');
         }
 
         $sqlSelect = "
@@ -105,7 +105,7 @@ class PiutangPasien extends Model
             ->join('reg_periksa', 'piutang_pasien.no_rawat', '=', 'reg_periksa.no_rawat')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->leftJoin(DB::raw($sisaPiutang), 'piutang_pasien.no_rawat', '=', 'sisa_piutang.no_rawat')
-            ->whereBetween('piutang_pasien.tgl_piutang', [$periodeAwal, $periodeAkhir])
+            ->whereBetween('piutang_pasien.tgl_piutang', [$tglAwal, $tglAkhir])
             ->when(!empty($penjamin), fn (Builder $query) => $query->where('reg_periksa.kd_pj', $penjamin));
     }
 }

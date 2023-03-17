@@ -1,8 +1,18 @@
-@props(['name', 'collection', 'model' => null, 'placeholder' => null, 'placeholderValue' => null, 'resetOn' => 'button#reset-filter', 'selected' => null])
+@props([
+    'name',
+    'options',
+    'model' => null,
+    'placeholder' => null,
+    'placeholderValue' => null,
+    'resetOn' => 'button#reset-filter',
+    'selected' => null,
+])
 
 @php
     $id = Str::slug($name);
     $title = Str::camel($name);
+
+    $isList = ! Arr::isAssoc($options);
 @endphp
 
 @once
@@ -50,10 +60,10 @@
 
 <div wire:ignore {{ $attributes->whereDoesntStartWith('wire:') }}>
     <select class="form-control form-control-sm simple-select2-sm input-sm" id="{{ $id }}" autocomplete="off" name="{{ $name }}">
-        @notnull($placeholder)
+        @if ($placeholder)
             <option value="{{ $placeholderValue }}">{{ $placeholder }}</option>
-        @endnotnull
-        @forelse ($collection as $key => $value)
+        @endif
+        @forelse ($options as $key => $value)
             <option value="{{ $key }}">{{ $key }} - {{ $value }}</option>
         @empty
             <option disabled>---NO DATA---</option>

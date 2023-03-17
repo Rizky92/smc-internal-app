@@ -26,17 +26,17 @@ class DPJPPiutangRanap extends Component
 
     public $jenisBayar;
 
-    public $periodeAwal;
+    public $tglAwal;
 
-    public $periodeAkhir;
+    public $tglAkhir;
 
     protected function queryString()
     {
         return [
             'status' => ['except' => ''],
             'jenisBayar' => ['except' => '', 'as' => 'kd_pj'],
-            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -58,7 +58,7 @@ class DPJPPiutangRanap extends Component
         return $this->isDeferred
             ? []
             : RawatInap::query()
-            ->piutangRanap($this->periodeAwal, $this->periodeAkhir, $this->status, $this->jenisBayar)
+            ->piutangRanap($this->tglAwal, $this->tglAkhir, $this->status, $this->jenisBayar)
             ->with([
                 'dpjpRanap',
                 'billing' => fn ($q) => $q->totalBillingan(),
@@ -82,14 +82,14 @@ class DPJPPiutangRanap extends Component
     {
         $this->status = '';
         $this->jenisBayar = '';
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     public function mapData()
     {
         return RawatInap::query()
-            ->piutangRanap($this->periodeAwal, $this->periodeAkhir, $this->status, $this->jenisBayar)
+            ->piutangRanap($this->tglAwal, $this->tglAkhir, $this->status, $this->jenisBayar)
             ->with([
                 'dpjpRanap',
                 'billing' => fn ($q) => $q->totalBillingan(),
@@ -189,7 +189,7 @@ class DPJPPiutangRanap extends Component
             'RS Samarinda Medika Citra',
             'Laporan Piutang Rawat Inap',
             now()->format('d F Y'),
-            'Periode ' . CarbonImmutable::parse($this->periodeAwal)->format('d F Y') . ' - ' . CarbonImmutable::parse($this->periodeAkhir)->format('d F Y'),
+            'Periode ' . CarbonImmutable::parse($this->tglAwal)->format('d F Y') . ' - ' . CarbonImmutable::parse($this->tglAkhir)->format('d F Y'),
         ];
     }
 }

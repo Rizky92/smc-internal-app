@@ -26,14 +26,14 @@ class NotaSelesai extends Model
         'user_id',
     ];
 
-    public function scopeBillingYangDiselesaikan(Builder $query, string $periodeAwal = '', string $periodeAkhir = ''): Builder
+    public function scopeBillingYangDiselesaikan(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
-        if (empty($periodeAwal)) {
-            $periodeAwal = now()->format('Y-m-d');
+        if (empty($tglAwal)) {
+            $tglAwal = now()->format('Y-m-d');
         }
 
-        if (empty($periodeAkhir)) {
-            $periodeAkhir = now()->addDay()->format('Y-m-d');
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->addDay()->format('Y-m-d');
         }
 
         $sik = DB::connection('mysql_sik')->getDatabaseName();
@@ -91,7 +91,7 @@ class NotaSelesai extends Model
             ->leftJoin(DB::raw($sik . '.bangsal bangsal'), 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
             ->leftJoin(DB::raw($sik . '.pasien pasien'), 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->leftJoin(DB::raw($sik . '.pegawai'), 'nota_selesai.user_id', '=', 'pegawai.nik')
-            ->whereBetween(DB::raw("date(nota_selesai.tgl_penyelesaian)"), [$periodeAwal, $periodeAkhir])
+            ->whereBetween(DB::raw("date(nota_selesai.tgl_penyelesaian)"), [$tglAwal, $tglAkhir])
             ->groupByRaw("
                 nota_selesai.no_rawat,
                 nota_selesai.status_pasien,

@@ -13,7 +13,7 @@
                     <x-filter.select model="status" :options="['' => 'Semua', 'Belum Lunas' => 'Belum Lunas', 'Lunas' => 'Lunas']" />
                 </div>
                 <x-filter.label class="ml-auto mr-3" constant-width>Jenis Bayar :</x-filter.label>
-                <x-filter.select2 name="Penjamin" model="jenisBayar" :collection="$this->penjamin" />
+                <x-filter.select2 name="Penjamin" model="jenisBayar" :options="$this->penjamin" />
             </x-card.row-col>
             <x-card.row-col class="mt-2">
                 <x-filter.select-perpage />
@@ -52,24 +52,12 @@
                 <x-slot name="body">
                     @forelse ($this->piutangRanap as $item)
                         @php
-                            $kategoriBilling = $item
-                                ->billing
-                                ->pluck('total', 'status')
-                                ->mapWithKeys(fn ($total, $status) => [Str::snake($status) => $total]);
-
-                            $billingTindakan = $kategoriBilling
-                                ->only([
-                                    'ranap_dokter',
-                                    'ranap_dokter_paramedis',
-                                    'ranap_paramedis',
-                                    'ralan_dokter',
-                                    'ralan_dokter_paramedis',
-                                    'ralan_paramedis',
-                                ])
-                                ->sum();
-
+                            $kategoriBilling = $item->billing->pluck('total', 'status')->mapWithKeys(fn($total, $status) => [Str::snake($status) => $total]);
+                            
+                            $billingTindakan = $kategoriBilling->only(['ranap_dokter', 'ranap_dokter_paramedis', 'ranap_paramedis', 'ralan_dokter', 'ralan_dokter_paramedis', 'ralan_paramedis'])->sum();
+                            
                             $total = $kategoriBilling->sum();
-
+                            
                             $sisa = $total - $item->uangmuka - $item->dibayar;
                         @endphp
                         <x-table.tr>

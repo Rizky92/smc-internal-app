@@ -16,15 +16,15 @@ class PerbaikanTanggalJurnal extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
-    public $periodeAwal;
+    public $tglAwal;
 
-    public $periodeAkhir;
+    public $tglAkhir;
 
     protected function queryString()
     {
         return [
-            'periodeAwal' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'periodeAkhir' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -35,7 +35,7 @@ class PerbaikanTanggalJurnal extends Component
 
     public function getJurnalProperty()
     {
-        return Jurnal::jurnalUmum($this->periodeAwal, $this->periodeAkhir)
+        return Jurnal::jurnalUmum($this->tglAwal, $this->tglAkhir)
             ->search($this->cari, [
                 'jurnal.no_jurnal',
                 'jurnal.no_bukti',
@@ -54,8 +54,8 @@ class PerbaikanTanggalJurnal extends Component
 
     protected function defaultValues()
     {
-        $this->periodeAwal = now()->format('Y-m-d');
-        $this->periodeAkhir = now()->format('Y-m-d');
+        $this->tglAwal = now()->format('Y-m-d');
+        $this->tglAkhir = now()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array

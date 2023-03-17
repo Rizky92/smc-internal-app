@@ -18,15 +18,15 @@ class LaporanStatistik extends Component
 {
     use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
-    public $periodeAwal;
+    public $tglAwal;
 
-    public $periodeAkhir;
+    public $tglAkhir;
 
     protected function queryString()
     {
         return [
-            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'periode_awal'],
-            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'periode_akhir'],
+            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -40,10 +40,10 @@ class LaporanStatistik extends Component
         return $this->isDeferred
             ? []
             : StatistikRekamMedis::query()
-                ->search($this->cari)
-                ->whereBetween('tgl_masuk', [$this->periodeAwal, $this->periodeAkhir])
-                ->orderBy('no_rawat')
-                ->paginate($this->perpage);
+            ->search($this->cari)
+            ->whereBetween('tgl_masuk', [$this->tglAwal, $this->tglAkhir])
+            ->orderBy('no_rawat')
+            ->paginate($this->perpage);
     }
 
     public function render()
@@ -54,15 +54,15 @@ class LaporanStatistik extends Component
 
     protected function defaultValues()
     {
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array
     {
         return [
             StatistikRekamMedis::query()
-                ->whereBetween('tgl_masuk', [$this->periodeAwal, $this->periodeAkhir])
+                ->whereBetween('tgl_masuk', [$this->tglAwal, $this->tglAkhir])
                 ->orderBy('no_rawat')
                 ->cursor()
         ];
@@ -112,8 +112,8 @@ class LaporanStatistik extends Component
 
     protected function pageHeaders(): array
     {
-        $dateStart = carbon($this->periodeAwal)->format('d F Y');
-        $dateEnd = carbon($this->periodeAkhir)->format('d F Y');
+        $dateStart = carbon($this->tglAwal)->format('d F Y');
+        $dateEnd = carbon($this->tglAkhir)->format('d F Y');
 
         return [
             'RS Samarinda Medika Citra',

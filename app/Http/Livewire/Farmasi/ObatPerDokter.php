@@ -16,15 +16,15 @@ class ObatPerDokter extends Component
 {
     use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
-    public $periodeAwal;
+    public $tglAwal;
 
-    public $periodeAkhir;
+    public $tglAkhir;
 
     protected function queryString(): array
     {
         return [
-            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'periode_awal'],
-            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'periode_akhir'],
+            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -36,7 +36,7 @@ class ObatPerDokter extends Component
     public function getObatPerDokterProperty()
     {
         return ResepObat::query()
-            ->penggunaanObatPerDokter($this->periodeAwal, $this->periodeAkhir)
+            ->penggunaanObatPerDokter($this->tglAwal, $this->tglAkhir)
             ->search($this->cari, [
                 'resep_obat.no_resep',
                 'databarang.nama_brng',
@@ -59,14 +59,14 @@ class ObatPerDokter extends Component
         $this->cari = '';
         $this->perpage = 25;
         $this->sortColumns = [];
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array
     {
         return [
-            ResepObat::penggunaanObatPerDokter($this->periodeAwal, $this->periodeAkhir)->get(),
+            ResepObat::penggunaanObatPerDokter($this->tglAwal, $this->tglAkhir)->get(),
         ];
     }
 
@@ -86,8 +86,8 @@ class ObatPerDokter extends Component
 
     protected function pageHeaders(): array
     {
-        $headerTglAwal = carbon($this->periodeAwal)->format('d F Y');
-        $headerTglAkhir = carbon($this->periodeAkhir)->format('d F Y');
+        $headerTglAwal = carbon($this->tglAwal)->format('d F Y');
+        $headerTglAkhir = carbon($this->tglAkhir)->format('d F Y');
 
         return [
             'RS Samarinda Medika Citra',

@@ -17,15 +17,15 @@ class KunjunganPerPoli extends Component
 {
     use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
-    public $periodeAwal;
+    public $tglAwal;
 
-    public $periodeAkhir;
+    public $tglAkhir;
 
     protected function queryString()
     {
         return [
-            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'periode_awal'],
-            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'periode_akhir'],
+            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -37,7 +37,7 @@ class KunjunganPerPoli extends Component
     public function getDataKunjunganResepPasienProperty()
     {
         return ResepObat::query()
-            ->kunjunganFarmasi($this->periodeAwal, $this->periodeAkhir)
+            ->kunjunganFarmasi($this->tglAwal, $this->tglAkhir)
             ->search($this->cari, [
                 'resep_obat.no_rawat',
                 'resep_obat.no_resep',
@@ -66,14 +66,14 @@ class KunjunganPerPoli extends Component
         $this->cari = '';
         $this->perpage = 25;
         $this->sortColumns = [];
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array
     {
         return [
-            ResepObat::kunjunganFarmasi($this->periodeAwal, $this->periodeAkhir)->get()
+            ResepObat::kunjunganFarmasi($this->tglAwal, $this->tglAkhir)->get()
         ];
     }
 

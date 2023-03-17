@@ -13,7 +13,9 @@ class BladeServiceProvider extends ServiceProvider
      * @var array<int, string>
      */
     protected $booleanAttributes = [
-        //
+        'selected',
+        'checked',
+        'required',
     ];
 
     /**
@@ -22,7 +24,8 @@ class BladeServiceProvider extends ServiceProvider
      * @var array<int, array<string, string>|string>
      */
     protected $booleanValuedAttributes = [
-        //
+        'autocomplete' => ['on', 'off'],
+        ''
     ];
 
     /**

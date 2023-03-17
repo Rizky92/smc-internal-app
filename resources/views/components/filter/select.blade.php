@@ -1,12 +1,31 @@
-@props(['model', 'options' => [], 'placeholder' => null, 'constantWidth' => false])
+@props([
+    'name',
+    'model' => null,
+    'options' => [],
+    'placeholder' => null,
+    'placeholderValue' => null,
+    'selected' => null,
+])
 
 @php
+    $id = Str::slug($name);
+    $title = Str::camel($name);
+
+    $isAssoc = Arr::isAssoc($options);
+
     $attrs = [
         'class' => 'custom-control custom-select text-sm',
-        'wire:model.defer' => $model,
+        'style' => 'width: max-content',
     ];
-    if ($constantWidth) {
-        $attrs = array_merge($attrs, ['style' => 'width: 10rem']);
+
+    if ($model) {
+        $attrs['wire:model.defer'] ??= $model;
+    }
+    
+    if (! $isAssoc) {
+        $options = collect($options)
+            ->mapWithKeys(fn($v, $k) => [$v => $v])
+            ->all();
     }
 @endphp
 
@@ -15,6 +34,6 @@
         <option value="" disabled selected>{{ $placeholder }}</option>
     @endif
     @foreach ($options as $value => $name)
-        <option value="{{ $value }}">{{ $name }}</option>
+        <option value="{{ $value }}" {{ $selected === $value ? 'selected' : null }}>{{ $isAssoc ? "{$value} - {$name}" : $name }}</option>
     @endforeach
 </select>

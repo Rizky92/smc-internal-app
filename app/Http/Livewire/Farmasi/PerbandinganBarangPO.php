@@ -18,17 +18,17 @@ class PerbandinganBarangPO extends Component
 {
     use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
-    public $periodeAwal;
+    public $tglAwal;
 
-    public $periodeAkhir;
+    public $tglAkhir;
 
     public $hanyaTampilkanBarangSelisih;
 
     protected function queryString()
     {
         return [
-            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'periode_awal'],
-            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'periode_akhir'],
+            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
             'hanyaTampilkanBarangSelisih' => ['except' => false, 'as' => 'barang_selisih'],
         ];
     }
@@ -41,7 +41,7 @@ class PerbandinganBarangPO extends Component
     public function getPerbandinganOrderObatPOProperty()
     {
         return SuratPemesananObat::query()
-            ->perbandinganPemesananObatPO($this->periodeAwal, $this->periodeAkhir, $this->hanyaTampilkanBarangSelisih)
+            ->perbandinganPemesananObatPO($this->tglAwal, $this->tglAkhir, $this->hanyaTampilkanBarangSelisih)
             ->search($this->cari, [
                 "surat_pemesanan_medis.no_pemesanan",
                 "databarang.nama_brng",
@@ -69,8 +69,8 @@ class PerbandinganBarangPO extends Component
         $this->cari = '';
         $this->perpage = 25;
         $this->sortColumns = [];
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
         $this->hanyaTampilkanBarangSelisih = false;
     }
 
@@ -78,7 +78,7 @@ class PerbandinganBarangPO extends Component
     {
         return [
             SuratPemesananObat::query()
-                ->perbandinganPemesananObatPO($this->periodeAwal, $this->periodeAkhir, $this->hanyaTampilkanBarangSelisih)
+                ->perbandinganPemesananObatPO($this->tglAwal, $this->tglAkhir, $this->hanyaTampilkanBarangSelisih)
                 ->get()
         ];
     }

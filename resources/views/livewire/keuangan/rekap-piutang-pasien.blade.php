@@ -10,7 +10,7 @@
             <x-card.row-col class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.label class="ml-auto" constant-width>Penjamin:</x-filter.label>
-                <x-filter.select2 name="caraBayar" model="caraBayar" :collection="$this->penjamin" placeholder="-" style="width: 16rem" />
+                <x-filter.select2 name="caraBayar" model="caraBayar" :options="$this->penjamin" placeholder="-" style="width: 16rem" />
             </x-card.row-col>
             <x-card.row-col class="mt-2">
                 <span class="text-sm" style="width: 5rem">TOTAL:</span>
@@ -41,12 +41,12 @@
                             <x-table.td>{{ $data->no_rkm_medis }}</x-table.td>
                             <x-table.td>{{ $data->nm_pasien }}</x-table.td>
                             <x-table.td>{{ $data->tgl_piutang }}</x-table.td>
-                            
+
                             <x-table.td>{{ $data->status }}</x-table.td>
                             <x-table.td>{{ rp($data->total) }}</x-table.td>
                             <x-table.td>{{ rp($data->uang_muka) }}</x-table.td>
                             <x-table.td>{{ rp($data->terbayar) }}</x-table.td>
-                            
+
                             <x-table.td>{{ rp($data->sisa) }}</x-table.td>
                             <x-table.td>{{ $data->tgltempo }}</x-table.td>
                             <x-table.td>{{ $data->penjamin }}</x-table.td>

@@ -5,7 +5,7 @@
 
     <x-card use-default-filter use-loading>
         <x-slot name="body" class="table-responsive">
-            <x-table sortable :sortColumns="$sortColumns" style="min-width: 100%; width: 120rem" :striped="false" :hover="false">
+            <x-table sortable :sortColumns="$sortColumns" style="min-width: 100%; width: 110rem" :striped="false" :hover="false">
                 <x-slot name="columns">
                     <x-table.th style="width: 8ch" title="#" />
                     <x-table.th style="width: 15ch" title="No. Jurnal" />
@@ -29,7 +29,13 @@
                                     size="xs" variant="link" class="mt-n1"
                                     title="Edit" icon="fas fa-pencil-alt" id="edit-{{ $jurnal->no_jurnal }}"
                                     data-toggle="modal" data-target="#modal-ubah-tgl-jurnal"
-                                    wire:click.prevent="$emit('keuangan.update-tgl-jurnal', '{{ $jurnal->no_jurnal }}')" />
+                                    wire:click.prevent="$emit('utj.prepare', {
+                                        noJurnal: '{{ $jurnal->no_jurnal }}',
+                                        noBukti: '{{ $jurnal->no_bukti }}',
+                                        keterangan: '{{ $jurnal->keterangan }}',
+                                        tglJurnal: '{{ $jurnal->tgl_jurnal }}',
+                                        jamJurnal: '{{ $jurnal->jam_jurnal }}'
+                                    })" />
                             </x-table.td>
                             <x-table.td rowspan="{{ $count }}">{{ $jurnal->no_jurnal }}</x-table.td>
                             <x-table.td rowspan="{{ $count }}">{{ $jurnal->no_bukti }}</x-table.td>

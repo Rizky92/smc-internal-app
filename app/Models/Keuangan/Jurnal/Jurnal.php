@@ -29,6 +29,15 @@ class Jurnal extends Model
         return $this->hasMany(JurnalDetail::class, 'no_jurnal', 'no_jurnal');
     }
 
+    public static function findLatest(string $tglJurnal, array $columns = ['*'])
+    {
+        return (new static)::query()
+            ->where('tgl_jurnal', $tglJurnal)
+            ->orderBy('jam_jurnal', 'desc')
+            ->orderBy('no_jurnal', 'desc')
+            ->first($columns);
+    }
+
     public function scopeJurnalUmum(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
@@ -41,6 +50,7 @@ class Jurnal extends Model
 
         return $query
             ->with(['detail', 'detail.rekening:kd_rek,nm_rek'])
+            ->whereHas('detail')
             ->whereBetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir]);
     }
 

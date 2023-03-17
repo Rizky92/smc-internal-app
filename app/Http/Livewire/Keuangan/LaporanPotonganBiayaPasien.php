@@ -17,15 +17,15 @@ class LaporanPotonganBiayaPasien extends Component
 {
     use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
-    public $periodeAwal;
+    public $tglAwal;
 
-    public $periodeAkhir;
+    public $tglAkhir;
 
     protected function queryString()
     {
         return [
-            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -43,7 +43,7 @@ class LaporanPotonganBiayaPasien extends Component
     public function getDataPotonganBiayaPasienProperty()
     {
         return PenguranganBiaya::query()
-            ->potonganBiayaPasien($this->periodeAwal, $this->periodeAkhir)
+            ->potonganBiayaPasien($this->tglAwal, $this->tglAkhir)
             ->search($this->cari, [
                 "pasien.nm_pasien",
                 "reg_periksa.no_rkm_medis",
@@ -68,14 +68,14 @@ class LaporanPotonganBiayaPasien extends Component
         $this->cari = '';
         $this->perpage = '';
         $this->sortColumns = [];
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array
     {
         return [
-            PenguranganBiaya::potonganBiayaPasien($this->periodeAwal, $this->periodeAkhir)->get()
+            PenguranganBiaya::potonganBiayaPasien($this->tglAwal, $this->tglAkhir)->get()
         ];
     }
 
@@ -103,7 +103,7 @@ class LaporanPotonganBiayaPasien extends Component
         return [
             'RS Samarinda Medika Citra',
             'Laporan Pengurangan Biaya Pasien',
-            carbon($this->periodeAwal)->format('d F Y') . ' s.d. ' . carbon($this->periodeAkhir)->format('d F Y'),
+            carbon($this->tglAwal)->format('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->format('d F Y'),
         ];
     }
 }

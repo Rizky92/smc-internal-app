@@ -18,19 +18,15 @@ return new class extends Migration
         Schema::connection('mysql_smc')->create('jurnal_backup', function (Blueprint $table) {
             $table->id();
 
-            $table->string('no_jurnal_diubah', 20)
+            $table->string('no_jurnal', 20)
                 ->nullable()
                 ->index();
 
-            $table->string('no_jurnal_asli', 20)
+            $table->date('tgl_jurnal_asli')
                 ->nullable()
                 ->index();
 
-            $table->dateTime('waktu_jurnal_asli')
-                ->nullable()
-                ->index();
-
-            $table->dateTime('waktu_jurnal_diubah')
+            $table->date('tgl_jurnal_diubah')
                 ->nullable()
                 ->index();
 

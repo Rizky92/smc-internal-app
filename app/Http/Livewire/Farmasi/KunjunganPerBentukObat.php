@@ -18,12 +18,9 @@ class KunjunganPerBentukObat extends Component
 {
     use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
-    private const OBAT_REGULAR_PAGE = 'obat_regular_page';
-    private const OBAT_RACIKAN_PAGE = 'obat_racikan_page';
+    public $tglAwal;
 
-    public $periodeAwal;
-
-    public $periodeAkhir;
+    public $tglAkhir;
 
     public $jenisPerawatan;
 
@@ -31,8 +28,8 @@ class KunjunganPerBentukObat extends Component
     {
         return [
             'jenisPerawatan' => ['except' => '', 'as' => 'jenis_perawatan'],
-            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'periode_awal'],
-            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'periode_akhir'],
+            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -50,7 +47,7 @@ class KunjunganPerBentukObat extends Component
     public function getKunjunganResepObatRegularPasienProperty()
     {
         return ResepDokter::query()
-            ->kunjunganResepObatRegular($this->periodeAwal, $this->periodeAkhir, $this->jenisPerawatan)
+            ->kunjunganResepObatRegular($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
             ->search($this->cari, [
                 'resep_dokter.no_resep',
                 'dokter.nm_dokter',
@@ -58,13 +55,13 @@ class KunjunganPerBentukObat extends Component
                 'reg_periksa.status_lanjut',
             ])
             ->sortWithColumns($this->sortColumns, ['total' => DB::raw('round(sum(resep_dokter.jml * databarang.h_beli))')])
-            ->paginate($this->perpage, ['*'], self::OBAT_REGULAR_PAGE);
+            ->paginate($this->perpage, ['*'], 'page_regular');
     }
 
     public function getKunjunganResepObatRacikanPasienProperty()
     {
         return ResepDokterRacikan::query()
-            ->kunjunganResepObatRacikan($this->periodeAwal, $this->periodeAkhir, $this->jenisPerawatan)
+            ->kunjunganResepObatRacikan($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
             ->search($this->cari, [
                 'resep_dokter_racikan.no_resep',
                 'dokter.nm_dokter',
@@ -72,7 +69,7 @@ class KunjunganPerBentukObat extends Component
                 'reg_periksa.status_lanjut',
             ])
             ->sortWithColumns($this->sortColumns, ['total' => DB::raw('round(sum(resep_dokter_racikan_detail.jml * databarang.h_beli))')])
-            ->paginate($this->perpage, ['*'], self::OBAT_RACIKAN_PAGE);
+            ->paginate($this->perpage, ['*'], 'page_racikan');
     }
 
     protected function defaultValues()
@@ -80,15 +77,15 @@ class KunjunganPerBentukObat extends Component
         $this->cari = '';
         $this->perpage = 25;
         $this->sortColumns = [];
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
         $this->jenisPerawatan = '';        
     }
 
     public function searchData()
     {
-        $this->resetPage(self::OBAT_REGULAR_PAGE);
-        $this->resetPage(self::OBAT_RACIKAN_PAGE);
+        $this->resetPage('page_regular');
+        $this->resetPage('page_racikan');
 
         $this->emit('$refresh');
     }
@@ -96,8 +93,8 @@ class KunjunganPerBentukObat extends Component
     protected function dataPerSheet(): array
     {
         return [
-            'Obat Regular' => ResepDokter::kunjunganResepObatRegular($this->periodeAwal, $this->periodeAkhir, $this->jenisPerawatan)->get(),
-            'Obat Racikan' => ResepDokterRacikan::kunjunganResepObatRacikan($this->periodeAwal, $this->periodeAkhir, $this->jenisPerawatan)->get(),
+            'Obat Regular' => ResepDokter::kunjunganResepObatRegular($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)->get(),
+            'Obat Racikan' => ResepDokterRacikan::kunjunganResepObatRacikan($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)->get(),
         ];
     }
 

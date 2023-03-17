@@ -98,6 +98,13 @@ if (!function_exists('tracker_end')) {
     }
 }
 
+if (! function_exists('tracker_dispose')) {
+    function tracker_dispose(string $connection)
+    {
+        DB::connection($connection)->disableQueryLog();
+    }
+}
+
 if (! function_exists('func_get_named_args')) {
     /**
      * @param  object $object

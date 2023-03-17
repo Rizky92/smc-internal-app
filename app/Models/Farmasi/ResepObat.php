@@ -25,14 +25,14 @@ class ResepObat extends Model
 
     public $timestamps = false;
 
-    public function scopePenggunaanObatPerDokter(Builder $query, string $periodeAwal = '', string $periodeAkhir = ''): Builder
+    public function scopePenggunaanObatPerDokter(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
-        if (empty($periodeAwal)) {
-            $periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
         }
 
-        if (empty($periodeAkhir)) {
-            $periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
         return $query
@@ -53,17 +53,17 @@ class ResepObat extends Model
             ->leftJoin('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
             ->whereRaw('detail_pemberian_obat.tgl_perawatan = resep_obat.tgl_perawatan')
             ->whereRaw('detail_pemberian_obat.jam = resep_obat.jam')
-            ->whereBetween('resep_obat.tgl_perawatan', [$periodeAwal, $periodeAkhir]);
+            ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir]);
     }
 
-    public function scopeKunjunganFarmasi(Builder $query, string $periodeAwal = '', string $periodeAkhir = ''): Builder
+    public function scopeKunjunganFarmasi(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
-        if (empty($periodeAwal)) {
-            $periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
         }
 
-        if (empty($periodeAkhir)) {
-            $periodeAkhir = now()->endofMonth()->format('Y-m-d');
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endofMonth()->format('Y-m-d');
         }
 
         return $query->selectRaw("
@@ -83,17 +83,17 @@ class ResepObat extends Model
             ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->leftJoin(DB::raw('dokter dokter_poli'), 'reg_periksa.kd_dokter', '=', 'dokter_poli.kd_dokter')
             ->leftJoin(DB::raw('dokter dokter_peresep'), 'resep_obat.kd_dokter', '=', 'dokter_peresep.kd_dokter')
-            ->whereBetween('resep_obat.tgl_perawatan', [$periodeAwal, $periodeAkhir]);
+            ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir]);
     }
 
-    public function scopeKunjunganResepPasien(Builder $query, string $periodeAwal = '', string $periodeAkhir = '', string $jenisPerawatan = ''): Builder
+    public function scopeKunjunganResepPasien(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $jenisPerawatan = ''): Builder
     {
-        if (empty($periodeAwal)) {
-            $periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
         }
 
-        if (empty($periodeAkhir)) {
-            $periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
         return $query->selectRaw("
@@ -110,7 +110,7 @@ class ResepObat extends Model
             ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->leftJoin('databarang', 'resep_dokter.kode_brng', '=', 'databarang.kode_brng')
             ->where('reg_periksa.status_bayar', 'Sudah Bayar')
-            ->whereBetween('resep_obat.tgl_perawatan', [$periodeAwal, $periodeAkhir])
+            ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
             ->when(!empty($jenisPerawatan), fn (Builder $query) => $query->where('reg_periksa.status_lanjut', $jenisPerawatan))
             ->groupBy([
                 'reg_periksa.no_rawat',

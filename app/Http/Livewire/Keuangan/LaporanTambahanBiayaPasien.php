@@ -17,15 +17,15 @@ class LaporanTambahanBiayaPasien extends Component
 {
     use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
-    public $periodeAwal;
+    public $tglAwal;
 
-    public $periodeAkhir;
+    public $tglAkhir;
 
     protected function queryString()
     {
         return [
-            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -37,7 +37,7 @@ class LaporanTambahanBiayaPasien extends Component
     public function getDataTambahanBiayaPasienProperty()
     {
         return TambahanBiaya::query()
-            ->biayaTambahanUntukHonorDokter($this->periodeAwal, $this->periodeAkhir)
+            ->biayaTambahanUntukHonorDokter($this->tglAwal, $this->tglAkhir)
             ->search($this->cari, [
                 'pasien.nm_pasien',
                 'reg_periksa.no_rkm_medis',
@@ -68,14 +68,14 @@ class LaporanTambahanBiayaPasien extends Component
         $this->cari = '';
         $this->perpage = 25;
         $this->sortColumns = [];
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array
     {
         return [
-            TambahanBiaya::biayaTambahanUntukHonorDokter($this->periodeAwal, $this->periodeAkhir)->get()
+            TambahanBiaya::biayaTambahanUntukHonorDokter($this->tglAwal, $this->tglAkhir)->get()
         ];
     }
 
@@ -103,7 +103,7 @@ class LaporanTambahanBiayaPasien extends Component
         return [
             'RS Samarinda Medika Citra',
             'Laporan Tambahan Biaya Pasien Untuk Honor Dokter',
-            carbon($this->periodeAwal)->format('d F Y') . ' s.d. ' . carbon($this->periodeAkhir)->format('d F Y'),
+            carbon($this->tglAwal)->format('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->format('d F Y'),
         ];
     }
 }
