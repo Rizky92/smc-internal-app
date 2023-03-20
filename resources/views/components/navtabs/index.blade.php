@@ -2,6 +2,7 @@
     'livewire' => false,
     'tabs' => null,
     'contents' => null,
+    'selected' => null,
 ])
 
 <div>

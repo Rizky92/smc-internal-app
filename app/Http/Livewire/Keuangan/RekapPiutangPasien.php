@@ -40,7 +40,7 @@ class RekapPiutangPasien extends Component
 
     public function getPenjaminProperty()
     {
-        return Penjamin::where('status', '1')->pluck('png_jawab', 'kd_pj');
+        return Penjamin::where('status', '1')->pluck('png_jawab', 'kd_pj')->all();
     }
 
     public function getPiutangPasienProperty()

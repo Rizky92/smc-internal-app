@@ -1,14 +1,23 @@
-@aware(['livewire' => false])
+@aware(['livewire', 'selected'])
 
 @props([
-    'selected' => false,
     'type' => 'pill',
     'id',
     'title',
 ])
 
 <li class="nav-item my-2">
-    <a class="nav-link {{ $selected ? 'active' : null }}" id="tab-{{ $id }}" data-toggle="{{ $type }}" href="#content-{{ $id }}" role="tab" aria-controls="content-{{ $id }}" aria-selected="{{ $selected ? 'true' : 'false' }}" {{ $livewire ? 'wire:ignore.self': null }}>
+    <a {{ $attributes
+        ->class(['nav-link', 'active' => $selected === $id])
+        ->merge([
+            'id' => "tab-{$id}",
+            'data-toggle' => $type,
+            'href' => "#content-{$id}",
+            'role' => 'tab',
+            'aria-controls' => "content-{$id}",
+            'aria-selected' => $selected === "tab-{$id}" ? 'true' : 'false',
+        ])
+    }} {{ $livewire ? 'wire:ignore.self' : null }}>
         <span>{{ $title }}</span>
     </a>
 </li>

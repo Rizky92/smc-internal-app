@@ -10,7 +10,6 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -40,10 +39,10 @@ class LaporanStatistik extends Component
         return $this->isDeferred
             ? []
             : StatistikRekamMedis::query()
-            ->search($this->cari)
-            ->whereBetween('tgl_masuk', [$this->tglAwal, $this->tglAkhir])
-            ->orderBy('no_rawat')
-            ->paginate($this->perpage);
+                ->search($this->cari)
+                ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
+                ->orderBy('no_rawat')
+                ->paginate($this->perpage);
     }
 
     public function render()

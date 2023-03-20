@@ -15,13 +15,13 @@
             </x-card.row-col>
         </x-slot>
         <x-slot name="body">
-            <x-navtabs livewire>
+            <x-navtabs livewire selected="medis">
                 <x-slot name="tabs">
-                    <x-navtabs.tab id="medis" title="Obat/BHP/Alkes" selected />
+                    <x-navtabs.tab id="medis" title="Obat/BHP/Alkes" />
                     <x-navtabs.tab id="nonmedis" title="Non Medis" />
                 </x-slot>
                 <x-slot name="contents">
-                    <x-navtabs.content id="medis" class="table-responsive" selected>
+                    <x-navtabs.content id="medis" class="table-responsive">
                         <x-table sortable :sortColumns="$sortColumns" style="min-width: 100%">
                             <x-slot name="columns">
                                 <x-table.th name="no_jurnal" title="No. Jurnal" />

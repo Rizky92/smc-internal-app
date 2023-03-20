@@ -44,6 +44,15 @@ class UbahTanggalJurnal extends Component
         $this->defaultValues();
     }
 
+    public function getBackupJurnalProperty()
+    {
+        return JurnalBackup::query()
+            ->with('pegawai:nik,nama')
+            ->where('no_jurnal', $this->noJurnal)
+            ->orderByDesc('tgl_jurnal_diubah')
+            ->get();
+    }
+
     public function render()
     {
         return view('livewire.keuangan.modal.ubah-tanggal-jurnal');
@@ -66,16 +75,14 @@ class UbahTanggalJurnal extends Component
         if (! auth()->user()->can('keuangan.perbaikan-tgl-jurnal.ubah-tanggal')) {
             $this->flashError();
 
-            $this->return;
+            return;
         }
         
         $jurnalDiubah = Jurnal::query()->find($this->noJurnal);
         $jurnalTerakhirPerTgl = Jurnal::findLatest($this->tglJurnalLama);
 
         if ($jurnalDiubah->is($jurnalTerakhirPerTgl)) {
-            throw new ModelIsIdenticalException;
-
-            tracker_end('mysql_sik');
+            $this->flashError("Entri no. jurnal tidak boleh entri yang terakhir di tanggal {$jurnalDiubah->tgl_jurnal}!");
 
             return;
         }
@@ -101,6 +108,35 @@ class UbahTanggalJurnal extends Component
 
         $this->dispatchBrowserEvent('data-saved');
         $this->emitUp('flash.success', "Tgl. untuk no. jurnal {$jurnalDiubah->no_jurnal} berhasil diubah!");
+    }
+
+    public function restoreTglJurnal()
+    {
+        if (! auth()->user()->can('keuangan.perbaikan-tgl-jurnal.ubah-tanggal')) {
+            $this->flasError();
+
+            return;
+        }
+
+        $jurnalBackup = JurnalBackup::query()
+            ->where('no_jurnal', $this->noJurnal)
+            ->orderBy('tgl_jurnal_asli')
+            ->first();
+
+        $jurnalSekarang = Jurnal::find($this->noJurnal);
+
+        tracker_start('mysql_sik');
+
+        $jurnalSekarang->tgl_jurnal = $jurnalBackup->tgl_jurnal_asli;
+
+        $jurnalSekarang->save();
+
+        tracker_end('mysql_sik');
+
+        tracker_start('mysql_smc');
+
+        JurnalBackup::where('no_jurnal', $this->noJurnal)
+            ->delete();
     }
 
     protected function defaultValues()

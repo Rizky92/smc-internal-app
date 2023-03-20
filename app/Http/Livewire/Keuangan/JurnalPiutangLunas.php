@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
-class PenarikanDataPiutangDibayar extends Component
+class JurnalPiutangLunas extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
@@ -41,7 +41,7 @@ class PenarikanDataPiutangDibayar extends Component
 
     public function render()
     {
-        return view('livewire.keuangan.penarikan-data-piutang-dibayar')
+        return view('livewire.keuangan.jurnal-piutang-lunas')
             ->layout(BaseLayout::class, ['title' => 'Penarikan Data Penagihan Piutang Dibayar dari Jurnal']);
     }
 
@@ -50,7 +50,8 @@ class PenarikanDataPiutangDibayar extends Component
         return DB::connection('mysql_sik')
             ->table('rekening')
             ->whereIn('kd_rek', PiutangDilunaskan::query()->groupBy('kd_rek')->pluck('kd_rek')->toArray())
-            ->pluck('nm_rek', 'kd_rek');
+            ->pluck('nm_rek', 'kd_rek')
+            ->all();
     }
 
     public function tarikDataTerbaru()

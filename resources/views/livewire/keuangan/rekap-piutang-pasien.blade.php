@@ -10,7 +10,7 @@
             <x-card.row-col class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.label class="ml-auto" constant-width>Penjamin:</x-filter.label>
-                <x-filter.select2 name="caraBayar" model="caraBayar" :options="$this->penjamin" placeholder="-" style="width: 16rem" />
+                <x-filter.select2 name="caraBayar" :options="$this->penjamin" selected="-" style="width: 16rem" livewire show-key />
             </x-card.row-col>
             <x-card.row-col class="mt-2">
                 <span class="text-sm" style="width: 5rem">TOTAL:</span>

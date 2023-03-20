@@ -12,7 +12,7 @@ use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
 
-class PerbaikanTanggalJurnal extends Component
+class JurnalPerbaikan extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
@@ -35,12 +35,11 @@ class PerbaikanTanggalJurnal extends Component
 
     public function getJurnalProperty()
     {
-        return Jurnal::jurnalUmum($this->tglAwal, $this->tglAkhir)
+        return Jurnal::query()
+            ->jurnalUmum($this->tglAwal, $this->tglAkhir)
             ->search($this->cari, [
                 'jurnal.no_jurnal',
                 'jurnal.no_bukti',
-                'detailjurnal.kd_rek',
-                'rekening.nm_rek',
                 'jurnal.keterangan',
             ])
             ->paginate($this->perpage);
@@ -48,7 +47,7 @@ class PerbaikanTanggalJurnal extends Component
 
     public function render()
     {
-        return view('livewire.keuangan.perbaikan-tanggal-jurnal')
+        return view('livewire.keuangan.jurnal-perbaikan')
             ->layout(BaseLayout::class, ['title' => 'Perbaikan Tanggal Jurnal Transaksi Keuangan']);
     }
 

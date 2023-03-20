@@ -84,7 +84,8 @@ class BukuBesar extends Component
     {
         return Rekening::query()
             ->orderBy('kd_rek')
-            ->pluck('nm_rek', 'kd_rek');
+            ->pluck('nm_rek', 'kd_rek')
+            ->all();
     }
 
     public function render()

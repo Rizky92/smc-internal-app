@@ -13,7 +13,7 @@ use App\View\Components\BaseLayout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class PenarikanDataSuplierPO extends Component
+class JurnalSupplierPO extends Component
 {
     use WithPagination, FlashComponent, Filterable, LiveTable, MenuTracker, ExcelExportable;
 
@@ -86,7 +86,7 @@ class PenarikanDataSuplierPO extends Component
 
     public function render()
     {
-        return view('livewire.keuangan.penarikan-data-suplier-p-o')
+        return view('livewire.keuangan.jurnal-supplier-p-o')
             ->layout(BaseLayout::class, ['title' => 'Penarikan Data Suplier Penerimaan Barang Medis / Non Medis dari Jurnal']);
     }
 

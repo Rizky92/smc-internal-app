@@ -2,9 +2,11 @@
 
 namespace App\Models\Keuangan\Jurnal;
 
+use App\Models\Kepegawaian\Pegawai;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class JurnalBackup extends Model
 {
@@ -25,4 +27,9 @@ class JurnalBackup extends Model
         'waktu_jurnal_asli' => 'datetime:Y-m-d H:i:s',
         'waktu_jurnal_diubah' => 'datetime:Y-m-d H:i:s',
     ];
+
+    public function pegawai(): BelongsTo
+    {
+        return $this->belongsTo(Pegawai::class, 'nip', 'nik');
+    }
 }

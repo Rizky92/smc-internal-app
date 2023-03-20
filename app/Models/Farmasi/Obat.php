@@ -26,7 +26,7 @@ class Obat extends Model
 
     public function scopeDaruratStok(Builder $query, bool $exportExcel = false): Builder
     {
-        $sqlSelect = [
+        $sqlSelect = collect([
             'databarang.kode_brng',
             'databarang.nama_brng',
             'kodesatuan.satuan satuan_kecil',
@@ -40,23 +40,21 @@ class Obat extends Model
             "ifnull((select ifnull(round(dp.h_pesan/databarang.isi, 2), 0) from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1), 0) harga_beli_terakhir",
             "ifnull((select ifnull(dp.dis, 0) from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1), 0) diskon_terakhir",
             "ifnull((select ds.nama_suplier from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur left join datasuplier ds on p.kode_suplier = ds.kode_suplier where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1), '-') supplier_terakhir"
-        ];
+        ])
+            ->when($exportExcel, fn ($c) => $c->skip(1))
+            ->join(',');
 
         $stokGudang = DB::raw("(
             select kode_brng, sum(stok) stok_di_gudang
             from gudangbarang
             inner join bangsal on gudangbarang.kd_bangsal = bangsal.kd_bangsal
             where bangsal.status = '1'
-            and gudangbarang.kd_bangsal in ('ap', 'ifi')
+        and gudangbarang.kd_bangsal in ('ap', 'ifi')
             group by kode_brng
         ) stok_gudang");
 
-        if ($exportExcel) {
-            array_shift($sqlSelect);
-        }
-
         return $query
-            ->selectRaw(collect($sqlSelect)->join(','))
+            ->selectRaw($sqlSelect)
             ->join('kategori_barang', 'databarang.kode_kategori', '=', 'kategori_barang.kode')
             ->join('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
             ->join('industrifarmasi', 'databarang.kode_industri', '=', 'industrifarmasi.kode_industri')

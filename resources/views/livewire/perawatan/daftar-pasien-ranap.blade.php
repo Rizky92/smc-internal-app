@@ -192,13 +192,11 @@
             <x-card.row-col :class="Arr::toCssClasses(['mt-3' => auth()->user()->can('perawatan.daftar-pasien-ranap.update-harga-kamar')])">
                 <x-filter.range-date />
                 <x-filter.label class="ml-auto pr-3">Berdasarkan:</x-filter.label>
-                <div class="input-group input-group-sm" style="width: max-content">
-                    <x-filter.select model="statusPerawatan" :options="[
-                        '-' => 'Sedang Dirawat',
-                        'tanggal_masuk' => 'Tgl. Masuk',
-                        'tanggal_keluar' => 'Tgl. Keluar',
-                    ]" />
-                </div>
+                <x-filter.select model="statusPerawatan" :options="[
+                    '-' => 'Sedang Dirawat',
+                    'tanggal_masuk' => 'Tgl. Masuk',
+                    'tanggal_keluar' => 'Tgl. Keluar',
+                ]" />
             </x-card.row-col>
             <x-card.row-col class="mt-2">
                 <x-filter.select-perpage />

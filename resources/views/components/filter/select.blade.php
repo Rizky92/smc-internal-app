@@ -1,39 +1,38 @@
 @props([
-    'name',
     'model' => null,
     'options' => [],
     'placeholder' => null,
     'placeholderValue' => null,
     'selected' => null,
+    'showKey' => false,
 ])
 
 @php
-    $id = Str::slug($name);
-    $title = Str::camel($name);
-
     $isAssoc = Arr::isAssoc($options);
-
+    
     $attrs = [
         'class' => 'custom-control custom-select text-sm',
-        'style' => 'width: max-content',
     ];
-
+    
     if ($model) {
         $attrs['wire:model.defer'] ??= $model;
     }
     
-    if (! $isAssoc) {
+    if (!$isAssoc) {
         $options = collect($options)
             ->mapWithKeys(fn($v, $k) => [$v => $v])
+            ->when($showKey, fn ($c) => $c->mapWithKeys(fn ($v, $k) => [$v => "{$v} - {$k}"]))
             ->all();
     }
 @endphp
 
-<select {{ $attributes->merge($attrs) }}>
-    @if ($placeholder)
-        <option value="" disabled selected>{{ $placeholder }}</option>
-    @endif
-    @foreach ($options as $value => $name)
-        <option value="{{ $value }}" {{ $selected === $value ? 'selected' : null }}>{{ $isAssoc ? "{$value} - {$name}" : $name }}</option>
-    @endforeach
-</select>
+<div class="input-group input-group-sm" style="width: max-content">
+    <select {{ $attributes->merge($attrs) }}>
+        @if ($placeholder)
+            <option value="" disabled selected>{{ $placeholder }}</option>
+        @endif
+        @foreach ($options as $key => $value)
+            <option value="{{ $key }}" {{ $selected === $key ? 'selected' : null }}>{{ $value }}</option>
+        @endforeach
+    </select>
+</div>

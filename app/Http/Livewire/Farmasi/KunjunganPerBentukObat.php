@@ -44,7 +44,7 @@ class KunjunganPerBentukObat extends Component
             ->layout(BaseLayout::class, ['title' => 'Kunjungan Resep Pasien Per Bentuk Obat']);
     }
 
-    public function getKunjunganResepObatRegularPasienProperty()
+    public function getDataKunjunganResepObatRegularProperty()
     {
         return ResepDokter::query()
             ->kunjunganResepObatRegular($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
@@ -58,7 +58,7 @@ class KunjunganPerBentukObat extends Component
             ->paginate($this->perpage, ['*'], 'page_regular');
     }
 
-    public function getKunjunganResepObatRacikanPasienProperty()
+    public function getDataKunjunganResepObatRacikanProperty()
     {
         return ResepDokterRacikan::query()
             ->kunjunganResepObatRacikan($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)

@@ -6,6 +6,8 @@
     'size' => 'default',
     'variant' => 'default',
     'outline' => false,
+
+    'hideTitle' => false,
 ])
 
 @php
@@ -50,22 +52,22 @@
 
 @switch($as)
     @case('button')
-        <button {{ $attributes->merge(['class' => $finalClass, 'type' => 'button', 'id' => $id]) }}>
+        <button {{ $attributes->merge(['class' => $finalClass, 'type' => 'button', 'id' => $id, 'title' => $title]) }}>
             @if ($icon)
                 <i class="{{ $icon }}"></i>
             @endif
-            @if ($title)
+            @if ($title && !$hideTitle)
                 <span class="{{ Arr::toCssClasses(['ml-1' => $icon]) }}">{{ $title ?? $slot }}</span>
             @endif
         </button>
     @break
 
     @case('link')
-        <a {{ $attributes->merge(['class' => $finalClass, 'role' => 'button', 'id' => $id]) }}>
+        <a {{ $attributes->merge(['class' => $finalClass, 'role' => 'button', 'id' => $id, 'title' => $titlew]) }}>
             @if ($icon)
                 <i class="{{ $icon }}"></i>
             @endif
-            @if ($title)
+            @if ($title && !$hideTitle)
                 <span class="{{ Arr::toCssClasses(['ml-1' => $icon]) }}">{{ $title ?? $slot }}</span>
             @endif
         </a>

@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class LaporanPenyelesaianBillingPerPetugas extends Component
+class LaporanSelesaiBillingPasien extends Component
 {
     use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
@@ -64,7 +64,7 @@ class LaporanPenyelesaianBillingPerPetugas extends Component
 
     public function render()
     {
-        return view('livewire.keuangan.laporan-penyelesaian-billing-per-petugas')
+        return view('livewire.keuangan.laporan-selesai-billing-pasien')
             ->layout(BaseLayout::class, ['title' => 'Laporan Penyelesaian Billing Pasien per Petugas']);
     }
 

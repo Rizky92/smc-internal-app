@@ -49,7 +49,10 @@ class Jurnal extends Model
         }
 
         return $query
-            ->with(['detail', 'detail.rekening:kd_rek,nm_rek'])
+            ->with([
+                'detail' => fn ($q) => $q->whereHas('rekening'),
+                'detail.rekening:kd_rek,nm_rek',
+            ])
             ->whereHas('detail')
             ->whereBetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir]);
     }

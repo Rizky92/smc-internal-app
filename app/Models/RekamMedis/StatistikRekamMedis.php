@@ -15,7 +15,7 @@ class StatistikRekamMedis extends Model
 
     protected $keyType = 'string';
 
-    protected $table = 'rekam_medis';
+    protected $table = 'laporan_statistik';
 
     public $incrementing = false;
 
@@ -24,15 +24,17 @@ class StatistikRekamMedis extends Model
     protected $searchColumns = [
         'no_rawat',
         'no_rm',
-        'pasien',
-        'nik',
+        'nm_pasien',
+        'no_ktp',
+        'jk',
+        'umur',
         'agama',
         'suku',
-        'status_rawat',
+        'status_lanjut',
         'status_poli',
-        'asal_poli',
-        'dokter_poli',
-        'status_ralan',
+        'nm_poli',
+        'nm_dokter',
+        'status',
         'diagnosa_awal',
         'kd_diagnosa',
         'nm_diagnosa',
@@ -40,13 +42,16 @@ class StatistikRekamMedis extends Model
         'nm_tindakan_ralan',
         'kd_tindakan_ranap',
         'nm_tindakan_ranap',
+        'lama_operasi',
+        'rujukan_masuk',
         'dokter_pj',
         'kelas',
-        'jenis_bayar',
+        'penjamin',
         'status_bayar',
         'status_pulang_ranap',
         'rujuk_keluar_rs',
         'alamat',
         'no_hp',
+        'kunjungan_ke',
     ];
 }

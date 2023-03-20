@@ -31,7 +31,7 @@ class StokObatRuangan extends Component
         $this->defaultValues();
     }
 
-    public function getStokObatPerRuanganProperty()
+    public function getCollectionProperty()
     {
         return GudangObat::query()
             ->stokPerRuangan($this->kodeBangsal)
@@ -51,7 +51,7 @@ class StokObatRuangan extends Component
 
     public function getBangsalProperty()
     {
-        return GudangObat::bangsalYangAda()->pluck('nm_bangsal', 'kd_bangsal');
+        return GudangObat::bangsalYangAda()->pluck('nm_bangsal', 'kd_bangsal')->all();
     }
 
     public function render()

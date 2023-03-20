@@ -1,18 +1,33 @@
 @props([
     'name',
-    'options',
-    'model' => null,
+    'options' => [],
     'placeholder' => null,
     'placeholderValue' => null,
     'resetOn' => 'button#reset-filter',
     'selected' => null,
+
+    'livewire' => false,
+    'showKey' => false,
 ])
 
 @php
+    $isAssoc = Arr::isAssoc($options);
+
     $id = Str::slug($name);
     $title = Str::camel($name);
+    $model = Str::camel($name);
 
-    $isList = ! Arr::isAssoc($options);
+    $options = collect($options);
+
+    if (! $isAssoc) {
+        $options = $options->mapWithKeys(fn($v, $k) => [$v => $v]);
+    }
+
+    if ($showKey) {
+        $options = $options->mapWithKeys(fn ($v, $k) => [$k => "{$k} - {$v}"]);
+    }
+
+    $options = $options->all();
 @endphp
 
 @once
@@ -23,14 +38,14 @@
     @push('js')
         <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
         <script>
-            let dropdownSelect2 = $('select#{{ Str::slug($name) }}')
+            let dropdownSelect2 = $('select#{{ $id }}')
 
             $(document).on('DOMContentLoaded', e => {
                 dropdownSelect2.select2({
                     dropdownCssClass: 'text-sm px-0',
                 })
 
-                @notnull($model)
+                @if($livewire)
                     Livewire.hook('element.updated', (el, component) => {
                         dropdownSelect2.select2({
                             dropdownCssClass: 'text-sm px-0',
@@ -44,7 +59,7 @@
                     dropdownSelect2.on('select2:unselect', e => {
                         @this.set('{{ $model }}', dropdownSelect2.val(), true)
                     })
-                @endnotnull
+                @endif
 
                 @notnull($resetOn)
                     $('{{ $resetOn }}').click(e => {
@@ -58,15 +73,13 @@
     @endpush
 @endonce
 
-<div wire:ignore {{ $attributes->whereDoesntStartWith('wire:') }}>
-    <select class="form-control form-control-sm simple-select2-sm input-sm" id="{{ $id }}" autocomplete="off" name="{{ $name }}">
+<div wire:ignore {{ $attributes->whereDoesntStartWith('wire:')->only('class')->merge(['style' => 'width: max-content']) }}>
+    <select id="{{ $id }}" name="{{ $name }}" class="form-control form-control-sm simple-select2-sm input-sm" autocomplete="off">
         @if ($placeholder)
             <option value="{{ $placeholderValue }}">{{ $placeholder }}</option>
         @endif
-        @forelse ($options as $key => $value)
-            <option value="{{ $key }}">{{ $key }} - {{ $value }}</option>
-        @empty
-            <option disabled>---NO DATA---</option>
-        @endforelse
+        @foreach ($options as $key => $value)
+            <option value="{{ $key }}" {{ $selected === $key ? 'selected' : null }}>{{ $value }}</option>
+        @endforeach
     </select>
 </div>
