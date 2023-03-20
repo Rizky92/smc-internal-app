@@ -5,7 +5,6 @@ namespace App\Http\Livewire\User\Siap;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
-use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\DeferredModal;
 use Livewire\Component;
 
