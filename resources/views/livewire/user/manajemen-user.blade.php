@@ -139,14 +139,11 @@
                     <x-table.th name="jbtn" title="Jabatan" style="width: 30ch" />
                     <x-table.th name="jenis" title="Jenis" style="width: 10ch" />
                     <x-table.th>Hak Akses</x-table.th>
-                    <x-table.th></x-table.th>
                 </x-slot>
                 <x-slot name="body">
                     @foreach ($this->users as $user)
                         <x-table.tr>
-                            <x-table.td clickable data-nrp="{{ $user->nik }}" data-nama="{{ $user->nama }}" data-role-ids="{{ $user->roles->pluck('id')->join(',') }}" data-role-permission-ids="{{ $user->getPermissionsViaRoles()->pluck('id')->join(',') }}" data-permission-ids="{{ $user->permissions->pluck('id')->join(',') }}">
-                                {{ $user->nik }}
-                            </x-table.td>
+                            <x-table.td-clickable emit="user.prepare" :params="$user->nik">{{ $user->nik }}</x-table.td-clickable>
                             <x-table.td>{{ $user->nama }}</x-table.td>
                             <x-table.td>{{ $user->jbtn }}</x-table.td>
                             <x-table.td>{{ $user->jenis }}</x-table.td>
@@ -159,23 +156,6 @@
                                         <x-badge variant="secondary">{{ $permission->name }}</x-badge>
                                     @endforeach
                                 </div>
-                            </x-table.td>
-                            <x-table.td>
-                                <x-dropdown variant="dark" outline livewire>
-                                    <x-slot name="button" title="Pilihan" icon="fas fa-cogs" disabled></x-slot>
-                                    <x-slot name="menu" class="dropdown-menu-right">
-                                        <x-dropdown.header class="text-left">SIMRS Khanza</x-dropdown.header>
-                                        <x-dropdown.item-button id="khanza-set" icon="fas fa-user-cog fa-fw" title="Set Hak Akses" data-toggle="modal" data-target="#modal-khanza-set" />
-                                        <x-dropdown.item-button id="khanza-transfer" icon="fas fa-exchange-alt fa-fw" title="Transfer Hak Akses" data-toggle="modal" data-target="#modal-khanza-transfer" />
-                                        <x-dropdown.divider />
-                                        <x-dropdown.header class="text-left">SMC Internal App</x-dropdown.header>
-                                        <x-dropdown.item-button id="siap-set" icon="fas fa-user-cog fa-fw" title="Set Perizinan" data-toggle="modal" data-target="#modal-siap-set" />
-                                        <x-dropdown.item-button id="siap-transfer" icon="fas fa-exchange-alt fa-fw" title="Transfer Perizinan" data-toggle="modal" data-target="#modal-siap-transfer" />
-                                        <x-dropdown.divider />
-                                        <x-dropdown.item-button id="siap-impersonate" icon="fas fa-user-secret fa-fw" title="Impersonasi" />
-                                        <x-dropdown.item-button id="siap-aktivitas" icon="fas fa-binoculars fa-fw" title="Lihat Aktivitias" data-toggle="modal" data-target="#modal-aktivitas" />
-                                    </x-slot>
-                                </x-dropdown>
                             </x-table.td>
                         </x-table.tr>
                     @endforeach

@@ -24,8 +24,8 @@ class SetHakAkses extends Component
     protected $listeners = [
         'khanza.show-sha' => 'showModal',
         'khanza.hide-sha' => 'hideModal',
-        'khanza.prepare-user' => 'prepareUser',
-        'khanza.simpan' => 'setHakAkses',
+        'khanza.prepare-set' => 'prepareUser',
+        'khanza.save' => 'setHakAkses',
     ];
 
     protected function queryString()
@@ -45,9 +45,9 @@ class SetHakAkses extends Component
         return $this->isDeferred
             ? []
             : HakAkses::query()
-            ->search($this->cari, ['nama_field', 'judul_menu'])
-            ->when($this->showChecked, fn ($q) => $q->orWhereIn('nama_field', collect($this->checkedHakAkses)->filter()->keys()->all()))
-            ->get();
+                ->search($this->cari, ['nama_field', 'judul_menu'])
+                ->when($this->showChecked, fn ($q) => $q->orWhereIn('nama_field', collect($this->checkedHakAkses)->filter()->keys()->all()))
+                ->get();
     }
 
     public function render()
@@ -73,7 +73,7 @@ class SetHakAkses extends Component
         $this->forgetComputed();
 
         $hakAksesUser = $this->hakAksesKhanza
-            ->mapWithKeys(fn ($hakAkses) => [$hakAkses->nama_field => $hakAkses->default_value])
+            ->pluck('default_value', 'nama_field')
             ->merge($this->checkedHakAkses)
             ->all();
 
