@@ -19,7 +19,9 @@
     <tbody {{ $body->attributes }}>
         {{ $body }}
     </tbody>
-    <tfoot {{ optional($footer)->attributes }}>
-        {{ $footer }}
-    </tfoot>
+    @if ($footer)
+        <tfoot {{ $footer->attributes }}>
+            {{ $footer }}
+        </tfoot>
+    @endif
 </table>

@@ -50,8 +50,9 @@ class PermissionSeeder extends Seeder
             Permission::create(['name' => 'keuangan.laporan-tindakan-radiologi.read', 'guard_name' => 'web']),
 
             // Ubah data jurnal
-            Permission::create(['name' => 'keuangan.perbaikan-tgl-jurnal.read', 'guard_name' => 'web']),
-            Permission::create(['name' => 'keuangan.perbaikan-tgl-jurnal.ubah-tanggal', 'guard_name' => 'web']),
+            Permission::create(['name' => 'keuangan.jurnal-perbaikan.read', 'guard_name' => 'web']),
+            Permission::create(['name' => 'keuangan.jurnal-perbaikan.ubah-tanggal', 'guard_name' => 'web']),
+            Permission::create(['name' => 'keuangan.riwayat-jurnal-perbaikan.read', 'guard_name' => 'web']),
         ];
 
         $farmasiPermissions = [

@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire\Keuangan\Modal;
 
-use App\Exceptions\ModelIsIdenticalException;
 use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\Jurnal\JurnalBackup;
 use App\Support\Traits\Livewire\DeferredModal;
@@ -46,11 +45,13 @@ class UbahTanggalJurnal extends Component
 
     public function getBackupJurnalProperty()
     {
-        return JurnalBackup::query()
-            ->with('pegawai:nik,nama')
-            ->where('no_jurnal', $this->noJurnal)
-            ->orderByDesc('tgl_jurnal_diubah')
-            ->get();
+        return auth()->user()->cannot('keuangan.riwayat-jurnal-perbaikan.read')
+            ? []
+            : JurnalBackup::query()
+                ->with('pegawai:nik,nama')
+                ->where('no_jurnal', $this->noJurnal)
+                ->orderByDesc('tgl_jurnal_diubah')
+                ->get();
     }
 
     public function render()
@@ -135,8 +136,9 @@ class UbahTanggalJurnal extends Component
 
         tracker_start('mysql_smc');
 
-        JurnalBackup::where('no_jurnal', $this->noJurnal)
-            ->delete();
+        JurnalBackup::where('no_jurnal', $this->noJurnal)->delete();
+
+        tracker_end('mysql_smc');
     }
 
     protected function defaultValues()
