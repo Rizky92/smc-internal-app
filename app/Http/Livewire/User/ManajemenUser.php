@@ -78,11 +78,6 @@ class ManajemenUser extends Component
             'nrp' => $user->nik,
             'nama' => $user->nama,
         ]);
-
-        $this->emitTo('user.khanza.transfer-hak-akses', 'khanza.prepare-transfer', [
-            'nrp' => $user->nik,
-            'nama' => $user->nama,
-        ]);
     }
 
     public function impersonateAsUser(string $nrp = '')

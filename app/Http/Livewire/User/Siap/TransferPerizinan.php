@@ -63,12 +63,12 @@ class TransferPerizinan extends Component
                 ->get();
     }
 
-    public function prepareTransfer($data)
+    public function prepareTransfer(string $nrp = '', string $nama = '', array $roleIds = [], array $permissionIds = [])
     {
-        $this->nrp = $data['nrp'];
-        $this->nama = $data['nama'];
-        $this->roles = $data['roleIds'];
-        $this->permissions = $data['permissionIds'];
+        $this->nrp = $nrp;
+        $this->nama = $nama;
+        $this->roles = Role::whereIn('id', $roleIds)->pluck('name', 'id');
+        $this->permissions = Permission::whereIn('id', $permissionIds)->pluck('name', 'id');
     }
 
     public function transferRolePermissions()
