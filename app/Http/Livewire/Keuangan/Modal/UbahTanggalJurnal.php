@@ -7,6 +7,7 @@ use App\Models\Keuangan\Jurnal\JurnalBackup;
 use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class UbahTanggalJurnal extends Component
@@ -78,11 +79,11 @@ class UbahTanggalJurnal extends Component
 
             return;
         }
-        
-        $jurnalDiubah = Jurnal::query()->find($this->noJurnal);
-        $jurnalTerakhirPerTgl = Jurnal::findLatest($this->tglJurnalLama);
 
-        if ($jurnalDiubah->is($jurnalTerakhirPerTgl)) {
+        $jurnalDiubah = Jurnal::query()->find($this->noJurnal);
+        $jurnalTerakhirPerTgl = Jurnal::query()->where('tgl_jurnal', $this->tglJurnalLama)->max('no_jurnal');
+
+        if ($jurnalDiubah->no_jurnal === $jurnalTerakhirPerTgl) {
             $this->flashError("Entri no. jurnal tidak boleh entri yang terakhir di tanggal {$jurnalDiubah->tgl_jurnal}!");
 
             return;
@@ -107,11 +108,10 @@ class UbahTanggalJurnal extends Component
 
         tracker_end('mysql_smc');
 
-        $this->dispatchBrowserEvent('data-saved');
         $this->emitUp('flash.success', "Tgl. untuk no. jurnal {$jurnalDiubah->no_jurnal} berhasil diubah!");
     }
 
-    public function restoreTglJurnal()
+    public function restoreTglJurnal($backupId)
     {
         if (! auth()->user()->can('keuangan.perbaikan-tgl-jurnal.ubah-tanggal')) {
             $this->flasError();
@@ -119,10 +119,7 @@ class UbahTanggalJurnal extends Component
             return;
         }
 
-        $jurnalBackup = JurnalBackup::query()
-            ->where('no_jurnal', $this->noJurnal)
-            ->orderBy('tgl_jurnal_asli')
-            ->first();
+        $jurnalBackup = JurnalBackup::find($backupId);
 
         $jurnalSekarang = Jurnal::find($this->noJurnal);
 
@@ -136,9 +133,12 @@ class UbahTanggalJurnal extends Component
 
         tracker_start('mysql_smc');
 
-        JurnalBackup::where('no_jurnal', $this->noJurnal)->delete();
+        $jurnalBackup->delete();
 
         tracker_end('mysql_smc');
+
+        $this->flashSuccess("Data jurnal dikembalikan ke tanggal {$jurnalSekarang->tgl_jurnal}!");
+        $this->emitUp('$refresh');
     }
 
     protected function defaultValues()
@@ -152,10 +152,5 @@ class UbahTanggalJurnal extends Component
         $this->tglJurnalLama = '';
         $this->tglJurnalBaru = '';
         $this->jamJurnalLama = '';
-    }
-
-    protected function preventValuesFromBeingTampered()
-    {
-
     }
 }
