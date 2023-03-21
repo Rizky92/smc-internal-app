@@ -24,7 +24,7 @@ class SetPerizinan extends Component
     protected $listeners = [
         'siap.show-sp' => 'showModal',
         'siap.hide-sp' => 'hideModal',
-        'siap.prepare-set' => 'prepareUser',
+        'siap.prepare-user' => 'prepareUser',
         'siap.save' => 'setRolePermissions',
     ];
 
@@ -48,12 +48,12 @@ class SetPerizinan extends Component
         return Permission::whereDoesntHave('roles')->get();
     }
 
-    public function prepareUser($data)
+    public function prepareUser(string $nrp = '', string $nama = '', array $roleIds = [], array $permissionIds = [])
     {
-        $this->nrp = $data['nrp'];
-        $this->nama = $data['nama'];
-        $this->checkedRoles = $data['roleIds'];
-        $this->checkedPermissions = $data['permissionIds'];
+        $this->nrp = $nrp;
+        $this->nama = $nama;
+        $this->checkedRoles = $roleIds;
+        $this->checkedPermissions = $permissionIds;
     }
 
     public function setRolePermissions()

@@ -24,10 +24,6 @@ class ManajemenUser extends Component
         ];
     }
 
-    protected $listeners = [
-        'user.prepare' => 'prepareUser',
-    ];
-
     public function mount()
     {
         $this->defaultValues();
@@ -54,30 +50,6 @@ class ManajemenUser extends Component
     {
         $this->cari = '';
         $this->perpage = 25;
-    }
-
-    public function prepareUser($nrp)
-    {
-        $user = User::findByNRP($nrp);
-
-        $this->emitTo('user.siap.set-perizinan', 'siap.prepare-set', [
-            'nrp' => $user->nik,
-            'nama' => $user->nama,
-            'roleIds' => $user->roles->pluck('id')->all(),
-            'permissionIds' => $user->permissions->pluck('id')->all(),
-        ]);
-
-        $this->emitTo('user.siap.transfer-perizinan', 'siap.prepare-transfer', [
-            'nrp' => $user->nik,
-            'nama' => $user->nama,
-            'roleIds' => $user->roles->pluck('id')->all(),
-            'permissionIds' => $user->permissions->pluck('id')->all(),
-        ]);
-
-        $this->emitTo('user.khanza.set-hak-akses', 'khanza.prepare-set', [
-            'nrp' => $user->nik,
-            'nama' => $user->nama,
-        ]);
     }
 
     public function impersonateAsUser(string $nrp = '')
