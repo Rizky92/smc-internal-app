@@ -10,6 +10,7 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class JurnalPerbaikan extends Component
@@ -35,14 +36,19 @@ class JurnalPerbaikan extends Component
 
     public function getJurnalProperty()
     {
-        return Jurnal::query()
-            ->jurnalUmum($this->tglAwal, $this->tglAkhir)
-            ->search($this->cari, [
-                'jurnal.no_jurnal',
-                'jurnal.no_bukti',
-                'jurnal.keterangan',
-            ])
-            ->paginate($this->perpage);
+        return $this->isDeferred
+            ? []
+            : Jurnal::query()
+                ->jurnalUmum($this->tglAwal, $this->tglAkhir)
+                ->search($this->cari, [
+                    'jurnal.no_jurnal',
+                    'jurnal.no_bukti',
+                    'jurnal.keterangan',
+                ])
+                ->sortWithColumns($this->sortColumns, [
+                    'waktu_jurnal' => DB::raw('timestamp(jurnal.tgl_jurnal, jurnal.jam_jurnal)'),
+                ])
+                ->paginate($this->perpage);
     }
 
     public function render()

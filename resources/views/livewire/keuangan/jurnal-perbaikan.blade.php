@@ -3,15 +3,15 @@
 
     <livewire:keuangan.modal.ubah-tanggal-jurnal />
 
-    <x-card use-default-filter use-loading>
+    <x-card use-default-filter use-loading wire:init="loadProperties">
         <x-slot name="body" class="table-responsive">
             <x-table sortable :sortColumns="$sortColumns" style="min-width: 100%; width: 110rem" :striped="false" :hover="false">
                 <x-slot name="columns">
                     <x-table.th style="width: 8ch" title="#" />
-                    <x-table.th style="width: 15ch" title="No. Jurnal" />
-                    <x-table.th style="width: 18ch" title="No. Bukti" />
-                    <x-table.th style="width: 17ch" title="Waktu Jurnal" />
-                    <x-table.th style="width: 60ch" title="Keterangan" />
+                    <x-table.th name="no_jurnal" style="width: 15ch" title="No. Jurnal" />
+                    <x-table.th name="no_bukti" style="width: 18ch" title="No. Bukti" />
+                    <x-table.th name="waktu_jurnal" style="width: 17ch" title="Waktu Jurnal" />
+                    <x-table.th name="keterangan" style="width: 60ch" title="Keterangan" />
                     <x-table.th style="width: 11ch" title="Kode Akun" />
                     <x-table.th title="Nama Akun" />
                     <x-table.th style="width: 16ch" title="Debet" />
