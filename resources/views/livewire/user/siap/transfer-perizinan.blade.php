@@ -3,15 +3,15 @@
         @push('js')
             <script>
                 document.addEventListener('DOMContentLoaded', () => {
-                    $('#modal-siap-transfer').on('shown.bs.modal', e => {
+                    $('#modal-transfer-perizinan').on('shown.bs.modal', e => {
                         @this.emit('siap.show-tp')
                     })
 
-                    $('#modal-siap-transfer').on('hide.bs.modal', e => {
+                    $('#modal-transfer-perizinan').on('hide.bs.modal', e => {
                         @this.emit('siap.hide-tp')
                     })
 
-                    $('#modal-siap-transfer').on('hidden.bs.modal', e => {
+                    $('#modal-transfer-perizinan').on('hidden.bs.modal', e => {
                         $('#checkbox-utama-khanza-set').prop('checked', false)
                         $('#checkbox-utama-khanza-set').trigger('change')
                     })
@@ -38,7 +38,7 @@
             </script>
         @endpush
     @endonce
-    <x-modal livewire title="Transfer perizinan SIAP ke user lainnya" id="modal-siap-transfer">
+    <x-modal livewire title="Transfer perizinan SIAP ke user lainnya" id="modal-transfer-perizinan">
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-row-col>
                 <div class="d-flex justify-content-start px-3 pt-3">

@@ -3,20 +3,20 @@
         @push('js')
             <script>
                 document.addEventListener('DOMContentLoaded', () => {
-                    $('#modal-khanza-transfer').on('shown.bs.modal', e => {
+                    $('#modal-transfer-hak-akses').on('shown.bs.modal', e => {
                         @this.emit('khanza.show-tha')
                     })
 
-                    $('#modal-khanza-transfer').on('hide.bs.modal', e => {
+                    $('#modal-transfer-hak-akses').on('hide.bs.modal', e => {
                         @this.emit('khanza.hide-tha')
                     })
 
-                    $('#modal-khanza-transfer').on('hidden.bs.modal', e => {
+                    $('#modal-transfer-hak-akses').on('hidden.bs.modal', e => {
                         $('#checkbox-utama-khanza-set').prop('checked', false)
                         $('#checkbox-utama-khanza-set').trigger('change')
                     })
 
-                    $('#checkbox-utama-khanza-transfer').change(e => {
+                    $('#checkbox-transfer-hak-akses').change(e => {
                         let isChecked = e.target.checked
                         let els = $('input[type=checkbox][id*=tk-]')
 
@@ -38,7 +38,7 @@
             </script>
         @endpush
     @endonce
-    <x-modal livewire title="Transfer hak akses SIMRS Khanza ke user lainnya" id="modal-khanza-transfer">
+    <x-modal livewire title="Transfer hak akses SIMRS Khanza ke user lainnya" id="modal-transfer-hak-akses">
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-row-col class="px-3 pt-3">
                 <div class="d-flex justify-content-start">
@@ -53,8 +53,8 @@
                     <x-table>
                         <x-slot name="columns">
                             <x-table.th>
-                                <input id="checkbox-utama-khanza-transfer" type="checkbox" name="__checkbox_utama" value="null">
-                                <label for="checkbox-utama-khanza-transfer"></label>
+                                <input id="checkbox-transfer-hak-akses" type="checkbox" name="__checkbox_utama" value="null">
+                                <label for="checkbox-transfer-hak-akses"></label>
                             </x-table.th>
                             <x-table.th title="NRP" />
                             <x-table.th title="Nama" />

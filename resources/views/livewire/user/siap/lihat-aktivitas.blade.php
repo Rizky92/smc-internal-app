@@ -3,18 +3,18 @@
         @push('js')
             <script>
                 document.addEventListener('DOMContentLoaded', () => {
-                    $('#modal-aktivitas').on('shown.bs.modal', e => {
+                    $('#modal-lihat-aktivitas').on('shown.bs.modal', e => {
                         @this.emit('siap.show-la')
                     })
 
-                    $('#modal-aktivitas').on('hide.bs.modal', e => {
+                    $('#modal-lihat-aktivitas').on('hide.bs.modal', e => {
                         @this.emit('siap.hide-la')
                     })
                 })
             </script>
         @endpush
     @endonce
-    <x-modal livewire id="modal-aktivitas" title="Lihat Aktivitas">
+    <x-modal livewire id="modal-lihat-aktivitas" title="Lihat Aktivitas">
         <x-slot name="body">
             <div class="timeline">
                 @forelse ($this->aktivitasUser as $date => $timeline)

@@ -15,7 +15,7 @@ class LihatAktivitas extends Component
     public $nama;
 
     protected $listeners = [
-        'siap.prepare-la' => 'prepare',
+        'siap.prepare-la' => 'prepareUser',
         'siap.show-la' => 'showModal',
         'siap.hide-la' => 'hideModal',
     ];
@@ -39,7 +39,7 @@ class LihatAktivitas extends Component
         return view('livewire.user.siap.lihat-aktivitas');
     }
 
-    public function prepare(?string $userId = null, ?string $nama = null)
+    public function prepareUser(?string $userId = null, ?string $nama = null)
     {
         $this->userId = $userId;
         $this->nama = $nama;

@@ -24,6 +24,10 @@ class ManajemenUser extends Component
         ];
     }
 
+    protected $listeners = [
+        'user.prepare' => 'prepareUser',
+    ];
+
     public function mount()
     {
         $this->defaultValues();
@@ -71,5 +75,15 @@ class ManajemenUser extends Component
         return redirect('admin/')
             ->with('flash.type', 'dark')
             ->with('flash.message', "Anda sekarang sedang login sebagai {$nrp}");
+    }
+
+    public function prepareUser($nrp, $nama, $roles, $permissions)
+    {
+        $this->emitTo('user.khanza.set-hak-akses', 'khanza.prepare-set', $nrp, $nama);
+        $this->emitTo('user.khanza.transfer-hak-akses', 'khanza.prepare-transfer', $nrp, $nama);
+
+        $this->emitTo('user.siap.lihat-aktivitas', 'siap.prepare-la', $nrp, $nama);
+        $this->emitTo('user.siap.set-perizinan', 'siap.prepare-set', $nrp, $nama, $roles, $permissions);
+        $this->emitTo('user.siap.transfer-perizinan', 'siap.prepare-transfer', $nrp, $nama, $roles, $permissions);
     }
 }
