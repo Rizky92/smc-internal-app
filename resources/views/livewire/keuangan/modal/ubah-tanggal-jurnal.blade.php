@@ -37,7 +37,7 @@
                     </x-slot>
                     <x-slot name="contents">
                         <x-navtabs.content id="tab-ubah-tgl-jurnal">
-                            <form wire:submit.prevent="$emit('utj.save')" class="px-3" id="form-ubah-tgl-jurnal">
+                            <form wire:submit.prevent="updateTglJurnal" class="px-3" id="form-ubah-tgl-jurnal">
                                 <x-row>
                                     <div class="col-6">
                                         <div class="form-group">
@@ -79,17 +79,15 @@
                                 <div class="table-responsive">
                                     <x-table style="max-width: 100%" id="table-riwayat">
                                         <x-slot name="columns">
-                                            <x-table.th title="Waktu berubah" class="pl-3" />
-                                            <x-table.th title="Tgl. Jurnal Diubah" />
-                                            <x-table.th title="Tgl. Jurnal Asli" />
+                                            <x-table.th class="pl-3" title="Tgl. TERBARU" />
+                                            <x-table.th title="Tgl. Sebelumnya" />
                                             <x-table.th title="Yang mengubah" />
-                                            <x-table.th title="Aksi" />
+                                            <x-table.th title="" />
                                         </x-slot>
                                         <x-slot name="body">
                                             @forelse ($this->backupJurnal as $item)
                                                 <x-table.tr>
-                                                    <x-table.td class="pl-3">{{ $item->created_at->format('Y-m-d H:i:s') }}</x-table.td>
-                                                    <x-table.td>{{ $item->tgl_jurnal_diubah }}</x-table.td>
+                                                    <x-table.td class="pl-3">{{ $item->tgl_jurnal_diubah }}</x-table.td>
                                                     <x-table.td>{{ $item->tgl_jurnal_asli }}</x-table.td>
                                                     <x-table.td>{{ $item->nip . ' ' . optional($item->pegawai)->nama }}</x-table.td>
                                                     <x-table.td>
@@ -148,7 +146,7 @@
             @endif
         </x-slot>
         <x-slot name="footer" class="justify-content-end">
-            <x-button size="sm" title="Batal" data-dismiss="modal" wire:click.prevent="$emit('utj.hide')" />
+            <x-button size="sm" title="Batal" data-dismiss="modal" />
             <x-button type="submit" size="sm" variant="danger" class="ml-2" title="Simpan" icon="fas fa-save" form="form-ubah-tgl-jurnal" />
         </x-slot>
     </x-modal>

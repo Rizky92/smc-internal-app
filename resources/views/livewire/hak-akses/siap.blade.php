@@ -5,22 +5,17 @@
         @push('js')
             <script>
                 function loadData(e) {
-                    let {
-                        roleId,
-                        roleName,
-                        permissionIds
-                    } = e.dataset
+                    let {roleId, roleName, permissionIds} = e.dataset
 
                     permissionIds = Array.from(permissionIds.split(','))
 
-                    @this.emit('siap.prepare', roleId, roleName, permissionIds)
+                    @this.emit('siap.prepare-update', roleId, roleName, permissionIds)
                 }
             </script>
         @endpush
     @endonce
 
-    <livewire:hak-akses.siap.modal-perizinan-baru />
-    <livewire:hak-akses.siap.modal-ubah-perizinan />
+    <livewire:hak-akses.siap.modal-perizinan />
 
     <x-card>
         <x-slot name="header">
@@ -28,7 +23,7 @@
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-                <x-button variant="primary" size="sm" title="Role Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-perizinan-baru" class="btn-primary ml-3" />
+                <x-button variant="primary" size="sm" title="Role Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-perizinan" class="btn-primary ml-3" />
             </x-card.row-col>
         </x-slot>
 
@@ -46,7 +41,13 @@
                             <x-table.td>
                                 @unless($superadmin)
                                     <div style="display: inline-flex; flex-wrap: wrap; gap: 0.5rem">
-                                        <x-button size="xs" variant="link" title="Edit" icon="fas fa-pencil-alt" data-toggle="modal" data-target="#modal-ubah-perizinan" data-role-id="{{ $role->id }}" data-role-name="{{ $role->name }}" data-permission-ids="{{ $role->permissions->pluck('id')->join(',') }}" onclick="loadData(this)" />
+                                        <x-button
+                                            size="xs" variant="link"
+                                            title="Edit" icon="fas fa-pencil-alt"
+                                            data-toggle="modal" data-target="#modal-perizinan"
+                                            data-role-id="{{ $role->id }}" data-role-name="{{ $role->name }}" data-permission-ids="{{ $role->permissions->pluck('id')->join(',') }}"
+                                            onclick="loadData(this)"
+                                        />
                                     </div>
                                 @endunless
                             </x-table.td>

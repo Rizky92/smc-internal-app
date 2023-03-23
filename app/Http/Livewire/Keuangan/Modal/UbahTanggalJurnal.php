@@ -14,8 +14,6 @@ class UbahTanggalJurnal extends Component
 {
     use DeferredModal, Filterable, FlashComponent;
 
-    public $dataJurnal;
-
     public $noJurnal;
 
     public $noBukti;
@@ -36,7 +34,6 @@ class UbahTanggalJurnal extends Component
         'utj.prepare' => 'prepareJurnal',
         'utj.show' => 'showModal',
         'utj.hide' => 'hideModal',
-        'utj.save' => 'updateTglJurnal',
     ];
 
     public function mount()
@@ -62,7 +59,6 @@ class UbahTanggalJurnal extends Component
 
     public function prepareJurnal($data)
     {
-        $this->dataJurnal = $data;
         $this->noJurnal = $data['noJurnal'];
         $this->noBukti = $data['noBukti'];
         $this->keterangan = $data['keterangan'];
@@ -80,6 +76,7 @@ class UbahTanggalJurnal extends Component
             return;
         }
 
+        // $jurnalBackup = JurnalBackup::query()->where('no_jurnal', $this->noJurnal)->exists();
         $jurnalDiubah = Jurnal::query()->find($this->noJurnal);
         $jurnalTerakhirPerTgl = Jurnal::query()
             ->where('tgl_jurnal', $this->tglJurnalLama)
@@ -87,32 +84,34 @@ class UbahTanggalJurnal extends Component
             ->value('no_jurnal');
 
         if ($jurnalDiubah->no_jurnal === $jurnalTerakhirPerTgl) {
-            $this->flashError("Entri no. jurnal tidak boleh entri yang terakhir di tanggal {$jurnalDiubah->tgl_jurnal}!");
+            $this->flashError("Entri no. jurnal tidak boleh entri yang terakhir di tanggal {$jurnalDiubah->tgl_jurnal}! Silahkan tunggu beberapa saat lalu coba lagi.");
 
             return;
         }
 
-        tracker_start('mysql_sik');
+        DB::transaction(function () use ($jurnalDiubah, $jurnalTerakhirPerTgl) {
+            tracker_start('mysql_sik');
+    
+            $jurnalDiubah->tgl_jurnal = carbon($this->tglJurnalBaru)->format('Y-m-d');
+    
+            $jurnalDiubah->save();
+    
+            tracker_end('mysql_sik');
+    
+            tracker_start('mysql_smc');
+    
+            JurnalBackup::create([
+                'no_jurnal' => $jurnalDiubah->no_jurnal,
+                'tgl_jurnal_asli' => $this->tglJurnalLama,
+                'tgl_jurnal_diubah' => $jurnalDiubah->tgl_jurnal,
+                'nip' => auth()->user()->nik,
+            ]);
+    
+            tracker_end('mysql_smc');
+        });
 
-        $jurnalDiubah->tgl_jurnal = carbon($this->tglJurnalBaru)->format('Y-m-d');
-
-        $jurnalDiubah->save();
-
-        tracker_end('mysql_sik');
-
-        tracker_start('mysql_smc');
-
-        JurnalBackup::create([
-            'no_jurnal' => $jurnalDiubah->no_jurnal,
-            'tgl_jurnal_asli' => $this->tglJurnalLama,
-            'tgl_jurnal_diubah' => $jurnalDiubah->tgl_jurnal,
-            'nip' => auth()->user()->nik,
-        ]);
-
-        tracker_end('mysql_smc');
-
-        $this->flashSuccess("Tgl. untuk no. jurnal {$jurnalDiubah->no_jurnal} berhasil diubah!");
         $this->dispatchBrowserEvent('jurnal-updated');
+        $this->emitUp('flash.success', "Tgl. untuk no. jurnal {$this->noJurnal} berhasil diubah!");
     }
 
     public function restoreTglJurnal($backupId)
@@ -123,24 +122,30 @@ class UbahTanggalJurnal extends Component
             return;
         }
 
-        $jurnalBackup = JurnalBackup::find($backupId);
-        $jurnalSekarang = Jurnal::find($this->noJurnal);
+        $tglJurnalKembali = null;
 
-        tracker_start('mysql_sik');
+        DB::transaction(function () use ($backupId, $tglJurnalKembali) {
+            $jurnalBackup = JurnalBackup::find($backupId);
+            $jurnalSekarang = Jurnal::find($this->noJurnal);
 
-        $jurnalSekarang->tgl_jurnal = $jurnalBackup->tgl_jurnal_asli;
+            $tglJurnalKembali = $jurnalBackup->tgl_jurnal_asli;
+    
+            tracker_start('mysql_sik');
+    
+            $jurnalSekarang->tgl_jurnal = $jurnalBackup->tgl_jurnal_asli;
+    
+            $jurnalSekarang->save();
+    
+            tracker_end('mysql_sik');
+    
+            tracker_start('mysql_smc');
+    
+            $jurnalBackup->delete();
+    
+            tracker_end('mysql_smc');
+        });
 
-        $jurnalSekarang->save();
-
-        tracker_end('mysql_sik');
-
-        tracker_start('mysql_smc');
-
-        $jurnalBackup->delete();
-
-        tracker_end('mysql_smc');
-
-        $this->flashSuccess("Data jurnal dikembalikan ke tanggal {$jurnalSekarang->tgl_jurnal}!");
+        $this->flashSuccess("No. jurnal {$this->noJurnal} dikembalikan ke tanggal {$tglJurnalKembali}!");
         $this->dispatchBrowserEvent('jurnal-restored');
     }
 
@@ -148,7 +153,6 @@ class UbahTanggalJurnal extends Component
     {
         $this->undefer();
 
-        $this->dataJurnal = [];
         $this->noJurnal = '';
         $this->noBukti = '';
         $this->keterangan = '';

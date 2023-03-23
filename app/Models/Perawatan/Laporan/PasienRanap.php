@@ -30,7 +30,7 @@ class PasienRanap extends Model
         'data_pasien',
         'png_jawab',
         'nm_poli',
-        'dokter_poli',
+        'nm_dokter',
         'stts_pulang',
         'dpjp',
     ];

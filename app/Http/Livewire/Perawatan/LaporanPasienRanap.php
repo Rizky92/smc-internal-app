@@ -88,7 +88,7 @@ class LaporanPasienRanap extends Component
                     'data_pasien',
                     'png_jawab',
                     'nm_poli',
-                    'dokter_poli',
+                    'nm_dokter',
                     'stts_pulang',
                     'tgl_masuk',
                     'jam_masuk',
