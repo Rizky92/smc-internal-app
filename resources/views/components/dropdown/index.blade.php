@@ -2,6 +2,7 @@
     'button',
     'menu',
     'livewire' => false,
+    'menuPosition' => 'left',
 ])
 
 @if ($livewire)    
@@ -29,7 +30,7 @@
 @endif
 
 
-<div {{ $attributes->merge(['class' => 'dropdown mb-3']) }} wire:ignore>
+<div {{ $attributes->merge(['class' => 'dropdown']) }} {{ $livewire ? 'wire:ignore' : null }}>
     <x-button :attributes="$button->attributes->merge(['size' => 'sm', 'class' => 'dropdown-toggle', 'data-toggle' => 'dropdown'])" />
     <div {{ $menu->attributes->merge(['class' => 'dropdown-menu']) }}>
         {{ $menu }}

@@ -3,7 +3,9 @@
     'funcName' => 'loadData',
 ])
 
-<td {{ $attributes->whereDoesntStartWith('data-') }}>
+@php($rowspan = $attributes->get('rowspan'))
+
+<td {{ $attributes->whereDoesntStartWith('data-')->when($rowspan == "0", fn ($attr) => $attr->except('rowspan')) }}>
     {{ $slot }}
     @if ($clickable)
         <a {{ $attributes->whereStartsWith('data-')->merge([

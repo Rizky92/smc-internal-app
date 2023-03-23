@@ -24,7 +24,7 @@ class ModalUbahPerizinan extends Component
         'siap.prepare' => 'prepare',
         'siap.show' => 'showModal',
         'siap.hide' => 'hideModal',
-        'siap.save' => 'updateRolePermissions',
+        'siap.update' => 'updateRolePermissions',
     ];
 
     public function mount()
@@ -63,10 +63,15 @@ class ModalUbahPerizinan extends Component
 
         tracker_start('mysql_smc');
 
+        $role->name = $this->roleName;
+
+        $role->save();
+
         $role->syncPermissions($this->checkedPermissions);
 
         tracker_end('mysql_smc');
 
+        $this->dispatchBrowserEvent('role-updated');
         $this->emitUp('flash.success', "Update perizinan untuk role \"{$role->name}\" berhasil!");
     }
 

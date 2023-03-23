@@ -24,8 +24,8 @@ class SetHakAkses extends Component
     protected $listeners = [
         'khanza.show-sha' => 'showModal',
         'khanza.hide-sha' => 'hideModal',
-        'khanza.prepare-user' => 'prepareUser',
-        'khanza.simpan' => 'setHakAkses',
+        'khanza.prepare-set' => 'prepareUser',
+        'khanza.set' => 'save',
     ];
 
     protected function queryString()
@@ -45,9 +45,9 @@ class SetHakAkses extends Component
         return $this->isDeferred
             ? []
             : HakAkses::query()
-            ->search($this->cari, ['nama_field', 'judul_menu'])
-            ->when($this->showChecked, fn ($q) => $q->orWhereIn('nama_field', collect($this->checkedHakAkses)->filter()->keys()->all()))
-            ->get();
+                ->search($this->cari, ['nama_field', 'judul_menu'])
+                ->when($this->showChecked, fn ($q) => $q->orWhereIn('nama_field', collect($this->checkedHakAkses)->filter()->keys()->all()))
+                ->get();
     }
 
     public function render()
@@ -61,7 +61,7 @@ class SetHakAkses extends Component
         $this->nama = $nama;
     }
 
-    public function setHakAkses()
+    public function save()
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->dispatchBrowserEvent('data-denied');
@@ -104,13 +104,6 @@ class SetHakAkses extends Component
         }
 
         $this->emit('$refresh');
-    }
-
-    public function hideModal()
-    {
-        $this->defaultValues();
-
-        $this->emitUp('resetState');
     }
 
     public function defaultValues()

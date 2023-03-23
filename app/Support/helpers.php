@@ -1,6 +1,7 @@
 <?php
 
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -97,6 +98,13 @@ if (!function_exists('tracker_end')) {
     }
 }
 
+if (! function_exists('tracker_dispose')) {
+    function tracker_dispose(string $connection)
+    {
+        DB::connection($connection)->disableQueryLog();
+    }
+}
+
 if (! function_exists('func_get_named_args')) {
     /**
      * @param  object $object
@@ -127,5 +135,20 @@ if (! function_exists('str')) {
     function str($str = null)
     {
         return Str::of($str);
+    }
+}
+
+if (! function_exists('maybe')) {
+    function maybe(object $obj, callable $default = null)
+    {
+        if (is_null($obj) && !is_null($default)) {
+            return Closure::fromCallable($default);
+        }
+
+        if (is_null($obj)) {
+            return null;
+        }
+
+        return $obj;
     }
 }

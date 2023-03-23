@@ -20,15 +20,15 @@ class RekapPiutangPasien extends Component
 
     public $caraBayar;
 
-    public $periodeAwal;
+    public $tglAwal;
 
-    public $periodeAkhir;
+    public $tglAkhir;
 
     protected function queryString()
     {
         return [
-            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'periode_awal'],
-            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'periode_akhir'],
+            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
             'caraBayar' => ['except' => '', 'as' => 'kdpj'],
         ];
     }
@@ -40,13 +40,13 @@ class RekapPiutangPasien extends Component
 
     public function getPenjaminProperty()
     {
-        return Penjamin::where('status', '1')->pluck('png_jawab', 'kd_pj');
+        return Penjamin::where('status', '1')->pluck('png_jawab', 'kd_pj')->all();
     }
 
     public function getPiutangPasienProperty()
     {
         return PiutangPasien::query()
-            ->rekapPiutangPasien($this->periodeAwal, $this->periodeAkhir, $this->caraBayar)
+            ->rekapPiutangPasien($this->tglAwal, $this->tglAkhir, $this->caraBayar)
             ->search($this->cari, [
                 'piutang_pasien.no_rawat',
                 'piutang_pasien.no_rkm_medis',
@@ -67,8 +67,8 @@ class RekapPiutangPasien extends Component
     public function getTotalTagihanPiutangPasienProperty()
     {
         return PiutangPasien::rekapPiutangPasien(
-            $this->periodeAwal,
-            $this->periodeAkhir,
+            $this->tglAwal,
+            $this->tglAkhir,
             $this->caraBayar,
             $this->cari
         )
@@ -80,20 +80,20 @@ class RekapPiutangPasien extends Component
         return view('livewire.keuangan.rekap-piutang-pasien')
             ->layout(BaseLayout::class, ['title' => 'Rekap Data Tagihan Piutang Pasien']);
     }
-    
+
     protected function defaultValues()
     {
         $this->cari = '';
         $this->perpage = 25;
         $this->sortColumns = [];
         $this->caraBayar = '';
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array
     {
-        $query = PiutangPasien::rekapPiutangPasien($this->periodeAwal, $this->periodeAkhir, $this->caraBayar, '');
+        $query = PiutangPasien::rekapPiutangPasien($this->tglAwal, $this->tglAkhir, $this->caraBayar, '');
 
         return [
             // TODO: ubah cara berikut dengan callback

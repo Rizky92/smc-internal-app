@@ -32,7 +32,7 @@ class TransferPerizinan extends Component
         'siap.show-tp' => 'showModal',
         'siap.hide-tp' => 'hideModal',
         'siap.prepare-transfer' => 'prepareTransfer',
-        'siap.transfer' => 'transferRolePermissions',
+        'siap.transfer' => 'save',
     ];
 
     public function mount()
@@ -71,7 +71,7 @@ class TransferPerizinan extends Component
         $this->permissions = Permission::whereIn('id', $permissionIds)->pluck('name', 'id');
     }
 
-    public function transferRolePermissions()
+    public function save()
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->dispatchBrowserEvent('data-denied');
@@ -93,18 +93,6 @@ class TransferPerizinan extends Component
 
         $this->dispatchBrowserEvent('data-saved');
         $this->emit('flash.success', "Transfer perizinan SIAP berhasil!");
-    }
-
-    public function showModal()
-    {
-        $this->loadProperties();
-    }
-
-    public function hideModal()
-    {
-        $this->defaultValues();
-
-        $this->emitUp('resetState');
     }
 
     protected function defaultValues()

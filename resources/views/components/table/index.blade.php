@@ -5,9 +5,12 @@
 
     'sortable' => false,
     'sortColumns' => [],
+
+    'striped' => true,
+    'hover' => true,
 ])
 
-<table {{ $attributes->merge(['class' => 'table table-hover table-striped table-head-fixed table-sm text-sm']) }}>
+<table {{ $attributes->class(['table table-head-fixed table-sm text-sm', 'table-hover' => $hover, 'table-striped' => $striped]) }}>
     <thead>
         <tr {{ $columns->attributes }}>
             {{ $columns }}
@@ -16,7 +19,9 @@
     <tbody {{ $body->attributes }}>
         {{ $body }}
     </tbody>
-    <tfoot {{ optional($footer)->attributes }}>
-        {{ $footer }}
-    </tfoot>
+    @if ($footer)
+        <tfoot {{ $footer->attributes }}>
+            {{ $footer }}
+        </tfoot>
+    @endif
 </table>

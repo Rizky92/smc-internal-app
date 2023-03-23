@@ -17,15 +17,15 @@ class LaporanDemografi extends Component
 {
     use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
-    public $periodeAwal;
+    public $tglAwal;
 
-    public $periodeAkhir;
+    public $tglAkhir;
 
     protected function queryString()
     {
         return [
-            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'periode_awal'],
-            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'periode_akhir'],
+            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -39,9 +39,9 @@ class LaporanDemografi extends Component
         return $this->isDeferred
             ? []
             : DemografiPasien::query()
-                ->search($this->cari)
-                ->whereBetween('tgl_registrasi', [$this->periodeAwal, $this->periodeAkhir])
-                ->paginate($this->perpage);
+            ->search($this->cari)
+            ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
+            ->paginate($this->perpage);
     }
 
     public function render()
@@ -52,14 +52,14 @@ class LaporanDemografi extends Component
 
     protected function defaultValues()
     {
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array
     {
         return [
-            DemografiPasien::laporanDemografiExcel($this->periodeAwal, $this->periodeAkhir)->get(),
+            DemografiPasien::laporanDemografiExcel($this->tglAwal, $this->tglAkhir)->get(),
         ];
     }
 

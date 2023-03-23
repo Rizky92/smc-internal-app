@@ -38,14 +38,14 @@ class DemografiPasien extends Model
         ];
     }
 
-    public function scopeLaporanDemografiExcel(Builder $query, string $periodeAwal = '', string $periodeAkhir = ''): Builder
+    public function scopeLaporanDemografiExcel(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
-        if (empty($periodeAwal)) {
-            $periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
         }
 
-        if (empty($periodeAkhir)) {
-            $periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
         return $query->selectRaw("
@@ -70,6 +70,6 @@ class DemografiPasien extends Model
             bahasa,
             suku
         ")
-            ->whereBetween('tgl_registrasi', [$periodeAwal, $periodeAkhir]);
+            ->whereBetween('tgl_registrasi', [$tglAwal, $tglAkhir]);
     }
 }

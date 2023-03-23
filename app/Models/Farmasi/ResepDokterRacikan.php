@@ -25,16 +25,16 @@ class ResepDokterRacikan extends Model
 
     public function scopeKunjunganResepObatRacikan(
         Builder $query,
-        string $periodeAwal = '',
-        string $periodeAkhir = '',
+        string $tglAwal = '',
+        string $tglAkhir = '',
         string $jenisPerawatan = ''
     ): Builder {
-        if (empty($periodeAwal)) {
-            $periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
         }
 
-        if (empty($periodeAkhir)) {
-            $periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
         return $query->selectRaw("
@@ -53,7 +53,7 @@ class ResepDokterRacikan extends Model
             ->join('databarang', 'resep_dokter_racikan_detail.kode_brng', '=', 'databarang.kode_brng')
             ->join('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
             ->where('reg_periksa.status_bayar', 'Sudah Bayar')
-            ->whereBetween('resep_obat.tgl_perawatan', [$periodeAwal, $periodeAkhir])
+            ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
             ->when(!empty($jenisPerawatan), fn (Builder $query) => $query->where('reg_periksa.status_lanjut', $jenisPerawatan))
             ->groupBy([
                 'resep_dokter_racikan.no_resep',

@@ -14,7 +14,7 @@ class SuratPemesananObat extends Model
     use Searchable, Sortable;
 
     protected $connection = 'mysql_sik';
-    
+
     protected $primaryKey = 'no_pemesanan';
 
     protected $keyType = 'string';
@@ -27,16 +27,16 @@ class SuratPemesananObat extends Model
 
     public function scopePerbandinganPemesananObatPO(
         Builder $query,
-        string $periodeAwal = '',
-        string $periodeAkhir = '',
+        string $tglAwal = '',
+        string $tglAkhir = '',
         bool $hanyaTampilkanYangBerbeda = false
     ): Builder {
-        if (empty($periodeAwal)) {
-            $periodeAwal = now()->startOfMonth()->format('Y-m-d');
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
         }
 
-        if (empty($periodeAkhir)) {
-            $periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
         $pemesananYangDatang = DB::raw("(
@@ -70,7 +70,7 @@ class SuratPemesananObat extends Model
             ->leftJoin($pemesananYangDatang, fn (JoinClause $join) => $join
                 ->on('surat_pemesanan_medis.no_pemesanan', '=', 'pemesanan_datang.no_order')
                 ->on('detail_surat_pemesanan_medis.kode_brng', '=', 'pemesanan_datang.kode_brng'))
-            ->whereBetween('surat_pemesanan_medis.tanggal', [$periodeAwal, $periodeAkhir])
+            ->whereBetween('surat_pemesanan_medis.tanggal', [$tglAwal, $tglAkhir])
             ->when($hanyaTampilkanYangBerbeda, fn (Builder $query) => $query->where($jumlahObatYangBerbeda, '!=', 0));
     }
 }

@@ -35,9 +35,9 @@ Breadcrumbs::for('admin.keuangan.stok-obat-ruangan', function (Trail $trail) {
     $trail->push('Stok Obat Ruangan', route('admin.keuangan.stok-obat-ruangan'));
 });
 
-Breadcrumbs::for('admin.keuangan.piutang-pasien', function (Trail $trail) {
+Breadcrumbs::for('admin.keuangan.rekap-piutang-pasien', function (Trail $trail) {
     $trail->parent('admin.keuangan');
-    $trail->push('Piutang Pasien', route('admin.keuangan.piutang-pasien'));
+    $trail->push('Rekap Piutang Pasien', route('admin.keuangan.rekap-piutang-pasien'));
 });
 
 Breadcrumbs::for('admin.keuangan.laporan-tambahan-biaya', function (Trail $trail) {
@@ -55,14 +55,19 @@ Breadcrumbs::for('admin.keuangan.laporan-selesai-billing', function (Trail $trai
     $trail->push('Laporan Selesai Billing', route('admin.keuangan.laporan-selesai-billing'));
 });
 
-Breadcrumbs::for('admin.keuangan.jurnal-po-supplier', function (Trail $trail) {
+Breadcrumbs::for('admin.keuangan.jurnal-supplier-po', function (Trail $trail) {
     $trail->parent('admin.keuangan');
-    $trail->push('Jurnal PO Supplier', route('admin.keuangan.jurnal-po-supplier'));
+    $trail->push('Jurnal Supplier PO', route('admin.keuangan.jurnal-supplier-po'));
 });
 
 Breadcrumbs::for('admin.keuangan.jurnal-piutang-lunas', function (Trail $trail) {
     $trail->parent('admin.keuangan');
     $trail->push('Jurnal Piutang Lunas', route('admin.keuangan.jurnal-piutang-lunas'));
+});
+
+Breadcrumbs::for('admin.keuangan.jurnal-perbaikan', function (Trail $trail) {
+    $trail->parent('admin.keuangan');
+    $trail->push('Jurnal Perbaikan', route('admin.keuangan.jurnal-perbaikan'));
 });
 
 Breadcrumbs::for('admin.keuangan.buku-besar', function (Trail $trail) {
@@ -78,11 +83,6 @@ Breadcrumbs::for('admin.keuangan.laba-rugi-rekening', function (Trail $trail) {
 Breadcrumbs::for('admin.keuangan.dpjp-piutang-ranap', function (Trail $trail) {
     $trail->parent('admin.keuangan');
     $trail->push('DPJP Piutang Ranap', route('admin.keuangan.dpjp-piutang-ranap'));
-});
-
-Breadcrumbs::for('admin.keuangan.perbaikan-tgl-jurnal', function (Trail $trail) {
-    $trail->parent('admin.keuangan');
-    $trail->push('DPJP Piutang Ranap', route('admin.keuangan.perbaikan-tgl-jurnal'));
 });
 
 Breadcrumbs::for('admin.keuangan.laporan-tindakan-lab', function (Trail $trail) {

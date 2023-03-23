@@ -16,14 +16,14 @@ use App\Http\Livewire\HakAkses\Khanza;
 use App\Http\Livewire\Keuangan\BukuBesar;
 use App\Http\Livewire\Keuangan\DPJPPiutangRanap;
 use App\Http\Livewire\Keuangan\LabaRugiRekeningPerPeriode;
-use App\Http\Livewire\Keuangan\LaporanPenyelesaianBillingPerPetugas;
+use App\Http\Livewire\Keuangan\LaporanSelesaiBillingPasien;
 use App\Http\Livewire\Keuangan\LaporanPotonganBiayaPasien;
 use App\Http\Livewire\Keuangan\LaporanTambahanBiayaPasien;
 use App\Http\Livewire\Keuangan\LaporanTindakanLab;
 use App\Http\Livewire\Keuangan\LaporanTindakanRadiologi;
-use App\Http\Livewire\Keuangan\PenarikanDataPiutangDibayar;
-use App\Http\Livewire\Keuangan\PenarikanDataSuplierPO;
-use App\Http\Livewire\Keuangan\PerbaikanTanggalJurnal;
+use App\Http\Livewire\Keuangan\JurnalPiutangLunas;
+use App\Http\Livewire\Keuangan\JurnalSupplierPO;
+use App\Http\Livewire\Keuangan\JurnalPerbaikan;
 use App\Http\Livewire\Keuangan\RekapPiutangPasien;
 use App\Http\Livewire\Keuangan\StokObatRuangan;
 use App\Http\Livewire\Logistik\InputMinmaxStok;
@@ -33,10 +33,8 @@ use App\Http\Livewire\Perawatan\LaporanPasienRanap;
 use App\Http\Livewire\RekamMedis\LaporanDemografi;
 use App\Http\Livewire\RekamMedis\LaporanStatistik;
 use App\Http\Livewire\User\ManajemenUser;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use InfyOm\RoutesExplorer\RoutesExplorer;
-use LZCompressor\LZString;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 
 /*
@@ -90,8 +88,8 @@ Route::prefix('admin')
                     ->name('stok-obat-ruangan');
 
                 Route::get('rekap-piutang-pasien', RekapPiutangPasien::class)
-                    ->middleware('can:keuangan.piutang-pasien.read')
-                    ->name('piutang-pasien');
+                    ->middleware('can:keuangan.rekap-piutang-pasien.read')
+                    ->name('rekap-piutang-pasien');
 
                 Route::get('laporan-tambahan-biaya', LaporanTambahanBiayaPasien::class)
                     ->middleware('can:keuangan.laporan-tambahan-biaya.read')
@@ -101,15 +99,15 @@ Route::prefix('admin')
                     ->middleware('can:keuangan.laporan-potongan-biaya.read')
                     ->name('laporan-potongan-biaya');
 
-                Route::get('laporan-selesai-billing', LaporanPenyelesaianBillingPerPetugas::class)
+                Route::get('laporan-selesai-billing', LaporanSelesaiBillingPasien::class)
                     ->middleware('can:keuangan.laporan-selesai-billing.read')
                     ->name('laporan-selesai-billing');
 
-                Route::get('jurnal-po-supplier', PenarikanDataSuplierPO::class)
-                    ->middleware('can:keuangan.jurnal-po-supplier.read')
-                    ->name('jurnal-po-supplier');
+                Route::get('jurnal-supplier-po', JurnalSupplierPO::class)
+                    ->middleware('can:keuangan.jurnal-supplier-po.read')
+                    ->name('jurnal-supplier-po');
 
-                Route::get('jurnal-piutang-lunas', PenarikanDataPiutangDibayar::class)
+                Route::get('jurnal-piutang-lunas', JurnalPiutangLunas::class)
                     ->middleware('can:keuangan.jurnal-piutang-lunas.read')
                     ->name('jurnal-piutang-lunas');
 
@@ -125,9 +123,9 @@ Route::prefix('admin')
                     ->middleware('can:keuangan.dpjp-piutang-ranap.read')
                     ->name('dpjp-piutang-ranap');
 
-                Route::get('perbaikan-tgl-jurnal', PerbaikanTanggalJurnal::class)
-                    ->middleware('can:keuangan.perbaikan-tgl-jurnal.read')
-                    ->name('perbaikan-tgl-jurnal');
+                Route::get('jurnal-perbaikan', JurnalPerbaikan::class)
+                    ->middleware('can:keuangan.jurnal-perbaikan.read')
+                    ->name('jurnal-perbaikan');
 
                 Route::get('laporan-tindakan-lab', LaporanTindakanLab::class)
                     ->middleware('can:keuangan.laporan-tindakan-lab.read')

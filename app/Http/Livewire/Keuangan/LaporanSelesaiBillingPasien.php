@@ -13,19 +13,19 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class LaporanPenyelesaianBillingPerPetugas extends Component
+class LaporanSelesaiBillingPasien extends Component
 {
     use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
-    public $periodeAwal;
+    public $tglAwal;
 
-    public $periodeAkhir;
+    public $tglAkhir;
 
     protected function queryString()
     {
         return [
-            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -37,7 +37,7 @@ class LaporanPenyelesaianBillingPerPetugas extends Component
     public function getBillingYangDiselesaikanProperty()
     {
         return NotaSelesai::query()
-            ->billingYangDiselesaikan($this->periodeAwal, $this->periodeAkhir)
+            ->billingYangDiselesaikan($this->tglAwal, $this->tglAkhir)
             ->search($this->cari, [
                 "nota_selesai.id",
                 "nota_selesai.no_rawat",
@@ -64,7 +64,7 @@ class LaporanPenyelesaianBillingPerPetugas extends Component
 
     public function render()
     {
-        return view('livewire.keuangan.laporan-penyelesaian-billing-per-petugas')
+        return view('livewire.keuangan.laporan-selesai-billing-pasien')
             ->layout(BaseLayout::class, ['title' => 'Laporan Penyelesaian Billing Pasien per Petugas']);
     }
 
@@ -82,15 +82,15 @@ class LaporanPenyelesaianBillingPerPetugas extends Component
         $this->cari = '';
         $this->perpage = 25;
         $this->sortColumns = [];
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array
     {
         return [
             NotaSelesai::query()
-                ->billingYangDiselesaikan($this->periodeAwal, $this->periodeAkhir)
+                ->billingYangDiselesaikan($this->tglAwal, $this->tglAkhir)
                 ->get()
         ];
     }
@@ -118,7 +118,7 @@ class LaporanPenyelesaianBillingPerPetugas extends Component
         return [
             'RS Samarinda Medika Citra',
             'Laporan Penyelesaian Billing Pasien Per Petugas',
-            carbon($this->periodeAwal)->format('d F Y') . ' s.d. ' . carbon($this->periodeAkhir)->format('d F Y'),
+            carbon($this->tglAwal)->format('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->format('d F Y'),
         ];
     }
 }

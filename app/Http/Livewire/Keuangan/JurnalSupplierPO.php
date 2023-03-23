@@ -13,19 +13,19 @@ use App\View\Components\BaseLayout;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class PenarikanDataSuplierPO extends Component
+class JurnalSupplierPO extends Component
 {
     use WithPagination, FlashComponent, Filterable, LiveTable, MenuTracker, ExcelExportable;
 
-    public $periodeAwal;
+    public $tglAwal;
 
-    public $periodeAkhir;
+    public $tglAkhir;
 
     protected function queryString()
     {
         return [
-            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -37,7 +37,7 @@ class PenarikanDataSuplierPO extends Component
     public function getJurnalBarangMedisProperty()
     {
         return JurnalMedis::query()
-            ->jurnalPenerimaanBarang($this->periodeAwal, $this->periodeAkhir)
+            ->jurnalPenerimaanBarang($this->tglAwal, $this->tglAkhir)
             ->search($this->cari, [
                 "jurnal_medis.id",
                 "jurnal_medis.no_jurnal",
@@ -62,7 +62,7 @@ class PenarikanDataSuplierPO extends Component
     public function getJurnalBarangNonMedisProperty()
     {
         return JurnalNonMedis::query()
-            ->jurnalPenerimaanBarang($this->periodeAwal, $this->periodeAkhir)
+            ->jurnalPenerimaanBarang($this->tglAwal, $this->tglAkhir)
             ->search($this->cari, [
                 'jurnal_non_medis.id',
                 'jurnal_non_medis.no_jurnal',
@@ -86,7 +86,7 @@ class PenarikanDataSuplierPO extends Component
 
     public function render()
     {
-        return view('livewire.keuangan.penarikan-data-suplier-p-o')
+        return view('livewire.keuangan.jurnal-supplier-p-o')
             ->layout(BaseLayout::class, ['title' => 'Penarikan Data Suplier Penerimaan Barang Medis / Non Medis dari Jurnal']);
     }
 
@@ -103,15 +103,15 @@ class PenarikanDataSuplierPO extends Component
 
     protected function defaultValues()
     {
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array
     {
         return [
-            'Medis' => JurnalMedis::jurnalPenerimaanBarang($this->periodeAwal, $this->periodeAkhir)->get(),
-            'Non Medis' => JurnalNonMedis::jurnalPenerimaanBarang($this->periodeAwal, $this->periodeAkhir)->get(),
+            'Medis' => JurnalMedis::jurnalPenerimaanBarang($this->tglAwal, $this->tglAkhir)->get(),
+            'Non Medis' => JurnalNonMedis::jurnalPenerimaanBarang($this->tglAwal, $this->tglAkhir)->get(),
         ];
     }
 
@@ -139,7 +139,7 @@ class PenarikanDataSuplierPO extends Component
             'RS Samarinda Medika Citra',
             'Penarikan Data Supplier PO Medis/Non Medis',
             now()->format('d F Y'),
-            carbon($this->periodeAwal)->format('d F Y') . ' - ' . carbon($this->periodeAkhir)->format('d F Y'),
+            carbon($this->tglAwal)->format('d F Y') . ' - ' . carbon($this->tglAkhir)->format('d F Y'),
         ];
     }
 }

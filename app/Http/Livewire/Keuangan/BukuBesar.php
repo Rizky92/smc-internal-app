@@ -19,16 +19,16 @@ class BukuBesar extends Component
 
     public $kodeRekening;
 
-    public $periodeAwal;
+    public $tglAwal;
 
-    public $periodeAkhir;
+    public $tglAkhir;
 
     protected function queryString()
     {
         return [
             'kodeRekening' => ['except' => ''],
-            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -47,7 +47,7 @@ class BukuBesar extends Component
         }
 
         return Jurnal::query()
-            ->bukuBesar($this->kodeRekening, $this->periodeAwal, $this->periodeAkhir)
+            ->bukuBesar($this->kodeRekening, $this->tglAwal, $this->tglAkhir)
             ->search($this->cari, [
                 'jurnal.tgl_jurnal',
                 'jurnal.jam_jurnal',
@@ -76,7 +76,7 @@ class BukuBesar extends Component
         }
 
         return Jurnal::query()
-            ->jumlahDebetDanKreditBukuBesar($this->kodeRekening, $this->periodeAwal, $this->periodeAkhir)
+            ->jumlahDebetDanKreditBukuBesar($this->kodeRekening, $this->tglAwal, $this->tglAkhir)
             ->first();
     }
 
@@ -84,7 +84,8 @@ class BukuBesar extends Component
     {
         return Rekening::query()
             ->orderBy('kd_rek')
-            ->pluck('nm_rek', 'kd_rek');
+            ->pluck('nm_rek', 'kd_rek')
+            ->all();
     }
 
     public function render()
@@ -112,13 +113,13 @@ class BukuBesar extends Component
     protected function defaultValues()
     {
         $this->kodeRekening = '';
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array
     {
-        $bukuBesar = Jurnal::bukuBesar($this->kodeRekening, $this->periodeAwal, $this->periodeAkhir)->get();
+        $bukuBesar = Jurnal::bukuBesar($this->kodeRekening, $this->tglAwal, $this->tglAkhir)->get();
 
         return [
             collect($bukuBesar->toArray())
@@ -160,7 +161,7 @@ class BukuBesar extends Component
             'RS Samarinda Medika Citra',
             'Buku Besar rekening ' . $this->rekening[$this->kodeRekening],
             now()->format('d F Y'),
-            'Periode ' . carbon($this->periodeAwal)->format('d F Y') . ' - ' . carbon($this->periodeAkhir)->format('d F Y'),
+            'Periode ' . carbon($this->tglAwal)->format('d F Y') . ' - ' . carbon($this->tglAkhir)->format('d F Y'),
         ];
     }
 }

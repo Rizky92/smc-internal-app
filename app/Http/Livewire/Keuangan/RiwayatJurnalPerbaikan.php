@@ -11,19 +11,19 @@ use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
 
-class PerbaikanTanggalJurnal extends Component
+class RiwayatJurnalPerbaikan extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
-    public $periodeAwal;
+    public $tglAwal;
 
-    public $periodeAkhir;
+    public $tglAkhir;
 
     protected function queryString()
     {
         return [
-            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -34,14 +34,14 @@ class PerbaikanTanggalJurnal extends Component
 
     public function render()
     {
-        return view('livewire.keuangan.perbaikan-tanggal-jurnal')
-            ->layout(BaseLayout::class, ['title' => 'PerbaikanTanggalJurnal']);
+        return view('livewire.keuangan.riwayat-jurnal-perbaikan')
+            ->layout(BaseLayout::class, ['title' => 'RiwayatJurnalPerbaikan']);
     }
 
     protected function defaultValues()
     {
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array

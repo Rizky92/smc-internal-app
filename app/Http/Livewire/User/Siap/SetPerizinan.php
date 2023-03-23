@@ -5,7 +5,6 @@ namespace App\Http\Livewire\User\Siap;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
-use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\DeferredModal;
 use Livewire\Component;
 
@@ -24,8 +23,8 @@ class SetPerizinan extends Component
     protected $listeners = [
         'siap.show-sp' => 'showModal',
         'siap.hide-sp' => 'hideModal',
-        'siap.prepare-user' => 'prepareUser',
-        'siap.save' => 'setRolePermissions',
+        'siap.prepare-set' => 'prepareUser',
+        'siap.set' => 'save',
     ];
 
     public function mount()
@@ -56,7 +55,7 @@ class SetPerizinan extends Component
         $this->checkedPermissions = $permissionIds;
     }
 
-    public function setRolePermissions()
+    public function save()
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->dispatchBrowserEvent('data-denied');
@@ -74,15 +73,7 @@ class SetPerizinan extends Component
 
         tracker_end('mysql_smc');
 
-        $this->dispatchBrowserEvent('data-saved');
         $this->emit('flash.success', "Perizinan SIAP untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
-    }
-    
-    public function hideModal()
-    {
-        $this->defaultValues();
-
-        $this->emitUp('resetState');
     }
 
     public function defaultValues()

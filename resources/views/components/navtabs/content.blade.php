@@ -1,11 +1,8 @@
-@aware(['livewire'])
+@aware(['livewire', 'selected'])
 
-@props([
-    'selected' => false,
-    'id',
-])
+@props(['id'])
 
-<div @class(['tab-pane', 'show active' => $selected]) id="content-{{ $id }}" role="tabpanel" {{ $livewire ? 'wire:ignore.self' : null }}>
+<div @class(['tab-pane', 'show active' => $selected === $id]) id="content-{{ $id }}" role="tabpanel" {{ $livewire ? 'wire:ignore.self' : null }}>
     <div {{ $attributes->except(['selected', 'id', 'title', 'livewire']) }}>
         {{ $slot }}
     </div>

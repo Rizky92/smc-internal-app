@@ -26,7 +26,7 @@ class InputMinmaxStok extends Component
 
     public function getSupplierProperty()
     {
-        return SupplierNonMedis::pluck('nama_suplier', 'kode_suplier');
+        return SupplierNonMedis::pluck('nama_suplier', 'kode_suplier')->all();
     }
 
     public function getBarangLogistikProperty()

@@ -6,7 +6,6 @@ use App\Models\Aplikasi\User;
 use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\LiveTable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -26,7 +25,7 @@ class TransferHakAkses extends Component
         'khanza.show-tha' => 'showModal',
         'khanza.hide-tha' => 'hideModal',
         'khanza.prepare-transfer' => 'prepareTransfer',
-        'khanza.transfer' => 'transferHakAkses',
+        'khanza.transfer' => 'save',
     ];
 
     public function mount()
@@ -62,7 +61,7 @@ class TransferHakAkses extends Component
         $this->nama = $nama;
     }
 
-    public function transferHakAkses()
+    public function save()
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->dispatchBrowserEvent('data-denied');
@@ -87,13 +86,6 @@ class TransferHakAkses extends Component
 
         $this->dispatchBrowserEvent('data-saved');
         $this->emit('flash.success', "Transfer hak akses SIMRS Khanza berhasil!");
-    }
-
-    public function hideModal()
-    {
-        $this->defaultValues();
-
-        $this->emitUp('resetState');
     }
 
     private function defaultValues()

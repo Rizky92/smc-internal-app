@@ -3,23 +3,23 @@
         @push('js')
             <script>
                 document.addEventListener('DOMContentLoaded', () => {
-                    $('#modal-khanza-set').on('shown.bs.modal', e => {
+                    $('#modal-set-hak-akses').on('shown.bs.modal', e => {
                         @this.emit('khanza.show-sha')
                     })
 
-                    $('#modal-khanza-set').on('hide.bs.modal', e => {
+                    $('#modal-set-hak-akses').on('hide.bs.modal', e => {
                         @this.emit('khanza.hide-sha')
                     })
 
-                    $('#modal-khanza-set').on('hidden.bs.modal', e => {
-                        $('#checkbox-utama-khanza-set').prop('checked', false)
-                        $('#checkbox-utama-khanza-set').trigger('change')
+                    $('#modal-set-hak-akses').on('hidden.bs.modal', e => {
+                        $('#checkbox-set-hak-akses').prop('checked', false)
+                        $('#checkbox-set-hak-akses').trigger('change')
                     })
                 })
             </script>
         @endpush
     @endonce
-    <x-modal livewire title="Set hak akses user untuk SIMRS Khanza" id="modal-khanza-set">
+    <x-modal livewire title="Set hak akses user untuk SIMRS Khanza" id="modal-set-hak-akses">
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-row-col class="px-3 pt-3">
                 <div class="d-flex justify-content-start">
@@ -34,8 +34,8 @@
                     <x-table>
                         <x-slot name="columns">
                             <x-table.th>
-                                <input id="checkbox-utama-khanza-set" type="checkbox" name="__checkbox_utama">
-                                <label for="checkbox-utama-khanza-set"></label>
+                                <input id="checkbox-set-hak-akses" type="checkbox" name="__checkbox_utama">
+                                <label for="checkbox-set-hak-akses"></label>
                             </x-table.th>
                             <x-table.th title="Nama Field" />
                             <x-table.th title="Judul Menu" />
@@ -60,9 +60,9 @@
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
             <x-filter.search method="$refresh" />
-            <x-filter.toggle class="ml-1" id="show-checked-khanza-set" title="Tampilkan yang dipilih" model="showChecked" />
+            <x-filter.toggle class="ml-1" id="show-checked-set-hak-akses" title="Tampilkan yang dipilih" model="showChecked" />
             <x-button size="sm" class="ml-auto" data-dismiss="modal" title="Batal" />
-            <x-button size="sm" variant="primary" class="ml-2" data-dismiss="modal" wire:click="$emit('khanza.simpan')" title="Simpan" icon="fas fa-save" />
+            <x-button size="sm" variant="primary" class="ml-2" data-dismiss="modal" wire:click="$emit('khanza.set')" title="Simpan" icon="fas fa-save" />
         </x-slot>
     </x-modal>
 </div>

@@ -19,15 +19,15 @@ class LabaRugiRekeningPerPeriode extends Component
 {
     use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
-    public $periodeAwal;
+    public $tglAwal;
 
-    public $periodeAkhir;
+    public $tglAkhir;
 
     protected function queryString()
     {
         return [
-            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -45,7 +45,7 @@ class LabaRugiRekeningPerPeriode extends Component
         $semuaRekening = Rekening::semuaRekening()->get();
 
         $debetKredit = Rekening::query()
-            ->hitungDebetKreditPerPeriode($this->periodeAwal, $this->periodeAkhir)
+            ->hitungDebetKreditPerPeriode($this->tglAwal, $this->tglAkhir)
             ->get();
 
         return $semuaRekening
@@ -109,8 +109,8 @@ class LabaRugiRekeningPerPeriode extends Component
 
     protected function defaultValues()
     {
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     protected function mapDataForExcelExport()
@@ -168,7 +168,7 @@ class LabaRugiRekeningPerPeriode extends Component
             'RS Samarinda Medika Citra',
             'Laporan Laba Rugi Keuangan',
             now()->format('d F Y'),
-            'Periode ' . CarbonImmutable::parse($this->periodeAwal)->format('d F Y') . ' - ' . CarbonImmutable::parse($this->periodeAkhir)->format('d F Y'),
+            'Periode ' . CarbonImmutable::parse($this->tglAwal)->format('d F Y') . ' - ' . CarbonImmutable::parse($this->tglAkhir)->format('d F Y'),
         ];
     }
 }

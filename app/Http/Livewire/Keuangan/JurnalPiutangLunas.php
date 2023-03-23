@@ -14,13 +14,13 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
-class PenarikanDataPiutangDibayar extends Component
+class JurnalPiutangLunas extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
-    public $periodeAwal;
+    public $tglAwal;
 
-    public $periodeAkhir;
+    public $tglAkhir;
 
     public $kodeRekening;
 
@@ -29,8 +29,8 @@ class PenarikanDataPiutangDibayar extends Component
     protected function queryString()
     {
         return [
-            'periodeAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'periodeAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -41,7 +41,7 @@ class PenarikanDataPiutangDibayar extends Component
 
     public function render()
     {
-        return view('livewire.keuangan.penarikan-data-piutang-dibayar')
+        return view('livewire.keuangan.jurnal-piutang-lunas')
             ->layout(BaseLayout::class, ['title' => 'Penarikan Data Penagihan Piutang Dibayar dari Jurnal']);
     }
 
@@ -50,7 +50,8 @@ class PenarikanDataPiutangDibayar extends Component
         return DB::connection('mysql_sik')
             ->table('rekening')
             ->whereIn('kd_rek', PiutangDilunaskan::query()->groupBy('kd_rek')->pluck('kd_rek')->toArray())
-            ->pluck('nm_rek', 'kd_rek');
+            ->pluck('nm_rek', 'kd_rek')
+            ->all();
     }
 
     public function tarikDataTerbaru()
@@ -65,24 +66,24 @@ class PenarikanDataPiutangDibayar extends Component
     public function getDataPiutangDilunaskanProperty()
     {
         return PiutangDilunaskan::query()
-            ->dataPiutangDilunaskan($this->periodeAwal, $this->periodeAkhir, $this->kodeRekening, $this->jenisPeriode)
+            ->dataPiutangDilunaskan($this->tglAwal, $this->tglAkhir, $this->kodeRekening, $this->jenisPeriode)
             ->search($this->cari, [
-               'piutang_dilunaskan.no_jurnal',
-               'jurnal.keterangan',
-               'piutang_dilunaskan.no_rawat',
-               'piutang_dilunaskan.no_tagihan',
-               'piutang_dilunaskan.no_rkm_medis',
-               'pasien.nm_pasien',
-               'piutang_dilunaskan.kd_pj',
-               "if(penjamin.nama_perusahaan = '' or penjamin.nama_perusahaan = '-', penjamin.png_jawab, penjamin.nama_perusahaan)",
-               'piutang_dilunaskan.nik_penagih',
-               "ifnull(penagih.nama, '-')",
-               'piutang_dilunaskan.nik_menyetujui',
-               "ifnull(penyetuju.nama, '-')",
-               'piutang_dilunaskan.nik_validasi',
-               "ifnull(pemvalidasi.nama, '-')",
-               'piutang_dilunaskan.kd_rek',
-               'piutang_dilunaskan.nm_rek',
+                'piutang_dilunaskan.no_jurnal',
+                'jurnal.keterangan',
+                'piutang_dilunaskan.no_rawat',
+                'piutang_dilunaskan.no_tagihan',
+                'piutang_dilunaskan.no_rkm_medis',
+                'pasien.nm_pasien',
+                'piutang_dilunaskan.kd_pj',
+                "if(penjamin.nama_perusahaan = '' or penjamin.nama_perusahaan = '-', penjamin.png_jawab, penjamin.nama_perusahaan)",
+                'piutang_dilunaskan.nik_penagih',
+                "ifnull(penagih.nama, '-')",
+                'piutang_dilunaskan.nik_menyetujui',
+                "ifnull(penyetuju.nama, '-')",
+                'piutang_dilunaskan.nik_validasi',
+                "ifnull(pemvalidasi.nama, '-')",
+                'piutang_dilunaskan.kd_rek',
+                'piutang_dilunaskan.nm_rek',
             ])
             ->sortWithColumns($this->sortColumns, [
                 'nama_penjamin' => DB::raw("if(penjamin.nama_perusahaan = '' or penjamin.nama_perusahaan = '-', penjamin.png_jawab, penjamin.nama_perusahaan)"),
@@ -94,22 +95,22 @@ class PenarikanDataPiutangDibayar extends Component
     {
         $this->kodeRekening = '112010';
         $this->jenisPeriode = 'jurnal';
-        $this->periodeAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->periodeAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array
     {
         return [
             PiutangDilunaskan::query()
-                ->dataPiutangDilunaskan($this->periodeAwal, $this->periodeAkhir)
+                ->dataPiutangDilunaskan($this->tglAwal, $this->tglAkhir, $this->kodeRekening, $this->jenisPeriode)
                 ->get()
                 ->map(function (PiutangDilunaskan $piutang) {
                     return [
                         'no_jurnal' => $piutang->no_jurnal,
                         'waktu_jurnal' => carbon($piutang->waktu_jurnal)->format('Y-m-d'),
                         'no_rawat' => $piutang->no_rawat,
-                        'no_rkm_medis' => $piutang->no_rkm_medis . ' ' . $piutang->nm_pasien . ' '. "({$piutang->umur})",
+                        'no_rkm_medis' => $piutang->no_rkm_medis . ' ' . $piutang->nm_pasien . ' ' . "({$piutang->umur})",
                         'nama_penjamin' => $piutang->nama_penjamin,
                         'no_tagihan' => $piutang->no_tagihan,
                         'nik_penagih' => $piutang->nik_penagih . ' ' . $piutang->nama_penagih,
@@ -121,7 +122,7 @@ class PenarikanDataPiutangDibayar extends Component
                         'status' => $piutang->status,
                         'nik_validasi' => $piutang->nik_validasi . ' ' . $piutang->nama_pemvalidasi,
                         'kd_rek' => $piutang->kd_rek . ' ' . $piutang->nm_rek,
-                        'keterangan' => $piutang->keterangan,                   
+                        'keterangan' => $piutang->keterangan,
                     ];
                 }),
         ];
@@ -155,7 +156,7 @@ class PenarikanDataPiutangDibayar extends Component
             'RS Samarinda Medika Citra',
             'Penarikan Data Penagihan Piutang Dibayar dari Jurnal',
             now()->format('d F Y'),
-            'Berdasarkan Tgl.' . Str::title($this->jenisPeriode) . ' periode ' . carbon($this->periodeAwal)->format('d F Y') . ' - ' . carbon($this->periodeAkhir)->format('d F Y'),
+            'Berdasarkan Tgl. ' . Str::title($this->jenisPeriode) . ' periode ' . carbon($this->tglAwal)->format('d F Y') . ' - ' . carbon($this->tglAkhir)->format('d F Y'),
         ];
     }
 }

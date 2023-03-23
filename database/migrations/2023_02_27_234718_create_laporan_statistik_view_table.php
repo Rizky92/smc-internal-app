@@ -16,49 +16,50 @@ return new class extends Migration
     public function up()
     {
         $db = DB::connection('mysql_sik')->getDatabaseName();
+        $kunjunganKe = "(
+            select count(rp2.no_rawat)
+            from $db.reg_periksa rp2
+            where rp2.no_rkm_medis = reg_periksa.no_rkm_medis and rp2.tgl_registrasi <= reg_periksa.tgl_registrasi
+        )";
 
         $query = <<<SQL
         select
-            reg_periksa.no_rawat,
-            reg_periksa.no_rkm_medis,
-            pasien.nm_pasien,
-            pasien.no_ktp,
-            pasien.jk,
-            pasien.tgl_lahir,
-            concat(reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur) as umur,
-            pasien.agama,
-            suku_bangsa.nama_suku_bangsa,
-            reg_periksa.status_lanjut,
-            reg_periksa.status_poli,
-            poliklinik.nm_poli,
-            dokter.nm_dokter,
-            reg_periksa.stts,
-            reg_periksa.tgl_registrasi,
-            reg_periksa.jam_reg,
-            if(rawat_inap.tgl_keluar > '0000-00-00', rawat_inap.tgl_keluar, '-') as tgl_keluar,
-            if(rawat_inap.jam_keluar > '00:00:00', rawat_inap.jam_keluar, '-') as jam_keluar,
-            rawat_inap.diagnosa_awal,
-            group_concat(distinct diagnosa.kd_penyakit separator ', ') as kd_diagnosa,
-            group_concat(distinct diagnosa.nm_penyakit separator ', ') as nm_diagnosa,
-            group_concat(distinct tindakan_ralan.kd_jenis_prw separator ', ') as kd_tindakan_ralan,
-            group_concat(distinct jns_perawatan.nm_perawatan separator ', ') as nm_tindakan_ralan,
-            group_concat(distinct tindakan_ranap.kd_jenis_prw separator ', ') as kd_tindakan_ranap,
-            group_concat(distinct jns_perawatan_inap.nm_perawatan separator ', ') as nm_tindakan_ranap,
-            '-' as lama_operasi,
-            '-' as rujukan_masuk,
-            group_concat(distinct dpjp.dokter_ranap separator '; ') as dokter_pj,
-            kamar.kelas,
-            penjab.png_jawab,
-            reg_periksa.status_bayar as status_bayar,
-            rawat_inap.stts_pulang as status_pulang_ranap,
-            rujuk.rujuk_ke as rujuk_keluar_rs,
-            pasien.alamat,
-            pasien.no_tlp as no_hp,
-            (
-                select count(rp2.no_rawat)
-                from $db.reg_periksa rp2
-                where rp2.no_rkm_medis = reg_periksa.no_rkm_medis and rp2.tgl_registrasi <= reg_periksa.tgl_registrasi
-            ) as kunjungan_ke
+            reg_periksa.no_rawat                                                        as no_rawat,
+            reg_periksa.no_rkm_medis                                                    as no_rm,
+            pasien.nm_pasien                                                            as nm_pasien,
+            pasien.no_ktp                                                               as no_ktp,
+            pasien.jk                                                                   as jk,
+            pasien.tgl_lahir                                                            as tgl_lahir,
+            concat(reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur)                   as umur,
+            pasien.agama                                                                as agama,
+            suku_bangsa.nama_suku_bangsa                                                as suku,
+            reg_periksa.status_lanjut                                                   as status_lanjut,
+            reg_periksa.status_poli                                                     as status_poli,
+            poliklinik.nm_poli                                                          as nm_poli,
+            dokter.nm_dokter                                                            as nm_dokter,
+            reg_periksa.stts                                                            as `status`,
+            reg_periksa.tgl_registrasi                                                  as tgl_registrasi,
+            reg_periksa.jam_reg                                                         as jam_registrasi,
+            if(rawat_inap.tgl_keluar > '0000-00-00', rawat_inap.tgl_keluar, '-')        as tgl_keluar,
+            if(rawat_inap.jam_keluar > '00:00:00', rawat_inap.jam_keluar, '-')          as jam_keluar,
+            rawat_inap.diagnosa_awal                                                    as diagnosa_awal,
+            group_concat(distinct diagnosa.kd_penyakit separator ', ')                  as kd_diagnosa,
+            group_concat(distinct diagnosa.nm_penyakit separator ', ')                  as nm_diagnosa,
+            group_concat(distinct tindakan_ralan.kd_jenis_prw separator ', ')           as kd_tindakan_ralan,
+            group_concat(distinct jns_perawatan.nm_perawatan separator ', ')            as nm_tindakan_ralan,
+            group_concat(distinct tindakan_ranap.kd_jenis_prw separator ', ')           as kd_tindakan_ranap,
+            group_concat(distinct jns_perawatan_inap.nm_perawatan separator ', ')       as nm_tindakan_ranap,
+            '-'                                                                         as lama_operasi,
+            '-'                                                                         as rujukan_masuk,
+            group_concat(distinct dpjp.dokter_ranap separator '; ')                     as dokter_pj,
+            kamar.kelas                                                                 as kelas,
+            penjab.png_jawab                                                            as penjamin,
+            reg_periksa.status_bayar                                                    as status_bayar,
+            rawat_inap.stts_pulang                                                      as status_pulang_ranap,
+            rujuk.rujuk_ke                                                              as rujuk_keluar_rs,
+            pasien.alamat                                                               as alamat,
+            pasien.no_tlp                                                               as no_hp,
+            $kunjunganKe                                                                as kunjungan_ke
         from $db.reg_periksa reg_periksa
         join $db.pasien pasien on reg_periksa.no_rkm_medis = pasien.no_rkm_medis
         left join $db.suku_bangsa suku_bangsa on pasien.suku_bangsa = suku_bangsa.id

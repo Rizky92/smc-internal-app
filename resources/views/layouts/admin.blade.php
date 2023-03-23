@@ -50,6 +50,10 @@
         .sidebar-search-results .list-group-item:hover, .sidebar-search-results .list-group-item:focus {
             background-color: #e5e7eb !important
         }
+
+        .table {
+            margin-bottom: 0 !important
+        }
     </style>
     @livewireStyles
 

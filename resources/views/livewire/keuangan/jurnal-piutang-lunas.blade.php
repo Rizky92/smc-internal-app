@@ -16,7 +16,7 @@
             <x-card.row-col class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.label class="ml-auto" constant-width>Rekening :</x-filter.label>
-                <x-filter.select2 name="Kode Rekening" model="kodeRekening" :collection="$this->akunPenagihanPiutang" />
+                <x-filter.select2 name="Kode Rekening" model="kodeRekening" :options="$this->akunPenagihanPiutang" />
             </x-card.row-col>
             <x-card.row-col class="mt-2">
                 <x-filter.button-reset-filters class="ml-auto" />

@@ -4,14 +4,15 @@
     @once
         @push('js')
             <script>
-                const inputNRP = $('input#user')
-                const inputNama = $('input#nama')
+                const inputNRP = $('input#user-nrp')
+                const inputNama = $('input#user-nama')
+
                 const inputRoles = $('input[name=roles]')
                 const inputRolePermissions = $('input[name=permissions][data-role-id]')
                 const inputPermissions = $('input[name=permissions]:not([data-role-id])')
 
                 const buttonDropdownPilihan = $('button#pilihan')
-                const buttonImpersonate = $('button#siap-impersonate')
+                const buttonImpersonate = $('button#button-impersonasi')
 
                 const buttonResetFilter = $('button#reset-filter')
 
@@ -33,10 +34,14 @@
                     clearData()
                 })
 
+                $(document).on('hidden.bs.modal', e => {
+                    clearData()
+                })
+
                 function loadData(e) {
                     let { nrp, nama, roleIds, rolePermissionIds, permissionIds } = e.dataset
-                    
-                    setButtonState('disabled', false)
+
+                    buttonDropdownPilihan.prop('disabled', false)
 
                     inputNRP.val(nrp)
                     inputNama.val(nama)
@@ -62,31 +67,20 @@
 
                     inputRoles.each((i, el) => el.checked = roles.find(v => v === el.value))
                     inputRolePermissions.each((i, el) => el.checked = permissions.find(v => v === el.value))
-                    inputPermissions.each((i, el) => el.checked = permissions.find(v => v === el.value))                    
+                    inputPermissions.each((i, el) => el.checked = permissions.find(v => v === el.value))
 
-                    @this.emit('siap.prepare-la', nrp, nama)
-                    @this.emit('siap.prepare-user', nrp, nama, roles, permissions)
-                    @this.emit('siap.prepare-transfer', nrp, nama, roles, permissions)
-                    @this.emit('khanza.prepare-user', nrp, nama)
-                    @this.emit('khanza.prepare-transfer', nrp, nama)
+                    @this.emit('user.prepare', nrp, nama, roles, permissions)
                 }
 
                 function clearData() {
-                    setButtonState('disabled', true)
+                    buttonDropdownPilihan.prop('disabled', true)
 
                     inputNRP.val('')
                     inputNama.val('')
-                    inputRoles.each((i, el) => el.checked = false)
-                    inputRolePermissions.each((i, el) => el.checked = false)
-                    inputPermissions.each((i, el) => el.checked = false)
                 }
 
                 function removeDuplicates(arr) {
                     return Array.from(new Set(arr))
-                }
-
-                function setButtonState(prop, state) {
-                    buttonDropdownPilihan.prop(prop, state)
                 }
             </script>
         @endpush
@@ -103,14 +97,14 @@
             <x-card.row>
                 <div class="col-2">
                     <div class="form-group">
-                        <label class="text-sm" for="user">NRP</label>
-                        <input class="form-control form-control-sm" id="user" type="text" readonly autocomplete="off">
+                        <label class="text-sm" for="user-nrp">NRP</label>
+                        <input class="form-control form-control-sm" id="user-nrp" type="text" readonly autocomplete="off">
                     </div>
                 </div>
                 <div class="col-4">
                     <div class="form-group">
-                        <label class="text-sm" for="nama">Nama</label>
-                        <input class="form-control form-control-sm" id="nama" type="text" readonly autocomplete="off">
+                        <label class="text-sm" for="user-nama">Nama</label>
+                        <input class="form-control form-control-sm" id="user-nama" type="text" readonly autocomplete="off">
                     </div>
                 </div>
                 <div class="col-6">
@@ -119,15 +113,15 @@
                             <x-slot name="button" title="Pilihan" icon="fas fa-cogs" disabled></x-slot>
                             <x-slot name="menu" class="dropdown-menu-right">
                                 <x-dropdown.header class="text-left">SIMRS Khanza</x-dropdown.header>
-                                <x-dropdown.item-button id="khanza-set" icon="fas fa-user-cog fa-fw" title="Set Hak Akses" data-toggle="modal" data-target="#modal-khanza-set" />
-                                <x-dropdown.item-button id="khanza-transfer" icon="fas fa-exchange-alt fa-fw" title="Transfer Hak Akses" data-toggle="modal" data-target="#modal-khanza-transfer" />
+                                <x-dropdown.item-button id="button-set-hak-akses" icon="fas fa-user-cog fa-fw" title="Set Hak Akses" data-toggle="modal" data-target="#modal-set-hak-akses" />
+                                <x-dropdown.item-button id="button-transfer-hak-akses" icon="fas fa-exchange-alt fa-fw" title="Transfer Hak Akses" data-toggle="modal" data-target="#modal-transfer-hak-akses" />
                                 <x-dropdown.divider />
                                 <x-dropdown.header class="text-left">SMC Internal App</x-dropdown.header>
-                                <x-dropdown.item-button id="siap-set" icon="fas fa-user-cog fa-fw" title="Set Perizinan" data-toggle="modal" data-target="#modal-siap-set" />
-                                <x-dropdown.item-button id="siap-transfer" icon="fas fa-exchange-alt fa-fw" title="Transfer Perizinan" data-toggle="modal" data-target="#modal-siap-transfer" />
+                                <x-dropdown.item-button id="button-set-perizinan" icon="fas fa-user-cog fa-fw" title="Set Perizinan" data-toggle="modal" data-target="#modal-set-perizinan" />
+                                <x-dropdown.item-button id="button-transfer-perizinan" icon="fas fa-exchange-alt fa-fw" title="Transfer Perizinan" data-toggle="modal" data-target="#modal-transfer-perizinan" />
                                 <x-dropdown.divider />
-                                <x-dropdown.item-button id="siap-impersonate" icon="fas fa-user-secret fa-fw" title="Impersonasi" />
-                                <x-dropdown.item-button id="siap-aktivitas" icon="fas fa-binoculars fa-fw" title="Lihat Aktivitias" data-toggle="modal" data-target="#modal-aktivitas" />
+                                <x-dropdown.item-button id="button-impersonasi" icon="fas fa-user-secret fa-fw" title="Impersonasi" />
+                                <x-dropdown.item-button id="button-lihat-aktivitas" icon="fas fa-binoculars fa-fw" title="Lihat Aktivitias" data-toggle="modal" data-target="#modal-lihat-aktivitas" />
                             </x-slot>
                         </x-dropdown>
                     </div>
@@ -151,12 +145,14 @@
                 <x-slot name="body">
                     @foreach ($this->users as $user)
                         <x-table.tr>
-                            <x-table.td clickable
+                            <x-table.td
+                                clickable
                                 data-nrp="{{ $user->nik }}"
                                 data-nama="{{ $user->nama }}"
                                 data-role-ids="{{ $user->roles->pluck('id')->join(',') }}"
                                 data-role-permission-ids="{{ $user->getPermissionsViaRoles()->pluck('id')->join(',') }}"
-                                data-permission-ids="{{ $user->permissions->pluck('id')->join(',') }}">
+                                data-permission-ids="{{ $user->permissions->pluck('id')->join(',') }}"
+                            >
                                 {{ $user->nik }}
                             </x-table.td>
                             <x-table.td>{{ $user->nama }}</x-table.td>

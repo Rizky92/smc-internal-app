@@ -1,10 +1,13 @@
 @props([
     'as' => 'button',
+    'id' => null,
     'title' => null,
     'icon' => null,
     'size' => 'default',
     'variant' => 'default',
     'outline' => false,
+
+    'hideTitle' => false,
 ])
 
 @php
@@ -31,13 +34,11 @@
     ];
     
     $buttonVariants = collect($buttonVariants)
-        // {{-- blade-formatter-disable --}}
         ->when(
             $outline,
             fn($cols) => $cols->map(fn($v, $k) => str($v)->prepend('btn-outline-'))->replace(['link' => 'btn-link']),
             fn($cols) => $cols->map(fn($v, $k) => str($v)->prepend('btn-'))
         )
-        // {{-- blade-formatter-enable --}}
         ->all();
     
     $finalClass = $finalClass
@@ -45,26 +46,28 @@
         ->push($buttonVariants[$variant])
         ->filter()
         ->join(' ');
+
+    $id ??= str($title)->slug();
 @endphp
 
 @switch($as)
     @case('button')
-        <button {{ $attributes->merge(['class' => $finalClass, 'type' => 'button', 'id' => Str::slug($title)]) }}>
+        <button {{ $attributes->merge(['class' => $finalClass, 'type' => 'button', 'id' => $id, 'title' => $title]) }}>
             @if ($icon)
                 <i class="{{ $icon }}"></i>
             @endif
-            @if ($title)
+            @if ($title && !$hideTitle)
                 <span class="{{ Arr::toCssClasses(['ml-1' => $icon]) }}">{{ $title ?? $slot }}</span>
             @endif
         </button>
     @break
 
     @case('link')
-        <a {{ $attributes->merge(['class' => $finalClass, 'role' => 'button', 'id' => Str::slug($title)]) }}>
+        <a {{ $attributes->merge(['class' => $finalClass, 'role' => 'button', 'id' => $id, 'title' => $titlew]) }}>
             @if ($icon)
                 <i class="{{ $icon }}"></i>
             @endif
-            @if ($title)
+            @if ($title && !$hideTitle)
                 <span class="{{ Arr::toCssClasses(['ml-1' => $icon]) }}">{{ $title ?? $slot }}</span>
             @endif
         </a>

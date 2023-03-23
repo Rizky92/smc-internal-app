@@ -32,7 +32,7 @@
                         @this.set('checkedRoles', selectedRoles)
                         @this.set('checkedPermissions', selectedPermissions)
 
-                        @this.emit('siap.save')
+                        @this.emit('siap.set')
                     })
 
                     $('input[type=checkbox]').change(function(e) {
@@ -78,18 +78,18 @@
                         checkSiblings(container)
                     })
 
-                    $('#modal-siap-set').on('shown.bs.modal', e => {
+                    $('#modal-set-perizinan').on('shown.bs.modal', e => {
                         @this.emit('siap.show-sp')
                     })
 
-                    $('#modal-siap-set').on('hide.bs.modal', e => {
+                    $('#modal-set-perizinan').on('hide.bs.modal', e => {
                         @this.emit('siap.hide-sp')
                     })
                 })
             </script>
         @endpush
     @endonce
-    <x-modal livewire title="Set perizinan user untuk SIAP" id="modal-siap-set">
+    <x-modal livewire title="Set perizinan user untuk SIAP" id="modal-set-perizinan">
         <x-slot name="body">
             <x-row-col>
                 <ul class="form-group" id="role_permissions" style="list-style: none">

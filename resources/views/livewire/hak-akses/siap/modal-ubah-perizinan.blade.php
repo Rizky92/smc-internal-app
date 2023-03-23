@@ -11,19 +11,23 @@
                         @this.emit('siap.hide')
                     })
                 })
+
+                $(document).on('role-updated', e => {
+                    $('#modal-ubah-perizinan').modal('hide')
+                })
             </script>
         @endpush
     @endonce
     <x-modal id="modal-ubah-perizinan" title="Set perizinan untuk {{ $roleName }}" livewire>
-        <x-slot name="body">
-            <form id="form-ubah-perizinan" wire:submit.prevent="$emit('siap.save')">
-                <x-row-col>
+        <x-slot name="body" class="p-0" style="overflow-x: hidden">
+            <form id="form-ubah-perizinan" wire:submit.prevent="$emit('siap.update')">
+                <x-row-col class="sticky-top bg-white pt-3 pb-2 px-3">
                     <div class="form-group">
                         <label for="role-sekarang">Nama role :</label>
                         <input type="text" id="role-sekarang" wire:model.defer="roleName" class="form-control form-control-sm" />
                     </div>
                 </x-row-col>
-                <x-row-col>
+                <x-row-col class="mt-1">
                     <ul class="form-group">
                         @foreach ($this->permissions as $group => $items)
                             @foreach ($items as $key => $name)
