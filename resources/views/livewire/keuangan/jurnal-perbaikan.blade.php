@@ -17,7 +17,9 @@
         <x-slot name="body" class="table-responsive">
             <x-table sortable :sortColumns="$sortColumns" style="min-width: 100%; width: 110rem" :striped="false" :hover="false">
                 <x-slot name="columns">
-                    <x-table.th style="width: 8ch" title="#" />
+                    @can('keuangan.jurnal-perbaikan.ubah-tanggal')
+                        <x-table.th style="width: 8ch" title="#" />
+                    @endcan
                     <x-table.th name="no_jurnal" style="width: 15ch" title="No. Jurnal" />
                     <x-table.th name="no_bukti" style="width: 18ch" title="No. Bukti" />
                     <x-table.th name="waktu_jurnal" style="width: 17ch" title="Waktu Jurnal" />
@@ -34,19 +36,21 @@
                                 $count = $jurnal->detail->count();
                                 $firstDetail = $jurnal->detail->first();
                             @endphp
-                            <x-table.td rowspan="{{ $count }}" class="pl-3 py-1">
-                                <x-button
-                                    size="xs" variant="link" class="mt-n1"
-                                    title="Edit" icon="fas fa-pencil-alt" id="edit-{{ $jurnal->no_jurnal }}"
-                                    data-toggle="modal" data-target="#modal-ubah-tgl-jurnal"
-                                    wire:click.prevent="$emit('utj.prepare', {
-                                        noJurnal: '{{ $jurnal->no_jurnal }}',
-                                        noBukti: '{{ $jurnal->no_bukti }}',
-                                        keterangan: '{{ $jurnal->keterangan }}',
-                                        tglJurnal: '{{ $jurnal->tgl_jurnal }}',
-                                        jamJurnal: '{{ $jurnal->jam_jurnal }}'
-                                    })" />
-                            </x-table.td>
+                            @can('keuangan.jurnal-perbaikan.ubah-tanggal')
+                                <x-table.td rowspan="{{ $count }}" class="pl-3 py-1">
+                                    <x-button
+                                        size="xs" variant="link" class="mt-n1"
+                                        title="Edit" icon="fas fa-pencil-alt" id="edit-{{ $jurnal->no_jurnal }}"
+                                        data-toggle="modal" data-target="#modal-ubah-tgl-jurnal"
+                                        wire:click.prevent="$emit('utj.prepare', {
+                                            noJurnal: '{{ $jurnal->no_jurnal }}',
+                                            noBukti: '{{ $jurnal->no_bukti }}',
+                                            keterangan: '{{ $jurnal->keterangan }}',
+                                            tglJurnal: '{{ $jurnal->tgl_jurnal }}',
+                                            jamJurnal: '{{ $jurnal->jam_jurnal }}'
+                                        })" />
+                                </x-table.td>
+                            @endcan
                             <x-table.td rowspan="{{ $count }}">{{ $jurnal->no_jurnal }}</x-table.td>
                             <x-table.td rowspan="{{ $count }}">{{ $jurnal->no_bukti }}</x-table.td>
                             <x-table.td rowspan="{{ $count }}">{{ $jurnal->tgl_jurnal }} {{ $jurnal->jam_jurnal }}</x-table.td>
@@ -75,7 +79,7 @@
                             @endforeach
                         @endif
                     @empty
-                        <x-table.tr-empty colspan="8" />
+                        <x-table.tr-empty :colspan="auth()->user()->can('keuangan.jurnal-perbaikan.ubah-tanggal') ? 8 : 7" />
                     @endforelse
                 </x-slot>
             </x-table>

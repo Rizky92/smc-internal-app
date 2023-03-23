@@ -43,7 +43,7 @@
                     <ul class="form-group">
                         @foreach ($this->permissions as $group => $items)
                             @foreach ($items as $key => $name)
-                                <li class="{{ Arr::toCssClasses(['custom-control custom-checkbox', 'mt-3' => $loop->first && !$loop->parent->first]) }}">
+                                <li class="{{ Arr::toCssClasses(['custom-control custom-checkbox', 'mt-3' => $loop->first && !$loop->parent->first, 'ml-4' => !Str::endsWith($name, '.read')]) }}">
                                     <input class="custom-control-input" type="checkbox" id="permission-{{ $key }}" name="permissions" wire:model.defer="checkedPermissions.{{ $key }}" value="{{ $key }}">
                                     <label for="permission-{{ $key }}" class="custom-control-label font-weight-normal">{{ $name }}</label>
                                 </li>

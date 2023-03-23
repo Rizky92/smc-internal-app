@@ -46,10 +46,10 @@ class UbahTanggalJurnal extends Component
         return auth()->user()->cannot('keuangan.riwayat-jurnal-perbaikan.read')
             ? []
             : JurnalBackup::query()
-                ->with('pegawai:nik,nama')
-                ->where('no_jurnal', $this->noJurnal)
-                ->orderByDesc('tgl_jurnal_diubah')
-                ->get();
+            ->with('pegawai:nik,nama')
+            ->where('no_jurnal', $this->noJurnal)
+            ->orderByDesc('tgl_jurnal_diubah')
+            ->get();
     }
 
     public function render()
@@ -70,7 +70,7 @@ class UbahTanggalJurnal extends Component
 
     public function updateTglJurnal()
     {
-        if (!auth()->user()->can('keuangan.perbaikan-tgl-jurnal.ubah-tanggal')) {
+        if (!auth()->user()->can('keuangan.jurnal-perbaikan.ubah-tanggal')) {
             $this->flashError();
 
             return;
@@ -91,22 +91,22 @@ class UbahTanggalJurnal extends Component
 
         DB::transaction(function () use ($jurnalDiubah, $jurnalTerakhirPerTgl) {
             tracker_start('mysql_sik');
-    
+
             $jurnalDiubah->tgl_jurnal = carbon($this->tglJurnalBaru)->format('Y-m-d');
-    
+
             $jurnalDiubah->save();
-    
+
             tracker_end('mysql_sik');
-    
+
             tracker_start('mysql_smc');
-    
+
             JurnalBackup::create([
                 'no_jurnal' => $jurnalDiubah->no_jurnal,
                 'tgl_jurnal_asli' => $this->tglJurnalLama,
                 'tgl_jurnal_diubah' => $jurnalDiubah->tgl_jurnal,
                 'nip' => auth()->user()->nik,
             ]);
-    
+
             tracker_end('mysql_smc');
         });
 
@@ -116,7 +116,7 @@ class UbahTanggalJurnal extends Component
 
     public function restoreTglJurnal($backupId)
     {
-        if (!auth()->user()->can('keuangan.perbaikan-tgl-jurnal.ubah-tanggal')) {
+        if (!auth()->user()->can('keuangan.jurnal-perbaikan.ubah-tanggal')) {
             $this->flasError();
 
             return;
@@ -129,19 +129,19 @@ class UbahTanggalJurnal extends Component
             $jurnalSekarang = Jurnal::find($this->noJurnal);
 
             $tglJurnalKembali = $jurnalBackup->tgl_jurnal_asli;
-    
+
             tracker_start('mysql_sik');
-    
+
             $jurnalSekarang->tgl_jurnal = $jurnalBackup->tgl_jurnal_asli;
-    
+
             $jurnalSekarang->save();
-    
+
             tracker_end('mysql_sik');
-    
+
             tracker_start('mysql_smc');
-    
+
             $jurnalBackup->delete();
-    
+
             tracker_end('mysql_smc');
         });
 

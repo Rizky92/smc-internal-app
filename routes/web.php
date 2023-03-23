@@ -104,7 +104,7 @@ Route::prefix('admin')
                     ->name('laporan-selesai-billing');
 
                 Route::get('jurnal-supplier-po', JurnalSupplierPO::class)
-                    ->middleware('can:keuangan.jurnal-supplier-po.read')
+                    ->middleware('can:keuangan.jurnal-po-supplier.read')
                     ->name('jurnal-supplier-po');
 
                 Route::get('jurnal-piutang-lunas', JurnalPiutangLunas::class)
