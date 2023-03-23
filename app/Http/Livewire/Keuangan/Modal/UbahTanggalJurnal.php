@@ -68,20 +68,23 @@ class UbahTanggalJurnal extends Component
         $this->keterangan = $data['keterangan'];
         $this->tglJurnalLama = $data['tglJurnal'];
         $this->jamJurnalLama = $data['jamJurnal'];
-        
+
         $this->tglJurnalBaru = $data['tglJurnal'];
     }
 
     public function updateTglJurnal()
     {
-        if (! auth()->user()->can('keuangan.perbaikan-tgl-jurnal.ubah-tanggal')) {
+        if (!auth()->user()->can('keuangan.perbaikan-tgl-jurnal.ubah-tanggal')) {
             $this->flashError();
 
             return;
         }
 
         $jurnalDiubah = Jurnal::query()->find($this->noJurnal);
-        $jurnalTerakhirPerTgl = Jurnal::query()->where('tgl_jurnal', $this->tglJurnalLama)->max('no_jurnal');
+        $jurnalTerakhirPerTgl = Jurnal::query()
+            ->where('tgl_jurnal', $this->tglJurnalLama)
+            ->orderByDesc(DB::raw('right(jurnal.no_jurnal, 6)'))
+            ->value('no_jurnal');
 
         if ($jurnalDiubah->no_jurnal === $jurnalTerakhirPerTgl) {
             $this->flashError("Entri no. jurnal tidak boleh entri yang terakhir di tanggal {$jurnalDiubah->tgl_jurnal}!");
@@ -108,19 +111,19 @@ class UbahTanggalJurnal extends Component
 
         tracker_end('mysql_smc');
 
-        $this->emitUp('flash.success', "Tgl. untuk no. jurnal {$jurnalDiubah->no_jurnal} berhasil diubah!");
+        $this->flashSuccess("Tgl. untuk no. jurnal {$jurnalDiubah->no_jurnal} berhasil diubah!");
+        $this->dispatchBrowserEvent('jurnal-updated');
     }
 
     public function restoreTglJurnal($backupId)
     {
-        if (! auth()->user()->can('keuangan.perbaikan-tgl-jurnal.ubah-tanggal')) {
+        if (!auth()->user()->can('keuangan.perbaikan-tgl-jurnal.ubah-tanggal')) {
             $this->flasError();
 
             return;
         }
 
         $jurnalBackup = JurnalBackup::find($backupId);
-
         $jurnalSekarang = Jurnal::find($this->noJurnal);
 
         tracker_start('mysql_sik');
@@ -138,7 +141,7 @@ class UbahTanggalJurnal extends Component
         tracker_end('mysql_smc');
 
         $this->flashSuccess("Data jurnal dikembalikan ke tanggal {$jurnalSekarang->tgl_jurnal}!");
-        $this->emitUp('$refresh');
+        $this->dispatchBrowserEvent('jurnal-restored');
     }
 
     protected function defaultValues()

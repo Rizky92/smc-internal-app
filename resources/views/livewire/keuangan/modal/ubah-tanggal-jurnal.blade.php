@@ -10,10 +10,10 @@
                     $('#modal-ubah-tgl-jurnal').on('hide.bs.modal', e => {
                         @this.emit('utj.hide')
                     })
+                })
 
-                    $(document).on('data-saved', e => {
-                        $('#modal-ubah-tgl-jurnal').modal('hide')
-                    })
+                $(document).on('jurnal-updated', e => {
+                    $('#modal-ubah-tgl-jurnal').modal('hide')
                 })
             </script>
         @endpush
@@ -93,10 +93,7 @@
                                                     <x-table.td>{{ $item->tgl_jurnal_asli }}</x-table.td>
                                                     <x-table.td>{{ $item->nip . ' ' . optional($item->pegawai)->nama }}</x-table.td>
                                                     <x-table.td>
-                                                        <x-button
-                                                            size="xs" variant="dark" outline
-                                                            title="Restore" icon="fas fa-sync-alt"
-                                                            wire:click.prevent="restoreTglJurnal({{ $item->id }})" />
+                                                        <x-button size="xs" variant="dark" outline title="Restore" icon="fas fa-sync-alt" wire:click.prevent="restoreTglJurnal({{ $item->id }})" />
                                                     </x-table.td>
                                                 </x-table.tr>
                                             @empty
