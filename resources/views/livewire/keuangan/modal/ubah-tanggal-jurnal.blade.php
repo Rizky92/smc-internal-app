@@ -29,121 +29,80 @@
                     </x-slot>
                 </x-callout>
             </x-row-col>
-            @if (auth()->user()->can('keuangan.riwayat-jurnal-perbaikan.read'))
-                <x-navtabs livewire class="pt-3" selected="tab-ubah-tgl-jurnal">
-                    <x-slot name="tabs">
-                        <x-navtabs.tab id="tab-ubah-tgl-jurnal" title="Aksi" />
-                        <x-navtabs.tab id="tab-riwayat-perubahan-jurnal" title="Riwayat Perubahan" />
-                    </x-slot>
-                    <x-slot name="contents">
-                        <x-navtabs.content id="tab-ubah-tgl-jurnal">
-                            <form wire:submit.prevent="updateTglJurnal" class="px-3" id="form-ubah-tgl-jurnal">
-                                <x-row>
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <label class="text-sm" for="no-jurnal">No. Jurnal</label>
-                                            <input type="text" class="form-control form-control-sm" id="no-jurnal" wire:model.defer="noJurnal" readonly autocomplete="off">
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <label class="text-sm" for="no-bukti">No. Bukti</label>
-                                            <input type="text" class="form-control form-control-sm" id="no-bukti" wire:model.defer="noBukti" readonly autocomplete="off">
-                                        </div>
-                                    </div>
-                                </x-row>
-                                <x-row-col>
+            <x-navtabs livewire class="pt-3" selected="tab-ubah-tgl-jurnal">
+                <x-slot name="tabs">
+                    <x-navtabs.tab id="tab-ubah-tgl-jurnal" title="Aksi" />
+                    <x-navtabs.tab id="tab-riwayat-perubahan-jurnal" title="Riwayat Perubahan" />
+                </x-slot>
+                <x-slot name="contents">
+                    <x-navtabs.content id="tab-ubah-tgl-jurnal">
+                        <form wire:submit.prevent="updateTglJurnal" class="px-3" id="form-ubah-tgl-jurnal">
+                            <x-row>
+                                <div class="col-6">
                                     <div class="form-group">
-                                        <label class="text-sm" for="keterangan">Keterangan</label>
-                                        <textarea class="form-control form-control-sm" id="keterangan" wire:model.defer="keterangan" readonly style="resize: none"></textarea>
+                                        <label class="text-sm" for="no-jurnal">No. Jurnal</label>
+                                        <input type="text" class="form-control form-control-sm" id="no-jurnal" wire:model.defer="noJurnal" readonly autocomplete="off">
                                     </div>
-                                </x-row-col>
-                                <x-row>
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <label class="text-sm" for="tgl-jurnal-lama">Tgl. Jurnal lama</label>
-                                            <input type="date" class="form-control form-control-sm" id="tgl-jurnal-lama" wire:model.defer="tglJurnalLama" readonly autocomplete="off">
-                                        </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="text-sm" for="no-bukti">No. Bukti</label>
+                                        <input type="text" class="form-control form-control-sm" id="no-bukti" wire:model.defer="noBukti" readonly autocomplete="off">
                                     </div>
-                                    <div class="col-6">
-                                        <div class="form-group">
-                                            <label class="text-sm" for="tgl-jurnal-baru">Tgl. Jurnal BARU</label>
-                                            <input type="date" class="form-control form-control-sm" id="tgl-jurnal-baru" autocomplete="off" wire:model.defer="tglJurnalBaru">
-                                        </div>
-                                    </div>
-                                </x-row>
-                            </form>
-                        </x-navtabs.content>
-                        <x-navtabs.content id="tab-riwayat-perubahan-jurnal">
-                            <x-row-col class="p-0">
-                                <div class="table-responsive">
-                                    <x-table style="max-width: 100%" id="table-riwayat">
-                                        <x-slot name="columns">
-                                            <x-table.th class="pl-3" title="Tgl. TERBARU" />
-                                            <x-table.th title="Tgl. Sebelumnya" />
-                                            <x-table.th title="Yang mengubah" />
-                                            <x-table.th title="" />
-                                        </x-slot>
-                                        <x-slot name="body">
-                                            @forelse ($this->backupJurnal as $item)
-                                                <x-table.tr>
-                                                    <x-table.td class="pl-3">{{ $item->tgl_jurnal_diubah }}</x-table.td>
-                                                    <x-table.td>{{ $item->tgl_jurnal_asli }}</x-table.td>
-                                                    <x-table.td>{{ $item->nip . ' ' . optional($item->pegawai)->nama }}</x-table.td>
-                                                    <x-table.td>
-                                                        <x-button size="xs" variant="dark" outline title="Restore" icon="fas fa-sync-alt" wire:click.prevent="restoreTglJurnal({{ $item->id }})" />
-                                                    </x-table.td>
-                                                </x-table.tr>
-                                            @empty
-                                                <x-table.tr-empty colspan="5" />
-                                            @endforelse
-                                        </x-slot>
-                                    </x-table>
+                                </div>
+                            </x-row>
+                            <x-row-col>
+                                <div class="form-group">
+                                    <label class="text-sm" for="keterangan">Keterangan</label>
+                                    <textarea class="form-control form-control-sm" id="keterangan" wire:model.defer="keterangan" readonly style="resize: none"></textarea>
                                 </div>
                             </x-row-col>
-                        </x-navtabs.content>
-                    </x-slot>
-                </x-navtabs>
-            @else
-                <x-navtabs.content id="tab-ubah-tgl-jurnal">
-                    <form wire:submit.prevent="$emit('utj.save')" class="px-3" id="form-ubah-tgl-jurnal">
-                        <x-row>
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label class="text-sm" for="no-jurnal">No. Jurnal</label>
-                                    <input type="text" class="form-control form-control-sm" id="no-jurnal" wire:model.defer="noJurnal" readonly autocomplete="off">
+                            <x-row>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="text-sm" for="tgl-jurnal-lama">Tgl. Jurnal lama</label>
+                                        <input type="date" class="form-control form-control-sm" id="tgl-jurnal-lama" wire:model.defer="tglJurnalLama" readonly autocomplete="off">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label class="text-sm" for="no-bukti">No. Bukti</label>
-                                    <input type="text" class="form-control form-control-sm" id="no-bukti" wire:model.defer="noBukti" readonly autocomplete="off">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label class="text-sm" for="tgl-jurnal-baru">Tgl. Jurnal BARU</label>
+                                        <input type="date" class="form-control form-control-sm" id="tgl-jurnal-baru" autocomplete="off" wire:model.defer="tglJurnalBaru">
+                                    </div>
                                 </div>
-                            </div>
-                        </x-row>
-                        <x-row-col>
-                            <div class="form-group">
-                                <label class="text-sm" for="keterangan">Keterangan</label>
-                                <textarea class="form-control form-control-sm" id="keterangan" wire:model.defer="keterangan" readonly style="resize: none"></textarea>
+                            </x-row>
+                        </form>
+                    </x-navtabs.content>
+                    <x-navtabs.content id="tab-riwayat-perubahan-jurnal">
+                        <x-row-col class="p-0">
+                            <div class="table-responsive">
+                                <x-table style="max-width: 100%" id="table-riwayat">
+                                    <x-slot name="columns">
+                                        <x-table.th class="pl-3" title="Tgl. TERBARU" />
+                                        <x-table.th title="Tgl. Sebelumnya" />
+                                        <x-table.th title="Yang mengubah" />
+                                        <x-table.th title="" />
+                                    </x-slot>
+                                    <x-slot name="body">
+                                        @forelse ($this->backupJurnal as $item)
+                                            <x-table.tr>
+                                                <x-table.td class="pl-3">{{ $item->tgl_jurnal_diubah }}</x-table.td>
+                                                <x-table.td>{{ $item->tgl_jurnal_asli }}</x-table.td>
+                                                <x-table.td>{{ $item->nip . ' ' . optional($item->pegawai)->nama }}</x-table.td>
+                                                <x-table.td>
+                                                    <x-button size="xs" variant="dark" outline title="Restore" icon="fas fa-sync-alt" wire:click.prevent="restoreTglJurnal({{ $item->id }})" />
+                                                </x-table.td>
+                                            </x-table.tr>
+                                        @empty
+                                            <x-table.tr-empty colspan="5" />
+                                        @endforelse
+                                    </x-slot>
+                                </x-table>
                             </div>
                         </x-row-col>
-                        <x-row>
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label class="text-sm" for="tgl-jurnal-lama">Tgl. Jurnal lama</label>
-                                    <input type="date" class="form-control form-control-sm" id="tgl-jurnal-lama" wire:model.defer="tglJurnalLama" readonly autocomplete="off">
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label class="text-sm" for="tgl-jurnal-baru">Tgl. Jurnal BARU</label>
-                                    <input type="date" class="form-control form-control-sm" id="tgl-jurnal-baru" autocomplete="off" wire:model.defer="tglJurnalBaru">
-                                </div>
-                            </div>
-                        </x-row>
-                    </form>
-                </x-navtabs.content>
-            @endif
+                    </x-navtabs.content>
+                </x-slot>
+            </x-navtabs>
         </x-slot>
         <x-slot name="footer" class="justify-content-end">
             <x-button size="sm" title="Batal" data-dismiss="modal" />
