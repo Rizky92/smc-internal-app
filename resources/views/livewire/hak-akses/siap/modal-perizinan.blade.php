@@ -28,7 +28,7 @@
                 <x-row-col class="sticky-top bg-white pt-3 pb-2 px-3">
                     <x-flash />
                     <div class="{{ Arr::toCssClasses(['form-group', 'mt-3' => session()->has('flash.type', 'flash.message')]) }}">
-                        <label for="role-sekarang">Nama role :</label>
+                        <label for="role-sekarang">Nama role:</label>
                         <input type="text" id="role-sekarang" wire:model.defer="roleName" class="form-control form-control-sm" />
                     </div>
                 </x-row-col>
@@ -36,7 +36,7 @@
                     <ul class="form-group">
                         @foreach ($this->permissions as $group => $items)
                             @foreach ($items as $key => $name)
-                                <li class="{{ Arr::toCssClasses(['custom-control custom-checkbox', 'mt-3' => $loop->first && !$loop->parent->first, 'ml-4' => !Str::endsWith($name, '.read')]) }}">
+                                <li class="{{ Arr::toCssClasses(['custom-control custom-checkbox', 'mt-3' => $loop->first && !$loop->parent->first]) }}">
                                     <input class="custom-control-input" type="checkbox" id="permission-{{ $key }}" name="permissions" wire:model.defer="checkedPermissions.{{ $key }}" value="{{ $key }}">
                                     <label for="permission-{{ $key }}" class="custom-control-label font-weight-normal">{{ $name }}</label>
                                 </li>

@@ -26,8 +26,6 @@ class ModalPerizinan extends Component
         'siap.prepare' => 'prepare',
         'siap.show' => 'showModal',
         'siap.hide' => 'hideModal',
-        'siap.create' => 'create',
-        'siap.update' => 'update',
     ];
 
     public function mount()
@@ -49,6 +47,7 @@ class ModalPerizinan extends Component
 
     public function prepare(int $id = -1, string $name = '', array $permissionIds = [])
     {
+        // dd(Permission::whereIn('id', $permissionIds)->pluck('name', 'id'));
         $this->roleId = $id;
         $this->roleName = $name;
         $this->checkedPermissions = $permissionIds;
@@ -62,31 +61,14 @@ class ModalPerizinan extends Component
             return;
         }
 
-        $validator = Validator::make([
-            'roleName' => $this->roleName,
-            'checkedPermissions' => $this->checkedPermissions,
-        ], [
-            'roleName' => ['required', 'string', 'max:255'],
-            'checkedPermissions' => ['required', 'array', 'min:0'],
-            'checkedPermissions.*' => ['exists:App\Models\Aplikasi\Permission,id'],
-        ]);
-
-        if ($validator->fails()) {
-            $this->flashError('Data tidak dapat divalidasi! Silahkan cek kembali data yang diinputkan!');
-
-            return;
-        }
-
-        $input = $validator->validate();
-
         tracker_start('mysql_smc');
 
         $role = Role::create([
-            'name' => $input['roleName'],
+            'name' => $this->roleName,
             'guard_name' => 'web',
         ]);
 
-        $role->syncPermissions($input['checkedPermissions']);
+        $role->syncPermissions(array_values($this->checkedPermissions));
 
         tracker_end('mysql_smc');
 
@@ -102,37 +84,18 @@ class ModalPerizinan extends Component
             return;
         }
 
-        $validator = Validator::make([
-            'roleId' => $this->roleId,
-            'roleName' => $this->roleName,
-            'checkedPermissions' => $this->checkedPermissions,
-        ], [
-            'roleId' => ['required', 'exists:App\Models\Aplikasi\Role,id'],
-            'roleName' => ['required', 'string', 'max:255'],
-            'checkedPermissions' => ['required', 'array', 'min:0'],
-            'checkedPermissions.*' => ['exists:App\Models\Aplikasi\Permission,id'],
-        ]);
-
-        if ($validator->fails()) {
-            $this->flashError('Data tidak dapat divalidasi! Silahkan cek kembali data yang diinputkan!');
-
-            return;
-        }
-
-        $input = $validator->validate();
-
-        $role = Role::findById($input['roleId']);
+        $role = Role::findById($this->roleId);
 
         tracker_start('mysql_smc');
 
-        $role->name = $input['roleName'];
+        $role->name = $this->roleName;
         $role->save();
 
-        $role->syncPermissions($input['checkedPermissions']);
+        $role->syncPermissions(array_values($this->checkedPermissions));
 
         tracker_end('mysql_smc');
 
-        $this->emitUp('flash.success', "Hak akses {$input['roleName']} berhasil diupdate!");
+        $this->emitUp('flash.success', "Hak akses {$this->roleName} berhasil diupdate!");
         $this->dispatchBrowserEvent('role-updated');
     }
 
