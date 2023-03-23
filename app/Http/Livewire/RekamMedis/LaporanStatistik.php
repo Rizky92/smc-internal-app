@@ -61,7 +61,7 @@ class LaporanStatistik extends Component
     {
         return [
             StatistikRekamMedis::query()
-                ->whereBetween('tgl_masuk', [$this->tglAwal, $this->tglAkhir])
+                ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
                 ->orderBy('no_rawat')
                 ->cursor()
         ];

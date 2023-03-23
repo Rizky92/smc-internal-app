@@ -53,7 +53,7 @@
                             <x-table.td>{{ $pasien->data_pasien }}</x-table.td>
                             <x-table.td>{{ $pasien->png_jawab }}</x-table.td>
                             <x-table.td>{{ $pasien->nm_poli }}</x-table.td>
-                            <x-table.td>{{ $pasien->dokter_poli }}</x-table.td>
+                            <x-table.td>{{ $pasien->nm_dokter }}</x-table.td>
                             <x-table.td>{{ $pasien->stts_pulang }}</x-table.td>
                             <x-table.td>{{ $pasien->tgl_masuk }}</x-table.td>
                             <x-table.td>{{ $pasien->jam_masuk }}</x-table.td>

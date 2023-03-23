@@ -32,6 +32,16 @@
     $finalClass = collect($finalClass)->join(' ');
 @endphp
 
+@once
+    @push('js')
+        <script>
+            $('.modal#{{ $id }}').on('show.bs.modal', e => {
+                $('.modal#{{ $id }}').modal('handleUpdate')
+            })
+        </script>
+    @endpush
+@endonce
+
 <div class="modal fade" id="{{ $id }}" {{ $livewire ? 'wire:ignore.self' : null }}>
     <div class="modal-dialog {{ $finalClass }}">
         <div {{ $attributes->merge(['class' => 'modal-content']) }}>
