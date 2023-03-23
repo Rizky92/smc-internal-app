@@ -46,10 +46,10 @@ class UbahTanggalJurnal extends Component
         return auth()->user()->cannot('keuangan.riwayat-jurnal-perbaikan.read')
             ? []
             : JurnalBackup::query()
-            ->with('pegawai:nik,nama')
-            ->where('no_jurnal', $this->noJurnal)
-            ->orderByDesc('tgl_jurnal_diubah')
-            ->get();
+                ->with('pegawai:nik,nama')
+                ->where('no_jurnal', $this->noJurnal)
+                ->orderByDesc('tgl_jurnal_diubah')
+                ->get();
     }
 
     public function render()

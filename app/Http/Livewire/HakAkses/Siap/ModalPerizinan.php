@@ -6,6 +6,7 @@ use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
+use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -13,7 +14,7 @@ use Livewire\Component;
 
 class ModalPerizinan extends Component
 {
-    use Filterable, LiveTable, DeferredModal;
+    use Filterable, LiveTable, DeferredModal, FlashComponent;
 
     public $roleId;
 
@@ -22,12 +23,11 @@ class ModalPerizinan extends Component
     public $checkedPermissions;
 
     protected $listeners = [
-        'siap.prepare-create' => 'prepareCreate',
-        'siap.prepare-update' => 'prepareUpdate',
+        'siap.prepare' => 'prepare',
         'siap.show' => 'showModal',
         'siap.hide' => 'hideModal',
-        'siap.create-role' => 'createRole',
-        'siap.update-role' => 'updateRole',
+        'siap.create' => 'create',
+        'siap.update' => 'update',
     ];
 
     public function mount()
@@ -47,54 +47,57 @@ class ModalPerizinan extends Component
         return view('livewire.hak-akses.siap.modal-perizinan');
     }
 
-    public function prepareCreate()
+    public function prepare(int $id = -1, string $name = '', array $permissionIds = [])
     {
-        $this->defaultValues();
+        $this->roleId = $id;
+        $this->roleName = $name;
+        $this->checkedPermissions = $permissionIds;
     }
 
-    public function createRole()
+    public function create()
     {
         if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
-            $this->emitUp('flash.error');
+            $this->flashError();
 
             return;
         }
 
         $validator = Validator::make([
             'roleName' => $this->roleName,
-            'checkedPermissions' => ['array'],
-            'checkedPermissions.*' => ['string'],
+            'checkedPermissions' => $this->checkedPermissions,
+        ], [
+            'roleName' => ['required', 'string', 'max:255'],
+            'checkedPermissions' => ['required', 'array', 'min:0'],
+            'checkedPermissions.*' => ['exists:App\Models\Aplikasi\Permission,id'],
         ]);
 
         if ($validator->fails()) {
-            $this->emitUp('flash.error');
+            $this->flashError('Data tidak dapat divalidasi! Silahkan cek kembali data yang diinputkan!');
 
             return;
         }
 
+        $input = $validator->validate();
+
         tracker_start('mysql_smc');
 
         $role = Role::create([
-            'name' => $this->roleName,
+            'name' => $input['roleName'],
             'guard_name' => 'web',
         ]);
 
-        $role->syncPermissions($this->checkedPermissions);
+        $role->syncPermissions($input['checkedPermissions']);
 
         tracker_end('mysql_smc');
-    }
-    
-    public function prepareUpdate(int $roleId = -1, string $roleName = '', $permissionIds = [])
-    {
-        $this->roleId = $roleId;
-        $this->roleName = $roleName;
-        $this->checkedPermissions = collect($permissionIds)->mapWithKeys(fn ($v, $k) => [$v => $v])->toArray();
+
+        $this->emitUp('flash.success', 'Hak akses baru berhasil ditambahkan!');
+        $this->dispatchBrowserEvent('role-created');
     }
 
-    public function updateRole()
+    public function update()
     {
         if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
-            $this->emitUp('flash.error');
+            $this->flashError();
 
             return;
         }
@@ -104,28 +107,33 @@ class ModalPerizinan extends Component
             'roleName' => $this->roleName,
             'checkedPermissions' => $this->checkedPermissions,
         ], [
-            'roleId' => ['required'],
+            'roleId' => ['required', 'exists:App\Models\Aplikasi\Role,id'],
             'roleName' => ['required', 'string', 'max:255'],
-            'checkedPermissions' => ['array'],
-            'checkedPermissions.*' => ['string', 'exists:App\Models\Aplikasi\Permission,id']
+            'checkedPermissions' => ['required', 'array', 'min:0'],
+            'checkedPermissions.*' => ['exists:App\Models\Aplikasi\Permission,id'],
         ]);
 
         if ($validator->fails()) {
-            $this->emit('flash.error');
+            $this->flashError('Data tidak dapat divalidasi! Silahkan cek kembali data yang diinputkan!');
 
             return;
         }
 
+        $input = $validator->validate();
+
+        $role = Role::findById($input['roleId']);
+
         tracker_start('mysql_smc');
 
-        $role = Role::findById($this->roleId);
-        $role->name = $this->roleName;
-
+        $role->name = $input['roleName'];
         $role->save();
 
-        $role->syncPermissions($this->checkedPermissions);
+        $role->syncPermissions($input['checkedPermissions']);
 
         tracker_end('mysql_smc');
+
+        $this->emitUp('flash.success', "Hak akses {$input['roleName']} berhasil diupdate!");
+        $this->dispatchBrowserEvent('role-updated');
     }
 
     protected function defaultValues()

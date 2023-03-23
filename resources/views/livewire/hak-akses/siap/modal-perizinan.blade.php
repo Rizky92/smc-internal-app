@@ -10,14 +10,6 @@
                     $('#modal-perizinan').on('hide.bs.modal', e => {
                         @this.emit('siap.hide')
                     })
-
-                    $('button#batalsimpan').click(e => {
-                        if (@this.roleId !== -1) {
-                            @this.emit('siap.update-role')
-                        } else {
-                            @this.emit('siap.create-role')
-                        }
-                    })
                 })
 
                 $(document).on('role-created', e => {
@@ -32,9 +24,10 @@
     @endonce
     <x-modal id="modal-perizinan" title="Set perizinan untuk {{ $roleName }}" livewire>
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
-            <form id="form-perizinan" wire:submit.prevent="$emit('siap.{{ $roleId !== -1 ? 'update-role' : 'create-role' }}')">
+            <form id="form-perizinan" wire:submit.prevent="{{ $roleId !== -1 ? 'update' : 'create' }}">
                 <x-row-col class="sticky-top bg-white pt-3 pb-2 px-3">
-                    <div class="form-group">
+                    <x-flash />
+                    <div class="{{ Arr::toCssClasses(['form-group', 'mt-3' => session()->has('flash.type', 'flash.message')]) }}">
                         <label for="role-sekarang">Nama role :</label>
                         <input type="text" id="role-sekarang" wire:model.defer="roleName" class="form-control form-control-sm" />
                     </div>

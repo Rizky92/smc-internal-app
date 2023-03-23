@@ -9,7 +9,7 @@
 
                     permissionIds = Array.from(permissionIds.split(','))
 
-                    @this.emit('siap.prepare-update', roleId, roleName, permissionIds)
+                    @this.emit('siap.prepare', roleId, roleName, permissionIds)
                 }
             </script>
         @endpush
