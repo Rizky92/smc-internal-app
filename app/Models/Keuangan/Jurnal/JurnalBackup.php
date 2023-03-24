@@ -39,27 +39,4 @@ class JurnalBackup extends Model
     {
         return $this->belongsTo(Pegawai::class, 'nip', 'nik');
     }
-
-    protected static function booted()
-    {
-        parent::booted();
-
-        static::addGlobalScope(function (Builder $query) {
-            $db = DB::connection('mysql_sik')->getDatabaseName();
-
-            $sqlSelect = <<<SQL
-                jurnal_backup.no_jurnal,
-                jurnal_backup.tgl_jurnal_diubah,
-                jurnal_backup.tgl_asli,
-                jurnal.keterangan,
-                jurnal_backup.nip,
-                pegawai.nama
-            SQL;
-
-            return $query
-                ->selectRaw($sqlSelect)
-                ->join(DB::raw("$db.jurnal jurnal"), 'jurnal_backup.no_jurnal', '=', 'jurnal.no_jurnal')
-                ->join(DB::raw("$db.pegawai pegawai"), 'jurnal_backup.nip', '=', 'pegawai.nik');
-        });
-    }
 }

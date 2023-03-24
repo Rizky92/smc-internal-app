@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\User\Siap;
 
 use App\Models\Aplikasi\Permission;
+use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
 use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
@@ -38,6 +39,17 @@ class SetPerizinan extends Component
     public function render()
     {
         return view('livewire.user.siap.set-perizinan');
+    }
+
+    public function getRolesProperty()
+    {
+        return $this->isDeferred
+            ? []
+            : Role::query()
+                ->with('permissions')
+                ->search($this->cari)
+                ->when($this->showChecked, fn ($q) => $q->orWhereIn('id', collect($this->checkedRoles)->filter()->keys()->all()))
+                ->pluck('name', 'id');
     }
 
     public function getPermissionsProperty()
