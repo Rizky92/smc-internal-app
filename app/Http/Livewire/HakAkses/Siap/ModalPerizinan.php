@@ -45,12 +45,16 @@ class ModalPerizinan extends Component
         return view('livewire.hak-akses.siap.modal-perizinan');
     }
 
-    public function prepare(int $id = -1, string $name = '', array $permissionIds = [])
+    public function prepare(int $id = -1)
     {
-        // dd(Permission::whereIn('id', $permissionIds)->pluck('name', 'id'));
         $this->roleId = $id;
-        $this->roleName = $name;
-        $this->checkedPermissions = $permissionIds;
+
+        if ($id !== -1) {
+            $role = Role::findById($id);
+    
+            $this->roleName = $role->name;
+            $this->checkedPermissions = $role->permissions->pluck('id', 'id')->all();
+        }
     }
 
     public function create()

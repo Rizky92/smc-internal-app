@@ -27,7 +27,7 @@
             <form id="form-perizinan" wire:submit.prevent="{{ $roleId !== -1 ? 'update' : 'create' }}">
                 <x-row-col class="sticky-top bg-white pt-3 pb-2 px-3">
                     <x-flash />
-                    <div class="{{ Arr::toCssClasses(['form-group', 'mt-3' => session()->has('flash.type', 'flash.message')]) }}">
+                    <div class="{{ Arr::toCssClasses(['form-group', 'mt-3' => session()->has(['flash.type', 'flash.message'])]) }}">
                         <label for="role-sekarang">Nama role:</label>
                         <input type="text" id="role-sekarang" wire:model.defer="roleName" class="form-control form-control-sm" />
                     </div>

@@ -29,13 +29,13 @@
                     </x-slot>
                 </x-callout>
             </x-row-col>
-            <x-navtabs livewire class="pt-3" selected="tab-ubah-tgl-jurnal">
+            <x-navtabs livewire class="pt-3" selected="ubah-tgl-jurnal">
                 <x-slot name="tabs">
-                    <x-navtabs.tab id="tab-ubah-tgl-jurnal" title="Aksi" />
-                    <x-navtabs.tab id="tab-riwayat-perubahan-jurnal" title="Riwayat Perubahan" />
+                    <x-navtabs.tab id="ubah-tgl-jurnal" title="Aksi" />
+                    <x-navtabs.tab id="riwayat-perubahan" title="Riwayat Perubahan" />
                 </x-slot>
                 <x-slot name="contents">
-                    <x-navtabs.content id="tab-ubah-tgl-jurnal">
+                    <x-navtabs.content id="ubah-tgl-jurnal">
                         <form wire:submit.prevent="updateTglJurnal" class="px-3" id="form-ubah-tgl-jurnal">
                             <x-row>
                                 <div class="col-6">
@@ -73,7 +73,7 @@
                             </x-row>
                         </form>
                     </x-navtabs.content>
-                    <x-navtabs.content id="tab-riwayat-perubahan-jurnal">
+                    <x-navtabs.content id="riwayat-perubahan">
                         <x-row-col class="p-0">
                             <div class="table-responsive">
                                 <x-table style="max-width: 100%" id="table-riwayat">

@@ -3,14 +3,15 @@
 namespace App\Http\Livewire\User\Siap;
 
 use App\Models\Aplikasi\Permission;
-use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
 use App\Support\Traits\Livewire\DeferredModal;
+use App\Support\Traits\Livewire\Filterable;
+use App\Support\Traits\Livewire\LiveTable;
 use Livewire\Component;
 
 class SetPerizinan extends Component
 {
-    use DeferredModal;
+    use Filterable, LiveTable, DeferredModal;
     
     public $nrp;
 
@@ -19,6 +20,8 @@ class SetPerizinan extends Component
     public $checkedRoles;
 
     public $checkedPermissions;
+
+    public $showChecked;
 
     protected $listeners = [
         'siap.show-sp' => 'showModal',
@@ -37,14 +40,14 @@ class SetPerizinan extends Component
         return view('livewire.user.siap.set-perizinan');
     }
 
-    public function getAvailableRolesProperty()
+    public function getPermissionsProperty()
     {
-        return Role::with('permissions')->get();
-    }
-
-    public function getOtherPermissionsProperty()
-    {
-        return Permission::whereDoesntHave('roles')->get();
+        return $this->isDeferred
+            ? []
+            : Permission::query()
+                ->search($this->cari)
+                ->when($this->showChecked, fn ($q) => $q->orWhereIn('id', collect($this->checkedPermissions)->filter()->keys()->all()))
+                ->pluck('name', 'id');
     }
 
     public function prepareUser(string $nrp = '', string $nama = '', array $roleIds = [], array $permissionIds = [])
@@ -84,5 +87,6 @@ class SetPerizinan extends Component
         $this->nama = '';
         $this->checkedRoles = [];
         $this->checkedPermissions = [];
+        $this->showChecked = false;
     }
 }

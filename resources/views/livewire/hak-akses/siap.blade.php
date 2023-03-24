@@ -1,20 +1,6 @@
 <div>
     <x-flash />
 
-    @once
-        @push('js')
-            <script>
-                function loadData(e) {
-                    let {roleId, roleName, permissionIds} = e.dataset
-
-                    permissionIds = Array.from(permissionIds.split(','))
-
-                    @this.emit('siap.prepare', roleId, roleName, permissionIds)
-                }
-            </script>
-        @endpush
-    @endonce
-
     <livewire:hak-akses.siap.modal-perizinan />
 
     <x-card>
@@ -40,15 +26,12 @@
                         <x-table.tr :class="Arr::toCssClasses(['text-muted' => $superadmin])">
                             <x-table.td>
                                 @unless($superadmin)
-                                    <div style="display: inline-flex; flex-wrap: wrap; gap: 0.5rem">
-                                        <x-button
-                                            size="xs" variant="link"
-                                            title="Edit" icon="fas fa-pencil-alt"
-                                            data-toggle="modal" data-target="#modal-perizinan"
-                                            data-role-id="{{ $role->id }}" data-role-name="{{ $role->name }}" data-permission-ids="{{ $role->permissions->pluck('id')->join(',') }}"
-                                            onclick="loadData(this)"
-                                        />
-                                    </div>
+                                    <x-button
+                                        size="xs" variant="link" class="m-0 p-0 border-0"
+                                        title="Edit" icon="fas fa-pencil-alt"
+                                        data-toggle="modal" data-target="#modal-perizinan"
+                                        wire:click="$emit('siap.prepare', {{ $role->id }})"
+                                    />
                                 @endunless
                             </x-table.td>
                             <x-table.td class="{{ Arr::toCssClasses(['pt-2' => !$superadmin]) }}">{{ $role->name }}</x-table.td>

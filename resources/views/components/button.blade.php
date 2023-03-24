@@ -56,19 +56,19 @@
             @if ($icon)
                 <i class="{{ $icon }}"></i>
             @endif
-            @if ($title && !$hideTitle)
-                <span class="{{ Arr::toCssClasses(['ml-1' => $icon]) }}">{{ $title ?? $slot }}</span>
+            @if ($title)
+                <span class="{{ Arr::toCssClasses(['ml-1' => $icon, 'sr-only' => $hideTitle]) }}">{{ $title ?? $slot }}</span>
             @endif
         </button>
     @break
 
     @case('link')
-        <a {{ $attributes->merge(['class' => $finalClass, 'role' => 'button', 'id' => $id, 'title' => $titlew]) }}>
+        <a {{ $attributes->merge(['class' => $finalClass, 'role' => 'button', 'id' => $id, 'title' => $title]) }}>
             @if ($icon)
                 <i class="{{ $icon }}"></i>
             @endif
-            @if ($title && !$hideTitle)
-                <span class="{{ Arr::toCssClasses(['ml-1' => $icon]) }}">{{ $title ?? $slot }}</span>
+            @if ($title)
+                <span class="{{ Arr::toCssClasses(['ml-1' => $icon, 'sr-only' => $hideTitle]) }}">{{ $title ?? $slot }}</span>
             @endif
         </a>
     @break

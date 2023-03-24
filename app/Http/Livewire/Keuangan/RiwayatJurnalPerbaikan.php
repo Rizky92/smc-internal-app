@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Keuangan;
 
+use App\Models\Keuangan\Jurnal\JurnalBackup;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
@@ -32,10 +33,15 @@ class RiwayatJurnalPerbaikan extends Component
         $this->defaultValues();
     }
 
+    public function getDataRiwayatJurnalPerbaikanProperty()
+    {
+        return JurnalBackup::query()
+    }
+
     public function render()
     {
         return view('livewire.keuangan.riwayat-jurnal-perbaikan')
-            ->layout(BaseLayout::class, ['title' => 'RiwayatJurnalPerbaikan']);
+            ->layout(BaseLayout::class, ['title' => 'Riwayat Jurnal Perbaikan']);
     }
 
     protected function defaultValues()

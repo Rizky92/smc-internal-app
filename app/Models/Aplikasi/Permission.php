@@ -10,4 +10,6 @@ class Permission extends BaseModel
     use Searchable;
     
     protected $connection = 'mysql_smc';
+
+    protected $searchColumns = ['name'];
 }
