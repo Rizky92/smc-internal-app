@@ -56,7 +56,7 @@ class JurnalSupplierPO extends Component
             ->sortWithColumns($this->sortColumns, [
                 'nm_pegawai' => "trim(concat(jurnal_medis.nik, ' ', coalesce(pegawai.nama, '')))"
             ])
-            ->paginate($this->perpage);
+            ->paginate($this->perpage, ['*'], 'page_medis');
     }
 
     public function getJurnalBarangNonMedisProperty()
@@ -81,7 +81,7 @@ class JurnalSupplierPO extends Component
             ->sortWithColumns($this->sortColumns, [
                 'nm_pegawai' => "trim(concat(jurnal_non_medis.nik, ' ', coalesce(pegawai.nama, '')))"
             ])
-            ->paginate($this->perpage);
+            ->paginate($this->perpage, ['*'], 'page_nonmedis');
     }
 
     public function render()
@@ -105,6 +105,14 @@ class JurnalSupplierPO extends Component
     {
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+    }
+
+    public function searchData()
+    {
+        $this->resetPage('page_medis');
+        $this->resetPage('page_nonmedis');
+
+        $this->emit('$refresh');
     }
 
     protected function dataPerSheet(): array

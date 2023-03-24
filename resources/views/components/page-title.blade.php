@@ -1,4 +1,4 @@
-<div class="content-header">
+<div class="content-header" page-title>
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-12">

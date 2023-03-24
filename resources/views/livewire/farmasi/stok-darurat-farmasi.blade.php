@@ -12,7 +12,7 @@
                 <x-filter.search class="ml-2" />
             </x-card.row-col>
         </x-slot>
-        <x-slot name="body" class="table-responsive">
+        <x-slot name="body" class="table-responsive" style="height: 911px">
             <x-table sortable :sortColumns="$sortColumns" style="min-width: 100%; width: 150rem">
                 <x-slot name="columns">
                     <x-table.th name="kode_brng" title="Kode" style="width: 13ch" />

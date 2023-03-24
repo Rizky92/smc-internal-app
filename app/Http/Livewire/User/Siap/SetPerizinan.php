@@ -49,7 +49,7 @@ class SetPerizinan extends Component
                 ->with('permissions')
                 ->search($this->cari)
                 ->when($this->showChecked, fn ($q) => $q->orWhereIn('id', collect($this->checkedRoles)->filter()->keys()->all()))
-                ->pluck('name', 'id');
+                ->get();
     }
 
     public function getPermissionsProperty()

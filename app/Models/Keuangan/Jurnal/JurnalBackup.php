@@ -5,10 +5,8 @@ namespace App\Models\Keuangan\Jurnal;
 use App\Models\Kepegawaian\Pegawai;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\DB;
 
 class JurnalBackup extends Model
 {

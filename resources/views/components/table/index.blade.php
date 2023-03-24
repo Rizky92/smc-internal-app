@@ -10,7 +10,7 @@
     'hover' => true,
 ])
 
-<table {{ $attributes->class(['table table-head-fixed table-sm text-sm', 'table-hover' => $hover, 'table-striped' => $striped]) }}>
+<table {{ $attributes->class(['table table-head-fixed table-sm text-sm text-nowrap', 'table-hover' => $hover, 'table-striped' => $striped]) }}>
     <thead>
         <tr {{ $columns->attributes }}>
             {{ $columns }}
