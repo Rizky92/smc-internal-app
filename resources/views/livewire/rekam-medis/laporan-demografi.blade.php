@@ -2,8 +2,8 @@
     <x-flash />
 
     <x-card use-default-filter use-loading wire:init="loadProperties">
-        <x-slot name="body" class="table-responsive">
-            <x-table style="width: 150rem">
+        <x-slot name="body">
+            <x-table style="width: 150rem" hover zebra sticky>
                 <x-slot name="columns">
                     <x-table.th title="Kecamatan" width="250" />
                     <x-table.th title="No. RM" width="70" />

@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Livewire\Keuangan;
+namespace App\Http\Livewire\Perawatan\Modal;
 
-use App\Models\Keuangan\Jurnal\JurnalBackup;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
@@ -12,7 +11,7 @@ use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
 
-class RiwayatJurnalPerbaikan extends Component
+class UbahHargaKamarInap extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
@@ -35,8 +34,8 @@ class RiwayatJurnalPerbaikan extends Component
 
     public function render()
     {
-        return view('livewire.keuangan.riwayat-jurnal-perbaikan')
-            ->layout(BaseLayout::class, ['title' => 'Riwayat Jurnal Perbaikan']);
+        return view('livewire.perawatan.modal.ubah-harga-kamar-inap')
+            ->layout(BaseLayout::class, ['title' => 'UbahHargaKamarInap']);
     }
 
     protected function defaultValues()

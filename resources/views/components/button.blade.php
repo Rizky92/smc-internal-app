@@ -50,6 +50,21 @@
     $id ??= str($title)->slug();
 @endphp
 
+@once
+    @push('css')
+        <style>
+            .btn {
+                display: inline-flex !important;
+                align-items: center !important;
+            }
+
+            .btn::after {
+                margin-top: 0.125rem
+            }
+        </style>
+    @endpush
+@endonce
+
 @switch($as)
     @case('button')
         <button {{ $attributes->merge(['class' => $finalClass, 'type' => 'button', 'id' => $id, 'title' => $title]) }}>

@@ -40,7 +40,7 @@
         </div>
 
         <nav class="mt-3">
-            <ul class="nav nav-pills nav-sidebar flex-column nav-flat" data-widget="treeview" role="menu" data-accordion="false">
+            <ul class="nav nav-pills nav-sidebar flex-column nav-flat text-sm" data-widget="treeview" role="menu" data-accordion="false">
                 {{ $slot }}
             </ul>
         </nav>

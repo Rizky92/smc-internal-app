@@ -133,8 +133,8 @@
                 <x-filter.search class="ml-2" />
             </x-card.row-col>
         </x-slot>
-        <x-slot name="body" class="table-responsive p-0">
-            <x-table sortable :sortColumns="$sortColumns">
+        <x-slot name="body">
+            <x-table :sortColumns="$sortColumns" sortable hover zebra sticky>
                 <x-slot name="columns">
                     <x-table.th name="nik" title="NRP" style="width: 15ch" />
                     <x-table.th name="nama" title="Nama" style="width: 50ch" />

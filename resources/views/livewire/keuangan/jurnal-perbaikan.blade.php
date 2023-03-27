@@ -14,8 +14,8 @@
                 <x-filter.search class="ml-2" />
             </x-card.row-col>
         </x-slot>
-        <x-slot name="body" class="table-responsive">
-            <x-table sortable :sortColumns="$sortColumns" style="min-width: 100%; width: 110rem" :striped="false" :hover="false">
+        <x-slot name="body">
+            <x-table sortable :sortColumns="$sortColumns" style="width: 110rem" sticky>
                 <x-slot name="columns">
                     @can('keuangan.jurnal-perbaikan.ubah-tanggal')
                         <x-table.th style="width: 8ch" title="#" />

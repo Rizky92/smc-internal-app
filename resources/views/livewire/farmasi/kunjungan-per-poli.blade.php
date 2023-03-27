@@ -2,8 +2,8 @@
     <x-flash />
 
     <x-card use-default-filter>
-        <x-slot name="body" class="table-responsive">
-            <x-table sortable :sortColumns="$sortColumns">
+        <x-slot name="body">
+            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky>
                 <x-slot name="columns">
                     <x-table.th name="no_rawat" title="No. Rawat" />
                     <x-table.th name="no_resep" title="No. Resep" />

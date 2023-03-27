@@ -1,9 +1,3 @@
-<div class="content-header" page-title>
-    <div class="container-fluid">
-        <div class="row mb-2">
-            <div class="col-12">
-                <h1 class="m-0">{{ $title }}</h1>
-            </div>
-        </div>
-    </div>
+<div class="p-3" page-title>
+    <h2 class="m-0">{{ $title }}</h2>
 </div>

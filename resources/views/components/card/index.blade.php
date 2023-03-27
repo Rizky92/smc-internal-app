@@ -31,7 +31,7 @@
         {{ $body }}
     </div>
     @if ($footer)
-        <div class="card-footer" card-section-footer>
+        <div class="card-footer py-0 my-0" card-section-footer>
             {{ $footer }}
         </div>
     @endif

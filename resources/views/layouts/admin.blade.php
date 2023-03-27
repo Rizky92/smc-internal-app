@@ -15,28 +15,6 @@
             user-select: none !important;
         }
 
-        .btn {
-            display: inline-flex !important;
-            align-items: center !important;
-        }
-
-        .btn::after {
-            margin-top: 0.125rem
-        }
-
-        .select2-selection__arrow {
-            top: 0 !important;
-        }
-
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 2rem !important;
-        }
-
-        .select2-container .select2-selection--single .select2-selection__rendered {
-            padding-left: 0 !important;
-            margin-left: -0.125rem !important;
-        }
-
         .sidebar-search-results .list-group-item {
             color: #111827 !important;
             background-color: #fff !important;
@@ -50,14 +28,9 @@
         .sidebar-search-results .list-group-item:hover, .sidebar-search-results .list-group-item:focus {
             background-color: #e5e7eb !important
         }
-
-        .table {
-            margin-bottom: 0 !important;
-        }
     </style>
-    @livewireStyles
-
     @stack('css')
+    @livewireStyles
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed bg-light">
@@ -104,11 +77,9 @@
 
         <div class="content-wrapper">
             <x-page-title :title="$title" />
-            <section class="content">
-                <div class="container-fluid">
-                    {{ $slot }}
-                </div>
-            </section>
+            <div class="px-3">
+                {{ $slot }}
+            </div>
         </div>
     </div>
 

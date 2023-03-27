@@ -12,8 +12,8 @@
                 <x-filter.button-export-excel class="ml-auto" />
             </x-card.row-col>
         </x-slot>
-        <x-slot name="body" class="table-responsive">
-            <x-table style="width: 150rem">
+        <x-slot name="body">
+            <x-table style="width: 150rem" zebra hover sticky>
                 <x-slot name="columns">
                     <x-table.th width="250" title="Laporan" />
                     <x-table.th class="text-center px-0" width="150" title="Januari" />

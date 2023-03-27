@@ -14,15 +14,15 @@
                 <x-filter.search class="ml-2" />
             </x-card.row-col>
         </x-slot>
-        <x-slot name="body">
+        <x-slot name="body" class="tab-content">
             <x-navtabs livewire selected="medis">
                 <x-slot name="tabs">
                     <x-navtabs.tab id="medis" title="Obat/BHP/Alkes" />
                     <x-navtabs.tab id="nonmedis" title="Non Medis" />
                 </x-slot>
                 <x-slot name="contents">
-                    <x-navtabs.content id="medis" class="table-responsive">
-                        <x-table sortable :sortColumns="$sortColumns" style="min-width: 100%">
+                    <x-navtabs.content id="medis">
+                        <x-table :sortColumns="$sortColumns" sortable hover zebra sticky>
                             <x-slot name="columns">
                                 <x-table.th name="no_jurnal" title="No. Jurnal" />
                                 <x-table.th name="waktu_jurnal" title="Waktu" />
@@ -52,10 +52,10 @@
                                 @endforelse
                             </x-slot>
                         </x-table>
-                        <x-paginator class="px-4 py-3 bg-light" :data="$this->jurnalBarangMedis" />
+                        <x-paginator class="px-4 bg-light" :data="$this->jurnalBarangMedis" />
                     </x-navtabs.content>
-                    <x-navtabs.content id="nonmedis" class="table-responsive">
-                        <x-table sortable :sortColumns="$sortColumns" style="min-width: 100%">
+                    <x-navtabs.content id="nonmedis">
+                        <x-table :sortColumns="$sortColumns" sortable hover zebra sticky>
                             <x-slot name="columns">
                                 <x-table.th name="no_jurnal" title="No. Jurnal" />
                                 <x-table.th name="waktu_jurnal" title="Waktu" />
@@ -85,7 +85,7 @@
                                 @endforelse
                             </x-slot>
                         </x-table>
-                        <x-paginator class="px-4 py-3 bg-light" :data="$this->jurnalBarangNonMedis" />
+                        <x-paginator class="px-4 bg-light" :data="$this->jurnalBarangNonMedis" />
                     </x-navtabs.content>
                 </x-slot>
             </x-navtabs>

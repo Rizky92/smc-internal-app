@@ -15,8 +15,8 @@
             </x-card.row-col>
         </x-slot>
 
-        <x-slot name="body" class="table-responsive">
-            <x-table style="width: 160rem" sortable :sortColumns="$sortColumns">
+        <x-slot name="body">
+            <x-table :sortColumns="$sortColumns" style="width: 160rem" sortable hover zebra sticky>
                 <x-slot name="columns">
                     <x-table.th name="no_rawat" title="No. Rawat" style="width: 20ch" />
                     <x-table.th name="tgl_registrasi" title="Tgl. Registrasi" style="width: 20ch" />

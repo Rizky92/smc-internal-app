@@ -34,6 +34,20 @@
     @push('css')
         <link href="{{ asset('plugins/select2/css/select2.min.css') }}" rel="stylesheet">
         <link href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}" rel="stylesheet">
+        <style>
+            .select2-selection__arrow {
+                top: 0 !important;
+            }
+
+            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                height: 2rem !important;
+            }
+
+            .select2-container .select2-selection--single .select2-selection__rendered {
+                padding-left: 0 !important;
+                margin-left: -0.125rem !important;
+            }
+        </style>
     @endpush
     @push('js')
         <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>

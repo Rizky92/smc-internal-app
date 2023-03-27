@@ -19,8 +19,8 @@
                 <x-filter.search class="ml-2" />
             </x-card.row-col>
         </x-slot>
-        <x-slot name="body" class="table-responsive">
-            <x-table style="min-width: 100%; width: 100rem" sortable :sortColumns="$sortColumns">
+        <x-slot name="body">
+            <x-table :sortColumns="$sortColumns" style="width: 100rem" sortable hover zebra sticky>
                 <x-slot name="columns">
                     <x-table.th name="no_rawat" title="No. Rawat" />
                     <x-table.th name="no_rkm_medis" title="No. RM" />

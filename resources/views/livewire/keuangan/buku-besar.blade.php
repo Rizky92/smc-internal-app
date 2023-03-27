@@ -17,8 +17,8 @@
                 <x-filter.search class="ml-2" />
             </x-card.row-col>
         </x-slot>
-        <x-slot name="body" class="table-responsive">
-            <x-table sortable :sortColumns="$sortColumns" style="min-width: 100%; width: 100rem">
+        <x-slot name="body">
+            <x-table :sortColumns="$sortColumns" style="width: 100rem" sortable hover zebra sticky>
                 <x-slot name="columns">
                     <x-table.th name="tgl_jurnal" title="Tgl." style="width: 13ch" />
                     <x-table.th name="jam_jurnal" title="Jam" style="width: 9ch" />
