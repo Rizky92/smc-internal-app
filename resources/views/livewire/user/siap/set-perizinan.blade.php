@@ -63,42 +63,40 @@
                             </div>
                         </x-navtabs.content>
                         <x-navtabs.content id="pilih-dari-role">
-                            <div class="table-responsive">
-                                <x-table>
-                                    <x-slot name="columns">
-                                        <x-table.th class="px-3">
-                                            <input id="checkbox-set-role" type="checkbox" name="__checkbox_utama">
-                                            <label for="checkbox-set-role"></label>
-                                        </x-table.th>
-                                        <x-table.th title="Nama Role" />
-                                        <x-table.th title="Perizinan yang diberikan" />
-                                    </x-slot>
-                                    <x-slot name="body">
-                                        @forelse ($this->roles as $role)
-                                            <x-table.tr>
-                                                <x-table.td class="px-3">
-                                                    <input id="sr-{{ $role->id }}" type="checkbox" wire:model.defer="checkedRoles.{{ $role->id }}">
-                                                    <label for="sr-{{ $role->id }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer; margin: 0"></label>
-                                                </x-table.td>
-                                                <x-table.td>{{ optional($role)->name }}</x-table.td>
-                                                <x-table.td>
-                                                    @unless (optional($role)->name === config('permission.superadmin_name'))
-                                                        <div style="display: inline-flex; flex-wrap: wrap; gap: 0.25rem">
-                                                            @foreach (optional($role)->permissions ?? [] as $permission)
-                                                                <x-badge variant="secondary">{{ $permission->name }}</x-badge>
-                                                            @endforeach
-                                                        </div>
-                                                    @else
-                                                        <x-badge variant="dark">*</x-badge>
-                                                    @endunless
-                                                </x-table.td>
-                                            </x-table.tr>
-                                        @empty
-                                            <x-table.tr-empty colspan="3" />
-                                        @endforelse
-                                    </x-slot>
-                                </x-table>
-                            </div>
+                            <x-table zebra hover sticky nowrap>
+                                <x-slot name="columns">
+                                    <x-table.th class="px-3">
+                                        <input id="checkbox-set-role" type="checkbox" name="__checkbox_utama">
+                                        <label for="checkbox-set-role"></label>
+                                    </x-table.th>
+                                    <x-table.th title="Nama Role" />
+                                    <x-table.th title="Perizinan yang diberikan" />
+                                </x-slot>
+                                <x-slot name="body">
+                                    @forelse ($this->roles as $role)
+                                        <x-table.tr>
+                                            <x-table.td class="px-3">
+                                                <input id="sr-{{ $role->id }}" type="checkbox" wire:model.defer="checkedRoles.{{ $role->id }}">
+                                                <label for="sr-{{ $role->id }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer; margin: 0"></label>
+                                            </x-table.td>
+                                            <x-table.td>{{ optional($role)->name }}</x-table.td>
+                                            <x-table.td>
+                                                @unless (optional($role)->name === config('permission.superadmin_name'))
+                                                    <div style="display: inline-flex; flex-wrap: wrap; gap: 0.25rem">
+                                                        @foreach (optional($role)->permissions ?? [] as $permission)
+                                                            <x-badge variant="secondary">{{ $permission->name }}</x-badge>
+                                                        @endforeach
+                                                    </div>
+                                                @else
+                                                    <x-badge variant="dark">*</x-badge>
+                                                @endunless
+                                            </x-table.td>
+                                        </x-table.tr>
+                                    @empty
+                                        <x-table.tr-empty colspan="3" />
+                                    @endforelse
+                                </x-slot>
+                            </x-table>
                         </x-navtabs.content>
                     </x-slot>
                 </x-navtabs>

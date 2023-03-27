@@ -18,7 +18,7 @@
             </x-card.row-col>
         </x-slot>
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" style="width: 100rem" sortable hover zebra sticky>
+            <x-table :sortColumns="$sortColumns" style="width: 100rem" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="tgl_jurnal" title="Tgl." style="width: 13ch" />
                     <x-table.th name="jam_jurnal" title="Jam" style="width: 9ch" />
@@ -47,14 +47,14 @@
                         <x-table.tr-empty :colspan="9" />
                     @endforelse
                 </x-slot>
-                <x-slot name="footer">
+                {{-- <x-slot name="footer">
                     <x-table.tr>
                         <x-table.th colspan="6" />
                         <x-table.th title="TOTAL :" />
                         <x-table.th :title="rp(optional($this->totalDebetDanKredit)->debet)" />
                         <x-table.th :title="rp(optional($this->totalDebetDanKredit)->kredit)" />
                     </x-table.tr>
-                </x-slot>
+                </x-slot> --}}
             </x-table>
         </x-slot>
         <x-slot name="footer">

@@ -75,30 +75,28 @@
                     </x-navtabs.content>
                     <x-navtabs.content id="riwayat-perubahan">
                         <x-row-col class="p-0">
-                            <div class="table-responsive">
-                                <x-table style="max-width: 100%" id="table-riwayat">
-                                    <x-slot name="columns">
-                                        <x-table.th class="pl-3" title="Tgl. TERBARU" />
-                                        <x-table.th title="Tgl. Sebelumnya" />
-                                        <x-table.th title="Yang mengubah" />
-                                        <x-table.th title="" />
-                                    </x-slot>
-                                    <x-slot name="body">
-                                        @forelse ($this->backupJurnal as $item)
-                                            <x-table.tr>
-                                                <x-table.td class="pl-3">{{ $item->tgl_jurnal_diubah }}</x-table.td>
-                                                <x-table.td>{{ $item->tgl_jurnal_asli }}</x-table.td>
-                                                <x-table.td>{{ $item->nip . ' ' . optional($item->pegawai)->nama }}</x-table.td>
-                                                <x-table.td>
-                                                    <x-button size="xs" variant="dark" outline title="Restore" icon="fas fa-sync-alt" wire:click.prevent="restoreTglJurnal({{ $item->id }})" />
-                                                </x-table.td>
-                                            </x-table.tr>
-                                        @empty
-                                            <x-table.tr-empty colspan="5" />
-                                        @endforelse
-                                    </x-slot>
-                                </x-table>
-                            </div>
+                            <x-table style="max-width: 100%" id="table-riwayat" zebra hover sticky nowrap>
+                                <x-slot name="columns">
+                                    <x-table.th class="pl-3" title="Tgl. TERBARU" />
+                                    <x-table.th title="Tgl. Sebelumnya" />
+                                    <x-table.th title="Yang mengubah" />
+                                    <x-table.th title="" />
+                                </x-slot>
+                                <x-slot name="body">
+                                    @forelse ($this->backupJurnal as $item)
+                                        <x-table.tr>
+                                            <x-table.td class="pl-3">{{ $item->tgl_jurnal_diubah }}</x-table.td>
+                                            <x-table.td>{{ $item->tgl_jurnal_asli }}</x-table.td>
+                                            <x-table.td>{{ $item->nip . ' ' . optional($item->pegawai)->nama }}</x-table.td>
+                                            <x-table.td>
+                                                <x-button size="xs" variant="dark" outline title="Restore" icon="fas fa-sync-alt" wire:click.prevent="restoreTglJurnal({{ $item->id }})" />
+                                            </x-table.td>
+                                        </x-table.tr>
+                                    @empty
+                                        <x-table.tr-empty colspan="5" />
+                                    @endforelse
+                                </x-slot>
+                            </x-table>
                         </x-row-col>
                     </x-navtabs.content>
                 </x-slot>

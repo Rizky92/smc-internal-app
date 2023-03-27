@@ -30,32 +30,30 @@
                 </div>
             </x-row-col>
             <x-row class="pt-2">
-                <div class="col-12 table-responsive">
-                    <x-table>
-                        <x-slot name="columns">
-                            <x-table.th>
-                                <input id="checkbox-set-hak-akses" type="checkbox" name="__checkbox_utama">
-                                <label for="checkbox-set-hak-akses"></label>
-                            </x-table.th>
-                            <x-table.th title="Nama Field" />
-                            <x-table.th title="Judul Menu" />
-                        </x-slot>
-                        <x-slot name="body">
-                            @forelse ($this->hakAksesKhanza as $hakAkses)
-                                <x-table.tr>
-                                    <x-table.td>
-                                        <input id="sk-{{ $hakAkses->nama_field }}" type="checkbox" wire:model.defer="checkedHakAkses.{{ $hakAkses->nama_field }}">
-                                        <label for="sk-{{ $hakAkses->nama_field }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer; margin: 0"></label>
-                                    </x-table.td>
-                                    <x-table.td>{{ $hakAkses->nama_field }}</x-table.td>
-                                    <x-table.td>{{ $hakAkses->judul_menu }}</x-table.td>
-                                </x-table.tr>
-                            @empty
-                                <x-table.tr-empty colspan="3" />
-                            @endforelse
-                        </x-slot>
-                    </x-table>
-                </div>
+                <x-table zebra hover sticky nowrap>
+                    <x-slot name="columns">
+                        <x-table.th>
+                            <input id="checkbox-set-hak-akses" type="checkbox" name="__checkbox_utama">
+                            <label for="checkbox-set-hak-akses"></label>
+                        </x-table.th>
+                        <x-table.th title="Nama Field" />
+                        <x-table.th title="Judul Menu" />
+                    </x-slot>
+                    <x-slot name="body">
+                        @forelse ($this->hakAksesKhanza as $hakAkses)
+                            <x-table.tr>
+                                <x-table.td>
+                                    <input id="sk-{{ $hakAkses->nama_field }}" type="checkbox" wire:model.defer="checkedHakAkses.{{ $hakAkses->nama_field }}">
+                                    <label for="sk-{{ $hakAkses->nama_field }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer; margin: 0"></label>
+                                </x-table.td>
+                                <x-table.td>{{ $hakAkses->nama_field }}</x-table.td>
+                                <x-table.td>{{ $hakAkses->judul_menu }}</x-table.td>
+                            </x-table.tr>
+                        @empty
+                            <x-table.tr-empty colspan="3" />
+                        @endforelse
+                    </x-slot>
+                </x-table>
             </x-row>
         </x-slot>
         <x-slot name="footer" class="justify-content-start">

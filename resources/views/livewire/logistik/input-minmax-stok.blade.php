@@ -59,8 +59,16 @@
                 })
 
                 function loadData(e) {
-                    let { kodeBarang, namaBarang, kodeSupplier, stokMin, stokMax, stokSekarang, saranOrder } = e.dataset
-                    
+                    let {
+                        kodeBarang,
+                        namaBarang,
+                        kodeSupplier,
+                        stokMin,
+                        stokMax,
+                        stokSekarang,
+                        saranOrder
+                    } = e.dataset
+
                     inputKodeBarang.val(kodeBarang)
                     inputNamaBarang.val(namaBarang)
                     inputSupplier.val(kodeSupplier)
@@ -162,7 +170,11 @@
                 </x-card.row-col>
             @endcanany
 
-            <x-card.row-col :class="Arr::toCssClasses(['mt-3' => auth()->user()->canAny(['logistik.input-minmax-stok.create', 'logistik.input-minmax-stok.update'])])">
+            <x-card.row-col :class="Arr::toCssClasses([
+                'mt-3' => auth()
+                    ->user()
+                    ->canAny(['logistik.input-minmax-stok.create', 'logistik.input-minmax-stok.update']),
+            ])">
                 <x-filter.button-export-excel class="ml-auto" />
             </x-card.row-col>
 
@@ -174,7 +186,7 @@
         </x-slot>
 
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" sortable hover zebra sticky>
+            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="kode_brng" title="Kode" />
                     <x-table.th name="nama_brng" title="Nama" />
@@ -193,16 +205,7 @@
                 <x-slot name="body">
                     @forelse ($this->barangLogistik as $barang)
                         <x-table.tr>
-                            <x-table.td
-                                clickable
-                                data-kode-barang="{{ $barang->kode_brng }}"
-                                data-nama-barang="{{ $barang->nama_brng }}"
-                                data-kode-supplier="{{ $barang->kode_supplier }}"
-                                data-stok-min="{{ $barang->stokmin }}"
-                                data-stok-max="{{ $barang->stokmax }}"
-                                data-stok-sekarang="{{ $barang->stok }}"
-                                data-saran-order="{{ $barang->saran_order }}"
-                            >
+                            <x-table.td clickable data-kode-barang="{{ $barang->kode_brng }}" data-nama-barang="{{ $barang->nama_brng }}" data-kode-supplier="{{ $barang->kode_supplier }}" data-stok-min="{{ $barang->stokmin }}" data-stok-max="{{ $barang->stokmax }}" data-stok-sekarang="{{ $barang->stok }}" data-saran-order="{{ $barang->saran_order }}">
                                 {{ $barang->kode_brng }}
                             </x-table.td>
                             <x-table.td>{{ $barang->nama_brng }}</x-table.td>

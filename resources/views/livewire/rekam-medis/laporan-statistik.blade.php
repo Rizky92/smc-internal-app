@@ -3,7 +3,7 @@
 
     <x-card use-default-filter use-loading wire:init="loadProperties">
         <x-slot name="body">
-            <x-table style="width: 450rem" hover zebra sticky>
+            <x-table style="width: 450rem" zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th style="width: 20ch" title="No. Rawat" />
                     <x-table.th style="width: 10ch" title="No RM" />

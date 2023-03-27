@@ -13,7 +13,7 @@
             </x-card.row-col>
         </x-slot>
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky>
+            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="kode_brng" title="Kode" style="width: 13ch" />
                     <x-table.th name="nama_brng" title="Nama" style="width: 50ch" />

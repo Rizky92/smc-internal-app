@@ -48,8 +48,11 @@
                 }
 
                 function loadData(e) {
-                    let { namaField, judulMenu } = e.dataset
-                    
+                    let {
+                        namaField,
+                        judulMenu
+                    } = e.dataset
+
                     setFormState('disabled', false)
 
                     inputNamaField.val(namaField)
@@ -97,8 +100,8 @@
             </x-card.row-col>
         </x-slot>
 
-        <x-slot name="body" class="table-responsive">
-            <x-table sortable :sortColumns="$sortColumns">
+        <x-slot name="body">
+            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th style="width: 50%" name="nama_field" title="Nama Field" />
                     <x-table.th style="width: 50%" name="judul_menu" title="Judul Menu" />

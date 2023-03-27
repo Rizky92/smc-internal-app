@@ -5,14 +5,12 @@ namespace App\Providers;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
-use App\Support\Menu\Generator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Stringable;
-use Illuminate\View\ComponentAttributeBag;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -39,13 +37,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // Gunakan custom grammar untuk mysql agar bisa
+        // melakukan pencatatan timestamp dengan presisi tingkat 6
+        // https://carbon.nesbot.com/laravel/
+        DB::connection('mysql_smc')->setQueryGrammar(new \App\Database\Query\Grammars\MysqlGrammar);
+
         $this->registerBladeDirectives();
         $this->registerModelConfigurations();
-        $this->registerMorphRelations();
         $this->registerSuperadminRole();
-        $this->registerCollectionMacros();
-        $this->registerCollectionMixins();
-        $this->registerQueryBuilderMacros();
+        $this->registerCollectionMacrosAndMixins();
     }
 
     public function registerBladeDirectives()
@@ -55,20 +55,12 @@ class AppServiceProvider extends ServiceProvider
         Blade::if('null', fn ($expr) => is_null($expr));
 
         Blade::if('notnull', fn ($expr) => !is_null($expr));
-
-        Blade::directive('attr', function (string $name, mixed $value, $condition) {
-
-            return "<?php echo e({$name}) ?>";
-        });
     }
 
     public function registerModelConfigurations()
     {
         Model::preventLazyLoading(! app()->isProduction());
-    }
 
-    public function registerMorphRelations()
-    {
         Relation::morphMap([
             'User' => User::class,
             'Role' => Role::class,
@@ -83,31 +75,16 @@ class AppServiceProvider extends ServiceProvider
         });
     }
 
-    public function registerCollectionMacros()
-    {
-        //
-    }
-
-    public function registerCollectionMixins()
+    public function registerCollectionMacrosAndMixins()
     {
         foreach ($this->mixins as $class => $mixins) {
-            if (! in_array('mixin', get_class_methods($class), true)) {
+            if (! in_array('mixin', get_class_methods($class), $strict = true)) {
                 continue;
             }
-
+    
             foreach ($mixins as $mixinClass) {
                 $class::mixin(new $mixinClass);
             }
         }
-    }
-
-    public function registerMenuProvider()
-    {
-        // $this->app->bind('menu', fn ($app) => new Generator($app));
-    }
-
-    public function registerQueryBuilderMacros()
-    {
-        //
     }
 }

@@ -3,23 +3,23 @@
 
     <x-card use-default-filter>
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" style="width: 150rem" sortable hover zebra sticky>
+            <x-table :sortColumns="$sortColumns" style="width: 150rem" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th style="width: 20ch" name="no_rawat" title="No. Rawat" />
                     <x-table.th style="width: 12ch" name="no_rkm_medis" title="No. RM" />
                     <x-table.th style="width: 42ch" name="nm_pasien" title="Pasien" />
                     <x-table.th style="width: 20ch" name="png_jawab" title="Jenis Bayar" />
-                    
+
                     <x-table.th style="width: 15ch" name="nama_petugas" title="Petugas" />
                     <x-table.th style="width: 13ch" name="tgl_periksa" title="Tgl. Periksa" />
                     <x-table.th style="width: 10ch" name="jam" title="Jam" />
                     <x-table.th style="width: 10ch" name="dokter_perujuk" title="Perujuk" />
-                    
+
                     <x-table.th style="width: 17ch" name="kd_jenis_prw" title="Kode Tindakan" />
                     <x-table.th style="width: 30ch" name="nm_perawatan" title="Nama Tindakan" />
                     <x-table.th style="width: 10ch" name="kategori" title="Kategori" />
                     <x-table.th style="width: 13ch" name="biaya" title="Biaya" />
-                    
+
                     <x-table.th style="width: 15ch" name="status_bayar" title="Status Bayar" />
                     <x-table.th style="width: 18ch" name="status" title="Jenis Perawatan" />
                     <x-table.th style="width: 15ch" name="kd_dokter" title="Kode Dokter" />

@@ -13,8 +13,8 @@
             </x-card.row-col>
         </x-slot>
 
-        <x-slot name="body" class="table-responsive">
-            <x-table>
+        <x-slot name="body">
+            <x-table zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th title="#" />
                     <x-table.th style="width: 30ch" title="Nama" />

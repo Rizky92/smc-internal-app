@@ -15,7 +15,7 @@
             </x-card.row-col>
         </x-slot>
         <x-slot name="body">
-            <x-table sortable :sortColumns="$sortColumns" style="width: 110rem" sticky>
+            <x-table :sortColumns="$sortColumns" style="width: 110rem" sortable sticky nowrap>
                 <x-slot name="columns">
                     @can('keuangan.jurnal-perbaikan.ubah-tanggal')
                         <x-table.th style="width: 8ch" title="#" />

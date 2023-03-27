@@ -21,8 +21,8 @@
                 <x-filter.search class="ml-2" />
             </x-card.row-col>
         </x-slot>
-        <x-slot name="body" class="table-responsive">
-            <x-table sortable :sortColumns="$sortColumns" style="min-width: 100%; width: 250rem">
+        <x-slot name="body">
+            <x-table :sortColumns="$sortColumns" style="width: 250rem" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th style="width: 21ch" name="waktu_keluar" title="Waktu Keluar" />
                     <x-table.th style="width: 15ch" title="No. Nota" />

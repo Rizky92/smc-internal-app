@@ -13,7 +13,7 @@
                             const inputHargaKamar = $('input#harga_kamar')
                             const inputLamaInap = $('input#lama_inap')
                             const inputTotalHarga = $('input#total_harga')
-                            
+
                             const elReadClipboard = $('#copy-to-clipboard')
 
                             const hiddenKdKamar = $('input#kd_kamar')
@@ -61,7 +61,18 @@
                             }
 
                             function loadData(e) {
-                                let { noRawat, kamar, pasien, hargaKamar, lamaInap, totalHarga, kdKamar, tglMasuk, jamMasuk, clipboard } = e.dataset
+                                let {
+                                    noRawat,
+                                    kamar,
+                                    pasien,
+                                    hargaKamar,
+                                    lamaInap,
+                                    totalHarga,
+                                    kdKamar,
+                                    tglMasuk,
+                                    jamMasuk,
+                                    clipboard
+                                } = e.dataset
 
                                 inputNoRawat.val(noRawat)
                                 inputKamar.val(kamar)
@@ -189,7 +200,11 @@
                 </x-card.row-col>
             @endcan
 
-            <x-card.row-col :class="Arr::toCssClasses(['mt-3' => auth()->user()->can('perawatan.daftar-pasien-ranap.update-harga-kamar')])">
+            <x-card.row-col :class="Arr::toCssClasses([
+                'mt-3' => auth()
+                    ->user()
+                    ->can('perawatan.daftar-pasien-ranap.update-harga-kamar'),
+            ])">
                 <x-filter.range-date />
                 <x-filter.label class="ml-auto pr-3">Berdasarkan:</x-filter.label>
                 <x-filter.select model="statusPerawatan" :options="[
@@ -207,7 +222,7 @@
         </x-slot>
 
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" style="width: 250rem" sortable hover zebra sticky>
+            <x-table :sortColumns="$sortColumns" style="width: 250rem" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="no_rawat" title="No. Rawat" style="width: 20ch" />
                     <x-table.th name="ruangan" title="Kamar" style="width: 35ch" />
@@ -223,35 +238,23 @@
                     <x-table.th name="nm_poli" title="Asal Poli" style="width: 20ch" />
                     <x-table.th name="dokter_poli" title="Dokter Poli" style="width: 40ch" />
                     <x-table.th name="stts_pulang" title="Status" style="width: 15ch" />
-                    
+
                     <x-table.th name="tgl_masuk" title="Tgl. Masuk" style="width: 12ch" />
                     <x-table.th name="jam_masuk" title="Jam Masuk" style="width: 12ch" />
                     <x-table.th name="tgl_keluar" title="Tgl. Keluar" style="width: 12ch" />
                     <x-table.th name="jam_keluar" title="Jam Keluar" style="width: 12ch" />
-                    
+
                     <x-table.th name="trf_kamar" title="Tarif Kamar" style="width: 15ch" />
                     <x-table.th name="lama" title="Lama" style="width: 10ch" />
                     <x-table.th name="ttl_biaya" title="Total" style="width: 20ch" />
                     <x-table.th name="dokter_ranap" title="DPJP" style="width: 35ch" />
-                    
+
                     <x-table.th name="no_tlp" title="No. HP" style="width: 15ch" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->daftarPasienRanap as $pasien)
                         <x-table.tr>
-                            <x-table.td
-                                clickable
-                                data-no-rawat="{{ $pasien->no_rawat }}"
-                                data-kamar="{{ $pasien->ruangan }}"
-                                data-pasien="{{ $pasien->nm_pasien }} {{ $pasien->umur }}"
-                                data-harga-kamar="{{ $pasien->trf_kamar }}"
-                                data-lama-inap="{{ $pasien->lama }}"
-                                data-total-harga="{{ $pasien->ttl_biaya }}"
-                                data-kd-kamar="{{ $pasien->kd_kamar }}"
-                                data-tgl-masuk="{{ $pasien->tgl_masuk }}"
-                                data-jam-masuk="{{ $pasien->jam_masuk }}"
-                                data-clipboard="{{ collect($pasien->getAttributes())->except('kd_kamar')->join('   ') }}"
-                            >
+                            <x-table.td clickable data-no-rawat="{{ $pasien->no_rawat }}" data-kamar="{{ $pasien->ruangan }}" data-pasien="{{ $pasien->nm_pasien }} {{ $pasien->umur }}" data-harga-kamar="{{ $pasien->trf_kamar }}" data-lama-inap="{{ $pasien->lama }}" data-total-harga="{{ $pasien->ttl_biaya }}" data-kd-kamar="{{ $pasien->kd_kamar }}" data-tgl-masuk="{{ $pasien->tgl_masuk }}" data-jam-masuk="{{ $pasien->jam_masuk }}" data-clipboard="{{ collect($pasien->getAttributes())->except('kd_kamar')->join('   ') }}">
                                 {{ $pasien->no_rawat }}
                             </x-table.td>
                             <x-table.td>{{ $pasien->ruangan }}</x-table.td>

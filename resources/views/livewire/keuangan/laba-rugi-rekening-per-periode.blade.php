@@ -10,7 +10,7 @@
             </x-card.row-col>
         </x-slot>
         <x-slot name="body">
-            <x-table hover zebra sticky>
+            <x-table zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="kd_rek" title="Kode Akun" />
                     <x-table.th name="nm_rek" title="Nama Akun" />
@@ -80,9 +80,6 @@
                     </x-table.tr>
                 </x-slot>
             </x-table>
-        </x-slot>
-        <x-slot name="footer">
-            {{-- <x-paginator :data="$this->collectionProperty" /> --}}
         </x-slot>
     </x-card>
 </div>

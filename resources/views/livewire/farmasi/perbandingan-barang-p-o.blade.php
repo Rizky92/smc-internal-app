@@ -15,7 +15,7 @@
             </x-card.row-col>
         </x-slot>
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky>
+            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="no_pemesanan" title="No. Pemesanan" />
                     <x-table.th name="nama_brng" title="Nama" />

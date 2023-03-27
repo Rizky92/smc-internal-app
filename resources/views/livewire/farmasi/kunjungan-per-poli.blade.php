@@ -3,7 +3,7 @@
 
     <x-card use-default-filter>
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky>
+            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="no_rawat" title="No. Rawat" />
                     <x-table.th name="no_resep" title="No. Resep" />

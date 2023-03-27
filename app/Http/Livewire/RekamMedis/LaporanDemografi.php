@@ -59,7 +59,7 @@ class LaporanDemografi extends Component
     protected function dataPerSheet(): array
     {
         return [
-            DemografiPasien::laporanDemografiExcel($this->tglAwal, $this->tglAkhir)->get(),
+            DemografiPasien::laporanDemografiExcel($this->tglAwal, $this->tglAkhir)->cursor(),
         ];
     }
 

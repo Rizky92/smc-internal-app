@@ -39,7 +39,13 @@
                 })
 
                 function loadData(e) {
-                    let { nrp, nama, roleIds, rolePermissionIds, permissionIds } = e.dataset
+                    let {
+                        nrp,
+                        nama,
+                        roleIds,
+                        rolePermissionIds,
+                        permissionIds
+                    } = e.dataset
 
                     buttonDropdownPilihan.prop('disabled', false)
 
@@ -134,7 +140,7 @@
             </x-card.row-col>
         </x-slot>
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" sortable hover zebra sticky>
+            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="nik" title="NRP" style="width: 15ch" />
                     <x-table.th name="nama" title="Nama" style="width: 50ch" />
@@ -145,14 +151,7 @@
                 <x-slot name="body">
                     @foreach ($this->users as $user)
                         <x-table.tr>
-                            <x-table.td
-                                clickable
-                                data-nrp="{{ $user->nik }}"
-                                data-nama="{{ $user->nama }}"
-                                data-role-ids="{{ $user->roles->pluck('id')->join(',') }}"
-                                data-role-permission-ids="{{ $user->getPermissionsViaRoles()->pluck('id')->join(',') }}"
-                                data-permission-ids="{{ $user->permissions->pluck('id')->join(',') }}"
-                            >
+                            <x-table.td clickable data-nrp="{{ $user->nik }}" data-nama="{{ $user->nama }}" data-role-ids="{{ $user->roles->pluck('id')->join(',') }}" data-role-permission-ids="{{ $user->getPermissionsViaRoles()->pluck('id')->join(',') }}" data-permission-ids="{{ $user->permissions->pluck('id')->join(',') }}">
                                 {{ $user->nik }}
                             </x-table.td>
                             <x-table.td>{{ $user->nama }}</x-table.td>

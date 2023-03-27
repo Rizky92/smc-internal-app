@@ -16,28 +16,28 @@
         </x-slot>
 
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" style="width: 160rem" sortable hover zebra sticky>
+            <x-table :sortColumns="$sortColumns" style="width: 160rem" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="no_rawat" title="No. Rawat" style="width: 20ch" />
                     <x-table.th name="tgl_registrasi" title="Tgl. Registrasi" style="width: 20ch" />
                     <x-table.th name="jam_reg" title="Jam Registrasi" style="width: 20ch" />
                     <x-table.th name="kelas" title="Kelas" style="width: 10ch" />
-                    
+
                     <x-table.th name="ruangan" title="Kamar" style="width: 35ch" />
                     <x-table.th name="trf_kamar" title="Tarif" style="width: 15ch" />
                     <x-table.th name="no_rkm_medis" title="No. RM" style="width: 15ch" />
                     <x-table.th name="data_pasien" title="Pasien" style="width: 50ch" />
-                    
+
                     <x-table.th name="png_jawab" title="Jenis Bayar" style="width: 25ch" />
                     <x-table.th name="nm_poli" title="Asal Poli" style="width: 20ch" />
                     <x-table.th name="dokter_poli" title="Dokter Poli" style="width: 40ch" />
                     <x-table.th name="stts_pulang" title="Status" style="width: 15ch" />
-                    
+
                     <x-table.th name="tgl_masuk" title="Tgl. Masuk" style="width: 15ch" />
                     <x-table.th name="jam_masuk" title="Jam Masuk" style="width: 15ch" />
                     <x-table.th name="tgl_keluar" title="Tgl. Keluar" style="width: 15ch" />
                     <x-table.th name="jam_keluar" title="Jam Keluar" style="width: 15ch" />
-                    
+
                     <x-table.th name="dpjp" title="DPJP" style="width: 40ch" />
                 </x-slot>
                 <x-slot name="body">

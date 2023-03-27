@@ -10,6 +10,7 @@
     'hover' => false,
     'sticky' => false,
     'borderless' => false,
+    'nowrap' => false,
 ])
 
 @once
@@ -33,10 +34,9 @@
         </style>
     @endpush
     @push('js')
-        @if ($sticky)
-            <script>
-                $(document).on('DOMContentLoaded', e => {
-
+        <script>
+            $(document).on('DOMContentLoaded', e => {
+                Livewire.on('element.updated', (msg, comp) => {
                     let clientHeight = document.documentElement.clientHeight
 
                     let navbarHeight = document.querySelector('nav.main-header.navbar')?.clientHeight ?? 0
@@ -45,20 +45,32 @@
                     let paginatorHeight = document.querySelector('[table-paginator]')?.clientHeight ?? 0
                     let titleHeight = document.querySelector('[page-title]')?.clientHeight ?? 0
 
-                    let actualTableHeight = clientHeight - (cardHeaderHeight + paginatorHeight + titleHeight + navbarHeight) - 14
+                    let tableEl = document.querySelector('table.table')
+                    let tableHeight = tableEl?.clientHeight ?? 0
 
-                    if (actualTableHeight > 300) {
-                        $('div.table-responsive').height(actualTableHeight)
+                    let adjustedTableHeight = clientHeight - (cardHeaderHeight + paginatorHeight + titleHeight + navbarHeight) - 14
+
+                    let isTableHeaderSticky = tableEl.classList.contains('table-head-fixed')
+                    let isTableHeightReachesMinimum = adjustedTableHeight > 300
+                    let isTableHeightRequireAdjustment = tableHeight > adjustedTableHeight
+
+                    if (
+                        isTableHeaderSticky &&
+                        isTableHeightReachesMinimum &&
+                        isTableHeightRequireAdjustment
+                    ) {
+                        $('div.table-responsive').height(adjustedTableHeight)
                     }
                 })
-            </script>
-        @endif
+            })
+        </script>
     @endpush
 @endonce
 
 <div class="table-responsive" wire:ignore.self>
     <table {{ $attributes->class([
-        'table table-sm text-sm text-nowrap' => true,
+        'table table-sm text-sm' => true,
+        'text-nowrap' => $nowrap,
         'table-hover' => $hover,
         'table-striped' => $zebra,
         'table-head-fixed table-foot-fixed' => $sticky,

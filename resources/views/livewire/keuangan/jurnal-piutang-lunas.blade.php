@@ -24,7 +24,7 @@
             </x-card.row-col>
         </x-slot>
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" style="width: 190rem" sortable hover zebra sticky>
+            <x-table :sortColumns="$sortColumns" style="width: 190rem" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th style="width: 15ch" name="no_jurnal" title="No. Jurnal" />
                     <x-table.th style="width: 17ch" name="waktu_jurnal" title="Tgl. Jurnal" />
