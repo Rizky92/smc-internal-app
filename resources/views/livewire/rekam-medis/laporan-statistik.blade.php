@@ -3,7 +3,7 @@
 
     <x-card use-default-filter use-loading wire:init="loadProperties">
         <x-slot name="body">
-            <x-table style="width: 450rem" zebra hover sticky nowrap>
+            <x-table style="width: 450rem" zebra hover sticky nowrap livewire>
                 <x-slot name="columns">
                     <x-table.th style="width: 20ch" title="No. Rawat" />
                     <x-table.th style="width: 10ch" title="No RM" />
@@ -44,6 +44,15 @@
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->dataLaporanStatistik as $registrasi)
+                        @php
+                            $kdDiagnosa = str($registrasi->kd_diagnosa)->split('/(, )/');
+                            $nmDiagnosa = str($registrasi->nm_diagnosa)->split('/(, )/');
+                            $kdTindakanRalan = str($registrasi->kd_tindakan_ralan)->split('/(, )/');
+                            $nmTindakanRalan = str($registrasi->nm_tindakan_ralan)->split('/(, )/');
+                            $kdTindakanRanap = str($registrasi->kd_tindakan_ranap)->split('/(, )/');
+                            $nmTindakanRanap = str($registrasi->nm_tindakan_ranap)->split('/(, )/');
+                            $dokterPj = str($registrasi->dokter_pj)->split('/(; )/');
+                        @endphp
                         <x-table.tr>
                             <x-table.td>{{ $registrasi->no_rawat }}</x-table.td>
                             <x-table.td>{{ $registrasi->no_rm }}</x-table.td>
@@ -64,15 +73,57 @@
                             <x-table.td>{{ $registrasi->tgl_keluar }}</x-table.td>
                             <x-table.td>{{ $registrasi->jam_keluar }}</x-table.td>
                             <x-table.td>{{ $registrasi->diagnosa_awal }}</x-table.td>
-                            <x-table.td>{{ $registrasi->kd_diagnosa }}</x-table.td>
-                            <x-table.td>{{ $registrasi->nm_diagnosa }}</x-table.td>
-                            <x-table.td>{{ $registrasi->kd_tindakan_ralan }}</x-table.td>
-                            <x-table.td>{{ $registrasi->nm_tindakan_ralan }}</x-table.td>
-                            <x-table.td>{{ $registrasi->kd_tindakan_ranap }}</x-table.td>
-                            <x-table.td>{{ $registrasi->nm_tindakan_ranap }}</x-table.td>
+                            <x-table.td>
+                                @foreach ($kdDiagnosa as $item)
+                                    {{ $item }} @if (!$loop->last)
+                                        <br>
+                                    @endif
+                                @endforeach
+                            </x-table.td>
+                            <x-table.td>
+                                @foreach ($nmDiagnosa as $item)
+                                    {{ $item }} @if (!$loop->last)
+                                        <br>
+                                    @endif
+                                @endforeach
+                            </x-table.td>
+                            <x-table.td>
+                                @foreach ($kdTindakanRalan as $item)
+                                    {{ $item }} @if (!$loop->last)
+                                        <br>
+                                    @endif
+                                @endforeach
+                            </x-table.td>
+                            <x-table.td>
+                                @foreach ($nmTindakanRalan as $item)
+                                    {{ $item }} @if (!$loop->last)
+                                        <br>
+                                    @endif
+                                @endforeach
+                            </x-table.td>
+                            <x-table.td>
+                                @foreach ($kdTindakanRanap as $item)
+                                    {{ $item }} @if (!$loop->last)
+                                        <br>
+                                    @endif
+                                @endforeach
+                            </x-table.td>
+                            <x-table.td>
+                                @foreach ($nmTindakanRanap as $item)
+                                    {{ $item }} @if (!$loop->last)
+                                        <br>
+                                    @endif
+                                @endforeach
+                            </x-table.td>
                             <x-table.td>{{ $registrasi->lama_operasi }}</x-table.td>
                             <x-table.td>{{ $registrasi->rujukan_masuk }}</x-table.td>
-                            <x-table.td>{{ $registrasi->dokter_pj }}</x-table.td>
+                            <x-table.td>
+                                @foreach ($dokterPj as $item)
+                                    {{ $item }} @if (!$loop->last)
+                                        <br>
+                                    @endif
+                                @endforeach
+                            </x-table.td>
                             <x-table.td>{{ $registrasi->kelas }}</x-table.td>
                             <x-table.td>{{ $registrasi->penjamin }}</x-table.td>
                             <x-table.td>{{ $registrasi->status_bayar }}</x-table.td>

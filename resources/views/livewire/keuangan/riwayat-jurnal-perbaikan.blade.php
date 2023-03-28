@@ -3,7 +3,7 @@
 
     <x-card use-default-filter>
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
+            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap livewire>
                 <x-slot name="columns">
                     {{-- <x-table.th name="id" title="#" /> --}}
                 </x-slot>

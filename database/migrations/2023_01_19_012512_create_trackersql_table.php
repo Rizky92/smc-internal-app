@@ -16,7 +16,7 @@ return new class extends Migration
     public function up()
     {
         Schema::connection('mysql_smc')->create('trackersql', function (Blueprint $table) {
-            $table->timestamp('tanggal', $precision = 3)->index();
+            $table->timestamp('tanggal', $precision = 6)->index();
             $table->text('sqle')->index();
             $table->string('usere', 20)->index();
             $table->ipAddress('ip');

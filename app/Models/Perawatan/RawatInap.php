@@ -10,6 +10,7 @@ use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -80,11 +81,6 @@ class RawatInap extends Model
             ->where('reg_periksa.kd_pj', $jenisBayar);
     }
 
-    public function dpjpRanap(): BelongsToMany
-    {
-        return $this->belongsToMany(Dokter::class, 'dpjp_ranap', 'no_rawat', 'kd_dokter', 'no_rawat', 'kd_dokter');
-    }
-
     public function billing(): HasMany
     {
         return $this->hasMany(Billing::class, 'no_rawat', 'no_rawat');
@@ -98,5 +94,36 @@ class RawatInap extends Model
     public function cicilanPiutang(): HasMany
     {
         return $this->hasMany(BayarPiutang::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function kamar(): BelongsTo
+    {
+        return $this->belongsTo(Kamar::class, 'kd_kamar', 'kd_kamar');
+    }
+
+    public function dpjpRanap(): BelongsToMany
+    {
+        return $this->belongsToMany(Dokter::class, 'dpjp_ranap', 'no_rawat', 'kd_dokter', 'no_rawat', 'kd_dokter');
+    }
+
+    public function diagnosa(): HasMany
+    {
+        return $this->hasMany(DiagnosaPasien::class, 'no_rawat', 'no_rawat')
+            ->where('status', 'Ranap');
+    }
+
+    public function tindakanRanapPerawat(): HasMany
+    {
+        return $this->hasMany(TindakanRanapPerawat::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function tindakanRanapDokter(): HasMany
+    {
+        return $this->hasMany(TindakanRanapDokter::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function tindakanRanapDokterPerawat(): HasMany
+    {
+        return $this->hasMany(TindakanRanapDokterPerawat::class, 'no_rawat', 'no_rawat');
     }
 }

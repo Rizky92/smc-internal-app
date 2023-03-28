@@ -25,6 +25,7 @@ use App\Http\Livewire\Keuangan\JurnalPiutangLunas;
 use App\Http\Livewire\Keuangan\JurnalSupplierPO;
 use App\Http\Livewire\Keuangan\JurnalPerbaikan;
 use App\Http\Livewire\Keuangan\RekapPiutangPasien;
+use App\Http\Livewire\Keuangan\RiwayatJurnalPerbaikan;
 use App\Http\Livewire\Keuangan\StokObatRuangan;
 use App\Http\Livewire\Logistik\InputMinmaxStok;
 use App\Http\Livewire\Logistik\StokDaruratLogistik;
@@ -126,6 +127,10 @@ Route::prefix('admin')
                 Route::get('jurnal-perbaikan', JurnalPerbaikan::class)
                     ->middleware('can:keuangan.jurnal-perbaikan.read')
                     ->name('jurnal-perbaikan');
+
+                Route::get('riwayat-jurnal-perbaikan', RiwayatJurnalPerbaikan::class)
+                    ->middleware('can:keuangan.riwayat-jurnal-perbaikan.read')
+                    ->name('riwayat-jurnal-perbaikan');
 
                 Route::get('laporan-tindakan-lab', LaporanTindakanLab::class)
                     ->middleware('can:keuangan.laporan-tindakan-lab.read')

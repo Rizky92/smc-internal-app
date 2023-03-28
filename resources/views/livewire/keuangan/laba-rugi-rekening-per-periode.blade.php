@@ -10,7 +10,7 @@
             </x-card.row-col>
         </x-slot>
         <x-slot name="body">
-            <x-table zebra hover sticky nowrap>
+            <x-table zebra hover sticky nowrap livewire>
                 <x-slot name="columns">
                     <x-table.th name="kd_rek" title="Kode Akun" />
                     <x-table.th name="nm_rek" title="Nama Akun" />

@@ -14,7 +14,7 @@
         </x-slot>
 
         <x-slot name="body">
-            <x-table zebra hover sticky nowrap>
+            <x-table zebra hover sticky nowrap livewire>
                 <x-slot name="columns">
                     <x-table.th title="#" />
                     <x-table.th style="width: 30ch" title="Nama" />
@@ -26,12 +26,7 @@
                         <x-table.tr :class="Arr::toCssClasses(['text-muted' => $superadmin])">
                             <x-table.td>
                                 @unless($superadmin)
-                                    <x-button
-                                        size="xs" variant="link" class="m-0 p-0 border-0"
-                                        title="Edit" icon="fas fa-pencil-alt"
-                                        data-toggle="modal" data-target="#modal-perizinan"
-                                        wire:click="$emit('siap.prepare', {{ $role->id }})"
-                                    />
+                                    <x-button size="xs" variant="link" class="m-0 p-0 border-0" title="Edit" icon="fas fa-pencil-alt" data-toggle="modal" data-target="#modal-perizinan" wire:click="$emit('siap.prepare', {{ $role->id }})" />
                                 @endunless
                             </x-table.td>
                             <x-table.td class="{{ Arr::toCssClasses(['pt-2' => !$superadmin]) }}">{{ $role->name }}</x-table.td>

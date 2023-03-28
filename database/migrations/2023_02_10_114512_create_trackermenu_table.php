@@ -16,7 +16,7 @@ return new class extends Migration
     public function up()
     {
         Schema::connection('mysql_smc')->create('trackermenu', function (Blueprint $table) {
-            $table->timestamp('waktu')->useCurrent();
+            $table->timestamp('waktu', $precision = 6)->useCurrent();
             $table->string('breadcrumbs', 100)->nullable();
             $table->string('route_name', 100)->nullable();
             $table->string('user_id', 20)->index();

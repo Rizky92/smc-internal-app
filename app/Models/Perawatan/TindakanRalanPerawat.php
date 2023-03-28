@@ -2,35 +2,23 @@
 
 namespace App\Models\Perawatan;
 
-use App\Models\Kepegawaian\Petugas;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\Pivot;
+use App\Support\Traits\Eloquent\Searchable;
+use App\Support\Traits\Eloquent\Sortable;
+use Illuminate\Database\Eloquent\Model;
 
-class TindakanRalanPerawat extends Pivot
+class TindakanRalanPerawat extends Model
 {
-    protected $connection = 'mysql_sik';
+    use Sortable, Searchable;
     
-    protected $table = 'rawat_jl_drpr';
+    protected $connection = 'mysql_sik';
+
+    protected $primaryKey = false;
+
+    protected $keyType = false;
+
+    protected $table = 'rawat_jl_pr';
 
     public $incrementing = false;
 
     public $timestamps = false;
-
-    public static $pivotColumns = [
-        'nip',
-        'tgl_perawatan',
-        'jam_rawat',
-        'material',
-        'bhp',
-        'tarif_tindakanpr',
-        'kso',
-        'menejemen',
-        'biaya_rawat',
-        'stts_bayar',
-    ];
-
-    public function perawat(): BelongsTo
-    {
-        return $this->belongsTo(Petugas::class, 'nip', 'nip');
-    }
 }

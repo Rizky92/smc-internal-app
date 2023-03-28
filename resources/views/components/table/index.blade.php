@@ -1,4 +1,6 @@
 @props([
+    'livewire' => false,
+
     'columns' => null,
     'body' => null,
     'footer' => null,
@@ -33,38 +35,39 @@
             }
         </style>
     @endpush
-    @push('js')
-        <script>
-            $(document).on('DOMContentLoaded', e => {
-                Livewire.on('element.updated', (msg, comp) => {
-                    let clientHeight = document.documentElement.clientHeight
+    @if ($livewire)    
+        @push('js')
+            <script>
+                $(document).on('DOMContentLoaded', e => {
+                    Livewire.hook('element.initialized', (el, component) => {
+                        let clientHeight = document.documentElement.clientHeight
+                        let navbarHeight = document.querySelector('nav.main-header.navbar')?.clientHeight ?? 0
+                        let cardHeaderHeight = document.querySelector('[card-section-header]')?.clientHeight ?? 0
+                        let cardFooterHeight = document.querySelector('[card-section-footer]')?.clientHeight ?? 0
+                        let paginatorHeight = document.querySelector('[table-paginator]')?.clientHeight ?? 0
+                        let titleHeight = document.querySelector('[page-title]')?.clientHeight ?? 0
+                        
+                        let tableEl = document.querySelector('table.table')
+                        let tableHeight = tableEl?.clientHeight ?? 0
 
-                    let navbarHeight = document.querySelector('nav.main-header.navbar')?.clientHeight ?? 0
-                    let cardHeaderHeight = document.querySelector('[card-section-header]')?.clientHeight ?? 0
-                    let cardFooterHeight = document.querySelector('[card-section-footer]')?.clientHeight ?? 0
-                    let paginatorHeight = document.querySelector('[table-paginator]')?.clientHeight ?? 0
-                    let titleHeight = document.querySelector('[page-title]')?.clientHeight ?? 0
+                        let adjustedTableHeight = clientHeight - (cardHeaderHeight + paginatorHeight + titleHeight + navbarHeight) - 16
 
-                    let tableEl = document.querySelector('table.table')
-                    let tableHeight = tableEl?.clientHeight ?? 0
+                        let isTableHeaderSticky = tableEl.classList.contains('table-head-fixed')
+                        let isTableHeightReachesMinimum = adjustedTableHeight > 300
+                        let isTableHeightRequireAdjustment = tableHeight > adjustedTableHeight
 
-                    let adjustedTableHeight = clientHeight - (cardHeaderHeight + paginatorHeight + titleHeight + navbarHeight) - 14
-
-                    let isTableHeaderSticky = tableEl.classList.contains('table-head-fixed')
-                    let isTableHeightReachesMinimum = adjustedTableHeight > 300
-                    let isTableHeightRequireAdjustment = tableHeight > adjustedTableHeight
-
-                    if (
-                        isTableHeaderSticky &&
-                        isTableHeightReachesMinimum &&
-                        isTableHeightRequireAdjustment
-                    ) {
-                        $('div.table-responsive').height(adjustedTableHeight)
-                    }
+                        if (
+                            isTableHeaderSticky &&
+                            isTableHeightReachesMinimum &&
+                            isTableHeightRequireAdjustment
+                        ) {
+                            $('div.table-responsive').height(adjustedTableHeight)
+                        }
+                    })
                 })
-            })
-        </script>
-    @endpush
+            </script>
+        @endpush
+    @endif
 @endonce
 
 <div class="table-responsive" wire:ignore.self>

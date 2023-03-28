@@ -63,7 +63,7 @@
                             </div>
                         </x-navtabs.content>
                         <x-navtabs.content id="pilih-dari-role">
-                            <x-table zebra hover sticky nowrap>
+                            <x-table zebra hover sticky nowrap livewire>
                                 <x-slot name="columns">
                                     <x-table.th class="px-3">
                                         <input id="checkbox-set-role" type="checkbox" name="__checkbox_utama">
@@ -81,7 +81,7 @@
                                             </x-table.td>
                                             <x-table.td>{{ optional($role)->name }}</x-table.td>
                                             <x-table.td>
-                                                @unless (optional($role)->name === config('permission.superadmin_name'))
+                                                @unless(optional($role)->name === config('permission.superadmin_name'))
                                                     <div style="display: inline-flex; flex-wrap: wrap; gap: 0.25rem">
                                                         @foreach (optional($role)->permissions ?? [] as $permission)
                                                             <x-badge variant="secondary">{{ $permission->name }}</x-badge>

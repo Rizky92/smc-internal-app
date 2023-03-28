@@ -20,7 +20,7 @@
             </x-card.row-col>
         </x-slot>
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" style="width: 100rem" sortable zebra hover sticky nowrap>
+            <x-table :sortColumns="$sortColumns" style="width: 100rem" sortable zebra hover sticky nowrap livewire>
                 <x-slot name="columns">
                     <x-table.th name="no_rawat" title="No. Rawat" />
                     <x-table.th name="no_rkm_medis" title="No. RM" />

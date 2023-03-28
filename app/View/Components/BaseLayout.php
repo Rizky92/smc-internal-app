@@ -147,6 +147,13 @@ class BaseLayout extends Component
                         'hasAnyPermissions' => $user->can('keuangan.jurnal-perbaikan.read'),
                     ],
                     [
+                        'name' => 'Riwayat Jurnal Perbaikan',
+                        'url' => route('admin.keuangan.riwayat-jurnal-perbaikan'),
+                        'icon' => "fas fa-history",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.riwayat-jurnal-perbaikan.read'),
+                    ],
+                    [
                         'name' => 'Buku Besar',
                         'url' => route('admin.keuangan.buku-besar'),
                         'icon' => "fas fa-book",

@@ -28,7 +28,7 @@
                             checkedUsers.set(el.value, isChecked)
                         })
 
-                        if (! isChecked) {
+                        if (!isChecked) {
                             checkedUsers.clear()
                         }
 
@@ -60,7 +60,7 @@
                 </div>
             </x-row-col>
             <x-row-col class="mt-2">
-                <x-table zebra hover sticky nowrap>
+                <x-table zebra hover sticky nowrap livewire>
                     <x-slot name="columns">
                         <x-table.th>
                             <input id="checkbox-utama-siap-transfer" type="checkbox" name="__checkbox_utama" value="null">

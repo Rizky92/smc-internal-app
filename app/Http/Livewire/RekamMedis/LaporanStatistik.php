@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\RekamMedis;
 
+use App\Models\Perawatan\RegistrasiPasien;
 use App\Models\RekamMedis\StatistikRekamMedis;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;

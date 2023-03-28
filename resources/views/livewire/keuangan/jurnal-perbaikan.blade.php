@@ -15,7 +15,7 @@
             </x-card.row-col>
         </x-slot>
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" style="width: 110rem" sortable sticky nowrap>
+            <x-table :sortColumns="$sortColumns" style="width: 110rem" sortable sticky nowrap livewire>
                 <x-slot name="columns">
                     @can('keuangan.jurnal-perbaikan.ubah-tanggal')
                         <x-table.th style="width: 8ch" title="#" />
@@ -38,17 +38,13 @@
                             @endphp
                             @can('keuangan.jurnal-perbaikan.ubah-tanggal')
                                 <x-table.td rowspan="{{ $count }}" class="pl-3 py-1">
-                                    <x-button
-                                        size="xs" variant="link" class="mt-n1"
-                                        title="Edit" icon="fas fa-pencil-alt" id="edit-{{ $jurnal->no_jurnal }}"
-                                        data-toggle="modal" data-target="#modal-ubah-tgl-jurnal"
-                                        wire:click.prevent="$emit('utj.prepare', {
-                                            noJurnal: '{{ $jurnal->no_jurnal }}',
-                                            noBukti: '{{ $jurnal->no_bukti }}',
-                                            keterangan: '{{ $jurnal->keterangan }}',
-                                            tglJurnal: '{{ $jurnal->tgl_jurnal }}',
-                                            jamJurnal: '{{ $jurnal->jam_jurnal }}'
-                                        })" />
+                                    <x-button size="xs" variant="link" class="mt-n1" title="Edit" icon="fas fa-pencil-alt" id="edit-{{ $jurnal->no_jurnal }}" data-toggle="modal" data-target="#modal-ubah-tgl-jurnal" wire:click.prevent="$emit('utj.prepare', {
+                                                noJurnal: '{{ $jurnal->no_jurnal }}',
+                                                noBukti: '{{ $jurnal->no_bukti }}',
+                                                keterangan: '{{ $jurnal->keterangan }}',
+                                                tglJurnal: '{{ $jurnal->tgl_jurnal }}',
+                                                jamJurnal: '{{ $jurnal->jam_jurnal }}'
+                                            })" />
                                 </x-table.td>
                             @endcan
                             <x-table.td rowspan="{{ $count }}">{{ $jurnal->no_jurnal }}</x-table.td>
@@ -79,7 +75,11 @@
                             @endforeach
                         @endif
                     @empty
-                        <x-table.tr-empty :colspan="auth()->user()->can('keuangan.jurnal-perbaikan.ubah-tanggal') ? 8 : 7" />
+                        <x-table.tr-empty :colspan="auth()
+                            ->user()
+                            ->can('keuangan.jurnal-perbaikan.ubah-tanggal')
+                            ? 8
+                            : 7" />
                     @endforelse
                 </x-slot>
             </x-table>

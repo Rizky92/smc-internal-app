@@ -101,7 +101,7 @@
         </x-slot>
 
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
+            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap livewire>
                 <x-slot name="columns">
                     <x-table.th style="width: 50%" name="nama_field" title="Nama Field" />
                     <x-table.th style="width: 50%" name="judul_menu" title="Judul Menu" />

@@ -2,13 +2,16 @@
 
 namespace App\Models\Perawatan;
 
+use App\Models\Kepegawaian\Dokter;
 use App\Models\RekamMedis\Pasien;
+use App\Models\RekamMedis\Penjamin;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -27,11 +30,6 @@ class RegistrasiPasien extends Model
     public $incrementing = false;
 
     public $timestamps = false;
-
-    public function pasien(): BelongsTo
-    {
-        return $this->belongsTo(Pasien::class, 'no_rkm_medis', 'no_rkm_medis');
-    }
 
     public function umur(): Attribute
     {
@@ -63,6 +61,104 @@ class RegistrasiPasien extends Model
 
             return "{$alamat}, Kel. {$kelurahan}, Kec. {$kecamatan}, {$kabupaten}, {$provinsi}";
         });
+    }
+
+    public function pasien(): BelongsTo
+    {
+        return $this->belongsTo(Pasien::class, 'no_rkm_medis', 'no_rkm_medis');
+    }
+
+    public function poliklinik(): BelongsTo
+    {
+        return $this->belongsTo(Poliklinik::class, 'kd_poli', 'kd_poli');
+    }
+
+    public function dokterPoli(): BelongsTo
+    {
+        return $this->belongsTo(Dokter::class, 'kd_dokter', 'kd_dokter');
+    }
+
+    public function penjamin(): BelongsTo
+    {
+        return $this->belongsTo(Penjamin::class, 'kd_pj', 'kd_pj');
+    }
+
+    public function rawatInap(): HasMany
+    {
+        return $this->hasMany(RawatInap::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function rujukanKeluar(): HasMany
+    {
+        return $this->hasMany(RujukanKeluar::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function diagnosa(): HasMany
+    {
+        return $this->hasMany(DiagnosaPasien::class, 'no_rawat', 'no_rawat')
+            ->where('status', 'Ralan');
+    }
+
+    public function tindakanRalanPerawat(): HasMany
+    {
+        return $this->hasMany(TindakanRalanPerawat::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function tindakanRalanDokter(): HasMany
+    {
+        return $this->hasMany(TindakanRalanDokter::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function tindakanRalanDokterPerawat(): HasMany
+    {
+        return $this->hasMany(TindakanRalanDokterPerawat::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function scopeLaporanStatistik(
+        Builder $query,
+        string $tglAwal = '',
+        string $tglAkhir = ''
+    ): Builder {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        }
+
+        return $query
+            ->with([
+                'pasien',
+                'pasien.suku',
+                'poliklinik',
+                'dokterPoli',
+                'penjamin',
+
+                // pemeriksaan ralan pasien
+                'diagnosa',
+                'tindakanRalanDokter',
+                // 'tindakanRalanDokter.tindakan',
+                'tindakanRalanPerawat',
+                // 'tindakanRalanPerawat.tindakan',
+                'tindakanRalanDokterPerawat',
+                // 'tindakanRalanDokterPerawat.tindakan',
+
+                // relasi ranap pasien
+                'rawatInap',
+                'rawatInap.dpjpRanap',
+                'rawatInap.kamar',
+                
+                // pemeriksaan ranap pasien
+                'rawatInap.diagnosa',
+                'rawatInap.tindakanRanapPerawat',
+                // 'rawatInap.tindakanRanapPerawat.tindakan',
+                'rawatInap.tindakanRanapDokter',
+                // 'rawatInap.tindakanRanapDokter.tindakan',
+                'rawatInap.tindakanRanapDokterPerawat',
+                // 'rawatInap.tindakanRanapDokterPerawat.tindakan',
+            ])
+            ->whereBetween('tgl_registrasi', [$tglAwal, $tglAkhir]);
     }
 
     public function scopeDaftarPasienRanap(
