@@ -1,6 +1,4 @@
 @props([
-    'livewire' => false,
-
     'columns' => null,
     'body' => null,
     'footer' => null,
@@ -35,42 +33,50 @@
             }
         </style>
     @endpush
-    @if ($livewire)    
-        @push('js')
-            <script>
-                $(document).on('DOMContentLoaded', e => {
-                    Livewire.hook('element.initialized', (el, component) => {
-                        let clientHeight = document.documentElement.clientHeight
-                        let navbarHeight = document.querySelector('nav.main-header.navbar')?.clientHeight ?? 0
-                        let cardHeaderHeight = document.querySelector('[card-section-header]')?.clientHeight ?? 0
-                        let cardFooterHeight = document.querySelector('[card-section-footer]')?.clientHeight ?? 0
-                        let paginatorHeight = document.querySelector('[table-paginator]')?.clientHeight ?? 0
-                        let titleHeight = document.querySelector('[page-title]')?.clientHeight ?? 0
-                        
-                        let tableEl = document.querySelector('table.table')
-                        let tableHeight = tableEl?.clientHeight ?? 0
+    {{-- @push('js')
+        <script>
+            $(document).on('DOMContentLoaded', e => {
+                Livewire.hook('element.initialized', (el, component) => updateComponent())
+                // Livewire.hook('element.updating', (fromEl, toEl, component) => updateComponent())
+                Livewire.hook('element.updated', (el, component) => updateComponent())
+                // Livewire.hook('element.removed', (el, component) => updateComponent())
+                // Livewire.hook('message.sent', (message, component) => updateComponent())
+                // Livewire.hook('message.failed', (message, component) => updateComponent())
+                // Livewire.hook('message.received', (message, component) => updateComponent())
+                // Livewire.hook('message.processed', (message, component) => updateComponent())
 
-                        let adjustedTableHeight = clientHeight - (cardHeaderHeight + paginatorHeight + titleHeight + navbarHeight) - 16
+                function updateComponent()
+                {
+                    let clientHeight = document.documentElement.clientHeight
+                    let navbarHeight = document.querySelector('nav.main-header.navbar')?.clientHeight ?? 0
+                    let cardHeaderHeight = document.querySelector('[card-section-header]')?.clientHeight ?? 0
+                    let cardFooterHeight = document.querySelector('[card-section-footer]')?.clientHeight ?? 0
+                    let paginatorHeight = document.querySelector('[table-paginator]')?.clientHeight ?? 0
+                    let titleHeight = document.querySelector('[page-title]')?.clientHeight ?? 0
+                    
+                    let tableEl = document.querySelector('table.table')
+                    let tableHeight = tableEl?.clientHeight ?? 0
 
-                        let isTableHeaderSticky = tableEl.classList.contains('table-head-fixed')
-                        let isTableHeightReachesMinimum = adjustedTableHeight > 300
-                        let isTableHeightRequireAdjustment = tableHeight > adjustedTableHeight
+                    let adjustedTableHeight = clientHeight - (cardHeaderHeight + paginatorHeight + titleHeight + navbarHeight) - 16
 
-                        if (
-                            isTableHeaderSticky &&
-                            isTableHeightReachesMinimum &&
-                            isTableHeightRequireAdjustment
-                        ) {
-                            $('div.table-responsive').height(adjustedTableHeight)
-                        }
-                    })
-                })
-            </script>
-        @endpush
-    @endif
+                    let isTableHeaderSticky = tableEl.classList.contains('table-head-fixed')
+                    let isTableHeightReachesMinimum = adjustedTableHeight > 300
+                    let isTableHeightRequireAdjustment = tableHeight > adjustedTableHeight
+
+                    if (
+                        isTableHeaderSticky &&
+                        isTableHeightReachesMinimum &&
+                        isTableHeightRequireAdjustment
+                    ) {
+                        $('div.table-responsive').height(adjustedTableHeight)
+                    }
+                }
+            })
+        </script>
+    @endpush --}}
 @endonce
 
-<div class="table-responsive" wire:ignore.self>
+<div class="table-responsive">
     <table {{ $attributes->class([
         'table table-sm text-sm' => true,
         'text-nowrap' => $nowrap,

@@ -40,7 +40,11 @@ trait ExcelExportable
 
     public function exportToExcel()
     {
-        $this->emit('flash.info', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+        if (method_exists($this, 'flashInfo')) {
+            $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+        } else {
+            $this->emit('flash.info', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+        }
 
         // Validasi sebelum proses export dimulai
         $this->validateSheetNames();
