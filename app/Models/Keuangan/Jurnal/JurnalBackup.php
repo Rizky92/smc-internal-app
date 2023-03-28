@@ -37,4 +37,9 @@ class JurnalBackup extends Model
     {
         return $this->belongsTo(Pegawai::class, 'nip', 'nik');
     }
+
+    public function jurnal(): BelongsTo
+    {
+        return $this->belongsTo(Jurnal::class, 'no_jurnal', 'no_jurnal');
+    }
 }

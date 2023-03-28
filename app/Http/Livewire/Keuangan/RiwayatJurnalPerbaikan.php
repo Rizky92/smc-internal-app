@@ -16,21 +16,16 @@ class RiwayatJurnalPerbaikan extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
-    public $tglAwal;
-
-    public $tglAkhir;
-
-    protected function queryString()
-    {
-        return [
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
-        ];
-    }
-
     public function mount()
     {
         $this->defaultValues();
+    }
+
+    public function getDataRiwayatJurnalPerbaikanProperty()
+    {
+        return JurnalBackup::query()
+            ->with('pegawai', 'jurnal')
+            ->paginate($this->perpage);
     }
 
     public function render()
@@ -41,8 +36,7 @@ class RiwayatJurnalPerbaikan extends Component
 
     protected function defaultValues()
     {
-        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        //
     }
 
     protected function dataPerSheet(): array
