@@ -11,7 +11,7 @@
 
 <div {{ $attributes->merge(['class' => 'card']) }}>
     @if ($useDefaultFilter)
-        <div class="card-body" card-section-header>
+        <div class="card-body">
             <x-card.row-col>
                 <x-filter.range-date />
                 <x-filter.button-export-excel class="ml-auto" />
@@ -23,15 +23,15 @@
             </x-card.row-col>
         </div>
     @else
-        <div class="card-body" card-section-header>
+        <div class="card-body">
             {{ $header }}
         </div>
     @endif
-    <div {{ $body->attributes->merge(['class' => 'card-body p-0']) }} card-section-body>
+    <div {{ $body->attributes->merge(['class' => 'card-body p-0']) }}>
         {{ $body }}
     </div>
     @if ($footer)
-        <div class="card-footer py-0 my-0" card-section-footer>
+        <div class="card-footer py-0 my-0">
             {{ $footer }}
         </div>
     @endif
