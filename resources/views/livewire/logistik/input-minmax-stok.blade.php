@@ -186,7 +186,7 @@
         </x-slot>
 
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap livewire>
+            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="kode_brng" title="Kode" />
                     <x-table.th name="nama_brng" title="Nama" />

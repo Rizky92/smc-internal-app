@@ -35,7 +35,7 @@ class PenyerahanObatDriveThru extends Component
     public function render()
     {
         return view('livewire.farmasi.penyerahan-obat-drive-thru')
-            ->layout(BaseLayout::class, ['title' => 'PenyerahanObatDriveThru']);
+            ->layout(BaseLayout::class, ['title' => 'Persiapan Penyerahan Obat Pasien melalui Drive Thru']);
     }
 
     protected function defaultValues()

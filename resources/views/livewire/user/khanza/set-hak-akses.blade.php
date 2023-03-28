@@ -30,7 +30,7 @@
                 </div>
             </x-row-col>
             <x-row class="pt-2">
-                <x-table zebra hover sticky nowrap livewire>
+                <x-table zebra hover sticky nowrap>
                     <x-slot name="columns">
                         <x-table.th>
                             <input id="checkbox-set-hak-akses" type="checkbox" name="__checkbox_utama">

@@ -140,7 +140,7 @@
             </x-card.row-col>
         </x-slot>
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap livewire>
+            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="nik" title="NRP" style="width: 15ch" />
                     <x-table.th name="nama" title="Nama" style="width: 50ch" />

@@ -22,7 +22,7 @@
                 </x-slot>
                 <x-slot name="contents">
                     <x-navtabs.content id="medis">
-                        <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap livewire>
+                        <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                             <x-slot name="columns">
                                 <x-table.th name="no_jurnal" title="No. Jurnal" />
                                 <x-table.th name="waktu_jurnal" title="Waktu" />
@@ -55,7 +55,7 @@
                         <x-paginator class="px-4 bg-light" :data="$this->jurnalBarangMedis" />
                     </x-navtabs.content>
                     <x-navtabs.content id="nonmedis">
-                        <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap livewire>
+                        <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                             <x-slot name="columns">
                                 <x-table.th name="no_jurnal" title="No. Jurnal" />
                                 <x-table.th name="waktu_jurnal" title="Waktu" />

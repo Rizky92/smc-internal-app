@@ -63,7 +63,7 @@
                             </div>
                         </x-navtabs.content>
                         <x-navtabs.content id="pilih-dari-role">
-                            <x-table zebra hover sticky nowrap livewire>
+                            <x-table zebra hover sticky nowrap>
                                 <x-slot name="columns">
                                     <x-table.th class="px-3">
                                         <input id="checkbox-set-role" type="checkbox" name="__checkbox_utama">

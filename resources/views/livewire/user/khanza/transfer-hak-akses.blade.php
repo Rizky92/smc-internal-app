@@ -49,7 +49,7 @@
                 </div>
             </x-row-col>
             <x-row-col class="pt-2">
-                <x-table zebra hover sticky nowrap livewire>
+                <x-table zebra hover sticky nowrap>
                     <x-slot name="columns">
                         <x-table.th>
                             <input id="checkbox-transfer-hak-akses" type="checkbox" name="__checkbox_utama" value="null">

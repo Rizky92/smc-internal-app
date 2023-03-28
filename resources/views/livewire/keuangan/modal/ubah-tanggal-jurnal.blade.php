@@ -75,7 +75,7 @@
                     </x-navtabs.content>
                     <x-navtabs.content id="riwayat-perubahan">
                         <x-row-col class="p-0">
-                            <x-table style="max-width: 100%" id="table-riwayat" zebra hover sticky nowrap livewire>
+                            <x-table style="max-width: 100%" id="table-riwayat" zebra hover sticky nowrap>
                                 <x-slot name="columns">
                                     <x-table.th class="pl-3" title="Tgl. TERBARU" />
                                     <x-table.th title="Tgl. Sebelumnya" />

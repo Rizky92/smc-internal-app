@@ -58,7 +58,7 @@
                         <x-paginator class="px-4 py-3 bg-light" :data="$this->dataKunjunganResepObatRegular" />
                     </x-navtabs.content>
                     <x-navtabs.content id="obat-racikan">
-                        <x-table class="mb-0" :sortColumns="$sortColumns" sortable zebra hover sticky nowrap livewire>
+                        <x-table class="mb-0" :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                             <x-slot name="columns">
                                 <x-table.th style="width: 20ch" name="no_resep" title="No. Resep" />
                                 <x-table.th style="width: 50ch" name="nm_dokter" title="Dokter Peresep" />

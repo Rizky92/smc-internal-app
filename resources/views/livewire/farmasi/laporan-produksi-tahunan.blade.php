@@ -13,7 +13,7 @@
             </x-card.row-col>
         </x-slot>
         <x-slot name="body">
-            <x-table style="width: 150rem" zebra hover sticky nowrap livewire>
+            <x-table style="width: 150rem" zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th width="250" title="Laporan" />
                     <x-table.th class="text-center px-0" width="150" title="Januari" />

@@ -60,7 +60,7 @@
                 </div>
             </x-row-col>
             <x-row-col class="mt-2">
-                <x-table zebra hover sticky nowrap livewire>
+                <x-table zebra hover sticky nowrap>
                     <x-slot name="columns">
                         <x-table.th>
                             <input id="checkbox-utama-siap-transfer" type="checkbox" name="__checkbox_utama" value="null">

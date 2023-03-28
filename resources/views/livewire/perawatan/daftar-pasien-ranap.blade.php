@@ -222,7 +222,7 @@
         </x-slot>
 
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" style="width: 250rem" sortable zebra hover sticky nowrap livewire>
+            <x-table :sortColumns="$sortColumns" style="width: 250rem" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="no_rawat" title="No. Rawat" style="width: 20ch" />
                     <x-table.th name="ruangan" title="Kamar" style="width: 35ch" />

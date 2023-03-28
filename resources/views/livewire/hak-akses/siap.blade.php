@@ -14,7 +14,7 @@
         </x-slot>
 
         <x-slot name="body">
-            <x-table zebra hover sticky nowrap livewire>
+            <x-table zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th title="#" />
                     <x-table.th style="width: 30ch" title="Nama" />

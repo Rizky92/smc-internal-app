@@ -3,7 +3,7 @@
 
     <x-card use-default-filter>
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" style="width: 150rem" sortable zebra hover sticky nowrap livewire>
+            <x-table :sortColumns="$sortColumns" style="width: 150rem" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="tgl_registrasi" title="Tgl." style="width: 15ch" />
                     <x-table.th name="jam_reg" title="Jam" style="width: 10ch" />
