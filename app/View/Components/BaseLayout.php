@@ -83,6 +83,7 @@ class BaseLayout extends Component
                     'keuangan.jurnal-po-supplier.read',
                     'keuangan.jurnal-piutang-lunas.read',
                     'keuangan.jurnal-perbaikan.read',
+                    'keuangan.riwayat-jurnal-perbaikan.read',
                     'keuangan.buku-besar.read',
                     'keuangan.laba-rugi-rekening.read',
                     'keuangan.dpjp-piutang-ranap.read',
@@ -201,6 +202,7 @@ class BaseLayout extends Component
                     'farmasi.kunjungan-per-bentuk-obat.read',
                     'farmasi.kunjungan-per-poli.read',
                     'farmasi.perbandingan-po-obat.read',
+                    'farmasi.penyerahan-obat-drivethru.read',
                 ]),
                 'items' => [
                     [
@@ -238,6 +240,12 @@ class BaseLayout extends Component
                         'icon' => 'fas fa-balance-scale',
                         'url' => route('admin.farmasi.perbandingan-po-obat'),
                         'hasAnyPermissions' => $user->can('farmasi.perbandingan-po-obat.read'),
+                    ],
+                    [
+                        'name' => 'Penyerahan Obat Drive Thru',
+                        'icon' => 'fas fa-car',
+                        'url' => route('admin.farmasi.penyerahan-obat-drivethru'),
+                        'hasAnyPermissions' => $user->can('farmasi.penyerahan-obat-drivethru.read'),
                     ],
                 ],
             ],

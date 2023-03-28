@@ -9,6 +9,7 @@ use App\Http\Livewire\Farmasi\KunjunganPerBentukObat;
 use App\Http\Livewire\Farmasi\KunjunganPerPoli;
 use App\Http\Livewire\Farmasi\LaporanProduksiTahunan;
 use App\Http\Livewire\Farmasi\ObatPerDokter;
+use App\Http\Livewire\Farmasi\PenyerahanObatDriveThru;
 use App\Http\Livewire\Farmasi\PerbandinganBarangPO;
 use App\Http\Livewire\Farmasi\StokDaruratFarmasi;
 use App\Http\Livewire\HakAkses\Siap;
@@ -92,15 +93,15 @@ Route::prefix('admin')
                     ->middleware('can:keuangan.rekap-piutang-pasien.read')
                     ->name('rekap-piutang-pasien');
 
-                Route::get('laporan-tambahan-biaya', LaporanTambahanBiayaPasien::class)
+                Route::get('laporan-tambahan-biaya-pasien', LaporanTambahanBiayaPasien::class)
                     ->middleware('can:keuangan.laporan-tambahan-biaya.read')
                     ->name('laporan-tambahan-biaya');
 
-                Route::get('laporan-potongan-biaya', LaporanPotonganBiayaPasien::class)
+                Route::get('laporan-potongan-biaya-pasien', LaporanPotonganBiayaPasien::class)
                     ->middleware('can:keuangan.laporan-potongan-biaya.read')
                     ->name('laporan-potongan-biaya');
 
-                Route::get('laporan-selesai-billing', LaporanSelesaiBillingPasien::class)
+                Route::get('laporan-selesai-billing-pasien', LaporanSelesaiBillingPasien::class)
                     ->middleware('can:keuangan.laporan-selesai-billing.read')
                     ->name('laporan-selesai-billing');
 
@@ -116,7 +117,7 @@ Route::prefix('admin')
                     ->middleware('can:keuangan.buku-besar.read')
                     ->name('buku-besar');
 
-                Route::get('laba-rugi-rekening', LabaRugiRekeningPerPeriode::class)
+                Route::get('laba-rugi-rekening-per-periode', LabaRugiRekeningPerPeriode::class)
                     ->middleware('can:keuangan.laba-rugi-rekening.read')
                     ->name('laba-rugi-rekening');
 
@@ -164,9 +165,13 @@ Route::prefix('admin')
                     ->middleware('can:farmasi.kunjungan-per-poli.read')
                     ->name('kunjungan-per-poli');
 
-                Route::get('ringkasan-perbandingan-po-obat', PerbandinganBarangPO::class)
+                Route::get('perbandingan-barang-po', PerbandinganBarangPO::class)
                     ->middleware('can:farmasi.perbandingan-po-obat.read')
                     ->name('perbandingan-po-obat');
+                    
+                Route::get('penyerahan-obat-drive-thru', PenyerahanObatDriveThru::class)
+                    ->middleware('can:farmasi.penyerahan-obat-drivethru.read')
+                    ->name('penyerahan-obat-drivethru');
             });
 
         Route::prefix('rekam-medis')
