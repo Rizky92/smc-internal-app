@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Farmasi;
 
+use App\Models\Farmasi\DriveThruObat;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
@@ -30,6 +31,11 @@ class PenyerahanObatDriveThru extends Component
     public function mount()
     {
         $this->defaultValues();
+    }
+
+    public function getDataObatTervalidasiProperty()
+    {
+        return DriveThruObat::paginate($this->perpage);
     }
 
     public function render()
