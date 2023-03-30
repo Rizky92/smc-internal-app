@@ -12,7 +12,7 @@ use Livewire\Component;
 
 class SetPerizinan extends Component
 {
-    use Filterable, LiveTable, DeferredModal;
+    use DeferredModal;
     
     public $nrp;
 
@@ -43,23 +43,12 @@ class SetPerizinan extends Component
 
     public function getRolesProperty()
     {
-        return $this->isDeferred
-            ? []
-            : Role::query()
-                ->with('permissions')
-                ->search($this->cari)
-                ->when($this->showChecked, fn ($q) => $q->orWhereIn('id', collect($this->checkedRoles)->filter()->keys()->all()))
-                ->get();
+        return Role::with('permissions')->get();
     }
 
-    public function getPermissionsProperty()
+    public function getOtherPermissionsProperty()
     {
-        return $this->isDeferred
-            ? []
-            : Permission::query()
-                ->search($this->cari)
-                ->when($this->showChecked, fn ($q) => $q->orWhereIn('id', collect($this->checkedPermissions)->filter()->keys()->all()))
-                ->pluck('name', 'id');
+        return Permission::whereDoesntHave('roles')->get();
     }
 
     public function prepareUser(string $nrp = '', string $nama = '', array $roleIds = [], array $permissionIds = [])
