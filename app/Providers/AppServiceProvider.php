@@ -47,7 +47,7 @@ class AppServiceProvider extends ServiceProvider
         $this->registerModelConfigurations();
         $this->registerSuperadminRole();
         $this->registerCollectionMacrosAndMixins();
-        $this->registerResponseMacros();
+        // $this->registerResponseMacros();
     }
 
     public function registerBladeDirectives()
