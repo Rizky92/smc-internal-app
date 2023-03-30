@@ -2,10 +2,13 @@
 
 namespace App\Models\Farmasi;
 
+use App\Models\Perawatan\RegistrasiPasien;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -24,6 +27,52 @@ class ResepObat extends Model
     public $incrementing = false;
 
     public $timestamps = false;
+
+    public function registrasi(): BelongsTo
+    {
+        return $this->belongsTo(RegistrasiPasien::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function detail(): BelongsToMany
+    {
+        return $this->belongsToMany(Obat::class, 'resep_dokter', 'no_resep', 'kode_brng', 'no_resep', 'kode_brng')
+            ->withPivot('jml');
+    }
+
+    public function scopePenyerahanMelaluiDriveThru(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->format('Y-m-d');
+        }
+
+        $sqlSelect = <<<SQL
+            resep_obat.no_resep,
+            resep_obat.no_rawat,
+            reg_periksa.no_rkm_medis,
+            pasien.nm_pasien,
+            reg_periksa.umurdaftar,
+            reg_periksa.sttsumur,
+            timestamp(resep_obat.tgl_peresepan, resep_obat.jam_peresepan) waktu_peresepan,
+            timestamp(resep_obat.tgl_perawatan, resep_obat.jam) waktu_validasi,
+            timestamp(resep_obat.tgl_penyerahan, resep_obat.jam_penyerahan) waktu_penyerahan,
+            resep_obat.status
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->leftJoin('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->where('resep_obat.status', 'ralan')
+            ->where(fn (Builder $query) => $query
+                ->where('resep_obat.tgl_peresepan', '!=', '0000-00-00')
+                ->where('resep_obat.jam_peresepan', '!=', '00:00:00'))
+            ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
+            ->orderBy('resep_obat.no_resep', 'desc');
+    }
 
     public function scopePenggunaanObatPerDokter(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {

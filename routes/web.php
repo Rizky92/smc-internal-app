@@ -5,36 +5,13 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\BPJS\MobileJKNController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
-use App\Http\Livewire\Farmasi\KunjunganPerBentukObat;
-use App\Http\Livewire\Farmasi\KunjunganPerPoli;
-use App\Http\Livewire\Farmasi\LaporanProduksiTahunan;
-use App\Http\Livewire\Farmasi\ObatPerDokter;
-use App\Http\Livewire\Farmasi\PenyerahanObatDriveThru;
-use App\Http\Livewire\Farmasi\PerbandinganBarangPO;
-use App\Http\Livewire\Farmasi\StokDaruratFarmasi;
-use App\Http\Livewire\HakAkses\Siap;
-use App\Http\Livewire\HakAkses\Khanza;
-use App\Http\Livewire\Keuangan\BukuBesar;
-use App\Http\Livewire\Keuangan\DPJPPiutangRanap;
-use App\Http\Livewire\Keuangan\LabaRugiRekeningPerPeriode;
-use App\Http\Livewire\Keuangan\LaporanSelesaiBillingPasien;
-use App\Http\Livewire\Keuangan\LaporanPotonganBiayaPasien;
-use App\Http\Livewire\Keuangan\LaporanTambahanBiayaPasien;
-use App\Http\Livewire\Keuangan\LaporanTindakanLab;
-use App\Http\Livewire\Keuangan\LaporanTindakanRadiologi;
-use App\Http\Livewire\Keuangan\JurnalPiutangLunas;
-use App\Http\Livewire\Keuangan\JurnalSupplierPO;
-use App\Http\Livewire\Keuangan\JurnalPerbaikan;
-use App\Http\Livewire\Keuangan\RekapPiutangPasien;
-use App\Http\Livewire\Keuangan\RiwayatJurnalPerbaikan;
-use App\Http\Livewire\Keuangan\StokObatRuangan;
-use App\Http\Livewire\Logistik\InputMinmaxStok;
-use App\Http\Livewire\Logistik\StokDaruratLogistik;
-use App\Http\Livewire\Perawatan\DaftarPasienRanap;
-use App\Http\Livewire\Perawatan\LaporanPasienRanap;
-use App\Http\Livewire\RekamMedis\LaporanDemografi;
-use App\Http\Livewire\RekamMedis\LaporanStatistik;
-use App\Http\Livewire\User\ManajemenUser;
+use App\Http\Livewire\Farmasi;
+use App\Http\Livewire\HakAkses;
+use App\Http\Livewire\Keuangan;
+use App\Http\Livewire\Logistik;
+use App\Http\Livewire\Perawatan;
+use App\Http\Livewire\RekamMedis;
+use App\Http\Livewire\User;
 use Illuminate\Support\Facades\Route;
 use InfyOm\RoutesExplorer\RoutesExplorer;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
@@ -73,11 +50,11 @@ Route::prefix('admin')
         Route::prefix('perawatan')
             ->as('perawatan.')
             ->group(function () {
-                Route::get('daftar-pasien-ranap', DaftarPasienRanap::class)
+                Route::get('daftar-pasien-ranap', Perawatan\DaftarPasienRanap::class)
                     ->middleware('can:perawatan.daftar-pasien-ranap.read')
                     ->name('daftar-pasien-ranap');
 
-                Route::get('laporan-pasien-ranap', LaporanPasienRanap::class)
+                Route::get('laporan-pasien-ranap', Perawatan\LaporanPasienRanap::class)
                     ->middleware('can:perawatan.laporan-pasien-ranap.read')
                     ->name('laporan-pasien-ranap');
             });
@@ -85,59 +62,59 @@ Route::prefix('admin')
         Route::prefix('keuangan')
             ->as('keuangan.')
             ->group(function () {
-                Route::get('stok-obat-ruangan', StokObatRuangan::class)
+                Route::get('stok-obat-ruangan', Keuangan\StokObatRuangan::class)
                     ->middleware('can:keuangan.stok-obat-ruangan.read')
                     ->name('stok-obat-ruangan');
 
-                Route::get('rekap-piutang-pasien', RekapPiutangPasien::class)
+                Route::get('rekap-piutang-pasien', Keuangan\RekapPiutangPasien::class)
                     ->middleware('can:keuangan.rekap-piutang-pasien.read')
                     ->name('rekap-piutang-pasien');
 
-                Route::get('laporan-tambahan-biaya-pasien', LaporanTambahanBiayaPasien::class)
+                Route::get('laporan-tambahan-biaya-pasien', Keuangan\LaporanTambahanBiayaPasien::class)
                     ->middleware('can:keuangan.laporan-tambahan-biaya.read')
                     ->name('laporan-tambahan-biaya');
 
-                Route::get('laporan-potongan-biaya-pasien', LaporanPotonganBiayaPasien::class)
+                Route::get('laporan-potongan-biaya-pasien', Keuangan\LaporanPotonganBiayaPasien::class)
                     ->middleware('can:keuangan.laporan-potongan-biaya.read')
                     ->name('laporan-potongan-biaya');
 
-                Route::get('laporan-selesai-billing-pasien', LaporanSelesaiBillingPasien::class)
+                Route::get('laporan-selesai-billing-pasien', Keuangan\LaporanSelesaiBillingPasien::class)
                     ->middleware('can:keuangan.laporan-selesai-billing.read')
                     ->name('laporan-selesai-billing');
 
-                Route::get('jurnal-supplier-po', JurnalSupplierPO::class)
+                Route::get('jurnal-supplier-po', Keuangan\JurnalSupplierPO::class)
                     ->middleware('can:keuangan.jurnal-po-supplier.read')
                     ->name('jurnal-supplier-po');
 
-                Route::get('jurnal-piutang-lunas', JurnalPiutangLunas::class)
+                Route::get('jurnal-piutang-lunas', Keuangan\JurnalPiutangLunas::class)
                     ->middleware('can:keuangan.jurnal-piutang-lunas.read')
                     ->name('jurnal-piutang-lunas');
 
-                Route::get('buku-besar', BukuBesar::class)
+                Route::get('buku-besar', Keuangan\BukuBesar::class)
                     ->middleware('can:keuangan.buku-besar.read')
                     ->name('buku-besar');
 
-                Route::get('laba-rugi-rekening-per-periode', LabaRugiRekeningPerPeriode::class)
+                Route::get('laba-rugi-rekening-per-periode', Keuangan\LabaRugiRekeningPerPeriode::class)
                     ->middleware('can:keuangan.laba-rugi-rekening.read')
                     ->name('laba-rugi-rekening');
 
-                Route::get('dpjp-piutang-ranap', DPJPPiutangRanap::class)
+                Route::get('dpjp-piutang-ranap', Keuangan\DPJPPiutangRanap::class)
                     ->middleware('can:keuangan.dpjp-piutang-ranap.read')
                     ->name('dpjp-piutang-ranap');
 
-                Route::get('jurnal-perbaikan', JurnalPerbaikan::class)
+                Route::get('jurnal-perbaikan', Keuangan\JurnalPerbaikan::class)
                     ->middleware('can:keuangan.jurnal-perbaikan.read')
                     ->name('jurnal-perbaikan');
 
-                Route::get('riwayat-jurnal-perbaikan', RiwayatJurnalPerbaikan::class)
+                Route::get('riwayat-jurnal-perbaikan', Keuangan\RiwayatJurnalPerbaikan::class)
                     ->middleware('can:keuangan.riwayat-jurnal-perbaikan.read')
                     ->name('riwayat-jurnal-perbaikan');
 
-                Route::get('laporan-tindakan-lab', LaporanTindakanLab::class)
+                Route::get('laporan-tindakan-lab', Keuangan\LaporanTindakanLab::class)
                     ->middleware('can:keuangan.laporan-tindakan-lab.read')
                     ->name('laporan-tindakan-lab');
 
-                Route::get('laporan-tindakan-radiologi', LaporanTindakanRadiologi::class)
+                Route::get('laporan-tindakan-radiologi', Keuangan\LaporanTindakanRadiologi::class)
                     ->middleware('can:keuangan.laporan-tindakan-radiologi.read')
                     ->name('laporan-tindakan-radiologi');
             });
@@ -145,31 +122,31 @@ Route::prefix('admin')
         Route::prefix('farmasi')
             ->as('farmasi.')
             ->group(function () {
-                Route::get('stok-darurat', StokDaruratFarmasi::class)
+                Route::get('stok-darurat', Farmasi\StokDaruratFarmasi::class)
                     ->middleware('can:farmasi.stok-darurat.read')
                     ->name('stok-darurat');
 
-                Route::get('penggunaan-obat-per-dokter', ObatPerDokter::class)
+                Route::get('penggunaan-obat-per-dokter', Farmasi\ObatPerDokter::class)
                     ->middleware('can:farmasi.obat-per-dokter.read')
                     ->name('obat-per-dokter');
 
-                Route::get('laporan-produksi-tahunan', LaporanProduksiTahunan::class)
+                Route::get('laporan-produksi-tahunan', Farmasi\LaporanProduksiTahunan::class)
                     ->middleware('can:farmasi.laporan-produksi.read')
                     ->name('laporan-produksi');
 
-                Route::get('kunjungan-resep-per-bentuk-obat', KunjunganPerBentukObat::class)
+                Route::get('kunjungan-resep-per-bentuk-obat', Farmasi\KunjunganPerBentukObat::class)
                     ->middleware('can:farmasi.kunjungan-per-bentuk-obat.read')
                     ->name('kunjungan-per-bentuk-obat');
 
-                Route::get('kunjungan-resep-per-poli', KunjunganPerPoli::class)
+                Route::get('kunjungan-resep-per-poli', Farmasi\KunjunganPerPoli::class)
                     ->middleware('can:farmasi.kunjungan-per-poli.read')
                     ->name('kunjungan-per-poli');
 
-                Route::get('perbandingan-barang-po', PerbandinganBarangPO::class)
+                Route::get('perbandingan-barang-po', Farmasi\PerbandinganBarangPO::class)
                     ->middleware('can:farmasi.perbandingan-po-obat.read')
                     ->name('perbandingan-po-obat');
                     
-                Route::get('penyerahan-obat-drive-thru', PenyerahanObatDriveThru::class)
+                Route::get('penyerahan-obat-drive-thru', Farmasi\PenyerahanObatDriveThru::class)
                     ->middleware('can:farmasi.penyerahan-obat-drivethru.read')
                     ->name('penyerahan-obat-drivethru');
             });
@@ -177,11 +154,11 @@ Route::prefix('admin')
         Route::prefix('rekam-medis')
             ->as('rekam-medis.')
             ->group(function () {
-                Route::get('laporan-statistik', LaporanStatistik::class)
+                Route::get('laporan-statistik', RekamMedis\LaporanStatistik::class)
                     ->middleware('can:rekam-medis.laporan-statistik.read')
                     ->name('laporan-statistik');
 
-                Route::get('laporan-demografi', LaporanDemografi::class)
+                Route::get('laporan-demografi', RekamMedis\LaporanDemografi::class)
                     ->middleware('can:rekam-medis.laporan-demografi.read')
                     ->name('laporan-demografi');
             });
@@ -189,24 +166,24 @@ Route::prefix('admin')
         Route::prefix('logistik')
             ->as('logistik.')
             ->group(function () {
-                Route::get('input-minmax-stok', InputMinmaxStok::class)
+                Route::get('input-minmax-stok', Logistik\InputMinmaxStok::class)
                     ->middleware('can:logistik.input-minmax-stok.read')
                     ->name('input-minmax-stok');
 
-                Route::get('stok-darurat', StokDaruratLogistik::class)
+                Route::get('stok-darurat', Logistik\StokDaruratLogistik::class)
                     ->middleware('can:logistik.stok-darurat.read')
                     ->name('stok-darurat');
             });
 
         Route::middleware('role:' . config('permission.superadmin_name'))
             ->group(function () {
-                Route::get('manajemen-user', ManajemenUser::class)
+                Route::get('manajemen-user', User\ManajemenUser::class)
                     ->name('manajemen-user');
 
-                Route::get('hak-akses/smc-internal-app', Siap::class)
+                Route::get('hak-akses/smc-internal-app', HakAkses\Siap::class)
                     ->name('hak-akses.siap');
 
-                Route::get('hak-akses/simrs-khanza', Khanza::class)
+                Route::get('hak-akses/simrs-khanza', HakAkses\Khanza::class)
                     ->name('hak-akses.khanza');
 
                 Route::get('logs', [LogViewerController::class, 'index'])
