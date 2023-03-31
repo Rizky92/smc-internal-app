@@ -241,12 +241,12 @@ class BaseLayout extends Component
                         'url' => route('admin.farmasi.perbandingan-po-obat'),
                         'hasAnyPermissions' => $user->can('farmasi.perbandingan-po-obat.read'),
                     ],
-                    [
-                        'name' => 'Penyerahan Obat Drive Thru',
-                        'icon' => 'fas fa-car',
-                        'url' => route('admin.farmasi.penyerahan-obat-drivethru'),
-                        'hasAnyPermissions' => $user->can('farmasi.penyerahan-obat-drivethru.read'),
-                    ],
+                    // [
+                    //     'name' => 'Penyerahan Obat Drive Thru',
+                    //     'icon' => 'fas fa-car',
+                    //     'url' => route('admin.farmasi.penyerahan-obat-drivethru'),
+                    //     'hasAnyPermissions' => $user->can('farmasi.penyerahan-obat-drivethru.read'),
+                    // ],
                 ],
             ],
             [
