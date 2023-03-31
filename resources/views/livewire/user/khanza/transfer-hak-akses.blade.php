@@ -15,25 +15,6 @@
                         $('#checkbox-utama-khanza-set').prop('checked', false)
                         $('#checkbox-utama-khanza-set').trigger('change')
                     })
-
-                    $('#checkbox-transfer-hak-akses').change(e => {
-                        let isChecked = e.target.checked
-                        let els = $('input[type=checkbox][id*=tk-]')
-
-                        let checkedUsers = new Map()
-
-                        els.each((i, el) => {
-                            el.checked = isChecked
-
-                            checkedUsers.set(el.value, isChecked)
-                        })
-
-                        if (!isChecked) {
-                            checkedUsers.clear()
-                        }
-
-                        @this.set('checkedUsers', Object.fromEntries(checkedUsers), true)
-                    })
                 })
             </script>
         @endpush
@@ -49,12 +30,9 @@
                 </div>
             </x-row-col>
             <x-row-col class="pt-2">
-                <x-table zebra hover sticky nowrap>
+                <x-table zebra hover>
                     <x-slot name="columns">
-                        <x-table.th>
-                            <input id="checkbox-transfer-hak-akses" type="checkbox" name="__checkbox_utama" value="null">
-                            <label for="checkbox-transfer-hak-akses"></label>
-                        </x-table.th>
+                        <x-table.th-checkbox-all id="checkbox-transfer-hak-akses" name="__checkbox_tha_utama" livewire model="checkedUsers" lookup="tk-" />
                         <x-table.th title="NRP" />
                         <x-table.th title="Nama" />
                         <x-table.th title="Jabatan" />
@@ -62,10 +40,7 @@
                     <x-slot name="body">
                         @forelse ($this->availableUsers as $user)
                             <x-table.tr>
-                                <x-table.td>
-                                    <input id="tk-{{ $user->nik }}" type="checkbox" wire:model.defer="checkedUsers.{{ $user->nik }}" value="{{ $user->nik }}">
-                                    <label for="tk-{{ $user->nik }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer; margin: 0"></label>
-                                </x-table.td>
+                                <x-table.td-checkbox model="checkedUsers" :key="$user->nik" :id="$user->nik" prefix="tk-" />
                                 <x-table.td>{{ $user->nik }}</x-table.td>
                                 <x-table.td>{{ $user->nama }}</x-table.td>
                                 <x-table.td>{{ $user->jbtn }}</x-table.td>

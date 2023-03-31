@@ -1,16 +1,15 @@
 @props([
     'model' => null,
-    'modelKey' => null,
-    'title' => null,
+    'key' => null,
+    'id' => null,
     'prefix' => null,
 ])
 
 @php
-    $id = str($title)
-        ->kebab()
+    $id = str($id)
         ->prepend($prefix);
 
-    $wireModel = $model . '.' . $modelKey;
+    $wireModel = $model . '.' . $key;
 @endphp
 
 <x-table.td>

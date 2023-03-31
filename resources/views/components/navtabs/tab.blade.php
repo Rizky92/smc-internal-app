@@ -6,8 +6,6 @@
     'title',
 ])
 
-
-
 <li class="nav-item my-2">
     <a {{ $attributes
         ->class(['nav-link', 'active' => $selected === $id])

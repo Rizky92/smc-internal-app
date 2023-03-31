@@ -14,33 +14,31 @@
 
 @php
     $sizes = ['sm', 'lg', 'xl'];
-
+    
     $finalClass = [];
-
-    if (in_array($size, $sizes) || $size !== 'default') {
+    
+    if (in_array($size, $sizes)) {
         $finalClass = array_merge(['modal-' . $size], $finalClass);
     }
-
+    
     if ($centered) {
         $finalClass = array_merge(['modal-dialog-centered'], $finalClass);
     }
-
+    
     if ($scrollable) {
         $finalClass = array_merge(['modal-dialog-scrollable'], $finalClass);
     }
-
+    
     $finalClass = collect($finalClass)->join(' ');
 @endphp
 
-@once
-    @push('js')
-        <script>
-            $('.modal#{{ $id }}').on('show.bs.modal', e => {
-                $('.modal#{{ $id }}').modal('handleUpdate')
-            })
-        </script>
-    @endpush
-@endonce
+@push('js')
+    <script>
+        $('.modal#{{ $id }}').on('show.bs.modal', e => {
+            $('.modal#{{ $id }}').modal('handleUpdate')
+        })
+    </script>
+@endpush
 
 <div class="modal fade" id="{{ $id }}" {{ $livewire ? 'wire:ignore.self' : null }}>
     <div class="modal-dialog {{ $finalClass }}">
@@ -60,7 +58,7 @@
             <div {{ $body->attributes->merge(['class' => 'modal-body']) }}>
                 {{ $body }}
             </div>
-            
+
             @if ($footer)
                 <div {{ $footer->attributes->merge(['class' => 'modal-footer']) }}>
                     {{ $footer }}
