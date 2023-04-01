@@ -22,24 +22,35 @@
     <x-modal livewire title="Set hak akses user untuk SIMRS Khanza" id="modal-set-hak-akses">
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-row-col class="px-3 pt-3">
-                <div class="d-flex justify-content-start">
-                    <div class="w-100">
-                        <label>User:</label>
-                        <p>{{ "{$nrp} {$nama}" }}</p>
-                    </div>
-                </div>
+                <label class="mb-0">User:</label>
+                <p>{{ "{$nrp} {$nama}" }}</p>
             </x-row-col>
-            <x-row class="pt-2">
+            <x-row-col class="pt-2">
                 <x-table zebra hover>
                     <x-slot name="columns">
-                        <x-table.th-checkbox-all id="checkbox-set-hak-akses" name="__checkbox_sha_utama" livewire model="checkedHakAkses" lookup="sk-" />
+                        <x-table.th-checkbox-all
+                            livewire
+                            class="pl-3"
+                            style="width: max-content"
+                            id="checkbox-set-hak-akses"
+                            name="__checkbox_sha_utama"
+                            model="checkedHakAkses"
+                            lookup="sha-"
+                        />
                         <x-table.th title="Nama Field" />
                         <x-table.th title="Judul Menu" />
                     </x-slot>
                     <x-slot name="body">
                         @forelse ($this->hakAksesKhanza as $hakAkses)
                             <x-table.tr>
-                                <x-table.td-checkbox model="checkedHakAkses" :key="$hakAkses->nama_field" :id="$hakAkses->nama_field" prefix="sk-" />
+                                <x-table.td-checkbox
+                                    livewire
+                                    class="pl-3"
+                                    model="checkedHakAkses"
+                                    :key="$hakAkses->nama_field"
+                                    :id="$hakAkses->nama_field"
+                                    prefix="sha-"
+                                />
                                 <x-table.td>{{ $hakAkses->nama_field }}</x-table.td>
                                 <x-table.td>{{ $hakAkses->judul_menu }}</x-table.td>
                             </x-table.tr>
@@ -48,7 +59,7 @@
                         @endforelse
                     </x-slot>
                 </x-table>
-            </x-row>
+            </x-row-col>
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
             <x-filter.search method="$refresh" />

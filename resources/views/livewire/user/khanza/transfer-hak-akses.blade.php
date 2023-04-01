@@ -12,8 +12,8 @@
                     })
 
                     $('#modal-transfer-hak-akses').on('hidden.bs.modal', e => {
-                        $('#checkbox-utama-khanza-set').prop('checked', false)
-                        $('#checkbox-utama-khanza-set').trigger('change')
+                        $('#checbox-transfer-hak-akses').prop('checked', false)
+                        $('#checbox-transfer-hak-akses').trigger('change')
                     })
                 })
             </script>
@@ -22,25 +22,36 @@
     <x-modal livewire title="Transfer hak akses SIMRS Khanza ke user lainnya" id="modal-transfer-hak-akses">
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-row-col class="px-3 pt-3">
-                <div class="d-flex justify-content-start">
-                    <div class="w-100">
-                        <label>User:</label>
-                        <p>{{ "{$nrp} {$nama}" }}</p>
-                    </div>
-                </div>
+                <label class="mb-0">User:</label>
+                <p>{{ "{$nrp} {$nama}" }}</p>
             </x-row-col>
             <x-row-col class="pt-2">
                 <x-table zebra hover>
                     <x-slot name="columns">
-                        <x-table.th-checkbox-all id="checkbox-transfer-hak-akses" name="__checkbox_tha_utama" livewire model="checkedUsers" lookup="tk-" />
-                        <x-table.th title="NRP" />
+                        <x-table.th-checkbox-all
+                            livewire
+                            class="pl-3"
+                            style="width: max-content"
+                            id="checkbox-transfer-hak-akses"
+                            name="__checkbox_tha_utama"
+                            model="checkedUsers"
+                            lookup="tha-"
+                        />
+                        <x-table.th style="width: 5ch" title="NRP" />
                         <x-table.th title="Nama" />
                         <x-table.th title="Jabatan" />
                     </x-slot>
                     <x-slot name="body">
                         @forelse ($this->availableUsers as $user)
                             <x-table.tr>
-                                <x-table.td-checkbox model="checkedUsers" :key="$user->nik" :id="$user->nik" prefix="tk-" />
+                                <x-table.td-checkbox
+                                    livewire
+                                    class="pl-3"
+                                    model="checkedUsers"
+                                    :key="$user->nik"
+                                    :id="$user->nik"
+                                    prefix="tha-"
+                                />
                                 <x-table.td>{{ $user->nik }}</x-table.td>
                                 <x-table.td>{{ $user->nama }}</x-table.td>
                                 <x-table.td>{{ $user->jbtn }}</x-table.td>

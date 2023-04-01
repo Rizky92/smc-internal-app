@@ -12,8 +12,8 @@
                     })
 
                     $('#modal-transfer-perizinan').on('hidden.bs.modal', e => {
-                        $('#checkbox-utama-khanza-set').prop('checked', false)
-                        $('#checkbox-utama-khanza-set').trigger('change')
+                        $('#checkbox-transfer-perizinan').prop('checked', false)
+                        $('#checkbox-transfer-perizinan').trigger('change')
                     })
 
                     $('#checkbox-utama-siap-transfer').change(e => {
@@ -40,13 +40,13 @@
     @endonce
     <x-modal livewire title="Transfer perizinan SIAP ke user lainnya" id="modal-transfer-perizinan">
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
-            <x-row-col>
-                <div class="d-flex justify-content-start px-3 pt-3">
-                    <div class="w-50">
+            <x-row-col class="px-3 pt-3">
+                <div class="d-flex justify-content-between">
+                    <div>
                         <label>User:</label>
                         <p>{{ "{$nrp} {$nama}" }}</p>
                     </div>
-                    <div class="w-50">
+                    <div>
                         <label>Hak akses yang ditransfer:</label>
                         <ul class="d-flex flex-wrap p-0 m-0 text-sm" style="list-style: none; row-gap: 0.5rem; column-gap: 0.25rem">
                             @foreach ($roles as $roleId => $role)
@@ -59,14 +59,19 @@
                     </div>
                 </div>
             </x-row-col>
-            <x-row-col class="mt-2">
-                <x-table zebra hover sticky nowrap>
+            <x-row-col class="pt-2">
+                <x-table zebra hover>
                     <x-slot name="columns">
-                        <x-table.th>
-                            <input id="checkbox-utama-siap-transfer" type="checkbox" name="__checkbox_utama" value="null">
-                            <label for="checkbox-utama-siap-transfer"></label>
-                        </x-table.th>
-                        <x-table.th title="NRP" />
+                        <x-table.th-checkbox-all
+                            livewire
+                            class="pl-3"
+                            style="width: max-content"
+                            id="checkbox-transfer-perizinan"
+                            name="__checkbox_tp_utama"
+                            model="checkedUsers"
+                            lookup="tha-"
+                        />
+                        <x-table.th style="width: 5ch" title="NRP" />
                         <x-table.th title="Nama" />
                         <x-table.th title="Jabatan" />
                         <x-table.th title="Role" />
@@ -74,10 +79,14 @@
                     <x-slot name="body">
                         @forelse ($this->availableUsers as $user)
                             <x-table.tr>
-                                <x-table.td>
-                                    <input id="khanza-user-{{ $user->nik }}" type="checkbox" wire:model.defer="checkedUsers.{{ $user->nik }}" value="{{ $user->nik }}">
-                                    <label for="khanza-user-{{ $user->nik }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer; margin: 0"></label>
-                                </x-table.td>
+                                <x-table.td-checkbox
+                                    livewire
+                                    class="pl-3"
+                                    model="checkedUsers"
+                                    :key="$user->nik"
+                                    :id="$user->nik"
+                                    prefix="tha-"
+                                />
                                 <x-table.td>{{ $user->nik }}</x-table.td>
                                 <x-table.td>{{ $user->nama }}</x-table.td>
                                 <x-table.td>{{ $user->jbtn }}</x-table.td>

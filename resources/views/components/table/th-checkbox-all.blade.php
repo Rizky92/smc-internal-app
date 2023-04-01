@@ -34,7 +34,7 @@
     </script>
 @endpush
 
-<x-table.th>
+<x-table.th :attributes="$attributes">
     <input id="{{ $id }}" type="checkbox" name="__{{ $name }}">
     <label for="{{ $id }}"></label>
 </x-table.th>

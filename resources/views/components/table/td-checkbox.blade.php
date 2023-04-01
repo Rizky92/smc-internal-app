@@ -1,4 +1,5 @@
 @props([
+    'livewire' => false,
     'model' => null,
     'key' => null,
     'id' => null,
@@ -12,7 +13,7 @@
     $wireModel = $model . '.' . $key;
 @endphp
 
-<x-table.td>
-    <input id="{{ $id }}" type="checkbox" wire:model.defer="{{ $wireModel }}">
+<x-table.td :attributes="$attributes">
+    <input id="{{ $id }}" type="checkbox" @if ($livewire) wire:model.defer="{{ $wireModel }}" @endif>
     <label for="{{ $id }}" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; cursor: pointer; margin: 0"></label>
 </x-table.td>
