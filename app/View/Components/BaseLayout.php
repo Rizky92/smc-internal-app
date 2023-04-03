@@ -100,10 +100,10 @@ class BaseLayout extends Component
                     ],
                     [
                         'name' => 'Rekap Piutang Pasien',
-                        'url' => route('admin.keuangan.rekap-piutang-pasien'),
+                        'url' => route('admin.keuangan.piutang-pasien'),
                         'icon' => "fas fa-file-invoice",
                         'type' => 'link',
-                        'hasAnyPermissions' => $user->can('keuangan.rekap-piutang-pasien.read'),
+                        'hasAnyPermissions' => $user->can('keuangan.piutang-pasien.read'),
                     ],
                     [
                         'name' => 'Laporan Tambahan Biaya',
