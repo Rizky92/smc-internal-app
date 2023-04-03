@@ -104,8 +104,8 @@ class LaporanStatistik extends Component
             'Status Bayar',
             'Status Pulang',
             'Rujukan Keluar',
-            'No. HP',
             'Alamat',
+            'No. HP',
             'Kunjungan ke',
         ];
     }
