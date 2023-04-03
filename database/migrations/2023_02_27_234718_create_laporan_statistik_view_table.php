@@ -57,7 +57,7 @@ return new class extends Migration
             reg_periksa.status_bayar                                              as status_bayar,
             rawat_inap.stts_pulang                                                as status_pulang_ranap,
             rujuk.rujuk_ke                                                        as rujuk_keluar_rs,
-            pasien.alamat                                                         as alamat,
+            convert(pasien.alamat using ascii)                                    as alamat,
             pasien.no_tlp                                                         as no_hp,
             $kunjunganKe                                                          as kunjungan_ke
         from $db.reg_periksa reg_periksa
