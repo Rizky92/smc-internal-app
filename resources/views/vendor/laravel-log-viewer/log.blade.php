@@ -88,35 +88,37 @@
             </div>
         </x-slot>
         <x-slot name="footer">
-            @if ($current_file)
-                <a href="?dl={{ \Illuminate\Support\Facades\Crypt::encrypt($current_file) }}{{ $current_folder ? '&f=' . \Illuminate\Support\Facades\Crypt::encrypt($current_folder) : '' }}">
-                    <i class="fas fa-download"></i>
-                    <span class="ml-1">Download</span>
-                </a>
+            <div class="py-3">
+                @if ($current_file)
+                    <a href="?dl={{ \Illuminate\Support\Facades\Crypt::encrypt($current_file) }}{{ $current_folder ? '&f=' . \Illuminate\Support\Facades\Crypt::encrypt($current_folder) : '' }}">
+                        <i class="fas fa-download"></i>
+                        <span class="ml-1">Download</span>
+                    </a>
 
-                <span class="px-2">&bull;</span>
-
-                <a id="clean-log" href="?clean={{ \Illuminate\Support\Facades\Crypt::encrypt($current_file) }}{{ $current_folder ? '&f=' . \Illuminate\Support\Facades\Crypt::encrypt($current_folder) : '' }}">
-                    <i class="fas fa-sync"></i>
-                    <span class="ml-1">Clean</span>
-                </a>
-
-                <span class="px-2">&bull;</span>
-
-                <a id="delete-log" href="?del={{ \Illuminate\Support\Facades\Crypt::encrypt($current_file) }}{{ $current_folder ? '&f=' . \Illuminate\Support\Facades\Crypt::encrypt($current_folder) : '' }}">
-                    <i class="far fa-trash-alt"></i>
-                    <span class="ml-1">Delete</span>
-                </a>
-
-                @if (count($files) > 1)
                     <span class="px-2">&bull;</span>
 
-                    <a id="delete-all-log" href="?delall=true{{ $current_folder ? '&f=' . \Illuminate\Support\Facades\Crypt::encrypt($current_folder) : '' }}">
-                        <i class="fas fa-trash-alt"></i>
-                        <span class="ml-1">Delete All</span>
+                    <a id="clean-log" href="?clean={{ \Illuminate\Support\Facades\Crypt::encrypt($current_file) }}{{ $current_folder ? '&f=' . \Illuminate\Support\Facades\Crypt::encrypt($current_folder) : '' }}">
+                        <i class="fas fa-sync"></i>
+                        <span class="ml-1">Clean</span>
                     </a>
+
+                    <span class="px-2">&bull;</span>
+
+                    <a id="delete-log" href="?del={{ \Illuminate\Support\Facades\Crypt::encrypt($current_file) }}{{ $current_folder ? '&f=' . \Illuminate\Support\Facades\Crypt::encrypt($current_folder) : '' }}">
+                        <i class="far fa-trash-alt"></i>
+                        <span class="ml-1">Delete</span>
+                    </a>
+
+                    @if (count($files) > 1)
+                        <span class="px-2">&bull;</span>
+
+                        <a id="delete-all-log" href="?delall=true{{ $current_folder ? '&f=' . \Illuminate\Support\Facades\Crypt::encrypt($current_folder) : '' }}">
+                            <i class="fas fa-trash-alt"></i>
+                            <span class="ml-1">Delete All</span>
+                        </a>
+                    @endif
                 @endif
-            @endif
+            </div>
         </x-slot>
     </x-card>
 </x-base-layout>
