@@ -84,6 +84,6 @@ class ManajemenUser extends Component
 
         $this->emitTo('user.siap.lihat-aktivitas', 'siap.prepare-la', $nrp, $nama);
         $this->emitTo('user.siap.set-perizinan', 'siap.prepare-set', $nrp, $nama, $roles, $permissions);
-        $this->emitTo('user.siap.transfer-perizinan', 'siap.prepare-transfer', $nrp, $nama, $roles, $permissions);
+        $this->emitTo('user.siap.transfer-perizinan', 'siap.prepare-transfer', $nrp, $nama);
     }
 }

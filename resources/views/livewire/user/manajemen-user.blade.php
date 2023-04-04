@@ -17,35 +17,19 @@
                 const buttonResetFilter = $('button#reset-filter')
 
                 $(document).on('DOMContentLoaded', e => {
-                    $('button#reset-filter').click(e => {
-                        clearData()
-                    })
+                    $('button#reset-filter').click(e => clearData())
 
                     buttonImpersonate.click(e => {
                         @this.impersonateAsUser(inputNRP.val())
                     })
                 })
 
-                $(document).on('data-saved', e => {
-                    clearData()
-                })
-
-                $(document).on('data-denied', e => {
-                    clearData()
-                })
-
-                $(document).on('hidden.bs.modal', e => {
-                    clearData()
-                })
+                $(document).on('data-saved', e => clearData())
+                $(document).on('data-denied', e => clearData())
+                $(document).on('hidden.bs.modal', e => clearData())
 
                 function loadData(e) {
-                    let {
-                        nrp,
-                        nama,
-                        roleIds,
-                        rolePermissionIds,
-                        permissionIds
-                    } = e.dataset
+                    let { nrp, nama, roleIds, rolePermissionIds, permissionIds } = e.dataset
 
                     buttonDropdownPilihan.prop('disabled', false)
 
@@ -151,7 +135,14 @@
                 <x-slot name="body">
                     @foreach ($this->users as $user)
                         <x-table.tr>
-                            <x-table.td clickable data-nrp="{{ $user->nik }}" data-nama="{{ $user->nama }}" data-role-ids="{{ $user->roles->pluck('id')->join(',') }}" data-role-permission-ids="{{ $user->getPermissionsViaRoles()->pluck('id')->join(',') }}" data-permission-ids="{{ $user->permissions->pluck('id')->join(',') }}">
+                            <x-table.td
+                                clickable
+                                data-nrp="{{ $user->nik }}"
+                                data-nama="{{ $user->nama }}"
+                                data-role-ids="{{ $user->roles->pluck('id')->join(',') }}"
+                                data-role-permission-ids="{{ $user->getPermissionsViaRoles()->pluck('id')->join(',') }}"
+                                data-permission-ids="{{ $user->permissions->pluck('id')->join(',') }}"
+                            >
                                 {{ $user->nik }}
                             </x-table.td>
                             <x-table.td>{{ $user->nama }}</x-table.td>

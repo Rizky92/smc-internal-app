@@ -63,12 +63,18 @@ class TransferPerizinan extends Component
                 ->get();
     }
 
-    public function prepareTransfer(string $nrp = '', string $nama = '', array $roleIds = [], array $permissionIds = [])
+    public function prepareTransfer(string $nrp = '', string $nama = '')
     {
         $this->nrp = $nrp;
         $this->nama = $nama;
-        $this->roles = Role::whereIn('id', $roleIds)->pluck('name', 'id');
-        $this->permissions = Permission::whereIn('id', $permissionIds)->pluck('name', 'id');
+
+        $user = User::query()
+            ->with(['roles', 'permissions'])
+            ->whereRaw('trim(pegawai.nik) = ?', $nrp)
+            ->first();
+
+        $this->roles = $user->roles->pluck('name', 'id');
+        $this->permissions = $user->permissions->pluck('name', 'id');
     }
 
     public function save()

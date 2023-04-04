@@ -15,25 +15,6 @@
                         $('#checkbox-transfer-perizinan').prop('checked', false)
                         $('#checkbox-transfer-perizinan').trigger('change')
                     })
-
-                    $('#checkbox-utama-siap-transfer').change(e => {
-                        let isChecked = e.target.checked
-                        let els = $('input[type=checkbox][id*=tp-]')
-
-                        let checkedUsers = new Map()
-
-                        els.each((i, el) => {
-                            el.checked = isChecked
-
-                            checkedUsers.set(el.value, isChecked)
-                        })
-
-                        if (!isChecked) {
-                            checkedUsers.clear()
-                        }
-
-                        @this.set('checkedUsers', Object.fromEntries(checkedUsers), true)
-                    })
                 })
             </script>
         @endpush
@@ -41,14 +22,14 @@
     <x-modal livewire title="Transfer perizinan SIAP ke user lainnya" id="modal-transfer-perizinan">
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-row-col class="px-3 pt-3">
-                <div class="d-flex justify-content-between">
-                    <div>
+                <div class="d-flex justify-content-between" style="column-gap: 1rem">
+                    <div class="w-50">
                         <label>User:</label>
                         <p>{{ "{$nrp} {$nama}" }}</p>
                     </div>
-                    <div>
+                    <div class="w-50">
                         <label>Hak akses yang ditransfer:</label>
-                        <ul class="d-flex flex-wrap p-0 m-0 text-sm" style="list-style: none; row-gap: 0.5rem; column-gap: 0.25rem">
+                        <ul class="d-flex flex-wrap p-0 m-0 text-xs" style="list-style: none; row-gap: 0.5rem; column-gap: 0.25rem">
                             @foreach ($roles as $roleId => $role)
                                 <li class="badge badge-dark text-sm font-weight-normal border">{{ $role }}</li>
                             @endforeach
