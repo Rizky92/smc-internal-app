@@ -1,7 +1,7 @@
 @props([
     'livewire' => false,
     'model' => null,
-    'key' => null,
+    'key' => (string) null,
     'id' => null,
     'prefix' => null,
 ])

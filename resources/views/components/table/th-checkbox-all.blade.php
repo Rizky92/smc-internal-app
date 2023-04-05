@@ -35,6 +35,6 @@
 @endpush
 
 <x-table.th :attributes="$attributes">
-    <input id="{{ $id }}" type="checkbox" name="__{{ $name }}">
+    <input id="{{ $id }}" type="checkbox" name="{{ $name }}">
     <label for="{{ $id }}"></label>
 </x-table.th>

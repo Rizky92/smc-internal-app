@@ -2,8 +2,6 @@
 
 namespace App\Http\Livewire\User\Siap;
 
-use App\Models\Aplikasi\Permission;
-use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
 use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
@@ -73,8 +71,8 @@ class TransferPerizinan extends Component
             ->whereRaw('trim(pegawai.nik) = ?', $nrp)
             ->first();
 
-        $this->roles = $user->roles->pluck('name', 'id');
-        $this->permissions = $user->permissions->pluck('name', 'id');
+        $this->roles = $user->roles->pluck('name', 'id')->all();
+        $this->permissions = $user->permissions->pluck('name', 'id')->all();
     }
 
     public function save()
@@ -86,7 +84,9 @@ class TransferPerizinan extends Component
             return;
         }
 
-        $permittedUsers = User::whereIn(DB::raw('trim(pegawai.nik)'), $this->checkedUsers)->get();
+        $permittedUsers = User::query()
+            ->whereIn(DB::raw('trim(pegawai.nik)'), collect($this->checkedUsers)->filter()->keys()->all())
+            ->get();
 
         tracker_start('mysql_smc');
 

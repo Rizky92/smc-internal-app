@@ -50,7 +50,7 @@
                             id="checkbox-transfer-perizinan"
                             name="__checkbox_tp_utama"
                             model="checkedUsers"
-                            lookup="tha-"
+                            lookup="tp-"
                         />
                         <x-table.th style="width: 5ch" title="NRP" />
                         <x-table.th title="Nama" />
@@ -66,7 +66,7 @@
                                     model="checkedUsers"
                                     :key="$user->nik"
                                     :id="$user->nik"
-                                    prefix="tha-"
+                                    prefix="tp-"
                                 />
                                 <x-table.td>{{ $user->nik }}</x-table.td>
                                 <x-table.td>{{ $user->nama }}</x-table.td>

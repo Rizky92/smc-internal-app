@@ -79,7 +79,7 @@ class TransferHakAkses extends Component
         tracker_start('mysql_sik');
 
         User::query()
-            ->whereIn('pegawai.nik', collect($this->checkedUsers)->filter()->all())
+            ->whereIn(DB::raw('trim(pegawai.nik)'), collect($this->checkedUsers)->filter()->map(fn ($v) => strval($v))->all())
             ->update($hakAkses);
 
         tracker_end('mysql_sik');
