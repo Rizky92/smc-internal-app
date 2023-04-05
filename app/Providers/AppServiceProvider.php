@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Database\Query\Grammars\MysqlGrammar;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
@@ -10,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -41,13 +41,12 @@ class AppServiceProvider extends ServiceProvider
         // Gunakan custom grammar untuk mysql agar bisa
         // melakukan pencatatan timestamp dengan presisi tingkat 6
         // https://carbon.nesbot.com/laravel/
-        DB::connection('mysql_smc')->setQueryGrammar(new \App\Database\Query\Grammars\MysqlGrammar);
+        DB::connection('mysql_smc')->setQueryGrammar(new MysqlGrammar);
 
         $this->registerBladeDirectives();
         $this->registerModelConfigurations();
         $this->registerSuperadminRole();
         $this->registerCollectionMacrosAndMixins();
-        // $this->registerResponseMacros();
     }
 
     public function registerBladeDirectives()

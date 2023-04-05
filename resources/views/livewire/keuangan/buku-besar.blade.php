@@ -47,14 +47,14 @@
                         <x-table.tr-empty :colspan="9" />
                     @endforelse
                 </x-slot>
-                {{-- <x-slot name="footer">
+                <x-slot name="footer">
                     <x-table.tr>
                         <x-table.th colspan="6" />
                         <x-table.th title="TOTAL :" />
                         <x-table.th :title="rp(optional($this->totalDebetDanKredit)->debet)" />
                         <x-table.th :title="rp(optional($this->totalDebetDanKredit)->kredit)" />
                     </x-table.tr>
-                </x-slot> --}}
+                </x-slot>
             </x-table>
         </x-slot>
         <x-slot name="footer">
