@@ -17,6 +17,7 @@
         @endpush
     @endonce
     <x-card>
+        <x-slot name="header"></x-slot>
         <x-slot name="body">
             <div class="table-responsive p-3">
                 <table class="table table-bordered table-hover" id="routes-table">

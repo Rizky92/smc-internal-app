@@ -16,6 +16,7 @@
 
                     resetInput(e)
                 })
+
                 buttonBatalSimpan.click(resetInput)
                 buttonResetFilter.click(resetInput)
 
@@ -48,10 +49,7 @@
                 }
 
                 function loadData(e) {
-                    let {
-                        namaField,
-                        judulMenu
-                    } = e.dataset
+                    let { namaField, judulMenu } = e.dataset
 
                     setFormState('disabled', false)
 
@@ -92,12 +90,12 @@
                     </div>
                 </div>
             </x-row>
-            <x-row-col class="mt-2">
+            <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-                <x-filter.button method="syncHakAkses" class="ml-3" icon="fas fa-sync-alt" title="Sync Hak Akses" />
-            </x-row-col>
+                <x-filter.button-refresh method="syncHakAkses" icon="fas fa-sync-alt" title="Sync Hak Akses" class="ml-3" />
+            </x-row-col-flex>
         </x-slot>
 
         <x-slot name="body">
@@ -109,7 +107,11 @@
                 <x-slot name="body">
                     @foreach ($this->hakAksesKhanza as $hakAkses)
                         <x-table.tr>
-                            <x-table.td clickable data-nama-field="{{ $hakAkses->nama_field }}" data-judul-menu="{{ $hakAkses->judul_menu }}">
+                            <x-table.td
+                                clickable
+                                data-nama-field="{{ $hakAkses->nama_field }}"
+                                data-judul-menu="{{ $hakAkses->judul_menu }}"
+                            >
                                 {{ $hakAkses->nama_field }}
                             </x-table.td>
                             <x-table.td>{{ $hakAkses->judul_menu }}</x-table.td>
