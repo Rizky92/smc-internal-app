@@ -3,23 +3,21 @@
 
     <x-card use-loading wire:init="loadProperties">
         <x-slot name="header">
-            <x-card.row-col>
+            <x-row-col-flex>
                 <x-filter.range-date />
                 <x-filter.button-export-excel class="ml-auto" />
-            </x-card.row-col>
-            <x-card.row-col class="mt-2">
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
                 <x-filter.label constant-width>Status :</x-filter.label>
-                <div class="input-group input-group-sm" style="width: 9rem">
-                    <x-filter.select model="status" :options="['' => 'Semua', 'Belum Lunas' => 'Belum Lunas', 'Lunas' => 'Lunas']" />
-                </div>
+                <x-filter.select model="status" :options="['-' => 'Semua', 'Belum Lunas' => 'Belum Lunas', 'Lunas' => 'Lunas']" />
                 <x-filter.label class="ml-auto mr-3" constant-width>Jenis Bayar :</x-filter.label>
                 <x-filter.select2 name="Penjamin" model="jenisBayar" :options="$this->penjamin" />
-            </x-card.row-col>
-            <x-card.row-col class="mt-2">
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-            </x-card.row-col>
+            </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" style="width: 250rem" sortable zebra hover sticky nowrap>
@@ -52,9 +50,13 @@
                 <x-slot name="body">
                     @forelse ($this->piutangRanap as $item)
                         @php
-                            $kategoriBilling = $item->billing->pluck('total', 'status')->mapWithKeys(fn($total, $status) => [Str::snake($status) => $total]);
+                            $kategoriBilling = $item->billing
+                                ->pluck('total', 'status')
+                                ->mapWithKeys(fn($total, $status) => [Str::snake($status) => $total]);
                             
-                            $billingTindakan = $kategoriBilling->only(['ranap_dokter', 'ranap_dokter_paramedis', 'ranap_paramedis', 'ralan_dokter', 'ralan_dokter_paramedis', 'ralan_paramedis'])->sum();
+                            $billingTindakan = $kategoriBilling
+                                ->only(['ranap_dokter', 'ranap_dokter_paramedis', 'ranap_paramedis', 'ralan_dokter', 'ralan_dokter_paramedis', 'ralan_paramedis'])
+                                ->sum();
                             
                             $total = $kategoriBilling->sum();
                             

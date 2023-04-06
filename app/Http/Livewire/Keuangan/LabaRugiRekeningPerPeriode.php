@@ -124,7 +124,15 @@ class LabaRugiRekeningPerPeriode extends Component
 
         $total = $this->totalLabaRugiPerRekening;
 
-        $totalPendapatanRow = $this->insertExcelRow('', 'TOTAL', '', $total['totalDebetPendapatan'], $total['totalKreditPendapatan'], $total['totalPendapatan']);
+        $totalPendapatanRow = $this->insertExcelRow(
+            $kd_rek = '',
+            $nm_rek = 'TOTAL',
+            $balance = '',
+            $debet = $total['totalDebetPendapatan'],
+            $kredit = $total['totalKreditPendapatan'],
+            $total = $total['totalPendapatan']
+        );
+
         $totalBebanRow = $this->insertExcelRow('', 'TOTAL', '', $total['totalDebetBeban'], $total['totalKreditBeban'], $total['totalBebanDanBiaya']);
 
         $pendapatanBersih = $this->insertExcelRow('', 'PENDAPATAN BERSIH', '', $total['totalPendapatan'], $total['totalBebanDanBiaya'], $total['labaRugi']);
@@ -138,8 +146,10 @@ class LabaRugiRekeningPerPeriode extends Component
             ->merge([$pendapatanBersih]);
     }
 
-    protected function insertExcelRow($kd_rek = '', $nm_rek = '', $balance = '', $debet = '', $kredit = '', $total = '')
+    protected function insertExcelRow(...$args)
     {
+        dd(func_get_named_args($this, 'insertExcelRow', func_get_args()));
+        
         return new Fluent(func_get_named_args($this, 'insertExcelRow', func_get_args()));
     }
 

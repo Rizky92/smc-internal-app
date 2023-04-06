@@ -3,16 +3,16 @@
 
     <x-card>
         <x-slot name="header">
-            <x-card.row-col>
+            <x-row-col-flex>
                 <x-filter.date />
                 <x-filter.toggle class="ml-3" model="tampilkanSemuaPasienPerTanggal" title="Tampilkan Semua Pasien" />
                 <x-filter.button-export-excel class="ml-auto" />
-            </x-card.row-col>
-            <x-card.row-col class="mt-2">
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage :constantWidth="true" />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search />
-            </x-card.row-col>
+            </x-row-col-flex>
         </x-slot>
 
         <x-slot name="body">

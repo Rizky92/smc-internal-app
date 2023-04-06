@@ -72,7 +72,7 @@
 
     <x-card>
         <x-slot name="header">
-            <x-card.row livewire>
+            <x-row livewire>
                 <div class="col-5">
                     <div class="form-group">
                         <label class="text-sm" for="field">Nama Field</label>
@@ -91,13 +91,13 @@
                         <x-button size="sm" variant="primary" class="mb-3 ml-2" title="Simpan" icon="fas fa-save" disabled />
                     </div>
                 </div>
-            </x-card.row>
-            <x-card.row-col class="mt-2">
+            </x-row>
+            <x-row-col class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
                 <x-filter.button method="syncHakAkses" class="ml-3" icon="fas fa-sync-alt" title="Sync Hak Akses" />
-            </x-card.row-col>
+            </x-row-col>
         </x-slot>
 
         <x-slot name="body">

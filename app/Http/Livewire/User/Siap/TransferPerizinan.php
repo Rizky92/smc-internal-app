@@ -85,7 +85,7 @@ class TransferPerizinan extends Component
         }
 
         $permittedUsers = User::query()
-            ->whereIn(DB::raw('trim(pegawai.nik)'), collect($this->checkedUsers)->filter()->keys()->all())
+            ->whereIn(DB::raw('trim(pegawai.nik)'), collect($this->checkedUsers)->filter()->map(fn ($_, $k) => strval($k))->all())
             ->get();
 
         tracker_start('mysql_smc');

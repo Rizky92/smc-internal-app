@@ -3,16 +3,16 @@
 
     <x-card use-loading loading-target="tarikDataTerbaru">
         <x-slot name="header">
-            <x-card.row-col>
+            <x-row-col-flex>
                 <x-filter.range-date />
-                <x-filter.button method="tarikDataTerbaru" title="Tarik Data Terbaru" icon="fas fa-sync-alt" class="ml-auto" />
+                <x-filter.button-refresh method="tarikDataTerbaru" title="Tarik Data Terbaru" class="ml-auto" />
                 <x-filter.button-export-excel class="ml-2" />
-            </x-card.row-col>
-            <x-card.row-col class="mt-2">
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-            </x-card.row-col>
+            </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" style="width: 140rem" sortable zebra hover sticky nowrap>

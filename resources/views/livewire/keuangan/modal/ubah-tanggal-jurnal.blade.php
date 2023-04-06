@@ -51,12 +51,14 @@
                                     </div>
                                 </div>
                             </x-row>
-                            <x-row-col>
-                                <div class="form-group">
-                                    <label class="text-sm" for="keterangan">Keterangan</label>
-                                    <textarea class="form-control form-control-sm" id="keterangan" wire:model.defer="keterangan" readonly style="resize: none"></textarea>
+                            <x-row>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label class="text-sm" for="keterangan">Keterangan</label>
+                                        <textarea class="form-control form-control-sm" id="keterangan" wire:model.defer="keterangan" readonly style="resize: none"></textarea>
+                                    </div>
                                 </div>
-                            </x-row-col>
+                            </x-row>
                             <x-row>
                                 <div class="col-6">
                                     <div class="form-group">

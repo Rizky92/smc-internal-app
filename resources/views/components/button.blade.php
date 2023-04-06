@@ -1,6 +1,5 @@
 @props([
     'as' => 'button',
-    'id' => null,
     'title' => null,
     'icon' => null,
     'size' => 'default',
@@ -87,5 +86,4 @@
             @endif
         </a>
     @break
-
 @endswitch

@@ -1,7 +1,5 @@
-@props(['livewire' => false])
-
-<div {{ $attributes->merge(['class' => 'row']) }} {{ $livewire ? 'wire:ignore' : null }}>
+<x-row :attributes="$attributes">
     <div class="col-12">
         {{ $slot }}
     </div>
-</div>
+</x-row>

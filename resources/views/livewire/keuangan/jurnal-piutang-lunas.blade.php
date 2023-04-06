@@ -3,25 +3,29 @@
 
     <x-card use-loading>
         <x-slot name="header">
-            <x-card.row-col>
-                <x-filter.label constant-width>Periode:</x-filter.label>
-                <div class="input-group input-group-sm" style="width: max-content">
-                    <x-filter.select model="jenisPeriode" :options="['jurnal' => 'Waktu Jurnal', 'penagihan' => 'Tgl. Penagihan', 'bayar' => 'Tgl. Bayar']" />
-                </div>
+            <x-row-col-flex>
+                <x-filter.label constant-width>Periode :</x-filter.label>
+                <x-filter.select model="jenisPeriode" :options="['jurnal' => 'Waktu Jurnal', 'penagihan' => 'Tgl. Penagihan', 'bayar' => 'Tgl. Bayar']" />
                 <x-filter.label class="px-3">dari</x-filter.label>
                 <x-filter.range-date title="" />
-                <x-filter.button method="tarikDataTerbaru" title="Tarik Data Terbaru" icon="fas fa-sync-alt" class="ml-auto" />
+                <x-button
+                    size="sm"
+                    title="Tarik Data Terbaru"
+                    icon="fas fa-sync-alt"
+                    class="ml-auto"
+                    wire:click.prevent="tarikDataTerbaru"
+                />
                 <x-filter.button-export-excel class="ml-3" />
-            </x-card.row-col>
-            <x-card.row-col class="mt-2">
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.label class="ml-auto" constant-width>Rekening :</x-filter.label>
                 <x-filter.select2 name="Kode Rekening" model="kodeRekening" :options="$this->akunPenagihanPiutang" />
-            </x-card.row-col>
-            <x-card.row-col class="mt-2">
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-            </x-card.row-col>
+            </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" style="width: 190rem" sortable zebra hover sticky nowrap>
@@ -50,17 +54,14 @@
                             <x-table.td>{{ $item->waktu_jurnal }}</x-table.td>
                             <x-table.td>{{ $item->no_rawat }}</x-table.td>
                             <x-table.td>{{ $item->no_rkm_medis }} {{ $item->nm_pasien }} ({{ $item->umur }})</x-table.td>
-
                             <x-table.td>{{ $item->kd_pj }} {{ $item->nama_penjamin }}</x-table.td>
                             <x-table.td>{{ $item->no_tagihan }}</x-table.td>
                             <x-table.td>{{ $item->nik_penagih }} {{ $item->nama_penagih }}</x-table.td>
                             <x-table.td>{{ $item->nik_menyetujui }} {{ $item->nama_penyetuju }}</x-table.td>
-
                             <x-table.td>{{ rp($item->piutang_dibayar) }}</x-table.td>
                             <x-table.td>{{ carbon($item->tgl_penagihan)->format('Y-m-d') }}</x-table.td>
                             <x-table.td>{{ carbon($item->tgl_jatuh_tempo)->format('Y-m-d') }}</x-table.td>
                             <x-table.td>{{ carbon($item->tgl_bayar)->format('Y-m-d') }}</x-table.td>
-
                             <x-table.td>{{ $item->status }}</x-table.td>
                             <x-table.td>{{ $item->nik_validasi }} {{ $item->nama_pemvalidasi }}</x-table.td>
                             <x-table.td>{{ $item->kd_rek }} {{ $item->nm_rek }}</x-table.td>
