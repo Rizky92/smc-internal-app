@@ -5,7 +5,7 @@
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.label constant-width>Ruangan :</x-filter.label>
-                <x-filter.select2 name="bangsal" model="kodeBangsal" placeholder="-" :options="$this->bangsal" />
+                <x-filter.select2 livewire name="kodeBangsal" placeholder="-" :options="$this->bangsal" />
                 <x-filter.button-export-excel class="ml-auto" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
