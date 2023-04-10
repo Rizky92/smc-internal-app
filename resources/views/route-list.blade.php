@@ -33,7 +33,7 @@
                         @foreach ($routes as ['url' => $url, 'name' => $name, 'methods' => $methods])
                             <tr>
                                 <td class="text-monospace">{{ $name }}</td>
-                                <td> {{ $url }}</td>
+                                <td>{{ $url }}</td>
                                 <td class="text-monospace">{{ $methods }}</td>
                             </tr>
                         @endforeach
