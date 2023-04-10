@@ -3,11 +3,11 @@
 
     <x-card>
         <x-slot name="header">
-            <x-card.row-col>
+            <x-row-col-flex>
                 <x-filter.range-date />
                 <x-filter.button-export-excel class="ml-auto" />
-            </x-card.row-col>
-            <x-card.row-col class="mt-2">
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.label class="ml-auto pr-3">Jenis Perawatan:</x-filter.label>
                 <x-filter.select model="jenisPerawatan" :options="[
@@ -15,11 +15,11 @@
                     'ralan' => 'Rawat Jalan',
                     'ranap' => 'Rawat Inap',
                 ]" />
-            </x-card.row-col>
-            <x-card.row-col class="mt-2">
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search />
-            </x-card.row-col>
+            </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
             <x-navtabs livewire selected="obat-regular">

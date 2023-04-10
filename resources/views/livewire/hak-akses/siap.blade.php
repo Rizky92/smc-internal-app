@@ -5,12 +5,12 @@
 
     <x-card>
         <x-slot name="header">
-            <x-card.row-col>
+            <x-row-col-flex>
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
                 <x-button variant="primary" size="sm" title="Role Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-perizinan" class="btn-primary ml-3" />
-            </x-card.row-col>
+            </x-row-col-flex>
         </x-slot>
 
         <x-slot name="body">
@@ -25,7 +25,7 @@
                         @php($superadmin = $role->name === config('permission.superadmin_name'))
                         <x-table.tr :class="Arr::toCssClasses(['text-muted' => $superadmin])">
                             <x-table.td>
-                                @unless($superadmin)
+                                @unless ($superadmin)
                                     <x-button size="xs" variant="link" class="m-0 p-0 border-0" title="Edit" icon="fas fa-pencil-alt" data-toggle="modal" data-target="#modal-perizinan" wire:click="$emit('siap.prepare', {{ $role->id }})" />
                                 @endunless
                             </x-table.td>

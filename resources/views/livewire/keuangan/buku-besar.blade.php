@@ -3,19 +3,19 @@
 
     <x-card use-loading>
         <x-slot name="header">
-            <x-card.row-col>
+            <x-row-col-flex>
                 <x-filter.range-date />
                 <x-filter.button-export-excel class="ml-auto" />
-            </x-card.row-col>
-            <x-card.row-col class="mt-2">
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.label class="ml-auto" constant-width>Rekening :</x-filter.label>
                 <x-filter.select2 name="Kode Rekening" livewire show-key :options="$this->rekening" placeholder="" />
-            </x-card.row-col>
-            <x-card.row-col class="mt-2">
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-            </x-card.row-col>
+            </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" style="width: 100rem" sortable zebra hover sticky nowrap>

@@ -17,6 +17,7 @@
         @endpush
     @endonce
     <x-card>
+        <x-slot name="header"></x-slot>
         <x-slot name="body">
             <div class="table-responsive p-3">
                 <table class="table table-bordered table-hover" id="routes-table">
@@ -32,7 +33,7 @@
                         @foreach ($routes as ['url' => $url, 'name' => $name, 'methods' => $methods])
                             <tr>
                                 <td class="text-monospace">{{ $name }}</td>
-                                <td> {{ $url }}</td>
+                                <td>{{ $url }}</td>
                                 <td class="text-monospace">{{ $methods }}</td>
                             </tr>
                         @endforeach

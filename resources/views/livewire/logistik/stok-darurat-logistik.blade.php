@@ -3,15 +3,15 @@
 
     <x-card>
         <x-slot name="header">
-            <x-card.row-col>
+            <x-row-col-flex>
                 <x-filter.toggle model="tampilkanSaranOrderNol" title="Tampilkan Saran Order Nol" />
                 <x-filter.button-export-excel class="ml-auto" />
-            </x-card.row-col>
-            <x-card.row-col class="mt-2">
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-            </x-card.row-col>
+            </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
@@ -35,12 +35,10 @@
                             <x-table.td>{{ $barang->nama_brng }}</x-table.td>
                             <x-table.td>{{ $barang->satuan }}</x-table.td>
                             <x-table.td>{{ $barang->jenis }}</x-table.td>
-
                             <x-table.td>{{ $barang->nama_supplier }}</x-table.td>
                             <x-table.td>{{ $barang->stokmin }}</x-table.td>
                             <x-table.td>{{ $barang->stokmax }}</x-table.td>
                             <x-table.td>{{ $barang->stok }}</x-table.td>
-
                             <x-table.td>{{ $barang->saran_order }}</x-table.td>
                             <x-table.td>{{ rp($barang->harga) }}</x-table.td>
                             <x-table.td>{{ rp($barang->total_harga) }}</x-table.td>

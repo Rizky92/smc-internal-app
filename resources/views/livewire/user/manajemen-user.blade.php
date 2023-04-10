@@ -84,7 +84,7 @@
 
     <x-card>
         <x-slot name="header">
-            <x-card.row>
+            <x-row>
                 <div class="col-2">
                     <div class="form-group">
                         <label class="text-sm" for="user-nrp">NRP</label>
@@ -103,25 +103,25 @@
                             <x-slot name="button" title="Pilihan" icon="fas fa-cogs" disabled></x-slot>
                             <x-slot name="menu" class="dropdown-menu-right">
                                 <x-dropdown.header class="text-left">SIMRS Khanza</x-dropdown.header>
-                                <x-dropdown.item-button id="button-set-hak-akses" icon="fas fa-user-cog fa-fw" title="Set Hak Akses" data-toggle="modal" data-target="#modal-set-hak-akses" />
-                                <x-dropdown.item-button id="button-transfer-hak-akses" icon="fas fa-exchange-alt fa-fw" title="Transfer Hak Akses" data-toggle="modal" data-target="#modal-transfer-hak-akses" />
+                                <x-dropdown.item as="button" id="button-set-hak-akses" icon="fas fa-user-cog fa-fw" title="Set Hak Akses" data-toggle="modal" data-target="#modal-set-hak-akses" />
+                                <x-dropdown.item as="button" id="button-transfer-hak-akses" icon="fas fa-exchange-alt fa-fw" title="Transfer Hak Akses" data-toggle="modal" data-target="#modal-transfer-hak-akses" />
                                 <x-dropdown.divider />
                                 <x-dropdown.header class="text-left">SMC Internal App</x-dropdown.header>
-                                <x-dropdown.item-button id="button-set-perizinan" icon="fas fa-user-cog fa-fw" title="Set Perizinan" data-toggle="modal" data-target="#modal-set-perizinan" />
-                                <x-dropdown.item-button id="button-transfer-perizinan" icon="fas fa-exchange-alt fa-fw" title="Transfer Perizinan" data-toggle="modal" data-target="#modal-transfer-perizinan" />
+                                <x-dropdown.item as="button" id="button-set-perizinan" icon="fas fa-user-cog fa-fw" title="Set Perizinan" data-toggle="modal" data-target="#modal-set-perizinan" />
+                                <x-dropdown.item as="button" id="button-transfer-perizinan" icon="fas fa-exchange-alt fa-fw" title="Transfer Perizinan" data-toggle="modal" data-target="#modal-transfer-perizinan" />
                                 <x-dropdown.divider />
-                                <x-dropdown.item-button id="button-impersonasi" icon="fas fa-user-secret fa-fw" title="Impersonasi" />
-                                <x-dropdown.item-button id="button-lihat-aktivitas" icon="fas fa-binoculars fa-fw" title="Lihat Aktivitias" data-toggle="modal" data-target="#modal-lihat-aktivitas" />
+                                <x-dropdown.item as="button" id="button-impersonasi" icon="fas fa-user-secret fa-fw" title="Impersonasi" />
+                                <x-dropdown.item as="button" id="button-lihat-aktivitas" icon="fas fa-binoculars fa-fw" title="Lihat Aktivitias" data-toggle="modal" data-target="#modal-lihat-aktivitas" />
                             </x-slot>
                         </x-dropdown>
                     </div>
                 </div>
-            </x-card.row>
-            <x-card.row-col>
+            </x-row>
+            <x-row-col-flex>
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-            </x-card.row-col>
+            </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
@@ -149,7 +149,7 @@
                             <x-table.td>{{ $user->jbtn }}</x-table.td>
                             <x-table.td>{{ $user->jenis }}</x-table.td>
                             <x-table.td>
-                                <div style="display: inline-flex; flex-wrap: wrap; gap: 0.25rem">
+                                <div class="d-inline-flex flex-wrap" style="gap: 0.25rem">
                                     @foreach ($user->roles as $role)
                                         <x-badge variant="dark">{{ $role->name }}</x-badge>
                                     @endforeach

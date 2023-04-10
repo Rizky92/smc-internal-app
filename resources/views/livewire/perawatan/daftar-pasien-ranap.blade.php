@@ -144,7 +144,7 @@
                     @endpush
                 @endonce
 
-                <x-card.row>
+                <x-row>
                     <div class="col-4">
                         <div class="form-group">
                             <label class="text-sm" for="no_rawat">No. Rawat</label>
@@ -167,9 +167,9 @@
                             <input type="text" class="form-control form-control-sm" id="pasien" readonly autocomplete="off">
                         </div>
                     </div>
-                </x-card.row>
+                </x-row>
 
-                <x-card.row>
+                <x-row>
                     <div class="col-6">
                         <div class="form-group">
                             <label class="text-sm" for="harga_kamar">Harga Kamar</label>
@@ -191,16 +191,16 @@
                             <input type="text" class="form-control form-control-sm" id="total_harga" readonly autocomplete="off">
                         </div>
                     </div>
-                </x-card.row>
+                </x-row>
 
-                <x-card.row-col class="pb-3 border-bottom">
+                <x-row-col-flex class="pb-3 border-bottom">
                     <x-button size="sm" variant="primary" disabled id="simpan-data" title="Simpan" icon="fas fa-save" />
                     <x-button size="sm" disabled class="ml-2" id="batal-simpan" title="Batal" />
                     <div id="copy-to-clipboard" class="text-xs border-0 ml-2" style="flex-grow: 1; user-select: all; font-family: monospace; white-space: pre-wrap; line-height: 1.25"></div>
-                </x-card.row-col>
+                </x-row-col-flex>
             @endcan
 
-            <x-card.row-col :class="Arr::toCssClasses([
+            <x-row-col-flex :class="Arr::toCssClasses([
                 'mt-3' => auth()
                     ->user()
                     ->can('perawatan.daftar-pasien-ranap.update-harga-kamar'),
@@ -212,13 +212,13 @@
                     'tanggal_masuk' => 'Tgl. Masuk',
                     'tanggal_keluar' => 'Tgl. Keluar',
                 ]" />
-            </x-card.row-col>
-            <x-card.row-col class="mt-2">
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search />
                 <x-filter.button-export-excel class="ml-2" />
-            </x-card.row-col>
+            </x-row-col-flex>
         </x-slot>
 
         <x-slot name="body">
@@ -228,33 +228,40 @@
                     <x-table.th name="ruangan" title="Kamar" style="width: 35ch" />
                     <x-table.th name="kelas" title="Kelas" style="width: 10ch" />
                     <x-table.th name="no_rkm_medis" title="No. RM" style="width: 10ch" />
-
                     <x-table.th name="data_pasien" title="Pasien" style="width: 50ch" />
                     <x-table.th name="alamat_pasien" title="Alamat" />
                     <x-table.th name="agama" title="Agama" style="width: 10ch" />
                     <x-table.th name="pj" title="P.J." style="width: 30ch" />
-
                     <x-table.th name="png_jawab" title="Jenis Bayar" style="width: 25ch" />
                     <x-table.th name="nm_poli" title="Asal Poli" style="width: 20ch" />
                     <x-table.th name="dokter_poli" title="Dokter Poli" style="width: 40ch" />
                     <x-table.th name="stts_pulang" title="Status" style="width: 15ch" />
-
                     <x-table.th name="tgl_masuk" title="Tgl. Masuk" style="width: 12ch" />
                     <x-table.th name="jam_masuk" title="Jam Masuk" style="width: 12ch" />
                     <x-table.th name="tgl_keluar" title="Tgl. Keluar" style="width: 12ch" />
                     <x-table.th name="jam_keluar" title="Jam Keluar" style="width: 12ch" />
-
                     <x-table.th name="trf_kamar" title="Tarif Kamar" style="width: 15ch" />
                     <x-table.th name="lama" title="Lama" style="width: 10ch" />
                     <x-table.th name="ttl_biaya" title="Total" style="width: 20ch" />
                     <x-table.th name="dokter_ranap" title="DPJP" style="width: 35ch" />
-
                     <x-table.th name="no_tlp" title="No. HP" style="width: 15ch" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->daftarPasienRanap as $pasien)
                         <x-table.tr>
-                            <x-table.td clickable data-no-rawat="{{ $pasien->no_rawat }}" data-kamar="{{ $pasien->ruangan }}" data-pasien="{{ $pasien->nm_pasien }} {{ $pasien->umur }}" data-harga-kamar="{{ $pasien->trf_kamar }}" data-lama-inap="{{ $pasien->lama }}" data-total-harga="{{ $pasien->ttl_biaya }}" data-kd-kamar="{{ $pasien->kd_kamar }}" data-tgl-masuk="{{ $pasien->tgl_masuk }}" data-jam-masuk="{{ $pasien->jam_masuk }}" data-clipboard="{{ collect($pasien->getAttributes())->except('kd_kamar')->join('   ') }}">
+                            <x-table.td
+                                clickable
+                                data-no-rawat="{{ $pasien->no_rawat }}"
+                                data-kamar="{{ $pasien->ruangan }}"
+                                data-pasien="{{ $pasien->nm_pasien }} {{ $pasien->umur }}"
+                                data-harga-kamar="{{ $pasien->trf_kamar }}"
+                                data-lama-inap="{{ $pasien->lama }}"
+                                data-total-harga="{{ $pasien->ttl_biaya }}"
+                                data-kd-kamar="{{ $pasien->kd_kamar }}"
+                                data-tgl-masuk="{{ $pasien->tgl_masuk }}"
+                                data-jam-masuk="{{ $pasien->jam_masuk }}"
+                                data-clipboard="{{ collect($pasien->getAttributes())->except('kd_kamar')->join('   ') }}"
+                            >
                                 {{ $pasien->no_rawat }}
                             </x-table.td>
                             <x-table.td>{{ $pasien->ruangan }}</x-table.td>

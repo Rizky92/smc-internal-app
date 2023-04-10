@@ -3,11 +3,11 @@
 
     <x-card use-loading wire:init="loadProperties">
         <x-slot name="header">
-            <x-card.row-col>
+            <x-row-col-flex>
                 <x-filter.range-date />
-                <x-filter.button-search class="ml-3" title="Refresh" icon="fas fa-sync-alt" />
+                <x-filter.button-refresh class="ml-3" />
                 <x-filter.button-export-excel class="ml-auto" />
-            </x-card.row-col>
+            </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
             <x-table zebra hover sticky nowrap>
@@ -45,6 +45,7 @@
                     <x-table.tr>
                         <x-table.td colspan="5">&nbsp;</x-table.td>
                     </x-table.tr>
+
                     <x-table.tr>
                         <x-table.td></x-table.td>
                         <x-table.td class="font-weight-bold">BEBAN & BIAYA</x-table.td>
@@ -71,6 +72,7 @@
                     <x-table.tr>
                         <x-table.td colspan="5">&nbsp;</x-table.td>
                     </x-table.tr>
+
                     <x-table.tr>
                         <x-table.td></x-table.td>
                         <x-table.td class="font-weight-bold">PENDAPATAN BERSIH</x-table.td>

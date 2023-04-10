@@ -5,14 +5,14 @@
 
     <x-card use-loading wire:init="loadProperties">
         <x-slot name="header">
-            <x-card.row-col>
+            <x-row-col-flex>
                 <x-filter.range-date />
-            </x-card.row-col>
-            <x-card.row-col class="mt-2">
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-            </x-card.row-col>
+            </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" style="width: 110rem" sortable sticky nowrap>
@@ -39,12 +39,12 @@
                             @can('keuangan.jurnal-perbaikan.ubah-tanggal')
                                 <x-table.td rowspan="{{ $count }}" class="pl-3 py-1">
                                     <x-button size="xs" variant="link" class="mt-n1" title="Edit" icon="fas fa-pencil-alt" id="edit-{{ $jurnal->no_jurnal }}" data-toggle="modal" data-target="#modal-ubah-tgl-jurnal" wire:click.prevent="$emit('utj.prepare', {
-                                                    noJurnal: '{{ $jurnal->no_jurnal }}',
-                                                    noBukti: '{{ $jurnal->no_bukti }}',
-                                                    keterangan: '{{ $jurnal->keterangan }}',
-                                                    tglJurnal: '{{ $jurnal->tgl_jurnal }}',
-                                                    jamJurnal: '{{ $jurnal->jam_jurnal }}'
-                                                })" />
+                                                        noJurnal: '{{ $jurnal->no_jurnal }}',
+                                                        noBukti: '{{ $jurnal->no_bukti }}',
+                                                        keterangan: '{{ $jurnal->keterangan }}',
+                                                        tglJurnal: '{{ $jurnal->tgl_jurnal }}',
+                                                        jamJurnal: '{{ $jurnal->jam_jurnal }}'
+                                                    })" />
                                 </x-table.td>
                             @endcan
                             <x-table.td rowspan="{{ $count }}">{{ $jurnal->no_jurnal }}</x-table.td>

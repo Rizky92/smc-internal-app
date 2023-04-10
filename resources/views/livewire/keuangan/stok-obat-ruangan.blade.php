@@ -3,16 +3,16 @@
 
     <x-card>
         <x-slot name="header">
-            <x-card.row-col>
+            <x-row-col-flex>
                 <x-filter.label constant-width>Ruangan :</x-filter.label>
-                <x-filter.select2 name="bangsal" model="kodeBangsal" placeholder="-" :options="$this->bangsal" />
+                <x-filter.select2 livewire name="kodeBangsal" placeholder="-" :options="$this->bangsal" />
                 <x-filter.button-export-excel class="ml-auto" />
-            </x-card.row-col>
-            <x-card.row-col class="mt-2">
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage :constantWidth="true" />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-            </x-card.row-col>
+            </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>

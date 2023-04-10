@@ -6,6 +6,7 @@ use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Rekening extends Model
 {
@@ -23,9 +24,28 @@ class Rekening extends Model
 
     public $timestamps = false;
 
+    protected static function booted()
+    {
+        parent::booted();
+
+        static::addGlobalScope(function (Builder $query) {
+            return $query
+                ->select([
+                    'rekening.kd_rek',
+                    'rekening.tipe',
+                    'rekening.balance',
+                    'rekening.level',
+                ])
+                ->addSelect(DB::raw('convert(rekening.nm_rek using ascii) as nm_rek'));
+        });
+    }
+
     public function scopeSemuaRekening(Builder $query): Builder
     {
-        return $query->select(['kd_rek', 'nm_rek', 'balance'])->where('tipe', 'R');
+        return $query
+            ->withoutGlobalScopes()
+            ->select(['kd_rek', 'nm_rek', 'balance'])
+            ->where('tipe', 'R');
     }
 
     public function scopeHitungDebetKreditPerPeriode(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
@@ -47,6 +67,7 @@ class Rekening extends Model
         ";
 
         return $query
+            ->withoutGlobalScopes()
             ->selectRaw($sqlSelect)
             ->leftJoin('detailjurnal', 'rekening.kd_rek', '=', 'detailjurnal.kd_rek')
             ->leftJoin('jurnal', 'detailjurnal.no_jurnal', '=', 'jurnal.no_jurnal')

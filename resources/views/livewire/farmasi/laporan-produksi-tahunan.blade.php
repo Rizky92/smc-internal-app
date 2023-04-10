@@ -3,14 +3,12 @@
 
     <x-card use-loading wire:init="loadProperties">
         <x-slot name="header">
-            <x-card.row-col>
+            <x-row-col-flex>
                 <x-filter.label>Tahun :</x-filter.label>
-                <div class="input-group input-group-sm ml-2" style="width: 5rem">
-                    <x-filter.select model="tahun" :options="$this->dataTahun" constant-width />
-                </div>
-                <x-filter.button-search class="ml-2" title="Refresh" method="$refresh" icon="fas fa-sync-alt" />
+                <x-filter.select model="tahun" :options="$this->dataTahun" />
+                <x-filter.button-refresh class="ml-2" />
                 <x-filter.button-export-excel class="ml-auto" />
-            </x-card.row-col>
+            </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
             <x-table style="width: 150rem" zebra hover sticky nowrap>

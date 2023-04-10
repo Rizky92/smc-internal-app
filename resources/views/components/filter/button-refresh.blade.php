@@ -1,7 +1,7 @@
 @props([
-    'method' => 'searchData',
-    'title' => 'Cari',
-    'icon' => 'fas fa-search',
+    'method' => '$refresh',
+    'title' => 'Refresh',
+    'icon' => 'fas fa-sync-alt',
 ])
 
 <x-button :attributes="$attributes->merge([

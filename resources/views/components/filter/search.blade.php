@@ -10,6 +10,6 @@
 ]) }}>
     <input class="form-control" type="search" wire:model.defer="{{ $model }}" wire:keydown.enter.stop="{{ $method }}" />
     <div class="input-group-append">
-        <x-button size="sm" wire:click.prevent="{{ $method }}" :title="$title" icon="fas fa-search" />
+        <x-filter.button-refresh :method="$method" :title="$title" icon="fas fa-search" />
     </div>
 </div>

@@ -3,9 +3,9 @@
     'id',
     'title' => '',
     'size' => 'lg',
+    'centered' => false,
     'scrollable' => true,
     'dismissable' => true,
-    'centered' => false,
 
     'header' => null,
     'body' => null,
@@ -13,23 +13,18 @@
 ])
 
 @php
-    $sizes = ['sm', 'lg', 'xl'];
+    $sizes = [
+        'default' => null,
+        'sm' => 'modal-sm',
+        'lg' => 'modal-lg',
+        'xl' => 'modal-xl',
+    ];
     
-    $finalClass = [];
-    
-    if (in_array($size, $sizes)) {
-        $finalClass = array_merge(['modal-' . $size], $finalClass);
-    }
-    
-    if ($centered) {
-        $finalClass = array_merge(['modal-dialog-centered'], $finalClass);
-    }
-    
-    if ($scrollable) {
-        $finalClass = array_merge(['modal-dialog-scrollable'], $finalClass);
-    }
-    
-    $finalClass = collect($finalClass)->join(' ');
+    $finalClass = collect()
+        ->merge($sizes[$size])
+        ->when($centered, fn ($c) => $c->merge('modal-dialog-centered'))
+        ->when($scrollable, fn ($c) => $c->merge('modal-dialog-scrollable'))
+        ->join(' ');
 @endphp
 
 @push('js')
