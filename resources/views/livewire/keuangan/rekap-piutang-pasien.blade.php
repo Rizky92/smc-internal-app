@@ -41,12 +41,10 @@
                             <x-table.td>{{ $data->no_rkm_medis }}</x-table.td>
                             <x-table.td>{{ $data->nm_pasien }}</x-table.td>
                             <x-table.td>{{ $data->tgl_piutang }}</x-table.td>
-
                             <x-table.td>{{ $data->status }}</x-table.td>
                             <x-table.td>{{ rp($data->total) }}</x-table.td>
                             <x-table.td>{{ rp($data->uang_muka) }}</x-table.td>
                             <x-table.td>{{ rp($data->terbayar) }}</x-table.td>
-
                             <x-table.td>{{ rp($data->sisa) }}</x-table.td>
                             <x-table.td>{{ $data->tgltempo }}</x-table.td>
                             <x-table.td>{{ $data->penjamin }}</x-table.td>
