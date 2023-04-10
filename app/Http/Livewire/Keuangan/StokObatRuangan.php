@@ -78,7 +78,7 @@ class StokObatRuangan extends Component
                     ['projeksi_harga' => DB::raw('round(databarang.h_beli * if(gudangbarang.stok < 0, 0, gudangbarang.stok))')],
                     ['databarang.nama_brng' => 'asc']
                 )
-                ->paginate($this->perpage)
+                ->get()
         ];
     }
 
