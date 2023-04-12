@@ -25,8 +25,24 @@ class PiutangPasien extends Model
 
     public $timestamps = false;
 
-    public function scopePiutangPasienSudahLunas(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $penjamin = '', string $rekening = '112010'): Builder
+    public function scopePiutangAging(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        }
+    }
+
+    public function scopePiutangPasienSudahLunas(
+        Builder $query,
+        string $tglAwal = '',
+        string $tglAkhir = '',
+        string $penjamin = '',
+        string $rekening = '112010'
+    ): Builder {
         if (empty($tglAwal)) {
             $tglAwal = now()->format('Y-m-d');
         }
