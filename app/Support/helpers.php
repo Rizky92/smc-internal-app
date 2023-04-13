@@ -1,7 +1,5 @@
 <?php
 
-use Carbon\CarbonImmutable;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -15,6 +13,20 @@ if (!function_exists('rp')) {
     function rp($nominal = 0, $decimalCount = 0)
     {
         return 'Rp. ' . number_format($nominal, $decimalCount, ',', '.');
+    }
+}
+
+if (!function_exists('currency')) {
+    /**
+     * @param  int|float $nominal
+     * @param  int $decimalCount
+     * @param  ?string $name
+     * 
+     * @return string
+     */
+    function currency($nominal = 0, int $decimalCount = 0, ?string $name = 'Rp. ')
+    {
+        return $name . number_format($nominal, $decimalCount, ',', '.');
     }
 }
 
