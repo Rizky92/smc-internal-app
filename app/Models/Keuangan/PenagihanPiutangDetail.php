@@ -72,6 +72,7 @@ class PenagihanPiutangDetail extends Model
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join(DB::raw('penjab penjab_pasien'), 'reg_periksa.kd_pj', '=', 'penjab_pasien.kd_pj')
             ->join(DB::raw('penjab penjab_piutang'), 'penagihan_piutang.kd_pj', '=', 'penjab_piutang.kd_pj')
-            ->whereRaw('round(besar_piutang.cicilan_sekarang, 2) < round(piutang_pasien.sisapiutang, 2)');
+            ->whereRaw('round(besar_piutang.cicilan_sekarang, 2) < round(piutang_pasien.sisapiutang, 2)')
+            ->whereBetween('penagihan_piutang.tanggal', [$tglAwal, $tglAkhir]);
     }
 }
