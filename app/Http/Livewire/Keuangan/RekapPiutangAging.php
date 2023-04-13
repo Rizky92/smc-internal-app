@@ -43,7 +43,7 @@ class RekapPiutangAging extends Component
     public function render()
     {
         return view('livewire.keuangan.rekap-piutang-aging')
-            ->layout(BaseLayout::class, ['title' => 'RekapPiutangAging']);
+            ->layout(BaseLayout::class, ['title' => 'Rekap Piutang Aging']);
     }
 
     protected function defaultValues()

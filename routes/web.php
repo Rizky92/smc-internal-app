@@ -70,6 +70,10 @@ Route::prefix('admin')
                     ->middleware('can:keuangan.rekap-piutang-pasien.read')
                     ->name('rekap-piutang-pasien');
 
+                Route::get('rekap-piutang-aging', Keuangan\RekapPiutangAging::class)
+                    ->middleware('can:keuangan.rekap-piutang-aging.read')
+                    ->name('rekap-piutang-aging');
+
                 Route::get('laporan-tambahan-biaya-pasien', Keuangan\LaporanTambahanBiayaPasien::class)
                     ->middleware('can:keuangan.laporan-tambahan-biaya.read')
                     ->name('laporan-tambahan-biaya');

@@ -76,6 +76,7 @@ class BaseLayout extends Component
                 'type' => 'dropdown',
                 'hasAnyPermissions' => $user->canAny([
                     'keuangan.stok-obat-ruangan.read',
+                    'keuangan.rekap-piutang-aging.read',
                     'keuangan.rekap-piutang-pasien.read',
                     'keuangan.laporan-tambahan-biaya.read',
                     'keuangan.laporan-potongan-biaya.read',
@@ -104,6 +105,13 @@ class BaseLayout extends Component
                         'icon' => "fas fa-file-invoice",
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.rekap-piutang-pasien.read'),
+                    ],
+                    [
+                        'name' => 'Rekap Piutang Aging',
+                        'url' => route('admin.keuangan.rekap-piutang-aging'),
+                        'icon' => "fas fa-file-invoice",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.rekap-piutang-aging.read'),
                     ],
                     [
                         'name' => 'Laporan Tambahan Biaya',

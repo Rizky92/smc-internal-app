@@ -40,6 +40,11 @@ Breadcrumbs::for('admin.keuangan.rekap-piutang-pasien', function (Trail $trail) 
     $trail->push('Rekap Piutang Pasien', route('admin.keuangan.rekap-piutang-pasien'));
 });
 
+Breadcrumbs::for('admin.keuangan.rekap-piutang-aging', function (Trail $trail) {
+    $trail->parent('admin.keuangan');
+    $trail->push('Rekap Piutang Aging', route('admin.keuangan.rekap-piutang-aging'));
+});
+
 Breadcrumbs::for('admin.keuangan.laporan-tambahan-biaya', function (Trail $trail) {
     $trail->parent('admin.keuangan');
     $trail->push('Laporan Tambahan Biaya', route('admin.keuangan.laporan-tambahan-biaya'));
