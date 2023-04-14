@@ -1,10 +1,25 @@
-<div>
+<div wire:init="loadProperties">
     <x-flash />
 
-    <x-card use-default-filter>
+    <x-card use-default-filter use-loading loading-target="loadProperties">
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" style="width: 200rem" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
+                    <x-table.th style="width: 15ch" name="no_tagihan" title="No Tagihan"
+                    <x-table.th style="width: 15ch" name="no_rawat" title="No Rawat"
+                    <x-table.th style="width: 12ch" name="tgl_tagihan" title="Tgl Tagihan"
+                    <x-table.th style="width: 12ch" name="tgl_jatuh_tempo" title="Tgl Jatuh Tempo"
+                    <x-table.th style="width: 20ch" name="tgl_bayar" title="Tgl Bayar"
+                    <x-table.th name="no_rkm_medis" title="No Rkm Medis"
+                    <x-table.th name="nm_pasien" title="Nm Pasien"
+                    <x-table.th name="penjab_pasien" title="Penjab Pasien"
+                    <x-table.th name="penjab_piutang" title="Penjab Piutang"
+                    <x-table.th name="catatan" title="Catatan"
+                    <x-table.th name="nama_bayar" title="Nama Bayar"
+                    <x-table.th name="total_piutang" title="Total Piutang"
+                    <x-table.th name="besar_cicilan" title="Besar Cicilan"
+                    <x-table.th name="sisa_piutang" title="Sisa Piutang"
+                    <x-table.th name="umur_hari" title="Umur Hari"
                     <x-table.th style="width: 15ch" name="no_tagihan" title="No. Tagihan" />
                     <x-table.th style="width: 15ch" name="no_rawat" title="No. Rawat" />
                     <x-table.th style="width: 12ch" name="tgl_tagihan" title="Tgl. Tagihan" />

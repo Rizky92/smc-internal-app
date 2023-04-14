@@ -38,6 +38,8 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'farmasi.perbandingan-po-obat.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'farmasi.stok-darurat.read', 'guard_name' => 'web']);
 
+        Permission::create(['name' => 'keuangan.account-payable.read', 'guard_name' => 'web']);
+        Permission::create(['name' => 'keuangan.account-receivable.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'keuangan.buku-besar.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'keuangan.dpjp-piutang-ranap.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'keuangan.jurnal-perbaikan.read', 'guard_name' => 'web']);
@@ -50,9 +52,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'keuangan.laporan-tambahan-pasien.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'keuangan.laporan-tindakan-lab.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'keuangan.laporan-tindakan-radiologi.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'keuangan.rekap-hutang-aging.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'keuangan.rekap-piutang-aging.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'keuangan.rekap-piutang-pasien.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'keuangan.riwayat-jurnal-perbaikan.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'keuangan.stok-obat-ruangan.read', 'guard_name' => 'web']);
 
@@ -70,6 +70,8 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'rekam-medis.laporan-statistik.read', 'guard_name' => 'web']);
 
         $keuanganPermissions = [
+            'keuangan.account-payable.read',
+            'keuangan.account-receivable.read',,
             'keuangan.buku-besar.read',
             'keuangan.dpjp-piutang-ranap.read',
             'keuangan.jurnal-perbaikan.read',
@@ -82,9 +84,7 @@ class PermissionSeeder extends Seeder
             'keuangan.laporan-tambahan-pasien.read',
             'keuangan.laporan-tindakan-lab.read',
             'keuangan.laporan-tindakan-radiologi.read',
-            'keuangan.rekap-hutang-aging.read',
             'keuangan.rekap-piutang-pasien.read',
-            'keuangan.rekap-piutang-aging.read',
             'keuangan.riwayat-jurnal-perbaikan.read',
             'keuangan.stok-obat-ruangan.read',
         ];

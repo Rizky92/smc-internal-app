@@ -107,13 +107,6 @@ class BaseLayout extends Component
                         'hasAnyPermissions' => $user->can('keuangan.rekap-piutang-pasien.read'),
                     ],
                     [
-                        'name' => 'Rekap Piutang Aging',
-                        'url' => route('admin.keuangan.rekap-piutang-aging'),
-                        'icon' => "fas fa-file-invoice",
-                        'type' => 'link',
-                        'hasAnyPermissions' => $user->can('keuangan.rekap-piutang-aging.read'),
-                    ],
-                    [
                         'name' => 'Laporan Tambahan Biaya',
                         'url' => route('admin.keuangan.laporan-tambahan-biaya'),
                         'icon' => "fas fa-file-invoice",
@@ -196,6 +189,13 @@ class BaseLayout extends Component
                         'icon' => "fas fa-file-invoice",
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.laporan-tindakan-radiologi.read'),
+                    ],
+                    [
+                        'name' => 'Account Receivable',
+                        'url' => route('admin.keuangan.account-receivable'),
+                        'icon' => "fas fa-file-invoice",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.account-receivable.read'),
                     ],
                 ],
             ],

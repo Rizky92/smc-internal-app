@@ -40,11 +40,6 @@ Breadcrumbs::for('admin.keuangan.rekap-piutang-pasien', function (Trail $trail) 
     $trail->push('Rekap Piutang Pasien', route('admin.keuangan.rekap-piutang-pasien'));
 });
 
-Breadcrumbs::for('admin.keuangan.rekap-piutang-aging', function (Trail $trail) {
-    $trail->parent('admin.keuangan');
-    $trail->push('Rekap Piutang Aging', route('admin.keuangan.rekap-piutang-aging'));
-});
-
 Breadcrumbs::for('admin.keuangan.laporan-tambahan-biaya', function (Trail $trail) {
     $trail->parent('admin.keuangan');
     $trail->push('Laporan Tambahan Biaya', route('admin.keuangan.laporan-tambahan-biaya'));
@@ -103,6 +98,16 @@ Breadcrumbs::for('admin.keuangan.laporan-tindakan-lab', function (Trail $trail) 
 Breadcrumbs::for('admin.keuangan.laporan-tindakan-radiologi', function (Trail $trail) {
     $trail->parent('admin.keuangan');
     $trail->push('Laporan Tindakan Rdlg.', route('admin.keuangan.laporan-tindakan-radiologi'));
+});
+
+Breadcrumbs::for('admin.keuangan.account-receivable', function (Trail $trail) {
+    $trail->parent('admin.keuangan');
+    $trail->push('Piutang Aging (Account Receivable)', route('admin.keuangan.account-receivable'));
+});
+
+Breadcrumbs::for('admin.keuangan.account-payable', function (Trail $trail) {
+    $trail->parent('admin.keuangan');
+    $trail->push('Hutang Aging (Account Payable)', route('admin.keuangan.account-payable'));
 });
 
 

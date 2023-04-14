@@ -70,10 +70,6 @@ Route::prefix('admin')
                     ->middleware('can:keuangan.rekap-piutang-pasien.read')
                     ->name('rekap-piutang-pasien');
 
-                Route::get('rekap-piutang-aging', Keuangan\RekapPiutangAging::class)
-                    ->middleware('can:keuangan.rekap-piutang-aging.read')
-                    ->name('rekap-piutang-aging');
-
                 Route::get('laporan-tambahan-biaya-pasien', Keuangan\LaporanTambahanBiayaPasien::class)
                     ->middleware('can:keuangan.laporan-tambahan-biaya.read')
                     ->name('laporan-tambahan-biaya');
@@ -121,6 +117,14 @@ Route::prefix('admin')
                 Route::get('laporan-tindakan-radiologi', Keuangan\LaporanTindakanRadiologi::class)
                     ->middleware('can:keuangan.laporan-tindakan-radiologi.read')
                     ->name('laporan-tindakan-radiologi');
+
+                Route::get('account-payable', Keuangan\AccountPayable::class)
+                    ->middleware('can:keuangan.account-payable.read')
+                    ->name('account-payable');
+                    
+                Route::get('account-receivable', Keuangan\AccountReceivable::class)
+                    ->middleware('can:keuangan.account-receivable.read')
+                    ->name('account-receivable');
             });
 
         Route::prefix('farmasi')

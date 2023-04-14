@@ -37,9 +37,6 @@ class BukuBesar extends Component
         $this->defaultValues();
     }
 
-    /**
-     * @return \Illuminate\Support\Collection|\Illuminate\Contracts\Pagination\LengthAwarePaginator
-     */
     public function getBukuBesarProperty()
     {
         if (empty($this->kodeRekening)) {
@@ -66,9 +63,6 @@ class BukuBesar extends Component
             ->paginate($this->perpage);
     }
 
-    /**
-     * @return \App\Models\Keuangan\Jurnal\Jurnal|int
-     */
     public function getTotalDebetDanKreditProperty()
     {
         if (empty($this->kodeRekening)) {
