@@ -79,26 +79,26 @@ class RekapPiutangAging extends Component
             PenagihanPiutangDetail::query()
                 ->tagihanPiutangAging($this->tglAwal, $this->tglAkhir)
                 ->cursor()
-                ->map(fn (PenagihanPiutangDetail $model) => new Fluent([
-                    'no_tagihan' => $model->no_tagihan,
-                    'no_rawat' => $model->no_rawat,
-                    'tgl_tagihan' => $model->tgl_tagihan,
-                    'tgl_jatuh_tempo' => $model->tgl_jatuh_tempo,
+                ->map(fn (PenagihanPiutangDetail $model) => [
+                    'no_tagihan'         => $model->no_tagihan,
+                    'no_rawat'           => $model->no_rawat,
+                    'tgl_tagihan'        => $model->tgl_tagihan,
+                    'tgl_jatuh_tempo'    => $model->tgl_jatuh_tempo,
                     'tgl_bayar_terakhir' => $model->tgl_bayar_terakhir,
-                    'no_rkm_medis' => $model->no_rkm_medis,
-                    'nm_pasien' => $model->nm_pasien,
-                    'penjab_pasien' => $model->penjab_pasien,
-                    'penjab_piutang' => $model->penjab_piutang,
-                    'catatan' => $model->catatan,
-                    'total_piutang' => $model->total_piutang,
-                    'uang_muka' => $model->uang_muka,
-                    'cicilan_sekarang' => $model->cicilan_sekarang,
-                    'sisa_piutang' => $model->sisa_piutang,
-                    'periode_0_30' => $model->umur_hari <= 30 ? $model->sisa_piutang : 0,
-                    'periode_31_60' => $model->umur_hari > 30 && $model->umur_hari <= 60 ? $model->sisa_piutang : 0,
-                    'periode_61_90' => $model->umur_hari > 60 && $model->umur_hari <= 90 ? $model->sisa_piutang : 0,
-                    'periode_90_up' => $model->umur_hari > 90 ? $model->sisa_piutang : 0,
-                ])),
+                    'no_rkm_medis'       => $model->no_rkm_medis,
+                    'nm_pasien'          => $model->nm_pasien,
+                    'penjab_pasien'      => $model->penjab_pasien,
+                    'penjab_piutang'     => $model->penjab_piutang,
+                    'catatan'            => $model->catatan,
+                    'total_piutang'      => $model->total_piutang,
+                    'uang_muka'          => $model->uang_muka,
+                    'cicilan_sekarang'   => $model->cicilan_sekarang,
+                    'sisa_piutang'       => $model->sisa_piutang,
+                    'periode_0_30'       => $model->umur_hari <= 30 ? $model->sisa_piutang : 0,
+                    'periode_31_60'      => $model->umur_hari > 30 && $model->umur_hari <= 60 ? $model->sisa_piutang : 0,
+                    'periode_61_90'      => $model->umur_hari > 60 && $model->umur_hari <= 90 ? $model->sisa_piutang : 0,
+                    'periode_90_up'      => $model->umur_hari > 90 ? $model->sisa_piutang : 0,
+                ]),
         ];
     }
 
@@ -131,7 +131,7 @@ class RekapPiutangAging extends Component
         return [
             'RS Samarinda Medika Citra',
             'Piutang Aging per ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
-            'Periode ' . carbon($this->tglAwal)->translatedFormat('d F Y') . ' s/d/ ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
+            'Periode ' . carbon($this->tglAwal)->translatedFormat('d F Y') . ' - ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
         ];
     }
 }

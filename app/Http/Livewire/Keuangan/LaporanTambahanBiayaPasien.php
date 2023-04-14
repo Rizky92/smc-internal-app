@@ -75,7 +75,9 @@ class LaporanTambahanBiayaPasien extends Component
     protected function dataPerSheet(): array
     {
         return [
-            TambahanBiaya::biayaTambahanUntukHonorDokter($this->tglAwal, $this->tglAkhir)->get()
+            TambahanBiaya::query()
+                ->biayaTambahanUntukHonorDokter($this->tglAwal, $this->tglAkhir)
+                ->get()
         ];
     }
 
@@ -102,8 +104,9 @@ class LaporanTambahanBiayaPasien extends Component
     {
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Tambahan Biaya Pasien Untuk Honor Dokter',
-            carbon($this->tglAwal)->format('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->format('d F Y'),
+            'Laporan Tambahan Biaya Pasien untuk Honor Dokter',
+            now()->translatedFormat('d F Y'),
+            'Periode '. carbon($this->tglAwal)->format('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->format('d F Y'),
         ];
     }
 }

@@ -4,7 +4,6 @@ namespace App\Http\Livewire\Keuangan;
 
 use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Support\Traits\Livewire\DeferredLoading;
-use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
@@ -15,7 +14,7 @@ use Livewire\Component;
 
 class JurnalPerbaikan extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use FlashComponent, Filterable, LiveTable, MenuTracker, DeferredLoading;
 
     public $tglAwal;
 
@@ -61,26 +60,5 @@ class JurnalPerbaikan extends Component
     {
         $this->tglAwal = now()->format('Y-m-d');
         $this->tglAkhir = now()->format('Y-m-d');
-    }
-
-    protected function dataPerSheet(): array
-    {
-        return [
-            //
-        ];
-    }
-
-    protected function columnHeaders(): array
-    {
-        return [
-            //
-        ];
-    }
-
-    protected function pageHeaders(): array
-    {
-        return [
-            //
-        ];
     }
 }

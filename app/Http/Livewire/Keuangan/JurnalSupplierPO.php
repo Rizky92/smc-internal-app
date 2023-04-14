@@ -10,6 +10,7 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use DB;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -54,7 +55,7 @@ class JurnalSupplierPO extends Component
                 "pegawai.nama",
             ])
             ->sortWithColumns($this->sortColumns, [
-                'nm_pegawai' => "trim(concat(jurnal_medis.nik, ' ', coalesce(pegawai.nama, '')))"
+                'nm_pegawai' => DB::raw("trim(concat(jurnal_medis.nik, ' ', coalesce(pegawai.nama, '')))"),
             ])
             ->paginate($this->perpage, ['*'], 'page_medis');
     }
@@ -146,8 +147,8 @@ class JurnalSupplierPO extends Component
         return [
             'RS Samarinda Medika Citra',
             'Penarikan Data Supplier PO Medis/Non Medis',
-            now()->format('d F Y'),
-            carbon($this->tglAwal)->format('d F Y') . ' - ' . carbon($this->tglAkhir)->format('d F Y'),
+            now()->translatedFormat('d F Y'),
+            'Periode ' . carbon($this->tglAwal)->translatedFormat('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
         ];
     }
 }

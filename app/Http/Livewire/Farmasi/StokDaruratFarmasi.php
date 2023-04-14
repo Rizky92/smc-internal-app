@@ -91,7 +91,7 @@ class StokDaruratFarmasi extends Component
         return [
             'RS Samarinda Medika Citra',
             'Laporan Darurat Stok Farmasi',
-            now()->format('d F Y'),
+            now()->translatedFormat('d F Y'),
         ];
     }
 }

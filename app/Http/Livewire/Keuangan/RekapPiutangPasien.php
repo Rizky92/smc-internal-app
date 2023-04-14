@@ -66,12 +66,15 @@ class RekapPiutangPasien extends Component
 
     public function getTotalTagihanPiutangPasienProperty()
     {
-        return PiutangPasien::rekapPiutangPasien(
-            $this->tglAwal,
-            $this->tglAkhir,
-            $this->caraBayar,
-            $this->cari
-        )
+        return PiutangPasien::query()
+            ->rekapPiutangPasien($this->tglAwal, $this->tglAkhir, $this->caraBayar)
+            ->search($this->cari, [
+                'piutang_pasien.no_rawat',
+                'piutang_pasien.no_rkm_medis',
+                'pasien.nm_pasien',
+                'piutang_pasien.status',
+                'penjab.png_jawab',
+            ])
             ->sum(DB::raw('round(piutang_pasien.sisapiutang - ifnull(sisa_piutang.sisa, 0))'));
     }
 
@@ -93,11 +96,12 @@ class RekapPiutangPasien extends Component
 
     protected function dataPerSheet(): array
     {
-        $query = PiutangPasien::rekapPiutangPasien($this->tglAwal, $this->tglAkhir, $this->caraBayar, '');
+        $query = PiutangPasien::query()->rekapPiutangPasien($this->tglAwal, $this->tglAkhir, $this->caraBayar);
 
         return [
-            // TODO: ubah cara berikut dengan callback
-            collect($query->orderBy('penjab.png_jawab')->get()->toArray())
+            $query
+                ->orderBy('penjab.png_jawab')
+                ->get()
                 ->merge([
                     [
                         'no_rawat' => 'TOTAL',
@@ -138,7 +142,8 @@ class RekapPiutangPasien extends Component
         return [
             'RS Samarinda Medika Citra',
             'Rekap Data Tagihan Piutang Pasien',
-            now()->format('d F Y'),
+            now()->translatedFormat('d F Y'),
+            'Periode ' . carbon($this->tglAwal)->translatedFormat('d F Y') . ' - ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
         ];
     }
 }

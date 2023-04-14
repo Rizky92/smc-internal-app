@@ -224,7 +224,8 @@ class DaftarPasienRanap extends Component
         return [
             'RS Samarinda Medika Citra',
             'Daftar Pasien Rawat Inap',
-            carbon($this->tglAwal)->format('d F Y') . ' - ' . carbon($this->tglAkhir)->format('d F Y'),
+            now()->translatedFormat('d F Y'),
+            'Periode ' . carbon($this->tglAwal)->translatedFormat('d F Y') . ' - ' . carbon($this->tglAkhir)->format('d F Y'),
         ];
     }
 }

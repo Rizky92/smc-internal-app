@@ -104,27 +104,25 @@ class JurnalPiutangLunas extends Component
         return [
             PiutangDilunaskan::query()
                 ->dataPiutangDilunaskan($this->tglAwal, $this->tglAkhir, $this->kodeRekening, $this->jenisPeriode)
-                ->get()
-                ->map(function (PiutangDilunaskan $piutang) {
-                    return [
-                        'no_jurnal' => $piutang->no_jurnal,
-                        'waktu_jurnal' => carbon($piutang->waktu_jurnal)->format('Y-m-d'),
-                        'no_rawat' => $piutang->no_rawat,
-                        'no_rkm_medis' => $piutang->no_rkm_medis . ' ' . $piutang->nm_pasien . ' ' . "({$piutang->umur})",
-                        'nama_penjamin' => $piutang->nama_penjamin,
-                        'no_tagihan' => $piutang->no_tagihan,
-                        'nik_penagih' => $piutang->nik_penagih . ' ' . $piutang->nama_penagih,
-                        'nik_penyetuju' => $piutang->nik_penyetuju . ' ' . $piutang->nama_penyetuju,
-                        'piutang_dibayar' => $piutang->piutang_dibayar,
-                        'tgl_penagihan' => carbon($piutang->tgl_penagihan)->format('Y-m-d'),
-                        'tgl_jatuh_tempo' => carbon($piutang->tgl_jatuh_tempo)->format('Y-m-d'),
-                        'tgl_bayar' => carbon($piutang->tgl_bayar)->format('Y-m-d'),
-                        'status' => $piutang->status,
-                        'nik_validasi' => $piutang->nik_validasi . ' ' . $piutang->nama_pemvalidasi,
-                        'kd_rek' => $piutang->kd_rek . ' ' . $piutang->nm_rek,
-                        'keterangan' => $piutang->keterangan,
-                    ];
-                }),
+                ->cursor()
+                ->map(fn (PiutangDilunaskan $model) => [
+                    'no_jurnal'       => $model->no_jurnal,
+                    'waktu_jurnal'    => carbon($model->waktu_jurnal)->format('Y-m-d'),
+                    'no_rawat'        => $model->no_rawat,
+                    'no_rkm_medis'    => $model->no_rkm_medis . ' ' . $model->nm_pasien . ' ' . "({$model->umur})",
+                    'nama_penjamin'   => $model->nama_penjamin,
+                    'no_tagihan'      => $model->no_tagihan,
+                    'nik_penagih'     => $model->nik_penagih . ' ' . $model->nama_penagih,
+                    'nik_penyetuju'   => $model->nik_penyetuju . ' ' . $model->nama_penyetuju,
+                    'piutang_dibayar' => $model->piutang_dibayar,
+                    'tgl_penagihan'   => carbon($model->tgl_penagihan)->format('Y-m-d'),
+                    'tgl_jatuh_tempo' => carbon($model->tgl_jatuh_tempo)->format('Y-m-d'),
+                    'tgl_bayar'       => carbon($model->tgl_bayar)->format('Y-m-d'),
+                    'status'          => $model->status,
+                    'nik_validasi'    => $model->nik_validasi . ' ' . $model->nama_pemvalidasi,
+                    'kd_rek'          => $model->kd_rek . ' ' . $model->nm_rek,
+                    'keterangan'      => $model->keterangan,
+                ]),
         ];
     }
 
@@ -155,8 +153,8 @@ class JurnalPiutangLunas extends Component
         return [
             'RS Samarinda Medika Citra',
             'Penarikan Data Penagihan Piutang Dibayar dari Jurnal',
-            now()->format('d F Y'),
-            'Berdasarkan Tgl. ' . Str::title($this->jenisPeriode) . ' periode ' . carbon($this->tglAwal)->format('d F Y') . ' - ' . carbon($this->tglAkhir)->format('d F Y'),
+            now()->translatedFormat('d F Y'),
+            'Berdasarkan Tgl. ' . Str::title($this->jenisPeriode) . ', periode ' . carbon($this->tglAwal)->translatedFormat('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
         ];
     }
 }

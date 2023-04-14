@@ -10,7 +10,6 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -94,7 +93,9 @@ class LaporanTindakanRadiologi extends Component
     protected function dataPerSheet(): array
     {
         return [
-            HasilPeriksaRadiologi::laporanTindakanRadiologi($this->tglAwal, $this->tglAkhir)->get(),
+            HasilPeriksaRadiologi::query()
+                ->laporanTindakanRadiologi($this->tglAwal, $this->tglAkhir)
+                ->get(),
         ];
     }
 
@@ -125,8 +126,8 @@ class LaporanTindakanRadiologi extends Component
         return [
             'RS Samarinda Medika Citra',
             'Laporan Jumlah Tindakan Radiologi',
-            now()->format('d F Y'),
-            CarbonImmutable::parse($this->tglAwal)->format('d F Y') . ' - ' . CarbonImmutable::parse($this->tglAkhir)->format('d F Y'),
+            now()->translatedFormat('d F Y'),
+            'Periode ' . carbon($this->tglAwal)->format('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->format('d F Y'),
         ];
     }
 }
