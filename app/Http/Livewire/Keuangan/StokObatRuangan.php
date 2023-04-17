@@ -100,7 +100,7 @@ class StokObatRuangan extends Component
         return [
             'RS Samarinda Medika Citra',
             'Stok Obat per Ruangan',
-            now()->format('d F Y'),
+            now()->translatedFormat('d F Y'),
         ];
     }
 }

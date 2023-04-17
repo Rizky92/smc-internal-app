@@ -37,9 +37,6 @@ class BukuBesar extends Component
         $this->defaultValues();
     }
 
-    /**
-     * @return \Illuminate\Support\Collection|\Illuminate\Contracts\Pagination\LengthAwarePaginator
-     */
     public function getBukuBesarProperty()
     {
         if (empty($this->kodeRekening)) {
@@ -66,9 +63,6 @@ class BukuBesar extends Component
             ->paginate($this->perpage);
     }
 
-    /**
-     * @return \App\Models\Keuangan\Jurnal\Jurnal|int
-     */
     public function getTotalDebetDanKreditProperty()
     {
         if (empty($this->kodeRekening)) {
@@ -160,8 +154,8 @@ class BukuBesar extends Component
         return [
             'RS Samarinda Medika Citra',
             'Buku Besar rekening ' . $this->rekening[$this->kodeRekening],
-            now()->format('d F Y'),
-            'Periode ' . carbon($this->tglAwal)->format('d F Y') . ' - ' . carbon($this->tglAkhir)->format('d F Y'),
+            now()->translatedFormat('d F Y'),
+            'Periode ' . carbon($this->tglAwal)->translatedFormat('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
         ];
     }
 }

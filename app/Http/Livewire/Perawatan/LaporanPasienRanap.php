@@ -127,7 +127,7 @@ class LaporanPasienRanap extends Component
         return [
             'RS Samarinda Medika Citra',
             'Laporan Pasien Masuk Rawat Inap',
-            carbon($this->tanggal)->format('d F Y'),
+            'Per ' . carbon($this->tanggal)->format('d F Y'),
         ];
     }
 }

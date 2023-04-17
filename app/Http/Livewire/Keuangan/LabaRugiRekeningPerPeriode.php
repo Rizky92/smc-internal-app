@@ -10,7 +10,6 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use Carbon\CarbonImmutable;
 use Illuminate\Support\Fluent;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -66,9 +65,11 @@ class LabaRugiRekeningPerPeriode extends Component
 
                 return new Fluent(array_merge(
                     $rekening->only('kd_rek', 'nm_rek', 'balance'),
-                    ['debet' => $debet],
-                    ['kredit' => $kredit],
-                    ['total' => $total],
+                    [
+                        'debet' => $debet,
+                        'kredit' => $kredit,
+                        'total' => $total,
+                    ],
                 ));
             })
             ->mapToGroups(fn ($item) => [$item->balance => $item]);
@@ -138,7 +139,7 @@ class LabaRugiRekeningPerPeriode extends Component
             ->merge([$pendapatanBersih]);
     }
 
-    protected function insertExcelRow($kd_rek = '', $nm_rek = '', $balance = '', $debet = '', $kredit = '', $total = '')
+    private function insertExcelRow($kd_rek = '', $nm_rek = '', $balance = '', $debet = '', $kredit = '', $total = '')
     {
         return new Fluent(func_get_named_args($this, 'insertExcelRow', func_get_args()));
     }
@@ -167,8 +168,8 @@ class LabaRugiRekeningPerPeriode extends Component
         return [
             'RS Samarinda Medika Citra',
             'Laporan Laba Rugi Keuangan',
-            now()->format('d F Y'),
-            'Periode ' . CarbonImmutable::parse($this->tglAwal)->format('d F Y') . ' - ' . CarbonImmutable::parse($this->tglAkhir)->format('d F Y'),
+            now()->translatedFormat('d F Y'),
+            'Periode ' . carbon($this->tglAwal)->format('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->format('d F Y'),
         ];
     }
 }

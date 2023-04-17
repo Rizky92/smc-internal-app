@@ -75,7 +75,9 @@ class LaporanPotonganBiayaPasien extends Component
     protected function dataPerSheet(): array
     {
         return [
-            PenguranganBiaya::potonganBiayaPasien($this->tglAwal, $this->tglAkhir)->get()
+            PenguranganBiaya::query()
+                ->potonganBiayaPasien($this->tglAwal, $this->tglAkhir)
+                ->get()
         ];
     }
 
@@ -103,7 +105,8 @@ class LaporanPotonganBiayaPasien extends Component
         return [
             'RS Samarinda Medika Citra',
             'Laporan Pengurangan Biaya Pasien',
-            carbon($this->tglAwal)->format('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->format('d F Y'),
+            now()->translatedFormat('d F Y'),
+            'Periode ' . carbon($this->tglAwal)->format('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->format('d F Y'),
         ];
     }
 }

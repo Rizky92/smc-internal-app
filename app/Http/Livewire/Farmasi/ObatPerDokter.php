@@ -86,13 +86,11 @@ class ObatPerDokter extends Component
 
     protected function pageHeaders(): array
     {
-        $headerTglAwal = carbon($this->tglAwal)->format('d F Y');
-        $headerTglAkhir = carbon($this->tglAkhir)->format('d F Y');
-
         return [
             'RS Samarinda Medika Citra',
             'Laporan Penggunaan Obat Per Dokter Peresep',
-            "{$headerTglAwal} - {$headerTglAkhir}",
+            now()->translatedFormat('d F Y'),
+            'Periode ' . carbon($this->tglAwal)->translatedFormat('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
         ];
     }
 }

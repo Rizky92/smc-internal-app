@@ -117,8 +117,9 @@ class LaporanSelesaiBillingPasien extends Component
     {
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Penyelesaian Billing Pasien Per Petugas',
-            carbon($this->tglAwal)->format('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->format('d F Y'),
+            'Laporan Penyelesaian Billing Pasien per Petugas',
+            now()->translatedFormat('d F Y'),
+            'Periode ' . carbon($this->tglAwal)->format('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->format('d F Y'),
         ];
     }
 }

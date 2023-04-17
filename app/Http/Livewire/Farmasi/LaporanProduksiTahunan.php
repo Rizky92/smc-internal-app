@@ -221,7 +221,7 @@ class LaporanProduksiTahunan extends Component
         return [
             'RS Samarinda Medika Citra',
             "Laporan Produksi Farmasi Tahun {$this->tahun}",
-            now()->format('d F Y'),
+            now()->translatedFormat('d F Y'),
         ];
     }
 }

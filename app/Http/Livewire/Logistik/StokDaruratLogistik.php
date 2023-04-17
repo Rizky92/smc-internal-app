@@ -69,7 +69,9 @@ class StokDaruratLogistik extends Component
     protected function dataPerSheet(): array
     {
         return [
-            BarangNonMedis::daruratStok($this->tampilkanSaranOrderNol)->get()
+            BarangNonMedis::query()
+                ->daruratStok($this->tampilkanSaranOrderNol)
+                ->get()
         ];
     }
 
@@ -95,7 +97,7 @@ class StokDaruratLogistik extends Component
         return [
             'RS Samarinda Medika Citra',
             'Darurat Stok Barang Non Medis',
-            now()->format('d F Y'),
+            now()->translatedFormat('d F Y'),
         ];
     }
 }

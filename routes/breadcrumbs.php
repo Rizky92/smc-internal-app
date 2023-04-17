@@ -100,6 +100,16 @@ Breadcrumbs::for('admin.keuangan.laporan-tindakan-radiologi', function (Trail $t
     $trail->push('Laporan Tindakan Rdlg.', route('admin.keuangan.laporan-tindakan-radiologi'));
 });
 
+Breadcrumbs::for('admin.keuangan.account-receivable', function (Trail $trail) {
+    $trail->parent('admin.keuangan');
+    $trail->push('Piutang Aging (Account Receivable)', route('admin.keuangan.account-receivable'));
+});
+
+Breadcrumbs::for('admin.keuangan.account-payable', function (Trail $trail) {
+    $trail->parent('admin.keuangan');
+    $trail->push('Hutang Aging (Account Payable)', route('admin.keuangan.account-payable'));
+});
+
 
 Breadcrumbs::for('admin.farmasi', function (Trail $trail) {
     $trail->parent('admin.dashboard');

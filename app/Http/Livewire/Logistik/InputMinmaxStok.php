@@ -99,7 +99,9 @@ class InputMinmaxStok extends Component
     protected function dataPerSheet(): array
     {
         return [
-            BarangNonMedis::denganMinmax(true)->get()
+            BarangNonMedis::query()
+                ->denganMinmax($export = true)
+                ->get()
         ];
     }
 
@@ -125,7 +127,7 @@ class InputMinmaxStok extends Component
         return [
             'RS Samarinda Medika Citra',
             'Minmax Stok Barang Non Medis',
-            now()->format('d F Y'),
+            now()->translatedFormat('d F Y'),
         ];
     }
 }

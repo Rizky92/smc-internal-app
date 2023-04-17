@@ -112,13 +112,11 @@ class LaporanStatistik extends Component
 
     protected function pageHeaders(): array
     {
-        $dateStart = carbon($this->tglAwal)->format('d F Y');
-        $dateEnd = carbon($this->tglAkhir)->format('d F Y');
-
         return [
             'RS Samarinda Medika Citra',
             'Laporan Statistik Rekam Medis',
-            "{$dateStart} - {$dateEnd}",
+            now()->translatedFormat('d F Y'),
+            'Periode ' . carbon($this->tglAwal)->translatedFormat('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
         ];
     }
 }

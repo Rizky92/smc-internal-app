@@ -117,6 +117,14 @@ Route::prefix('admin')
                 Route::get('laporan-tindakan-radiologi', Keuangan\LaporanTindakanRadiologi::class)
                     ->middleware('can:keuangan.laporan-tindakan-radiologi.read')
                     ->name('laporan-tindakan-radiologi');
+
+                Route::get('account-payable', Keuangan\AccountPayable::class)
+                    ->middleware('can:keuangan.account-payable.read')
+                    ->name('account-payable');
+                    
+                Route::get('account-receivable', Keuangan\AccountReceivable::class)
+                    ->middleware('can:keuangan.account-receivable.read')
+                    ->name('account-receivable');
             });
 
         Route::prefix('farmasi')

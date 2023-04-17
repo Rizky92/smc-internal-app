@@ -101,7 +101,8 @@ class PerbandinganBarangPO extends Component
         return [
             'RS Samarinda Medika Citra',
             'Ringkasan Perbandingan PO Obat',
-            now()->format('d F Y'),
+            now()->translatedFormat('d F Y'),
+            'Periode ' . carbon($this->tglAwal)->translatedFormat('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
         ];
     }
 }
