@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Keuangan;
 
 use App\Models\Keuangan\PenagihanPiutangDetail;
+use App\Models\RekamMedis\Penjamin;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
@@ -21,11 +22,20 @@ class AccountReceivable extends Component
 
     public $tglAkhir;
 
+    public $hanyaBelumLunas;
+
+    public $jaminanPasien;
+
+    public $jenisPerawatan;
+
     protected function queryString()
     {
         return [
             'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'hanyaBelumLunas' => ['except' => false, 'as' => 'belum_lunas'],
+            'jaminanPasien' => ['except' => '-', 'as' => 'jaminan_pasien'],
+            'jenisPerawatan' => ['except' => 'semua', 'as' => 'jenis_perawatan'],
         ];
     }
 
@@ -39,7 +49,7 @@ class AccountReceivable extends Component
         return $this->isDeferred
             ? collect()
             : PenagihanPiutangDetail::query()
-                ->tagihanPiutangAging($this->tglAwal, $this->tglAkhir)
+                ->tagihanPiutangAging($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
                 ->search($this->cari, [
                     'detail_penagihan_piutang.no_tagihan',
                     'detail_penagihan_piutang.no_rawat',
@@ -62,6 +72,11 @@ class AccountReceivable extends Component
                 ->paginate($this->perpage);
     }
 
+    public function getPenjaminProperty()
+    {
+        return Penjamin::where('status', '1')->pluck('png_jawab', 'kd_pj')->all();
+    }
+
     public function getTotalPiutangAgingProperty()
     {
         
@@ -77,25 +92,29 @@ class AccountReceivable extends Component
     {
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->hanyaBelumLunas = false;
+        $this->jaminanPasien = '-';
+        $this->jenisPerawatan = 'semua';
     }
 
     protected function dataPerSheet(): array
     {
         return [
             PenagihanPiutangDetail::query()
-                ->tagihanPiutangAging($this->tglAwal, $this->tglAkhir)
+                ->tagihanPiutangAging($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
                 ->cursor()
                 ->map(fn (PenagihanPiutangDetail $model) => [
                     'no_tagihan'      => $model->no_tagihan,
                     'no_rawat'        => $model->no_rawat,
                     'tgl_tagihan'     => $model->tgl_tagihan,
                     'tgl_jatuh_tempo' => $model->tgl_jatuh_tempo,
-                    'tgl_bayar'       => $model->tgl_bayar,
+                    'tgl_bayar'       => $model->tgl_bayar ?? '-',
                     'no_rkm_medis'    => $model->no_rkm_medis,
                     'nm_pasien'       => $model->nm_pasien,
                     'penjab_pasien'   => $model->penjab_pasien,
                     'penjab_piutang'  => $model->penjab_piutang,
                     'catatan'         => $model->catatan,
+                    'status'          => $model->status,
                     'nama_bayar'      => $model->nama_bayar,
                     'total_piutang'   => $model->total_piutang,
                     'besar_cicilan'   => $model->besar_cicilan,
@@ -104,6 +123,7 @@ class AccountReceivable extends Component
                     'periode_31_60'   => $model->umur_hari > 30 && $model->umur_hari <= 60 ? $model->sisa_piutang : 0,
                     'periode_61_90'   => $model->umur_hari > 60 && $model->umur_hari <= 90 ? $model->sisa_piutang : 0,
                     'periode_90_up'   => $model->umur_hari > 90 ? $model->sisa_piutang : 0,
+                    'umur_hari'       => $model->umur_hari,
                 ]),
         ];
     }
@@ -111,24 +131,26 @@ class AccountReceivable extends Component
     protected function columnHeaders(): array
     {
         return [
-            'No. Tagihan',
-            'No. Rawat',
-            'Tgl. Tagihan',
-            'Tgl. Jatuh Tempo',
-            'Tgl. Bayar Terakhir',
-            'No. RM',
-            'Pasien',
-            'Asuransi Pasien',
-            'Jaminan Piutang',
-            'Catatan',
-            'Total Piutang',
-            'Uang Muka',
-            'Cicilan saat ini',
-            'Sisa Piutang',
-            '0 - 30',
-            '31 - 60',
-            '61 - 90',
-            '> 90',
+            "No. Tagihan",
+            "No. Rawat",
+            "Tgl. Tagihan",
+            "Tgl. Jatuh Tempo",
+            "Tgl. Bayar",
+            "No RM",
+            "Pasien",
+            "Jaminan Pasien",
+            "Jaminan Akun Piutang",
+            "Catatan",
+            "Status Piutang",
+            "Nama Bayar",
+            "Total Piutang",
+            "Besar Cicilan",
+            "Sisa",
+            "0 - 30",
+            "31 - 60",
+            "61 - 90",
+            "> 90",
+            "Umur Hari",
         ];
     }
 
@@ -136,7 +158,8 @@ class AccountReceivable extends Component
     {
         return [
             'RS Samarinda Medika Citra',
-            'Piutang Aging per ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
+            'Piutang Aging (Account Receivable)',
+            carbon($this->tglAkhir)->translatedFormat('d F Y'),
             'Periode ' . carbon($this->tglAwal)->translatedFormat('d F Y') . ' - ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
         ];
     }

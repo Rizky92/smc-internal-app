@@ -38,8 +38,14 @@ class PenagihanPiutangDetail extends Model
         return $this->hasMany(BayarPiutang::class, 'no_rawat', 'no_rawat');
     }
 
-    public function scopeTagihanPiutangAging(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
-    {
+    public function scopeTagihanPiutangAging(
+        Builder $query,
+        string $tglAwal = '',
+        string $tglAkhir = '',
+        string $jaminanPasien = '-',
+        string $jenisPerawatan = 'semua',
+        bool $belumLunas = false
+    ): Builder {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->format('Y-m-d');
         }
@@ -59,6 +65,7 @@ class PenagihanPiutangDetail extends Model
             penjab_pasien.png_jawab penjab_pasien,
             penjab_tagihan.png_jawab penjab_piutang,
             penagihan_piutang.catatan,
+            piutang_pasien.status,
             detail_piutang_pasien.nama_bayar,
             round(detail_piutang_pasien.totalpiutang, 2) total_piutang,
             round(bayar_piutang.besar_cicilan, 2) besar_cicilan,
@@ -68,7 +75,7 @@ class PenagihanPiutangDetail extends Model
 
         $sqlFilterOnlyPaid = DB::connection('mysql_sik')
             ->table('detail_piutang_pasien')
-            ->select('no_rawat')
+            ->select('detail_piutang_pasien.no_rawat')
             ->join('akun_piutang', 'detail_piutang_pasien.nama_bayar', '=', 'akun_piutang.nama_bayar')
             ->join('bayar_piutang', fn (JoinClause $join) => $join
                 ->on('detail_piutang_pasien.no_rawat', '=', 'bayar_piutang.no_rawat')
@@ -87,11 +94,15 @@ class PenagihanPiutangDetail extends Model
             ->leftJoin('bayar_piutang', fn (JoinClause $join) => $join
                 ->on('detail_penagihan_piutang.no_rawat', '=', 'bayar_piutang.no_rawat')
                 ->on('akun_piutang.kd_rek', '=', 'bayar_piutang.kd_rek_kontra'))
-            ->join('reg_periksa', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->join('reg_periksa', 'detail_penagihan_piutang.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join(DB::raw('penjab penjab_tagihan'), 'penagihan_piutang.kd_pj', '=', 'penjab_tagihan.kd_pj')
             ->join(DB::raw('penjab penjab_pasien'), 'reg_periksa.kd_pj', '=', 'penjab_pasien.kd_pj')
-            ->where('piutang_pasien.status', '!=', 'Lunas')
+            ->when($belumLunas, fn ($q) => $q->where('piutang_pasien.status', '!=', 'Lunas'))
+            ->when($jaminanPasien !== '-', fn ($q) => $q->where('reg_periksa.kd_pj', $jaminanPasien))
+            ->when($jenisPerawatan !== 'semua', fn ($q) => $q->where('reg_periksa.status_lanjut', $jenisPerawatan))
             ->where(fn ($q) => $q->whereNull('bayar_piutang.no_rawat')->orWhereIn('detail_penagihan_piutang.no_rawat', $sqlFilterOnlyPaid))
+            ->whereBetween('penagihan_piutang.tanggal', [$tglAwal, $tglAkhir])
             ->orderBy(DB::raw("datediff('{$tglAkhir}', penagihan_piutang.tanggal)"), 'desc')
             ->orderBy('detail_penagihan_piutang.no_rawat', 'asc')
             ->orderBy('detail_penagihan_piutang.no_tagihan', 'asc');

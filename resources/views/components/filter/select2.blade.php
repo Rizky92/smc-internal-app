@@ -88,7 +88,7 @@
 >
     <select id="{{ $id }}" name="{{ $name }}" class="form-control form-control-sm simple-select2-sm input-sm" autocomplete="off">
         @if ($placeholder)
-            <option value="{{ $placeholderValue ?? $placeholder }}">{{ $placeholder }}</option>
+            <option value="{{ $placeholderValue ?? '' }}">{{ $placeholder }}</option>
         @endif
         @foreach ($options as $key => $value)
             <option value="{{ $key }}" {{ $selected === $key ? 'selected' : null }}>{{ $value }}</option>
