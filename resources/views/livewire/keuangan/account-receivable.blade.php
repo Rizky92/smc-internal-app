@@ -69,6 +69,19 @@
                         <x-table.tr-empty colspan="19" />
                     @endforelse
                 </x-slot>
+                <x-slot name="footer">
+                    <x-table.tr>
+                        <x-table.th colspan="11" />
+                        <x-table.th title="TOTAL :" />
+                        <x-table.th :title="rp(optional($this->totalPiutangAging)['totalPiutang'])" />
+                        <x-table.th :title="rp(optional($this->totalPiutangAging)['totalCicilan'])" />
+                        <x-table.th :title="rp(optional($this->totalPiutangAging)['totalSisaCicilan'])" />
+                        <x-table.th :title="rp(optional(optional($this->totalPiutangAging)['totalSisaPerPeriode'])->get('periode_0_30'))" />
+                        <x-table.th :title="rp(optional(optional($this->totalPiutangAging)['totalSisaPerPeriode'])->get('periode_31_60'))" />
+                        <x-table.th :title="rp(optional(optional($this->totalPiutangAging)['totalSisaPerPeriode'])->get('periode_61_90'))" />
+                        <x-table.th :title="rp(optional(optional($this->totalPiutangAging)['totalSisaPerPeriode'])->get('periode_90_up'))" />
+                    </x-table.tr>
+                </x-slot>
             </x-table>
         </x-slot>
         <x-slot name="footer">
