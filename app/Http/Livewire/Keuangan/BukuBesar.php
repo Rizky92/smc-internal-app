@@ -116,9 +116,7 @@ class BukuBesar extends Component
         $bukuBesar = Jurnal::bukuBesar($this->kodeRekening, $this->tglAwal, $this->tglAkhir)->get();
 
         return [
-            Jurnal::query()
-                ->bukuBesar($this->kodeRekening, $this->tglAwal, $this->tglAkhir)
-                ->get()
+            collect($bukuBesar->toArray())
                 ->merge([
                     [
                         'tgl_jurnal' => '',
