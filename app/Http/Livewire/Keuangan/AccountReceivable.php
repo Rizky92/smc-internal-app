@@ -82,7 +82,7 @@ class AccountReceivable extends Component
         if ($this->isDeferred) 
             return [];
 
-        $query = PenagihanPiutangDetail::query()
+        $total = PenagihanPiutangDetail::query()
             ->totalTagihanPiutangAging($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
             ->search($this->cari, [
                 'detail_penagihan_piutang.no_tagihan',
@@ -96,9 +96,9 @@ class AccountReceivable extends Component
             ])
             ->get();
 
-        $totalPiutang = (float) $query->sum('total_piutang');
-        $totalCicilan = (float) $query->sum('total_cicilan');
-        $totalSisaPerPeriode = $query->pluck('sisa_piutang', 'periode');
+        $totalPiutang = (float) $total->sum('total_piutang');
+        $totalCicilan = (float) $total->sum('total_cicilan');
+        $totalSisaPerPeriode = $total->pluck('sisa_piutang', 'periode');
         $totalSisaCicilan = (float) $totalSisaPerPeriode->sum();
 
         return compact('totalPiutang', 'totalCicilan', 'totalSisaPerPeriode', 'totalSisaCicilan');
@@ -121,11 +121,6 @@ class AccountReceivable extends Component
 
     protected function dataPerSheet(): array
     {
-        $totalPiutang = (float) $this->totalPiutangAging->sum('total_piutang');
-        $totalCicilan = (float) $this->totalPiutangAging->sum('total_cicilan');
-        $totalSisaPerPeriode = $this->totalPiutangAging->pluck('sisa_piutang', 'periode');
-        $totalSisaCicilan = (float) $totalSisaPerPeriode->sum('sisa_piutang');
-
         return [
             PenagihanPiutangDetail::query()
                 ->tagihanPiutangAging($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
@@ -166,13 +161,13 @@ class AccountReceivable extends Component
                         'catatan'         => '',
                         'status'          => '',
                         'nama_bayar'      => 'TOTAL',
-                        'total_piutang'   => $totalPiutang,
-                        'besar_cicilan'   => $totalCicilan,
-                        'sisa_piutang'    => $totalSisaCicilan,
-                        'periode_0_30'    => $totalSisaPerPeriode->get('periode_0_30') ?? 0,
-                        'periode_31_60'   => $totalSisaPerPeriode->get('periode_31_60') ?? 0,
-                        'periode_61_90'   => $totalSisaPerPeriode->get('periode_61_90') ?? 0,
-                        'periode_90_up'   => $totalSisaPerPeriode->get('periode_90_up') ?? 0,
+                        'total_piutang'   => $this->totalPiutangAging['totalPiutang'],
+                        'besar_cicilan'   => $this->totalPiutangAging['totalCicilan'],
+                        'sisa_piutang'    => $this->totalPiutangAging['totalSisaCicilan'],
+                        'periode_0_30'    => $this->totalPiutangAging['totalSisaPerPeriode']->get('periode_0_30') ?? 0,
+                        'periode_31_60'   => $this->totalPiutangAging['totalSisaPerPeriode']->get('periode_31_60') ?? 0,
+                        'periode_61_90'   => $this->totalPiutangAging['totalSisaPerPeriode']->get('periode_61_90') ?? 0,
+                        'periode_90_up'   => $this->totalPiutangAging['totalSisaPerPeriode']->get('periode_90_up') ?? 0,
                         'umur_hari'       => '',
                     ]
                 ]),
