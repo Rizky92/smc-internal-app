@@ -76,7 +76,7 @@ class StokObatRuangan extends Component
                 ->sortWithColumns(
                     $this->sortColumns,
                     ['projeksi_harga' => DB::raw('round(databarang.h_beli * if(gudangbarang.stok < 0, 0, gudangbarang.stok))')],
-                    ['databarang.nama_brng' => 'asc']
+                    ['nama_brng' => 'asc']
                 )
                 ->get()
         ];
