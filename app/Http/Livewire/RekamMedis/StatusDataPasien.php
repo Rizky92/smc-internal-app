@@ -22,9 +22,12 @@ class StatusDataPasien extends Component
 
     public $tampilkanSemuaRegistrasi;
 
+    public $jenisPerawatan;
+
     protected function queryString()
     {
         return [
+            'jenisPerawatan' => ['except' => 'semua', 'as' => 'jenis_rawat'],
             'tampilkanSemuaRegistrasi' => ['except' => false, 'as' => 'semua'],
             'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
@@ -41,7 +44,7 @@ class StatusDataPasien extends Component
         return $this->isDeferred
             ? []
             : RegistrasiPasien::query()
-                ->statusDataRM($this->tglAwal, $this->tglAkhir, $this->tampilkanSemuaRegistrasi)
+                ->statusDataRM($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan, $this->tampilkanSemuaRegistrasi)
                 ->search($this->cari, [
                     'reg_periksa.no_rawat',
                     'reg_periksa.tgl_registrasi',
@@ -73,7 +76,7 @@ class StatusDataPasien extends Component
     {
         return [
             RegistrasiPasien::query()
-                ->statusDataRM($this->tglAwal, $this->tglAkhir, $this->tampilkanSemuaRegistrasi)
+                ->statusDataRM($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan, $this->tampilkanSemuaRegistrasi)
                 ->cursor()
                 ->map(fn ($v, $k) => [
                     'no_rawat' => $v->no_rawat,
