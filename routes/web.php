@@ -154,7 +154,7 @@ Route::prefix('admin')
                     ->middleware('can:farmasi.perbandingan-po-obat.read')
                     ->name('perbandingan-po-obat');
                     
-                Route::get('penyerahan-obat-drive-thru', Farmasi\PenyerahanObatDriveThru::class)
+                Route::get('penyerahan-obat-drive-thru', Farmasi\PenyerahanObatNonResep::class)
                     ->middleware('can:farmasi.penyerahan-obat-drivethru.read')
                     ->name('penyerahan-obat-drivethru');
             });
@@ -169,6 +169,10 @@ Route::prefix('admin')
                 Route::get('laporan-demografi', RekamMedis\LaporanDemografi::class)
                     ->middleware('can:rekam-medis.laporan-demografi.read')
                     ->name('laporan-demografi');
+
+                Route::get('status-data-pasien', RekamMedis\StatusDataPasien::class)
+                    ->middleware('can:rekam-medis.status-data-pasien.read')
+                    ->name('status-data-pasien');
             });
 
         Route::prefix('logistik')

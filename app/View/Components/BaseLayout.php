@@ -278,6 +278,12 @@ class BaseLayout extends Component
                         'url' => route('admin.rekam-medis.laporan-demografi'),
                         'hasAnyPermissions' => $user->can('rekam-medis.laporan-demografi.read'),
                     ],
+                    [
+                        'name' => 'Status Data Pasien',
+                        'icon' => 'fas fa-file-alt',
+                        'url' => route('admin.rekam-medis.status-data-pasien'),
+                        'hasAnyPermissions' => $user->can('rekam-medis.status-data-pasien.read'),
+                    ],
                 ],
             ],
             [

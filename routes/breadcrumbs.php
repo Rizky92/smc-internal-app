@@ -167,6 +167,11 @@ Breadcrumbs::for('admin.rekam-medis.laporan-demografi', function (Trail $trail) 
     $trail->push('Demografi Pasien', route('admin.rekam-medis.laporan-demografi'));
 });
 
+Breadcrumbs::for('admin.rekam-medis.status-data-pasien', function (Trail $trail) {
+    $trail->parent('admin.rekam-medis');
+    $trail->push('Status Data Pasien', route('admin.rekam-medis.status-data-pasien'));
+});
+
 
 Breadcrumbs::for('admin.logistik', function (Trail $trail) {
     $trail->parent('admin.dashboard');

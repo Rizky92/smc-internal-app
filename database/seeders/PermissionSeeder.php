@@ -69,6 +69,7 @@ class PermissionSeeder extends Seeder
 
         Permission::create(['name' => 'rekam-medis.laporan-demografi.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'rekam-medis.laporan-statistik.read', 'guard_name' => 'web']);
+        Permission::create(['name' => 'rekam-medis.status-data-pasien.read', 'guard_name' => 'web']);
 
         $keuanganPermissions = [
             'keuangan.account-payable.read',
@@ -91,12 +92,13 @@ class PermissionSeeder extends Seeder
         ];
 
         $farmasiPermissions = [
-            'farmasi.kunjungan-per-bentuk-obat.read',
-            'farmasi.kunjungan-per-poli.read',
-            'farmasi.laporan-produksi.read',
-            'farmasi.obat-per-dokter.read',
-            'farmasi.perbandingan-po-obat.read',
-            'farmasi.stok-darurat.read',
+            'faramsi.kunjungan-per-bentuk-obat.read',
+            'faramsi.kunjungan-per-poli.read',
+            'faramsi.input-minmax-stok.read',
+            'faramsi.laporan-produksi.read',
+            'faramsi.obat-per-dokter.read',
+            'faramsi.perbandingan-po-obat.read',
+            'faramsi.stok-darurat.read',
             'keuangan.stok-obat-ruangan.read',
         ];
 
@@ -108,6 +110,7 @@ class PermissionSeeder extends Seeder
         $rekamMedisPermissions = [
             'rekam-medis.laporan-demografi.read',
             'rekam-medis.laporan-statistik.read',
+            'rekam-medis.status-data-pasien.read',
         ];
 
         $logistikPermissions = [
