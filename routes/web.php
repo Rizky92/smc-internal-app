@@ -118,9 +118,9 @@ Route::prefix('admin')
                     ->middleware('can:keuangan.laporan-tindakan-radiologi.read')
                     ->name('laporan-tindakan-radiologi');
 
-                Route::get('account-payable', Keuangan\AccountPayable::class)
-                    ->middleware('can:keuangan.account-payable.read')
-                    ->name('account-payable');
+                Route::get('hutang-aging-medis', Keuangan\HutangAgingMedis::class)
+                    ->middleware('can:keuangan.hutang-aging-medis.read')
+                    ->name('hutang-aging-medis');
                     
                 Route::get('account-receivable', Keuangan\AccountReceivable::class)
                     ->middleware('can:keuangan.account-receivable.read')

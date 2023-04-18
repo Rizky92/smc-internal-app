@@ -11,7 +11,7 @@ use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
 
-class AccountPayable extends Component
+class HutangAgingMedis extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
@@ -34,7 +34,7 @@ class AccountPayable extends Component
 
     public function render()
     {
-        return view('livewire.keuangan.account-payable')
+        return view('livewire.keuangan.hutang-aging-medis')
             ->layout(BaseLayout::class, ['title' => 'Hutang Aging (Account Payable)']);
     }
 

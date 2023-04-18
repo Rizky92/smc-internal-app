@@ -197,6 +197,20 @@ class BaseLayout extends Component
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.account-receivable.read'),
                     ],
+                    [
+                        'name' => 'Hutang Aging Medis',
+                        'url' => route('admin.keuangan.hutang-aging-medis'),
+                        'icon' => "fas fa-file-invoice",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.hutang-aging-medis.read'),
+                    ],
+                    [
+                        'name' => 'Hutang Aging Non Medis',
+                        'url' => route('admin.keuangan.hutang-aging-nonmedis'),
+                        'icon' => "fas fa-file-invoice",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.hutang-aging-nonmedis.read'),
+                    ],
                 ],
             ],
             [
@@ -210,7 +224,7 @@ class BaseLayout extends Component
                     'farmasi.kunjungan-per-bentuk-obat.read',
                     'farmasi.kunjungan-per-poli.read',
                     'farmasi.perbandingan-po-obat.read',
-                    'farmasi.penyerahan-obat-drivethru.read',
+                    'farmasi.penyerahan-resep-obat.read',
                 ]),
                 'items' => [
                     [
@@ -250,10 +264,10 @@ class BaseLayout extends Component
                         'hasAnyPermissions' => $user->can('farmasi.perbandingan-po-obat.read'),
                     ],
                     // [
-                    //     'name' => 'Penyerahan Obat Drive Thru',
-                    //     'icon' => 'fas fa-car',
-                    //     'url' => route('admin.farmasi.penyerahan-obat-drivethru'),
-                    //     'hasAnyPermissions' => $user->can('farmasi.penyerahan-obat-drivethru.read'),
+                    //     'name' => 'Penyerahan Resep Obat',
+                    //     'icon' => 'fas fa-receipt',
+                    //     'url' => route('admin.farmasi.penyerahan-resep-obat'),
+                    //     'hasAnyPermissions' => $user->can('farmasi.penyerahan-resep-obat.read'),
                     // ],
                 ],
             ],
@@ -264,6 +278,7 @@ class BaseLayout extends Component
                 'hasAnyPermissions' => $user->canAny([
                     'rekam-medis.laporan-statistik.read',
                     'rekam-medis.laporan-demografi.read',
+                    'rekam-medis.status-data-pasien.read',
                 ]),
                 'items' => [
                     [
