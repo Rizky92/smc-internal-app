@@ -13,7 +13,7 @@ use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
-class PenyerahanObatDriveThru extends Component
+class PenyerahanObatNonResep extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
@@ -56,7 +56,7 @@ class PenyerahanObatDriveThru extends Component
 
     public function render()
     {
-        return view('livewire.farmasi.penyerahan-obat-drive-thru')
+        return view('livewire.farmasi.penyerahan-obat-non-resep')
             ->layout(BaseLayout::class, ['title' => 'Persiapan Penyerahan Obat Pasien Rawat Jalan melalui Drive Thru']);
     }
 

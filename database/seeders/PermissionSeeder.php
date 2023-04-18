@@ -33,6 +33,7 @@ class PermissionSeeder extends Seeder
 
         Permission::create(['name' => 'farmasi.kunjungan-per-bentuk-obat.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'farmasi.kunjungan-per-poli.read', 'guard_name' => 'web']);
+        Permission::create(['name' => 'farmasi.input-minmax-stok.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'farmasi.laporan-produksi.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'farmasi.obat-per-dokter.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'farmasi.perbandingan-po-obat.read', 'guard_name' => 'web']);

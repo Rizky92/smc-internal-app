@@ -35,7 +35,7 @@ class InputMinmaxStokPerRuangan extends Component
     public function render()
     {
         return view('livewire.farmasi.input-minmax-stok-per-ruangan')
-            ->layout(BaseLayout::class, ['title' => 'InputMinmaxStokPerRuangan']);
+            ->layout(BaseLayout::class, ['title' => 'Input Minmax Stok Per Ruangan']);
     }
 
     protected function defaultValues()
