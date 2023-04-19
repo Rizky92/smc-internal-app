@@ -58,7 +58,7 @@
                                 @endforelse
                             </x-slot>
                         </x-table>
-                        <x-paginator class="px-4 bg-light" :data="$this->jurnalBarangMedis" />
+                        <x-paginator class="px-4 py-3 bg-light" :data="$this->jurnalBarangMedis" />
                     </x-navtabs.content>
                     <x-navtabs.content id="nonmedis">
                         <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
@@ -91,7 +91,7 @@
                                 @endforelse
                             </x-slot>
                         </x-table>
-                        <x-paginator class="px-4 bg-light" :data="$this->jurnalBarangNonMedis" />
+                        <x-paginator class="px-4 py-3 bg-light" :data="$this->jurnalBarangNonMedis" />
                     </x-navtabs.content>
                 </x-slot>
             </x-navtabs>

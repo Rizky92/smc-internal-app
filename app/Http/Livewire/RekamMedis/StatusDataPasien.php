@@ -70,6 +70,7 @@ class StatusDataPasien extends Component
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
         $this->tampilkanSemuaRegistrasi = false;
+        $this->jenisPerawatan = 'semua';
     }
 
     protected function dataPerSheet(): array

@@ -4,6 +4,7 @@ namespace App\Models\Perawatan;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Poliklinik extends Model
 {

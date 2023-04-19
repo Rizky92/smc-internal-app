@@ -8,7 +8,7 @@
 
 <li class="nav-item my-2">
     <a {{ $attributes
-        ->class(['nav-link', 'active' => $selected === $id])
+        ->class(['nav-link text-sm', 'active' => $selected === $id])
         ->merge([
             'id' => "tab-{$id}",
             'data-toggle' => $type,

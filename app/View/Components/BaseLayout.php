@@ -90,6 +90,8 @@ class BaseLayout extends Component
                     'keuangan.dpjp-piutang-ranap.read',
                     'keuangan.laporan-tindakan-lab.read',
                     'keuangan.laporan-tindakan-radiologi.read',
+                    'keuangan.account-receivable.read',
+                    'keuangan.account-payable.read',
                 ]),
                 'items' => [
                     [
@@ -191,25 +193,18 @@ class BaseLayout extends Component
                         'hasAnyPermissions' => $user->can('keuangan.laporan-tindakan-radiologi.read'),
                     ],
                     [
-                        'name' => 'Account Receivable',
+                        'name' => 'Piutang Aging AR',
                         'url' => route('admin.keuangan.account-receivable'),
                         'icon' => "fas fa-file-invoice",
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.account-receivable.read'),
                     ],
                     [
-                        'name' => 'Hutang Aging Medis',
-                        'url' => route('admin.keuangan.hutang-aging-medis'),
+                        'name' => 'Hutang Aging AP',
+                        'url' => route('admin.keuangan.account-payable'),
                         'icon' => "fas fa-file-invoice",
                         'type' => 'link',
-                        'hasAnyPermissions' => $user->can('keuangan.hutang-aging-medis.read'),
-                    ],
-                    [
-                        'name' => 'Hutang Aging Non Medis',
-                        'url' => route('admin.keuangan.hutang-aging-nonmedis'),
-                        'icon' => "fas fa-file-invoice",
-                        'type' => 'link',
-                        'hasAnyPermissions' => $user->can('keuangan.hutang-aging-nonmedis.read'),
+                        'hasAnyPermissions' => $user->can('keuangan.account-payable.read'),
                     ],
                 ],
             ],
