@@ -11,11 +11,10 @@ use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class LaporanPasienRanap extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
+    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
     public $tanggal;
 

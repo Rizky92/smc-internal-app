@@ -11,12 +11,11 @@ use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class StokDaruratLogistik extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
-    
+    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
+
     public $tampilkanSaranOrderNol;
 
     protected function queryString()
@@ -32,7 +31,7 @@ class StokDaruratLogistik extends Component
     }
 
     public function getStokDaruratLogistikProperty()
-    {   
+    {
         return BarangNonMedis::query()
             ->daruratStok($this->tampilkanSaranOrderNol)
             ->search($this->cari, [

@@ -12,11 +12,10 @@ use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class LaporanStatistik extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
     public $tglAwal;
 
@@ -40,10 +39,10 @@ class LaporanStatistik extends Component
         return $this->isDeferred
             ? []
             : StatistikRekamMedis::query()
-                ->search($this->cari)
-                ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
-                ->orderBy('no_rawat')
-                ->paginate($this->perpage);
+            ->search($this->cari)
+            ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
+            ->orderBy('no_rawat')
+            ->paginate($this->perpage);
     }
 
     public function render()

@@ -12,11 +12,10 @@ use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use DB;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class JurnalSupplierPO extends Component
 {
-    use WithPagination, FlashComponent, Filterable, LiveTable, MenuTracker, ExcelExportable;
+    use FlashComponent, Filterable, LiveTable, MenuTracker, ExcelExportable;
 
     public $tglAwal;
 
