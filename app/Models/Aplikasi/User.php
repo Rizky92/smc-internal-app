@@ -987,14 +987,14 @@ class User extends Authenticatable
         parent::booted();
 
         static::addGlobalScope(function (Builder $query) {
-            $sqlSelect = "
+            $sqlSelect = <<<SQL
                 trim(pegawai.nik) nik,
                 pegawai.nama nama,
                 coalesce(jabatan.nm_jbtn, spesialis.nm_sps, pegawai.jbtn) jbtn,
                 (case when petugas.nip is not null then 'Petugas' when dokter.kd_dokter is not null then 'Dokter' else '-' end) jenis,
                 user.id_user id_user,
-                user.password password
-            ";
+                user.password `password`
+            SQL;
 
             return $query->selectRaw($sqlSelect)
                 ->join('pegawai', DB::raw('AES_DECRYPT(id_user, "nur")'), '=', DB::raw('trim(pegawai.nik)'))
@@ -1009,6 +1009,26 @@ class User extends Authenticatable
     public function scopeWithHakAkses(Builder $query)
     {
         return $query->selectRaw('user.*');
+    }
+
+    public function scopeTampilkanYangMemilikiHakAkses(Builder $query, bool $hakAkses = false): Builder
+    {
+        $db = DB::connection('mysql_smc')->getDatabaseName();
+
+        $sqlHasRoles = DB::table("{$db}.model_has_roles")
+            ->whereRaw("model_type = 'User'")
+            ->whereRaw('model_has_roles.model_id = user.id_user')
+            ->toSql();
+
+        $sqlHasPermissions = DB::table("{$db}.model_has_permissions")
+            ->whereRaw("model_type = 'User'")
+            ->whereRaw('model_has_permissions.model_id = user.id_user')
+            ->toSql();
+
+        return $query->when($hakAkses, fn ($q) => $q
+            ->whereRaw("exists ({$sqlHasRoles})")
+            ->orWhereRaw("exists ({$sqlHasPermissions})")
+        );
     }
 
     public static function findByNRP(string $nrp, array $columns = ['*'])
