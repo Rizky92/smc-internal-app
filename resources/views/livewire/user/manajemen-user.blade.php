@@ -1,4 +1,4 @@
-<div>
+<div wire:init="loadProperties">
     <x-flash />
 
     @once
@@ -82,7 +82,7 @@
     <livewire:user.khanza.transfer-hak-akses />
     <livewire:user.siap.lihat-aktivitas />
 
-    <x-card>
+    <x-card use-loading loading-target="loadProperties">
         <x-slot name="header">
             <x-row>
                 <div class="col-2">
@@ -136,7 +136,7 @@
                     <x-table.th>Hak Akses</x-table.th>
                 </x-slot>
                 <x-slot name="body">
-                    @foreach ($this->users as $user)
+                    @forelse ($this->users as $user)
                         <x-table.tr>
                             <x-table.td
                                 clickable
@@ -162,7 +162,9 @@
                                 </div>
                             </x-table.td>
                         </x-table.tr>
-                    @endforeach
+                    @empty
+                        <x-table.tr-empty colspan="5" />
+                    @endforelse
                 </x-slot>
             </x-table>
         </x-slot>

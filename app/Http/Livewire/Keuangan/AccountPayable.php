@@ -67,7 +67,8 @@ class AccountPayable extends Component
     protected function dataPerSheet(): array
     {
         return [
-            //
+            'Medis' => PemesananObat::query()->hutangAgingMedis($this->tglAwal, $this->tglAkhir)->get(),
+            'Non Medis' => PemesananBarangNonMedis::query()->hutangAgingNonMedis($this->tglAwal, $this->tglAkhir)->get(),
         ];
     }
 
