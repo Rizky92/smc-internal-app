@@ -42,28 +42,32 @@ class PemesananObat extends Model
         }
 
         $sqlSelect = <<<SQL
+            detail_titip_faktur.no_tagihan,
             pemesanan.no_order,
             pemesanan.no_faktur,
             datasuplier.nama_suplier,
-            pemesanan.tgl_pesan,
+            titip_faktur.tanggal tgl_tagihan,
             pemesanan.tgl_tempo,
+            pemesanan.tgl_pesan tgl_terima,
             bayar_pemesanan.tgl_bayar,
-            pemesanan.status,
             round(pemesanan.tagihan, 2) tagihan,
+            pemesanan.status,
             round(bayar_pemesanan.besar_bayar, 2) dibayar,
             round(pemesanan.tagihan - ifnull(bayar_pemesanan.besar_bayar, 0), 2) sisa,
             bayar_pemesanan.nama_bayar,
             bayar_pemesanan.keterangan,
-            datediff('{$tglAkhir}', pemesanan.tgl_pesan) umur_hari
+            datediff('2023-04-30', titip_faktur.tanggal) umur_hari
         SQL;
 
         return $query
             ->selectRaw($sqlSelect)
             ->leftJoin('bayar_pemesanan', 'pemesanan.no_faktur', '=', 'bayar_pemesanan.no_faktur')
             ->leftJoin('datasuplier', 'pemesanan.kode_suplier', '=', 'datasuplier.kode_suplier')
-            ->whereBetween('pemesanan.tgl_pesan', [$tglAwal, $tglAkhir])
+            ->leftJoin('detail_titip_faktur', 'pemesanan.no_faktur', '=', 'detail_titip_faktur.no_faktur')
+            ->leftJoin('titip_faktur', 'detail_titip_faktur.no_tagihan', '=', 'titip_faktur.no_tagihan')
+            ->whereBetween('titip_faktur.tanggal', [$tglAwal, $tglAkhir])
             ->whereRaw('round(pemesanan.tagihan, 2) != ifnull(round(bayar_pemesanan.besar_bayar, 2), 0)')
-            ->orderBy(DB::raw("datediff('{$tglAkhir}', pemesanan.tgl_pesan)"), 'desc');
+            ->orderBy(DB::raw("datediff('{$tglAkhir}', titip_faktur.tanggal)"), 'desc');
     }
 
     public static function totalPembelianDariFarmasi(string $year = '2022'): array

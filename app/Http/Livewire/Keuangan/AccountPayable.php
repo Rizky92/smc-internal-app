@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Keuangan;
 
 use App\Models\Farmasi\Inventaris\PemesananObat;
+use App\Models\Logistik\PemesananBarangNonMedis;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
@@ -39,12 +40,16 @@ class AccountPayable extends Component
             ? []
             : PemesananObat::query()
                 ->hutangAgingMedis($this->tglAwal, $this->tglAkhir)
-                ->paginate($this->perpage);
+                ->paginate($this->perpage, ['*'], 'page_medis');
     }
 
     public function getDataAccountPayableNonMedisProperty()
     {
-        return $this->isDeffered;
+        return $this->isDeferred
+            ? []
+            : PemesananBarangNonMedis::query()
+                ->hutangAgingNonMedis($this->tglAwal, $this->tglAkhir)
+                ->paginate($this->perpage, ['*'], 'page_nonmedis');
     }
 
     public function render()
