@@ -164,3 +164,10 @@ if (! function_exists('maybe')) {
         return $obj;
     }
 }
+
+if (! function_exists('is_between')) {
+    function is_between($value, $start = 0, $end = 0): bool
+    {
+        return $value >= $start && $value <= $end;
+    }
+}

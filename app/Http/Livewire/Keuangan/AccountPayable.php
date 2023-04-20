@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Keuangan;
 
+use App\Models\Farmasi\Inventaris\PemesananObat;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
@@ -30,6 +31,20 @@ class AccountPayable extends Component
     public function mount()
     {
         $this->defaultValues();
+    }
+
+    public function getDataAccountPayableMedisProperty()
+    {
+        return $this->isDeferred
+            ? []
+            : PemesananObat::query()
+                ->hutangAgingMedis($this->tglAwal, $this->tglAkhir)
+                ->paginate($this->perpage);
+    }
+
+    public function getDataAccountPayableNonMedisProperty()
+    {
+        return $this->isDeffered;
     }
 
     public function render()
