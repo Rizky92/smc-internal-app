@@ -123,7 +123,7 @@ Route::prefix('admin')
                     ->name('account-receivable');
 
                 Route::get('account-payable', Keuangan\AccountPayable::class)
-                    ->middleware('can:keuangan.account-payable.read')
+                    ->middleware('canany:keuangan.account-payable.read-medis|keuangan.account-payable.read-nonmedis')
                     ->name('account-payable');
             });
 

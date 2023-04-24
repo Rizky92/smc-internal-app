@@ -34,8 +34,8 @@
                     <x-table.th name="catatan" title="Catatan" />
                     <x-table.th style="width: 12ch" name="status" title="Status Piutang" />
                     <x-table.th name="nama_bayar" title="Nama Bayar" />
-                    <x-table.th name="total_piutang" title="Total Piutang" />
-                    <x-table.th name="besar_cicilan" title="Besar Cicilan" />
+                    <x-table.th name="total_piutang" title="Piutang" />
+                    <x-table.th name="besar_cicilan" title="Cicilan" />
                     <x-table.th name="sisa_piutang" title="Sisa" />
                     <x-table.th style="width: 20ch" title="0 - 30" />
                     <x-table.th style="width: 20ch" title="31 - 60" />

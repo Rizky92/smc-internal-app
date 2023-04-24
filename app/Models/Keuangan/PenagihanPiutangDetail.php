@@ -167,7 +167,7 @@ class PenagihanPiutangDetail extends Model
             ->join('reg_periksa', 'detail_penagihan_piutang.no_rawat', '=', 'reg_periksa.no_rawat')
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join(DB::raw('penjab penjab_tagihan'), 'penagihan_piutang.kd_pj', '=', 'penjab_tagihan.kd_pj')
-            ->join(DB::raw('penjab penjab_pasien'), 'reg_periksa.kd_pj', '=', 'penjab_pasien.kd_pj')G
+            ->join(DB::raw('penjab penjab_pasien'), 'reg_periksa.kd_pj', '=', 'penjab_pasien.kd_pj')
             ->when($belumLunas, fn ($q) => $q->where('piutang_pasien.status', '!=', 'Lunas'))
             ->when($jaminanPasien !== '-', fn ($q) => $q->where('reg_periksa.kd_pj', $jaminanPasien))
             ->when($jenisPerawatan !== 'semua', fn ($q) => $q->where('reg_periksa.status_lanjut', $jenisPerawatan))

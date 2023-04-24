@@ -31,7 +31,7 @@ class PemesananObat extends Model
             ->groupByRaw("month(pemesanan.tgl_pesan)");
     }
 
-    public function scopeHutangAgingMedis(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    public function scopeHutangAging(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->format('Y-m-d');
@@ -50,11 +50,11 @@ class PemesananObat extends Model
             pemesanan.tgl_tempo,
             pemesanan.tgl_pesan tgl_terima,
             bayar_pemesanan.tgl_bayar,
-            round(pemesanan.tagihan, 2) tagihan,
             pemesanan.status,
+            bayar_pemesanan.nama_bayar,
+            round(pemesanan.tagihan, 2) tagihan,
             round(bayar_pemesanan.besar_bayar, 2) dibayar,
             round(pemesanan.tagihan - ifnull(bayar_pemesanan.besar_bayar, 0), 2) sisa,
-            bayar_pemesanan.nama_bayar,
             bayar_pemesanan.keterangan,
             datediff('2023-04-30', titip_faktur.tanggal) umur_hari
         SQL;
@@ -68,6 +68,46 @@ class PemesananObat extends Model
             ->whereBetween('titip_faktur.tanggal', [$tglAwal, $tglAkhir])
             ->whereRaw('round(pemesanan.tagihan, 2) != ifnull(round(bayar_pemesanan.besar_bayar, 2), 0)')
             ->orderBy(DB::raw("datediff('{$tglAkhir}', titip_faktur.tanggal)"), 'desc');
+    }
+
+    public function scopeTotalHutangAging(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        }
+
+        $sqlSelect = <<<SQL
+            case
+                when datediff('{$tglAkhir}', titip_faktur.tanggal) <= 30 then 'periode_0_30'
+                when datediff('{$tglAkhir}', titip_faktur.tanggal) between 31 and 60 then 'periode_31_60'
+                when datediff('{$tglAkhir}', titip_faktur.tanggal) between 61 and 90 then 'periode_61_90'
+                when datediff('{$tglAkhir}', titip_faktur.tanggal) > 90 then 'periode_90_up'
+            end periode,
+            round(sum(pemesanan.tagihan), 2) total_tagihan,
+            round(sum(bayar_pemesanan.besar_bayar), 2) total_dibayar,
+            round(sum(pemesanan.tagihan - ifnull(bayar_pemesanan.besar_bayar, 0)), 2) sisa_tagihan
+        SQL;
+
+        $sqlGroupBy = <<<SQL
+            datediff('{$tglAkhir}', titip_faktur.tanggal) <= 30,
+            datediff('{$tglAkhir}', titip_faktur.tanggal) between 31 and 60,
+            datediff('{$tglAkhir}', titip_faktur.tanggal) between 61 and 90,
+            datediff('{$tglAkhir}', titip_faktur.tanggal) > 90
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->leftJoin('bayar_pemesanan', 'pemesanan.no_faktur', '=', 'bayar_pemesanan.no_faktur')
+            ->leftJoin('datasuplier', 'pemesanan.kode_suplier', '=', 'datasuplier.kode_suplier')
+            ->leftJoin('detail_titip_faktur', 'pemesanan.no_faktur', '=', 'detail_titip_faktur.no_faktur')
+            ->leftJoin('titip_faktur', 'detail_titip_faktur.no_tagihan', '=', 'titip_faktur.no_tagihan')
+            ->whereBetween('titip_faktur.tanggal', [$tglAwal, $tglAkhir])
+            ->whereRaw('round(pemesanan.tagihan, 2) != ifnull(round(bayar_pemesanan.besar_bayar, 2), 0)')
+            ->groupByRaw($sqlGroupBy);
     }
 
     public static function totalPembelianDariFarmasi(string $year = '2022'): array

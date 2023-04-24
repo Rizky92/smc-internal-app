@@ -91,7 +91,8 @@ class BaseLayout extends Component
                     'keuangan.laporan-tindakan-lab.read',
                     'keuangan.laporan-tindakan-radiologi.read',
                     'keuangan.account-receivable.read',
-                    'keuangan.account-payable.read',
+                    'keuangan.account-payable.read-medis',
+                    'keuangan.account-payable.read-nonmedis',
                 ]),
                 'items' => [
                     [
@@ -204,7 +205,7 @@ class BaseLayout extends Component
                         'url' => route('admin.keuangan.account-payable'),
                         'icon' => "fas fa-file-invoice",
                         'type' => 'link',
-                        'hasAnyPermissions' => $user->can('keuangan.account-payable.read'),
+                        'hasAnyPermissions' => $user->canAny(['keuangan.account-payable.read-medis', 'keuangan.account-payable.read-nonmedis']),
                     ],
                 ],
             ],

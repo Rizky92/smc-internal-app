@@ -20,7 +20,7 @@ class PemesananBarangNonMedis extends Model
 
     public $timestamps = false;
 
-    public function scopeHutangAgingNonMedis(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    public function scopeHutangAging(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->format('Y-m-d');
@@ -57,5 +57,45 @@ class PemesananBarangNonMedis extends Model
             ->whereBetween('ipsrs_titip_faktur.tanggal', [$tglAwal, $tglAkhir])
             ->whereRaw('round(ipsrspemesanan.tagihan, 2) != ifnull(round(bayar_pemesanan_non_medis.besar_bayar, 2), 0)')
             ->orderBy(DB::raw("datediff('{$tglAkhir}', ipsrs_titip_faktur.tanggal)"), 'desc');
+    }
+
+    public function scopeTotalHutangAging(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        }
+
+        $sqlSelect = <<<SQL
+            case
+                when datediff('{$tglAkhir}', ipsrs_titip_faktur.tanggal) <= 30 then 'periode_0_30'
+                when datediff('{$tglAkhir}', ipsrs_titip_faktur.tanggal) between 31 and 60 then 'periode_31_60'
+                when datediff('{$tglAkhir}', ipsrs_titip_faktur.tanggal) between 61 and 90 then 'periode_61_90'
+                when datediff('{$tglAkhir}', ipsrs_titip_faktur.tanggal) > 90 then 'periode_90_up'
+            end periode,
+            round(sum(ipsrspemesanan.tagihan), 2) total_tagihan,
+            round(sum(bayar_pemesanan_non_medis.besar_bayar), 2) total_dibayar,
+            round(sum(ipsrspemesanan.tagihan - ifnull(bayar_pemesanan_non_medis.besar_bayar, 0)), 2) sisa_tagihan
+        SQL;
+
+        $sqlGroupBy = <<<SQL
+            datediff('{$tglAkhir}', ipsrs_titip_faktur.tanggal) <= 30,
+            datediff('{$tglAkhir}', ipsrs_titip_faktur.tanggal) between 31 and 60,
+            datediff('{$tglAkhir}', ipsrs_titip_faktur.tanggal) between 61 and 90,
+            datediff('{$tglAkhir}', ipsrs_titip_faktur.tanggal) > 90
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->leftJoin('bayar_pemesanan_non_medis', 'ipsrspemesanan.no_faktur', '=', 'bayar_pemesanan_non_medis.no_faktur')
+            ->leftJoin('ipsrssuplier', 'ipsrspemesanan.kode_suplier', '=', 'ipsrssuplier.kode_suplier')
+            ->leftJoin('ipsrs_detail_titip_faktur', 'ipsrspemesanan.no_faktur', '=', 'ipsrs_detail_titip_faktur.no_faktur')
+            ->leftJoin('ipsrs_titip_faktur', 'ipsrs_detail_titip_faktur.no_tagihan', '=', 'ipsrs_titip_faktur.no_tagihan')
+            ->whereBetween('ipsrs_titip_faktur.tanggal', [$tglAwal, $tglAkhir])
+            ->whereRaw('round(ipsrspemesanan.tagihan, 2) != ifnull(round(bayar_pemesanan_non_medis.besar_bayar, 2), 0)')
+            ->groupByRaw($sqlGroupBy);
     }
 }
