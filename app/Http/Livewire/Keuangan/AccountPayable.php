@@ -11,6 +11,7 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class AccountPayable extends Component
@@ -42,6 +43,26 @@ class AccountPayable extends Component
 
         return PemesananObat::query()
             ->hutangAging($this->tglAwal, $this->tglAkhir)
+            ->search($this->cari, [
+                'detail_titip_faktur.no_tagihan',
+                'pemesanan.no_order',
+                'pemesanan.no_faktur',
+                'datasuplier.nama_suplier',
+                'pemesanan.status',
+                "ifnull(bayar_pemesanan.nama_bayar, '-')",
+                "ifnull(bayar_pemesanan.keterangan, '-')",
+            ])
+            ->sortWithColumns($this->sortColumns, [
+                'tgl_tagihan'   => 'titip_faktur.tanggal',
+                'tgl_terima'    => 'pemesanan.tgl_pesan',
+                'tagihan'       => DB::raw('round(pemesanan.tagihan, 2)'),
+                'dibayar'       => DB::raw('round(bayar_pemesanan.besar_bayar, 2)'),
+                'sisa'          => DB::raw('round(pemesanan.tagihan - ifnull(bayar_pemesanan.besar_bayar, 0), 2)'),
+                'periode_0_30'  => DB::raw("datediff('{$this->tglAkhir}', titip_faktur.tanggal) <= 30"),
+                'periode_31_60' => DB::raw("datediff('{$this->tglAkhir}', titip_faktur.tanggal) between 31 and 60"),
+                'periode_61_90' => DB::raw("datediff('{$this->tglAkhir}', titip_faktur.tanggal) between 61 and 90"),
+                'periode_90_up' => DB::raw("datediff('{$this->tglAkhir}', titip_faktur.tanggal) > 90"),
+            ])
             ->paginate($this->perpage, ['*'], 'page_medis');
     }
 
@@ -53,6 +74,26 @@ class AccountPayable extends Component
 
         return PemesananBarangNonMedis::query()
             ->hutangAging($this->tglAwal, $this->tglAkhir)
+            ->search($this->cari, [
+                'ipsrs_detail_titip_faktur.no_tagihan',
+                'ipsrspemesanan.no_order',
+                'ipsrspemesanan.no_faktur',
+                'ipsrssuplier.nama_suplier',
+                'ipsrspemesanan.status',
+                "ifnull(bayar_pemesanan_non_medis.nama_bayar, '-')",
+                "ifnull(bayar_pemesanan_non_medis.keterangan, '-')",
+            ])
+            ->sortWithColumns($this->sortColumns, [
+                'tgl_tagihan'   => 'ipsrs_titip_faktur.tanggal',
+                'tgl_terima'    => 'ipsrspemesanan.tgl_pesan',
+                'tagihan'       => DB::raw('round(ipsrspemesanan.tagihan, 2)'),
+                'dibayar'       => DB::raw('round(bayar_pemesanan_non_medis.besar_bayar, 2)'),
+                'sisa'          => DB::raw('round(ipsrspemesanan.tagihan - ifnull(bayar_pemesanan_non_medis.besar_bayar, 0), 2)'),
+                'periode_0_30'  => DB::raw("datediff('{$this->tglAkhir}', ipsrs_titip_faktur.tanggal) <= 30"),
+                'periode_31_60' => DB::raw("datediff('{$this->tglAkhir}', ipsrs_titip_faktur.tanggal) between 31 and 60"),
+                'periode_61_90' => DB::raw("datediff('{$this->tglAkhir}', ipsrs_titip_faktur.tanggal) between 61 and 90"),
+                'periode_90_up' => DB::raw("datediff('{$this->tglAkhir}', ipsrs_titip_faktur.tanggal) > 90"),
+            ])
             ->paginate($this->perpage, ['*'], 'page_nonmedis');
     }
 
@@ -64,6 +105,15 @@ class AccountPayable extends Component
 
         $total = PemesananObat::query()
             ->totalHutangAging($this->tglAwal, $this->tglAkhir)
+            ->search($this->cari, [
+                'detail_titip_faktur.no_tagihan',
+                'pemesanan.no_order',
+                'pemesanan.no_faktur',
+                'datasuplier.nama_suplier',
+                'pemesanan.status',
+                'bayar_pemesanan.nama_bayar',
+                'bayar_pemesanan.keterangan',
+            ])
             ->get();
 
         $totalTagihan = (float) $total->sum('total_tagihan');
@@ -82,6 +132,15 @@ class AccountPayable extends Component
 
         $total = PemesananBarangNonMedis::query()
             ->totalHutangAging($this->tglAwal, $this->tglAkhir)
+            ->search($this->cari, [
+                'ipsrs_detail_titip_faktur.no_tagihan',
+                'ipsrspemesanan.no_order',
+                'ipsrspemesanan.no_faktur',
+                'ipsrssuplier.nama_suplier',
+                'ipsrspemesanan.status',
+                'bayar_pemesanan_non_medis.nama_bayar',
+                'bayar_pemesanan_non_medis.keterangan',
+            ])
             ->get();
 
         $totalTagihan = (float) $total->sum('total_tagihan');
@@ -100,6 +159,9 @@ class AccountPayable extends Component
 
     protected function defaultValues()
     {
+        $this->cari = '';
+        $this->perpage = 25;
+        $this->sortColumns = [];
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }

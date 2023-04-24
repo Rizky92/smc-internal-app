@@ -44,8 +44,8 @@ class StokDaruratLogistik extends Component
             ->sortWithColumns($this->sortColumns, [
                 'nama_supplier' => "IFNULL(ipsrssuplier.nama_suplier, '-')",
                 'jenis'         => 'ipsrsjenisbarang.nm_jenis',
-                'stokmin'       => 'IFNULL(smc.ipsrs_minmax_stok_barang.stok_min, 0)',
-                'stokmax'       => 'IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0)',
+                'stokmin'       => DB::raw("IFNULL(smc.ipsrs_minmax_stok_barang.stok_min, 0)"),
+                'stokmax'       => DB::raw("IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0)"),
                 'saran_order'   => DB::raw("IFNULL(IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok, '0')"),
                 'total_harga'   => DB::raw("(ipsrsbarang.harga * (IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok))"),
             ], ['ipsrsbarang.nama_brng' => 'asc'])
@@ -62,6 +62,7 @@ class StokDaruratLogistik extends Component
     {
         $this->cari = '';
         $this->perpage = 25;
+        $this->sortColumns = [];
         $this->tampilkanSaranOrderNol = true;
     }
 

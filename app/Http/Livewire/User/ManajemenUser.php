@@ -59,6 +59,7 @@ class ManajemenUser extends Component
         $this->tampilkanYangMemilikiHakAkses = false;
         $this->cari = '';
         $this->perpage = 25;
+        $this->sortColumns = [];
     }
 
     public function impersonateAsUser(string $nrp = '')

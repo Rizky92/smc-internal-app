@@ -2,12 +2,16 @@
 
 namespace App\Models\Farmasi\Inventaris;
 
+use App\Support\Traits\Eloquent\Searchable;
+use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class PemesananObat extends Model
 {
+    use Searchable, Sortable;
+    
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = 'no_faktur';

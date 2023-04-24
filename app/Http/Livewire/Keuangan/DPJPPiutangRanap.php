@@ -78,6 +78,9 @@ class DPJPPiutangRanap extends Component
 
     protected function defaultValues()
     {
+        $this->cari = '';
+        $this->perpage = 25;
+        $this->sortColumns = [];
         $this->status = '';
         $this->jenisBayar = '';
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');

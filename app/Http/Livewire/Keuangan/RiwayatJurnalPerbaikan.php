@@ -36,7 +36,9 @@ class RiwayatJurnalPerbaikan extends Component
 
     protected function defaultValues()
     {
-        //
+        $this->cari = '';
+        $this->perpage = 25;
+        $this->sortColumns = [];
     }
 
     protected function dataPerSheet(): array

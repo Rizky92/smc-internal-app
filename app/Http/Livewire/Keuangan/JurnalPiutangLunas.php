@@ -93,6 +93,9 @@ class JurnalPiutangLunas extends Component
 
     protected function defaultValues()
     {
+        $this->cari = '';
+        $this->perpage = 25;
+        $this->sortColumns = [];
         $this->kodeRekening = '112010';
         $this->jenisPeriode = 'jurnal';
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
