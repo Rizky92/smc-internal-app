@@ -9,7 +9,7 @@
 
 <li class="nav-item my-2">
     <a {{ $attributes
-        ->class(['nav-link text-sm', 'active' => $selected === $id])
+        ->class(['nav-link text-sm', 'active' => $selected === $id, 'disabled' => !((!$withPermissions && !$hasPermission) xor ($withPermissions && $hasPermission))])
         ->merge([
             'id' => "tab-{$id}",
             'data-toggle' => $type,

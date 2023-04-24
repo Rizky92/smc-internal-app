@@ -36,26 +36,31 @@ class AccountPayable extends Component
 
     public function getDataAccountPayableMedisProperty()
     {
-        return $this->isDeferred
-            ? []
-            : PemesananObat::query()
-                ->hutangAging($this->tglAwal, $this->tglAkhir)
-                ->paginate($this->perpage, ['*'], 'page_medis');
+        if ($this->isDeferred || auth()->user()->can('keuangan.hutang-aging.read-medis')) {
+            return [];
+        }
+
+        return PemesananObat::query()
+            ->hutangAging($this->tglAwal, $this->tglAkhir)
+            ->paginate($this->perpage, ['*'], 'page_medis');
     }
 
     public function getDataAccountPayableNonMedisProperty()
     {
-        return $this->isDeferred
-            ? []
-            : PemesananBarangNonMedis::query()
-                ->hutangAging($this->tglAwal, $this->tglAkhir)
-                ->paginate($this->perpage, ['*'], 'page_nonmedis');
+        if ($this->isDeferred || auth()->user()->can('keuangan.hutang-aging.read-nonmedis')) {
+            return [];
+        }
+
+        return PemesananBarangNonMedis::query()
+            ->hutangAging($this->tglAwal, $this->tglAkhir)
+            ->paginate($this->perpage, ['*'], 'page_nonmedis');
     }
 
     public function getTotalAccountPayableMedisProperty()
     {
-        if ($this->isDeferred)
+        if ($this->isDeferred || auth()->user()->can('keuangan.hutang-aging.read-medis')) {
             return [];
+        }
 
         $total = PemesananObat::query()
             ->totalHutangAging($this->tglAwal, $this->tglAkhir)
@@ -71,8 +76,9 @@ class AccountPayable extends Component
 
     public function getTotalAccountPayableNonMedisProperty()
     {
-        if ($this->isDeferred)
+        if ($this->isDeferred || auth()->user()->can('keuangan.hutang-aging.read-nonmedis')) {
             return [];
+        }
 
         $total = PemesananBarangNonMedis::query()
             ->totalHutangAging($this->tglAwal, $this->tglAkhir)
