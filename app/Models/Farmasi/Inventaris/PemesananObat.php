@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 class PemesananObat extends Model
 {
     use Searchable, Sortable;
-    
+
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = 'no_faktur';
@@ -60,7 +60,7 @@ class PemesananObat extends Model
             round(bayar_pemesanan.besar_bayar, 2) dibayar,
             round(pemesanan.tagihan - ifnull(bayar_pemesanan.besar_bayar, 0), 2) sisa,
             bayar_pemesanan.keterangan,
-            datediff('2023-04-30', titip_faktur.tanggal) umur_hari
+            datediff('{$tglAkhir}', titip_faktur.tanggal) umur_hari
         SQL;
 
         return $query
