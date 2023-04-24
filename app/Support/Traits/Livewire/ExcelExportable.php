@@ -64,9 +64,7 @@ trait ExcelExportable
 
         $dataSheets = $this->dataPerSheet();
 
-        $firstSheet = sizeof($dataSheets) > 1
-            ? (string) array_keys($dataSheets)[0]
-            : 'Sheet 1';
+        $firstSheet = array_keys($dataSheets)[0] ?: 'Sheet 1';
 
         $firstData = Arr::isList($dataSheets)
             ? $dataSheets[0]
