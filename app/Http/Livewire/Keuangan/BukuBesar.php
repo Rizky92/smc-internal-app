@@ -10,12 +10,12 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Fluent;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class BukuBesar extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
+    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
     public $kodeRekening;
 
@@ -26,7 +26,7 @@ class BukuBesar extends Component
     protected function queryString()
     {
         return [
-            'kodeRekening' => ['except' => ''],
+            'kodeRekening' => ['except' => '1', 'as' => 'rekening'],
             'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
@@ -44,7 +44,7 @@ class BukuBesar extends Component
         }
 
         return Jurnal::query()
-            ->bukuBesar($this->kodeRekening, $this->tglAwal, $this->tglAkhir)
+            ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
             ->search($this->cari, [
                 'jurnal.tgl_jurnal',
                 'jurnal.jam_jurnal',
@@ -70,7 +70,7 @@ class BukuBesar extends Component
         }
 
         return Jurnal::query()
-            ->jumlahDebetDanKreditBukuBesar($this->kodeRekening, $this->tglAwal, $this->tglAkhir)
+            ->jumlahDebetDanKreditBukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
             ->first();
     }
 
@@ -113,24 +113,21 @@ class BukuBesar extends Component
 
     protected function dataPerSheet(): array
     {
-        $bukuBesar = Jurnal::bukuBesar($this->kodeRekening, $this->tglAwal, $this->tglAkhir)->get();
-
         return [
-            collect($bukuBesar->toArray())
-                ->merge([
-                    [
-                        'tgl_jurnal' => '',
-                        'jam_jurnal' => '',
-                        'no_jurnal' => '',
-                        'no_bukti' => '',
-                        'keterangan' => '',
-                        'kd_rek' => '',
-                        'nm_rek' => 'TOTAL :',
-                        'debet' => optional($this->totalDebetDanKredit)->debet,
-                        'kredit' => optional($this->totalDebetDanKredit)->kredit,
-                    ]
-                ])
-                ->toArray(),
+            Jurnal::query()
+                ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
+                ->get()
+                ->push(new Fluent([
+                    'tgl_jurnal' => '',
+                    'jam_jurnal' => '',
+                    'no_jurnal' => '',
+                    'no_bukti' => '',
+                    'keterangan' => '',
+                    'kd_rek' => '',
+                    'nm_rek' => 'TOTAL :',
+                    'debet' => optional($this->totalDebetDanKredit)->debet,
+                    'kredit' => optional($this->totalDebetDanKredit)->kredit,
+                ])),
         ];
     }
 

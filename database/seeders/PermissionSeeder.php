@@ -33,12 +33,14 @@ class PermissionSeeder extends Seeder
 
         Permission::create(['name' => 'farmasi.kunjungan-per-bentuk-obat.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'farmasi.kunjungan-per-poli.read', 'guard_name' => 'web']);
+        Permission::create(['name' => 'farmasi.input-minmax-stok.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'farmasi.laporan-produksi.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'farmasi.obat-per-dokter.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'farmasi.perbandingan-po-obat.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'farmasi.stok-darurat.read', 'guard_name' => 'web']);
 
-        Permission::create(['name' => 'keuangan.account-payable.read', 'guard_name' => 'web']);
+        Permission::create(['name' => 'keuangan.account-payable.read-medis', 'guard_name' => 'web']);
+        Permission::create(['name' => 'keuangan.account-payable.read-nonmedis', 'guard_name' => 'web']);
         Permission::create(['name' => 'keuangan.account-receivable.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'keuangan.buku-besar.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'keuangan.dpjp-piutang-ranap.read', 'guard_name' => 'web']);
@@ -68,10 +70,12 @@ class PermissionSeeder extends Seeder
 
         Permission::create(['name' => 'rekam-medis.laporan-demografi.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'rekam-medis.laporan-statistik.read', 'guard_name' => 'web']);
+        Permission::create(['name' => 'rekam-medis.status-data-pasien.read', 'guard_name' => 'web']);
 
         $keuanganPermissions = [
-            'keuangan.account-payable.read',
-            'keuangan.account-receivable.read',,
+            'keuangan.account-payable.read-medis',
+            'keuangan.account-payable.read-nonmedis',
+            'keuangan.account-receivable.read',
             'keuangan.buku-besar.read',
             'keuangan.dpjp-piutang-ranap.read',
             'keuangan.jurnal-perbaikan.read',
@@ -90,12 +94,13 @@ class PermissionSeeder extends Seeder
         ];
 
         $farmasiPermissions = [
-            'farmasi.kunjungan-per-bentuk-obat.read',
-            'farmasi.kunjungan-per-poli.read',
-            'farmasi.laporan-produksi.read',
-            'farmasi.obat-per-dokter.read',
-            'farmasi.perbandingan-po-obat.read',
-            'farmasi.stok-darurat.read',
+            'faramsi.kunjungan-per-bentuk-obat.read',
+            'faramsi.kunjungan-per-poli.read',
+            'faramsi.input-minmax-stok.read',
+            'faramsi.laporan-produksi.read',
+            'faramsi.obat-per-dokter.read',
+            'faramsi.perbandingan-po-obat.read',
+            'faramsi.stok-darurat.read',
             'keuangan.stok-obat-ruangan.read',
         ];
 
@@ -107,6 +112,7 @@ class PermissionSeeder extends Seeder
         $rekamMedisPermissions = [
             'rekam-medis.laporan-demografi.read',
             'rekam-medis.laporan-statistik.read',
+            'rekam-medis.status-data-pasien.read',
         ];
 
         $logistikPermissions = [

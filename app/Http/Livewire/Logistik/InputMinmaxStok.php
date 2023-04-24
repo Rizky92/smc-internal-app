@@ -13,11 +13,10 @@ use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class InputMinmaxStok extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
+    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
     public function mount()
     {
@@ -63,7 +62,7 @@ class InputMinmaxStok extends Component
 
     public function simpan(string $kodeBarang, int $stokMin = 0, int $stokMax = 0, string $kodeSupplier = '-')
     {
-        if (! auth()->user()->can('logistik.stok-minmax.update')) {
+        if (!auth()->user()->can('logistik.stok-minmax.update')) {
             $this->flashError('Anda tidak memiliki izin untuk mengupdate barang');
 
             return;

@@ -78,6 +78,11 @@ if (!function_exists('tracker_start')) {
 }
 
 if (!function_exists('tracker_end')) {
+    /**
+     * @param  string $connection
+     * 
+     * @return void
+     */
     function tracker_end(string $connection = 'mysql_smc')
     {
         // matikan trackersql ketika sedang impersonasi
@@ -111,6 +116,11 @@ if (!function_exists('tracker_end')) {
 }
 
 if (! function_exists('tracker_dispose')) {
+    /**
+     * @param  string $connection
+     * 
+     * @return void
+     */
     function tracker_dispose(string $connection)
     {
         DB::connection($connection)->disableQueryLog();
@@ -162,5 +172,12 @@ if (! function_exists('maybe')) {
         }
 
         return $obj;
+    }
+}
+
+if (! function_exists('is_between')) {
+    function is_between($value, $start = 0, $end = 0): bool
+    {
+        return $value >= $start && $value <= $end;
     }
 }

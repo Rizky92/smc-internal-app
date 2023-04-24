@@ -118,13 +118,13 @@ Route::prefix('admin')
                     ->middleware('can:keuangan.laporan-tindakan-radiologi.read')
                     ->name('laporan-tindakan-radiologi');
 
-                Route::get('account-payable', Keuangan\AccountPayable::class)
-                    ->middleware('can:keuangan.account-payable.read')
-                    ->name('account-payable');
-                    
                 Route::get('account-receivable', Keuangan\AccountReceivable::class)
                     ->middleware('can:keuangan.account-receivable.read')
                     ->name('account-receivable');
+
+                Route::get('account-payable', Keuangan\AccountPayable::class)
+                    ->middleware('canany:keuangan.account-payable.read-medis|keuangan.account-payable.read-nonmedis')
+                    ->name('account-payable');
             });
 
         Route::prefix('farmasi')
@@ -154,7 +154,7 @@ Route::prefix('admin')
                     ->middleware('can:farmasi.perbandingan-po-obat.read')
                     ->name('perbandingan-po-obat');
                     
-                Route::get('penyerahan-obat-drive-thru', Farmasi\PenyerahanObatDriveThru::class)
+                Route::get('penyerahan-obat-drive-thru', Farmasi\PenyerahanObatNonResep::class)
                     ->middleware('can:farmasi.penyerahan-obat-drivethru.read')
                     ->name('penyerahan-obat-drivethru');
             });
@@ -169,6 +169,10 @@ Route::prefix('admin')
                 Route::get('laporan-demografi', RekamMedis\LaporanDemografi::class)
                     ->middleware('can:rekam-medis.laporan-demografi.read')
                     ->name('laporan-demografi');
+
+                Route::get('status-data-pasien', RekamMedis\StatusDataPasien::class)
+                    ->middleware('can:rekam-medis.status-data-pasien.read')
+                    ->name('status-data-pasien');
             });
 
         Route::prefix('logistik')

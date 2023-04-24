@@ -44,8 +44,7 @@ class RegistrasiPasien extends Model
     public function alamatLengkap(): Attribute
     {
         return Attribute::get(function () {
-            if (!(
-                $this->relationLoaded('kelurahan') ||
+            if (!($this->relationLoaded('kelurahan') ||
                 $this->relationLoaded('kecamatan') ||
                 $this->relationLoaded('kabupaten') ||
                 $this->relationLoaded('provinsi')
@@ -148,7 +147,7 @@ class RegistrasiPasien extends Model
                 'rawatInap',
                 'rawatInap.dpjpRanap',
                 'rawatInap.kamar',
-                
+
                 // pemeriksaan ranap pasien
                 'rawatInap.diagnosa',
                 'rawatInap.tindakanRanapPerawat',
@@ -238,8 +237,13 @@ class RegistrasiPasien extends Model
             ");
     }
 
-    public function scopeStatusDataRM(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $jenisPerawatan = 'semua'): Builder
-    {
+    public function scopeStatusDataRM(
+        Builder $query,
+        string $tglAwal = '',
+        string $tglAkhir = '',
+        string $jenisPerawatan = 'semua',
+        bool $tampilkanSemuaRegistrasi = false
+    ): Builder {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->format('Y-m-d');
         }
@@ -257,14 +261,14 @@ class RegistrasiPasien extends Model
             pasien.nm_pasien,
             poliklinik.nm_poli,
             reg_periksa.status_lanjut,
-            (select exists(select * from pemeriksaan_ralan where pemeriksaan_ralan.no_rawat = reg_periksa.no_rawat)) soapie_ralan,
-            (select exists(select * from pemeriksaan_ranap where pemeriksaan_ranap.no_rawat = reg_periksa.no_rawat)) soapie_ranap,
-            (select exists(select * from resume_pasien where resume_pasien.no_rawat = reg_periksa.no_rawat)) resume_ralan,
-            (select exists(select * from resume_pasien_ranap where resume_pasien_ranap.no_rawat = reg_periksa.no_rawat)) resume_ranap,
-            (select exists(select * from data_triase_igd where data_triase_igd.no_rawat = reg_periksa.no_rawat)) triase_igd,
-            (select exists(select * from penilaian_awal_keperawatan_igd where penilaian_awal_keperawatan_igd.no_rawat = reg_periksa.no_rawat)) askep_igd,
-            (select exists(select * from diagnosa_pasien where diagnosa_pasien.no_rawat = reg_periksa.no_rawat)) icd_10,
-            (select exists(select * from prosedur_pasien where prosedur_pasien.no_rawat = reg_periksa.no_rawat)) icd_9
+            exists(select * from pemeriksaan_ralan where pemeriksaan_ralan.no_rawat = reg_periksa.no_rawat) soapie_ralan,
+            exists(select * from pemeriksaan_ranap where pemeriksaan_ranap.no_rawat = reg_periksa.no_rawat) soapie_ranap,
+            exists(select * from resume_pasien where resume_pasien.no_rawat = reg_periksa.no_rawat) resume_ralan,
+            exists(select * from resume_pasien_ranap where resume_pasien_ranap.no_rawat = reg_periksa.no_rawat) resume_ranap,
+            exists(select * from data_triase_igd where data_triase_igd.no_rawat = reg_periksa.no_rawat) triase_igd,
+            exists(select * from penilaian_awal_keperawatan_igd where penilaian_awal_keperawatan_igd.no_rawat = reg_periksa.no_rawat) askep_igd,
+            exists(select * from diagnosa_pasien where diagnosa_pasien.no_rawat = reg_periksa.no_rawat) icd_10,
+            exists(select * from prosedur_pasien where prosedur_pasien.no_rawat = reg_periksa.no_rawat) icd_9
         SQL;
 
         return $query
@@ -273,6 +277,8 @@ class RegistrasiPasien extends Model
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
-            ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir]);
+            ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
+            ->when(!$tampilkanSemuaRegistrasi, fn ($q) => $q->whereNotIn('reg_periksa.stts', ['Batal', 'Belum']))
+            ->when($jenisPerawatan !== 'semua', fn ($q) => $q->where('reg_periksa.status_lanjut', $jenisPerawatan));
     }
 }

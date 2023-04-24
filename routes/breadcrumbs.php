@@ -102,12 +102,12 @@ Breadcrumbs::for('admin.keuangan.laporan-tindakan-radiologi', function (Trail $t
 
 Breadcrumbs::for('admin.keuangan.account-receivable', function (Trail $trail) {
     $trail->parent('admin.keuangan');
-    $trail->push('Piutang Aging (Account Receivable)', route('admin.keuangan.account-receivable'));
+    $trail->push('Piutang Aging AR', route('admin.keuangan.account-receivable'));
 });
 
 Breadcrumbs::for('admin.keuangan.account-payable', function (Trail $trail) {
     $trail->parent('admin.keuangan');
-    $trail->push('Hutang Aging (Account Payable)', route('admin.keuangan.account-payable'));
+    $trail->push('Hutang Aging AP', route('admin.keuangan.account-payable'));
 });
 
 
@@ -146,9 +146,9 @@ Breadcrumbs::for('admin.farmasi.perbandingan-po-obat', function (Trail $trail) {
     $trail->push('Perbandingan PO Obat', route('admin.farmasi.perbandingan-po-obat'));
 });
 
-Breadcrumbs::for('admin.farmasi.penyerahan-obat-drivethru', function (Trail $trail) {
+Breadcrumbs::for('admin.farmasi.penyerahan-resep-obat', function (Trail $trail) {
     $trail->parent('admin.farmasi');
-    $trail->push('Penyerahan Obat Drive Thru', route('admin.farmasi.penyerahan-obat-drivethru'));
+    $trail->push('Penyerahan Resep Obat', route('admin.farmasi.penyerahan-resep-obat-masal'));
 });
 
 
@@ -165,6 +165,11 @@ Breadcrumbs::for('admin.rekam-medis.laporan-statistik', function (Trail $trail) 
 Breadcrumbs::for('admin.rekam-medis.laporan-demografi', function (Trail $trail) {
     $trail->parent('admin.rekam-medis');
     $trail->push('Demografi Pasien', route('admin.rekam-medis.laporan-demografi'));
+});
+
+Breadcrumbs::for('admin.rekam-medis.status-data-pasien', function (Trail $trail) {
+    $trail->parent('admin.rekam-medis');
+    $trail->push('Status Data Pasien', route('admin.rekam-medis.status-data-pasien'));
 });
 
 

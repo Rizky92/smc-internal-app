@@ -57,7 +57,7 @@ class Jurnal extends Model
             ->whereBetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir]);
     }
 
-    public function scopeBukuBesar(Builder $query, string $kodeRekening, string $tglAwal = '', string $tglAkhir = ''): Builder
+    public function scopeBukuBesar(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodeRekening): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->format('Y-m-d');
@@ -87,7 +87,7 @@ class Jurnal extends Model
             ->whereBetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir]);
     }
 
-    public function scopeJumlahDebetDanKreditBukuBesar(Builder $query, string $kodeRekening, string $tglAwal = '', string $tglAkhir = ''): Builder
+    public function scopeJumlahDebetDanKreditBukuBesar(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodeRekening): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->format('Y-m-d');

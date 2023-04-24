@@ -1,4 +1,4 @@
-<div>
+<div wire:init="loadProperties">
     <x-flash />
 
     @once
@@ -82,7 +82,7 @@
     <livewire:user.khanza.transfer-hak-akses />
     <livewire:user.siap.lihat-aktivitas />
 
-    <x-card>
+    <x-card use-loading loading-target="loadProperties">
         <x-slot name="header">
             <x-row>
                 <div class="col-2">
@@ -99,21 +99,24 @@
                 </div>
                 <div class="col-6">
                     <div class="d-flex align-items-end h-100">
-                        <x-dropdown class="mb-3" livewire>
-                            <x-slot name="button" title="Pilihan" icon="fas fa-cogs" disabled></x-slot>
-                            <x-slot name="menu" class="dropdown-menu-right">
-                                <x-dropdown.header class="text-left">SIMRS Khanza</x-dropdown.header>
-                                <x-dropdown.item as="button" id="button-set-hak-akses" icon="fas fa-user-cog fa-fw" title="Set Hak Akses" data-toggle="modal" data-target="#modal-set-hak-akses" />
-                                <x-dropdown.item as="button" id="button-transfer-hak-akses" icon="fas fa-exchange-alt fa-fw" title="Transfer Hak Akses" data-toggle="modal" data-target="#modal-transfer-hak-akses" />
-                                <x-dropdown.divider />
-                                <x-dropdown.header class="text-left">SMC Internal App</x-dropdown.header>
-                                <x-dropdown.item as="button" id="button-set-perizinan" icon="fas fa-user-cog fa-fw" title="Set Perizinan" data-toggle="modal" data-target="#modal-set-perizinan" />
-                                <x-dropdown.item as="button" id="button-transfer-perizinan" icon="fas fa-exchange-alt fa-fw" title="Transfer Perizinan" data-toggle="modal" data-target="#modal-transfer-perizinan" />
-                                <x-dropdown.divider />
-                                <x-dropdown.item as="button" id="button-impersonasi" icon="fas fa-user-secret fa-fw" title="Impersonasi" />
-                                <x-dropdown.item as="button" id="button-lihat-aktivitas" icon="fas fa-binoculars fa-fw" title="Lihat Aktivitias" data-toggle="modal" data-target="#modal-lihat-aktivitas" />
-                            </x-slot>
-                        </x-dropdown>
+                        <div class="mb-3 d-flex align-items-center w-100">
+                            <x-dropdown livewire>
+                                <x-slot name="button" title="Pilihan" icon="fas fa-cogs" disabled></x-slot>
+                                <x-slot name="menu" class="dropdown-menu-right">
+                                    <x-dropdown.header class="text-left">SIMRS Khanza</x-dropdown.header>
+                                    <x-dropdown.item as="button" id="button-set-hak-akses" icon="fas fa-user-cog fa-fw" title="Set Hak Akses" data-toggle="modal" data-target="#modal-set-hak-akses" />
+                                    <x-dropdown.item as="button" id="button-transfer-hak-akses" icon="fas fa-exchange-alt fa-fw" title="Transfer Hak Akses" data-toggle="modal" data-target="#modal-transfer-hak-akses" />
+                                    <x-dropdown.divider />
+                                    <x-dropdown.header class="text-left">SMC Internal App</x-dropdown.header>
+                                    <x-dropdown.item as="button" id="button-set-perizinan" icon="fas fa-user-cog fa-fw" title="Set Perizinan" data-toggle="modal" data-target="#modal-set-perizinan" />
+                                    <x-dropdown.item as="button" id="button-transfer-perizinan" icon="fas fa-exchange-alt fa-fw" title="Transfer Perizinan" data-toggle="modal" data-target="#modal-transfer-perizinan" />
+                                    <x-dropdown.divider />
+                                    <x-dropdown.item as="button" id="button-impersonasi" icon="fas fa-user-secret fa-fw" title="Impersonasi" />
+                                    <x-dropdown.item as="button" id="button-lihat-aktivitas" icon="fas fa-binoculars fa-fw" title="Lihat Aktivitias" data-toggle="modal" data-target="#modal-lihat-aktivitas" />
+                                </x-slot>
+                            </x-dropdown>
+                            <x-filter.toggle class="ml-auto" model="tampilkanYangMemilikiHakAkses" title="Tampilkan yang Memiliki Hak Akses" />
+                        </div>
                     </div>
                 </div>
             </x-row>
@@ -133,7 +136,7 @@
                     <x-table.th>Hak Akses</x-table.th>
                 </x-slot>
                 <x-slot name="body">
-                    @foreach ($this->users as $user)
+                    @forelse ($this->users as $user)
                         <x-table.tr>
                             <x-table.td
                                 clickable
@@ -159,7 +162,9 @@
                                 </div>
                             </x-table.td>
                         </x-table.tr>
-                    @endforeach
+                    @empty
+                        <x-table.tr-empty colspan="5" />
+                    @endforelse
                 </x-slot>
             </x-table>
         </x-slot>

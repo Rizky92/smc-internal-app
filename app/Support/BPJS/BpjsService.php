@@ -4,7 +4,6 @@ namespace App\Support\BPJS;
 
 use Illuminate\Support\Facades\Http;
 use LZCompressor\LZString;
-use RuntimeException;
 
 class BpjsService
 {
@@ -13,12 +12,6 @@ class BpjsService
     protected array $response;
 
     protected array $headers;
-
-    protected $consid = '8645';
-
-    protected $secret = '0tG8DF7F13';
-
-    protected $userkey = '568884b9a78e0af6bc518f7f4ecd8b4c';
 
     public static function start()
     {
@@ -34,10 +27,10 @@ class BpjsService
         $url = 'https://apijkn-dev.bpjs-kesehatan.go.id/antreanrs_dev/antrean/getlisttask';
 
         $this->setHeaders([
-            'x-cons-id' => $this->consid,
+            'x-cons-id' => config('bpjs.consid'),
             'x-timestamp' => $this->timestamp,
             'x-signature' => $this->generateSignature(),
-            'user_key' => $this->userkey,
+            'user_key' => config('bpjs.userkey'),
         ]);
 
         $data = $noBooking;
@@ -57,8 +50,8 @@ class BpjsService
     {
         $timestamp = $this->timestamp;
 
-        $consid = $this->consid;
-        $secret = $this->secret;
+        $consid = config('bpjs.consid');
+        $secret = config('bpjs.secret');
 
         $signature = hash_hmac('sha256', "{$consid}&{$timestamp}", $secret, true);
 
@@ -68,8 +61,8 @@ class BpjsService
     protected function decryptResponse(string $key = 'response')
     {
         $timestamp = $this->timestamp;
-        $consid = $this->consid;
-        $secret = $this->secret;
+        $consid = config('bpjs.consid');
+        $secret = config('bpjs.secret');
 
         $hash = hex2bin(hash('sha256', $consid . $secret . $timestamp));
 

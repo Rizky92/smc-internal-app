@@ -90,6 +90,9 @@ class BaseLayout extends Component
                     'keuangan.dpjp-piutang-ranap.read',
                     'keuangan.laporan-tindakan-lab.read',
                     'keuangan.laporan-tindakan-radiologi.read',
+                    'keuangan.account-receivable.read',
+                    'keuangan.account-payable.read-medis',
+                    'keuangan.account-payable.read-nonmedis',
                 ]),
                 'items' => [
                     [
@@ -191,11 +194,18 @@ class BaseLayout extends Component
                         'hasAnyPermissions' => $user->can('keuangan.laporan-tindakan-radiologi.read'),
                     ],
                     [
-                        'name' => 'Account Receivable',
+                        'name' => 'Piutang Aging AR',
                         'url' => route('admin.keuangan.account-receivable'),
                         'icon' => "fas fa-file-invoice",
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.account-receivable.read'),
+                    ],
+                    [
+                        'name' => 'Hutang Aging AP',
+                        'url' => route('admin.keuangan.account-payable'),
+                        'icon' => "fas fa-file-invoice",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->canAny(['keuangan.account-payable.read-medis', 'keuangan.account-payable.read-nonmedis']),
                     ],
                 ],
             ],
@@ -210,7 +220,7 @@ class BaseLayout extends Component
                     'farmasi.kunjungan-per-bentuk-obat.read',
                     'farmasi.kunjungan-per-poli.read',
                     'farmasi.perbandingan-po-obat.read',
-                    'farmasi.penyerahan-obat-drivethru.read',
+                    'farmasi.penyerahan-resep-obat.read',
                 ]),
                 'items' => [
                     [
@@ -250,10 +260,10 @@ class BaseLayout extends Component
                         'hasAnyPermissions' => $user->can('farmasi.perbandingan-po-obat.read'),
                     ],
                     // [
-                    //     'name' => 'Penyerahan Obat Drive Thru',
-                    //     'icon' => 'fas fa-car',
-                    //     'url' => route('admin.farmasi.penyerahan-obat-drivethru'),
-                    //     'hasAnyPermissions' => $user->can('farmasi.penyerahan-obat-drivethru.read'),
+                    //     'name' => 'Penyerahan Resep Obat',
+                    //     'icon' => 'fas fa-receipt',
+                    //     'url' => route('admin.farmasi.penyerahan-resep-obat'),
+                    //     'hasAnyPermissions' => $user->can('farmasi.penyerahan-resep-obat.read'),
                     // ],
                 ],
             ],
@@ -264,6 +274,7 @@ class BaseLayout extends Component
                 'hasAnyPermissions' => $user->canAny([
                     'rekam-medis.laporan-statistik.read',
                     'rekam-medis.laporan-demografi.read',
+                    'rekam-medis.status-data-pasien.read',
                 ]),
                 'items' => [
                     [
@@ -277,6 +288,12 @@ class BaseLayout extends Component
                         'icon' => 'fas fa-globe-asia',
                         'url' => route('admin.rekam-medis.laporan-demografi'),
                         'hasAnyPermissions' => $user->can('rekam-medis.laporan-demografi.read'),
+                    ],
+                    [
+                        'name' => 'Status Data Pasien',
+                        'icon' => 'fas fa-file-alt',
+                        'url' => route('admin.rekam-medis.status-data-pasien'),
+                        'hasAnyPermissions' => $user->can('rekam-medis.status-data-pasien.read'),
                     ],
                 ],
             ],
