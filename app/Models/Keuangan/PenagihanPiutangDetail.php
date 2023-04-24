@@ -126,10 +126,10 @@ class PenagihanPiutangDetail extends Model
 
         $sqlSelect = <<<SQL
             case
-                when datediff('2023-04-30', penagihan_piutang.tanggal) <= 30 then 'periode_0_30'
-                when datediff('2023-04-30', penagihan_piutang.tanggal) between 31 and 60 then 'periode_31_60'
-                when datediff('2023-04-30', penagihan_piutang.tanggal) between 61 and 90 then 'periode_61_90'
-                when datediff('2023-04-30', penagihan_piutang.tanggal) > 90 then 'periode_90_up'
+                when datediff('{$tglAkhir}', penagihan_piutang.tanggal) <= 30 then 'periode_0_30'
+                when datediff('{$tglAkhir}', penagihan_piutang.tanggal) between 31 and 60 then 'periode_31_60'
+                when datediff('{$tglAkhir}', penagihan_piutang.tanggal) between 61 and 90 then 'periode_61_90'
+                when datediff('{$tglAkhir}', penagihan_piutang.tanggal) > 90 then 'periode_90_up'
             end periode,
             round(sum(detail_piutang_pasien.totalpiutang), 2) total_piutang,
             round(sum(bayar_piutang.besar_cicilan), 2) total_cicilan,
@@ -137,10 +137,10 @@ class PenagihanPiutangDetail extends Model
         SQL;
 
         $sqlGroupBy = <<<SQL
-            datediff('2023-04-30', penagihan_piutang.tanggal) <= 30,
-            datediff('2023-04-30', penagihan_piutang.tanggal) between 31 and 60,
-            datediff('2023-04-30', penagihan_piutang.tanggal) between 61 and 90,
-            datediff('2023-04-30', penagihan_piutang.tanggal) > 90
+            datediff('{$tglAkhir}', penagihan_piutang.tanggal) <= 30,
+            datediff('{$tglAkhir}', penagihan_piutang.tanggal) between 31 and 60,
+            datediff('{$tglAkhir}', penagihan_piutang.tanggal) between 61 and 90,
+            datediff('{$tglAkhir}', penagihan_piutang.tanggal) > 90
         SQL;
 
         $sqlFilterOnlyPaid = DB::connection('mysql_sik')
@@ -167,7 +167,7 @@ class PenagihanPiutangDetail extends Model
             ->join('reg_periksa', 'detail_penagihan_piutang.no_rawat', '=', 'reg_periksa.no_rawat')
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join(DB::raw('penjab penjab_tagihan'), 'penagihan_piutang.kd_pj', '=', 'penjab_tagihan.kd_pj')
-            ->join(DB::raw('penjab penjab_pasien'), 'reg_periksa.kd_pj', '=', 'penjab_pasien.kd_pj')
+            ->join(DB::raw('penjab penjab_pasien'), 'reg_periksa.kd_pj', '=', 'penjab_pasien.kd_pj')G
             ->when($belumLunas, fn ($q) => $q->where('piutang_pasien.status', '!=', 'Lunas'))
             ->when($jaminanPasien !== '-', fn ($q) => $q->where('reg_periksa.kd_pj', $jaminanPasien))
             ->when($jenisPerawatan !== 'semua', fn ($q) => $q->where('reg_periksa.status_lanjut', $jenisPerawatan))
