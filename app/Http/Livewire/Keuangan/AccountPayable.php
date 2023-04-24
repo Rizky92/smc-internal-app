@@ -36,7 +36,7 @@ class AccountPayable extends Component
 
     public function getDataAccountPayableMedisProperty()
     {
-        if ($this->isDeferred || !auth()->user()->can('keuangan.hutang-aging.read-medis')) {
+        if ($this->isDeferred || !auth()->user()->can('keuangan.account-payable.read-medis')) {
             return [];
         }
 
@@ -47,7 +47,7 @@ class AccountPayable extends Component
 
     public function getDataAccountPayableNonMedisProperty()
     {
-        if ($this->isDeferred || !auth()->user()->can('keuangan.hutang-aging.read-nonmedis')) {
+        if ($this->isDeferred || !auth()->user()->can('keuangan.account-payable.read-nonmedis')) {
             return [];
         }
 
@@ -58,7 +58,7 @@ class AccountPayable extends Component
 
     public function getTotalAccountPayableMedisProperty()
     {
-        if ($this->isDeferred || !auth()->user()->can('keuangan.hutang-aging.read-medis')) {
+        if ($this->isDeferred || !auth()->user()->can('keuangan.account-payable.read-medis')) {
             return [];
         }
 
@@ -76,7 +76,7 @@ class AccountPayable extends Component
 
     public function getTotalAccountPayableNonMedisProperty()
     {
-        if ($this->isDeferred || !auth()->user()->can('keuangan.hutang-aging.read-nonmedis')) {
+        if ($this->isDeferred || !auth()->user()->can('keuangan.account-payable.read-nonmedis')) {
             return [];
         }
 
