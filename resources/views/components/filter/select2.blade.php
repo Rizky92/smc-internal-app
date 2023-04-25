@@ -84,8 +84,8 @@
 
 <div wire:ignore {{ $attributes
     ->only('class')
-    ->merge(['style' => 'width: max-content']) }}
->
+    ->merge(['style' => 'width: max-content'])
+}}>
     <select id="{{ $id }}" name="{{ $name }}" class="form-control form-control-sm simple-select2-sm input-sm" autocomplete="off">
         @if ($placeholder)
             <option value="{{ $placeholderValue ?? '' }}">{{ $placeholder }}</option>
