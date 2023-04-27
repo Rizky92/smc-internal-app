@@ -40,7 +40,7 @@ class User extends Authenticatable
     protected $searchColumns = [
         'pegawai.nik',
         'pegawai.nama',
-        'jabatan.nm_jbtn',
+        'ifnull(jabatan.nm_jbtn, "")',
     ];
 
     protected $casts = [
