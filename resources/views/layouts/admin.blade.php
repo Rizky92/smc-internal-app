@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title }} - {{ config('app.name') }}</title>
 
-    <link href="{{ asset('plugins/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/fontawesome5-all.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/adminlte.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/OverlayScrollbars.min.css') }}" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="{{ asset('logo.ico') }}">
     <style>
         .custom-control-label {
@@ -84,9 +84,9 @@
         </div>
     </div>
 
-    <script src="{{ asset('plugins/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('js/jquery.overlayScrollbars.min.js') }}"></script>
     <script src="{{ asset('js/adminlte.min.js') }}"></script>
     @stack('js')
 

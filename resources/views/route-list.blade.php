@@ -1,14 +1,14 @@
 <x-base-layout title="Route list">
     @once
         @push('css')
-            <link rel="stylesheet" href="{{ asset('plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
-            <link rel="stylesheet" href="{{ asset('plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap4.min.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/responsive.bootstrap4.min.css') }}">
         @endpush
         @push('js')
-            <script src="{{ asset('plugins/datatables/jquery.dataTables.min.js') }}"></script>
-            <script src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
-            <script src="{{ asset('plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
-            <script src="{{ asset('plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+            <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+            <script src="{{ asset('js/dataTables.bootstrap4.min.js') }}"></script>
+            <script src="{{ asset('js/dataTables.responsive.min.js') }}"></script>
+            <script src="{{ asset('js/responsive.bootstrap4.min.js') }}"></script>
             <script>
                 $(document).ready(function() {
                     $('#routes-table').DataTable();

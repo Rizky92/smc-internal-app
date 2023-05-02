@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Mixins\Collections;
+namespace App\Support\Mixins;
 
 class CustomCollections
 {

@@ -26,6 +26,8 @@ class TransferPerizinan extends Component
 
     public $checkedUsers;
 
+    public $softTransfer;
+
     protected $listeners = [
         'siap.show-tp' => 'showModal',
         'siap.hide-tp' => 'hideModal',
@@ -84,15 +86,20 @@ class TransferPerizinan extends Component
             return;
         }
 
-        $permittedUsers = User::query()
-            ->whereIn(DB::raw('trim(pegawai.nik)'), collect($this->checkedUsers)->filter()->map(fn ($_, $k) => strval($k))->all())
+        $selectedUsers = collect($this->checkedUsers)
+            ->filter()
+            ->map(fn ($_, $k) => strval($k))
+            ->all();
+
+        $selectedUsers = User::query()
+            ->whereIn(DB::raw('trim(pegawai.nik)'), $selectedUsers)
             ->get();
 
         tracker_start('mysql_smc');
 
-        foreach ($permittedUsers as $permittedUser) {
-            $permittedUser->syncRoles($this->roles);
-            $permittedUser->syncPermissions($this->permissions);
+        foreach ($selectedUsers as $user) {
+            $user->syncRoles($this->roles);
+            $user->syncPermissions($this->permissions);
         }
 
         tracker_end('mysql_smc');
@@ -109,6 +116,7 @@ class TransferPerizinan extends Component
         $this->nrp = '';
         $this->nama = '';
         $this->showChecked = false;
+        $this->softTransfer = false;
         $this->roles = [];
         $this->permissions = [];
         $this->checkedUsers = [];

@@ -21,6 +21,8 @@ class TransferHakAkses extends Component
 
     public $checkedUsers;
 
+    public $softTransfer;
+
     protected $listeners = [
         'khanza.show-tha' => 'showModal',
         'khanza.hide-tha' => 'hideModal',
@@ -74,6 +76,7 @@ class TransferHakAkses extends Component
 
         $hakAkses = collect($currentUser->getAttributes())
             ->except(['id_user', 'password'])
+            ->when($this->softTransfer, fn ($c) => $c->filter(fn ($v) => $v === 'true'))
             ->all();
 
         tracker_start('mysql_sik');
@@ -96,6 +99,7 @@ class TransferHakAkses extends Component
         $this->nrp = '';
         $this->nama = '';
         $this->showChecked = false;
+        $this->softTransfer = false;
         $this->checkedUsers = [];
     }
 }
