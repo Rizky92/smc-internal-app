@@ -11,6 +11,7 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 class LaporanStatistik extends Component
@@ -39,10 +40,10 @@ class LaporanStatistik extends Component
         return $this->isDeferred
             ? []
             : StatistikRekamMedis::query()
-            ->search($this->cari)
-            ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
-            ->orderBy('no_rawat')
-            ->paginate($this->perpage);
+                ->search($this->cari)
+                ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
+                ->orderBy('no_rawat')
+                ->paginate($this->perpage);
     }
 
     public function render()
@@ -67,6 +68,44 @@ class LaporanStatistik extends Component
                 ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
                 ->orderBy('no_rawat')
                 ->cursor()
+                ->map(fn (StatistikRekamMedis $model) => [
+                    Str::transliterate($model->no_rawat ?? ''),
+                    Str::transliterate($model->no_rm ?? ''),
+                    Str::transliterate($model->nm_pasien ?? ''),
+                    Str::transliterate($model->no_ktp ?? ''),
+                    Str::transliterate($model->jk ?? ''),
+                    Str::transliterate($model->tgl_lahir ?? ''),
+                    Str::transliterate($model->umur ?? ''),
+                    Str::transliterate($model->agama ?? ''),
+                    Str::transliterate($model->suku ?? ''),
+                    Str::transliterate($model->status_lanjut ?? ''),
+                    Str::transliterate($model->status_poli ?? ''),
+                    Str::transliterate($model->nm_poli ?? ''),
+                    Str::transliterate($model->nm_dokter ?? ''),
+                    Str::transliterate($model->status ?? ''),
+                    Str::transliterate($model->tgl_registrasi ?? ''),
+                    Str::transliterate($model->jam_registrasi ?? ''),
+                    Str::transliterate($model->tgl_keluar ?? ''),
+                    Str::transliterate($model->jam_keluar ?? ''),
+                    Str::transliterate($model->diagnosa_awal ?? ''),
+                    Str::transliterate($model->kd_diagnosa ?? ''),
+                    Str::transliterate($model->nm_diagnosa ?? ''),
+                    Str::transliterate($model->kd_tindakan_ralan ?? ''),
+                    Str::transliterate($model->nm_tindakan_ralan ?? ''),
+                    Str::transliterate($model->kd_tindakan_ranap ?? ''),
+                    Str::transliterate($model->nm_tindakan_ranap ?? ''),
+                    Str::transliterate($model->lama_operasi ?? ''),
+                    Str::transliterate($model->rujukan_masuk ?? ''),
+                    Str::transliterate($model->dokter_pj ?? ''),
+                    Str::transliterate($model->kelas ?? ''),
+                    Str::transliterate($model->penjamin ?? ''),
+                    Str::transliterate($model->status_bayar ?? ''),
+                    Str::transliterate($model->status_pulang_ranap ?? ''),
+                    Str::transliterate($model->rujuk_keluar_rs ?? ''),
+                    Str::transliterate($model->alamat ?? ''),
+                    Str::transliterate($model->no_hp ?? ''),
+                    Str::transliterate($model->kunjungan_ke ?? ''),
+                ])
         ];
     }
 
