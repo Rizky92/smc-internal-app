@@ -6,6 +6,7 @@
 @props([
     'name' => null,
     'title' => null,
+    'alignText' => 'left',
 ])
 
 @if ($sortable && !empty($name))

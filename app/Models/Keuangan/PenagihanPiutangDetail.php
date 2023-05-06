@@ -126,10 +126,10 @@ class PenagihanPiutangDetail extends Model
 
         $sqlSelect = <<<SQL
             case
-                when datediff('2023-04-30', penagihan_piutang.tanggal) <= 30 then 'periode_0_30'
-                when datediff('2023-04-30', penagihan_piutang.tanggal) between 31 and 60 then 'periode_31_60'
-                when datediff('2023-04-30', penagihan_piutang.tanggal) between 61 and 90 then 'periode_61_90'
-                when datediff('2023-04-30', penagihan_piutang.tanggal) > 90 then 'periode_90_up'
+                when datediff('{$tglAkhir}', penagihan_piutang.tanggal) <= 30 then 'periode_0_30'
+                when datediff('{$tglAkhir}', penagihan_piutang.tanggal) between 31 and 60 then 'periode_31_60'
+                when datediff('{$tglAkhir}', penagihan_piutang.tanggal) between 61 and 90 then 'periode_61_90'
+                when datediff('{$tglAkhir}', penagihan_piutang.tanggal) > 90 then 'periode_90_up'
             end periode,
             round(sum(detail_piutang_pasien.totalpiutang), 2) total_piutang,
             round(sum(bayar_piutang.besar_cicilan), 2) total_cicilan,
@@ -137,10 +137,10 @@ class PenagihanPiutangDetail extends Model
         SQL;
 
         $sqlGroupBy = <<<SQL
-            datediff('2023-04-30', penagihan_piutang.tanggal) <= 30,
-            datediff('2023-04-30', penagihan_piutang.tanggal) between 31 and 60,
-            datediff('2023-04-30', penagihan_piutang.tanggal) between 61 and 90,
-            datediff('2023-04-30', penagihan_piutang.tanggal) > 90
+            datediff('{$tglAkhir}', penagihan_piutang.tanggal) <= 30,
+            datediff('{$tglAkhir}', penagihan_piutang.tanggal) between 31 and 60,
+            datediff('{$tglAkhir}', penagihan_piutang.tanggal) between 61 and 90,
+            datediff('{$tglAkhir}', penagihan_piutang.tanggal) > 90
         SQL;
 
         $sqlFilterOnlyPaid = DB::connection('mysql_sik')

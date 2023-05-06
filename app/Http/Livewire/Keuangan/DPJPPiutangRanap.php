@@ -15,11 +15,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Fluent;
 use Illuminate\Support\Str;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class DPJPPiutangRanap extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
     public $status;
 
@@ -79,6 +78,9 @@ class DPJPPiutangRanap extends Component
 
     protected function defaultValues()
     {
+        $this->cari = '';
+        $this->perpage = 25;
+        $this->sortColumns = [];
         $this->status = '';
         $this->jenisBayar = '';
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');

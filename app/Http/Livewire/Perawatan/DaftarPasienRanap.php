@@ -13,11 +13,10 @@ use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class DaftarPasienRanap extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
+    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
     public $tglAwal;
 

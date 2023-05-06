@@ -12,11 +12,10 @@ use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class KunjunganPerBentukObat extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
+    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
     public $tglAwal;
 
@@ -79,7 +78,7 @@ class KunjunganPerBentukObat extends Component
         $this->sortColumns = [];
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->jenisPerawatan = '';        
+        $this->jenisPerawatan = '';
     }
 
     public function searchData()

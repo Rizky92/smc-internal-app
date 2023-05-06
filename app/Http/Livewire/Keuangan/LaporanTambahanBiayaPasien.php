@@ -11,11 +11,10 @@ use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class LaporanTambahanBiayaPasien extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
+    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
     public $tglAwal;
 
@@ -106,7 +105,7 @@ class LaporanTambahanBiayaPasien extends Component
             'RS Samarinda Medika Citra',
             'Laporan Tambahan Biaya Pasien untuk Honor Dokter',
             now()->translatedFormat('d F Y'),
-            'Periode '. carbon($this->tglAwal)->format('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->format('d F Y'),
+            'Periode ' . carbon($this->tglAwal)->format('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->format('d F Y'),
         ];
     }
 }

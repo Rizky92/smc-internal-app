@@ -102,12 +102,12 @@ Breadcrumbs::for('admin.keuangan.laporan-tindakan-radiologi', function (Trail $t
 
 Breadcrumbs::for('admin.keuangan.account-receivable', function (Trail $trail) {
     $trail->parent('admin.keuangan');
-    $trail->push('Account Receivable', route('admin.keuangan.account-receivable'));
+    $trail->push('Piutang Aging AR', route('admin.keuangan.account-receivable'));
 });
 
 Breadcrumbs::for('admin.keuangan.account-payable', function (Trail $trail) {
     $trail->parent('admin.keuangan');
-    $trail->push('Account Payable', route('admin.keuangan.account-payable'));
+    $trail->push('Hutang Aging AP', route('admin.keuangan.account-payable'));
 });
 
 

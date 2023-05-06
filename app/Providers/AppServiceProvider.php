@@ -16,9 +16,9 @@ use Illuminate\Support\ServiceProvider;
 class AppServiceProvider extends ServiceProvider
 {
     protected $mixins = [
-        \Illuminate\Support\Collection::class => [
-            \App\Support\Mixins\Collections\CustomCollections::class,
-        ],
+        \Illuminate\Support\Collection::class => \App\Support\Mixins\CustomCollections::class,
+        \Illuminate\Support\Str::class => \App\Support\Mixins\CustomStr::class,
+        \Illuminate\Support\Stringable::class => \App\Support\Mixins\CustomStringable::class,
     ];
 
     /**
@@ -80,6 +80,12 @@ class AppServiceProvider extends ServiceProvider
     {
         foreach ($this->mixins as $class => $mixins) {
             if (! in_array('mixin', get_class_methods($class), $strict = true)) {
+                continue;
+            }
+
+            if (is_string($mixins)) {
+                $class::mixin(new $mixins);
+
                 continue;
             }
     

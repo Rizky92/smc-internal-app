@@ -56,21 +56,15 @@ trait ExcelExportable
     {
         $filename = now()->format('Ymd_His') . '_';
 
-        if (method_exists($this, 'filename')) {
-            $filename .= Str::of($this->filename())
-                ->trim()
-                ->snake();
-        } else {
-            $filename .= Str::snake(class_basename($this));
-        }
+        $filename .= method_exists($this, 'filename')
+            ? Str::of($this->filename())->trim()->snake()
+            : Str::snake(class_basename($this));
 
         $filename .= '.xlsx';
 
         $dataSheets = $this->dataPerSheet();
 
-        $firstSheet = sizeof($dataSheets) > 1
-            ? (string) array_keys($dataSheets)[0]
-            : 'Sheet 1';
+        $firstSheet = array_keys($dataSheets)[0] ?: 'Sheet 1';
 
         $firstData = Arr::isList($dataSheets)
             ? $dataSheets[0]

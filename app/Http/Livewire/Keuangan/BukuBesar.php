@@ -12,11 +12,10 @@ use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Fluent;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class BukuBesar extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
+    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
     public $kodeRekening;
 
@@ -107,6 +106,9 @@ class BukuBesar extends Component
 
     protected function defaultValues()
     {
+        $this->cari = '';
+        $this->perpage = 25;
+        $this->sortColumns = [];
         $this->kodeRekening = '';
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');

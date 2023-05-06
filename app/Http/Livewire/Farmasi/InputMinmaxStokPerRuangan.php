@@ -40,6 +40,9 @@ class InputMinmaxStokPerRuangan extends Component
 
     protected function defaultValues()
     {
+        $this->cari = '';
+        $this->perpage = '';
+        $this->sortColumns = [];
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }

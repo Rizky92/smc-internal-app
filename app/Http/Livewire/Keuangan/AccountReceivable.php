@@ -49,27 +49,27 @@ class AccountReceivable extends Component
         return $this->isDeferred
             ? collect()
             : PenagihanPiutangDetail::query()
-                ->tagihanPiutangAging($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
-                ->search($this->cari, [
-                    'detail_penagihan_piutang.no_tagihan',
-                    'detail_penagihan_piutang.no_rawat',
-                    'reg_periksa.no_rkm_medis',
-                    'pasien.nm_pasien',
-                    'penjab_pasien.png_jawab',
-                    'penjab_tagihan.png_jawab',
-                    'penagihan_piutang.catatan',
-                    'detail_piutang_pasien.nama_bayar',
-                ])
-                ->sortWithColumns($this->sortColumns, [
-                    'tgl_tagihan'     => 'penagihan_piutang.tanggal',
-                    'tgl_jatuh_tempo' => 'penagihan_piutang.tanggaltempo',
-                    'penjab_pasien'   => 'penjab_pasien.png_jawab',
-                    'penjab_piutang'  => 'penjab_tagihan.png_jawab',
-                    'total_piutang'   => DB::raw('round(detail_piutang_pasien.totalpiutang, 2)'),
-                    'besar_cicilan'   => DB::raw('round(bayar_piutang.besar_cicilan, 2)'),
-                    'sisa_piutang'    => DB::raw('round(detail_piutang_pasien.totalpiutang - ifnull(bayar_piutang.besar_cicilan, 0), 2)'),
-                ])
-                ->paginate($this->perpage);
+            ->tagihanPiutangAging($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
+            ->search($this->cari, [
+                'detail_penagihan_piutang.no_tagihan',
+                'detail_penagihan_piutang.no_rawat',
+                'reg_periksa.no_rkm_medis',
+                'pasien.nm_pasien',
+                'penjab_pasien.png_jawab',
+                'penjab_tagihan.png_jawab',
+                'penagihan_piutang.catatan',
+                'detail_piutang_pasien.nama_bayar',
+            ])
+            ->sortWithColumns($this->sortColumns, [
+                'tgl_tagihan'     => 'penagihan_piutang.tanggal',
+                'tgl_jatuh_tempo' => 'penagihan_piutang.tanggaltempo',
+                'penjab_pasien'   => 'penjab_pasien.png_jawab',
+                'penjab_piutang'  => 'penjab_tagihan.png_jawab',
+                'total_piutang'   => DB::raw('round(detail_piutang_pasien.totalpiutang, 2)'),
+                'besar_cicilan'   => DB::raw('round(bayar_piutang.besar_cicilan, 2)'),
+                'sisa_piutang'    => DB::raw('round(detail_piutang_pasien.totalpiutang - ifnull(bayar_piutang.besar_cicilan, 0), 2)'),
+            ])
+            ->paginate($this->perpage);
     }
 
     public function getPenjaminProperty()
@@ -79,7 +79,7 @@ class AccountReceivable extends Component
 
     public function getTotalPiutangAgingProperty()
     {
-        if ($this->isDeferred) 
+        if ($this->isDeferred)
             return [];
 
         $total = PenagihanPiutangDetail::query()
@@ -112,6 +112,9 @@ class AccountReceivable extends Component
 
     protected function defaultValues()
     {
+        $this->cari = '';
+        $this->perpage = 25;
+        $this->sortColumns = [];
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
         $this->hanyaBelumLunas = false;
@@ -121,6 +124,15 @@ class AccountReceivable extends Component
 
     protected function dataPerSheet(): array
     {
+        $total = PenagihanPiutangDetail::query()
+            ->totalTagihanPiutangAging($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
+            ->get();
+
+        $totalPiutang = (float) $total->sum('total_piutang');
+        $totalCicilan = (float) $total->sum('total_cicilan');
+        $totalSisaPerPeriode = $total->pluck('sisa_piutang', 'periode');
+        $totalSisaCicilan = (float) $totalSisaPerPeriode->sum();
+
         return [
             PenagihanPiutangDetail::query()
                 ->tagihanPiutangAging($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
@@ -147,30 +159,28 @@ class AccountReceivable extends Component
                     'periode_90_up'   => $model->umur_hari > 90 ? $model->sisa_piutang : 0,
                     'umur_hari'       => $model->umur_hari,
                 ])
-                ->merge([
-                    [
-                        'no_tagihan'      => '',
-                        'no_rawat'        => '',
-                        'tgl_tagihan'     => '',
-                        'tgl_jatuh_tempo' => '',
-                        'tgl_bayar'       => '',
-                        'no_rkm_medis'    => '',
-                        'nm_pasien'       => '',
-                        'penjab_pasien'   => '',
-                        'penjab_piutang'  => '',
-                        'catatan'         => '',
-                        'status'          => '',
-                        'nama_bayar'      => 'TOTAL',
-                        'total_piutang'   => $this->totalPiutangAging['totalPiutang'],
-                        'besar_cicilan'   => $this->totalPiutangAging['totalCicilan'],
-                        'sisa_piutang'    => $this->totalPiutangAging['totalSisaCicilan'],
-                        'periode_0_30'    => $this->totalPiutangAging['totalSisaPerPeriode']->get('periode_0_30') ?? 0,
-                        'periode_31_60'   => $this->totalPiutangAging['totalSisaPerPeriode']->get('periode_31_60') ?? 0,
-                        'periode_61_90'   => $this->totalPiutangAging['totalSisaPerPeriode']->get('periode_61_90') ?? 0,
-                        'periode_90_up'   => $this->totalPiutangAging['totalSisaPerPeriode']->get('periode_90_up') ?? 0,
-                        'umur_hari'       => '',
-                    ]
-                ]),
+                ->merge([[
+                    'no_tagihan'      => '',
+                    'no_rawat'        => '',
+                    'tgl_tagihan'     => '',
+                    'tgl_jatuh_tempo' => '',
+                    'tgl_bayar'       => '',
+                    'no_rkm_medis'    => '',
+                    'nm_pasien'       => '',
+                    'penjab_pasien'   => '',
+                    'penjab_piutang'  => '',
+                    'catatan'         => '',
+                    'status'          => '',
+                    'nama_bayar'      => 'TOTAL',
+                    'total_piutang'   => $totalPiutang,
+                    'besar_cicilan'   => $totalCicilan,
+                    'sisa_piutang'    => $totalSisaCicilan,
+                    'periode_0_30'    => $totalSisaPerPeriode->get('periode_0_30') ?? 0,
+                    'periode_31_60'   => $totalSisaPerPeriode->get('periode_31_60') ?? 0,
+                    'periode_61_90'   => $totalSisaPerPeriode->get('periode_61_90') ?? 0,
+                    'periode_90_up'   => $totalSisaPerPeriode->get('periode_90_up') ?? 0,
+                    'umur_hari'       => '',
+                ]]),
         ];
     }
 
@@ -189,8 +199,8 @@ class AccountReceivable extends Component
             "Catatan",
             "Status Piutang",
             "Nama Bayar",
-            "Total Piutang",
-            "Besar Cicilan",
+            "Piutang",
+            "Cicilan",
             "Sisa",
             "0 - 30",
             "31 - 60",
@@ -205,7 +215,7 @@ class AccountReceivable extends Component
         return [
             'RS Samarinda Medika Citra',
             'Piutang Aging (Account Receivable)',
-            carbon($this->tglAkhir)->translatedFormat('d F Y'),
+            'Per ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
             'Periode ' . carbon($this->tglAwal)->translatedFormat('d F Y') . ' - ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
         ];
     }

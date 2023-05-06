@@ -25,8 +25,8 @@
 
 @push('css')
     @once
-        <link href="{{ asset('plugins/select2/css/select2.min.css') }}" rel="stylesheet">
-        <link href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet">
         <style>
             .select2-selection__arrow {
                 top: 0 !important;
@@ -45,7 +45,7 @@
 @endpush
 @push('js')
     @once
-        <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+        <script src="{{ asset('js/select2.full.min.js') }}"></script>
     @endonce
     <script>
         let dropdownSelect2 = $('select#{{ $id }}')
@@ -84,8 +84,8 @@
 
 <div wire:ignore {{ $attributes
     ->only('class')
-    ->merge(['style' => 'width: max-content']) }}
->
+    ->merge(['style' => 'width: max-content'])
+}}>
     <select id="{{ $id }}" name="{{ $name }}" class="form-control form-control-sm simple-select2-sm input-sm" autocomplete="off">
         @if ($placeholder)
             <option value="{{ $placeholderValue ?? '' }}">{{ $placeholder }}</option>

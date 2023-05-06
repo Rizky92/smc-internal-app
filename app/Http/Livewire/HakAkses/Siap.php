@@ -13,11 +13,10 @@ use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Str;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class Siap extends Component
 {
-    use WithPagination, FlashComponent, Filterable, LiveTable, MenuTracker;
+    use FlashComponent, Filterable, LiveTable, MenuTracker;
 
     public function mount()
     {

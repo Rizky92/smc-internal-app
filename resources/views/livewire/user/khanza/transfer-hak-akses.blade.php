@@ -24,6 +24,7 @@
             <x-row-col class="px-3 pt-3">
                 <label class="mb-0">User:</label>
                 <p>{{ "{$nrp} {$nama}" }}</p>
+                <x-filter.toggle class="mt-2" id="toggle-khanza-soft-transfer" title="Hanya transfer hak akses yang dimiliki user" model="softTransfer" />
             </x-row-col>
             <x-row-col class="pt-2">
                 <x-table zebra hover>

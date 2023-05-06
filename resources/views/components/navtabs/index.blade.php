@@ -3,6 +3,7 @@
     'tabs' => null,
     'contents' => null,
     'selected' => null,
+    'withPermissions' => false,
 ])
 
 <div>

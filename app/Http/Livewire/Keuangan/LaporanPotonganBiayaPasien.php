@@ -11,11 +11,10 @@ use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class LaporanPotonganBiayaPasien extends Component
 {
-    use WithPagination, FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
+    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
     public $tglAwal;
 
@@ -66,7 +65,7 @@ class LaporanPotonganBiayaPasien extends Component
     protected function defaultValues()
     {
         $this->cari = '';
-        $this->perpage = '';
+        $this->perpage = 25;
         $this->sortColumns = [];
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
