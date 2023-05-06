@@ -87,12 +87,8 @@ class User extends Authenticatable
         'gabung_norawat' => BooleanCast::class,
         'pemeriksaan_lab_mb' => BooleanCast::class,
         'ubah_petugas_lab_mb' => BooleanCast::class,
-
-        // [B]
         'barcoderalan' => BooleanCast::class,
         'barcoderanap' => BooleanCast::class,
-
-        // [C]
         'dokter' => BooleanCast::class,
         'petugas' => BooleanCast::class,
         'barcode' => BooleanCast::class,
@@ -147,8 +143,6 @@ class User extends Authenticatable
         'audit_bundle_isk' => BooleanCast::class,
         'audit_bundle_plabsi' => BooleanCast::class,
         'audit_bundle_vap' => BooleanCast::class,
-
-        // [D]
         'suplier' => BooleanCast::class,
         'satuan_barang' => BooleanCast::class,
         'konversi_satuan' => BooleanCast::class,
@@ -195,7 +189,7 @@ class User extends Authenticatable
         'sisa_stok' => BooleanCast::class,
         'obat_per_resep' => BooleanCast::class,
         'pengajuan_barang_medis' => BooleanCast::class,
-        '10_obat_terbanyak_poli' => BooleanCast::class,
+        'sepuluh_obat_terbanyak_poli' => BooleanCast::class,
         'rekap_obat_poli' => BooleanCast::class,
         'rekap_obat_pasien' => BooleanCast::class,
         'hibah_obat_bhp' => BooleanCast::class,
@@ -223,8 +217,6 @@ class User extends Authenticatable
         'nilai_penerimaan_vendor_farmasi_perbulan' => BooleanCast::class,
         'obat_bhp_tidakbergerak' => BooleanCast::class,
         'sirkulasi_obat6' => BooleanCast::class,
-
-        // [E]
         'ipsrs_barang' => BooleanCast::class,
         'ipsrs_pengadaan_barang' => BooleanCast::class,
         'ipsrs_stok_keluar' => BooleanCast::class,
@@ -244,7 +236,7 @@ class User extends Authenticatable
         'stok_opname_logistik' => BooleanCast::class,
         'sirkulasi_non_medis' => BooleanCast::class,
         'pengajuan_barang_nonmedis' => BooleanCast::class,
-        'sirkulasi_non_medis2' => BooleanCast::class,
+        'sirkulasi_non_medis' => BooleanCast::class,
         'ipsrs_returbeli' => BooleanCast::class,
         'ipsrs_riwayat_barang' => BooleanCast::class,
         'verifikasi_penerimaan_logistik' => BooleanCast::class,
@@ -256,8 +248,15 @@ class User extends Authenticatable
         'ringkasan_returbeli_nonmedis' => BooleanCast::class,
         'hibah_non_medis' => BooleanCast::class,
         'nilai_penerimaan_vendor_nonmedis_perbulan' => BooleanCast::class,
-
-        // [F]
+        'dapur_barang' => BooleanCast::class,
+        'dapur_opname' => BooleanCast::class,
+        'dapur_suplier' => BooleanCast::class,
+        'dapur_pembelian' => BooleanCast::class,
+        'dapur_stok_keluar' => BooleanCast::class,
+        'dapur_riwayat_barang' => BooleanCast::class,
+        'permintaan_dapur' => BooleanCast::class,
+        'biaya_pengadaan_dapur' => BooleanCast::class,
+        'rekap_pengadaan_dapur' => BooleanCast::class,
         'inventaris_jenis' => BooleanCast::class,
         'inventaris_kategori' => BooleanCast::class,
         'inventaris_merk' => BooleanCast::class,
@@ -284,16 +283,13 @@ class User extends Authenticatable
         'penerimaan_aset_inventaris' => BooleanCast::class,
         'hibah_aset_inventaris' => BooleanCast::class,
         'pemeliharaan_gedung' => BooleanCast::class,
-
-        // [G]
+        'kesling_limbah_b3medis_cair' => BooleanCast::class,
         'parkir_jenis' => BooleanCast::class,
         'parkir_in' => BooleanCast::class,
         'parkir_out' => BooleanCast::class,
         'parkir_rekap_harian' => BooleanCast::class,
         'parkir_rekap_bulanan' => BooleanCast::class,
         'parkir_barcode' => BooleanCast::class,
-
-        // [H]
         'harian_tindakan_poli' => BooleanCast::class,
         'obat_per_poli' => BooleanCast::class,
         'obat_per_kamar' => BooleanCast::class,
@@ -349,8 +345,7 @@ class User extends Authenticatable
         'pembayaran_akun_bayar5' => BooleanCast::class,
         'jasa_tindakan_pasien' => BooleanCast::class,
         'rekap_jm_dokter' => BooleanCast::class,
-
-        // [I]
+        'rekap_biaya_registrasi' => BooleanCast::class,
         'penyakit' => BooleanCast::class,
         'obat_penyakit' => BooleanCast::class,
         'penyakit_ralan' => BooleanCast::class,
@@ -435,8 +430,7 @@ class User extends Authenticatable
         'jumlah_pengunjung_ralan_tni' => BooleanCast::class,
         'laporan_penyakit_tni' => BooleanCast::class,
         'laporan_bulanan_irj' => BooleanCast::class,
-
-        // [J]
+        'operasi_per_bulan' => BooleanCast::class,
         'deposit_pasien' => BooleanCast::class,
         'piutang_pasien' => BooleanCast::class,
         'kamar' => BooleanCast::class,
@@ -500,8 +494,6 @@ class User extends Authenticatable
         'ringkasan_hutang_vendor_nonmedis' => BooleanCast::class,
         'pembayaran_bank_papua' => BooleanCast::class,
         'pembayaran_bank_jabar' => BooleanCast::class,
-
-        // [K]
         'bpjs_cek_nik' => BooleanCast::class,
         'bpjs_cek_kartu' => BooleanCast::class,
         'bpjs_cek_riwayat' => BooleanCast::class,
@@ -621,11 +613,14 @@ class User extends Authenticatable
         'satu_sehat_referensi_pasien' => BooleanCast::class,
         'satu_sehat_mapping_departemen' => BooleanCast::class,
         'satu_sehat_mapping_lokasi' => BooleanCast::class,
+        'satu_sehat_mapping_vaksin' => BooleanCast::class,
         'satu_sehat_kirim_encounter' => BooleanCast::class,
         'satu_sehat_kirim_condition' => BooleanCast::class,
         'satu_sehat_kirim_observationttv' => BooleanCast::class,
-
-        // [L]
+        'satu_sehat_kirim_procedure' => BooleanCast::class,
+        'satu_sehat_kirim_Immunization' => BooleanCast::class,
+        'satu_sehat_kirim_clinicalimpression' => BooleanCast::class,
+        'bpjs_antrean_pertanggal' => BooleanCast::class,
         'pasien' => BooleanCast::class,
         'pasien_meninggal' => BooleanCast::class,
         'kelahiran_bayi' => BooleanCast::class,
@@ -737,8 +732,23 @@ class User extends Authenticatable
         'transfer_pasien_antar_ruang' => BooleanCast::class,
         'catatan_cek_gds' => BooleanCast::class,
         'checklist_pre_operasi' => BooleanCast::class,
-
-        // [M]
+        'signin_sebelum_anestesi' => BooleanCast::class,
+        'timeout_sebelum_insisi' => BooleanCast::class,
+        'signout_sebelum_menutup_luka' => BooleanCast::class,
+        'checklist_post_operasi' => BooleanCast::class,
+        'rekonsiliasi_obat' => BooleanCast::class,
+        'konfirmasi_rekonsiliasi_obat' => BooleanCast::class,
+        'penilaian_pasien_terminal' => BooleanCast::class,
+        'monitoring_reaksi_tranfusi' => BooleanCast::class,
+        'penilaian_korban_kekerasan' => BooleanCast::class,
+        'penilaian_lanjutan_resiko_jatuh_lansia' => BooleanCast::class,
+        'penilaian_pasien_penyakit_menular' => BooleanCast::class,
+        'mpp_skrining' => BooleanCast::class,
+        'edukasi_pasien_keluarga_rj' => BooleanCast::class,
+        'pemantauan_pews_dewasa' => BooleanCast::class,
+        'penilaian_tambahan_bunuh_diri' => BooleanCast::class,
+        'penilaian_tambahan_perilaku_kekerasan' => BooleanCast::class,
+        'penilaian_tambahan_beresiko_melarikan_diri' => BooleanCast::class,
         'pengambilan_utd2' => BooleanCast::class,
         'utd_medis_rusak' => BooleanCast::class,
         'pengambilan_penunjang_utd2' => BooleanCast::class,
@@ -750,8 +760,6 @@ class User extends Authenticatable
         'utd_pemisahan_darah' => BooleanCast::class,
         'utd_penyerahan_darah' => BooleanCast::class,
         'utd_pendonor' => BooleanCast::class,
-
-        // [N]
         'grafik_kunjungan_poli' => BooleanCast::class,
         'grafik_kunjungan_perdokter' => BooleanCast::class,
         'grafik_kunjungan_perpekerjaan' => BooleanCast::class,
@@ -863,8 +871,8 @@ class User extends Authenticatable
         'grafik_perbaikan_inventaris_perbulan' => BooleanCast::class,
         'grafik_perbaikan_inventaris_pertahun' => BooleanCast::class,
         'grafik_perbaikan_inventaris_perpelaksana_status' => BooleanCast::class,
-
-        // [O]
+        'grafik_limbahb3cair_pertanggal' => BooleanCast::class,
+        'grafik_limbahb3cair_perbulan' => BooleanCast::class,
         'surat_indeks' => BooleanCast::class,
         'surat_map' => BooleanCast::class,
         'surat_almari' => BooleanCast::class,
@@ -894,8 +902,8 @@ class User extends Authenticatable
         'surat_pulang_atas_permintaan_sendiri' => BooleanCast::class,
         'surat_pernyataan_pasien_umum' => BooleanCast::class,
         'surat_persetujuan_umum' => BooleanCast::class,
-
-        // [P]
+        'surat_persetujuan_rawat_inap' => BooleanCast::class,
+        'persetujuan_penundaan_pelayanan' => BooleanCast::class,
         'ruang_perpustakaan' => BooleanCast::class,
         'kategori_perpustakaan' => BooleanCast::class,
         'jenis_perpustakaan' => BooleanCast::class,
@@ -909,8 +917,6 @@ class User extends Authenticatable
         'peminjaman_perpustakaan' => BooleanCast::class,
         'bayar_denda_perpustakaan' => BooleanCast::class,
         'ebook_perpustakaan' => BooleanCast::class,
-
-        // [Q]
         'toko_suplier' => BooleanCast::class,
         'toko_jenis' => BooleanCast::class,
         'toko_barang' => BooleanCast::class,
@@ -935,8 +941,6 @@ class User extends Authenticatable
         'toko_retur_piutang' => BooleanCast::class,
         'toko_sirkulasi2' => BooleanCast::class,
         'toko_keuntungan_barang' => BooleanCast::class,
-
-        // [R]
         'zis_pengeluaran_penerima_dankes' => BooleanCast::class,
         'zis_penghasilan_penerima_dankes' => BooleanCast::class,
         'zis_ukuran_rumah_penerima_dankes' => BooleanCast::class,
@@ -953,8 +957,6 @@ class User extends Authenticatable
         'zis_jenis_simpanan_penerima_dankes' => BooleanCast::class,
         'zis_kategori_asnaf_penerima_dankes' => BooleanCast::class,
         'zis_patologis_penerima_dankes' => BooleanCast::class,
-
-        // [S]
         'setup_pjlab' => BooleanCast::class,
         'setup_otolokasi' => BooleanCast::class,
         'setup_jam_kamin' => BooleanCast::class,
