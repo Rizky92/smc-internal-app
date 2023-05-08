@@ -43,6 +43,7 @@ class ResepDokterRacikan extends Model
             resep_obat.tgl_perawatan,
             resep_obat.jam,
             pasien.nm_pasien,
+            poliklinik.nm_poli,
             reg_periksa.status_lanjut,
             round(sum(resep_dokter_racikan_detail.jml * databarang.h_beli)) total
         ")
@@ -52,6 +53,7 @@ class ResepDokterRacikan extends Model
             ->join('resep_dokter_racikan_detail', 'resep_dokter_racikan.no_resep', '=', 'resep_dokter_racikan_detail.no_resep')
             ->join('databarang', 'resep_dokter_racikan_detail.kode_brng', '=', 'databarang.kode_brng')
             ->join('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
+            ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->where('reg_periksa.status_bayar', 'Sudah Bayar')
             ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
             ->when(!empty($jenisPerawatan), fn (Builder $query) => $query->where('reg_periksa.status_lanjut', $jenisPerawatan))

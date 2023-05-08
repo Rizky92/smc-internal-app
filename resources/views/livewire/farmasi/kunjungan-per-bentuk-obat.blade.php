@@ -32,11 +32,12 @@
                         <x-table class="mb-0" :sortColumns="$sortColumns" sortable zebra hover sticky>
                             <x-slot name="columns">
                                 <x-table.th style="width: 20ch" name="no_resep" title="No. Resep" />
-                                <x-table.th style="width: 50ch" name="nm_dokter" title="Dokter Peresep" />
+                                <x-table.th style="width: 40ch" name="nm_dokter" title="Dokter Peresep" />
                                 <x-table.th style="width: 20ch" name="tgl_perawatan" title="Tgl. Validasi" />
                                 <x-table.th style="width: 15ch" name="jam" title="Jam" />
-                                <x-table.th style="width: 50ch" name="nm_pasien" title="Pasien" />
-                                <x-table.th style="width: 15ch" name="status_lanjut" title="Jenis Perawatan" />
+                                <x-table.th name="nm_pasien" title="Pasien" />
+                                <x-table.th style="width: 20ch" name="nm_poli" title="Asal Poli" />
+                                <x-table.th style="width: 18ch" name="status_lanjut" title="Jenis Perawatan" />
                                 <x-table.th style="width: 20ch" name="total" title="Total Pembelian" />
                             </x-slot>
                             <x-slot name="body">
@@ -47,11 +48,12 @@
                                         <x-table.td>{{ $resep->tgl_perawatan }}</x-table.td>
                                         <x-table.td>{{ $resep->jam }}</x-table.td>
                                         <x-table.td>{{ $resep->nm_pasien }}</x-table.td>
+                                        <x-table.td>{{ $resep->nm_poli }}</x-table.td>
                                         <x-table.td>{{ $resep->status_lanjut }}</x-table.td>
                                         <x-table.td>{{ rp($resep->total) }}</x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty :colspan="7" />
+                                    <x-table.tr-empty :colspan="8" />
                                 @endforelse
                             </x-slot>
                         </x-table>
@@ -64,8 +66,9 @@
                                 <x-table.th style="width: 50ch" name="nm_dokter" title="Dokter Peresep" />
                                 <x-table.th style="width: 20ch" name="tgl_perawatan" title="Tgl. Validasi" />
                                 <x-table.th style="width: 15ch" name="jam" title="Jam" />
-                                <x-table.th style="width: 50ch" name="nm_pasien" title="Pasien" />
-                                <x-table.th style="width: 15ch" name="status_lanjut" title="Jenis Perawatan" />
+                                <x-table.th name="nm_pasien" title="Pasien" />
+                                <x-table.th style="width: 20ch" name="nm_poli" title="Asal Poli" />
+                                <x-table.th style="width: 18ch" name="status_lanjut" title="Jenis Perawatan" />
                                 <x-table.th style="width: 20ch" name="total" title="Total Pembelian" />
                             </x-slot>
                             <x-slot name="body">
@@ -76,11 +79,12 @@
                                         <x-table.td>{{ $resep->tgl_perawatan }}</x-table.td>
                                         <x-table.td>{{ $resep->jam }}</x-table.td>
                                         <x-table.td>{{ $resep->nm_pasien }}</x-table.td>
+                                        <x-table.td>{{ $resep->nm_poli }}</x-table.td>
                                         <x-table.td>{{ $resep->status_lanjut }}</x-table.td>
                                         <x-table.td>{{ rp($resep->total) }}</x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty :colspan="7" />
+                                    <x-table.tr-empty :colspan="8" />
                                 @endforelse
                             </x-slot>
                         </x-table>

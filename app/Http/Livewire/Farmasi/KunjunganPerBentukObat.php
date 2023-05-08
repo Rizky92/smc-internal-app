@@ -105,6 +105,7 @@ class KunjunganPerBentukObat extends Component
             'Tgl. Validasi',
             'Jam',
             'Pasien',
+            'Asal Poli',
             'Jenis Perawatan',
             'Total Pembelian (RP)',
         ];
