@@ -37,7 +37,7 @@
                             <x-table.td>{{ $item->status_bayar }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr colspan="13" />
+                        <x-table.tr-empty colspan="13" />
                     @endforelse
                 </x-slot>
             </x-table>

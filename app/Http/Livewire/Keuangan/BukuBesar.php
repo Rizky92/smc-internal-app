@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Keuangan;
 
 use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\Rekening;
+use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
@@ -15,7 +16,7 @@ use Livewire\Component;
 
 class BukuBesar extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
+    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
     public $kodeRekening;
 
@@ -26,7 +27,7 @@ class BukuBesar extends Component
     protected function queryString()
     {
         return [
-            'kodeRekening' => ['except' => '1', 'as' => 'rekening'],
+            'kodeRekening' => ['except' => '', 'as' => 'rekening'],
             'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
@@ -39,11 +40,9 @@ class BukuBesar extends Component
 
     public function getBukuBesarProperty()
     {
-        if (empty($this->kodeRekening)) {
-            return collect();
-        }
-
-        return Jurnal::query()
+        return $this->isDeferred
+            ? []
+            : Jurnal::query()
             ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
             ->search($this->cari, [
                 'jurnal.tgl_jurnal',
@@ -65,11 +64,9 @@ class BukuBesar extends Component
 
     public function getTotalDebetDanKreditProperty()
     {
-        if (empty($this->kodeRekening)) {
-            return null;
-        }
-
-        return Jurnal::query()
+        return $this->isDeferred
+            ? []
+            : Jurnal::query()
             ->jumlahDebetDanKreditBukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
             ->first();
     }
@@ -88,22 +85,6 @@ class BukuBesar extends Component
             ->layout(BaseLayout::class, ['title' => 'Jurnal Buku Besar']);
     }
 
-    public function exportToExcel()
-    {
-        if (empty($this->kodeRekening)) {
-            $this->flashError('Silahkan pilih rekening terlebih dahulu!');
-
-            return;
-        }
-
-        $this->emit('flash.info', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
-
-        // Validasi sebelum proses export dimulai
-        $this->validateSheetNames();
-
-        $this->emit('beginExcelExport');
-    }
-
     protected function defaultValues()
     {
         $this->cari = '';
@@ -119,18 +100,20 @@ class BukuBesar extends Component
         return [
             Jurnal::query()
                 ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
-                ->get()
-                ->push(new Fluent([
-                    'tgl_jurnal' => '',
-                    'jam_jurnal' => '',
-                    'no_jurnal' => '',
-                    'no_bukti' => '',
-                    'keterangan' => '',
-                    'kd_rek' => '',
-                    'nm_rek' => 'TOTAL :',
-                    'debet' => optional($this->totalDebetDanKredit)->debet,
-                    'kredit' => optional($this->totalDebetDanKredit)->kredit,
-                ])),
+                ->cursor()
+                ->merge([
+                    [
+                        'tgl_jurnal' => '',
+                        'jam_jurnal' => '',
+                        'no_jurnal' => '',
+                        'no_bukti' => '',
+                        'keterangan' => '',
+                        'kd_rek' => '',
+                        'nm_rek' => 'TOTAL :',
+                        'debet' => optional($this->totalDebetDanKredit)->debet,
+                        'kredit' => optional($this->totalDebetDanKredit)->kredit,
+                    ]
+                ]),
         ];
     }
 
@@ -151,9 +134,10 @@ class BukuBesar extends Component
 
     protected function pageHeaders(): array
     {
+        $rekening = empty($this->kodeRekening) ? 'SEMUA' : $this->rekening[$this->kodeRekening];
         return [
             'RS Samarinda Medika Citra',
-            'Buku Besar rekening ' . $this->rekening[$this->kodeRekening],
+            'Buku Besar rekening ' . $rekening,
             now()->translatedFormat('d F Y'),
             'Periode ' . carbon($this->tglAwal)->translatedFormat('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
         ];
