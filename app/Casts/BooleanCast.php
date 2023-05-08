@@ -9,7 +9,7 @@ class BooleanCast implements CastsAttributes
     /**
      * Cast the given value.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model $model
      * @param  string $key
      * @param  string $value
      * @param  array $attributes
@@ -25,7 +25,7 @@ class BooleanCast implements CastsAttributes
     /**
      * Prepare the given value for storage.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model $model
      * @param  string $key
      * @param  bool $value
      * @param  array $attributes
