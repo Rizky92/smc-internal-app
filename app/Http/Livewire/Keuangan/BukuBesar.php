@@ -11,7 +11,6 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Fluent;
 use Livewire\Component;
 
 class BukuBesar extends Component
@@ -101,6 +100,19 @@ class BukuBesar extends Component
             Jurnal::query()
                 ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
                 ->cursor()
+                ->map(function ($data) {
+                    return [
+                        'tgl_jurnal' => $data->tgl_jurnal,
+                        'jam_jurnal' => $data->jam_jurnal,
+                        'no_jurnal' => $data->no_jurnal,
+                        'no_bukti' => $data->no_bukti,
+                        'keterangan' => $data->keterangan,
+                        'kd_rek' => $data->kd_rek,
+                        'nm_rek' => $data->nm_rek,
+                        'debet' => round($data->debet, 2),
+                        'kredit' => round($data->kredit, 2),
+                    ];
+                })
                 ->merge([
                     [
                         'tgl_jurnal' => '',
@@ -110,8 +122,8 @@ class BukuBesar extends Component
                         'keterangan' => '',
                         'kd_rek' => '',
                         'nm_rek' => 'TOTAL :',
-                        'debet' => optional($this->totalDebetDanKredit)->debet,
-                        'kredit' => optional($this->totalDebetDanKredit)->kredit,
+                        'debet' => round(optional($this->totalDebetDanKredit)->debet, 2),
+                        'kredit' => round(optional($this->totalDebetDanKredit)->kredit, 2),
                     ]
                 ]),
         ];
