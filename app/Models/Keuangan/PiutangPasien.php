@@ -24,8 +24,8 @@ class PiutangPasien extends Model
     public $incrementing = false;
 
     public $timestamps = false;
-
-    public function scopePiutangAging(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    
+    public function scopePiutangBelumLunas(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $penjamin = ''): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->format('Y-m-d');
@@ -34,6 +34,27 @@ class PiutangPasien extends Model
         if (empty($tglAkhir)) {
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
+
+        $sqlSelect = <<<SQL
+            piutang_pasien.no_rawat,
+            piutang_pasien.tgl_piutang,
+            piutang_pasien.no_rkm_medis, 
+            pasien.nm_pasien,
+            piutang_pasien.status,
+            piutang_pasien.totalpiutang,
+            piutang_pasien.uangmuka,
+            piutang_pasien.sisapiutang,
+            piutang_pasien.tgltempo,
+            penjab.png_jawab
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join('pasien', 'piutang_pasien.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->join('reg_periksa', 'piutang_pasien.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+            ->where('piutang_pasien.status', 'Belum Lunas')
+            ->when(!empty($penjamin), fn (Builder $q) => $q->where('reg_periksa.kd_pj', $penjamin));
     }
 
     public function scopePiutangPasienSudahLunas(

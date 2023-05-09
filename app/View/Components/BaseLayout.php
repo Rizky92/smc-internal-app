@@ -2,21 +2,21 @@
 
 namespace App\View\Components;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\URL;
 use Illuminate\View\Component;
 
 class BaseLayout extends Component
 {
-    /** @var \Illuminate\Support\Collection $sidebarMenu */
-    public $sidebarMenu;
+    public ?Collection $sidebarMenu;
 
-    public $title;
+    public ?string $title;
 
-    public $current;
+    public ?string $current;
 
-    public $nama;
+    public ?string $nama;
 
-    public $nik;
+    public ?string $nik;
 
     /**
      * Create a new component instance.
@@ -75,24 +75,25 @@ class BaseLayout extends Component
                 'icon' => "far fa-circle",
                 'type' => 'dropdown',
                 'hasAnyPermissions' => $user->canAny([
-                    'keuangan.stok-obat-ruangan.read',
-                    'keuangan.rekap-piutang-aging.read',
-                    'keuangan.rekap-piutang-pasien.read',
-                    'keuangan.laporan-tambahan-biaya.read',
-                    'keuangan.laporan-potongan-biaya.read',
-                    'keuangan.laporan-selesai-billing.read',
-                    'keuangan.jurnal-po-supplier.read',
-                    'keuangan.jurnal-piutang-lunas.read',
-                    'keuangan.jurnal-perbaikan.read',
-                    'keuangan.riwayat-jurnal-perbaikan.read',
-                    'keuangan.buku-besar.read',
-                    'keuangan.laba-rugi-rekening.read',
-                    'keuangan.dpjp-piutang-ranap.read',
-                    'keuangan.laporan-tindakan-lab.read',
-                    'keuangan.laporan-tindakan-radiologi.read',
-                    'keuangan.account-receivable.read',
                     'keuangan.account-payable.read-medis',
                     'keuangan.account-payable.read-nonmedis',
+                    'keuangan.account-receivable.read',
+                    'keuangan.buku-besar.read',
+                    'keuangan.dpjp-piutang-ranap.read',
+                    'keuangan.jurnal-perbaikan.read',
+                    'keuangan.jurnal-piutang-lunas.read',
+                    'keuangan.jurnal-po-supplier.read',
+                    'keuangan.laba-rugi-rekening.read',
+                    'keuangan.laporan-potongan-biaya.read',
+                    'keuangan.laporan-selesai-billing.read',
+                    'keuangan.laporan-tambahan-biaya.read',
+                    'keuangan.laporan-tindakan-lab.read',
+                    'keuangan.laporan-tindakan-radiologi.read',
+                    'keuangan.piutang-belum-lunas.read',
+                    'keuangan.rekap-piutang-aging.read',
+                    'keuangan.rekap-piutang-pasien.read',
+                    'keuangan.riwayat-jurnal-perbaikan.read',
+                    'keuangan.stok-obat-ruangan.read',
                 ]),
                 'items' => [
                     [
@@ -206,6 +207,13 @@ class BaseLayout extends Component
                         'icon' => "fas fa-file-invoice",
                         'type' => 'link',
                         'hasAnyPermissions' => $user->canAny(['keuangan.account-payable.read-medis', 'keuangan.account-payable.read-nonmedis']),
+                    ],
+                    [
+                        'name' => 'Piutang Belum Lunas',
+                        'url' => route('admin.keuangan.piutang-belum-lunas'),
+                        'icon' => "fas fa-file-invoice",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->canAny(['keuangan.piutang-belum-lunas.read', 'keuangan.piutang-belum-lunas.read']),
                     ],
                 ],
             ],
