@@ -39,9 +39,13 @@ class ObatPerDokter extends Component
             ->search($this->cari, [
                 'resep_obat.no_resep',
                 'databarang.nama_brng',
+                'kategori_barang.nama',
+                'dokter.kd_dokter',
                 'dokter.nm_dokter',
                 'resep_obat.status',
                 'poliklinik.nm_poli',
+                'reg_periksa.kd_pj',
+                'penjab.png_jawab',
             ])
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
@@ -76,10 +80,12 @@ class ObatPerDokter extends Component
             'Tgl. Validasi',
             'Jam',
             'Nama Obat',
+            'Kategori',
             'Jumlah',
             'Dokter Peresep',
             'Asal',
             'Asal Poli',
+            'Jenis Bayar',
         ];
     }
 

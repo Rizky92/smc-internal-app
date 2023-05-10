@@ -5,14 +5,16 @@
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
-                    <x-table.th name="no_resep" title="No. Resep" />
-                    <x-table.th name="tgl_perawatan" title="Tgl. Validasi" />
-                    <x-table.th name="jam" title="Jam" />
-                    <x-table.th name="nama_brng" title="Nama Obat" />
-                    <x-table.th name="jml" title="Jumlah" />
-                    <x-table.th name="nm_dokter" title="Dokter Peresep" />
-                    <x-table.th name="status" title="Asal" />
-                    <x-table.th name="nm_poli" title="Asal Poli" />
+                    <x-table.th style="width: 12ch" name="no_resep" title="No. Resep" />
+                    <x-table.th style="width: 12ch" name="tgl_perawatan" title="Tgl. Validasi" />
+                    <x-table.th style="width: 10ch" name="jam" title="Jam" />
+                    <x-table.th style="width: 30ch" name="nama_brng" title="Nama Obat" />
+                    <x-table.th style="width: 20ch" name="nama" title="Kategori" />
+                    <x-table.th style="width: 7ch" name="jml" title="Jumlah" />
+                    <x-table.th style="width: 40ch" name="nm_dokter" title="Dokter Peresep" />
+                    <x-table.th style="width: 10ch" name="status" title="Asal" />
+                    <x-table.th style="width: 30ch" name="nm_poli" title="Asal Poli" />
+                    <x-table.th style="width: 30ch" name="png_jawab" title="Jenis Bayar" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->obatPerDokter as $obat)
@@ -21,10 +23,12 @@
                             <x-table.td>{{ $obat->tgl_perawatan }}</x-table.td>
                             <x-table.td>{{ $obat->jam }}</x-table.td>
                             <x-table.td>{{ $obat->nama_brng }}</x-table.td>
+                            <x-table.td>{{ $obat->nama }}</x-table.td>
                             <x-table.td>{{ $obat->jml }}</x-table.td>
                             <x-table.td>{{ $obat->nm_dokter }}</x-table.td>
                             <x-table.td>{{ $obat->status }}</x-table.td>
                             <x-table.td>{{ $obat->nm_poli }}</x-table.td>
+                            <x-table.td>{{ $obat->png_jawab }}</x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty :colspan="8" />
