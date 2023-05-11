@@ -90,16 +90,20 @@ class ResepObat extends Model
                 resep_obat.tgl_perawatan,
                 resep_obat.jam,
                 databarang.nama_brng,
+                kategori_barang.nama,
                 detail_pemberian_obat.jml,
                 dokter.nm_dokter,
                 resep_obat.status,
-                poliklinik.nm_poli
+                poliklinik.nm_poli,
+                penjab.png_jawab
             ")
             ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->leftJoin('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
             ->leftJoin('detail_pemberian_obat', 'reg_periksa.no_rawat', '=', 'detail_pemberian_obat.no_rawat')
             ->leftJoin('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
+            ->leftJoin('kategori_barang', 'databarang.kode_kategori', '=', 'kategori_barang.kode')
             ->whereRaw('detail_pemberian_obat.tgl_perawatan = resep_obat.tgl_perawatan')
             ->whereRaw('detail_pemberian_obat.jam = resep_obat.jam')
             ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir]);
