@@ -77,7 +77,7 @@ class PiutangDilunaskan extends Model
                 $status = $ket->startsWith('BAYAR');
                 $verifikator = $ket->afterLast('OLEH ');
 
-                return [
+                $mapped = [
                     'no_jurnal' => $jurnal->no_jurnal,
                     'waktu_jurnal' => $jurnal->waktu_jurnal,
                     'no_rawat' => $jurnal->no_rawat,
@@ -98,7 +98,7 @@ class PiutangDilunaskan extends Model
                     'updated_at' => now(),
                 ];
 
-                static::insert($jurnal);
+                static::insert($mapped);
             });
     }
 
