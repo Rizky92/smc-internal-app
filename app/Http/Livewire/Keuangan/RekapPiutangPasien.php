@@ -101,20 +101,18 @@ class RekapPiutangPasien extends Component
             $query
                 ->orderBy('penjab.png_jawab')
                 ->get()
-                ->merge([
-                    [
-                        'no_rawat' => 'TOTAL',
-                        'no_rkm_medis' => '',
-                        'nm_pasien' => '',
-                        'tgl_piutang' => '',
-                        'status' => '',
-                        'total' => $query->sum(DB::raw('round(piutang_pasien.totalpiutang, 2)')),
-                        'uang_muka' => $query->sum(DB::raw('round(piutang_pasien.uangmuka, 2)')),
-                        'terbayar' => $query->sum(DB::raw('round(ifnull(sisa_piutang.sisa, 0), 2)')),
-                        'sisa' => $query->sum(DB::raw('round(piutang_pasien.sisapiutang - ifnull(sisa_piutang.sisa, 0), 2)')),
-                        'tgltempo' => '',
-                        'penjamin' => '',
-                    ]
+                ->push([
+                    'no_rawat' => 'TOTAL',
+                    'no_rkm_medis' => '',
+                    'nm_pasien' => '',
+                    'tgl_piutang' => '',
+                    'status' => '',
+                    'total' => $query->sum(DB::raw('round(piutang_pasien.totalpiutang, 2)')),
+                    'uang_muka' => $query->sum(DB::raw('round(piutang_pasien.uangmuka, 2)')),
+                    'terbayar' => $query->sum(DB::raw('round(ifnull(sisa_piutang.sisa, 0), 2)')),
+                    'sisa' => $query->sum(DB::raw('round(piutang_pasien.sisapiutang - ifnull(sisa_piutang.sisa, 0), 2)')),
+                    'tgltempo' => '',
+                    'penjamin' => '',
                 ])
         ];
     }
