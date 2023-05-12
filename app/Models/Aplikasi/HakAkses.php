@@ -31,7 +31,7 @@ class HakAkses extends Model
 
     protected $searchColumns = [
         'nama_field',
-        'judul_menu',
+        'ifnull(judul_menu, "")',
     ];
 
     protected $casts = [

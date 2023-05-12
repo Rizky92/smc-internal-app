@@ -4,21 +4,22 @@ namespace App\Support\Traits\Livewire;
 
 trait DeferredLoading
 {
+    /** @var bool */
     public $isDeferred;
 
-    public function mountDeferredLoading()
+    public function mountDeferredLoading(): void
     {
         $this->isDeferred = true;
     }
 
-    public function loadProperties()
+    public function loadProperties(): void
     {
         $this->isDeferred = false;
 
         $this->emit('$refresh');
     }
 
-    public function undefer()
+    public function undefer(): void
     {
         $this->isDeferred = true;
 

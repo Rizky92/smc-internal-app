@@ -9,7 +9,7 @@ use Str;
 
 trait MenuTracker
 {
-    public function mountMenuTracker()
+    public function mountMenuTracker(): void
     {
         $this->recordVisitor();
     }

@@ -10,30 +10,42 @@ use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class ManajemenUser extends Component
 {
     use FlashComponent, Filterable, LiveTable, MenuTracker, DeferredLoading;
 
+    /** @var bool */
     public $tampilkanYangMemilikiHakAkses;
 
+    /** @var \Illuminate\Support\Collection|array */
+    public $selectUsers;
+
+    /** @var mixed */
     protected $listeners = [
         'user.prepare' => 'prepareUser',
     ];
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
             'tampilkanYangMemilikiHakAkses' => ['except' => false, 'as' => 'hak_akses'],
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
+    /**
+     * @return array|\Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
     public function getUsersProperty()
     {
         return $this->isDeferred
@@ -48,13 +60,13 @@ class ManajemenUser extends Component
                 ->paginate($this->perpage);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.user.manajemen-user')
             ->layout(BaseLayout::class, ['title' => 'Manajemen User']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->tampilkanYangMemilikiHakAkses = false;
         $this->cari = '';
@@ -62,6 +74,25 @@ class ManajemenUser extends Component
         $this->sortColumns = [];
     }
 
+    public function selectAllUsers(bool $state): void
+    {
+        if (! $state) {
+            $this->selectUsers = [];
+
+            return;
+        }
+
+        $this->selectUsers = User::query()
+            ->select([DB::raw("aes_decrypt(id_user, 'nur') as user_id")])
+            ->pluck('user_id')
+            ->flip()
+            ->map(fn (int $_) => true)
+            ->all();
+    }
+
+    /**
+     * @return \Illuminate\Http\RedirectResponse|void
+     */
     public function impersonateAsUser(string $nrp = '')
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
@@ -83,7 +114,16 @@ class ManajemenUser extends Component
             ->with('flash.message', "Anda sekarang sedang login sebagai {$nrp}");
     }
 
-    public function prepareUser($nrp, $nama, $roles, $permissions)
+    /**
+     * @template TA of \App\Models\Aplikasi\Role|string|int
+     * @template TB of \App\Models\Aplikasi\Permission|string|int
+     * 
+     * @param  string|null $nrp
+     * @param  string|null $nama
+     * @param  array<int, TA>|string|null $roles
+     * @param  array<int, TB>|string|null $permissions
+     */
+    public function prepareUser($nrp, $nama, $roles, $permissions): void
     {
         $this->emitTo('user.khanza.set-hak-akses', 'khanza.prepare-set', $nrp, $nama);
         $this->emitTo('user.khanza.transfer-hak-akses', 'khanza.prepare-transfer', $nrp, $nama);

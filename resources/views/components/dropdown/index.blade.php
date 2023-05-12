@@ -6,27 +6,25 @@
 ])
 
 @if ($livewire)    
-    @once
-        @push('js')
-            <script>
-                $(document).on('DOMContentLoaded', e => {
-                    let buttonId = "{{ Str::slug($button->attributes->get('title')) }}"
+    @push('js')
+        <script>
+            $(document).on('DOMContentLoaded', e => {
+                let buttonId = "{{ Str::slug($button->attributes->get('title')) }}"
 
-                    let buttonComponent = $(`button#${buttonId}`)
+                let buttonComponent = $(`button#${buttonId}`)
 
-                    buttonComponent.data('toggle', 'dropdown')
+                buttonComponent.data('toggle', 'dropdown')
 
-                    Livewire.hook('element.updating', (from, to, component) => {
-                        buttonComponent.dropdown('dispose')
-                    })
-
-                    Livewire.hook('element.updated', (el, component) => {
-                        buttonComponent.dropdown()
-                    })
+                Livewire.hook('element.updating', (from, to, component) => {
+                    buttonComponent.dropdown('dispose')
                 })
-            </script>
-        @endpush
-    @endonce
+
+                Livewire.hook('element.updated', (el, component) => {
+                    buttonComponent.dropdown()
+                })
+            })
+        </script>
+    @endpush
 @endif
 
 

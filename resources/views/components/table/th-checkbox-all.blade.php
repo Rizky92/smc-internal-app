@@ -5,6 +5,7 @@
     'name' => null,
     'lookup' => null,
     'model' => null,
+    'method' => null,
 ])
 
 @push('js')
@@ -14,26 +15,25 @@
                 let isChecked = e.target.checked
                 let els = $('input[type=checkbox][id*={{ $lookup }}]')
 
-                console.log({isChecked})
-
                 let checkboxes = new Map()
 
                 els.each((i, el) => {
                     el.checked = isChecked
 
                     checkboxes.set(el.name, isChecked)
-
-                    console.log({checkboxes, name: el.name, checked: el.checked})
                 })
 
                 if (!isChecked) {
                     checkboxes.clear()
                 }
 
-                console.log(checkboxes)
-
                 @if ($livewire)
-                    @this.set('{{ $model }}', Object.fromEntries(checkboxes), true)
+                    @if (!is_null($method) && is_null($model))
+                        @this.{{ $method }}(isChecked)
+                    @endif
+                    @if (is_null($method))
+                        @this.set('{{ $model }}', Object.fromEntries(checkboxes), true)
+                    @endif
                 @endif
             })
         })

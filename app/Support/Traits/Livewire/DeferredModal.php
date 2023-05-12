@@ -6,7 +6,7 @@ trait DeferredModal
 {
     use DeferredLoading;
 
-    public function mountDeferredModal()
+    public function mountDeferredModal(): void
     {
         $this->listeners = array_merge($this->listeners, [
             'showModal',
@@ -14,7 +14,7 @@ trait DeferredModal
         ]);
     }
 
-    public function showModal()
+    public function showModal(): void
     {
         $this->loadProperties();
     }

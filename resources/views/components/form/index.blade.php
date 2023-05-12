@@ -10,7 +10,7 @@
 @php
     $methodHTML = 'POST';
 
-    if ((string) str($method)->upper() === 'GET') {
+    if (Str::upper($method) === 'GET') {
         $methodHTML = 'GET';
     }
 @endphp

@@ -11,7 +11,7 @@ trait Searchable
     /**
      * @param  \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder $query
      * @param  string $search
-     * @param  \Illuminate\Support\Collection<int, string>|array<int, string> $columns
+     * @param  \Illuminate\Support\Collection<int, string>|array<array-key, string> $columns
      * 
      * @return \Illuminate\Database\Eloquent\Builder
      * @throws \LogicException

@@ -11,19 +11,23 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class PiutangBelumLunas extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
+    /** @var string */
     public $tglAwal;
 
+    /** @var string */
     public $tglAkhir;
 
+    /** @var string */
     public $penjamin;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
             'penjamin' => ['except' => ''],
@@ -32,11 +36,14 @@ class PiutangBelumLunas extends Component
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
+    /**
+     * @return array<null, null>|\Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
     public function getDataPiutangBelumLunasProperty()
     {
         return $this->isDeferred
@@ -60,7 +67,7 @@ class PiutangBelumLunas extends Component
                 ->paginate($this->perpage);
     }
 
-    public function getDataPenjaminProperty()
+    public function getDataPenjaminProperty(): array
     {
         return Penjamin::query()
             ->where('status', '1')
@@ -68,13 +75,13 @@ class PiutangBelumLunas extends Component
             ->all();
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.keuangan.piutang-belum-lunas')
             ->layout(BaseLayout::class, ['title' => 'Piutang Belum Lunas']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->sortColumns = [];

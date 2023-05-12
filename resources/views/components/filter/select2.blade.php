@@ -14,7 +14,6 @@
     $isList = !Arr::isAssoc($options);
     
     $id = Str::slug($name);
-    $title = Str::camel($name);
     $model = Str::camel($name);
     
     $options = collect($options)

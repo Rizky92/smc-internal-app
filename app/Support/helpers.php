@@ -20,11 +20,11 @@ if (!function_exists('currency')) {
     /**
      * @param  int|float $nominal
      * @param  int $decimalCount
-     * @param  ?string $name
+     * @param  string $name
      * 
      * @return string
      */
-    function currency($nominal = 0, int $decimalCount = 0, ?string $name = 'Rp. ')
+    function currency($nominal = 0, int $decimalCount = 0, string $name = 'Rp. ')
     {
         return $name . number_format($nominal, $decimalCount, ',', '.');
     }
@@ -67,7 +67,7 @@ if (!function_exists('map_bulan')) {
 }
 
 if (!function_exists('tracker_start')) {
-    function tracker_start(string $connection = 'mysql_smc')
+    function tracker_start(string $connection = 'mysql_smc'): void
     {
         if (app('impersonate')->isImpersonating()) {
             return;
@@ -131,7 +131,7 @@ if (! function_exists('func_get_named_args')) {
     /**
      * @param  object $object
      * @param  string $name
-     * @param  array $args<string|int, mixed>
+     * @param  array<string|int, mixed> $args
      * 
      * @return array<string|int, mixed>
      */
@@ -150,11 +150,11 @@ if (! function_exists('func_get_named_args')) {
 
 if (! function_exists('str')) {
     /**
-     * @param  mixed $str = null
+     * @param  string $str = null
      * 
      * @return \Illuminate\Support\Stringable
      */
-    function str($str = null)
+    function str($str = '')
     {
         return Str::of($str);
     }

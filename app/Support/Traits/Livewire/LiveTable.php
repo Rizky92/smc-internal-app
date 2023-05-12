@@ -17,15 +17,17 @@ trait LiveTable
     /** @var array<string, string> $sortColumns = [] */
     public $sortColumns;
 
+    /** @var string */
     protected $paginationTheme = 'bootstrap';
 
+    /** @var array|mixed */
     protected $queryStringLiveTable = [
         'cari' => ['except' => ''],
         'perpage' => ['except' => 25],
         'sortColumns' => ['except' => '', 'as' => 'sort'],
     ];
 
-    public function initializeLiveTable()
+    public function initializeLiveTable(): void
     {
         $this->listeners = array_merge($this->listeners, [
             'sortBy',
@@ -33,14 +35,14 @@ trait LiveTable
         ]);
     }
 
-    public function mountLiveTable()
+    public function mountLiveTable(): void
     {
         $this->cari = '';
         $this->perpage = 25;
         $this->sortColumns = [];
     }
 
-    public function sortBy(string $column, ?string $direction)
+    public function sortBy(string $column, ?string $direction): void
     {
         switch ($direction) {
             case null:
@@ -60,7 +62,7 @@ trait LiveTable
         $this->performSort();
     }
 
-    protected function performSort()
+    protected function performSort(): void
     {
         $this->emit('$refresh');
     }

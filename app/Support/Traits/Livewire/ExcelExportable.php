@@ -5,14 +5,16 @@ namespace App\Support\Traits\Livewire;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 use Rizky92\Xlswriter\ExcelExport;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 trait ExcelExportable
 {
+    /** @var array<array-key, string> */
     private $invalidSheetCharacters = [
         '/',
     ];
 
-    public function initializeExcelExportable()
+    public function initializeExcelExportable(): void
     {
         $this->listeners = array_merge($this->listeners, [
             'exportToExcel',
@@ -38,7 +40,7 @@ trait ExcelExportable
         }), 'RuntimeException', "Invalid characters found.");
     }
 
-    public function exportToExcel()
+    public function exportToExcel(): void
     {
         if (method_exists($this, 'flashInfo')) {
             $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
@@ -52,7 +54,7 @@ trait ExcelExportable
         $this->emit('beginExcelExport');
     }
 
-    public function beginExcelExport()
+    public function beginExcelExport(): StreamedResponse
     {
         $filename = now()->format('Ymd_His') . '_';
 

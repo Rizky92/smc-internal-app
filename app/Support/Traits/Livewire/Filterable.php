@@ -4,9 +4,9 @@ namespace App\Support\Traits\Livewire;
 
 trait Filterable
 {
-    abstract protected function defaultValues();
+    abstract protected function defaultValues(): void;
 
-    public function initializeFilterable()
+    public function initializeFilterable(): void
     {
         $this->listeners = array_merge($this->listeners, [
             'searchData',
@@ -16,12 +16,12 @@ trait Filterable
         ]);
     }
 
-    public function pageName()
+    public function pageName(): string
     {
         return 'page';
     }
 
-    public function searchData()
+    public function searchData(): void
     {
         if (method_exists($this, 'resetPage')) {
             $this->resetPage($this->pageName());
@@ -30,21 +30,21 @@ trait Filterable
         $this->emit('$refresh');
     }
 
-    public function resetState()
+    public function resetState(): void
     {
         $this->defaultValues();
 
         $this->emit('$refresh');
     }
 
-    public function resetFilters()
+    public function resetFilters(): void
     {
         $this->defaultValues();
 
         $this->searchData();
     }
 
-    public function fullRefresh()
+    public function fullRefresh(): void
     {
         $this->forgetComputed();
 

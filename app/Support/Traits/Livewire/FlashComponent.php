@@ -4,7 +4,7 @@ namespace App\Support\Traits\Livewire;
 
 trait FlashComponent
 {
-    public function initializeFlashComponent()
+    public function initializeFlashComponent(): void
     {
         $this->listeners = array_merge($this->listeners, [
             'flash',
@@ -15,14 +15,17 @@ trait FlashComponent
         ]);
     }
 
-    public function flash(array $flash)
+    /**
+     * @param  array<string, string> $flash
+     */
+    public function flash($flash): void
     {
         foreach ($flash as $key => $message) {
             session()->flash($key, $message);
         }
     }
 
-    public function flashSuccess(string $message = "Sukses melakukan perubahan data")
+    public function flashSuccess(string $message = "Sukses melakukan perubahan data"): void
     {
         $this->flash([
             'flash.type' => 'success',
@@ -31,7 +34,7 @@ trait FlashComponent
         ]);
     }
 
-    public function flashInfo(string $message = "Terjadi sesuatu!")
+    public function flashInfo(string $message = "Terjadi sesuatu!"): void
     {
         $this->flash([
             'flash.type' => 'dark',
@@ -40,7 +43,7 @@ trait FlashComponent
         ]);
     }
 
-    public function flashWarning(string $message = "Terjadi sesuatu!")
+    public function flashWarning(string $message = "Terjadi sesuatu!"): void
     {
         $this->flash([
             'flash.type' => 'warning',
@@ -49,7 +52,7 @@ trait FlashComponent
         ]);
     }
 
-    public function flashError(string $message = "Anda tidak diizinkan untuk melakukan aksi ini!")
+    public function flashError(string $message = "Anda tidak diizinkan untuk melakukan aksi ini!"): void
     {
         $this->flash([
             'flash.type' => 'danger',

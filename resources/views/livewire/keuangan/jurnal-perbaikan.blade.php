@@ -23,7 +23,7 @@
                     <x-table.th name="no_jurnal" style="width: 15ch" title="No. Jurnal" />
                     <x-table.th name="no_bukti" style="width: 18ch" title="No. Bukti" />
                     <x-table.th name="waktu_jurnal" style="width: 17ch" title="Waktu Jurnal" />
-                    <x-table.th name="keterangan" style="width: 60ch" title="Keterangan" />
+                    <x-table.th name="keterangan" title="Keterangan" />
                     <x-table.th style="width: 11ch" title="Kode Akun" />
                     <x-table.th title="Nama Akun" />
                     <x-table.th style="width: 16ch" title="Debet" />
@@ -39,12 +39,12 @@
                             @can('keuangan.jurnal-perbaikan.ubah-tanggal')
                                 <x-table.td rowspan="{{ $count }}" class="pl-3 py-1">
                                     <x-button size="xs" variant="link" class="mt-n1" title="Edit" icon="fas fa-pencil-alt" id="edit-{{ $jurnal->no_jurnal }}" data-toggle="modal" data-target="#modal-ubah-tgl-jurnal" wire:click.prevent="$emit('utj.prepare', {
-                                                        noJurnal: '{{ $jurnal->no_jurnal }}',
-                                                        noBukti: '{{ $jurnal->no_bukti }}',
-                                                        keterangan: '{{ $jurnal->keterangan }}',
-                                                        tglJurnal: '{{ $jurnal->tgl_jurnal }}',
-                                                        jamJurnal: '{{ $jurnal->jam_jurnal }}'
-                                                    })" />
+                                        noJurnal: '{{ $jurnal->no_jurnal }}',
+                                        noBukti: '{{ $jurnal->no_bukti }}',
+                                        keterangan: '{{ $jurnal->keterangan }}',
+                                        tglJurnal: '{{ $jurnal->tgl_jurnal }}',
+                                        jamJurnal: '{{ $jurnal->jam_jurnal }}'
+                                    })" />
                                 </x-table.td>
                             @endcan
                             <x-table.td rowspan="{{ $count }}">{{ $jurnal->no_jurnal }}</x-table.td>
@@ -55,7 +55,8 @@
                             <x-table.td>
                                 @if (optional($firstDetail)->kredit > 0)
                                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                @endif {{ optional(optional($firstDetail)->rekening)->nm_rek }}
+                                @endif
+                                {{ optional(optional($firstDetail)->rekening)->nm_rek }}
                             </x-table.td>
                             <x-table.td>{{ optional($firstDetail)->debet > 0 ? rp(optional($firstDetail)->debet) : null }}</x-table.td>
                             <x-table.td>{{ optional($firstDetail)->kredit > 0 ? rp(optional($firstDetail)->kredit) : null }}</x-table.td>
