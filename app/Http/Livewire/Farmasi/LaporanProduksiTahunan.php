@@ -4,7 +4,7 @@ namespace App\Http\Livewire\Farmasi;
 
 use App\Models\Farmasi\MutasiObat;
 use App\Models\Farmasi\PemberianObat;
-use App\Models\Farmasi\PengeluaranStokObat;
+use App\Models\Farmasi\PengeluaranObat;
 use App\Models\Farmasi\PenjualanWalkInObat;
 use App\Models\Farmasi\ResepObat;
 use App\Models\Farmasi\ReturPenjualanObat;
@@ -77,7 +77,7 @@ class LaporanProduksiTahunan extends Component
         if ($this->isDeferred) {
             return [];
         }
-        
+
         $kunjunganTotal = [];
 
         foreach ($this->kunjunganRalan as $key => $data) {
@@ -159,7 +159,7 @@ class LaporanProduksiTahunan extends Component
 
     public function getStokKeluarMedisProperty()
     {
-        return $this->isDeferred ? [] : PengeluaranStokObat::stokPengeluaranMedisFarmasi($this->tahun);
+        return $this->isDeferred ? [] : PengeluaranObat::stokPengeluaranMedisFarmasi($this->tahun);
     }
 
     public function getTransferOrderProperty()
