@@ -30,9 +30,9 @@
                     <x-table.th name="harga_beli_terakhir" title="Harga Beli Terakhir" style="width: 25ch" />
                     <x-table.th name="diskon_terakhir" title="Diskon Terakhir (%)" style="width: 24ch" />
                     <x-table.th name="supplier_terakhir" title="Supplier Terakhir" style="width: 40ch" />
-                    <x-table.th name="pemakaian_1_minggu" title="Pemakaian 1 Minggu" style="width: 40ch" />
-                    <x-table.th name="pemakaian_1_bulan" title="Pemakaian 1 Bulan" style="width: 40ch" />
                     <x-table.th name="pemakaian_3_bulan" title="Pemakaian 3 Bulan" style="width: 40ch" />
+                    <x-table.th name="pemakaian_1_bulan" title="Pemakaian 1 Bulan" style="width: 40ch" />
+                    <x-table.th name="pemakaian_1_minggu" title="Pemakaian 1 Minggu" style="width: 40ch" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->stokDaruratObat as $obat)
@@ -52,9 +52,9 @@
                             <x-table.td>{{ rp($obat->harga_beli_terakhir) }}</x-table.td>
                             <x-table.td>{{ $obat->diskon_terakhir }}</x-table.td>
                             <x-table.td>{{ $obat->supplier_terakhir }}</x-table.td>
-                            <x-table.td>{{ floatval($obat->pemakaian_1_minggu) }}</x-table.td>
-                            <x-table.td>{{ floatval($obat->pemakaian_1_bulan) }}</x-table.td>
                             <x-table.td>{{ floatval($obat->pemakaian_3_bulan) }}</x-table.td>
+                            <x-table.td>{{ floatval($obat->pemakaian_1_bulan) }}</x-table.td>
+                            <x-table.td>{{ floatval($obat->pemakaian_1_minggu) }}</x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="18" />
