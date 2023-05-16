@@ -42,18 +42,17 @@ trait ExcelExportable
 
     public function exportToExcel(): void
     {
-        if (method_exists($this, 'flashInfo')) {
-            $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
-        } else {
-            $this->emit('flash.info', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
-        }
-
+        $this->emit('flash.info', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+        
         // Validasi sebelum proses export dimulai
         $this->validateSheetNames();
 
         $this->emit('beginExcelExport');
     }
 
+    /**
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse|void
+     */
     public function beginExcelExport(): StreamedResponse
     {
         $filename = now()->format('Ymd_His') . '_';
