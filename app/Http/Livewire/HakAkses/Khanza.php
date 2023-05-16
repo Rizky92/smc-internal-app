@@ -49,37 +49,42 @@ class Khanza extends Component
             return;
         }
 
-        $hakAksesUser = collect(User::rawFindByNRP('221203')->getAttributes())->except('id_user', 'password');
+        $hakAkses = collect(User::rawFindByNRP('221203')->getAttributes())->except('id_user', 'password');
 
         $hakAksesTersedia = HakAkses::pluck('default_value', 'nama_field');
 
-        $hakAksesUser = $hakAksesUser->diffKeys($hakAksesTersedia);
+        $hakAksesBaru = $hakAkses->diffKeys($hakAksesTersedia)->map(fn ($_) => 'false');
+        $hakAksesDibuang = $hakAksesTersedia->diffKeys($hakAkses);
 
-        if ($hakAksesUser->isEmpty()) {
+        $countBaru = $hakAksesBaru->count();
+        $countDibuang = $hakAksesDibuang->count();
+
+        if ($hakAksesBaru->isEmpty() && $hakAksesDibuang->isEmpty()) {
             $this->flashInfo('Hak akses SIMRS Khanza sudah yang terupdate!');
 
             return;
         }
 
-        $hakAksesUser = $hakAksesUser->mapWithKeys(fn ($_, $field) => [$field => 'false']);
-
-        $hakAksesBaru = $hakAksesUser
-            ->map(fn ($value, $field) => ['nama_field' => $field, 'default_value' => $value])
-            ->values();
+        $hakAksesUser = $hakAkses
+            ->reject(fn ($_, $k) => $hakAksesDibuang->keys()->containsStrict($k))
+            ->diffKeys($hakAksesTersedia)
+            ->map(fn ($_, $k) => ['nama_field' => $k, 'default_value' => 'false'])
+            ->values()
+            ->toArray();
 
         tracker_start('mysql_smc');
 
-        HakAkses::insert($hakAksesBaru->toArray());
+        HakAkses::insert($hakAksesUser);
 
         tracker_end('mysql_smc');
 
         tracker_start('mysql_sik');
 
-        User::query()->update($hakAksesUser->toArray());
+        User::query()->update($hakAksesBaru->all());
 
         tracker_end('mysql_sik');
 
-        $this->flashSuccess('Hak akses berhasil disinkron!');
+        $this->flashSuccess("Hak akses berhasil disinkronisasikan! Hak Akses Baru: {$countBaru} | Hak Akses Dibuang: {$countDibuang}");
 
         $this->resetFilters();
     }

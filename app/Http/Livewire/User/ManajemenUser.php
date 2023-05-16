@@ -23,9 +23,6 @@ class ManajemenUser extends Component
     /** @var bool */
     public $tampilkanYangMemilikiHakAkses;
 
-    /** @var \Illuminate\Support\Collection|array */
-    public $selectUsers;
-
     /** @var mixed */
     protected $listeners = [
         'user.prepare' => 'prepareUser',
@@ -72,22 +69,6 @@ class ManajemenUser extends Component
         $this->cari = '';
         $this->perpage = 25;
         $this->sortColumns = [];
-    }
-
-    public function selectAllUsers(bool $state): void
-    {
-        if (! $state) {
-            $this->selectUsers = [];
-
-            return;
-        }
-
-        $this->selectUsers = User::query()
-            ->select([DB::raw("aes_decrypt(id_user, 'nur') as user_id")])
-            ->pluck('user_id')
-            ->flip()
-            ->map(fn (int $_) => true)
-            ->all();
     }
 
     /**

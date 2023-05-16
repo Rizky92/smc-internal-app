@@ -129,7 +129,6 @@
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
-                    <x-table.th-checkbox-all livewire id="checkbox-all-users" name="checkbox-all-users" lookup="cau-" method="selectAllUsers" />
                     <x-table.th name="nik" title="NRP" style="width: 15ch" />
                     <x-table.th name="nama" title="Nama" style="width: 50ch" />
                     <x-table.th name="jbtn" title="Jabatan" style="width: 30ch" />
@@ -139,7 +138,6 @@
                 <x-slot name="body">
                     @forelse ($this->users as $user)
                         <x-table.tr>
-                            <x-table.td-checkbox livewire obscure-checkbox model="selectUsers" :key="$user->nik" :id="$user->nik" prefix="cau-" />
                             <x-table.td
                                 clickable
                                 data-nrp="{{ $user->nik }}"

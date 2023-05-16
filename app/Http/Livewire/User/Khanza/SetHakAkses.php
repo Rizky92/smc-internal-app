@@ -97,9 +97,9 @@ class SetHakAkses extends Component
 
         if (!$this->isDeferred) {
             $this->checkedHakAkses = collect($user->getAttributes())->except('id_user', 'password')
-                ->filter(fn ($field) => $field === 'true')
+                ->filter(fn ($f, $k) => $f === 'true')
                 ->keys()
-                ->mapWithKeys(fn ($field) => [$field => true])
+                ->mapWithKeys(fn ($f, $k) => [$f => true])
                 ->all();
         }
 
