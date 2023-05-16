@@ -41,8 +41,25 @@ class Obat extends Model
             ifnull((select ifnull(round(dp.h_pesan/databarang.isi, 2), 0) from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1), 0) harga_beli_terakhir,
             ifnull((select ifnull(dp.dis, 0) from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1), 0) diskon_terakhir,
             ifnull((select ds.nama_suplier from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur left join datasuplier ds on p.kode_suplier = ds.kode_suplier where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1), '-') supplier_terakhir,
-            total_ke_pasien.jumlah pasien_jumlah_14_hari,
-            total_ke_pasien.total pasien_total_14_hari
+            (
+                ifnull((select round(sum(detail_pemberian_obat.jml), 2) from detail_pemberian_obat where detail_pemberian_obat.kode_brng = databarang.kode_brng and detail_pemberian_obat.tgl_perawatan between date_sub(now(), interval 2 week) and now()), 0) + 
+                ifnull((select round(sum(detailjual.jumlah), 2) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.tgl_jual between date_sub(now(), interval 2 week) and now()), 0)
+            ) ke_pasien_14_hari,
+            (
+                ifnull((select round(sum(detail_pemberian_obat.jml), 2) from detail_pemberian_obat where detail_pemberian_obat.kode_brng = databarang.kode_brng and detail_pemberian_obat.tgl_perawatan between date_sub(now(), interval 1 week) and now()), 0) + 
+                ifnull((select round(sum(detailjual.jumlah), 2) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.tgl_jual between date_sub(now(), interval 1 week) and now()), 0) +
+                ifnull((select round(sum(detail_pengeluaran_obat_bhp.jumlah), 2) from detail_pengeluaran_obat_bhp join pengeluaran_obat_bhp on detail_pengeluaran_obat_bhp.no_keluar = pengeluaran_obat_bhp.no_keluar where detail_pengeluaran_obat_bhp.kode_brng = databarang.kode_brng and pengeluaran_obat_bhp.tanggal between date_sub(now(), interval 1 week) and now()), 0)
+            ) pemakaian_1_minggu,
+            (
+                ifnull((select round(sum(detail_pemberian_obat.jml), 2) from detail_pemberian_obat where detail_pemberian_obat.kode_brng = databarang.kode_brng and detail_pemberian_obat.tgl_perawatan between date_sub(now(), interval 1 month) and now()), 0) + 
+                ifnull((select round(sum(detailjual.jumlah), 2) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.tgl_jual between date_sub(now(), interval 1 month) and now()), 0) +
+                ifnull((select round(sum(detail_pengeluaran_obat_bhp.jumlah), 2) from detail_pengeluaran_obat_bhp join pengeluaran_obat_bhp on detail_pengeluaran_obat_bhp.no_keluar = pengeluaran_obat_bhp.no_keluar where detail_pengeluaran_obat_bhp.kode_brng = databarang.kode_brng and pengeluaran_obat_bhp.tanggal between date_sub(now(), interval 1 month) and now()), 0)
+            ) pemakaian_1_bulan,
+            (
+                ifnull((select round(sum(detail_pemberian_obat.jml), 2) from detail_pemberian_obat where detail_pemberian_obat.kode_brng = databarang.kode_brng and detail_pemberian_obat.tgl_perawatan between date_sub(now(), interval 3 month) and now()), 0) + 
+                ifnull((select round(sum(detailjual.jumlah), 2) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.tgl_jual between date_sub(now(), interval 3 month) and now()), 0) +
+                ifnull((select round(sum(detail_pengeluaran_obat_bhp.jumlah), 2) from detail_pengeluaran_obat_bhp join pengeluaran_obat_bhp on detail_pengeluaran_obat_bhp.no_keluar = pengeluaran_obat_bhp.no_keluar where detail_pengeluaran_obat_bhp.kode_brng = databarang.kode_brng and pengeluaran_obat_bhp.tanggal between date_sub(now(), interval 3 month) and now()), 0)
+            ) pemakaian_3_bulan
         SQL;
 
         $stokGudangAP = DB::raw("(
@@ -51,7 +68,7 @@ class Obat extends Model
             inner join bangsal on gudangbarang.kd_bangsal = bangsal.kd_bangsal
             where bangsal.status = '1'
             and gudangbarang.kd_bangsal = 'AP'
-            group by gudangbarang.kode_brng
+            group by kode_brng
         ) stok_gudang_ap");
 
         $stokGudangIFI = DB::raw("(
@@ -60,18 +77,8 @@ class Obat extends Model
             inner join bangsal on gudangbarang.kd_bangsal = bangsal.kd_bangsal
             where bangsal.status = '1'
             and gudangbarang.kd_bangsal = 'IFI'
-            group by gudangbarang.kode_brng
+            group by kode_brng
         ) stok_gudang_ifi");
-
-        $totalObatKePasien = DB::raw("(
-            select
-                detail_pemberian_obat.kode_brng,
-                round(sum(detail_pemberian_obat.jml), 2) jumlah,
-                round(sum(detail_pemberian_obat.total - detail_pemberian_obat.embalase + detail_pemberian_obat.tuslah), 2) total
-            from detail_pemberian_obat
-            where detail_pemberian_obat.tgl_perawatan between date_sub(now(), interval 14 day) and now()
-            group by detail_pemberian_obat.kode_brng
-        ) total_ke_pasien");
 
         return $query
             ->selectRaw($sqlSelect)
@@ -80,10 +87,9 @@ class Obat extends Model
             ->join('industrifarmasi', 'databarang.kode_industri', '=', 'industrifarmasi.kode_industri')
             ->leftJoin($stokGudangAP, 'databarang.kode_brng', '=', 'stok_gudang_ap.kode_brng')
             ->leftJoin($stokGudangIFI, 'databarang.kode_brng', '=', 'stok_gudang_ifi.kode_brng')
-            ->leftJoin($totalObatKePasien, 'databarang.kode_brng', '=', 'total_ke_pasien.kode_brng')
             ->where('databarang.status', '1')
-            ->where('databarang.stokminimal', '>', '0')
-            ->whereRaw('(databarang.stokminimal - ifnull(stok_gudang_ap.stok_di_gudang, 0)) > 0')
+            ->where('databarang.stokminimal', '>', 0)
+            ->whereRaw('(databarang.stokminimal - ifnull(stok_gudang_ap.stok_di_gudang, 0)) > ?', [0])
             ->whereRaw('ifnull(stok_gudang_ap.stok_di_gudang, 0) <= databarang.stokminimal');
     }
 }
