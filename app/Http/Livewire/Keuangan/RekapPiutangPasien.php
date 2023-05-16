@@ -95,7 +95,8 @@ class RekapPiutangPasien extends Component
 
     protected function dataPerSheet(): array
     {
-        $query = PiutangPasien::query()->rekapPiutangPasien($this->tglAwal, $this->tglAkhir, $this->caraBayar);
+        $query = PiutangPasien::query()
+            ->rekapPiutangPasien($this->tglAwal, $this->tglAkhir, $this->caraBayar);
 
         return [
             $query
@@ -113,6 +114,9 @@ class RekapPiutangPasien extends Component
                     'sisa' => $query->sum(DB::raw('round(piutang_pasien.sisapiutang - ifnull(sisa_piutang.sisa, 0), 2)')),
                     'tgltempo' => '',
                     'penjamin' => '',
+                ])
+                ->map(fn (PiutangPasien $model) => [
+                    
                 ])
         ];
     }

@@ -92,8 +92,34 @@ class KunjunganPerBentukObat extends Component
     protected function dataPerSheet(): array
     {
         return [
-            'Obat Regular' => ResepDokter::kunjunganResepObatRegular($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)->get(),
-            'Obat Racikan' => ResepDokterRacikan::kunjunganResepObatRacikan($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)->get(),
+            'Obat Regular' => ResepDokter::query()
+                ->kunjunganResepObatRegular($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
+                ->get()
+                ->map(fn (ResepDokter $model) => [
+                    'no_resep'      => $model->no_resep,
+                    'nm_dokter'     => $model->nm_dokter,
+                    'tgl_perawatan' => $model->tgl_perawatan,
+                    'jam'           => $model->jam,
+                    'nm_pasien'     => $model->nm_pasien,
+                    'nm_poli'       => $model->nm_poli,
+                    'status_lanjut' => $model->status_lanjut,
+                    'total'         => floatval($model->total),
+                ]),
+
+            'Obat Racikan' => ResepDokterRacikan::query()
+                ->kunjunganResepObatRacikan($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
+                ->get()
+                ->map(fn (ResepDokterRacikan $model) => [
+                    'no_resep'      => $model->no_resep,
+                    'nm_dokter'     => $model->nm_dokter,
+                    'tgl_perawatan' => $model->tgl_perawatan,
+                    'jam'           => $model->jam,
+                    'nm_pasien'     => $model->nm_pasien,
+                    'nm_poli'       => $model->nm_poli,
+                    'status_lanjut' => $model->status_lanjut,
+                    'total'         => floatval($model->total),
+                ]),
+
         ];
     }
 

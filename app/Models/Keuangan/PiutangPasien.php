@@ -117,7 +117,7 @@ class PiutangPasien extends Model
             $tglAkhir = now()->endOfMont()->format('Y-m-d');
         }
 
-        $sqlSelect = "
+        $sqlSelect = <<<SQL
             piutang_pasien.no_rawat,
             piutang_pasien.no_rkm_medis,
             pasien.nm_pasien,
@@ -129,19 +129,21 @@ class PiutangPasien extends Model
             (piutang_pasien.sisapiutang - ifnull(sisa_piutang.sisa, 0)) sisa,
             piutang_pasien.tgltempo,
             penjab.png_jawab penjamin
-        ";
+        SQL;
 
-        $sisaPiutang = "(
+        $sisaPiutang = DB::raw(<<<SQL
+        (
             select ifnull(sum(besar_cicilan), 0) sisa, no_rawat
             from bayar_piutang
             group by no_rawat
-        ) sisa_piutang";
+        ) sisa_piutang
+        SQL);
 
         return $query->selectRaw($sqlSelect)
             ->join('pasien', 'piutang_pasien.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join('reg_periksa', 'piutang_pasien.no_rawat', '=', 'reg_periksa.no_rawat')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
-            ->leftJoin(DB::raw($sisaPiutang), 'piutang_pasien.no_rawat', '=', 'sisa_piutang.no_rawat')
+            ->leftJoin($sisaPiutang, 'piutang_pasien.no_rawat', '=', 'sisa_piutang.no_rawat')
             ->whereBetween('piutang_pasien.tgl_piutang', [$tglAwal, $tglAkhir])
             ->when(!empty($penjamin), fn (Builder $query) => $query->where('reg_periksa.kd_pj', $penjamin));
     }

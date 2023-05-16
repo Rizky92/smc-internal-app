@@ -40,7 +40,7 @@ class JurnalNonMedis extends Model
 
         $db = DB::connection('mysql_sik')->getDatabaseName();
 
-        $sqlSelect = "
+        $sqlSelect = <<<SQL
             jurnal_non_medis.id,
             jurnal_non_medis.no_jurnal,
             jurnal_non_medis.waktu_jurnal,
@@ -53,7 +53,7 @@ class JurnalNonMedis extends Model
             rekening.nm_rek,
             ipsrssuplier.nama_suplier,
             trim(concat(jurnal_non_medis.nik, ' ', coalesce(pegawai.nama, ''))) nm_pegawai
-        ";
+        SQL;
 
         return $query
             ->selectRaw($sqlSelect)

@@ -116,7 +116,7 @@ class PemesananObat extends Model
 
     public static function totalPembelianDariFarmasi(string $year = '2022'): array
     {
-        $data = static::pembelianFarmasi($year)->pluck('jumlah', 'bulan');
+        $data = static::pembelianFarmasi($year)->pluck('jumlah', 'bulan')->map(fn ($v) => floatval($v));
 
         return map_bulan($data);
     }

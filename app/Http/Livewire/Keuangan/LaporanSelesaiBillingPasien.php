@@ -91,6 +91,19 @@ class LaporanSelesaiBillingPasien extends Component
             NotaSelesai::query()
                 ->billingYangDiselesaikan($this->tglAwal, $this->tglAkhir)
                 ->get()
+                ->map(fn (NotaSelesai $model) => [
+                    'no_rawat'         => $model->no_rawat,
+                    'no_rkm_medis'     => $model->no_rkm_medis,
+                    'nm_pasien'        => $model->nm_pasien,
+                    'no_nota'          => $model->no_nota,
+                    'ruangan'          => $model->ruangan,
+                    'status_pasien'    => $model->status_pasien,
+                    'bentuk_bayar'     => $model->bentuk_bayar,
+                    'besar_bayar'      => floatval($model->besar_bayar),
+                    'png_jawab'        => $model->png_jawab,
+                    'tgl_penyelesaian' => $model->tgl_penyelesaian,
+                    'nama_pegawai'     => $model->nama_pegawai,
+                ]),
         ];
     }
 

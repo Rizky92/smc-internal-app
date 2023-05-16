@@ -32,7 +32,7 @@ class ReturPenjualanObat extends Model
 
     public static function totalReturObat(string $year = '2022'): array
     {
-        $data = static::returObatPasien($year)->pluck('jumlah', 'bulan');
+        $data = static::returObatPasien($year)->pluck('jumlah', 'bulan')->map(fn ($v) => floatval($v));
         
         return map_bulan($data);
     }

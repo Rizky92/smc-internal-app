@@ -65,9 +65,9 @@ class LabaRugiRekeningPerPeriode extends Component
                 return new Fluent(array_merge(
                     $rekening->only('kd_rek', 'nm_rek', 'balance'),
                     [
-                        'debet' => $debet,
-                        'kredit' => $kredit,
-                        'total' => $total,
+                        'debet' => floatval($debet),
+                        'kredit' => floatval($kredit),
+                        'total' => floatval($total),
                     ],
                 ));
             })
@@ -118,9 +118,9 @@ class LabaRugiRekeningPerPeriode extends Component
 
     protected function mapDataForExcelExport()
     {
-        $pendapatanRowHeader = $this->insertExcelRow('', 'PENDAPATAN');
-        $bebanRowHeader = $this->insertExcelRow('', 'BEBAN & BIAYA');
-        $empty = $this->insertExcelRow();
+        $pendapatanRowHeader = $this->insertExcelRow('', 'PENDAPATAN', '', '', '', '');
+        $bebanRowHeader = $this->insertExcelRow('', 'BEBAN & BIAYA', '', '', '', '');
+        $empty = $this->insertExcelRow('', '', '', '', '', '');
 
         $pendapatan = $this->labaRugiPerRekening->get('K');
         $beban = $this->labaRugiPerRekening->get('D');
@@ -141,7 +141,7 @@ class LabaRugiRekeningPerPeriode extends Component
             ->merge([$pendapatanBersih]);
     }
 
-    private function insertExcelRow($kd_rek = '', $nm_rek = '', $balance = '', $debet = '', $kredit = '', $total = '')
+    private function insertExcelRow($kd_rek, $nm_rek, $balance, $debet, $kredit, $total)
     {
         return new Fluent(func_get_named_args($this, 'insertExcelRow', func_get_args()));
     }

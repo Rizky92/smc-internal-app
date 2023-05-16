@@ -49,28 +49,28 @@ class PemberianObat extends Model
 
     public static function pendapatanObatRalan(string $year = '2022'): array
     {
-        $data = static::pendapatanObat('ralan', $year)->pluck('jumlah', 'bulan');
+        $data = static::pendapatanObat('ralan', $year)->pluck('jumlah', 'bulan')->map(fn ($v) => floatval($v));
 
         return map_bulan($data);
     }
 
     public static function pendapatanObatRanap(string $year = '2022'): array
     {
-        $data = static::pendapatanObat('ranap', $year)->pluck('jumlah', 'bulan');
+        $data = static::pendapatanObat('ranap', $year)->pluck('jumlah', 'bulan')->map(fn ($v) => floatval($v));
 
         return map_bulan($data);
     }
 
     public static function pendapatanObatIGD(string $year = '2022'): array
     {
-        $data = static::pendapatanObat('IGD', $year)->pluck('jumlah', 'bulan');
+        $data = static::pendapatanObat('IGD', $year)->pluck('jumlah', 'bulan')->map(fn ($v) => floatval($v));
 
         return map_bulan($data);
     }
 
     public static function pendapatanAlkesUnit(string $year = '2022'): array
     {
-        $data = static::pendapatanObat('', $year, true)->pluck('jumlah', 'bulan');
+        $data = static::pendapatanObat('', $year, true)->pluck('jumlah', 'bulan')->map(fn ($v) => floatval($v));
 
         return map_bulan($data);
     }

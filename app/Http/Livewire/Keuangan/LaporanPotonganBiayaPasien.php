@@ -77,6 +77,21 @@ class LaporanPotonganBiayaPasien extends Component
             PenguranganBiaya::query()
                 ->potonganBiayaPasien($this->tglAwal, $this->tglAkhir)
                 ->get()
+                ->map(fn (PenguranganBiaya $model) => [
+                    'tgl_registrasi'    => $model->tgl_registrasi,
+                    'jam_reg'           => $model->jam_reg,
+                    'nm_pasien'         => $model->nm_pasien,
+                    'no_rkm_medis'      => $model->no_rkm_medis,
+                    'no_rawat'          => $model->no_rawat,
+                    'nama_pengurangan'  => $model->nama_pengurangan,
+                    'besar_pengurangan' => floatval($model->besar_pengurangan),
+                    'png_jawab'         => $model->png_jawab,
+                    'dokter_ralan'      => $model->dokter_ralan,
+                    'dokter_ranap'      => $model->dokter_ranap,
+                    'nm_poli'           => $model->nm_poli,
+                    'status_lanjut'     => $model->status_lanjut,
+                    'status_bayar'      => $model->status_bayar,
+                ])
         ];
     }
 

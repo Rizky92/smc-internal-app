@@ -36,7 +36,7 @@ class KunjunganPerPoli extends Component
     public function getDataKunjunganResepPasienProperty()
     {
         return ResepObat::query()
-            ->kunjunganFarmasi($this->tglAwal, $this->tglAkhir)
+            ->kunjunganPerPoli($this->tglAwal, $this->tglAkhir)
             ->search($this->cari, [
                 'resep_obat.no_rawat',
                 'resep_obat.no_resep',
@@ -72,7 +72,21 @@ class KunjunganPerPoli extends Component
     protected function dataPerSheet(): array
     {
         return [
-            ResepObat::kunjunganFarmasi($this->tglAwal, $this->tglAkhir)->get()
+            ResepObat::query()
+                ->kunjunganPerPoli($this->tglAwal, $this->tglAkhir)
+                ->get()
+                ->map(fn (ResepObat $model) => [
+                    'no_rawat'          => $model->no_rawat,
+                    'no_resep'          => $model->no_resep,
+                    'nm_pasien'         => $model->nm_pasien,
+                    'umur'              => $model->umur,
+                    'tgl_perawatan'     => $model->tgl_perawatan,
+                    'jam'               => $model->jam,
+                    'nm_dokter_peresep' => $model->nm_dokter_peresep,
+                    'nm_dokter_poli'    => $model->nm_dokter_poli,
+                    'status_lanjut'     => $model->status_lanjut,
+                    'nm_poli'           => $model->nm_poli,
+                ]),
         ];
     }
 

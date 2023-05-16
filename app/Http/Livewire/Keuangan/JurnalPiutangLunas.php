@@ -117,7 +117,7 @@ class JurnalPiutangLunas extends Component
                     'no_tagihan'      => $model->no_tagihan,
                     'nik_penagih'     => $model->nik_penagih . ' ' . $model->nama_penagih,
                     'nik_penyetuju'   => $model->nik_penyetuju . ' ' . $model->nama_penyetuju,
-                    'piutang_dibayar' => $model->piutang_dibayar,
+                    'piutang_dibayar' => floatval($model->piutang_dibayar),
                     'tgl_penagihan'   => carbon($model->tgl_penagihan)->format('Y-m-d'),
                     'tgl_jatuh_tempo' => carbon($model->tgl_jatuh_tempo)->format('Y-m-d'),
                     'tgl_bayar'       => carbon($model->tgl_bayar)->format('Y-m-d'),

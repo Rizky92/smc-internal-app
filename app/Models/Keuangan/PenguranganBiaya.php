@@ -34,7 +34,7 @@ class PenguranganBiaya extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        return $query->selectRaw("
+        $sqlSelect = <<<SQL
             reg_periksa.tgl_registrasi,
             reg_periksa.jam_reg,
             pasien.nm_pasien,
@@ -48,7 +48,10 @@ class PenguranganBiaya extends Model
             poliklinik.nm_poli,
             reg_periksa.status_lanjut,
             reg_periksa.status_bayar
-        ")
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
             ->leftJoin('reg_periksa', 'pengurangan_biaya.no_rawat', '=', 'reg_periksa.no_rawat')
             ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->leftJoin('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')

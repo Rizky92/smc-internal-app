@@ -79,6 +79,15 @@ class PerbandinganBarangPO extends Component
             SuratPemesananObat::query()
                 ->perbandinganPemesananObatPO($this->tglAwal, $this->tglAkhir, $this->hanyaTampilkanBarangSelisih)
                 ->get()
+                ->map(fn (SuratPemesananObat $model) => [
+                    'no_pemesanan'   => $model->no_pemesanan,
+                    'nama_brng'      => $model->nama_brng,
+                    'suplier_pesan'  => $model->suplier_pesan,
+                    'suplier_datang' => $model->suplier_datang,
+                    'jumlah_pesan'   => floatval($model->jumlah_pesan),
+                    'jumlah_datang'  => floatval($model->jumlah_datang),
+                    'selisih'        => floatval($model->selisih),
+                ])
         ];
     }
 

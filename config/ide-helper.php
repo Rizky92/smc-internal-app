@@ -196,7 +196,6 @@ return [
         \Illuminate\Support\Collection::class => \App\Support\Mixins\CustomCollections::class,
         \Illuminate\Support\Str::class => \App\Support\Mixins\CustomStr::class,
         \Illuminate\Support\Stringable::class => \App\Support\Mixins\CustomStringable::class,
-        \Illuminate\Contracts\Auth\Authenticatable::class => \App\Models\Aplikasi\User::class,
     ],
 
     'magic' => [

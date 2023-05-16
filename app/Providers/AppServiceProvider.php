@@ -6,6 +6,7 @@ use App\Database\Query\Grammars\MysqlGrammar;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
+use App\Support\BPJS\BpjsService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Blade;
@@ -43,10 +44,16 @@ class AppServiceProvider extends ServiceProvider
         // https://carbon.nesbot.com/laravel/
         DB::connection('mysql_smc')->setQueryGrammar(new MysqlGrammar);
 
+        $this->registerFacades();
         $this->registerBladeDirectives();
         $this->registerModelConfigurations();
         $this->registerSuperadminRole();
         $this->registerCollectionMacrosAndMixins();
+    }
+
+    public function registerFacades()
+    {
+        $this->app->bind(BpjsService::class, fn () => new BpjsService);
     }
 
     public function registerBladeDirectives()

@@ -39,6 +39,16 @@ class SuratPemesananObat extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
+        $sqlSelect = <<<SQL
+            surat_pemesanan_medis.no_pemesanan,
+            databarang.nama_brng,
+            datasuplier.nama_suplier suplier_pesan,
+            ifnull(pemesanan_datang.nama_suplier, '-') suplier_datang,
+            detail_surat_pemesanan_medis.jumlah2 jumlah_pesan,
+            ifnull(pemesanan_datang.jumlah, 0) jumlah_datang,
+            ifnull((detail_surat_pemesanan_medis.jumlah2 - pemesanan_datang.jumlah), 'Barang belum datang') selisih
+        SQL;
+
         $pemesananYangDatang = DB::raw("(
             select
                 pemesanan.no_order,
@@ -55,15 +65,8 @@ class SuratPemesananObat extends Model
 
         $jumlahObatYangBerbeda = DB::raw('(detail_surat_pemesanan_medis.jumlah2 - ifnull(pemesanan_datang.jumlah, 0))');
 
-        return $query->selectRaw("
-            surat_pemesanan_medis.no_pemesanan,
-            databarang.nama_brng,
-            datasuplier.nama_suplier suplier_pesan,
-            ifnull(pemesanan_datang.nama_suplier, '-') suplier_datang,
-            detail_surat_pemesanan_medis.jumlah2 jumlah_pesan,
-            ifnull(pemesanan_datang.jumlah, 0) jumlah_datang,
-            ifnull((detail_surat_pemesanan_medis.jumlah2 - pemesanan_datang.jumlah), 'Barang belum datang') selisih
-        ")
+        return $query
+            ->selectRaw($sqlSelect)
             ->join('datasuplier', 'surat_pemesanan_medis.kode_suplier', '=', 'datasuplier.kode_suplier')
             ->join('detail_surat_pemesanan_medis', 'surat_pemesanan_medis.no_pemesanan', '=', 'detail_surat_pemesanan_medis.no_pemesanan')
             ->join('databarang', 'detail_surat_pemesanan_medis.kode_brng', '=', 'databarang.kode_brng')

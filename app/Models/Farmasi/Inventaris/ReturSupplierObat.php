@@ -33,7 +33,7 @@ class ReturSupplierObat extends Model
 
     public static function totalBarangRetur(string $year = '2022'): array
     {
-        $data = static::returKeSupplier($year)->pluck('jumlah', 'bulan');
+        $data = static::returKeSupplier($year)->pluck('jumlah', 'bulan')->map(fn ($v) => floatval($v));
 
         return map_bulan($data);
     }

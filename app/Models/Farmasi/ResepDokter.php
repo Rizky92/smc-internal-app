@@ -37,7 +37,7 @@ class ResepDokter extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        return $query->selectRaw("
+        $sqlSelect = <<<SQL
             resep_dokter.no_resep,
             dokter.nm_dokter,
             resep_obat.tgl_perawatan,
@@ -46,7 +46,10 @@ class ResepDokter extends Model
             poliklinik.nm_poli,
             reg_periksa.status_lanjut,
             round(sum(resep_dokter.jml * databarang.h_beli)) total
-        ")
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
             ->join('resep_obat', 'resep_dokter.no_resep', '=', 'resep_obat.no_resep')
             ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
             ->join('databarang', 'resep_dokter.kode_brng', '=', 'databarang.kode_brng')

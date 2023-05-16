@@ -7,16 +7,51 @@ use LZCompressor\LZString;
 
 class BpjsService
 {
-    protected string $timestamp = '';
+    protected $timestamp = '';
 
-    protected array $response;
+    protected $response;
 
-    protected array $headers;
+    protected $headers;
+
+    public static function __callStatic($name, $arguments)
+    {
+        return (new static)->$name($arguments);
+    }
 
     public static function start()
     {
         return new static;
     }
+
+    // public function dashboardPerBulan(string $bulan, string $tahun, string $jam)
+    // {
+    //     if (empty($this->timestamp)) {
+    //         $this->timestamp = now()->format('U');
+    //     }
+
+    //     $url = 'https://apijkn.bpjs-kesehatan.go.id/antreanrs/antrean/dashboard/waktutunggu/bulan/{p1}/tahun/{p2}/waktu/{p3}';
+
+    //     $this->setHeaders([
+    //         'x-cons-id' => config('bpjs.consid'),
+    //         'x-timestamp' => $this->timestamp,
+    //         'x-signature' => $this->generateSignature(),
+    //         'user_key' => config('bpjs.userkey'),
+    //     ]);
+
+    //     $url = str($url)
+    //         ->replace('{p1}', $bulan)
+    //         ->replace('{p2}', $tahun)
+    //         ->replace('{p3}', $jam);
+        
+    //     $this->response = Http::withHeaders($this->headers)
+    //         ->get((string) $url);
+
+    //     dd($this->response);
+
+    //     $this->decryptResponse();
+
+    //     return new static;
+    // }
 
     public function getListTask($noBooking)
     {

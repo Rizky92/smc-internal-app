@@ -69,7 +69,21 @@ class ObatPerDokter extends Component
     protected function dataPerSheet(): array
     {
         return [
-            ResepObat::penggunaanObatPerDokter($this->tglAwal, $this->tglAkhir)->get(),
+            ResepObat::query()
+                ->penggunaanObatPerDokter($this->tglAwal, $this->tglAkhir)
+                ->get()
+                ->map(fn (ResepObat $model) => [
+                    'no_resep'      => $model->no_resep,
+                    'tgl_perawatan' => $model->tgl_perawatan,
+                    'jam'           => $model->jam,
+                    'nama_brng'     => $model->nama_brng,
+                    'nama'          => $model->nama,
+                    'jml'           => floatval($model->jml),
+                    'nm_dokter'     => $model->nm_dokter,
+                    'status'        => $model->status,
+                    'nm_poli'       => $model->nm_poli,
+                    'png_jawab'     => $model->png_jawab,
+                ]),
         ];
     }
 

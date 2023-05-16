@@ -121,8 +121,39 @@ class JurnalSupplierPO extends Component
     protected function dataPerSheet(): array
     {
         return [
-            'Medis' => JurnalMedis::jurnalPenerimaanBarang($this->tglAwal, $this->tglAkhir)->get(),
-            'Non Medis' => JurnalNonMedis::jurnalPenerimaanBarang($this->tglAwal, $this->tglAkhir)->get(),
+            'Medis' => JurnalMedis::query()
+                ->jurnalPenerimaanBarang($this->tglAwal, $this->tglAkhir)
+                ->get()
+                ->map(fn (JurnalMedis $model) => [
+                    'no_jurnal'    => $model->no_jurnal,
+                    'waktu_jurnal' => $model->waktu_jurnal,
+                    'no_faktur'    => $model->no_faktur,
+                    'ket'          => $model->ket,
+                    'status'       => $model->status,
+                    'besar_bayar'  => floatval($model->besar_bayar),
+                    'nama_bayar'   => $model->nama_bayar,
+                    'kd_rek'       => $model->kd_rek,
+                    'nm_rek'       => $model->nm_rek,
+                    'nama_suplier' => $model->nama_suplier,
+                    'nm_pegawai'   => $model->nm_pegawai,
+                ]),
+
+            'Non Medis' => JurnalNonMedis::query()
+                ->jurnalPenerimaanBarang($this->tglAwal, $this->tglAkhir)
+                ->get()
+                ->map(fn (JurnalNonMedis $model) => [
+                    'no_jurnal'    => $model->no_jurnal,
+                    'waktu_jurnal' => $model->waktu_jurnal,
+                    'no_faktur'    => $model->no_faktur,
+                    'ket'          => $model->ket,
+                    'status'       => $model->status,
+                    'besar_bayar'  => floatval($model->besar_bayar),
+                    'nama_bayar'   => $model->nama_bayar,
+                    'kd_rek'       => $model->kd_rek,
+                    'nm_rek'       => $model->nm_rek,
+                    'nama_suplier' => $model->nama_suplier,
+                    'nm_pegawai'   => $model->nm_pegawai,
+                ]),
         ];
     }
 

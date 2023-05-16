@@ -83,7 +83,25 @@ class LaporanTindakanLab extends Component
         return [
             HasilPeriksaLab::query()
                 ->laporanTindakanLab($this->tglAwal, $this->tglAkhir)
-                ->get(),
+                ->get()
+                ->map(fn (HasilPeriksaLab $model) => [
+                    'no_rawat'       => $model->no_rawat,
+                    'no_rkm_medis'   => $model->no_rkm_medis,
+                    'nm_pasien'      => $model->nm_pasien,
+                    'png_jawab'      => $model->png_jawab,
+                    'nama_petugas'   => $model->nama_petugas,
+                    'tgl_periksa'    => $model->tgl_periksa,
+                    'jam'            => $model->jam,
+                    'dokter_perujuk' => $model->dokter_perujuk,
+                    'kd_jenis_prw'   => $model->kd_jenis_prw,
+                    'nm_perawatan'   => $model->nm_perawatan,
+                    'kategori'       => $model->kategori,
+                    'biaya'          => floatval($model->biaya),
+                    'status_bayar'   => $model->status_bayar,
+                    'status'         => $model->status,
+                    'kd_dokter'      => $model->kd_dokter,
+                    'nm_dokter'      => $model->nm_dokter,
+                ]),
         ];
     }
 

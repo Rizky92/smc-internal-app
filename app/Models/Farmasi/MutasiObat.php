@@ -31,7 +31,7 @@ class MutasiObat extends Model
 
     public static function transferOrder(string $year = '2022'): array
     {
-        $data = static::jumlahTransferOrder($year)->pluck('jumlah', 'bulan');
+        $data = static::jumlahTransferOrder($year)->pluck('jumlah', 'bulan')->map(fn ($v) => floatval($v));
 
         return map_bulan($data);
     }

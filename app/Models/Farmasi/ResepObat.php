@@ -84,19 +84,21 @@ class ResepObat extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
+        $sqlSelect = <<<SQL
+            resep_obat.no_resep,
+            resep_obat.tgl_perawatan,
+            resep_obat.jam,
+            databarang.nama_brng,
+            kategori_barang.nama,
+            detail_pemberian_obat.jml,
+            dokter.nm_dokter,
+            resep_obat.status,
+            poliklinik.nm_poli,
+            penjab.png_jawab
+        SQL;
+
         return $query
-            ->selectRaw("
-                resep_obat.no_resep,
-                resep_obat.tgl_perawatan,
-                resep_obat.jam,
-                databarang.nama_brng,
-                kategori_barang.nama,
-                detail_pemberian_obat.jml,
-                dokter.nm_dokter,
-                resep_obat.status,
-                poliklinik.nm_poli,
-                penjab.png_jawab
-            ")
+            ->selectRaw($sqlSelect)
             ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
@@ -109,7 +111,7 @@ class ResepObat extends Model
             ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir]);
     }
 
-    public function scopeKunjunganFarmasi(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    public function scopeKunjunganPerPoli(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->format('Y-m-d');
@@ -119,7 +121,7 @@ class ResepObat extends Model
             $tglAkhir = now()->endofMonth()->format('Y-m-d');
         }
 
-        return $query->selectRaw("
+        $sqlSelect = <<<SQL
             resep_obat.no_rawat,
             resep_obat.no_resep,
             pasien.nm_pasien,
@@ -130,7 +132,10 @@ class ResepObat extends Model
             dokter_poli.nm_dokter nm_dokter_poli,
             reg_periksa.status_lanjut,
             poliklinik.nm_poli
-        ")
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
             ->leftJoin('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
             ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
@@ -200,21 +205,21 @@ class ResepObat extends Model
 
     public static function kunjunganPasienRalan(string $year = '2022'): array
     {
-        $data = static::kunjunganPasien('ralan', $year)->pluck('jumlah', 'bulan');
+        $data = static::kunjunganPasien('ralan', $year)->pluck('jumlah', 'bulan')->map(fn ($v) => intval($v));
 
         return map_bulan($data);
     }
 
     public static function kunjunganPasienRanap(string $year = '2022'): array
     {
-        $data = static::kunjunganPasien('ranap', $year)->pluck('jumlah', 'bulan');
+        $data = static::kunjunganPasien('ranap', $year)->pluck('jumlah', 'bulan')->map(fn ($v) => intval($v));
 
         return map_bulan($data);
     }
 
     public static function kunjunganPasienIGD(string $year = '2022'): array
     {
-        $data = static::kunjunganPasien('IGD', $year)->pluck('jumlah', 'bulan');
+        $data = static::kunjunganPasien('IGD', $year)->pluck('jumlah', 'bulan')->map(fn ($v) => intval($v));
 
         return map_bulan($data);
     }

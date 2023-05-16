@@ -77,6 +77,21 @@ class LaporanTambahanBiayaPasien extends Component
             TambahanBiaya::query()
                 ->biayaTambahanUntukHonorDokter($this->tglAwal, $this->tglAkhir)
                 ->get()
+                ->map(fn (TambahanBiaya $model) => [
+                    'tgl_registrasi' => $model->tgl_registrasi,
+                    'jam_reg'        => $model->jam_reg,
+                    'nm_pasien'      => $model->nm_pasien,
+                    'no_rkm_medis'   => $model->no_rkm_medis,
+                    'no_rawat'       => $model->no_rawat,
+                    'nama_biaya'     => $model->nama_biaya,
+                    'besar_biaya'    => floatval($model->besar_biaya),
+                    'png_jawab'      => $model->png_jawab,
+                    'dokter_ralan'   => $model->dokter_ralan,
+                    'dokter_ranap'   => $model->dokter_ranap,
+                    'nm_poli'        => $model->nm_poli,
+                    'status_lanjut'  => $model->status_lanjut,
+                    'status_bayar'   => $model->status_bayar,
+                ])
         ];
     }
 
