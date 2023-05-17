@@ -47,7 +47,7 @@ class NotaSelesai extends Model
             ifnull(concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal), '-') ruangan,
             nota_selesai.status_pasien,
             nota_selesai.bentuk_bayar,
-            coalesce(nota_pasien.besar_bayar, piutang_pasien.sisapiutang) besar_bayar,
+            coalesce(nota_pasien.besar_bayar, piutang_pasien.totalpiutang) besar_bayar,
             penjab.png_jawab,
             nota_selesai.tgl_penyelesaian,
             concat(nota_selesai.user_id, ' ', pegawai.nama) nama_pegawai
