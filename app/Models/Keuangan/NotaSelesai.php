@@ -47,7 +47,7 @@ class NotaSelesai extends Model
             ifnull(concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal), '-') ruangan,
             nota_selesai.status_pasien,
             nota_selesai.bentuk_bayar,
-            nota_pasien.besar_bayar,
+            coalesce(nota_pasien.besar_bayar, piutang_pasien.totalpiutang) besar_bayar,
             penjab.png_jawab,
             nota_selesai.tgl_penyelesaian,
             concat(nota_selesai.user_id, ' ', pegawai.nama) nama_pegawai
@@ -87,6 +87,7 @@ class NotaSelesai extends Model
             ->selectRaw($sqlSelect)
             ->leftJoin(DB::raw($sik . '.reg_periksa reg_periksa'), 'nota_selesai.no_rawat', '=', 'reg_periksa.no_rawat')
             ->leftJoin(DB::raw($sik . '.kamar_inap kamar_inap'), 'nota_selesai.no_rawat', '=', 'kamar_inap.no_rawat')
+            ->leftJoin(DB::raw($sik . '.piutang_pasien piutang_pasien'), 'nota_selesai.no_rawat', '=', 'piutang_pasien.no_rawat')
             ->leftJoin($notaPasien, 'nota_selesai.no_rawat', '=', 'nota_pasien.no_rawat')
             ->leftJoin(DB::raw($sik . '.penjab penjab'), 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->leftJoin(DB::raw($sik . '.kamar kamar'), 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
