@@ -60,9 +60,10 @@ class LaporanSelesaiBillingPasien extends Component
                     "pegawai.nama",
                 ])
                 ->sortWithColumns($this->sortColumns, [
-                    'nm_pasien' => DB::raw("trim(pasien.nm_pasien)"),
-                    'ruangan' => DB::raw("ifnull(concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal), '-')"),
+                    'nm_pasien'    => DB::raw("trim(pasien.nm_pasien)"),
+                    'ruangan'      => DB::raw("ifnull(concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal), '-')"),
                     'nama_pegawai' => DB::raw("concat(nota_selesai.user_id, ' ', pegawai.nama)"),
+                    'besar_bayar'  => DB::raw("coalesce(nota_pasien.besar_bayar, piutang_pasien.totalpiutang)"),
                 ])
                 ->paginate($this->perpage);
     }
@@ -116,7 +117,6 @@ class LaporanSelesaiBillingPasien extends Component
     protected function columnHeaders(): array
     {
         return [
-            '#',
             'No. Rawat',
             'No. RM',
             'Pasien',
