@@ -117,7 +117,7 @@ class NotaSelesai extends Model
             ->where(fn ($query) => $query
                 ->where('keterangan', 'like', '%PEMBAYARAN PASIEN RAWAT JALAN% %DIPOSTING OLEH%')
                 ->orWhere('keterangan', 'like', '%PEMBAYARAN PASIEN RAWAT INAP% %DIPOSTING OLEH%')
-                ->orWhere('keterangan', 'like', '%PIUTANG PASIEN RAWAT RALAN% %DIPOSTING OLEH%')
+                ->orWhere('keterangan', 'like', '%PIUTANG PASIEN RAWAT JALAN% %DIPOSTING OLEH%')
                 ->orWhere('keterangan', 'like', '%PIUTANG PASIEN RAWAT INAP% %DIPOSTING OLEH%'))
             ->orderBy('no_jurnal')
             ->chunk(500, function ($jurnal) {

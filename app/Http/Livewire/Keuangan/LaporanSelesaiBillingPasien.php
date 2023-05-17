@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Keuangan;
 
 use App\Models\Keuangan\NotaSelesai;
+use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
@@ -10,17 +11,18 @@ use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class LaporanSelesaiBillingPasien extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
+    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
     public $tglAwal;
 
     public $tglAkhir;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
             'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
@@ -28,46 +30,50 @@ class LaporanSelesaiBillingPasien extends Component
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
+    /**
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|array
+     */
     public function getBillingYangDiselesaikanProperty()
     {
-        return NotaSelesai::query()
-            ->billingYangDiselesaikan($this->tglAwal, $this->tglAkhir)
-            ->search($this->cari, [
-                "nota_selesai.id",
-                "nota_selesai.no_rawat",
-                "pasien.no_rkm_medis",
-                "pasien.nm_pasien",
-                "ifnull(nota_pasien.no_nota, '-')",
-                "ifnull(kamar.kd_kamar, '-')",
-                "ifnull(bangsal.kd_bangsal, '-')",
-                "ifnull(bangsal.nm_bangsal, '-')",
-                "nota_selesai.status_pasien",
-                "nota_selesai.bentuk_bayar",
-                "penjab.png_jawab",
-                "nota_selesai.tgl_penyelesaian",
-                "nota_selesai.user_id",
-                "pegawai.nama",
-            ])
-            ->sortWithColumns($this->sortColumns, [
-                'nm_pasien' => DB::raw("trim(pasien.nm_pasien)"),
-                'ruangan' => DB::raw("ifnull(concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal), '-')"),
-                'nama_pegawai' => DB::raw("concat(nota_selesai.user_id, ' ', pegawai.nama)"),
-            ])
-            ->paginate($this->perpage);
+        return $this->isDeferred
+            ? []
+            : NotaSelesai::query()
+                ->billingYangDiselesaikan($this->tglAwal, $this->tglAkhir)
+                ->search($this->cari, [
+                    "nota_selesai.no_rawat",
+                    "pasien.no_rkm_medis",
+                    "pasien.nm_pasien",
+                    "ifnull(nota_pasien.no_nota, '-')",
+                    "ifnull(kamar.kd_kamar, '-')",
+                    "ifnull(bangsal.kd_bangsal, '-')",
+                    "ifnull(bangsal.nm_bangsal, '-')",
+                    "nota_selesai.status_pasien",
+                    "nota_selesai.bentuk_bayar",
+                    "penjab.png_jawab",
+                    "nota_selesai.tgl_penyelesaian",
+                    "nota_selesai.user_id",
+                    "pegawai.nama",
+                ])
+                ->sortWithColumns($this->sortColumns, [
+                    'nm_pasien' => DB::raw("trim(pasien.nm_pasien)"),
+                    'ruangan' => DB::raw("ifnull(concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal), '-')"),
+                    'nama_pegawai' => DB::raw("concat(nota_selesai.user_id, ' ', pegawai.nama)"),
+                ])
+                ->paginate($this->perpage);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.keuangan.laporan-selesai-billing-pasien')
             ->layout(BaseLayout::class, ['title' => 'Laporan Penyelesaian Billing Pasien per Petugas']);
     }
 
-    public function tarikDataTerbaru()
+    public function tarikDataTerbaru(): void
     {
         NotaSelesai::refreshModel();
 
@@ -76,7 +82,7 @@ class LaporanSelesaiBillingPasien extends Component
         $this->flashSuccess("Data Berhasil Diperbaharui!");
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;
