@@ -1,7 +1,7 @@
-<div>
+<div wire:init="loadProperties">
     <x-flash />
 
-    <x-card use-loading loading-target="tarikDataTerbaru">
+    <x-card use-loading>
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.range-date />
