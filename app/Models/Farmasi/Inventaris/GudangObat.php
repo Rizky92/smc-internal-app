@@ -39,16 +39,14 @@ class GudangObat extends Model
 
     public function scopeBangsalYangAda(Builder $query): Builder
     {
-        return $query->selectRaw("
-            distinct(gudangbarang.kd_bangsal) kd_bangsal,
-            bangsal.nm_bangsal
-        ")
+        return $query
+            ->selectRaw("distinct(gudangbarang.kd_bangsal) kd_bangsal, bangsal.nm_bangsal")
             ->join('bangsal', 'gudangbarang.kd_bangsal', '=', 'bangsal.kd_bangsal');
     }
 
     public function scopeStokPerRuangan(Builder $query, string $kodeBangsal = '-'): Builder
     {
-        return $query->selectRaw("
+        $sqlSelect = <<<SQL
             bangsal.nm_bangsal,
             gudangbarang.kode_brng,
             databarang.nama_brng,
@@ -56,7 +54,10 @@ class GudangObat extends Model
             gudangbarang.stok,
             databarang.h_beli,
             round(databarang.h_beli * if(gudangbarang.stok < 0, 0, gudangbarang.stok)) projeksi_harga
-        ")
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
             ->leftJoin('databarang', 'gudangbarang.kode_brng', '=', 'databarang.kode_brng')
             ->leftJoin('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
             ->leftJoin('bangsal', 'gudangbarang.kd_bangsal', '=', 'bangsal.kd_bangsal')

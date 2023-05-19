@@ -78,6 +78,15 @@ class StokObatRuangan extends Component
                     ['nama_brng' => 'asc']
                 )
                 ->get()
+                ->map(fn (GudangObat $model) => [
+                    'nm_bangsal'     => $model->nm_bangsal,
+                    'kode_brng'      => $model->kode_brng,
+                    'nama_brng'      => $model->nama_brng,
+                    'satuan'         => $model->satuan,
+                    'stok'           => round(floatval($model->stok), 2),
+                    'h_beli'         => round(floatval($model->h_beli), 2),
+                    'projeksi_harga' => round(floatval($model->projeksi_harga), 2),
+                ]),
         ];
     }
 

@@ -116,7 +116,17 @@ class RekapPiutangPasien extends Component
                     'penjamin' => '',
                 ])
                 ->map(fn (PiutangPasien $model) => [
-                    
+                    'no_rawat'     => $model->no_rawat,
+                    'no_rkm_medis' => $model->no_rkm_medis,
+                    'nm_pasien'    => $model->nm_pasien,
+                    'tgl_piutang'  => $model->tgl_piutang,
+                    'status'       => $model->status,
+                    'total'        => round(floatval($model->total), 2),
+                    'uang_muka'    => round(floatval($model->uang_muka), 2),
+                    'terbayar'     => round(floatval($model->terbayar), 2),
+                    'sisa'         => round(floatval($model->sisa), 2),
+                    'tgltempo'     => $model->tgltempo,
+                    'penjamin'     => $model->penjamin,
                 ])
         ];
     }
