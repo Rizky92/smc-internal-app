@@ -33,7 +33,7 @@ return new class extends Migration
             $table->string('nik_penagih', 20)->nullable()->index();
             $table->string('nik_menyetujui', 20)->nullable()->index();
             $table->string('nik_validasi', 20)->nullable()->index();
-            $table->timestamps();
+            $table->timestamps($precision = 6);
         });
     }
 };

@@ -2,25 +2,27 @@
 
 namespace App\Support\Mixins;
 
+use Closure;
+
 class CustomStr
 {
-    public function parseInt()
+    public function parseInt(): Closure
     {
-        return fn ($value) => intval($value);
+        return fn (string $value): int => intval($value);
     }
 
-    public function parseDouble()
+    public function parseDouble(): Closure
     {
-        return fn ($value) => floatval($value);
+        return fn (string $value): float => floatval($value);
     }
 
-    public function parseFloat()
+    public function parseFloat(): Closure
     {
-        return fn ($value) => floatval($value);
+        return fn (string $value): float => floatval($value);
     }
 
-    public function parseBoolean()
+    public function parseBoolean(): Closure
     {
-        return fn ($value) => boolval($value);
+        return fn (string $value): bool => boolval($value);
     }
 }

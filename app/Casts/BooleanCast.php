@@ -18,7 +18,6 @@ class BooleanCast implements CastsAttributes
      */
     public function get($model, string $key, $value, array $attributes)
     {
-        // dd(['get' => $value]);
         return $value === 'true';
     }
 
@@ -34,7 +33,6 @@ class BooleanCast implements CastsAttributes
      */
     public function set($model, string $key, $value, array $attributes)
     {
-        // dd(['set' => $value]);
         return $value ? 'true' : 'false';
     }
 }

@@ -62,6 +62,63 @@ class RegistrasiPasien extends Model
         });
     }
 
+    public function awalKeperawatan(): Attribute
+    {
+        return Attribute::get(function ($_, array $attributes) {
+            $exists = false;
+
+            $available = collect();
+
+            if ($attributes['gigi'] !== "0") {
+                $exists = true;
+                $available->push('Gigi');
+            }
+
+            if ($attributes['igd'] !== "0") {
+                $exists = true;
+                $available->push('IGD');
+            }
+
+            if ($attributes['kebidanan'] !== "0") {
+                $exists = true;
+                $available->push('Kebidanan');
+            }
+
+            if ($attributes['mata'] !== "0") {
+                $exists = true;
+                $available->push('Mata');
+            }
+
+            if ($attributes['ralan'] !== "0") {
+                $exists = true;
+                $available->push('Ralan');
+            }
+
+            if ($attributes['ralan_bayi'] !== "0") {
+                $exists = true;
+                $available->push('Ralan Bayi');
+            }
+
+            if ($attributes['ralan_psikiatri'] !== "0") {
+                $exists = true;
+                $available->push('Ralan Psikiatri');
+            }
+
+            if ($attributes['ranap'] !== "0") {
+                $exists = true;
+                $available->push('Ranap');
+            }
+
+            if (! $exists) {
+                return 'Tidak ada';
+            }
+
+            $available = $available->join(', ');
+
+            return "Ada ($available)";
+        });
+    }
+
     public function pasien(): BelongsTo
     {
         return $this->belongsTo(Pasien::class, 'no_rkm_medis', 'no_rkm_medis');
@@ -223,7 +280,7 @@ class RegistrasiPasien extends Model
             ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->leftJoin('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
             ->leftJoin('dpjp_ranap', 'reg_periksa.no_rawat', '=', 'dpjp_ranap.no_rawat')
-            ->leftJoin(DB::raw('dokter dokter_pj'), 'dpjp_ranap.kd_dokter', '=', 'dokter_pj.kd_dokter')
+            ->leftJoin(DB::raw('dokter dokter_pj')->getValue(), 'dpjp_ranap.kd_dokter', '=', 'dokter_pj.kd_dokter')
             ->when($statusPerawatan === '-', fn (Builder $query) => $query->where('kamar_inap.stts_pulang', '-'))
             ->when($statusPerawatan === 'tanggal_masuk', fn (Builder $query) => $query->whereBetween('kamar_inap.tgl_masuk', [$tglAwal, $tglAkhir]))
             ->when($statusPerawatan === 'tanggal_keluar', fn (Builder $query) => $query->whereBetween('kamar_inap.tgl_keluar', [$tglAwal, $tglAkhir]))
@@ -268,7 +325,15 @@ class RegistrasiPasien extends Model
             exists(select * from data_triase_igd where data_triase_igd.no_rawat = reg_periksa.no_rawat) triase_igd,
             exists(select * from penilaian_awal_keperawatan_igd where penilaian_awal_keperawatan_igd.no_rawat = reg_periksa.no_rawat) askep_igd,
             exists(select * from diagnosa_pasien where diagnosa_pasien.no_rawat = reg_periksa.no_rawat) icd_10,
-            exists(select * from prosedur_pasien where prosedur_pasien.no_rawat = reg_periksa.no_rawat) icd_9
+            exists(select * from prosedur_pasien where prosedur_pasien.no_rawat = reg_periksa.no_rawat) icd_9,
+            exists(select * from penilaian_awal_keperawatan_gigi where penilaian_awal_keperawatan_gigi.no_rawat = reg_periksa.no_rawat) gigi,
+            exists(select * from penilaian_awal_keperawatan_igd where penilaian_awal_keperawatan_igd.no_rawat = reg_periksa.no_rawat) igd,
+            exists(select * from penilaian_awal_keperawatan_kebidanan where penilaian_awal_keperawatan_kebidanan.no_rawat = reg_periksa.no_rawat) kebidanan,
+            exists(select * from penilaian_awal_keperawatan_mata where penilaian_awal_keperawatan_mata.no_rawat = reg_periksa.no_rawat) mata,
+            exists(select * from penilaian_awal_keperawatan_ralan where penilaian_awal_keperawatan_ralan.no_rawat = reg_periksa.no_rawat) ralan,
+            exists(select * from penilaian_awal_keperawatan_ralan_bayi where penilaian_awal_keperawatan_ralan_bayi.no_rawat = reg_periksa.no_rawat) ralan_bayi,
+            exists(select * from penilaian_awal_keperawatan_ralan_psikiatri where penilaian_awal_keperawatan_ralan_psikiatri.no_rawat = reg_periksa.no_rawat) ralan_psikiatri,
+            exists(select * from penilaian_awal_keperawatan_ranap where penilaian_awal_keperawatan_ranap.no_rawat = reg_periksa.no_rawat) ranap
         SQL;
 
         return $query

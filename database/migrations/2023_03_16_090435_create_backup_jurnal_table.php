@@ -34,7 +34,7 @@ return new class extends Migration
                 ->nullable()
                 ->index();
 
-            $table->timestamps();
+            $table->timestamps($precision = 6);
         });
     }
 };

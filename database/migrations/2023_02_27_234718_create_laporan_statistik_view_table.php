@@ -16,11 +16,9 @@ return new class extends Migration
     public function up()
     {
         $db = DB::connection('mysql_sik')->getDatabaseName();
-        $kunjunganKe = "(
-            select count(rp2.no_rawat)
-            from $db.reg_periksa rp2
-            where rp2.no_rkm_medis = reg_periksa.no_rkm_medis and rp2.tgl_registrasi <= reg_periksa.tgl_registrasi
-        )";
+        $kunjunganKe = <<<SQL
+            (select count(rp2.no_rawat) from $db.reg_periksa rp2 where rp2.no_rkm_medis = reg_periksa.no_rkm_medis and rp2.tgl_registrasi <= reg_periksa.tgl_registrasi)
+        SQL;
 
         $query = <<<SQL
         select

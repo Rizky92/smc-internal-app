@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     protected $connection = 'mysql_smc';
-    
+
     /**
      * Run the migrations.
      *
@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedInteger('stok_min')->default(0);
             $table->unsignedInteger('stok_max')->default(0);
             $table->char('kode_suplier', 5)->nullable()->index();
-            $table->timestamps();
+            $table->timestamps($precision = 6);
             $table->softDeletes();
         });
     }

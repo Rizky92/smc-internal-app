@@ -2,27 +2,26 @@
 
 namespace App\Support\Mixins;
 
-/**
- * @extends \Illuminate\Support\Stringable
- */
+use Closure;
+
 class CustomStringable
 {
-    public function toInt()
+    public function toInt(): Closure
     {
         return fn (): int => intval($this->value);
     }
 
-    public function toDouble()
+    public function toDouble(): Closure
     {
         return fn (): float => floatval($this->value);
     }
 
-    public function toFloat()
+    public function toFloat(): Closure
     {
         return fn (): float => floatval($this->value);
     }
 
-    public function toBoolean()
+    public function toBoolean(): Closure
     {
         return fn (): bool => boolval($this->value);
     }

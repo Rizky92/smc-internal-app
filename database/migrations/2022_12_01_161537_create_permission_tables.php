@@ -8,7 +8,7 @@ use Spatie\Permission\PermissionRegistrar;
 return new class extends Migration
 {
     protected $connection = 'mysql_smc';
-    
+
     /**
      * Run the migrations.
      *
@@ -31,7 +31,7 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->string('name');       // For MySQL 8.0 use string('name', 125);
             $table->string('guard_name'); // For MySQL 8.0 use string('guard_name', 125);
-            $table->timestamps();
+            $table->timestamps($precision = 6);
 
             $table->unique(['name', 'guard_name']);
         });
@@ -44,7 +44,7 @@ return new class extends Migration
             }
             $table->string('name');       // For MySQL 8.0 use string('name', 125);
             $table->string('guard_name'); // For MySQL 8.0 use string('guard_name', 125);
-            $table->timestamps();
+            $table->timestamps($precision = 6);
             if ($teams || config('permission.testing')) {
                 $table->unique([$columnNames['team_foreign_key'], 'name', 'guard_name']);
             } else {

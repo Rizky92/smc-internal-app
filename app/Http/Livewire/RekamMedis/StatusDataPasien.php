@@ -12,6 +12,9 @@ use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class StatusDataPasien extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
@@ -34,11 +37,14 @@ class StatusDataPasien extends Component
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
+    /**
+     * @return array|\Illuminate\Pagination\LengthAwarePaginator
+     */
     public function getDataStatusRekamMedisPasienProperty()
     {
         return $this->isDeferred
@@ -99,6 +105,7 @@ class StatusDataPasien extends Component
                     'askep_igd' => boolval($v->askep_igd) ? 'Ada' : 'Tidak ada',
                     'icd_10' => boolval($v->icd_10) ? 'Ada' : 'Tidak ada',
                     'icd_9' => boolval($v->icd_9) ? 'Ada' : 'Tidak ada',
+                    'awal_keperawatan' => $v->awal_keperawatan,
                 ]),
         ];
     }
@@ -122,6 +129,7 @@ class StatusDataPasien extends Component
             'Askep IGD',
             'ICD 10',
             'ICD 9',
+            'Awal Pengkajian',
         ];
     }
 
