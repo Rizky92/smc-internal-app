@@ -8,17 +8,21 @@ use RuntimeException;
 
 class Crypter extends BaseCrypter
 {
-    /**
-     * @psalm-suppress MissingParamType
-     */
-    public static function __callStatic($name, $arguments)
-    {
-        $passthru = ['encrypt', 'decrypt', 'generateKey'];
+    // /**
+    //  * @psalm-suppress MissingParamType
+    //  */
+    // public static function __callStatic($name, $arguments)
+    // {
+    //     $passthru = ['encrypt', 'decrypt', 'generateKey'];
 
-        if (! in_array($name, $passthru, true)) {
-            throw new BadMethodCallException;
-        }
+    //     if (empty(static::$seed)) {
+    //         throw new RuntimeException("Seed is not defined");
+    //     }
 
-        return static::$name(...$arguments);
-    }
+    //     if (! in_array($name, $passthru, true)) {
+    //         throw new BadMethodCallException;
+    //     }
+
+    //     return (new static(static::$seed))->$name(...$arguments);
+    // }
 }

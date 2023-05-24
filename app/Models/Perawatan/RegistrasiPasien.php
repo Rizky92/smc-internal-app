@@ -99,7 +99,7 @@ class RegistrasiPasien extends Model
                 $available->push('Ranap');
             }
 
-            if (! $available->isEmpty()) {
+            if ($available->isEmpty()) {
                 return 'Tidak ada';
             }
 

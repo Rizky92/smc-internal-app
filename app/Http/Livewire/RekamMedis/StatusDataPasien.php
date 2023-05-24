@@ -88,24 +88,24 @@ class StatusDataPasien extends Component
             RegistrasiPasien::query()
                 ->statusDataRM($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan, $this->tampilkanSemuaRegistrasi)
                 ->cursor()
-                ->map(fn ($v, $k) => [
-                    'no_rawat' => $v->no_rawat,
-                    'tgl_registrasi' => $v->tgl_registrasi,
-                    'stts' => $v->stts,
-                    'nm_dokter' => $v->nm_dokter,
-                    'no_rkm_medis' => $v->no_rkm_medis,
-                    'nm_pasien' => $v->nm_pasien,
-                    'nm_poli' => $v->nm_poli,
-                    'status_lanjut' => $v->status_lanjut,
-                    'soapie_ralan' => boolval($v->soapie_ralan) ? 'Ada' : 'Tidak ada',
-                    'soapie_ranap' => boolval($v->soapie_ranap) ? 'Ada' : 'Tidak ada',
-                    'resume_ralan' => boolval($v->resume_ralan) ? 'Ada' : 'Tidak ada',
-                    'resume_ranap' => boolval($v->resume_ranap) ? 'Ada' : 'Tidak ada',
-                    'triase_igd' => boolval($v->triase_igd) ? 'Ada' : 'Tidak ada',
-                    'askep_igd' => boolval($v->askep_igd) ? 'Ada' : 'Tidak ada',
-                    'icd_10' => boolval($v->icd_10) ? 'Ada' : 'Tidak ada',
-                    'icd_9' => boolval($v->icd_9) ? 'Ada' : 'Tidak ada',
-                    'awal_keperawatan' => $v->awal_keperawatan,
+                ->map(fn (RegistrasiPasien $modal): array => [
+                    'no_rawat'         => $modal->no_rawat,
+                    'tgl_registrasi'   => $modal->tgl_registrasi,
+                    'stts'             => $modal->stts,
+                    'nm_dokter'        => $modal->nm_dokter,
+                    'no_rkm_medis'     => $modal->no_rkm_medis,
+                    'nm_pasien'        => $modal->nm_pasien,
+                    'nm_poli'          => $modal->nm_poli,
+                    'status_lanjut'    => $modal->status_lanjut,
+                    'soapie_ralan'     => boolval($modal->soapie_ralan) ? 'Ada' : 'Tidak ada',
+                    'soapie_ranap'     => boolval($modal->soapie_ranap) ? 'Ada' : 'Tidak ada',
+                    'resume_ralan'     => boolval($modal->resume_ralan) ? 'Ada' : 'Tidak ada',
+                    'resume_ranap'     => boolval($modal->resume_ranap) ? 'Ada' : 'Tidak ada',
+                    'triase_igd'       => boolval($modal->triase_igd) ? 'Ada' : 'Tidak ada',
+                    'askep_igd'        => boolval($modal->askep_igd) ? 'Ada' : 'Tidak ada',
+                    'icd_10'           => boolval($modal->icd_10) ? 'Ada' : 'Tidak ada',
+                    'icd_9'            => boolval($modal->icd_9) ? 'Ada' : 'Tidak ada',
+                    'awal_keperawatan' => $modal->awal_keperawatan,
                 ]),
         ];
     }
@@ -129,7 +129,7 @@ class StatusDataPasien extends Component
             'Askep IGD',
             'ICD 10',
             'ICD 9',
-            'Awal Pengkajian',
+            'Awal Keperawatan',
         ];
     }
 

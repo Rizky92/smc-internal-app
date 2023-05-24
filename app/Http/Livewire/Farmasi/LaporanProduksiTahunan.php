@@ -46,10 +46,8 @@ class LaporanProduksiTahunan extends Component
     public function getDataTahunProperty()
     {
         return collect(range((int) now()->format('Y'), 2022, -1))
-            ->mapWithKeys(function ($value, $key) {
-                return [$value => $value];
-            })
-            ->toArray();
+            ->mapWithKeys(fn (int $v, $_): array => [$v => $v])
+            ->all();
     }
 
     public function getKunjunganRalanProperty()
@@ -81,7 +79,11 @@ class LaporanProduksiTahunan extends Component
         $kunjunganTotal = [];
 
         foreach ($this->kunjunganRalan as $key => $data) {
-            $kunjunganTotal[$key] = $this->kunjunganRalan[$key] + $this->kunjunganRanap[$key] + $this->kunjunganIGD[$key] + $this->kunjunganWalkIn[$key];
+            $kunjunganTotal[$key] =
+                $this->kunjunganRalan[$key] +
+                $this->kunjunganRanap[$key] +
+                $this->kunjunganIGD[$key] +
+                $this->kunjunganWalkIn[$key];
         }
 
         return $kunjunganTotal;
@@ -121,7 +123,11 @@ class LaporanProduksiTahunan extends Component
         $pendapatanObat = [];
 
         foreach ($this->pendapatanObatRalan as $key => $data) {
-            $pendapatanObat[$key] = $this->pendapatanObatRalan[$key] + $this->pendapatanObatRanap[$key] + $this->pendapatanObatIGD[$key] + $this->pendapatanObatWalkIn[$key];
+            $pendapatanObat[$key] =
+                $this->pendapatanObatRalan[$key] +
+                $this->pendapatanObatRanap[$key] +
+                $this->pendapatanObatIGD[$key] +
+                $this->pendapatanObatWalkIn[$key];
         }
 
         return $pendapatanObat;

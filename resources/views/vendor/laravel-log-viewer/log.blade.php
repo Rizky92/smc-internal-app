@@ -13,10 +13,19 @@
                 $(document).ready(function() {
                     $('#logviewer-table tr').click(e => {
                         let asd = e.currentTarget.querySelector('.stack')
+                        let qwe = e.currentTarget.querySelector('p.title')
 
                         asd.style['display'] = (asd.style['display'] === 'none')
                             ? 'block'
                             : 'none'
+
+                        qwe.style['max-height'] = (asd.style['display'] === 'none')
+                            ? '50px'
+                            : '100%'
+
+                        qwe.style['overflow'] = (asd.style['display'] === 'none')
+                            ? 'hidden'
+                            : 'auto'
                     })
 
                     $('#logviewer-table').DataTable({
@@ -68,7 +77,7 @@
                                 @endif
                                 <td class="date">{{ $log['date'] }}</td>
                                 <td class="text">
-                                    {{ $log['text'] }}
+                                    <p class="title m-0 p-0" style="max-height: 50px; overflow: hidden">{{ $log['text'] }}</p>
                                     @if (isset($log['in_file']))
                                         <br />
                                         {{ $log['in_file'] }}

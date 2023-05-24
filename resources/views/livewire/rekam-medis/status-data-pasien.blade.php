@@ -37,7 +37,7 @@
                     <x-table.th style="width: 32ch" name="askep_igd" title="Askep IGD" />
                     <x-table.th style="width: 32ch" name="icd_10" title="ICD 10" />
                     <x-table.th style="width: 32ch" name="icd_9" title="ICD 9" />
-                    <x-table.th style="width: 32ch" name="icd_9" title="Pengkajian Awal" />
+                    <x-table.th style="width: 32ch" name="icd_9" title="Awal Keperawatan" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->dataStatusRekamMedisPasien as $item)
