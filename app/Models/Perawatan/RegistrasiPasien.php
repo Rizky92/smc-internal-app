@@ -65,51 +65,41 @@ class RegistrasiPasien extends Model
     public function awalKeperawatan(): Attribute
     {
         return Attribute::get(function ($_, array $attributes) {
-            $exists = false;
-
             $available = collect();
 
             if ($attributes['gigi'] !== "0") {
-                $exists = true;
                 $available->push('Gigi');
             }
 
-            if ($attributes['igd'] !== "0") {
-                $exists = true;
+            if ($attributes['askep_igd'] !== "0") {
                 $available->push('IGD');
             }
 
             if ($attributes['kebidanan'] !== "0") {
-                $exists = true;
                 $available->push('Kebidanan');
             }
 
             if ($attributes['mata'] !== "0") {
-                $exists = true;
                 $available->push('Mata');
             }
 
             if ($attributes['ralan'] !== "0") {
-                $exists = true;
                 $available->push('Ralan');
             }
 
             if ($attributes['ralan_bayi'] !== "0") {
-                $exists = true;
                 $available->push('Ralan Bayi');
             }
 
             if ($attributes['ralan_psikiatri'] !== "0") {
-                $exists = true;
                 $available->push('Ralan Psikiatri');
             }
 
             if ($attributes['ranap'] !== "0") {
-                $exists = true;
                 $available->push('Ranap');
             }
 
-            if (! $exists) {
+            if (! $available->isEmpty()) {
                 return 'Tidak ada';
             }
 
@@ -327,7 +317,6 @@ class RegistrasiPasien extends Model
             exists(select * from diagnosa_pasien where diagnosa_pasien.no_rawat = reg_periksa.no_rawat) icd_10,
             exists(select * from prosedur_pasien where prosedur_pasien.no_rawat = reg_periksa.no_rawat) icd_9,
             exists(select * from penilaian_awal_keperawatan_gigi where penilaian_awal_keperawatan_gigi.no_rawat = reg_periksa.no_rawat) gigi,
-            exists(select * from penilaian_awal_keperawatan_igd where penilaian_awal_keperawatan_igd.no_rawat = reg_periksa.no_rawat) igd,
             exists(select * from penilaian_awal_keperawatan_kebidanan where penilaian_awal_keperawatan_kebidanan.no_rawat = reg_periksa.no_rawat) kebidanan,
             exists(select * from penilaian_awal_keperawatan_mata where penilaian_awal_keperawatan_mata.no_rawat = reg_periksa.no_rawat) mata,
             exists(select * from penilaian_awal_keperawatan_ralan where penilaian_awal_keperawatan_ralan.no_rawat = reg_periksa.no_rawat) ralan,

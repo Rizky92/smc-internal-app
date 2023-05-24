@@ -7,6 +7,24 @@ use Illuminate\Support\Collection;
 
 class CustomCollections
 {
+    public function pushIf(): Closure
+    {
+        return function (bool $condition, ...$values): Collection {
+            /** @var \Illuminate\Support\Collection $this */
+            
+            return $this->when($condition, fn (Collection $c) => $c->push($values));
+        };
+    }
+
+    public function pushUnless(): Closure
+    {
+        return function (bool $condition, ...$values): Collection {
+            /** @var \Illuminate\Support\Collection $this */
+            
+            return $this->unless($condition, fn (Collection $c) => $c->push($values));
+        };
+    }
+
     public function whereLike(): Closure
     {
         return function (?string $search = null, int $looseRange = 1): Collection {
