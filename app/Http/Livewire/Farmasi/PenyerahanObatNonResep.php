@@ -10,18 +10,25 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class PenyerahanObatNonResep extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
+    /** @var string */
     public $tglAwal;
 
+    /** @var string */
     public $tglAkhir;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
             'tglAwal' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_awal'],
@@ -29,12 +36,12 @@ class PenyerahanObatNonResep extends Component
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function getDataPenyerahanObatDriveThruProperty()
+    public function getDataPenyerahanObatDriveThruProperty(): LengthAwarePaginator
     {
         return ResepObat::query()
             ->penyerahanMelaluiDriveThru($this->tglAwal, $this->tglAkhir)
@@ -54,13 +61,13 @@ class PenyerahanObatNonResep extends Component
             ->paginate($this->perpage);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.farmasi.penyerahan-obat-non-resep')
             ->layout(BaseLayout::class, ['title' => 'Persiapan Penyerahan Obat Pasien Rawat Jalan melalui Drive Thru']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;

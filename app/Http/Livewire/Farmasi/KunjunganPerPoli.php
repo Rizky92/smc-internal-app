@@ -9,18 +9,25 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class KunjunganPerPoli extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
+    /** @var string */
     public $tglAwal;
 
+    /** @var string */
     public $tglAkhir;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
             'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
@@ -28,12 +35,12 @@ class KunjunganPerPoli extends Component
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function getDataKunjunganResepPasienProperty()
+    public function getDataKunjunganResepPasienProperty(): LengthAwarePaginator
     {
         return ResepObat::query()
             ->kunjunganPerPoli($this->tglAwal, $this->tglAkhir)
@@ -54,13 +61,13 @@ class KunjunganPerPoli extends Component
             ->paginate($this->perpage);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.farmasi.kunjungan-per-poli')
             ->layout(BaseLayout::class, ['title' => 'Kunjungan Resep Pasien Per Poli']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;
@@ -106,6 +113,9 @@ class KunjunganPerPoli extends Component
         ];
     }
 
+    /**
+     * @return array{0: string, 1: string, 2: string, 3: string}
+     */
     protected function pageHeaders(): array
     {
         return [

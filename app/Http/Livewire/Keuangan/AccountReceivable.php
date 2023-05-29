@@ -12,72 +12,84 @@ use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class AccountReceivable extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
+    /** @var string */
     public $tglAwal;
 
+    /** @var string */
     public $tglAkhir;
 
+    /** @var bool */
     public $hanyaBelumLunas;
 
+    /** @var string */
     public $jaminanPasien;
 
+    /** @var string */
     public $jenisPerawatan;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'         => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir'        => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
             'hanyaBelumLunas' => ['except' => false, 'as' => 'belum_lunas'],
-            'jaminanPasien' => ['except' => '-', 'as' => 'jaminan_pasien'],
-            'jenisPerawatan' => ['except' => 'semua', 'as' => 'jenis_perawatan'],
+            'jaminanPasien'   => ['except' => '-', 'as' => 'jaminan_pasien'],
+            'jenisPerawatan'  => ['except' => 'semua', 'as' => 'jenis_perawatan'],
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
+    /** 
+     * @return \Illuminate\Pagination\LengthAwarePaginator|array<empty, empty>
+     */
     public function getDataAccountReceivableProperty()
     {
         return $this->isDeferred
-            ? collect()
+            ? []
             : PenagihanPiutangDetail::query()
-            ->tagihanPiutangAging($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
-            ->search($this->cari, [
-                'detail_penagihan_piutang.no_tagihan',
-                'detail_penagihan_piutang.no_rawat',
-                'reg_periksa.no_rkm_medis',
-                'pasien.nm_pasien',
-                'penjab_pasien.png_jawab',
-                'penjab_tagihan.png_jawab',
-                'penagihan_piutang.catatan',
-                'detail_piutang_pasien.nama_bayar',
-            ])
-            ->sortWithColumns($this->sortColumns, [
-                'tgl_tagihan'     => 'penagihan_piutang.tanggal',
-                'tgl_jatuh_tempo' => 'penagihan_piutang.tanggaltempo',
-                'penjab_pasien'   => 'penjab_pasien.png_jawab',
-                'penjab_piutang'  => 'penjab_tagihan.png_jawab',
-                'total_piutang'   => DB::raw('round(detail_piutang_pasien.totalpiutang, 2)'),
-                'besar_cicilan'   => DB::raw('round(bayar_piutang.besar_cicilan, 2)'),
-                'sisa_piutang'    => DB::raw('round(detail_piutang_pasien.totalpiutang - ifnull(bayar_piutang.besar_cicilan, 0), 2)'),
-            ])
-            ->paginate($this->perpage);
+                ->tagihanPiutangAging($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
+                ->search($this->cari, [
+                    'detail_penagihan_piutang.no_tagihan',
+                    'detail_penagihan_piutang.no_rawat',
+                    'reg_periksa.no_rkm_medis',
+                    'pasien.nm_pasien',
+                    'penjab_pasien.png_jawab',
+                    'penjab_tagihan.png_jawab',
+                    'penagihan_piutang.catatan',
+                    'detail_piutang_pasien.nama_bayar',
+                ])
+                ->sortWithColumns($this->sortColumns, [
+                    'tgl_tagihan'     => 'penagihan_piutang.tanggal',
+                    'tgl_jatuh_tempo' => 'penagihan_piutang.tanggaltempo',
+                    'penjab_pasien'   => 'penjab_pasien.png_jawab',
+                    'penjab_piutang'  => 'penjab_tagihan.png_jawab',
+                    'total_piutang'   => DB::raw('round(detail_piutang_pasien.totalpiutang, 2)'),
+                    'besar_cicilan'   => DB::raw('round(bayar_piutang.besar_cicilan, 2)'),
+                    'sisa_piutang'    => DB::raw('round(detail_piutang_pasien.totalpiutang - ifnull(bayar_piutang.besar_cicilan, 0), 2)'),
+                ])
+                ->paginate($this->perpage);
     }
 
-    public function getPenjaminProperty()
+    public function getPenjaminProperty(): array
     {
         return Penjamin::where('status', '1')->pluck('png_jawab', 'kd_pj')->all();
     }
 
-    public function getTotalPiutangAgingProperty()
+    public function getTotalPiutangAgingProperty(): array
     {
         if ($this->isDeferred)
             return [];
@@ -104,13 +116,13 @@ class AccountReceivable extends Component
         return compact('totalPiutang', 'totalCicilan', 'totalSisaPerPeriode', 'totalSisaCicilan');
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.keuangan.account-receivable')
             ->layout(BaseLayout::class, ['title' => 'Piutang Aging (Account Receivable)']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;
@@ -172,13 +184,13 @@ class AccountReceivable extends Component
                     'catatan'         => '',
                     'status'          => '',
                     'nama_bayar'      => 'TOTAL',
-                    'total_piutang'   => (float) $totalPiutang,
-                    'besar_cicilan'   => (float) $totalCicilan,
-                    'sisa_piutang'    => (float) $totalSisaCicilan,
-                    'periode_0_30'    => (float) $totalSisaPerPeriode->get('periode_0_30') ?? 0,
-                    'periode_31_60'   => (float) $totalSisaPerPeriode->get('periode_31_60') ?? 0,
-                    'periode_61_90'   => (float) $totalSisaPerPeriode->get('periode_61_90') ?? 0,
-                    'periode_90_up'   => (float) $totalSisaPerPeriode->get('periode_90_up') ?? 0,
+                    'total_piutang'   => $totalPiutang,
+                    'besar_cicilan'   => $totalCicilan,
+                    'sisa_piutang'    => $totalSisaCicilan,
+                    'periode_0_30'    => (float) $totalSisaPerPeriode->get('periode_0_30'),
+                    'periode_31_60'   => (float) $totalSisaPerPeriode->get('periode_31_60'),
+                    'periode_61_90'   => (float) $totalSisaPerPeriode->get('periode_61_90'),
+                    'periode_90_up'   => (float) $totalSisaPerPeriode->get('periode_90_up'),
                     'umur_hari'       => '',
                 ]]),
         ];

@@ -9,18 +9,20 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class Khanza extends Component
 {
     use FlashComponent, Filterable, LiveTable, MenuTracker;
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function getHakAksesKhanzaProperty()
+    public function getHakAksesKhanzaProperty(): LengthAwarePaginator
     {
         return HakAkses::query()
             ->search($this->cari)
@@ -28,20 +30,20 @@ class Khanza extends Component
             ->paginate($this->perpage);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.hak-akses.khanza')
             ->layout(BaseLayout::class, ['title' => 'Pengaturan perizinan SIMRS Khanza']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;
         $this->sortColumns = [];
     }
 
-    public function syncHakAkses()
+    public function syncHakAkses(): void
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
@@ -49,11 +51,11 @@ class Khanza extends Component
             return;
         }
 
-        $hakAkses = collect(User::rawFindByNRP('221203')->getAttributes())->except('id_user', 'password');
+        $hakAkses = collect(User::rawFindByNRP('221203')->getAttributes())->except(['id_user', 'password']);
 
         $hakAksesTersedia = HakAkses::pluck('default_value', 'nama_field');
 
-        $hakAksesBaru = $hakAkses->diffKeys($hakAksesTersedia)->map(fn ($_) => 'false');
+        $hakAksesBaru = $hakAkses->diffKeys($hakAksesTersedia)->map(fn ($_): string => 'false');
         $hakAksesDibuang = $hakAksesTersedia->diffKeys($hakAkses);
 
         $countBaru = $hakAksesBaru->count();
@@ -89,7 +91,7 @@ class Khanza extends Component
         $this->resetFilters();
     }
 
-    public function simpanHakAkses(string $field, string $judul)
+    public function simpanHakAkses(string $field, string $judul): void
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');

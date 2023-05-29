@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class StokDaruratFarmasi extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
@@ -24,7 +27,7 @@ class StokDaruratFarmasi extends Component
     }
 
     /**
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator<array-key, \App\Models\Farmasi\Obat>|array
+     * @return \Illuminate\Pagination\LengthAwarePaginator|array
      */
     public function getStokDaruratObatProperty()
     {
@@ -78,7 +81,7 @@ class StokDaruratFarmasi extends Component
                 ->daruratStok()
                 ->orderBy('nama_brng')
                 ->get()
-                ->map(fn (Obat $model) => [
+                ->map(fn (Obat $model): array => [
                     'nama_brng'           => $model->nama_brng,
                     'satuan_kecil'        => $model->satuan_kecil,
                     'kategori'            => $model->kategori,

@@ -9,14 +9,21 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class ObatPerDokter extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
+    /** @var string */
     public $tglAwal;
 
+    /** @var string */
     public $tglAkhir;
 
     protected function queryString(): array
@@ -27,12 +34,12 @@ class ObatPerDokter extends Component
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function getObatPerDokterProperty()
+    public function getObatPerDokterProperty(): LengthAwarePaginator
     {
         return ResepObat::query()
             ->penggunaanObatPerDokter($this->tglAwal, $this->tglAkhir)
@@ -51,13 +58,13 @@ class ObatPerDokter extends Component
             ->paginate($this->perpage);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.farmasi.obat-per-dokter')
             ->layout(BaseLayout::class, ['title' => 'Penggunaan Obat Per Dokter Peresep']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;
@@ -72,7 +79,7 @@ class ObatPerDokter extends Component
             ResepObat::query()
                 ->penggunaanObatPerDokter($this->tglAwal, $this->tglAkhir)
                 ->get()
-                ->map(fn (ResepObat $model) => [
+                ->map(fn (ResepObat $model): array => [
                     'no_resep'      => $model->no_resep,
                     'tgl_perawatan' => $model->tgl_perawatan,
                     'jam'           => $model->jam,

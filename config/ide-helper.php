@@ -180,26 +180,17 @@ return [
     */
 
     'extra' => [
-        Eloquent::class => [
-            \Illuminate\Database\Eloquent\Builder::class,
-            \Illuminate\Database\Query\Builder::class,
-        ],
+        \Illuminate\Support\Facades\Session::class => \Illuminate\Session\Store::class,
 
-        \Illuminate\Support\Facade\Session::class => [
-            \Illuminate\Session\Store::class,
-        ],
+        \Illuminate\View\View::class => \Livewire\Macros\ViewMacros::class,
 
-        \Illuminate\Contracts\View\View::class => [
-            \Livewire\Macros\ViewMacros::class,
-        ],
-        
         \Illuminate\Support\Collection::class => \App\Support\Mixins\CustomCollections::class,
         \Illuminate\Support\Str::class => \App\Support\Mixins\CustomStr::class,
         \Illuminate\Support\Stringable::class => \App\Support\Mixins\CustomStringable::class,
     ],
 
     'magic' => [
-        
+        //
     ],
 
     /*
@@ -213,7 +204,7 @@ return [
     */
 
     'interfaces' => [
-        //
+        \Illuminate\Contracts\View\View::class => \Illuminate\View\View::class,
     ],
 
     /*

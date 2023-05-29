@@ -10,31 +10,38 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use DB;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class JurnalSupplierPO extends Component
 {
     use FlashComponent, Filterable, LiveTable, MenuTracker, ExcelExportable;
 
+    /** @var string */
     public $tglAwal;
 
+    /** @var string */
     public $tglAkhir;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function getJurnalBarangMedisProperty()
+    public function getJurnalBarangMedisProperty(): LengthAwarePaginator
     {
         return JurnalMedis::query()
             ->jurnalPenerimaanBarang($this->tglAwal, $this->tglAkhir)
@@ -59,7 +66,7 @@ class JurnalSupplierPO extends Component
             ->paginate($this->perpage, ['*'], 'page_medis');
     }
 
-    public function getJurnalBarangNonMedisProperty()
+    public function getJurnalBarangNonMedisProperty(): LengthAwarePaginator
     {
         return JurnalNonMedis::query()
             ->jurnalPenerimaanBarang($this->tglAwal, $this->tglAkhir)
@@ -84,13 +91,13 @@ class JurnalSupplierPO extends Component
             ->paginate($this->perpage, ['*'], 'page_nonmedis');
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.keuangan.jurnal-supplier-p-o')
             ->layout(BaseLayout::class, ['title' => 'Penarikan Data Suplier Penerimaan Barang Medis / Non Medis dari Jurnal']);
     }
 
-    public function tarikDataTerbaru()
+    public function tarikDataTerbaru(): void
     {
         JurnalMedis::refreshModel();
 
@@ -101,7 +108,7 @@ class JurnalSupplierPO extends Component
         $this->flashSuccess('Data Berhasil Diperbaharui!');
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;
@@ -110,7 +117,7 @@ class JurnalSupplierPO extends Component
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
-    public function searchData()
+    public function searchData(): void
     {
         $this->resetPage('page_medis');
         $this->resetPage('page_nonmedis');

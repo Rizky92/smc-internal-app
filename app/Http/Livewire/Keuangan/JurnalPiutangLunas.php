@@ -10,42 +10,51 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class JurnalPiutangLunas extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
+    /** @var string */
     public $tglAwal;
 
+    /** @var string */
     public $tglAkhir;
 
+    /** @var string */
     public $kodeRekening;
 
+    /** @var string */
     public $jenisPeriode;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.keuangan.jurnal-piutang-lunas')
             ->layout(BaseLayout::class, ['title' => 'Penarikan Data Penagihan Piutang Dibayar dari Jurnal']);
     }
 
-    public function getAkunPenagihanPiutangProperty()
+    public function getAkunPenagihanPiutangProperty(): array
     {
         return DB::connection('mysql_sik')
             ->table('rekening')
@@ -54,7 +63,7 @@ class JurnalPiutangLunas extends Component
             ->all();
     }
 
-    public function tarikDataTerbaru()
+    public function tarikDataTerbaru(): void
     {
         PiutangDilunaskan::refreshModel();
 
@@ -63,7 +72,7 @@ class JurnalPiutangLunas extends Component
         $this->flashSuccess('Data Berhasil Diperbaharui!');
     }
 
-    public function getDataPiutangDilunaskanProperty()
+    public function getDataPiutangDilunaskanProperty(): LengthAwarePaginator
     {
         return PiutangDilunaskan::query()
             ->dataPiutangDilunaskan($this->tglAwal, $this->tglAkhir, $this->kodeRekening, $this->jenisPeriode)
@@ -91,7 +100,7 @@ class JurnalPiutangLunas extends Component
             ->paginate($this->perpage);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;
@@ -108,7 +117,7 @@ class JurnalPiutangLunas extends Component
             PiutangDilunaskan::query()
                 ->dataPiutangDilunaskan($this->tglAwal, $this->tglAkhir, $this->kodeRekening, $this->jenisPeriode)
                 ->cursor()
-                ->map(fn (PiutangDilunaskan $model) => [
+                ->map(fn (PiutangDilunaskan $model): array => [
                     'no_jurnal'       => $model->no_jurnal,
                     'waktu_jurnal'    => carbon($model->waktu_jurnal)->format('Y-m-d'),
                     'no_rawat'        => $model->no_rawat,

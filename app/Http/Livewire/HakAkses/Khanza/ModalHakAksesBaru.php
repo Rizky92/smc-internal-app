@@ -5,12 +5,15 @@ namespace App\Http\Livewire\HakAkses\Khanza;
 use App\Models\Aplikasi\HakAkses;
 use App\View\Components\BaseLayout;
 use Illuminate\Validation\Rule;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class ModalHakAksesBaru extends Component
 {
+    /** @var string */
     public $namaField;
 
+    /** @var string */
     public $judulMenu;
 
     // protected $rules = [
@@ -18,12 +21,12 @@ class ModalHakAksesBaru extends Component
     //     'judulMenu' => ['required', 'string', 'max:255', Rule::unique('khanza_mapping_akses', 'nama_field')->ignore($this->namaField, 'nama_field')],
     // ];
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.hak-akses.khanza.modal-hak-akses-baru');
     }
 
-    public function save()
+    public function save(): void
     {
         HakAkses::updateOrCreate(['nama_field' => $this->namaField], ['judul_menu' => $this->judulMenu]);
     }

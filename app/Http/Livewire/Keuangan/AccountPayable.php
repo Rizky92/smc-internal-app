@@ -12,17 +12,23 @@ use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class AccountPayable extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
+    /** @var string */
     public $tglAwal;
 
+    /** @var string */
     public $tglAkhir;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
             'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
@@ -30,11 +36,14 @@ class AccountPayable extends Component
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
+    /**
+     * @return \Illuminate\Pagination\LengthAwarePaginator|array<empty, empty>
+     */
     public function getDataAccountPayableMedisProperty()
     {
         if ($this->isDeferred || !auth()->user()->can('keuangan.account-payable.read-medis')) {
@@ -66,6 +75,9 @@ class AccountPayable extends Component
             ->paginate($this->perpage, ['*'], 'page_medis');
     }
 
+    /**
+     * @return \Illuminate\Pagination\LengthAwarePaginator|array<empty, empty>
+     */
     public function getDataAccountPayableNonMedisProperty()
     {
         if ($this->isDeferred || !auth()->user()->can('keuangan.account-payable.read-nonmedis')) {
@@ -97,7 +109,7 @@ class AccountPayable extends Component
             ->paginate($this->perpage, ['*'], 'page_nonmedis');
     }
 
-    public function getTotalAccountPayableMedisProperty()
+    public function getTotalAccountPayableMedisProperty(): array
     {
         if ($this->isDeferred || !auth()->user()->can('keuangan.account-payable.read-medis')) {
             return [];
@@ -124,7 +136,7 @@ class AccountPayable extends Component
         return compact('totalTagihan', 'totalDibayar', 'totalSisaTagihan', 'totalSisaPerPeriode');
     }
 
-    public function getTotalAccountPayableNonMedisProperty()
+    public function getTotalAccountPayableNonMedisProperty(): array
     {
         if ($this->isDeferred || !auth()->user()->can('keuangan.account-payable.read-nonmedis')) {
             return [];
@@ -151,13 +163,13 @@ class AccountPayable extends Component
         return compact('totalTagihan', 'totalDibayar', 'totalSisaTagihan', 'totalSisaPerPeriode');
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.keuangan.account-payable')
             ->layout(BaseLayout::class, ['title' => 'Hutang Aging (Account Payable)']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;
@@ -215,13 +227,13 @@ class AccountPayable extends Component
                     'tgl_bayar'     => '',
                     'status'        => '',
                     'nama_bayar'    => 'TOTAL',
-                    'tagihan'       => (float) $totalTagihanMedis,
-                    'dibayar'       => (float) $totalDibayarMedis,
-                    'sisa'          => (float) $totalSisaDibayarMedis,
-                    'periode_0_30'  => (float) $totalSisaPerPeriodeMedis->get('periode_0_30') ?? 0,
-                    'periode_31_60' => (float) $totalSisaPerPeriodeMedis->get('periode_31_60') ?? 0,
-                    'periode_61_90' => (float) $totalSisaPerPeriodeMedis->get('periode_61_90') ?? 0,
-                    'periode_90_up' => (float) $totalSisaPerPeriodeMedis->get('periode_90_up') ?? 0,
+                    'tagihan'       => $totalTagihanMedis,
+                    'dibayar'       => $totalDibayarMedis,
+                    'sisa'          => $totalSisaDibayarMedis,
+                    'periode_0_30'  => (float) $totalSisaPerPeriodeMedis->get('periode_0_30'),
+                    'periode_31_60' => (float) $totalSisaPerPeriodeMedis->get('periode_31_60'),
+                    'periode_61_90' => (float) $totalSisaPerPeriodeMedis->get('periode_61_90'),
+                    'periode_90_up' => (float) $totalSisaPerPeriodeMedis->get('periode_90_up'),
                     'umur_hari'     => '',
                     'keterangan'    => '',
                 ]]);
@@ -272,13 +284,13 @@ class AccountPayable extends Component
                     'tgl_bayar'     => '',
                     'status'        => '',
                     'nama_bayar'    => 'TOTAL',
-                    'tagihan'       => (float) $totalTagihanNonMedis,
-                    'dibayar'       => (float) $totalDibayarNonMedis,
-                    'sisa'          => (float) $totalSisaDibayarNonMedis,
-                    'periode_0_30'  => (float) $totalSisaPerPeriodeNonMedis->get('periode_0_30') ?? 0,
-                    'periode_31_60' => (float) $totalSisaPerPeriodeNonMedis->get('periode_31_60') ?? 0,
-                    'periode_61_90' => (float) $totalSisaPerPeriodeNonMedis->get('periode_61_90') ?? 0,
-                    'periode_90_up' => (float) $totalSisaPerPeriodeNonMedis->get('periode_90_up') ?? 0,
+                    'tagihan'       => $totalTagihanNonMedis,
+                    'dibayar'       => $totalDibayarNonMedis,
+                    'sisa'          => $totalSisaDibayarNonMedis,
+                    'periode_0_30'  => (float) $totalSisaPerPeriodeNonMedis->get('periode_0_30'),
+                    'periode_31_60' => (float) $totalSisaPerPeriodeNonMedis->get('periode_31_60'),
+                    'periode_61_90' => (float) $totalSisaPerPeriodeNonMedis->get('periode_61_90'),
+                    'periode_90_up' => (float) $totalSisaPerPeriodeNonMedis->get('periode_90_up'),
                     'umur_hari'     => '',
                     'keterangan'    => '',
                 ]]);

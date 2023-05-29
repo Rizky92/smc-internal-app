@@ -10,7 +10,7 @@ if (!function_exists('rp')) {
      * 
      * @return string
      */
-    function rp($nominal = 0, $decimalCount = 0)
+    function rp($nominal = 0, int $decimalCount = 0): string
     {
         return 'Rp. ' . number_format($nominal, $decimalCount, ',', '.');
     }
@@ -24,7 +24,7 @@ if (!function_exists('currency')) {
      * 
      * @return string
      */
-    function currency($nominal = 0, int $decimalCount = 0, string $name = 'Rp. ')
+    function currency($nominal = 0, int $decimalCount = 0, string $name = 'Rp. '): string
     {
         return $name . number_format($nominal, $decimalCount, ',', '.');
     }
@@ -32,12 +32,12 @@ if (!function_exists('currency')) {
 
 if (!function_exists('map_bulan')) {
     /**
-     * @param  \Illuminate\Contracts\Support\Arrayable<int, mixed>|array<int, mixed>|null $data = []
-     * @param  mixed $default = 0
+     * @param  \Illuminate\Contracts\Support\Arrayable<int, mixed>|array<int, mixed>|null $data
+     * @param  mixed $default
      * 
      * @return array<int, mixed>
      */
-    function map_bulan($data = [], $default = 0)
+    function map_bulan($data, $default = 0)
     {
         $arr = [
             1 => $default,
@@ -67,6 +67,11 @@ if (!function_exists('map_bulan')) {
 }
 
 if (!function_exists('tracker_start')) {
+    /**
+     * @param  string $connection
+     * 
+     * @return void
+     */
     function tracker_start(string $connection = 'mysql_smc'): void
     {
         if (app('impersonate')->isImpersonating()) {
@@ -83,9 +88,8 @@ if (!function_exists('tracker_end')) {
      * 
      * @return void
      */
-    function tracker_end(string $connection = 'mysql_smc')
+    function tracker_end(string $connection = 'mysql_smc'): void
     {
-        // matikan trackersql ketika sedang impersonasi
         if (app('impersonate')->isImpersonating()) {
             DB::connection($connection)->disableQueryLog();
 
@@ -103,10 +107,10 @@ if (!function_exists('tracker_end')) {
                 ->replaceArray('?', $log['bindings']);
 
             DB::connection('mysql_smc')->table('trackersql')->insert([
-                'tanggal' => now(),
-                'sqle' => (string) $sql,
-                'usere' => auth()->user()->nik,
-                'ip' => request()->ip(),
+                'tanggal'    => now(),
+                'sqle'       => (string) $sql,
+                'usere'      => auth()->user()->nik,
+                'ip'         => request()->ip(),
                 'connection' => $connection,
             ]);
         }
@@ -121,7 +125,7 @@ if (! function_exists('tracker_dispose')) {
      * 
      * @return void
      */
-    function tracker_dispose(string $connection)
+    function tracker_dispose(string $connection): void
     {
         DB::connection($connection)->disableQueryLog();
     }
@@ -135,7 +139,7 @@ if (! function_exists('func_get_named_args')) {
      * 
      * @return array<string|int, mixed>
      */
-    function func_get_named_args($object, $name, $args)
+    function func_get_named_args($object, $name, $args): array
     {
         $func = new ReflectionMethod($object, $name);
         $res = [];
@@ -150,7 +154,7 @@ if (! function_exists('func_get_named_args')) {
 
 if (! function_exists('str')) {
     /**
-     * @param  string $str = null
+     * @param  string $str
      * 
      * @return \Illuminate\Support\Stringable
      */
@@ -161,7 +165,13 @@ if (! function_exists('str')) {
 }
 
 if (! function_exists('maybe')) {
-    function maybe(object $obj, callable $default = null)
+    /**
+     * @param  mixed $obj
+     * @param  callable $default
+     * 
+     * @return mixed
+     */
+    function maybe($obj, callable $default = null)
     {
         if (is_null($obj) && !is_null($default)) {
             return Closure::fromCallable($default);
@@ -176,8 +186,15 @@ if (! function_exists('maybe')) {
 }
 
 if (! function_exists('is_between')) {
+    /**
+     * @param  float|int $value
+     * @param  float|int $start
+     * @param  float|int $end
+     * 
+     * @return bool
+     */
     function is_between($value, $start = 0, $end = 0): bool
     {
-        return $value >= $start && $value <= $end;
+        return ($value >= $start) && ($value <= $end);
     }
 }

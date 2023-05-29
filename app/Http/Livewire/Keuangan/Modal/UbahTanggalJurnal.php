@@ -7,23 +7,34 @@ use App\Models\Keuangan\Jurnal\JurnalBackup;
 use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class UbahTanggalJurnal extends Component
 {
     use DeferredModal, Filterable, FlashComponent;
 
+    /** @var string */
     public $noJurnal;
 
+    /** @var string */
     public $noBukti;
 
+    /** @var string */
     public $keterangan;
 
+    /** @var string */
     public $tglJurnalLama;
 
+    /** @var string */
     public $jamJurnalLama;
 
+    /** @var string */
     public $tglJurnalBaru;
 
     protected $rules = [
@@ -41,6 +52,9 @@ class UbahTanggalJurnal extends Component
         $this->defaultValues();
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<\App\Models\Keuangan\Jurnal\JurnalBackup>|array<empty, empty>
+     */
     public function getBackupJurnalProperty()
     {
         return auth()->user()->cannot('keuangan.riwayat-jurnal-perbaikan.read')
@@ -52,12 +66,12 @@ class UbahTanggalJurnal extends Component
                 ->get();
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.keuangan.modal.ubah-tanggal-jurnal');
     }
 
-    public function prepareJurnal($data)
+    public function prepareJurnal(array $data): void
     {
         $this->noJurnal = $data['noJurnal'];
         $this->noBukti = $data['noBukti'];
@@ -68,7 +82,7 @@ class UbahTanggalJurnal extends Component
         $this->tglJurnalBaru = $data['tglJurnal'];
     }
 
-    public function updateTglJurnal()
+    public function updateTglJurnal(): void
     {
         if (!auth()->user()->can('keuangan.jurnal-perbaikan.ubah-tanggal')) {
             $this->flashError();
@@ -78,6 +92,11 @@ class UbahTanggalJurnal extends Component
 
         // $jurnalBackup = JurnalBackup::query()->where('no_jurnal', $this->noJurnal)->exists();
         $jurnalDiubah = Jurnal::query()->find($this->noJurnal);
+
+        if (is_null($jurnalDiubah)) {
+            throw (new ModelNotFoundException)->setModel(Jurnal::class, $this->noJurnal);
+        }
+
         $jurnalTerakhirPerTgl = Jurnal::query()
             ->where('tgl_jurnal', $this->tglJurnalLama)
             ->orderByDesc(DB::raw('right(jurnal.no_jurnal, 6)'))
@@ -89,7 +108,7 @@ class UbahTanggalJurnal extends Component
             return;
         }
 
-        DB::transaction(function () use ($jurnalDiubah, $jurnalTerakhirPerTgl) {
+        DB::transaction(function () use ($jurnalDiubah): void {
             tracker_start('mysql_sik');
 
             $jurnalDiubah->tgl_jurnal = carbon($this->tglJurnalBaru)->format('Y-m-d');
@@ -114,7 +133,7 @@ class UbahTanggalJurnal extends Component
         $this->emitUp('flash.success', "Tgl. untuk no. jurnal {$this->noJurnal} berhasil diubah!");
     }
 
-    public function restoreTglJurnal($backupId)
+    public function restoreTglJurnal(int $backupId): void
     {
         if (!auth()->user()->can('keuangan.jurnal-perbaikan.ubah-tanggal')) {
             $this->flasError();
@@ -149,7 +168,7 @@ class UbahTanggalJurnal extends Component
         $this->dispatchBrowserEvent('jurnal-restored');
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->undefer();
 

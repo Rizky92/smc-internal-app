@@ -37,7 +37,7 @@ class User extends Authenticatable
         'permissions',
     ];
 
-    protected $searchColumns = [
+    protected array $searchColumns = [
         'pegawai.nik',
         'pegawai.nama',
         'coalesce(jabatan.nm_jbtn, spesialis.nm_sps, pegawai.jbtn, "")',
@@ -1034,6 +1034,9 @@ class User extends Authenticatable
         );
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Model|static|null
+     */
     public static function findByNRP(string $nrp, array $columns = ['*'])
     {
         if (empty($nrp)) return new static;

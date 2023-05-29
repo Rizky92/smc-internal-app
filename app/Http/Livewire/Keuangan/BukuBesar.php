@@ -11,56 +11,69 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class BukuBesar extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
+    /** @var string */
     public $kodeRekening;
 
+    /** @var string */
     public $tglAwal;
 
+    /** @var string */
     public $tglAkhir;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
             'kodeRekening' => ['except' => '', 'as' => 'rekening'],
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'      => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir'     => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
+    /**
+     * @return \Illuminate\Pagination\LengthAwarePaginator|array<empty, empty>
+     */
     public function getBukuBesarProperty()
     {
         return $this->isDeferred
             ? []
             : Jurnal::query()
-            ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
-            ->search($this->cari, [
-                'jurnal.tgl_jurnal',
-                'jurnal.jam_jurnal',
-                'jurnal.no_jurnal',
-                'jurnal.no_bukti',
-                'jurnal.keterangan',
-                'detailjurnal.kd_rek',
-                'rekening.nm_rek',
-                'detailjurnal.debet',
-                'detailjurnal.kredit',
-            ])
-            ->sortWithColumns($this->sortColumns, [], [
-                'tgl_jurnal' => 'asc',
-                'jam_jurnal' => 'asc',
-            ])
-            ->paginate($this->perpage);
+                ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
+                ->search($this->cari, [
+                    'jurnal.tgl_jurnal',
+                    'jurnal.jam_jurnal',
+                    'jurnal.no_jurnal',
+                    'jurnal.no_bukti',
+                    'jurnal.keterangan',
+                    'detailjurnal.kd_rek',
+                    'rekening.nm_rek',
+                    'detailjurnal.debet',
+                    'detailjurnal.kredit',
+                ])
+                ->sortWithColumns($this->sortColumns, [], [
+                    'tgl_jurnal' => 'asc',
+                    'jam_jurnal' => 'asc',
+                ])
+                ->paginate($this->perpage);
     }
 
+    /**
+     * @return \App\Models\Keuangan\Jurnal\Jurnal|array<empty, empty>
+     */
     public function getTotalDebetDanKreditProperty()
     {
         return $this->isDeferred
@@ -70,7 +83,7 @@ class BukuBesar extends Component
                 ->first();
     }
 
-    public function getRekeningProperty()
+    public function getRekeningProperty(): array
     {
         return Rekening::query()
             ->orderBy('kd_rek')
@@ -78,13 +91,13 @@ class BukuBesar extends Component
             ->all();
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.keuangan.buku-besar')
             ->layout(BaseLayout::class, ['title' => 'Jurnal Buku Besar']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;
@@ -100,7 +113,7 @@ class BukuBesar extends Component
             Jurnal::query()
                 ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
                 ->cursor()
-                ->map(fn (Jurnal $model) => [
+                ->map(fn (Jurnal $model): array => [
                     'tgl_jurnal' => $model->tgl_jurnal,
                     'jam_jurnal' => $model->jam_jurnal,
                     'no_jurnal'  => $model->no_jurnal,
@@ -145,6 +158,7 @@ class BukuBesar extends Component
     protected function pageHeaders(): array
     {
         $rekening = empty($this->kodeRekening) ? 'SEMUA' : $this->rekening[$this->kodeRekening];
+        
         return [
             'RS Samarinda Medika Citra',
             'Buku Besar rekening ' . $rekening,

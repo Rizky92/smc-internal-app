@@ -11,32 +11,33 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Str;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class Siap extends Component
 {
     use FlashComponent, Filterable, LiveTable, MenuTracker;
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function getRolesProperty()
+    public function getRolesProperty(): LengthAwarePaginator
     {
         return Role::query()
             ->with('permissions')
             ->paginate($this->perpage);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.hak-akses.siap')
             ->layout(BaseLayout::class, ['title' => 'Pengaturan perizinan SMC Internal App']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;

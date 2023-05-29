@@ -11,72 +11,84 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Fluent;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class DPJPPiutangRanap extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
+    /** @var string */
     public $status;
 
+    /** @var string */
     public $jenisBayar;
 
+    /** @var string */
     public $tglAwal;
 
+    /** @var string */
     public $tglAkhir;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
-            'status' => ['except' => ''],
+            'status'     => ['except' => ''],
             'jenisBayar' => ['except' => '', 'as' => 'kd_pj'],
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'    => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir'   => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function getPenjaminProperty()
+    public function getPenjaminProperty(): Collection
     {
         return Penjamin::query()
             ->where('status', '1')
             ->pluck('png_jawab', 'kd_pj');
     }
 
-
+    /**
+     * @return \Illuminate\Pagination\LengthAwarePaginator|array<empty, empty>
+     */
     public function getPiutangRanapProperty()
     {
         return $this->isDeferred
             ? []
             : RawatInap::query()
-            ->piutangRanap($this->tglAwal, $this->tglAkhir, $this->status, $this->jenisBayar)
-            ->with([
-                'dpjpRanap',
-                'billing' => fn ($q) => $q->totalBillingan(),
-            ])
-            ->withSum('cicilanPiutang as dibayar', 'besar_cicilan')
-            ->sortWithColumns($this->sortColumns, [
-                'perujuk' => DB::raw("ifnull(rujuk_masuk.perujuk, '-')"),
-                'waktu_keluar' => DB::raw("timestamp(kamar_inap.tgl_keluar, kamar_inap.jam_keluar)"),
-                'ruangan' => DB::raw("concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal)"),
-            ])
-            ->paginate($this->perpage);
+                ->piutangRanap($this->tglAwal, $this->tglAkhir, $this->status, $this->jenisBayar)
+                ->with([
+                    'dpjpRanap',
+                    'billing' => fn (Builder $q): Builder => $q->totalBillingan(),
+                ])
+                ->withSum('cicilanPiutang as dibayar', 'besar_cicilan')
+                ->sortWithColumns($this->sortColumns, [
+                    'perujuk'      => DB::raw("ifnull(rujuk_masuk.perujuk, '-')"),
+                    'waktu_keluar' => DB::raw("timestamp(kamar_inap.tgl_keluar, kamar_inap.jam_keluar)"),
+                    'ruangan'      => DB::raw("concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal)"),
+                ])
+                ->paginate($this->perpage);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.keuangan.dpjp-piutang-ranap')
             ->layout(BaseLayout::class, ['title' => 'DPJP Piutang Ranap']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;
@@ -87,17 +99,20 @@ class DPJPPiutangRanap extends Component
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
+    /**
+     * @return \Illuminate\Support\Collection<array-key, \Illuminate\Support\Fluent>
+     */
     public function mapData()
     {
         return RawatInap::query()
             ->piutangRanap($this->tglAwal, $this->tglAkhir, $this->status, $this->jenisBayar)
             ->with([
                 'dpjpRanap',
-                'billing' => fn ($q) => $q->totalBillingan(),
+                'billing' => fn (Builder $q): Builder => $q->totalBillingan(),
             ])
             ->withSum('cicilanPiutang as dibayar', 'besar_cicilan')
             ->get()
-            ->map(function (RawatInap $ranap) {
+            ->map(function (RawatInap $ranap): Fluent {
                 $kategoriBilling = $ranap
                     ->billing
                     ->pluck('total', 'status')

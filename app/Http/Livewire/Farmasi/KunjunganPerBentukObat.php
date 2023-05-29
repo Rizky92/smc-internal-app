@@ -10,20 +10,28 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class KunjunganPerBentukObat extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
+    /** @var string */
     public $tglAwal;
 
+    /** @var string */
     public $tglAkhir;
 
+    /** @var string */
     public $jenisPerawatan;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
             'jenisPerawatan' => ['except' => '', 'as' => 'jenis_perawatan'],
@@ -32,18 +40,18 @@ class KunjunganPerBentukObat extends Component
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.farmasi.kunjungan-per-bentuk-obat')
             ->layout(BaseLayout::class, ['title' => 'Kunjungan Resep Pasien Per Bentuk Obat']);
     }
 
-    public function getDataKunjunganResepObatRegularProperty()
+    public function getDataKunjunganResepObatRegularProperty(): LengthAwarePaginator
     {
         return ResepDokter::query()
             ->kunjunganResepObatRegular($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
@@ -57,7 +65,7 @@ class KunjunganPerBentukObat extends Component
             ->paginate($this->perpage, ['*'], 'page_regular');
     }
 
-    public function getDataKunjunganResepObatRacikanProperty()
+    public function getDataKunjunganResepObatRacikanProperty(): LengthAwarePaginator
     {
         return ResepDokterRacikan::query()
             ->kunjunganResepObatRacikan($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
@@ -71,7 +79,7 @@ class KunjunganPerBentukObat extends Component
             ->paginate($this->perpage, ['*'], 'page_racikan');
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;
@@ -81,7 +89,7 @@ class KunjunganPerBentukObat extends Component
         $this->jenisPerawatan = '';
     }
 
-    public function searchData()
+    public function searchData(): void
     {
         $this->resetPage('page_regular');
         $this->resetPage('page_racikan');

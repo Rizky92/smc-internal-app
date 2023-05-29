@@ -24,9 +24,6 @@ class Obat extends Model
 
     public $timestamps = false;
 
-    /**
-     * @TODO  change joins to relationshipS and aggregates
-     */
     public function scopeDaruratStok(Builder $query): Builder
     {
         $sqlSelect = <<<SQL

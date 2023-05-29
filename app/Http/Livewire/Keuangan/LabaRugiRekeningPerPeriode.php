@@ -10,31 +10,38 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Fluent;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class LabaRugiRekeningPerPeriode extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
+    /** @var string */
     public $tglAwal;
 
+    /** @var string */
     public $tglAkhir;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function getLabaRugiPerRekeningProperty()
+    public function getLabaRugiPerRekeningProperty(): Collection
     {
         if ($this->isDeferred) {
             return collect(['D' => [], 'K' => []]);
@@ -48,7 +55,7 @@ class LabaRugiRekeningPerPeriode extends Component
 
         return $semuaRekening
             ->merge($debetKredit)
-            ->map(function (Rekening $rekening) {
+            ->map(function (Rekening $rekening): Fluent {
                 $total = 0;
 
                 $debet = $rekening->debet ?? 0;
@@ -71,10 +78,10 @@ class LabaRugiRekeningPerPeriode extends Component
                     ],
                 ));
             })
-            ->mapToGroups(fn ($item) => [$item->balance => $item]);
+            ->mapToGroups(fn ($item): array => [$item->balance => $item]);
     }
 
-    public function getTotalLabaRugiPerRekeningProperty()
+    public function getTotalLabaRugiPerRekeningProperty(): array
     {
         $pendapatan = collect($this->labaRugiPerRekening->get('K'));
 
@@ -101,13 +108,13 @@ class LabaRugiRekeningPerPeriode extends Component
         );
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.keuangan.laba-rugi-rekening-per-periode')
             ->layout(BaseLayout::class, ['title' => 'Laporan Laba Rugi']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;
@@ -116,11 +123,11 @@ class LabaRugiRekeningPerPeriode extends Component
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
-    protected function mapDataForExcelExport()
+    protected function mapDataForExcelExport(): Collection
     {
-        $pendapatanRowHeader = $this->insertExcelRow('', 'PENDAPATAN', '', '', '', '');
-        $bebanRowHeader = $this->insertExcelRow('', 'BEBAN & BIAYA', '', '', '', '');
-        $empty = $this->insertExcelRow('', '', '', '', '', '');
+        $pendapatanRowHeader = $this->insertExcelRow('', 'PENDAPATAN');
+        $bebanRowHeader = $this->insertExcelRow('', 'BEBAN & BIAYA');
+        $empty = $this->insertExcelRow();
 
         $pendapatan = $this->labaRugiPerRekening->get('K');
         $beban = $this->labaRugiPerRekening->get('D');
@@ -141,7 +148,7 @@ class LabaRugiRekeningPerPeriode extends Component
             ->merge([$pendapatanBersih]);
     }
 
-    private function insertExcelRow($kd_rek, $nm_rek, $balance, $debet, $kredit, $total)
+    private function insertExcelRow(string $kd_rek = '', string $nm_rek = '', string $balance = '', string $debet = '', string $kredit = '', string $total = ''): Fluent
     {
         return new Fluent(func_get_named_args($this, 'insertExcelRow', func_get_args()));
     }

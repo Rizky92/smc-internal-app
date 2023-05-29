@@ -29,8 +29,6 @@ use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 
 Route::get('/', HomeController::class);
 
-Route::get('tes-mobilejkn', MobileJKNController::class)->name('mobilejkn');
-
 Route::get('login', [LoginController::class, 'create'])->name('login');
 Route::post('login', [LoginController::class, 'store']);
 

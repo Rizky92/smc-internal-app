@@ -8,18 +8,23 @@ use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class ModalPerizinan extends Component
 {
     use Filterable, LiveTable, DeferredModal, FlashComponent;
 
+    /** @var int */
     public $roleId;
 
+    /** @var string */
     public $roleName;
 
+    /** @var array */
     public $checkedPermissions;
 
     protected $listeners = [
@@ -28,24 +33,24 @@ class ModalPerizinan extends Component
         'siap.hide' => 'hideModal',
     ];
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function getPermissionsProperty()
+    public function getPermissionsProperty(): Collection
     {
         return Permission::orderBy('name')
             ->pluck('name', 'id')
-            ->groupBy(fn ($permission, $id) => Str::before($permission, '.'), $preserveKeys = true);
+            ->groupBy(fn (string $permission, int $_) => Str::before($permission, '.'), $preserveKeys = true);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.hak-akses.siap.modal-perizinan');
     }
 
-    public function prepare(int $id = -1)
+    public function prepare(int $id = -1): void
     {
         $this->roleId = $id;
 
@@ -57,7 +62,7 @@ class ModalPerizinan extends Component
         }
     }
 
-    public function create()
+    public function create(): void
     {
         if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->flashError();
@@ -80,7 +85,7 @@ class ModalPerizinan extends Component
         $this->dispatchBrowserEvent('role-created');
     }
 
-    public function update()
+    public function update(): void
     {
         if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->flashError();
@@ -103,7 +108,7 @@ class ModalPerizinan extends Component
         $this->dispatchBrowserEvent('role-updated');
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->roleId = -1;
         $this->roleName = '';

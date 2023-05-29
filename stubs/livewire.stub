@@ -12,13 +12,18 @@ use App\View\Components\BaseLayout;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class [class] extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
-    public ?string $tglAwal;
+    /** @var string */
+    public $tglAwal;
 
-    public ?string $tglAkhir;
+    /** @var string */
+    public $tglAkhir;
 
     protected function queryString(): array
     {
@@ -39,7 +44,7 @@ class [class] extends Component
             ->layout(BaseLayout::class, ['title' => '[class]']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');

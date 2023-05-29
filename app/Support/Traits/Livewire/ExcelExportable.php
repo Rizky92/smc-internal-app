@@ -2,6 +2,7 @@
 
 namespace App\Support\Traits\Livewire;
 
+use Closure;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 use Rizky92\Xlswriter\ExcelExport;
@@ -9,9 +10,13 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 trait ExcelExportable
 {
-    /** @var array<array-key, string> */
+    /**
+     * List of invalid characters used in Excel Sheet
+     * 
+     * @var string[]
+     */
     private $invalidSheetCharacters = [
-        '/',
+        '\\', '/', '?', '*', ':', '[', ']',
     ];
 
     public function initializeExcelExportable(): void
@@ -33,11 +38,11 @@ trait ExcelExportable
 
     protected function validateSheetNames(): void
     {
-        $sheets = collect(array_keys($this->dataPerSheet()));
+        $invalidSheet = collect(array_keys($this->dataPerSheet()))
+            ->filter(fn (string $v): bool => Str::containsAll($v, $this->invalidSheetCharacters))
+            ->first();
 
-        throw_if($sheets->contains(function ($value) {
-            return Str::containsAll($value, $this->invalidSheetCharacters);
-        }), 'RuntimeException', "Invalid characters found.");
+        throw_if(!is_null($invalidSheet), 'RuntimeException', sprintf("Invalid characters found in sheet: '%s'", (string) $invalidSheet));
     }
 
     public function exportToExcel(): void
@@ -50,9 +55,6 @@ trait ExcelExportable
         $this->emit('beginExcelExport');
     }
 
-    /**
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse|void
-     */
     public function beginExcelExport(): StreamedResponse
     {
         $filename = now()->format('Ymd_His') . '_';
@@ -71,6 +73,8 @@ trait ExcelExportable
             ? $dataSheets[0]
             : $dataSheets[$firstSheet];
 
+        $firstData = is_callable($firstData) ? $firstData() : $firstData;
+
         $excel = ExcelExport::make($filename, $firstSheet)
             ->setPageHeaders($this->pageHeaders())
             ->setColumnHeaders($this->columnHeaders())
@@ -79,9 +83,11 @@ trait ExcelExportable
         array_shift($dataSheets);
 
         foreach ($dataSheets as $sheet => $data) {
-            $excel
-                ->addSheet($sheet)
-                ->setData($data);
+            if ($data instanceof Closure || is_callable($data)) {
+                $excel->addSheet($sheet)->setData($data());
+            } else {
+                $excel->addSheet($sheet)->setData($data);
+            }
         }
 
         return $excel->export();

@@ -17,60 +17,65 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class LaporanProduksiTahunan extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
+    /** @var string */
     public $tahun;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
             'tahun' => ['except' => now()->format('Y')],
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.farmasi.laporan-produksi-tahunan')
             ->layout(BaseLayout::class, ['title' => 'Laporan Produksi Tahunan Farmasi']);
     }
 
-    public function getDataTahunProperty()
+    public function getDataTahunProperty(): array
     {
         return collect(range((int) now()->format('Y'), 2022, -1))
-            ->mapWithKeys(fn (int $v, $_): array => [$v => $v])
+            ->mapWithKeys(fn (int $v, int $_): array => [$v => $v])
             ->all();
     }
 
-    public function getKunjunganRalanProperty()
+    public function getKunjunganRalanProperty(): array
     {
         return $this->isDeferred ? [] : ResepObat::kunjunganPasienRalan($this->tahun);
     }
 
-    public function getKunjunganRanapProperty()
+    public function getKunjunganRanapProperty(): array
     {
         return $this->isDeferred ? [] : ResepObat::kunjunganPasienRanap($this->tahun);
     }
 
-    public function getKunjunganIGDProperty()
+    public function getKunjunganIGDProperty(): array
     {
         return $this->isDeferred ? [] : ResepObat::kunjunganPasienIGD($this->tahun);
     }
 
-    public function getKunjunganWalkInProperty()
+    public function getKunjunganWalkInProperty(): array
     {
         return $this->isDeferred ? [] : PenjualanWalkInObat::totalKunjunganWalkIn($this->tahun);
     }
 
-    public function getKunjunganTotalProperty()
+    public function getKunjunganTotalProperty(): array
     {
         if ($this->isDeferred) {
             return [];
@@ -78,7 +83,7 @@ class LaporanProduksiTahunan extends Component
 
         $kunjunganTotal = [];
 
-        foreach ($this->kunjunganRalan as $key => $data) {
+        foreach ($this->kunjunganRalan as $key => $_) {
             $kunjunganTotal[$key] =
                 $this->kunjunganRalan[$key] +
                 $this->kunjunganRanap[$key] +
@@ -89,32 +94,32 @@ class LaporanProduksiTahunan extends Component
         return $kunjunganTotal;
     }
 
-    public function getPendapatanObatRalanProperty()
+    public function getPendapatanObatRalanProperty(): array
     {
         return $this->isDeferred ? [] : PemberianObat::pendapatanObatRalan($this->tahun);
     }
 
-    public function getPendapatanObatRanapProperty()
+    public function getPendapatanObatRanapProperty(): array
     {
         return $this->isDeferred ? [] : PemberianObat::pendapatanObatRanap($this->tahun);
     }
 
-    public function getPendapatanObatIGDProperty()
+    public function getPendapatanObatIGDProperty(): array
     {
         return $this->isDeferred ? [] : PemberianObat::pendapatanObatIGD($this->tahun);
     }
 
-    public function getPendapatanObatWalkInProperty()
+    public function getPendapatanObatWalkInProperty(): array
     {
         return $this->isDeferred ? [] : PenjualanWalkInObat::totalPendapatanWalkIn($this->tahun);
     }
 
-    public function getPendapatanAlkesFarmasiDanUnitProperty()
+    public function getPendapatanAlkesFarmasiDanUnitProperty(): array
     {
         return $this->isDeferred ? [] : PemberianObat::pendapatanAlkesUnit($this->tahun);
     }
 
-    public function getPendapatanObatTotalProperty()
+    public function getPendapatanObatTotalProperty(): array
     {
         if ($this->isDeferred) {
             return [];
@@ -122,7 +127,7 @@ class LaporanProduksiTahunan extends Component
 
         $pendapatanObat = [];
 
-        foreach ($this->pendapatanObatRalan as $key => $data) {
+        foreach ($this->pendapatanObatRalan as $key => $_) {
             $pendapatanObat[$key] =
                 $this->pendapatanObatRalan[$key] +
                 $this->pendapatanObatRanap[$key] +
@@ -133,22 +138,22 @@ class LaporanProduksiTahunan extends Component
         return $pendapatanObat;
     }
 
-    public function getReturObatProperty()
+    public function getReturObatProperty(): array
     {
         return $this->isDeferred ? [] : ReturPenjualanObat::totalReturObat($this->tahun);
     }
 
-    public function getPembelianFarmasiProperty()
+    public function getPembelianFarmasiProperty(): array
     {
         return $this->isDeferred ? [] : PemesananObat::totalPembelianDariFarmasi($this->tahun);
     }
 
-    public function getReturSupplierProperty()
+    public function getReturSupplierProperty(): array
     {
         return $this->isDeferred ? [] : ReturSupplierObat::totalBarangRetur($this->tahun);
     }
 
-    public function getTotalBersihPembelianFarmasiProperty()
+    public function getTotalBersihPembelianFarmasiProperty(): array
     {
         if ($this->isDeferred) {
             return [];
@@ -156,24 +161,24 @@ class LaporanProduksiTahunan extends Component
 
         $totalBersih = $this->pembelianFarmasi;
 
-        foreach ($totalBersih as $key => $data) {
+        foreach ($totalBersih as $key => $_) {
             $totalBersih[$key] -= $this->returSupplier[$key];
         }
 
         return $totalBersih;
     }
 
-    public function getStokKeluarMedisProperty()
+    public function getStokKeluarMedisProperty(): array
     {
         return $this->isDeferred ? [] : PengeluaranObat::stokPengeluaranMedisFarmasi($this->tahun);
     }
 
-    public function getTransferOrderProperty()
+    public function getTransferOrderProperty(): array
     {
         return $this->isDeferred ? [] : MutasiObat::transferOrder($this->tahun);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->tahun = now()->format('Y');
     }

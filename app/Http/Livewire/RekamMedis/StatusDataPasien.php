@@ -10,6 +10,8 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\LazyCollection;
+use Illuminate\View\View;
 use Livewire\Component;
 
 /**
@@ -27,7 +29,7 @@ class StatusDataPasien extends Component
 
     public $jenisPerawatan;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
             'jenisPerawatan' => ['except' => 'semua', 'as' => 'jenis_rawat'],
@@ -65,13 +67,13 @@ class StatusDataPasien extends Component
                 ->paginate($this->perpage);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.rekam-medis.status-data-pasien')
             ->layout(BaseLayout::class, ['title' => 'Status Data Rekam Medis Pasien']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;
@@ -106,7 +108,8 @@ class StatusDataPasien extends Component
                     'icd_10'           => boolval($modal->icd_10) ? 'Ada' : 'Tidak ada',
                     'icd_9'            => boolval($modal->icd_9) ? 'Ada' : 'Tidak ada',
                     'awal_keperawatan' => $modal->awal_keperawatan,
-                ]),
+                ])
+                ->all(),
         ];
     }
 
