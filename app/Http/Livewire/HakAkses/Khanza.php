@@ -9,10 +9,13 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class Khanza extends Component
 {
     use FlashComponent, Filterable, LiveTable, MenuTracker;
@@ -22,7 +25,7 @@ class Khanza extends Component
         $this->defaultValues();
     }
 
-    public function getHakAksesKhanzaProperty(): LengthAwarePaginator
+    public function getHakAksesKhanzaProperty(): Paginator
     {
         return HakAkses::query()
             ->search($this->cari)
@@ -55,7 +58,7 @@ class Khanza extends Component
 
         $hakAksesTersedia = HakAkses::pluck('default_value', 'nama_field');
 
-        $hakAksesBaru = $hakAkses->diffKeys($hakAksesTersedia)->map(fn ($_): string => 'false');
+        $hakAksesBaru = $hakAkses->diffKeys($hakAksesTersedia)->map(fn (string $_): string => 'false');
         $hakAksesDibuang = $hakAksesTersedia->diffKeys($hakAkses);
 
         $countBaru = $hakAksesBaru->count();
@@ -68,9 +71,9 @@ class Khanza extends Component
         }
 
         $hakAksesUser = $hakAkses
-            ->reject(fn ($_, $k) => $hakAksesDibuang->keys()->containsStrict($k))
+            ->reject(fn (string $_, string $k): bool => $hakAksesDibuang->keys()->containsStrict($k))
             ->diffKeys($hakAksesTersedia)
-            ->map(fn ($_, $k) => ['nama_field' => $k, 'default_value' => 'false'])
+            ->map(fn (string $_, string $k): array => ['nama_field' => $k, 'default_value' => 'false'])
             ->values()
             ->toArray();
 

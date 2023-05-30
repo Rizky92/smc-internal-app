@@ -11,24 +11,29 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class InputMinmaxStok extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function getSupplierProperty()
+    public function getSupplierProperty(): array
     {
         return SupplierNonMedis::pluck('nama_suplier', 'kode_suplier')->all();
     }
 
-    public function getBarangLogistikProperty()
+    public function getBarangLogistikProperty(): Paginator
     {
         $db = DB::connection('mysql_smc')->getDatabaseName();
 
@@ -54,13 +59,13 @@ class InputMinmaxStok extends Component
             ->paginate($this->perpage);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.logistik.input-minmax-stok')
             ->layout(BaseLayout::class, ['title' => 'Stok Minmax Barang Logistik']);
     }
 
-    public function simpan(string $kodeBarang, int $stokMin = 0, int $stokMax = 0, string $kodeSupplier = '-')
+    public function simpan(string $kodeBarang, int $stokMin = 0, int $stokMax = 0, string $kodeSupplier = '-'): void
     {
         if (!auth()->user()->can('logistik.stok-minmax.update')) {
             $this->flashError('Anda tidak memiliki izin untuk mengupdate barang');
@@ -88,7 +93,7 @@ class InputMinmaxStok extends Component
         $this->flashSuccess('Data berhasil disimpan!');
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;

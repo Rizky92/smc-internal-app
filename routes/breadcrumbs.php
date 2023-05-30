@@ -151,11 +151,6 @@ Breadcrumbs::for('admin.farmasi.perbandingan-po-obat', function (Trail $trail) {
     $trail->push('Perbandingan PO Obat', route('admin.farmasi.perbandingan-po-obat'));
 });
 
-Breadcrumbs::for('admin.farmasi.penyerahan-resep-obat', function (Trail $trail) {
-    $trail->parent('admin.farmasi');
-    $trail->push('Penyerahan Resep Obat', route('admin.farmasi.penyerahan-resep-obat-masal'));
-});
-
 
 Breadcrumbs::for('admin.rekam-medis', function (Trail $trail) {
     $trail->parent('admin.dashboard');

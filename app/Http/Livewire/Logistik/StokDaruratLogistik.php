@@ -9,28 +9,34 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class StokDaruratLogistik extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
+    /** @var bool */
     public $tampilkanSaranOrderNol;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
             'tampilkanSaranOrderNol' => ['except' => true],
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function getStokDaruratLogistikProperty()
+    public function getStokDaruratLogistikProperty(): Paginator
     {
         return BarangNonMedis::query()
             ->daruratStok($this->tampilkanSaranOrderNol)
@@ -52,13 +58,13 @@ class StokDaruratLogistik extends Component
             ->paginate($this->perpage);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.logistik.stok-darurat-logistik')
             ->layout(BaseLayout::class, ['title' => 'Darurat Stok Barang Logistik']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;

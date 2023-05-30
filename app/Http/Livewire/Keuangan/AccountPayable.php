@@ -42,7 +42,7 @@ class AccountPayable extends Component
     }
 
     /**
-     * @return \Illuminate\Pagination\LengthAwarePaginator|array<empty, empty>
+     * @return \Illuminate\Contracts\Pagination\Paginator|array<empty, empty>
      */
     public function getDataAccountPayableMedisProperty()
     {
@@ -76,7 +76,7 @@ class AccountPayable extends Component
     }
 
     /**
-     * @return \Illuminate\Pagination\LengthAwarePaginator|array<empty, empty>
+     * @return \Illuminate\Contracts\Pagination\Paginator|array<empty, empty>
      */
     public function getDataAccountPayableNonMedisProperty()
     {
@@ -195,7 +195,7 @@ class AccountPayable extends Component
             $export['Medis'] = PemesananObat::query()
                 ->hutangAging($this->tglAwal, $this->tglAkhir)
                 ->cursor()
-                ->map(fn (PemesananObat $model) => [
+                ->map(fn (PemesananObat $model): array => [
                     'no_tagihan'    => $model->no_tagihan,
                     'no_order'      => $model->no_order,
                     'no_faktur'     => $model->no_faktur,
@@ -252,7 +252,7 @@ class AccountPayable extends Component
             $export['Non Medis'] = PemesananBarangNonMedis::query()
                 ->hutangAging($this->tglAwal, $this->tglAkhir)
                 ->cursor()
-                ->map(fn (PemesananBarangNonMedis $model) => [
+                ->map(fn (PemesananBarangNonMedis $model): array => [
                     'no_tagihan'    => $model->no_tagihan,
                     'no_order'      => $model->no_order,
                     'no_faktur'     => $model->no_faktur,

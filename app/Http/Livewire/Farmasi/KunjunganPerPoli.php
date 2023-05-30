@@ -9,7 +9,7 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -30,7 +30,7 @@ class KunjunganPerPoli extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
@@ -40,7 +40,7 @@ class KunjunganPerPoli extends Component
         $this->defaultValues();
     }
 
-    public function getDataKunjunganResepPasienProperty(): LengthAwarePaginator
+    public function getDataKunjunganResepPasienProperty(): Paginator
     {
         return ResepObat::query()
             ->kunjunganPerPoli($this->tglAwal, $this->tglAkhir)
@@ -82,7 +82,7 @@ class KunjunganPerPoli extends Component
             ResepObat::query()
                 ->kunjunganPerPoli($this->tglAwal, $this->tglAkhir)
                 ->get()
-                ->map(fn (ResepObat $model) => [
+                ->map(fn (ResepObat $model): array => [
                     'no_rawat'          => $model->no_rawat,
                     'no_resep'          => $model->no_resep,
                     'nm_pasien'         => $model->nm_pasien,
@@ -113,9 +113,6 @@ class KunjunganPerPoli extends Component
         ];
     }
 
-    /**
-     * @return array{0: string, 1: string, 2: string, 3: string}
-     */
     protected function pageHeaders(): array
     {
         return [

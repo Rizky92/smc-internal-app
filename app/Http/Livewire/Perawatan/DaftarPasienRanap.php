@@ -10,35 +10,43 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class DaftarPasienRanap extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
+    /** @var string */
     public $tglAwal;
 
+    /** @var string */
     public $tglAkhir;
 
+    /** @var string */
     public $statusPerawatan;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
-            'tglAwal' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'         => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir'        => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
             'statusPerawatan' => ['except' => '-', 'as' => 'status'],
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function getDaftarPasienRanapProperty()
+    public function getDaftarPasienRanapProperty(): Paginator
     {
         return RegistrasiPasien::query()
             ->daftarPasienRanap(
@@ -83,47 +91,13 @@ class DaftarPasienRanap extends Component
             ->paginate($this->perpage);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.perawatan.daftar-pasien-ranap')
             ->layout(BaseLayout::class, ['title' => 'Daftar Pasien Rawat Inap']);
     }
 
-    /*
-    public function batalkanRanapPasien(string $noRawat, string $tglMasuk, string $jamMasuk, string $kamar)
-    {
-        if (!auth()->user()->can('perawatan.rawat-inap.batal-ranap')) {
-            $this->flashError('Anda tidak dapat melakukan aksi ini');
-
-            return;
-        }
-
-        tracker_start();
-
-        RawatInap::where([
-            ['no_rawat', '=', $noRawat],
-            ['tgl_masuk', '=', $tglMasuk],
-            ['jam_masuk', '=', $jamMasuk],
-            ['kd_kamar', '=', $kamar]
-        ])
-            ->delete();
-
-        Kamar::find($kamar)->update(['status' => 'KOSONG']);
-
-        if (!RawatInap::where('no_rawat', $noRawat)->exists()) {
-            RegistrasiPasien::find($noRawat)->update([
-                'status_lanjut' => 'Ralan',
-                'stts' => 'Sudah',
-            ]);
-        }
-
-        tracker_end();
-
-        $this->flashSuccess("Data pasien dengan No. Rawat {$noRawat} sudah kembali ke rawat jalan!");
-    }
-    */
-
-    public function updateHargaKamar(string $noRawat, string $kdKamar, string $tglMasuk, string $jamMasuk, int $hargaKamarBaru, int $lamaInap)
+    public function updateHargaKamar(string $noRawat, string $kdKamar, string $tglMasuk, string $jamMasuk, int $hargaKamarBaru, int $lamaInap): void
     {
         if (!auth()->user()->can('perawatan.daftar-pasien-ranap.update-harga-kamar')) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
@@ -133,10 +107,10 @@ class DaftarPasienRanap extends Component
 
         $validator = Validator::make([
             'harga_kamar_baru' => $hargaKamarBaru,
-            'lama_inap' => $lamaInap,
+            'lama_inap'        => $lamaInap,
         ], [
             'harga_kamar_baru' => ['integer', 'numeric', 'min:0'],
-            'lama_inap' => ['integer', 'numeric', 'min:0'],
+            'lama_inap'        => ['integer', 'numeric', 'min:0'],
         ]);
 
         if ($validator->fails()) {
@@ -154,7 +128,7 @@ class DaftarPasienRanap extends Component
             ['jam_masuk', '=', carbon($jamMasuk)->format('H:i:s')],
         ])->update([
             'trf_kamar' => $hargaKamarBaru,
-            'lama' => $lamaInap,
+            'lama'      => $lamaInap,
             'ttl_biaya' => $hargaKamarBaru * $lamaInap
         ]);
 
@@ -166,7 +140,7 @@ class DaftarPasienRanap extends Component
         $this->flashSuccess('Harga kamar berhasil diupdate!');
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;

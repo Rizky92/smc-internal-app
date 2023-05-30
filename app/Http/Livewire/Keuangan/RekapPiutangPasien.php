@@ -10,39 +10,47 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class RekapPiutangPasien extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
+    /** @var string */
     public $caraBayar;
 
+    /** @var string */
     public $tglAwal;
 
+    /** @var string */
     public $tglAkhir;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'   => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir'  => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
             'caraBayar' => ['except' => '', 'as' => 'kdpj'],
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function getPenjaminProperty()
+    public function getPenjaminProperty(): array
     {
         return Penjamin::where('status', '1')->pluck('png_jawab', 'kd_pj')->all();
     }
 
-    public function getPiutangPasienProperty()
+    public function getPiutangPasienProperty(): Paginator
     {
         return PiutangPasien::query()
             ->rekapPiutangPasien($this->tglAwal, $this->tglAkhir, $this->caraBayar)
@@ -63,7 +71,7 @@ class RekapPiutangPasien extends Component
             ->paginate($this->perpage);
     }
 
-    public function getTotalTagihanPiutangPasienProperty()
+    public function getTotalTagihanPiutangPasienProperty(): float
     {
         return PiutangPasien::query()
             ->rekapPiutangPasien($this->tglAwal, $this->tglAkhir, $this->caraBayar)
@@ -77,13 +85,13 @@ class RekapPiutangPasien extends Component
             ->sum(DB::raw('round(piutang_pasien.sisapiutang - ifnull(sisa_piutang.sisa, 0))'));
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.keuangan.rekap-piutang-pasien')
             ->layout(BaseLayout::class, ['title' => 'Rekap Data Tagihan Piutang Pasien']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;
@@ -103,19 +111,19 @@ class RekapPiutangPasien extends Component
                 ->orderBy('penjab.png_jawab')
                 ->get()
                 ->push([
-                    'no_rawat' => 'TOTAL',
+                    'no_rawat'     => 'TOTAL',
                     'no_rkm_medis' => '',
-                    'nm_pasien' => '',
-                    'tgl_piutang' => '',
-                    'status' => '',
-                    'total' => $query->sum(DB::raw('round(piutang_pasien.totalpiutang, 2)')),
-                    'uang_muka' => $query->sum(DB::raw('round(piutang_pasien.uangmuka, 2)')),
-                    'terbayar' => $query->sum(DB::raw('round(ifnull(sisa_piutang.sisa, 0), 2)')),
-                    'sisa' => $query->sum(DB::raw('round(piutang_pasien.sisapiutang - ifnull(sisa_piutang.sisa, 0), 2)')),
-                    'tgltempo' => '',
-                    'penjamin' => '',
+                    'nm_pasien'    => '',
+                    'tgl_piutang'  => '',
+                    'status'       => '',
+                    'total'        => $query->sum(DB::raw('round(piutang_pasien.totalpiutang, 2)')),
+                    'uang_muka'    => $query->sum(DB::raw('round(piutang_pasien.uangmuka, 2)')),
+                    'terbayar'     => $query->sum(DB::raw('round(ifnull(sisa_piutang.sisa, 0), 2)')),
+                    'sisa'         => $query->sum(DB::raw('round(piutang_pasien.sisapiutang - ifnull(sisa_piutang.sisa, 0), 2)')),
+                    'tgltempo'     => '',
+                    'penjamin'     => '',
                 ])
-                ->map(fn (PiutangPasien $model) => [
+                ->map(fn (PiutangPasien $model): array => [
                     'no_rawat'     => $model->no_rawat,
                     'no_rkm_medis' => $model->no_rkm_medis,
                     'nm_pasien'    => $model->nm_pasien,

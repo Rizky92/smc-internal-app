@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\BPJS;
 
-use App\Http\Controllers\Controller;
 use App\Support\BPJS\BpjsService;
 
-class MobileJKNController extends Controller
+class MobileJKNController
 {
+    /** 
+     * @return never
+     */
     public function __invoke()
     {
         $getListTask = BpjsService::start()

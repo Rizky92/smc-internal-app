@@ -3,11 +3,12 @@
 namespace App\Http\Livewire\HakAkses\Khanza;
 
 use App\Models\Aplikasi\HakAkses;
-use App\View\Components\BaseLayout;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class ModalHakAksesBaru extends Component
 {
     /** @var string */

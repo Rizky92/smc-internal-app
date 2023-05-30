@@ -5,7 +5,7 @@
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.date />
-                <x-filter.toggle class="ml-3" model="tampilkanSemuaPasienPerTanggal" title="Tampilkan Semua Pasien" />
+                <x-filter.toggle class="ml-3" model="semuaPasien" title="Tampilkan Semua Pasien" />
                 <x-filter.button-export-excel class="ml-auto" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">

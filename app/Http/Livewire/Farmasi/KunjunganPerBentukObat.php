@@ -10,7 +10,7 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -35,8 +35,8 @@ class KunjunganPerBentukObat extends Component
     {
         return [
             'jenisPerawatan' => ['except' => '', 'as' => 'jenis_perawatan'],
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'        => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir'       => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -51,7 +51,7 @@ class KunjunganPerBentukObat extends Component
             ->layout(BaseLayout::class, ['title' => 'Kunjungan Resep Pasien Per Bentuk Obat']);
     }
 
-    public function getDataKunjunganResepObatRegularProperty(): LengthAwarePaginator
+    public function getDataKunjunganResepObatRegularProperty(): Paginator
     {
         return ResepDokter::query()
             ->kunjunganResepObatRegular($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
@@ -65,7 +65,7 @@ class KunjunganPerBentukObat extends Component
             ->paginate($this->perpage, ['*'], 'page_regular');
     }
 
-    public function getDataKunjunganResepObatRacikanProperty(): LengthAwarePaginator
+    public function getDataKunjunganResepObatRacikanProperty(): Paginator
     {
         return ResepDokterRacikan::query()
             ->kunjunganResepObatRacikan($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
@@ -103,7 +103,7 @@ class KunjunganPerBentukObat extends Component
             'Obat Regular' => ResepDokter::query()
                 ->kunjunganResepObatRegular($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
                 ->get()
-                ->map(fn (ResepDokter $model) => [
+                ->map(fn (ResepDokter $model): array => [
                     'no_resep'      => $model->no_resep,
                     'nm_dokter'     => $model->nm_dokter,
                     'tgl_perawatan' => $model->tgl_perawatan,
@@ -117,7 +117,7 @@ class KunjunganPerBentukObat extends Component
             'Obat Racikan' => ResepDokterRacikan::query()
                 ->kunjunganResepObatRacikan($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
                 ->get()
-                ->map(fn (ResepDokterRacikan $model) => [
+                ->map(fn (ResepDokterRacikan $model): array => [
                     'no_resep'      => $model->no_resep,
                     'nm_dokter'     => $model->nm_dokter,
                     'tgl_perawatan' => $model->tgl_perawatan,

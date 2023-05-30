@@ -9,28 +9,34 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class StokObatRuangan extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
+    /** @var string */
     public $kodeBangsal;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
             'kodeBangsal' => ['except' => '-', 'as' => 'ruangan'],
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function getCollectionProperty()
+    public function getCollectionProperty(): Paginator
     {
         return GudangObat::query()
             ->stokPerRuangan($this->kodeBangsal)
@@ -48,18 +54,18 @@ class StokObatRuangan extends Component
             ->paginate($this->perpage);
     }
 
-    public function getBangsalProperty()
+    public function getBangsalProperty(): array
     {
         return GudangObat::bangsalYangAda()->pluck('nm_bangsal', 'kd_bangsal')->all();
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.keuangan.stok-obat-ruangan')
             ->layout(BaseLayout::class, ['title' => 'Stok Obat Per Ruangan']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;
@@ -78,7 +84,7 @@ class StokObatRuangan extends Component
                     ['nama_brng' => 'asc']
                 )
                 ->get()
-                ->map(fn (GudangObat $model) => [
+                ->map(fn (GudangObat $model): array => [
                     'nm_bangsal'     => $model->nm_bangsal,
                     'kode_brng'      => $model->kode_brng,
                     'nama_brng'      => $model->nama_brng,

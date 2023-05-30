@@ -155,10 +155,6 @@ Route::prefix('admin')
                 Route::get('perbandingan-barang-po', Farmasi\PerbandinganBarangPO::class)
                     ->middleware('can:farmasi.perbandingan-po-obat.read')
                     ->name('perbandingan-po-obat');
-                    
-                Route::get('penyerahan-obat-drive-thru', Farmasi\PenyerahanObatNonResep::class)
-                    ->middleware('can:farmasi.penyerahan-obat-drivethru.read')
-                    ->name('penyerahan-obat-drivethru');
             });
 
         Route::prefix('rekam-medis')

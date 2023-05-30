@@ -10,17 +10,24 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class LaporanTindakanLab extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
+    /** @var string */
     public $tglAwal;
 
+    /** @var string */
     public $tglAkhir;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
             'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
@@ -28,12 +35,12 @@ class LaporanTindakanLab extends Component
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function getDataLaporanTindakanLabProperty()
+    public function getDataLaporanTindakanLabProperty(): Paginator
     {
         return HasilPeriksaLab::query()
             ->laporanTindakanLab($this->tglAwal, $this->tglAkhir)
@@ -63,13 +70,13 @@ class LaporanTindakanLab extends Component
             ->paginate($this->perpage);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.keuangan.laporan-tindakan-lab')
             ->layout(BaseLayout::class, ['title' => 'Laporan Jumlah Tindakan Laboratorium']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;
@@ -84,7 +91,7 @@ class LaporanTindakanLab extends Component
             HasilPeriksaLab::query()
                 ->laporanTindakanLab($this->tglAwal, $this->tglAkhir)
                 ->get()
-                ->map(fn (HasilPeriksaLab $model) => [
+                ->map(fn (HasilPeriksaLab $model): array => [
                     'no_rawat'       => $model->no_rawat,
                     'no_rkm_medis'   => $model->no_rkm_medis,
                     'nm_pasien'      => $model->nm_pasien,

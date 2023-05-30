@@ -9,11 +9,15 @@ use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @template TRole of \App\Models\Aplikasi\Role
+ * 
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class ModalPerizinan extends Component
 {
     use Filterable, LiveTable, DeferredModal, FlashComponent;
@@ -27,6 +31,7 @@ class ModalPerizinan extends Component
     /** @var array */
     public $checkedPermissions;
 
+    /** @var mixed */
     protected $listeners = [
         'siap.prepare' => 'prepare',
         'siap.show' => 'showModal',
@@ -55,6 +60,7 @@ class ModalPerizinan extends Component
         $this->roleId = $id;
 
         if ($id !== -1) {
+            /** @var TRole */
             $role = Role::findById($id);
     
             $this->roleName = $role->name;
@@ -73,7 +79,7 @@ class ModalPerizinan extends Component
         tracker_start('mysql_smc');
 
         $role = Role::create([
-            'name' => $this->roleName,
+            'name'       => $this->roleName,
             'guard_name' => 'web',
         ]);
 
@@ -93,6 +99,7 @@ class ModalPerizinan extends Component
             return;
         }
 
+        /** @var TRole */
         $role = Role::findById($this->roleId);
 
         tracker_start('mysql_smc');

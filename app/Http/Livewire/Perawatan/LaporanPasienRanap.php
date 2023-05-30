@@ -9,40 +9,48 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class LaporanPasienRanap extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
+    /** @var string */
     public $tanggal;
 
+    /** @var string */
     public $statusPerawatan;
 
-    public $tampilkanSemuaPasienPerTanggal;
+    /** @var bool */
+    public $semuaPasien;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
-            'tanggal' => ['except' => now()->format('Y-m-d')],
+            'tanggal'         => ['except' => now()->format('Y-m-d')],
             'statusPerawatan' => ['except' => 'tanggal_masuk', 'as' => 'status_perawatan'],
-            'tampilkanSemuaPasienPerTanggal' => ['except' => false, 'as' => 'tampilkan_semua_pasien'],
+            'semuaPasien'     => ['except' => false, 'as' => 'tampilkan_semua_pasien'],
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function getLaporanPasienRanapProperty()
+    public function getLaporanPasienRanapProperty(): Paginator
     {
         return PasienRanap::query()
             ->search($this->cari)
             ->whereBetween('tgl_masuk', [$this->tanggal, $this->tanggal])
             ->when(
-                $this->tampilkanSemuaPasienPerTanggal,
+                $this->semuaPasien,
                 fn (Builder $query) => $query->where('status_ranap', '<=', '3'),
                 fn (Builder $query) => $query->where('status_ranap', '<=', '2')
             )
@@ -50,20 +58,20 @@ class LaporanPasienRanap extends Component
             ->paginate($this->perpage);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.perawatan.laporan-pasien-ranap')
             ->layout(BaseLayout::class, ['title' => 'Laporan Pasien Masuk Rawat Inap']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;
         $this->sortColumns = [];
         $this->tanggal = now()->format('Y-m-d');
         $this->statusPerawatan = 'tanggal_masuk';
-        $this->tampilkanSemuaPasienPerTanggal = false;
+        $this->semuaPasien = false;
     }
 
     protected function dataPerSheet(): array
@@ -72,9 +80,9 @@ class LaporanPasienRanap extends Component
             PasienRanap::query()
                 ->whereBetween('tgl_masuk', [$this->tanggal, $this->tanggal])
                 ->when(
-                    $this->tampilkanSemuaPasienPerTanggal,
-                    fn (Builder $query) => $query->where('status_ranap', '<=', '3'),
-                    fn (Builder $query) => $query->where('status_ranap', '<=', '2')
+                    $this->semuaPasien,
+                    fn (Builder $q): Builder => $q->where('status_ranap', '<=', '3'),
+                    fn (Builder $q): Builder => $q->where('status_ranap', '<=', '2')
                 )
                 ->get([
                     'no_rawat',

@@ -61,7 +61,7 @@ class DPJPPiutangRanap extends Component
     }
 
     /**
-     * @return \Illuminate\Pagination\LengthAwarePaginator|array<empty, empty>
+     * @return \Illuminate\Contracts\Pagination\Paginator|array<empty, empty>
      */
     public function getPiutangRanapProperty()
     {
@@ -99,10 +99,7 @@ class DPJPPiutangRanap extends Component
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
-    /**
-     * @return \Illuminate\Support\Collection<array-key, \Illuminate\Support\Fluent>
-     */
-    public function mapData()
+    public function mapData(): Collection
     {
         return RawatInap::query()
             ->piutangRanap($this->tglAwal, $this->tglAkhir, $this->status, $this->jenisBayar)
@@ -112,11 +109,11 @@ class DPJPPiutangRanap extends Component
             ])
             ->withSum('cicilanPiutang as dibayar', 'besar_cicilan')
             ->get()
-            ->map(function (RawatInap $ranap): Fluent {
+            ->map(function (RawatInap $ranap): array {
                 $kategoriBilling = $ranap
                     ->billing
                     ->pluck('total', 'status')
-                    ->mapWithKeys(fn ($total, $status) => [Str::snake($status) => $total]);
+                    ->mapWithKeys(fn ($total, $status): array => [Str::snake($status) => $total]);
 
                 $billingTindakan = $kategoriBilling
                     ->only([
@@ -133,32 +130,32 @@ class DPJPPiutangRanap extends Component
 
                 $sisa = $total - $ranap->uangmuka - $ranap->dibayar;
 
-                return new Fluent([
+                return [
                     'waktu_keluar'  => $ranap->waktu_keluar,
                     'no_nota'       => $ranap->no_nota,
                     'no_rkm_medis'  => $ranap->no_rkm_medis,
                     'nm_pasien'     => $ranap->nm_pasien,
                     'png_jawab'     => $ranap->png_jawab,
                     'perujuk'       => $ranap->perujuk,
-                    'registrasi'    => $kategoriBilling->get('registrasi'),
+                    'registrasi'    => (float) $kategoriBilling->get('registrasi'),
                     'tindakan'      => $billingTindakan,
-                    'obat'          => $kategoriBilling->get('obat'),
-                    'retur_obat'    => $kategoriBilling->get('retur_obat'),
-                    'resep_pulang'  => $kategoriBilling->get('resep_pulang'),
-                    'laborat'       => $kategoriBilling->get('laborat'),
-                    'radiologi'     => $kategoriBilling->get('radiologi'),
-                    'potongan'      => $kategoriBilling->get('potongan'),
-                    'tambahan'      => $kategoriBilling->get('tambahan'),
-                    'kamar_service' => $kategoriBilling->only(['kamar', 'service'])->sum(),
-                    'operasi'       => $kategoriBilling->get('operasi'),
-                    'harian'        => $kategoriBilling->get('harian'),
-                    'total'         => $total,
-                    'uangmuka'      => $ranap->uangmuka,
-                    'dibayar'       => $ranap->dibayar,
-                    'sisa'          => $sisa,
+                    'obat'          => (float) $kategoriBilling->get('obat'),
+                    'retur_obat'    => (float) $kategoriBilling->get('retur_obat'),
+                    'resep_pulang'  => (float) $kategoriBilling->get('resep_pulang'),
+                    'laborat'       => (float) $kategoriBilling->get('laborat'),
+                    'radiologi'     => (float) $kategoriBilling->get('radiologi'),
+                    'potongan'      => (float) $kategoriBilling->get('potongan'),
+                    'tambahan'      => (float) $kategoriBilling->get('tambahan'),
+                    'kamar_service' => (float) $kategoriBilling->only(['kamar', 'service'])->sum(),
+                    'operasi'       => (float) $kategoriBilling->get('operasi'),
+                    'harian'        => (float) $kategoriBilling->get('harian'),
+                    'total'         => (float) $total,
+                    'uangmuka'      => (float) $ranap->uangmuka,
+                    'dibayar'       => (float) $ranap->dibayar,
+                    'sisa'          => (float) $sisa,
                     'ruangan'       => $ranap->ruangan,
                     'dokter_pj'     => $ranap->dpjpRanap->implode('nm_dokter', ', '),
-                ]);
+                ];
             });
     }
 

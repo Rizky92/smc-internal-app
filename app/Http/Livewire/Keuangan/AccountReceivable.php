@@ -54,7 +54,7 @@ class AccountReceivable extends Component
     }
 
     /** 
-     * @return \Illuminate\Pagination\LengthAwarePaginator|array<empty, empty>
+     * @return \Illuminate\Contracts\Pagination\Paginator|array<empty, empty>
      */
     public function getDataAccountReceivableProperty()
     {

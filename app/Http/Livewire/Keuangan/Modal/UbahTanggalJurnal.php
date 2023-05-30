@@ -37,17 +37,19 @@ class UbahTanggalJurnal extends Component
     /** @var string */
     public $tglJurnalBaru;
 
+    /** @var array */
     protected $rules = [
         'tglJurnalBaru' => ['required', 'date'],
     ];
 
+    /** @var mixed */
     protected $listeners = [
         'utj.prepare' => 'prepareJurnal',
         'utj.show' => 'showModal',
         'utj.hide' => 'hideModal',
     ];
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
@@ -94,7 +96,7 @@ class UbahTanggalJurnal extends Component
         $jurnalDiubah = Jurnal::query()->find($this->noJurnal);
 
         if (is_null($jurnalDiubah)) {
-            throw (new ModelNotFoundException)->setModel(Jurnal::class, $this->noJurnal);
+            throw (new ModelNotFoundException)->setModel(Jurnal::class, [$this->noJurnal]);
         }
 
         $jurnalTerakhirPerTgl = Jurnal::query()

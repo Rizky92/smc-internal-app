@@ -10,31 +10,38 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class LaporanTindakanRadiologi extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
+    /** @var string */
     public $tglAwal;
 
+    /** @var string */
     public $tglAkhir;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function getDataLaporanTindakanRadiologiProperty()
+    public function getDataLaporanTindakanRadiologiProperty(): Paginator
     {
         return HasilPeriksaRadiologi::query()
             ->laporanTindakanRadiologi($this->tglAwal, $this->tglAkhir)
@@ -72,18 +79,18 @@ class LaporanTindakanRadiologi extends Component
                 'hasil_pemeriksaan' => DB::raw('LEFT(hasil_radiologi.hasil, 200)'),
             ], [
                 'periksa_radiologi.tgl_periksa' => 'asc',
-                'periksa_radiologi.jam' => 'asc',
+                'periksa_radiologi.jam'         => 'asc',
             ])
             ->paginate($this->perpage);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.keuangan.laporan-tindakan-radiologi')
             ->layout(BaseLayout::class, ['title' => 'Laporan Jumlah Tindakan Radiologi']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;
@@ -98,7 +105,7 @@ class LaporanTindakanRadiologi extends Component
             HasilPeriksaRadiologi::query()
                 ->laporanTindakanRadiologi($this->tglAwal, $this->tglAkhir)
                 ->get()
-                ->map(fn (HasilPeriksaRadiologi $model) => [
+                ->map(fn (HasilPeriksaRadiologi $model): array => [
                     'no_rawat'          => $model->no_rawat,
                     'no_rkm_medis'      => $model->no_rkm_medis,
                     'nm_pasien'         => $model->nm_pasien,

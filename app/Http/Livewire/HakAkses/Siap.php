@@ -2,19 +2,19 @@
 
 namespace App\Http\Livewire\HakAkses;
 
-use App\Models\Aplikasi\HakAkses;
-use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
-use App\Models\Aplikasi\User;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class Siap extends Component
 {
     use FlashComponent, Filterable, LiveTable, MenuTracker;
@@ -24,7 +24,7 @@ class Siap extends Component
         $this->defaultValues();
     }
 
-    public function getRolesProperty(): LengthAwarePaginator
+    public function getRolesProperty(): Paginator
     {
         return Role::query()
             ->with('permissions')

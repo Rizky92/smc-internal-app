@@ -14,6 +14,9 @@ use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class PiutangBelumLunas extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
@@ -31,7 +34,7 @@ class PiutangBelumLunas extends Component
     {
         return [
             'penjamin' => ['except' => ''],
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
@@ -42,7 +45,7 @@ class PiutangBelumLunas extends Component
     }
 
     /**
-     * @return array<null, null>|\Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return \Illuminate\Contracts\Pagination\Paginator|array<empty, empty>
      */
     public function getDataPiutangBelumLunasProperty()
     {

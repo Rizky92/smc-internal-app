@@ -44,7 +44,7 @@ class LogToJournal
      * 
      * @return bool
      */
-    protected function isDetailEqual($debet, $kredit)
+    protected function isDetailEqual($debet, $kredit): bool
     {
         $totalDebet = $debet->sum('nominal');
         $totalKredit = $kredit->sum('nominal');

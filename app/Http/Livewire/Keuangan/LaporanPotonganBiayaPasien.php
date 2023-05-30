@@ -9,37 +9,44 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class LaporanPotonganBiayaPasien extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
+    /** @var string */
     public $tglAwal;
 
+    /** @var string */
     public $tglAkhir;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.keuangan.laporan-potongan-biaya-pasien')
             ->layout(BaseLayout::class, ['title' => 'Laporan Potongan Biaya Pasien']);
     }
 
-    public function getDataPotonganBiayaPasienProperty()
+    public function getDataPotonganBiayaPasienProperty(): Paginator
     {
         return PenguranganBiaya::query()
             ->potonganBiayaPasien($this->tglAwal, $this->tglAkhir)
@@ -62,7 +69,7 @@ class LaporanPotonganBiayaPasien extends Component
             ->paginate($this->perpage);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;
@@ -77,7 +84,7 @@ class LaporanPotonganBiayaPasien extends Component
             PenguranganBiaya::query()
                 ->potonganBiayaPasien($this->tglAwal, $this->tglAkhir)
                 ->get()
-                ->map(fn (PenguranganBiaya $model) => [
+                ->map(fn (PenguranganBiaya $model): array => [
                     'tgl_registrasi'    => $model->tgl_registrasi,
                     'jam_reg'           => $model->jam_reg,
                     'nm_pasien'         => $model->nm_pasien,

@@ -12,29 +12,38 @@ use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class LaporanStatistik extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
+    /** @var string */
     public $tglAwal;
 
+    /** @var string */
     public $tglAkhir;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
+    /**
+     * @return \Illuminate\Contracts\Pagination\Paginator|array<empty, empty>
+     */
     public function getDataLaporanStatistikProperty()
     {
         return $this->isDeferred
@@ -46,13 +55,13 @@ class LaporanStatistik extends Component
                 ->paginate($this->perpage);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.rekam-medis.laporan-statistik')
             ->layout(BaseLayout::class, ['title' => 'Laporan Statistik']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;
@@ -68,7 +77,7 @@ class LaporanStatistik extends Component
                 ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
                 ->orderBy('no_rawat')
                 ->cursor()
-                ->map(fn (StatistikRekamMedis $model) => [
+                ->map(fn (StatistikRekamMedis $model): array => [
                     Str::transliterate($model->no_rawat ?? ''),
                     Str::transliterate($model->no_rm ?? ''),
                     Str::transliterate($model->nm_pasien ?? ''),

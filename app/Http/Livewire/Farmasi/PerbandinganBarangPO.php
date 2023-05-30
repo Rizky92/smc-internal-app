@@ -9,7 +9,7 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -28,14 +28,14 @@ class PerbandinganBarangPO extends Component
     public $tglAkhir;
 
     /** @var bool */
-    public $hanyaTampilkanBarangSelisih;
+    public $barangSelisih;
 
     protected function queryString(): array
     {
         return [
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
-            'hanyaTampilkanBarangSelisih' => ['except' => false, 'as' => 'barang_selisih'],
+            'tglAwal'       => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir'      => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'barangSelisih' => ['except' => false, 'as' => 'barang_selisih'],
         ];
     }
 
@@ -44,10 +44,10 @@ class PerbandinganBarangPO extends Component
         $this->defaultValues();
     }
 
-    public function getPerbandinganOrderObatPOProperty(): LengthAwarePaginator
+    public function getPerbandinganOrderObatPOProperty(): Paginator
     {
         return SuratPemesananObat::query()
-            ->perbandinganPemesananObatPO($this->tglAwal, $this->tglAkhir, $this->hanyaTampilkanBarangSelisih)
+            ->perbandinganPemesananObatPO($this->tglAwal, $this->tglAkhir, $this->barangSelisih)
             ->search($this->cari, [
                 "surat_pemesanan_medis.no_pemesanan",
                 "databarang.nama_brng",
@@ -77,16 +77,16 @@ class PerbandinganBarangPO extends Component
         $this->sortColumns = [];
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->hanyaTampilkanBarangSelisih = false;
+        $this->barangSelisih = false;
     }
 
     protected function dataPerSheet(): array
     {
         return [
             SuratPemesananObat::query()
-                ->perbandinganPemesananObatPO($this->tglAwal, $this->tglAkhir, $this->hanyaTampilkanBarangSelisih)
+                ->perbandinganPemesananObatPO($this->tglAwal, $this->tglAkhir, $this->barangSelisih)
                 ->get()
-                ->map(fn (SuratPemesananObat $model) => [
+                ->map(fn (SuratPemesananObat $model): array => [
                     'no_pemesanan'   => $model->no_pemesanan,
                     'nama_brng'      => $model->nama_brng,
                     'suplier_pesan'  => $model->suplier_pesan,

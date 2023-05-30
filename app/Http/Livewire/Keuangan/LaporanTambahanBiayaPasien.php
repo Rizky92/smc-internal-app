@@ -9,31 +9,38 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class LaporanTambahanBiayaPasien extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
 
+    /** @var string */
     public $tglAwal;
 
+    /** @var string */
     public $tglAkhir;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function getDataTambahanBiayaPasienProperty()
+    public function getDataTambahanBiayaPasienProperty(): Paginator
     {
         return TambahanBiaya::query()
             ->biayaTambahanUntukHonorDokter($this->tglAwal, $this->tglAkhir)
@@ -56,13 +63,13 @@ class LaporanTambahanBiayaPasien extends Component
             ->paginate($this->perpage);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.keuangan.laporan-tambahan-biaya-pasien')
             ->layout(BaseLayout::class, ['title' => 'Laporan Tambahan Biaya Pasien untuk Honor Dokter']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;
@@ -77,7 +84,7 @@ class LaporanTambahanBiayaPasien extends Component
             TambahanBiaya::query()
                 ->biayaTambahanUntukHonorDokter($this->tglAwal, $this->tglAkhir)
                 ->get()
-                ->map(fn (TambahanBiaya $model) => [
+                ->map(fn (TambahanBiaya $model): array => [
                     'tgl_registrasi' => $model->tgl_registrasi,
                     'jam_reg'        => $model->jam_reg,
                     'nm_pasien'      => $model->nm_pasien,

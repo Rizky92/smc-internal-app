@@ -9,7 +9,7 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -29,7 +29,7 @@ class ObatPerDokter extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
@@ -39,7 +39,7 @@ class ObatPerDokter extends Component
         $this->defaultValues();
     }
 
-    public function getObatPerDokterProperty(): LengthAwarePaginator
+    public function getObatPerDokterProperty(): Paginator
     {
         return ResepObat::query()
             ->penggunaanObatPerDokter($this->tglAwal, $this->tglAkhir)

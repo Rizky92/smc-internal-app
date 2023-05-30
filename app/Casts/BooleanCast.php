@@ -11,7 +11,7 @@ class BooleanCast implements CastsAttributes
      *
      * @param  \Illuminate\Database\Eloquent\Model $model
      * @param  string $key
-     * @param  string $value
+     * @param  string|mixed $value
      * @param  array $attributes
      * 
      * @return bool
@@ -26,7 +26,7 @@ class BooleanCast implements CastsAttributes
      *
      * @param  \Illuminate\Database\Eloquent\Model $model
      * @param  string $key
-     * @param  bool $value
+     * @param  bool|mixed $value
      * @param  array $attributes
      * 
      * @return string

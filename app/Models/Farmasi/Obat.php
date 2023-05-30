@@ -90,6 +90,7 @@ class Obat extends Model
             ->where('databarang.status', '1')
             ->where('databarang.stokminimal', '>', 0)
             ->whereRaw('(databarang.stokminimal - ifnull(stok_gudang_ap.stok_di_gudang, 0)) > ?', [0])
-            ->whereRaw('ifnull(stok_gudang_ap.stok_di_gudang, 0) <= databarang.stokminimal');
+            ->whereRaw('ifnull(stok_gudang_ap.stok_di_gudang, 0) <= databarang.stokminimal')
+            ->orderBy('databarang.nama_brng');
     }
 }

@@ -2,19 +2,15 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
-use App\Models\Aplikasi\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class CreateSPOController extends Controller
+class CreateSPOController
 {
     /**
      * Handle the incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): JsonResponse
     {
         return response()->json('Hello world');
     }

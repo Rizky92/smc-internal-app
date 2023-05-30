@@ -6,14 +6,14 @@
 @props([
     'name' => null,
     'title' => null,
-    'alignText' => 'left',
+    'align' => 'left',
 ])
 
 @if ($sortable && !empty($name))
     <th {{ $attributes->class([
         'py-2' => true,
     ]) }}>
-        <button type="button" class="btn btn-link text-decoration-none font-weight-bold text-left w-100 p-0 m-0" wire:click="sortBy(@js($name), @js((string) optional($sortColumns)[$name]))">
+        <button type="button" class="btn btn-link text-decoration-none font-weight-bold text-{{ $align }} w-100 p-0 m-0" wire:click="sortBy(@js($name), @js((string) optional($sortColumns)[$name]))">
             <span class="text-dark mr-1">{{ $title }}</span>
             @switch(optional($sortColumns)[$name])
                 @case('asc')

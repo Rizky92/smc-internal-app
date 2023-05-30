@@ -45,7 +45,7 @@ class BukuBesar extends Component
     }
 
     /**
-     * @return \Illuminate\Pagination\LengthAwarePaginator|array<empty, empty>
+     * @return \Illuminate\Contracts\Pagination\Paginator|array<empty, empty>
      */
     public function getBukuBesarProperty()
     {
@@ -158,7 +158,7 @@ class BukuBesar extends Component
     protected function pageHeaders(): array
     {
         $rekening = empty($this->kodeRekening) ? 'SEMUA' : $this->rekening[$this->kodeRekening];
-        
+
         return [
             'RS Samarinda Medika Citra',
             'Buku Besar rekening ' . $rekening,

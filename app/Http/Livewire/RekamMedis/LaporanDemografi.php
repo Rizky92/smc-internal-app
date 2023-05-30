@@ -10,46 +10,55 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class LaporanDemografi extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
+    /** @var string */
     public $tglAwal;
 
+    /** @var string */
     public $tglAkhir;
 
-    protected function queryString()
+    protected function queryString(): array
     {
         return [
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
+    /** 
+     * @return \Illuminate\Contracts\Pagination\Paginator|array<empty, empty>
+     */
     public function getDemografiPasienProperty()
     {
         return $this->isDeferred
             ? []
             : DemografiPasien::query()
-            ->search($this->cari)
-            ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
-            ->paginate($this->perpage);
+                ->search($this->cari)
+                ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
+                ->paginate($this->perpage);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.rekam-medis.laporan-demografi')
             ->layout(BaseLayout::class, ['title' => 'Laporan Demografi Pasien']);
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->cari = '';
         $this->perpage = 25;
