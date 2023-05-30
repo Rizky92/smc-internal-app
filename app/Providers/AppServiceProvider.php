@@ -51,12 +51,12 @@ class AppServiceProvider extends ServiceProvider
         $this->registerCollectionMacrosAndMixins();
     }
 
-    public function registerFacades()
+    public function registerFacades(): void
     {
         $this->app->bind(BpjsService::class, fn () => new BpjsService);
     }
 
-    public function registerBladeDirectives()
+    public function registerBladeDirectives(): void
     {
         Blade::if('inarray', fn (mixed $needle, array $haystack, bool $strict = false) => in_array($needle, $haystack, $strict));
 
@@ -65,7 +65,7 @@ class AppServiceProvider extends ServiceProvider
         Blade::if('notnull', fn ($expr) => !is_null($expr));
     }
 
-    public function registerModelConfigurations()
+    public function registerModelConfigurations(): void
     {
         Model::preventLazyLoading(! app()->isProduction());
 
@@ -76,14 +76,14 @@ class AppServiceProvider extends ServiceProvider
         ]);
     }
 
-    public function registerSuperadminRole()
+    public function registerSuperadminRole(): void
     {
         Gate::before(function (User $user) {
             return $user->hasRole(config('permission.superadmin_name')) ? true : null;
         });
     }
 
-    public function registerCollectionMacrosAndMixins()
+    public function registerCollectionMacrosAndMixins(): void
     {
         foreach ($this->mixins as $class => $mixins) {
             if (! in_array('mixin', get_class_methods($class), $strict = true)) {

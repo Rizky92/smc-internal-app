@@ -31,11 +31,12 @@
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->jurnal as $jurnal)
-                        <x-table.tr>
-                            @php
-                                $count = $jurnal->detail->count();
-                                $firstDetail = $jurnal->detail->first();
-                            @endphp
+                        @php
+                            $odd = $loop->iteration % 2 === 0 ? '255 255 255' : '247 247 247';
+                            $count = $jurnal->detail->count();
+                            $firstDetail = $jurnal->detail->first();
+                        @endphp
+                        <x-table.tr style="background-color: rgb({{ $odd }})">
                             @can('keuangan.jurnal-perbaikan.ubah-tanggal')
                                 <x-table.td rowspan="{{ $count }}" class="pl-3 py-1">
                                     <x-button size="xs" variant="link" class="mt-n1" title="Edit" icon="fas fa-pencil-alt" id="edit-{{ $jurnal->no_jurnal }}" data-toggle="modal" data-target="#modal-ubah-tgl-jurnal" wire:click.prevent="$emit('utj.prepare', {
@@ -63,7 +64,7 @@
                         </x-table.tr>
                         @if ($jurnal->detail->skip(1)->count() > 0)
                             @foreach ($jurnal->detail->skip(1) as $detail)
-                                <x-table.tr>
+                                <x-table.tr style="background-color: rgb({{ $odd }})">
                                     <x-table.td class="p-1 border-0">{{ $detail->kd_rek }}</x-table.td>
                                     <x-table.td class="border-0">
                                         @if ($detail->kredit > 0)
@@ -76,11 +77,7 @@
                             @endforeach
                         @endif
                     @empty
-                        <x-table.tr-empty :colspan="auth()
-                            ->user()
-                            ->can('keuangan.jurnal-perbaikan.ubah-tanggal')
-                            ? 8
-                            : 7" />
+                        <x-table.tr-empty :colspan="auth()->user()->can('keuangan.jurnal-perbaikan.ubah-tanggal') ? 8 : 7" />
                     @endforelse
                 </x-slot>
             </x-table>

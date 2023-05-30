@@ -21,21 +21,25 @@ class StatusDataPasien extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
+    /** @var string */
     public $tglAwal;
 
+    /** @var string */
     public $tglAkhir;
 
-    public $tampilkanSemuaRegistrasi;
+    /** @var bool */
+    public $semuaRegistrasi;
 
+    /** @var string */
     public $jenisPerawatan;
 
     protected function queryString(): array
     {
         return [
-            'jenisPerawatan' => ['except' => 'semua', 'as' => 'jenis_rawat'],
-            'tampilkanSemuaRegistrasi' => ['except' => false, 'as' => 'semua'],
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'jenisPerawatan'  => ['except' => 'semua', 'as' => 'jenis_rawat'],
+            'semuaRegistrasi' => ['except' => false, 'as' => 'semua'],
+            'tglAwal'         => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir'        => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -45,14 +49,14 @@ class StatusDataPasien extends Component
     }
 
     /**
-     * @return array|\Illuminate\Pagination\LengthAwarePaginator
+     * @return \Illuminate\Contracts\Pagination\Paginator|array<empty, empty>
      */
     public function getDataStatusRekamMedisPasienProperty()
     {
         return $this->isDeferred
             ? []
             : RegistrasiPasien::query()
-                ->statusDataRM($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan, $this->tampilkanSemuaRegistrasi)
+                ->statusDataRM($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan, $this->semuaRegistrasi)
                 ->search($this->cari, [
                     'reg_periksa.no_rawat',
                     'reg_periksa.tgl_registrasi',
@@ -80,7 +84,7 @@ class StatusDataPasien extends Component
         $this->sortColumns = [];
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->tampilkanSemuaRegistrasi = false;
+        $this->semuaRegistrasi = false;
         $this->jenisPerawatan = 'semua';
     }
 
@@ -88,7 +92,7 @@ class StatusDataPasien extends Component
     {
         return [
             RegistrasiPasien::query()
-                ->statusDataRM($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan, $this->tampilkanSemuaRegistrasi)
+                ->statusDataRM($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan, $this->semuaRegistrasi)
                 ->cursor()
                 ->map(fn (RegistrasiPasien $modal): array => [
                     'no_rawat'         => $modal->no_rawat,

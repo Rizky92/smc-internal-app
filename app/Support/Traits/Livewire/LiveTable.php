@@ -8,13 +8,13 @@ trait LiveTable
 {
     use WithPagination;
 
-    /** @var string $cari = '' */
+    /** @var ?string */
     public $cari;
 
-    /** @var int $perpage = 25 */
+    /** @var int */
     public $perpage;
 
-    /** @var array<string, string> $sortColumns = [] */
+    /** @var string[] */
     public $sortColumns;
 
     /** @var string */
@@ -22,8 +22,8 @@ trait LiveTable
 
     /** @var array|mixed */
     protected $queryStringLiveTable = [
-        'cari' => ['except' => ''],
-        'perpage' => ['except' => 25],
+        'cari'        => ['except' => ''],
+        'perpage'     => ['except' => 25],
         'sortColumns' => ['except' => '', 'as' => 'sort'],
     ];
 

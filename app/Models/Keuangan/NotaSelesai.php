@@ -103,7 +103,7 @@ class NotaSelesai extends Model
             ");
     }
 
-    public static function refreshModel()
+    public static function refreshModel(): void
     {
         $latest = static::latest('tgl_penyelesaian')->first();
 

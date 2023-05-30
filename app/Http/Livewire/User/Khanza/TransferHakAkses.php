@@ -6,35 +6,50 @@ use App\Models\Aplikasi\User;
 use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\LiveTable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Livewire\Component;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class TransferHakAkses extends Component
 {
     use Filterable, LiveTable, DeferredModal;
 
+    /** @var ?string */
     public $nrp;
 
+    /** @var ?string */
     public $nama;
 
+    /** @var bool|false */
     public $showChecked;
 
+    /** @var ?string[] */
     public $checkedUsers;
 
+    /** @var bool|false */
     public $softTransfer;
 
+    /** @var mixed */
     protected $listeners = [
-        'khanza.show-tha' => 'showModal',
-        'khanza.hide-tha' => 'hideModal',
+        'khanza.show-tha'         => 'showModal',
+        'khanza.hide-tha'         => 'hideModal',
         'khanza.prepare-transfer' => 'prepareTransfer',
-        'khanza.transfer' => 'save',
+        'khanza.transfer'         => 'save',
     ];
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection|array<empty, empty>
+     */
     public function getAvailableUsersProperty()
     {
         $checkedUsers = collect($this->checkedUsers)
@@ -46,24 +61,24 @@ class TransferHakAkses extends Component
             ? []
             : User::query()
                 ->where(DB::raw('trim(pegawai.nik)'), '!=', $this->nrp)
-                ->where(fn ($q) => $q
+                ->where(fn (Builder $q): Builder => $q
                     ->search($this->cari)
-                    ->when($this->showChecked, fn ($q) => $q->orWhereIn(DB::raw('trim(pegawai.nik)'), $checkedUsers)))
+                    ->when($this->showChecked, fn (Builder $q): Builder => $q->orWhereIn(DB::raw('trim(pegawai.nik)'), $checkedUsers)))
                 ->get();
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.user.khanza.transfer-hak-akses');
     }
 
-    public function prepareTransfer(string $nrp = '', string $nama = '')
+    public function prepareTransfer(string $nrp = '', string $nama = ''): void
     {
         $this->nrp = $nrp;
         $this->nama = $nama;
     }
 
-    public function save()
+    public function save(): void
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->dispatchBrowserEvent('data-denied');
@@ -76,13 +91,13 @@ class TransferHakAkses extends Component
 
         $hakAkses = collect($currentUser->getAttributes())
             ->except(['id_user', 'password'])
-            ->when($this->softTransfer, fn ($c) => $c->filter(fn ($v) => $v === 'true'))
+            ->when($this->softTransfer, fn (Collection $c): Collection => $c->filter(fn ($v) => $v === 'true'))
             ->all();
 
         tracker_start('mysql_sik');
 
         User::query()
-            ->whereIn(DB::raw('trim(pegawai.nik)'), collect($this->checkedUsers)->filter()->map(fn ($_, $k) => strval($k))->all())
+            ->whereIn(DB::raw('trim(pegawai.nik)'), collect($this->checkedUsers)->filter()->map(fn (bool $_, string $k): string => strval($k))->all())
             ->update($hakAkses);
 
         tracker_end('mysql_sik');
@@ -91,7 +106,7 @@ class TransferHakAkses extends Component
         $this->emit('flash.success', "Transfer hak akses SIMRS Khanza berhasil!");
     }
 
-    private function defaultValues()
+    protected function defaultValues(): void
     {
         $this->undefer();
 

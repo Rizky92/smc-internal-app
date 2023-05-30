@@ -13,7 +13,7 @@
                 <x-filter.select class="ml-3" model="jenisPerawatan" :options="['semua' => 'Semua', 'ralan' => 'Rawat Jalan', 'ranap' => 'Rawat Inap']" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
-                <x-filter.toggle title="Tampilkan Semua Registrasi" model="tampilkanSemuaRegistrasi" />
+                <x-filter.toggle title="Tampilkan Semua Registrasi" model="semuaRegistrasi" />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
             </x-row-col-flex>

@@ -1009,7 +1009,10 @@ class User extends Authenticatable
         });
     }
 
-    public function scopeWithHakAkses(Builder $query)
+    /**
+     * @psalm-return Builder<\Illuminate\Database\Eloquent\Model>
+     */
+    public function scopeWithHakAkses(Builder $query): Builder
     {
         return $query->selectRaw('user.*');
     }

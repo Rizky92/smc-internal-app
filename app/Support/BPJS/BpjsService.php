@@ -18,7 +18,10 @@ class BpjsService
         return (new static)->$name($arguments);
     }
 
-    public static function start()
+    /**
+     * @return static
+     */
+    public static function start(): self
     {
         return new static;
     }
@@ -53,7 +56,10 @@ class BpjsService
     //     return new static;
     // }
 
-    public function getListTask($noBooking)
+    /**
+     * @return static
+     */
+    public function getListTask($noBooking): self
     {
         if (empty($this->timestamp)) {
             $this->timestamp = now()->format('U');
@@ -81,7 +87,7 @@ class BpjsService
         return $this;
     }
 
-    protected function generateSignature()
+    protected function generateSignature(): string
     {
         $timestamp = $this->timestamp;
 
@@ -93,7 +99,7 @@ class BpjsService
         return base64_encode($signature);
     }
 
-    protected function decryptResponse(string $key = 'response')
+    protected function decryptResponse(string $key = 'response'): void
     {
         $timestamp = $this->timestamp;
         $consid = config('bpjs.consid');
@@ -117,7 +123,10 @@ class BpjsService
         );
     }
 
-    public function setTimestamp(string $timestamp = '')
+    /**
+     * @return static
+     */
+    public function setTimestamp(string $timestamp = ''): self
     {
         if (empty($timestamp)) {
             $timestamp = now()->format('U');
@@ -128,14 +137,20 @@ class BpjsService
         return $this;
     }
 
-    public function setHeaders(array $headers)
+    /**
+     * @return static
+     */
+    public function setHeaders(array $headers): self
     {
         $this->headers = $headers;
 
         return $this;
     }
 
-    public function setHeader(string $key, mixed $value = null)
+    /**
+     * @return static
+     */
+    public function setHeader(string $key, mixed $value = null): self
     {
         $this->headers[$key] ??= $value;
 

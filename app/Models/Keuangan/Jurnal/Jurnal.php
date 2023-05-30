@@ -29,7 +29,10 @@ class Jurnal extends Model
         return $this->hasMany(JurnalDetail::class, 'no_jurnal', 'no_jurnal');
     }
 
-    public static function findLatest(string $tglJurnal, array $columns = ['*'])
+    /**
+     * @return static
+     */
+    public static function findLatest(string $tglJurnal, array $columns = ['*']): ?self
     {
         return (new static)::query()
             ->where('tgl_jurnal', $tglJurnal)

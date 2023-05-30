@@ -66,7 +66,7 @@ class JurnalMedis extends Model
             ->whereBetween(DB::raw('date(jurnal_medis.waktu_jurnal)'), [$tglAwal, $tglAkhir]);
     }
 
-    public static function refreshModel()
+    public static function refreshModel(): void
     {
         $latest = static::latest('waktu_jurnal')->first();
 

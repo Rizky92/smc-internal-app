@@ -5,6 +5,7 @@ namespace App\View\Components;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\URL;
 use Illuminate\View\Component;
+use Illuminate\View\View;
 
 class BaseLayout extends Component
 {
@@ -20,10 +21,6 @@ class BaseLayout extends Component
 
     /**
      * Create a new component instance.
-     * 
-     * @param  string $title
-     *
-     * @return void
      */
     public function __construct(string $title = 'Dashboard')
     {
@@ -228,7 +225,6 @@ class BaseLayout extends Component
                     'farmasi.kunjungan-per-bentuk-obat.read',
                     'farmasi.kunjungan-per-poli.read',
                     'farmasi.perbandingan-po-obat.read',
-                    'farmasi.penyerahan-resep-obat.read',
                 ]),
                 'items' => [
                     [
@@ -267,12 +263,6 @@ class BaseLayout extends Component
                         'url' => route('admin.farmasi.perbandingan-po-obat'),
                         'hasAnyPermissions' => $user->can('farmasi.perbandingan-po-obat.read'),
                     ],
-                    // [
-                    //     'name' => 'Penyerahan Resep Obat',
-                    //     'icon' => 'fas fa-receipt',
-                    //     'url' => route('admin.farmasi.penyerahan-resep-obat'),
-                    //     'hasAnyPermissions' => $user->can('farmasi.penyerahan-resep-obat.read'),
-                    // ],
                 ],
             ],
             [
@@ -376,10 +366,8 @@ class BaseLayout extends Component
 
     /**
      * Get the view / contents that represent the component.
-     *
-     * @return \Illuminate\Contracts\View\View|\Closure|string
      */
-    public function render()
+    public function render(): View
     {
         return view('layouts.admin');
     }

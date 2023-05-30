@@ -16,19 +16,19 @@ class Generator
         $this->routes = collect(Route::getRoutes()->getRoutes());
     }
 
-    public static function make()
+    public static function make(): void
     {
         //
     }
 
-    public function fromRoute(string $name)
+    public function fromRoute(string $name): void
     {
         if ($this->menuExists($name)) {
             
         }
     }
 
-    protected function menuExists(string $name)
+    protected function menuExists(string $name): bool
     {
         return $this->menu->has($name);
     }

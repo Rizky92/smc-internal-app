@@ -122,10 +122,10 @@ class UbahTanggalJurnal extends Component
             tracker_start('mysql_smc');
 
             JurnalBackup::create([
-                'no_jurnal' => $jurnalDiubah->no_jurnal,
-                'tgl_jurnal_asli' => $this->tglJurnalLama,
+                'no_jurnal'         => $jurnalDiubah->no_jurnal,
+                'tgl_jurnal_asli'   => $this->tglJurnalLama,
                 'tgl_jurnal_diubah' => $jurnalDiubah->tgl_jurnal,
-                'nip' => auth()->user()->nik,
+                'nip'               => auth()->user()->nik,
             ]);
 
             tracker_end('mysql_smc');

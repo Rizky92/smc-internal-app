@@ -31,17 +31,20 @@ class SetPerizinan extends Component
         'siap.set' => 'save',
     ];
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         return view('livewire.user.siap.set-perizinan');
     }
 
-    public function getRolesProperty()
+    /**
+     * @psalm-return \Illuminate\Database\Eloquent\Collection<\Illuminate\Database\Eloquent\Model>
+     */
+    public function getRolesProperty(): \Illuminate\Database\Eloquent\Collection
     {
         return Role::with('permissions')->get();
     }
@@ -51,7 +54,7 @@ class SetPerizinan extends Component
         return Permission::whereDoesntHave('roles')->get();
     }
 
-    public function prepareUser(string $nrp = '', string $nama = '', array $roleIds = [], array $permissionIds = [])
+    public function prepareUser(string $nrp = '', string $nama = '', array $roleIds = [], array $permissionIds = []): void
     {
         $this->nrp = $nrp;
         $this->nama = $nama;
@@ -59,6 +62,9 @@ class SetPerizinan extends Component
         $this->checkedPermissions = $permissionIds;
     }
 
+    /**
+     * @return void
+     */
     public function save()
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
@@ -80,7 +86,7 @@ class SetPerizinan extends Component
         $this->emit('flash.success', "Perizinan SIAP untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
     }
 
-    public function defaultValues()
+    public function defaultValues(): void
     {
         $this->undefer();
 

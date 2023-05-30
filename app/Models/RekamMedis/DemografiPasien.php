@@ -22,7 +22,12 @@ class DemografiPasien extends Model
 
     public $timestamps = false;
 
-    protected function searchColumns()
+    /**
+     * @return string[]
+     *
+     * @psalm-return array{0: 'kecamatan', 1: 'no_rm', 2: 'no_rawat', 3: 'nm_pasien', 4: 'almt', 5: 'diagnosa', 6: 'agama', 7: 'pendidikan', 8: 'bahasa', 9: 'suku'}
+     */
+    protected function searchColumns(): array
     {
         return [
             'kecamatan',

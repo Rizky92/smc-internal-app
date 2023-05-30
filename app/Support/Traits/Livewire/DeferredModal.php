@@ -19,7 +19,7 @@ trait DeferredModal
         $this->loadProperties();
     }
 
-    public function hideModal()
+    public function hideModal(): void
     {
         $this->undefer();
 

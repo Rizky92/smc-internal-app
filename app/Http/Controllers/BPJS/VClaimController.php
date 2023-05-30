@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 class VClaimController
 {
-    public function store(Request $request)
+    public function store(Request $request): void
     {
         //
     }

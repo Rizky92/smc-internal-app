@@ -25,7 +25,7 @@ class PiutangDilunaskan extends Model
 
     protected $table = 'piutang_dilunaskan';
 
-    public static function refreshModel()
+    public static function refreshModel(): void
     {
         $latest = static::query()->latest('waktu_jurnal')->value('waktu_jurnal');
 

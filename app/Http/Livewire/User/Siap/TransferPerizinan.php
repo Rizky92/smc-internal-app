@@ -35,16 +35,21 @@ class TransferPerizinan extends Component
         'siap.transfer' => 'save',
     ];
 
-    public function mount()
+    public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function render()
+    public function render(): \Illuminate\View\View
     {
         return view('livewire.user.siap.transfer-perizinan');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection|array
+     *
+     * @psalm-return \Illuminate\Database\Eloquent\Collection<User>|array<empty, empty>
+     */
     public function getAvailableUsersProperty()
     {
         $checkedUsers = collect($this->checkedUsers)
@@ -63,7 +68,7 @@ class TransferPerizinan extends Component
                 ->get();
     }
 
-    public function prepareTransfer(string $nrp = '', string $nama = '')
+    public function prepareTransfer(string $nrp = '', string $nama = ''): void
     {
         $this->nrp = $nrp;
         $this->nama = $nama;
@@ -77,6 +82,9 @@ class TransferPerizinan extends Component
         $this->permissions = $user->permissions->pluck('name', 'id')->all();
     }
 
+    /**
+     * @return void
+     */
     public function save()
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {

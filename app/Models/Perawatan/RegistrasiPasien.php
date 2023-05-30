@@ -289,7 +289,7 @@ class RegistrasiPasien extends Model
         string $tglAwal = '',
         string $tglAkhir = '',
         string $jenisPerawatan = 'semua',
-        bool $tampilkanSemuaRegistrasi = false
+        bool $semuaRegistrasi = false
     ): Builder {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->format('Y-m-d');
@@ -332,7 +332,7 @@ class RegistrasiPasien extends Model
             ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
-            ->when(!$tampilkanSemuaRegistrasi, fn ($q) => $q->whereNotIn('reg_periksa.stts', ['Batal', 'Belum']))
+            ->when(!$semuaRegistrasi, fn ($q) => $q->whereNotIn('reg_periksa.stts', ['Batal', 'Belum']))
             ->when($jenisPerawatan !== 'semua', fn ($q) => $q->where('reg_periksa.status_lanjut', $jenisPerawatan));
     }
 }
