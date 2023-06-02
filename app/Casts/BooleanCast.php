@@ -11,13 +11,17 @@ class BooleanCast implements CastsAttributes
      *
      * @param  \Illuminate\Database\Eloquent\Model $model
      * @param  string $key
-     * @param  string|mixed $value
+     * @param  mixed $value
      * @param  array $attributes
      * 
      * @return bool
      */
     public function get($model, string $key, $value, array $attributes)
     {
+        if (! is_string($value)) {
+            return false;
+        }
+        
         return $value === 'true';
     }
 

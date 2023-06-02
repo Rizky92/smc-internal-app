@@ -2,85 +2,73 @@
 
 namespace App\Support\BPJS;
 
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use LZCompressor\LZString;
+use RuntimeException;
 
 class BpjsService
 {
-    protected $timestamp = '';
+    private const URL_DASHBOARD_PER_BULAN = "https://apijkn.bpjs-kesehatan.go.id/antreanrs/dashboard/waktutunggu/bulan/{bulan}/tahun/{tahun}/waktu/{waktu}";
+    private const URL_GET_LIST_TASK = "https://apijkn.bpjs-kesehatan.go.id/antreanrs/antrean/getlisttask";
 
-    protected $response;
+    protected string $timestamp;
 
-    protected $headers;
+    /** @var \Illuminate\Http\Client\Response|null */
+    protected ?Response $response = null;
 
-    public static function __callStatic($name, $arguments)
-    {
-        return (new static)->$name($arguments);
-    }
-
-    /**
-     * @return static
-     */
-    public static function start(): self
-    {
-        return new static;
-    }
-
-    // public function dashboardPerBulan(string $bulan, string $tahun, string $jam)
-    // {
-    //     if (empty($this->timestamp)) {
-    //         $this->timestamp = now()->format('U');
-    //     }
-
-    //     $url = 'https://apijkn.bpjs-kesehatan.go.id/antreanrs/antrean/dashboard/waktutunggu/bulan/{p1}/tahun/{p2}/waktu/{p3}';
-
-    //     $this->setHeaders([
-    //         'x-cons-id' => config('bpjs.consid'),
-    //         'x-timestamp' => $this->timestamp,
-    //         'x-signature' => $this->generateSignature(),
-    //         'user_key' => config('bpjs.userkey'),
-    //     ]);
-
-    //     $url = str($url)
-    //         ->replace('{p1}', $bulan)
-    //         ->replace('{p2}', $tahun)
-    //         ->replace('{p3}', $jam);
-        
-    //     $this->response = Http::withHeaders($this->headers)
-    //         ->get((string) $url);
-
-    //     dd($this->response);
-
-    //     $this->decryptResponse();
-
-    //     return new static;
-    // }
+    /** @var array */
+    protected array $headers;
 
     /**
-     * @return static
+     * @param  string|null $timestamp
+     * 
+     * @return void
      */
-    public function getListTask($noBooking): self
+    public function __construct(?string $timestamp = null)
     {
-        if (empty($this->timestamp)) {
-            $this->timestamp = now()->format('U');
-        }
-        
-        $url = 'https://apijkn-dev.bpjs-kesehatan.go.id/antreanrs_dev/antrean/getlisttask';
+        $this->timestamp = $timestamp ?? now()->format('U');
 
-        $this->setHeaders([
+        $this->headers = [
             'x-cons-id' => config('bpjs.consid'),
             'x-timestamp' => $this->timestamp,
             'x-signature' => $this->generateSignature(),
             'user_key' => config('bpjs.userkey'),
-        ]);
+        ];
+    }
 
-        $data = $noBooking;
+    /**
+     * @param  string $bulan
+     * @param  string $tahun
+     * @param  string $waktu
+     * @psalm-param  "rs"|"server" $waktu
+     * 
+     * @return static
+     */
+    public function dashboardPerBulan(string $bulan, string $tahun, string $waktu): ?self
+    {
+        $url = str(self::URL_DASHBOARD_PER_BULAN)
+            ->replace('{p1}', $bulan)
+            ->replace('{p2}', $tahun)
+            ->replace('{p3}', $waktu);
+        
+        $this->response = Http::withHeaders($this->headers)
+            ->get((string) $url);
 
-        if (is_string($noBooking)) {
-            $data = ['kodebooking' => '20230309000001'];
-        }
+        $this->decryptResponse();
 
-        $this->response = Http::withHeaders($this->headers)->post($url, $data)->json();
+        return $this;
+    }
+
+    /**
+     * @param  string $noBooking
+     * 
+     * @return static
+     */
+    public function getListTask($noBooking): ?self
+    {
+        $this->response = Http::withHeaders($this->headers)
+            ->post(self::URL_GET_LIST_TASK, ['kodebooking' => $noBooking]);
         
         $this->decryptResponse();
 
@@ -89,23 +77,20 @@ class BpjsService
 
     protected function generateSignature(): string
     {
-        $timestamp = $this->timestamp;
-
         $consid = config('bpjs.consid');
         $secret = config('bpjs.secret');
 
-        $signature = hash_hmac('sha256', "{$consid}&{$timestamp}", $secret, true);
+        $signature = hash_hmac('sha256', "{$consid}&{$this->timestamp}", $secret, true);
 
         return base64_encode($signature);
     }
 
-    protected function decryptResponse(string $key = 'response'): void
+    protected function decryptResponse(?string $key = null): void
     {
-        $timestamp = $this->timestamp;
         $consid = config('bpjs.consid');
         $secret = config('bpjs.secret');
 
-        $hash = hex2bin(hash('sha256', $consid . $secret . $timestamp));
+        $hash = hex2bin(hash('sha256', $consid . $secret . $this->timestamp));
 
         $iv = substr($hash, 0, 16);
 
@@ -113,7 +98,7 @@ class BpjsService
 
         $output = openssl_decrypt($response, 'AES-256-CBC', $hash, OPENSSL_RAW_DATA, $iv);
 
-        $decoded = LZString::decompressFromEncodedURIComponent($output);
+        $decoded = LZString::decompressFromEncodedURIComponent($output) ?? '';
 
         $this->response['decoded'] ??= json_decode(
             $decoded,
@@ -124,39 +109,8 @@ class BpjsService
     }
 
     /**
-     * @return static
+     * @return mixed
      */
-    public function setTimestamp(string $timestamp = ''): self
-    {
-        if (empty($timestamp)) {
-            $timestamp = now()->format('U');
-        }
-
-        $this->timestamp = $timestamp;
-
-        return $this;
-    }
-
-    /**
-     * @return static
-     */
-    public function setHeaders(array $headers): self
-    {
-        $this->headers = $headers;
-
-        return $this;
-    }
-
-    /**
-     * @return static
-     */
-    public function setHeader(string $key, mixed $value = null): self
-    {
-        $this->headers[$key] ??= $value;
-
-        return $this;
-    }
-
     public function response()
     {
         return $this->response;

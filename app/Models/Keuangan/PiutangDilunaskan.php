@@ -15,11 +15,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Kirschbaum\PowerJoins\PowerJoins;
 
 class PiutangDilunaskan extends Model
 {
-    use Sortable, Searchable, PowerJoins;
+    use Sortable, Searchable;
 
     protected $connection = 'mysql_smc';
 
