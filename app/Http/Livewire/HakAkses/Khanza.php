@@ -58,7 +58,7 @@ class Khanza extends Component
 
         $hakAksesTersedia = HakAkses::pluck('default_value', 'nama_field');
 
-        $hakAksesBaru = $hakAkses->diffKeys($hakAksesTersedia)->map(fn (string $_): string => 'false');
+        $hakAksesBaru = $hakAkses->diffKeys($hakAksesTersedia)->map(fn (?object $_): string => 'false');
         $hakAksesDibuang = $hakAksesTersedia->diffKeys($hakAkses);
 
         $countBaru = $hakAksesBaru->count();
@@ -71,9 +71,9 @@ class Khanza extends Component
         }
 
         $hakAksesUser = $hakAkses
-            ->reject(fn (string $_, string $k): bool => $hakAksesDibuang->keys()->containsStrict($k))
+            ->reject(fn (?string $_, string $k): bool => $hakAksesDibuang->keys()->containsStrict($k))
             ->diffKeys($hakAksesTersedia)
-            ->map(fn (string $_, string $k): array => ['nama_field' => $k, 'default_value' => 'false'])
+            ->map(fn (?string $_, string $k): array => ['nama_field' => $k, 'default_value' => 'false'])
             ->values()
             ->toArray();
 
@@ -106,7 +106,7 @@ class Khanza extends Component
 
         HakAkses::updateOrCreate(
             ['nama_field' => $field],
-            ['judul_menu' => $judul, 'default_value' => 'false']
+            ['judul_menu' => $judul, 'default_value' => false]
         );
 
         tracker_end('mysql_smc');

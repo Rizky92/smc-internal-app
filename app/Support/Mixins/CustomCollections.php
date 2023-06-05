@@ -7,6 +7,9 @@ use Illuminate\Support\Collection;
 
 class CustomCollections
 {
+    /**
+     * @return \Closure(bool $condition, mixed ...$values): \Illuminate\Support\Collection
+     */
     public function pushIf(): Closure
     {
         return function (bool $condition, ...$values): Collection {
@@ -16,6 +19,9 @@ class CustomCollections
         };
     }
 
+    /**
+     * @return \Closure(bool, ...mixed): \Illuminate\Support\Collection
+     */
     public function pushUnless(): Closure
     {
         return function (bool $condition, ...$values): Collection {
@@ -25,6 +31,9 @@ class CustomCollections
         };
     }
 
+    /**
+     * @return \Closure(string|null, int): \Illuminate\Support\Collection
+     */
     public function whereLike(): Closure
     {
         return function (?string $search = null, int $looseRange = 1): Collection {
@@ -38,6 +47,9 @@ class CustomCollections
         };
     }
 
+    /**
+     * @return \Closure(string|null, int): bool
+     */
     public function containsLike(): Closure
     {
         return function (?string $search = null, int $looseRange = 1): bool {
