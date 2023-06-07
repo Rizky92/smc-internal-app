@@ -10,7 +10,11 @@ class Kecamatan extends Model
 
     protected $primaryKey = 'kd_kec';
 
+    protected $keyType = 'int';
+
     protected $table = 'kecamatan';
 
     public $incrementing = false;
+
+    public $timestamps = false;
 }

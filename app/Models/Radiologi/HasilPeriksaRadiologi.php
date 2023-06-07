@@ -66,11 +66,10 @@ class HasilPeriksaRadiologi extends Model
             ->leftJoin('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->leftJoin('dokter', 'periksa_radiologi.kd_dokter', '=', 'dokter.kd_dokter')
             ->leftJoin('jns_perawatan_radiologi', 'periksa_radiologi.kd_jenis_prw', '=', 'jns_perawatan_radiologi.kd_jenis_prw')
-            ->leftJoin('hasil_radiologi', function (JoinClause $join) {
-                $join->on('periksa_radiologi.no_rawat', '=', 'hasil_radiologi.no_rawat')
-                    ->on('periksa_radiologi.tgl_periksa', '=', 'hasil_radiologi.tgl_periksa')
-                    ->on('periksa_radiologi.jam', '=', 'hasil_radiologi.jam');
-            })
+            ->leftJoin('hasil_radiologi', fn (JoinClause $join) => $join
+                ->on('periksa_radiologi.no_rawat', '=', 'hasil_radiologi.no_rawat')
+                ->on('periksa_radiologi.tgl_periksa', '=', 'hasil_radiologi.tgl_periksa')
+                ->on('periksa_radiologi.jam', '=', 'hasil_radiologi.jam'))
             ->whereBetween('periksa_radiologi.tgl_periksa', [$tglAwal, $tglAkhir])
             ->groupByRaw("concat(
                 periksa_radiologi.no_rawat,

@@ -21,6 +21,7 @@ class StatistikRekamMedis extends Model
 
     public $timestamps = false;
 
+    /** @var array */
     protected $searchColumns = [
         'no_rawat',
         'no_rm',

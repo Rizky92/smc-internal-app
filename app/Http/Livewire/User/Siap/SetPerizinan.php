@@ -6,29 +6,33 @@ use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
 use App\Support\Traits\Livewire\DeferredModal;
-use App\Support\Traits\Livewire\Filterable;
-use App\Support\Traits\Livewire\LiveTable;
+use Illuminate\Database\Eloquent\Collection;
 use Livewire\Component;
 
 class SetPerizinan extends Component
 {
     use DeferredModal;
-    
+
+    /** @var ?string */
     public $nrp;
 
+    /** @var ?string */
     public $nama;
 
+    /** @var ?array */
     public $checkedRoles;
 
+    /** @var ?array */
     public $checkedPermissions;
 
+    /** @var ?bool */
     public $showChecked;
 
     protected $listeners = [
-        'siap.show-sp' => 'showModal',
-        'siap.hide-sp' => 'hideModal',
+        'siap.show-sp'     => 'showModal',
+        'siap.hide-sp'     => 'hideModal',
         'siap.prepare-set' => 'prepareUser',
-        'siap.set' => 'save',
+        'siap.set'         => 'save',
     ];
 
     public function mount(): void
@@ -42,14 +46,17 @@ class SetPerizinan extends Component
     }
 
     /**
-     * @psalm-return \Illuminate\Database\Eloquent\Collection<\Illuminate\Database\Eloquent\Model>
+     * @return \Illuminate\Database\Eloquent\Collection<\App\Models\Aplikasi\Role>
      */
-    public function getRolesProperty(): \Illuminate\Database\Eloquent\Collection
+    public function getRolesProperty(): Collection
     {
         return Role::with('permissions')->get();
     }
 
-    public function getOtherPermissionsProperty()
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<\App\Models\Aplikasi\Permission>
+     */
+    public function getOtherPermissionsProperty(): Collection
     {
         return Permission::whereDoesntHave('roles')->get();
     }
@@ -62,10 +69,7 @@ class SetPerizinan extends Component
         $this->checkedPermissions = $permissionIds;
     }
 
-    /**
-     * @return void
-     */
-    public function save()
+    public function save(): void
     {
         if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->dispatchBrowserEvent('data-denied');

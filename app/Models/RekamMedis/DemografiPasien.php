@@ -24,8 +24,6 @@ class DemografiPasien extends Model
 
     /**
      * @return string[]
-     *
-     * @psalm-return array{0: 'kecamatan', 1: 'no_rm', 2: 'no_rawat', 3: 'nm_pasien', 4: 'almt', 5: 'diagnosa', 6: 'agama', 7: 'pendidikan', 8: 'bahasa', 9: 'suku'}
      */
     protected function searchColumns(): array
     {
@@ -53,7 +51,7 @@ class DemografiPasien extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        return $query->selectRaw("
+        $sqlSelect = <<<SQL
             kecamatan,
             no_rm,
             no_rawat,
@@ -74,7 +72,10 @@ class DemografiPasien extends Model
             pendidikan,
             bahasa,
             suku
-        ")
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
             ->whereBetween('tgl_registrasi', [$tglAwal, $tglAkhir]);
     }
 }

@@ -28,36 +28,36 @@ trait FlashComponent
     public function flashSuccess(string $message = "Sukses melakukan perubahan data"): void
     {
         $this->flash([
-            'flash.type' => 'success',
             'flash.message' => $message,
-            'flash.icon' => 'check-circle',
+            'flash.type'    => 'success',
+            'flash.icon'    => 'check-circle',
         ]);
     }
 
     public function flashInfo(string $message = "Terjadi sesuatu!"): void
     {
         $this->flash([
-            'flash.type' => 'dark',
             'flash.message' => $message,
-            'flash.icon' => 'info-circle',
+            'flash.type'    => 'dark',
+            'flash.icon'    => 'info-circle',
         ]);
     }
 
     public function flashWarning(string $message = "Terjadi sesuatu!"): void
     {
         $this->flash([
-            'flash.type' => 'warning',
             'flash.message' => $message,
-            'flash.icon' => 'exclamation-triangle',
+            'flash.type'    => 'warning',
+            'flash.icon'    => 'exclamation-triangle',
         ]);
     }
 
     public function flashError(string $message = "Anda tidak diizinkan untuk melakukan aksi ini!"): void
     {
         $this->flash([
-            'flash.type' => 'danger',
             'flash.message' => $message,
-            'flash.icon' => 'times-circle',
+            'flash.type'    => 'danger',
+            'flash.icon'    => 'times-circle',
         ]);
     }
 }

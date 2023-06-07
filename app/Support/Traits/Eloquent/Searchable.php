@@ -35,7 +35,7 @@ trait Searchable
             throw new LogicException("No columns are defined to perform search.");
         }
 
-        // Split search queries by spaces, convert to lowercase, and filter any non-space character
+        // Split search queries to each words, convert to lowercase, and filter any null/empty/space character
         $search = Str::of($search)
             ->lower()
             ->split('/\s+/')
@@ -45,7 +45,7 @@ trait Searchable
 
         return $query->when(
             $search->isNotEmpty(),
-            fn ($query) => $query->where(function ($query) use ($search, $concatenatedColumns) {
+            fn (Builder $query): Builder => $query->where(function (Builder $query) use ($search, $concatenatedColumns): Builder {
                 foreach ($search as $word) {
                     $query->whereRaw("{$concatenatedColumns} like ?", ["%{$word}%"]);
                 }

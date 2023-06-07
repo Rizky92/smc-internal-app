@@ -25,7 +25,7 @@ class BpjsService
      * 
      * @return void
      */
-    public function __construct(?string $timestamp = null)
+    public function __construct($timestamp = null)
     {
         $this->timestamp = $timestamp ?? now()->format('U');
 

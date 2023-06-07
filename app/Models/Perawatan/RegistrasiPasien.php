@@ -160,53 +160,6 @@ class RegistrasiPasien extends Model
         return $this->hasMany(TindakanRalanDokterPerawat::class, 'no_rawat', 'no_rawat');
     }
 
-    public function scopeLaporanStatistik(
-        Builder $query,
-        string $tglAwal = '',
-        string $tglAkhir = ''
-    ): Builder {
-        if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
-        }
-
-        if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
-        }
-
-        return $query
-            ->with([
-                'pasien',
-                'pasien.suku',
-                'poliklinik',
-                'dokterPoli',
-                'penjamin',
-
-                // pemeriksaan ralan pasien
-                'diagnosa',
-                'tindakanRalanDokter',
-                // 'tindakanRalanDokter.tindakan',
-                'tindakanRalanPerawat',
-                // 'tindakanRalanPerawat.tindakan',
-                'tindakanRalanDokterPerawat',
-                // 'tindakanRalanDokterPerawat.tindakan',
-
-                // relasi ranap pasien
-                'rawatInap',
-                'rawatInap.dpjpRanap',
-                'rawatInap.kamar',
-
-                // pemeriksaan ranap pasien
-                'rawatInap.diagnosa',
-                'rawatInap.tindakanRanapPerawat',
-                // 'rawatInap.tindakanRanapPerawat.tindakan',
-                'rawatInap.tindakanRanapDokter',
-                // 'rawatInap.tindakanRanapDokter.tindakan',
-                'rawatInap.tindakanRanapDokterPerawat',
-                // 'rawatInap.tindakanRanapDokterPerawat.tindakan',
-            ])
-            ->whereBetween('tgl_registrasi', [$tglAwal, $tglAkhir]);
-    }
-
     public function scopeDaftarPasienRanap(
         Builder $query,
         string $tglAwal = '',
@@ -222,7 +175,7 @@ class RegistrasiPasien extends Model
             $tglAkhir = now()->format('Y-m-d');
         }
 
-        $sqlSelect = "
+        $sqlSelect = <<<SQL
             kamar_inap.kd_kamar,
             reg_periksa.no_rawat,
             concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal) ruangan,
@@ -251,13 +204,14 @@ class RegistrasiPasien extends Model
             kamar_inap.ttl_biaya,
             ifnull(group_concat(dokter_pj.nm_dokter separator ', '), '-') dokter_ranap,
             pasien.no_tlp
-        ";
+        SQL;
 
         if ($exportToExcel) {
             $sqlSelect = Str::after($sqlSelect, "kamar_inap.kd_kamar,");
         }
 
-        return $query->selectRaw($sqlSelect)
+        return $query
+            ->selectRaw($sqlSelect)
             ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->leftJoin('kamar_inap', 'reg_periksa.no_rawat', '=', 'kamar_inap.no_rawat')
             ->leftJoin('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
@@ -270,7 +224,7 @@ class RegistrasiPasien extends Model
             ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->leftJoin('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
             ->leftJoin('dpjp_ranap', 'reg_periksa.no_rawat', '=', 'dpjp_ranap.no_rawat')
-            ->leftJoin(DB::raw('dokter dokter_pj')->getValue(), 'dpjp_ranap.kd_dokter', '=', 'dokter_pj.kd_dokter')
+            ->leftJoin(DB::raw('dokter dokter_pj'), 'dpjp_ranap.kd_dokter', '=', 'dokter_pj.kd_dokter')
             ->when($statusPerawatan === '-', fn (Builder $query) => $query->where('kamar_inap.stts_pulang', '-'))
             ->when($statusPerawatan === 'tanggal_masuk', fn (Builder $query) => $query->whereBetween('kamar_inap.tgl_masuk', [$tglAwal, $tglAkhir]))
             ->when($statusPerawatan === 'tanggal_keluar', fn (Builder $query) => $query->whereBetween('kamar_inap.tgl_keluar', [$tglAwal, $tglAkhir]))

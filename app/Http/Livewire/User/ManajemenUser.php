@@ -41,7 +41,7 @@ class ManajemenUser extends Component
     }
 
     /**
-     * @return array|\Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return array|\Illuminate\Contracts\Pagination\Paginator
      */
     public function getUsersProperty()
     {
@@ -51,7 +51,7 @@ class ManajemenUser extends Component
                 ->tampilkanYangMemilikiHakAkses($this->tampilkanYangMemilikiHakAkses)
                 ->search($this->cari)
                 ->sortWithColumns($this->sortColumns, [
-                    'jbtn' => DB::raw("coalesce(jabatan.nm_jbtn, spesialis.nm_sps, pegawai.jbtn)"),
+                    'jbtn'  => DB::raw("coalesce(jabatan.nm_jbtn, spesialis.nm_sps, pegawai.jbtn, '-')"),
                     'jenis' => DB::raw("(case when petugas.nip is not null then 'Petugas' when dokter.kd_dokter is not null then 'Dokter' else '-' end)"),
                 ])
                 ->paginate($this->perpage);
@@ -72,7 +72,7 @@ class ManajemenUser extends Component
     }
 
     /**
-     * @return \Illuminate\Http\RedirectResponse|void
+     * @return void|\Illuminate\Http\RedirectResponse
      */
     public function impersonateAsUser(string $nrp = '')
     {
@@ -90,19 +90,16 @@ class ManajemenUser extends Component
 
         auth()->user()->impersonate(User::findByNRP($nrp));
 
-        return redirect('admin/')
+        return redirect(route('admin.dashboard'))
             ->with('flash.type', 'dark')
             ->with('flash.message', "Anda sekarang sedang login sebagai {$nrp}");
     }
 
     /**
-     * @template TA of \App\Models\Aplikasi\Role|string|int
-     * @template TB of \App\Models\Aplikasi\Permission|string|int
-     * 
      * @param  string|null $nrp
      * @param  string|null $nama
-     * @param  array<int, TA>|string|null $roles
-     * @param  array<int, TB>|string|null $permissions
+     * @param  array<string|int, bool|string> $roles
+     * @param  array<string|int, bool|string> $permissions
      */
     public function prepareUser($nrp, $nama, $roles, $permissions): void
     {

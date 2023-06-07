@@ -10,7 +10,11 @@ class Kabupaten extends Model
 
     protected $primaryKey = 'kd_kab';
 
+    protected $keyType = 'int';
+
     protected $table = 'kabupaten';
+
+    public $incrementing = false;
 
     public $timestamps = false;
 }

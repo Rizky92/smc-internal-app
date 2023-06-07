@@ -6,7 +6,6 @@ use App\Database\Query\Grammars\MysqlGrammar;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
-use App\Support\BPJS\BpjsService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Blade;
@@ -16,6 +15,9 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
+    /**
+     * @var array<class-string, class-string[]|class-string>
+     */
     protected $mixins = [
         \Illuminate\Support\Collection::class => \App\Support\Mixins\CustomCollections::class,
         \Illuminate\Support\Str::class => \App\Support\Mixins\CustomStr::class,
@@ -44,25 +46,19 @@ class AppServiceProvider extends ServiceProvider
         // https://carbon.nesbot.com/laravel/
         DB::connection('mysql_smc')->setQueryGrammar(new MysqlGrammar);
 
-        $this->registerFacades();
         $this->registerBladeDirectives();
         $this->registerModelConfigurations();
         $this->registerSuperadminRole();
         $this->registerCollectionMacrosAndMixins();
     }
 
-    public function registerFacades(): void
-    {
-        $this->app->bind(BpjsService::class, fn () => new BpjsService);
-    }
-
     public function registerBladeDirectives(): void
     {
-        Blade::if('inarray', fn (mixed $needle, array $haystack, bool $strict = false) => in_array($needle, $haystack, $strict));
+        Blade::if('inarray', fn ($needle, array $haystack, bool $strict = false): bool => in_array($needle, $haystack, $strict));
 
-        Blade::if('null', fn ($expr) => is_null($expr));
+        Blade::if('null', fn ($expr): bool => is_null($expr));
 
-        Blade::if('notnull', fn ($expr) => !is_null($expr));
+        Blade::if('notnull', fn ($expr): bool => !is_null($expr));
     }
 
     public function registerModelConfigurations(): void
@@ -78,9 +74,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function registerSuperadminRole(): void
     {
-        Gate::before(function (User $user) {
-            return $user->hasRole(config('permission.superadmin_name')) ? true : null;
-        });
+        Gate::before(fn (User $user) => $user->hasRole(config('permission.superadmin_name')) ? true : null);
     }
 
     public function registerCollectionMacrosAndMixins(): void

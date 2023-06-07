@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Bangsal extends Model
 {
+    protected $connection = 'mysql_sik';
+    
     protected $primaryKey = 'kd_bangsal';
 
     protected $keyType = 'string';

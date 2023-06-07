@@ -10,7 +10,11 @@ class Kelurahan extends Model
 
     protected $primaryKey = 'kd_kel';
 
+    protected $keyType = 'int';
+
     protected $table = 'kelurahan';
+
+    public $incrementing = false;
 
     public $timestamps = false;
 }

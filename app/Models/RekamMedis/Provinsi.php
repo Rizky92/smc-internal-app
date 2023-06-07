@@ -10,7 +10,11 @@ class Provinsi extends Model
 
     protected $primaryKey = 'kd_prop';
 
+    protected $keyType = 'int';
+
     protected $table = 'propinsi';
+
+    public $incrementing = false;
 
     public $timestamps = false;
 }

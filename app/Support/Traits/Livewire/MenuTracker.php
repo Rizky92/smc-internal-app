@@ -22,13 +22,13 @@ trait MenuTracker
     private function menuPath(): string
     {
         return Breadcrumbs::generate($this->currentRoute())
-            ->map(fn ($value) => $value->title)
+            ->map(fn ($value): string => $value->title)
             ->join(' / ');
     }
 
     private function recordVisitor(): void
     {
-        if (app('impersonate')->isImpersonating()) {
+        if (app('impersonate')->isImpersonating() || app()->runningUnitTests()) {
             return;
         }
 
@@ -38,11 +38,11 @@ trait MenuTracker
         DB::connection('mysql_smc')
             ->table('trackermenu')
             ->insert([
-                'waktu' => now(),
+                'waktu'       => now(),
                 'breadcrumbs' => $breadcrumbs,
-                'route_name' => $route,
-                'user_id' => (string) Str::of(auth()->user()->nik)->trim(),
-                'ip_address' => request()->ip(),
+                'route_name'  => $route,
+                'user_id'     => (string) Str::of(auth()->user()->nik)->trim(),
+                'ip_address'  => request()->ip(),
             ]);
     }
 }
