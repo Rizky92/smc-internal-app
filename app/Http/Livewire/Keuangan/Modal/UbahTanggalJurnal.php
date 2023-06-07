@@ -147,7 +147,16 @@ class UbahTanggalJurnal extends Component
 
         DB::transaction(function () use ($backupId, $tglJurnalKembali) {
             $jurnalBackup = JurnalBackup::find($backupId);
+
+            if (is_null($jurnalBackup)) {
+                return;
+            }
+
             $jurnalSekarang = Jurnal::find($this->noJurnal);
+
+            if (is_null($jurnalSekarang)) {
+                return;
+            }
 
             $tglJurnalKembali = $jurnalBackup->tgl_jurnal_asli;
 
