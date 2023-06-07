@@ -74,7 +74,7 @@ if (!function_exists('tracker_start')) {
      */
     function tracker_start(string $connection = 'mysql_smc'): void
     {
-        if (app('impersonate')->isImpersonating()) {
+        if (app('impersonate')->isImpersonating() || app()->runningUnitTests()) {
             return;
         }
         
@@ -90,7 +90,7 @@ if (!function_exists('tracker_end')) {
      */
     function tracker_end(string $connection = 'mysql_smc'): void
     {
-        if (app('impersonate')->isImpersonating()) {
+        if (app('impersonate')->isImpersonating() || app()->runningUnitTests()) {
             DB::connection($connection)->disableQueryLog();
 
             return;

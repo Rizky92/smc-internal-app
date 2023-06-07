@@ -7,6 +7,5 @@
                 <h5 class="font-weight-normal">Selamat Datang, <span class="font-weight-bold">{{ Str::of(auth()->user()->nama)->title() }}!</span></h5>
             </div>
         </div>
-        <div class="row"></div>
     </div>
 </x-base-layout>

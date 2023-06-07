@@ -2,21 +2,34 @@
 
 namespace Tests\Feature\Menu;
 
+use App\Models\Aplikasi\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class LaporanPasienRanapTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    public function test_example()
+    public function test_user_bisa_mengunjungi_laporan_pasien_ranap()
     {
-        $response = $this->get('/');
+        $user = User::findByNRP('88888888');
 
-        $response->assertStatus(200);
+        $test = $this->actingAs($user);
+
+        $test->assertTrue($user->can('perawatan.laporan-pasien-ranap.read'));
+
+        $test->get('admin/perawatan/laporan-pasien-ranap')
+            ->assertOk();
+    }
+
+    public function test_user_tidak_bisa_mengunjungi_laporan_pasien_ranap()
+    {
+        $user = User::findByNRP('221203');
+
+        $test = $this->actingAs($user);
+
+        $test->assertFalse($user->can('perawatan.laporan-pasien-ranap.read'));
+
+        $test->get('admin/perawatan/laporan-pasien-ranap')
+            ->assertNotFound();
     }
 }
