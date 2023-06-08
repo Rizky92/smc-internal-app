@@ -12,6 +12,7 @@ use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -67,7 +68,7 @@ class InputMinmaxStok extends Component
 
     public function simpan(string $kodeBarang, int $stokMin = 0, int $stokMax = 0, string $kodeSupplier = '-'): void
     {
-        if (!auth()->user()->can('logistik.stok-minmax.update')) {
+        if (!Auth::user()->can('logistik.stok-minmax.update')) {
             $this->flashError('Anda tidak memiliki izin untuk mengupdate barang');
 
             return;

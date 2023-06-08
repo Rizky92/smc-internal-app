@@ -11,6 +11,7 @@ use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
@@ -99,7 +100,7 @@ class DaftarPasienRanap extends Component
 
     public function updateHargaKamar(string $noRawat, string $kdKamar, string $tglMasuk, string $jamMasuk, int $hargaKamarBaru, int $lamaInap): void
     {
-        if (!auth()->user()->can('perawatan.daftar-pasien-ranap.update-harga-kamar')) {
+        if (!Auth::user()->can('perawatan.daftar-pasien-ranap.update-harga-kamar')) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;

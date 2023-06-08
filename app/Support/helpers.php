@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -32,12 +33,12 @@ if (!function_exists('currency')) {
 
 if (!function_exists('map_bulan')) {
     /**
-     * @param  \Illuminate\Contracts\Support\Arrayable<int, mixed>|array<int, mixed>|null $data
+     * @param  array $data
      * @param  mixed $default
      * 
-     * @return array<int, mixed>
+     * @return mixed[]
      */
-    function map_bulan($data, $default = 0)
+    function map_bulan(array $data, $default = 0)
     {
         $arr = [
             1 => $default,
@@ -77,7 +78,7 @@ if (!function_exists('tracker_start')) {
         if (app('impersonate')->isImpersonating() || app()->runningUnitTests()) {
             return;
         }
-        
+
         DB::connection($connection)->enableQueryLog();
     }
 }
@@ -109,7 +110,7 @@ if (!function_exists('tracker_end')) {
             DB::connection('mysql_smc')->table('trackersql')->insert([
                 'tanggal'    => now(),
                 'sqle'       => (string) $sql,
-                'usere'      => auth()->user()->nik,
+                'usere'      => Auth::user()->nik,
                 'ip'         => request()->ip(),
                 'connection' => $connection,
             ]);
@@ -119,7 +120,7 @@ if (!function_exists('tracker_end')) {
     }
 }
 
-if (! function_exists('tracker_dispose')) {
+if (!function_exists('tracker_dispose')) {
     /**
      * @param  string $connection
      * 
@@ -131,13 +132,13 @@ if (! function_exists('tracker_dispose')) {
     }
 }
 
-if (! function_exists('func_get_named_args')) {
+if (!function_exists('func_get_named_args')) {
     /**
      * @param  object $object
      * @param  string $name
-     * @param  array<string|int, mixed> $args
+     * @param  mixed[] $args
      * 
-     * @return array<string|int, mixed>
+     * @return mixed[]
      */
     function func_get_named_args($object, $name, $args): array
     {
@@ -152,7 +153,7 @@ if (! function_exists('func_get_named_args')) {
     }
 }
 
-if (! function_exists('str')) {
+if (!function_exists('str')) {
     /**
      * @param  string $str
      * 
@@ -164,7 +165,7 @@ if (! function_exists('str')) {
     }
 }
 
-if (! function_exists('maybe')) {
+if (!function_exists('maybe')) {
     /**
      * @param  mixed $obj
      * @param  callable $default
@@ -185,7 +186,7 @@ if (! function_exists('maybe')) {
     }
 }
 
-if (! function_exists('is_between')) {
+if (!function_exists('is_between')) {
     /**
      * @param  float|int $value
      * @param  float|int $start

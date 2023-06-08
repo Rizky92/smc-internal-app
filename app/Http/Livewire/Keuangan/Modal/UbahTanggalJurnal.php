@@ -8,6 +8,7 @@ use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -59,13 +60,13 @@ class UbahTanggalJurnal extends Component
      */
     public function getBackupJurnalProperty()
     {
-        return auth()->user()->cannot('keuangan.riwayat-jurnal-perbaikan.read')
+        return Auth::user()->cannot('keuangan.riwayat-jurnal-perbaikan.read')
             ? []
             : JurnalBackup::query()
-                ->with('pegawai:nik,nama')
-                ->where('no_jurnal', $this->noJurnal)
-                ->orderByDesc('tgl_jurnal_diubah')
-                ->get();
+            ->with('pegawai:nik,nama')
+            ->where('no_jurnal', $this->noJurnal)
+            ->orderByDesc('tgl_jurnal_diubah')
+            ->get();
     }
 
     public function render(): View
@@ -86,7 +87,7 @@ class UbahTanggalJurnal extends Component
 
     public function updateTglJurnal(): void
     {
-        if (!auth()->user()->can('keuangan.jurnal-perbaikan.ubah-tanggal')) {
+        if (!Auth::user()->can('keuangan.jurnal-perbaikan.ubah-tanggal')) {
             $this->flashError();
 
             return;
@@ -125,7 +126,7 @@ class UbahTanggalJurnal extends Component
                 'no_jurnal'         => $jurnalDiubah->no_jurnal,
                 'tgl_jurnal_asli'   => $this->tglJurnalLama,
                 'tgl_jurnal_diubah' => $jurnalDiubah->tgl_jurnal,
-                'nip'               => auth()->user()->nik,
+                'nip'               => Auth::user()->nik,
             ]);
 
             tracker_end('mysql_smc');
@@ -137,7 +138,7 @@ class UbahTanggalJurnal extends Component
 
     public function restoreTglJurnal(int $backupId): void
     {
-        if (!auth()->user()->can('keuangan.jurnal-perbaikan.ubah-tanggal')) {
+        if (!Auth::user()->can('keuangan.jurnal-perbaikan.ubah-tanggal')) {
             $this->flasError();
 
             return;

@@ -11,6 +11,7 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -31,7 +32,7 @@ class AccountPayable extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
@@ -46,7 +47,7 @@ class AccountPayable extends Component
      */
     public function getDataAccountPayableMedisProperty()
     {
-        if ($this->isDeferred || !auth()->user()->can('keuangan.account-payable.read-medis')) {
+        if ($this->isDeferred || !Auth::user()->can('keuangan.account-payable.read-medis')) {
             return [];
         }
 
@@ -80,7 +81,7 @@ class AccountPayable extends Component
      */
     public function getDataAccountPayableNonMedisProperty()
     {
-        if ($this->isDeferred || !auth()->user()->can('keuangan.account-payable.read-nonmedis')) {
+        if ($this->isDeferred || !Auth::user()->can('keuangan.account-payable.read-nonmedis')) {
             return [];
         }
 
@@ -111,7 +112,7 @@ class AccountPayable extends Component
 
     public function getTotalAccountPayableMedisProperty(): array
     {
-        if ($this->isDeferred || !auth()->user()->can('keuangan.account-payable.read-medis')) {
+        if ($this->isDeferred || !Auth::user()->can('keuangan.account-payable.read-medis')) {
             return [];
         }
 
@@ -138,7 +139,7 @@ class AccountPayable extends Component
 
     public function getTotalAccountPayableNonMedisProperty(): array
     {
-        if ($this->isDeferred || !auth()->user()->can('keuangan.account-payable.read-nonmedis')) {
+        if ($this->isDeferred || !Auth::user()->can('keuangan.account-payable.read-nonmedis')) {
             return [];
         }
 
@@ -182,7 +183,7 @@ class AccountPayable extends Component
     {
         $export = [];
 
-        if (auth()->user()->can('keuangan.account-payable.read-medis')) {
+        if (Auth::user()->can('keuangan.account-payable.read-medis')) {
             $totalMedis = PemesananObat::query()
                 ->totalHutangAging($this->tglAwal, $this->tglAkhir)
                 ->get();
@@ -239,7 +240,7 @@ class AccountPayable extends Component
                 ]]);
         }
 
-        if (auth()->user()->can('keuangan.account-payable.read-nonmedis')) {
+        if (Auth::user()->can('keuangan.account-payable.read-nonmedis')) {
             $totalNonMedis = PemesananBarangNonMedis::query()
                 ->totalHutangAging($this->tglAwal, $this->tglAkhir)
                 ->get();
@@ -327,11 +328,11 @@ class AccountPayable extends Component
     {
         $appends = [];
 
-        if (auth()->user()->can('keuangan.account-payable.read-medis')) {
+        if (Auth::user()->can('keuangan.account-payable.read-medis')) {
             $appends[] = 'Medis';
         }
 
-        if (auth()->user()->can('keuangan.account-payable.read-nonmedis')) {
+        if (Auth::user()->can('keuangan.account-payable.read-nonmedis')) {
             $appends[] = 'Non Medis';
         }
 

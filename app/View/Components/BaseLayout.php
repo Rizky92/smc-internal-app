@@ -3,6 +3,7 @@
 namespace App\View\Components;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
 use Illuminate\View\Component;
 use Illuminate\View\View;
@@ -25,7 +26,7 @@ class BaseLayout extends Component
     public function __construct(string $title = 'Dashboard')
     {
         /** @var \App\Models\Aplikasi\User $user */
-        $user = auth()->user();
+        $user = Auth::user();
 
         $develop = config('permission.superadmin_name');
 

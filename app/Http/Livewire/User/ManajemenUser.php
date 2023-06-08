@@ -9,6 +9,7 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -76,7 +77,7 @@ class ManajemenUser extends Component
      */
     public function impersonateAsUser(string $nrp = '')
     {
-        if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
+        if (!Auth::user()->hasRole(config('permission.superadmin_name'))) {
             $this->flashError('Anda tidak memiliki izin untuk melakukan tindakan ini!');
 
             return;
@@ -88,7 +89,7 @@ class ManajemenUser extends Component
             return;
         }
 
-        auth()->user()->impersonate(User::findByNRP($nrp));
+        Auth::user()->impersonate(User::findByNRP($nrp));
 
         return redirect(route('admin.dashboard'))
             ->with('flash.type', 'dark')

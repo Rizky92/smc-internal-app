@@ -7,6 +7,7 @@ use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
 use App\Support\Traits\Livewire\DeferredModal;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class SetPerizinan extends Component
@@ -71,7 +72,7 @@ class SetPerizinan extends Component
 
     public function save(): void
     {
-        if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
+        if (!Auth::user()->hasRole(config('permission.superadmin_name'))) {
             $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 

@@ -62,9 +62,9 @@ class TransferPerizinan extends Component
             : User::query()
                 ->with('roles')
                 ->where(DB::raw('trim(pegawai.nik)'), '!=', $this->nrp)
-                ->where(fn ($q) => $q
+                ->where(fn (Builder $q): Builder => $q
                     ->search($this->cari)
-                    ->when($this->showChecked, fn (Builder $query) => $query->orWhereIn(DB::raw('trim(pegawai.nik)'), $checkedUsers)))
+                    ->when($this->showChecked, fn (Builder $q): Builder => $q->orWhereIn(DB::raw('trim(pegawai.nik)'), $checkedUsers)))
                 ->get();
     }
 
@@ -87,7 +87,7 @@ class TransferPerizinan extends Component
      */
     public function save()
     {
-        if (!auth()->user()->hasRole(config('permission.superadmin_name'))) {
+        if (!Auth::user()->hasRole(config('permission.superadmin_name'))) {
             $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 

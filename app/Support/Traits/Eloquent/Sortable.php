@@ -16,21 +16,21 @@ trait Sortable
      */
     public function scopeSortWithColumns(Builder $query, array $columns = [], array $rawColumns = [], array $initialColumnOrder = []): Builder
     {
-        $mappedColumns = collect($columns)->flatMap(fn ($_, $key): array => [$key => $key]);
-
-        if (!empty($rawColumns)) {
-            $mappedColumns = $mappedColumns->merge($rawColumns);
-        }
-
         if (!empty($initialColumnOrder) && empty($columns)) {
             foreach ($initialColumnOrder as $column => $direction) {
-                $query->orderBy($mappedColumns->get($column), $direction);
+                $query->orderBy($column, $direction);
             }
 
             return $query;
         }
 
         $query->reorder();
+
+        $mappedColumns = collect($columns)->flatMap(fn ($_, $key) => [$key => $key]);
+
+        if (!empty($rawColumns)) {
+            $mappedColumns = $mappedColumns->merge($rawColumns);
+        }
 
         foreach ($columns as $column => $direction) {
             $query->orderBy($mappedColumns->get($column), $direction);

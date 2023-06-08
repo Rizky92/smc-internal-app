@@ -3,6 +3,7 @@
 namespace App\Support\Traits\Livewire;
 
 use Diglactic\Breadcrumbs\Breadcrumbs;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Str;
@@ -41,7 +42,7 @@ trait MenuTracker
                 'waktu'       => now(),
                 'breadcrumbs' => $breadcrumbs,
                 'route_name'  => $route,
-                'user_id'     => (string) Str::of(auth()->user()->nik)->trim(),
+                'user_id'     => (string) Str::of(Auth::user()->nik)->trim(),
                 'ip_address'  => request()->ip(),
             ]);
     }

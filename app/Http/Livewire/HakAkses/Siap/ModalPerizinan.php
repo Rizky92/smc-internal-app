@@ -9,6 +9,7 @@ use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -62,7 +63,7 @@ class ModalPerizinan extends Component
         if ($id !== -1) {
             /** @var TRole */
             $role = Role::findById($id);
-    
+
             $this->roleName = $role->name;
             $this->checkedPermissions = $role->permissions->pluck('id', 'id')->all();
         }
@@ -70,7 +71,7 @@ class ModalPerizinan extends Component
 
     public function create(): void
     {
-        if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
+        if (!Auth::user()->hasRole(config('permission.superadmin_name'))) {
             $this->flashError();
 
             return;
@@ -93,7 +94,7 @@ class ModalPerizinan extends Component
 
     public function update(): void
     {
-        if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
+        if (!Auth::user()->hasRole(config('permission.superadmin_name'))) {
             $this->flashError();
 
             return;
