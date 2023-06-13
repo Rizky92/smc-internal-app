@@ -36,22 +36,25 @@ class ResepDokterRacikan extends Model
         if (empty($tglAkhir)) {
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
-
+        
         $sqlSelect = <<<SQL
-            resep_dokter_racikan.no_resep,
-            dokter.nm_dokter,
             resep_obat.tgl_perawatan,
-            resep_obat.jam,
+            resep_dokter_racikan.no_resep,
             pasien.nm_pasien,
-            poliklinik.nm_poli,
+            penjab.png_jawab,
             reg_periksa.status_lanjut,
-            round(sum(resep_dokter_racikan_detail.jml * databarang.h_beli)) total
+            dokter.nm_dokter,
+            poliklinik.nm_poli,
+            resep_obat.jam,
+            resep_obat.jam_penyerahan,
+            round(sum(resep_dokter_racikan.jml * databarang.h_beli)) total
         SQL;
 
         return $query
             ->selectRaw($sqlSelect)
             ->join('resep_obat', 'resep_dokter_racikan.no_resep', '=', 'resep_obat.no_resep')
             ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join('resep_dokter_racikan_detail', 'resep_dokter_racikan.no_resep', '=', 'resep_dokter_racikan_detail.no_resep')
             ->join('databarang', 'resep_dokter_racikan_detail.kode_brng', '=', 'databarang.kode_brng')

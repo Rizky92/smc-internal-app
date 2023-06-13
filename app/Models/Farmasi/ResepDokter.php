@@ -38,13 +38,15 @@ class ResepDokter extends Model
         }
 
         $sqlSelect = <<<SQL
-            resep_dokter.no_resep,
-            dokter.nm_dokter,
             resep_obat.tgl_perawatan,
-            resep_obat.jam,
+            resep_dokter.no_resep,
             pasien.nm_pasien,
-            poliklinik.nm_poli,
+            penjab.png_jawab,
             reg_periksa.status_lanjut,
+            dokter.nm_dokter,
+            poliklinik.nm_poli,
+            resep_obat.jam,
+            resep_obat.jam_penyerahan,
             round(sum(resep_dokter.jml * databarang.h_beli)) total
         SQL;
 
@@ -52,6 +54,7 @@ class ResepDokter extends Model
             ->selectRaw($sqlSelect)
             ->join('resep_obat', 'resep_dokter.no_resep', '=', 'resep_obat.no_resep')
             ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->join('databarang', 'resep_dokter.kode_brng', '=', 'databarang.kode_brng')
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
