@@ -10,6 +10,7 @@ use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -25,6 +26,9 @@ class Khanza extends Component
         $this->defaultValues();
     }
 
+    /**
+     * @psalm-return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
     public function getHakAksesKhanzaProperty(): Paginator
     {
         return HakAkses::query()

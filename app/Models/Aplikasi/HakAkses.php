@@ -29,6 +29,7 @@ class HakAkses extends Model
         'default_value',
     ];
 
+    /** @var string[] */
     protected $searchColumns = [
         'nama_field',
         'ifnull(judul_menu, "")',
