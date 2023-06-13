@@ -10,26 +10,22 @@ class KhanzaHakAksesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
-        Schema::disableForeignKeyConstraints();
+        Schema::connection('mysql_smc')->disableForeignKeyConstraints();
         HakAkses::truncate();
 
         $mapping = collect(config('khanza.mapping_akses'));
 
-        $mapping->transform(function ($judul, $field) {
-            return [
-                'nama_field' => $field,
-                'judul_menu' => $judul,
-                'default_value' => 'false',
-            ];
-        });
+        $mapping->transform(fn (string $judul, string $field): array => [
+            'nama_field' => $field,
+            'judul_menu' => $judul,
+            'default_value' => 'false',
+        ]);
 
         HakAkses::insert($mapping->toArray());
 
-        Schema::enableForeignKeyConstraints();
+        Schema::connection('mysql_smc')->enableForeignKeyConstraints();
     }
 }

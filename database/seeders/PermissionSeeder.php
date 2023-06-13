@@ -14,10 +14,8 @@ class PermissionSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
         Schema::connection('mysql_smc')->disableForeignKeyConstraints();
         DB::setDefaultConnection('mysql_smc');
