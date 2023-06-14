@@ -39,14 +39,14 @@ class ResepDokter extends Model
 
         $sqlSelect = <<<SQL
             resep_obat.tgl_perawatan,
+            timestamp(resep_obat.tgl_perawatan, resep_obat.jam) as waktu_validasi,
+            timestamp(resep_obat.tgl_penyerahan, resep_obat.jam_penyerahan) as waktu_penyerahan,
             resep_dokter.no_resep,
             pasien.nm_pasien,
             penjab.png_jawab,
             reg_periksa.status_lanjut,
             dokter.nm_dokter,
             poliklinik.nm_poli,
-            resep_obat.jam,
-            resep_obat.jam_penyerahan,
             round(sum(resep_dokter.jml * databarang.h_beli)) total
         SQL;
 
@@ -69,6 +69,13 @@ class ResepDokter extends Model
                 'resep_obat.jam',
                 'pasien.nm_pasien',
                 'reg_periksa.status_lanjut',
+            ])
+            ->withCasts([
+                'tgl_perawatan' => 'date',
+                'waktu_validasi' => 'datetime',
+                'waktu_penyerahan' => 'datetime',
+                'total' => 'float',
+                'selisih' => 'datetime',
             ]);
     }
 }

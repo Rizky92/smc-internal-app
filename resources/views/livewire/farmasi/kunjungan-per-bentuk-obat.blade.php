@@ -29,27 +29,37 @@
                 </x-slot>
                 <x-slot name="contents">
                     <x-navtabs.content id="obat-regular">
-                        <x-table class="mb-0" :sortColumns="$sortColumns" sortable zebra hover sticky>
+                        <x-table class="mb-0" :sortColumns="$sortColumns" sortable zebra hover sticky style="width: 120rem">
                             <x-slot name="columns">
-                                <x-table.th style="width: 20ch" name="no_resep" title="No. Resep" />
-                                <x-table.th style="width: 40ch" name="nm_dokter" title="Dokter Peresep" />
-                                <x-table.th style="width: 20ch" name="tgl_perawatan" title="Tgl. Validasi" />
-                                <x-table.th style="width: 15ch" name="jam" title="Jam" />
+                                <x-table.th style="width: 13ch" name="tgl_perawatan" title="Tanggal" />
+                                <x-table.th style="width: 13ch" name="no_resep" title="No. Resep" />
                                 <x-table.th name="nm_pasien" title="Pasien" />
-                                <x-table.th style="width: 20ch" name="nm_poli" title="Asal Poli" />
+                                <x-table.th style="width: 25ch" name="png_jawab" title="Jenis Bayar" />
                                 <x-table.th style="width: 18ch" name="status_lanjut" title="Jenis Perawatan" />
+                                <x-table.th style="width: 20ch" name="nm_poli" title="Asal Poli" />
+                                <x-table.th style="width: 40ch" name="nm_dokter" title="Dokter Peresep" />
+                                <x-table.th style="width: 19ch" name="waktu_validasi" title="Waktu Validasi" />
+                                <x-table.th style="width: 19ch" name="waktu_penyerahan" title="Waktu Penyerahan" />
+                                <x-table.th style="width: 14ch" name="selisih" title="Selisih Waktu" />
                                 <x-table.th style="width: 20ch" name="total" title="Total Pembelian" />
                             </x-slot>
                             <x-slot name="body">
                                 @forelse ($this->dataKunjunganResepObatRegular as $resep)
                                     <x-table.tr>
+                                        <x-table.td>{{ $resep->tgl_perawatan->translatedFormat('Y-m-d') }}</x-table.td>
                                         <x-table.td>{{ $resep->no_resep }}</x-table.td>
-                                        <x-table.td>{{ $resep->nm_dokter }}</x-table.td>
-                                        <x-table.td>{{ $resep->tgl_perawatan }}</x-table.td>
-                                        <x-table.td>{{ $resep->jam }}</x-table.td>
                                         <x-table.td>{{ $resep->nm_pasien }}</x-table.td>
-                                        <x-table.td>{{ $resep->nm_poli }}</x-table.td>
+                                        <x-table.td>{{ $resep->png_jawab }}</x-table.td>
                                         <x-table.td>{{ $resep->status_lanjut }}</x-table.td>
+                                        <x-table.td>{{ $resep->nm_poli }}</x-table.td>
+                                        <x-table.td>{{ $resep->nm_dokter }}</x-table.td>
+                                        <x-table.td>{{ $resep->waktu_validasi->translatedFormat('Y-m-d H:i:s') }}</x-table.td>
+                                        <x-table.td>{{ optional($resep->waktu_penyerahan)->translatedFormat('Y-m-d H:i:s') }}</x-table.td>
+                                        <x-table.td>{{
+                                            !is_null($resep->waktu_penyerahan) && !is_null($resep->waktu_validasi)
+                                                ? $resep->waktu_validasi->diff($resep->waktu_penyerahan)->format('%R %H:%I:%S')
+                                                : null
+                                        }}</x-table.td>
                                         <x-table.td>{{ rp($resep->total) }}</x-table.td>
                                     </x-table.tr>
                                 @empty
@@ -60,27 +70,37 @@
                         <x-paginator class="px-4 py-3 bg-light" :data="$this->dataKunjunganResepObatRegular" />
                     </x-navtabs.content>
                     <x-navtabs.content id="obat-racikan">
-                        <x-table class="mb-0" :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
+                        <x-table class="mb-0" :sortColumns="$sortColumns" sortable zebra hover sticky nowrap style="width: 120rem">
                             <x-slot name="columns">
-                                <x-table.th style="width: 20ch" name="no_resep" title="No. Resep" />
-                                <x-table.th style="width: 50ch" name="nm_dokter" title="Dokter Peresep" />
-                                <x-table.th style="width: 20ch" name="tgl_perawatan" title="Tgl. Validasi" />
-                                <x-table.th style="width: 15ch" name="jam" title="Jam" />
+                                <x-table.th style="width: 13ch" name="tgl_perawatan" title="Tanggal" />
+                                <x-table.th style="width: 13ch" name="no_resep" title="No. Resep" />
                                 <x-table.th name="nm_pasien" title="Pasien" />
-                                <x-table.th style="width: 20ch" name="nm_poli" title="Asal Poli" />
+                                <x-table.th style="width: 25ch" name="png_jawab" title="Jenis Bayar" />
                                 <x-table.th style="width: 18ch" name="status_lanjut" title="Jenis Perawatan" />
+                                <x-table.th style="width: 20ch" name="nm_poli" title="Asal Poli" />
+                                <x-table.th style="width: 40ch" name="nm_dokter" title="Dokter Peresep" />
+                                <x-table.th style="width: 19ch" name="waktu_validasi" title="Waktu Validasi" />
+                                <x-table.th style="width: 19ch" name="waktu_penyerahan" title="Waktu Penyerahan" />
+                                <x-table.th style="width: 14ch" name="selisih" title="Selisih Waktu" />
                                 <x-table.th style="width: 20ch" name="total" title="Total Pembelian" />
                             </x-slot>
                             <x-slot name="body">
                                 @forelse ($this->dataKunjunganResepObatRacikan as $resep)
                                     <x-table.tr>
+                                        <x-table.td>{{ $resep->tgl_perawatan->translatedFormat('d-m-Y') }}</x-table.td>
                                         <x-table.td>{{ $resep->no_resep }}</x-table.td>
-                                        <x-table.td>{{ $resep->nm_dokter }}</x-table.td>
-                                        <x-table.td>{{ $resep->tgl_perawatan }}</x-table.td>
-                                        <x-table.td>{{ $resep->jam }}</x-table.td>
                                         <x-table.td>{{ $resep->nm_pasien }}</x-table.td>
-                                        <x-table.td>{{ $resep->nm_poli }}</x-table.td>
+                                        <x-table.td>{{ $resep->png_jawab }}</x-table.td>
                                         <x-table.td>{{ $resep->status_lanjut }}</x-table.td>
+                                        <x-table.td>{{ $resep->nm_poli }}</x-table.td>
+                                        <x-table.td>{{ $resep->nm_dokter }}</x-table.td>
+                                        <x-table.td>{{ $resep->waktu_validasi->translatedFormat('Y-m-d H:i:s') }}</x-table.td>
+                                        <x-table.td>{{ optional($resep->waktu_penyerahan)->translatedFormat('Y-m-d H:i:s') }}</x-table.td>
+                                        <x-table.td>{{
+                                            !is_null($resep->waktu_penyerahan) && !is_null($resep->waktu_validasi)
+                                                ? $resep->waktu_validasi->diff($resep->waktu_penyerahan)->format('%R %H:%I:%S')
+                                                : null
+                                        }}</x-table.td>
                                         <x-table.td>{{ rp($resep->total) }}</x-table.td>
                                     </x-table.tr>
                                 @empty

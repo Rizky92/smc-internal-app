@@ -4,6 +4,40 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+if (!function_exists('time_length')) {
+    /**
+     * @param  \Illuminate\Support\Carbon|\DateTimeInterface|string|null $start
+     * @param  \Illuminate\Support\Carbon|\DateTimeInterface|string|null $end
+     * @param  bool $strict
+     * 
+     * @return string|null
+     */
+    function time_length($start, $end, $strict = false): ?string
+    {
+        if ($strict && (empty($start) || empty($end))) {
+            return null;
+        }
+
+        if (is_string($start)) {
+            $start = carbon($start);
+        }
+
+        if (is_string($end)) {
+            $end = carbon($end);
+        }
+
+        $length = $start->diff($end);
+
+        $format = '%R %h jam %i menit %s detik';
+
+        if ((int) $length->format('%d') >= 1) {
+            $format = '%R %d hari %h jam %i menit %s detik';
+        }
+
+        return $length->format($format);
+    }
+}
+
 if (!function_exists('rp')) {
     /**
      * @param  int|float $nominal = 0

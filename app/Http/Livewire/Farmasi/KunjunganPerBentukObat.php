@@ -104,13 +104,16 @@ class KunjunganPerBentukObat extends Component
                 ->kunjunganResepObatRegular($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
                 ->get()
                 ->map(fn (ResepDokter $model): array => [
+                    'tgl_perawatan' => $model->tgl_perawatan->format('Y-m-d'),
                     'no_resep'      => $model->no_resep,
-                    'nm_dokter'     => $model->nm_dokter,
-                    'tgl_perawatan' => $model->tgl_perawatan,
-                    'jam'           => $model->jam,
                     'nm_pasien'     => $model->nm_pasien,
-                    'nm_poli'       => $model->nm_poli,
+                    'png_jawab'     => $model->png_jawab,
                     'status_lanjut' => $model->status_lanjut,
+                    'nm_poli'       => $model->nm_poli,
+                    'nm_dokter'     => $model->nm_dokter,
+                    'validasi'      => $model->waktu_validasi->translatedFormat('Y-m-d H:i:s'),
+                    'penyerahan'    => optional($model->waktu_penyerahan)->translatedFormat('Y-m-d H:i:s'),
+                    'selisih'       => time_length($model->waktu_validasi, $model->waktu_penyerahan),
                     'total'         => floatval($model->total),
                 ]),
 
@@ -118,29 +121,34 @@ class KunjunganPerBentukObat extends Component
                 ->kunjunganResepObatRacikan($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
                 ->get()
                 ->map(fn (ResepDokterRacikan $model): array => [
+                    'tgl_perawatan' => $model->tgl_perawatan->format('Y-m-d'),
                     'no_resep'      => $model->no_resep,
-                    'nm_dokter'     => $model->nm_dokter,
-                    'tgl_perawatan' => $model->tgl_perawatan,
-                    'jam'           => $model->jam,
                     'nm_pasien'     => $model->nm_pasien,
-                    'nm_poli'       => $model->nm_poli,
+                    'png_jawab'     => $model->png_jawab,
                     'status_lanjut' => $model->status_lanjut,
+                    'nm_poli'       => $model->nm_poli,
+                    'nm_dokter'     => $model->nm_dokter,
+                    'validasi'      => $model->waktu_validasi->translatedFormat('Y-m-d H:i:s'),
+                    'penyerahan'    => optional($model->waktu_penyerahan)->translatedFormat('Y-m-d H:i:s'),
+                    'selisih'       => time_length($model->waktu_validasi, $model->waktu_penyerahan),
                     'total'         => floatval($model->total),
                 ]),
-
         ];
     }
 
     protected function columnHeaders(): array
     {
         return [
+            'Tanggal',
             'No. Resep',
-            'Dokter Peresep',
-            'Tgl. Validasi',
-            'Jam',
             'Pasien',
-            'Asal Poli',
+            'Jenis Bayar',
             'Jenis Perawatan',
+            'Asal Poli',
+            'Dokter Peresep',
+            'Waktu Validasi',
+            'Waktu Penyerahan',
+            'Lama Penyelesaian',
             'Total Pembelian (RP)',
         ];
     }

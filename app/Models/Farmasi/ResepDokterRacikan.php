@@ -39,25 +39,25 @@ class ResepDokterRacikan extends Model
         
         $sqlSelect = <<<SQL
             resep_obat.tgl_perawatan,
+            timestamp(resep_obat.tgl_perawatan, resep_obat.jam) as waktu_validasi,
+            timestamp(resep_obat.tgl_penyerahan, resep_obat.jam_penyerahan) as waktu_penyerahan,
             resep_dokter_racikan.no_resep,
             pasien.nm_pasien,
             penjab.png_jawab,
             reg_periksa.status_lanjut,
             dokter.nm_dokter,
             poliklinik.nm_poli,
-            resep_obat.jam,
-            resep_obat.jam_penyerahan,
-            round(sum(resep_dokter_racikan.jml * databarang.h_beli)) total
+            round(sum(resep_dokter_racikan_detail.jml * databarang.h_beli)) total
         SQL;
 
         return $query
             ->selectRaw($sqlSelect)
+            ->join('resep_dokter_racikan_detail', 'resep_dokter_racikan.no_resep', '=', 'resep_dokter_racikan_detail.no_resep')
             ->join('resep_obat', 'resep_dokter_racikan.no_resep', '=', 'resep_obat.no_resep')
             ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
-            ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
-            ->join('resep_dokter_racikan_detail', 'resep_dokter_racikan.no_resep', '=', 'resep_dokter_racikan_detail.no_resep')
             ->join('databarang', 'resep_dokter_racikan_detail.kode_brng', '=', 'databarang.kode_brng')
+            ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
             ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->where('reg_periksa.status_bayar', 'Sudah Bayar')
@@ -70,6 +70,13 @@ class ResepDokterRacikan extends Model
                 'resep_obat.jam',
                 'pasien.nm_pasien',
                 'reg_periksa.status_lanjut',
+            ])
+            ->withCasts([
+                'tgl_perawatan' => 'date',
+                'waktu_validasi' => 'datetime',
+                'waktu_penyerahan' => 'datetime',
+                'total' => 'float',
+                'selisih' => 'datetime',
             ]);
     }
 }
