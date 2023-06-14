@@ -10,6 +10,7 @@ use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Casts\AsStringable;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -78,6 +79,9 @@ class ObatPerDokter extends Component
         return [
             ResepObat::query()
                 ->penggunaanObatPerDokter($this->tglAwal, $this->tglAkhir)
+                ->withCasts([
+                    'status' => AsStringable::class,
+                ])
                 ->get()
                 ->map(fn (ResepObat $model): array => [
                     'no_resep'      => $model->no_resep,
@@ -87,7 +91,7 @@ class ObatPerDokter extends Component
                     'nama'          => $model->nama,
                     'jml'           => floatval($model->jml),
                     'nm_dokter'     => $model->nm_dokter,
-                    'status'        => $model->status,
+                    'status'        => (string) $model->status->title(),
                     'nm_poli'       => $model->nm_poli,
                     'png_jawab'     => $model->png_jawab,
                 ]),
@@ -104,7 +108,7 @@ class ObatPerDokter extends Component
             'Kategori',
             'Jumlah',
             'Dokter Peresep',
-            'Asal',
+            'Jenis Perawatan',
             'Asal Poli',
             'Jenis Bayar',
         ];
@@ -112,11 +116,20 @@ class ObatPerDokter extends Component
 
     protected function pageHeaders(): array
     {
+        $periodeAwal = carbon($this->tglAwal);
+        $periodeAkhir = carbon($this->tglAkhir);
+
+        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+
+        if ($periodeAwal->isSameDay($periodeAkhir)) {
+            $periode = $periodeAwal->translatedFormat('d F Y');
+        }
+
         return [
             'RS Samarinda Medika Citra',
             'Laporan Penggunaan Obat Per Dokter Peresep',
             now()->translatedFormat('d F Y'),
-            'Periode ' . carbon($this->tglAwal)->translatedFormat('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
+            $periode,
         ];
     }
 }

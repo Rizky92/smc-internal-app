@@ -169,7 +169,7 @@ class AccountReceivable extends Component
                     'periode_31_60'   => $model->umur_hari > 30 && $model->umur_hari <= 60 ? floatval($model->sisa_piutang) : 0,
                     'periode_61_90'   => $model->umur_hari > 60 && $model->umur_hari <= 90 ? floatval($model->sisa_piutang) : 0,
                     'periode_90_up'   => $model->umur_hari > 90 ? floatval($model->sisa_piutang) : 0,
-                    'umur_hari'       => $model->umur_hari,
+                    'umur_hari'       => intval($model->umur_hari),
                 ])
                 ->merge([[
                     'no_tagihan'      => '',
@@ -224,11 +224,20 @@ class AccountReceivable extends Component
 
     protected function pageHeaders(): array
     {
+        $periodeAwal = carbon($this->tglAwal);
+        $periodeAkhir = carbon($this->tglAkhir);
+
+        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+
+        if ($periodeAwal->isSameDay($periodeAkhir)) {
+            $periode = $periodeAwal->translatedFormat('d F Y');
+        }
+
         return [
             'RS Samarinda Medika Citra',
             'Piutang Aging (Account Receivable)',
             'Per ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
-            'Periode ' . carbon($this->tglAwal)->translatedFormat('d F Y') . ' - ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
+            $periode,
         ];
     }
 }

@@ -110,11 +110,6 @@ Breadcrumbs::for('admin.keuangan.account-payable', function (Trail $trail) {
     $trail->push('Hutang Aging AP', route('admin.keuangan.account-payable'));
 });
 
-Breadcrumbs::for('admin.keuangan.piutang-belum-lunas', function (Trail $trail) {
-    $trail->parent('admin.keuangan');
-    $trail->push('Piutang Belum Lunas', route('admin.keuangan.piutang-belum-lunas'));
-});
-
 
 Breadcrumbs::for('admin.farmasi', function (Trail $trail) {
     $trail->parent('admin.dashboard');

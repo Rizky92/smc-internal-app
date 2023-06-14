@@ -195,11 +195,20 @@ class DaftarPasienRanap extends Component
 
     protected function pageHeaders(): array
     {
+        $periodeAwal = carbon($this->tglAwal);
+        $periodeAkhir = carbon($this->tglAkhir);
+
+        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+
+        if ($periodeAwal->isSameDay($periodeAkhir)) {
+            $periode = $periodeAwal->translatedFormat('d F Y');
+        }
+
         return [
             'RS Samarinda Medika Citra',
             'Daftar Pasien Rawat Inap',
             now()->translatedFormat('d F Y'),
-            'Periode ' . carbon($this->tglAwal)->translatedFormat('d F Y') . ' - ' . carbon($this->tglAkhir)->format('d F Y'),
+            $periode,
         ];
     }
 }

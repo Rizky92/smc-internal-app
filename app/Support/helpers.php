@@ -67,12 +67,12 @@ if (!function_exists('currency')) {
 
 if (!function_exists('map_bulan')) {
     /**
-     * @param  array $data
+     * @param  \Illuminate\Support\Collection<int, int|float>|array<int, int|float>|null $data
      * @param  mixed $default
      * 
      * @return mixed[]
      */
-    function map_bulan(array $data, $default = 0)
+    function map_bulan($data, $default = 0)
     {
         $arr = [
             1 => $default,

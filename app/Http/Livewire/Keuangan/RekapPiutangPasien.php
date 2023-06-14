@@ -110,20 +110,7 @@ class RekapPiutangPasien extends Component
             $query
                 ->orderBy('penjab.png_jawab')
                 ->get()
-                ->push([
-                    'no_rawat'     => 'TOTAL',
-                    'no_rkm_medis' => '',
-                    'nm_pasien'    => '',
-                    'tgl_piutang'  => '',
-                    'status'       => '',
-                    'total'        => $query->sum(DB::raw('round(piutang_pasien.totalpiutang, 2)')),
-                    'uang_muka'    => $query->sum(DB::raw('round(piutang_pasien.uangmuka, 2)')),
-                    'terbayar'     => $query->sum(DB::raw('round(ifnull(sisa_piutang.sisa, 0), 2)')),
-                    'sisa'         => $query->sum(DB::raw('round(piutang_pasien.sisapiutang - ifnull(sisa_piutang.sisa, 0), 2)')),
-                    'tgltempo'     => '',
-                    'penjamin'     => '',
-                ])
-                ->map(fn (PiutangPasien $model): array => [
+                ->map(fn ($model): array => [
                     'no_rawat'     => $model->no_rawat,
                     'no_rkm_medis' => $model->no_rkm_medis,
                     'nm_pasien'    => $model->nm_pasien,
@@ -135,6 +122,19 @@ class RekapPiutangPasien extends Component
                     'sisa'         => round(floatval($model->sisa), 2),
                     'tgltempo'     => $model->tgltempo,
                     'penjamin'     => $model->penjamin,
+                ])
+                ->push([
+                    'no_rawat'     => 'TOTAL',
+                    'no_rkm_medis' => '',
+                    'nm_pasien'    => '',
+                    'tgl_piutang'  => '',
+                    'status'       => '',
+                    'total'        => round(floatval($query->sum(DB::raw('round(piutang_pasien.totalpiutang, 2)'))), 2),
+                    'uang_muka'    => round(floatval($query->sum(DB::raw('round(piutang_pasien.uangmuka, 2)'))), 2),
+                    'terbayar'     => round(floatval($query->sum(DB::raw('round(ifnull(sisa_piutang.sisa, 0), 2)'))), 2),
+                    'sisa'         => round(floatval($query->sum(DB::raw('round(piutang_pasien.sisapiutang - ifnull(sisa_piutang.sisa, 0), 2)'))), 2),
+                    'tgltempo'     => '',
+                    'penjamin'     => '',
                 ])
         ];
     }
@@ -158,11 +158,20 @@ class RekapPiutangPasien extends Component
 
     protected function pageHeaders(): array
     {
+        $periodeAwal = carbon($this->tglAwal);
+        $periodeAkhir = carbon($this->tglAkhir);
+
+        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+
+        if ($periodeAwal->isSameDay($periodeAkhir)) {
+            $periode = $periodeAwal->translatedFormat('d F Y');
+        }
+
         return [
             'RS Samarinda Medika Citra',
             'Rekap Data Tagihan Piutang Pasien',
             now()->translatedFormat('d F Y'),
-            'Periode ' . carbon($this->tglAwal)->translatedFormat('d F Y') . ' - ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
+            $periode,
         ];
     }
 }

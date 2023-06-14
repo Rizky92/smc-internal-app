@@ -123,10 +123,6 @@ Route::prefix('admin')
                 Route::get('account-payable', Keuangan\AccountPayable::class)
                     ->middleware('canany:keuangan.account-payable.read-medis|keuangan.account-payable.read-nonmedis')
                     ->name('account-payable');
-
-                Route::get('piutang-belum-lunas', Keuangan\PiutangBelumLunas::class)
-                    ->middleware('canany:keuangan.piutang-belum-lunas.read')
-                    ->name('piutang-belum-lunas');
             });
 
         Route::prefix('farmasi')
