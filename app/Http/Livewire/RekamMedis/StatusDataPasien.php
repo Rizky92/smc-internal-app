@@ -108,7 +108,7 @@ class StatusDataPasien extends Component
                     'askep_igd'        => boolval($modal->askep_igd) ? 'Ada' : 'Tidak ada',
                     'icd_10'           => boolval($modal->icd_10) ? 'Ada' : 'Tidak ada',
                     'icd_9'            => boolval($modal->icd_9) ? 'Ada' : 'Tidak ada',
-                    'awal_keperawatan' => $modal->awal_keperawatan,
+                    // 'awal_keperawatan' => $modal->awal_keperawatan,
                 ])
                 ->all(),
         ];
@@ -133,17 +133,26 @@ class StatusDataPasien extends Component
             'Askep IGD',
             'ICD 10',
             'ICD 9',
-            'Awal Keperawatan',
+            // 'Awal Keperawatan',
         ];
     }
 
     protected function pageHeaders(): array
     {
+        $periodeAwal = carbon($this->tglAwal);
+        $periodeAkhir = carbon($this->tglAkhir);
+
+        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+
+        if ($periodeAwal->isSameDay($periodeAkhir)) {
+            $periode = $periodeAwal->translatedFormat('d F Y');
+        }
+
         return [
             'RS Samarinda Medika Citra',
             'Status Data Rekam Medis Pasien',
             now()->translatedFormat('d F Y'),
-            'Periode ' . carbon($this->tglAwal)->translatedFormat('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
+            $periode,
         ];
     }
 }
