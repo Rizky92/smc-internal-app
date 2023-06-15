@@ -99,11 +99,20 @@ class LaporanDemografi extends Component
 
     protected function pageHeaders(): array
     {
+        $periodeAwal = carbon($this->tglAwal);
+        $periodeAkhir = carbon($this->tglAkhir);
+
+        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+
+        if ($periodeAwal->isSameDay($periodeAkhir)) {
+            $periode = $periodeAwal->translatedFormat('d F Y');
+        }
+
         return [
             'RS Samarinda Medika Citra',
             'Laporan Demografi Pasien',
             now()->translatedFormat('d F Y'),
-            'Periode ' . carbon($this->tglAwal)->translatedFormat('d F Y') . ' s.d. ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
+            $periode,
         ];
     }
 }

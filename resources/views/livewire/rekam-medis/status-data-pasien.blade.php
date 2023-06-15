@@ -37,7 +37,7 @@
                     <x-table.th style="width: 32ch" name="askep_igd" title="Askep IGD" />
                     <x-table.th style="width: 32ch" name="icd_10" title="ICD 10" />
                     <x-table.th style="width: 32ch" name="icd_9" title="ICD 9" />
-                    <x-table.th style="width: 32ch" name="icd_9" title="Awal Keperawatan" />
+                    {{-- <x-table.th style="width: 32ch" name="icd_9" title="Awal Keperawatan" /> --}}
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->dataStatusRekamMedisPasien as $item)
@@ -58,7 +58,7 @@
                             <x-table.td>{{ (bool) $item->askep_igd ? 'Ada' : 'Tidak Ada' }}</x-table.td>
                             <x-table.td>{{ (bool) $item->icd_10 ? 'Ada' : 'Tidak Ada' }}</x-table.td>
                             <x-table.td>{{ (bool) $item->icd_9 ? 'Ada' : 'Tidak Ada' }}</x-table.td>
-                            <x-table.td>{{ $item->awal_keperawatan }}</x-table.td>
+                            {{-- <x-table.td>{{ $item->awal_keperawatan }}</x-table.td> --}}
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="16" />
