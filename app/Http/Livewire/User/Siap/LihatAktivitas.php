@@ -7,9 +7,6 @@ use App\Support\Traits\Livewire\DeferredModal;
 use Illuminate\View\View;
 use Livewire\Component;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class LihatAktivitas extends Component
 {
     use DeferredModal;

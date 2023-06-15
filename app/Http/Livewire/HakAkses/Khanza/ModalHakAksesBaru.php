@@ -6,9 +6,6 @@ use App\Models\Aplikasi\HakAkses;
 use Illuminate\View\View;
 use Livewire\Component;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class ModalHakAksesBaru extends Component
 {
     /** @var string */

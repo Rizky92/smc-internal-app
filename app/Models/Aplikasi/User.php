@@ -983,6 +983,9 @@ class User extends Authenticatable
         'zis_penghasilan_penerima_dankes' => BooleanCast::class,
         'zis_ternak_penerima_dankes' => BooleanCast::class,
         'zis_ukuran_rumah_penerima_dankes' => BooleanCast::class,
+        'sisa_diet_pasien' => BooleanCast::class,
+        'penilaian_awal_medis_ralan_bedah_mulut' => BooleanCast::class,
+        'penilaian_pasien_keracunan' => BooleanCast::class,
     ];
 
     protected static function booted()
@@ -1031,9 +1034,11 @@ class User extends Authenticatable
             ->whereRaw('model_has_permissions.model_id = user.id_user')
             ->toSql();
 
-        return $query->when($hakAkses, fn ($q) => $q
-            ->whereRaw("exists ({$sqlHasRoles})")
-            ->orWhereRaw("exists ({$sqlHasPermissions})")
+        return $query->when(
+            $hakAkses,
+            fn ($q) => $q
+                ->whereRaw("exists ({$sqlHasRoles})")
+                ->orWhereRaw("exists ({$sqlHasPermissions})")
         );
     }
 
@@ -1049,7 +1054,13 @@ class User extends Authenticatable
             ->first($columns);
     }
 
-    public static function rawFindByNRP(string $nrp, array $columns = [''])
+    /**
+     * @param  string $nrp
+     * @param  array $columns
+     * 
+     * @return static
+     */
+    public static function rawFindByNRP(string $nrp, array $columns = ['']): self
     {
         if (empty($nrp)) return new static;
 

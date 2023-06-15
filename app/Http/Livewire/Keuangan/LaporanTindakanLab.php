@@ -14,9 +14,6 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\View\View;
 use Livewire\Component;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class LaporanTindakanLab extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;

@@ -14,9 +14,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\View\View;
 use Livewire\Component;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class LaporanPasienRanap extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;

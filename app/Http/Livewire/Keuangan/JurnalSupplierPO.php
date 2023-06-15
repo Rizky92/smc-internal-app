@@ -15,9 +15,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class JurnalSupplierPO extends Component
 {
     use FlashComponent, Filterable, LiveTable, MenuTracker, ExcelExportable;

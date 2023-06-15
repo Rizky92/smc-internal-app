@@ -15,9 +15,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class AccountReceivable extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
@@ -61,27 +58,27 @@ class AccountReceivable extends Component
         return $this->isDeferred
             ? []
             : PenagihanPiutangDetail::query()
-                ->tagihanPiutangAging($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
-                ->search($this->cari, [
-                    'detail_penagihan_piutang.no_tagihan',
-                    'detail_penagihan_piutang.no_rawat',
-                    'reg_periksa.no_rkm_medis',
-                    'pasien.nm_pasien',
-                    'penjab_pasien.png_jawab',
-                    'penjab_tagihan.png_jawab',
-                    'penagihan_piutang.catatan',
-                    'detail_piutang_pasien.nama_bayar',
-                ])
-                ->sortWithColumns($this->sortColumns, [
-                    'tgl_tagihan'     => 'penagihan_piutang.tanggal',
-                    'tgl_jatuh_tempo' => 'penagihan_piutang.tanggaltempo',
-                    'penjab_pasien'   => 'penjab_pasien.png_jawab',
-                    'penjab_piutang'  => 'penjab_tagihan.png_jawab',
-                    'total_piutang'   => DB::raw('round(detail_piutang_pasien.totalpiutang, 2)'),
-                    'besar_cicilan'   => DB::raw('round(bayar_piutang.besar_cicilan, 2)'),
-                    'sisa_piutang'    => DB::raw('round(detail_piutang_pasien.totalpiutang - ifnull(bayar_piutang.besar_cicilan, 0), 2)'),
-                ])
-                ->paginate($this->perpage);
+            ->tagihanPiutangAging($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
+            ->search($this->cari, [
+                'detail_penagihan_piutang.no_tagihan',
+                'detail_penagihan_piutang.no_rawat',
+                'reg_periksa.no_rkm_medis',
+                'pasien.nm_pasien',
+                'penjab_pasien.png_jawab',
+                'penjab_tagihan.png_jawab',
+                'penagihan_piutang.catatan',
+                'detail_piutang_pasien.nama_bayar',
+            ])
+            ->sortWithColumns($this->sortColumns, [
+                'tgl_tagihan'     => 'penagihan_piutang.tanggal',
+                'tgl_jatuh_tempo' => 'penagihan_piutang.tanggaltempo',
+                'penjab_pasien'   => 'penjab_pasien.png_jawab',
+                'penjab_piutang'  => 'penjab_tagihan.png_jawab',
+                'total_piutang'   => DB::raw('round(detail_piutang_pasien.totalpiutang, 2)'),
+                'besar_cicilan'   => DB::raw('round(bayar_piutang.besar_cicilan, 2)'),
+                'sisa_piutang'    => DB::raw('round(detail_piutang_pasien.totalpiutang - ifnull(bayar_piutang.besar_cicilan, 0), 2)'),
+            ])
+            ->paginate($this->perpage);
     }
 
     public function getPenjaminProperty(): array

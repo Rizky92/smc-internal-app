@@ -12,9 +12,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class SetHakAkses extends Component
 {
     use Filterable, LiveTable, DeferredModal;
@@ -60,7 +57,13 @@ class SetHakAkses extends Component
             ? []
             : HakAkses::query()
                 ->search($this->cari, ['nama_field', 'judul_menu'])
-                ->when($this->showChecked, fn (Builder $q): Builder => $q->orWhereIn('nama_field', collect($this->checkedHakAkses)->filter()->keys()->all()))
+                ->when($this->showChecked, fn (Builder $q): Builder => $q
+                    ->orWhereIn('nama_field', collect($this->checkedHakAkses)
+                        ->filter()
+                        ->keys()
+                        ->all()
+                    )
+                )
                 ->get();
     }
 
@@ -87,7 +90,7 @@ class SetHakAkses extends Component
         $this->forgetComputed();
 
         $hakAksesUser = $this->hakAksesKhanza
-            ->mapWithKeys(fn ($hakAkses) => [$hakAkses->nama_field => $hakAkses->default_value])
+            ->mapWithKeys(fn (HakAkses $hakAkses): array => [$hakAkses->nama_field => $hakAkses->default_value])
             ->merge($this->checkedHakAkses)
             ->all();
 
@@ -111,9 +114,9 @@ class SetHakAkses extends Component
 
         if (!$this->isDeferred) {
             $this->checkedHakAkses = collect($user->getAttributes())->except('id_user', 'password')
-                ->filter(fn ($f, $k) => $f === 'true')
+                ->filter(fn (?string $f, $_): bool => $f === 'true')
                 ->keys()
-                ->mapWithKeys(fn ($f, $k) => [$f => true])
+                ->mapWithKeys(fn (string $f, int $_): array => [$f => true])
                 ->all();
         }
 

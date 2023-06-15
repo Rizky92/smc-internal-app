@@ -17,4 +17,9 @@
     <plugins>
         <pluginClass class="Psalm\LaravelPlugin\Plugin"/>
     </plugins>
+
+    <issueHandlers>
+        <UnsafeInstantiation errorLevel="suppress" />
+        <PropertyNotSetInConstructor errorLevel="suppress" />
+    </issueHandlers>
 </psalm>

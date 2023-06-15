@@ -14,9 +14,6 @@ use Illuminate\Support\LazyCollection;
 use Illuminate\View\View;
 use Livewire\Component;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class StatusDataPasien extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
@@ -56,19 +53,19 @@ class StatusDataPasien extends Component
         return $this->isDeferred
             ? []
             : RegistrasiPasien::query()
-                ->statusDataRM($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan, $this->semuaRegistrasi)
-                ->search($this->cari, [
-                    'reg_periksa.no_rawat',
-                    'reg_periksa.tgl_registrasi',
-                    'reg_periksa.stts',
-                    'dokter.nm_dokter',
-                    'reg_periksa.no_rkm_medis',
-                    'pasien.nm_pasien',
-                    'poliklinik.nm_poli',
-                    'reg_periksa.status_lanjut',
-                ])
-                ->sortWithColumns($this->sortColumns)
-                ->paginate($this->perpage);
+            ->statusDataRM($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan, $this->semuaRegistrasi)
+            ->search($this->cari, [
+                'reg_periksa.no_rawat',
+                'reg_periksa.tgl_registrasi',
+                'reg_periksa.stts',
+                'dokter.nm_dokter',
+                'reg_periksa.no_rkm_medis',
+                'pasien.nm_pasien',
+                'poliklinik.nm_poli',
+                'reg_periksa.status_lanjut',
+            ])
+            ->sortWithColumns($this->sortColumns)
+            ->paginate($this->perpage);
     }
 
     public function render(): View

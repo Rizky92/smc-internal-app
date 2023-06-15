@@ -6,9 +6,6 @@ use App\Support\Traits\Livewire\DeferredModal;
 use Illuminate\View\View;
 use Livewire\Component;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class ModalTemplateBaru extends Component
 {
     use DeferredModal;
@@ -32,5 +29,4 @@ class ModalTemplateBaru extends Component
     {
         return view('livewire.hak-akses.khanza.modal-template-baru');
     }
-
 }

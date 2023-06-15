@@ -14,9 +14,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class Khanza extends Component
 {
     use FlashComponent, Filterable, LiveTable, MenuTracker;

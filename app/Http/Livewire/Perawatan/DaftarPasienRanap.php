@@ -17,9 +17,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 use Livewire\Component;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class DaftarPasienRanap extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;

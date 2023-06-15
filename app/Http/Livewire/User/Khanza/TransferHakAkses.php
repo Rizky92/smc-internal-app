@@ -13,9 +13,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class TransferHakAkses extends Component
 {
     use Filterable, LiveTable, DeferredModal;
@@ -64,7 +61,8 @@ class TransferHakAkses extends Component
                 ->where(DB::raw('trim(pegawai.nik)'), '!=', $this->nrp)
                 ->where(fn (Builder $q): Builder => $q
                     ->search($this->cari)
-                    ->when($this->showChecked, fn (Builder $q): Builder => $q->orWhereIn(DB::raw('trim(pegawai.nik)'), $checkedUsers)))
+                    ->when($this->showChecked, fn (Builder $q): Builder => $q->orWhereIn(DB::raw('trim(pegawai.nik)'), $checkedUsers))
+                )
                 ->get();
     }
 
@@ -92,7 +90,7 @@ class TransferHakAkses extends Component
 
         $hakAkses = collect($currentUser->getAttributes())
             ->except(['id_user', 'password'])
-            ->when($this->softTransfer, fn (Collection $c): Collection => $c->filter(fn ($v) => $v === 'true'))
+            ->when($this->softTransfer, fn (Collection $c): Collection => $c->filter(fn (string $v): bool => $v === 'true'))
             ->all();
 
         tracker_start('mysql_sik');

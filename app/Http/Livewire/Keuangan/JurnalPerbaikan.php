@@ -13,9 +13,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class JurnalPerbaikan extends Component
 {
     use FlashComponent, Filterable, LiveTable, MenuTracker, DeferredLoading;
@@ -47,16 +44,16 @@ class JurnalPerbaikan extends Component
         return $this->isDeferred
             ? []
             : Jurnal::query()
-                ->jurnalUmum($this->tglAwal, $this->tglAkhir)
-                ->search($this->cari, [
-                    'jurnal.no_jurnal',
-                    'jurnal.no_bukti',
-                    'jurnal.keterangan',
-                ])
-                ->sortWithColumns($this->sortColumns, [
-                    'waktu_jurnal' => DB::raw('timestamp(jurnal.tgl_jurnal, jurnal.jam_jurnal)'),
-                ])
-                ->paginate($this->perpage);
+            ->jurnalUmum($this->tglAwal, $this->tglAkhir)
+            ->search($this->cari, [
+                'jurnal.no_jurnal',
+                'jurnal.no_bukti',
+                'jurnal.keterangan',
+            ])
+            ->sortWithColumns($this->sortColumns, [
+                'waktu_jurnal' => DB::raw('timestamp(jurnal.tgl_jurnal, jurnal.jam_jurnal)'),
+            ])
+            ->paginate($this->perpage);
     }
 
     public function render(): View

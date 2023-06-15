@@ -15,9 +15,6 @@ use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class LaporanStatistik extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
@@ -49,10 +46,10 @@ class LaporanStatistik extends Component
         return $this->isDeferred
             ? []
             : StatistikRekamMedis::query()
-                ->search($this->cari)
-                ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
-                ->orderBy('no_rawat')
-                ->paginate($this->perpage);
+            ->search($this->cari)
+            ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
+            ->orderBy('no_rawat')
+            ->paginate($this->perpage);
     }
 
     public function render(): View

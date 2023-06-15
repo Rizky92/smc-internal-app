@@ -12,9 +12,6 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\View\View;
 use Livewire\Component;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class Siap extends Component
 {
     use FlashComponent, Filterable, LiveTable, MenuTracker;

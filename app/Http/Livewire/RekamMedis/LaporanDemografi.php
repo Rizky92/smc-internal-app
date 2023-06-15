@@ -13,9 +13,6 @@ use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class LaporanDemografi extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
@@ -47,9 +44,9 @@ class LaporanDemografi extends Component
         return $this->isDeferred
             ? []
             : DemografiPasien::query()
-                ->search($this->cari)
-                ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
-                ->paginate($this->perpage);
+            ->search($this->cari)
+            ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
+            ->paginate($this->perpage);
     }
 
     public function render(): View

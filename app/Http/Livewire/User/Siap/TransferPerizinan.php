@@ -7,32 +7,43 @@ use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\LiveTable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class TransferPerizinan extends Component
 {
     use Filterable, LiveTable, DeferredModal;
 
+    /** @var ?string */
     public $nrp;
 
+    /** @var ?string */
     public $nama;
 
+    /** @var ?string[] */
     public $roles;
 
+    /** @var ?string[] */
     public $permissions;
 
+    /** @var bool */
     public $showChecked;
 
+    /** @var ?string[] */
     public $checkedUsers;
 
+    /** @var bool */
     public $softTransfer;
 
+    /** @var mixed */
     protected $listeners = [
-        'siap.show-tp' => 'showModal',
-        'siap.hide-tp' => 'hideModal',
+        'siap.show-tp'          => 'showModal',
+        'siap.hide-tp'          => 'hideModal',
         'siap.prepare-transfer' => 'prepareTransfer',
-        'siap.transfer' => 'save',
+        'siap.transfer'         => 'save',
     ];
 
     public function mount(): void
@@ -40,15 +51,13 @@ class TransferPerizinan extends Component
         $this->defaultValues();
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.user.siap.transfer-perizinan');
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection|array
-     *
-     * @psalm-return \Illuminate\Database\Eloquent\Collection<User>|array<empty, empty>
+     * @return \Illuminate\Database\Eloquent\Collection<\App\Models\Aplikasi\User>|array<empty, empty>
      */
     public function getAvailableUsersProperty()
     {
@@ -61,7 +70,7 @@ class TransferPerizinan extends Component
             ? []
             : User::query()
                 ->with('roles')
-                ->where(DB::raw('trim(pegawai.nik)'), '!=', $this->nrp)
+                ->whereRaw('trim(pegawai.nik) != ?', [$this->nrp])
                 ->where(fn (Builder $q): Builder => $q
                     ->search($this->cari)
                     ->when($this->showChecked, fn (Builder $q): Builder => $q->orWhereIn(DB::raw('trim(pegawai.nik)'), $checkedUsers)))
@@ -77,17 +86,18 @@ class TransferPerizinan extends Component
             ->with(['roles', 'permissions'])
             ->whereRaw('trim(pegawai.nik) = ?', $nrp)
             ->first();
+        
+        if (! $user) {
+            throw (new ModelNotFoundException())->setModel(User::class, [$nrp]);
+        }
 
         $this->roles = $user->roles->pluck('name', 'id')->all();
         $this->permissions = $user->permissions->pluck('name', 'id')->all();
     }
 
-    /**
-     * @return void
-     */
-    public function save()
+    public function save(): void
     {
-        if (!Auth::user()->hasRole(config('permission.superadmin_name'))) {
+        if (! Auth::user()->hasRole(config('permission.superadmin_name'))) {
             $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
@@ -116,7 +126,7 @@ class TransferPerizinan extends Component
         $this->emit('flash.success', "Transfer perizinan SIAP berhasil!");
     }
 
-    protected function defaultValues()
+    protected function defaultValues(): void
     {
         $this->undefer();
 

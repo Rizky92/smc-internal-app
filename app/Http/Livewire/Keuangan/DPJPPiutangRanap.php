@@ -19,9 +19,6 @@ use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class DPJPPiutangRanap extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
@@ -68,18 +65,18 @@ class DPJPPiutangRanap extends Component
         return $this->isDeferred
             ? []
             : RawatInap::query()
-                ->piutangRanap($this->tglAwal, $this->tglAkhir, $this->status, $this->jenisBayar)
-                ->with([
-                    'dpjpRanap',
-                    'billing' => fn (Builder $q): Builder => $q->totalBillingan(),
-                ])
-                ->withSum('cicilanPiutang as dibayar', 'besar_cicilan')
-                ->sortWithColumns($this->sortColumns, [
-                    'perujuk'      => DB::raw("ifnull(rujuk_masuk.perujuk, '-')"),
-                    'waktu_keluar' => DB::raw("timestamp(kamar_inap.tgl_keluar, kamar_inap.jam_keluar)"),
-                    'ruangan'      => DB::raw("concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal)"),
-                ])
-                ->paginate($this->perpage);
+            ->piutangRanap($this->tglAwal, $this->tglAkhir, $this->status, $this->jenisBayar)
+            ->with([
+                'dpjpRanap',
+                'billing' => fn (Builder $q): Builder => $q->totalBillingan(),
+            ])
+            ->withSum('cicilanPiutang as dibayar', 'besar_cicilan')
+            ->sortWithColumns($this->sortColumns, [
+                'perujuk'      => DB::raw("ifnull(rujuk_masuk.perujuk, '-')"),
+                'waktu_keluar' => DB::raw("timestamp(kamar_inap.tgl_keluar, kamar_inap.jam_keluar)"),
+                'ruangan'      => DB::raw("concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal)"),
+            ])
+            ->paginate($this->perpage);
     }
 
     public function render(): View

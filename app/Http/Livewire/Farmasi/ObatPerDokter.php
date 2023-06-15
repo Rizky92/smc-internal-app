@@ -14,9 +14,6 @@ use Illuminate\Database\Eloquent\Casts\AsStringable;
 use Illuminate\View\View;
 use Livewire\Component;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class ObatPerDokter extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
