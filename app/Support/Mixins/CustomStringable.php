@@ -4,9 +4,6 @@ namespace App\Support\Mixins;
 
 use Closure;
 
-/**
- * @psalm-scope-this \Illuminate\Support\Stringable
- */
 class CustomStringable
 {
     /**
@@ -14,6 +11,10 @@ class CustomStringable
      */
     public function toInt(): Closure
     {
+        /** 
+         * @scope
+         * @psalm-scope-this Illuminate\Support\Stringable
+         */
         return fn (): int => intval($this->value);
     }
 

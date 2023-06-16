@@ -18,7 +18,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('mysql_smc')->create('detail_anggaran', function (Blueprint $table): void {
+        Schema::connection('mysql_smc')->create('anggaran_detail', function (Blueprint $table): void {
             $table->id();
             $table->string('nama');
             $table->unsignedBigInteger('subtotal');

@@ -106,7 +106,10 @@ class RawatInap extends Model
         return $this->belongsToMany(Dokter::class, 'dpjp_ranap', 'no_rawat', 'kd_dokter', 'no_rawat', 'kd_dokter');
     }
 
-    public function diagnosa(): HasMany
+    /**
+     * @psalm-return Builder<TRelatedModel>
+     */
+    public function diagnosa(): Builder
     {
         return $this->hasMany(DiagnosaPasien::class, 'no_rawat', 'no_rawat')
             ->where('status', 'Ranap');

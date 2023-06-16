@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('nama')->nullable();
             $table->unsignedBigInteger('nominal');
             $table->date('tgl_dipakai');
-            $table->foreignId('detail_anggaran_id')->constrained('detail_anggaran');
+            $table->foreignId('anggaran_detail_id')->constrained('anggaran_detail');
             $table->timestamps($precision = 6);
         });
     }

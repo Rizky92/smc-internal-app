@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire\Aplikasi;
 
-use App\Support\Traits\Livewire\DeferredLoading;
+use App\Models\Bidang;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
@@ -13,14 +13,7 @@ use Livewire\Component;
 
 class BidangUnit extends Component
 {
-    use FlashComponent, Filterable, LiveTable, MenuTracker, DeferredLoading;
-
-    protected function queryString(): array
-    {
-        return [
-            //
-        ];
-    }
+    use FlashComponent, Filterable, LiveTable, MenuTracker;
 
     public function mount(): void
     {
@@ -31,6 +24,14 @@ class BidangUnit extends Component
     {
         return view('livewire.aplikasi.bidang-unit')
             ->layout(BaseLayout::class, ['title' => 'Bidang Unit RS']);
+    }
+
+    /**
+     * @return \Illuminate\Contracts\Pagination\Paginator
+     */
+    public function getBidangUnitProperty()
+    {
+        return Bidang::paginate($this->perpage);
     }
 
     protected function defaultValues(): void

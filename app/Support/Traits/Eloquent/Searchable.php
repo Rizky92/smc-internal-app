@@ -9,12 +9,12 @@ use LogicException;
 trait Searchable
 {
     /**
-     * @param  \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder $query
-     * @param  string $search
-     * @param  \Illuminate\Support\Collection<int, string>|array<array-key, string> $columns
-     * 
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $search
+     * @param \Illuminate\Support\Collection<int, string>|array<array-key, string> $columns
+     *
      * @return \Illuminate\Database\Eloquent\Builder
-     * 
+     *
      * @throws \LogicException
      */
     public function scopeSearch(Builder $query, string $search, $columns = []): Builder
@@ -35,7 +35,7 @@ trait Searchable
             throw new LogicException("No columns are defined to perform search.");
         }
 
-        // Split search queries to each words, convert to lowercase, and filter any null/empty/space character
+        // Split search queries to each words, convert to lowercase, and filter any white-space character
         $search = Str::of($search)
             ->lower()
             ->split('/\s+/')

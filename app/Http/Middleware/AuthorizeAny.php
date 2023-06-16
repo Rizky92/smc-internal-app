@@ -68,18 +68,20 @@ class AuthorizeAny
             return [];
         }
 
-        return collect($models)->map(function ($model) use ($request) {
-            return $model instanceof Model ? $model : $this->getModel($request, $model);
-        })->all();
+        return collect($models)->map(fn ($model) => 
+            $model instanceof Model 
+                ? $model
+                : $this->getModel($request, $model)
+            );
     }
 
     /**
-     * Get the model to authorize.
+     *  Get the model to authorize.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  string $model
-     * 
-     * @return \Illuminate\Database\Eloquent\Model|string
+     * @param \Illuminate\Http\Request $request
+     * @param string $model
+     *
+     * @return null|object|string
      */
     protected function getModel($request, $model)
     {

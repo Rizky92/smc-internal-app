@@ -139,7 +139,10 @@ class RegistrasiPasien extends Model
         return $this->hasMany(RujukanKeluar::class, 'no_rawat', 'no_rawat');
     }
 
-    public function diagnosa(): HasMany
+    /**
+     * @psalm-return Builder<TRelatedModel>
+     */
+    public function diagnosa(): Builder
     {
         return $this->hasMany(DiagnosaPasien::class, 'no_rawat', 'no_rawat')
             ->where('status', 'Ralan');

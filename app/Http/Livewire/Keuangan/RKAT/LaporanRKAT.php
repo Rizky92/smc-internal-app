@@ -2,6 +2,8 @@
 
 namespace App\Http\Livewire\Keuangan\RKAT;
 
+use App\Models\Keuangan\RKAT\Anggaran;
+use App\Models\Keuangan\RKAT\PemakaianAnggaran;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
@@ -33,6 +35,18 @@ class LaporanRKAT extends Component
     public function mount(): void
     {
         $this->defaultValues();
+    }
+
+    public function getAnggaranTahunanProperty()
+    {
+        return Anggaran::query()
+            ->with([
+                'bidang',
+                'detail' => fn ($q) => $q
+                    ->withSum('pemakaian as total_pemakaian', 'nominal')
+            ])
+            ->withSum('detail as total_anggaran', 'subtotal')
+            ->get();
     }
 
     public function render(): View
