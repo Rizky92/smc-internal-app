@@ -1,6 +1,6 @@
 <?php
 
-namespace [namespace];
+namespace App\Http\Livewire\Keuangan\RKAT;
 
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
@@ -12,7 +12,7 @@ use App\View\Components\BaseLayout;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class [class] extends Component
+class LaporanRKAT extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
@@ -37,8 +37,8 @@ class [class] extends Component
 
     public function render(): View
     {
-        return view('[view]')
-            ->layout(BaseLayout::class, ['title' => '[class]']);
+        return view('livewire.keuangan.rkat.laporan-rkat')
+            ->layout(BaseLayout::class, ['title' => 'Laporan Pemakaian RKAT per Bidang']);
     }
 
     protected function defaultValues(): void

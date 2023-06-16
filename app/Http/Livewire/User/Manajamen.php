@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class ManajemenUser extends Component
+class Manajamen extends Component
 {
     use FlashComponent, Filterable, LiveTable, MenuTracker, DeferredLoading;
 
@@ -46,18 +46,18 @@ class ManajemenUser extends Component
         return $this->isDeferred
             ? []
             : User::query()
-            ->tampilkanYangMemilikiHakAkses($this->tampilkanYangMemilikiHakAkses)
-            ->search($this->cari)
-            ->sortWithColumns($this->sortColumns, [
-                'jbtn'  => DB::raw("coalesce(jabatan.nm_jbtn, spesialis.nm_sps, pegawai.jbtn, '-')"),
-                'jenis' => DB::raw("(case when petugas.nip is not null then 'Petugas' when dokter.kd_dokter is not null then 'Dokter' else '-' end)"),
-            ])
-            ->paginate($this->perpage);
+                ->tampilkanYangMemilikiHakAkses($this->tampilkanYangMemilikiHakAkses)
+                ->search($this->cari)
+                ->sortWithColumns($this->sortColumns, [
+                    'jbtn'  => DB::raw("coalesce(jabatan.nm_jbtn, spesialis.nm_sps, pegawai.jbtn, '-')"),
+                    'jenis' => DB::raw("(case when petugas.nip is not null then 'Petugas' when dokter.kd_dokter is not null then 'Dokter' else '-' end)"),
+                ])
+                ->paginate($this->perpage);
     }
 
     public function render(): View
     {
-        return view('livewire.user.manajemen-user')
+        return view('livewire.user.manajamen')
             ->layout(BaseLayout::class, ['title' => 'Manajemen User']);
     }
 

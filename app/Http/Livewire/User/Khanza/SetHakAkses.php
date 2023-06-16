@@ -113,7 +113,7 @@ class SetHakAkses extends Component
         $user = User::rawFindByNRP($this->nrp);
 
         if (!$this->isDeferred) {
-            $this->checkedHakAkses = collect($user->getAttributes())->except('id_user', 'password')
+            $this->checkedHakAkses = collect($user->getAttributes())->except(['id_user', 'password'])
                 ->filter(fn (?string $f, $_): bool => $f === 'true')
                 ->keys()
                 ->mapWithKeys(fn (string $f, int $_): array => [$f => true])

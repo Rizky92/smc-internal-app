@@ -73,11 +73,12 @@ class BaseLayout extends Component
                 'icon' => "far fa-circle",
                 'type' => 'dropdown',
                 'hasAnyPermissions' => $user->canAny([
+                    'keuangan.rkat.laporan-rkat.read',
+                    'keuangan.rkat.pembuatan-rkat.read',
                     'keuangan.account-payable.read-medis',
                     'keuangan.account-payable.read-nonmedis',
                     'keuangan.account-receivable.read',
                     'keuangan.buku-besar.read',
-                    'keuangan.dpjp-piutang-ranap.read',
                     'keuangan.jurnal-perbaikan.read',
                     'keuangan.jurnal-piutang-lunas.read',
                     'keuangan.jurnal-po-supplier.read',
@@ -93,6 +94,20 @@ class BaseLayout extends Component
                     'keuangan.stok-obat-ruangan.read',
                 ]),
                 'items' => [
+                    [
+                        'name' => 'Laporan RKAT',
+                        'url' => route('admin.keuangan.laporan-rkat'),
+                        'icon' => "fas fa-coins",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.rkat.laporan-rkat.read'),
+                    ],
+                    [
+                        'name' => 'Buat RKAT',
+                        'url' => route('admin.keuangan.pembuatan-rkat'),
+                        'icon' => "fas fa-coins",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.rkat.pembuatan-rkat.read'),
+                    ],
                     [
                         'name' => 'Stok Obat Ruangan',
                         'url' => route('admin.keuangan.stok-obat-ruangan'),
@@ -308,6 +323,21 @@ class BaseLayout extends Component
                         'icon' => 'far fa-newspaper',
                         'url' => route('admin.logistik.stok-darurat'),
                         'hasAnyPermissions' => $user->can('logistik.stok-darurat.read'),
+                    ],
+                ],
+            ],
+            [
+                'name' => 'Aplikasi',
+                'icon' => 'far fa-circle',
+                'type' => 'dropdown',
+                'hasAnyPermissions' => $user->hasRole($develop),
+                'items' => [
+                    [
+                        'name' => 'Bidang Unit',
+                        'url' => route('admin.aplikasi.bidang-unit'),
+                        'icon' => "fas fa-hospital",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->hasRole($develop),
                     ],
                 ],
             ],

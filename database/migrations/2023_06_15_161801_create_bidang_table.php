@@ -6,18 +6,21 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * The name of the database connection to use.
+     *
+     * @var ?string
+     */
     protected $connection = 'mysql_smc';
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::connection('mysql_smc')->create('lokasi_pengambilan_obat', function (Blueprint $table) {
+        Schema::connection('mysql_smc')->create('bidang', function (Blueprint $table): void {
             $table->id();
-            $table->timestamps($precision = 6);
+            $table->string('nama');
         });
     }
 };
