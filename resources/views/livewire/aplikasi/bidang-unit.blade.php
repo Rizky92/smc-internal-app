@@ -1,12 +1,15 @@
 <div>
     <x-flash />
 
+    <livewire:aplikasi.modal.bidang-unit-baru />
+
     <x-card>
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
+                <x-button variant="primary" size="sm" title="Bidang Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-bidang-baru" class="btn-primary ml-3" />
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">

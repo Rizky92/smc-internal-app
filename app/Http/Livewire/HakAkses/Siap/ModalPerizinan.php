@@ -14,11 +14,6 @@ use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
 
-/**
- * @template TRole of \App\Models\Aplikasi\Role
- * 
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class ModalPerizinan extends Component
 {
     use Filterable, LiveTable, DeferredModal, FlashComponent;
@@ -44,6 +39,9 @@ class ModalPerizinan extends Component
         $this->defaultValues();
     }
 
+    /**
+     * @return \Illuminate\Support\Collection<int, string>
+     */
     public function getPermissionsProperty(): Collection
     {
         return Permission::orderBy('name')
