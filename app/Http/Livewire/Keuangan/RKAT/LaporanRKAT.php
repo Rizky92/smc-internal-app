@@ -37,16 +37,9 @@ class LaporanRKAT extends Component
         $this->defaultValues();
     }
 
-    public function getAnggaranTahunanProperty()
+    public function getDataLaporanRKATProperty()
     {
-        return Anggaran::query()
-            ->with([
-                'bidang',
-                'detail' => fn ($q) => $q
-                    ->withSum('pemakaian as total_pemakaian', 'nominal')
-            ])
-            ->withSum('detail as total_anggaran', 'subtotal')
-            ->get();
+        return [];
     }
 
     public function render(): View

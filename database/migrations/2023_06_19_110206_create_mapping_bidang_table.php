@@ -18,12 +18,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('mysql_smc')->create('anggaran_detail', function (Blueprint $table): void {
-            $table->id();
-            $table->string('nama');
-            $table->unsignedBigInteger('subtotal');
-            $table->foreignId('anggaran_id')->constrained('anggaran');
-            $table->timestamps($precision = 6);
+        Schema::connection('mysql_smc')->create('mapping_bidang', function (Blueprint $table): void {
+            $table->foreignId('bidang_id');
+            $table->foreignId('kd_bangsal');
         });
     }
 };

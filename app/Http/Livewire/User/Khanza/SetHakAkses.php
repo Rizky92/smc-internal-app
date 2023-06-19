@@ -16,16 +16,16 @@ class SetHakAkses extends Component
 {
     use Filterable, LiveTable, DeferredModal;
 
-    /** @var ?string */
+    /** @var string */
     public $nrp;
 
-    /** @var ?string */
+    /** @var string */
     public $nama;
 
-    /** @var bool|false */
+    /** @var bool */
     public $showChecked;
 
-    /** @var ?string[] */
+    /** @var string[] */
     public $checkedHakAkses;
 
     /** @var mixed */
@@ -114,9 +114,9 @@ class SetHakAkses extends Component
 
         if (!$this->isDeferred) {
             $this->checkedHakAkses = collect($user->getAttributes())->except(['id_user', 'password'])
-                ->filter(fn (?string $f, $_): bool => $f === 'true')
+                ->filter(fn (?string $v, ?string $k): bool => $v === 'true')
                 ->keys()
-                ->mapWithKeys(fn (string $f, int $_): array => [$f => true])
+                ->mapWithKeys(fn (string $v, int $k): array => [$v => true])
                 ->all();
         }
 

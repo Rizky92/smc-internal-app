@@ -18,12 +18,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('mysql_smc')->create('pemakaian_anggaran_bidang', function (Blueprint $table): void {
+        Schema::connection('mysql_smc')->create('anggaran_bidang', function (Blueprint $table): void {
             $table->id();
-            $table->text('deskripsi')->nullable();
-            $table->bigInteger('nominal_pemakaian');
-            $table->date('tgl_dipakai');
-            $table->foreignId('anggaran_bidang_id')->constrained('anggaran_bidang');
+            $table->foreignId('bidang_id')->constrained('bidang');
+            $table->foreignId('anggaran_id')->constrained('anggaran');
+            $table->year('tahun');
+            $table->bigInteger('nominal_anggaran');
             $table->timestamps($precision = 6);
         });
     }

@@ -14,10 +14,10 @@ class PemakaianAnggaran extends Model
 
     protected $connection = 'mysql_smc';
 
-    protected $table = 'pemakaian_anggaran';
+    protected $table = 'pemakaian_anggaran_bidang';
 
     public function subAnggaran(): BelongsTo
     {
-        return $this->belongsTo(AnggaranDetail::class, 'anggaran_detail_id', 'id');
+        return $this->belongsTo(AnggaranBidang::class, 'anggaran_bidang_id', 'id');
     }
 }

@@ -22,8 +22,6 @@ return new class extends Migration
             $table->id();
             $table->string('nama');
             $table->text('deskripsi')->nullable();
-            $table->year('tahun');
-            $table->foreignId('bidang_id')->constrained('bidang');
             $table->timestamps($precision = 6);
         });
     }
