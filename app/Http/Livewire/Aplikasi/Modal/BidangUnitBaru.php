@@ -14,10 +14,10 @@ class BidangUnitBaru extends Component
     use DeferredModal, Filterable;
 
     /** @var int */
-    public $idBidang;
+    public $bidangId;
 
     /** @var string */
-    public $namaBidang;
+    public $nama;
 
     /** @var mixed */
     protected $listeners = [
@@ -38,13 +38,13 @@ class BidangUnitBaru extends Component
 
     public function prepare(int $id = -1, string $nama = ''): void
     {
-        $this->idBidang = $id;
-        $this->namaBidang = $nama;
+        $this->bidangId = $id;
+        $this->nama = $nama;
     }
 
     public function create(): void
     {
-        if ($this->idBidang !== -1) {
+        if ($this->bidangId !== -1) {
             $this->update();
 
             return;
@@ -57,7 +57,7 @@ class BidangUnitBaru extends Component
             return;
         }
 
-        Bidang::create(['nama' => $this->namaBidang]);
+        Bidang::create(['nama' => $this->nama]);
 
         $this->dispatchBrowserEvent('data-saved');
         $this->emit('flash.success', 'Bidang baru berhasil ditambahkan!');
@@ -72,7 +72,7 @@ class BidangUnitBaru extends Component
             return;
         }
 
-        $bidang = Bidang::find($this->idBidang);
+        $bidang = Bidang::find($this->bidangId);
 
         if (! $bidang) {
             $this->dispatchBrowserEvent('data-not-found');
@@ -81,7 +81,7 @@ class BidangUnitBaru extends Component
             return;
         }
 
-        $bidang->nama = $this->namaBidang;
+        $bidang->nama = $this->nama;
 
         $bidang->save();
 
@@ -91,7 +91,7 @@ class BidangUnitBaru extends Component
 
     protected function defaultValues(): void
     {
-        $this->idBidang = -1;
-        $this->namaBidang = '';
+        $this->bidangId = -1;
+        $this->nama = '';
     }
 }

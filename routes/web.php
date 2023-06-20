@@ -64,9 +64,9 @@ Route::prefix('admin')
         Route::prefix('keuangan')
             ->as('keuangan.')
             ->group(function () {
-                Route::get('laporan-rkat', Keuangan\RKAT\LaporanRKAT::class)
-                    ->middleware('can:keuangan.laporan-rkat.read')
-                    ->name('laporan-rkat');
+                Route::get('pemantauan-rkat', Keuangan\RKAT\PemantauanRKAT::class)
+                    ->middleware('can:keuangan.pemantauan-rkat.read')
+                    ->name('pemantauan-rkat');
 
                 Route::get('pembuatan-rkat', Keuangan\RKAT\PembuatanRKAT::class)
                     ->middleware('can:keuangan.pembuatan-rkat.read')

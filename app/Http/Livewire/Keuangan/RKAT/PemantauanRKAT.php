@@ -16,7 +16,7 @@ use App\View\Components\BaseLayout;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class LaporanRKAT extends Component
+class PemantauanRKAT extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
@@ -55,7 +55,7 @@ class LaporanRKAT extends Component
 
     public function render(): View
     {
-        return view('livewire.keuangan.rkat.laporan-rkat')
+        return view('livewire.keuangan.rkat.pemantauan-rkat')
             ->layout(BaseLayout::class, ['title' => 'Laporan Pemakaian RKAT per Bidang']);
     }
 

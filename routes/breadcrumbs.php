@@ -105,9 +105,9 @@ Breadcrumbs::for('admin.keuangan.account-payable', function (Trail $trail): void
     $trail->push('Hutang Aging AP', route('admin.keuangan.account-payable'));
 });
 
-Breadcrumbs::for('admin.keuangan.laporan-rkat', function (Trail $trail): void {
+Breadcrumbs::for('admin.keuangan.pemantauan-rkat', function (Trail $trail): void {
     $trail->parent('admin.keuangan');
-    $trail->push('Laporan RKAT', route('admin.keuangan.laporan-rkat'));
+    $trail->push('Pemantauan RKAT', route('admin.keuangan.pemantauan-rkat'));
 });
 
 Breadcrumbs::for('admin.keuangan.pembuatan-rkat', function (Trail $trail): void {

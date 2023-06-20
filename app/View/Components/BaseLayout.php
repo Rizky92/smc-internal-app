@@ -73,7 +73,7 @@ class BaseLayout extends Component
                 'icon' => "far fa-circle",
                 'type' => 'dropdown',
                 'hasAnyPermissions' => $user->canAny([
-                    'keuangan.rkat.laporan-rkat.read',
+                    'keuangan.rkat.pemantauan-rkat.read',
                     'keuangan.rkat.pembuatan-rkat.read',
                     'keuangan.account-payable.read-medis',
                     'keuangan.account-payable.read-nonmedis',
@@ -95,14 +95,14 @@ class BaseLayout extends Component
                 ]),
                 'items' => [
                     [
-                        'name' => 'Laporan RKAT',
-                        'url' => route('admin.keuangan.laporan-rkat'),
+                        'name' => 'Pemantauan RKAT',
+                        'url' => route('admin.keuangan.pemantauan-rkat'),
                         'icon' => "fas fa-coins",
                         'type' => 'link',
-                        'hasAnyPermissions' => $user->can('keuangan.rkat.laporan-rkat.read'),
+                        'hasAnyPermissions' => $user->can('keuangan.rkat.pemantauan-rkat.read'),
                     ],
                     [
-                        'name' => 'Buat RKAT',
+                        'name' => 'Kategori RKAT',
                         'url' => route('admin.keuangan.pembuatan-rkat'),
                         'icon' => "fas fa-coins",
                         'type' => 'link',
