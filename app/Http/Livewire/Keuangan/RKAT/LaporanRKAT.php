@@ -2,7 +2,9 @@
 
 namespace App\Http\Livewire\Keuangan\RKAT;
 
+use App\Models\Bidang;
 use App\Models\Keuangan\RKAT\Anggaran;
+use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Models\Keuangan\RKAT\PemakaianAnggaran;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
@@ -39,7 +41,16 @@ class LaporanRKAT extends Component
 
     public function getDataLaporanRKATProperty()
     {
-        return [];
+        return Bidang::query()
+            ->with([
+                'anggaran' => fn ($q) => $q
+                    ->with(['anggaran', 'pemakaian'])
+                    ->withSum('pemakaian as total_pemakaian', 'nominal_pemakaian')
+            ])
+            ->get();
+        return AnggaranBidang::query()
+            ->with('bidang', 'anggaran')
+            ->get();
     }
 
     public function render(): View

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Keuangan\RKAT\Anggaran;
+use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,7 +26,7 @@ class Bidang extends Model
 
     public function anggaran(): HasMany
     {
-        return $this->hasMany(Anggaran::class, 'bidang_id', 'id');
+        return $this->hasMany(AnggaranBidang::class, 'bidang_id', 'id');
     }
 
     public function mappingBangsal(): BelongsToMany
