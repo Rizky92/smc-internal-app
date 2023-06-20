@@ -21,7 +21,9 @@ class BidangUnitBaru extends Component
 
     /** @var mixed */
     protected $listeners = [
-        //
+        'prepare',
+        'bidang.show-modal' => 'showModal',
+        'bidang.hide-modal' => 'hideModal',
     ];
 
     public function mount(): void
@@ -34,24 +36,57 @@ class BidangUnitBaru extends Component
         return view('livewire.aplikasi.modal.bidang-unit-baru');
     }
 
-    public function prepare(int $id = -1): void
+    public function prepare(int $id = -1, string $nama = ''): void
     {
         $this->idBidang = $id;
+        $this->namaBidang = $nama;
     }
 
     public function create(): void
     {
-        if (! Auth::user()->hasRole(config('permission.superadmin_name'))) {
+        if ($this->idBidang !== -1) {
+            $this->update();
+
+            return;
+        }
+
+        if (! Auth::user()->can('aplikasi.bidang-unit.create')) {
             $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini.');
 
             return;
         }
+
+        Bidang::create(['nama' => $this->namaBidang]);
+
+        $this->dispatchBrowserEvent('data-saved');
+        $this->emit('flash.success', 'Bidang baru berhasil ditambahkan!');
     }
 
     public function update(): void
     {
+        if (! Auth::user()->can('aplikasi.bidang-unit.update')) {
+            $this->dispatchBrowserEvent('data-denied');
+            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini.');
 
+            return;
+        }
+
+        $bidang = Bidang::find($this->idBidang);
+
+        if (! $bidang) {
+            $this->dispatchBrowserEvent('data-not-found');
+            $this->emit('flash.error', 'Tidak dapat menemukan data yang bisa diupdate. Silahkan coba kembali.');
+
+            return;
+        }
+
+        $bidang->nama = $this->namaBidang;
+
+        $bidang->save();
+
+        $this->dispatchBrowserEvent('data-saved');
+        $this->emit('flash.success', 'Data bidang berhasil diubah!');
     }
 
     protected function defaultValues(): void

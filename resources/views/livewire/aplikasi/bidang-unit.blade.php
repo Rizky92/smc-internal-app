@@ -3,6 +3,20 @@
 
     <livewire:aplikasi.modal.bidang-unit-baru />
 
+    @once
+        @push('js')
+            <script>
+                function loadData(e) {
+                    let { id, name } = e.dataset
+
+                    @this.emit('prepare', id, name)
+
+                    $('#modal-bidang-baru').modal('show')
+                }
+            </script>
+        @endpush
+    @endonce
+
     <x-card>
         <x-slot name="header">
             <x-row-col-flex>
@@ -21,7 +35,11 @@
                 <x-slot name="body">
                     @forelse ($this->bidangUnit as $item)
                         <x-table.tr>
-                            <x-table.td>{{ $item->id }}</x-table.td>
+                            <x-table.td
+                                clickable
+                                data-id="{{ $item->id }}"
+                                data-name="{{ $item->nama }}"
+                            >{{ $item->id }}</x-table.td>
                             <x-table.td>{{ $item->nama }}</x-table.td>
                         </x-table.tr>
                     @empty

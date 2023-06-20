@@ -206,6 +206,7 @@ return [
     'interfaces' => [
         \Illuminate\Contracts\View\View::class => \Illuminate\View\View::class,
         \Illuminate\Contracts\Auth\Authenticatable::class => \App\Models\Aplikasi\User::class,
+        \Illuminate\Contracts\Auth\Access\Authorizable::class => \App\Models\Aplikasi\User::class,
     ],
 
     /*

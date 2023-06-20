@@ -6,6 +6,14 @@ use Closure;
 
 class CustomStr
 {
+    /** 
+     * @return \Closure(string, string): string
+     */
+    public function wrap(): Closure
+    {
+        return fn (string $value, string $with): string => $with . $value . $with;
+    }
+
     /**
      * @return \Closure(string): int
      */

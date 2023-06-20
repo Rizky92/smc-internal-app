@@ -20,6 +20,10 @@ class Bidang extends Model
 
     public $timestamps = false;
 
+    protected $fillable = [
+        'nama',
+    ];
+
     public function anggaran(): HasMany
     {
         return $this->hasMany(Anggaran::class, 'bidang_id', 'id');
