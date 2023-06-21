@@ -1,7 +1,7 @@
 <div>
     <x-flash />
 
-    <livewire:keuangan.r-k-a-t.modal.r-k-a-t-baru />
+    <livewire:keuangan.r-k-a-t.modal.input-kategori-r-k-a-t />
 
     @once
         @push('js')
@@ -23,7 +23,7 @@
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-                <x-button variant="primary" size="sm" title="Anggaran Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-anggaran-baru" class="btn-primary ml-3" />
+                <x-button variant="primary" size="sm" title="Anggaran Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-pelaporan-rkat" class="btn-primary ml-3" />
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">

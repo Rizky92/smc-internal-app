@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class RKATBaru extends Component
+class InputKategoriRKAT extends Component
 {
     use DeferredModal, Filterable;
 
@@ -25,8 +25,8 @@ class RKATBaru extends Component
     /** @var mixed */
     protected $listeners = [
         'prepare',
-        'anggaran.show-modal' => 'showModal',
-        'anggaran.hide-modal' => 'hideModal',
+        'kategori-rkat.show-modal' => 'showModal',
+        'kategori-rkat.hide-modal' => 'hideModal',
     ];
 
     public function mount(): void
@@ -36,7 +36,7 @@ class RKATBaru extends Component
 
     public function render(): View
     {
-        return view('livewire.keuangan.rkat.modal.rkat-baru');
+        return view('livewire.keuangan.rkat.modal.input-kategori-rkat');
     }
 
     public function prepare(int $id = -1, string $nama = '', string $deskripsi = ''): void
@@ -54,7 +54,7 @@ class RKATBaru extends Component
             return;
         }
 
-        if (! Auth::user()->can('keuangan.rkat.pembuatan-rkat.create')) {
+        if (! Auth::user()->can('keuangan.rkat.kategori-rkat.create')) {
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 
@@ -72,7 +72,7 @@ class RKATBaru extends Component
 
     public function update(): void
     {
-        if (! Auth::user()->can('keuangan.rkat.pembuatan-rkat.update')) {
+        if (! Auth::user()->can('keuangan.rkat.kategori-rkat.update')) {
             $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini.');
 

@@ -4,7 +4,7 @@
     <x-card use-loading wire:init="loadProperties">
         <x-slot name="header">
             <x-row-col-flex>
-                <x-filter.label>Tahun :</x-filter.label>
+                <x-filter.label class="pr-3">Tahun :</x-filter.label>
                 <x-filter.select model="tahun" :options="$this->dataTahun" />
                 <x-filter.button-refresh class="ml-2" />
                 <x-filter.button-export-excel class="ml-auto" />

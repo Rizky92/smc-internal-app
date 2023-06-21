@@ -62,53 +62,6 @@ class RegistrasiPasien extends Model
         });
     }
 
-    public function awalKeperawatan(): Attribute
-    {
-        return Attribute::get(function ($_, array $attributes) {
-            $available = collect();
-
-            if ($attributes['gigi'] !== "0") {
-                $available->push('Gigi');
-            }
-
-            if ($attributes['askep_igd'] !== "0") {
-                $available->push('IGD');
-            }
-
-            if ($attributes['kebidanan'] !== "0") {
-                $available->push('Kebidanan');
-            }
-
-            if ($attributes['mata'] !== "0") {
-                $available->push('Mata');
-            }
-
-            if ($attributes['ralan'] !== "0") {
-                $available->push('Ralan');
-            }
-
-            if ($attributes['ralan_bayi'] !== "0") {
-                $available->push('Ralan Bayi');
-            }
-
-            if ($attributes['ralan_psikiatri'] !== "0") {
-                $available->push('Ralan Psikiatri');
-            }
-
-            if ($attributes['ranap'] !== "0") {
-                $available->push('Ranap');
-            }
-
-            if ($available->isEmpty()) {
-                return 'Tidak ada';
-            }
-
-            $available = $available->join(', ');
-
-            return "Ada ($available)";
-        });
-    }
-
     public function pasien(): BelongsTo
     {
         return $this->belongsTo(Pasien::class, 'no_rkm_medis', 'no_rkm_medis');
@@ -140,12 +93,13 @@ class RegistrasiPasien extends Model
     }
 
     /**
-     * @psalm-return Builder<TRelatedModel>
+     * @psalm-suppress InvalidReturnType
+     * @psalm-suppress InvalidReturnStatement
      */
-    public function diagnosa(): Builder
+    public function diagnosa(): HasMany
     {
         return $this->hasMany(DiagnosaPasien::class, 'no_rawat', 'no_rawat')
-            ->where('status', 'Ralan');
+            ->where('status', 'ralan');
     }
 
     public function tindakanRalanPerawat(): HasMany
@@ -282,7 +236,7 @@ class RegistrasiPasien extends Model
             ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
-            ->when(!$semuaRegistrasi, fn ($q) => $q->whereNotIn('reg_periksa.stts', ['Batal', 'Belum']))
-            ->when($jenisPerawatan !== 'semua', fn ($q) => $q->where('reg_periksa.status_lanjut', $jenisPerawatan));
+            ->when(!$semuaRegistrasi, fn (Builder $q): Builder => $q->whereNotIn('reg_periksa.stts', ['Batal', 'Belum']))
+            ->when($jenisPerawatan !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.status_lanjut', $jenisPerawatan));
     }
 }

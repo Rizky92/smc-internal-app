@@ -11,7 +11,7 @@ use App\View\Components\BaseLayout;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class PembuatanRKAT extends Component
+class KategoriRKAT extends Component
 {
     use FlashComponent, Filterable, LiveTable, MenuTracker;
 
@@ -27,7 +27,7 @@ class PembuatanRKAT extends Component
 
     public function render(): View
     {
-        return view('livewire.keuangan.rkat.pembuatan-rkat')
+        return view('livewire.keuangan.rkat.kategori-rkat')
             ->layout(BaseLayout::class, ['title' => 'Pembuatan RKAT baru']);
     }
 

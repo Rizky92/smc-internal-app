@@ -20,6 +20,8 @@ class AnggaranBidang extends Model
     protected $table = 'anggaran_bidang';
 
     protected $fillable = [
+        'anggaran_id',
+        'bidang_id',
         'tahun',
         'nominal_anggaran',
     ];

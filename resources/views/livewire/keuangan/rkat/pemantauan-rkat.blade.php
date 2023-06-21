@@ -1,7 +1,16 @@
 <div>
     <x-flash />
 
-    <x-card use-default-filter>
+    <x-card>
+        <x-slot name="header">
+            <x-row-col-flex>
+                <x-filter.label class="pr-3">Tahun:</x-filter.label>
+                <x-filter.select model="tahun" :options="$this->dataTahun" />
+                <x-filter.button-reset-filters class="ml-auto" />
+                <x-filter.search class="ml-2" />
+                <x-filter.button-export-excel class="ml-2" />
+            </x-row-col-flex>
+        </x-slot>
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" style="min-width: 100%" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
@@ -53,9 +62,6 @@
                     @endforelse
                 </x-slot>
             </x-table>
-        </x-slot>
-        <x-slot name="footer">
-            {{-- <x-paginator :data="$this->collectionProperty" /> --}}
         </x-slot>
     </x-card>
 </div>

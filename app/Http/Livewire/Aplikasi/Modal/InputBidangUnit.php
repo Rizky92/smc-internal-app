@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class BidangUnitBaru extends Component
+class InputBidangUnit extends Component
 {
     use DeferredModal, Filterable;
 
@@ -33,7 +33,7 @@ class BidangUnitBaru extends Component
 
     public function render(): View
     {
-        return view('livewire.aplikasi.modal.bidang-unit-baru');
+        return view('livewire.aplikasi.modal.input-bidang-unit');
     }
 
     public function prepare(int $id = -1, string $nama = ''): void

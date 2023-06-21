@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire\Keuangan\RKAT;
 
-use App\Models\Bidang;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
@@ -10,14 +9,18 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\View\View;
 use Livewire\Component;
 
-class PemantauanRKAT extends Component
+class PelaporanRKAT extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+
+    /** @var string */
+    public $tglAwal;
+
+    /** @var string */
+    public $tglAkhir;
 
     /** @var string */
     public $tahun;
@@ -25,6 +28,8 @@ class PemantauanRKAT extends Component
     protected function queryString(): array
     {
         return [
+            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
             'tahun' => ['except' => now()->format('Y')],
         ];
     }
@@ -34,6 +39,11 @@ class PemantauanRKAT extends Component
         $this->defaultValues();
     }
 
+    public function getDataLaporanRKATPerBidangProperty()
+    {
+        
+    }
+    
     public function getDataTahunProperty(): array
     {
         return collect(range((int) now()->format('Y'), 2023, -1))
@@ -41,29 +51,16 @@ class PemantauanRKAT extends Component
             ->all();
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Collection<\App\Models\Bidang>
-     */
-    public function getDataLaporanRKATProperty(): Collection
-    {
-        return Bidang::query()
-            ->with([
-                'anggaran' => fn (HasMany $q) => $q
-                    ->with(['anggaran', 'pemakaian'])
-                    ->withSum('pemakaian as total_pemakaian', 'nominal_pemakaian')
-            ])
-            ->get()
-            ->dd();
-    }
-
     public function render(): View
     {
-        return view('livewire.keuangan.rkat.pemantauan-rkat')
-            ->layout(BaseLayout::class, ['title' => 'Laporan Pemakaian RKAT per Bidang']);
+        return view('livewire.keuangan.rkat.pelaporan-rkat')
+            ->layout(BaseLayout::class, ['title' => 'Pelaporan Penggunaan RKAT']);
     }
 
     protected function defaultValues(): void
     {
+        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
         $this->tahun = now()->format('Y');
     }
 

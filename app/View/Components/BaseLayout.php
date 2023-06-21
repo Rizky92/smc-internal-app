@@ -73,8 +73,9 @@ class BaseLayout extends Component
                 'icon' => "far fa-circle",
                 'type' => 'dropdown',
                 'hasAnyPermissions' => $user->canAny([
+                    'keuangan.rkat.pelaporan-rkat.read',
                     'keuangan.rkat.pemantauan-rkat.read',
-                    'keuangan.rkat.pembuatan-rkat.read',
+                    'keuangan.rkat.kategori-rkat.read',
                     'keuangan.account-payable.read-medis',
                     'keuangan.account-payable.read-nonmedis',
                     'keuangan.account-receivable.read',
@@ -95,6 +96,13 @@ class BaseLayout extends Component
                 ]),
                 'items' => [
                     [
+                        'name' => 'Pelaporan RKAT',
+                        'url' => route('admin.keuangan.pelaporan-rkat'),
+                        'icon' => "fas fa-coins",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.rkat.pelaporan-rkat.read'),
+                    ],
+                    [
                         'name' => 'Pemantauan RKAT',
                         'url' => route('admin.keuangan.pemantauan-rkat'),
                         'icon' => "fas fa-coins",
@@ -103,10 +111,10 @@ class BaseLayout extends Component
                     ],
                     [
                         'name' => 'Kategori RKAT',
-                        'url' => route('admin.keuangan.pembuatan-rkat'),
+                        'url' => route('admin.keuangan.kategori-rkat'),
                         'icon' => "fas fa-coins",
                         'type' => 'link',
-                        'hasAnyPermissions' => $user->can('keuangan.rkat.pembuatan-rkat.read'),
+                        'hasAnyPermissions' => $user->can('keuangan.rkat.kategori-rkat.read'),
                     ],
                     [
                         'name' => 'Stok Obat Ruangan',
@@ -185,13 +193,6 @@ class BaseLayout extends Component
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.laba-rugi-rekening.read'),
                     ],
-                    // [
-                    //     'name' => 'DPJP Piutang Ranap',
-                    //     'url' => route('admin.keuangan.dpjp-piutang-ranap'),
-                    //     'icon' => "fas fa-file-invoice",
-                    //     'type' => 'link',
-                    //     'hasAnyPermissions' => $user->can('keuangan.dpjp-piutang-ranap.read'),
-                    // ],
                     [
                         'name' => 'Laporan Tindakan Lab',
                         'url' => route('admin.keuangan.laporan-tindakan-lab'),
