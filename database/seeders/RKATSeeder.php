@@ -72,5 +72,75 @@ class RKATSeeder extends Seeder
             ['bidang_id' => 5, 'anggaran_id' => 4, 'tahun' => 2023, 'nominal_anggaran' => 6054475, 'created_at' => now(), 'updated_at' => now()],
             ['bidang_id' => 5, 'anggaran_id' => 5, 'tahun' => 2023, 'nominal_anggaran' => 0, 'created_at' => now(), 'updated_at' => now()],
         ]);
+
+        PemakaianAnggaran::insert([
+            ['anggaran_bidang_id' => 1, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-01-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 1, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-01-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 1, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-02-01')->addDays(rand(1, 27)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 1, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-02-01')->addDays(rand(1, 27)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 1, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-03-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 1, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-04-01')->addDays(rand(1, 29)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 1, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-05-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+
+            ['anggaran_bidang_id' => 2, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-01-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 2, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-02-01')->addDays(rand(1, 27)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 2, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-02-01')->addDays(rand(1, 27)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 2, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-04-01')->addDays(rand(1, 29)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 2, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-04-01')->addDays(rand(1, 29)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 2, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-05-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+
+            ['anggaran_bidang_id' => 3, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-01-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 3, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-01-01')->addDays(rand(1, 27)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 3, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-02-01')->addDays(rand(1, 27)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 3, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-05-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 3, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-05-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+
+            ['anggaran_bidang_id' => 4, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-01-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 4, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-02-01')->addDays(rand(1, 27)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 4, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-03-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+
+            ['anggaran_bidang_id' => 6, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-01-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 6, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-02-01')->addDays(rand(1, 27)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 6, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-03-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 6, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-03-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 6, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-04-01')->addDays(rand(1, 29)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 6, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-04-01')->addDays(rand(1, 29)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 6, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-05-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+
+            ['anggaran_bidang_id' => 7, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-01-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 7, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-02-01')->addDays(rand(1, 27)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 7, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-03-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 7, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-04-01')->addDays(rand(1, 29)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 7, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-05-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+            
+            ['anggaran_bidang_id' => 8, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-02-01')->addDays(rand(1, 27)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 8, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-03-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 8, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-04-01')->addDays(rand(1, 29)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 8, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-04-01')->addDays(rand(1, 29)), 'created_at' => now(), 'updated_at' => now()],
+            
+            ['anggaran_bidang_id' => 9, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-01-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 9, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-01-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 9, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-02-01')->addDays(rand(1, 27)), 'created_at' => now(), 'updated_at' => now()],
+
+            ['anggaran_bidang_id' => 11, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-01-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 11, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-01-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 11, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-02-01')->addDays(rand(1, 27)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 11, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-02-01')->addDays(rand(1, 27)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 11, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-04-01')->addDays(rand(1, 29)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 11, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-04-01')->addDays(rand(1, 29)), 'created_at' => now(), 'updated_at' => now()],
+
+            ['anggaran_bidang_id' => 12, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-01-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 12, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-02-01')->addDays(rand(1, 27)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 12, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-03-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 12, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-04-01')->addDays(rand(1, 29)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 12, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-05-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+
+            ['anggaran_bidang_id' => 13, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-01-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 13, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-03-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 13, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-05-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+
+            ['anggaran_bidang_id' => 14, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-02-01')->addDays(rand(1, 27)), 'created_at' => now(), 'updated_at' => now()],
+            ['anggaran_bidang_id' => 14, 'nominal_pemakaian' => rand(1, 1_000_000), 'tgl_dipakai' => carbon('2023-05-01')->addDays(rand(1, 30)), 'created_at' => now(), 'updated_at' => now()],
+        ]);
     }
 }

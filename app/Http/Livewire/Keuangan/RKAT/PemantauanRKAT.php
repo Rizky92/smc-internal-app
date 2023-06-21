@@ -52,8 +52,7 @@ class PemantauanRKAT extends Component
                     ->with(['anggaran', 'pemakaian'])
                     ->withSum('pemakaian as total_pemakaian', 'nominal_pemakaian')
             ])
-            ->get()
-            ->dd();
+            ->get();
     }
 
     public function render(): View

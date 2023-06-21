@@ -7,7 +7,11 @@
 ])
 
 @php
-    $isAssoc = Arr::isAssoc($options);
+    if (! $options instanceof \Illuminate\Support\Collection) {
+        $options = collect($options);
+    }
+
+    $isAssoc = $options->isAssoc();
     
     $attrs = [
         'class' => 'custom-control custom-select text-sm',
@@ -18,7 +22,7 @@
     }
     
     if (!$isAssoc) {
-        $options = collect($options)
+        $options = $options
             ->mapWithKeys(fn($v, $k) => [$v => $v])
             ->when($showKey, fn ($c) => $c->mapWithKeys(fn ($v, $k) => [$v => "{$v} - {$k}"]))
             ->all();
@@ -28,7 +32,7 @@
 <div class="input-group input-group-sm" style="width: max-content">
     <select {{ $attributes->merge($attrs) }}>
         @if ($placeholder)
-            <option hidden>{{ $placeholder }}</option>
+            <option hidden selected value="{{ $placeholder }}">{{ $placeholder }}</option>
             <option disabled>{{ $placeholder }}</option>
         @endif
         @foreach ($options as $key => $value)

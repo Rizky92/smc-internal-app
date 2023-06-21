@@ -8,15 +8,46 @@ use Illuminate\Support\Collection;
 class CustomCollections
 {
     /**
+     * @return \Closure(): bool
+     */
+    public function isAssoc(): Closure
+    {
+        /** 
+         * @psalm-scope-this Illuminate\Support\Collection
+         */
+        return function (): bool {
+            $keys = array_keys($this->items);
+
+            return array_keys($keys) !== $keys;
+        };
+    }
+
+    /**
+     * @return \Closure(): bool
+     */
+    public function isList(): Closure
+    {
+        /** 
+         * @psalm-scope-this Illuminate\Support\Collection
+         */
+        return function (): bool {
+            $keys = array_keys($this->items);
+
+            return array_keys($keys) === $keys;
+        };
+    }
+
+    /**
      * @return \Closure(bool $condition, mixed ...$values): \Illuminate\Support\Collection
      */
     public function pushIf(): Closure
     {
-        return function (bool $condition, ...$values): Collection {
-            /** @var \Illuminate\Support\Collection $this */
-            
-            return $this->when($condition, fn (Collection $c) => $c->push($values));
-        };
+        /** 
+         * @psalm-scope-this Illuminate\Support\Collection
+         */
+        return fn (bool $condition, ...$values): Collection =>
+            $this->when($condition, fn (Collection $c) => 
+                $c->push($values));
     }
 
     /**
@@ -24,11 +55,12 @@ class CustomCollections
      */
     public function pushUnless(): Closure
     {
-        return function (bool $condition, ...$values): Collection {
-            /** @var \Illuminate\Support\Collection $this */
-            
-            return $this->unless($condition, fn (Collection $c) => $c->push($values));
-        };
+        /** 
+         * @psalm-scope-this Illuminate\Support\Collection
+         */
+        return fn (bool $condition, ...$values): Collection => 
+            $this->unless($condition, fn (Collection $c) =>
+                $c->push($values));
     }
 
     /**
@@ -36,6 +68,9 @@ class CustomCollections
      */
     public function whereLike(): Closure
     {
+        /** 
+         * @psalm-scope-this Illuminate\Support\Collection
+         */
         return function (?string $search = null, int $looseRange = 1): Collection {
             /** @var \Illuminate\Support\Collection $this */
 
@@ -52,6 +87,9 @@ class CustomCollections
      */
     public function containsLike(): Closure
     {
+        /** 
+         * @psalm-scope-this Illuminate\Support\Collection
+         */
         return function (?string $search = null, int $looseRange = 1): bool {
             /** @var \Illuminate\Support\Collection $this */
 

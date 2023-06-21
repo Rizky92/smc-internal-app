@@ -2,6 +2,7 @@
 
 namespace App\Models\Keuangan\RKAT;
 
+use App\Models\Aplikasi\User;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,8 +17,21 @@ class PemakaianAnggaran extends Model
 
     protected $table = 'pemakaian_anggaran_bidang';
 
-    public function subAnggaran(): BelongsTo
+    protected $fillable = [
+        'deskripsi',
+        'nominal_pemakaian',
+        'tgl_dipakai',
+        'anggaran_bidang_id',
+        'user_id',
+    ];
+
+    public function anggaranBidang(): BelongsTo
     {
         return $this->belongsTo(AnggaranBidang::class, 'anggaran_bidang_id', 'id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'nik');
     }
 }

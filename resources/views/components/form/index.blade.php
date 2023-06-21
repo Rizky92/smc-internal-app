@@ -19,9 +19,11 @@
     ->merge(['method' => $methodHTML])
     ->when($files, fn ($attr) => $attr->merge(['enctype' => 'multipart/form-data']))
     ->when($livewire, fn ($attr) => $attr->merge(['wire:submit.prevent' => $submit]))
-    ->when(!$livewire && !is_null($action), fn ($attr) => $attr->merge(compact('action')))
+    ->when(!$livewire && !is_null($action), fn ($attr) => $attr->merge(['action' => $action]))
 }}>
     @csrf
-    @method($method)
+    @if (!$livewire)
+        @method($method)
+    @endif
     {{ $slot }}
 </form>
