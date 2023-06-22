@@ -7,6 +7,7 @@ use App\Models\Keuangan\RKAT\PemakaianAnggaran;
 use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -16,13 +17,19 @@ class InputPelaporanRKAT extends Component
     use FlashComponent, Filterable, DeferredModal;
 
     /** @var bool */
-    public $isUpdating;
+    public $status;
 
     /** @var int */
     public $anggaranBidangId;
 
-    /** @var \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection */
-    public $data;
+    /** @var \Carbon\Carbon|\DateTime|string */
+    public $tglPakai;
+
+    /** @var int|float */
+    public $nominalPemakaian;
+
+    /** @var string */
+    public $deskripsi;
 
     /** @var mixed */
     protected $listeners = [
@@ -31,9 +38,35 @@ class InputPelaporanRKAT extends Component
         'pelaporan-rkat.show-modal' => 'showModal',
     ];
 
+    /** @var mixed */
+    protected $rules = [
+        'anggaranBidangId' => ['required', 'exists:anggaran_bidang'],
+        'tglPakai'         => ['required', 'date'],
+        'nominalPemakaian' => ['required', 'numeric'],
+        'deskripsi'        => ['required', 'string'],
+    ];
+
     public function mount(): void
     {
         $this->defaultValues();
+    }
+
+    public function getDataRKATPerBidangProperty(): Collection
+    {
+        return AnggaranBidang::query()
+            ->with(['anggaran', 'bidang'])
+            ->get()
+            ->mapWithKeys(function (AnggaranBidang $ab) {
+                $namaAnggaran = $ab->anggaran->nama;
+                $namaBidang = $ab->bidang->nama;
+                $tahun = $ab->tahun;
+
+                $string = collect([$namaAnggaran, $namaBidang, $tahun])
+                    ->joinStr(' - ')
+                    ->value();
+
+                return [$ab->id => $string];
+            });
     }
 
     public function render(): View
@@ -41,59 +74,43 @@ class InputPelaporanRKAT extends Component
         return view('livewire.keuangan.rkat.modal.input-pelaporan-rkat');
     }
 
-    public function prepare(int $anggaranBidangId = -1): void
+    public function prepare(array $options): void
     {
-        if ($anggaranBidangId === -1) {
-            return;
-        }
-
-        $this->anggaranBidangId = $anggaranBidangId;
-
-        /** @var \App\Models\Keuangan\RKAT\AnggaranBidang */
-        $anggaranBidang = AnggaranBidang::query()
-            ->with('pemakaian')
-            ->find($anggaranBidangId);
-
-        $this->data = $anggaranBidang->pemakaian;
+        $this->anggaranBidangId = $options['anggaranBidangId'];
+        $this->tglPakai = $options['tglPakai'];
+        $this->nominalPemakaian = $options['nominalPemakaian'];
+        $this->deskripsi = $options['deskripsi'];
     }
 
     public function create(): void
     {
-        // TODO: Ganti setting dengan proses setting aplikasi
-        $settings = false;
+        if ($this->isUpdating) {
+            $this->update();
 
-        /** 
-         * @psalm-suppress TypeDoesNotContainType
-         * @psalm-suppress RedundantCondition
-         */
-        if (! Auth::user()->can('keuangan.rkat.pelaporan-rkat.input-rkat') || ! $settings) {
+            return;
+        }
+
+        if (! Auth::user()->can('keuangan.rkat.pelaporan-rkat.input-rkat')) {
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 
             return;
         }
 
-        if ($this->data->isAssoc()) {
-            $this->emit('flash.error', 'Terjadi error! Cek kembali data yang diinputkan.');
-            $this->dispatchBrowserEvent('data-denied');
+        $this->validate();
 
-            return;
-        }
-
-        $this->data->each(function (array $pemakaian) {
-            PemakaianAnggaran::create([
-                'deskripsi' => $pemakaian['deskripsi'],
-                'nominal_pemakaian' => $pemakaian['nominal'],
-                'tgl_dipakai' => $pemakaian['tgl_dipakai'],
-                'anggaran_bidang_id' => $this->anggaranBidangId,
-                'user_id' => Auth::user()->nik,
-            ]);
-        });
+        PemakaianAnggaran::create([
+            'deskripsi'          => $this->deskripsi,
+            'nominal_pemakaian'  => $this->nominalPemakaian,
+            'tgl_dipakai'        => $this->tglDipakai,
+            'anggaran_bidang_id' => $this->anggaranBidangId,
+            'user_id'            => Auth::user()->nik,
+        ]);
     }
 
     public function update()
     {
-        
+
     }
 
     public function reorder(int $id, int $position)
@@ -103,18 +120,26 @@ class InputPelaporanRKAT extends Component
 
     protected function defaultValues(): void
     {
+        $this->status = false;
+
         $this->anggaranBidangId = -1;
-        $this->data = collect();
-        $this->isUpdating = false;
+        $this->tglPakai = '';
+        $this->nominalPemakaian = -1;
+        $this->deskripsi = '';
+    }
+
+    public function isUpdating(): bool
+    {
+        return $this->status;
     }
 
     public function updating(): void
     {
-        $this->isUpdating = true;
+        $this->status = true;
     }
 
     public function creating(): void
     {
-        $this->isUpdating = false;
+        $this->status = false;
     }
 }

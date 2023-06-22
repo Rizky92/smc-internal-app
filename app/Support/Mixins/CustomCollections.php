@@ -4,9 +4,24 @@ namespace App\Support\Mixins;
 
 use Closure;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Stringable;
 
 class CustomCollections
 {
+    /**
+     * @return \Closure(string, string): \Illuminate\Support\Stringable
+     */
+    public function joinStr(): Closure
+    {
+        /** 
+         * @psalm-scope-this Illuminate\Support\Collection
+         * @var \Illuminate\Support\Collection $this
+         */
+        return function (string $glue, string $finalGlue = ''): Stringable {
+            return new Stringable($this->join($glue, $finalGlue));
+        };
+    }
+
     /**
      * @return \Closure(): bool
      */
@@ -14,6 +29,7 @@ class CustomCollections
     {
         /** 
          * @psalm-scope-this Illuminate\Support\Collection
+         * @var \Illuminate\Support\Collection $this
          */
         return function (): bool {
             $keys = array_keys($this->items);
@@ -29,6 +45,7 @@ class CustomCollections
     {
         /** 
          * @psalm-scope-this Illuminate\Support\Collection
+         * @var \Illuminate\Support\Collection $this
          */
         return function (): bool {
             $keys = array_keys($this->items);
@@ -44,6 +61,7 @@ class CustomCollections
     {
         /** 
          * @psalm-scope-this Illuminate\Support\Collection
+         * @var \Illuminate\Support\Collection $this
          */
         return fn (bool $condition, ...$values): Collection =>
             $this->when($condition, fn (Collection $c) => 
@@ -57,6 +75,7 @@ class CustomCollections
     {
         /** 
          * @psalm-scope-this Illuminate\Support\Collection
+         * @var \Illuminate\Support\Collection $this
          */
         return fn (bool $condition, ...$values): Collection => 
             $this->unless($condition, fn (Collection $c) =>
@@ -70,10 +89,9 @@ class CustomCollections
     {
         /** 
          * @psalm-scope-this Illuminate\Support\Collection
+         * @var \Illuminate\Support\Collection $this
          */
         return function (?string $search = null, int $looseRange = 1): Collection {
-            /** @var \Illuminate\Support\Collection $this */
-
             return $this->filter(function (string $v) use ($search, $looseRange): bool {
                 if (empty($search)) return true;
 
@@ -89,10 +107,9 @@ class CustomCollections
     {
         /** 
          * @psalm-scope-this Illuminate\Support\Collection
+         * @var \Illuminate\Support\Collection $this
          */
         return function (?string $search = null, int $looseRange = 1): bool {
-            /** @var \Illuminate\Support\Collection $this */
-
             return $this->contains(function (string $v) use ($search, $looseRange): bool {
                 if (empty($search)) return false;
                 

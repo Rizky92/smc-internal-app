@@ -5,12 +5,26 @@ namespace App\Support\Mixins;
 use Closure;
 use Illuminate\Support\Stringable;
 
+/**
+ * @property-read string $value
+ */
 class CustomStringable
 {
     /**
+     * @return \Closure(): string
+     */
+    public function value(): Closure
+    {
+        /**
+         * @psalm-scope-this Illuminate\Support\Stringable
+         */
+        return fn (): string => $this->value;
+    }
+
+    /**
      * @return \Closure(string): \Illuminate\Support\Stringable
      */
-    public function wrap()
+    public function wrap(): Closure
     {
         /** 
          * @psalm-scope-this Illuminate\Support\Stringable

@@ -10,22 +10,34 @@
             })
         </script>
     @endpush
-    <x-modal id="modal-input-pelaporan-rkat" :title="$isUpdating ? 'Edit Kategori Anggaran' : 'Tambah Kategori Anggaran Baru'" livewire centered>
+    <x-modal id="modal-input-pelaporan-rkat" :title="$this->isUpdating() ? 'Edit Kategori Anggaran' : 'Tambah Kategori Anggaran Baru'" livewire centered>
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
-            <form id="form-input-pelaporan-rkat" wire:submit.prevent="{{ $anggaranBidangId !== -1 ? 'update' : 'create' }}">
+            <x-form id="form-input-pelaporan-rkat" livewire :submit="$anggaranBidangId !== -1 ? 'update' : 'create'">
                 <x-row-col class="sticky-top bg-white py-1 px-3">
                     <div class="form-group mt-3">
-                        <label for="nama-anggaran">Nama Anggaran:</label>
-                        <input type="text" id="nama-anggaran" wire:model.defer="nama" class="form-control form-control-sm" />
+                        <label for="anggaran-bidang-id">Anggaran bidang digunakan:</label>
+                        <x-form.select2 
+                            livewire
+                            name="anggaranBidangId"
+                            :options="$this->dataRKATPerBidang"
+                            :selected="$anggaranBidangId"
+                            width="full-width"
+                        />
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="tgl-pemakaian">Tgl. Pemakaian</label>
+                        <x-form.date model="tglPakai" />
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="nominal-anggaran">Nominal</label>
+                        <input type="text" id="nominal-anggaran" wire:model.defer="nama" class="form-control form-control-sm" />
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="keterangan">Keterangan</label>
+                        <textarea id="keterangan" wire:model.defer="deskripsi" class="form-control form-control-sm"></textarea>
                     </div>
                 </x-row-col>
-            </form>
-            <div class="pt-1 pb-2 px-3">
-                <x-row-col-flex>
-                    <x-button size="sm" variant="secondary" id="tambah-row" title="Tambah" icon="fas fa-plus" />
-                    <x-button class="ml-2" size="sm" variant="danger" id="hapus-row" title="Hapus" icon="fas fa-trash" disabled />
-                </x-row-col-flex>
-            </div>
+            </x-form>
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
             <x-button size="sm" class="ml-auto" data-dismiss="modal" id="batalsimpan" title="Batal" />
