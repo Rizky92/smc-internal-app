@@ -72,6 +72,10 @@ Route::prefix('admin')
                     ->middleware('can:keuangan.pemantauan-rkat.read')
                     ->name('pemantauan-rkat');
 
+                Route::get('penetapan-rkat', Keuangan\RKAT\PenetapanRKAT::class)
+                    ->middleware('can:keuangan.penetapan-rkat.read')
+                    ->name('penetapan-rkat');
+
                 Route::get('kategori-rkat', Keuangan\RKAT\KategoriRKAT::class)
                     ->middleware('can:keuangan.kategori-rkat.read')
                     ->name('kategori-rkat');

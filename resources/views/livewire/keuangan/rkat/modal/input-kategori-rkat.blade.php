@@ -8,6 +8,10 @@
             $('#modal-input-kategori-rkat').on('hide.bs.modal', e => {
                 @this.emit('kategori-rkat.hide-modal')
             })
+
+            document.addEventListener('data-saved', () => {
+                $('#modal-input-kategori-rkat').modal('hide')
+            })
         </script>
     @endpush
     @php($isUpdating = $anggaranId !== -1)

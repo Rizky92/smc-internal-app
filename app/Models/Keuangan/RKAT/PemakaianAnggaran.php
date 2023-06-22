@@ -2,7 +2,7 @@
 
 namespace App\Models\Keuangan\RKAT;
 
-use App\Models\Aplikasi\User;
+use App\Models\Kepegawaian\Petugas;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -30,8 +30,8 @@ class PemakaianAnggaran extends Model
         return $this->belongsTo(AnggaranBidang::class, 'anggaran_bidang_id', 'id');
     }
 
-    public function user(): BelongsTo
+    public function petugas(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id', 'nik');
+        return $this->belongsTo(Petugas::class, 'user_id', 'nip');
     }
 }

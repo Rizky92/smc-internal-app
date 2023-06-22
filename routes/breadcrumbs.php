@@ -115,6 +115,11 @@ Breadcrumbs::for('admin.keuangan.pemantauan-rkat', function (Trail $trail): void
     $trail->push('Pemantauan RKAT', route('admin.keuangan.pemantauan-rkat'));
 });
 
+Breadcrumbs::for('admin.keuangan.penetapan-rkat', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('Penetapan RKAT', route('admin.keuangan.penetapan-rkat'));
+});
+
 Breadcrumbs::for('admin.keuangan.kategori-rkat', function (Trail $trail): void {
     $trail->parent('admin.keuangan');
     $trail->push('kategori RKAT', route('admin.keuangan.kategori-rkat'));

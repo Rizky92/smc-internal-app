@@ -96,6 +96,13 @@ class BaseLayout extends Component
                 ]),
                 'items' => [
                     [
+                        'name' => 'Penetapan RKAT',
+                        'url' => route('admin.keuangan.penetapan-rkat'),
+                        'icon' => "fas fa-sitemap",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.rkat.penetapan-rkat.read'),
+                    ],
+                    [
                         'name' => 'Pelaporan RKAT',
                         'url' => route('admin.keuangan.pelaporan-rkat'),
                         'icon' => "fas fa-coins",

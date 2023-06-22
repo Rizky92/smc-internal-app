@@ -3,6 +3,26 @@
 
     <livewire:keuangan.r-k-a-t.modal.input-pelaporan-r-k-a-t />
 
+    @once
+        @push('js')
+            <script>
+                function loadData(e) {
+                    let { pemakaianAnggaranId, anggaranBidangId, tglPakai, nominalPemakaian, deskripsi } = e.dataset
+
+                    @this.emit('prepare', {
+                        pemakaianAnggaranId,
+                        anggaranBidangId,
+                        tglPakai,
+                        nominalPemakaian,
+                        deskripsi
+                    })
+
+                    $('#modal-input-pelaporan-rkat').modal('show')
+                }
+            </script>
+        @endpush
+    @endonce
+
     <x-card>
         <x-slot name="header">
             <x-row-col-flex>
@@ -37,7 +57,14 @@
                 <x-slot name="body">
                     @forelse ($this->dataPenggunaanRKAT as $penggunaan)
                         <x-table.tr>
-                            <x-table.td>{{ $penggunaan->id }}</x-table.td>
+                            <x-table.td
+                                clickable
+                                data-pemakaian-anggaran-id="{{ $penggunaan->id }}"
+                                data-anggaran-bidang-id="{{ $penggunaan->anggaranBidang->id }}"
+                                data-tgl-pakai="{{ $penggunaan->tgl_dipakai }}"
+                                data-nominal-pemakaian="{{ $penggunaan->nominal_pemakaian }}"
+                                data-deskripsi="{{ $penggunaan->deskripsi }}"
+                            >{{ $penggunaan->id }}</x-table.td>
                             <x-table.td>{{ $penggunaan->anggaranBidang->bidang->nama }}</x-table.td>
                             <x-table.td>{{ $penggunaan->anggaranBidang->anggaran->nama }}</x-table.td>
                             <x-table.td>{{ $penggunaan->anggaranBidang->tahun }}</x-table.td>
@@ -45,7 +72,7 @@
                             <x-table.td>{{ rp($penggunaan->nominal_pemakaian) }}</x-table.td>
                             <x-table.td>{{ $penggunaan->deskripsi ?? '-' }}</x-table.td>
                             <x-table.td>{{ $penggunaan->created_at->format('Y-m-d') }}</x-table.td>
-                            <x-table.td></x-table.td>
+                            <x-table.td>{{ $penggunaan->user_id }} {{ optional($penggunaan->petugas)->nama }}</x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="8" />

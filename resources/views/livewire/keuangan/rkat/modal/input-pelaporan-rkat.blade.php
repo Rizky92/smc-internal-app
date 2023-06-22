@@ -8,11 +8,15 @@
             $('#modal-input-pelaporan-rkat').on('hide.bs.modal', e => {
                 @this.emit('pelaporan-rkat.hide-modal')
             })
+
+            $(document).on('data-saved', () => {
+                $('#modal-input-pelaporan-rkat').modal('hide')
+            })
         </script>
     @endpush
-    <x-modal id="modal-input-pelaporan-rkat" :title="$this->isUpdating() ? 'Edit Kategori Anggaran' : 'Tambah Kategori Anggaran Baru'" livewire centered>
+    <x-modal id="modal-input-pelaporan-rkat" :title="$this->isUpdating() ? 'Edit Data Penggunaan RKAT' : 'Input Data Penggunaan RKAT'" livewire centered>
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
-            <x-form id="form-input-pelaporan-rkat" livewire :submit="$anggaranBidangId !== -1 ? 'update' : 'create'">
+            <x-form id="form-input-pelaporan-rkat" livewire :submit="$this->isUpdating() ? 'update' : 'create'">
                 <x-row-col class="sticky-top bg-white py-1 px-3">
                     <div class="form-group mt-3">
                         <label for="anggaran-bidang-id">Anggaran bidang digunakan:</label>
@@ -22,19 +26,24 @@
                             :options="$this->dataRKATPerBidang"
                             :selected="$anggaranBidangId"
                             width="full-width"
+                            placeholder="-"
                         />
+                        <x-form.error name="anggaranBidangId" />
                     </div>
                     <div class="form-group mt-3">
                         <label for="tgl-pemakaian">Tgl. Pemakaian</label>
                         <x-form.date model="tglPakai" />
+                        <x-form.error name="tglPakai" />
                     </div>
                     <div class="form-group mt-3">
                         <label for="nominal-anggaran">Nominal</label>
-                        <input type="text" id="nominal-anggaran" wire:model.defer="nama" class="form-control form-control-sm" />
+                        <input type="text" id="nominal-anggaran" wire:model.defer="nominalPemakaian" class="form-control form-control-sm" />
+                        <x-form.error name="nama" />
                     </div>
                     <div class="form-group mt-3">
                         <label for="keterangan">Keterangan</label>
                         <textarea id="keterangan" wire:model.defer="deskripsi" class="form-control form-control-sm"></textarea>
+                        <x-form.error name="deskripsi" />
                     </div>
                 </x-row-col>
             </x-form>

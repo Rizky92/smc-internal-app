@@ -16,8 +16,8 @@ class InputPelaporanRKAT extends Component
 {
     use FlashComponent, Filterable, DeferredModal;
 
-    /** @var bool */
-    public $status;
+    /** @var int */
+    public $pemakaianAnggaranId;
 
     /** @var int */
     public $anggaranBidangId;
@@ -38,13 +38,21 @@ class InputPelaporanRKAT extends Component
         'pelaporan-rkat.show-modal' => 'showModal',
     ];
 
-    /** @var mixed */
-    protected $rules = [
-        'anggaranBidangId' => ['required', 'exists:anggaran_bidang'],
-        'tglPakai'         => ['required', 'date'],
-        'nominalPemakaian' => ['required', 'numeric'],
-        'deskripsi'        => ['required', 'string'],
-    ];
+    protected function rules(): array
+    {
+        $rules = collect([
+            'anggaranBidangId'    => ['required', 'exists:anggaran_bidang,id'],
+            'tglPakai'            => ['required', 'date'],
+            'nominalPemakaian'    => ['required', 'numeric'],
+            'deskripsi'           => ['required', 'string'],
+        ]);
+
+        if ($this->isUpdating()) {
+            $rules->prepend(['required'], 'pemakaianAnggaranId');
+        }
+
+        return $rules->all();
+    }
 
     public function mount(): void
     {
@@ -76,6 +84,7 @@ class InputPelaporanRKAT extends Component
 
     public function prepare(array $options): void
     {
+        $this->pemakaianAnggaranId = $options['pemakaianAnggaranId'] ?? -1;
         $this->anggaranBidangId = $options['anggaranBidangId'];
         $this->tglPakai = $options['tglPakai'];
         $this->nominalPemakaian = $options['nominalPemakaian'];
@@ -84,13 +93,13 @@ class InputPelaporanRKAT extends Component
 
     public function create(): void
     {
-        if ($this->isUpdating) {
+        if ($this->isUpdating()) {
             $this->update();
 
             return;
         }
 
-        if (! Auth::user()->can('keuangan.rkat.pelaporan-rkat.input-rkat')) {
+        if (! Auth::user()->can('keuangan.rkat.pelaporan-rkat.input-laporan-rkat')) {
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 
@@ -102,44 +111,54 @@ class InputPelaporanRKAT extends Component
         PemakaianAnggaran::create([
             'deskripsi'          => $this->deskripsi,
             'nominal_pemakaian'  => $this->nominalPemakaian,
-            'tgl_dipakai'        => $this->tglDipakai,
+            'tgl_dipakai'        => $this->tglPakai,
             'anggaran_bidang_id' => $this->anggaranBidangId,
             'user_id'            => Auth::user()->nik,
         ]);
+
+        $this->dispatchBrowserEvent('data-saved');
+        $this->emit('flash.success', 'Data Pemakaian RKAT baru berhasil ditambahkan!');
     }
 
-    public function update()
+    public function update(): void
     {
+        if (! $this->isUpdating()) {
+            $this->create();
+        }
 
-    }
+        if (! Auth::user()->can('keuangan.rkat.pelaporan-rkat.edit-laporan-rkat')) {
+            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatchBrowserEvent('data-denied');
 
-    public function reorder(int $id, int $position)
-    {
+            return;
+        }
 
+        $this->validate();
+
+        PemakaianAnggaran::query()
+            ->where('id', $this->pemakaianAnggaranId)
+            ->update([
+                'anggaran_bidang_id' => $this->anggaranBidangId,
+                'tgl_pakai' => $this->tglPakai,
+                'nominal_pemakaian' => $this->nominalPemakaian,
+                'deskripsi' => $this->deskripsi,
+            ]);
+        
+        $this->dispatchBrowserEvent('data-saved');
+        $this->emit('flash.success', 'Data Pemakaian RKAT baru berhasil diupdate!');
     }
 
     protected function defaultValues(): void
     {
-        $this->status = false;
-
+        $this->pemakaianAnggaranId = -1;
         $this->anggaranBidangId = -1;
         $this->tglPakai = '';
-        $this->nominalPemakaian = -1;
+        $this->nominalPemakaian = 0;
         $this->deskripsi = '';
     }
 
     public function isUpdating(): bool
     {
-        return $this->status;
-    }
-
-    public function updating(): void
-    {
-        $this->status = true;
-    }
-
-    public function creating(): void
-    {
-        $this->status = false;
+        return $this->pemakaianAnggaranId !== -1;
     }
 }

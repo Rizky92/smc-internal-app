@@ -69,6 +69,8 @@
                     dropdownSelect2.select2({
                         dropdownCssClass: 'text-sm px-0',
                     })
+
+                    dropdownSelect2.trigger('change')
                 })
 
                 dropdownSelect2.on('select2:select', e => {
@@ -97,7 +99,7 @@
 }}>
     <select id="{{ $id }}" name="{{ $name }}" class="form-control form-control-sm simple-select2-sm input-sm" autocomplete="off">
         @if ($placeholder)
-            <option value="{{ $placeholderValue ?? '' }}">{{ $placeholder }}</option>
+            <option disabled selected>{{ $placeholder }}</option>
         @endif
         @foreach ($options as $key => $value)
             <option value="{{ $key }}" {{ $selected === $key ? 'selected' : null }}>{{ $value }}</option>
