@@ -4,7 +4,6 @@
     'name',
     'options' => [],
     'placeholder' => null,
-    'placeholderValue' => null,
     'resetOn' => 'button#reset-filter',
     'selected' => null,
     'showKey' => false,
@@ -23,8 +22,7 @@
     
     $options = $options
         ->when($isList, fn ($c) => $c->mapWithKeys(fn ($v, $k) => [$v => $v]))
-        ->when($showKey, fn ($c) => $c->mapWithKeys(fn ($v, $k) => [$k => "{$k} - {$v}"]))
-        ->all();
+        ->when($showKey, fn ($c) => $c->mapWithKeys(fn ($v, $k) => [$k => "{$k} - {$v}"]));
 
     $styles = [
         'max-content' => ['style' => 'width: max-content'],
@@ -57,38 +55,22 @@
         <script src="{{ asset('js/select2.full.min.js') }}"></script>
     @endonce
     <script>
-        let dropdownSelect2 = $('select#{{ $id }}')
-
-        $(document).on('DOMContentLoaded', e => {
-            dropdownSelect2.select2({
+        window.select2 = () => {
+            $('select#{{ $id }}').select2({
                 dropdownCssClass: 'text-sm px-0',
+            }).on('change', () => {
+                let data = $('select#{{ $id }}').select2("val")
+
+                @this.set('{{ $model }}', data, true)
             })
+        }
 
-            @if ($livewire)
-                Livewire.hook('element.updated', (el, component) => {
-                    dropdownSelect2.select2({
-                        dropdownCssClass: 'text-sm px-0',
-                    })
+        $(document).on('livewire:load', () => {
+            select2()
 
-                    dropdownSelect2.trigger('change')
-                })
-
-                dropdownSelect2.on('select2:select', e => {
-                    @this.set('{{ $model }}', dropdownSelect2.val(), true)
-                })
-
-                dropdownSelect2.on('select2:unselect', e => {
-                    @this.set('{{ $model }}', dropdownSelect2.val(), true)
-                })
-            @endif
-
-            @notnull($resetOn)
-                $('{{ $resetOn }}').click(e => {
-                    dropdownSelect2.val('')
-
-                    dropdownSelect2.trigger('change')
-                })
-            @endnotnull
+            Livewire.on('select2.hydrate', () => {
+                select2()
+            })
         })
     </script>
 @endpush
@@ -97,11 +79,11 @@
     ->only('class')
     ->merge($styles[$width])
 }}>
-    <select id="{{ $id }}" name="{{ $name }}" class="form-control form-control-sm simple-select2-sm input-sm" autocomplete="off">
+    <select wire:model.defer="{{ $model }}" id="{{ $id }}" name="{{ $name }}" class="form-control form-control-sm simple-select2-sm input-sm" autocomplete="off">
         @if ($placeholder)
-            <option disabled selected>{{ $placeholder }}</option>
+            <option disabled {{ $options->has($selected) ? null : 'selected' }}>{{ $placeholder }}</option>
         @endif
-        @foreach ($options as $key => $value)
+        @foreach ($options->all() as $key => $value)
             <option value="{{ $key }}" {{ $selected === $key ? 'selected' : null }}>{{ $value }}</option>
         @endforeach
     </select>

@@ -6,16 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * The name of the database connection to use.
+     *
+     * @var ?string
+     */
     protected $connection = 'mysql_smc';
     
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::connection('mysql_smc')->create('trackermenu', function (Blueprint $table) {
+        Schema::connection('mysql_smc')->create('trackermenu', function (Blueprint $table): void {
             $table->timestamp('waktu', $precision = 6)->useCurrent();
             $table->string('breadcrumbs', 100)->nullable();
             $table->string('route_name', 100)->nullable();

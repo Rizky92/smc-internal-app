@@ -17,19 +17,19 @@ class InputPelaporanRKAT extends Component
     use FlashComponent, Filterable, DeferredModal;
 
     /** @var int */
-    public $pemakaianAnggaranId;
+    public int $pemakaianAnggaranId;
 
     /** @var int */
-    public $anggaranBidangId;
+    public int $anggaranBidangId;
 
     /** @var \Carbon\Carbon|\DateTime|string */
     public $tglPakai;
 
     /** @var int|float */
-    public $nominalPemakaian;
+    public float $nominalPemakaian;
 
     /** @var string */
-    public $deskripsi;
+    public string $deskripsi;
 
     /** @var mixed */
     protected $listeners = [
@@ -57,6 +57,11 @@ class InputPelaporanRKAT extends Component
     public function mount(): void
     {
         $this->defaultValues();
+    }
+
+    public function hydrate(): void
+    {
+        $this->emit('select2.hydrate');
     }
 
     public function getDataRKATPerBidangProperty(): Collection

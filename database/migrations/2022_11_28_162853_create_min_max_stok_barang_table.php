@@ -6,16 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * The name of the database connection to use.
+     *
+     * @var ?string
+     */
     protected $connection = 'mysql_smc';
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::connection('mysql_smc')->create('ipsrs_minmax_stok_barang', function (Blueprint $table) {
+        Schema::connection('mysql_smc')->create('ipsrs_minmax_stok_barang', function (Blueprint $table): void {
             $table->string('kode_brng', 15)->primary();
             $table->unsignedInteger('stok_min')->default(0);
             $table->unsignedInteger('stok_max')->default(0);

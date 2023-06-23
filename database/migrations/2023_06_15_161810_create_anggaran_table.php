@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('nama');
             $table->text('deskripsi')->nullable();
             $table->timestamps($precision = 6);
+            $table->softDeletes('deleted_at', $precision);
         });
     }
 };

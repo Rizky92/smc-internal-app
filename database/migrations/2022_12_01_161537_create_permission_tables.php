@@ -7,14 +7,17 @@ use Spatie\Permission\PermissionRegistrar;
 
 return new class extends Migration
 {
+    /**
+     * The name of the database connection to use.
+     *
+     * @var ?string
+     */
     protected $connection = 'mysql_smc';
 
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         $tableNames = config('permission.table_names');
         $columnNames = config('permission.column_names');
@@ -27,7 +30,7 @@ return new class extends Migration
             throw new \Exception('Error: team_foreign_key on config/permission.php not loaded. Run [php artisan config:clear] and try again.');
         }
 
-        Schema::connection('mysql_smc')->create($tableNames['permissions'], function (Blueprint $table) {
+        Schema::connection('mysql_smc')->create($tableNames['permissions'], function (Blueprint $table): void {
             $table->bigIncrements('id');
             $table->string('name');       // For MySQL 8.0 use string('name', 125);
             $table->string('guard_name'); // For MySQL 8.0 use string('guard_name', 125);
@@ -36,7 +39,7 @@ return new class extends Migration
             $table->unique(['name', 'guard_name']);
         });
 
-        Schema::connection('mysql_smc')->create($tableNames['roles'], function (Blueprint $table) use ($teams, $columnNames) {
+        Schema::connection('mysql_smc')->create($tableNames['roles'], function (Blueprint $table) use ($teams, $columnNames): void {
             $table->bigIncrements('id');
             if ($teams || config('permission.testing')) { // permission.testing is a fix for sqlite testing
                 $table->unsignedBigInteger($columnNames['team_foreign_key'])->nullable();
@@ -52,7 +55,7 @@ return new class extends Migration
             }
         });
 
-        Schema::connection('mysql_smc')->create($tableNames['model_has_permissions'], function (Blueprint $table) use ($tableNames, $columnNames, $teams) {
+        Schema::connection('mysql_smc')->create($tableNames['model_has_permissions'], function (Blueprint $table) use ($tableNames, $columnNames, $teams): void {
             $table->unsignedBigInteger(PermissionRegistrar::$pivotPermission);
 
             $table->string('model_type');
@@ -79,7 +82,7 @@ return new class extends Migration
             }
         });
 
-        Schema::connection('mysql_smc')->create($tableNames['model_has_roles'], function (Blueprint $table) use ($tableNames, $columnNames, $teams) {
+        Schema::connection('mysql_smc')->create($tableNames['model_has_roles'], function (Blueprint $table) use ($tableNames, $columnNames, $teams): void {
             $table->unsignedBigInteger(PermissionRegistrar::$pivotRole);
 
             $table->string('model_type');
@@ -106,7 +109,7 @@ return new class extends Migration
             }
         });
 
-        Schema::connection('mysql_smc')->create($tableNames['role_has_permissions'], function (Blueprint $table) use ($tableNames) {
+        Schema::connection('mysql_smc')->create($tableNames['role_has_permissions'], function (Blueprint $table) use ($tableNames): void {
             $table->unsignedBigInteger(PermissionRegistrar::$pivotPermission);
             $table->unsignedBigInteger(PermissionRegistrar::$pivotRole);
 
@@ -130,10 +133,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         $tableNames = config('permission.table_names');
 

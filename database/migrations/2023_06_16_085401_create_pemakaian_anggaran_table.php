@@ -24,6 +24,7 @@ return new class extends Migration
             $table->bigInteger('nominal_pemakaian');
             $table->date('tgl_dipakai');
             $table->foreignId('anggaran_bidang_id')->constrained('anggaran_bidang');
+            $table->foreignId('user_id');
             $table->timestamps($precision = 6);
         });
     }

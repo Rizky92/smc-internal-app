@@ -18,7 +18,8 @@
         "rap2hpoutre/laravel-log-viewer": "^2.3.0",
         "rizky92/carbon-helper": "^0.0.3",
         "rizky92/laravel-xlswriter": "*",
-        "spatie/laravel-permission": "^5.10.1"
+        "spatie/laravel-permission": "^5.10.1",
+        "spatie/laravel-settings": "^3.1"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.7.0",

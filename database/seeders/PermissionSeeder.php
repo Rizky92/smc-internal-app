@@ -41,7 +41,6 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'keuangan.account-payable.read-nonmedis', 'guard_name' => 'web']);
         Permission::create(['name' => 'keuangan.account-receivable.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'keuangan.buku-besar.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'keuangan.dpjp-piutang-ranap.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'keuangan.jurnal-perbaikan.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'keuangan.jurnal-perbaikan.ubah-tanggal', 'guard_name' => 'web']);
         Permission::create(['name' => 'keuangan.jurnal-piutang-lunas.read', 'guard_name' => 'web']);
@@ -75,7 +74,6 @@ class PermissionSeeder extends Seeder
             'keuangan.account-payable.read-nonmedis',
             'keuangan.account-receivable.read',
             'keuangan.buku-besar.read',
-            'keuangan.dpjp-piutang-ranap.read',
             'keuangan.jurnal-perbaikan.read',
             'keuangan.jurnal-perbaikan.ubah-tanggal',
             'keuangan.jurnal-piutang-lunas.read',

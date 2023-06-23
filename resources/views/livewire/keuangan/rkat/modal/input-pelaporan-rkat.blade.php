@@ -25,8 +25,9 @@
                             name="anggaranBidangId"
                             :options="$this->dataRKATPerBidang"
                             :selected="$anggaranBidangId"
-                            width="full-width"
                             placeholder="-"
+                            width="full-width"
+                            trigger="pelaporan-rkat.show-modal"
                         />
                         <x-form.error name="anggaranBidangId" />
                     </div>
