@@ -19,7 +19,7 @@
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" style="width: 250rem" sortable zebra hover sticky nowrap>
+            <x-table :sortColumns="$sortColumns" style="width: 150rem" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th style="width: 25ch" name="no_rawat" title="No. Rawat" />
                     <x-table.th style="width: 20ch" name="tgl_registrasi" title="Tgl. Registrasi" />
@@ -35,19 +35,8 @@
                     <x-table.th style="width: 32ch" name="resume_ranap" title="Resume Ranap" />
                     <x-table.th style="width: 32ch" name="triase_igd" title="Triase IGD" />
                     <x-table.th style="width: 32ch" name="askep_igd" title="Askep IGD" />
-                    <x-table.th style="width: 32ch" name="askep_poli_umum" title="Askep Poli Umum" />
-                    <x-table.th style="width: 32ch" name="askep_poli_anak" title="Askep Poli Anak" />
-                    <x-table.th style="width: 32ch" name="askep_poli_bedah" title="Askep Poli Bedah" />
-                    <x-table.th style="width: 32ch" name="askep_poli_bedah_mulut" title="Askep Poli Bedah Mulut" />
-                    <x-table.th style="width: 32ch" name="askep_poli_kandungan" title="Askep Poli Kandungan" />
-                    <x-table.th style="width: 32ch" name="askep_poli_mata" title="Askep Poli Mata" />
-                    <x-table.th style="width: 32ch" name="askep_poli_neurologi" title="Askep Poli Neurologi" />
-                    <x-table.th style="width: 32ch" name="askep_poli_orthopedi" title="Askep Poli Orthopedi" />
-                    <x-table.th style="width: 32ch" name="askep_poli_penyakit_dalam" title="Askep Poli Penyakit Dalam" />
-                    <x-table.th style="width: 32ch" name="askep_poli_psikiatrik" title="Askep Poli Psikiatrik" />
-                    <x-table.th style="width: 32ch" name="askep_poli_tht" title="Askep Poli THT" />
-                    <x-table.th style="width: 32ch" name="askep_ranap_umum" title="Askep Ranap Umum" />
-                    <x-table.th style="width: 32ch" name="askep_ranap_kandungan" title="Askep Ranap Kandungan" />
+                    <x-table.th style="width: 35ch" title="Askep Poli" />
+                    <x-table.th style="width: 35ch" title="Askep RWI" />
                     <x-table.th style="width: 32ch" name="icd_10" title="ICD 10" />
                     <x-table.th style="width: 32ch" name="icd_9" title="ICD 9" />
                 </x-slot>
@@ -68,19 +57,8 @@
                             <x-table.td>{{ (bool) $item->resume_ranap ? 'Ada' : 'Tidak Ada' }}</x-table.td>
                             <x-table.td>{{ (bool) $item->triase_igd ? 'Ada' : 'Tidak Ada' }}</x-table.td>
                             <x-table.td>{{ (bool) $item->askep_igd ? 'Ada' : 'Tidak Ada' }}</x-table.td>
-                            <x-table.td>{{ (bool) $item->askep_poli_umum ? 'Ada' : 'Tidak Ada' }}</x-table.td>
-                            <x-table.td>{{ (bool) $item->askep_poli_anak ? 'Ada' : 'Tidak Ada' }}</x-table.td>
-                            <x-table.td>{{ (bool) $item->askep_poli_bedah ? 'Ada' : 'Tidak Ada' }}</x-table.td>
-                            <x-table.td>{{ (bool) $item->askep_poli_bedah_mulut ? 'Ada' : 'Tidak Ada' }}</x-table.td>
-                            <x-table.td>{{ (bool) $item->askep_poli_kandungan ? 'Ada' : 'Tidak Ada' }}</x-table.td>
-                            <x-table.td>{{ (bool) $item->askep_poli_mata ? 'Ada' : 'Tidak Ada' }}</x-table.td>
-                            <x-table.td>{{ (bool) $item->askep_poli_neurologi ? 'Ada' : 'Tidak Ada' }}</x-table.td>
-                            <x-table.td>{{ (bool) $item->askep_poli_orthopedi ? 'Ada' : 'Tidak Ada' }}</x-table.td>
-                            <x-table.td>{{ (bool) $item->askep_poli_penyakit_dalam ? 'Ada' : 'Tidak Ada' }}</x-table.td>
-                            <x-table.td>{{ (bool) $item->askep_poli_psikiatrik ? 'Ada' : 'Tidak Ada' }}</x-table.td>
-                            <x-table.td>{{ (bool) $item->askep_poli_tht ? 'Ada' : 'Tidak Ada' }}</x-table.td>
-                            <x-table.td>{{ (bool) $item->askep_ranap_umum ? 'Ada' : 'Tidak Ada' }}</x-table.td>
-                            <x-table.td>{{ (bool) $item->askep_ranap_kandungan ? 'Ada' : 'Tidak Ada' }}</x-table.td>
+                            <x-table.td>{{ $item->askep_poli }}</x-table.td>
+                            <x-table.td>{{ $item->askep_rwi }}</x-table.td>
                             <x-table.td>{{ (bool) $item->icd_10 ? 'Ada' : 'Tidak Ada' }}</x-table.td>
                             <x-table.td>{{ (bool) $item->icd_9 ? 'Ada' : 'Tidak Ada' }}</x-table.td>
                         </x-table.tr>

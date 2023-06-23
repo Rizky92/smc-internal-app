@@ -37,9 +37,9 @@
                         <x-form.error name="tglPakai" />
                     </div>
                     <div class="form-group mt-3">
-                        <label for="nominal-anggaran">Nominal</label>
-                        <input type="text" id="nominal-anggaran" wire:model.defer="nominalPemakaian" class="form-control form-control-sm" />
-                        <x-form.error name="nama" />
+                        <label for="nominal-pemakaian">Nominal Dipakai</label>
+                        <input type="text" id="nominal-pemakaian" wire:model.defer="nominalPemakaian" class="form-control form-control-sm" />
+                        <x-form.error name="nominalPemakaian" />
                     </div>
                     <div class="form-group mt-3">
                         <label for="keterangan">Keterangan</label>

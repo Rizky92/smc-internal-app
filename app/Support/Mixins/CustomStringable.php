@@ -22,14 +22,20 @@ class CustomStringable
     }
 
     /**
-     * @return \Closure(string): \Illuminate\Support\Stringable
+     * @return \Closure(string ?string): \Illuminate\Support\Stringable
      */
     public function wrap(): Closure
     {
         /** 
          * @psalm-scope-this Illuminate\Support\Stringable
          */
-        return fn (string $with): Stringable => new Stringable($with . $this->value . $with);
+        return function (string $startsWith, ?string $endsWith = null) {
+            if (! $endsWith) {
+                return new Stringable($startsWith .  $this->value . $startsWith);
+            }
+
+            return new Stringable($startsWith . $this->value . $endsWith);
+        };
     }
 
     /**

@@ -17,19 +17,19 @@ class InputPelaporanRKAT extends Component
     use FlashComponent, Filterable, DeferredModal;
 
     /** @var int */
-    public int $pemakaianAnggaranId;
+    public $pemakaianAnggaranId;
 
     /** @var int */
-    public int $anggaranBidangId;
+    public $anggaranBidangId;
 
     /** @var \Carbon\Carbon|\DateTime|string */
     public $tglPakai;
 
     /** @var int|float */
-    public float $nominalPemakaian;
+    public $nominalPemakaian;
 
     /** @var string */
-    public string $deskripsi;
+    public $deskripsi;
 
     /** @var mixed */
     protected $listeners = [
@@ -59,17 +59,12 @@ class InputPelaporanRKAT extends Component
         $this->defaultValues();
     }
 
-    public function hydrate(): void
-    {
-        $this->emit('select2.hydrate');
-    }
-
     public function getDataRKATPerBidangProperty(): Collection
     {
         return AnggaranBidang::query()
             ->with(['anggaran', 'bidang'])
             ->get()
-            ->mapWithKeys(function (AnggaranBidang $ab) {
+            ->mapWithKeys(function (AnggaranBidang $ab): array {
                 $namaAnggaran = $ab->anggaran->nama;
                 $namaBidang = $ab->bidang->nama;
                 $tahun = $ab->tahun;
@@ -144,9 +139,9 @@ class InputPelaporanRKAT extends Component
             ->where('id', $this->pemakaianAnggaranId)
             ->update([
                 'anggaran_bidang_id' => $this->anggaranBidangId,
-                'tgl_pakai' => $this->tglPakai,
-                'nominal_pemakaian' => $this->nominalPemakaian,
-                'deskripsi' => $this->deskripsi,
+                'tgl_pakai'          => $this->tglPakai,
+                'nominal_pemakaian'  => $this->nominalPemakaian,
+                'deskripsi'          => $this->deskripsi,
             ]);
         
         $this->dispatchBrowserEvent('data-saved');
