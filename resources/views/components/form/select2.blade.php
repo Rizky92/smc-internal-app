@@ -1,7 +1,7 @@
 @props([
-    'livewire' => false,
-
-    'name',
+    'id',
+    'name' => null,
+    'model' => null,
     'options' => [],
     'placeholder' => null,
     'resetOn' => 'button#reset-filter',
@@ -15,10 +15,9 @@
         $options = collect($options);
     }
 
+    $livewire = !is_null($model);
+
     $isList = $options->isList();
-    
-    $id = Str::slug($name);
-    $model = Str::camel($name);
     
     $options = $options
         ->when($isList, fn ($c) => $c->mapWithKeys(fn ($v, $k) => [$v => $v]))
@@ -61,17 +60,21 @@
             }).on('change', () => {
                 let data = $('select#{{ $id }}').select2("val")
 
-                @this.set('{{ $model }}', data, true)
+                @if ($livewire)
+                    @this.set('{{ $model }}', data, true)
+                @endif
             })
         }
 
-        $(document).on('livewire:load', () => {
-            select2()
-
-            Livewire.on('select2.hydrate', () => {
+        @if ($livewire)
+            $(document).on('livewire:load', () => {
                 select2()
+
+                Livewire.on('select2.hydrate', () => {
+                    select2()
+                })
             })
-        })
+        @endif
     </script>
 @endpush
 
@@ -79,7 +82,7 @@
     ->only('class')
     ->merge($styles[$width])
 }}>
-    <select wire:model.defer="{{ $model }}" id="{{ $id }}" name="{{ $name }}" class="form-control form-control-sm simple-select2-sm input-sm" autocomplete="off">
+    <select @if($livewire) wire:model.defer="{{ $model }}" @endif id="{{ $id }}" name="{{ $name }}" class="form-control form-control-sm simple-select2-sm input-sm" autocomplete="off">
         @if ($placeholder)
             <option disabled {{ $options->has($selected) ? null : 'selected' }}>{{ $placeholder }}</option>
         @endif

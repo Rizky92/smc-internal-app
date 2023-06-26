@@ -59,6 +59,11 @@ class InputPelaporanRKAT extends Component
         $this->defaultValues();
     }
 
+    public function hydrate(): void
+    {
+        $this->emit('select2.hydrate');
+    }
+
     public function getDataRKATPerBidangProperty(): Collection
     {
         return AnggaranBidang::query()

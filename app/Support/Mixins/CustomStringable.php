@@ -11,6 +11,8 @@ use Illuminate\Support\Stringable;
 class CustomStringable
 {
     /**
+     * Returns the underlying value
+     * 
      * @return \Closure(): string
      */
     public function value(): Closure
@@ -22,11 +24,13 @@ class CustomStringable
     }
 
     /**
-     * @return \Closure(string ?string): \Illuminate\Support\Stringable
+     * Wrap the underlying string with given values
+     * 
+     * @return \Closure(string, ?string): \Illuminate\Support\Stringable
      */
     public function wrap(): Closure
     {
-        /** 
+        /**
          * @psalm-scope-this Illuminate\Support\Stringable
          */
         return function (string $startsWith, ?string $endsWith = null) {
@@ -39,6 +43,8 @@ class CustomStringable
     }
 
     /**
+     * Returns the underlying value in type integer
+     * 
      * @return \Closure(): int
      */
     public function toInt(): Closure
@@ -49,6 +55,12 @@ class CustomStringable
         return fn (): int => intval($this->value);
     }
 
+    /**
+     * Alias of toFloat()
+     * Returns the underlying value in type float
+     * 
+     * @return \Closure(): float
+     */
     public function toDouble(): Closure
     {
         /** 
@@ -57,6 +69,11 @@ class CustomStringable
         return fn (): float => floatval($this->value);
     }
 
+    /**
+     * Returns the underlying value in type float
+     * 
+     * @return \Closure(): float
+     */
     public function toFloat(): Closure
     {
         /** 
@@ -65,6 +82,12 @@ class CustomStringable
         return fn (): float => floatval($this->value);
     }
 
+
+    /**
+     * Returns the underlying value in type boolean
+     * 
+     * @return \Closure(): bool
+     */
     public function toBoolean(): Closure
     {
         /** 

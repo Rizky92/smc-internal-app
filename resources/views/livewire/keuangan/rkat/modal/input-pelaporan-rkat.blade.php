@@ -20,14 +20,13 @@
                 <x-row-col class="sticky-top bg-white py-1 px-3">
                     <div class="form-group mt-3">
                         <label for="anggaran-bidang-id">Anggaran bidang digunakan:</label>
-                        <x-form.select2 
-                            livewire
-                            name="anggaranBidangId"
+                        <x-form.select2
+                            id="anggaran-bidang-id"
+                            model="anggaranBidangId"
                             :options="$this->dataRKATPerBidang"
                             :selected="$anggaranBidangId"
                             placeholder="-"
                             width="full-width"
-                            trigger="pelaporan-rkat.show-modal"
                         />
                         <x-form.error name="anggaranBidangId" />
                     </div>

@@ -13,13 +13,16 @@ class DateBetween implements Rule
     
     /**
      * Create a new rule instance.
+     * 
+     * @param  \Carbon\Carbon|\DateTime|string $start
+     * @param  \Carbon\Carbon|\DateTime|string $end
      *
      * @return void
      */
-    public function __construct(Carbon $start, Carbon $end)
+    public function __construct($start, $end)
     {
-        $this->startDate = $start;
-        $this->endDate = $end;
+        $this->startDate = carbon($start);
+        $this->endDate = carbon($end);
     }
 
     /**
@@ -49,6 +52,9 @@ class DateBetween implements Rule
      */
     public function message()
     {
-        return 'Date must exists between :start and :end';
+        return str(':Attribute harus sesuai periode antara :start hingga :end')
+            ->replace(':start', $this->startDate->format('Y-m-d'))
+            ->replace(':end', $this->endDate->format('Y-m-d'))
+            ->value();
     }
 }
