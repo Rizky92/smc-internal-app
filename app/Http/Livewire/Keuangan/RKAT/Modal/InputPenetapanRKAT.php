@@ -8,6 +8,7 @@ use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -26,6 +27,13 @@ class InputPenetapanRKAT extends Component
 
     /** @var int|float */
     public $nominalAnggaran;
+
+    /** @var mixed */
+    protected $listeners = [
+        'prepare',
+        'penetapan-rkat.show-modal' => 'showModal',
+        'penetapan-rkat.hide-modal' => 'hideModal',
+    ];
 
     protected function rules(): array
     {
@@ -66,18 +74,70 @@ class InputPenetapanRKAT extends Component
     {
         $this->anggaranBidangId = $id;
 
+        /** @var \App\Models\Keuangan\RKAT\AnggaranBidang */
         $data = AnggaranBidang::find($id);
-
-        if (!$data) {
-            $this->emit('flash.error', 'Tidak dapat menemukan data yang dipilih!');
-            $this->emit('modal.unloaded');
-
-            return;
-        }
 
         $this->anggaranId = $data->anggaran_id;
         $this->bidangId = $data->bidang_id;
         $this->nominalAnggaran = $data->nominal_anggaran;
+    }
+
+    public function create(): void
+    {
+        if ($this->isUpdating()) {
+            $this->update();
+
+            return;
+        }
+
+        if (!Auth::user()->can('keuangan.rkat.penetapan-rkat.create')) {
+            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatchBrowserEvent('data-denied');
+
+            return;
+        }
+
+        $this->validate();
+
+        AnggaranBidang::create([
+            'anggaran_id'      => $this->anggaranId,
+            'bidang_id'        => $this->bidangId,
+            'tahun'            => $this->tahun,
+            'nominal_anggaran' => round($this->nominalAnggaran, 2),
+        ]);
+
+        $this->dispatchBrowserEvent('data-saved');
+        $this->emit('flash.success', 'Data berhasil disimpan!');
+    }
+
+    public function update(): void
+    {
+        if (! $this->isUpdating()) {
+            $this->create();
+
+            return;
+        }
+
+        if (!Auth::user()->can('keuangan.rkat.penetapan-rkat.update')) {
+            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatchBrowserEvent('data-denied');
+
+            return;
+        }
+
+        $this->validate();
+
+        AnggaranBidang::query()
+            ->whereId($this->anggaranBidangId)
+            ->update([
+                'anggaran_id'      => $this->anggaranId,
+                'bidang_id'        => $this->bidangId,
+                'tahun'            => $this->tahun,
+                'nominal_anggaran' => round($this->nominalAnggaran, 2),
+            ]);
+
+        $this->dispatchBrowserEvent('data-saved');
+        $this->emit('flash.success', 'Data berhasil diupdate!');
     }
 
     public function isUpdating(): bool

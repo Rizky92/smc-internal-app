@@ -8,6 +8,7 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -20,7 +21,7 @@ class KategoriRKAT extends Component
         $this->defaultValues();
     }
 
-    public function getDataAnggaranProperty()
+    public function getDataAnggaranProperty(): Paginator
     {
         return Anggaran::paginate($this->perpage);
     }
@@ -33,6 +34,6 @@ class KategoriRKAT extends Component
 
     protected function defaultValues(): void
     {
-        
+        //
     }
 }

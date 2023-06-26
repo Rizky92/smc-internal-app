@@ -7,11 +7,11 @@
         @push('js')
             <script>
                 function loadData(e) {
-                    let { anggaranBidangId } = e.dataset
+                    let { id } = e.dataset
 
-                    @this.emit('prepare', anggaranBidangId)
+                    @this.emit('prepare', id)
 
-                    $('.modal#modal-input-penetapan-rkat').modal('show')
+                    $('#modal-input-penetapan-rkat').modal('show')
                 }
             </script>
         @endpush
