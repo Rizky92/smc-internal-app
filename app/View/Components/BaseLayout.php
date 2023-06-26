@@ -334,21 +334,21 @@ class BaseLayout extends Component
                     ],
                 ],
             ],
-            [
-                'name' => 'Aplikasi',
-                'icon' => 'far fa-circle',
-                'type' => 'dropdown',
-                'hasAnyPermissions' => $user->hasRole($develop),
-                'items' => [
-                    [
-                        'name' => 'Bidang Unit',
-                        'url' => route('admin.aplikasi.bidang-unit'),
-                        'icon' => "fas fa-hospital",
-                        'type' => 'link',
-                        'hasAnyPermissions' => $user->hasRole($develop),
-                    ],
-                ],
-            ],
+            // [
+            //     'name' => 'Aplikasi',
+            //     'icon' => 'far fa-circle',
+            //     'type' => 'dropdown',
+            //     'hasAnyPermissions' => $user->hasRole($develop),
+            //     'items' => [
+            //         [
+            //             'name' => 'Bidang Unit',
+            //             'url' => route('admin.aplikasi.bidang-unit'),
+            //             'icon' => "fas fa-hospital",
+            //             'type' => 'link',
+            //             'hasAnyPermissions' => $user->hasRole($develop),
+            //         ],
+            //     ],
+            // ],
             [
                 'name' => 'Hak Akses',
                 'icon' => "far fa-circle",
