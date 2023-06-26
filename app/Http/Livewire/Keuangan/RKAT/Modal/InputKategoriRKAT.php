@@ -97,6 +97,11 @@ class InputKategoriRKAT extends Component
         $this->emit('flash.success', 'Data anggaran berhasil diubah!');
     }
 
+    public function isUpdating(): bool
+    {
+        return $this->anggaranId !== -1;
+    }
+
     protected function defaultValues(): void
     {
         $this->anggaranId = -1;

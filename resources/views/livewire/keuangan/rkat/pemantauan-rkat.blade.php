@@ -57,6 +57,9 @@
                                 2, ',', '.') }}%
                             </x-table.td>
                         </x-table.tr>
+                        <x-table.tr>
+                            <x-table.td-empty colspan="6" text="" />
+                        </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="6" />
                     @endforelse

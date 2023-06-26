@@ -99,10 +99,12 @@ class InputPenetapanRKAT extends Component
 
         $this->validate();
 
+        $tahun = 2024;
+
         AnggaranBidang::create([
             'anggaran_id'      => $this->anggaranId,
             'bidang_id'        => $this->bidangId,
-            'tahun'            => $this->tahun,
+            'tahun'            => $tahun,
             'nominal_anggaran' => round($this->nominalAnggaran, 2),
         ]);
 
