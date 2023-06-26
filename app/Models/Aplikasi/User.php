@@ -1024,6 +1024,9 @@ class User extends Authenticatable
     {
         $db = DB::connection('mysql_smc')->getDatabaseName();
 
+        // Laravel tidak bisa melakukan query `whereHas` apabila berbeda koneksi database 
+        // sehingga perlu melakukan pengecekan secara manual dengan mengkonversi query
+        // builder menjadi bentuk raw SQL query sebagai workaround masalah tersebut.
         $sqlHasRoles = DB::table("{$db}.model_has_roles")
             ->whereRaw("model_type = 'User'")
             ->whereRaw('model_has_roles.model_id = user.id_user')
@@ -1036,7 +1039,7 @@ class User extends Authenticatable
 
         return $query->when(
             $hakAkses,
-            fn ($q) => $q
+            fn (Builder $q): Builder => $q
                 ->whereRaw("exists ({$sqlHasRoles})")
                 ->orWhereRaw("exists ({$sqlHasPermissions})")
         );

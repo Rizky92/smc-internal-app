@@ -6,14 +6,17 @@ use Staudenmeir\LaravelMigrationViews\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * The name of the database connection to use.
+     *
+     * @var ?string
+     */
     protected $connection = 'mysql_smc';
     
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         $db = DB::connection('mysql_sik')->getDatabaseName();
 
@@ -51,14 +54,16 @@ return new class extends Migration
             kamar_inap.jam_keluar;
         SQL;
 
-        $kamarInapMin = DB::raw("(
+        $kamarInapMin = DB::raw(<<<SQL
+        (
             select
                 kamar_inap2.no_rawat as no_rawat,
                 kamar_inap2.stts_pulang as stts_pulang,
                 min(timestamp(kamar_inap2.tgl_masuk, kamar_inap2.jam_masuk)) as waktu_masuk
             from {$db}.kamar_inap kamar_inap2
             group by kamar_inap2.no_rawat
-        ) kamar_inap_min");
+        ) kamar_inap_min
+        SQL);
 
         $query = DB::connection('mysql_sik')
             ->table("{$db}.reg_periksa", 'reg_periksa')

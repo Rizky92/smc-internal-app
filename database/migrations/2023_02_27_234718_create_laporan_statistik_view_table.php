@@ -6,16 +6,20 @@ use Staudenmeir\LaravelMigrationViews\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * The name of the database connection to use.
+     *
+     * @var ?string
+     */
     protected $connection = 'mysql_smc';
     
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         $db = DB::connection('mysql_sik')->getDatabaseName();
+        
         $kunjunganKe = <<<SQL
             (select count(rp2.no_rawat) from $db.reg_periksa rp2 where rp2.no_rkm_medis = reg_periksa.no_rkm_medis and rp2.tgl_registrasi <= reg_periksa.tgl_registrasi)
         SQL;

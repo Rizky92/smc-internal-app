@@ -62,53 +62,6 @@ class RegistrasiPasien extends Model
         });
     }
 
-    public function awalKeperawatan(): Attribute
-    {
-        return Attribute::get(function ($_, array $attributes) {
-            $available = collect();
-
-            if ($attributes['gigi'] !== "0") {
-                $available->push('Gigi');
-            }
-
-            if ($attributes['askep_igd'] !== "0") {
-                $available->push('IGD');
-            }
-
-            if ($attributes['kebidanan'] !== "0") {
-                $available->push('Kebidanan');
-            }
-
-            if ($attributes['mata'] !== "0") {
-                $available->push('Mata');
-            }
-
-            if ($attributes['ralan'] !== "0") {
-                $available->push('Ralan');
-            }
-
-            if ($attributes['ralan_bayi'] !== "0") {
-                $available->push('Ralan Bayi');
-            }
-
-            if ($attributes['ralan_psikiatri'] !== "0") {
-                $available->push('Ralan Psikiatri');
-            }
-
-            if ($attributes['ranap'] !== "0") {
-                $available->push('Ranap');
-            }
-
-            if ($available->isEmpty()) {
-                return 'Tidak ada';
-            }
-
-            $available = $available->join(', ');
-
-            return "Ada ($available)";
-        });
-    }
-
     public function pasien(): BelongsTo
     {
         return $this->belongsTo(Pasien::class, 'no_rkm_medis', 'no_rkm_medis');
@@ -139,10 +92,14 @@ class RegistrasiPasien extends Model
         return $this->hasMany(RujukanKeluar::class, 'no_rawat', 'no_rawat');
     }
 
+    /**
+     * @psalm-suppress InvalidReturnType
+     * @psalm-suppress InvalidReturnStatement
+     */
     public function diagnosa(): HasMany
     {
         return $this->hasMany(DiagnosaPasien::class, 'no_rawat', 'no_rawat')
-            ->where('status', 'Ralan');
+            ->where('status', 'ralan');
     }
 
     public function tindakanRalanPerawat(): HasMany
@@ -268,6 +225,22 @@ class RegistrasiPasien extends Model
             exists(select * from resume_pasien_ranap where resume_pasien_ranap.no_rawat = reg_periksa.no_rawat) resume_ranap,
             exists(select * from data_triase_igd where data_triase_igd.no_rawat = reg_periksa.no_rawat) triase_igd,
             exists(select * from penilaian_awal_keperawatan_igd where penilaian_awal_keperawatan_igd.no_rawat = reg_periksa.no_rawat) askep_igd,
+
+            exists(select * from penilaian_medis_ralan where penilaian_medis_ralan.no_rawat = reg_periksa.no_rawat) askep_poli_umum,
+            exists(select * from penilaian_medis_ralan_anak where penilaian_medis_ralan_anak.no_rawat = reg_periksa.no_rawat) askep_poli_anak,
+            exists(select * from penilaian_medis_ralan_bedah where penilaian_medis_ralan_bedah.no_rawat = reg_periksa.no_rawat) askep_poli_bedah,
+            exists(select * from penilaian_medis_ralan_bedah_mulut where penilaian_medis_ralan_bedah_mulut.no_rawat = reg_periksa.no_rawat) askep_poli_bedah_mulut,
+            exists(select * from penilaian_medis_ralan_kandungan where penilaian_medis_ralan_kandungan.no_rawat = reg_periksa.no_rawat) askep_poli_kandungan,
+            exists(select * from penilaian_medis_ralan_mata where penilaian_medis_ralan_mata.no_rawat = reg_periksa.no_rawat) askep_poli_mata,
+            exists(select * from penilaian_medis_ralan_neurologi where penilaian_medis_ralan_neurologi.no_rawat = reg_periksa.no_rawat) askep_poli_neurologi,
+            exists(select * from penilaian_medis_ralan_orthopedi where penilaian_medis_ralan_orthopedi.no_rawat = reg_periksa.no_rawat) askep_poli_orthopedi,
+            exists(select * from penilaian_medis_ralan_penyakit_dalam where penilaian_medis_ralan_penyakit_dalam.no_rawat = reg_periksa.no_rawat) askep_poli_penyakit_dalam,
+            exists(select * from penilaian_medis_ralan_psikiatrik where penilaian_medis_ralan_psikiatrik.no_rawat = reg_periksa.no_rawat) askep_poli_psikiatrik,
+            exists(select * from penilaian_medis_ralan_tht where penilaian_medis_ralan_tht.no_rawat = reg_periksa.no_rawat) askep_poli_tht,
+            
+            exists(select * from penilaian_medis_ranap where penilaian_medis_ranap.no_rawat = reg_periksa.no_rawat) askep_ranap_umum,
+            exists(select * from penilaian_medis_ranap_kandungan where penilaian_medis_ranap_kandungan.no_rawat = reg_periksa.no_rawat) askep_ranap_kandungan,
+
             exists(select * from diagnosa_pasien where diagnosa_pasien.no_rawat = reg_periksa.no_rawat) icd_10,
             exists(select * from prosedur_pasien where prosedur_pasien.no_rawat = reg_periksa.no_rawat) icd_9
         SQL;
@@ -279,7 +252,85 @@ class RegistrasiPasien extends Model
             ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
-            ->when(!$semuaRegistrasi, fn ($q) => $q->whereNotIn('reg_periksa.stts', ['Batal', 'Belum']))
-            ->when($jenisPerawatan !== 'semua', fn ($q) => $q->where('reg_periksa.status_lanjut', $jenisPerawatan));
+            ->when(!$semuaRegistrasi, fn (Builder $q): Builder => $q->whereNotIn('reg_periksa.stts', ['Batal', 'Belum']))
+            ->when($jenisPerawatan !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.status_lanjut', $jenisPerawatan));
+    }
+
+    public function askepRWI(): Attribute
+    {
+        return Attribute::get(function ($_, array $attributes) {
+            $askep = collect();
+
+            if ($attributes['askep_ranap_umum'] === "1") {
+                $askep->push('RWI Umum');
+            }
+
+            if ($attributes['askep_ranap_kandungan'] === "1") {
+                $askep->push('RWI Kandungan');
+            }
+
+            if ($askep->isEmpty()) {
+                return 'Tidak ada';
+            }
+
+            return 'Ada . ' . $askep->joinStr(', ')->wrap('(', ')')->value();
+        });
+    }
+
+    public function askepPoli(): Attribute
+    {
+        return Attribute::get(function ($_, array $attributes) {
+            $askep = collect();
+
+            if ($attributes['askep_poli_umum'] === "1") {
+                $askep->push('Poli Umum');
+            }
+
+            if ($attributes['askep_poli_anak'] === "1") {
+                $askep->push('Poli Anak');
+            }
+            
+            if ($attributes['askep_poli_bedah'] === "1") {
+                $askep->push('Poli Bedah');
+            }
+
+            if ($attributes['askep_poli_bedah_mulut'] === "1") {
+                $askep->push('Poli Bedah Mulut');
+            }
+
+            if ($attributes['askep_poli_kandungan'] === "1") {
+                $askep->push('Poli Kandungan');
+            }
+
+            if ($attributes['askep_poli_mata'] === "1") {
+                $askep->push('Poli Mata');
+            }
+
+            if ($attributes['askep_poli_neurologi'] === "1") {
+                $askep->push('Poli Neurologi');
+            }
+
+            if ($attributes['askep_poli_orthopedi'] === "1") {
+                $askep->push('Poli Orthopedi');
+            }
+
+            if ($attributes['askep_poli_penyakit_dalam'] === "1") {
+                $askep->push('Poli Penyakit Dalam');
+            }
+
+            if ($attributes['askep_poli_psikiatrik'] === "1") {
+                $askep->push('Poli Psikiatrik');
+            }
+
+            if ($attributes['askep_poli_tht'] === "1") {
+                $askep->push('Poli THT');
+            }
+
+            if ($askep->isEmpty()) {
+                return "Tidak ada";
+            }
+
+            return 'Ada ' . $askep->joinStr(', ')->wrap('(', ')')->value();
+        });
     }
 }

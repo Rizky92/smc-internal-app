@@ -233,3 +233,12 @@ if (!function_exists('is_between')) {
         return ($value >= $start) && ($value <= $end);
     }
 }
+
+if (! function_exists('attr')) {
+    function attr(string $name, array $attributes): string
+    {
+        $attr = collect($attributes)->filter()->keys()->first();
+
+        return $name . '=' . Str::wrap($attr, '"');
+    }
+}

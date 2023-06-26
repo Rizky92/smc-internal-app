@@ -1,16 +1,14 @@
 @props([
-    'columns' => null,
-    'body' => null,
-    'footer' => null,
-
-    'sortable' => false,
+    'columns'     => null,
+    'body'        => null,
+    'footer'      => null,
+    'sortable'    => false,
     'sortColumns' => [],
-
-    'zebra' => false,
-    'hover' => false,
-    'sticky' => false,
-    'borderless' => false,
-    'nowrap' => false,
+    'zebra'       => false,
+    'hover'       => false,
+    'sticky'      => false,
+    'borderless'  => false,
+    'nowrap'      => false,
 ])
 
 @once

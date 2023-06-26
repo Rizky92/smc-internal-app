@@ -181,9 +181,7 @@ return [
 
     'extra' => [
         \Illuminate\Support\Facades\Session::class => \Illuminate\Session\Store::class,
-
         \Illuminate\View\View::class => \Livewire\Macros\ViewMacros::class,
-
         \Illuminate\Support\Collection::class => \App\Support\Mixins\CustomCollections::class,
         \Illuminate\Support\Str::class => \App\Support\Mixins\CustomStr::class,
         \Illuminate\Support\Stringable::class => \App\Support\Mixins\CustomStringable::class,
@@ -206,6 +204,7 @@ return [
     'interfaces' => [
         \Illuminate\Contracts\View\View::class => \Illuminate\View\View::class,
         \Illuminate\Contracts\Auth\Authenticatable::class => \App\Models\Aplikasi\User::class,
+        \Illuminate\Contracts\Auth\Access\Authorizable::class => \App\Models\Aplikasi\User::class,
     ],
 
     /*

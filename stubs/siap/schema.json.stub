@@ -1,0 +1,16 @@
+{
+    "name": "{{ name }}",
+    "livewire": {
+        "name": "{{ livewireName }}",
+        "filter": {
+            "date": false,
+            "dateRange": true,
+            "excelExport": true,
+            "search": true,
+            "dropdown": {
+                "name": "{{ livewireDropdownName }}",
+                "type": "{{ livewireDropdownType }}"
+            }
+        }
+    }
+}

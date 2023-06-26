@@ -17,6 +17,8 @@ trait DeferredModal
     public function showModal(): void
     {
         $this->loadProperties();
+
+        $this->dispatchBrowserEvent('modal-loaded');
     }
 
     public function hideModal(): void
@@ -26,5 +28,7 @@ trait DeferredModal
         if (method_exists($this, 'defaultValues')) {
             $this->defaultValues();
         }
+
+        $this->dispatchBrowserEvent('modal-unloaded');
     }
 }

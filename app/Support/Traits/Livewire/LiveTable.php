@@ -48,15 +48,15 @@ trait LiveTable
             case null:
             case '':
                 $this->sortColumns = array_merge($this->sortColumns, [$column => 'asc']);
-                break;
+            break;
 
             case 'asc':
                 $this->sortColumns = array_merge($this->sortColumns, [$column => 'desc']);
-                break;
+            break;
 
             default:
                 unset($this->sortColumns[$column]);
-                break;
+            break;
         }
 
         $this->performSort();

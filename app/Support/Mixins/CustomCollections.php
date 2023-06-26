@@ -4,19 +4,68 @@ namespace App\Support\Mixins;
 
 use Closure;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Stringable;
 
 class CustomCollections
 {
+    /**
+     * @return \Closure(string, string): \Illuminate\Support\Stringable
+     */
+    public function joinStr(): Closure
+    {
+        /** 
+         * @psalm-scope-this Illuminate\Support\Collection
+         * @var \Illuminate\Support\Collection $this
+         */
+        return function (string $glue, string $finalGlue = ''): Stringable {
+            return new Stringable($this->join($glue, $finalGlue));
+        };
+    }
+
+    /**
+     * @return \Closure(): bool
+     */
+    public function isAssoc(): Closure
+    {
+        /** 
+         * @psalm-scope-this Illuminate\Support\Collection
+         * @var \Illuminate\Support\Collection $this
+         */
+        return function (): bool {
+            $keys = array_keys($this->items);
+
+            return array_keys($keys) !== $keys;
+        };
+    }
+
+    /**
+     * @return \Closure(): bool
+     */
+    public function isList(): Closure
+    {
+        /** 
+         * @psalm-scope-this Illuminate\Support\Collection
+         * @var \Illuminate\Support\Collection $this
+         */
+        return function (): bool {
+            $keys = array_keys($this->items);
+
+            return array_keys($keys) === $keys;
+        };
+    }
+
     /**
      * @return \Closure(bool $condition, mixed ...$values): \Illuminate\Support\Collection
      */
     public function pushIf(): Closure
     {
-        return function (bool $condition, ...$values): Collection {
-            /** @var \Illuminate\Support\Collection $this */
-            
-            return $this->when($condition, fn (Collection $c) => $c->push($values));
-        };
+        /** 
+         * @psalm-scope-this Illuminate\Support\Collection
+         * @var \Illuminate\Support\Collection $this
+         */
+        return fn (bool $condition, ...$values): Collection =>
+            $this->when($condition, fn (Collection $c) => 
+                $c->push($values));
     }
 
     /**
@@ -24,11 +73,13 @@ class CustomCollections
      */
     public function pushUnless(): Closure
     {
-        return function (bool $condition, ...$values): Collection {
-            /** @var \Illuminate\Support\Collection $this */
-            
-            return $this->unless($condition, fn (Collection $c) => $c->push($values));
-        };
+        /** 
+         * @psalm-scope-this Illuminate\Support\Collection
+         * @var \Illuminate\Support\Collection $this
+         */
+        return fn (bool $condition, ...$values): Collection => 
+            $this->unless($condition, fn (Collection $c) =>
+                $c->push($values));
     }
 
     /**
@@ -36,9 +87,11 @@ class CustomCollections
      */
     public function whereLike(): Closure
     {
+        /** 
+         * @psalm-scope-this Illuminate\Support\Collection
+         * @var \Illuminate\Support\Collection $this
+         */
         return function (?string $search = null, int $looseRange = 1): Collection {
-            /** @var \Illuminate\Support\Collection $this */
-
             return $this->filter(function (string $v) use ($search, $looseRange): bool {
                 if (empty($search)) return true;
 
@@ -52,9 +105,11 @@ class CustomCollections
      */
     public function containsLike(): Closure
     {
+        /** 
+         * @psalm-scope-this Illuminate\Support\Collection
+         * @var \Illuminate\Support\Collection $this
+         */
         return function (?string $search = null, int $looseRange = 1): bool {
-            /** @var \Illuminate\Support\Collection $this */
-
             return $this->contains(function (string $v) use ($search, $looseRange): bool {
                 if (empty($search)) return false;
                 

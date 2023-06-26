@@ -9,20 +9,17 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use Illuminate\Contracts\View\View;
+use Illuminate\View\View;
 use Livewire\Component;
 
-/**
- * @psalm-suppress PropertyNotSetInConstructor
- */
 class [class] extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
-    /** @var string */
+    /** @var ?string */
     public $tglAwal;
 
-    /** @var string */
+    /** @var ?string */
     public $tglAkhir;
 
     protected function queryString(): array

@@ -15,7 +15,7 @@ trait MenuTracker
         $this->recordVisitor();
     }
 
-    private function currentRoute(): string
+    private function currentRoute(): ?string
     {
         return Route::currentRouteName();
     }
@@ -23,7 +23,7 @@ trait MenuTracker
     private function menuPath(): string
     {
         return Breadcrumbs::generate($this->currentRoute())
-            ->map(fn ($value): string => $value->title)
+            ->map(fn (object $value): string => $value->title)
             ->join(' / ');
     }
 

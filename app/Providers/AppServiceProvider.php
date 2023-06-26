@@ -8,7 +8,6 @@ use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -20,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
      * @var array<class-string, class-string[]|class-string>
      */
     protected $mixins = [
+        \Illuminate\Support\Arr::class => \App\Support\Mixins\CustomArr::class,
         \Illuminate\Support\Collection::class => \App\Support\Mixins\CustomCollections::class,
         \Illuminate\Support\Str::class => \App\Support\Mixins\CustomStr::class,
         \Illuminate\Support\Stringable::class => \App\Support\Mixins\CustomStringable::class,
@@ -42,7 +42,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // Gunakan custom grammar untuk mysql agar bisa
+        // Menggunakan custom grammar untuk driver db mysql agar bisa
         // melakukan pencatatan timestamp dengan presisi tingkat 6
         // https://carbon.nesbot.com/laravel/
         DB::connection('mysql_smc')->setQueryGrammar(new MysqlGrammar);
@@ -67,8 +67,8 @@ class AppServiceProvider extends ServiceProvider
         Model::preventLazyLoading(! app()->isProduction());
 
         Relation::morphMap([
-            'User' => User::class,
-            'Role' => Role::class,
+            'User'       => User::class,
+            'Role'       => Role::class,
             'Permission' => Permission::class,
         ]);
     }

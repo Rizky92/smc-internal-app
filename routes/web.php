@@ -2,9 +2,9 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
-use App\Http\Controllers\BPJS\MobileJKNController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Livewire\Aplikasi;
 use App\Http\Livewire\Farmasi;
 use App\Http\Livewire\HakAkses;
 use App\Http\Livewire\Keuangan;
@@ -45,6 +45,10 @@ Route::prefix('admin')
 
         Route::get('/', DashboardController::class)->name('dashboard');
 
+        Route::get('bidang-unit', Aplikasi\BidangUnit::class)
+            ->middleware('can:aplikasi.bidang.read')
+            ->name('aplikasi.bidang-unit');
+
         Route::prefix('perawatan')
             ->as('perawatan.')
             ->group(function () {
@@ -60,6 +64,22 @@ Route::prefix('admin')
         Route::prefix('keuangan')
             ->as('keuangan.')
             ->group(function () {
+                Route::get('pelaporan-rkat', Keuangan\RKAT\PelaporanRKAT::class)
+                    ->middleware('can:keuangan.pelaporan-rkat.read')
+                    ->name('pelaporan-rkat');
+
+                Route::get('pemantauan-rkat', Keuangan\RKAT\PemantauanRKAT::class)
+                    ->middleware('can:keuangan.pemantauan-rkat.read')
+                    ->name('pemantauan-rkat');
+
+                Route::get('penetapan-rkat', Keuangan\RKAT\PenetapanRKAT::class)
+                    ->middleware('can:keuangan.penetapan-rkat.read')
+                    ->name('penetapan-rkat');
+
+                Route::get('kategori-rkat', Keuangan\RKAT\KategoriRKAT::class)
+                    ->middleware('can:keuangan.kategori-rkat.read')
+                    ->name('kategori-rkat');
+
                 Route::get('stok-obat-ruangan', Keuangan\StokObatRuangan::class)
                     ->middleware('can:keuangan.stok-obat-ruangan.read')
                     ->name('stok-obat-ruangan');
@@ -183,7 +203,7 @@ Route::prefix('admin')
 
         Route::middleware('role:' . config('permission.superadmin_name'))
             ->group(function () {
-                Route::get('manajemen-user', User\ManajemenUser::class)
+                Route::get('manajemen-user', User\Manajamen::class)
                     ->name('manajemen-user');
 
                 Route::get('hak-akses/smc-internal-app', HakAkses\Siap::class)

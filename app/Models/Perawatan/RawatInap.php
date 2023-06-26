@@ -77,7 +77,7 @@ class RawatInap extends Model
             ->join('piutang_pasien', 'kamar_inap.no_rawat', '=', 'piutang_pasien.no_rawat')
             ->whereNotIn('kamar_inap.stts_pulang', ['-', 'Pindah Kamar'])
             ->whereBetween('kamar_inap.tgl_keluar', [$tglAwal, $tglAkhir])
-            ->when(!empty($status), fn ($query) => $query->where('piutang_pasien.status', $status))
+            ->when(!empty($status), fn (Builder $q): Builder => $q->where('piutang_pasien.status', $status))
             ->where('reg_periksa.kd_pj', $jenisBayar);
     }
 
@@ -106,10 +106,13 @@ class RawatInap extends Model
         return $this->belongsToMany(Dokter::class, 'dpjp_ranap', 'no_rawat', 'kd_dokter', 'no_rawat', 'kd_dokter');
     }
 
-    public function diagnosa(): HasMany
+    /**
+     * @psalm-return Builder<TRelatedModel>
+     */
+    public function diagnosa(): Builder
     {
         return $this->hasMany(DiagnosaPasien::class, 'no_rawat', 'no_rawat')
-            ->where('status', 'Ranap');
+            ->where('status', 'ranap');
     }
 
     public function tindakanRanapPerawat(): HasMany

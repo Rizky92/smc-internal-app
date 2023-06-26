@@ -6,6 +6,20 @@ use Closure;
 
 class CustomStr
 {
+    /** 
+     * @return \Closure(string, string, ?string): string
+     */
+    public function wrap(): Closure
+    {
+        return function (string $value, string $startsWith, ?string $endsWith = null) {
+            if (! $endsWith) {
+                return $startsWith . $value . $startsWith;
+            }
+
+            return $startsWith . $value . $endsWith;
+        };
+    }
+
     /**
      * @return \Closure(string): int
      */
