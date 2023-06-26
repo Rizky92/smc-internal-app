@@ -11,6 +11,7 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -34,10 +35,10 @@ class PelaporanRKAT extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
-            'tahun' => ['except' => now()->format('Y')],
-            'bidang' => ['except' => 'SEMUA'],
+            'tahun'    => ['except' => now()->format('Y')],
+            'bidang'   => ['except' => 'SEMUA'],
         ];
     }
 
@@ -46,7 +47,7 @@ class PelaporanRKAT extends Component
         $this->defaultValues();
     }
 
-    public function getDataPenggunaanRKATProperty()
+    public function getDataPenggunaanRKATProperty(): Paginator
     {
         return PemakaianAnggaran::query()
             ->with([

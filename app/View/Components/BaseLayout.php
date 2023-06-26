@@ -73,6 +73,7 @@ class BaseLayout extends Component
                 'icon' => "far fa-circle",
                 'type' => 'dropdown',
                 'hasAnyPermissions' => $user->canAny([
+                    'keuangan.rkat.penetapan-rkat.read',
                     'keuangan.rkat.pelaporan-rkat.read',
                     'keuangan.rkat.pemantauan-rkat.read',
                     'keuangan.rkat.kategori-rkat.read',

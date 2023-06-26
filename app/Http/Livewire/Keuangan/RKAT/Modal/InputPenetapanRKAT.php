@@ -2,32 +2,44 @@
 
 namespace App\Http\Livewire\Keuangan\RKAT\Modal;
 
-use App\Support\Traits\Livewire\DeferredLoading;
-use App\Support\Traits\Livewire\ExcelExportable;
+use App\Models\Bidang;
+use App\Models\Keuangan\RKAT\Anggaran;
+use App\Models\Keuangan\RKAT\AnggaranBidang;
+use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
-use App\Support\Traits\Livewire\FlashComponent;
-use App\Support\Traits\Livewire\LiveTable;
-use App\Support\Traits\Livewire\MenuTracker;
-use App\View\Components\BaseLayout;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class InputPenetapanRKAT extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use Filterable, DeferredModal;
 
-    /** @var ?string */
-    public $tglAwal;
+    /** @var int */
+    public $anggaranBidangId;
 
-    /** @var ?string */
-    public $tglAkhir;
+    /** @var int */
+    public $anggaranId;
 
-    protected function queryString(): array
+    /** @var int */
+    public $bidangId;
+
+    /** @var int|float */
+    public $nominalAnggaran;
+
+    protected function rules(): array
     {
-        return [
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
-        ];
+        $rules = collect([
+            'anggaranId'      => ['required', 'exists:anggaran,id'],
+            'bidangId'        => ['required', 'exists:bidang,id'],
+            'nominalAnggaran' => ['required', 'numeric'],
+        ]);
+
+        if ($this->isUpdating()) {
+            $rules->prepend(['required'], 'anggaranBidangId');
+        }
+
+        return $rules->all();
     }
 
     public function mount(): void
@@ -35,35 +47,49 @@ class InputPenetapanRKAT extends Component
         $this->defaultValues();
     }
 
+    public function getKategoriAnggaranProperty(): Collection
+    {
+        return Anggaran::pluck('nama', 'id');
+    }
+
+    public function getBidangUnitProperty(): Collection
+    {
+        return Bidang::pluck('nama', 'id');
+    }
+
     public function render(): View
     {
         return view('livewire.keuangan.rkat.modal.input-penetapan-rkat');
     }
 
+    public function prepare(int $id = -1): void
+    {
+        $this->anggaranBidangId = $id;
+
+        $data = AnggaranBidang::find($id);
+
+        if (!$data) {
+            $this->emit('flash.error', 'Tidak dapat menemukan data yang dipilih!');
+            $this->emit('modal.unloaded');
+
+            return;
+        }
+
+        $this->anggaranId = $data->anggaran_id;
+        $this->bidangId = $data->bidang_id;
+        $this->nominalAnggaran = $data->nominal_anggaran;
+    }
+
+    public function isUpdating(): bool
+    {
+        return $this->anggaranBidangId !== -1;
+    }
+
     protected function defaultValues(): void
     {
-        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
-    }
-
-    protected function dataPerSheet(): array
-    {
-        return [
-            //
-        ];
-    }
-
-    protected function columnHeaders(): array
-    {
-        return [
-            //
-        ];
-    }
-
-    protected function pageHeaders(): array
-    {
-        return [
-            //
-        ];
+        $this->anggaranBidangId = -1;
+        $this->anggaranId = -1;
+        $this->bidangId = -1;
+        $this->nominalAnggaran = 0;
     }
 }

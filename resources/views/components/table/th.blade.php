@@ -13,8 +13,8 @@
     <th {{ $attributes->class([
         'py-2' => true,
     ]) }}>
-        <button type="button" class="btn btn-link text-decoration-none font-weight-bold text-{{ $align }} w-100 p-0 m-0" wire:click="sortBy(@js($name), @js((string) optional($sortColumns)[$name]))">
-            <span class="text-dark mr-1">{{ $title }}</span>
+        <button type="button" class="btn btn-link text-decoration-none font-weight-bold text-{{ $align }} w-100 p-0 m-0 {{ $align === 'right' ? 'flex-row-reverse' : null }}" wire:click="sortBy(@js($name), @js((string) optional($sortColumns)[$name]))">
+            <span class="text-dark {{ $align === 'right' ? 'ml-1' : 'mr-1' }}">{{ $title }}</span>
             @switch(optional($sortColumns)[$name])
                 @case('asc')
                     <i class="fas fa-arrow-up" style="margin-top: 0.0625rem"></i>

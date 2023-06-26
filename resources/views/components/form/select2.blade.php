@@ -5,7 +5,6 @@
     'options' => [],
     'placeholder' => null,
     'resetOn' => 'button#reset-filter',
-    'selected' => null,
     'showKey' => false,
     'width' => 'max-content',
 ])
@@ -84,10 +83,10 @@
 }}>
     <select @if($livewire) wire:model.defer="{{ $model }}" @endif id="{{ $id }}" name="{{ $name }}" class="form-control form-control-sm simple-select2-sm input-sm" autocomplete="off">
         @if ($placeholder)
-            <option disabled {{ $options->has($selected) ? null : 'selected' }}>{{ $placeholder }}</option>
+            <option disabled {{ $options->has($this->$model) ? null : 'selected' }}>{{ $placeholder }}</option>
         @endif
         @foreach ($options->all() as $key => $value)
-            <option value="{{ $key }}" {{ $selected === $key ? 'selected' : null }}>{{ $value }}</option>
+            <option value="{{ $key }}" {{ $this->$model === $key ? 'selected' : null }}>{{ $value }}</option>
         @endforeach
     </select>
 </div>

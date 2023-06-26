@@ -1,5 +1,7 @@
 @props([
     'justifyContent' => 'start',
+    'colGap' => 0,
+    'rowGap' => 0,
 ])
 
 @php
@@ -16,10 +18,20 @@
         $justifyContentPosition[$justifyContent],
         'align-items-center',
     ]);
+
+    $gap = collect();
+
+    if ($colGap > 0) {
+        $gap->push("column-gap: {$colGap}");
+    }
+
+    if ($rowGap > 0) {
+        $gap->push("row-gap: {$rowGap}");
+    }
 @endphp
 
 <x-row-col :attributes="$attributes">
-    <div class="{{ $class }}">
+    <div class="{{ $class }}" @if ($gap->isNotEmpty()) style="{{ $gap->join('; ') }}" @endif>
         {{ $slot }}
     </div>
 </x-row-col>

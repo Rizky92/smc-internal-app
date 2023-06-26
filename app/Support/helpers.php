@@ -6,15 +6,14 @@ use Illuminate\Support\Str;
 
 if (!function_exists('time_length')) {
     /**
-     * @param  \Illuminate\Support\Carbon|\DateTimeInterface|string|null $start
+     * @param  \Illuminate\Support\Carbon|\DateTimeInterface|string $start
      * @param  \Illuminate\Support\Carbon|\DateTimeInterface|string|null $end
-     * @param  bool $strict
      * 
      * @return string|null
      */
-    function time_length($start, $end, $strict = false): ?string
+    function time_length($start, $end): ?string
     {
-        if ($strict && (empty($start) || empty($end))) {
+        if (empty($start) || empty($end)) {
             return null;
         }
 

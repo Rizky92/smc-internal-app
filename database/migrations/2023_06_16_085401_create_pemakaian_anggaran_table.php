@@ -21,7 +21,7 @@ return new class extends Migration
         Schema::connection('mysql_smc')->create('pemakaian_anggaran_bidang', function (Blueprint $table): void {
             $table->id();
             $table->text('deskripsi')->nullable();
-            $table->bigInteger('nominal_pemakaian');
+            $table->float('nominal_pemakaian');
             $table->date('tgl_dipakai');
             $table->foreignId('anggaran_bidang_id')->constrained('anggaran_bidang');
             $table->foreignId('user_id');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Keuangan\RKAT;
 
+use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
@@ -9,6 +10,7 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -17,22 +19,33 @@ class PenetapanRKAT extends Component
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
     /** @var ?string */
-    public $tglAwal;
-
-    /** @var ?string */
-    public $tglAkhir;
+    public $tahun;
 
     protected function queryString(): array
     {
         return [
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tahun' => ['except' => now()->format('Y')],
         ];
     }
 
     public function mount(): void
     {
         $this->defaultValues();
+    }
+
+    public function getDataAnggaranBidangProperty(): Paginator
+    {
+        return AnggaranBidang::query()
+            ->with(['anggaran', 'bidang'])
+            ->where('tahun', $this->tahun)
+            ->paginate($this->perpage);
+    }
+
+    public function getDataTahunProperty(): array
+    {
+        return collect(range((int) now()->format('Y'), 2023, -1))
+            ->mapWithKeys(fn (int $v, int $_): array => [$v => $v])
+            ->all();
     }
 
     public function render(): View
@@ -43,8 +56,7 @@ class PenetapanRKAT extends Component
 
     protected function defaultValues(): void
     {
-        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tahun = now()->format('Y');
     }
 
     protected function dataPerSheet(): array

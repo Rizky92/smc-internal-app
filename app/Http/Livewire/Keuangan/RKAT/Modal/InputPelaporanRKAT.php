@@ -6,7 +6,6 @@ use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Models\Keuangan\RKAT\PemakaianAnggaran;
 use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
-use App\Support\Traits\Livewire\FlashComponent;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -14,7 +13,7 @@ use Livewire\Component;
 
 class InputPelaporanRKAT extends Component
 {
-    use FlashComponent, Filterable, DeferredModal;
+    use Filterable, DeferredModal;
 
     /** @var int */
     public $pemakaianAnggaranId;

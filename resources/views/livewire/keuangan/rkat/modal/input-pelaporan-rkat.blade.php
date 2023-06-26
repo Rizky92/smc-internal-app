@@ -17,14 +17,13 @@
     <x-modal id="modal-input-pelaporan-rkat" :title="$this->isUpdating() ? 'Edit Data Penggunaan RKAT' : 'Input Data Penggunaan RKAT'" livewire centered>
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-form id="form-input-pelaporan-rkat" livewire :submit="$this->isUpdating() ? 'update' : 'create'">
-                <x-row-col class="sticky-top bg-white py-1 px-3">
-                    <div class="form-group mt-3">
+                <x-row-col class="sticky-top bg-white pt-3 pb-1 px-3">
+                    <div class="form-group">
                         <label for="anggaran-bidang-id">Anggaran bidang digunakan:</label>
                         <x-form.select2
                             id="anggaran-bidang-id"
                             model="anggaranBidangId"
                             :options="$this->dataRKATPerBidang"
-                            :selected="$anggaranBidangId"
                             placeholder="-"
                             width="full-width"
                         />

@@ -32,10 +32,9 @@ Route::get('/', HomeController::class);
 Route::get('login', [LoginController::class, 'create'])->name('login');
 Route::post('login', [LoginController::class, 'store']);
 
-Route::middleware('auth')
-    ->group(function () {
-        Route::post('logout', LogoutController::class)->name('logout');
-    });
+Route::post('logout', LogoutController::class)
+    ->middleware('auth')
+    ->name('logout');
 
 Route::prefix('admin')
     ->as('admin.')
@@ -45,9 +44,13 @@ Route::prefix('admin')
 
         Route::get('/', DashboardController::class)->name('dashboard');
 
-        Route::get('bidang-unit', Aplikasi\BidangUnit::class)
-            ->middleware('can:aplikasi.bidang.read')
-            ->name('aplikasi.bidang-unit');
+        Route::prefix('aplikasi')
+            ->as('aplikasi.')
+            ->group(function () {
+                Route::get('bidang-unit', Aplikasi\BidangUnit::class)
+                    ->middleware('can:aplikasi.bidang.read')
+                    ->name('bidang-unit');
+            });
 
         Route::prefix('perawatan')
             ->as('perawatan.')
