@@ -273,7 +273,7 @@ class RegistrasiPasien extends Model
                 return 'Tidak ada';
             }
 
-            return 'Ada . ' . $askep->joinStr(', ')->wrap('(', ')')->value();
+            return 'Ada ' . $askep->joinStr(', ')->wrap('(', ')')->value();
         });
     }
 
