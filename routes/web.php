@@ -50,6 +50,10 @@ Route::prefix('admin')
                 Route::get('bidang-unit', Aplikasi\BidangUnit::class)
                     ->middleware('can:aplikasi.bidang.read')
                     ->name('bidang-unit');
+
+                Route::get('pengaturan', Aplikasi\Pengaturan::class)
+                    ->middleware('role:' . config('permission.superadmin_name'))
+                    ->name('pengaturan');
             });
 
         Route::prefix('perawatan')

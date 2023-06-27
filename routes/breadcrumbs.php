@@ -231,6 +231,11 @@ Breadcrumbs::for('admin.aplikasi.bidang-unit', function (Trail $trail): void {
     $trail->push('Bidang Unit', route('admin.aplikasi.bidang-unit'));
 });
 
+Breadcrumbs::for('admin.aplikasi.pengaturan', function (Trail $trail): void {
+    $trail->parent('admin.aplikasi');
+    $trail->push('Pengaturan', route('admin.aplikasi.pengaturan'));
+});
+
 
 Breadcrumbs::for('admin.route-list', function (Trail $trail): void {
     $trail->parent('admin.dashboard');

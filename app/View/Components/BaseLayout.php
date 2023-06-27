@@ -339,12 +339,19 @@ class BaseLayout extends Component
                 'name' => 'Aplikasi',
                 'icon' => 'far fa-circle',
                 'type' => 'dropdown',
-                'hasAnyPermissions' => $user->hasRole($develop),
+                'hasAnyPermissions' => $user->canAny(['aplikasi.bidang-unit.read']) || $user->hasRole($develop),
                 'items' => [
                     [
                         'name' => 'Bidang Unit',
                         'url' => route('admin.aplikasi.bidang-unit'),
                         'icon' => "fas fa-hospital",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('aplikasi.bidang-unit.read'),
+                    ],
+                    [
+                        'name' => 'Pengaturan',
+                        'url' => route('admin.aplikasi.pengaturan'),
+                        'icon' => "fas fa-sliders-h",
                         'type' => 'link',
                         'hasAnyPermissions' => $user->hasRole($develop),
                     ],

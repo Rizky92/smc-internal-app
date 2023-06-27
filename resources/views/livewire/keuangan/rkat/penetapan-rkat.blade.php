@@ -39,7 +39,7 @@
                     <x-table.th name="tahun" title="Tahun" />
                     <x-table.th name="bidang_id" title="Bidang" />
                     <x-table.th name="anggaran_id" title="Anggaran" />
-                    <x-table.th name="nominal_anggaran" title="Nominal" align="right" colspan="2" />
+                    <x-table.th name="nominal_anggaran" title="Nominal" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->dataAnggaranBidang as $item)
@@ -52,10 +52,10 @@
                             </x-table.td>
                             <x-table.td>{{ $item->bidang->nama }}</x-table.td>
                             <x-table.td>{{ $item->anggaran->nama }}</x-table.td>
-                            <x-table.td-currency :value="$item->nominal_anggaran" />
+                            <x-table.td>{{ rp($item->nominal_anggaran) }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="5" />
+                        <x-table.tr-empty colspan="4" />
                     @endforelse
                 </x-slot>
             </x-table>

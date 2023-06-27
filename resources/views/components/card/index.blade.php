@@ -7,6 +7,7 @@
     'footer' => null,
 
     'loadingTarget' => null,
+    'table' => true,
 ])
 
 <div {{ $attributes->merge(['class' => 'card']) }}>
@@ -27,7 +28,10 @@
             {{ $header }}
         </div>
     @endif
-    <div {{ $body->attributes->merge(['class' => 'card-body p-0']) }}>
+    <div {{ $body->attributes->class([
+        'card-body',
+        'p-0' => $table,
+    ]) }}>
         {{ $body }}
     </div>
     @if ($footer)
