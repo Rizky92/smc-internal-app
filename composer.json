@@ -81,6 +81,13 @@
         "psalm-init": [
             "./vendor/bin/psalm --init",
             "./vendor/bin/psalm-plugin enable psalm/plugin-laravel"
+        ],
+        "optimize": [
+            "@php artisan optimize",
+            "@php artisan view:cache",
+            "@php artisan livewire:discover",
+            "@php artisan permission:cache-reset",
+            "@php artisan settings:discover"
         ]
     }
 }

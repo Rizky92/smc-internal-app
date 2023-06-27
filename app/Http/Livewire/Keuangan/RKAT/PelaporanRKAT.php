@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Keuangan\RKAT;
 
 use App\Models\Bidang;
 use App\Models\Keuangan\RKAT\PemakaianAnggaran;
+use App\Settings\RKATSettings;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;

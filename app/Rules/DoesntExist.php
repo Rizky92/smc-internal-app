@@ -8,13 +8,25 @@ use Illuminate\Contracts\Validation\Rule;
 class DoesntExist implements Rule
 {
     /**
-     * Create a new rule instance.
-     *
-     * @return void
+     * @var class-string<\Illuminate\Database\Eloquent\Model>
      */
-    public function __construct()
+    private string $model;
+
+    /**
+     * @var string
+     */
+    private string $column;
+
+    /**
+     * Create a new rule instance.
+     * 
+     * @param  class-string<\Illuminate\Database\Eloquent\Model> $model
+     * @param  string $column
+     */
+    public function __construct(string $model, string $column)
     {
-        //
+        $this->model = $model;
+        $this->column = $column;
     }
 
     /**
@@ -26,7 +38,7 @@ class DoesntExist implements Rule
      */
     public function passes($attribute, $value)
     {
-        return ! AnggaranBidang::whereTahun($value)->exists();
+        return ! $this->model::where($this->column, $value)->exists();
     }
 
     /**
@@ -36,6 +48,9 @@ class DoesntExist implements Rule
      */
     public function message()
     {
-        return 'Tahun RKAT sudah ada anggaran yang digunakan di tahun tersebut!';
+        $model = str(class_basename($this->model))
+            ->title();
+
+        return ":Attribute tidak boleh menggunakan {$model} yang sudah ada!";
     }
 }

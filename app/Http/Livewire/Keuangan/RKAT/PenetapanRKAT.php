@@ -2,7 +2,10 @@
 
 namespace App\Http\Livewire\Keuangan\RKAT;
 
+use App\Models\Bidang;
 use App\Models\Keuangan\RKAT\AnggaranBidang;
+use App\Settings\PengaturanRKAT;
+use App\Settings\RKATSettings;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
@@ -11,6 +14,7 @@ use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -18,8 +22,14 @@ class PenetapanRKAT extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
-    /** @var ?string */
+    /** @var string */
     public $tahun;
+
+    /** @var string */
+    public $batasAwalRKAT;
+
+    /** @var string */
+    public $batasAkhirRKAT;
 
     protected function queryString(): array
     {
@@ -43,9 +53,22 @@ class PenetapanRKAT extends Component
 
     public function getDataTahunProperty(): array
     {
-        return collect(range((int) now()->format('Y'), 2023, -1))
+        $tahunAwal = AnggaranBidang::query()
+            ->withCasts(['tahun' => 'int'])
+            ->orderBy('tahun')
+            ->limit(1)
+            ->value('tahun') ?? 2023;
+
+        $tahunAkhir = app(RKATSettings::class)->tahun;
+
+        return collect(range($tahunAwal, $tahunAkhir, 1))
             ->mapWithKeys(fn (int $v, int $_): array => [$v => $v])
             ->all();
+    }
+
+    public function getDataBidangProperty(): Collection
+    {
+        return Bidang::pluck('nama', 'id');
     }
 
     public function render(): View
@@ -62,21 +85,35 @@ class PenetapanRKAT extends Component
     protected function dataPerSheet(): array
     {
         return [
-            //
+            AnggaranBidang::query()
+                ->with(['anggaran', 'bidang'])
+                ->whereTahun($this->tahun)
+                ->get()
+                ->map(fn (AnggaranBidang $model): array => [
+                    'tahun'    => $model->tahun,
+                    'bidang'   => $model->bidang->nama,
+                    'anggaran' => $model->anggaran->nama,
+                    'nominal'  => $model->nominal_anggaran,
+                ]),
         ];
     }
 
     protected function columnHeaders(): array
     {
         return [
-            //
+            'Tahun',
+            'Bidang',
+            'Anggaran',
+            'Nominal (Rp)',
         ];
     }
 
     protected function pageHeaders(): array
     {
         return [
-            //
+            'RS Samarinda Medika Citra',
+            'Laporan Penetapan RKAT Tahun ' . $this->tahun,
+            'Per ' . now()->translatedFormat('d F Y'),
         ];
     }
 }

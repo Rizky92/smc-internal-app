@@ -4,17 +4,20 @@ namespace App\Http\Livewire\Aplikasi\Concerns;
 
 use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Rules\DoesntExist;
-use App\Settings\PengaturanRKAT as SettingsPengaturanRKAT;
+use App\Settings\RKATSettings;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Fluent;
-use Illuminate\View\Component;
 
 trait PengaturanRKAT
 {
     /** @var string */
     public $tahunRKAT;
+
+    /** @var string */
+    public $tglAwalBatasInputRKAT;
+
+    /** @var string */
+    public $tglAkhirBatasInputRKAT;
 
     /** @var string */
     public $tglAwalPenetapanRKAT;
@@ -48,21 +51,25 @@ trait PengaturanRKAT
             return;
         }
 
-        $settings = app(SettingsPengaturanRKAT::class);
-
         $validated = $this->validate([
             'tahunRKAT' => ['required', new DoesntExist],
             'tglAwalPenetapanRKAT' => ['required', 'date'],
             'tglAkhirPenetapanRKAT' => ['required', 'date'],
+            'tglAwalBatasInputRKAT' => ['required', 'date'],
+            'tglAkhirBatasInputRKAT' => ['required', 'date'],
         ], [
             'tahunRKAT.' . DoesntExist::class => 'Tahun RKAT tersebut sudah ada anggarannya!',
         ]);
 
         $validated = new Fluent($validated);
 
+        $settings = app(RKATSettings::class);
+
         $settings->tahun = $validated->tahunRKAT;
-        $settings->tgl_awal = carbon($validated->tglAwalPenetapanRKAT);
-        $settings->tgl_akhir = carbon($validated->tglAkhirPenetapanRKAT);
+        $settings->batas_penetapan_awal = carbon($validated->tglAwalPenetapanRKAT);
+        $settings->batas_penetapan_akhir = carbon($validated->tglAkhirPenetapanRKAT);
+        $settings->batas_input_awal = carbon($validated->tglAwalInputRKAT);
+        $settings->batas_input_akhir = carbon($validated->tglAkhirInputRKAT);
 
         $settings->save();
 
@@ -72,10 +79,12 @@ trait PengaturanRKAT
 
     protected function defaultValuesPengaturanRKAT(): void
     {
-        $settings = app(SettingsPengaturanRKAT::class);
+        $settings = app(RKATSettings::class);
 
         $this->tahunRKAT = $settings->tahun;
-        $this->tglAwalPenetapanRKAT = $settings->tgl_awal->format('Y-m-d');
-        $this->tglAkhirPenetapanRKAT = $settings->tgl_akhir->format('Y-m-d');
+        $this->tglAwalPenetapanRKAT = $settings->batas_penetapan_awal->format('Y-m-d');
+        $this->tglAkhirPenetapanRKAT = $settings->batas_penetapan_akhir->format('Y-m-d');
+        $this->tglAwalInputRKAT = $settings->batas_penetapan_awal->format('Y-m-d');
+        $this->tglAkhirInputRKAT = $settings->batas_penetapan_akhir->format('Y-m-d');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Keuangan\RKAT\Modal;
 
 use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Models\Keuangan\RKAT\PemakaianAnggaran;
+use App\Settings\RKATSettings;
 use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
 use Illuminate\Support\Collection;
@@ -105,6 +106,15 @@ class InputPelaporanRKAT extends Component
 
         if (! Auth::user()->can('keuangan.rkat.pelaporan-rkat.input-laporan-rkat')) {
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatchBrowserEvent('data-denied');
+
+            return;
+        }
+
+        $settings = App(RKATSettings::class);
+
+        if (now()->between($settings->batas_input_awal, $settings->batas_input_akhir)) {
+            $this->emit('flash.error', 'Waktu input laporan penggunaan RKAT telah bahis!');
             $this->dispatchBrowserEvent('data-denied');
 
             return;

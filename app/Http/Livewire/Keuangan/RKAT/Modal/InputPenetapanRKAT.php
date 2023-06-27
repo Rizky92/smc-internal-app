@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Keuangan\RKAT\Modal;
 use App\Models\Bidang;
 use App\Models\Keuangan\RKAT\Anggaran;
 use App\Models\Keuangan\RKAT\AnggaranBidang;
+use App\Settings\RKATSettings;
 use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
 use Illuminate\Support\Collection;
@@ -97,14 +98,21 @@ class InputPenetapanRKAT extends Component
             return;
         }
 
-        $this->validate();
+        $settings = app(RKATSettings::class);
 
-        $tahun = 2024;
+        if (now()->between($settings->batas_input_awal, $settings->batas_input_akhir)) {
+            $this->emit('flas.error', 'Batas waktu penetapan RKAT melewati periode');
+            $this->dispatchBrowserEvent('data-denied');
+
+            return;
+        }
+
+        $this->validate();
 
         AnggaranBidang::create([
             'anggaran_id'      => $this->anggaranId,
             'bidang_id'        => $this->bidangId,
-            'tahun'            => $tahun,
+            'tahun'            => $settings->tahun,
             'nominal_anggaran' => round($this->nominalAnggaran, 2),
         ]);
 
