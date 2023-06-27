@@ -52,26 +52,24 @@ trait PengaturanRKAT
         }
 
         $validated = $this->validate([
-            'tahunRKAT' => ['required', new DoesntExist],
+            'tahunRKAT' => ['required', new DoesntExist(AnggaranBidang::class, 'tahun')],
             'tglAwalPenetapanRKAT' => ['required', 'date'],
             'tglAkhirPenetapanRKAT' => ['required', 'date'],
             'tglAwalBatasInputRKAT' => ['required', 'date'],
             'tglAkhirBatasInputRKAT' => ['required', 'date'],
-        ], [
-            'tahunRKAT.' . DoesntExist::class => 'Tahun RKAT tersebut sudah ada anggarannya!',
         ]);
 
         $validated = new Fluent($validated);
 
-        $settings = app(RKATSettings::class);
-
-        $settings->tahun = $validated->tahunRKAT;
-        $settings->batas_penetapan_awal = carbon($validated->tglAwalPenetapanRKAT);
-        $settings->batas_penetapan_akhir = carbon($validated->tglAkhirPenetapanRKAT);
-        $settings->batas_input_awal = carbon($validated->tglAwalInputRKAT);
-        $settings->batas_input_akhir = carbon($validated->tglAkhirInputRKAT);
-
-        $settings->save();
+        app(RKATSettings::class)
+            ->fill([
+                'tahun'                 => $validated->tahunRKAT,
+                'batas_penetapan_awal'  => carbon($validated->tglAwalPenetapanRKAT),
+                'batas_penetapan_akhir' => carbon($validated->tglAkhirPenetapanRKAT),
+                'batas_input_awal'      => carbon($validated->tglAwalInputRKAT),
+                'batas_input_akhir'     => carbon($validated->tglAkhirInputRKAT),
+            ])
+            ->save();
 
         $this->emit('flash.success', 'Pengaturan RKAT berhasil diupdate!');
         $this->dispatchBrowserEvent('pengaturan-rkat.data-saved');

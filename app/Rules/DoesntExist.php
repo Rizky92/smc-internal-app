@@ -2,13 +2,15 @@
 
 namespace App\Rules;
 
-use App\Models\Keuangan\RKAT\AnggaranBidang;
 use Illuminate\Contracts\Validation\Rule;
 
+/**
+ * @template TModel as \Illuminate\Database\Eloquent\Model
+ */
 class DoesntExist implements Rule
 {
     /**
-     * @var class-string<\Illuminate\Database\Eloquent\Model>
+     * @var class-string<TModel>
      */
     private string $model;
 
@@ -20,7 +22,7 @@ class DoesntExist implements Rule
     /**
      * Create a new rule instance.
      * 
-     * @param  class-string<\Illuminate\Database\Eloquent\Model> $model
+     * @param  class-string<TModel> $model
      * @param  string $column
      */
     public function __construct(string $model, string $column)
@@ -49,7 +51,8 @@ class DoesntExist implements Rule
     public function message()
     {
         $model = str(class_basename($this->model))
-            ->title();
+            ->headline()
+            ->value();
 
         return ":Attribute tidak boleh menggunakan {$model} yang sudah ada!";
     }

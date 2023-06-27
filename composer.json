@@ -83,11 +83,16 @@
             "./vendor/bin/psalm-plugin enable psalm/plugin-laravel"
         ],
         "optimize": [
-            "@php artisan optimize",
-            "@php artisan view:cache",
+            "@php artisan optimize -q",
+            "@php artisan view:cache -q",
+            "@php artisan livewire:discover -q",
+            "@php artisan settings:discover -q"
+        ],
+        "optimize:clear": [
+            "@php artisan optimize:clear",
             "@php artisan livewire:discover",
-            "@php artisan permission:cache-reset",
-            "@php artisan settings:discover"
+            "@php artisan settings:clear-cache",
+            "@php artisan settings:clear-discover"
         ]
     }
 }
