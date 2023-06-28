@@ -17,13 +17,8 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        Schema::connection('mysql_smc')->disableForeignKeyConstraints();
-        DB::setDefaultConnection('mysql_smc');
-
         Permission::truncate();
         Role::truncate();
-
-        app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         DB::table('model_has_roles')->truncate();
         DB::table('model_has_permissions')->truncate();
@@ -55,10 +50,28 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'keuangan.riwayat-jurnal-perbaikan.read', 'guard_name' => 'web']);
         Permission::create(['name' => 'keuangan.stok-obat-ruangan.read', 'guard_name' => 'web']);
 
+        Permission::create(['name' => 'keuangan.rkat.kategori-rkat.create', 'guard_name' => 'web']);
+        Permission::create(['name' => 'keuangan.rkat.kategori-rkat.read', 'guard_name' => 'web']);
+        Permission::create(['name' => 'keuangan.rkat.kategori-rkat.update', 'guard_name' => 'web']);
+        Permission::create(['name' => 'keuangan.rkat.kategori-rkat.delete', 'guard_name' => 'web']);
+
+        Permission::create(['name' => 'keuangan.rkat.pemantauan-rkat.read', 'guard_name' => 'web']);
+
+        Permission::create(['name' => 'keuangan.rkat.penetapan-rkat.create', 'guard_name' => 'web']);
+        Permission::create(['name' => 'keuangan.rkat.penetapan-rkat.read', 'guard_name' => 'web']);
+        Permission::create(['name' => 'keuangan.rkat.penetapan-rkat.update', 'guard_name' => 'web']);
+        Permission::create(['name' => 'keuangan.rkat.penetapan-rkat.delete', 'guard_name' => 'web']);
+
+        Permission::create(['name' => 'keuangan.rkat.pelaporan-rkat.create', 'guard_name' => 'web']);
+        Permission::create(['name' => 'keuangan.rkat.pelaporan-rkat.read', 'guard_name' => 'web']);
+        Permission::create(['name' => 'keuangan.rkat.pelaporan-rkat.update', 'guard_name' => 'web']);
+        Permission::create(['name' => 'keuangan.rkat.pelaporan-rkat.delete', 'guard_name' => 'web']);
+
         Permission::create(['name' => 'logistik.input-minmax-stok.create', 'guard_name' => 'web']);
-        Permission::create(['name' => 'logistik.input-minmax-stok.delete', 'guard_name' => 'web']);
-        Permission::create(['name' => 'logistik.input-minmax-stok.update', 'guard_name' => 'web']);
         Permission::create(['name' => 'logistik.input-minmax-stok.read', 'guard_name' => 'web']);
+        Permission::create(['name' => 'logistik.input-minmax-stok.update', 'guard_name' => 'web']);
+        Permission::create(['name' => 'logistik.input-minmax-stok.delete', 'guard_name' => 'web']);
+
         Permission::create(['name' => 'logistik.stok-darurat.read', 'guard_name' => 'web']);
 
         Permission::create(['name' => 'perawatan.daftar-pasien-ranap.read', 'guard_name' => 'web']);
@@ -84,19 +97,18 @@ class PermissionSeeder extends Seeder
             'keuangan.laporan-tambahan-pasien.read',
             'keuangan.laporan-tindakan-lab.read',
             'keuangan.laporan-tindakan-radiologi.read',
-            'keuangan.rekap-piutang-pasien.read',
             'keuangan.riwayat-jurnal-perbaikan.read',
             'keuangan.stok-obat-ruangan.read',
         ];
 
         $farmasiPermissions = [
-            'faramsi.kunjungan-per-bentuk-obat.read',
-            'faramsi.kunjungan-per-poli.read',
-            'faramsi.input-minmax-stok.read',
-            'faramsi.laporan-produksi.read',
-            'faramsi.obat-per-dokter.read',
-            'faramsi.perbandingan-po-obat.read',
-            'faramsi.stok-darurat.read',
+            'farmasi.kunjungan-per-bentuk-obat.read',
+            'farmasi.kunjungan-per-poli.read',
+            'farmasi.input-minmax-stok.read',
+            'farmasi.laporan-produksi.read',
+            'farmasi.obat-per-dokter.read',
+            'farmasi.perbandingan-po-obat.read',
+            'farmasi.stok-darurat.read',
             'keuangan.stok-obat-ruangan.read',
         ];
 
@@ -129,13 +141,13 @@ class PermissionSeeder extends Seeder
         // Superadmin role name, bypasses all permissions
         $superadminRole = Role::create(['name' => config('permission.superadmin_name'), 'guard_name' => 'web']);
         
-        $perawatanRole = Role::create(['name' => 'Perawatan', 'guard_name' => 'web']);
-        $keuanganRole = Role::create(['name' => 'Keuangan', 'guard_name' => 'web']);
-        $farmasiRole = Role::create(['name' => 'Farmasi', 'guard_name' => 'web']);
+        $perawatanRole  = Role::create(['name' => 'Perawatan', 'guard_name' => 'web']);
+        $keuanganRole   = Role::create(['name' => 'Keuangan', 'guard_name' => 'web']);
+        $farmasiRole    = Role::create(['name' => 'Farmasi', 'guard_name' => 'web']);
         $rekamMedisRole = Role::create(['name' => 'Rekam Medis', 'guard_name' => 'web']);
-        $logistikRole = Role::create(['name' => 'Logistik', 'guard_name' => 'web']);
-        $kasirRole = Role::create(['name' => 'Kasir', 'guard_name' => 'web']);
-        $MODRole = Role::create(['name' => 'MOD', 'guard_name' => 'web']);
+        $logistikRole   = Role::create(['name' => 'Logistik', 'guard_name' => 'web']);
+        $kasirRole      = Role::create(['name' => 'Kasir', 'guard_name' => 'web']);
+        $MODRole        = Role::create(['name' => 'MOD', 'guard_name' => 'web']);
 
         $keuanganRole->givePermissionTo($keuanganPermissions);
         $perawatanRole->givePermissionTo($perawatanPermissions);
@@ -145,9 +157,7 @@ class PermissionSeeder extends Seeder
         $kasirRole->givePermissionTo($kasirPermissions);
         $MODRole->givePermissionTo($MODPermissions);
         
-        Schema::connection('mysql_smc')->enableForeignKeyConstraints();
-        DB::setDefaultConnection('mysql_sik');
-
+        /** @var \App\Models\Aplikasi\User */
         $user = User::findByNRP('88888888');
 
         $user->assignRole($superadminRole);

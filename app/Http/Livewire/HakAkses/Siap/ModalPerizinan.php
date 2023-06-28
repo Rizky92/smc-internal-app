@@ -59,7 +59,7 @@ class ModalPerizinan extends Component
         $this->roleId = $id;
 
         if ($id !== -1) {
-            /** @var TRole */
+            /** @var \App\Models\Aplikasi\Role */
             $role = Role::findById($id);
 
             $this->roleName = $role->name;
@@ -75,7 +75,7 @@ class ModalPerizinan extends Component
             return;
         }
 
-        tracker_start('mysql_smc');
+        tracker_start();
 
         $role = Role::create([
             'name'       => $this->roleName,
@@ -84,7 +84,7 @@ class ModalPerizinan extends Component
 
         $role->syncPermissions(array_values($this->checkedPermissions));
 
-        tracker_end('mysql_smc');
+        tracker_end();
 
         $this->emitUp('flash.success', 'Hak akses baru berhasil ditambahkan!');
         $this->dispatchBrowserEvent('role-created');
@@ -98,17 +98,17 @@ class ModalPerizinan extends Component
             return;
         }
 
-        /** @var TRole */
+        /** @var \App\Models\Aplikasi\Role */
         $role = Role::findById($this->roleId);
 
-        tracker_start('mysql_smc');
+        tracker_start();
 
         $role->name = $this->roleName;
         $role->save();
 
         $role->syncPermissions(array_values($this->checkedPermissions));
 
-        tracker_end('mysql_smc');
+        tracker_end();
 
         $this->emitUp('flash.success', "Hak akses {$this->roleName} berhasil diupdate!");
         $this->dispatchBrowserEvent('role-updated');

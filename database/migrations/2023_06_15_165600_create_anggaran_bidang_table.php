@@ -23,8 +23,10 @@ return new class extends Migration
             $table->foreignId('anggaran_id')->constrained('anggaran');
             $table->foreignId('bidang_id')->constrained('bidang');
             $table->year('tahun');
-            $table->float('nominal_anggaran');
+            $table->double('nominal_anggaran');
             $table->timestamps($precision = 6);
+
+            $table->unique(['anggaran_id', 'bidang_id', 'tahun']);
         });
     }
 };

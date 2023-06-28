@@ -8,6 +8,7 @@ use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Settings\RKATSettings;
 use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
+use App\Support\Traits\Livewire\FlashComponent;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -15,7 +16,7 @@ use Livewire\Component;
 
 class InputPenetapanRKAT extends Component
 {
-    use Filterable, DeferredModal;
+    use FlashComponent, Filterable, DeferredModal;
 
     /** @var int */
     public $anggaranBidangId;
@@ -92,7 +93,7 @@ class InputPenetapanRKAT extends Component
         }
 
         if (!Auth::user()->can('keuangan.rkat.penetapan-rkat.create')) {
-            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 
             return;
@@ -101,7 +102,7 @@ class InputPenetapanRKAT extends Component
         $settings = app(RKATSettings::class);
 
         if (now()->between($settings->batas_input_awal, $settings->batas_input_akhir)) {
-            $this->emit('flas.error', 'Batas waktu penetapan RKAT melewati periode');
+            $this->flashError('Batas waktu penetapan RKAT melewati periode yang ditetapkan!');
             $this->dispatchBrowserEvent('data-denied');
 
             return;
@@ -109,12 +110,16 @@ class InputPenetapanRKAT extends Component
 
         $this->validate();
 
+        tracker_start();
+
         AnggaranBidang::create([
             'anggaran_id'      => $this->anggaranId,
             'bidang_id'        => $this->bidangId,
             'tahun'            => $settings->tahun,
             'nominal_anggaran' => round($this->nominalAnggaran, 2),
         ]);
+
+        tracker_end();
 
         $this->dispatchBrowserEvent('data-saved');
         $this->emit('flash.success', 'Data berhasil disimpan!');
@@ -129,7 +134,7 @@ class InputPenetapanRKAT extends Component
         }
 
         if (!Auth::user()->can('keuangan.rkat.penetapan-rkat.update')) {
-            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 
             return;
@@ -142,7 +147,6 @@ class InputPenetapanRKAT extends Component
             ->update([
                 'anggaran_id'      => $this->anggaranId,
                 'bidang_id'        => $this->bidangId,
-                'tahun'            => $this->tahun,
                 'nominal_anggaran' => round($this->nominalAnggaran, 2),
             ]);
 

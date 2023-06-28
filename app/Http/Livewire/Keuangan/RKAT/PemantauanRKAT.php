@@ -3,6 +3,8 @@
 namespace App\Http\Livewire\Keuangan\RKAT;
 
 use App\Models\Bidang;
+use App\Models\Keuangan\RKAT\Anggaran;
+use App\Models\Keuangan\RKAT\PemakaianAnggaran;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
@@ -11,6 +13,7 @@ use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Livewire\Component;
@@ -68,22 +71,43 @@ class PemantauanRKAT extends Component
 
     protected function dataPerSheet(): array
     {
+        $bidang = Bidang::all();
+        $anggaran = Anggaran::all();
+
+        $pemakaianAnggaran = PemakaianAnggaran::query()
+            ->selectRaw("anggaran_bidang_id, date_format(tgl_dipakai, '%Y-%m') as bulan, sum(nominal_pemakaian)")
+            ->with('anggaranBidang')
+            ->whereRaw('year(tgl_dipakai) = ?', $this->tahun)
+            ->groupByRaw("anggaran_bidang_id, date_format(tgl_dipakai, '%Y-%m')")
+            ->get();
+
         return [
-            //
+            
         ];
     }
 
     protected function columnHeaders(): array
     {
-        return [
-            //
-        ];
+        return collect(
+            carbon()
+                ->setYear(intval($this->tahun))
+                ->toPeriod(carbon()->endOfYear(), '1 month')
+        )
+            ->each
+            ->translatedFormat('F')
+            ->prepend('Anggaran')
+            ->prepend('Bidang')
+            ->push('Selisih')
+            ->push('Persentase')
+            ->toArray();
     }
 
     protected function pageHeaders(): array
     {
         return [
-            //
+            'RS Samarinda Medika Citra',
+            'Laporan Pemantauan RKAT Tahun ' . $this->tahun,
+            'Per ' . now()->translatedFormat('d F Y'),
         ];
     }
 }

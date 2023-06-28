@@ -23,7 +23,7 @@
                 <x-slot name="body">
                     @foreach ($this->roles as $role)
                         @php($superadmin = $role->name === config('permission.superadmin_name'))
-                        <x-table.tr :class="Arr::toCssClasses(['text-muted' => $superadmin])">
+                        <x-table.tr>
                             <x-table.td>
                                 @unless ($superadmin)
                                     <x-button size="xs" variant="link" class="m-0 p-0 border-0" title="Edit" icon="fas fa-pencil-alt" data-toggle="modal" data-target="#modal-perizinan" wire:click="$emit('siap.prepare', {{ $role->id }})" />
@@ -33,7 +33,7 @@
                             <x-table.td>
                                 <div style="display: inline-flex; flex-wrap: wrap; gap: 0.25rem">
                                     @if ($superadmin)
-                                        *
+                                        <x-badge variant="dark">*</x-badge>
                                     @endif
                                     @foreach ($role->permissions as $permission)
                                         <x-badge variant="secondary">{{ $permission->name }}</x-badge>

@@ -88,22 +88,59 @@ class PelaporanRKAT extends Component
 
     protected function dataPerSheet(): array
     {
-        return [
-            //
-        ];
+        $data = PemakaianAnggaran::query()
+            ->with([
+                'petugas',
+                'anggaranBidang',
+                'anggaranBidang.anggaran',
+                'anggaranBidang.bidang',
+            ])
+            ->get()
+            ->map(fn (PemakaianAnggaran $model): array => [
+                'bidang'      => $model->anggaranBidang->bidang->nama,
+                'judul'       => $model->judul,
+                'anggaran'    => $model->anggaranBidang->anggaran->nama,
+                'tahun'       => $model->anggaranBidang->tahun,
+                'tgl_dipakai' => $model->tgl_dipakai,
+                'nominal'     => floatval($model->nominal_pemakaian),
+                'nip'         => $model->user_id,
+                'petugas'     => $model->petugas->nama,
+                'keterangan'  => $model->deskripsi,
+            ]);
+
+        return [$data];
     }
 
     protected function columnHeaders(): array
     {
         return [
-            //
+            'Bidang',
+            'Judul',
+            'Anggaran',
+            'Tahun',
+            'Tgl. Dipakai',
+            'Nominal',
+            'Petugas',
+            'Keterangan',
         ];
     }
 
     protected function pageHeaders(): array
     {
+        $periodeAwal = carbon($this->tglAwal);
+        $periodeAkhir = carbon($this->tglAkhir);
+
+        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+
+        if ($periodeAwal->isSameDay($periodeAkhir)) {
+            $periode = $periodeAwal->translatedFormat('d F Y');
+        }
+
         return [
-            //
+            'RS Samarinda Medika Citra',
+            'Pelaporan RKAT tahun ' .  $this->tahun,
+            'Per ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
+            $periode,
         ];
     }
 }

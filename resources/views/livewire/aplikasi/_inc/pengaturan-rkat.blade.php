@@ -13,7 +13,11 @@
             </x-row-col-flex>
             <x-row-col-flex class="mt-3">
                 <label for="penetapan-rkat" class="m-0 w-25 font-weight-normal">Periode Waktu Penetapan RKAT</label>
-                <x-form.range-date model-start="tglAwalPenetapanRKAT" model-end="tglAkhirPenetapanRKAT" class="w-100" />
+                <div class="w-100">
+                    <x-form.range-date model-start="tglAwalPenetapanRKAT" model-end="tglAkhirPenetapanRKAT" class="w-100" />
+                    <x-form.error name="tglAwalPenetapanRKAT" />
+                    <x-form.error name="tglAkhirPenetapanRKAT" />
+                </div>
             </x-row-col-flex>
         </x-form>
     </x-slot>

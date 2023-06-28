@@ -61,10 +61,14 @@ class InputKategoriRKAT extends Component
             return;
         }
 
+        tracker_start();
+
         Anggaran::create([
             'nama' => $this->nama,
             'deskripsi' => empty($this->deskripsi) ? null : $this->deskripsi,
         ]);
+
+        tracker_end();
 
         $this->dispatchBrowserEvent('data-saved');
         $this->emit('flash.success', 'Anggaran baru berhasil ditambahkan!');
@@ -88,10 +92,14 @@ class InputKategoriRKAT extends Component
             return;
         }
 
+        tracker_start();
+
         $anggaran->nama = $this->nama;
         $anggaran->deskripsi = $this->deskripsi;
 
         $anggaran->save();
+
+        tracker_end();
 
         $this->dispatchBrowserEvent('data-saved');
         $this->emit('flash.success', 'Data anggaran berhasil diubah!');

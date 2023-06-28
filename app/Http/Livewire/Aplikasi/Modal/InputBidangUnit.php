@@ -57,7 +57,11 @@ class InputBidangUnit extends Component
             return;
         }
 
+        tracker_start();
+
         Bidang::create(['nama' => $this->nama]);
+
+        tracker_end();
 
         $this->dispatchBrowserEvent('data-saved');
         $this->emit('flash.success', 'Bidang baru berhasil ditambahkan!');

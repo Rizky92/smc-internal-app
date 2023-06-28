@@ -7,6 +7,7 @@ use App\Models\Keuangan\RKAT\PemakaianAnggaran;
 use App\Settings\RKATSettings;
 use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
+use App\Support\Traits\Livewire\FlashComponent;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -14,10 +15,16 @@ use Livewire\Component;
 
 class InputPelaporanRKAT extends Component
 {
-    use Filterable, DeferredModal;
+    use FlashComponent, Filterable, DeferredModal;
 
     /** @var int */
     public $pemakaianAnggaranId;
+
+    /** @var string */
+    public $noBukti;
+
+    /** @var string */
+    public $judul;
 
     /** @var int */
     public $anggaranBidangId;
@@ -66,8 +73,11 @@ class InputPelaporanRKAT extends Component
 
     public function getDataRKATPerBidangProperty(): Collection
     {
+        $tahun = app(RKATSettings::class)->tahun;
+
         return AnggaranBidang::query()
             ->with(['anggaran', 'bidang'])
+            ->where('tahun', $tahun)
             ->get()
             ->mapWithKeys(function (AnggaranBidang $ab): array {
                 $namaAnggaran = $ab->anggaran->nama;
@@ -111,24 +121,21 @@ class InputPelaporanRKAT extends Component
             return;
         }
 
-        $settings = App(RKATSettings::class);
-
-        if (now()->between($settings->batas_input_awal, $settings->batas_input_akhir)) {
-            $this->emit('flash.error', 'Waktu input laporan penggunaan RKAT telah bahis!');
-            $this->dispatchBrowserEvent('data-denied');
-
-            return;
-        }
-
         $this->validate();
 
+        tracker_start();
+
         PemakaianAnggaran::create([
+            'no_bukti'           => $this->noBukti,
+            'judul'              => $this->judul,
             'deskripsi'          => $this->deskripsi,
             'nominal_pemakaian'  => $this->nominalPemakaian,
             'tgl_dipakai'        => $this->tglPakai,
             'anggaran_bidang_id' => $this->anggaranBidangId,
             'user_id'            => Auth::user()->nik,
         ]);
+
+        tracker_end();
 
         $this->dispatchBrowserEvent('data-saved');
         $this->emit('flash.success', 'Data Pemakaian RKAT baru berhasil ditambahkan!');
@@ -149,6 +156,8 @@ class InputPelaporanRKAT extends Component
 
         $this->validate();
 
+        tracker_start();
+
         PemakaianAnggaran::query()
             ->where('id', $this->pemakaianAnggaranId)
             ->update([
@@ -157,6 +166,8 @@ class InputPelaporanRKAT extends Component
                 'nominal_pemakaian'  => $this->nominalPemakaian,
                 'deskripsi'          => $this->deskripsi,
             ]);
+
+        tracker_end();
         
         $this->dispatchBrowserEvent('data-saved');
         $this->emit('flash.success', 'Data Pemakaian RKAT baru berhasil diupdate!');

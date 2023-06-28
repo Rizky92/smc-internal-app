@@ -14,16 +14,12 @@ class BpjsService
 
     protected string $timestamp;
 
-    /** @var \Illuminate\Http\Client\Response|null */
     protected ?Response $response = null;
 
-    /** @var array */
     protected array $headers;
 
     /**
      * @param  string|null $timestamp
-     * 
-     * @return void
      */
     public function __construct($timestamp = null)
     {
