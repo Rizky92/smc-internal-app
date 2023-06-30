@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Keuangan\RKAT;
 
 use App\Models\Bidang;
 use App\Models\Keuangan\RKAT\Anggaran;
+use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Models\Keuangan\RKAT\PemakaianAnggaran;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
@@ -13,9 +14,9 @@ use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class PemantauanRKAT extends Component
@@ -39,8 +40,12 @@ class PemantauanRKAT extends Component
 
     public function getDataTahunProperty(): array
     {
-        return collect(range((int) now()->format('Y'), 2023, -1))
-            ->mapWithKeys(fn (int $v, int $_): array => [$v => $v])
+        return DB::table('anggaran_bidang')
+            ->select('tahun')
+            ->groupBy('tahun')
+            ->orderBy('tahun', 'asc')
+            ->get()
+            ->mapWithKeys(fn (object $row): array => [$row->tahun => $row->tahun])
             ->all();
     }
 
@@ -61,7 +66,7 @@ class PemantauanRKAT extends Component
     public function render(): View
     {
         return view('livewire.keuangan.rkat.pemantauan-rkat')
-            ->layout(BaseLayout::class, ['title' => 'Laporan Pemakaian RKAT per Bidang']);
+            ->layout(BaseLayout::class, ['title' => 'Pemantauan Pemakaian RKAT per Bidang']);
     }
 
     protected function defaultValues(): void
@@ -71,42 +76,71 @@ class PemantauanRKAT extends Component
 
     protected function dataPerSheet(): array
     {
-        $bidang = Bidang::all();
-        $anggaran = Anggaran::all();
-
         $pemakaianAnggaran = PemakaianAnggaran::query()
-            ->selectRaw("anggaran_bidang_id, date_format(tgl_dipakai, '%Y-%m') as bulan, sum(nominal_pemakaian)")
-            ->with('anggaranBidang')
+            ->selectRaw("anggaran_bidang_id, month(tgl_dipakai) as bulan, sum(nominal_pemakaian) as total_dipakai")
             ->whereRaw('year(tgl_dipakai) = ?', $this->tahun)
-            ->groupByRaw("anggaran_bidang_id, date_format(tgl_dipakai, '%Y-%m')")
+            ->groupByRaw("anggaran_bidang_id, month(tgl_dipakai)")
+            ->get();
+
+        $anggaranBidang = AnggaranBidang::query()
+            ->with(['anggaran', 'bidang'])
+            ->whereTahun($this->tahun)
             ->get();
 
         return [
-            
+            $anggaranBidang->map(function (AnggaranBidang $model, int $_) use ($pemakaianAnggaran): array {
+                $pemakaianAnggaranBidang = $pemakaianAnggaran
+                    ->where('anggaran_bidang_id', $model->getKey())
+                    ->mapWithKeys(fn (PemakaianAnggaran $item, int $_): array => [$item->bulan => round(floatval($item->total_dipakai), 2)]);
+
+                $nominal = round($model->nominal_anggaran, 2);
+
+                $total = round(floatval($pemakaianAnggaranBidang->sum()), 2);
+
+                $selisih = $nominal - $total;
+
+                $persentase = $total > 0
+                    ? round($total / $nominal, 4)
+                    : 0;
+
+                $output = collect([
+                    'bidang'   => $model->bidang->nama,
+                    'anggaran' => $model->anggaran->nama,
+                    'nominal'  => $nominal,
+                ])
+                    ->merge(map_bulan($pemakaianAnggaranBidang))
+                    ->merge([
+                        'total'      => $total,
+                        'selisih'    => $selisih,
+                        'persentase' => $persentase,
+                    ]);
+
+                return $output->all();
+            }),
         ];
     }
 
     protected function columnHeaders(): array
     {
-        return collect(
-            carbon()
+        return collect(carbon('2023-01-01')
                 ->setYear(intval($this->tahun))
-                ->toPeriod(carbon()->endOfYear(), '1 month')
-        )
-            ->each
+                ->toPeriod(carbon()->endOfYear(), '1 month'))
+            ->map
             ->translatedFormat('F')
+            ->prepend('Nominal')
             ->prepend('Anggaran')
             ->prepend('Bidang')
+            ->push('Total')
             ->push('Selisih')
             ->push('Persentase')
-            ->toArray();
+            ->all();
     }
 
     protected function pageHeaders(): array
     {
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Pemantauan RKAT Tahun ' . $this->tahun,
+            'Pemantauan Pemakaian RKAT Tahun ' . $this->tahun,
             'Per ' . now()->translatedFormat('d F Y'),
         ];
     }

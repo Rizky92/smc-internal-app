@@ -13,6 +13,7 @@ use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -30,7 +31,7 @@ class PelaporanRKAT extends Component
     /** @var string */
     public $tahun;
 
-    /** @var string */
+    /** @var int */
     public $bidang;
 
     protected function queryString(): array
@@ -57,6 +58,7 @@ class PelaporanRKAT extends Component
                 'anggaranBidang.anggaran',
                 'anggaranBidang.bidang',
             ])
+            ->when($this->bidang !== -1, fn (Builder $q): Builder => $q->whereAnggaranBidangId($this->bidang))
             ->paginate($this->perpage);
     }
     
@@ -83,7 +85,7 @@ class PelaporanRKAT extends Component
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
         $this->tahun = now()->format('Y');
-        $this->bidang = 'SEMUA';
+        $this->bidang = -1;
     }
 
     protected function dataPerSheet(): array
@@ -95,7 +97,8 @@ class PelaporanRKAT extends Component
                 'anggaranBidang.anggaran',
                 'anggaranBidang.bidang',
             ])
-            ->get()
+            ->when($this->bidang !== -1, fn (Builder $q): Builder => $q->whereAnggaranBidangId($this->bidang))
+            ->cursor()
             ->map(fn (PemakaianAnggaran $model): array => [
                 'bidang'      => $model->anggaranBidang->bidang->nama,
                 'judul'       => $model->judul,
