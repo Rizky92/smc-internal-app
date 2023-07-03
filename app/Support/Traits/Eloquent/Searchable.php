@@ -9,9 +9,9 @@ use LogicException;
 trait Searchable
 {
     /**
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string $search
-     * @param \Illuminate\Support\Collection<int, string>|array<array-key, string> $columns
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  string $search
+     * @param  \Illuminate\Support\Collection<int, string>|array<array-key, string> $columns
      *
      * @return \Illuminate\Database\Eloquent\Builder
      *
@@ -41,8 +41,6 @@ trait Searchable
             ->split('/\s+/')
             ->filter()
             ->map(fn (string $word) => str($word)->wrap('%')->value());
-
-        $concatenatedColumns = 'concat(' . $columns->join(", ' ', ") . ')';
 
         $concatenatedColumns = $columns->joinStr(", ' ', ")->wrap('concat(', ')')->value();
 

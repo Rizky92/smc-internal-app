@@ -4,7 +4,6 @@ namespace App\Http\Livewire\Keuangan\RKAT;
 
 use App\Models\Bidang;
 use App\Models\Keuangan\RKAT\PemakaianAnggaran;
-use App\Settings\RKATSettings;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
@@ -13,7 +12,6 @@ use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -40,7 +38,7 @@ class PelaporanRKAT extends Component
             'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
             'tahun'    => ['except' => now()->format('Y')],
-            'bidang'   => ['except' => 'SEMUA'],
+            'bidang'   => ['except' => -1],
         ];
     }
 
@@ -52,13 +50,7 @@ class PelaporanRKAT extends Component
     public function getDataPenggunaanRKATProperty(): Paginator
     {
         return PemakaianAnggaran::query()
-            ->with([
-                'petugas',
-                'anggaranBidang',
-                'anggaranBidang.anggaran',
-                'anggaranBidang.bidang',
-            ])
-            ->when($this->bidang !== -1, fn (Builder $q): Builder => $q->whereAnggaranBidangId($this->bidang))
+            ->penggunaanRKAT($this->bidang)
             ->paginate($this->perpage);
     }
     
@@ -90,28 +82,22 @@ class PelaporanRKAT extends Component
 
     protected function dataPerSheet(): array
     {
-        $data = PemakaianAnggaran::query()
-            ->with([
-                'petugas',
-                'anggaranBidang',
-                'anggaranBidang.anggaran',
-                'anggaranBidang.bidang',
-            ])
-            ->when($this->bidang !== -1, fn (Builder $q): Builder => $q->whereAnggaranBidangId($this->bidang))
-            ->cursor()
-            ->map(fn (PemakaianAnggaran $model): array => [
-                'bidang'      => $model->anggaranBidang->bidang->nama,
-                'judul'       => $model->judul,
-                'anggaran'    => $model->anggaranBidang->anggaran->nama,
-                'tahun'       => $model->anggaranBidang->tahun,
-                'tgl_dipakai' => $model->tgl_dipakai,
-                'nominal'     => floatval($model->nominal_pemakaian),
-                'nip'         => $model->user_id,
-                'petugas'     => $model->petugas->nama,
-                'keterangan'  => $model->deskripsi,
-            ]);
-
-        return [$data];
+        return [
+            PemakaianAnggaran::query()
+                ->penggunaanRKAT($this->bidang)
+                ->cursor()
+                ->map(fn (PemakaianAnggaran $model): array => [
+                    'bidang'      => $model->anggaranBidang->bidang->nama,
+                    'judul'       => $model->judul,
+                    'anggaran'    => $model->anggaranBidang->anggaran->nama,
+                    'tahun'       => $model->anggaranBidang->tahun,
+                    'tgl_dipakai' => $model->tgl_dipakai,
+                    'nominal'     => floatval($model->nominal_pemakaian),
+                    'nip'         => $model->user_id,
+                    'petugas'     => $model->petugas->nama,
+                    'keterangan'  => $model->deskripsi,
+                ]),
+        ];
     }
 
     protected function columnHeaders(): array

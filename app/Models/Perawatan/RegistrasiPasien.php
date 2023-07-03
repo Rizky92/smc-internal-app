@@ -82,11 +82,6 @@ class RegistrasiPasien extends Model
         return $this->hasMany(RawatInap::class, 'no_rawat', 'no_rawat');
     }
 
-    public function rujukanKeluar(): HasMany
-    {
-        return $this->hasMany(RujukanKeluar::class, 'no_rawat', 'no_rawat');
-    }
-
     /**
      * @psalm-suppress InvalidReturnType
      * @psalm-suppress InvalidReturnStatement

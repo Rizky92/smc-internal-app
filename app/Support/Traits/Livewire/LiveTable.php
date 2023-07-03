@@ -8,7 +8,7 @@ trait LiveTable
 {
     use WithPagination;
 
-    /** @var ?string */
+    /** @var string */
     public $cari;
 
     /** @var int */
@@ -37,9 +37,7 @@ trait LiveTable
 
     public function mountLiveTable(): void
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
+        $this->defaultValuesLiveTable();
     }
 
     public function sortBy(string $column, ?string $direction): void
@@ -65,5 +63,12 @@ trait LiveTable
     protected function performSort(): void
     {
         $this->emit('$refresh');
+    }
+
+    protected function defaultValuesLiveTable(): void
+    {
+        $this->cari = '';
+        $this->perpage = 25;
+        $this->sortColumns = [];
     }
 }

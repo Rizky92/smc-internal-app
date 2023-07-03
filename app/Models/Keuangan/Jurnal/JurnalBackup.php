@@ -29,8 +29,8 @@ class JurnalBackup extends Model
     ];
 
     protected $casts = [
-        'waktu_jurnal_asli' => 'datetime:Y-m-d H:i:s',
-        'waktu_jurnal_diubah' => 'datetime:Y-m-d H:i:s',
+        'waktu_jurnal_asli' => 'datetime',
+        'waktu_jurnal_diubah' => 'datetime',
     ];
 
     public function pegawai(): BelongsTo

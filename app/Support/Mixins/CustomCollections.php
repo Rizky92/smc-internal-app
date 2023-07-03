@@ -15,11 +15,9 @@ class CustomCollections
     {
         /** 
          * @psalm-scope-this Illuminate\Support\Collection
-         * @var \Illuminate\Support\Collection $this
          */
-        return function (string $glue, string $finalGlue = ''): Stringable {
-            return new Stringable($this->join($glue, $finalGlue));
-        };
+        return fn (string $glue, string $finalGlue = ''): Stringable =>
+            new Stringable($this->join($glue, $finalGlue));
     }
 
     /**
@@ -27,9 +25,8 @@ class CustomCollections
      */
     public function isAssoc(): Closure
     {
-        /** 
+        /**
          * @psalm-scope-this Illuminate\Support\Collection
-         * @var \Illuminate\Support\Collection $this
          */
         return function (): bool {
             $keys = array_keys($this->items);
@@ -43,9 +40,8 @@ class CustomCollections
      */
     public function isList(): Closure
     {
-        /** 
+        /**
          * @psalm-scope-this Illuminate\Support\Collection
-         * @var \Illuminate\Support\Collection $this
          */
         return function (): bool {
             $keys = array_keys($this->items);
@@ -59,13 +55,13 @@ class CustomCollections
      */
     public function pushIf(): Closure
     {
-        /** 
+        /**
          * @psalm-scope-this Illuminate\Support\Collection
-         * @var \Illuminate\Support\Collection $this
          */
         return fn (bool $condition, ...$values): Collection =>
             $this->when($condition, fn (Collection $c) => 
-                $c->push($values));
+                $c->push($values)
+            );
     }
 
     /**
@@ -73,13 +69,13 @@ class CustomCollections
      */
     public function pushUnless(): Closure
     {
-        /** 
+        /**
          * @psalm-scope-this Illuminate\Support\Collection
-         * @var \Illuminate\Support\Collection $this
          */
         return fn (bool $condition, ...$values): Collection => 
             $this->unless($condition, fn (Collection $c) =>
-                $c->push($values));
+                $c->push($values)
+            );
     }
 
     /**
@@ -87,17 +83,13 @@ class CustomCollections
      */
     public function whereLike(): Closure
     {
-        /** 
+        /**
          * @psalm-scope-this Illuminate\Support\Collection
-         * @var \Illuminate\Support\Collection $this
          */
-        return function (?string $search = null, int $looseRange = 1): Collection {
-            return $this->filter(function (string $v) use ($search, $looseRange): bool {
-                if (empty($search)) return true;
-
-                return levenshtein($v, $search) <= $looseRange;
-            });
-        };
+        return fn (?string $search = null, int $maxDistance = 1): Collection =>
+            $this->filter(fn (string $v): bool =>
+                empty($search) ?: levenshtein($v, $search) <= $maxDistance
+            );
     }
 
     /**
@@ -105,16 +97,12 @@ class CustomCollections
      */
     public function containsLike(): Closure
     {
-        /** 
+        /**
          * @psalm-scope-this Illuminate\Support\Collection
-         * @var \Illuminate\Support\Collection $this
          */
-        return function (?string $search = null, int $looseRange = 1): bool {
-            return $this->contains(function (string $v) use ($search, $looseRange): bool {
-                if (empty($search)) return false;
-                
-                return levenshtein($v, $search) <= $looseRange;
-            });
-        };
+        return fn (?string $search = null, int $maxDistance = 1): bool =>
+            $this->contains(fn (string $v): bool =>
+                empty($search) ?: levenshtein($v, $search) <= $maxDistance
+            );
     }
 }

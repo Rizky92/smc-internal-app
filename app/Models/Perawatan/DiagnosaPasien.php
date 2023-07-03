@@ -8,5 +8,13 @@ class DiagnosaPasien extends Model
 {
     protected $connection = 'mysql_sik';
     
+    protected $primaryKey = false;
+
+    protected $keyType = false;
+
     protected $table = 'diagnosa_pasien';
+
+    public $incrementing = false;
+
+    public $timestamps = false;
 }

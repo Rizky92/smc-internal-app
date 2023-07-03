@@ -242,6 +242,8 @@ class BaseLayout extends Component
                     'farmasi.kunjungan-per-bentuk-obat.read',
                     'farmasi.kunjungan-per-poli.read',
                     'farmasi.perbandingan-po-obat.read',
+                    'farmasi.laporan-pembuatan-soap.read',
+                    'farmasi.laporan-pemakaian-obat-napza.read',
                 ]),
                 'items' => [
                     [
@@ -279,6 +281,18 @@ class BaseLayout extends Component
                         'icon' => 'fas fa-balance-scale',
                         'url' => route('admin.farmasi.perbandingan-po-obat'),
                         'hasAnyPermissions' => $user->can('farmasi.perbandingan-po-obat.read'),
+                    ],
+                    [
+                        'name' => 'Pembuatan SOAP',
+                        'icon' => 'fas fa-balance-scale',
+                        'url' => route('admin.farmasi.laporan-pembuatan-soap'),
+                        'hasAnyPermissions' => $user->can('farmasi.laporan-pembuatan-soap.read'),
+                    ],
+                    [
+                        'name' => 'Pemakaian Obat NAPZA',
+                        'icon' => 'fas fa-balance-scale',
+                        'url' => route('admin.farmasi.laporan-pemakaian-obat-napza'),
+                        'hasAnyPermissions' => $user->can('farmasi.laporan-pemakaian-obat-napza.read'),
                     ],
                 ],
             ],

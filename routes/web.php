@@ -178,6 +178,14 @@ Route::prefix('admin')
                 Route::get('perbandingan-barang-po', Farmasi\PerbandinganBarangPO::class)
                     ->middleware('can:farmasi.perbandingan-po-obat.read')
                     ->name('perbandingan-po-obat');
+
+                Route::get('laporan-pembuatan-soap', Farmasi\LaporanPembuatanSOAP::class)
+                    ->middleware('can:farmasi.laporan-pembuatan-soap.read')
+                    ->name('laporan-pembuatan-soap');
+
+                Route::get('laporan-pemakaian-obat-napza', Farmasi\LaporanPemakaianObatNAPZA::class)
+                    ->middleware('can:farmasi.laporan-pemakaian-obat-napza.read')
+                    ->name('laporan-pemakaian-obat-napza');
             });
 
         Route::prefix('rekam-medis')

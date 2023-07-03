@@ -5,12 +5,12 @@ namespace App\Rules;
 use Illuminate\Contracts\Validation\Rule;
 
 /**
- * @template TModel as \Illuminate\Database\Eloquent\Model
+ * @template TModel as class-string<\Illuminate\Database\Eloquent\Model>
  */
 class DoesntExist implements Rule
 {
     /**
-     * @var class-string<TModel>
+     * @var TModel
      */
     private string $model;
 
@@ -22,7 +22,7 @@ class DoesntExist implements Rule
     /**
      * Create a new rule instance.
      * 
-     * @param  class-string<TModel> $model
+     * @param  TModel $model
      * @param  string $column
      */
     public function __construct(string $model, string $column)
@@ -34,8 +34,8 @@ class DoesntExist implements Rule
     /**
      * Determine if the validation rule passes.
      *
-     * @param  string  $attribute
-     * @param  mixed  $value
+     * @param  string $attribute
+     * @param  mixed $value
      * @return bool
      */
     public function passes($attribute, $value)

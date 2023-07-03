@@ -6,15 +6,16 @@ use App\Models\Bidang;
 use App\Models\Kepegawaian\Petugas;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Znck\Eloquent\Relations\BelongsToThrough;
-use Znck\Eloquent\Traits\BelongsToThrough as TraitsBelongsToThrough;
+use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
 class PemakaianAnggaran extends Model
 {
-    use Sortable, Searchable, HasFactory, TraitsBelongsToThrough;
+    use Sortable, Searchable, HasFactory, BelongsToThroughTrait;
 
     protected $connection = 'mysql_smc';
 
@@ -46,5 +47,16 @@ class PemakaianAnggaran extends Model
     public function petugas(): BelongsTo
     {
         return $this->belongsTo(Petugas::class, 'user_id', 'nip');
+    }
+
+    public function scopePenggunaanRKAT(Builder $query, int $bidangId = -1): Builder
+    {
+        return $query
+            ->with(['petugas', 'anggaranBidang', 'anggaranBidang.anggaran', 'anggaranBidang.bidang'])
+            ->when($bidangId !== -1,
+                fn (Builder $q): Builder => $q->whereHas('anggaranBidang.bidang',
+                    fn (Builder $q): Builder => $q->whereId($bidangId)
+                )
+            );
     }
 }

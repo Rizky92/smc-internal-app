@@ -23,23 +23,20 @@ class DemografiPasien extends Model
     public $timestamps = false;
 
     /**
-     * @return string[]
+     * @var string[]
      */
-    protected function searchColumns(): array
-    {
-        return [
-            'kecamatan',
-            'no_rm',
-            'no_rawat',
-            'nm_pasien',
-            'almt',
-            'diagnosa',
-            'agama',
-            'pendidikan',
-            'bahasa',
-            'suku',
-        ];
-    }
+    protected $searchColumns = [
+        'kecamatan',
+        'no_rm',
+        'no_rawat',
+        'nm_pasien',
+        'almt',
+        'diagnosa',
+        'agama',
+        'pendidikan',
+        'bahasa',
+        'suku',
+    ];
 
     public function scopeLaporanDemografiExcel(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {

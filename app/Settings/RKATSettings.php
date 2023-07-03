@@ -26,10 +26,10 @@ class RKATSettings extends Settings
     public static function casts(): array
     {
         return [
-            'batas_penetapan_awal' => DateTimeInterfaceCast::class,
+            'batas_penetapan_awal'  => DateTimeInterfaceCast::class,
             'batas_penetapan_akhir' => DateTimeInterfaceCast::class,
-            'batas_input_awal' => DateTimeInterfaceCast::class,
-            'batas_input_akhir' => DateTimeInterfaceCast::class,
+            'batas_input_awal'      => DateTimeInterfaceCast::class,
+            'batas_input_akhir'     => DateTimeInterfaceCast::class,
         ];
     }
 }

@@ -29,7 +29,7 @@ class KategoriRKAT extends Component
     public function render(): View
     {
         return view('livewire.keuangan.rkat.kategori-rkat')
-            ->layout(BaseLayout::class, ['title' => 'Pembuatan RKAT baru']);
+            ->layout(BaseLayout::class, ['title' => 'Kategori RKAT']);
     }
 
     protected function defaultValues(): void

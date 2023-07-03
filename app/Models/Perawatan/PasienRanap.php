@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Perawatan\Laporan;
+namespace App\Models\Perawatan;
 
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
@@ -22,6 +22,9 @@ class PasienRanap extends Model
 
     public $timestamps = false;
 
+    /** 
+     * @var string[]
+     */
     protected $searchColumns = [
         'no_rawat',
         'ruangan',

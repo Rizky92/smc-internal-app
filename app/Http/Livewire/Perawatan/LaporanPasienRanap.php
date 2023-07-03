@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire\Perawatan;
 
-use App\Models\Perawatan\Laporan\PasienRanap;
+use App\Models\Perawatan\PasienRanap;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
