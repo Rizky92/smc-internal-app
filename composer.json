@@ -80,11 +80,11 @@
             "@php artisan ide-helper:models --nowrite",
             "@php artisan ide-helper:meta",
             "./vendor/bin/psalm --use-baseline=psalm-baseline.xml --report=analysis.json > NUL",
-            "./vendor/bin/psalm --alter --php-version=7.4 --issues=all --allow-backwards-incompatible-changes=true > NUL"
+            "./vendor/bin/psalm --alter --php-version=7.4 --issues=MissingReturnType,MissingClosureReturnType,UnnecessaryVarAnnotation,ParamNameMismatch,InvalidReturnType,InvalidNullableReturnType,InvalidFalsableReturnType --allow-backwards-incompatible-changes=true > NUL"
         ],
         "lint:rebase": [
             "./vendor/bin/psalm --set-baseline=psalm-baseline.xml > NUL",
-            "./vendor/bin/psalm --alter --php-version=7.4 --issues=all --allow-backwards-incompatible-changes=true > NUL"
+            "./vendor/bin/psalm --alter --php-version=7.4 --issues=MissingReturnType,MissingClosureReturnType,UnnecessaryVarAnnotation,ParamNameMismatch,InvalidReturnType,InvalidNullableReturnType,InvalidFalsableReturnType --allow-backwards-incompatible-changes=true > NUL"
         ],
         "psalm-init": [
             "./vendor/bin/psalm --init",

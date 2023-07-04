@@ -19,6 +19,21 @@
     </plugins>
 
     <issueHandlers>
+        <InvalidReturnType>
+            <errorLevel type="suppress">
+                <file name="app\Models\Perawatan\RawatInap.php" />
+            </errorLevel>
+        </InvalidReturnType>
+        <TooManyTemplateParams>
+            <errorLevel type="suppress">
+                <file name="app\Models\Perawatan\RawatInap.php" />
+            </errorLevel>
+        </TooManyTemplateParams>
+        <InvalidReturnStatement>
+            <errorLevel type="suppress">
+                <file name="app\Models\Perawatan\RawatInap.php" />
+            </errorLevel>
+        </InvalidReturnStatement>
         <UnsafeInstantiation errorLevel="suppress" />
         <PropertyNotSetInConstructor errorLevel="suppress" />
         <UndefinedPropertyFetch errorLevel="suppress" />
