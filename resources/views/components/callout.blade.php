@@ -27,21 +27,19 @@
         'danger' => 'fa-times-circle text-danger',
     ];
 
-    if (! array_key_exists($variant, $colorVariants)) {
-        $calloutClass[] = $variant;
-    } else {
+    if (array_key_exists($variant, $colorVariants)) {
         $calloutClass[] = $colorVariants[$variant];
-    }
-
-    if (! is_null($icon)) {
-        $iconClass = $icon;
     } else {
-        $iconClass[] = $iconVariants[$variant];
+        $calloutClass[] = $variant;
     }
 
-    if (is_array($iconClass)) {
-        $iconClass = Arr::toCssClasses($iconClass);
+    if (array_key_exists($variant, $iconVariants)) {
+        $iconClass[] = $iconVariants[$variant];
+    } else {
+        $iconClass[] = $icon;
     }
+
+    $iconClass = Arr::toCssClasses($iconClass);
 
     $calloutClass = Arr::toCssClasses($calloutClass);
 @endphp

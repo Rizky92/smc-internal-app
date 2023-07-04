@@ -21,6 +21,27 @@
       <code>BpjsService::start()</code>
     </UndefinedMethod>
   </file>
+  <file src="app/Http/Livewire/Aplikasi/Concerns/PengaturanRKAT.php">
+    <InvalidPropertyAssignmentValue occurrences="1">
+      <code>$settings-&gt;tahun</code>
+    </InvalidPropertyAssignmentValue>
+    <PossiblyNullReference occurrences="1">
+      <code>hasRole</code>
+    </PossiblyNullReference>
+    <UndefinedInterfaceMethod occurrences="1">
+      <code>hasRole</code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="app/Http/Livewire/Aplikasi/Modal/InputBidangUnit.php">
+    <PossiblyNullReference occurrences="2">
+      <code>can</code>
+      <code>can</code>
+    </PossiblyNullReference>
+    <UndefinedInterfaceMethod occurrences="2">
+      <code>can</code>
+      <code>can</code>
+    </UndefinedInterfaceMethod>
+  </file>
   <file src="app/Http/Livewire/HakAkses/Khanza.php">
     <PossiblyNullReference occurrences="2">
       <code>hasRole</code>
@@ -80,9 +101,47 @@
       <code>can</code>
       <code>cannot</code>
     </UndefinedInterfaceMethod>
-    <UndefinedPropertyFetch occurrences="1">
-      <code>$jurnalBackup-&gt;tgl_jurnal_asli</code>
-    </UndefinedPropertyFetch>
+  </file>
+  <file src="app/Http/Livewire/Keuangan/RKAT/Modal/InputKategoriRKAT.php">
+    <PossiblyNullReference occurrences="2">
+      <code>can</code>
+      <code>can</code>
+    </PossiblyNullReference>
+    <UndefinedInterfaceMethod occurrences="2">
+      <code>can</code>
+      <code>can</code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="app/Http/Livewire/Keuangan/RKAT/Modal/InputPelaporanRKAT.php">
+    <NoInterfaceProperties occurrences="1">
+      <code>Auth::user()-&gt;nik</code>
+    </NoInterfaceProperties>
+    <PossiblyNullPropertyFetch occurrences="1">
+      <code>Auth::user()-&gt;nik</code>
+    </PossiblyNullPropertyFetch>
+    <PossiblyNullReference occurrences="2">
+      <code>can</code>
+      <code>can</code>
+    </PossiblyNullReference>
+    <UndefinedInterfaceMethod occurrences="2">
+      <code>can</code>
+      <code>can</code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="app/Http/Livewire/Keuangan/RKAT/Modal/InputPenetapanRKAT.php">
+    <PossiblyNullReference occurrences="2">
+      <code>can</code>
+      <code>can</code>
+    </PossiblyNullReference>
+    <UndefinedInterfaceMethod occurrences="2">
+      <code>can</code>
+      <code>can</code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="app/Http/Livewire/Keuangan/RKAT/PemantauanRKAT.php">
+    <PossiblyInvalidArgument occurrences="1">
+      <code>$pemakaianAnggaranBidang</code>
+    </PossiblyInvalidArgument>
   </file>
   <file src="app/Http/Livewire/Logistik/InputMinmaxStok.php">
     <PossiblyNullReference occurrences="1">
@@ -106,10 +165,6 @@
     </UndefinedMethod>
   </file>
   <file src="app/Http/Livewire/User/Khanza/SetHakAkses.php">
-    <PossiblyNullArgument occurrences="2">
-      <code>$this-&gt;nrp</code>
-      <code>$this-&gt;nrp</code>
-    </PossiblyNullArgument>
     <PossiblyNullReference occurrences="1">
       <code>hasRole</code>
     </PossiblyNullReference>
@@ -117,9 +172,6 @@
       <code>!$this-&gt;isDeferred</code>
       <code>$this-&gt;isDeferred</code>
     </RedundantCondition>
-    <TooManyArguments occurrences="1">
-      <code>except</code>
-    </TooManyArguments>
     <UndefinedInterfaceMethod occurrences="1">
       <code>hasRole</code>
     </UndefinedInterfaceMethod>
@@ -139,7 +191,7 @@
       <code>hasRole</code>
     </UndefinedInterfaceMethod>
   </file>
-  <file src="app/Http/Livewire/User/ManajemenUser.php">
+  <file src="app/Http/Livewire/User/Manajamen.php">
     <PossiblyNullReference occurrences="2">
       <code>hasRole</code>
       <code>impersonate</code>
@@ -175,39 +227,15 @@
     <ImplicitToStringCast occurrences="1">
       <code>DB::raw('trim(pegawai.nik)')</code>
     </ImplicitToStringCast>
-    <PossiblyNullPropertyFetch occurrences="2">
-      <code>$user-&gt;permissions</code>
-      <code>$user-&gt;roles</code>
-    </PossiblyNullPropertyFetch>
-    <PossiblyNullReference occurrences="2">
-      <code>pluck</code>
-      <code>pluck</code>
+    <PossiblyNullArgument occurrences="1">
+      <code>$this-&gt;roles</code>
+    </PossiblyNullArgument>
+    <PossiblyNullReference occurrences="1">
+      <code>hasRole</code>
     </PossiblyNullReference>
-    <TraitMethodSignatureMismatch occurrences="1">
-      <code>protected function defaultValues()&#13;</code>
-    </TraitMethodSignatureMismatch>
-    <UndefinedClass occurrences="1">
-      <code>Auth</code>
-    </UndefinedClass>
-  </file>
-  <file src="app/Http/Middleware/AuthorizeAny.php">
-    <LessSpecificReturnStatement occurrences="1"/>
-    <MoreSpecificReturnType occurrences="1">
-      <code>\Illuminate\Database\Eloquent\Model|string</code>
-    </MoreSpecificReturnType>
-    <NullableReturnStatement occurrences="1"/>
-  </file>
-  <file src="app/Http/Middleware/RoleMiddleware.php">
-    <RedundantCondition occurrences="1">
-      <code>explode('|', $role)</code>
-    </RedundantCondition>
-    <TypeDoesNotContainType occurrences="1">
-      <code>is_array($role)</code>
-    </TypeDoesNotContainType>
-    <UndefinedDocblockClass occurrences="2">
-      <code>$user</code>
-      <code>$user</code>
-    </UndefinedDocblockClass>
+    <UndefinedInterfaceMethod occurrences="1">
+      <code>hasRole</code>
+    </UndefinedInterfaceMethod>
   </file>
   <file src="app/Http/Middleware/TrustProxies.php">
     <NonInvariantDocblockPropertyType occurrences="1">
@@ -274,7 +302,7 @@
   </file>
   <file src="app/Models/Keuangan/NotaSelesai.php">
     <ImplicitToStringCast occurrences="9">
-      <code>$notaPasien</code>
+      <code>DB::raw($notaPasien)</code>
       <code>DB::raw($sik . '.bangsal bangsal')</code>
       <code>DB::raw($sik . '.kamar kamar')</code>
       <code>DB::raw($sik . '.kamar_inap kamar_inap')</code>
@@ -284,9 +312,6 @@
       <code>DB::raw($sik . '.piutang_pasien piutang_pasien')</code>
       <code>DB::raw($sik . '.reg_periksa reg_periksa')</code>
     </ImplicitToStringCast>
-    <PossiblyNullPropertyFetch occurrences="1">
-      <code>$latest-&gt;tgl_penyelesaian</code>
-    </PossiblyNullPropertyFetch>
   </file>
   <file src="app/Models/Keuangan/PenagihanPiutangDetail.php">
     <ImplicitToStringCast occurrences="4">
@@ -328,19 +353,17 @@
     </ImplicitToStringCast>
   </file>
   <file src="app/Models/Perawatan/RawatInap.php">
-    <InvalidReturnStatement occurrences="1"/>
-    <InvalidReturnType occurrences="1">
-      <code>HasMany</code>
-    </InvalidReturnType>
+    <InvalidTemplateParam occurrences="1">
+      <code>Builder&lt;TRelatedModel&gt;</code>
+    </InvalidTemplateParam>
+    <UndefinedDocblockClass occurrences="1">
+      <code>Builder&lt;TRelatedModel&gt;</code>
+    </UndefinedDocblockClass>
   </file>
   <file src="app/Models/Perawatan/RegistrasiPasien.php">
     <ImplicitToStringCast occurrences="1">
       <code>DB::raw('dokter dokter_pj')</code>
     </ImplicitToStringCast>
-    <InvalidReturnStatement occurrences="1"/>
-    <InvalidReturnType occurrences="1">
-      <code>HasMany</code>
-    </InvalidReturnType>
   </file>
   <file src="app/Providers/AppServiceProvider.php">
     <UndefinedInterfaceMethod occurrences="1">
@@ -362,18 +385,7 @@
       <code>$this-&gt;response</code>
     </PossiblyNullReference>
   </file>
-  <file src="app/Support/Mixins/CustomStringable.php">
-    <UndefinedThisPropertyFetch occurrences="4">
-      <code>$this-&gt;value</code>
-      <code>$this-&gt;value</code>
-      <code>$this-&gt;value</code>
-      <code>$this-&gt;value</code>
-    </UndefinedThisPropertyFetch>
-  </file>
   <file src="app/Support/Traits/Eloquent/Searchable.php">
-    <MismatchingDocblockParamType occurrences="1">
-      <code>\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder</code>
-    </MismatchingDocblockParamType>
     <RedundantCondition occurrences="2">
       <code>is_array($this-&gt;searchColumns)</code>
       <code>property_exists($this, 'searchColumns') &amp;&amp; is_array($this-&gt;searchColumns)</code>
@@ -388,20 +400,12 @@
       <code>array&lt;string, \Illuminate\Database\Query\Expression&lt;string&gt;|string&gt;</code>
     </TooManyTemplateParams>
   </file>
-  <file src="app/Support/Traits/Livewire/Filterable.php">
-    <TraitMethodSignatureMismatch occurrences="1">
-      <code>abstract protected function defaultValues(): void;</code>
-    </TraitMethodSignatureMismatch>
-  </file>
   <file src="app/Support/Traits/Livewire/LiveTable.php">
     <RedundantCondition occurrences="1">
       <code>null</code>
     </RedundantCondition>
   </file>
   <file src="app/Support/Traits/Livewire/MenuTracker.php">
-    <InvalidNullableReturnType occurrences="1">
-      <code>string</code>
-    </InvalidNullableReturnType>
     <NoInterfaceProperties occurrences="1">
       <code>Auth::user()-&gt;nik</code>
     </NoInterfaceProperties>
@@ -435,10 +439,5 @@
       <code>enableQueryLog</code>
       <code>getQueryLog</code>
     </UndefinedInterfaceMethod>
-  </file>
-  <file src="database/seeders/PermissionSeeder.php">
-    <PossiblyNullReference occurrences="1">
-      <code>assignRole</code>
-    </PossiblyNullReference>
   </file>
 </files>

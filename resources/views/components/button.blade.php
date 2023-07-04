@@ -19,7 +19,7 @@
         'lg' => 'btn-lg',
     ];
     
-    $buttonVariants = [
+    $buttonVariants = collect([
         'default' => 'default',
         'primary' => 'primary',
         'secondary' => 'secondary',
@@ -30,9 +30,7 @@
         'light' => 'light',
         'dark' => 'dark',
         'link' => 'link',
-    ];
-    
-    $buttonVariants = collect($buttonVariants)
+    ])
         ->when(
             $outline,
             fn($cols) => $cols->map(fn($v, $k) => str($v)->prepend('btn-outline-'))->replace(['link' => 'btn-link']),

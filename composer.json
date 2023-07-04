@@ -5,6 +5,7 @@
     "require": {
         "php": "^7.4",
         "ext-xlswriter": "*",
+        "brick/money": "^0.5.3",
         "diglactic/laravel-breadcrumbs": "^8.1.1",
         "fideloper/proxy": "^4.4.2",
         "fruitcake/laravel-cors": "^2.2.0",
@@ -20,7 +21,8 @@
         "rizky92/laravel-xlswriter": "*",
         "spatie/laravel-permission": "^5.10.1",
         "spatie/laravel-settings": "^3.1",
-        "staudenmeir/belongs-to-through": "^2.11"
+        "staudenmeir/belongs-to-through": "^2.11",
+        "staudenmeir/laravel-adjacency-list": "^1.9"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.7.0",
@@ -77,7 +79,12 @@
             "@php artisan ide-helper:generate",
             "@php artisan ide-helper:models --nowrite",
             "@php artisan ide-helper:meta",
-            "./vendor/bin/psalm --report=analysis.json > NUL"
+            "./vendor/bin/psalm --use-baseline=psalm-baseline.xml --report=analysis.json > NUL",
+            "./vendor/bin/psalm --alter --php-version=7.4 --issues=all --allow-backwards-incompatible-changes=true > NUL"
+        ],
+        "lint:rebase": [
+            "./vendor/bin/psalm --set-baseline=psalm-baseline.xml > NUL",
+            "./vendor/bin/psalm --alter --php-version=7.4 --issues=all --allow-backwards-incompatible-changes=true > NUL"
         ],
         "psalm-init": [
             "./vendor/bin/psalm --init",
