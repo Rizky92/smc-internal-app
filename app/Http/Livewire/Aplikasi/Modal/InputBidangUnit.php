@@ -16,6 +16,9 @@ class InputBidangUnit extends Component
     /** @var int */
     public $bidangId;
 
+    /** @var int */
+    public $parentId;
+
     /** @var string */
     public $nama;
 
@@ -31,14 +34,22 @@ class InputBidangUnit extends Component
         $this->defaultValues();
     }
 
+    public function getParentBidangProperty()
+    {
+        return Bidang::query()
+            ->whereNull('parent_id')
+            ->pluck('nama', 'id');
+    }
+
     public function render(): View
     {
         return view('livewire.aplikasi.modal.input-bidang-unit');
     }
 
-    public function prepare(int $id = -1, string $nama = ''): void
+    public function prepare(int $bidangId = -1, int $parentId = -1, string $nama = ''): void
     {
-        $this->bidangId = $id;
+        $this->parentId = $parentId;
+        $this->bidangId = $bidangId;
         $this->nama = $nama;
     }
 
@@ -59,7 +70,7 @@ class InputBidangUnit extends Component
 
         tracker_start();
 
-        Bidang::create(['nama' => $this->nama]);
+        Bidang::create(['nama' => $this->nama, 'parent_id' => $this->parentId]);
 
         tracker_end();
 
@@ -86,6 +97,7 @@ class InputBidangUnit extends Component
         }
 
         $bidang->nama = $this->nama;
+        $bidang->parent_id = $this->parentId;
 
         $bidang->save();
 
@@ -95,6 +107,7 @@ class InputBidangUnit extends Component
 
     protected function defaultValues(): void
     {
+        $this->parentId = -1;
         $this->bidangId = -1;
         $this->nama = '';
     }

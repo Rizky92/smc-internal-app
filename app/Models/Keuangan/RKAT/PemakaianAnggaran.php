@@ -19,11 +19,10 @@ class PemakaianAnggaran extends Model
 
     protected $connection = 'mysql_smc';
 
-    protected $table = 'pemakaian_anggaran_bidang';
+    protected $table = 'pemakaian_anggaran';
 
     protected $fillable = [
         'deskripsi',
-        'nominal_pemakaian',
         'tgl_dipakai',
         'anggaran_bidang_id',
         'user_id',

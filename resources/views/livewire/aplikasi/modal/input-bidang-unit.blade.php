@@ -8,6 +8,10 @@
             $('#modal-input-bidang-unit').on('hide.bs.modal', e => {
                 @this.emit('bidang.hide-modal')
             })
+
+            $(document).on('data-saved', () => {
+                $('#modal-input-bidang-unit').modal('hide')
+            })
         </script>
     @endpush
     @php($isUpdating = $bidangId !== -1)
@@ -18,6 +22,16 @@
                     <div class="form-group mt-3">
                         <label for="nama-bidang">Nama Bidang:</label>
                         <input type="text" id="nama-bidang" wire:model.defer="nama" class="form-control form-control-sm" />
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="parent-bidang">Sub-bidang dari:</label>
+                        <x-form.select
+                            model="parentId"
+                            :options="$this->parentBidang"
+                            placeholder="-"
+                            placeholderValue="-1"
+                            width="full-width"
+                        />
                     </div>
                 </x-row-col>
             </form>

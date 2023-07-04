@@ -31,7 +31,10 @@ class BidangUnit extends Component
      */
     public function getBidangUnitProperty()
     {
-        return Bidang::paginate($this->perpage);
+        return Bidang::query()
+            ->whereNull('parent_id')
+            ->with(['descendants' => fn ($q) => $q->depthFirst()])
+            ->get();
     }
 
     protected function defaultValues(): void

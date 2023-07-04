@@ -21,7 +21,7 @@
                     <x-table.th title="Perizinan yang Diberikan" />
                 </x-slot>
                 <x-slot name="body">
-                    @foreach ($this->roles as $role)
+                    @forelse ($this->roles as $role)
                         @php($superadmin = $role->name === config('permission.superadmin_name'))
                         <x-table.tr>
                             <x-table.td>
@@ -41,7 +41,9 @@
                                 </div>
                             </x-table.td>
                         </x-table.tr>
-                    @endforeach
+                    @empty
+                        <x-table.tr-empty colspan="3" padding />
+                    @endforelse
                 </x-slot>
             </x-table>
         </x-slot>

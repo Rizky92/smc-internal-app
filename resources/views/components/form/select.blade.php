@@ -2,6 +2,7 @@
     'model' => null,
     'options' => [],
     'placeholder' => null,
+    'placeholderValue' => null,
     'showKey' => false,
     'width' => 'max-content',
 ])
@@ -37,7 +38,7 @@
 <div class="input-group input-group-sm" style="{{ $styles[$width] }}">
     <select {{ $attributes->merge($attrs) }}>
         @if ($placeholder)
-            <option hidden selected value="{{ $placeholder }}">{{ $placeholder }}</option>
+            <option hidden selected value="{{ $placeholderValue ?? $placeholder }}">{{ $placeholder }}</option>
             <option disabled>{{ $placeholder }}</option>
         @endif
         @foreach ($options as $key => $value)

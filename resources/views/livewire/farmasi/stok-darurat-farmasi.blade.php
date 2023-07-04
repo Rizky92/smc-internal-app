@@ -57,7 +57,7 @@
                             <x-table.td class="text-right">{{ floatval($obat->pemakaian_1_minggu) }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="21" />
+                        <x-table.tr-empty colspan="21" padding />
                     @endforelse
                 </x-slot>
             </x-table>

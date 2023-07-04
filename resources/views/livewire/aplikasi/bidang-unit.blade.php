@@ -7,9 +7,9 @@
         @push('js')
             <script>
                 function loadData(e) {
-                    let { id, name } = e.dataset
+                    let { bidangId, parentId, name } = e.dataset
 
-                    @this.emit('prepare', id, name)
+                    @this.emit('prepare', bidangId, parentId, name)
 
                     $('#modal-input-bidang-unit').modal('show')
                 }
@@ -29,7 +29,6 @@
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" style="min-width: 100%" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
-                    <x-table.th style="width: 7ch" name="id" title="#" />
                     <x-table.th name="nama" title="Nama" />
                 </x-slot>
                 <x-slot name="body">
@@ -37,13 +36,28 @@
                         <x-table.tr>
                             <x-table.td
                                 clickable
-                                data-id="{{ $item->id }}"
+                                data-bidang-id="{{ $item->id }}"
+                                data-parent-id="{{ $item->parent_id ?? -1 }}"
                                 data-name="{{ $item->nama }}"
-                            >{{ $item->id }}</x-table.td>
-                            <x-table.td>{{ $item->nama }}</x-table.td>
+                            >{{ $item->nama }}</x-table.td>
                         </x-table.tr>
+                        @foreach ($item->descendants ?? [] as $descendant)
+                            <x-table.tr>
+                                <x-table.td
+                                    clickable
+                                    data-bidang-id="{{ $descendant->id }}"
+                                    data-parent-id="{{ $descendant->parent_id ?? -1 }}"
+                                    data-name="{{ $descendant->nama }}"
+                                >
+                                    @for ($i = 0; $i < $descendant->depth; $i++)
+                                        &nbsp;&nbsp;&nbsp;&nbsp;
+                                    @endfor
+                                    {{ $descendant->nama }}
+                                </x-table.td>
+                            </x-table.tr>
+                        @endforeach
                     @empty
-                        <x-table.tr-empty colspan="2" />
+                        <x-table.tr-empty colspan="1" padding />
                     @endforelse
                 </x-slot>
             </x-table>

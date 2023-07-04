@@ -105,7 +105,7 @@
                     <x-table.th style="width: 50%" name="judul_menu" title="Judul Menu" />
                 </x-slot>
                 <x-slot name="body">
-                    @foreach ($this->hakAksesKhanza as $hakAkses)
+                    @forelse ($this->hakAksesKhanza as $hakAkses)
                         <x-table.tr>
                             <x-table.td
                                 clickable
@@ -116,7 +116,9 @@
                             </x-table.td>
                             <x-table.td>{{ $hakAkses->judul_menu }}</x-table.td>
                         </x-table.tr>
-                    @endforeach
+                    @empty
+                        <x-table.tr-empty colspan="2" padding />
+                    @endforelse
                 </x-slot>
             </x-table>
         </x-slot>

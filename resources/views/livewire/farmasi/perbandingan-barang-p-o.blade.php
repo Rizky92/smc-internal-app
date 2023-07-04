@@ -37,7 +37,7 @@
                             <x-table.td>{{ $obat->selisih }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty :colspan="7" />
+                        <x-table.tr-empty :colspan="7" padding />
                     @endforelse
                 </x-slot>
             </x-table>

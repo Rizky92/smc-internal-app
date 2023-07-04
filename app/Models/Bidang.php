@@ -9,10 +9,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
 class Bidang extends Model
 {
-    use Sortable, Searchable, HasFactory;
+    use Sortable, Searchable, HasFactory, HasRecursiveRelationships;
 
     protected $connection = 'mysql_smc';
 
@@ -22,7 +23,13 @@ class Bidang extends Model
 
     protected $fillable = [
         'nama',
+        'parent_id',
     ];
+
+    public function getParentKeyName()
+    {
+        return 'parent_id';
+    }
 
     public function anggaran(): HasMany
     {
