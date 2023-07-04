@@ -4,6 +4,7 @@ namespace App\Http\Livewire\Keuangan\RKAT\Modal;
 
 use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Models\Keuangan\RKAT\PemakaianAnggaran;
+use App\Models\Keuangan\RKAT\PemakaianAnggaranDetail;
 use App\Settings\RKATSettings;
 use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
@@ -38,6 +39,9 @@ class InputPelaporanRKAT extends Component
     /** @var string */
     public $deskripsi;
 
+    /** @var array */
+    public $detail;
+
     /** @var mixed */
     protected $listeners = [
         'prepare',
@@ -48,10 +52,14 @@ class InputPelaporanRKAT extends Component
     protected function rules(): array
     {
         $rules = collect([
-            'anggaranBidangId'    => ['required', 'exists:anggaran_bidang,id'],
-            'tglPakai'            => ['required', 'date'],
-            'nominalPemakaian'    => ['required', 'numeric'],
-            'deskripsi'           => ['required', 'string'],
+            'anggaranBidangId'   => ['required', 'exists:anggaran_bidang,id'],
+            'tglPakai'           => ['required', 'date'],
+            'nominalPemakaian'   => ['required', 'numeric'],
+            'deskripsi'          => ['required', 'string'],
+            'detail'             => ['array'],
+            'detail.*.nama'      => ['required'],
+            'detail.*.deskripsi' => ['nullable'],
+            'detail.*.nominal'   => ['required'],
         ]);
 
         if ($this->isUpdating()) {
@@ -102,8 +110,16 @@ class InputPelaporanRKAT extends Component
         $this->pemakaianAnggaranId = $options['pemakaianAnggaranId'] ?? -1;
         $this->anggaranBidangId = $options['anggaranBidangId'];
         $this->tglPakai = $options['tglPakai'];
-        $this->nominalPemakaian = $options['nominalPemakaian'];
         $this->deskripsi = $options['deskripsi'];
+        $this->detail = PemakaianAnggaranDetail::query()
+            ->where('pemakaian_anggaran_id', $this->pemakaianAnggaranId)
+            ->get()
+            ->map(fn (PemakaianAnggaranDetail $model): array => [
+                'nama'      => $model->nama,
+                'deskripsi' => $model->deskripsi,
+                'nominal'   => round($model->nominal),
+            ])
+            ->all();
     }
 
     public function create(): void
@@ -173,6 +189,20 @@ class InputPelaporanRKAT extends Component
         $this->emit('flash.success', 'Data Pemakaian RKAT baru berhasil diupdate!');
     }
 
+    public function addDetail(): void
+    {
+        $this->detail[] = [
+            'nama' => '',
+            'deskripsi' => '',
+            'nominal' => 0,
+        ];
+    }
+
+    public function removeDetail(int $index): void
+    {
+        unset($this->detail[$index]);
+    }
+
     protected function defaultValues(): void
     {
         $this->pemakaianAnggaranId = -1;
@@ -180,6 +210,7 @@ class InputPelaporanRKAT extends Component
         $this->tglPakai = '';
         $this->nominalPemakaian = 0;
         $this->deskripsi = '';
+        $this->detail = [];
     }
 
     public function isUpdating(): bool

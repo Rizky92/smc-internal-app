@@ -44,6 +44,22 @@
                         <textarea id="keterangan" wire:model.defer="deskripsi" class="form-control form-control-sm"></textarea>
                         <x-form.error name="deskripsi" />
                     </div>
+                    <div class="form-group mt-3">
+                        <label for="detail">Detail</label>
+                        <x-button size="sm" variant="secondary" title="Tambah" icon="plus" wire:click="addDetail" />
+                        <ul class="p-0 m-0">
+                            @foreach ($this->detail as $index => $item)
+                                <li class="d-flex justify-content-start align-items-center m-0 p-0" style="column-gap: 2rem" wire:key="detail-pelaporan-{{ $index }}">
+                                    <input type="text" class="form-control form-control-sm" wire:model.defer="detail.{{ $index }}.nama">
+                                    <input type="text" class="form-control form-control-sm" wire:model.defer="detail.{{ $index }}.deskripsi">
+                                    <input type="text" class="form-control form-control-sm" wire:model.defer="detail.{{ $index }}.nominal" class="text-right">
+                                    <button type="button" wire:click="removeDetail({{ $index }})" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
                 </x-row-col>
             </x-form>
         </x-slot>
