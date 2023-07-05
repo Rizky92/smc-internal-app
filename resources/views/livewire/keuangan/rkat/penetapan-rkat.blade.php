@@ -1,7 +1,9 @@
 <div>
     <x-flash />
 
-    <livewire:keuangan.r-k-a-t.modal.input-penetapan-r-k-a-t />
+    @if ($this->sudahBisaTetapkanRKAT())
+        <livewire:keuangan.r-k-a-t.modal.input-penetapan-r-k-a-t />
+    @endif
 
     @once
         @push('js')
@@ -30,7 +32,16 @@
                 <x-filter.search class="ml-2" />
             </x-row-col-flex>
             <x-row-col-flex class="pt-3 border-top">
-                <x-button variant="primary" size="sm" title="Anggaran Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-penetapan-rkat" class="btn-primary ml-auto" />
+                <x-button
+                    variant="primary"
+                    size="sm"
+                    title="Anggaran Baru"
+                    icon="fas fa-plus"
+                    :disabled="$this->sudahBisaTetapkanRKAT()"
+                    data-toggle="modal"
+                    data-target="#modal-input-penetapan-rkat"
+                    class="btn-primary ml-auto"
+                />
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">

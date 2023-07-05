@@ -27,7 +27,7 @@
             </style>
         @endonce
     @endpush
-    <x-modal id="modal-input-penetapan-rkat" :title="($this->isUpdating() ? 'Edit Data Anggaran' : 'Input Data Anggaran') . ' Tahun 2024'" livewire centered>
+    <x-modal id="modal-input-penetapan-rkat" :title="($this->isUpdating() ? 'Edit' : 'Input') . ' Data Anggaran Tahun ' . $this->tahun" livewire centered>
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-flash class="mx-3 mt-3" />
             <x-form id="form-input-penetapan-rkat" livewire :submit="$this->isUpdating() ? 'update' : 'create'" class="py-1 px-3">

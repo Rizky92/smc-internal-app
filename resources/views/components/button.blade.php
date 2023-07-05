@@ -5,6 +5,7 @@
     'size' => 'default',
     'variant' => 'default',
     'outline' => false,
+    'disabled' => false,
 
     'hideTitle' => false,
 ])
@@ -64,7 +65,15 @@
 
 @switch($as)
     @case('button')
-        <button {{ $attributes->merge(['class' => $finalClass, 'type' => 'button', 'id' => $id, 'title' => $title]) }}>
+        <button {{ $attributes
+            ->merge([
+                'class' => $finalClass,
+                'type' => 'button',
+                'id' => $id,
+                'title' => $title,
+                'disabled' => $disabled,
+            ])
+        }}>
             @if ($icon)
                 <i class="{{ $icon }}"></i>
             @endif
@@ -75,7 +84,10 @@
     @break
 
     @case('link')
-        <a {{ $attributes->merge(['class' => $finalClass, 'role' => 'button', 'id' => $id, 'title' => $title]) }}>
+        <a {{ $attributes
+            ->merge(['class' => $finalClass, 'role' => 'button', 'id' => $id, 'title' => $title])
+            ->when($disabled, fn ($attrs) => $attrs->except('href'))
+        }}>
             @if ($icon)
                 <i class="{{ $icon }}"></i>
             @endif

@@ -34,15 +34,15 @@
                         <x-form.error name="keterangan" />
                     </div>
                     <div class="form-group mt-3">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <label for="detail">Detail</label>
-                            <x-button size="sm" variant="secondary" title="Tambah" icon="fas fa-plus" wire:click="addDetail" />
+                        <div class="d-flex justify-content-start align-items-center">
+                            <span class="d-block font-weight-bold" style="width: calc(75% - 1.6rem)">Nama Pengeluaran</span>
+                            <span class="d-block font-weight-bold">Nominal</span>
                         </div>
-                        <ul class="p-0 m-0 mt-2 d-flex flex-column" style="row-gap: 0.5rem" id="detail-pemakaian">
+                        <ul class="p-0 m-0 mt-2 mb-3 d-flex flex-column" style="row-gap: 0.5rem" id="detail-pemakaian">
                             @foreach ($this->detail as $index => $item)
                                 <li class="d-flex justify-content-start align-items-center m-0 p-0" wire:key="detail-pelaporan-{{ $index }}">
                                     <input type="text" class="form-control form-control-sm" wire:model.defer="detail.{{ $index }}.keterangan">
-                                    <span class="ml-4 mr-2 text-sm">Rp.</span>
+                                    <span class="ml-4 text-sm" style="width: 3rem">Rp.</span>
                                     <input type="text" class="form-control form-control-sm text-right w-25" wire:model.defer="detail.{{ $index }}.nominal">
                                     <button type="button" wire:click="removeDetail({{ $index }})" class="btn btn-sm btn-danger ml-3">
                                         <i class="fas fa-trash"></i>
@@ -50,6 +50,10 @@
                                 </li>
                             @endforeach
                         </ul>
+                        <x-button size="sm" variant="secondary" title="Tambah Detail" icon="fas fa-plus" wire:click="addDetail" />
+                        <div class="mt-1">
+                            <x-form.error name="nominalPemakaian" />
+                        </div>
                     </div>
                 </x-row-col>
             </x-form>

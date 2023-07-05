@@ -67,6 +67,11 @@ class InputPenetapanRKAT extends Component
         return Bidang::pluck('nama', 'id');
     }
 
+    public function getTahunProperty(): int
+    {
+        return app(RKATSettings::class)->tahun;
+    }
+
     public function render(): View
     {
         return view('livewire.keuangan.rkat.modal.input-penetapan-rkat');

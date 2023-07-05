@@ -65,9 +65,8 @@ class PemakaianAnggaranDetail extends Model
      * @var string[]
      */
     protected $fillable = [
-        'nama',
-        'deskripsi',
         'nominal',
+        'keterangan',
     ];
 
     /**
@@ -83,7 +82,6 @@ class PemakaianAnggaranDetail extends Model
      * @var string[]
      */
     protected $searchColumns = [
-        'nama',
-        'deskripsi',
+        'keterangan',
     ];
 }

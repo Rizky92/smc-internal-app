@@ -25,12 +25,6 @@ class PenetapanRKAT extends Component
     /** @var string */
     public $tahun;
 
-    /** @var string */
-    public $batasAwalRKAT;
-
-    /** @var string */
-    public $batasAkhirRKAT;
-
     protected function queryString(): array
     {
         return [
@@ -75,6 +69,16 @@ class PenetapanRKAT extends Component
     {
         return view('livewire.keuangan.rkat.penetapan-rkat')
             ->layout(BaseLayout::class, ['title' => 'Penetapan RKAT']);
+    }
+
+    public function sudahBisaTetapkanRKAT(): bool
+    {
+        $settings = app(RKATSettings::class);
+
+        $penetapanAwal = $settings->batas_penetapan_awal;
+        $penetapanAkhir = $settings->batas_penetapan_akhir;
+
+        return carbon()->between($penetapanAwal, $penetapanAkhir);
     }
 
     protected function defaultValues(): void

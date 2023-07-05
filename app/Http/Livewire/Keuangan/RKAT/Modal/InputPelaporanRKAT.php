@@ -23,19 +23,7 @@ class InputPelaporanRKAT extends Component
     use FlashComponent, Filterable, DeferredModal;
 
     /** @var int */
-    public $bidangId;
-
-    /** @var int */
-    public $anggaranId;
-
-    /** @var int */
     public $pemakaianAnggaranId;
-
-    /** @var string */
-    public $noBukti;
-
-    /** @var string */
-    public $judul;
 
     /** @var int */
     public $anggaranBidangId;
@@ -43,11 +31,8 @@ class InputPelaporanRKAT extends Component
     /** @var \Carbon\Carbon|\DateTime|string */
     public $tglPakai;
 
-    /** @var int|float */
-    public $nominalPemakaian;
-
     /** @var string */
-    public $deskripsi;
+    public $keterangan;
 
     /** @var array */
     public $detail;
@@ -64,8 +49,7 @@ class InputPelaporanRKAT extends Component
         $rules = collect([
             'anggaranBidangId'    => ['required', 'exists:anggaran_bidang,id'],
             'tglPakai'            => ['required', 'date'],
-            'nominalPemakaian'    => ['required', 'numeric'],
-            'deskripsi'           => ['required', 'string'],
+            'keterangan'          => ['required', 'string'],
             'detail'              => ['array'],
             'detail.*.keterangan' => ['nullable', 'string'],
             'detail.*.nominal'    => ['required', 'numeric'],
@@ -86,16 +70,6 @@ class InputPelaporanRKAT extends Component
     public function hydrate(): void
     {
         $this->emit('select2.hydrate');
-    }
-
-    public function getDataBidangProperty(): Collection
-    {
-        return Bidang::pluck('nama', 'id');
-    }
-
-    public function getDataAnggaranProperty(): Collection
-    {
-        return Anggaran::pluck('nama', 'id');
     }
 
     public function getTahunProperty(): int
@@ -171,8 +145,7 @@ class InputPelaporanRKAT extends Component
         tracker_start();
 
         $pemakaianAnggaran = PemakaianAnggaran::create([
-            'judul'              => $this->judul,
-            'deskripsi'          => $this->deskripsi,
+            'judul'              => $this->keterangan,
             'tgl_dipakai'        => $this->tglPakai,
             'anggaran_bidang_id' => $this->anggaranBidangId,
             'user_id'            => Auth::user()->nik,
@@ -210,7 +183,7 @@ class InputPelaporanRKAT extends Component
         tracker_start();
 
         $pemakaianAnggaran->update([
-            'judul'              => $this->judul,
+            'judul'              => $this->keterangan,
             'deskripsi'          => $this->deskripsi,
             'tgl_dipakai'        => $this->tglPakai,
             'anggaran_bidang_id' => $this->anggaranBidangId,
@@ -256,7 +229,10 @@ class InputPelaporanRKAT extends Component
         $this->tglPakai = '';
         $this->nominalPemakaian = 0;
         $this->deskripsi = '';
-        $this->detail = [];
+        $this->detail = [[
+            'keterangan' => '',
+            'nominal'    => 0,
+        ]];
     }
 
     private function manuallyValidateAmount(): void
@@ -274,7 +250,7 @@ class InputPelaporanRKAT extends Component
 
         if ($pemakaianBaru > ($nominalAnggaran - $anggaranDigunakan)) {
             throw ValidationException::withMessages([
-                'nominal' => 'Pemakaian anggaran melebihi sisa anggaran yang masih ada',
+                'nominalPemakaian' => 'Pemakaian anggaran melebihi sisa anggaran yang masih ada',
             ]);
         }
     }
