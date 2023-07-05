@@ -54,7 +54,7 @@ class PiutangPasien extends Model
             ->join('reg_periksa', 'piutang_pasien.no_rawat', '=', 'reg_periksa.no_rawat')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->where('piutang_pasien.status', 'Belum Lunas')
-            ->when(!empty($penjamin), fn (Builder $q) => $q->where('reg_periksa.kd_pj', $penjamin));
+            ->when(!empty($penjamin), fn (Builder $q): Builder => $q->where('reg_periksa.kd_pj', $penjamin));
     }
 
     public function scopePiutangPasienSudahLunas(

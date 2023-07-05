@@ -12,6 +12,7 @@ use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -22,7 +23,15 @@ class PiutangDilunaskan extends Model
 
     protected $connection = 'mysql_smc';
 
+    protected $primaryKey = 'id';
+
+    protected $keyType = 'int';
+
     protected $table = 'piutang_dilunaskan';
+
+    public $incrementing = true;
+
+    public $timestamps = true;
 
     public static function refreshModel(): void
     {
@@ -60,21 +69,21 @@ class PiutangDilunaskan extends Model
                 ->on('penagihan_piutang.kd_rek', '=', 'bayar_piutang.kd_rek'))
             ->when(
                 !is_null($latest),
-                fn ($q) => $q->whereRaw("timestamp(tgl_jurnal, jam_jurnal) > ?", $latest),
-                fn ($q) => $q->where('tgl_jurnal', '>=', '2022-10-31')
+                fn (DatabaseBuilder $q): DatabaseBuilder => $q->whereRaw("timestamp(tgl_jurnal, jam_jurnal) > ?", $latest),
+                fn (DatabaseBuilder $q): DatabaseBuilder => $q->where('tgl_jurnal', '>=', '2022-10-31')
             )
             ->where('penagihan_piutang.status', 'Sudah Dibayar')
-            ->where(fn ($q) => $q
+            ->where(fn (DatabaseBuilder $q): DatabaseBuilder => $q
                 ->where('keterangan', 'like', '%bayar piutang, oleh%')
                 ->orWhere('keterangan', 'like', '%pembatalan bayar piutang, oleh%'))
             ->orderBy('jurnal.tgl_jurnal')
             ->orderBy('jurnal.jam_jurnal')
             ->cursor()
-            ->each(function ($jurnal) {
+            ->each(function (object $jurnal): void {
                 $ket = Str::of($jurnal->keterangan);
 
                 $status = $ket->startsWith('BAYAR');
-                $verifikator = $ket->afterLast('OLEH ');
+                $verifikator = $ket->afterLast('OLEH ')->trim();
 
                 $mapped = [
                     'no_jurnal'       => $jurnal->no_jurnal,
@@ -117,14 +126,14 @@ class PiutangDilunaskan extends Model
         }
 
         $filterTgl = [
-            'jurnal' => DB::raw("date(waktu_jurnal)"),
+            'jurnal'    => DB::raw("date(waktu_jurnal)"),
             'penagihan' => 'tgl_penagihan',
-            'bayar' => 'tgl_bayar',
+            'bayar'     => 'tgl_bayar',
         ][$berdasarkanTgl];
 
         $db = DB::connection('mysql_sik')->getDatabaseName();
 
-        $sqlSelect = "
+        $sqlSelect = <<<SQL
             piutang_dilunaskan.*,
             jurnal.keterangan,
             concat(registrasi.umurdaftar, ' ', registrasi.sttsumur) umur,
@@ -133,7 +142,7 @@ class PiutangDilunaskan extends Model
             penagih.nama nama_penagih,
             penyetuju.nama nama_penyetuju,
             pemvalidasi.nama nama_pemvalidasi
-        ";
+        SQL;
 
         $jurnal = DB::raw("{$db}.jurnal jurnal");
         $registrasi = DB::raw("{$db}.reg_periksa registrasi");

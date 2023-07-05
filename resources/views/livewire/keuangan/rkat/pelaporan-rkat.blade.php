@@ -44,13 +44,12 @@
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" style="min-width: 100%" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
-                    <x-table.th title="#" />
                     <x-table.th title="Bidang" />
                     <x-table.th title="Anggaran" />
                     <x-table.th title="Tahun" />
                     <x-table.th title="Tgl. Pakai" />
+                    <x-table.th title="Judul" />
                     <x-table.th title="Nominal" />
-                    <x-table.th title="Deskripsi" />
                     <x-table.th title="Tgl. Diinput" />
                     <x-table.th title="Oleh" />
                 </x-slot>
@@ -64,18 +63,17 @@
                                 data-tgl-pakai="{{ $penggunaan->tgl_dipakai }}"
                                 data-nominal-pemakaian="{{ $penggunaan->nominal_pemakaian }}"
                                 data-deskripsi="{{ $penggunaan->deskripsi }}"
-                            >{{ $penggunaan->id }}</x-table.td>
-                            <x-table.td>{{ $penggunaan->anggaranBidang->bidang->nama }}</x-table.td>
+                            >{{ $penggunaan->anggaranBidang->bidang->nama }}</x-table.td>
                             <x-table.td>{{ $penggunaan->anggaranBidang->anggaran->nama }}</x-table.td>
                             <x-table.td>{{ $penggunaan->anggaranBidang->tahun }}</x-table.td>
                             <x-table.td>{{ $penggunaan->tgl_dipakai }}</x-table.td>
+                            <x-table.td>{{ $penggunaan->judul ?? '-' }}</x-table.td>
                             <x-table.td>{{ rp($penggunaan->nominal_pemakaian) }}</x-table.td>
-                            <x-table.td>{{ $penggunaan->deskripsi ?? '-' }}</x-table.td>
                             <x-table.td>{{ $penggunaan->created_at->format('Y-m-d') }}</x-table.td>
                             <x-table.td>{{ $penggunaan->user_id }} {{ optional($penggunaan->petugas)->nama }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="9" />
+                        <x-table.tr-empty colspan="8" />
                     @endforelse
                 </x-slot>
             </x-table>

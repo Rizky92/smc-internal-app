@@ -15,9 +15,9 @@
         </script>
     @endpush
     <x-modal id="modal-input-pelaporan-rkat" :title="$this->isUpdating() ? 'Edit Data Penggunaan RKAT' : 'Input Data Penggunaan RKAT'" livewire centered>
-        <x-slot name="body" class="p-0" style="overflow-x: hidden">
+        <x-slot name="body" style="overflow-x: hidden">
             <x-form id="form-input-pelaporan-rkat" livewire :submit="$this->isUpdating() ? 'update' : 'create'">
-                <x-row-col class="sticky-top bg-white pt-3 pb-1 px-3">
+                <x-row-col class="sticky-top bg-white">
                     <div class="form-group">
                         <label for="anggaran-bidang-id">Anggaran bidang digunakan:</label>
                         <x-form.select2
@@ -45,20 +45,25 @@
                         <x-form.error name="deskripsi" />
                     </div>
                     <div class="form-group mt-3">
-                        <label for="detail">Detail</label>
-                        <x-button size="sm" variant="secondary" title="Tambah" icon="plus" wire:click="addDetail" />
-                        <ul class="p-0 m-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <label for="detail">Detail</label>
+                            <x-button size="sm" variant="secondary" title="Tambah" icon="fas fa-plus" wire:click="addDetail" />
+                        </div>
+                        <ul class="p-0 m-0 mt-2 d-flex flex-column" style="row-gap: 0.5rem" id="detail-pemakaian">
                             @foreach ($this->detail as $index => $item)
-                                <li class="d-flex justify-content-start align-items-center m-0 p-0" style="column-gap: 2rem" wire:key="detail-pelaporan-{{ $index }}">
-                                    <input type="text" class="form-control form-control-sm" wire:model.defer="detail.{{ $index }}.nama">
-                                    <input type="text" class="form-control form-control-sm" wire:model.defer="detail.{{ $index }}.deskripsi">
-                                    <input type="text" class="form-control form-control-sm" wire:model.defer="detail.{{ $index }}.nominal" class="text-right">
-                                    <button type="button" wire:click="removeDetail({{ $index }})" class="btn btn-sm btn-danger">
+                                <li class="d-flex justify-content-start align-items-center m-0 p-0" wire:key="detail-pelaporan-{{ $index }}">
+                                    <input type="text" class="form-control form-control-sm" wire:model.defer="detail.{{ $index }}.keterangan">
+                                    <span class="ml-4 mr-2 text-sm">Rp.</span>
+                                    <input type="text" class="form-control form-control-sm text-right w-25" wire:model.defer="detail.{{ $index }}.nominal">
+                                    <button type="button" wire:click="removeDetail({{ $index }})" class="btn btn-sm btn-danger ml-3">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </li>
                             @endforeach
                         </ul>
+                    </div>
+                    <div class="d-flex justify-content-end align-items-center mt-3">
+
                     </div>
                 </x-row-col>
             </x-form>

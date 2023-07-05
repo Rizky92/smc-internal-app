@@ -12,19 +12,18 @@ return new class extends Migration
      * @var ?string
      */
     protected $connection = 'mysql_smc';
-    
+
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::connection('mysql_smc')->create('failed_jobs', function (Blueprint $table): void {
-            $table->bigIncrements('id');
-            $table->text('connection');
-            $table->text('queue');
-            $table->longText('payload');
-            $table->longText('exception');
-            $table->timestamp('failed_at')->useCurrent();
+        Schema::connection('mysql_smc')->create('pemakaian_anggaran_detail', function (Blueprint $table): void {
+            $table->id();
+            $table->string('keterangan');
+            $table->double('nominal');
+            $table->foreignId('pemakaian_anggaran_id')->constrained('pemakaian_anggaran');
+            $table->timestamps($precision = 6);
         });
     }
 };

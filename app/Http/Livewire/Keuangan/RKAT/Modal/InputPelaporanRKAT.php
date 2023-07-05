@@ -52,14 +52,13 @@ class InputPelaporanRKAT extends Component
     protected function rules(): array
     {
         $rules = collect([
-            'anggaranBidangId'   => ['required', 'exists:anggaran_bidang,id'],
-            'tglPakai'           => ['required', 'date'],
-            'nominalPemakaian'   => ['required', 'numeric'],
-            'deskripsi'          => ['required', 'string'],
-            'detail'             => ['array'],
-            'detail.*.nama'      => ['required'],
-            'detail.*.deskripsi' => ['nullable'],
-            'detail.*.nominal'   => ['required'],
+            'anggaranBidangId'    => ['required', 'exists:anggaran_bidang,id'],
+            'tglPakai'            => ['required', 'date'],
+            'nominalPemakaian'    => ['required', 'numeric'],
+            'deskripsi'           => ['required', 'string'],
+            'detail'              => ['array'],
+            'detail.*.keterangan' => ['nullable'],
+            'detail.*.nominal'    => ['required'],
         ]);
 
         if ($this->isUpdating()) {
@@ -111,15 +110,19 @@ class InputPelaporanRKAT extends Component
         $this->anggaranBidangId = $options['anggaranBidangId'];
         $this->tglPakai = $options['tglPakai'];
         $this->deskripsi = $options['deskripsi'];
-        $this->detail = PemakaianAnggaranDetail::query()
+
+        $detail = PemakaianAnggaranDetail::query()
             ->where('pemakaian_anggaran_id', $this->pemakaianAnggaranId)
-            ->get()
-            ->map(fn (PemakaianAnggaranDetail $model): array => [
-                'nama'      => $model->nama,
-                'deskripsi' => $model->deskripsi,
-                'nominal'   => round($model->nominal),
-            ])
-            ->all();
+            ->get();
+
+        $this->detail = $detail->isNotEmpty()
+            ? $detail
+                ->map(fn (PemakaianAnggaranDetail $model): array => [
+                    'keterangan' => $model->keterangan,
+                    'nominal'    => round($model->nominal),
+                ])
+                ->all()
+            : [];
     }
 
     public function create(): void
@@ -141,15 +144,17 @@ class InputPelaporanRKAT extends Component
 
         tracker_start();
 
-        PemakaianAnggaran::create([
-            'no_bukti'           => $this->noBukti,
+        $pemakaianAnggaran = PemakaianAnggaran::create([
             'judul'              => $this->judul,
             'deskripsi'          => $this->deskripsi,
-            'nominal_pemakaian'  => $this->nominalPemakaian,
             'tgl_dipakai'        => $this->tglPakai,
             'anggaran_bidang_id' => $this->anggaranBidangId,
             'user_id'            => Auth::user()->nik,
         ]);
+
+        $pemakaianAnggaran
+            ->detail()
+            ->createMany($this->detail);
 
         tracker_end();
 
@@ -172,16 +177,26 @@ class InputPelaporanRKAT extends Component
 
         $this->validate();
 
+        /** @var \App\Models\Keuangan\RKAT\PemakaianAnggaran */
+        $pemakaianAnggaran = PemakaianAnggaran::find($this->pemakaianAnggaranId);
+
         tracker_start();
 
-        PemakaianAnggaran::query()
-            ->where('id', $this->pemakaianAnggaranId)
-            ->update([
-                'anggaran_bidang_id' => $this->anggaranBidangId,
-                'tgl_pakai'          => $this->tglPakai,
-                'nominal_pemakaian'  => $this->nominalPemakaian,
-                'deskripsi'          => $this->deskripsi,
-            ]);
+        $pemakaianAnggaran->update([
+            'judul'              => $this->judul,
+            'deskripsi'          => $this->deskripsi,
+            'tgl_dipakai'        => $this->tglPakai,
+            'anggaran_bidang_id' => $this->anggaranBidangId,
+        ]);
+
+        // hapus data yang ada terlebih dahulu, lalu lakukan insert ulang
+        $pemakaianAnggaran
+            ->detail()
+            ->delete();
+
+        $pemakaianAnggaran
+            ->detail()
+            ->createMany($this->detail);
 
         tracker_end();
         
@@ -192,9 +207,8 @@ class InputPelaporanRKAT extends Component
     public function addDetail(): void
     {
         $this->detail[] = [
-            'nama' => '',
-            'deskripsi' => '',
-            'nominal' => 0,
+            'keterangan' => '',
+            'nominal'    => 0,
         ];
     }
 

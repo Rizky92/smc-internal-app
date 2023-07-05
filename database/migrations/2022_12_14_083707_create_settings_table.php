@@ -7,11 +7,18 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
+     * The name of the database connection to use.
+     *
+     * @var ?string
+     */
+    protected $connection = 'mysql_smc';
+
+    /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('settings', function (Blueprint $table): void {
+        Schema::connection('mysql_smc')->create('settings', function (Blueprint $table): void {
             $table->id();
             $table->string('group');
             $table->string('name');
@@ -20,13 +27,5 @@ return new class extends Migration
             $table->timestamps();
             $table->unique(['group', 'name']);
         });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('settings');
     }
 };
