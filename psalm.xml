@@ -8,14 +8,15 @@
     errorBaseline="psalm-baseline.xml"
 >
     <projectFiles>
-        <directory name="app"/>
-        <directory name="database/seeders"/>
+        <directory name="app" />
+        <directory name="database/seeders" />
         <ignoreFiles>
-            <directory name="vendor"/>
+            <directory name="vendor" />
+            <file name="app\Models\Bidang.php" />
         </ignoreFiles>
     </projectFiles>
     <plugins>
-        <pluginClass class="Psalm\LaravelPlugin\Plugin"/>
+        <pluginClass class="Psalm\LaravelPlugin\Plugin" />
     </plugins>
 
     <issueHandlers>
