@@ -14,19 +14,13 @@
             })
         </script>
     @endpush
-    <x-modal id="modal-input-pelaporan-rkat" :title="$this->isUpdating() ? 'Edit Data Penggunaan RKAT' : 'Input Data Penggunaan RKAT'" livewire centered>
+    <x-modal id="modal-input-pelaporan-rkat" :title="($this->isUpdating() ? 'Edit Data Penggunaan RKAT' : 'Input Data Penggunaan RKAT') . ' Tahun ' . $this->tahun" livewire centered>
         <x-slot name="body" style="overflow-x: hidden">
             <x-form id="form-input-pelaporan-rkat" livewire :submit="$this->isUpdating() ? 'update' : 'create'">
                 <x-row-col class="sticky-top bg-white">
                     <div class="form-group">
                         <label for="anggaran-bidang-id">Anggaran bidang digunakan:</label>
-                        <x-form.select2
-                            id="anggaran-bidang-id"
-                            model="anggaranBidangId"
-                            :options="$this->dataRKATPerBidang"
-                            placeholder="-"
-                            width="full-width"
-                        />
+                        <x-form.select2 id="anggaran-bidang-id" model="anggaranBidangId" :options="$this->dataRKATPerBidang" placeholder="-" width="full-width" />
                         <x-form.error name="anggaranBidangId" />
                     </div>
                     <div class="form-group mt-3">
@@ -35,14 +29,9 @@
                         <x-form.error name="tglPakai" />
                     </div>
                     <div class="form-group mt-3">
-                        <label for="nominal-pemakaian">Nominal Dipakai</label>
-                        <input type="text" id="nominal-pemakaian" wire:model.defer="nominalPemakaian" class="form-control form-control-sm" />
-                        <x-form.error name="nominalPemakaian" />
-                    </div>
-                    <div class="form-group mt-3">
                         <label for="keterangan">Keterangan</label>
-                        <textarea id="keterangan" wire:model.defer="deskripsi" class="form-control form-control-sm"></textarea>
-                        <x-form.error name="deskripsi" />
+                        <input type="text" id="keterangan" wire:model.defer="keterangan" class="form-control form-control-sm" />
+                        <x-form.error name="keterangan" />
                     </div>
                     <div class="form-group mt-3">
                         <div class="d-flex justify-content-between align-items-center">
@@ -61,9 +50,6 @@
                                 </li>
                             @endforeach
                         </ul>
-                    </div>
-                    <div class="d-flex justify-content-end align-items-center mt-3">
-
                     </div>
                 </x-row-col>
             </x-form>

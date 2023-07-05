@@ -25,7 +25,7 @@
                         <x-table.tr>
                             <x-table.td colspan="5">{{ $anggaran->nama }}</x-table.td>
                         </x-table.tr>
-                        @foreach ($anggaran->anggaran as $detail)
+                        @foreach ($anggaran->anggaranBidang as $detail)
                             <x-table.tr>
                                 <x-table.td>{{ $detail->anggaran->nama }}</x-table.td>
                                 <x-table.td>{{ rp($detail->nominal_anggaran) }}</x-table.td>
@@ -43,8 +43,8 @@
                         <x-table.tr>
                             <x-table.td>Total</x-table.td>
                             @php
-                                $totalAnggaran = $anggaran->anggaran->sum('nominal_anggaran');
-                                $totalPemakaian = $anggaran->anggaran->sum('total_pemakaian');
+                                $totalAnggaran = $anggaran->anggaranBidang->sum('nominal_anggaran');
+                                $totalPemakaian = $anggaran->anggaranBidang->sum('total_pemakaian');
                             @endphp
                             <x-table.td>{{ rp($totalAnggaran) }}</x-table.td>
                             <x-table.td>{{ rp($totalPemakaian) }}</x-table.td>

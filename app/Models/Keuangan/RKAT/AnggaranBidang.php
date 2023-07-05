@@ -10,10 +10,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 class AnggaranBidang extends Model
 {
-    use Sortable, Searchable, HasFactory;
+    use Sortable, Searchable, HasFactory, HasRelationships;
 
     protected $connection = 'mysql_smc';
 
@@ -44,5 +46,10 @@ class AnggaranBidang extends Model
     public function pemakaian(): HasMany
     {
         return $this->hasMany(PemakaianAnggaran::class, 'anggaran_bidang_id', 'id');
+    }
+
+    public function detailPemakaian(): HasManyThrough
+    {
+        return $this->hasManyThrough(PemakaianAnggaranDetail::class, PemakaianAnggaran::class, 'anggaran_bidang_id', 'pemakaian_anggaran_id');
     }
 }

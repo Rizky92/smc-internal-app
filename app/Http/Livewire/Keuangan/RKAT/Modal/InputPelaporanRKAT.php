@@ -2,6 +2,8 @@
 
 namespace App\Http\Livewire\Keuangan\RKAT\Modal;
 
+use App\Models\Bidang;
+use App\Models\Keuangan\RKAT\Anggaran;
 use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Models\Keuangan\RKAT\PemakaianAnggaran;
 use App\Models\Keuangan\RKAT\PemakaianAnggaranDetail;
@@ -9,14 +11,22 @@ use App\Settings\RKATSettings;
 use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
 use App\Support\Traits\Livewire\FlashComponent;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class InputPelaporanRKAT extends Component
 {
     use FlashComponent, Filterable, DeferredModal;
+
+    /** @var int */
+    public $bidangId;
+
+    /** @var int */
+    public $anggaranId;
 
     /** @var int */
     public $pemakaianAnggaranId;
@@ -57,8 +67,8 @@ class InputPelaporanRKAT extends Component
             'nominalPemakaian'    => ['required', 'numeric'],
             'deskripsi'           => ['required', 'string'],
             'detail'              => ['array'],
-            'detail.*.keterangan' => ['nullable'],
-            'detail.*.nominal'    => ['required'],
+            'detail.*.keterangan' => ['nullable', 'string'],
+            'detail.*.nominal'    => ['required', 'numeric'],
         ]);
 
         if ($this->isUpdating()) {
@@ -76,6 +86,21 @@ class InputPelaporanRKAT extends Component
     public function hydrate(): void
     {
         $this->emit('select2.hydrate');
+    }
+
+    public function getDataBidangProperty(): Collection
+    {
+        return Bidang::pluck('nama', 'id');
+    }
+
+    public function getDataAnggaranProperty(): Collection
+    {
+        return Anggaran::pluck('nama', 'id');
+    }
+
+    public function getTahunProperty(): int
+    {
+        return app(RKATSettings::class)->tahun;
     }
 
     public function getDataRKATPerBidangProperty(): Collection
@@ -141,6 +166,7 @@ class InputPelaporanRKAT extends Component
         }
 
         $this->validate();
+        $this->manuallyValidateAmount();
 
         tracker_start();
 
@@ -176,6 +202,7 @@ class InputPelaporanRKAT extends Component
         }
 
         $this->validate();
+        $this->manuallyValidateAmount();
 
         /** @var \App\Models\Keuangan\RKAT\PemakaianAnggaran */
         $pemakaianAnggaran = PemakaianAnggaran::find($this->pemakaianAnggaranId);
@@ -217,6 +244,11 @@ class InputPelaporanRKAT extends Component
         unset($this->detail[$index]);
     }
 
+    public function isUpdating(): bool
+    {
+        return $this->pemakaianAnggaranId !== -1;
+    }
+
     protected function defaultValues(): void
     {
         $this->pemakaianAnggaranId = -1;
@@ -227,8 +259,23 @@ class InputPelaporanRKAT extends Component
         $this->detail = [];
     }
 
-    public function isUpdating(): bool
+    private function manuallyValidateAmount(): void
     {
-        return $this->pemakaianAnggaranId !== -1;
+        $nominalAnggaran = round(AnggaranBidang::whereId($this->anggaranBidangId)->value('nominal_anggaran'), 2);
+
+        $anggaranDigunakan = round(PemakaianAnggaran::query()
+            ->whereAnggaranBidangId($this->anggaranBidangId)
+            ->when($this->pemakaianAnggaranId !== -1, fn (Builder $q): Builder => $q->whereId($this->pemakaianAnggaranId))
+            ->withSum('detail as total_pemakaian', 'nominal')
+            ->withCasts(['total_pemakaian' => 'float'])
+            ->value('total_pemakaian'), 2);
+
+        $pemakaianBaru = round(floatval(collect($this->detail)->sum('nominal')), 2);
+
+        if ($pemakaianBaru > ($nominalAnggaran - $anggaranDigunakan)) {
+            throw ValidationException::withMessages([
+                'nominal' => 'Pemakaian anggaran melebihi sisa anggaran yang masih ada',
+            ]);
+        }
     }
 }

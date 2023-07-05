@@ -34,7 +34,7 @@ class InputBidangUnit extends Component
         $this->defaultValues();
     }
 
-    public function getParentBidangProperty()
+    public function getParentBidangProperty(): \Illuminate\Support\Collection
     {
         return Bidang::query()
             ->whereNull('parent_id')

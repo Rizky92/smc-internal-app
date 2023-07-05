@@ -16,6 +16,7 @@ use App\View\Components\BaseLayout;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -56,9 +57,8 @@ class PemantauanRKAT extends Component
     {
         return Bidang::query()
             ->with([
-                'anggaran' => fn (HasMany $q) => $q
-                    ->with(['anggaran', 'pemakaian'])
-                    ->withSum('pemakaian as total_pemakaian', 'nominal_pemakaian')
+                'anggaranBidang' => fn (HasMany $q) => $q->withSum('detailPemakaian as total_pemakaian', 'nominal'),
+                'anggaranBidang.anggaran'
             ])
             ->get();
     }

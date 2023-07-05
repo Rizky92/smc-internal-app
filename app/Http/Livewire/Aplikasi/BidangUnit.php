@@ -27,9 +27,9 @@ class BidangUnit extends Component
     }
 
     /**
-     * @return \Illuminate\Contracts\Pagination\Paginator
+     * @psalm-return \Illuminate\Database\Eloquent\Collection<Bidang>
      */
-    public function getBidangUnitProperty()
+    public function getBidangUnitProperty(): \Illuminate\Database\Eloquent\Collection
     {
         return Bidang::query()
             ->whereNull('parent_id')
