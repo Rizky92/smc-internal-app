@@ -20,7 +20,6 @@
     <x-card>
         <x-slot name="header">
             <x-row-col-flex>
-                <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
                 <x-button variant="primary" size="sm" title="Bidang Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-bidang-unit" class="btn-primary ml-3" />
@@ -29,7 +28,7 @@
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" style="min-width: 100%" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
-                    <x-table.th name="nama" title="Nama" />
+                    <x-table.th title="Nama" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->bidangUnit as $item)

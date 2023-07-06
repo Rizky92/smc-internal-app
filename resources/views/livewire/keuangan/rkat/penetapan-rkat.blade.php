@@ -56,7 +56,7 @@
                     @forelse ($this->dataAnggaranBidang as $item)
                         <x-table.tr>
                             <x-table.td
-                                clickable
+                                :clickable="$this->bisaTetapkanRKAT()"
                                 data-id="{{ $item->id }}"
                             >
                                 {{ $item->tahun }}

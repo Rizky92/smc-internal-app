@@ -112,8 +112,6 @@ class PemeriksaanRanap extends Model
             pemeriksaan_ranap.jam_rawat,
             pemeriksaan_ranap.no_rawat,
             pasien.nm_pasien,
-            kamar_inap.kd_kamar,
-            bangsal.nm_bangsal,
             penjab.png_jawab,
             pemeriksaan_ranap.alergi,
             pemeriksaan_ranap.keluhan,
@@ -130,9 +128,6 @@ class PemeriksaanRanap extends Model
             ->leftJoin('reg_periksa', 'pemeriksaan_ranap.no_rawat', '=', 'reg_periksa.no_rawat')
             ->leftJoin('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
-            ->leftJoin('kamar_inap', 'pemeriksaan_ranap.no_rawat', '=', 'kamar_inap.no_rawat')
-            ->leftJoin('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
-            ->leftJoin('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
             ->leftJoin('petugas', DB::raw('trim(pemeriksaan_ranap.nip)'), '=', DB::raw('trim(petugas.nip)'))
             ->leftJoin('jabatan', 'petugas.kd_jbtn', '=', 'jabatan.kd_jbtn')
             ->with('dpjp')

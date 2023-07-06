@@ -128,7 +128,7 @@ class InputPelaporanRKAT extends Component
             return;
         }
 
-        if (! Auth::user()->can('keuangan.rkat.pelaporan-rkat.input-laporan-rkat')) {
+        if (! Auth::user()->can('keuangan.rkat.pelaporan-rkat.create')) {
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 
@@ -163,7 +163,7 @@ class InputPelaporanRKAT extends Component
             $this->create();
         }
 
-        if (! Auth::user()->can('keuangan.rkat.pelaporan-rkat.edit-laporan-rkat')) {
+        if (! Auth::user()->can('keuangan.rkat.pelaporan-rkat.update')) {
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 
@@ -197,6 +197,25 @@ class InputPelaporanRKAT extends Component
         
         $this->dispatchBrowserEvent('data-saved');
         $this->emit('flash.success', 'Data Pemakaian RKAT baru berhasil diupdate!');
+    }
+
+    public function delete(): void
+    {
+        if (! Auth::user()->can('keuangan.rkat.pelaporan-rkat.delete')) {
+            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatchBrowserEvent('data-denied');
+
+            return;
+        }
+
+        tracker_start();
+
+        PemakaianAnggaran::find($this->pemakaianAnggaranId)->delete();
+
+        tracker_end();
+
+        $this->dispatchBrowserEvent('data-saved');
+        $this->emit('flash.success', 'Data Pemakaian RKAT baru berhasil dihapus!');
     }
 
     public function addDetail(): void

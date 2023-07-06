@@ -27,16 +27,16 @@ class PemeriksaanRalan extends Model
     /**
      * The primary key for the model.
      *
-     * @var string
+     * @var string|false
      */
-    protected $primaryKey = 'id';
+    protected $primaryKey = false;
 
     /**
      * The "type" of the primary key ID.
      *
-     * @var string
+     * @var string|false
      */
-    protected $keyType = 'int';
+    protected $keyType = false;
 
     /**
      * Indicates if the IDs are auto-incrementing.

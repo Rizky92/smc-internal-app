@@ -10,6 +10,7 @@ use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
+use Staudenmeir\LaravelAdjacencyList\Eloquent\Relations\Descendants;
 
 class BidangUnit extends Component
 {
@@ -33,7 +34,8 @@ class BidangUnit extends Component
     {
         return Bidang::query()
             ->whereNull('parent_id')
-            ->with(['descendants' => fn ($q) => $q->depthFirst()])
+            ->search($this->cari, ['nama'])
+            ->with(['descendants' => fn (Descendants $q): Descendants => $q->depthFirst()])
             ->get();
     }
 

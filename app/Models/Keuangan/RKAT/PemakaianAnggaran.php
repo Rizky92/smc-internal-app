@@ -23,6 +23,7 @@ class PemakaianAnggaran extends Model
     protected $table = 'pemakaian_anggaran';
 
     protected $fillable = [
+        'judul',
         'deskripsi',
         'tgl_dipakai',
         'anggaran_bidang_id',

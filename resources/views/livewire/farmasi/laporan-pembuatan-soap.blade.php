@@ -9,7 +9,6 @@
                     <x-table.th name="jam_rawat" title="Jam" />
                     <x-table.th name="no_rawat" title="No. Rawat" />
                     <x-table.th name="nm_pasien" title="Pasien" />
-                    <x-table.th name="kd_kamar" title="Kamar" />
                     <x-table.th name="png_jawab" title="Jenis Bayar" />
                     <x-table.th name="dpjp" title="DPJP" />
                     <x-table.th name="alergi" title="Alergi" />
@@ -27,9 +26,8 @@
                             <x-table.td>{{ $item->jam_rawat }}</x-table.td>
                             <x-table.td>{{ $item->no_rawat }}</x-table.td>
                             <x-table.td>{{ $item->nm_pasien }}</x-table.td>
-                            <x-table.td>{{ $item->kd_kamar }} {{ $item->nm_bangsal }}</x-table.td>
                             <x-table.td>{{ $item->png_jawab }}</x-table.td>
-                            <x-table.td>{{ optional($item->dpjp)->pluck('nm_dokter')->joinStr(', ') }}</x-table.td>
+                            <x-table.td>{{ optional($item->dpjp)->pluck('nm_dokter')->join('; ') }}</x-table.td>
                             <x-table.td>{{ $item->alergi }}</x-table.td>
                             <x-table.td>{{ $item->keluhan }}</x-table.td>
                             <x-table.td>{{ $item->pemeriksaan }}</x-table.td>
@@ -39,7 +37,7 @@
                             <x-table.td>{{ $item->nm_jbtn }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="16" />
+                        <x-table.tr-empty colspan="16" padding />
                     @endforelse
                 </x-slot>
             </x-table>

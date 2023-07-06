@@ -49,9 +49,6 @@ class LaporanPembuatanSOAP extends Component
                     'pemeriksaan_ranap.no_rawat',
                     'pasien.no_rkm_medis',
                     'pasien.nm_pasien',
-                    'kamar_inap.kd_kamar',
-                    'bangsal.kd_bangsal',
-                    'bangsal.nm_bangsal',
                     'penjab.kd_pj',
                     'penjab.png_jawab',
                     'ifnull(pemeriksaan_ranap.alergi, "")',
@@ -84,21 +81,62 @@ class LaporanPembuatanSOAP extends Component
     protected function dataPerSheet(): array
     {
         return [
-            //
+            PemeriksaanRanap::query()
+                ->pemeriksaanOlehFarmasi($this->tglAwal, $this->tglAkhir)
+                ->get()
+                ->map(fn (PemeriksaanRanap $model): array => [
+                    'tgl_perawatan' => $model->tgl_perawatan,
+                    'jam_rawat'     => $model->jam_rawat,
+                    'no_rawat'      => $model->no_rawat,
+                    'nm_pasien'     => $model->nm_pasien,
+                    'png_jawab'     => $model->png_jawab,
+                'dpjp'          => optional($model->dpjp)->pluck('nm_dokter')->join('; '),
+                    'alergi'        => $model->alergi,
+                    'keluhan'       => $model->keluhan,
+                    'pemeriksaan'   => $model->pemeriksaan,
+                    'penilaian'     => $model->penilaian,
+                    'rtl'           => $model->rtl,
+                    'nip'           => $model->nip . ' ' . $model->nama,
+                    'nm_jbtn'       => $model->nm_jbtn,
+                ]),
         ];
     }
 
     protected function columnHeaders(): array
     {
         return [
-            //
+            'Tgl. SOAP',
+            'Jam',
+            'No. Rawat',
+            'Pasien',
+            'Jenis Bayar',
+            'DPJP',
+            'Alergi',
+            'Keluhan (Subjek)',
+            'Pemeriksaan (Objek)',
+            'Penilaian (Asesmen)',
+            'RTL (Plan)',
+            'Petugas',
+            'Jabatan',
         ];
     }
 
     protected function pageHeaders(): array
     {
+        $periodeAwal = carbon($this->tglAwal);
+        $periodeAkhir = carbon($this->tglAkhir);
+
+        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+
+        if ($periodeAwal->isSameDay($periodeAkhir)) {
+            $periode = $periodeAwal->translatedFormat('d F Y');
+        }
+
         return [
-            //
+            'RS Samarinda Medika Citra',
+            'Laporan Pembuatan SOAP oleh Farmasi',
+            now()->translatedFormat('d F Y'),
+            $periode,
         ];
     }
 }
