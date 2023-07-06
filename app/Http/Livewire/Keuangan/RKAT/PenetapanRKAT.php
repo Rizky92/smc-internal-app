@@ -15,6 +15,7 @@ use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -71,14 +72,16 @@ class PenetapanRKAT extends Component
             ->layout(BaseLayout::class, ['title' => 'Penetapan RKAT']);
     }
 
-    public function sudahBisaTetapkanRKAT(): bool
+    public function bisaTetapkanRKAT(): bool
     {
         $settings = app(RKATSettings::class);
+
+        $permission = Auth::user()->can('keuangan.rkat.penetapan-rkat.create');
 
         $penetapanAwal = $settings->batas_penetapan_awal;
         $penetapanAkhir = $settings->batas_penetapan_akhir;
 
-        return carbon()->between($penetapanAwal, $penetapanAkhir);
+        return carbon()->between($penetapanAwal, $penetapanAkhir) && $permission;
     }
 
     protected function defaultValues(): void

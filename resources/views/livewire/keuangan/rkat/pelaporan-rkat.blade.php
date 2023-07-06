@@ -7,14 +7,10 @@
         @push('js')
             <script>
                 function loadData(e) {
-                    let { pemakaianAnggaranId, anggaranBidangId, tglPakai, nominalPemakaian, deskripsi } = e.dataset
+                    let { pemakaianAnggaranId, anggaranBidangId, tglPakai, keterangan } = e.dataset
 
                     @this.emit('prepare', {
-                        pemakaianAnggaranId,
-                        anggaranBidangId,
-                        tglPakai,
-                        nominalPemakaian,
-                        deskripsi
+                        pemakaianAnggaranId, anggaranBidangId, tglPakai, keterangan
                     })
 
                     $('#modal-input-pelaporan-rkat').modal('show')
@@ -59,10 +55,9 @@
                             <x-table.td
                                 clickable
                                 data-pemakaian-anggaran-id="{{ $penggunaan->id }}"
-                                data-anggaran-bidang-id="{{ $penggunaan->anggaranBidang->id }}"
+                                data-anggaran-bidang-id="{{ $penggunaan->anggaran_bidang_id }}"
                                 data-tgl-pakai="{{ $penggunaan->tgl_dipakai }}"
-                                data-nominal-pemakaian="{{ $penggunaan->nominal_pemakaian }}"
-                                data-deskripsi="{{ $penggunaan->deskripsi }}"
+                                data-keterangan="{{ $penggunaan->judul }}"
                             >{{ $penggunaan->anggaranBidang->bidang->nama }}</x-table.td>
                             <x-table.td>{{ $penggunaan->anggaranBidang->anggaran->nama }}</x-table.td>
                             <x-table.td>{{ $penggunaan->anggaranBidang->tahun }}</x-table.td>

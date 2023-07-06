@@ -77,9 +77,11 @@ class PemantauanRKAT extends Component
     protected function dataPerSheet(): array
     {
         $pemakaianAnggaran = PemakaianAnggaran::query()
-            ->selectRaw("anggaran_bidang_id, month(tgl_dipakai) as bulan, sum(nominal_pemakaian) as total_dipakai")
+            ->selectRaw("anggaran_bidang_id, month(tgl_dipakai) as bulan, sum(pemakaian_anggaran_detail.nominal) as total_dipakai")
+            ->join('pemakaian_anggaran_detail', 'pemakaian_anggaran.id', '=', 'pemakaian_anggaran_detail.pemakaian_anggaran_id')
             ->whereRaw('year(tgl_dipakai) = ?', $this->tahun)
             ->groupByRaw("anggaran_bidang_id, month(tgl_dipakai)")
+            ->withCasts(['bulan' => 'int', 'total_dipakai' => 'float'])
             ->get();
 
         $anggaranBidang = AnggaranBidang::query()
@@ -91,11 +93,11 @@ class PemantauanRKAT extends Component
             $anggaranBidang->map(function (AnggaranBidang $model, int $_) use ($pemakaianAnggaran): array {
                 $pemakaianAnggaranBidang = $pemakaianAnggaran
                     ->where('anggaran_bidang_id', $model->getKey())
-                    ->mapWithKeys(fn (PemakaianAnggaran $item, int $_): array => [$item->bulan => round(floatval($item->total_dipakai), 2)]);
+                    ->mapWithKeys(fn (PemakaianAnggaran $item, int $_): array => [$item->bulan => round($item->total_dipakai, 2)]);
 
                 $nominal = round($model->nominal_anggaran, 2);
 
-                $total = round(floatval($pemakaianAnggaranBidang->sum()), 2);
+                $total = round($pemakaianAnggaranBidang->sum(), 2);
 
                 $selisih = $nominal - $total;
 

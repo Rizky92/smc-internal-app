@@ -2,8 +2,6 @@
 
 namespace App\Http\Livewire\Keuangan\RKAT\Modal;
 
-use App\Models\Bidang;
-use App\Models\Keuangan\RKAT\Anggaran;
 use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Models\Keuangan\RKAT\PemakaianAnggaran;
 use App\Models\Keuangan\RKAT\PemakaianAnggaranDetail;
@@ -79,11 +77,9 @@ class InputPelaporanRKAT extends Component
 
     public function getDataRKATPerBidangProperty(): Collection
     {
-        $tahun = app(RKATSettings::class)->tahun;
-
         return AnggaranBidang::query()
             ->with(['anggaran', 'bidang'])
-            ->where('tahun', $tahun)
+            ->where('tahun', $this->tahun)
             ->get()
             ->mapWithKeys(function (AnggaranBidang $ab): array {
                 $namaAnggaran = $ab->anggaran->nama;
@@ -108,20 +104,20 @@ class InputPelaporanRKAT extends Component
         $this->pemakaianAnggaranId = $options['pemakaianAnggaranId'] ?? -1;
         $this->anggaranBidangId = $options['anggaranBidangId'];
         $this->tglPakai = $options['tglPakai'];
-        $this->deskripsi = $options['deskripsi'];
+        $this->keterangan = $options['keterangan'];
 
         $detail = PemakaianAnggaranDetail::query()
             ->where('pemakaian_anggaran_id', $this->pemakaianAnggaranId)
             ->get();
 
-        $this->detail = $detail->isNotEmpty()
-            ? $detail
+        $this->detail = $detail->isEmpty()
+            ? []
+            : $detail
                 ->map(fn (PemakaianAnggaranDetail $model): array => [
                     'keterangan' => $model->keterangan,
                     'nominal'    => round($model->nominal),
                 ])
-                ->all()
-            : [];
+                ->all();
     }
 
     public function create(): void
@@ -140,7 +136,7 @@ class InputPelaporanRKAT extends Component
         }
 
         $this->validate();
-        $this->manuallyValidateAmount();
+        $this->validasiNominalPemakaian();
 
         tracker_start();
 
@@ -175,7 +171,7 @@ class InputPelaporanRKAT extends Component
         }
 
         $this->validate();
-        $this->manuallyValidateAmount();
+        $this->validasiNominalPemakaian();
 
         /** @var \App\Models\Keuangan\RKAT\PemakaianAnggaran */
         $pemakaianAnggaran = PemakaianAnggaran::find($this->pemakaianAnggaranId);
@@ -184,7 +180,6 @@ class InputPelaporanRKAT extends Component
 
         $pemakaianAnggaran->update([
             'judul'              => $this->keterangan,
-            'deskripsi'          => $this->deskripsi,
             'tgl_dipakai'        => $this->tglPakai,
             'anggaran_bidang_id' => $this->anggaranBidangId,
         ]);
@@ -227,15 +222,14 @@ class InputPelaporanRKAT extends Component
         $this->pemakaianAnggaranId = -1;
         $this->anggaranBidangId = -1;
         $this->tglPakai = '';
-        $this->nominalPemakaian = 0;
-        $this->deskripsi = '';
+        $this->keterangan = '';
         $this->detail = [[
             'keterangan' => '',
             'nominal'    => 0,
         ]];
     }
 
-    private function manuallyValidateAmount(): void
+    private function validasiNominalPemakaian(): void
     {
         $nominalAnggaran = round(AnggaranBidang::whereId($this->anggaranBidangId)->value('nominal_anggaran'), 2);
 

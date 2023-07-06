@@ -1,7 +1,7 @@
 <div>
     <x-flash />
 
-    @if ($this->sudahBisaTetapkanRKAT())
+    @if ($this->bisaTetapkanRKAT())
         <livewire:keuangan.r-k-a-t.modal.input-penetapan-r-k-a-t />
     @endif
 
@@ -37,7 +37,7 @@
                     size="sm"
                     title="Anggaran Baru"
                     icon="fas fa-plus"
-                    :disabled="$this->sudahBisaTetapkanRKAT()"
+                    :disabled="! $this->bisaTetapkanRKAT()"
                     data-toggle="modal"
                     data-target="#modal-input-penetapan-rkat"
                     class="btn-primary ml-auto"
