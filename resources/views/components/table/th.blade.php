@@ -23,9 +23,7 @@
             'mr-1' => $align === 'left',
         ]);
     @endphp
-    <th {{ $attributes->class([
-        'py-2' => true,
-    ]) }}>
+    <th {{ $attributes->class(['py-2']) }}>
         <button
             type="button"
             class="btn btn-link text-decoration-none font-weight-bold w-100 p-0 m-0 {{ $alignButtonClass }}"
