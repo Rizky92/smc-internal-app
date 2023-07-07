@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire\Keuangan;
 
-use App\Models\Farmasi\Inventaris\PemesananObat;
+use App\Models\Farmasi\PenerimaanObat;
 use App\Models\Logistik\PemesananBarangNonMedis;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
@@ -48,7 +48,7 @@ class AccountPayable extends Component
             return [];
         }
 
-        return PemesananObat::query()
+        return PenerimaanObat::query()
             ->hutangAging($this->tglAwal, $this->tglAkhir)
             ->search($this->cari, [
                 'detail_titip_faktur.no_tagihan',
@@ -113,7 +113,7 @@ class AccountPayable extends Component
             return [];
         }
 
-        $total = PemesananObat::query()
+        $total = PenerimaanObat::query()
             ->totalHutangAging($this->tglAwal, $this->tglAkhir)
             ->search($this->cari, [
                 'detail_titip_faktur.no_tagihan',
@@ -181,7 +181,7 @@ class AccountPayable extends Component
         $export = [];
 
         if (Auth::user()->can('keuangan.account-payable.read-medis')) {
-            $totalMedis = PemesananObat::query()
+            $totalMedis = PenerimaanObat::query()
                 ->totalHutangAging($this->tglAwal, $this->tglAkhir)
                 ->get();
 
@@ -190,10 +190,10 @@ class AccountPayable extends Component
             $totalSisaPerPeriodeMedis = $totalMedis->pluck('sisa_tagihan', 'periode');
             $totalSisaDibayarMedis = (float) $totalSisaPerPeriodeMedis->sum();
 
-            $export['Medis'] = PemesananObat::query()
+            $export['Medis'] = PenerimaanObat::query()
                 ->hutangAging($this->tglAwal, $this->tglAkhir)
                 ->cursor()
-                ->map(fn (PemesananObat $model): array => [
+                ->map(fn (PenerimaanObat $model): array => [
                     'no_tagihan'    => $model->no_tagihan,
                     'no_order'      => $model->no_order,
                     'no_faktur'     => $model->no_faktur,

@@ -44,7 +44,7 @@
         </button>
     </th>
 @else
-    <th {{ $attributes->class(['py-2']) }}>
+    <th {{ $attributes->class(['py-2', 'text-right' => $align === 'right']) }}>
         {{ $title ?? $slot }}
     </th>
 @endif

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Farmasi\Inventaris;
+namespace App\Models\Farmasi;
 
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class PemesananObat extends Model
+class PenerimaanObat extends Model
 {
     use Searchable, Sortable;
 

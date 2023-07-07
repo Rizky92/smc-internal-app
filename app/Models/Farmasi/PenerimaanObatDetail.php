@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models\Farmasi\Inventaris;
+namespace App\Models\Farmasi;
 
 use Illuminate\Database\Eloquent\Model;
 
-class DetailPemesananObat extends Model
+class PenerimaanObatDetail extends Model
 {
     protected $connection = 'mysql_sik';
     

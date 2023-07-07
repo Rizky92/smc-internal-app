@@ -2,10 +2,15 @@
 
 namespace App\Models\Farmasi;
 
+use App\Models\Satuan;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class Obat extends Model
@@ -23,6 +28,51 @@ class Obat extends Model
     public $incrementing = false;
 
     public $timestamps = false;
+
+    public function satuanKecil(): BelongsTo
+    {
+        return $this->belongsTo(Satuan::class, 'kode_sat', 'kode_sat');
+    }
+
+    public function satuanBesar(): BelongsTo
+    {
+        return $this->belongsTo(Satuan::class, 'kode_sat', 'kode_satbesar');
+    }
+
+    public function penerimaanDetail(): HasMany
+    {
+        return $this->hasMany(PenerimaanObatDetail::class, 'kode_brng', 'kode_brng');
+    }
+
+    public function penerimaan(): HasManyThrough
+    {
+        return $this->hasManyThrough(PenerimaanObat::class, PenerimaanObatDetail::class, 'kode_brng', 'no_faktur', 'kode_brng', 'no_faktur');
+    }
+
+    public function kategori(): BelongsTo
+    {
+        return $this->belongsTo(Kategori::class, 'kode_kategori', 'kode');
+    }
+
+    public function golongan(): BelongsTo
+    {
+        return $this->belongsTo(Golongan::class, 'kode_golongan', 'kode');
+    }
+
+    public function jenis(): BelongsTo
+    {
+        return $this->belongsTo(Jenis::class, 'kdjns', 'kdjns');
+    }
+
+    public function mutasi(): HasMany
+    {
+        return $this->hasMany(MutasiObat::class, 'kode_brng', 'kode_brng');
+    }
+
+    public function pemberian(): HasMany
+    {
+        return $this->hasMany(PemberianObat::class, 'kode_brng', 'kode_brng');
+    }
 
     public function scopeDaruratStok(Builder $query): Builder
     {
@@ -92,5 +142,61 @@ class Obat extends Model
             ->whereRaw('(databarang.stokminimal - ifnull(stok_gudang_ap.stok_di_gudang, 0)) > ?', [0])
             ->whereRaw('ifnull(stok_gudang_ap.stok_di_gudang, 0) <= databarang.stokminimal')
             ->orderBy('databarang.nama_brng');
+    }
+
+    /**
+     * @param  string $tglAwal
+     * @param  string $tglAkhir
+     * @param  "narkotika"|"psikotropika" $golongan
+     * 
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopePemakaianObatNAPZA(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $golongan = 'narkotika'): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        }
+
+        $sqlSelect = <<<SQL
+            databarang.kode_brng,
+            databarang.nama_brng,
+            databarang.kode_golongan,
+            golongan_barang.nama,
+            kodesatuan.satuan,
+            (select stok_awal from riwayat_barang_medis where kode_brng = databarang.kode_brng and riwayat_barang_medis.kd_bangsal = 'AP' and riwayat_barang_medis.tanggal between ? and ? order by riwayat_barang_medis.tanggal asc, riwayat_barang_medis.jam asc limit 1) stok_awal,
+            (select sum(mutasibarang.jml) from mutasibarang where mutasibarang.kode_brng = databarang.kode_brng and mutasibarang.kd_bangsalke = 'AP' and mutasibarang.tanggal between ? and ?) tf_masuk,
+            (select sum(detailpesan.jumlah2) from detailpesan join pemesanan on detailpesan.no_faktur = pemesanan.no_faktur where detailpesan.kode_brng = databarang.kode_brng and pemesanan.kd_bangsal = 'AP' and pemesanan.tgl_pesan between ? and ?) penerimaan_obat,
+            (select sum(detail_pemberian_obat.jml) from detail_pemberian_obat where kode_brng = databarang.kode_brng and kd_bangsal = 'AP' and tgl_perawatan between ? and ?) pemberian_obat,
+            (select sum(detailjual.jumlah) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.kd_bangsal = 'AP' and penjualan.tgl_jual between ? and ?) penjualan_obat,
+            (select sum(mutasibarang.jml) from mutasibarang where mutasibarang.kode_brng = databarang.kode_brng and mutasibarang.kd_bangsaldari = 'AP' and mutasibarang.tanggal between ? and ?) tf_keluar
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect, [
+                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir,
+            ])
+            ->join('golongan_barang', 'databarang.kode_golongan', '=', 'golongan_barang.kode')
+            ->join('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
+            ->when($golongan === 'narkotika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G07'))
+            ->when($golongan === 'psikotropika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G01'))
+            ->when(empty($golongan), fn (Builder $q): Builder => $q->where('databarang.kode_golongan', '-'))
+            ->whereIn('databarang.kode_golongan', ['G01', 'G07'])
+            ->withCasts([
+                'stok_awal'       => 'float',
+                'tf_masuk'        => 'float',
+                'penerimaan_obat' => 'float',
+                'pemberian_obat'  => 'float',
+                'penjualan_obat'  => 'float',
+                'tf_keluar'       => 'float',
+            ]);
     }
 }

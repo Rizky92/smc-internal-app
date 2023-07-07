@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Farmasi;
 
+use App\Models\Farmasi\Obat;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
@@ -33,6 +34,48 @@ class LaporanPemakaianObatNAPZA extends Component
     public function mount(): void
     {
         $this->defaultValues();
+    }
+
+    /**
+     * @return array<empty, empty>|\Illuminate\Contracts\Pagination\Paginator
+     */
+    public function getDataPemakaianObatNarkotikaProperty()
+    {
+        return $this->isDeferred
+            ? []
+            : Obat::query()
+                ->pemakaianObatNAPZA($this->tglAwal, $this->tglAkhir, 'narkotika')
+                ->search($this->cari, [
+                    'databarang.kode_brng',
+                    'databarang.nama_brng',
+                    'databarang.kode_golongan',
+                    'golongan_barang.nama',
+                    'kodesatuan.kode_sat',
+                    'kodesatuan.satuan',
+                ])
+                ->sortWithColumns($this->sortColumns)
+                ->paginate($this->perpage, ['*'], 'page_narkotika');
+    }
+
+    /**
+     * @return array<empty, empty>|\Illuminate\Contracts\Pagination\Paginator
+     */
+    public function getDataPemakaianObatPsikotropikaProperty()
+    {
+        return $this->isDeferred
+            ? []
+            : Obat::query()
+                ->pemakaianObatNAPZA($this->tglAwal, $this->tglAkhir, 'psikotropika')
+                ->search($this->cari, [
+                    'databarang.kode_brng',
+                    'databarang.nama_brng',
+                    'databarang.kode_golongan',
+                    'golongan_barang.nama',
+                    'kodesatuan.kode_sat',
+                    'kodesatuan.satuan',
+                ])
+                ->sortWithColumns($this->sortColumns)
+                ->paginate($this->perpage, ['*'], 'page_psikotropika');
     }
 
     public function render(): View

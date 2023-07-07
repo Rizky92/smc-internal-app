@@ -8,7 +8,7 @@ use App\Models\Farmasi\PengeluaranObat;
 use App\Models\Farmasi\PenjualanWalkInObat;
 use App\Models\Farmasi\ResepObat;
 use App\Models\Farmasi\ReturPenjualanObat;
-use App\Models\Farmasi\Inventaris\PemesananObat;
+use App\Models\Farmasi\PenerimaanObat;
 use App\Models\Farmasi\Inventaris\ReturSupplierObat;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
@@ -142,7 +142,7 @@ class LaporanProduksiTahunan extends Component
 
     public function getPembelianFarmasiProperty(): array
     {
-        return $this->isDeferred ? [] : PemesananObat::totalPembelianDariFarmasi($this->tahun);
+        return $this->isDeferred ? [] : PenerimaanObat::totalPembelianDariFarmasi($this->tahun);
     }
 
     public function getReturSupplierProperty(): array
