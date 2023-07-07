@@ -192,9 +192,12 @@ class Obat extends Model
             ])
             ->join('golongan_barang', 'databarang.kode_golongan', '=', 'golongan_barang.kode')
             ->join('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
-            ->when($golongan === 'narkotika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G07'))
-            ->when($golongan === 'psikotropika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G01'))
-            ->when(empty($golongan), fn (Builder $q): Builder => $q->where('databarang.kode_golongan', '-'))
+            ->where('databarang.status', '1')
+            ->where(fn (Builder $query): Builder => $query
+                ->when($golongan === 'narkotika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G07'))
+                ->when($golongan === 'psikotropika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G01'))
+                ->when(empty($golongan), fn (Builder $q): Builder => $q->where('databarang.kode_golongan', '-'))
+            )
             ->whereIn('databarang.kode_golongan', ['G01', 'G07'])
             ->withCasts([
                 'stok_awal'       => 'float',
