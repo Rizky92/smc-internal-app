@@ -75,12 +75,16 @@ class RKATPenetapan extends Component
     {
         $settings = app(RKATSettings::class);
 
-        $permission = Auth::user()->can('keuangan.rkat.penetapan-rkat.create');
+        $user = Auth::user();
+
+        $hasPermission = $user->can('keuangan.rkat.penetapan-rkat.create');
+
+        $isDevelop = $user->hasRole(config('permission.superadmin_name'));
 
         $penetapanAwal = $settings->batas_penetapan_awal;
         $penetapanAkhir = $settings->batas_penetapan_akhir;
 
-        return carbon()->between($penetapanAwal, $penetapanAkhir) && $permission;
+        return (carbon()->between($penetapanAwal, $penetapanAkhir) && $hasPermission) || $isDevelop;
     }
 
     protected function defaultValues(): void

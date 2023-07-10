@@ -230,6 +230,7 @@ class Menu
                     'farmasi.perbandingan-po-obat.read',
                     'farmasi.laporan-pembuatan-soap.read',
                     'farmasi.laporan-pemakaian-obat-napza.read',
+                    'farmasi.laporan-pemakaian-obat-morphine.read',
                 ]),
                 'items' => [
                     [
@@ -279,6 +280,12 @@ class Menu
                         'icon' => 'fas fa-file-invoice',
                         'url' => route('admin.farmasi.laporan-pemakaian-obat-napza'),
                         'hasAnyPermissions' => $user->can('farmasi.laporan-pemakaian-obat-napza.read'),
+                    ],
+                    [
+                        'name' => 'Pemakaian Obat Morfin',
+                        'icon' => 'fas fa-file-invoice',
+                        'url' => route('admin.farmasi.laporan-pemakaian-obat-morphine'),
+                        'hasAnyPermissions' => $user->can('farmasi.laporan-pemakaian-obat-morphine.read'),
                     ],
                 ],
             ],

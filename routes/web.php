@@ -186,6 +186,10 @@ Route::prefix('admin')
                 Route::get('laporan-pemakaian-obat-napza', Farmasi\LaporanPemakaianObatNAPZA::class)
                     ->middleware('can:farmasi.laporan-pemakaian-obat-napza.read')
                     ->name('laporan-pemakaian-obat-napza');
+
+                Route::get('laporan-pemakaian-obat-morphine', Farmasi\LaporanPemakaianObatMorphine::class)
+                    ->middleware('can:farmasi.laporan-pemakaian-obat-morphine.read')
+                    ->name('laporan-pemakaian-obat-morphine');
             });
 
         Route::prefix('rekam-medis')

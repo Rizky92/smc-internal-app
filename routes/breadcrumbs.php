@@ -176,6 +176,11 @@ Breadcrumbs::for('admin.farmasi.laporan-pemakaian-obat-napza', function (Trail $
     $trail->push('Pemakaian Obat NAPZA', route('admin.farmasi.laporan-pemakaian-obat-napza'));
 });
 
+Breadcrumbs::for('admin.farmasi.laporan-pemakaian-obat-morphine', function (Trail $trail): void {
+    $trail->parent('admin.farmasi');
+    $trail->push('Pemakaian Obat Morfin', route('admin.farmasi.laporan-pemakaian-obat-morphine'));
+});
+
 
 Breadcrumbs::for('admin.rekam-medis', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
