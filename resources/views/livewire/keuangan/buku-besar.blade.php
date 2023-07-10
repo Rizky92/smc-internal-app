@@ -44,7 +44,7 @@
                             <x-table.td>{{ rp($jurnal->kredit) }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty :colspan="9" />
+                        <x-table.tr-empty colspan="9" padding />
                     @endforelse
                 </x-slot>
                 <x-slot name="footer">

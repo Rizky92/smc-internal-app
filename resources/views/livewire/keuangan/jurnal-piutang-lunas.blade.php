@@ -5,7 +5,13 @@
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.label constant-width>Periode :</x-filter.label>
-                <x-filter.select model="jenisPeriode" :options="['jurnal' => 'Waktu Jurnal', 'penagihan' => 'Tgl. Penagihan', 'bayar' => 'Tgl. Bayar']" />
+                <x-filter.select
+                    model="jenisPeriode"
+                    :options="[
+                        'jurnal'    => 'Waktu Jurnal',
+                        'penagihan' => 'Tgl. Penagihan',
+                        'bayar'     => 'Tgl. Bayar',
+                    ]" />
                 <x-filter.label class="px-3">dari</x-filter.label>
                 <x-filter.range-date title="" />
                 <x-button

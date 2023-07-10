@@ -50,7 +50,7 @@
                                         <x-table.td class="text-right">{{ number_format(($item->stok_awal + $item->tf_masuk + $item->penerimaan_obat + $item->hibah_obat + $item->retur_pasien) - ($item->pemberian_obat + $item->penjualan_obat + $item->tf_keluar + $item->retur_supplier), 0, ',', '.') }}</x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty colspan="15" padding />
+                                    <x-table.tr-empty colspan="16" padding />
                                 @endforelse
                             </x-slot>
                         </x-table>
@@ -97,7 +97,7 @@
                                         <x-table.td class="text-right">{{ number_format(($item->stok_awal + $item->tf_masuk + $item->penerimaan_obat + $item->hibah_obat + $item->retur_pasien) - ($item->pemberian_obat + $item->penjualan_obat + $item->tf_keluar + $item->retur_supplier), 0, ',', '.') }}</x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty colspan="13" padding />
+                                    <x-table.tr-empty colspan="16" padding />
                                 @endforelse
                             </x-slot>
                         </x-table>
