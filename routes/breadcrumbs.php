@@ -24,6 +24,11 @@ Breadcrumbs::for('admin.perawatan.laporan-pasien-ranap', function (Trail $trail)
     $trail->push('Laporan Pasien Ranap', route('admin.perawatan.laporan-pasien-ranap'));
 });
 
+Breadcrumbs::for('admin.perawatan.laporan-transaksi-gantung', function (Trail $trail): void {
+    $trail->parent('admin.perawatan');
+    $trail->push('Transaksi Gantung', route('admin.perawatan.laporan-transaksi-gantung'));
+});
+
 
 Breadcrumbs::for('admin.keuangan', function (Trail $trail): void {
     $trail->parent('admin.dashboard');

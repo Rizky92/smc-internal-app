@@ -45,6 +45,13 @@ class Menu
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('perawatan.laporan-pasien-ranap.read'),
                     ],
+                    [
+                        'name' => 'Transaksi Gantung',
+                        'url' => route('admin.perawatan.laporan-transaksi-gantung'),
+                        'icon' => "fas fa-file-alt",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('perawatan.laporan-transaksi-gantung.read'),
+                    ],
                 ]
             ],
             [
