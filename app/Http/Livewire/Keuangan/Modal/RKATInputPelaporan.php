@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Keuangan\RKAT\Modal;
+namespace App\Http\Livewire\Keuangan\Modal;
 
 use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Models\Keuangan\RKAT\PemakaianAnggaran;
@@ -16,7 +16,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class InputPelaporanRKAT extends Component
+class RKATInputPelaporan extends Component
 {
     use FlashComponent, Filterable, DeferredModal;
 
@@ -96,7 +96,7 @@ class InputPelaporanRKAT extends Component
 
     public function render(): View
     {
-        return view('livewire.keuangan.rkat.modal.input-pelaporan-rkat');
+        return view('livewire.keuangan.modal.rkat-input-pelaporan');
     }
 
     public function prepare(array $options): void

@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Http\Livewire\Keuangan\RKAT;
+namespace App\Http\Livewire\Keuangan;
 
 use App\Models\Bidang;
 use App\Models\Keuangan\RKAT\AnggaranBidang;
-use App\Settings\PengaturanRKAT;
 use App\Settings\RKATSettings;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
@@ -19,7 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class PenetapanRKAT extends Component
+class RKATPenetapan extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
@@ -68,7 +67,7 @@ class PenetapanRKAT extends Component
 
     public function render(): View
     {
-        return view('livewire.keuangan.rkat.penetapan-rkat')
+        return view('livewire.keuangan.rkat-penetapan')
             ->layout(BaseLayout::class, ['title' => 'Penetapan RKAT']);
     }
 

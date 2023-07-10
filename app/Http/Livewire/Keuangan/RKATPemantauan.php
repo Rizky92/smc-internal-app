@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Livewire\Keuangan\RKAT;
+namespace App\Http\Livewire\Keuangan;
 
 use App\Models\Bidang;
-use App\Models\Keuangan\RKAT\Anggaran;
 use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Models\Keuangan\RKAT\PemakaianAnggaran;
 use App\Support\Traits\Livewire\DeferredLoading;
@@ -16,11 +15,10 @@ use App\View\Components\BaseLayout;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
-class PemantauanRKAT extends Component
+class RKATPemantauan extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
@@ -50,9 +48,6 @@ class PemantauanRKAT extends Component
             ->all();
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Collection<\App\Models\Bidang>
-     */
     public function getDataLaporanRKATProperty(): Collection
     {
         return Bidang::query()
@@ -65,7 +60,7 @@ class PemantauanRKAT extends Component
 
     public function render(): View
     {
-        return view('livewire.keuangan.rkat.pemantauan-rkat')
+        return view('livewire.keuangan.rkat-pemantauan')
             ->layout(BaseLayout::class, ['title' => 'Pemantauan Pemakaian RKAT per Bidang']);
     }
 

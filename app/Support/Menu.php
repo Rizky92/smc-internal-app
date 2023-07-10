@@ -52,10 +52,10 @@ class Menu
                 'icon' => "far fa-circle",
                 'type' => 'dropdown',
                 'hasAnyPermissions' => $user->canAny([
-                    'keuangan.rkat.penetapan-rkat.read',
-                    'keuangan.rkat.pelaporan-rkat.read',
-                    'keuangan.rkat.pemantauan-rkat.read',
-                    'keuangan.rkat.kategori-rkat.read',
+                    'keuangan.rkat-penetapan.read',
+                    'keuangan.rkat-pelaporan.read',
+                    'keuangan.rkat-pemantauan.read',
+                    'keuangan.rkat-kategori.read',
                     'keuangan.account-payable.read-medis',
                     'keuangan.account-payable.read-nonmedis',
                     'keuangan.account-receivable.read',
@@ -71,7 +71,7 @@ class Menu
                     'keuangan.laporan-tindakan-radiologi.read',
                     'keuangan.rekap-piutang-aging.read',
                     'keuangan.rekap-piutang-pasien.read',
-                    'keuangan.riwayat-jurnal-perbaikan.read',
+                    'keuangan.jurnal-perbaikan-riwayat.read',
                     'keuangan.stok-obat-ruangan.read',
                 ]),
                 'items' => [
@@ -161,10 +161,10 @@ class Menu
                     ],
                     // [
                     //     'name' => 'Riwayat Jurnal Perbaikan',
-                    //     'url' => route('admin.keuangan.riwayat-jurnal-perbaikan'),
+                    //     'url' => route('admin.keuangan.jurnal-perbaikan-riwayat'),
                     //     'icon' => "fas fa-history",
                     //     'type' => 'link',
-                    //     'hasAnyPermissions' => $user->can('keuangan.riwayat-jurnal-perbaikan.read'),
+                    //     'hasAnyPermissions' => $user->can('keuangan.jurnal-perbaikan-riwayat.read'),
                     // ],
                     [
                         'name' => 'Buku Besar',

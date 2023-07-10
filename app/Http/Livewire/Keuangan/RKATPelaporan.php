@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Keuangan\RKAT;
+namespace App\Http\Livewire\Keuangan;
 
 use App\Models\Bidang;
 use App\Models\Keuangan\RKAT\PemakaianAnggaran;
@@ -16,7 +16,7 @@ use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class PelaporanRKAT extends Component
+class RKATPelaporan extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
@@ -68,7 +68,7 @@ class PelaporanRKAT extends Component
 
     public function render(): View
     {
-        return view('livewire.keuangan.rkat.pelaporan-rkat')
+        return view('livewire.keuangan.rkat-pelaporan')
             ->layout(BaseLayout::class, ['title' => 'Pelaporan Penggunaan RKAT']);
     }
 

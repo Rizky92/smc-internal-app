@@ -71,19 +71,19 @@ Route::prefix('admin')
         Route::prefix('keuangan')
             ->as('keuangan.')
             ->group(function () {
-                Route::get('pelaporan-rkat', Keuangan\RKAT\PelaporanRKAT::class)
+                Route::get('pelaporan-rkat', Keuangan\RKATPelaporan::class)
                     ->middleware('can:keuangan.pelaporan-rkat.read')
                     ->name('pelaporan-rkat');
 
-                Route::get('pemantauan-rkat', Keuangan\RKAT\PemantauanRKAT::class)
+                Route::get('pemantauan-rkat', Keuangan\RKATPemantauan::class)
                     ->middleware('can:keuangan.pemantauan-rkat.read')
                     ->name('pemantauan-rkat');
 
-                Route::get('penetapan-rkat', Keuangan\RKAT\PenetapanRKAT::class)
+                Route::get('penetapan-rkat', Keuangan\RKATPenetapan::class)
                     ->middleware('can:keuangan.penetapan-rkat.read')
                     ->name('penetapan-rkat');
 
-                Route::get('kategori-rkat', Keuangan\RKAT\KategoriRKAT::class)
+                Route::get('kategori-rkat', Keuangan\RKATKategori::class)
                     ->middleware('can:keuangan.kategori-rkat.read')
                     ->name('kategori-rkat');
 
@@ -123,17 +123,13 @@ Route::prefix('admin')
                     ->middleware('can:keuangan.laba-rugi-rekening.read')
                     ->name('laba-rugi-rekening');
 
-                Route::get('dpjp-piutang-ranap', Keuangan\DPJPPiutangRanap::class)
-                    ->middleware('can:keuangan.dpjp-piutang-ranap.read')
-                    ->name('dpjp-piutang-ranap');
-
                 Route::get('jurnal-perbaikan', Keuangan\JurnalPerbaikan::class)
                     ->middleware('can:keuangan.jurnal-perbaikan.read')
                     ->name('jurnal-perbaikan');
 
-                Route::get('riwayat-jurnal-perbaikan', Keuangan\RiwayatJurnalPerbaikan::class)
-                    ->middleware('can:keuangan.riwayat-jurnal-perbaikan.read')
-                    ->name('riwayat-jurnal-perbaikan');
+                Route::get('jurnal-perbaikan-riwayat', Keuangan\JurnalPerbaikanRiwayat::class)
+                    ->middleware('can:keuangan.jurnal-perbaikan-riwayat.read')
+                    ->name('jurnal-perbaikan-riwayat');
 
                 Route::get('laporan-tindakan-lab', Keuangan\LaporanTindakanLab::class)
                     ->middleware('can:keuangan.laporan-tindakan-lab.read')

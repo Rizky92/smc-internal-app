@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Keuangan\RKAT;
+namespace App\Http\Livewire\Keuangan;
 
 use App\Models\Keuangan\RKAT\Anggaran;
 use App\Support\Traits\Livewire\Filterable;
@@ -12,7 +12,7 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class KategoriRKAT extends Component
+class RKATKategori extends Component
 {
     use FlashComponent, Filterable, LiveTable, MenuTracker;
 
@@ -28,7 +28,7 @@ class KategoriRKAT extends Component
 
     public function render(): View
     {
-        return view('livewire.keuangan.rkat.kategori-rkat')
+        return view('livewire.keuangan.rkat-kategori')
             ->layout(BaseLayout::class, ['title' => 'Kategori RKAT']);
     }
 

@@ -1,7 +1,7 @@
 <div>
     <x-flash />
 
-    <livewire:keuangan.r-k-a-t.modal.input-kategori-r-k-a-t />
+    <livewire:keuangan.modal.r-k-a-t-input-kategori />
 
     @once
         @push('js')

@@ -2,7 +2,7 @@
     <x-flash />
 
     @if ($this->bisaTetapkanRKAT())
-        <livewire:keuangan.r-k-a-t.modal.input-penetapan-r-k-a-t />
+        <livewire:keuangan.modal.r-k-a-t-input-penetapan />
     @endif
 
     @once

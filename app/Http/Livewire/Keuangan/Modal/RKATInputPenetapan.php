@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Keuangan\RKAT\Modal;
+namespace App\Http\Livewire\Keuangan\Modal;
 
 use App\Models\Bidang;
 use App\Models\Keuangan\RKAT\Anggaran;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class InputPenetapanRKAT extends Component
+class RKATInputPenetapan extends Component
 {
     use FlashComponent, Filterable, DeferredModal;
 
@@ -74,7 +74,7 @@ class InputPenetapanRKAT extends Component
 
     public function render(): View
     {
-        return view('livewire.keuangan.rkat.modal.input-penetapan-rkat');
+        return view('livewire.keuangan.modal.rkat-input-penetapan');
     }
 
     public function prepare(int $id = -1): void

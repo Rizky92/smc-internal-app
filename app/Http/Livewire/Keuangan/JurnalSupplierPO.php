@@ -83,14 +83,14 @@ class JurnalSupplierPO extends Component
                 "pegawai.nama",
             ])
             ->sortWithColumns($this->sortColumns, [
-                'nm_pegawai' => "trim(concat(jurnal_non_medis.nik, ' ', coalesce(pegawai.nama, '')))"
+                'nm_pegawai' => DB::raw("trim(concat(jurnal_non_medis.nik, ' ', coalesce(pegawai.nama, '')))")
             ])
             ->paginate($this->perpage, ['*'], 'page_nonmedis');
     }
 
     public function render(): View
     {
-        return view('livewire.keuangan.jurnal-supplier-p-o')
+        return view('livewire.keuangan.jurnal-supplier-po')
             ->layout(BaseLayout::class, ['title' => 'Penarikan Data Suplier Penerimaan Barang Medis / Non Medis dari Jurnal']);
     }
 

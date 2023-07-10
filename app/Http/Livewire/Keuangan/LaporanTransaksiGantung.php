@@ -2,7 +2,6 @@
 
 namespace App\Http\Livewire\Keuangan;
 
-use App\Models\Keuangan\Jurnal\JurnalBackup;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
@@ -10,37 +9,42 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class RiwayatJurnalPerbaikan extends Component
+class LaporanTransaksiGantung extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+
+    /** @var ?string */
+    public $tglAwal;
+
+    /** @var ?string */
+    public $tglAkhir;
+
+    protected function queryString(): array
+    {
+        return [
+            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+        ];
+    }
 
     public function mount(): void
     {
         $this->defaultValues();
     }
 
-    public function getDataRiwayatJurnalPerbaikanProperty(): Paginator
-    {
-        return JurnalBackup::query()
-            ->with(['pegawai', 'jurnal'])
-            ->paginate($this->perpage);
-    }
-
     public function render(): View
     {
-        return view('livewire.keuangan.riwayat-jurnal-perbaikan')
-            ->layout(BaseLayout::class, ['title' => 'Riwayat Jurnal Perbaikan']);
+        return view('livewire.keuangan.laporan-transaksi-gantung')
+            ->layout(BaseLayout::class, ['title' => 'LaporanTransaksiGantung']);
     }
 
     protected function defaultValues(): void
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
+        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array

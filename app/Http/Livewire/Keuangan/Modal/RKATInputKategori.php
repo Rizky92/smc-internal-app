@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Keuangan\RKAT\Modal;
+namespace App\Http\Livewire\Keuangan\Modal;
 
 use App\Models\Keuangan\RKAT\Anggaran;
 use App\Support\Traits\Livewire\DeferredModal;
@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class InputKategoriRKAT extends Component
+class RKATInputKategori extends Component
 {
     use DeferredModal, Filterable;
 
@@ -36,7 +36,7 @@ class InputKategoriRKAT extends Component
 
     public function render(): View
     {
-        return view('livewire.keuangan.rkat.modal.input-kategori-rkat');
+        return view('livewire.keuangan.modal.rkat-input-kategori');
     }
 
     public function prepare(int $id = -1, string $nama = '', string $deskripsi = ''): void
