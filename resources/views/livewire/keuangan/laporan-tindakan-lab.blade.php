@@ -43,7 +43,7 @@
                             <x-table.td>{{ $item->nm_dokter }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="16" />
+                        <x-table.tr-empty colspan="16" padding />
                     @endforelse
                 </x-slot>
             </x-table>

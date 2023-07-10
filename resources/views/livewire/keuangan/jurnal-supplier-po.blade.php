@@ -54,7 +54,7 @@
                                         <x-table.td>{{ $jurnal->nm_pegawai }}</x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty colspan="10" />
+                                    <x-table.tr-empty colspan="10" padding />
                                 @endforelse
                             </x-slot>
                         </x-table>
@@ -87,7 +87,7 @@
                                         <x-table.td>{{ $jurnal->nm_pegawai }}</x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty colspan="10" />
+                                    <x-table.tr-empty colspan="10" padding />
                                 @endforelse
                             </x-slot>
                         </x-table>

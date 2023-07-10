@@ -35,7 +35,7 @@
                             <x-table.td>{{ $pasien->suku }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="12" />
+                        <x-table.tr-empty colspan="12" padding />
                     @endforelse
                 </x-slot>
             </x-table>

@@ -78,7 +78,7 @@
                                 </x-table.td>
                             </x-table.tr>
                         @empty
-                            <x-table.tr-empty colspan="5" />
+                            <x-table.tr-empty colspan="5" padding />
                         @endforelse
                     </x-slot>
                 </x-table>

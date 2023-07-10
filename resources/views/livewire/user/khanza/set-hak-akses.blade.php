@@ -55,7 +55,7 @@
                                 <x-table.td>{{ $hakAkses->judul_menu }}</x-table.td>
                             </x-table.tr>
                         @empty
-                            <x-table.tr-empty colspan="3" />
+                            <x-table.tr-empty colspan="3" padding />
                         @endforelse
                     </x-slot>
                 </x-table>

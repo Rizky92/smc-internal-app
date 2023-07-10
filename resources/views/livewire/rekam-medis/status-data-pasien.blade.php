@@ -63,7 +63,7 @@
                             <x-table.td>{{ (bool) $item->icd_9 ? 'Ada' : 'Tidak Ada' }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="29" />
+                        <x-table.tr-empty colspan="29" padding />
                     @endforelse
                 </x-slot>
             </x-table>

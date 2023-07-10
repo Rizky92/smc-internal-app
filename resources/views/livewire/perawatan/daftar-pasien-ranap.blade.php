@@ -286,7 +286,7 @@
                             <x-table.td>{{ $pasien->no_tlp }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="21" />
+                        <x-table.tr-empty colspan="21" padding />
                     @endforelse
                 </x-slot>
             </x-table>

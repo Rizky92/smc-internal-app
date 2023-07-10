@@ -38,7 +38,7 @@
 
                             $firstDetail = $jurnal->detail->first();
                         @endphp
-                        
+
                         <x-table.tr style="background-color: rgb({{ $odd }})">
                             @can('keuangan.jurnal-perbaikan.ubah-tanggal')
                                 <x-table.td rowspan="{{ $count }}" class="pl-3 py-1">
@@ -89,7 +89,7 @@
                             @endforeach
                         @endif
                     @empty
-                        <x-table.tr-empty :colspan="auth()->user()->can('keuangan.jurnal-perbaikan.ubah-tanggal') ? 8 : 7" />
+                        <x-table.tr-empty :colspan="auth()->user()->can('keuangan.jurnal-perbaikan.ubah-tanggal') ? 8 : 7" padding />
                     @endforelse
                 </x-slot>
             </x-table>

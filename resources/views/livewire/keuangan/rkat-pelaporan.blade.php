@@ -68,7 +68,7 @@
                             <x-table.td>{{ $penggunaan->user_id }} {{ optional($penggunaan->petugas)->nama }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="8" />
+                        <x-table.tr-empty colspan="8" padding />
                     @endforelse
                 </x-slot>
             </x-table>

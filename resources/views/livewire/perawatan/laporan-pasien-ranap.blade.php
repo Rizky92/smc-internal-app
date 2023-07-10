@@ -58,7 +58,7 @@
                             <x-table.td>{{ $pasien->dpjp }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="17" />
+                        <x-table.tr-empty colspan="17" padding />
                     @endforelse
                 </x-slot>
             </x-table>

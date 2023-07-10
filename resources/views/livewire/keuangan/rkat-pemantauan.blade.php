@@ -61,7 +61,7 @@
                             <x-table.td-empty colspan="6" text="" />
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="6" />
+                        <x-table.tr-empty colspan="6" padding />
                     @endforelse
                 </x-slot>
             </x-table>
