@@ -1,11 +1,13 @@
 <?xml version="1.0"?>
 <psalm
-    errorLevel="3"
+    errorLevel="4"
     resolveFromConfigFile="true"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
     errorBaseline="psalm-baseline.xml"
+    allowStringToStandInForClass="true"
+    restrictReturnTypes="false"
 >
     <projectFiles>
         <directory name="app" />
@@ -18,25 +20,14 @@
     <plugins>
         <pluginClass class="Psalm\LaravelPlugin\Plugin" />
     </plugins>
+    <stubs>
+        <file name="_ide_helper_models.php" />
+        <file name="_ide_helper.php" />
+        <file name=".phpstorm.meta.php" />
+    </stubs>
 
     <issueHandlers>
-        <InvalidReturnType>
-            <errorLevel type="suppress">
-                <file name="app\Models\Perawatan\RawatInap.php" />
-            </errorLevel>
-        </InvalidReturnType>
-        <TooManyTemplateParams>
-            <errorLevel type="suppress">
-                <file name="app\Models\Perawatan\RawatInap.php" />
-            </errorLevel>
-        </TooManyTemplateParams>
-        <InvalidReturnStatement>
-            <errorLevel type="suppress">
-                <file name="app\Models\Perawatan\RawatInap.php" />
-            </errorLevel>
-        </InvalidReturnStatement>
         <UnsafeInstantiation errorLevel="suppress" />
         <PropertyNotSetInConstructor errorLevel="suppress" />
-        <UndefinedPropertyFetch errorLevel="suppress" />
     </issueHandlers>
 </psalm>

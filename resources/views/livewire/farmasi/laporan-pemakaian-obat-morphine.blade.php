@@ -15,6 +15,7 @@
                         <x-navtabs.content :id="$key">
                             <x-table style="min-width: 100%" zebra hover sticky nowrap>
                                 <x-slot name="columns">
+                                    <x-table.th name="no_rawat" title="No. Rawat" />
                                     <x-table.th name="no_rkm_medis" title="No. RM" />
                                     <x-table.th name="nm_pasien" title="Nama Pasien" />
                                     <x-table.th name="alamat" title="Alamat Pasien" />
@@ -26,6 +27,7 @@
                                 <x-slot name="body">
                                     @forelse ($this->{$property} as $item)
                                         <x-table.tr>
+                                            <x-table.td>{{ $item->no_rawat }}</x-table.td>
                                             <x-table.td>{{ $item->no_rkm_medis }}</x-table.td>
                                             <x-table.td>{{ $item->nm_pasien }}</x-table.td>
                                             <x-table.td>{{ $item->alamat }}</x-table.td>
@@ -35,7 +37,7 @@
                                             <x-table.td>{{ $item->alamat_dokter }}</x-table.td>
                                         </x-table.tr>
                                     @empty
-                                        <x-table.tr-empty colspan="7" padding />
+                                        <x-table.tr-empty colspan="8" padding />
                                     @endforelse
                                 </x-slot>
                             </x-table>

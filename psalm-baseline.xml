@@ -84,6 +84,45 @@
       <code>can</code>
     </UndefinedInterfaceMethod>
   </file>
+  <file src="app/Http/Livewire/Keuangan/Modal/RKATInputKategori.php">
+    <PossiblyNullReference occurrences="2">
+      <code>can</code>
+      <code>can</code>
+    </PossiblyNullReference>
+    <UndefinedInterfaceMethod occurrences="2">
+      <code>can</code>
+      <code>can</code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="app/Http/Livewire/Keuangan/Modal/RKATInputPelaporan.php">
+    <NoInterfaceProperties occurrences="1">
+      <code>Auth::user()-&gt;nik</code>
+    </NoInterfaceProperties>
+    <PossiblyNullPropertyFetch occurrences="1">
+      <code>Auth::user()-&gt;nik</code>
+    </PossiblyNullPropertyFetch>
+    <PossiblyNullReference occurrences="4">
+      <code>can</code>
+      <code>can</code>
+      <code>can</code>
+      <code>delete</code>
+    </PossiblyNullReference>
+    <UndefinedInterfaceMethod occurrences="3">
+      <code>can</code>
+      <code>can</code>
+      <code>can</code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="app/Http/Livewire/Keuangan/Modal/RKATInputPenetapan.php">
+    <PossiblyNullReference occurrences="2">
+      <code>can</code>
+      <code>can</code>
+    </PossiblyNullReference>
+    <UndefinedInterfaceMethod occurrences="2">
+      <code>can</code>
+      <code>can</code>
+    </UndefinedInterfaceMethod>
+  </file>
   <file src="app/Http/Livewire/Keuangan/Modal/UbahTanggalJurnal.php">
     <NoInterfaceProperties occurrences="1">
       <code>Auth::user()-&gt;nik</code>
@@ -102,46 +141,20 @@
       <code>cannot</code>
     </UndefinedInterfaceMethod>
   </file>
-  <file src="app/Http/Livewire/Keuangan/RKAT/Modal/InputKategoriRKAT.php">
-    <PossiblyNullReference occurrences="2">
-      <code>can</code>
-      <code>can</code>
-    </PossiblyNullReference>
-    <UndefinedInterfaceMethod occurrences="2">
-      <code>can</code>
-      <code>can</code>
-    </UndefinedInterfaceMethod>
-  </file>
-  <file src="app/Http/Livewire/Keuangan/RKAT/Modal/InputPelaporanRKAT.php">
-    <NoInterfaceProperties occurrences="1">
-      <code>Auth::user()-&gt;nik</code>
-    </NoInterfaceProperties>
-    <PossiblyNullPropertyFetch occurrences="1">
-      <code>Auth::user()-&gt;nik</code>
-    </PossiblyNullPropertyFetch>
-    <PossiblyNullReference occurrences="2">
-      <code>can</code>
-      <code>can</code>
-    </PossiblyNullReference>
-    <UndefinedInterfaceMethod occurrences="2">
-      <code>can</code>
-      <code>can</code>
-    </UndefinedInterfaceMethod>
-  </file>
-  <file src="app/Http/Livewire/Keuangan/RKAT/Modal/InputPenetapanRKAT.php">
-    <PossiblyNullReference occurrences="2">
-      <code>can</code>
-      <code>can</code>
-    </PossiblyNullReference>
-    <UndefinedInterfaceMethod occurrences="2">
-      <code>can</code>
-      <code>can</code>
-    </UndefinedInterfaceMethod>
-  </file>
-  <file src="app/Http/Livewire/Keuangan/RKAT/PemantauanRKAT.php">
+  <file src="app/Http/Livewire/Keuangan/RKATPemantauan.php">
     <PossiblyInvalidArgument occurrences="1">
       <code>$pemakaianAnggaranBidang</code>
     </PossiblyInvalidArgument>
+  </file>
+  <file src="app/Http/Livewire/Keuangan/RKATPenetapan.php">
+    <PossiblyNullReference occurrences="2">
+      <code>can</code>
+      <code>hasRole</code>
+    </PossiblyNullReference>
+    <UndefinedInterfaceMethod occurrences="2">
+      <code>can</code>
+      <code>hasRole</code>
+    </UndefinedInterfaceMethod>
   </file>
   <file src="app/Http/Livewire/Logistik/InputMinmaxStok.php">
     <PossiblyNullReference occurrences="1">
@@ -352,13 +365,11 @@
       <code>DB::raw('dokter dokter_pj')</code>
     </ImplicitToStringCast>
   </file>
-  <file src="app/Models/Perawatan/RawatInap.php">
-    <InvalidTemplateParam occurrences="1">
-      <code>Builder&lt;TRelatedModel&gt;</code>
-    </InvalidTemplateParam>
-    <UndefinedDocblockClass occurrences="1">
-      <code>Builder&lt;TRelatedModel&gt;</code>
-    </UndefinedDocblockClass>
+  <file src="app/Models/Perawatan/PemeriksaanRanap.php">
+    <ImplicitToStringCast occurrences="2">
+      <code>DB::raw('trim(pemeriksaan_ranap.nip)')</code>
+      <code>DB::raw('trim(petugas.nip)')</code>
+    </ImplicitToStringCast>
   </file>
   <file src="app/Models/Perawatan/RegistrasiPasien.php">
     <ImplicitToStringCast occurrences="1">

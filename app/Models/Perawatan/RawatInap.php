@@ -106,10 +106,16 @@ class RawatInap extends Model
         return $this->belongsToMany(Dokter::class, 'dpjp_ranap', 'no_rawat', 'kd_dokter', 'no_rawat', 'kd_dokter');
     }
 
+    /**
+     * @psalm-suppress InvalidReturnType
+     * @psalm-suppress InvalidReturnStatement
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function diagnosa(): HasMany
     {
         return $this->hasMany(DiagnosaPasien::class, 'no_rawat', 'no_rawat')
-            ->where('status', 'ranap');
+            ->ranap();
     }
 
     public function tindakanRanapPerawat(): HasMany

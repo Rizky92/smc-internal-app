@@ -54,7 +54,7 @@ class RKATInputKategori extends Component
             return;
         }
 
-        if (! Auth::user()->can('keuangan.rkat.kategori-rkat.create')) {
+        if (!Auth::user()->can('keuangan.rkat.kategori-rkat.create')) {
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 
@@ -76,7 +76,7 @@ class RKATInputKategori extends Component
 
     public function update(): void
     {
-        if (! Auth::user()->can('keuangan.rkat.kategori-rkat.update')) {
+        if (!Auth::user()->can('keuangan.rkat.kategori-rkat.update')) {
             $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini.');
 
@@ -85,7 +85,7 @@ class RKATInputKategori extends Component
 
         $anggaran = Anggaran::find($this->anggaranId);
 
-        if (! $anggaran) {
+        if (!$anggaran) {
             $this->dispatchBrowserEvent('data-not-found');
             $this->emit('flash.error', 'Tidak dapat menemukan data yang bisa diupdate. Silahkan coba kembali.');
 

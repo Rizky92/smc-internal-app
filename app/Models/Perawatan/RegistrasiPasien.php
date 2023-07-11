@@ -304,7 +304,7 @@ class RegistrasiPasien extends Model
 
     public function askepRWI(): Attribute
     {
-        return Attribute::get(function ($_, array $attributes) {
+        return Attribute::get(function (?string $_, array $attributes) {
             $askep = collect();
 
             if ($attributes['askep_ranap_umum'] === "1") {
@@ -325,7 +325,7 @@ class RegistrasiPasien extends Model
 
     public function askepPoli(): Attribute
     {
-        return Attribute::get(function ($_, array $attributes) {
+        return Attribute::get(function (?string $_, array $attributes) {
             $askep = collect();
 
             if ($attributes['askep_poli_umum'] === "1") {

@@ -181,6 +181,7 @@ return [
 
     'extra' => [
         \Illuminate\Support\Facades\Session::class => \Illuminate\Session\Store::class,
+        \Illuminate\Contracts\View\View::class => \Livewire\Macros\ViewMacros::class,
         \Illuminate\View\View::class => \Livewire\Macros\ViewMacros::class,
         \Illuminate\Support\Arr::class => \App\Support\Mixins\CustomArr::class,
         \Illuminate\Support\Collection::class => \App\Support\Mixins\CustomCollections::class,

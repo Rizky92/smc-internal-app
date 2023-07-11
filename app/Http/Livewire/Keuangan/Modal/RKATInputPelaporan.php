@@ -101,8 +101,13 @@ class RKATInputPelaporan extends Component
 
     public function prepare(array $options): void
     {
+        $this->anggaranBidangId = AnggaranBidang::where([
+            ['anggaran_id', '=', $options['anggaranId']],
+            ['bidang_id', '=', $options['bidangId']],
+            ['tahun', '=', $options['tahun']],
+        ])->value('id') ?? -1;
+
         $this->pemakaianAnggaranId = $options['pemakaianAnggaranId'] ?? -1;
-        $this->anggaranBidangId = $options['anggaranBidangId'];
         $this->tglPakai = $options['tglPakai'];
         $this->keterangan = $options['keterangan'];
 
@@ -122,13 +127,19 @@ class RKATInputPelaporan extends Component
 
     public function create(): void
     {
+        $user = Auth::user();
+
+        if (! $user) {
+            abort(500);
+        }
+
         if ($this->isUpdating()) {
             $this->update();
 
             return;
         }
 
-        if (! Auth::user()->can('keuangan.rkat.pelaporan-rkat.create')) {
+        if (!$user->can('keuangan.rkat.pelaporan-rkat.create')) {
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 
@@ -144,7 +155,7 @@ class RKATInputPelaporan extends Component
             'judul'              => $this->keterangan,
             'tgl_dipakai'        => $this->tglPakai,
             'anggaran_bidang_id' => $this->anggaranBidangId,
-            'user_id'            => Auth::user()->nik,
+            'user_id'            => $user->nik,
         ]);
 
         $pemakaianAnggaran
@@ -159,11 +170,11 @@ class RKATInputPelaporan extends Component
 
     public function update(): void
     {
-        if (! $this->isUpdating()) {
+        if (!$this->isUpdating()) {
             $this->create();
         }
 
-        if (! Auth::user()->can('keuangan.rkat.pelaporan-rkat.update')) {
+        if (!Auth::user()->can('keuangan.rkat.pelaporan-rkat.update')) {
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 
@@ -194,14 +205,14 @@ class RKATInputPelaporan extends Component
             ->createMany($this->detail);
 
         tracker_end();
-        
+
         $this->dispatchBrowserEvent('data-saved');
         $this->emit('flash.success', 'Data Pemakaian RKAT baru berhasil diupdate!');
     }
 
     public function delete(): void
     {
-        if (! Auth::user()->can('keuangan.rkat.pelaporan-rkat.delete')) {
+        if (!Auth::user()->can('keuangan.rkat.pelaporan-rkat.delete')) {
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 

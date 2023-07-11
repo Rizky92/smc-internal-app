@@ -33,7 +33,7 @@
                         @forelse ($this->kunjunganTotal as $item)
                             <th class="text-center px-0" scope="col" width="150">{{ $item }}</th>
                         @empty
-                            <x-table.td-empty colspan="12" padding />
+                            <x-table.td-empty colspan="12" />
                         @endforelse
                     </x-table.tr>
                     <x-table.tr>
@@ -41,7 +41,7 @@
                         @forelse ($this->kunjunganRalan as $item)
                             <td class="text-center px-0" width="150">{{ $item }}</td>
                         @empty
-                            <x-table.td-empty colspan="12" padding />
+                            <x-table.td-empty colspan="12" />
                         @endforelse
                     </x-table.tr>
                     <x-table.tr>
@@ -49,7 +49,7 @@
                         @forelse ($this->kunjunganRanap as $item)
                             <td class="text-center px-0" width="150">{{ $item }}</td>
                         @empty
-                            <x-table.td-empty colspan="12" padding />
+                            <x-table.td-empty colspan="12" />
                         @endforelse
                     </x-table.tr>
                     <x-table.tr>
@@ -57,7 +57,7 @@
                         @forelse ($this->kunjunganIGD as $item)
                             <td class="text-center px-0" width="150">{{ $item }}</td>
                         @empty
-                            <x-table.td-empty colspan="12" padding />
+                            <x-table.td-empty colspan="12" />
                         @endforelse
                     </x-table.tr>
                     <x-table.tr>
@@ -65,7 +65,7 @@
                         @forelse ($this->kunjunganWalkIn as $item)
                             <td class="text-center px-0" width="150">{{ $item }}</td>
                         @empty
-                            <x-table.td-empty colspan="12" padding />
+                            <x-table.td-empty colspan="12" />
                         @endforelse
                     </x-table.tr>
                     <x-table.tr>
@@ -73,7 +73,7 @@
                         @forelse ($this->pendapatanObatTotal as $item)
                             <th class="text-center px-0" width="150">{{ rp($item) }}</th>
                         @empty
-                            <x-table.td-empty colspan="12" padding />
+                            <x-table.td-empty colspan="12" />
                         @endforelse
                     </x-table.tr>
                     <x-table.tr>
@@ -81,7 +81,7 @@
                         @forelse ($this->pendapatanObatRalan as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @empty
-                            <x-table.td-empty colspan="12" padding />
+                            <x-table.td-empty colspan="12" />
                         @endforelse
                     </x-table.tr>
                     <x-table.tr>
@@ -89,7 +89,7 @@
                         @forelse ($this->pendapatanObatRanap as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @empty
-                            <x-table.td-empty colspan="12" padding />
+                            <x-table.td-empty colspan="12" />
                         @endforelse
                     </x-table.tr>
                     <x-table.tr>
@@ -97,7 +97,7 @@
                         @forelse ($this->pendapatanObatIGD as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @empty
-                            <x-table.td-empty colspan="12" padding />
+                            <x-table.td-empty colspan="12" />
                         @endforelse
                     </x-table.tr>
                     <x-table.tr>
@@ -105,7 +105,7 @@
                         @forelse ($this->pendapatanObatWalkIn as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @empty
-                            <x-table.td-empty colspan="12" padding />
+                            <x-table.td-empty colspan="12" />
                         @endforelse
                     </x-table.tr>
                     <x-table.tr>
@@ -113,7 +113,7 @@
                         @forelse ($this->pendapatanAlkesFarmasiDanUnit as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @empty
-                            <x-table.td-empty colspan="12" padding />
+                            <x-table.td-empty colspan="12" />
                         @endforelse
                     </x-table.tr>
                     <x-table.tr>
@@ -121,7 +121,7 @@
                         @forelse ($this->returObat as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @empty
-                            <x-table.td-empty colspan="12" padding />
+                            <x-table.td-empty colspan="12" />
                         @endforelse
                     </x-table.tr>
                     <x-table.tr>
@@ -129,7 +129,7 @@
                         @forelse ($this->pembelianFarmasi as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @empty
-                            <x-table.td-empty colspan="12" padding />
+                            <x-table.td-empty colspan="12" />
                         @endforelse
                     </x-table.tr>
                     <x-table.tr>
@@ -137,7 +137,7 @@
                         @forelse ($this->returSupplier as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @empty
-                            <x-table.td-empty colspan="12" padding />
+                            <x-table.td-empty colspan="12" />
                         @endforelse
                     </x-table.tr>
                     <x-table.tr>
@@ -145,7 +145,7 @@
                         @forelse ($this->totalBersihPembelianFarmasi as $item)
                             <th class="text-center px-0" width="150">{{ rp($item) }}</th>
                         @empty
-                            <x-table.td-empty colspan="12" padding />
+                            <x-table.td-empty colspan="12" />
                         @endforelse
                     </x-table.tr>
                     <x-table.tr>
@@ -153,7 +153,7 @@
                         @forelse ($this->stokKeluarMedis as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @empty
-                            <x-table.td-empty colspan="12" padding />
+                            <x-table.td-empty colspan="12" />
                         @endforelse
                     </x-table.tr>
                     <x-table.tr>
@@ -161,7 +161,7 @@
                         @forelse ($this->transferOrder as $item)
                             <td class="text-center px-0" width="150">{{ rp($item) }}</td>
                         @empty
-                            <x-table.td-empty colspan="12" padding />
+                            <x-table.td-empty colspan="12" />
                         @endforelse
                     </x-table.tr>
                 </x-slot>

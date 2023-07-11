@@ -52,6 +52,13 @@ class LaporanPemakaianObatMorphine extends Component
     {
         return PemberianObat::query()
             ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, '02.05.0011')
+            ->search($this->cari, [
+                'pasien.no_rkm_medis',
+                'pasien.nm_pasien',
+                'pasien.alamat',
+                'dokter.kd_dokter',
+                'dokter.nm_dokter',
+            ])
             ->paginate($this->perpage, ['*'], 'page_obat_a');
     }
 
@@ -59,6 +66,13 @@ class LaporanPemakaianObatMorphine extends Component
     {
         return PemberianObat::query()
             ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, '02.05.0012')
+            ->search($this->cari, [
+                'pasien.no_rkm_medis',
+                'pasien.nm_pasien',
+                'pasien.alamat',
+                'dokter.kd_dokter',
+                'dokter.nm_dokter',
+            ])
             ->paginate($this->perpage, ['*'], 'page_obat_b');
     }
 
@@ -66,6 +80,13 @@ class LaporanPemakaianObatMorphine extends Component
     {
         return PemberianObat::query()
             ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, '02.05.0013')
+            ->search($this->cari, [
+                'pasien.no_rkm_medis',
+                'pasien.nm_pasien',
+                'pasien.alamat',
+                'dokter.kd_dokter',
+                'dokter.nm_dokter',
+            ])
             ->paginate($this->perpage, ['*'], 'page_obat_c');
     }
 
@@ -73,6 +94,13 @@ class LaporanPemakaianObatMorphine extends Component
     {
         return PemberianObat::query()
             ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, '02.05.0014')
+            ->search($this->cari, [
+                'pasien.no_rkm_medis',
+                'pasien.nm_pasien',
+                'pasien.alamat',
+                'dokter.kd_dokter',
+                'dokter.nm_dokter',
+            ])
             ->paginate($this->perpage, ['*'], 'page_obat_d');
     }
 
@@ -104,6 +132,7 @@ class LaporanPemakaianObatMorphine extends Component
     protected function columnHeaders(): array
     {
         return [
+            'No. Rawat',
             'No. RM',
             'Nama Pasien',
             'Alamat Pasien',

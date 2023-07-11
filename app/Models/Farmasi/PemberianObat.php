@@ -2,12 +2,16 @@
 
 namespace App\Models\Farmasi;
 
+use App\Support\Traits\Eloquent\Searchable;
+use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class PemberianObat extends Model
 {
+    use Searchable, Sortable;
+
     protected $connection = 'mysql_sik';
     
     protected $primaryKey = false;
@@ -31,6 +35,7 @@ class PemberianObat extends Model
         }
 
         $sqlSelect = <<<SQL
+            detail_pemberian_obat.no_rawat,
             pasien.no_rkm_medis,
             pasien.nm_pasien,
             pasien.alamat,
@@ -52,13 +57,15 @@ class PemberianObat extends Model
 
     public function scopePendapatanObat(Builder $query, string $jenisPerawatan = '', string $year = '2022', bool $selainFarmasi = false): Builder
     {
+        $date = carbon()->setYear(intval($year))->startOfYear()->toPeriod(carbon()->setYear(intval($year))->endOfYear());
+        
         return $query->selectRaw("
             round(sum(detail_pemberian_obat.total)) jumlah,
             month(detail_pemberian_obat.tgl_perawatan) bulan
         ")
             ->leftJoin('reg_periksa', 'detail_pemberian_obat.no_rawat', '=', 'reg_periksa.no_rawat')
             ->leftJoin('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
-            ->whereBetween('detail_pemberian_obat.tgl_perawatan', ["{$year}-01-01", "{$year}-12-31"])
+            ->whereBetween('detail_pemberian_obat.tgl_perawatan', [$date->startDate, $date->endDate])
             ->when(!empty($jenisPerawatan), function (Builder $query) use ($jenisPerawatan) {
                 switch (Str::lower($jenisPerawatan)) {
                     case 'ralan':
@@ -71,36 +78,35 @@ class PemberianObat extends Model
                             ->where('reg_periksa.kd_poli', '=', 'IGDK');
                 }
             })
-            ->when($selainFarmasi, function (Builder $query) {
-                return $query->where('databarang.kode_kategori', 'like', '3.%');
-            })
-            ->groupByRaw('month(detail_pemberian_obat.tgl_perawatan)');
+            ->when($selainFarmasi, fn (Builder $q): Builder => $q->where('databarang.kode_kategori', 'like', '3.%'))
+            ->groupByRaw('month(detail_pemberian_obat.tgl_perawatan)')
+            ->withCasts(['jumlah' => 'float', 'bulan' => 'int']);
     }
 
     public static function pendapatanObatRalan(string $year = '2022'): array
     {
-        $data = static::pendapatanObat('ralan', $year)->pluck('jumlah', 'bulan')->map(fn ($v) => floatval($v));
+        $data = static::pendapatanObat('ralan', $year)->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
     }
 
     public static function pendapatanObatRanap(string $year = '2022'): array
     {
-        $data = static::pendapatanObat('ranap', $year)->pluck('jumlah', 'bulan')->map(fn ($v) => floatval($v));
+        $data = static::pendapatanObat('ranap', $year)->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
     }
 
     public static function pendapatanObatIGD(string $year = '2022'): array
     {
-        $data = static::pendapatanObat('IGD', $year)->pluck('jumlah', 'bulan')->map(fn ($v) => floatval($v));
+        $data = static::pendapatanObat('IGD', $year)->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
     }
 
     public static function pendapatanAlkesUnit(string $year = '2022'): array
     {
-        $data = static::pendapatanObat('', $year, true)->pluck('jumlah', 'bulan')->map(fn ($v) => floatval($v));
+        $data = static::pendapatanObat('', $year, true)->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
     }

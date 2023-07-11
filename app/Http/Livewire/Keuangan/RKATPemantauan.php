@@ -12,7 +12,7 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
-use Illuminate\Contracts\View\View;
+use Illuminate\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
@@ -120,8 +120,8 @@ class RKATPemantauan extends Component
     protected function columnHeaders(): array
     {
         return collect(carbon('2023-01-01')
-                ->setYear(intval($this->tahun))
-                ->toPeriod(carbon()->endOfYear(), '1 month'))
+            ->setYear(intval($this->tahun))
+            ->toPeriod(carbon()->endOfYear(), '1 month'))
             ->map
             ->translatedFormat('F')
             ->prepend('Nominal')
