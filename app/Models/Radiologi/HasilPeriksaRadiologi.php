@@ -8,10 +8,12 @@ use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\JoinClause;
+use Reedware\LaravelCompositeRelations\CompositeBelongsTo;
+use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 
 class HasilPeriksaRadiologi extends Model
 {
-    use Searchable, Sortable;
+    use Searchable, Sortable, HasCompositeRelations;
 
     protected $connection = 'mysql_sik';
 
@@ -28,6 +30,11 @@ class HasilPeriksaRadiologi extends Model
     protected $casts = [
         'hasil_pemeriksaan' => CastAsciiChars::class,
     ];
+
+    public function permintaan(): CompositeBelongsTo
+    {
+        return $this->compositeBelongsTo(PermintaanRadiologi::class, ['no_rawat', 'tgl_hasil', 'jam_hasil'], ['no_rawat', 'tgl_periksa', 'jam']);
+    }
 
     public function scopeLaporanTindakanRadiologi(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {

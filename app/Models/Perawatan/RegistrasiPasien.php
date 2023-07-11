@@ -60,6 +60,84 @@ class RegistrasiPasien extends Model
         });
     }
 
+    public function askepRWI(): Attribute
+    {
+        return Attribute::get(function (?string $_, array $attributes) {
+            $askep = collect();
+
+            if ($attributes['askep_ranap_umum'] === "1") {
+                $askep->push('RWI Umum');
+            }
+
+            if ($attributes['askep_ranap_kandungan'] === "1") {
+                $askep->push('RWI Kandungan');
+            }
+
+            if ($askep->isEmpty()) {
+                return 'Tidak ada';
+            }
+
+            return 'Ada ' . $askep->joinStr(', ')->wrap('(', ')')->value();
+        });
+    }
+
+    public function askepPoli(): Attribute
+    {
+        return Attribute::get(function (?string $_, array $attributes) {
+            $askep = collect();
+
+            if ($attributes['askep_poli_umum'] === "1") {
+                $askep->push('Poli Umum');
+            }
+
+            if ($attributes['askep_poli_anak'] === "1") {
+                $askep->push('Poli Anak');
+            }
+            
+            if ($attributes['askep_poli_bedah'] === "1") {
+                $askep->push('Poli Bedah');
+            }
+
+            if ($attributes['askep_poli_bedah_mulut'] === "1") {
+                $askep->push('Poli Bedah Mulut');
+            }
+
+            if ($attributes['askep_poli_kandungan'] === "1") {
+                $askep->push('Poli Kandungan');
+            }
+
+            if ($attributes['askep_poli_mata'] === "1") {
+                $askep->push('Poli Mata');
+            }
+
+            if ($attributes['askep_poli_neurologi'] === "1") {
+                $askep->push('Poli Neurologi');
+            }
+
+            if ($attributes['askep_poli_orthopedi'] === "1") {
+                $askep->push('Poli Orthopedi');
+            }
+
+            if ($attributes['askep_poli_penyakit_dalam'] === "1") {
+                $askep->push('Poli Penyakit Dalam');
+            }
+
+            if ($attributes['askep_poli_psikiatrik'] === "1") {
+                $askep->push('Poli Psikiatrik');
+            }
+
+            if ($attributes['askep_poli_tht'] === "1") {
+                $askep->push('Poli THT');
+            }
+
+            if ($askep->isEmpty()) {
+                return "Tidak ada";
+            }
+
+            return 'Ada ' . $askep->joinStr(', ')->wrap('(', ')')->value();
+        });
+    }
+
     public function pasien(): BelongsTo
     {
         return $this->belongsTo(Pasien::class, 'no_rkm_medis', 'no_rkm_medis');
@@ -300,83 +378,5 @@ class RegistrasiPasien extends Model
             ->where('reg_periksa.status_lanjut', $status)
             ->where('reg_periksa.stts', 'sudah')
             ->where('reg_periksa.status_bayar', 'belum bayar');
-    }
-
-    public function askepRWI(): Attribute
-    {
-        return Attribute::get(function (?string $_, array $attributes) {
-            $askep = collect();
-
-            if ($attributes['askep_ranap_umum'] === "1") {
-                $askep->push('RWI Umum');
-            }
-
-            if ($attributes['askep_ranap_kandungan'] === "1") {
-                $askep->push('RWI Kandungan');
-            }
-
-            if ($askep->isEmpty()) {
-                return 'Tidak ada';
-            }
-
-            return 'Ada ' . $askep->joinStr(', ')->wrap('(', ')')->value();
-        });
-    }
-
-    public function askepPoli(): Attribute
-    {
-        return Attribute::get(function (?string $_, array $attributes) {
-            $askep = collect();
-
-            if ($attributes['askep_poli_umum'] === "1") {
-                $askep->push('Poli Umum');
-            }
-
-            if ($attributes['askep_poli_anak'] === "1") {
-                $askep->push('Poli Anak');
-            }
-            
-            if ($attributes['askep_poli_bedah'] === "1") {
-                $askep->push('Poli Bedah');
-            }
-
-            if ($attributes['askep_poli_bedah_mulut'] === "1") {
-                $askep->push('Poli Bedah Mulut');
-            }
-
-            if ($attributes['askep_poli_kandungan'] === "1") {
-                $askep->push('Poli Kandungan');
-            }
-
-            if ($attributes['askep_poli_mata'] === "1") {
-                $askep->push('Poli Mata');
-            }
-
-            if ($attributes['askep_poli_neurologi'] === "1") {
-                $askep->push('Poli Neurologi');
-            }
-
-            if ($attributes['askep_poli_orthopedi'] === "1") {
-                $askep->push('Poli Orthopedi');
-            }
-
-            if ($attributes['askep_poli_penyakit_dalam'] === "1") {
-                $askep->push('Poli Penyakit Dalam');
-            }
-
-            if ($attributes['askep_poli_psikiatrik'] === "1") {
-                $askep->push('Poli Psikiatrik');
-            }
-
-            if ($attributes['askep_poli_tht'] === "1") {
-                $askep->push('Poli THT');
-            }
-
-            if ($askep->isEmpty()) {
-                return "Tidak ada";
-            }
-
-            return 'Ada ' . $askep->joinStr(', ')->wrap('(', ')')->value();
-        });
     }
 }
