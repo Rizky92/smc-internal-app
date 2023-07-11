@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Keuangan;
+namespace App\Http\Livewire\Perawatan;
 
 use App\Models\Perawatan\RegistrasiPasien;
 use App\Support\Traits\Livewire\DeferredLoading;
@@ -62,7 +62,7 @@ class LaporanTransaksiGantung extends Component
 
     public function render(): View
     {
-        return view('livewire.keuangan.laporan-transaksi-gantung')
+        return view('livewire.perawatan.laporan-transaksi-gantung')
             ->layout(BaseLayout::class, ['title' => 'Laporan Transaksi Gantung Pasien Rawat Jalan']);
     }
 

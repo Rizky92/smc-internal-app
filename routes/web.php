@@ -67,8 +67,8 @@ Route::prefix('admin')
                     ->middleware('can:perawatan.laporan-pasien-ranap.read')
                     ->name('laporan-pasien-ranap');
 
-                Route::get('laporan-transaksi-gantung', Keuangan\LaporanTransaksiGantung::class)
-                    ->middleware('can:keuangan.laporan-transaksi-gantung.read')
+                Route::get('laporan-transaksi-gantung', Perawatan\LaporanTransaksiGantung::class)
+                    ->middleware('can:perawatan.laporan-transaksi-gantung.read')
                     ->name('laporan-transaksi-gantung');
             });
 
