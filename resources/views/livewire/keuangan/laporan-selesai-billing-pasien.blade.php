@@ -43,7 +43,7 @@
                             <x-table.td :title="$billing->nama_pegawai">{{ $billing->nama_pegawai }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="10" />
+                        <x-table.tr-empty colspan="10" padding />
                     @endforelse
                 </x-slot>
             </x-table>

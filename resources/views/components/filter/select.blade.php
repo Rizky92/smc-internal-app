@@ -32,8 +32,7 @@
 <div class="input-group input-group-sm" style="width: max-content">
     <select {{ $attributes->merge($attrs) }}>
         @if ($placeholder)
-            <option hidden selected value="{{ $placeholder }}">{{ $placeholder }}</option>
-            <option disabled>{{ $placeholder }}</option>
+            <option selected value="{{ $placeholderValue ?? $placeholder }}">{{ $placeholder }}</option>
         @endif
         @foreach ($options as $key => $value)
             <option value="{{ $key }}" {{ $selected === $key ? 'selected' : null }}>{{ $value }}</option>

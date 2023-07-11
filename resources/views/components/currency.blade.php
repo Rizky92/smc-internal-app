@@ -1,6 +1,6 @@
-@props(['name' => 'Rp.', 'value' => 0, 'default' => null])
+@props(['name' => 'Rp.', 'value' => 0, 'decimal' => 0, 'default' => null])
 
 <div class="d-flex justify-content-between">
     <span>{{ $name }}</span>
-    <span>{{ $default ?? number_format($value, 0, ',', '.') }}</span>
+    <span>{{ is_null($default) ? number_format($value, $decimal, ',', '.') : $default }}</span>
 </div>

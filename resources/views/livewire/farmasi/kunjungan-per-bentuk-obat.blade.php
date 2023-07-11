@@ -63,7 +63,7 @@
                                         <x-table.td>{{ rp($resep->total) }}</x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty :colspan="8" />
+                                    <x-table.tr-empty colspan="11" padding />
                                 @endforelse
                             </x-slot>
                         </x-table>
@@ -104,7 +104,7 @@
                                         <x-table.td>{{ rp($resep->total) }}</x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty :colspan="8" />
+                                    <x-table.tr-empty colspan="11" padding />
                                 @endforelse
                             </x-slot>
                         </x-table>

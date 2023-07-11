@@ -60,10 +60,10 @@ class UbahTanggalJurnal extends Component
         return Auth::user()->cannot('keuangan.riwayat-jurnal-perbaikan.read')
             ? []
             : JurnalBackup::query()
-            ->with('pegawai:nik,nama')
-            ->where('no_jurnal', $this->noJurnal)
-            ->orderByDesc('tgl_jurnal_diubah')
-            ->get();
+                ->with('pegawai:nik,nama')
+                ->where('no_jurnal', $this->noJurnal)
+                ->orderByDesc('tgl_jurnal_diubah')
+                ->get();
     }
 
     public function render(): View
@@ -117,7 +117,7 @@ class UbahTanggalJurnal extends Component
 
             tracker_end('mysql_sik');
 
-            tracker_start('mysql_smc');
+            tracker_start();
 
             JurnalBackup::create([
                 'no_jurnal'         => $jurnalDiubah->no_jurnal,
@@ -126,7 +126,7 @@ class UbahTanggalJurnal extends Component
                 'nip'               => Auth::user()->nik,
             ]);
 
-            tracker_end('mysql_smc');
+            tracker_end();
         });
 
         $this->dispatchBrowserEvent('jurnal-updated');
@@ -166,11 +166,11 @@ class UbahTanggalJurnal extends Component
 
             tracker_end('mysql_sik');
 
-            tracker_start('mysql_smc');
+            tracker_start();
 
             $jurnalBackup->delete();
 
-            tracker_end('mysql_smc');
+            tracker_end();
         });
 
         $this->flashSuccess("No. jurnal {$this->noJurnal} dikembalikan ke tanggal {$tglJurnalKembali}!");

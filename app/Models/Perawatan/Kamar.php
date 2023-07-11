@@ -21,10 +21,6 @@ class Kamar extends Model
 
     public $timestamps = false;
 
-    public $fillable = [
-        'status',
-    ];
-
     public function bangsal(): BelongsTo
     {
         return $this->belongsTo(Bangsal::class, 'kd_bangsal', 'kd_bangsal');

@@ -20,11 +20,13 @@ return new class extends Migration
     {
         Schema::connection('mysql_smc')->create('anggaran_bidang', function (Blueprint $table): void {
             $table->id();
-            $table->foreignId('bidang_id')->constrained('bidang');
             $table->foreignId('anggaran_id')->constrained('anggaran');
+            $table->foreignId('bidang_id')->constrained('bidang');
             $table->year('tahun');
-            $table->bigInteger('nominal_anggaran');
+            $table->double('nominal_anggaran');
             $table->timestamps($precision = 6);
+
+            $table->unique(['anggaran_id', 'bidang_id', 'tahun']);
         });
     }
 };

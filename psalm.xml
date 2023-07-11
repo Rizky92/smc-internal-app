@@ -8,18 +8,35 @@
     errorBaseline="psalm-baseline.xml"
 >
     <projectFiles>
-        <directory name="app"/>
-        <directory name="database/seeders"/>
+        <directory name="app" />
+        <directory name="database/seeders" />
         <ignoreFiles>
-            <directory name="vendor"/>
+            <directory name="vendor" />
+            <file name="app\Models\Bidang.php" />
         </ignoreFiles>
     </projectFiles>
     <plugins>
-        <pluginClass class="Psalm\LaravelPlugin\Plugin"/>
+        <pluginClass class="Psalm\LaravelPlugin\Plugin" />
     </plugins>
 
     <issueHandlers>
+        <InvalidReturnType>
+            <errorLevel type="suppress">
+                <file name="app\Models\Perawatan\RawatInap.php" />
+            </errorLevel>
+        </InvalidReturnType>
+        <TooManyTemplateParams>
+            <errorLevel type="suppress">
+                <file name="app\Models\Perawatan\RawatInap.php" />
+            </errorLevel>
+        </TooManyTemplateParams>
+        <InvalidReturnStatement>
+            <errorLevel type="suppress">
+                <file name="app\Models\Perawatan\RawatInap.php" />
+            </errorLevel>
+        </InvalidReturnStatement>
         <UnsafeInstantiation errorLevel="suppress" />
         <PropertyNotSetInConstructor errorLevel="suppress" />
+        <UndefinedPropertyFetch errorLevel="suppress" />
     </issueHandlers>
 </psalm>

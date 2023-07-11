@@ -50,7 +50,7 @@
                             <x-table.td>{{ $data->penjamin }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="11" />
+                        <x-table.tr-empty colspan="11" padding />
                     @endforelse
                 </x-slot>
             </x-table>

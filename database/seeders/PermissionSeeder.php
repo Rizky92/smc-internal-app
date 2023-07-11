@@ -7,8 +7,7 @@ use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use Spatie\Permission\PermissionRegistrar;
+use Schema;
 
 class PermissionSeeder extends Seeder
 {
@@ -18,62 +17,73 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         Schema::connection('mysql_smc')->disableForeignKeyConstraints();
-        DB::setDefaultConnection('mysql_smc');
 
         Permission::truncate();
         Role::truncate();
-
-        app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         DB::table('model_has_roles')->truncate();
         DB::table('model_has_permissions')->truncate();
         DB::table('role_has_permissions')->truncate();
 
-        Permission::create(['name' => 'farmasi.kunjungan-per-bentuk-obat.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'farmasi.kunjungan-per-poli.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'farmasi.input-minmax-stok.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'farmasi.laporan-produksi.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'farmasi.obat-per-dokter.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'farmasi.perbandingan-po-obat.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'farmasi.stok-darurat.read', 'guard_name' => 'web']);
+        Permission::create(['name' => 'farmasi.kunjungan-per-bentuk-obat.read']);
+        Permission::create(['name' => 'farmasi.kunjungan-per-poli.read']);
+        Permission::create(['name' => 'farmasi.laporan-produksi.read']);
+        Permission::create(['name' => 'farmasi.obat-per-dokter.read']);
+        Permission::create(['name' => 'farmasi.perbandingan-po-obat.read']);
+        Permission::create(['name' => 'farmasi.stok-darurat.read']);
 
-        Permission::create(['name' => 'keuangan.account-payable.read-medis', 'guard_name' => 'web']);
-        Permission::create(['name' => 'keuangan.account-payable.read-nonmedis', 'guard_name' => 'web']);
-        Permission::create(['name' => 'keuangan.account-receivable.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'keuangan.buku-besar.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'keuangan.jurnal-perbaikan.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'keuangan.jurnal-perbaikan.ubah-tanggal', 'guard_name' => 'web']);
-        Permission::create(['name' => 'keuangan.jurnal-piutang-lunas.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'keuangan.jurnal-po-supplier.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'keuangan.laba-rugi-rekening.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'keuangan.laporan-potongan-biaya.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'keuangan.laporan-selesai-billing.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'keuangan.laporan-tambahan-pasien.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'keuangan.laporan-tindakan-lab.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'keuangan.laporan-tindakan-radiologi.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'keuangan.rekap-piutang-aging.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'keuangan.riwayat-jurnal-perbaikan.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'keuangan.stok-obat-ruangan.read', 'guard_name' => 'web']);
+        Permission::create(['name' => 'keuangan.account-payable.read-medis']);
+        Permission::create(['name' => 'keuangan.account-payable.read-nonmedis']);
+        Permission::create(['name' => 'keuangan.account-receivable.read']);
+        Permission::create(['name' => 'keuangan.buku-besar.read']);
+        Permission::create(['name' => 'keuangan.jurnal-perbaikan-riwayat.read']);
+        Permission::create(['name' => 'keuangan.jurnal-perbaikan.read']);
+        Permission::create(['name' => 'keuangan.jurnal-perbaikan.ubah-tanggal']);
+        Permission::create(['name' => 'keuangan.jurnal-piutang-lunas.read']);
+        Permission::create(['name' => 'keuangan.jurnal-po-supplier.read']);
+        Permission::create(['name' => 'keuangan.laba-rugi-rekening.read']);
+        Permission::create(['name' => 'keuangan.laporan-potongan-biaya.read']);
+        Permission::create(['name' => 'keuangan.laporan-selesai-billing.read']);
+        Permission::create(['name' => 'keuangan.laporan-tambahan-pasien.read']);
+        Permission::create(['name' => 'keuangan.laporan-tindakan-lab.read']);
+        Permission::create(['name' => 'keuangan.laporan-tindakan-radiologi.read']);
+        Permission::create(['name' => 'keuangan.laporan-transaksi-gantung.read']);
+        Permission::create(['name' => 'keuangan.rekap-piutang-aging.read']);
+        Permission::create(['name' => 'keuangan.rkat-kategori.create']);
+        Permission::create(['name' => 'keuangan.rkat-kategori.delete']);
+        Permission::create(['name' => 'keuangan.rkat-kategori.read']);
+        Permission::create(['name' => 'keuangan.rkat-kategori.update']);
+        Permission::create(['name' => 'keuangan.rkat-pelaporan.create']);
+        Permission::create(['name' => 'keuangan.rkat-pelaporan.delete']);
+        Permission::create(['name' => 'keuangan.rkat-pelaporan.read']);
+        Permission::create(['name' => 'keuangan.rkat-pelaporan.update']);
+        Permission::create(['name' => 'keuangan.rkat-pemantauan.read']);
+        Permission::create(['name' => 'keuangan.rkat-penetapan.create']);
+        Permission::create(['name' => 'keuangan.rkat-penetapan.delete']);
+        Permission::create(['name' => 'keuangan.rkat-penetapan.read']);
+        Permission::create(['name' => 'keuangan.rkat-penetapan.update']);
+        Permission::create(['name' => 'keuangan.stok-obat-ruangan.read']);
 
-        Permission::create(['name' => 'logistik.input-minmax-stok.create', 'guard_name' => 'web']);
-        Permission::create(['name' => 'logistik.input-minmax-stok.delete', 'guard_name' => 'web']);
-        Permission::create(['name' => 'logistik.input-minmax-stok.update', 'guard_name' => 'web']);
-        Permission::create(['name' => 'logistik.input-minmax-stok.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'logistik.stok-darurat.read', 'guard_name' => 'web']);
+        Permission::create(['name' => 'logistik.input-minmax-stok.create']);
+        Permission::create(['name' => 'logistik.input-minmax-stok.delete']);
+        Permission::create(['name' => 'logistik.input-minmax-stok.read']);
+        Permission::create(['name' => 'logistik.input-minmax-stok.update']);
+        Permission::create(['name' => 'logistik.stok-darurat.read']);
 
-        Permission::create(['name' => 'perawatan.daftar-pasien-ranap.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'perawatan.daftar-pasien-ranap.update-harga-kamar', 'guard_name' => 'web']);
-        Permission::create(['name' => 'perawatan.laporan-pasien-ranap.read', 'guard_name' => 'web']);
+        Permission::create(['name' => 'perawatan.daftar-pasien-ranap.read']);
+        Permission::create(['name' => 'perawatan.daftar-pasien-ranap.update-harga-kamar']);
+        Permission::create(['name' => 'perawatan.laporan-pasien-ranap.read']);
 
-        Permission::create(['name' => 'rekam-medis.laporan-demografi.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'rekam-medis.laporan-statistik.read', 'guard_name' => 'web']);
-        Permission::create(['name' => 'rekam-medis.status-data-pasien.read', 'guard_name' => 'web']);
+        Permission::create(['name' => 'rekam-medis.laporan-demografi.read']);
+        Permission::create(['name' => 'rekam-medis.laporan-statistik.read']);
+        Permission::create(['name' => 'rekam-medis.status-data-pasien.read']);
 
         $keuanganPermissions = [
             'keuangan.account-payable.read-medis',
             'keuangan.account-payable.read-nonmedis',
             'keuangan.account-receivable.read',
             'keuangan.buku-besar.read',
+            'keuangan.jurnal-perbaikan-riwayat.read',
             'keuangan.jurnal-perbaikan.read',
             'keuangan.jurnal-perbaikan.ubah-tanggal',
             'keuangan.jurnal-piutang-lunas.read',
@@ -84,19 +94,16 @@ class PermissionSeeder extends Seeder
             'keuangan.laporan-tambahan-pasien.read',
             'keuangan.laporan-tindakan-lab.read',
             'keuangan.laporan-tindakan-radiologi.read',
-            'keuangan.rekap-piutang-pasien.read',
-            'keuangan.riwayat-jurnal-perbaikan.read',
             'keuangan.stok-obat-ruangan.read',
         ];
 
         $farmasiPermissions = [
-            'faramsi.kunjungan-per-bentuk-obat.read',
-            'faramsi.kunjungan-per-poli.read',
-            'faramsi.input-minmax-stok.read',
-            'faramsi.laporan-produksi.read',
-            'faramsi.obat-per-dokter.read',
-            'faramsi.perbandingan-po-obat.read',
-            'faramsi.stok-darurat.read',
+            'farmasi.kunjungan-per-bentuk-obat.read',
+            'farmasi.kunjungan-per-poli.read',
+            'farmasi.laporan-produksi.read',
+            'farmasi.obat-per-dokter.read',
+            'farmasi.perbandingan-po-obat.read',
+            'farmasi.stok-darurat.read',
             'keuangan.stok-obat-ruangan.read',
         ];
 
@@ -127,15 +134,15 @@ class PermissionSeeder extends Seeder
         ];
 
         // Superadmin role name, bypasses all permissions
-        $superadminRole = Role::create(['name' => config('permission.superadmin_name'), 'guard_name' => 'web']);
+        $superadminRole = Role::create(['name' => config('permission.superadmin_name')]);
         
-        $perawatanRole = Role::create(['name' => 'Perawatan', 'guard_name' => 'web']);
-        $keuanganRole = Role::create(['name' => 'Keuangan', 'guard_name' => 'web']);
-        $farmasiRole = Role::create(['name' => 'Farmasi', 'guard_name' => 'web']);
-        $rekamMedisRole = Role::create(['name' => 'Rekam Medis', 'guard_name' => 'web']);
-        $logistikRole = Role::create(['name' => 'Logistik', 'guard_name' => 'web']);
-        $kasirRole = Role::create(['name' => 'Kasir', 'guard_name' => 'web']);
-        $MODRole = Role::create(['name' => 'MOD', 'guard_name' => 'web']);
+        $perawatanRole  = Role::create(['name' => 'Perawatan']);
+        $keuanganRole   = Role::create(['name' => 'Keuangan']);
+        $farmasiRole    = Role::create(['name' => 'Farmasi']);
+        $rekamMedisRole = Role::create(['name' => 'Rekam Medis']);
+        $logistikRole   = Role::create(['name' => 'Logistik']);
+        $kasirRole      = Role::create(['name' => 'Kasir']);
+        $MODRole        = Role::create(['name' => 'MOD']);
 
         $keuanganRole->givePermissionTo($keuanganPermissions);
         $perawatanRole->givePermissionTo($perawatanPermissions);
@@ -145,11 +152,11 @@ class PermissionSeeder extends Seeder
         $kasirRole->givePermissionTo($kasirPermissions);
         $MODRole->givePermissionTo($MODPermissions);
         
-        Schema::connection('mysql_smc')->enableForeignKeyConstraints();
-        DB::setDefaultConnection('mysql_sik');
-
+        /** @var \App\Models\Aplikasi\User */
         $user = User::findByNRP('88888888');
 
         $user->assignRole($superadminRole);
+
+        Schema::connection('mysql_smc')->enableForeignKeyConstraints();
     }
 }

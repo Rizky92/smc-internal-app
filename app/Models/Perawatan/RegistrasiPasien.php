@@ -2,7 +2,10 @@
 
 namespace App\Models\Perawatan;
 
+use App\Models\Farmasi\PemberianObat;
 use App\Models\Kepegawaian\Dokter;
+use App\Models\Laboratorium\HasilPeriksaLab;
+use App\Models\Radiologi\HasilPeriksaRadiologi;
 use App\Models\RekamMedis\Pasien;
 use App\Models\RekamMedis\Penjamin;
 use App\Support\Traits\Eloquent\Searchable;
@@ -33,12 +36,7 @@ class RegistrasiPasien extends Model
 
     public function umur(): Attribute
     {
-        return Attribute::get(function () {
-            $umur = $this->umurdaftar;
-            $satuan = $this->sttsumur;
-
-            return "({$umur} {$satuan})";
-        });
+        return Attribute::get(fn (): string => "({$this->umurdaftar} {$this->sttsumur})");
     }
 
     public function alamatLengkap(): Attribute
@@ -87,19 +85,24 @@ class RegistrasiPasien extends Model
         return $this->hasMany(RawatInap::class, 'no_rawat', 'no_rawat');
     }
 
-    public function rujukanKeluar(): HasMany
-    {
-        return $this->hasMany(RujukanKeluar::class, 'no_rawat', 'no_rawat');
-    }
-
-    /**
-     * @psalm-suppress InvalidReturnType
-     * @psalm-suppress InvalidReturnStatement
-     */
     public function diagnosa(): HasMany
     {
-        return $this->hasMany(DiagnosaPasien::class, 'no_rawat', 'no_rawat')
-            ->where('status', 'ralan');
+        return $this->hasMany(DiagnosaPasien::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function hasilLaboratorium(): HasMany
+    {
+        return $this->hasMany(HasilPeriksaLab::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function hasilRadiologi(): HasMany
+    {
+        return $this->hasMany(HasilPeriksaRadiologi::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function obat(): HasMany
+    {
+        return $this->hasMany(PemberianObat::class, 'no_rawat', 'no_rawat');
     }
 
     public function tindakanRalanPerawat(): HasMany
@@ -225,7 +228,6 @@ class RegistrasiPasien extends Model
             exists(select * from resume_pasien_ranap where resume_pasien_ranap.no_rawat = reg_periksa.no_rawat) resume_ranap,
             exists(select * from data_triase_igd where data_triase_igd.no_rawat = reg_periksa.no_rawat) triase_igd,
             exists(select * from penilaian_awal_keperawatan_igd where penilaian_awal_keperawatan_igd.no_rawat = reg_periksa.no_rawat) askep_igd,
-
             exists(select * from penilaian_medis_ralan where penilaian_medis_ralan.no_rawat = reg_periksa.no_rawat) askep_poli_umum,
             exists(select * from penilaian_medis_ralan_anak where penilaian_medis_ralan_anak.no_rawat = reg_periksa.no_rawat) askep_poli_anak,
             exists(select * from penilaian_medis_ralan_bedah where penilaian_medis_ralan_bedah.no_rawat = reg_periksa.no_rawat) askep_poli_bedah,
@@ -237,10 +239,8 @@ class RegistrasiPasien extends Model
             exists(select * from penilaian_medis_ralan_penyakit_dalam where penilaian_medis_ralan_penyakit_dalam.no_rawat = reg_periksa.no_rawat) askep_poli_penyakit_dalam,
             exists(select * from penilaian_medis_ralan_psikiatrik where penilaian_medis_ralan_psikiatrik.no_rawat = reg_periksa.no_rawat) askep_poli_psikiatrik,
             exists(select * from penilaian_medis_ralan_tht where penilaian_medis_ralan_tht.no_rawat = reg_periksa.no_rawat) askep_poli_tht,
-            
             exists(select * from penilaian_medis_ranap where penilaian_medis_ranap.no_rawat = reg_periksa.no_rawat) askep_ranap_umum,
             exists(select * from penilaian_medis_ranap_kandungan where penilaian_medis_ranap_kandungan.no_rawat = reg_periksa.no_rawat) askep_ranap_kandungan,
-
             exists(select * from diagnosa_pasien where diagnosa_pasien.no_rawat = reg_periksa.no_rawat) icd_10,
             exists(select * from prosedur_pasien where prosedur_pasien.no_rawat = reg_periksa.no_rawat) icd_9
         SQL;
@@ -254,6 +254,52 @@ class RegistrasiPasien extends Model
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
             ->when(!$semuaRegistrasi, fn (Builder $q): Builder => $q->whereNotIn('reg_periksa.stts', ['Batal', 'Belum']))
             ->when($jenisPerawatan !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.status_lanjut', $jenisPerawatan));
+    }
+
+    public function scopeLaporanTransaksiGantung(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $status = 'ralan'): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        }
+
+        $sqlSelect = <<<SQL
+            dokter.nm_dokter,
+            reg_periksa.no_rkm_medis,
+            pasien.nm_pasien,
+            poliklinik.nm_poli,
+            reg_periksa.p_jawab,
+            reg_periksa.almt_pj,
+            reg_periksa.hubunganpj,
+            coalesce(penjab.nama_perusahaan, penjab.png_jawab) penjamin,
+            reg_periksa.stts,
+            reg_periksa.no_rawat,
+            reg_periksa.tgl_registrasi,
+            reg_periksa.jam_reg
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
+            ->leftJoin('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+            ->leftJoin('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
+            ->withExists([
+                'diagnosa as diagnosa' => fn (Builder $q): Builder => $q->where('status', $status),
+                'obat as obat',
+                'hasilLaboratorium as lab',
+                'hasilRadiologi as rad',
+                'tindakanRalanDokter as ralan_dokter',
+                'tindakanRalanPerawat as ralan_perawat',
+                'tindakanRalanDokterPerawat as ralan_dokter_perawat',
+            ])
+            ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
+            ->where('reg_periksa.status_lanjut', $status)
+            ->where('reg_periksa.stts', 'sudah')
+            ->where('reg_periksa.status_bayar', 'belum bayar');
     }
 
     public function askepRWI(): Attribute

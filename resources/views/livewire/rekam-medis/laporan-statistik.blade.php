@@ -134,7 +134,7 @@
                             <x-table.td>{{ $registrasi->kunjungan_ke }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="36" />
+                        <x-table.tr-empty colspan="36" padding />
                     @endforelse
                 </x-slot>
             </x-table>

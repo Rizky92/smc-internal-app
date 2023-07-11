@@ -2,11 +2,13 @@
 
 namespace App\Models\Keuangan;
 
+use App\Models\Perawatan\RegistrasiPasien;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+
 
 class Billing extends Model
 {
@@ -24,30 +26,51 @@ class Billing extends Model
 
     public $timestamps = false;
 
+    /**
+     * @template TRegistrasiPasien as \App\Models\Perawatan\RegistrasiPasien
+     * 
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  \Illuminate\Support\Collection<array-key, TRegistrasiPasien|string>|array<TRegistrasiPasien|string>|TRegistrasiPasien|string|null $noRawat
+     * 
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
     public function scopeTotalBillingan(Builder $query, $noRawat = null): Builder
     {
+        if (is_array($noRawat)) {
+            $noRawat = collect($noRawat);
+        }
+
         if ($noRawat instanceof Collection) {
             $noRawat = $noRawat
-                ->map(fn ($registrar) => $registrar->no_rawat)
+                ->map(fn (RegistrasiPasien $registrar): string => $registrar->no_rawat)
                 ->values()
-                ->toArray();
+                ->all();
+        }
+
+        if ($noRawat instanceof RegistrasiPasien) {
+            $noRawat = $noRawat->no_rawat;
         }
 
         if (is_string($noRawat)) {
             $noRawat = [$noRawat];
         }
 
-        $kategoriBilling = ['Registrasi', 'Ralan Paramedis', 'Ralan Dokter', 'Ralan Dokter Paramedis', 'Ranap Paramedis', 'Ranap Dokter', 'Ranap Dokter Paramedis', 'Obat', 'Resep Pulang', 'Laborat', 'Radiologi', 'Potongan', 'Tambahan', 'Kamar', 'Service', 'Operasi', 'Harian', 'Retur Obat'];
+        $kategoriBilling = [
+            'Registrasi', 'Ralan Paramedis', 'Ralan Dokter', 'Ralan Dokter Paramedis',
+            'Ranap Paramedis', 'Ranap Dokter', 'Ranap Dokter Paramedis', 'Obat', 'Resep Pulang',
+            'Laborat', 'Radiologi', 'Potongan', 'Tambahan', 'Kamar', 'Service', 'Operasi',
+            'Harian', 'Retur Obat'
+        ];
 
-        $sqlSelect = "
+        $sqlSelect = <<<SQL
             no_rawat,
             status,
             sum(totalbiaya) total
-        ";
+        SQL;
 
         return $query
             ->selectRaw($sqlSelect)
-            ->when(!is_null($noRawat), fn (Builder $query) => $query->whereIn('no_rawat', $noRawat))
+            ->when(!is_null($noRawat), fn (Builder $query): Builder => $query->whereIn('no_rawat', $noRawat))
             ->whereIn('status', $kategoriBilling)
             ->groupBy(['no_rawat', 'status']);
     }

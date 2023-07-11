@@ -28,6 +28,10 @@
         .sidebar-search-results .list-group-item:hover, .sidebar-search-results .list-group-item:focus {
             background-color: #e5e7eb !important
         }
+
+        .nav-flat.nav-sidebar>.nav-item .nav-treeview .nav-item>.nav-link, .nav-flat.nav-sidebar>.nav-item>.nav-treeview .nav-item>.nav-link {
+            border-left: 0 !important;
+        }
     </style>
     @stack('css')
 

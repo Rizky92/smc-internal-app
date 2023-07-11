@@ -20,6 +20,36 @@ class PemberianObat extends Model
 
     public $timestamps = false;
 
+    public function scopeLaporanPemakaianObatMorphine(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodeObat): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        }
+
+        $sqlSelect = <<<SQL
+            pasien.no_rkm_medis,
+            pasien.nm_pasien,
+            pasien.alamat,
+            detail_pemberian_obat.tgl_perawatan,
+            detail_pemberian_obat.jml,
+            dokter.nm_dokter,
+            "RS Samarinda Medika Citra" alamat_dokter
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->leftJoin('reg_periksa', 'detail_pemberian_obat.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->leftJoin('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
+            ->where('detail_pemberian_obat.kode_brng', $kodeObat)
+            ->whereBetween('detail_pemberian_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
+            ->withCasts(['jml' => 'int']);
+    }
+
     public function scopePendapatanObat(Builder $query, string $jenisPerawatan = '', string $year = '2022', bool $selainFarmasi = false): Builder
     {
         return $query->selectRaw("

@@ -10,6 +10,7 @@ use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
+use Staudenmeir\LaravelAdjacencyList\Eloquent\Relations\Descendants;
 
 class BidangUnit extends Component
 {
@@ -27,11 +28,15 @@ class BidangUnit extends Component
     }
 
     /**
-     * @return \Illuminate\Contracts\Pagination\Paginator
+     * @psalm-return \Illuminate\Database\Eloquent\Collection<Bidang>
      */
-    public function getBidangUnitProperty()
+    public function getBidangUnitProperty(): \Illuminate\Database\Eloquent\Collection
     {
-        return Bidang::paginate($this->perpage);
+        return Bidang::query()
+            ->whereNull('parent_id')
+            ->search($this->cari, ['nama'])
+            ->with(['descendants' => fn (Descendants $q): Descendants => $q->depthFirst()])
+            ->get();
     }
 
     protected function defaultValues(): void

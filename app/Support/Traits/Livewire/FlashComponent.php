@@ -9,16 +9,16 @@ trait FlashComponent
         $this->listeners = array_merge($this->listeners, [
             'flash',
             'flash.success' => 'flashSuccess',
-            'flash.info' => 'flashInfo',
+            'flash.info'    => 'flashInfo',
             'flash.warning' => 'flashWarning',
-            'flash.error' => 'flashError',
+            'flash.error'   => 'flashError',
         ]);
     }
 
     /**
      * @param  array<string, string> $flash
      */
-    public function flash($flash): void
+    public function flash(array $flash): void
     {
         foreach ($flash as $key => $message) {
             session()->flash($key, $message);

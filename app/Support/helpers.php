@@ -1,20 +1,20 @@
 <?php
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 if (!function_exists('time_length')) {
     /**
-     * @param  \Illuminate\Support\Carbon|\DateTimeInterface|string|null $start
+     * @param  \Illuminate\Support\Carbon|\DateTimeInterface|string $start
      * @param  \Illuminate\Support\Carbon|\DateTimeInterface|string|null $end
-     * @param  bool $strict
      * 
      * @return string|null
      */
-    function time_length($start, $end, $strict = false): ?string
+    function time_length($start, $end): ?string
     {
-        if ($strict && (empty($start) || empty($end))) {
+        if (empty($start) || empty($end)) {
             return null;
         }
 
@@ -89,6 +89,12 @@ if (!function_exists('map_bulan')) {
             12 => $default,
         ];
 
+        $namaBulan = collect(carbon()
+            ->startOfYear()
+            ->toPeriod(carbon()->endOfYear(), '1 month'))
+            ->map
+            ->translatedFormat('F');
+
         if (empty($data)) {
             return $arr;
         }
@@ -97,7 +103,11 @@ if (!function_exists('map_bulan')) {
             $arr[$bulan] = $item;
         }
 
-        return $arr;
+        $arr = array_values($arr);
+
+        return $namaBulan
+            ->mapWithKeys(fn (string $bulan, int $key): array => [$bulan => $arr[$key]])
+            ->all();
     }
 }
 

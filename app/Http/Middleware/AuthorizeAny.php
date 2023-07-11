@@ -35,7 +35,7 @@ class AuthorizeAny
      * @param  \Illuminate\Http\Request $request
      * @param  \Closure $next
      * @param  string $abilities
-     * @param  array|null ...$models
+     * @param  array|null $models
      * 
      * @return mixed
      * @throws \Illuminate\Auth\AuthenticationException
@@ -60,7 +60,7 @@ class AuthorizeAny
      * @param  \Illuminate\Http\Request $request
      * @param  array|null $models
      * 
-     * @return \Illuminate\Database\Eloquent\Model|array|string
+     * @return \Illuminate\Support\Collection<array-key, \Illuminate\Database\Eloquent\Model>|array
      */
     protected function getGateArguments($request, $models)
     {
@@ -71,8 +71,7 @@ class AuthorizeAny
         return collect($models)->map(fn ($model) => 
             $model instanceof Model 
                 ? $model
-                : $this->getModel($request, $model)
-            );
+                : $this->getModel($request, $model));
     }
 
     /**
@@ -87,10 +86,13 @@ class AuthorizeAny
     {
         if ($this->isClassName($model)) {
             return trim($model);
-        } else {
-            return $request->route($model, null) ?:
-                ((preg_match("/^['\"](.*)['\"]$/", trim($model), $matches)) ? $matches[1] : null);
         }
+
+        return $request->route($model, null) ?: (
+            (preg_match("/^['\"](.*)['\"]$/", trim($model), $matches))
+                ? $matches[1]
+                : null
+        );
     }
 
     /**

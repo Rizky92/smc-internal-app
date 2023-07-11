@@ -37,7 +37,13 @@
                         @foreach ($this->permissions as $group => $items)
                             @foreach ($items as $key => $name)
                                 <li class="{{ Arr::toCssClasses(['custom-control custom-checkbox', 'mt-3' => $loop->first && !$loop->parent->first]) }}">
-                                    <input class="custom-control-input" type="checkbox" id="permission-{{ $key }}" name="permissions" wire:model.defer="checkedPermissions.{{ $key }}" value="{{ $key }}">
+                                    <input type="checkbox"
+                                        class="custom-control-input"
+                                        id="permission-{{ $key }}"
+                                        name="permissions"
+                                        value="{{ $key }}"
+                                        wire:model.defer="checkedPermissions.{{ $key }}"
+                                    >
                                     <label for="permission-{{ $key }}" class="custom-control-label font-weight-normal">{{ $name }}</label>
                                 </li>
                             @endforeach

@@ -30,7 +30,7 @@
 
         <div class="form-inline">
             <div class="input-group input-group-sm" data-widget="sidebar-search">
-                <input class="form-control form-control-sidebar bg-white" type="search" placeholder="Cari menu..." aria-label="Cari menu">
+                <input class="form-control form-control-sidebar bg-white" type="search" placeholder="Cari menu..." aria-label="Cari menu" autocomplete="off">
                 <div class="input-group-append">
                     <button class="btn btn-sidebar">
                         <i class="fas fa-search fa-fw"></i>

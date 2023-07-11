@@ -54,7 +54,7 @@
                                         <x-table.td>{{ $item->keterangan }}</x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty colspan="18" />
+                                    <x-table.tr-empty colspan="18" padding />
                                 @endforelse
                             </x-slot>
                             <x-slot name="footer">
@@ -119,7 +119,7 @@
                                         <x-table.td>{{ $item->keterangan }}</x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty colspan="18" />
+                                    <x-table.tr-empty colspan="18" padding />
                                 @endforelse
                             </x-slot>
                             <x-slot name="footer">

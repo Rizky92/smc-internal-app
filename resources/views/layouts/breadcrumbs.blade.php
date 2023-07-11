@@ -1,4 +1,4 @@
-@unless($breadcrumbs->isEmpty())
+@if($breadcrumbs->isNotEmpty())
     <li class="nav-item">
         <ol class="d-flex justify-content-start align-items-center nav-link" style="list-style: none">
             @foreach ($breadcrumbs as $bc)
@@ -18,4 +18,4 @@
             @endforeach
         </ol>
     </li>
-@endunless
+@endif

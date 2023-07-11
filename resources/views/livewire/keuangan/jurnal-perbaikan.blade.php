@@ -33,19 +33,31 @@
                     @forelse ($this->jurnal as $jurnal)
                         @php
                             $odd = $loop->iteration % 2 === 0 ? '255 255 255' : '247 247 247';
+
                             $count = $jurnal->detail->count();
+
                             $firstDetail = $jurnal->detail->first();
                         @endphp
+
                         <x-table.tr style="background-color: rgb({{ $odd }})">
                             @can('keuangan.jurnal-perbaikan.ubah-tanggal')
                                 <x-table.td rowspan="{{ $count }}" class="pl-3 py-1">
-                                    <x-button size="xs" variant="link" class="mt-n1" title="Edit" icon="fas fa-pencil-alt" id="edit-{{ $jurnal->no_jurnal }}" data-toggle="modal" data-target="#modal-ubah-tgl-jurnal" wire:click.prevent="$emit('utj.prepare', {
-                                        noJurnal: '{{ $jurnal->no_jurnal }}',
-                                        noBukti: '{{ $jurnal->no_bukti }}',
-                                        keterangan: '{{ $jurnal->keterangan }}',
-                                        tglJurnal: '{{ $jurnal->tgl_jurnal }}',
-                                        jamJurnal: '{{ $jurnal->jam_jurnal }}'
-                                    })" />
+                                    <x-button
+                                        size="xs"
+                                        variant="link"
+                                        class="mt-n1"
+                                        title="Edit"
+                                        icon="fas fa-pencil-alt"
+                                        id="edit-{{ $jurnal->no_jurnal }}"
+                                        data-toggle="modal"
+                                        data-target="#modal-ubah-tgl-jurnal"
+                                            wire:click.prevent="$emit('utj.prepare', {
+                                            noJurnal: '{{ $jurnal->no_jurnal }}',
+                                            noBukti: '{{ $jurnal->no_bukti }}',
+                                            keterangan: '{{ $jurnal->keterangan }}',
+                                            tglJurnal: '{{ $jurnal->tgl_jurnal }}',
+                                            jamJurnal: '{{ $jurnal->jam_jurnal }}'
+                                        })" />
                                 </x-table.td>
                             @endcan
                             <x-table.td rowspan="{{ $count }}">{{ $jurnal->no_jurnal }}</x-table.td>
@@ -77,7 +89,7 @@
                             @endforeach
                         @endif
                     @empty
-                        <x-table.tr-empty :colspan="auth()->user()->can('keuangan.jurnal-perbaikan.ubah-tanggal') ? 8 : 7" />
+                        <x-table.tr-empty :colspan="auth()->user()->can('keuangan.jurnal-perbaikan.ubah-tanggal') ? 8 : 7" padding />
                     @endforelse
                 </x-slot>
             </x-table>

@@ -27,5 +27,14 @@ return new class extends Migration
             $table->unsignedInteger('available_at');
             $table->unsignedInteger('created_at');
         });
+
+        Schema::connection('mysql_smc')->create('failed_jobs', function (Blueprint $table): void {
+            $table->bigIncrements('id');
+            $table->text('connection');
+            $table->text('queue');
+            $table->longText('payload');
+            $table->longText('exception');
+            $table->timestamp('failed_at')->useCurrent();
+        });
     }
 };

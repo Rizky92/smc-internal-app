@@ -31,7 +31,7 @@
                             <x-table.td>{{ $obat->png_jawab }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty :colspan="8" />
+                        <x-table.tr-empty colspan="10" padding />
                     @endforelse
                 </x-slot>
             </x-table>

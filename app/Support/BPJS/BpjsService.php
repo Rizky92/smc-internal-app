@@ -5,25 +5,20 @@ namespace App\Support\BPJS;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use LZCompressor\LZString;
-use RuntimeException;
 
 class BpjsService
 {
-    private const URL_DASHBOARD_PER_BULAN = "https://apijkn.bpjs-kesehatan.go.id/antreanrs/dashboard/waktutunggu/bulan/{bulan}/tahun/{tahun}/waktu/{waktu}";
+    private const URL_DASHBOARD_PER_BULAN = "https://apijkn.bpjs-kesehatan.go.id/antreanrs/dashboard/waktutunggu/bulan/{param}/tahun/{param}/waktu/{param}";
     private const URL_GET_LIST_TASK = "https://apijkn.bpjs-kesehatan.go.id/antreanrs/antrean/getlisttask";
 
     protected string $timestamp;
 
-    /** @var \Illuminate\Http\Client\Response|null */
     protected ?Response $response = null;
 
-    /** @var array */
     protected array $headers;
 
     /**
      * @param  string|null $timestamp
-     * 
-     * @return void
      */
     public function __construct($timestamp = null)
     {
@@ -48,9 +43,7 @@ class BpjsService
     public function dashboardPerBulan(string $bulan, string $tahun, string $waktu): ?self
     {
         $url = str(self::URL_DASHBOARD_PER_BULAN)
-            ->replace('{p1}', $bulan)
-            ->replace('{p2}', $tahun)
-            ->replace('{p3}', $waktu);
+            ->replaceArray('{param}', [$bulan, $tahun, $waktu]);
         
         $this->response = Http::withHeaders($this->headers)
             ->get((string) $url);

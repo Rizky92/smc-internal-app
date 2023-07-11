@@ -11,13 +11,10 @@ class CustomStr
      */
     public function wrap(): Closure
     {
-        return function (string $value, string $startsWith, ?string $endsWith = null) {
-            if (! $endsWith) {
-                return $startsWith . $value . $startsWith;
-            }
-
-            return $startsWith . $value . $endsWith;
-        };
+        return fn (string $value, string $startsWith, ?string $endsWith = null): string =>
+            is_null($endsWith)
+                ? $startsWith . $value . $startsWith
+                : $startsWith . $value . $endsWith;
     }
 
     /**

@@ -3,16 +3,21 @@
 namespace App\Models;
 
 use App\Models\Keuangan\RKAT\AnggaranBidang;
+use App\Models\Keuangan\RKAT\PemakaianAnggaran;
+use App\Models\Keuangan\RKAT\PemakaianAnggaranDetail;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
+use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
 class Bidang extends Model
 {
-    use Sortable, Searchable, HasFactory;
+    use Sortable, Searchable, HasFactory, HasRelationships, HasRecursiveRelationships;
 
     protected $connection = 'mysql_smc';
 
@@ -22,9 +27,15 @@ class Bidang extends Model
 
     protected $fillable = [
         'nama',
+        'parent_id',
     ];
 
-    public function anggaran(): HasMany
+    public function getParentKeyName()
+    {
+        return 'parent_id';
+    }
+
+    public function anggaranBidang(): HasMany
     {
         return $this->hasMany(AnggaranBidang::class, 'bidang_id', 'id');
     }
@@ -32,5 +43,26 @@ class Bidang extends Model
     public function mappingBangsal(): BelongsToMany
     {
         return $this->belongsToMany(Bangsal::class, 'mapping_bidang', 'kd_bangsal', 'bidang_id', 'kd_bangsal', 'id');
+    }
+
+    public function totalPemakaian(): HasManyDeep
+    {
+        return $this->hasManyDeep(
+            PemakaianAnggaranDetail::class,
+            [
+                AnggaranBidang::class,
+                PemakaianAnggaran::class,            
+            ],
+            [
+                'bidang_id',
+                'anggaran_bidang_id',
+                'pemakaian_anggaran_id',
+            ],
+            [
+                'id',
+                'id',
+                'id',
+            ]
+        );
     }
 }

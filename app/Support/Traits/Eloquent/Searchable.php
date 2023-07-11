@@ -9,9 +9,9 @@ use LogicException;
 trait Searchable
 {
     /**
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param string $search
-     * @param \Illuminate\Support\Collection<int, string>|array<array-key, string> $columns
+     * @param  \Illuminate\Database\Eloquent\Builder $query
+     * @param  string $search
+     * @param  \Illuminate\Support\Collection<int, string>|array<array-key, string> $columns
      *
      * @return \Illuminate\Database\Eloquent\Builder
      *
@@ -35,19 +35,20 @@ trait Searchable
             throw new LogicException("No columns are defined to perform search.");
         }
 
-        // Split search queries to each words, convert to lowercase, and filter any white-space character
+        // Split search queries to each words, convert to lowercase, filter any white-space character, and wrap each words with "%".
         $search = Str::of($search)
             ->lower()
             ->split('/\s+/')
-            ->filter();
+            ->filter()
+            ->map(fn (string $word) => str($word)->wrap('%')->value());
 
-        $concatenatedColumns = 'concat(' . $columns->join(", ' ', ") . ')';
+        $concatenatedColumns = $columns->joinStr(", ' ', ")->wrap('concat(', ')')->value();
 
         return $query->when(
             $search->isNotEmpty(),
             fn (Builder $query): Builder => $query->where(function (Builder $query) use ($search, $concatenatedColumns): Builder {
                 foreach ($search as $word) {
-                    $query->whereRaw("{$concatenatedColumns} like ?", ["%{$word}%"]);
+                    $query->whereRaw("{$concatenatedColumns} like ?", $word);
                 }
 
                 return $query;

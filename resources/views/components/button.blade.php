@@ -5,6 +5,7 @@
     'size' => 'default',
     'variant' => 'default',
     'outline' => false,
+    'disabled' => false,
 
     'hideTitle' => false,
 ])
@@ -19,7 +20,7 @@
         'lg' => 'btn-lg',
     ];
     
-    $buttonVariants = [
+    $buttonVariants = collect([
         'default' => 'default',
         'primary' => 'primary',
         'secondary' => 'secondary',
@@ -30,9 +31,7 @@
         'light' => 'light',
         'dark' => 'dark',
         'link' => 'link',
-    ];
-    
-    $buttonVariants = collect($buttonVariants)
+    ])
         ->when(
             $outline,
             fn($cols) => $cols->map(fn($v, $k) => str($v)->prepend('btn-outline-'))->replace(['link' => 'btn-link']),
@@ -66,7 +65,15 @@
 
 @switch($as)
     @case('button')
-        <button {{ $attributes->merge(['class' => $finalClass, 'type' => 'button', 'id' => $id, 'title' => $title]) }}>
+        <button {{ $attributes
+            ->merge([
+                'class' => $finalClass,
+                'type' => 'button',
+                'id' => $id,
+                'title' => $title,
+                'disabled' => $disabled,
+            ])
+        }}>
             @if ($icon)
                 <i class="{{ $icon }}"></i>
             @endif
@@ -77,7 +84,10 @@
     @break
 
     @case('link')
-        <a {{ $attributes->merge(['class' => $finalClass, 'role' => 'button', 'id' => $id, 'title' => $title]) }}>
+        <a {{ $attributes
+            ->merge(['class' => $finalClass, 'role' => 'button', 'id' => $id, 'title' => $title])
+            ->when($disabled, fn ($attrs) => $attrs->except('href'))
+        }}>
             @if ($icon)
                 <i class="{{ $icon }}"></i>
             @endif

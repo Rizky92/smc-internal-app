@@ -24,6 +24,11 @@ Breadcrumbs::for('admin.perawatan.laporan-pasien-ranap', function (Trail $trail)
     $trail->push('Laporan Pasien Ranap', route('admin.perawatan.laporan-pasien-ranap'));
 });
 
+Breadcrumbs::for('admin.perawatan.laporan-transaksi-gantung', function (Trail $trail): void {
+    $trail->parent('admin.perawatan');
+    $trail->push('Transaksi Gantung', route('admin.perawatan.laporan-transaksi-gantung'));
+});
+
 
 Breadcrumbs::for('admin.keuangan', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
@@ -148,17 +153,32 @@ Breadcrumbs::for('admin.farmasi.laporan-produksi', function (Trail $trail): void
 
 Breadcrumbs::for('admin.farmasi.kunjungan-per-bentuk-obat', function (Trail $trail): void {
     $trail->parent('admin.farmasi');
-    $trail->push('Kunjungan per Bentuk Obat', route('admin.farmasi.kunjungan-per-bentuk-obat'));
+    $trail->push('Kunjungan Bentuk Obat', route('admin.farmasi.kunjungan-per-bentuk-obat'));
 });
 
 Breadcrumbs::for('admin.farmasi.kunjungan-per-poli', function (Trail $trail): void {
     $trail->parent('admin.farmasi');
-    $trail->push('Kunjungan per Poli', route('admin.farmasi.kunjungan-per-poli'));
+    $trail->push('Kunjungan Poli', route('admin.farmasi.kunjungan-per-poli'));
 });
 
 Breadcrumbs::for('admin.farmasi.perbandingan-po-obat', function (Trail $trail): void {
     $trail->parent('admin.farmasi');
     $trail->push('Perbandingan PO Obat', route('admin.farmasi.perbandingan-po-obat'));
+});
+
+Breadcrumbs::for('admin.farmasi.laporan-pembuatan-soap', function (Trail $trail): void {
+    $trail->parent('admin.farmasi');
+    $trail->push('Pembuatan SOAP', route('admin.farmasi.laporan-pembuatan-soap'));
+});
+
+Breadcrumbs::for('admin.farmasi.laporan-pemakaian-obat-napza', function (Trail $trail): void {
+    $trail->parent('admin.farmasi');
+    $trail->push('Pemakaian Obat NAPZA', route('admin.farmasi.laporan-pemakaian-obat-napza'));
+});
+
+Breadcrumbs::for('admin.farmasi.laporan-pemakaian-obat-morphine', function (Trail $trail): void {
+    $trail->parent('admin.farmasi');
+    $trail->push('Pemakaian Obat Morfin', route('admin.farmasi.laporan-pemakaian-obat-morphine'));
 });
 
 
@@ -229,6 +249,11 @@ Breadcrumbs::for('admin.aplikasi', function (Trail $trail): void {
 Breadcrumbs::for('admin.aplikasi.bidang-unit', function (Trail $trail): void {
     $trail->parent('admin.aplikasi');
     $trail->push('Bidang Unit', route('admin.aplikasi.bidang-unit'));
+});
+
+Breadcrumbs::for('admin.aplikasi.pengaturan', function (Trail $trail): void {
+    $trail->parent('admin.aplikasi');
+    $trail->push('Pengaturan', route('admin.aplikasi.pengaturan'));
 });
 
 

@@ -21,6 +21,7 @@ return new class extends Migration
         Schema::connection('mysql_smc')->create('bidang', function (Blueprint $table): void {
             $table->id();
             $table->string('nama');
+            $table->foreignId('parent_id')->nullable();
         });
     }
 };

@@ -32,10 +32,9 @@ Route::get('/', HomeController::class);
 Route::get('login', [LoginController::class, 'create'])->name('login');
 Route::post('login', [LoginController::class, 'store']);
 
-Route::middleware('auth')
-    ->group(function () {
-        Route::post('logout', LogoutController::class)->name('logout');
-    });
+Route::post('logout', LogoutController::class)
+    ->middleware('auth')
+    ->name('logout');
 
 Route::prefix('admin')
     ->as('admin.')
@@ -45,9 +44,17 @@ Route::prefix('admin')
 
         Route::get('/', DashboardController::class)->name('dashboard');
 
-        Route::get('bidang-unit', Aplikasi\BidangUnit::class)
-            ->middleware('can:aplikasi.bidang.read')
-            ->name('aplikasi.bidang-unit');
+        Route::prefix('aplikasi')
+            ->as('aplikasi.')
+            ->group(function () {
+                Route::get('bidang-unit', Aplikasi\BidangUnit::class)
+                    ->middleware('can:aplikasi.bidang.read')
+                    ->name('bidang-unit');
+
+                Route::get('pengaturan', Aplikasi\Pengaturan::class)
+                    ->middleware('role:' . config('permission.superadmin_name'))
+                    ->name('pengaturan');
+            });
 
         Route::prefix('perawatan')
             ->as('perawatan.')
@@ -59,24 +66,28 @@ Route::prefix('admin')
                 Route::get('laporan-pasien-ranap', Perawatan\LaporanPasienRanap::class)
                     ->middleware('can:perawatan.laporan-pasien-ranap.read')
                     ->name('laporan-pasien-ranap');
+
+                Route::get('laporan-transaksi-gantung', Keuangan\LaporanTransaksiGantung::class)
+                    ->middleware('can:keuangan.laporan-transaksi-gantung.read')
+                    ->name('laporan-transaksi-gantung');
             });
 
         Route::prefix('keuangan')
             ->as('keuangan.')
             ->group(function () {
-                Route::get('pelaporan-rkat', Keuangan\RKAT\PelaporanRKAT::class)
+                Route::get('pelaporan-rkat', Keuangan\RKATPelaporan::class)
                     ->middleware('can:keuangan.pelaporan-rkat.read')
                     ->name('pelaporan-rkat');
 
-                Route::get('pemantauan-rkat', Keuangan\RKAT\PemantauanRKAT::class)
+                Route::get('pemantauan-rkat', Keuangan\RKATPemantauan::class)
                     ->middleware('can:keuangan.pemantauan-rkat.read')
                     ->name('pemantauan-rkat');
 
-                Route::get('penetapan-rkat', Keuangan\RKAT\PenetapanRKAT::class)
+                Route::get('penetapan-rkat', Keuangan\RKATPenetapan::class)
                     ->middleware('can:keuangan.penetapan-rkat.read')
                     ->name('penetapan-rkat');
 
-                Route::get('kategori-rkat', Keuangan\RKAT\KategoriRKAT::class)
+                Route::get('kategori-rkat', Keuangan\RKATKategori::class)
                     ->middleware('can:keuangan.kategori-rkat.read')
                     ->name('kategori-rkat');
 
@@ -116,17 +127,13 @@ Route::prefix('admin')
                     ->middleware('can:keuangan.laba-rugi-rekening.read')
                     ->name('laba-rugi-rekening');
 
-                Route::get('dpjp-piutang-ranap', Keuangan\DPJPPiutangRanap::class)
-                    ->middleware('can:keuangan.dpjp-piutang-ranap.read')
-                    ->name('dpjp-piutang-ranap');
-
                 Route::get('jurnal-perbaikan', Keuangan\JurnalPerbaikan::class)
                     ->middleware('can:keuangan.jurnal-perbaikan.read')
                     ->name('jurnal-perbaikan');
 
-                Route::get('riwayat-jurnal-perbaikan', Keuangan\RiwayatJurnalPerbaikan::class)
-                    ->middleware('can:keuangan.riwayat-jurnal-perbaikan.read')
-                    ->name('riwayat-jurnal-perbaikan');
+                Route::get('jurnal-perbaikan-riwayat', Keuangan\JurnalPerbaikanRiwayat::class)
+                    ->middleware('can:keuangan.jurnal-perbaikan-riwayat.read')
+                    ->name('jurnal-perbaikan-riwayat');
 
                 Route::get('laporan-tindakan-lab', Keuangan\LaporanTindakanLab::class)
                     ->middleware('can:keuangan.laporan-tindakan-lab.read')
@@ -171,6 +178,18 @@ Route::prefix('admin')
                 Route::get('perbandingan-barang-po', Farmasi\PerbandinganBarangPO::class)
                     ->middleware('can:farmasi.perbandingan-po-obat.read')
                     ->name('perbandingan-po-obat');
+
+                Route::get('laporan-pembuatan-soap', Farmasi\LaporanPembuatanSOAP::class)
+                    ->middleware('can:farmasi.laporan-pembuatan-soap.read')
+                    ->name('laporan-pembuatan-soap');
+
+                Route::get('laporan-pemakaian-obat-napza', Farmasi\LaporanPemakaianObatNAPZA::class)
+                    ->middleware('can:farmasi.laporan-pemakaian-obat-napza.read')
+                    ->name('laporan-pemakaian-obat-napza');
+
+                Route::get('laporan-pemakaian-obat-morphine', Farmasi\LaporanPemakaianObatMorphine::class)
+                    ->middleware('can:farmasi.laporan-pemakaian-obat-morphine.read')
+                    ->name('laporan-pemakaian-obat-morphine');
             });
 
         Route::prefix('rekam-medis')

@@ -21,12 +21,10 @@ class Penjamin extends Model
 
     public function namaPenjamin(): Attribute
     {
-        return Attribute::get(function (): string {
-            if (!in_array($this->nama_perusahaan, ['-', ''])) {
-                return $this->nama_perusahaan;
-            }
-
-            return $this->png_jawab;
-        });
+        return Attribute::get(fn (): string => 
+            !in_array($this->nama_perusahaan, ['-', ''])
+                ? $this->nama_perusahaan
+                : $this->png_jawab
+        );
     }
 }

@@ -58,7 +58,7 @@
                                 <x-table.td>{{ $user->jbtn }}</x-table.td>
                             </x-table.tr>
                         @empty
-                            <x-table.tr-empty colspan="4" />
+                            <x-table.tr-empty colspan="4" padding />
                         @endforelse
                     </x-slot>
                 </x-table>

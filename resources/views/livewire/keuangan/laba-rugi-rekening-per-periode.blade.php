@@ -33,7 +33,7 @@
                             <x-table.td>{{ rp($rekening->total) }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty :colspan="5" />
+                        <x-table.tr-empty colspan="5" padding />
                     @endforelse
                     <x-table.tr>
                         <x-table.td></x-table.td>
@@ -60,7 +60,7 @@
                             <x-table.td>{{ rp($rekening->total) }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty :colspan="5" />
+                        <x-table.tr-empty colspan="5" padding />
                     @endforelse
                     <x-table.tr>
                         <x-table.td></x-table.td>

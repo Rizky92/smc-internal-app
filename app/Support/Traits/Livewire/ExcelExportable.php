@@ -36,6 +36,11 @@ trait ExcelExportable
         return [];
     }
 
+    /**
+     * @return void
+     * 
+     * @throws \RuntimeException
+     */
     protected function validateSheetNames(): void
     {
         $invalidSheet = collect(array_keys($this->dataPerSheet()))

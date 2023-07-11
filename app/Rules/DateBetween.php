@@ -30,6 +30,7 @@ class DateBetween implements Rule
      *
      * @param  string $attribute
      * @param  \Carbon\Carbon|\DateTime|string|mixed $value
+     * 
      * @return bool
      */
     public function passes($attribute, $value)
