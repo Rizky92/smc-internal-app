@@ -433,8 +433,8 @@ class RegistrasiPasien extends Model
                 'tindakanRalanPerawat as ralan_perawat',
             ])
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
-            ->where('reg_periksa.status_lanjut', $jenis)
-            ->where('reg_periksa.stts', $status)
+            ->when($jenis !== '-', fn (Builder $q): Builder => $q->where('reg_periksa.status_lanjut', $jenis))
+            ->when($status !== '-', fn (Builder $q): Builder => $q->where('reg_periksa.stts', $status))
             ->where('reg_periksa.status_bayar', 'belum bayar');
     }
 }
