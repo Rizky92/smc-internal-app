@@ -390,8 +390,13 @@ class RegistrasiPasien extends Model
             ->when($jenisPerawatan !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.status_lanjut', $jenisPerawatan));
     }
 
-    public function scopeLaporanTransaksiGantung(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $status = 'ralan'): Builder
-    {
+    public function scopeLaporanTransaksiGantung(
+        Builder $query,
+        string $tglAwal = '',
+        string $tglAkhir = '',
+        string $jenis = 'ralan',
+        string $status = 'sudah'
+    ): Builder {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->format('Y-m-d');
         }
@@ -423,13 +428,13 @@ class RegistrasiPasien extends Model
             ->leftJoin('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
             ->with(['permintaanLabPK', 'permintaanLabPA', 'permintaanRadiologi'])
             ->withExists([
-                'diagnosa as diagnosa' => fn (Builder $q): Builder => $q->where('status', $status),
+                'diagnosa as diagnosa' => fn (Builder $q): Builder => $q->where('status', $jenis),
                 'obat as obat',
                 'tindakanRalanPerawat as ralan_perawat',
             ])
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
-            ->where('reg_periksa.status_lanjut', $status)
-            ->where('reg_periksa.stts', 'sudah')
+            ->where('reg_periksa.status_lanjut', $jenis)
+            ->where('reg_periksa.stts', $status)
             ->where('reg_periksa.status_bayar', 'belum bayar');
     }
 }

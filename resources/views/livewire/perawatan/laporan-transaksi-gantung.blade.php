@@ -1,11 +1,31 @@
 <div wire:init="loadProperties">
     <x-flash />
 
-    <x-card use-default-filter use-loading loading-target="loadProperties">
+    <x-card use-loading loading-target="loadProperties">
+        <x-slot name="header">
+            <x-row-col-flex>
+                <x-filter.range-date />
+                <x-filter.button-export-excel class="ml-auto" />
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
+                <x-filter.label constant-width>Jenis</x-filter.label>
+                <x-filter.select model="jenis" :options="[
+                    '-' => 'SEMUA',
+                    'ralan' => 'Rawat Jalan',
+                    'ranap' => 'Rawat Inap',
+                ]" />
+                <x-filter.label class="ml-auto pr-3">Status Registrasi</x-filter.label>
+                <x-filter.select model="status" :options="$this->statusRegistrasi" />
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
+                <x-filter.select-perpage />
+                <x-filter.button-reset-filters class="ml-auto" />
+                <x-filter.search class="ml-2" />
+            </x-row-col-flex>
+        </x-slot>
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" style="min-width: 100%" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
-                    {{-- <x-table.th name="biaya_admin" title="Biaya Admin" /> --}}
                     <x-table.th name="nm_dokter" title="Dr. Dituju" />
                     <x-table.th name="no_rkm_medis" title="No. RM" />
                     <x-table.th name="nm_pasien" title="Nama Pasien" />
@@ -23,8 +43,6 @@
                     <x-table.th name="obat" title="Obat" />
                     <x-table.th name="lab" title="Laboratorium" />
                     <x-table.th name="rad" title="Radiologi" />
-                    {{-- <x-table.th name="kasir" title="Kasir" /> --}}
-                    {{-- <x-table.th name="billing" title="Billing" /> --}}
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->dataLaporanTransaksiGantung as $item)
@@ -46,8 +64,6 @@
                             <x-table.td>{{ $item->obat ? 'Ada' : 'Tidak ada' }}</x-table.td>
                             <x-table.td>{{ $item->status_order_lab }}</x-table.td>
                             <x-table.td>{{ $item->status_order_rad }}</x-table.td>
-                            {{-- <x-table.td>{{ $item->kasir }}</x-table.td> --}}
-                            {{-- <x-table.td>{{ $item->billing }}</x-table.td> --}}
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="17" padding />

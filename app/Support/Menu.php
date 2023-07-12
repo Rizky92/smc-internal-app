@@ -29,6 +29,7 @@ class Menu
                 'hasAnyPermissions' => $user->canAny([
                     'perawatan.daftar-pasien-ranap.read',
                     'perawatan.laporan-pasien-ranap.read',
+                    'perawatan.laporan-transaksi-gantung.read',
                 ]),
                 'items' => [
                     [

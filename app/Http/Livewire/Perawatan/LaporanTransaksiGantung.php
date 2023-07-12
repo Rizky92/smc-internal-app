@@ -25,14 +25,18 @@ class LaporanTransaksiGantung extends Component
     public $tglAkhir;
 
     /** @var "ralan"|"ranap" */
+    public $jenis;
+
+    /** @var string */
     public $status;
 
     protected function queryString(): array
     {
         return [
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
-            'status' => ['except' => 'ralan'],
+            'jenis'    => ['except' => 'ralan'],
+            'status'   => ['except' => 'sudah'],
         ];
     }
 
@@ -41,10 +45,25 @@ class LaporanTransaksiGantung extends Component
         $this->defaultValues();
     }
 
+    public function getStatusRegistrasiProperty()
+    {
+        return [
+            'semua'        => 'SEMUA',
+            'belum'        => 'Belum',
+            'sudah'        => 'Sudah',
+            'batal'        => 'Batal',
+            'diterima'     => 'Berkas Diterima',
+            'dirujuk'      => 'Dirujuk',
+            'meninggal'    => 'Meninggal',
+            'dirawat'      => 'Dirawat',
+            'pulang-paksa' => 'Pulang Paksa',
+        ];
+    }
+
     public function getDataLaporanTransaksiGantungProperty(): Paginator
     {
         return RegistrasiPasien::query()
-            ->laporanTransaksiGantung($this->tglAwal, $this->tglAkhir)
+            ->laporanTransaksiGantung($this->tglAwal, $this->tglAkhir, $this->jenis, $this->status)
             ->search($this->cari, [
                 'reg_periksa.no_rawat',
                 'reg_periksa.no_rkm_medis',
@@ -70,14 +89,15 @@ class LaporanTransaksiGantung extends Component
     {
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->status = 'ralan';
+        $this->jenis = 'ralan';
+        $this->status = 'sudah';
     }
 
     protected function dataPerSheet(): array
     {
         return [
             RegistrasiPasien::query()
-                ->laporanTransaksiGantung($this->tglAwal, $this->tglAkhir, $this->status)
+                ->laporanTransaksiGantung($this->tglAwal, $this->tglAkhir, $this->jenis, $this->status)
                 ->get()
                 ->map(fn (RegistrasiPasien $model, int $_): array => [
                     'nm_dokter'      => $model->nm_dokter,

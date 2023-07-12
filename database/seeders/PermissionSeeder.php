@@ -47,7 +47,6 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'keuangan.laporan-tambahan-pasien.read']);
         Permission::create(['name' => 'keuangan.laporan-tindakan-lab.read']);
         Permission::create(['name' => 'keuangan.laporan-tindakan-radiologi.read']);
-        Permission::create(['name' => 'keuangan.laporan-transaksi-gantung.read']);
         Permission::create(['name' => 'keuangan.rekap-piutang-aging.read']);
         Permission::create(['name' => 'keuangan.rkat-kategori.create']);
         Permission::create(['name' => 'keuangan.rkat-kategori.delete']);
@@ -73,6 +72,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'perawatan.daftar-pasien-ranap.read']);
         Permission::create(['name' => 'perawatan.daftar-pasien-ranap.update-harga-kamar']);
         Permission::create(['name' => 'perawatan.laporan-pasien-ranap.read']);
+        Permission::create(['name' => 'perawatan.laporan-transaksi-gantung.read']);
 
         Permission::create(['name' => 'rekam-medis.laporan-demografi.read']);
         Permission::create(['name' => 'rekam-medis.laporan-statistik.read']);
