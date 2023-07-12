@@ -54,7 +54,7 @@ return [
     |
     */
 
-    'asset_url' => env('LIVEWIRE_URL'),
+    'asset_url' => env('LIVEWIRE_URL', env('APP_URL')),
 
     /*
     |--------------------------------------------------------------------------
@@ -68,7 +68,7 @@ return [
     |
     */
 
-    'app_url' => env('LIVEWIRE_URL'),
+    'app_url' => env('LIVEWIRE_URL', env('APP_URL')),
 
     /*
     |--------------------------------------------------------------------------
