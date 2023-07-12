@@ -2,9 +2,6 @@
 
 namespace App\Http\Livewire\Perawatan;
 
-use App\Models\Laboratorium\PermintaanLabMB;
-use App\Models\Laboratorium\PermintaanLabPA;
-use App\Models\Laboratorium\PermintaanLabPK;
 use App\Models\Perawatan\RegistrasiPasien;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
@@ -55,7 +52,7 @@ class LaporanTransaksiGantung extends Component
                 'reg_periksa.p_jawab',
                 'reg_periksa.almt_pj',
                 'reg_periksa.kd_pj',
-                'pasien.nm_pasin',
+                'pasien.nm_pasien',
                 'coalesce(penjab.nama_perusahaan, penjab.png_jawab, "-")',
                 'dokter.nm_dokter',
                 'poliklinik.nm_poli',
@@ -67,19 +64,6 @@ class LaporanTransaksiGantung extends Component
     {
         return view('livewire.perawatan.laporan-transaksi-gantung')
             ->layout(BaseLayout::class, ['title' => 'Laporan Transaksi Gantung Pasien Rawat Jalan']);
-    }
-
-    public function statusOrder(?string $labPK, ?string $labPA): string
-    {
-        if (is_null($labPK) && is_null($labPA)) {
-            return 'Tidak ada';
-        }
-
-        if ($labPK === 'Belum dilayani' || $labPA === 'Belum dilayani') {
-            return 'Belum Dilayani';
-        }
-
-        return 'Sudah Dilayani';
     }
 
     protected function defaultValues(): void
@@ -109,10 +93,10 @@ class LaporanTransaksiGantung extends Component
                     'tgl_registrasi' => $model->tgl_registrasi,
                     'jam_reg'        => $model->jam_reg,
                     'diagnosa'       => $model->diagnosa ? 'Ada' : 'Tidak ada',
-                    'tindakan'       => ($model->ralan_dokter || $model->ralan_dokter_perawat) ? 'Ada' : 'Tidak ada',
+                    'tindakan'       => $model->ralan_perawat ? 'Ada' : 'Tidak ada',
                     'obat'           => $model->obat ? 'Ada' : 'Tidak ada',
-                    'lab'            => $model->lab ? 'Ada' : 'Tidak ada',
-                    'rad'            => $model->rad ? 'Ada' : 'Tidak ada',
+                    'lab'            => $model->status_order_lab,
+                    'rad'            => $model->status_order_rad,
                 ]),
         ];
     }

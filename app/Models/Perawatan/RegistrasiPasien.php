@@ -152,10 +152,10 @@ class RegistrasiPasien extends Model
                 return 'Tidak ada';
             }
 
-            $statusOrderPK = optional($this->permintaanLabPK)->containsStrict('status_order', 'Sudah Dilayani') ?? false;
-            $statusOrderPA = optional($this->permintaanLabPA)->containsStrict('status_order', 'Sudah Dilayani') ?? false;
+            $statusOrderPK = optional($this->permintaanLabPK)->containsStrict('status_order', 'Sudah Dilayani');
+            $statusOrderPA = optional($this->permintaanLabPA)->containsStrict('status_order', 'Sudah Dilayani');
 
-            return ($statusOrderPK && $statusOrderPA)
+            return ($statusOrderPK || $statusOrderPA)
                 ? 'Sudah Dilayani'
                 : 'Belum Dilayani';
         });

@@ -9,9 +9,9 @@ trait StatusOrder
     public function statusOrder(): Attribute
     {
         return Attribute::get(fn ($_, array $attributes): string => 
-            is_null($attributes['tgl_hasil']) && is_null($attributes['jam_hasil'])
+            ($attributes['tgl_hasil'] === '0000-00-00' && $attributes['jam_hasil'] === '00:00:00')
                 ? 'Belum Dilayani'
                 : 'Sudah Dilayani'
-            );
+        );
     }
 }
