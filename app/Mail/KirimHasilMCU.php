@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class KirimHasilMCU extends Mailable
+class KirimHasilMCU extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -28,6 +28,8 @@ class KirimHasilMCU extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.kirim-hasil-mcu');
+        return $this
+            ->markdown('emails.kirim-hasil-mcu')
+            ->attach(base_path() . \DIRECTORY_SEPARATOR . 'analysis.txt');
     }
 }

@@ -2,13 +2,16 @@
 
 namespace App\Models\Laboratorium;
 
+use App\Models\Laboratorium\Concerns\StatusOrder;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Model;
+use Reedware\LaravelCompositeRelations\CompositeHasMany;
+use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 
-class PermintaanLabDetail extends Model
+class PermintaanLabPK extends Model
 {
-    use Sortable, Searchable;
+    use Sortable, Searchable, HasCompositeRelations, StatusOrder;
 
     /**
      * The connection name for the model.
@@ -22,21 +25,21 @@ class PermintaanLabDetail extends Model
      *
      * @var string
      */
-    protected $table = 'PermintaanLabDetail';
+    protected $table = 'permintaan_lab';
 
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'noorder';
 
     /**
      * The "type" of the primary key ID.
      *
      * @var string
      */
-    protected $keyType = 'int';
+    protected $keyType = 'string';
 
     /**
      * Indicates if the IDs are auto-incrementing.
@@ -83,4 +86,21 @@ class PermintaanLabDetail extends Model
     protected $searchColumns = [
         //
     ];
+
+    protected $appends = ['status_order'];
+
+    /**
+     * @psalm-suppress InvalidReturnType
+     * @psalm-suppress InvalidReturnStatement
+     */
+    public function hasil(): CompositeHasMany
+    {
+        return $this
+            ->compositeHasMany(
+                HasilPeriksaLab::class,
+                ['no_rawat', 'tgl_periksa', 'jam'],
+                ['no_rawat', 'tgl_hasil', 'jam_hasil'],
+            )
+            ->where('status', 'PK');
+    }
 }

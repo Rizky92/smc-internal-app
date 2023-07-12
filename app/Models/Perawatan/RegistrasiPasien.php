@@ -5,7 +5,11 @@ namespace App\Models\Perawatan;
 use App\Models\Farmasi\PemberianObat;
 use App\Models\Kepegawaian\Dokter;
 use App\Models\Laboratorium\HasilPeriksaLab;
+use App\Models\Laboratorium\PermintaanLabMB;
+use App\Models\Laboratorium\PermintaanLabPA;
+use App\Models\Laboratorium\PermintaanLabPK;
 use App\Models\Radiologi\HasilPeriksaRadiologi;
+use App\Models\Radiologi\PermintaanRadiologi;
 use App\Models\RekamMedis\Pasien;
 use App\Models\RekamMedis\Penjamin;
 use App\Support\Traits\Eloquent\Searchable;
@@ -138,6 +142,38 @@ class RegistrasiPasien extends Model
         });
     }
 
+    public function statusOrderLab(): Attribute
+    {
+        return Attribute::get(function ($_, array $attributes): string {
+            if (
+                $this->permintaanLabPK->isEmpty() &&
+                $this->permintaanLabPA->isEmpty()
+            ) {
+                return 'Tidak ada';
+            }
+
+            $statusOrderPK = optional($this->permintaanLabPK)->containsStrict('status_order', 'Sudah Dilayani') ?? false;
+            $statusOrderPA = optional($this->permintaanLabPA)->containsStrict('status_order', 'Sudah Dilayani') ?? false;
+
+            return ($statusOrderPK && $statusOrderPA)
+                ? 'Sudah Dilayani'
+                : 'Belum Dilayani';
+        });
+    }
+
+    public function statusOrderRad(): Attribute
+    {
+        return Attribute::get(function ($_, array $attributes): string {
+            if ($this->permintaanRadiologi->isEmpty()) {
+                return 'Tidak ada';
+            }
+
+            return optional($this->permintaanRadiologi)->containsStrict('status_order', 'Sudah Dilayani')
+                ? 'Sudah Dilayani'
+                : 'Belum Dilayani';
+        });
+    }
+
     public function pasien(): BelongsTo
     {
         return $this->belongsTo(Pasien::class, 'no_rkm_medis', 'no_rkm_medis');
@@ -166,6 +202,26 @@ class RegistrasiPasien extends Model
     public function diagnosa(): HasMany
     {
         return $this->hasMany(DiagnosaPasien::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function permintaanLabPK(): HasMany
+    {
+        return $this->hasMany(PermintaanLabPK::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function permintaanLabPA(): HasMany
+    {
+        return $this->hasMany(PermintaanLabPA::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function permintaanLabMB(): HasMany
+    {
+        return $this->hasMany(PermintaanLabMB::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function permintaanRadiologi(): HasMany
+    {
+        return $this->hasMany(PermintaanRadiologi::class, 'no_rawat', 'no_rawat');
     }
 
     public function hasilLaboratorium(): HasMany
@@ -365,14 +421,11 @@ class RegistrasiPasien extends Model
             ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->leftJoin('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->leftJoin('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
+            ->with(['permintaanLabPK', 'permintaanLabPA', 'permintaanRadiologi'])
             ->withExists([
                 'diagnosa as diagnosa' => fn (Builder $q): Builder => $q->where('status', $status),
                 'obat as obat',
-                'hasilLaboratorium as lab',
-                'hasilRadiologi as rad',
-                'tindakanRalanDokter as ralan_dokter',
                 'tindakanRalanPerawat as ralan_perawat',
-                'tindakanRalanDokterPerawat as ralan_dokter_perawat',
             ])
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
             ->where('reg_periksa.status_lanjut', $status)

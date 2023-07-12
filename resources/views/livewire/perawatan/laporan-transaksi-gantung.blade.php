@@ -42,10 +42,10 @@
                             <x-table.td>{{ $item->tgl_registrasi }}</x-table.td>
                             <x-table.td>{{ $item->jam_reg }}</x-table.td>
                             <x-table.td>{{ $item->diagnosa ? 'Ada' : 'Tidak ada' }}</x-table.td>
-                            <x-table.td>{{ ($item->ralan_dokter || $item->ralan_dokter_perawat) ? 'Ada' : 'Tidak ada' }}</x-table.td>
+                            <x-table.td>{{ $item->ralan_perawat ? 'Ada' : 'Tidak ada' }}</x-table.td>
                             <x-table.td>{{ $item->obat ? 'Ada' : 'Tidak ada' }}</x-table.td>
-                            <x-table.td>{{ $item->lab ? 'Ada' : 'Tidak ada' }}</x-table.td>
-                            <x-table.td>{{ $item->rad ? 'Ada' : 'Tidak ada' }}</x-table.td>
+                            <x-table.td>{{ $item->status_order_lab }}</x-table.td>
+                            <x-table.td>{{ $item->status_order_rad }}</x-table.td>
                             {{-- <x-table.td>{{ $item->kasir }}</x-table.td> --}}
                             {{-- <x-table.td>{{ $item->billing }}</x-table.td> --}}
                         </x-table.tr>

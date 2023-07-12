@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Models\Radiologi;
+namespace App\Models\Laboratorium;
 
+use App\Models\Laboratorium\Concerns\StatusOrder;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Reedware\LaravelCompositeRelations\CompositeHasMany;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 
-class PermintaanRadiologi extends Model
+class PermintaanLabMB extends Model
 {
-    use Sortable, Searchable, HasCompositeRelations;
+    use Sortable, Searchable, HasCompositeRelations, StatusOrder;    
 
     /**
      * The connection name for the model.
@@ -25,7 +25,7 @@ class PermintaanRadiologi extends Model
      *
      * @var string
      */
-    protected $table = 'permintaan_radiologi';
+    protected $table = 'permintaan_labmb';
 
     /**
      * The primary key for the model.
@@ -71,13 +71,20 @@ class PermintaanRadiologi extends Model
         // 
     ];
 
+    protected $appends = ['status_order'];
+
     /**
      * The attributes that should be cast.
      *
      * @var array
      */
     protected $casts = [
-        // 
+        'tgl_permintaan' => 'date',
+        'jam_permintaan' => 'datetime',
+        'tgl_sampel' => 'date',
+        'jam_sampel' => 'datetime',
+        'tgl_hasil' => 'date',
+        'jam_hasil' => 'datetime',
     ];
 
     /** 
@@ -87,22 +94,18 @@ class PermintaanRadiologi extends Model
         //
     ];
 
+    /**
+     * @psalm-suppress InvalidReturnType
+     * @psalm-suppress InvalidReturnStatement
+     */
     public function hasil(): CompositeHasMany
     {
         return $this
             ->compositeHasMany(
-                HasilPeriksaRadiologi::class,
+                HasilPeriksaLab::class,
                 ['no_rawat', 'tgl_periksa', 'jam'],
-                ['no_rawat', 'tgl_hasil', 'jam_hasil']
-            );
-    }
-
-    public function statusOrder(): Attribute
-    {
-        return Attribute::get(fn ($_, array $attributes): string => 
-            is_null($attributes['tgl_hasil']) && is_null($attributes['jam_hasil'])
-                ? 'Belum dilayani'
-                : 'Sudah Dilayani'
-            );
+                ['no_rawat', 'tgl_hasil', 'jam_hasil'],
+            )
+            ->where('status', 'MB');
     }
 }

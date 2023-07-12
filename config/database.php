@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql_sik'),
+    'default' => env('DB_CONNECTION', 'mysql_smc'),
 
     /*
     |--------------------------------------------------------------------------
@@ -58,10 +58,12 @@ return [
             'prefix_indexes' => true,
             'strict'         => true,
             'engine'         => null,
-            'options'        => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-                PDO::ATTR_EMULATE_PREPARES => true,
-            ]) : [],
+            'options'        => extension_loaded('pdo_mysql')
+                ? array_filter([
+                    PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                    PDO::ATTR_EMULATE_PREPARES => true,
+                ])
+                : [],
             'modes'          => [
                 'STRICT_TRANS_TABLES',
                 'ERROR_FOR_DIVISION_BY_ZERO',
@@ -84,10 +86,12 @@ return [
             'prefix_indexes' => true,
             'strict'         => true,
             'engine'         => null,
-            'options'        => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-                PDO::ATTR_EMULATE_PREPARES => true,
-            ]) : [],
+            'options'        => extension_loaded('pdo_mysql')
+                ? array_filter([
+                    PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                    PDO::ATTR_EMULATE_PREPARES => true,
+                ])
+                : [],
             'modes'          => [
                 'STRICT_TRANS_TABLES',
                 'ERROR_FOR_DIVISION_BY_ZERO',
@@ -110,10 +114,11 @@ return [
             'prefix_indexes' => true,
             'strict'         => true,
             'engine'         => null,
-            'options'        => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-                PDO::ATTR_EMULATE_PREPARES => true,
-            ]) : [],
+            'options'        => extension_loaded('pdo_mysql')
+                ? array_filter([
+                    PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                    PDO::ATTR_EMULATE_PREPARES => true,
+                ]) : [],
             'modes'          => [
                 'STRICT_TRANS_TABLES',
                 'ERROR_FOR_DIVISION_BY_ZERO',

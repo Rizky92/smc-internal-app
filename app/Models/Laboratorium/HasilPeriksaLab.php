@@ -6,10 +6,12 @@ use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Reedware\LaravelCompositeRelations\CompositeBelongsTo;
+use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 
 class HasilPeriksaLab extends Model
 {
-    use Searchable, Sortable;
+    use Searchable, Sortable, HasCompositeRelations;
 
     protected $connection = 'mysql_sik';
 
@@ -22,6 +24,51 @@ class HasilPeriksaLab extends Model
     public $incrementing = false;
 
     public $timestamps = false;
+
+    /**
+     * @psalm-suppress InvalidReturnType
+     * @psalm-suppress InvalidReturnStatement
+     */
+    public function permintaanLabPK(): CompositeBelongsTo
+    {
+        return $this
+            ->compositeBelongsTo(
+                PermintaanLabPK::class,
+                ['no_rawat', 'tgl_hasil', 'jam_hasil'],
+                ['no_rawat', 'tgl_periksa', 'jam']
+            )
+            ->where('kategori', 'PK');
+    }
+
+    /**
+     * @psalm-suppress InvalidReturnType
+     * @psalm-suppress InvalidReturnStatement
+     */
+    public function permintaanLabPA(): CompositeBelongsTo
+    {
+        return $this
+            ->compositeBelongsTo(
+                PermintaanLabPA::class,
+                ['no_rawat', 'tgl_hasil', 'jam_hasil'],
+                ['no_rawat', 'tgl_periksa', 'jam']
+            )
+            ->where('kategori', 'PA');
+    }
+
+    /**
+     * @psalm-suppress InvalidReturnType
+     * @psalm-suppress InvalidReturnStatement
+     */
+    public function permintaanLabMB(): CompositeBelongsTo
+    {
+        return $this
+            ->compositeBelongsTo(
+                PermintaanLabMB::class,
+                ['no_rawat', 'tgl_hasil', 'jam_hasil'],
+                ['no_rawat', 'tgl_periksa', 'jam']
+            )
+            ->where('kategori', 'MB');
+    }
 
     public function scopeLaporanTindakanLab(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
