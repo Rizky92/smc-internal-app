@@ -8,8 +8,7 @@
 ])
 
 @php
-    $id = str($id)
-        ->prepend($prefix);
+    $id = str($id)->prepend($prefix);
 
     $wireModel = $model . '.' . $key;
 @endphp

@@ -1,21 +1,23 @@
 <div>
     <x-flash />
 
-    <livewire:keuangan.modal.r-k-a-t-input-kategori />
+    @can('keuangan.rkat-kategori.create')
+        <livewire:keuangan.modal.r-k-a-t-input-kategori />
 
-    @once
-        @push('js')
-            <script>
-                function loadData(e) {
-                    let { id, nama, deskripsi } = e.dataset
+        @once
+            @push('js')
+                <script>
+                    function loadData(e) {
+                        let { id, nama, deskripsi } = e.dataset
 
-                    @this.emit('prepare', id, nama, deskripsi)
+                        @this.emit('prepare', id, nama, deskripsi)
 
-                    $('#modal-input-kategori-rkat').modal('show')
-                }
-            </script>
-        @endpush
-    @endonce
+                        $('#modal-input-kategori-rkat').modal('show')
+                    }
+                </script>
+            @endpush
+        @endonce
+    @endcan
 
     <x-card>
         <x-slot name="header">
@@ -23,7 +25,9 @@
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-                <x-button variant="primary" size="sm" title="Anggaran Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-kategori-rkat" class="btn-primary ml-3" />
+                @can('keuangan.rkat-kategori.create')
+                    <x-button variant="primary" size="sm" title="Anggaran Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-kategori-rkat" class="btn-primary ml-3" />
+                @endcan
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
@@ -37,7 +41,7 @@
                     @forelse ($this->dataAnggaran as $item)
                         <x-table.tr>
                             <x-table.td
-                                clickable
+                                :clickable="auth()->user()->can('keuangan.rkat-kategori.update')"
                                 data-id="{{ $item->id }}"
                                 data-nama="{{ $item->nama }}"
                                 data-deskripsi="{{ $item->deskripsi }}"

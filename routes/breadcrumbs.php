@@ -30,6 +30,17 @@ Breadcrumbs::for('admin.perawatan.laporan-transaksi-gantung', function (Trail $t
 });
 
 
+Breadcrumbs::for('admin.lab', function (Trail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Laboratorium');
+});
+
+Breadcrumbs::for('admin.lab.hasil-mcu-pama', function (Trail $trail): void {
+    $trail->parent('admin.lab');
+    $trail->push('Hasil MCU PAMA', route('admin.lab.hasil-mcu-pama'));
+});
+
+
 Breadcrumbs::for('admin.keuangan', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Keuangan');

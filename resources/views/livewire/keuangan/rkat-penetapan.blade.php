@@ -3,21 +3,21 @@
 
     @if ($this->bisaTetapkanRKAT())
         <livewire:keuangan.modal.r-k-a-t-input-penetapan />
+
+        @once
+            @push('js')
+                <script>
+                    function loadData(e) {
+                        let { id } = e.dataset
+
+                        @this.emit('prepare', id)
+
+                        $('#modal-input-penetapan-rkat').modal('show')
+                    }
+                </script>
+            @endpush
+        @endonce
     @endif
-
-    @once
-        @push('js')
-            <script>
-                function loadData(e) {
-                    let { id } = e.dataset
-
-                    @this.emit('prepare', id)
-
-                    $('#modal-input-penetapan-rkat').modal('show')
-                }
-            </script>
-        @endpush
-    @endonce
 
     <x-card>
         <x-slot name="header">
@@ -32,16 +32,17 @@
                 <x-filter.search class="ml-2" />
             </x-row-col-flex>
             <x-row-col-flex class="pt-3 border-top">
-                <x-button
-                    variant="primary"
-                    size="sm"
-                    title="Anggaran Baru"
-                    icon="fas fa-plus"
-                    :disabled="! $this->bisaTetapkanRKAT()"
-                    data-toggle="modal"
-                    data-target="#modal-input-penetapan-rkat"
-                    class="btn-primary ml-auto"
-                />
+                @if ($this->bisaTetapkanRKAT())    
+                    <x-button
+                        variant="primary"
+                        size="sm"
+                        title="Anggaran Baru"
+                        icon="fas fa-plus"
+                        data-toggle="modal"
+                        data-target="#modal-input-penetapan-rkat"
+                        class="btn-primary ml-auto"
+                    />
+                @endif
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">

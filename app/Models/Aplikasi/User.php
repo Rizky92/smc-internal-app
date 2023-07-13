@@ -2,6 +2,7 @@
 
 namespace App\Models\Aplikasi;
 
+use App\Casts\AESFromDatabaseCast;
 use App\Casts\BooleanCast;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
@@ -993,6 +994,7 @@ class User extends Authenticatable
         parent::booted();
 
         static::addGlobalScope(function (Builder $query) {
+
             $sqlSelect = <<<SQL
                 trim(pegawai.nik) nik,
                 pegawai.nama nama,
@@ -1002,8 +1004,9 @@ class User extends Authenticatable
                 user.password `password`
             SQL;
 
-            return $query->selectRaw($sqlSelect)
-                ->join('pegawai', DB::raw('AES_DECRYPT(id_user, "nur")'), '=', DB::raw('trim(pegawai.nik)'))
+            return $query
+                ->selectRaw($sqlSelect)
+                ->join('pegawai', DB::raw('trim(AES_DECRYPT(id_user, "nur"))'), '=', DB::raw('trim(pegawai.nik)'))
                 ->leftJoin('petugas', DB::raw('trim(pegawai.nik)'), '=', DB::raw('trim(petugas.nip)'))
                 ->leftJoin('jabatan', 'petugas.kd_jbtn', '=', 'jabatan.kd_jbtn')
                 ->leftJoin('dokter', DB::raw('trim(pegawai.nik)'), '=', DB::raw('trim(dokter.kd_dokter)'))
@@ -1012,9 +1015,6 @@ class User extends Authenticatable
         });
     }
 
-    /**
-     * @psalm-return Builder<\Illuminate\Database\Eloquent\Model>
-     */
     public function scopeWithHakAkses(Builder $query): Builder
     {
         return $query->selectRaw('user.*');
@@ -1027,6 +1027,7 @@ class User extends Authenticatable
         // Laravel tidak bisa melakukan query `whereHas` apabila berbeda koneksi database 
         // sehingga perlu melakukan pengecekan secara manual dengan mengkonversi query
         // builder menjadi bentuk raw SQL query sebagai workaround masalah tersebut.
+
         $sqlHasRoles = DB::table("{$db}.model_has_roles")
             ->whereRaw("model_type = 'User'")
             ->whereRaw('model_has_roles.model_id = user.id_user')

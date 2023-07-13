@@ -32,4 +32,9 @@ class KirimHasilMCU extends Mailable implements ShouldQueue
             ->markdown('emails.kirim-hasil-mcu')
             ->attach(base_path() . \DIRECTORY_SEPARATOR . 'analysis.txt');
     }
+
+    public function markAsSent()
+    {
+
+    }
 }

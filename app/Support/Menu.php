@@ -56,6 +56,23 @@ class Menu
                 ]
             ],
             [
+                'name' => 'Laboratorium',
+                'icon' => 'far fa-circle',
+                'type' => 'dropdown',
+                'hasAnyPermissions' => $user->canAny([
+                    'lab.hasil-mcu-pama.read',
+                ]),
+                'items' => [
+                    [
+                        'name' => 'Hasil MCU PAMA',
+                        'url' => route('admin.lab.hasil-mcu-pama'),
+                        'icon' => "fas fa-vial",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.rkat.penetapan-rkat.read'),
+                    ],
+                ],
+            ],
+            [
                 'name' => 'Keuangan',
                 'icon' => "far fa-circle",
                 'type' => 'dropdown',
@@ -88,28 +105,28 @@ class Menu
                         'url' => route('admin.keuangan.penetapan-rkat'),
                         'icon' => "fas fa-sitemap",
                         'type' => 'link',
-                        'hasAnyPermissions' => $user->can('keuangan.rkat.penetapan-rkat.read'),
+                        'hasAnyPermissions' => $user->can('keuangan.rkat-penetapan.read'),
                     ],
                     [
                         'name' => 'Pelaporan RKAT',
                         'url' => route('admin.keuangan.pelaporan-rkat'),
                         'icon' => "fas fa-coins",
                         'type' => 'link',
-                        'hasAnyPermissions' => $user->can('keuangan.rkat.pelaporan-rkat.read'),
+                        'hasAnyPermissions' => $user->can('keuangan.rkat-pelaporan.read'),
                     ],
                     [
                         'name' => 'Pemantauan RKAT',
                         'url' => route('admin.keuangan.pemantauan-rkat'),
                         'icon' => "fas fa-coins",
                         'type' => 'link',
-                        'hasAnyPermissions' => $user->can('keuangan.rkat.pemantauan-rkat.read'),
+                        'hasAnyPermissions' => $user->can('keuangan.rkat-pemantauan.read'),
                     ],
                     [
                         'name' => 'Kategori RKAT',
                         'url' => route('admin.keuangan.kategori-rkat'),
                         'icon' => "fas fa-coins",
                         'type' => 'link',
-                        'hasAnyPermissions' => $user->can('keuangan.rkat.kategori-rkat.read'),
+                        'hasAnyPermissions' => $user->can('keuangan.rkat-kategori.read'),
                     ],
                     [
                         'name' => 'Stok Obat Ruangan',

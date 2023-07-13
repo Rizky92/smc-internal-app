@@ -1,23 +1,25 @@
 <div>
     <x-flash />
 
-    <livewire:keuangan.modal.r-k-a-t-input-pelaporan />
+    @can('keuangan.rkat-pelaporan.create')
+        <livewire:keuangan.modal.r-k-a-t-input-pelaporan />
 
-    @once
-        @push('js')
-            <script>
-                function loadData(e) {
-                    let { pemakaianAnggaranId, anggaranBidangId, tglPakai, keterangan } = e.dataset
+        @once
+            @push('js')
+                <script>
+                    function loadData(e) {
+                        let { pemakaianAnggaranId, anggaranBidangId, tglPakai, keterangan } = e.dataset
 
-                    @this.emit('prepare', {
-                        pemakaianAnggaranId, anggaranBidangId, tglPakai, keterangan
-                    })
+                        @this.emit('prepare', {
+                            pemakaianAnggaranId, anggaranBidangId, tglPakai, keterangan
+                        })
 
-                    $('#modal-input-pelaporan-rkat').modal('show')
-                }
-            </script>
-        @endpush
-    @endonce
+                        $('#modal-input-pelaporan-rkat').modal('show')
+                    }
+                </script>
+            @endpush
+        @endonce
+    @endcan
 
     <x-card>
         <x-slot name="header">
@@ -34,7 +36,9 @@
             <x-row-col-flex class="pt-3 border-top">
                 <x-filter.label constant-width>Bidang:</x-filter.label>
                 <x-filter.select model="bidang" :options="$this->dataBidang" placeholder="SEMUA" />
-                <x-button variant="primary" size="sm" title="Laporan Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-pelaporan-rkat" class="btn-primary ml-auto" />
+                @can('keuangan.rkat-pelaporan.create')
+                    <x-button variant="primary" size="sm" title="Laporan Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-pelaporan-rkat" class="btn-primary ml-auto" />
+                @endcan
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
@@ -53,7 +57,7 @@
                     @forelse ($this->dataPenggunaanRKAT as $penggunaan)
                         <x-table.tr>
                             <x-table.td
-                                clickable
+                                :clickable="auth()->user()->can('keuangan.rkat-pelaporan.update')"
                                 data-pemakaian-anggaran-id="{{ $penggunaan->id }}"
                                 data-anggaran-bidang-id="{{ $penggunaan->anggaran_bidang_id }}"
                                 data-tgl-pakai="{{ $penggunaan->tgl_dipakai }}"

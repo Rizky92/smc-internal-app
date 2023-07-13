@@ -8,6 +8,7 @@ use App\Http\Livewire\Aplikasi;
 use App\Http\Livewire\Farmasi;
 use App\Http\Livewire\HakAkses;
 use App\Http\Livewire\Keuangan;
+use App\Http\Livewire\Laboratorium;
 use App\Http\Livewire\Logistik;
 use App\Http\Livewire\Perawatan;
 use App\Http\Livewire\RekamMedis;
@@ -70,6 +71,14 @@ Route::prefix('admin')
                 Route::get('laporan-transaksi-gantung', Perawatan\LaporanTransaksiGantung::class)
                     ->middleware('can:perawatan.laporan-transaksi-gantung.read')
                     ->name('laporan-transaksi-gantung');
+            });
+
+        Route::prefix('laboratorium')
+            ->as('lab.')
+            ->group(function () {
+                Route::get('hasil-mcu-pama', Laboratorium\HasilMCUPAMA::class)
+                    ->middleware('can:lab.hasil-mcu-pama.read')
+                    ->name('hasil-mcu-pama');
             });
 
         Route::prefix('keuangan')

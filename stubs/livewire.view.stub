@@ -13,7 +13,7 @@
                             <x-table.td>{{ $item->id }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="1" />
+                        <x-table.tr-empty colspan="1" padding />
                     @endforelse --}}
                 </x-slot>
             </x-table>
