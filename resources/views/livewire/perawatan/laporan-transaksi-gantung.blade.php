@@ -10,7 +10,7 @@
             <x-row-col-flex class="mt-2">
                 <x-filter.label constant-width>Jenis</x-filter.label>
                 <x-filter.select model="jenis" :options="[
-                    '-' => 'SEMUA',
+                    'semua' => 'SEMUA',
                     'ralan' => 'Rawat Jalan',
                     'ranap' => 'Rawat Inap',
                 ]" />
