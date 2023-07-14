@@ -6,7 +6,6 @@ use App\Casts\Year;
 use App\Models\Bidang;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,7 +14,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 class AnggaranBidang extends Model
 {
-    use Sortable, Searchable, HasFactory, HasRelationships;
+    use Sortable, Searchable, HasRelationships;
 
     protected $connection = 'mysql_smc';
 

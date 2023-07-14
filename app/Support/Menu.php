@@ -60,15 +60,15 @@ class Menu
                 'icon' => 'far fa-circle',
                 'type' => 'dropdown',
                 'hasAnyPermissions' => $user->canAny([
-                    'lab.hasil-mcu-pama.read',
+                    'lab.hasil-mcu-karyawan.read',
                 ]),
                 'items' => [
                     [
-                        'name' => 'Hasil MCU PAMA',
-                        'url' => route('admin.lab.hasil-mcu-pama'),
+                        'name' => 'Hasil MCU Karyawan',
+                        'url' => route('admin.lab.hasil-mcu-karyawan'),
                         'icon' => "fas fa-vial",
                         'type' => 'link',
-                        'hasAnyPermissions' => $user->can('keuangan.rkat.penetapan-rkat.read'),
+                        'hasAnyPermissions' => $user->can('lab.hasil-mcu-karyawan.read'),
                     ],
                 ],
             ],

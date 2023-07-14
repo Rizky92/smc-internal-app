@@ -35,9 +35,9 @@ Breadcrumbs::for('admin.lab', function (Trail $trail): void {
     $trail->push('Laboratorium');
 });
 
-Breadcrumbs::for('admin.lab.hasil-mcu-pama', function (Trail $trail): void {
+Breadcrumbs::for('admin.lab.hasil-mcu-karyawan', function (Trail $trail): void {
     $trail->parent('admin.lab');
-    $trail->push('Hasil MCU PAMA', route('admin.lab.hasil-mcu-pama'));
+    $trail->push('Hasil MCU Karyawan', route('admin.lab.hasil-mcu-karyawan'));
 });
 
 

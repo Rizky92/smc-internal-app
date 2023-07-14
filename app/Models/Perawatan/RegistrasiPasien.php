@@ -10,6 +10,7 @@ use App\Models\Laboratorium\PermintaanLabPA;
 use App\Models\Laboratorium\PermintaanLabPK;
 use App\Models\Radiologi\HasilPeriksaRadiologi;
 use App\Models\Radiologi\PermintaanRadiologi;
+use App\Models\RekamMedis\BerkasDigitalKeperawatan;
 use App\Models\RekamMedis\Pasien;
 use App\Models\RekamMedis\Penjamin;
 use App\Support\Traits\Eloquent\Searchable;
@@ -37,6 +38,23 @@ class RegistrasiPasien extends Model
     public $incrementing = false;
 
     public $timestamps = false;
+
+    protected array $searchColumns = [
+        'no_reg',
+        'no_rawat',
+        'kd_dokter',
+        'no_rkm_medis',
+        'kd_poli',
+        'p_jawab',
+        'almt_pj',
+        'hubunganpj',
+        'stts',
+        'stts_daftar',
+        'status_lanjut',
+        'kd_pj',
+        'status_bayar',
+        'status_poli',
+    ];
 
     public function umur(): Attribute
     {
@@ -144,7 +162,14 @@ class RegistrasiPasien extends Model
 
     public function statusOrderLab(): Attribute
     {
-        return Attribute::get(function ($_, array $attributes): string {
+        return Attribute::get(function ($_, array $attributes): ?string {
+            if (
+                ! $this->relationLoaded('permintaanLabPK') &&
+                ! $this->relationLoaded('permintaanLabPA')
+            ) {
+                return null;
+            }
+
             if (
                 $this->permintaanLabPK->isEmpty() &&
                 $this->permintaanLabPA->isEmpty()
@@ -163,7 +188,11 @@ class RegistrasiPasien extends Model
 
     public function statusOrderRad(): Attribute
     {
-        return Attribute::get(function ($_, array $attributes): string {
+        return Attribute::get(function ($_, array $attributes): ?string {
+            if (! $this->relationLoaded('permintaanRadiologi')) {
+                return null;
+            }
+
             if ($this->permintaanRadiologi->isEmpty()) {
                 return 'Tidak ada';
             }
@@ -252,6 +281,11 @@ class RegistrasiPasien extends Model
     public function tindakanRalanDokterPerawat(): HasMany
     {
         return $this->hasMany(TindakanRalanDokterPerawat::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function berkasDigital(): HasMany
+    {
+        return $this->hasMany(BerkasDigitalKeperawatan::class, 'no_rawat', 'no_rawat');
     }
 
     public function scopeDaftarPasienRanap(

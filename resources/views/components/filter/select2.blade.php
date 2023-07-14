@@ -2,7 +2,7 @@
     'livewire' => false,
 
     'name',
-    'options' => [],
+    'options' => collect(),
     'placeholder' => null,
     'placeholderValue' => null,
     'resetOn' => 'button#reset-filter',
@@ -11,12 +11,12 @@
 ])
 
 @php
-    $isList = !Arr::isAssoc($options);
+    $isList = $options->isList();
     
     $id = Str::slug($name);
     $model = Str::camel($name);
     
-    $options = collect($options)
+    $options = $options
         ->when($isList, fn ($c) => $c->mapWithKeys(fn ($v, $k) => [$v => $v]))
         ->when($showKey, fn ($c) => $c->mapWithKeys(fn ($v, $k) => [$k => "{$k} - {$v}"]))
         ->all();

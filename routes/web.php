@@ -13,6 +13,7 @@ use App\Http\Livewire\Logistik;
 use App\Http\Livewire\Perawatan;
 use App\Http\Livewire\RekamMedis;
 use App\Http\Livewire\User;
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Support\Facades\Route;
 use InfyOm\RoutesExplorer\RoutesExplorer;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
@@ -41,6 +42,18 @@ Route::prefix('admin')
     ->as('admin.')
     ->middleware('auth')
     ->group(function () {
+        Route::get('preview-email/{class?}', function ($class) {
+            Debugbar::disable();
+
+            if (is_null($class)) {
+                return null;
+            }
+
+            $class = 'App\\Mail\\' . $class;
+
+            return new $class;
+        })->name('email.preview');
+
         Route::impersonate();
 
         Route::get('/', DashboardController::class)->name('dashboard');
@@ -76,9 +89,9 @@ Route::prefix('admin')
         Route::prefix('laboratorium')
             ->as('lab.')
             ->group(function () {
-                Route::get('hasil-mcu-pama', Laboratorium\HasilMCUPAMA::class)
-                    ->middleware('can:lab.hasil-mcu-pama.read')
-                    ->name('hasil-mcu-pama');
+                Route::get('hasil-mcu-karyawan', Laboratorium\KirimHasilMCUKaryawan::class)
+                    ->middleware('can:lab.hasil-mcu-karyawan.read')
+                    ->name('hasil-mcu-karyawan');
             });
 
         Route::prefix('keuangan')

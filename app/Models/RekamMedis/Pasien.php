@@ -93,6 +93,6 @@ class Pasien extends Model
 
     public function perusahaan(): BelongsTo
     {
-        return $this->belongsTo(Perusahaan::class, 'kode_perusahaan', 'perusahaan_pasien');
+        return $this->belongsTo(Perusahaan::class, 'perusahaan_pasien', 'kode_perusahaan');
     }
 }

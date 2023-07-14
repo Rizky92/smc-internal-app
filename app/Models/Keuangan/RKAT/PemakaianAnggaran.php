@@ -7,7 +7,6 @@ use App\Models\Kepegawaian\Petugas;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -16,7 +15,7 @@ use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
 class PemakaianAnggaran extends Model
 {
-    use Sortable, Searchable, HasFactory, BelongsToThroughTrait;
+    use Sortable, Searchable, BelongsToThroughTrait;
 
     protected $connection = 'mysql_smc';
 
