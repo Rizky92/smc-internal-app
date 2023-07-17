@@ -2,7 +2,7 @@
 
 namespace App\Models\Laboratorium;
 
-use App\Models\Laboratorium\Concerns\StatusOrder;
+use App\Support\Traits\Eloquent\StatusOrder;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +11,7 @@ use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 
 class PermintaanLabMB extends Model
 {
-    use Sortable, Searchable, HasCompositeRelations, StatusOrder;    
+    use Sortable, Searchable, HasCompositeRelations, StatusOrder;
 
     /**
      * The connection name for the model.

@@ -4,14 +4,14 @@ namespace App\Models\Radiologi;
 
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
-use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Support\Traits\Eloquent\StatusOrder;
 use Illuminate\Database\Eloquent\Model;
 use Reedware\LaravelCompositeRelations\CompositeHasMany;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 
 class PermintaanRadiologi extends Model
 {
-    use Sortable, Searchable, HasCompositeRelations;
+    use Sortable, Searchable, HasCompositeRelations, StatusOrder;
 
     /**
      * The connection name for the model.
@@ -94,15 +94,6 @@ class PermintaanRadiologi extends Model
                 HasilPeriksaRadiologi::class,
                 ['no_rawat', 'tgl_periksa', 'jam'],
                 ['no_rawat', 'tgl_hasil', 'jam_hasil']
-            );
-    }
-
-    public function statusOrder(): Attribute
-    {
-        return Attribute::get(fn ($_, array $attributes): string => 
-            ($attributes['tgl_hasil'] === '0000-00-00' && $attributes['jam_hasil'] === '00:00:00')
-                ? 'Belum dilayani'
-                : 'Sudah Dilayani'
             );
     }
 }
