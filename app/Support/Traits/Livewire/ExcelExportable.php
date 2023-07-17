@@ -60,7 +60,7 @@ trait ExcelExportable
         $this->emit('beginExcelExport');
     }
 
-    public function beginExcelExport(): StreamedResponse
+    public function beginExcelExport(): ?\Symfony\Component\HttpFoundation\StreamedResponse
     {
         $filename = now()->format('Ymd_His') . '_';
 

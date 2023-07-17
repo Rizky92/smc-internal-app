@@ -45,7 +45,12 @@ class LaporanTransaksiGantung extends Component
         $this->defaultValues();
     }
 
-    public function getStatusRegistrasiProperty()
+    /**
+     * @return string[]
+     *
+     * @psalm-return array{semua: 'SEMUA', belum: 'Belum', sudah: 'Sudah', batal: 'Batal', diterima: 'Berkas Diterima', dirujuk: 'Dirujuk', meninggal: 'Meninggal', dirawat: 'Dirawat', 'pulang-paksa': 'Pulang Paksa'}
+     */
+    public function getStatusRegistrasiProperty(): array
     {
         return [
             'semua'        => 'SEMUA',

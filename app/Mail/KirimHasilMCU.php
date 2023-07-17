@@ -11,14 +11,16 @@ class KirimHasilMCU extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
+    private array $data;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(array $data)
     {
-        //
+        $this->data = $data;
     }
 
     /**
@@ -33,8 +35,13 @@ class KirimHasilMCU extends Mailable implements ShouldQueue
             ->attach(base_path() . \DIRECTORY_SEPARATOR . 'analysis.txt');
     }
 
-    public function markAsSent()
+    public function markEmailSent(): void
     {
 
+    }
+
+    protected function findData(): void
+    {
+        //
     }
 }

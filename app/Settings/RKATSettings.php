@@ -13,10 +13,6 @@ class RKATSettings extends Settings
     public Carbon $batas_penetapan_awal;
 
     public Carbon $batas_penetapan_akhir;
-
-    public Carbon $batas_input_awal;
-
-    public Carbon $batas_input_akhir;
     
     public static function group(): string
     {
@@ -28,8 +24,6 @@ class RKATSettings extends Settings
         return [
             'batas_penetapan_awal'  => DateTimeInterfaceCast::class,
             'batas_penetapan_akhir' => DateTimeInterfaceCast::class,
-            'batas_input_awal'      => DateTimeInterfaceCast::class,
-            'batas_input_akhir'     => DateTimeInterfaceCast::class,
         ];
     }
 }
