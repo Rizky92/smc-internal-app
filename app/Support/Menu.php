@@ -9,7 +9,7 @@ class Menu
 {
     public static function all(?string $search = null): Collection
     {
-        /** @var \App\Models\Aplikasi\User $user */
+        /** @var \App\Models\Aplikasi\User */
         $user = Auth::user();
 
         $develop = config('permission.superadmin_name');
@@ -184,13 +184,13 @@ class Menu
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.jurnal-perbaikan.read'),
                     ],
-                    // [
-                    //     'name' => 'Riwayat Jurnal Perbaikan',
-                    //     'url' => route('admin.keuangan.jurnal-perbaikan-riwayat'),
-                    //     'icon' => "fas fa-history",
-                    //     'type' => 'link',
-                    //     'hasAnyPermissions' => $user->can('keuangan.jurnal-perbaikan-riwayat.read'),
-                    // ],
+                    [
+                        'name' => 'Riwayat Jurnal',
+                        'url' => route('admin.keuangan.jurnal-perbaikan-riwayat'),
+                        'icon' => "fas fa-history",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.jurnal-perbaikan-riwayat.read'),
+                    ],
                     [
                         'name' => 'Buku Besar',
                         'url' => route('admin.keuangan.buku-besar'),

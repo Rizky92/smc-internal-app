@@ -11,12 +11,27 @@ use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class JurnalPerbaikanRiwayat extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+
+    /** @var string */
+    public $tglAwal;
+
+    /** @var string */
+    public $tglAkhir;
+
+    protected function queryString(): array
+    {
+        return [
+            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+        ];
+    }
 
     public function mount(): void
     {
@@ -26,7 +41,13 @@ class JurnalPerbaikanRiwayat extends Component
     public function getDataRiwayatJurnalPerbaikanProperty(): Paginator
     {
         return JurnalBackup::query()
-            ->with(['pegawai', 'jurnal'])
+            ->with([
+                'pegawai',
+                'jurnal' => fn (BelongsTo $query): BelongsTo => $query
+                    ->withSum('detail as total_debet', 'debet')
+                    ->withSum('detail as total_kredit', 'kredit'),
+            ])
+            ->whereBetween('tgl_jurnal_diubah', [$this->tglAwal, $this->tglAkhir])
             ->paginate($this->perpage);
     }
 
@@ -38,9 +59,8 @@ class JurnalPerbaikanRiwayat extends Component
 
     protected function defaultValues(): void
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
+        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array

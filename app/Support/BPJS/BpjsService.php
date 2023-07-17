@@ -18,9 +18,9 @@ class BpjsService
     protected array $headers;
 
     /**
-     * @param  string|null $timestamp
+     * @param  ?string $timestamp
      */
-    public function __construct($timestamp = null)
+    public function __construct(?string $timestamp = null)
     {
         $this->timestamp = $timestamp ?? now()->format('U');
 

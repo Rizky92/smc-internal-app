@@ -51,7 +51,7 @@
                                         id="edit-{{ $jurnal->no_jurnal }}"
                                         data-toggle="modal"
                                         data-target="#modal-ubah-tgl-jurnal"
-                                            wire:click.prevent="$emit('utj.prepare', {
+                                        wire:click.prevent="$emit('utj.prepare', {
                                             noJurnal: '{{ $jurnal->no_jurnal }}',
                                             noBukti: '{{ $jurnal->no_bukti }}',
                                             keterangan: '{{ $jurnal->keterangan }}',

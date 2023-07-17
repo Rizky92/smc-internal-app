@@ -53,7 +53,7 @@ class Jurnal extends Model
 
         return $query
             ->with([
-                'detail' => fn ($q) => $q->whereHas('rekening'),
+                'detail' => fn (HasMany $q) => $q->whereHas('rekening'),
                 'detail.rekening:kd_rek,nm_rek',
             ])
             ->whereHas('detail')
@@ -70,7 +70,7 @@ class Jurnal extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        $sqlSelect = "
+        $sqlSelect = <<<SQL
             jurnal.tgl_jurnal,
             jurnal.jam_jurnal,
             jurnal.no_jurnal,
@@ -80,7 +80,7 @@ class Jurnal extends Model
             rekening.nm_rek,
             detailjurnal.debet,
             detailjurnal.kredit
-        ";
+        SQL;
 
         return $query
             ->selectRaw($sqlSelect)

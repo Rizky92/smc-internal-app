@@ -86,9 +86,9 @@ Breadcrumbs::for('admin.keuangan.jurnal-perbaikan', function (Trail $trail): voi
     $trail->push('Jurnal Perbaikan', route('admin.keuangan.jurnal-perbaikan'));
 });
 
-Breadcrumbs::for('admin.keuangan.riwayat-jurnal-perbaikan', function (Trail $trail): void {
+Breadcrumbs::for('admin.keuangan.jurnal-perbaikan-riwayat', function (Trail $trail): void {
     $trail->parent('admin.keuangan');
-    $trail->push('Riwayat Jurnal Perbaikan', route('admin.keuangan.riwayat-jurnal-perbaikan'));
+    $trail->push('Riwayat Jurnal', route('admin.keuangan.jurnal-perbaikan-riwayat'));
 });
 
 Breadcrumbs::for('admin.keuangan.buku-besar', function (Trail $trail): void {
