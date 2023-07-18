@@ -112,6 +112,7 @@ class LaporanStatistik extends Component
                     Str::transliterate($model->no_hp ?? ''),
                     Str::transliterate($model->kunjungan_ke ?? ''),
                 ])
+                ->all()
         ];
     }
 
