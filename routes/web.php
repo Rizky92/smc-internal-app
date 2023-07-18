@@ -99,19 +99,19 @@ Route::prefix('admin')
             ->group(function () {
                 Route::get('pelaporan-rkat', Keuangan\RKATPelaporan::class)
                     ->name('pelaporan-rkat')
-                    ->middleware('can:keuangan.pelaporan-rkat.read');
+                    ->middleware('can:keuangan.rkat-pelaporan.read');
 
                 Route::get('pemantauan-rkat', Keuangan\RKATPemantauan::class)
                     ->name('pemantauan-rkat')
-                    ->middleware('can:keuangan.pemantauan-rkat.read');
+                    ->middleware('can:keuangan.rkat-pemantauan.read');
 
                 Route::get('penetapan-rkat', Keuangan\RKATPenetapan::class)
                     ->name('penetapan-rkat')
-                    ->middleware('can:keuangan.penetapan-rkat.read');
+                    ->middleware('can:keuangan.rkat-penetapan.read');
 
                 Route::get('kategori-rkat', Keuangan\RKATKategori::class)
                     ->name('kategori-rkat')
-                    ->middleware('can:keuangan.kategori-rkat.read');
+                    ->middleware('can:keuangan.rkat-kategori.read');
 
                 Route::get('stok-obat-ruangan', Keuangan\StokObatRuangan::class)
                     ->name('stok-obat-ruangan')
