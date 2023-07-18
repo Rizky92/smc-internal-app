@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4a84065dff002c56dda1102f1f42d5f9",
+    "content-hash": "c03b583f43d4753c92c576096da8516a",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3742,21 +3742,21 @@
         },
         {
             "name": "rizky92/laravel-xlswriter",
-            "version": "0.0.4",
+            "version": "0.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Rizky92/laravel-xlswriter.git",
-                "reference": "6526e74970f84401608049f1eb34216a61ad9933"
+                "reference": "94ea39e0fb6d05c79619bf98b7d216829a914b8c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Rizky92/laravel-xlswriter/zipball/6526e74970f84401608049f1eb34216a61ad9933",
-                "reference": "6526e74970f84401608049f1eb34216a61ad9933",
+                "url": "https://api.github.com/repos/Rizky92/laravel-xlswriter/zipball/94ea39e0fb6d05c79619bf98b7d216829a914b8c",
+                "reference": "94ea39e0fb6d05c79619bf98b7d216829a914b8c",
                 "shasum": ""
             },
             "require": {
                 "ext-xlswriter": "^1.5.0",
-                "illuminate/support": "^7.0|^8.0|^9.0|^10.0",
+                "illuminate/support": "^7.0||^8.0||^9.0",
                 "php": "^7.4|^8.0"
             },
             "type": "library",
@@ -3779,9 +3779,9 @@
             "description": "Laravel wrapper package for php ext-xlswriter extension",
             "support": {
                 "issues": "https://github.com/Rizky92/laravel-xlswriter/issues",
-                "source": "https://github.com/Rizky92/laravel-xlswriter/tree/0.0.4"
+                "source": "https://github.com/Rizky92/laravel-xlswriter/tree/0.0.3"
             },
-            "time": "2023-07-16T07:08:32+00:00"
+            "time": "2022-12-26T17:17:53+00:00"
         },
         {
             "name": "spatie/laravel-permission",
