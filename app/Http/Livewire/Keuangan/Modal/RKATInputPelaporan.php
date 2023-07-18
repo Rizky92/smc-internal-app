@@ -118,18 +118,18 @@ class RKATInputPelaporan extends Component
         $this->detail = $detail->isEmpty()
             ? []
             : $detail
-                ->map(fn (PemakaianAnggaranDetail $model): array => [
-                    'keterangan' => $model->keterangan,
-                    'nominal'    => round($model->nominal),
-                ])
-                ->all();
+            ->map(fn (PemakaianAnggaranDetail $model): array => [
+                'keterangan' => $model->keterangan,
+                'nominal'    => round($model->nominal),
+            ])
+            ->all();
     }
 
     public function create(): void
     {
         $user = Auth::user();
 
-        if (! $user) {
+        if (!$user) {
             abort(500);
         }
 
@@ -139,7 +139,7 @@ class RKATInputPelaporan extends Component
             return;
         }
 
-        if (!$user->can('keuangan.rkat.pelaporan-rkat.create')) {
+        if (!$user->can('keuangan.rkat-pelaporan-rkat.create')) {
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 
@@ -174,7 +174,7 @@ class RKATInputPelaporan extends Component
             $this->create();
         }
 
-        if (!Auth::user()->can('keuangan.rkat.pelaporan-rkat.update')) {
+        if (!Auth::user()->can('keuangan.rkat-pelaporan-rkat.update')) {
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 
@@ -212,7 +212,7 @@ class RKATInputPelaporan extends Component
 
     public function delete(): void
     {
-        if (!Auth::user()->can('keuangan.rkat.pelaporan-rkat.delete')) {
+        if (!Auth::user()->can('keuangan.rkat-pelaporan-rkat.delete')) {
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 

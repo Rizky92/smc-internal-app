@@ -75,7 +75,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function registerSuperadminRole(): void
     {
-        Gate::before(fn (User $user) => $user->hasRole(config('permission.superadmin_name')) ? true : null);
+        Gate::before(fn (User $user) => $user->hasRole(config('permission.superadmin_name')) ?: null);
     }
 
     public function registerCollectionMacrosAndMixins(): void

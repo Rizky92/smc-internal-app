@@ -189,7 +189,8 @@ class AccountReceivable extends Component
                     'periode_61_90'   => (float) $totalSisaPerPeriode->get('periode_61_90'),
                     'periode_90_up'   => (float) $totalSisaPerPeriode->get('periode_90_up'),
                     'umur_hari'       => '',
-                ]]),
+                ]])
+                ->all(),
         ];
     }
 

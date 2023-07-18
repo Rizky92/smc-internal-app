@@ -51,28 +51,20 @@ class KunjunganPerBentukObat extends Component
     public function getDataKunjunganResepObatRegularProperty(): Paginator
     {
         return ResepDokter::query()
-            ->kunjunganResepObatRegular($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
-            ->search($this->cari, [
-                'resep_dokter.no_resep',
-                'dokter.nm_dokter',
-                'pasien.nm_pasien',
-                'reg_periksa.status_lanjut',
+            ->kunjunganResepObatRegular($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan, $this->cari)
+            ->sortWithColumns($this->sortColumns, [
+                'total' => DB::raw('round(sum(resep_dokter.jml * databarang.h_beli))'),
             ])
-            ->sortWithColumns($this->sortColumns, ['total' => DB::raw('round(sum(resep_dokter.jml * databarang.h_beli))')])
             ->paginate($this->perpage, ['*'], 'page_regular');
     }
 
     public function getDataKunjunganResepObatRacikanProperty(): Paginator
     {
         return ResepDokterRacikan::query()
-            ->kunjunganResepObatRacikan($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
-            ->search($this->cari, [
-                'resep_dokter_racikan.no_resep',
-                'dokter.nm_dokter',
-                'pasien.nm_pasien',
-                'reg_periksa.status_lanjut',
+            ->kunjunganResepObatRacikan($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan, $this->cari)
+            ->sortWithColumns($this->sortColumns, [
+                'total' => DB::raw('round(sum(resep_dokter_racikan_detail.jml * databarang.h_beli))'),
             ])
-            ->sortWithColumns($this->sortColumns, ['total' => DB::raw('round(sum(resep_dokter_racikan_detail.jml * databarang.h_beli))')])
             ->paginate($this->perpage, ['*'], 'page_racikan');
     }
 

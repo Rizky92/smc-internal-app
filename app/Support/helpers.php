@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
 
 if (!function_exists('time_length')) {
     /**
@@ -51,7 +51,7 @@ if (!function_exists('rp')) {
     }
 }
 
-if (!function_exists('currency')) {
+if (!function_exists('money')) {
     /**
      * @param  int|float $nominal
      * @param  int $decimalCount
@@ -59,7 +59,7 @@ if (!function_exists('currency')) {
      * 
      * @return string
      */
-    function currency($nominal = 0, int $decimalCount = 0, string $name = 'Rp. '): string
+    function money($nominal = 0, int $decimalCount = 0, string $name = 'Rp. '): string
     {
         return $name . number_format($nominal, $decimalCount, ',', '.');
     }
@@ -89,9 +89,9 @@ if (!function_exists('map_bulan')) {
             12 => $default,
         ];
 
-        $namaBulan = collect(carbon()
-            ->startOfYear()
-            ->toPeriod(carbon()->endOfYear(), '1 month'))
+        $namaBulan = collect(
+            carbon()->startOfYear()->toPeriod(carbon()->endOfYear(), '1 month')->toArray()
+        )
             ->map
             ->translatedFormat('F');
 
@@ -199,20 +199,17 @@ if (!function_exists('func_get_named_args')) {
 
 if (!function_exists('str')) {
     /**
-     * @param  string $str
-     * 
-     * @return \Illuminate\Support\Stringable
+     * @param  string|mixed $value
      */
-    function str($str = '')
+    function str($value = ''): Stringable
     {
-        return Str::of($str);
+        return Str::of($value);
     }
 }
 
 if (!function_exists('maybe')) {
     /**
      * @param  mixed $obj
-     * @param  callable $default
      * 
      * @return mixed
      */
@@ -238,13 +235,17 @@ if (!function_exists('is_between')) {
      * 
      * @return bool
      */
-    function is_between($value, $start = 0, $end = 0): bool
+    function is_between($value, $start = 0, $end = 0, bool $equal = false): bool
     {
-        return ($value >= $start) && ($value <= $end);
+        if ($equal) {
+            return ($value >= $start) && ($value <= $end);
+        }
+
+        return ($value > $start) && ($value < $end);
     }
 }
 
-if (! function_exists('attr')) {
+if (!function_exists('attr')) {
     function attr(string $name, array $attributes): string
     {
         $attr = collect($attributes)->filter()->keys()->first();

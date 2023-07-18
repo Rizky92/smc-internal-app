@@ -17,8 +17,12 @@ trait Sortable
     public function scopeSortWithColumns(Builder $query, array $columns = [], array $rawColumns = [], array $initialColumnOrder = []): Builder
     {
         if (!empty($initialColumnOrder) && empty($columns)) {
+            if (!empty($rawColumns)) {
+                $rawColumns = collect($rawColumns);
+            }
+
             foreach ($initialColumnOrder as $column => $direction) {
-                $query->orderBy($column, $direction);
+                $query->orderBy($rawColumns->get($column) ?? $column, $direction);
             }
 
             return $query;

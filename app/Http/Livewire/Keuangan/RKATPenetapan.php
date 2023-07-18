@@ -77,7 +77,7 @@ class RKATPenetapan extends Component
 
         $user = Auth::user();
 
-        $hasPermission = $user->can('keuangan.rkat.penetapan-rkat.create');
+        $hasPermission = $user->can('keuangan.rkat-penetapan-rkat.create');
 
         $isDevelop = $user->hasRole(config('permission.superadmin_name'));
 

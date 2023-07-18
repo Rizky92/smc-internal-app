@@ -6,19 +6,21 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 
 trait StatusOrder
 {
-    protected function timeAttributeName(): array
+    protected function dateAttributeName(): string
     {
-        return [
-            'tgl' => 'tgl_hasil',
-            'jam' => 'jam_hasil',
-        ];
+        return 'tgl_hasil';
+    }
+
+    protected function timeAttributeName(): string
+    {
+        return 'jam_hasil';
     }
 
     public function statusOrder(): Attribute
     {
         return Attribute::get(fn ($_, array $attributes): string => 
-            ($attributes[$this->timeAttributeName()['tgl']] === '0000-00-00' &&
-             $attributes[$this->timeAttributeName()['jam']] === '00:00:00')
+            ($attributes[$this->dateAttributeName()] === '0000-00-00' &&
+             $attributes[$this->timeAttributeName()] === '00:00:00')
                 ? 'Belum Dilayani'
                 : 'Sudah Dilayani'
         );

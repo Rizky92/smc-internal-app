@@ -21,7 +21,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class RegistrasiPasien extends Model
 {
@@ -40,20 +39,20 @@ class RegistrasiPasien extends Model
     public $timestamps = false;
 
     protected array $searchColumns = [
-        'reg_periksa.no_reg',
-        'reg_periksa.no_rawat',
-        'reg_periksa.kd_dokter',
-        'reg_periksa.no_rkm_medis',
-        'reg_periksa.kd_poli',
-        'reg_periksa.p_jawab',
-        'reg_periksa.almt_pj',
-        'reg_periksa.hubunganpj',
-        'reg_periksa.stts',
-        'reg_periksa.stts_daftar',
-        'reg_periksa.status_lanjut',
-        'reg_periksa.kd_pj',
-        'reg_periksa.status_bayar',
-        'reg_periksa.status_poli',
+        'no_reg',
+        'no_rawat',
+        'kd_dokter',
+        'no_rkm_medis',
+        'kd_poli',
+        'p_jawab',
+        'almt_pj',
+        'hubunganpj',
+        'stts',
+        'stts_daftar',
+        'status_lanjut',
+        'kd_pj',
+        'status_bayar',
+        'status_poli',
     ];
 
     public function umur(): Attribute
@@ -293,7 +292,7 @@ class RegistrasiPasien extends Model
         string $tglAwal = '',
         string $tglAkhir = '',
         string $statusPerawatan = '-',
-        bool $exportToExcel = false
+        string $search
     ): Builder {
         if (empty($tglAwal)) {
             $tglAwal = now()->format('Y-m-d');
@@ -306,7 +305,7 @@ class RegistrasiPasien extends Model
         $sqlSelect = <<<SQL
             kamar_inap.kd_kamar,
             reg_periksa.no_rawat,
-            concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal) ruangan,
+            bangsal.nm_bangsal,
             kamar.kelas,
             reg_periksa.no_rkm_medis,
             pasien.nm_pasien,
@@ -334,10 +333,6 @@ class RegistrasiPasien extends Model
             pasien.no_tlp
         SQL;
 
-        if ($exportToExcel) {
-            $sqlSelect = Str::after($sqlSelect, "kamar_inap.kd_kamar,");
-        }
-
         return $query
             ->selectRaw($sqlSelect)
             ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
@@ -356,6 +351,28 @@ class RegistrasiPasien extends Model
             ->when($statusPerawatan === '-', fn (Builder $query) => $query->where('kamar_inap.stts_pulang', '-'))
             ->when($statusPerawatan === 'tanggal_masuk', fn (Builder $query) => $query->whereBetween('kamar_inap.tgl_masuk', [$tglAwal, $tglAkhir]))
             ->when($statusPerawatan === 'tanggal_keluar', fn (Builder $query) => $query->whereBetween('kamar_inap.tgl_keluar', [$tglAwal, $tglAkhir]))
+            ->search($search, [
+                "kamar_inap.kd_kamar",
+                "kamar.kd_kamar",
+                "bangsal.kd_bangsal",
+                "bangsal.nm_bangsal",
+                "kamar.kelas",
+                "pasien.nm_pasien",
+                "pasien.alamat",
+                "kelurahan.nm_kel",
+                "kecamatan.nm_kec",
+                "kabupaten.nm_kab",
+                "propinsi.nm_prop",
+                "pasien.agama",
+                "pasien.namakeluarga",
+                "pasien.keluarga",
+                "penjab.png_jawab",
+                "poliklinik.nm_poli",
+                "dokter.nm_dokter",
+                "kamar_inap.stts_pulang",
+                "ifnull(dokter_pj.nm_dokter, '-')",
+                "pasien.no_tlp",
+            ])
             ->groupByRaw("
                 reg_periksa.no_rawat,
                 kamar_inap.kd_kamar,
@@ -461,14 +478,14 @@ class RegistrasiPasien extends Model
             ->leftJoin('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->leftJoin('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
             ->with(['permintaanLabPK', 'permintaanLabPA', 'permintaanRadiologi'])
+            ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
+            ->when($jenis !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.status_lanjut', $jenis))
+            ->when($status !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.stts', $status))
+            ->where('reg_periksa.status_bayar', 'belum bayar')
             ->withExists([
                 'diagnosa as diagnosa' => fn (Builder $q): Builder => $q->where('status', $jenis),
                 'obat as obat',
                 'tindakanRalanPerawat as ralan_perawat',
-            ])
-            ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
-            ->when($jenis !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.status_lanjut', $jenis))
-            ->when($status !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.stts', $status))
-            ->where('reg_periksa.status_bayar', 'belum bayar');
+            ]);
     }
 }

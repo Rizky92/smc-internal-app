@@ -23,11 +23,18 @@ class ResepDokter extends Model
 
     public $timestamps = false;
 
+    protected array $searchColumns = [
+        'no_resep',
+        'kode_brng',
+        'aturan_pakai',
+    ];
+
     public function scopeKunjunganResepObatRegular(
         Builder $query,
         string $tglAwal = '',
         string $tglAkhir = '',
-        string $jenisPerawatan = ''
+        string $jenisPerawatan = '',
+        string $search
     ): Builder {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->format('Y-m-d');
@@ -62,6 +69,13 @@ class ResepDokter extends Model
             ->where('reg_periksa.status_bayar', 'Sudah Bayar')
             ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
             ->when(!empty($jenisPerawatan), fn (Builder $query) => $query->where('reg_periksa.status_lanjut', $jenisPerawatan))
+            ->search($search, [
+                'pasien.nm_pasien',
+                'penjab.png_jawab',
+                'reg_periksa.status_lanjut',
+                'dokter.nm_dokter',
+                'poliklinik.nm_poli',
+            ])
             ->groupBy([
                 'resep_dokter.no_resep',
                 'dokter.nm_dokter',

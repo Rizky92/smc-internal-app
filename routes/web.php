@@ -42,18 +42,6 @@ Route::prefix('admin')
     ->middleware('auth')
     ->as('admin.')
     ->group(function () {
-        Route::get('preview-email/{class?}', function (?string $class) {
-            Debugbar::disable();
-
-            if (is_null($class)) {
-                return null;
-            }
-
-            $class = 'App\\Mail\\' . $class;
-
-            return new $class;
-        })->name('email.preview');
-
         Route::impersonate();
 
         Route::get('/', DashboardController::class)->name('dashboard');
@@ -63,7 +51,7 @@ Route::prefix('admin')
             ->group(function () {
                 Route::get('bidang-unit', Aplikasi\BidangUnit::class)
                     ->name('bidang-unit')
-                    ->middleware('can:aplikasi.bidang.read');
+                    ->middleware('can:aplikasi.bidang-unit.read');
 
                 Route::get('pengaturan', Aplikasi\Pengaturan::class)
                     ->name('pengaturan')
