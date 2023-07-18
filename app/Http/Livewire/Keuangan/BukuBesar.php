@@ -96,9 +96,6 @@ class BukuBesar extends Component
 
     protected function defaultValues(): void
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
         $this->kodeRekening = '';
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
@@ -133,7 +130,8 @@ class BukuBesar extends Component
                         'debet'      => round(optional($this->totalDebetDanKredit)->debet, 2),
                         'kredit'     => round(optional($this->totalDebetDanKredit)->kredit, 2),
                     ]
-                ]),
+                ])
+                ->all(),
         ];
     }
 
