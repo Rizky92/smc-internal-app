@@ -2,7 +2,7 @@
     'livewire' => false,
 
     'name',
-    'options' => collect(),
+    'options' => [],
     'placeholder' => null,
     'placeholderValue' => null,
     'resetOn' => 'button#reset-filter',
@@ -11,6 +11,10 @@
 ])
 
 @php
+    if (! $options instanceof \Illuminate\Support\Collection) {
+        $options = collect($options);
+    }
+    
     $isList = $options->isList();
     
     $id = Str::slug($name);

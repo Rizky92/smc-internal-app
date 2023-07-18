@@ -132,11 +132,11 @@ class PiutangPasien extends Model
         SQL;
 
         $sisaPiutang = DB::raw(<<<SQL
-        (
-            select ifnull(sum(besar_cicilan), 0) sisa, no_rawat
-            from bayar_piutang
-            group by no_rawat
-        ) sisa_piutang
+            (
+                select ifnull(sum(besar_cicilan), 0) sisa, no_rawat
+                from bayar_piutang
+                group by no_rawat
+            ) sisa_piutang
         SQL);
 
         return $query->selectRaw($sqlSelect)

@@ -40,20 +40,20 @@ class RegistrasiPasien extends Model
     public $timestamps = false;
 
     protected array $searchColumns = [
-        'no_reg',
-        'no_rawat',
-        'kd_dokter',
-        'no_rkm_medis',
-        'kd_poli',
-        'p_jawab',
-        'almt_pj',
-        'hubunganpj',
-        'stts',
-        'stts_daftar',
-        'status_lanjut',
-        'kd_pj',
-        'status_bayar',
-        'status_poli',
+        'reg_periksa.no_reg',
+        'reg_periksa.no_rawat',
+        'reg_periksa.kd_dokter',
+        'reg_periksa.no_rkm_medis',
+        'reg_periksa.kd_poli',
+        'reg_periksa.p_jawab',
+        'reg_periksa.almt_pj',
+        'reg_periksa.hubunganpj',
+        'reg_periksa.stts',
+        'reg_periksa.stts_daftar',
+        'reg_periksa.status_lanjut',
+        'reg_periksa.kd_pj',
+        'reg_periksa.status_bayar',
+        'reg_periksa.status_poli',
     ];
 
     public function umur(): Attribute

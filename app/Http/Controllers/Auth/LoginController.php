@@ -24,8 +24,8 @@ class LoginController
         ], $request->only(['user', 'pass']));
 
         $user = User::query()
-            ->whereRaw('AES_DECRYPT(id_user, "nur") = ?', $request->get('user'))
-            ->whereRaw('AES_DECRYPT(password, "windi") = ?', $request->get('pass'))
+            ->whereRaw('AES_DECRYPT(id_user, ?) = ?', [config('khanza.app.userkey'), $request->get('user')])
+            ->whereRaw('AES_DECRYPT(password, ?) = ?', [config('khanza.app.passkey'), $request->get('pass')])
             ->first();
 
         if (! $user) {
@@ -34,7 +34,8 @@ class LoginController
             ]);
         }
         
-        Auth::guard('web')->login($user);
+        Auth::guard('web')
+            ->login($user);
 
         $request->session()->regenerate();
 
