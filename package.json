@@ -1,0 +1,8 @@
+{
+    "private": true,
+    "scripts": {},
+    "dependencies": {
+        "prettier": "^2.0.0",
+        "prettier-plugin-blade": "^1.6.10"
+    }
+}
