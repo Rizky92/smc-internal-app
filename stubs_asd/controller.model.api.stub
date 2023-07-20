@@ -1,0 +1,51 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ namespacedModel }};
+use {{ namespacedStoreRequest }};
+use {{ namespacedUpdateRequest }};
+use Illuminate\Http\JsonResponse;
+
+class {{ class }}
+{
+    /**
+     * Display a listing of the {{ model }}.
+     */
+    public function index(): JsonResponse
+    {
+        //
+    }
+
+    /**
+     * Store a newly created {{ model }} into database.
+     */
+    public function store({{ storeRequest }} $request): JsonResponse
+    {
+        //
+    }
+
+    /**
+     * Display the specified {{ model }}.
+     */
+    public function show({{ model }} ${{ modelVariable }}): JsonResponse
+    {
+        //
+    }
+
+    /**
+     * Update the specified {{ model }} in database.
+     */
+    public function update({{ updateRequest }} $request, {{ model }} ${{ modelVariable }}): JsonResponse
+    {
+        //
+    }
+
+    /**
+     * Remove the specified {{ model }} from database.
+     */
+    public function destroy({{ model }} ${{ modelVariable }}): JsonResponse
+    {
+        //
+    }
+}
