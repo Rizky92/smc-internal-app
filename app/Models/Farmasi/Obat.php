@@ -5,12 +5,12 @@ namespace App\Models\Farmasi;
 use App\Models\Satuan;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class Obat extends Model
@@ -145,20 +145,16 @@ class Obat extends Model
     }
 
     /**
-     * @param  string $tglAwal
-     * @param  string $tglAkhir
-     * @param  "narkotika"|"psikotropika" $golongan
-     * 
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @psalm-param  "narkotika"|"psikotropika" $golongan
      */
-    public function scopePemakaianObatNAPZA(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $golongan = 'narkotika'): Builder
+    public function scopePemakaianObatNAPZA(Builder $query, ?Carbon $tglAwal = null, ?Carbon $tglAkhir = null, string $golongan = 'narkotika'): Builder
     {
-        if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+        if (is_null($tglAwal)) {
+            $tglAwal = now()->startOfMonth();
         }
 
-        if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        if (is_null($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth();
         }
 
         $sqlSelect = <<<SQL
@@ -198,7 +194,6 @@ class Obat extends Model
                 ->when($golongan === 'psikotropika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G01'))
                 ->when(empty($golongan), fn (Builder $q): Builder => $q->where('databarang.kode_golongan', '-'))
             )
-            ->whereIn('databarang.kode_golongan', ['G01', 'G07'])
             ->withCasts([
                 'stok_awal'       => 'float',
                 'tf_masuk'        => 'float',

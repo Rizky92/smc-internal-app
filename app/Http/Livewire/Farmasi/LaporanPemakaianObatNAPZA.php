@@ -17,17 +17,17 @@ class LaporanPemakaianObatNAPZA extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
-    /** @var ?string */
+    /** @var \Carbon\Carbon */
     public $tglAwal;
 
-    /** @var ?string */
+    /** @var \Carbon\Carbon */
     public $tglAkhir;
 
     protected function queryString(): array
     {
         return [
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal' => ['except' => now()->startOfMonth(), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth(), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -86,8 +86,8 @@ class LaporanPemakaianObatNAPZA extends Component
 
     protected function defaultValues(): void
     {
-        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth();
+        $this->tglAkhir = now()->endOfMonth();
     }
 
     protected function dataPerSheet(): array
