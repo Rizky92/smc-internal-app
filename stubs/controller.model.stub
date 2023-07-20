@@ -3,83 +3,64 @@
 namespace {{ namespace }};
 
 use {{ namespacedModel }};
-use {{ rootNamespace }}Http\Controllers\Controller;
-use {{ namespacedRequests }}
+use {{ namespacedRequests }};
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
-class {{ class }} extends Controller
+class {{ class }}
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Display a listing of the {{ model }}.
      */
-    public function index()
+    public function index(): View
     {
         //
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Show the form for creating a new {{ model }}.
      */
-    public function create()
+    public function create(): View
     {
         //
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \{{ namespacedStoreRequest }}  $request
-     * @return \Illuminate\Http\Response
+     * Store a newly created {{ model }} in database.
      */
-    public function store({{ storeRequest }} $request)
+    public function store({{ storeRequest }} $request): RedirectResponse
     {
         //
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  \{{ namespacedModel }}  ${{ modelVariable }}
-     * @return \Illuminate\Http\Response
+     * Display the specified {{ model }}.
      */
-    public function show({{ model }} ${{ modelVariable }})
+    public function show({{ model }} ${{ modelVariable }}): View
     {
         //
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \{{ namespacedModel }}  ${{ modelVariable }}
-     * @return \Illuminate\Http\Response
+     * Show the form for editing the specified {{ model }}.
      */
-    public function edit({{ model }} ${{ modelVariable }})
+    public function edit({{ model }} ${{ modelVariable }}): View
     {
         //
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \{{ namespacedUpdateRequest }}  $request
-     * @param  \{{ namespacedModel }}  ${{ modelVariable }}
-     * @return \Illuminate\Http\Response
+     * Update the specified {{ model }} in storage.
      */
-    public function update({{ updateRequest }} $request, {{ model }} ${{ modelVariable }})
+    public function update({{ updateRequest }} $request, {{ model }} ${{ modelVariable }}): RedirectResponse
     {
         //
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \{{ namespacedModel }}  ${{ modelVariable }}
-     * @return \Illuminate\Http\Response
+     * Remove the specified {{ model }} from storage.
      */
-    public function destroy({{ model }} ${{ modelVariable }})
+    public function destroy({{ model }} ${{ modelVariable }}): RedirectResponse
     {
         //
     }
