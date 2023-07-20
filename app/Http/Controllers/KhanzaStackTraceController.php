@@ -11,10 +11,9 @@ class KhanzaStackTraceController
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request  $request
      */
-    public function __invoke(Request $request): RedirectResponse
+    public function __invoke(Request $request): void
     {
         
     }
