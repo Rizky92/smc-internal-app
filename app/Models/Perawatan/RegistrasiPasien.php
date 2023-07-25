@@ -81,81 +81,81 @@ class RegistrasiPasien extends Model
         });
     }
 
-    public function askepRWI(): Attribute
+    public function asmedRWI(): Attribute
     {
         return Attribute::get(function (?string $_, array $attributes) {
-            $askep = collect();
+            $asmed = collect();
 
-            if ($attributes['askep_ranap_umum'] === "1") {
-                $askep->push('RWI Umum');
+            if ($attributes['asmed_ranap_umum'] === "1") {
+                $asmed->push('RWI Umum');
             }
 
-            if ($attributes['askep_ranap_kandungan'] === "1") {
-                $askep->push('RWI Kandungan');
+            if ($attributes['asmed_ranap_kandungan'] === "1") {
+                $asmed->push('RWI Kandungan');
             }
 
-            if ($askep->isEmpty()) {
+            if ($asmed->isEmpty()) {
                 return 'Tidak ada';
             }
 
-            return 'Ada ' . $askep->joinStr(', ')->wrap('(', ')')->value();
+            return 'Ada ' . $asmed->joinStr(', ')->wrap('(', ')')->value();
         });
     }
 
-    public function askepPoli(): Attribute
+    public function asmedPoli(): Attribute
     {
         return Attribute::get(function (?string $_, array $attributes) {
-            $askep = collect();
+            $asmed = collect();
 
-            if ($attributes['askep_poli_umum'] === "1") {
-                $askep->push('Poli Umum');
+            if ($attributes['asmed_poli_umum'] === "1") {
+                $asmed->push('Poli Umum');
             }
 
-            if ($attributes['askep_poli_anak'] === "1") {
-                $askep->push('Poli Anak');
+            if ($attributes['asmed_poli_anak'] === "1") {
+                $asmed->push('Poli Anak');
             }
             
-            if ($attributes['askep_poli_bedah'] === "1") {
-                $askep->push('Poli Bedah');
+            if ($attributes['asmed_poli_bedah'] === "1") {
+                $asmed->push('Poli Bedah');
             }
 
-            if ($attributes['askep_poli_bedah_mulut'] === "1") {
-                $askep->push('Poli Bedah Mulut');
+            if ($attributes['asmed_poli_bedah_mulut'] === "1") {
+                $asmed->push('Poli Bedah Mulut');
             }
 
-            if ($attributes['askep_poli_kandungan'] === "1") {
-                $askep->push('Poli Kandungan');
+            if ($attributes['asmed_poli_kandungan'] === "1") {
+                $asmed->push('Poli Kandungan');
             }
 
-            if ($attributes['askep_poli_mata'] === "1") {
-                $askep->push('Poli Mata');
+            if ($attributes['asmed_poli_mata'] === "1") {
+                $asmed->push('Poli Mata');
             }
 
-            if ($attributes['askep_poli_neurologi'] === "1") {
-                $askep->push('Poli Neurologi');
+            if ($attributes['asmed_poli_neurologi'] === "1") {
+                $asmed->push('Poli Neurologi');
             }
 
-            if ($attributes['askep_poli_orthopedi'] === "1") {
-                $askep->push('Poli Orthopedi');
+            if ($attributes['asmed_poli_orthopedi'] === "1") {
+                $asmed->push('Poli Orthopedi');
             }
 
-            if ($attributes['askep_poli_penyakit_dalam'] === "1") {
-                $askep->push('Poli Penyakit Dalam');
+            if ($attributes['asmed_poli_penyakit_dalam'] === "1") {
+                $asmed->push('Poli Penyakit Dalam');
             }
 
-            if ($attributes['askep_poli_psikiatrik'] === "1") {
-                $askep->push('Poli Psikiatrik');
+            if ($attributes['asmed_poli_psikiatrik'] === "1") {
+                $asmed->push('Poli Psikiatrik');
             }
 
-            if ($attributes['askep_poli_tht'] === "1") {
-                $askep->push('Poli THT');
+            if ($attributes['asmed_poli_tht'] === "1") {
+                $asmed->push('Poli THT');
             }
 
-            if ($askep->isEmpty()) {
+            if ($asmed->isEmpty()) {
                 return "Tidak ada";
             }
 
-            return 'Ada ' . $askep->joinStr(', ')->wrap('(', ')')->value();
+            return 'Ada ' . $asmed->joinStr(', ')->wrap('(', ')')->value();
         });
     }
 
@@ -413,19 +413,19 @@ class RegistrasiPasien extends Model
             exists(select * from resume_pasien_ranap where resume_pasien_ranap.no_rawat = reg_periksa.no_rawat) resume_ranap,
             exists(select * from data_triase_igd where data_triase_igd.no_rawat = reg_periksa.no_rawat) triase_igd,
             exists(select * from penilaian_awal_keperawatan_igd where penilaian_awal_keperawatan_igd.no_rawat = reg_periksa.no_rawat) askep_igd,
-            exists(select * from penilaian_medis_ralan where penilaian_medis_ralan.no_rawat = reg_periksa.no_rawat) askep_poli_umum,
-            exists(select * from penilaian_medis_ralan_anak where penilaian_medis_ralan_anak.no_rawat = reg_periksa.no_rawat) askep_poli_anak,
-            exists(select * from penilaian_medis_ralan_bedah where penilaian_medis_ralan_bedah.no_rawat = reg_periksa.no_rawat) askep_poli_bedah,
-            exists(select * from penilaian_medis_ralan_bedah_mulut where penilaian_medis_ralan_bedah_mulut.no_rawat = reg_periksa.no_rawat) askep_poli_bedah_mulut,
-            exists(select * from penilaian_medis_ralan_kandungan where penilaian_medis_ralan_kandungan.no_rawat = reg_periksa.no_rawat) askep_poli_kandungan,
-            exists(select * from penilaian_medis_ralan_mata where penilaian_medis_ralan_mata.no_rawat = reg_periksa.no_rawat) askep_poli_mata,
-            exists(select * from penilaian_medis_ralan_neurologi where penilaian_medis_ralan_neurologi.no_rawat = reg_periksa.no_rawat) askep_poli_neurologi,
-            exists(select * from penilaian_medis_ralan_orthopedi where penilaian_medis_ralan_orthopedi.no_rawat = reg_periksa.no_rawat) askep_poli_orthopedi,
-            exists(select * from penilaian_medis_ralan_penyakit_dalam where penilaian_medis_ralan_penyakit_dalam.no_rawat = reg_periksa.no_rawat) askep_poli_penyakit_dalam,
-            exists(select * from penilaian_medis_ralan_psikiatrik where penilaian_medis_ralan_psikiatrik.no_rawat = reg_periksa.no_rawat) askep_poli_psikiatrik,
-            exists(select * from penilaian_medis_ralan_tht where penilaian_medis_ralan_tht.no_rawat = reg_periksa.no_rawat) askep_poli_tht,
-            exists(select * from penilaian_medis_ranap where penilaian_medis_ranap.no_rawat = reg_periksa.no_rawat) askep_ranap_umum,
-            exists(select * from penilaian_medis_ranap_kandungan where penilaian_medis_ranap_kandungan.no_rawat = reg_periksa.no_rawat) askep_ranap_kandungan,
+            exists(select * from penilaian_medis_ralan where penilaian_medis_ralan.no_rawat = reg_periksa.no_rawat) asmed_poli_umum,
+            exists(select * from penilaian_medis_ralan_anak where penilaian_medis_ralan_anak.no_rawat = reg_periksa.no_rawat) asmed_poli_anak,
+            exists(select * from penilaian_medis_ralan_bedah where penilaian_medis_ralan_bedah.no_rawat = reg_periksa.no_rawat) asmed_poli_bedah,
+            exists(select * from penilaian_medis_ralan_bedah_mulut where penilaian_medis_ralan_bedah_mulut.no_rawat = reg_periksa.no_rawat) asmed_poli_bedah_mulut,
+            exists(select * from penilaian_medis_ralan_kandungan where penilaian_medis_ralan_kandungan.no_rawat = reg_periksa.no_rawat) asmed_poli_kandungan,
+            exists(select * from penilaian_medis_ralan_mata where penilaian_medis_ralan_mata.no_rawat = reg_periksa.no_rawat) asmed_poli_mata,
+            exists(select * from penilaian_medis_ralan_neurologi where penilaian_medis_ralan_neurologi.no_rawat = reg_periksa.no_rawat) asmed_poli_neurologi,
+            exists(select * from penilaian_medis_ralan_orthopedi where penilaian_medis_ralan_orthopedi.no_rawat = reg_periksa.no_rawat) asmed_poli_orthopedi,
+            exists(select * from penilaian_medis_ralan_penyakit_dalam where penilaian_medis_ralan_penyakit_dalam.no_rawat = reg_periksa.no_rawat) asmed_poli_penyakit_dalam,
+            exists(select * from penilaian_medis_ralan_psikiatrik where penilaian_medis_ralan_psikiatrik.no_rawat = reg_periksa.no_rawat) asmed_poli_psikiatrik,
+            exists(select * from penilaian_medis_ralan_tht where penilaian_medis_ralan_tht.no_rawat = reg_periksa.no_rawat) asmed_poli_tht,
+            exists(select * from penilaian_medis_ranap where penilaian_medis_ranap.no_rawat = reg_periksa.no_rawat) asmed_ranap_umum,
+            exists(select * from penilaian_medis_ranap_kandungan where penilaian_medis_ranap_kandungan.no_rawat = reg_periksa.no_rawat) asmed_ranap_kandungan,
             exists(select * from diagnosa_pasien where diagnosa_pasien.no_rawat = reg_periksa.no_rawat) icd_10,
             exists(select * from prosedur_pasien where prosedur_pasien.no_rawat = reg_periksa.no_rawat) icd_9
         SQL;

@@ -4,10 +4,10 @@ namespace App\Support\Traits\Livewire;
 
 trait WithDateRange
 {
-    /** @var \Carbon\Carbon */
+    /** @var \Carbon\Carbon|string */
     public $tglAwal;
 
-    /** @var \Carbon\Carbon */
+    /** @var \Carbon\Carbon|string */
     public $tglAkhir;
 
     protected function queryStringWithDateRange(): array
@@ -22,12 +22,7 @@ trait WithDateRange
     {
         $this->defaultValueWithDateRange();
     }
-
-    public function hydrate(): void
-    {
-        
-    }
-
+    
     protected function defaultValueWithDateRange(): void
     {
         $this->tglAwal = now()->startOfMonth();
