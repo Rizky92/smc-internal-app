@@ -262,7 +262,7 @@ class RegistrasiPasien extends Model
         return $this->hasMany(HasilPeriksaRadiologi::class, 'no_rawat', 'no_rawat');
     }
 
-    public function obat(): HasMany
+    public function pemberianObat(): HasMany
     {
         return $this->hasMany(PemberianObat::class, 'no_rawat', 'no_rawat');
     }
@@ -285,6 +285,43 @@ class RegistrasiPasien extends Model
     public function berkasDigital(): HasMany
     {
         return $this->hasMany(BerkasDigitalKeperawatan::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function scopeRiwayatPemakaianObatTB(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $cari): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        }
+
+        $sqlSelect = <<<SQL
+            reg_periksa.no_rawat,
+            reg_periksa.tgl_registrasi,
+            reg_periksa.status_lanjut,
+            pasien.nm_pasien,
+            reg_periksa.no_rkm_medis,
+            pasien.no_tlp,
+            pasien.alamat
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->with([
+                'pemberianObat' => fn (HasMany $q): HasMany => $q
+                    ->with(['obat' => fn (BelongsTo $q): BelongsTo => $q->whereIn('kode_kategori', ['2.03', '2.15'])])
+                    ->whereHas('obat', fn (Builder $q): Builder => $q->whereIn('kode_kategori', ['2.03', '2.15']))
+            ])
+            ->whereHas('pemberianObat.obat', fn (Builder $q): Builder => $q->whereIn('kode_kategori', ['2.03', '2.15']))
+            ->whereBetween('tgl_registrasi', [$tglAwal, $tglAkhir])
+            ->search($cari, [
+                'pasien.nm_pasien',
+                'pasien.no_tlp',
+                'pasien.alamat',
+            ]);
     }
 
     public function scopeDaftarPasienRanap(

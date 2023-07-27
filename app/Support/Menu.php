@@ -249,6 +249,7 @@ class Menu
                     'farmasi.laporan-pembuatan-soap.read',
                     'farmasi.laporan-pemakaian-obat-napza.read',
                     'farmasi.laporan-pemakaian-obat-morphine.read',
+                    'farmasi.laporan-pemakaian-obat-tb.read',
                 ]),
                 'items' => [
                     [
@@ -304,6 +305,12 @@ class Menu
                         'icon' => 'fas fa-file-invoice',
                         'url' => route('admin.farmasi.laporan-pemakaian-obat-morphine'),
                         'hasAnyPermissions' => $user->can('farmasi.laporan-pemakaian-obat-morphine.read'),
+                    ],
+                    [
+                        'name' => 'Pemakaian Obat TB',
+                        'icon' => 'fas fa-file-invoice',
+                        'url' => route('admin.farmasi.laporan-pemakaian-obat-tb'),
+                        'hasAnyPermissions' => $user->can('farmasi.laporan-pemakaian-obat-tb.read'),
                     ],
                 ],
             ],

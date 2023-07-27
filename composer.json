@@ -20,7 +20,7 @@
         "rap2hpoutre/laravel-log-viewer": "^2.3.0",
         "reedware/laravel-composite-relations": "^3.0",
         "rizky92/carbon-helper": "^0.0.3",
-        "rizky92/laravel-xlswriter": "*",
+        "rizky92/xlswriter-for-laravel": "0.0.3",
         "spatie/laravel-permission": "^5.10.1",
         "spatie/laravel-settings": "^3.1",
         "staudenmeir/belongs-to-through": "^2.11.2",

@@ -200,6 +200,10 @@ Route::prefix('admin')
                 Route::get('laporan-pemakaian-obat-morphine', Farmasi\LaporanPemakaianObatMorphine::class)
                     ->name('laporan-pemakaian-obat-morphine')
                     ->middleware('can:farmasi.laporan-pemakaian-obat-morphine.read');
+
+                Route::get('laporan-pemakaian-obat-tb', Farmasi\LaporanPemakaianObatTB::class)
+                    ->name('laporan-pemakaian-obat-tb')
+                    ->middleware('can:farmasi.laporan-pemakaian-obat-tb.read');
             });
 
         Route::prefix('rekam-medis')

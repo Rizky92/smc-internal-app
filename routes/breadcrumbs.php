@@ -192,6 +192,11 @@ Breadcrumbs::for('admin.farmasi.laporan-pemakaian-obat-morphine', function (Trai
     $trail->push('Pemakaian Obat Morfin', route('admin.farmasi.laporan-pemakaian-obat-morphine'));
 });
 
+Breadcrumbs::for('admin.farmasi.laporan-pemakaian-obat-tb', function (Trail $trail): void {
+    $trail->parent('admin.farmasi');
+    $trail->push('Pemakaian Obat TB', route('admin.farmasi.laporan-pemakaian-obat-tb'));
+});
+
 
 Breadcrumbs::for('admin.rekam-medis', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
