@@ -24,14 +24,12 @@ trait LiveTable
     protected $queryStringLiveTable = [
         'cari'        => ['except' => ''],
         'perpage'     => ['except' => 25],
-        'sortColumns' => ['except' => '', 'as' => 'sort'],
     ];
 
     public function initializeLiveTable(): void
     {
         $this->listeners = array_merge($this->listeners, [
             'sortBy',
-            'performSort',
         ]);
     }
 
@@ -57,11 +55,6 @@ trait LiveTable
             break;
         }
 
-        $this->performSort();
-    }
-
-    protected function performSort(): void
-    {
         $this->emit('$refresh');
     }
 

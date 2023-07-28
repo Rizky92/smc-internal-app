@@ -311,7 +311,12 @@ class RegistrasiPasien extends Model
             ->selectRaw($sqlSelect)
             ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->with([
-                'pemberianObat' => fn (HasMany $q): HasMany => $q
+                'pemberianObat' => /**
+                 * @return \Illuminate\Database\Eloquent\Builder
+                 *
+                 * @psalm-return \Illuminate\Database\Eloquent\Builder<TRelatedModel>|\Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model>
+                 */
+                fn (HasMany $q) => $q
                     ->with(['obat' => fn (BelongsTo $q): BelongsTo => $q->whereIn('kode_kategori', ['2.03', '2.15'])])
                     ->whereHas('obat', fn (Builder $q): Builder => $q->whereIn('kode_kategori', ['2.03', '2.15']))
             ])

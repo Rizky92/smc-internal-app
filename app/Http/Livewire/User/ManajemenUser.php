@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class Manajamen extends Component
+class ManajemenUser extends Component
 {
     use FlashComponent, Filterable, LiveTable, MenuTracker, DeferredLoading;
 
@@ -57,7 +57,7 @@ class Manajamen extends Component
 
     public function render(): View
     {
-        return view('livewire.user.manajamen')
+        return view('livewire.user.manajemen-user')
             ->layout(BaseLayout::class, ['title' => 'Manajemen User']);
     }
 

@@ -24,19 +24,11 @@ trait Searchable
         }
 
         if (property_exists($this, 'searchColumns') && is_array($this->searchColumns)) {
-            $columns = $columns->merge(
-                collect($this->searchColumns)
-                    ->map(fn (string $col, int $k): string =>
-                        Str::startsWith($col, $this->getTable())
-                            ? $col
-                            : sprintf('%s.%s', $this->getTable(), $col)
-                    )
-                    ->all()
-            );
+            $columns = $columns->merge($this->qualifyColumns($this->searchColumns));
         }
 
         if (method_exists($this, 'searchColumns')) {
-            $columns = $columns->merge($this->searchColumns());
+            $columns = $columns->merge($this->qualifyColumns($this->searchColumns()));
         }
 
         if ($columns->isEmpty()) {
@@ -48,7 +40,7 @@ trait Searchable
             ->lower()
             ->split('/\s+/')
             ->filter()
-            ->map(fn (string $word): string => str($word)->wrap('%')->value());
+            ->map(fn (string $word): string => Str::wrap($word, '%'));
 
         $concatenatedColumns = $columns->joinStr(", ' ', ")->wrap('concat(', ')')->value();
 

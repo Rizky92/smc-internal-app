@@ -236,7 +236,7 @@ Route::prefix('admin')
 
         Route::middleware('role:' . config('permission.superadmin_name'))
             ->group(function () {
-                Route::get('manajemen-user', User\Manajamen::class)
+                Route::get('manajemen-user', User\ManajemenUser::class)
                     ->name('manajemen-user');
 
                 Route::get('hak-akses/smc-internal-app', HakAkses\Siap::class)

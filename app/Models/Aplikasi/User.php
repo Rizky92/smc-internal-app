@@ -38,12 +38,14 @@ class User extends Authenticatable
         'permissions',
     ];
 
-    protected array $searchColumns = [
-        'pegawai.nik',
-        'pegawai.nama',
-        'coalesce(jabatan.nm_jbtn, spesialis.nm_sps, pegawai.jbtn, "")',
-        '(case when petugas.nip is not null then "Petugas" when dokter.kd_dokter is not null then "Dokter" else "-" end)',
-    ];
+    protected function searchColumns(): array {
+        return [
+            'pegawai.nik',
+            'pegawai.nama',
+            DB::raw('coalesce(jabatan.nm_jbtn, spesialis.nm_sps, pegawai.jbtn, "")'),
+            DB::raw('(case when petugas.nip is not null then "Petugas" when dokter.kd_dokter is not null then "Dokter" else "-" end)'),
+        ];
+    }
 
     protected $casts = [
         '10_obat_terbanyak_poli' => BooleanCast::class,
