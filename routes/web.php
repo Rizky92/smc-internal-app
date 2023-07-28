@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\LogoutOtherSessionsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Livewire\Aplikasi;
@@ -37,6 +38,13 @@ Route::post('login', [LoginController::class, 'store']);
 Route::post('logout', LogoutController::class)
     ->name('logout')
     ->middleware('auth');
+
+Route::get('logout-other-device', [LogoutOtherSessionsController::class, 'show'])
+    ->name('logout-other-device')
+    ->middleware('auth');
+
+Route::delete('logout-other-device', [LogoutOtherSessionsController::class, 'destroy'])
+    ->middleware(['auth', 'password.confirm']);
 
 Route::prefix('admin')
     ->middleware('auth')
