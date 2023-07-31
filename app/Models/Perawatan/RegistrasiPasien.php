@@ -287,42 +287,6 @@ class RegistrasiPasien extends Model
         return $this->hasMany(BerkasDigitalKeperawatan::class, 'no_rawat', 'no_rawat');
     }
 
-    public function scopeRiwayatPemakaianObatTB(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $cari): Builder
-    {
-        if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
-        }
-
-        if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
-        }
-
-        $sqlSelect = <<<SQL
-            reg_periksa.no_rawat,
-            reg_periksa.tgl_registrasi,
-            reg_periksa.status_lanjut,
-            pasien.nm_pasien,
-            reg_periksa.no_rkm_medis,
-            pasien.no_tlp,
-            pasien.alamat
-        SQL;
-
-        return $query
-            ->selectRaw($sqlSelect)
-            ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
-            ->with([
-                'pemberianObat' => fn (HasMany $q) => $q
-                    ->with(['obat' => fn (BelongsTo $q): BelongsTo => $q->whereIn('kode_kategori', ['2.14', '2.15'])])
-                    ->whereHas('obat', fn (Builder $q): Builder => $q->whereIn('kode_kategori', ['2.14', '2.15']))
-            ])
-            ->whereBetween('tgl_registrasi', [$tglAwal, $tglAkhir])
-            ->search($cari, [
-                'pasien.nm_pasien',
-                'pasien.no_tlp',
-                'pasien.alamat',
-            ]);
-    }
-
     public function scopeDaftarPasienRanap(
         Builder $query,
         string $tglAwal = '',
@@ -522,6 +486,55 @@ class RegistrasiPasien extends Model
                 'diagnosa as diagnosa' => fn (Builder $q): Builder => $q->where('status', $jenis),
                 'obat as obat',
                 'tindakanRalanPerawat as ralan_perawat',
+            ]);
+    }
+
+    public function scopeRiwayatPemakaianObatTB(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $cari = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        }
+
+        $sqlSelect = <<<SQL
+            reg_periksa.no_rawat,
+            reg_periksa.tgl_registrasi,
+            reg_periksa.no_rkm_medis,
+            pasien.nm_pasien,
+            databarang.nama_brng,
+            sum(detail_pemberian_obat.jml) as total,
+            bangsal.nm_bangsal,
+            reg_periksa.status_lanjut,
+            penjab.png_jawab,
+            pasien.no_tlp,
+            pasien.alamat
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->withCasts(['total' => 'float'])
+            ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->leftJoin('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+            ->leftJoin('detail_pemberian_obat', 'reg_periksa.no_rawat', '=', 'detail_pemberian_obat.no_rawat')
+            ->leftJoin('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
+            ->leftJoin('bangsal', 'detail_pemberian_obat.kd_bangsal', '=', 'bangsal.kd_bangsal')
+            ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
+            ->whereIn('databarang.kode_kategori', ['2.14', '2.15'])
+            ->search($cari, [
+                'pasien.nm_pasien',
+                'databarang.nama_brng',
+                'bangsal.nm_bangsal',
+                'penjab.png_jawab',
+                'pasien.no_tlp',
+                'pasien.alamat',
+            ])
+            ->groupBy([
+                'reg_periksa.no_rawat',
+                'detail_pemberian_obat.kode_brng',
+                'detail_pemberian_obat.kd_bangsal',
             ]);
     }
 }

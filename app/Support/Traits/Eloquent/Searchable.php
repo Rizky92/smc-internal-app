@@ -35,12 +35,12 @@ trait Searchable
             throw new LogicException("No columns are defined to perform search.");
         }
 
-        // Split search queries to each words, convert to lowercase, filter any white-space character, and wrap each words with "%".
+        // Convert to lowercase, split search queries to each words, filter any white-space character, and wrap each words with "%".
         $search = Str::of($search)
             ->lower()
             ->split('/\s+/')
             ->filter()
-            ->map(fn (string $word): string => Str::wrap($word, '%'));
+            ->map(fn (string $word): string => str($word)->trim()->wrap('%')->value());
 
         $concatenatedColumns = $columns->joinStr(", ' ', ")->wrap('concat(', ')')->value();
 

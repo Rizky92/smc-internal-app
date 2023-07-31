@@ -5,7 +5,6 @@ namespace App\Models\Farmasi;
 use App\Models\Satuan;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -28,6 +27,18 @@ class Obat extends Model
     public $incrementing = false;
 
     public $timestamps = false;
+
+    protected array $searchColumns = [
+        'kode_brng',
+        'nama_brng',
+        'kode_satbesar',
+        'kode_sat',
+        'letak_barang',
+        'kdjns',
+        'kode_industri',
+        'kode_kategori',
+        'kode_golongan',
+    ];
 
     public function satuanKecil(): BelongsTo
     {
@@ -147,15 +158,10 @@ class Obat extends Model
     /**
      * @psalm-param  "narkotika"|"psikotropika" $golongan
      */
-    public function scopePemakaianObatNAPZA(Builder $query, ?Carbon $tglAwal = null, ?Carbon $tglAkhir = null, string $golongan = 'narkotika'): Builder
+    public function scopePemakaianObatNAPZA(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $golongan = 'narkotika'): Builder
     {
-        if (is_null($tglAwal)) {
-            $tglAwal = now()->startOfMonth();
-        }
-
-        if (is_null($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth();
-        }
+        $tglAwal = carbon($tglAwal)->startOfMonth();
+        $tglAkhir = carbon($tglAkhir)->endOfMonth();
 
         $sqlSelect = <<<SQL
             databarang.kode_brng,
@@ -169,6 +175,7 @@ class Obat extends Model
             (select sum(detailhibah_obat_bhp.jumlah2) from detailhibah_obat_bhp join hibah_obat_bhp on detailhibah_obat_bhp.no_hibah = hibah_obat_bhp.no_hibah where detailhibah_obat_bhp.kode_brng = databarang.kode_brng and hibah_obat_bhp.kd_bangsal = 'AP' and hibah_obat_bhp.tgl_hibah between ? and ?) hibah_obat,
             (select sum(detreturjual.jml_retur) from detreturjual join returjual on detreturjual.no_retur_jual = returjual.no_retur_jual where detreturjual.kode_brng = databarang.kode_brng and returjual.kd_bangsal = 'AP' and returjual.tgl_retur between ? and ?) retur_pasien,
             (select sum(detail_pemberian_obat.jml) from detail_pemberian_obat where detail_pemberian_obat.kode_brng = databarang.kode_brng and kd_bangsal = 'AP' and tgl_perawatan between ? and ?) pemberian_obat,
+            (select sum(riwayat_barang_medis.masuk) from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and kd_bangsal = 'AP' and tanggal between ? and ?) hapus_beriobat,
             (select sum(detailjual.jumlah) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.kd_bangsal = 'AP' and penjualan.tgl_jual between ? and ?) penjualan_obat,
             (select sum(mutasibarang.jml) from mutasibarang where mutasibarang.kode_brng = databarang.kode_brng and mutasibarang.kd_bangsaldari = 'AP' and mutasibarang.tanggal between ? and ?) tf_keluar,
             (select sum(detreturbeli.jml_retur2) from detreturbeli join returbeli on detreturbeli.no_retur_beli = returbeli.no_retur_beli where detreturbeli.kode_brng = databarang.kode_brng and returbeli.kd_bangsal = 'AP' and returbeli.tgl_retur between ? and ?) retur_supplier
@@ -176,6 +183,7 @@ class Obat extends Model
 
         return $query
             ->selectRaw($sqlSelect, [
+                $tglAwal, $tglAkhir,
                 $tglAwal, $tglAkhir,
                 $tglAwal, $tglAkhir,
                 $tglAwal, $tglAkhir,
@@ -198,9 +206,13 @@ class Obat extends Model
                 'stok_awal'       => 'float',
                 'tf_masuk'        => 'float',
                 'penerimaan_obat' => 'float',
+                'hibah_obat'      => 'float',
+                'retur_pasien'    => 'float',
                 'pemberian_obat'  => 'float',
+                'hapus_beriobat'  => 'float',
                 'penjualan_obat'  => 'float',
                 'tf_keluar'       => 'float',
+                'retur_supplier'  => 'float',
             ]);
     }
 }

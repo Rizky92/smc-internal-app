@@ -2,11 +2,14 @@
 
 namespace App\Models\RekamMedis;
 
+use App\Support\Traits\Eloquent\Searchable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 
 class Penjamin extends Model
 {
+    use Searchable;
+
     protected $connection = 'mysql_sik';
     
     protected $primaryKey = 'kd_pj';
@@ -18,6 +21,12 @@ class Penjamin extends Model
     public $incrementing = false;
 
     public $timestamps = false;
+
+    protected array $searchColumns = [
+        'kd_pj',
+        'png_jawab',
+        'nama_perusahaan',
+    ];
 
     public function namaPenjamin(): Attribute
     {

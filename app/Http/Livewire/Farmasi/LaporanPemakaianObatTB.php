@@ -11,6 +11,10 @@ use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -41,6 +45,9 @@ class LaporanPemakaianObatTB extends Component
     {
         return RegistrasiPasien::query()
             ->riwayatPemakaianObatTB($this->tglAwal, $this->tglAkhir, $this->cari)
+            ->sortWithColumns($this->sortColumns, [
+                'total' => DB::raw('sum(detail_pemberian_obat.jml)')
+            ])
             ->paginate($this->perpage);
     }
 
@@ -59,21 +66,45 @@ class LaporanPemakaianObatTB extends Component
     protected function dataPerSheet(): array
     {
         return [
-            //
+            RegistrasiPasien::query()
+                ->riwayatPemakaianObatTB($this->tglAwal, $this->tglAkhir, $this->cari)
+                ->cursor()
         ];
     }
 
     protected function columnHeaders(): array
     {
         return [
-            //
+            'No. Rawat',
+            'Tgl. Registrasi',
+            'No. RM',
+            'Pasien',
+            'Obat Diberikan',
+            'Jumlah',
+            'Farmasi',
+            'Status',
+            'Penjamin',
+            'No. Telp',
+            'Alamat',
         ];
     }
 
     protected function pageHeaders(): array
     {
+        $periodeAwal = carbon($this->tglAwal);
+        $periodeAkhir = carbon($this->tglAkhir);
+
+        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+
+        if ($periodeAwal->isSameDay($periodeAkhir)) {
+            $periode = $periodeAwal->translatedFormat('d F Y');
+        }
+
         return [
-            //
+            'RS Samarinda Medika Citra',
+            'Laporan Pemakaian Obat TB ke Pasien',
+            now()->translatedFormat('d F Y'),
+            $periode,
         ];
     }
 }

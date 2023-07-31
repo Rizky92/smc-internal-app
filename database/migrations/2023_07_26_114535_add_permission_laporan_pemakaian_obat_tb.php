@@ -7,6 +7,6 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Permission::create(['name' => 'farmasi.laporan-pemakaian-obat.tb.read']);
+        Permission::create(['name' => 'farmasi.laporan-pemakaian-obat-tb.read']);
     }
 };

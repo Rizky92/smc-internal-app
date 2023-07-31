@@ -42,12 +42,12 @@
                                         <x-table.td class="text-right">{{ number_format($item->hibah_obat, 0, ',', '.') }}</x-table.td>
                                         <x-table.td class="text-right">{{ number_format($item->retur_pasien, 0, ',', '.') }}</x-table.td>
                                         <x-table.td class="text-right">{{ number_format($item->tf_masuk + $item->penerimaan_obat + $item->hibah_obat + $item->retur_pasien, 0, ',', '.') }}</x-table.td>
-                                        <x-table.td class="text-right">{{ number_format($item->pemberian_obat, 0, ',', '.') }}</x-table.td>
+                                        <x-table.td class="text-right">{{ number_format($item->pemberian_obat - $item->hapus_beriobat, 0, ',', '.') }}</x-table.td>
                                         <x-table.td class="text-right">{{ number_format($item->penjualan_obat, 0, ',', '.') }}</x-table.td>
                                         <x-table.td class="text-right">{{ number_format($item->tf_keluar, 0, ',', '.') }}</x-table.td>
                                         <x-table.td class="text-right">{{ number_format($item->retur_supplier, 0, ',', '.') }}</x-table.td>
-                                        <x-table.td class="text-right">{{ number_format($item->pemberian_obat + $item->penjualan_obat + $item->tf_keluar + $item->retur_supplier, 0, ',', '.') }}</x-table.td>
-                                        <x-table.td class="text-right">{{ number_format(($item->stok_awal + $item->tf_masuk + $item->penerimaan_obat + $item->hibah_obat + $item->retur_pasien) - ($item->pemberian_obat + $item->penjualan_obat + $item->tf_keluar + $item->retur_supplier), 0, ',', '.') }}</x-table.td>
+                                        <x-table.td class="text-right">{{ number_format($item->pemberian_obat - $item->hapus_beriobat + $item->penjualan_obat + $item->tf_keluar + $item->retur_supplier, 0, ',', '.') }}</x-table.td>
+                                        <x-table.td class="text-right">{{ number_format(($item->stok_awal + $item->tf_masuk + $item->penerimaan_obat + $item->hibah_obat + $item->retur_pasien) - ($item->pemberian_obat - $item->hapus_beriobat + $item->penjualan_obat + $item->tf_keluar + $item->retur_supplier), 0, ',', '.') }}</x-table.td>
                                     </x-table.tr>
                                 @empty
                                     <x-table.tr-empty colspan="16" padding />
@@ -89,12 +89,12 @@
                                         <x-table.td class="text-right">{{ number_format($item->hibah_obat, 0, ',', '.') }}</x-table.td>
                                         <x-table.td class="text-right">{{ number_format($item->retur_pasien, 0, ',', '.') }}</x-table.td>
                                         <x-table.td class="text-right">{{ number_format($item->tf_masuk + $item->penerimaan_obat + $item->hibah_obat + $item->retur_pasien, 0, ',', '.') }}</x-table.td>
-                                        <x-table.td class="text-right">{{ number_format($item->pemberian_obat, 0, ',', '.') }}</x-table.td>
+                                        <x-table.td class="text-right">{{ number_format($item->pemberian_obat - $item->hapus_beriobat, 0, ',', '.') }}</x-table.td>
                                         <x-table.td class="text-right">{{ number_format($item->penjualan_obat, 0, ',', '.') }}</x-table.td>
                                         <x-table.td class="text-right">{{ number_format($item->tf_keluar, 0, ',', '.') }}</x-table.td>
                                         <x-table.td class="text-right">{{ number_format($item->retur_supplier, 0, ',', '.') }}</x-table.td>
-                                        <x-table.td class="text-right">{{ number_format($item->pemberian_obat + $item->penjualan_obat + $item->tf_keluar + $item->retur_supplier, 0, ',', '.') }}</x-table.td>
-                                        <x-table.td class="text-right">{{ number_format(($item->stok_awal + $item->tf_masuk + $item->penerimaan_obat + $item->hibah_obat + $item->retur_pasien) - ($item->pemberian_obat + $item->penjualan_obat + $item->tf_keluar + $item->retur_supplier), 0, ',', '.') }}</x-table.td>
+                                        <x-table.td class="text-right">{{ number_format($item->pemberian_obat - $item->hapus_beriobat + $item->penjualan_obat + $item->tf_keluar + $item->retur_supplier, 0, ',', '.') }}</x-table.td>
+                                        <x-table.td class="text-right">{{ number_format(($item->stok_awal + $item->tf_masuk + $item->penerimaan_obat + $item->hibah_obat + $item->retur_pasien) - ($item->pemberian_obat - $item->hapus_beriobat + $item->penjualan_obat + $item->tf_keluar + $item->retur_supplier), 0, ',', '.') }}</x-table.td>
                                     </x-table.tr>
                                 @empty
                                     <x-table.tr-empty colspan="16" padding />

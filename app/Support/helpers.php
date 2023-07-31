@@ -40,10 +40,7 @@ if (!function_exists('time_length')) {
 
 if (!function_exists('rp')) {
     /**
-     * @param  int|float $nominal = 0
-     * @param  int $decimalCount = 0
-     * 
-     * @return string
+     * @param  int|float $nominal
      */
     function rp($nominal = 0, int $decimalCount = 0): string
     {
@@ -54,10 +51,6 @@ if (!function_exists('rp')) {
 if (!function_exists('money')) {
     /**
      * @param  int|float $nominal
-     * @param  int $decimalCount
-     * @param  string $name
-     * 
-     * @return string
      */
     function money($nominal = 0, int $decimalCount = 0, string $name = 'Rp. '): string
     {
@@ -112,11 +105,6 @@ if (!function_exists('map_bulan')) {
 }
 
 if (!function_exists('tracker_start')) {
-    /**
-     * @param  string $connection
-     * 
-     * @return void
-     */
     function tracker_start(string $connection = 'mysql_smc'): void
     {
         if (app('impersonate')->isImpersonating() || app()->runningUnitTests()) {
@@ -128,11 +116,6 @@ if (!function_exists('tracker_start')) {
 }
 
 if (!function_exists('tracker_end')) {
-    /**
-     * @param  string $connection
-     * 
-     * @return void
-     */
     function tracker_end(string $connection = 'mysql_smc'): void
     {
         if (app('impersonate')->isImpersonating() || app()->runningUnitTests()) {
@@ -160,18 +143,15 @@ if (!function_exists('tracker_end')) {
             ]);
         }
 
+        DB::connection($connection)->flushQueryLog();
         DB::connection($connection)->disableQueryLog();
     }
 }
 
 if (!function_exists('tracker_dispose')) {
-    /**
-     * @param  string $connection
-     * 
-     * @return void
-     */
     function tracker_dispose(string $connection): void
     {
+        DB::connection($connection)->flushQueryLog();
         DB::connection($connection)->disableQueryLog();
     }
 }
