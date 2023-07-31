@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Livewire\RekamMedis;
+namespace App\Http\Livewire\Farmasi;
 
-use App\Models\RekamMedis\DemografiPasien;
+use App\Models\Perawatan\RegistrasiPasien;
 use App\Support\Traits\Livewire\DeferredLoading;
 use App\Support\Traits\Livewire\ExcelExportable;
 use App\Support\Traits\Livewire\Filterable;
@@ -10,10 +10,15 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class LaporanDemografi extends Component
+class LaporanPemakaianObatTB extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
@@ -36,30 +41,24 @@ class LaporanDemografi extends Component
         $this->defaultValues();
     }
 
-    /** 
-     * @return \Illuminate\Contracts\Pagination\Paginator|array<empty, empty>
-     */
-    public function getDemografiPasienProperty()
+    public function getDataLaporanPemakaianObatTBProperty(): Paginator
     {
-        return $this->isDeferred
-            ? []
-            : DemografiPasien::query()
-            ->search($this->cari)
-            ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
+        return RegistrasiPasien::query()
+            ->riwayatPemakaianObatTB($this->tglAwal, $this->tglAkhir, $this->cari)
+            ->sortWithColumns($this->sortColumns, [
+                'total' => DB::raw('sum(detail_pemberian_obat.jml)')
+            ])
             ->paginate($this->perpage);
     }
 
     public function render(): View
     {
-        return view('livewire.rekam-medis.laporan-demografi')
-            ->layout(BaseLayout::class, ['title' => 'Laporan Demografi Pasien']);
+        return view('livewire.farmasi.laporan-pemakaian-obat-tb')
+            ->layout(BaseLayout::class, ['title' => 'Laporan Pemakaian Obat TB per Pasien']);
     }
 
     protected function defaultValues(): void
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
@@ -67,36 +66,26 @@ class LaporanDemografi extends Component
     protected function dataPerSheet(): array
     {
         return [
-            DemografiPasien::query()
-                ->laporanDemografiExcel($this->tglAwal, $this->tglAkhir)
+            RegistrasiPasien::query()
+                ->riwayatPemakaianObatTB($this->tglAwal, $this->tglAkhir, $this->cari)
                 ->cursor()
-                ->all(),
         ];
     }
 
     protected function columnHeaders(): array
     {
         return [
-            'Kecamatan',
+            'No. Rawat',
+            'Tgl. Registrasi',
             'No. RM',
-            'No. Registrasi',
             'Pasien',
+            'Obat Diberikan',
+            'Jumlah',
+            'Farmasi',
+            'Status',
+            'Penjamin',
+            'No. Telp',
             'Alamat',
-            '0 - < 28 Hr',
-            '28 Hr - 1 Th',
-            '1 - 4 Th',
-            '5 - 14 Th',
-            '15 - 24 Th',
-            '25 - 44 Th',
-            '45 - 64 Th',
-            '> 64 Th',
-            'PR',
-            'LK',
-            'Diagnosa',
-            'Agama',
-            'Pendidikan',
-            'Bahasa',
-            'Suku',
         ];
     }
 
@@ -113,7 +102,7 @@ class LaporanDemografi extends Component
 
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Demografi Pasien',
+            'Laporan Pemakaian Obat TB ke Pasien',
             now()->translatedFormat('d F Y'),
             $periode,
         ];

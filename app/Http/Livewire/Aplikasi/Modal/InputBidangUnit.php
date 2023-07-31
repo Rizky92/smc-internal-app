@@ -5,6 +5,7 @@ namespace App\Http\Livewire\Aplikasi\Modal;
 use App\Models\Bidang;
 use App\Support\Traits\Livewire\DeferredModal;
 use App\Support\Traits\Livewire\Filterable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -34,7 +35,7 @@ class InputBidangUnit extends Component
         $this->defaultValues();
     }
 
-    public function getParentBidangProperty(): \Illuminate\Support\Collection
+    public function getParentBidangProperty(): Collection
     {
         return Bidang::query()
             ->whereNull('parent_id')

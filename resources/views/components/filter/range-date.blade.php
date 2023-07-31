@@ -8,7 +8,7 @@
     @if (!empty($title))
         <span class="text-sm" style="width: 5rem">{{ $title }}</span>
     @endif
-    <input class="form-control form-control-sm" type="date" style="width: 9rem" wire:model.defer="{{ $modelStart }}" />
+    <input class="form-control form-control-sm" type="date" style="width: 9rem" wire:model.defer="{{ $modelStart }}" value="{{ now()->startOfMonth()->format('Y-m-d') }}" />
     <span class="text-sm px-3">sampai</span>
-    <input class="form-control form-control-sm" type="date" style="width: 9rem" wire:model.defer="{{ $modelEnd }}" />
+    <input class="form-control form-control-sm" type="date" style="width: 9rem" wire:model.defer="{{ $modelEnd }}" value="{{ now()->endOfMonth()->format('Y-m-d') }}" />
 </div>

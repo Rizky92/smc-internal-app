@@ -2,16 +2,19 @@
 
 namespace App\Models\RekamMedis;
 
+use App\Models\Perawatan\RegistrasiPasien;
 use App\Models\Perusahaan;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 class Pasien extends Model
 {
-    use Searchable, Sortable;
+    use Searchable, Sortable, HasRelationships;
 
     protected $connection = 'mysql_sik';
     
@@ -25,7 +28,7 @@ class Pasien extends Model
 
     public $timestamps = false;
 
-    protected $searchColumns = [
+    protected array $searchColumns = [
         'no_rkm_medis',
         'nm_pasien',
         'no_ktp',
@@ -94,5 +97,10 @@ class Pasien extends Model
     public function perusahaan(): BelongsTo
     {
         return $this->belongsTo(Perusahaan::class, 'perusahaan_pasien', 'kode_perusahaan');
+    }
+
+    public function registrasi(): HasMany
+    {
+        return $this->hasMany(RegistrasiPasien::class, 'no_rkm_medis', 'no_rkm_medis');
     }
 }

@@ -131,7 +131,8 @@ class JurnalPiutangLunas extends Component
                     'nik_validasi'    => $model->nik_validasi . ' ' . $model->nama_pemvalidasi,
                     'kd_rek'          => $model->kd_rek . ' ' . $model->nm_rek,
                     'keterangan'      => $model->keterangan,
-                ]),
+                ])
+                ->all(),
         ];
     }
 

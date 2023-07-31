@@ -13,7 +13,7 @@
                     @foreach ($this->dataObat as $key => $_)    
                         @php($property = 'dataLaporanPemakaianObatMorphine' . $key)
                         <x-navtabs.content :id="$key">
-                            <x-table style="min-width: 100%" zebra hover sticky nowrap>
+                            <x-table zebra hover sticky nowrap>
                                 <x-slot name="columns">
                                     <x-table.th name="no_rawat" title="No. Rawat" />
                                     <x-table.th name="no_rkm_medis" title="No. RM" />

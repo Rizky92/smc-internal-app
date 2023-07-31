@@ -102,28 +102,28 @@ class Menu
                 'items' => [
                     [
                         'name' => 'Penetapan RKAT',
-                        'url' => route('admin.keuangan.penetapan-rkat'),
+                        'url' => route('admin.keuangan.rkat-penetapan'),
                         'icon' => "fas fa-sitemap",
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.rkat-penetapan.read'),
                     ],
                     [
                         'name' => 'Pelaporan RKAT',
-                        'url' => route('admin.keuangan.pelaporan-rkat'),
+                        'url' => route('admin.keuangan.rkat-pelaporan'),
                         'icon' => "fas fa-coins",
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.rkat-pelaporan.read'),
                     ],
                     [
                         'name' => 'Pemantauan RKAT',
-                        'url' => route('admin.keuangan.pemantauan-rkat'),
+                        'url' => route('admin.keuangan.rkat-pemantauan'),
                         'icon' => "fas fa-coins",
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.rkat-pemantauan.read'),
                     ],
                     [
                         'name' => 'Kategori RKAT',
-                        'url' => route('admin.keuangan.kategori-rkat'),
+                        'url' => route('admin.keuangan.rkat-kategori'),
                         'icon' => "fas fa-coins",
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.rkat-kategori.read'),
@@ -249,6 +249,7 @@ class Menu
                     'farmasi.laporan-pembuatan-soap.read',
                     'farmasi.laporan-pemakaian-obat-napza.read',
                     'farmasi.laporan-pemakaian-obat-morphine.read',
+                    'farmasi.laporan-pemakaian-obat-tb.read',
                 ]),
                 'items' => [
                     [
@@ -304,6 +305,12 @@ class Menu
                         'icon' => 'fas fa-file-invoice',
                         'url' => route('admin.farmasi.laporan-pemakaian-obat-morphine'),
                         'hasAnyPermissions' => $user->can('farmasi.laporan-pemakaian-obat-morphine.read'),
+                    ],
+                    [
+                        'name' => 'Pemakaian Obat TB',
+                        'icon' => 'fas fa-file-invoice',
+                        'url' => route('admin.farmasi.laporan-pemakaian-obat-tb'),
+                        'hasAnyPermissions' => $user->can('farmasi.laporan-pemakaian-obat-tb.read'),
                     ],
                 ],
             ],

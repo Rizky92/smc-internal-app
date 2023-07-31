@@ -96,7 +96,8 @@ class RKATPelaporan extends Component
                     'nip'         => $model->user_id,
                     'petugas'     => $model->petugas->nama,
                     'keterangan'  => $model->deskripsi,
-                ]),
+                ])
+                ->all(),
         ];
     }
 

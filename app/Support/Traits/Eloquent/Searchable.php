@@ -24,23 +24,23 @@ trait Searchable
         }
 
         if (property_exists($this, 'searchColumns') && is_array($this->searchColumns)) {
-            $columns = $columns->merge($this->searchColumns);
+            $columns = $columns->merge($this->qualifyColumns($this->searchColumns));
         }
 
         if (method_exists($this, 'searchColumns')) {
-            $columns = $columns->merge($this->searchColumns());
+            $columns = $columns->merge($this->qualifyColumns($this->searchColumns()));
         }
 
         if ($columns->isEmpty()) {
             throw new LogicException("No columns are defined to perform search.");
         }
 
-        // Split search queries to each words, convert to lowercase, filter any white-space character, and wrap each words with "%".
+        // Convert to lowercase, split search queries to each words, filter any white-space character, and wrap each words with "%".
         $search = Str::of($search)
             ->lower()
             ->split('/\s+/')
             ->filter()
-            ->map(fn (string $word) => str($word)->wrap('%')->value());
+            ->map(fn (string $word): string => str($word)->trim()->wrap('%')->value());
 
         $concatenatedColumns = $columns->joinStr(", ' ', ")->wrap('concat(', ')')->value();
 

@@ -1,0 +1,67 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ namespacedModel }};
+use {{ namespacedRequests }};
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
+
+class {{ class }}
+{
+    /**
+     * Display a listing of the {{ model }}.
+     */
+    public function index(): View
+    {
+        //
+    }
+
+    /**
+     * Show the form for creating a new {{ model }}.
+     */
+    public function create(): View
+    {
+        //
+    }
+
+    /**
+     * Store a newly created {{ model }} in database.
+     */
+    public function store({{ storeRequest }} $request): RedirectResponse
+    {
+        //
+    }
+
+    /**
+     * Display the specified {{ model }}.
+     */
+    public function show({{ model }} ${{ modelVariable }}): View
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified {{ model }}.
+     */
+    public function edit({{ model }} ${{ modelVariable }}): View
+    {
+        //
+    }
+
+    /**
+     * Update the specified {{ model }} in storage.
+     */
+    public function update({{ updateRequest }} $request, {{ model }} ${{ modelVariable }}): RedirectResponse
+    {
+        //
+    }
+
+    /**
+     * Remove the specified {{ model }} from storage.
+     */
+    public function destroy({{ model }} ${{ modelVariable }}): RedirectResponse
+    {
+        //
+    }
+}

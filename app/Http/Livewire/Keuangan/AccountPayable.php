@@ -234,7 +234,8 @@ class AccountPayable extends Component
                     'periode_90_up' => (float) $totalSisaPerPeriodeMedis->get('periode_90_up'),
                     'umur_hari'     => '',
                     'keterangan'    => '',
-                ]]);
+                ]])
+                ->all();
         }
 
         if (Auth::user()->can('keuangan.account-payable.read-nonmedis')) {
@@ -291,7 +292,8 @@ class AccountPayable extends Component
                     'periode_90_up' => (float) $totalSisaPerPeriodeNonMedis->get('periode_90_up'),
                     'umur_hari'     => '',
                     'keterangan'    => '',
-                ]]);
+                ]])
+                ->all();
         }
 
         return $export;

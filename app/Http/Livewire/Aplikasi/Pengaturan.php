@@ -15,11 +15,6 @@ class Pengaturan extends Component
     // Pengaturan per kategori aplikasi masuk jadi Traits
     use Concerns\PengaturanRKAT;
 
-    public function mount(): void
-    {
-        //
-    }
-
     public function render(): View
     {
         return view('livewire.aplikasi.pengaturan')

@@ -21,7 +21,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class RegistrasiPasien extends Model
 {
@@ -40,20 +39,20 @@ class RegistrasiPasien extends Model
     public $timestamps = false;
 
     protected array $searchColumns = [
-        'reg_periksa.no_reg',
-        'reg_periksa.no_rawat',
-        'reg_periksa.kd_dokter',
-        'reg_periksa.no_rkm_medis',
-        'reg_periksa.kd_poli',
-        'reg_periksa.p_jawab',
-        'reg_periksa.almt_pj',
-        'reg_periksa.hubunganpj',
-        'reg_periksa.stts',
-        'reg_periksa.stts_daftar',
-        'reg_periksa.status_lanjut',
-        'reg_periksa.kd_pj',
-        'reg_periksa.status_bayar',
-        'reg_periksa.status_poli',
+        'no_reg',
+        'no_rawat',
+        'kd_dokter',
+        'no_rkm_medis',
+        'kd_poli',
+        'p_jawab',
+        'almt_pj',
+        'hubunganpj',
+        'stts',
+        'stts_daftar',
+        'status_lanjut',
+        'kd_pj',
+        'status_bayar',
+        'status_poli',
     ];
 
     public function umur(): Attribute
@@ -82,81 +81,81 @@ class RegistrasiPasien extends Model
         });
     }
 
-    public function askepRWI(): Attribute
+    public function asmedRWI(): Attribute
     {
         return Attribute::get(function (?string $_, array $attributes) {
-            $askep = collect();
+            $asmed = collect();
 
-            if ($attributes['askep_ranap_umum'] === "1") {
-                $askep->push('RWI Umum');
+            if ($attributes['asmed_ranap_umum'] === "1") {
+                $asmed->push('RWI Umum');
             }
 
-            if ($attributes['askep_ranap_kandungan'] === "1") {
-                $askep->push('RWI Kandungan');
+            if ($attributes['asmed_ranap_kandungan'] === "1") {
+                $asmed->push('RWI Kandungan');
             }
 
-            if ($askep->isEmpty()) {
+            if ($asmed->isEmpty()) {
                 return 'Tidak ada';
             }
 
-            return 'Ada ' . $askep->joinStr(', ')->wrap('(', ')')->value();
+            return 'Ada ' . $asmed->joinStr(', ')->wrap('(', ')')->value();
         });
     }
 
-    public function askepPoli(): Attribute
+    public function asmedPoli(): Attribute
     {
         return Attribute::get(function (?string $_, array $attributes) {
-            $askep = collect();
+            $asmed = collect();
 
-            if ($attributes['askep_poli_umum'] === "1") {
-                $askep->push('Poli Umum');
+            if ($attributes['asmed_poli_umum'] === "1") {
+                $asmed->push('Poli Umum');
             }
 
-            if ($attributes['askep_poli_anak'] === "1") {
-                $askep->push('Poli Anak');
+            if ($attributes['asmed_poli_anak'] === "1") {
+                $asmed->push('Poli Anak');
             }
             
-            if ($attributes['askep_poli_bedah'] === "1") {
-                $askep->push('Poli Bedah');
+            if ($attributes['asmed_poli_bedah'] === "1") {
+                $asmed->push('Poli Bedah');
             }
 
-            if ($attributes['askep_poli_bedah_mulut'] === "1") {
-                $askep->push('Poli Bedah Mulut');
+            if ($attributes['asmed_poli_bedah_mulut'] === "1") {
+                $asmed->push('Poli Bedah Mulut');
             }
 
-            if ($attributes['askep_poli_kandungan'] === "1") {
-                $askep->push('Poli Kandungan');
+            if ($attributes['asmed_poli_kandungan'] === "1") {
+                $asmed->push('Poli Kandungan');
             }
 
-            if ($attributes['askep_poli_mata'] === "1") {
-                $askep->push('Poli Mata');
+            if ($attributes['asmed_poli_mata'] === "1") {
+                $asmed->push('Poli Mata');
             }
 
-            if ($attributes['askep_poli_neurologi'] === "1") {
-                $askep->push('Poli Neurologi');
+            if ($attributes['asmed_poli_neurologi'] === "1") {
+                $asmed->push('Poli Neurologi');
             }
 
-            if ($attributes['askep_poli_orthopedi'] === "1") {
-                $askep->push('Poli Orthopedi');
+            if ($attributes['asmed_poli_orthopedi'] === "1") {
+                $asmed->push('Poli Orthopedi');
             }
 
-            if ($attributes['askep_poli_penyakit_dalam'] === "1") {
-                $askep->push('Poli Penyakit Dalam');
+            if ($attributes['asmed_poli_penyakit_dalam'] === "1") {
+                $asmed->push('Poli Penyakit Dalam');
             }
 
-            if ($attributes['askep_poli_psikiatrik'] === "1") {
-                $askep->push('Poli Psikiatrik');
+            if ($attributes['asmed_poli_psikiatrik'] === "1") {
+                $asmed->push('Poli Psikiatrik');
             }
 
-            if ($attributes['askep_poli_tht'] === "1") {
-                $askep->push('Poli THT');
+            if ($attributes['asmed_poli_tht'] === "1") {
+                $asmed->push('Poli THT');
             }
 
-            if ($askep->isEmpty()) {
+            if ($asmed->isEmpty()) {
                 return "Tidak ada";
             }
 
-            return 'Ada ' . $askep->joinStr(', ')->wrap('(', ')')->value();
+            return 'Ada ' . $asmed->joinStr(', ')->wrap('(', ')')->value();
         });
     }
 
@@ -263,7 +262,7 @@ class RegistrasiPasien extends Model
         return $this->hasMany(HasilPeriksaRadiologi::class, 'no_rawat', 'no_rawat');
     }
 
-    public function obat(): HasMany
+    public function pemberianObat(): HasMany
     {
         return $this->hasMany(PemberianObat::class, 'no_rawat', 'no_rawat');
     }
@@ -293,7 +292,7 @@ class RegistrasiPasien extends Model
         string $tglAwal = '',
         string $tglAkhir = '',
         string $statusPerawatan = '-',
-        bool $exportToExcel = false
+        string $search
     ): Builder {
         if (empty($tglAwal)) {
             $tglAwal = now()->format('Y-m-d');
@@ -306,7 +305,7 @@ class RegistrasiPasien extends Model
         $sqlSelect = <<<SQL
             kamar_inap.kd_kamar,
             reg_periksa.no_rawat,
-            concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal) ruangan,
+            bangsal.nm_bangsal,
             kamar.kelas,
             reg_periksa.no_rkm_medis,
             pasien.nm_pasien,
@@ -334,10 +333,6 @@ class RegistrasiPasien extends Model
             pasien.no_tlp
         SQL;
 
-        if ($exportToExcel) {
-            $sqlSelect = Str::after($sqlSelect, "kamar_inap.kd_kamar,");
-        }
-
         return $query
             ->selectRaw($sqlSelect)
             ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
@@ -356,6 +351,28 @@ class RegistrasiPasien extends Model
             ->when($statusPerawatan === '-', fn (Builder $query) => $query->where('kamar_inap.stts_pulang', '-'))
             ->when($statusPerawatan === 'tanggal_masuk', fn (Builder $query) => $query->whereBetween('kamar_inap.tgl_masuk', [$tglAwal, $tglAkhir]))
             ->when($statusPerawatan === 'tanggal_keluar', fn (Builder $query) => $query->whereBetween('kamar_inap.tgl_keluar', [$tglAwal, $tglAkhir]))
+            ->search($search, [
+                "kamar_inap.kd_kamar",
+                "kamar.kd_kamar",
+                "bangsal.kd_bangsal",
+                "bangsal.nm_bangsal",
+                "kamar.kelas",
+                "pasien.nm_pasien",
+                "pasien.alamat",
+                "kelurahan.nm_kel",
+                "kecamatan.nm_kec",
+                "kabupaten.nm_kab",
+                "propinsi.nm_prop",
+                "pasien.agama",
+                "pasien.namakeluarga",
+                "pasien.keluarga",
+                "penjab.png_jawab",
+                "poliklinik.nm_poli",
+                "dokter.nm_dokter",
+                "kamar_inap.stts_pulang",
+                "ifnull(dokter_pj.nm_dokter, '-')",
+                "pasien.no_tlp",
+            ])
             ->groupByRaw("
                 reg_periksa.no_rawat,
                 kamar_inap.kd_kamar,
@@ -396,19 +413,19 @@ class RegistrasiPasien extends Model
             exists(select * from resume_pasien_ranap where resume_pasien_ranap.no_rawat = reg_periksa.no_rawat) resume_ranap,
             exists(select * from data_triase_igd where data_triase_igd.no_rawat = reg_periksa.no_rawat) triase_igd,
             exists(select * from penilaian_awal_keperawatan_igd where penilaian_awal_keperawatan_igd.no_rawat = reg_periksa.no_rawat) askep_igd,
-            exists(select * from penilaian_medis_ralan where penilaian_medis_ralan.no_rawat = reg_periksa.no_rawat) askep_poli_umum,
-            exists(select * from penilaian_medis_ralan_anak where penilaian_medis_ralan_anak.no_rawat = reg_periksa.no_rawat) askep_poli_anak,
-            exists(select * from penilaian_medis_ralan_bedah where penilaian_medis_ralan_bedah.no_rawat = reg_periksa.no_rawat) askep_poli_bedah,
-            exists(select * from penilaian_medis_ralan_bedah_mulut where penilaian_medis_ralan_bedah_mulut.no_rawat = reg_periksa.no_rawat) askep_poli_bedah_mulut,
-            exists(select * from penilaian_medis_ralan_kandungan where penilaian_medis_ralan_kandungan.no_rawat = reg_periksa.no_rawat) askep_poli_kandungan,
-            exists(select * from penilaian_medis_ralan_mata where penilaian_medis_ralan_mata.no_rawat = reg_periksa.no_rawat) askep_poli_mata,
-            exists(select * from penilaian_medis_ralan_neurologi where penilaian_medis_ralan_neurologi.no_rawat = reg_periksa.no_rawat) askep_poli_neurologi,
-            exists(select * from penilaian_medis_ralan_orthopedi where penilaian_medis_ralan_orthopedi.no_rawat = reg_periksa.no_rawat) askep_poli_orthopedi,
-            exists(select * from penilaian_medis_ralan_penyakit_dalam where penilaian_medis_ralan_penyakit_dalam.no_rawat = reg_periksa.no_rawat) askep_poli_penyakit_dalam,
-            exists(select * from penilaian_medis_ralan_psikiatrik where penilaian_medis_ralan_psikiatrik.no_rawat = reg_periksa.no_rawat) askep_poli_psikiatrik,
-            exists(select * from penilaian_medis_ralan_tht where penilaian_medis_ralan_tht.no_rawat = reg_periksa.no_rawat) askep_poli_tht,
-            exists(select * from penilaian_medis_ranap where penilaian_medis_ranap.no_rawat = reg_periksa.no_rawat) askep_ranap_umum,
-            exists(select * from penilaian_medis_ranap_kandungan where penilaian_medis_ranap_kandungan.no_rawat = reg_periksa.no_rawat) askep_ranap_kandungan,
+            exists(select * from penilaian_medis_ralan where penilaian_medis_ralan.no_rawat = reg_periksa.no_rawat) asmed_poli_umum,
+            exists(select * from penilaian_medis_ralan_anak where penilaian_medis_ralan_anak.no_rawat = reg_periksa.no_rawat) asmed_poli_anak,
+            exists(select * from penilaian_medis_ralan_bedah where penilaian_medis_ralan_bedah.no_rawat = reg_periksa.no_rawat) asmed_poli_bedah,
+            exists(select * from penilaian_medis_ralan_bedah_mulut where penilaian_medis_ralan_bedah_mulut.no_rawat = reg_periksa.no_rawat) asmed_poli_bedah_mulut,
+            exists(select * from penilaian_medis_ralan_kandungan where penilaian_medis_ralan_kandungan.no_rawat = reg_periksa.no_rawat) asmed_poli_kandungan,
+            exists(select * from penilaian_medis_ralan_mata where penilaian_medis_ralan_mata.no_rawat = reg_periksa.no_rawat) asmed_poli_mata,
+            exists(select * from penilaian_medis_ralan_neurologi where penilaian_medis_ralan_neurologi.no_rawat = reg_periksa.no_rawat) asmed_poli_neurologi,
+            exists(select * from penilaian_medis_ralan_orthopedi where penilaian_medis_ralan_orthopedi.no_rawat = reg_periksa.no_rawat) asmed_poli_orthopedi,
+            exists(select * from penilaian_medis_ralan_penyakit_dalam where penilaian_medis_ralan_penyakit_dalam.no_rawat = reg_periksa.no_rawat) asmed_poli_penyakit_dalam,
+            exists(select * from penilaian_medis_ralan_psikiatrik where penilaian_medis_ralan_psikiatrik.no_rawat = reg_periksa.no_rawat) asmed_poli_psikiatrik,
+            exists(select * from penilaian_medis_ralan_tht where penilaian_medis_ralan_tht.no_rawat = reg_periksa.no_rawat) asmed_poli_tht,
+            exists(select * from penilaian_medis_ranap where penilaian_medis_ranap.no_rawat = reg_periksa.no_rawat) asmed_ranap_umum,
+            exists(select * from penilaian_medis_ranap_kandungan where penilaian_medis_ranap_kandungan.no_rawat = reg_periksa.no_rawat) asmed_ranap_kandungan,
             exists(select * from diagnosa_pasien where diagnosa_pasien.no_rawat = reg_periksa.no_rawat) icd_10,
             exists(select * from prosedur_pasien where prosedur_pasien.no_rawat = reg_periksa.no_rawat) icd_9
         SQL;
@@ -461,14 +478,63 @@ class RegistrasiPasien extends Model
             ->leftJoin('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->leftJoin('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
             ->with(['permintaanLabPK', 'permintaanLabPA', 'permintaanRadiologi'])
+            ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
+            ->when($jenis !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.status_lanjut', $jenis))
+            ->when($status !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.stts', $status))
+            ->where('reg_periksa.status_bayar', 'belum bayar')
             ->withExists([
                 'diagnosa as diagnosa' => fn (Builder $q): Builder => $q->where('status', $jenis),
                 'obat as obat',
                 'tindakanRalanPerawat as ralan_perawat',
-            ])
+            ]);
+    }
+
+    public function scopeRiwayatPemakaianObatTB(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $cari = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        }
+
+        $sqlSelect = <<<SQL
+            reg_periksa.no_rawat,
+            reg_periksa.tgl_registrasi,
+            reg_periksa.no_rkm_medis,
+            pasien.nm_pasien,
+            databarang.nama_brng,
+            sum(detail_pemberian_obat.jml) as total,
+            bangsal.nm_bangsal,
+            reg_periksa.status_lanjut,
+            penjab.png_jawab,
+            pasien.no_tlp,
+            pasien.alamat
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->withCasts(['total' => 'float'])
+            ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->leftJoin('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+            ->leftJoin('detail_pemberian_obat', 'reg_periksa.no_rawat', '=', 'detail_pemberian_obat.no_rawat')
+            ->leftJoin('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
+            ->leftJoin('bangsal', 'detail_pemberian_obat.kd_bangsal', '=', 'bangsal.kd_bangsal')
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
-            ->when($jenis !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.status_lanjut', $jenis))
-            ->when($status !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.stts', $status))
-            ->where('reg_periksa.status_bayar', 'belum bayar');
+            ->whereIn('databarang.kode_kategori', ['2.14', '2.15'])
+            ->search($cari, [
+                'pasien.nm_pasien',
+                'databarang.nama_brng',
+                'bangsal.nm_bangsal',
+                'penjab.png_jawab',
+                'pasien.no_tlp',
+                'pasien.alamat',
+            ])
+            ->groupBy([
+                'reg_periksa.no_rawat',
+                'detail_pemberian_obat.kode_brng',
+                'detail_pemberian_obat.kd_bangsal',
+            ]);
     }
 }

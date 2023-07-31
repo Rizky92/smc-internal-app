@@ -252,7 +252,7 @@
                             <x-table.td
                                 clickable
                                 data-no-rawat="{{ $pasien->no_rawat }}"
-                                data-kamar="{{ $pasien->ruangan }}"
+                                data-kamar="{{ $pasien->kd_kamar }} {{ $pasien->nm_bangsal }}"
                                 data-pasien="{{ $pasien->nm_pasien }} {{ $pasien->umur }}"
                                 data-harga-kamar="{{ $pasien->trf_kamar }}"
                                 data-lama-inap="{{ $pasien->lama }}"
@@ -260,11 +260,11 @@
                                 data-kd-kamar="{{ $pasien->kd_kamar }}"
                                 data-tgl-masuk="{{ $pasien->tgl_masuk }}"
                                 data-jam-masuk="{{ $pasien->jam_masuk }}"
-                                data-clipboard="{{ collect($pasien->getAttributes())->except('kd_kamar')->join('   ') }}"
+                                data-clipboard="{{ collect($pasien->getAttributes())->join('   ') }}"
                             >
                                 {{ $pasien->no_rawat }}
                             </x-table.td>
-                            <x-table.td>{{ $pasien->ruangan }}</x-table.td>
+                            <x-table.td>{{ $pasien->kd_kamar }} {{ $pasien->nm_bangsal }}</x-table.td>
                             <x-table.td>{{ $pasien->kelas }}</x-table.td>
                             <x-table.td>{{ $pasien->no_rkm_medis }}</x-table.td>
                             <x-table.td>{{ $pasien->nm_pasien }} {{ $pasien->umur }}</x-table.td>

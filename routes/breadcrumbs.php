@@ -121,24 +121,24 @@ Breadcrumbs::for('admin.keuangan.account-payable', function (Trail $trail): void
     $trail->push('Hutang Aging AP', route('admin.keuangan.account-payable'));
 });
 
-Breadcrumbs::for('admin.keuangan.pelaporan-rkat', function (Trail $trail): void {
+Breadcrumbs::for('admin.keuangan.rkat-pelaporan', function (Trail $trail): void {
     $trail->parent('admin.keuangan');
-    $trail->push('pelaporan RKAT', route('admin.keuangan.pelaporan-rkat'));
+    $trail->push('pelaporan RKAT', route('admin.keuangan.rkat-pelaporan'));
 });
 
-Breadcrumbs::for('admin.keuangan.pemantauan-rkat', function (Trail $trail): void {
+Breadcrumbs::for('admin.keuangan.rkat-pemantauan', function (Trail $trail): void {
     $trail->parent('admin.keuangan');
-    $trail->push('Pemantauan RKAT', route('admin.keuangan.pemantauan-rkat'));
+    $trail->push('Pemantauan RKAT', route('admin.keuangan.rkat-pemantauan'));
 });
 
-Breadcrumbs::for('admin.keuangan.penetapan-rkat', function (Trail $trail): void {
+Breadcrumbs::for('admin.keuangan.rkat-penetapan', function (Trail $trail): void {
     $trail->parent('admin.keuangan');
-    $trail->push('Penetapan RKAT', route('admin.keuangan.penetapan-rkat'));
+    $trail->push('Penetapan RKAT', route('admin.keuangan.rkat-penetapan'));
 });
 
-Breadcrumbs::for('admin.keuangan.kategori-rkat', function (Trail $trail): void {
+Breadcrumbs::for('admin.keuangan.rkat-kategori', function (Trail $trail): void {
     $trail->parent('admin.keuangan');
-    $trail->push('kategori RKAT', route('admin.keuangan.kategori-rkat'));
+    $trail->push('kategori RKAT', route('admin.keuangan.rkat-kategori'));
 });
 
 
@@ -190,6 +190,11 @@ Breadcrumbs::for('admin.farmasi.laporan-pemakaian-obat-napza', function (Trail $
 Breadcrumbs::for('admin.farmasi.laporan-pemakaian-obat-morphine', function (Trail $trail): void {
     $trail->parent('admin.farmasi');
     $trail->push('Pemakaian Obat Morfin', route('admin.farmasi.laporan-pemakaian-obat-morphine'));
+});
+
+Breadcrumbs::for('admin.farmasi.laporan-pemakaian-obat-tb', function (Trail $trail): void {
+    $trail->parent('admin.farmasi');
+    $trail->push('Pemakaian Obat TB', route('admin.farmasi.laporan-pemakaian-obat-tb'));
 });
 
 

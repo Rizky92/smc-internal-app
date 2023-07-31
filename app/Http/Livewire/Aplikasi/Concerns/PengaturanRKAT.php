@@ -6,18 +6,11 @@ use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Rules\DoesntExist;
 use App\Settings\RKATSettings;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Fluent;
 
 trait PengaturanRKAT
 {
     /** @var string */
     public $tahunRKAT;
-
-    /** @var string */
-    public $tglAwalBatasInputRKAT;
-
-    /** @var string */
-    public $tglAkhirBatasInputRKAT;
 
     /** @var string */
     public $tglAwalPenetapanRKAT;
@@ -55,21 +48,15 @@ trait PengaturanRKAT
             'tahunRKAT'              => ['required', new DoesntExist(AnggaranBidang::class, 'tahun')],
             'tglAwalPenetapanRKAT'   => ['required', 'date'],
             'tglAkhirPenetapanRKAT'  => ['required', 'date'],
-            'tglAwalBatasInputRKAT'  => ['required', 'date'],
-            'tglAkhirBatasInputRKAT' => ['required', 'date'],
         ]);
-
-        $validated = new Fluent($validated);
 
         tracker_start();
 
         app(RKATSettings::class)
             ->fill([
-                'tahun'                 => $validated->tahunRKAT,
-                'batas_penetapan_awal'  => carbon($validated->tglAwalPenetapanRKAT),
-                'batas_penetapan_akhir' => carbon($validated->tglAkhirPenetapanRKAT),
-                'batas_input_awal'      => carbon($validated->tglAwalInputRKAT),
-                'batas_input_akhir'     => carbon($validated->tglAkhirInputRKAT),
+                'tahun'                 => $validated['tahunRKAT'],
+                'batas_penetapan_awal'  => carbon($validated['tglAwalPenetapanRKAT']),
+                'batas_penetapan_akhir' => carbon($validated['tglAkhirPenetapanRKAT']),
             ])
             ->save();
 
@@ -86,7 +73,5 @@ trait PengaturanRKAT
         $this->tahunRKAT = $settings->tahun;
         $this->tglAwalPenetapanRKAT = $settings->batas_penetapan_awal->format('Y-m-d');
         $this->tglAkhirPenetapanRKAT = $settings->batas_penetapan_akhir->format('Y-m-d');
-        $this->tglAwalBatasInputRKAT = $settings->batas_input_awal->format('Y-m-d');
-        $this->tglAkhirBatasInputRKAT = $settings->batas_input_akhir->format('Y-m-d');
     }
 }

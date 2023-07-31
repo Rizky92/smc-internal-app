@@ -8,6 +8,7 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\Relations\Descendants;
@@ -30,7 +31,7 @@ class BidangUnit extends Component
     /**
      * @psalm-return \Illuminate\Database\Eloquent\Collection<Bidang>
      */
-    public function getBidangUnitProperty(): \Illuminate\Database\Eloquent\Collection
+    public function getBidangUnitProperty(): Collection
     {
         return Bidang::query()
             ->whereNull('parent_id')

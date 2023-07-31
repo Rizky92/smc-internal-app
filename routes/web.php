@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\LogoutOtherSessionsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Livewire\Aplikasi;
@@ -38,22 +39,17 @@ Route::post('logout', LogoutController::class)
     ->name('logout')
     ->middleware('auth');
 
+Route::get('logout-other-device', [LogoutOtherSessionsController::class, 'show'])
+    ->name('logout-other-device')
+    ->middleware('auth');
+
+Route::delete('logout-other-device', [LogoutOtherSessionsController::class, 'destroy'])
+    ->middleware(['auth', 'password.confirm']);
+
 Route::prefix('admin')
     ->middleware('auth')
     ->as('admin.')
     ->group(function () {
-        Route::get('preview-email/{class?}', function (?string $class) {
-            Debugbar::disable();
-
-            if (is_null($class)) {
-                return null;
-            }
-
-            $class = 'App\\Mail\\' . $class;
-
-            return new $class;
-        })->name('email.preview');
-
         Route::impersonate();
 
         Route::get('/', DashboardController::class)->name('dashboard');
@@ -63,7 +59,7 @@ Route::prefix('admin')
             ->group(function () {
                 Route::get('bidang-unit', Aplikasi\BidangUnit::class)
                     ->name('bidang-unit')
-                    ->middleware('can:aplikasi.bidang.read');
+                    ->middleware('can:aplikasi.bidang-unit.read');
 
                 Route::get('pengaturan', Aplikasi\Pengaturan::class)
                     ->name('pengaturan')
@@ -97,20 +93,20 @@ Route::prefix('admin')
         Route::prefix('keuangan')
             ->as('keuangan.')
             ->group(function () {
-                Route::get('pelaporan-rkat', Keuangan\RKATPelaporan::class)
-                    ->name('pelaporan-rkat')
+                Route::get('rkat-pelaporan', Keuangan\RKATPelaporan::class)
+                    ->name('rkat-pelaporan')
                     ->middleware('can:keuangan.rkat-pelaporan.read');
 
-                Route::get('pemantauan-rkat', Keuangan\RKATPemantauan::class)
-                    ->name('pemantauan-rkat')
+                Route::get('rkat-pemantauan', Keuangan\RKATPemantauan::class)
+                    ->name('rkat-pemantauan')
                     ->middleware('can:keuangan.rkat-pemantauan.read');
 
-                Route::get('penetapan-rkat', Keuangan\RKATPenetapan::class)
-                    ->name('penetapan-rkat')
+                Route::get('rkat-penetapan', Keuangan\RKATPenetapan::class)
+                    ->name('rkat-penetapan')
                     ->middleware('can:keuangan.rkat-penetapan.read');
 
-                Route::get('kategori-rkat', Keuangan\RKATKategori::class)
-                    ->name('kategori-rkat')
+                Route::get('rkat-kategori', Keuangan\RKATKategori::class)
+                    ->name('rkat-kategori')
                     ->middleware('can:keuangan.rkat-kategori.read');
 
                 Route::get('stok-obat-ruangan', Keuangan\StokObatRuangan::class)
@@ -212,6 +208,10 @@ Route::prefix('admin')
                 Route::get('laporan-pemakaian-obat-morphine', Farmasi\LaporanPemakaianObatMorphine::class)
                     ->name('laporan-pemakaian-obat-morphine')
                     ->middleware('can:farmasi.laporan-pemakaian-obat-morphine.read');
+
+                Route::get('laporan-pemakaian-obat-tb', Farmasi\LaporanPemakaianObatTB::class)
+                    ->name('laporan-pemakaian-obat-tb')
+                    ->middleware('can:farmasi.laporan-pemakaian-obat-tb.read');
             });
 
         Route::prefix('rekam-medis')
@@ -244,7 +244,7 @@ Route::prefix('admin')
 
         Route::middleware('role:' . config('permission.superadmin_name'))
             ->group(function () {
-                Route::get('manajemen-user', User\Manajamen::class)
+                Route::get('manajemen-user', User\ManajemenUser::class)
                     ->name('manajemen-user');
 
                 Route::get('hak-akses/smc-internal-app', HakAkses\Siap::class)

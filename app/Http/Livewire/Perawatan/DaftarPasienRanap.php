@@ -50,32 +50,9 @@ class DaftarPasienRanap extends Component
             ->daftarPasienRanap(
                 $this->tglAwal,
                 $this->tglAkhir,
-                $this->statusPerawatan
+                $this->statusPerawatan,
+                $this->cari,
             )
-            ->search($this->cari, [
-                "kamar_inap.kd_kamar",
-                "reg_periksa.no_rawat",
-                "reg_periksa.no_rkm_medis",
-                "kamar.kd_kamar",
-                "bangsal.kd_bangsal",
-                "bangsal.nm_bangsal",
-                "kamar.kelas",
-                "pasien.nm_pasien",
-                "pasien.alamat",
-                "kelurahan.nm_kel",
-                "kecamatan.nm_kec",
-                "kabupaten.nm_kab",
-                "propinsi.nm_prop",
-                "pasien.agama",
-                "pasien.namakeluarga",
-                "pasien.keluarga",
-                "penjab.png_jawab",
-                "poliklinik.nm_poli",
-                "dokter.nm_dokter",
-                "kamar_inap.stts_pulang",
-                "ifnull(dokter_pj.nm_dokter, '-')",
-                "pasien.no_tlp",
-            ])
             ->sortWithColumns($this->sortColumns, [
                 'ruangan'       => DB::raw("concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal)"),
                 'data_pasien'   => DB::raw("concat(pasien.nm_pasien, ' (', reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur, ')')"),
@@ -140,9 +117,6 @@ class DaftarPasienRanap extends Component
 
     protected function defaultValues(): void
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
         $this->statusPerawatan = '-';
         $this->tglAwal = now()->format('Y-m-d');
         $this->tglAkhir = now()->format('Y-m-d');
@@ -156,7 +130,6 @@ class DaftarPasienRanap extends Component
                     $this->tglAwal,
                     $this->tglAkhir,
                     $this->statusPerawatan,
-                    $exportToExcel = true
                 )
                 ->orderBy('no_rawat')
                 ->get()
