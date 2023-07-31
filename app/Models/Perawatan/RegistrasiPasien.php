@@ -484,7 +484,7 @@ class RegistrasiPasien extends Model
             ->where('reg_periksa.status_bayar', 'belum bayar')
             ->withExists([
                 'diagnosa as diagnosa' => fn (Builder $q): Builder => $q->where('status', $jenis),
-                'obat as obat',
+                'pemberianObat as obat',
                 'tindakanRalanPerawat as ralan_perawat',
             ]);
     }
