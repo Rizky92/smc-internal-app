@@ -46,10 +46,9 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'keuangan.laba-rugi-rekening.read']);
         Permission::create(['name' => 'keuangan.laporan-potongan-biaya.read']);
         Permission::create(['name' => 'keuangan.laporan-selesai-billing.read']);
-        Permission::create(['name' => 'keuangan.laporan-tambahan-pasien.read']);
+        Permission::create(['name' => 'keuangan.laporan-tambahan-biaya.read']);
         Permission::create(['name' => 'keuangan.laporan-tindakan-lab.read']);
         Permission::create(['name' => 'keuangan.laporan-tindakan-radiologi.read']);
-        Permission::create(['name' => 'keuangan.rekap-piutang-aging.read']);
         Permission::create(['name' => 'keuangan.rkat-kategori.create']);
         Permission::create(['name' => 'keuangan.rkat-kategori.delete']);
         Permission::create(['name' => 'keuangan.rkat-kategori.read']);

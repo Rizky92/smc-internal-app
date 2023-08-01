@@ -19,6 +19,10 @@ trait Searchable
      */
     public function scopeSearch(Builder $query, string $search, $columns = []): Builder
     {
+        if (empty($search)) {
+            return $query;
+        }
+
         if (is_array($columns)) {
             $columns = collect($columns);
         }

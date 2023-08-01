@@ -291,8 +291,7 @@ class RegistrasiPasien extends Model
         Builder $query,
         string $tglAwal = '',
         string $tglAkhir = '',
-        string $statusPerawatan = '-',
-        string $search
+        string $statusPerawatan = '-'
     ): Builder {
         if (empty($tglAwal)) {
             $tglAwal = now()->format('Y-m-d');
@@ -351,28 +350,6 @@ class RegistrasiPasien extends Model
             ->when($statusPerawatan === '-', fn (Builder $query) => $query->where('kamar_inap.stts_pulang', '-'))
             ->when($statusPerawatan === 'tanggal_masuk', fn (Builder $query) => $query->whereBetween('kamar_inap.tgl_masuk', [$tglAwal, $tglAkhir]))
             ->when($statusPerawatan === 'tanggal_keluar', fn (Builder $query) => $query->whereBetween('kamar_inap.tgl_keluar', [$tglAwal, $tglAkhir]))
-            ->search($search, [
-                "kamar_inap.kd_kamar",
-                "kamar.kd_kamar",
-                "bangsal.kd_bangsal",
-                "bangsal.nm_bangsal",
-                "kamar.kelas",
-                "pasien.nm_pasien",
-                "pasien.alamat",
-                "kelurahan.nm_kel",
-                "kecamatan.nm_kec",
-                "kabupaten.nm_kab",
-                "propinsi.nm_prop",
-                "pasien.agama",
-                "pasien.namakeluarga",
-                "pasien.keluarga",
-                "penjab.png_jawab",
-                "poliklinik.nm_poli",
-                "dokter.nm_dokter",
-                "kamar_inap.stts_pulang",
-                "ifnull(dokter_pj.nm_dokter, '-')",
-                "pasien.no_tlp",
-            ])
             ->groupByRaw("
                 reg_periksa.no_rawat,
                 kamar_inap.kd_kamar,

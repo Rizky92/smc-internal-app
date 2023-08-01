@@ -94,7 +94,6 @@ class Menu
                     'keuangan.laporan-tambahan-biaya.read',
                     'keuangan.laporan-tindakan-lab.read',
                     'keuangan.laporan-tindakan-radiologi.read',
-                    'keuangan.rekap-piutang-aging.read',
                     'keuangan.rekap-piutang-pasien.read',
                     'keuangan.jurnal-perbaikan-riwayat.read',
                     'keuangan.stok-obat-ruangan.read',
