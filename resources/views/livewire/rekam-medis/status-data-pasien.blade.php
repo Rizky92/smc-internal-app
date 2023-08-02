@@ -34,7 +34,7 @@
                     <x-table.th style="width: 32ch" name="resume_ralan" title="Resume Ralan" />
                     <x-table.th style="width: 32ch" name="resume_ranap" title="Resume Ranap" />
                     <x-table.th style="width: 32ch" name="triase_igd" title="Triase IGD" />
-                    <x-table.th style="width: 32ch" name="askep_igd" title="Asmed IGD" />
+                    <x-table.th style="width: 32ch" name="askep_igd" title="Askep IGD" />
                     <x-table.th style="width: 32ch" name="asmed_igd" title="Asmed IGD" />
                     <x-table.th style="width: 35ch" title="Asmed Poli" />
                     <x-table.th style="width: 35ch" title="Asmed RWI" />
