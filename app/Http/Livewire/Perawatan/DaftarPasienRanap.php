@@ -53,26 +53,26 @@ class DaftarPasienRanap extends Component
                 $this->statusPerawatan
             )
             ->search($this->cari, [
-                "kamar_inap.kd_kamar",
-                "kamar.kd_kamar",
-                "bangsal.kd_bangsal",
-                "bangsal.nm_bangsal",
-                "kamar.kelas",
-                "pasien.nm_pasien",
-                "pasien.alamat",
-                "kelurahan.nm_kel",
-                "kecamatan.nm_kec",
-                "kabupaten.nm_kab",
-                "propinsi.nm_prop",
-                "pasien.agama",
-                "pasien.namakeluarga",
-                "pasien.keluarga",
-                "penjab.png_jawab",
-                "poliklinik.nm_poli",
-                "dokter.nm_dokter",
-                "kamar_inap.stts_pulang",
-                "ifnull(dokter_pj.nm_dokter, '-')",
-                "pasien.no_tlp",
+                'kamar_inap.kd_kamar',
+                'kamar.kd_kamar',
+                'bangsal.kd_bangsal',
+                'bangsal.nm_bangsal',
+                'kamar.kelas',
+                'pasien.nm_pasien',
+                'pasien.alamat',
+                'kelurahan.nm_kel',
+                'kecamatan.nm_kec',
+                'kabupaten.nm_kab',
+                'propinsi.nm_prop',
+                'pasien.agama',
+                'pasien.namakeluarga',
+                'pasien.keluarga',
+                'penjab.png_jawab',
+                'poliklinik.nm_poli',
+                'dokter.nm_dokter',
+                'kamar_inap.stts_pulang',
+                'ifnull(dokter_pj.nm_dokter, "-")',
+                'pasien.no_tlp',
             ])
             ->sortWithColumns($this->sortColumns, [
                 'ruangan'       => DB::raw("concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal)"),
@@ -122,11 +122,12 @@ class DaftarPasienRanap extends Component
             ['kd_kamar', '=', $kdKamar],
             ['tgl_masuk', '=', carbon($tglMasuk)->format('Y-m-d')],
             ['jam_masuk', '=', carbon($jamMasuk)->format('H:i:s')],
-        ])->update([
-            'trf_kamar' => $hargaKamarBaru,
-            'lama'      => $lamaInap,
-            'ttl_biaya' => $hargaKamarBaru * $lamaInap
-        ]);
+        ])
+            ->update([
+                'trf_kamar' => $hargaKamarBaru,
+                'lama'      => $lamaInap,
+                'ttl_biaya' => $hargaKamarBaru * $lamaInap
+            ]);
 
         tracker_end('mysql_sik');
 
@@ -147,11 +148,7 @@ class DaftarPasienRanap extends Component
     {
         return [
             RegistrasiPasien::query()
-                ->daftarPasienRanap(
-                    $this->tglAwal,
-                    $this->tglAkhir,
-                    $this->statusPerawatan,
-                )
+                ->daftarPasienRanap($this->tglAwal, $this->tglAkhir, $this->statusPerawatan)
                 ->orderBy('no_rawat')
                 ->get()
         ];

@@ -106,8 +106,9 @@ class StatusDataPasien extends Component
                     'resume_ranap'   => boolval($model->resume_ranap) ? 'Ada' : 'Tidak ada',
                     'triase_igd'     => boolval($model->triase_igd) ? 'Ada' : 'Tidak ada',
                     'askep_igd'      => boolval($model->askep_igd) ? 'Ada' : 'Tidak ada',
-                    'askep_poli'     => $model->askep_poli,
-                    'askep_rwi'      => $model->askep_rwi,
+                    'asmed_igd'      => boolval($model->asmed_igd) ? 'Ada' : 'Tidak ada',
+                    'asmed_poli'     => $model->asmed_poli,
+                    'asmed_rwi'      => $model->asmed_rwi,
                     'icd_10'         => boolval($model->icd_10) ? 'Ada' : 'Tidak ada',
                     'icd_9'          => boolval($model->icd_9) ? 'Ada' : 'Tidak ada',
                 ])

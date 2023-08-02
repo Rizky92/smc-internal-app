@@ -17,9 +17,7 @@ trait Sortable
     public function scopeSortWithColumns(Builder $query, array $columns = [], array $rawColumns = [], array $initialColumnOrder = []): Builder
     {
         if (!empty($initialColumnOrder) && empty($columns)) {
-            if (!empty($rawColumns)) {
-                $rawColumns = collect($rawColumns);
-            }
+            $rawColumns = collect($rawColumns);
 
             foreach ($initialColumnOrder as $column => $direction) {
                 $query->orderBy($rawColumns->get($column) ?? $column, $direction);
@@ -30,7 +28,7 @@ trait Sortable
 
         $query->reorder();
 
-        $mappedColumns = collect($columns)->flatMap(fn ($_, $key) => [$key => $key]);
+        $mappedColumns = collect($columns)->flatMap(fn ($_, $key): array => [$key => $key]);
 
         if (!empty($rawColumns)) {
             $mappedColumns = $mappedColumns->merge($rawColumns);

@@ -49,23 +49,23 @@ class BukuBesar extends Component
         return $this->isDeferred
             ? []
             : Jurnal::query()
-            ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
-            ->search($this->cari, [
-                'jurnal.tgl_jurnal',
-                'jurnal.jam_jurnal',
-                'jurnal.no_jurnal',
-                'jurnal.no_bukti',
-                'jurnal.keterangan',
-                'detailjurnal.kd_rek',
-                'rekening.nm_rek',
-                'detailjurnal.debet',
-                'detailjurnal.kredit',
-            ])
-            ->sortWithColumns($this->sortColumns, [], [
-                'tgl_jurnal' => 'asc',
-                'jam_jurnal' => 'asc',
-            ])
-            ->paginate($this->perpage);
+                ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
+                ->search($this->cari, [
+                    'jurnal.tgl_jurnal',
+                    'jurnal.jam_jurnal',
+                    'jurnal.no_jurnal',
+                    'jurnal.no_bukti',
+                    'jurnal.keterangan',
+                    'detailjurnal.kd_rek',
+                    'rekening.nm_rek',
+                    'detailjurnal.debet',
+                    'detailjurnal.kredit',
+                ])
+                ->sortWithColumns($this->sortColumns, [], [
+                    'tgl_jurnal' => 'asc',
+                    'jam_jurnal' => 'asc',
+                ])
+                ->paginate($this->perpage);
     }
 
     /**
