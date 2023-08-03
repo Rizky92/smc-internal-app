@@ -3,6 +3,7 @@
 namespace App\Support\Traits\Eloquent;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use LogicException;
 
@@ -28,11 +29,21 @@ trait Searchable
         }
 
         if (property_exists($this, 'searchColumns') && is_array($this->searchColumns)) {
-            $columns = $columns->merge($this->qualifyColumns($this->searchColumns));
+            $searchColumns = collect($this->searchColumns)
+                ->map(function (string $column) {
+                    if (Str::containsAll($column, ['(', ')', '<', '>', '=', '.', '-'])) {
+                        return $column;
+                    }
+
+                    return $this->qualifyColumn($column);
+                })
+                ->all();
+
+            $columns = $columns->merge($this->qualifyColumns($searchColumns));
         }
 
         if (method_exists($this, 'searchColumns')) {
-            $columns = $columns->merge($this->qualifyColumns($this->searchColumns()));
+            $columns = $columns->merge($this->searchColumns());
         }
 
         if ($columns->isEmpty()) {

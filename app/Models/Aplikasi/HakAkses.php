@@ -6,6 +6,7 @@ use App\Casts\BooleanCast;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class HakAkses extends Model
 {
@@ -80,11 +81,11 @@ class HakAkses extends Model
         'default_value' => BooleanCast::class,
     ];
 
-    /** 
-     * @var string[]
-     */
-    protected $searchColumns = [
-        'nama_field',
-        'ifnull(judul_menu, "")',
-    ];
+    protected function searchColumns(): array
+    {
+        return [
+            'nama_field',
+            DB::raw('ifnull(judul_menu, "")'),
+        ];
+    }
 }
