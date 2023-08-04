@@ -100,10 +100,10 @@ class Jurnal extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        $sqlSelect = "
+        $sqlSelect = <<<SQL
             ifnull(round(sum(detailjurnal.debet), 2), 0) debet,
             ifnull(round(sum(detailjurnal.kredit), 2), 0) kredit
-        ";
+        SQL;
 
         return $query
             ->selectRaw($sqlSelect)

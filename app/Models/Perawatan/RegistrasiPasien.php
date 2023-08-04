@@ -98,7 +98,7 @@ class RegistrasiPasien extends Model
                 return 'Tidak ada';
             }
 
-            return 'Ada ' . $asmed->joinStr(', ')->wrap('(', ')')->value();
+            return 'Ada ' . $asmed->joinStr(', ')->wrap('(', ')')->value;
         });
     }
 
@@ -114,7 +114,7 @@ class RegistrasiPasien extends Model
             if ($attributes['asmed_poli_anak'] === "1") {
                 $asmed->push('Poli Anak');
             }
-            
+
             if ($attributes['asmed_poli_bedah'] === "1") {
                 $asmed->push('Poli Bedah');
             }
@@ -155,7 +155,7 @@ class RegistrasiPasien extends Model
                 return "Tidak ada";
             }
 
-            return 'Ada ' . $asmed->joinStr(', ')->wrap('(', ')')->value();
+            return 'Ada ' . $asmed->joinStr(', ')->wrap('(', ')')->value;
         });
     }
 
@@ -163,8 +163,8 @@ class RegistrasiPasien extends Model
     {
         return Attribute::get(function ($_, array $attributes): ?string {
             if (
-                ! $this->relationLoaded('permintaanLabPK') &&
-                ! $this->relationLoaded('permintaanLabPA')
+                !$this->relationLoaded('permintaanLabPK') &&
+                !$this->relationLoaded('permintaanLabPA')
             ) {
                 return null;
             }
@@ -188,7 +188,7 @@ class RegistrasiPasien extends Model
     public function statusOrderRad(): Attribute
     {
         return Attribute::get(function ($_, array $attributes): ?string {
-            if (! $this->relationLoaded('permintaanRadiologi')) {
+            if (!$this->relationLoaded('permintaanRadiologi')) {
                 return null;
             }
 

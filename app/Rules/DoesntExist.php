@@ -40,7 +40,7 @@ class DoesntExist implements Rule
      */
     public function passes($attribute, $value)
     {
-        return ! $this->model::where($this->column, $value)->exists();
+        return !$this->model::where($this->column, $value)->exists();
     }
 
     /**
@@ -52,7 +52,7 @@ class DoesntExist implements Rule
     {
         $model = str(class_basename($this->model))
             ->headline()
-            ->value();
+            ->value;
 
         return ":Attribute tidak boleh menggunakan {$model} yang sudah ada!";
     }

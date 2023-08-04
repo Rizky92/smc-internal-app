@@ -31,7 +31,7 @@ trait Searchable
         if (property_exists($this, 'searchColumns') && is_array($this->searchColumns)) {
             $searchColumns = collect($this->searchColumns)
                 ->map(function (string $column) {
-                    if (Str::containsAll($column, ['(', ')', '<', '>', '=', '.', '-'])) {
+                    if (Str::contains($column, ['(', ')', '<', '>', '=', '.', '-'])) {
                         return $column;
                     }
 
@@ -55,9 +55,9 @@ trait Searchable
             ->lower()
             ->split('/\s+/')
             ->filter()
-            ->map(fn (string $word): string => str($word)->trim()->wrap('%')->value());
+            ->map(fn (string $word): string => str($word)->trim()->wrap('%')->value);
 
-        $concatenatedColumns = $columns->joinStr(", ' ', ")->wrap('concat(', ')')->value();
+        $concatenatedColumns = $columns->joinStr(", ' ', ")->wrap('concat(', ')')->value;
 
         return $query->when(
             $search->isNotEmpty(),

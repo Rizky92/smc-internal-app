@@ -8,14 +8,28 @@ use Illuminate\Support\Stringable;
 class CustomStringable
 {
     /**
-     * Returns the underlying value
+     * replace all strings with provided value
      * 
-     * @return \Closure(): string
+     * @return \Closure(string|string[], string): \Illuminate\Support\Stringable
      */
-    public function value(): Closure
+    public function replaceWith(): Closure
     {
         /** @psalm-scope-this Illuminate\Support\Stringable */
-        return fn (): string => $this->value;
+        return function ($replace, string $with): Stringable {
+            /** @var \Illuminate\Support\Stringable $this */
+
+            $value = $this->value;
+
+            if (is_string($replace)) {
+                $replace = [$replace];
+            }
+
+            foreach ($replace as $char) {
+                $value = str_replace($char, $with, $value);
+            }
+
+            return new Stringable($value);
+        };
     }
 
     /**
@@ -26,7 +40,7 @@ class CustomStringable
     public function wrap(): Closure
     {
         /** @psalm-scope-this Illuminate\Support\Stringable */
-        return fn (string $startsWith, ?string $endsWith = null) =>
+        return fn (string $startsWith, ?string $endsWith = null): Stringable =>
             is_null($endsWith)
                 ? new Stringable($startsWith .  $this->value . $startsWith)
                 : new Stringable($startsWith . $this->value . $endsWith);

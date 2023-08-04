@@ -62,6 +62,7 @@ class PenagihanPiutangDetail extends Model
             bayar_piutang.tgl_bayar,
             reg_periksa.no_rkm_medis,
             pasien.nm_pasien,
+            penagihan_piutang.kd_pj,
             penjab_pasien.png_jawab penjab_pasien,
             penjab_tagihan.png_jawab penjab_piutang,
             penagihan_piutang.catatan,
@@ -70,7 +71,7 @@ class PenagihanPiutangDetail extends Model
             round(detail_piutang_pasien.totalpiutang, 2) total_piutang,
             round(bayar_piutang.besar_cicilan, 2) besar_cicilan,
             round(detail_piutang_pasien.totalpiutang - ifnull(bayar_piutang.besar_cicilan, 0), 2) sisa_piutang,
-            datediff('{$tglAkhir}', penagihan_piutang.tanggal) umur_hari
+            datediff(?, penagihan_piutang.tanggal) umur_hari
         SQL;
 
         $sqlFilterOnlyPaid = DB::connection('mysql_sik')
@@ -84,7 +85,7 @@ class PenagihanPiutangDetail extends Model
             ->havingRaw('round(sum(detail_piutang_pasien.totalpiutang - bayar_piutang.besar_cicilan), 2) != 0');
 
         return $query
-            ->selectRaw($sqlSelect)
+            ->selectRaw($sqlSelect, [$tglAkhir])
             ->join('penagihan_piutang', 'detail_penagihan_piutang.no_tagihan', '=', 'penagihan_piutang.no_tagihan')
             ->leftJoin('detail_piutang_pasien', fn (JoinClause $join) => $join
                 ->on('detail_penagihan_piutang.no_rawat', '=', 'detail_piutang_pasien.no_rawat')
@@ -103,7 +104,7 @@ class PenagihanPiutangDetail extends Model
             ->when($jenisPerawatan !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.status_lanjut', $jenisPerawatan))
             ->where(fn (Builder $q): Builder => $q->whereNull('bayar_piutang.no_rawat')->orWhereIn('detail_penagihan_piutang.no_rawat', $sqlFilterOnlyPaid))
             ->whereBetween('penagihan_piutang.tanggal', [$tglAwal, $tglAkhir])
-            ->orderBy(DB::raw("datediff('{$tglAkhir}', penagihan_piutang.tanggal)"), 'desc')
+            ->orderByRaw('datediff(?, penagihan_piutang.tanggal) desc', [$tglAkhir])
             ->orderBy('detail_penagihan_piutang.no_rawat', 'asc')
             ->orderBy('detail_penagihan_piutang.no_tagihan', 'asc');
     }
@@ -126,10 +127,10 @@ class PenagihanPiutangDetail extends Model
 
         $sqlSelect = <<<SQL
             case
-                when datediff('{$tglAkhir}', penagihan_piutang.tanggal) <= 30 then 'periode_0_30'
-                when datediff('{$tglAkhir}', penagihan_piutang.tanggal) between 31 and 60 then 'periode_31_60'
-                when datediff('{$tglAkhir}', penagihan_piutang.tanggal) between 61 and 90 then 'periode_61_90'
-                when datediff('{$tglAkhir}', penagihan_piutang.tanggal) > 90 then 'periode_90_up'
+                when datediff(?, penagihan_piutang.tanggal) <= 30 then 'periode_0_30'
+                when datediff(?, penagihan_piutang.tanggal) between 31 and 60 then 'periode_31_60'
+                when datediff(?, penagihan_piutang.tanggal) between 61 and 90 then 'periode_61_90'
+                when datediff(?, penagihan_piutang.tanggal) > 90 then 'periode_90_up'
             end periode,
             round(sum(detail_piutang_pasien.totalpiutang), 2) total_piutang,
             round(sum(bayar_piutang.besar_cicilan), 2) total_cicilan,
@@ -137,10 +138,10 @@ class PenagihanPiutangDetail extends Model
         SQL;
 
         $sqlGroupBy = <<<SQL
-            datediff('{$tglAkhir}', penagihan_piutang.tanggal) <= 30,
-            datediff('{$tglAkhir}', penagihan_piutang.tanggal) between 31 and 60,
-            datediff('{$tglAkhir}', penagihan_piutang.tanggal) between 61 and 90,
-            datediff('{$tglAkhir}', penagihan_piutang.tanggal) > 90
+            datediff(?, penagihan_piutang.tanggal) <= 30,
+            datediff(?, penagihan_piutang.tanggal) between 31 and 60,
+            datediff(?, penagihan_piutang.tanggal) between 61 and 90,
+            datediff(?, penagihan_piutang.tanggal) > 90
         SQL;
 
         $sqlFilterOnlyPaid = DB::connection('mysql_sik')
@@ -154,7 +155,7 @@ class PenagihanPiutangDetail extends Model
             ->havingRaw('round(sum(detail_piutang_pasien.totalpiutang - bayar_piutang.besar_cicilan), 2) != 0');
 
         return $query
-            ->selectRaw($sqlSelect)
+            ->selectRaw($sqlSelect, [$tglAkhir, $tglAkhir, $tglAkhir, $tglAkhir])
             ->join('penagihan_piutang', 'detail_penagihan_piutang.no_tagihan', '=', 'penagihan_piutang.no_tagihan')
             ->leftJoin('detail_piutang_pasien', fn (JoinClause $join) => $join
                 ->on('detail_penagihan_piutang.no_rawat', '=', 'detail_piutang_pasien.no_rawat')
@@ -173,6 +174,6 @@ class PenagihanPiutangDetail extends Model
             ->when($jenisPerawatan !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.status_lanjut', $jenisPerawatan))
             ->where(fn (Builder $q): Builder => $q->whereNull('bayar_piutang.no_rawat')->orWhereIn('detail_penagihan_piutang.no_rawat', $sqlFilterOnlyPaid))
             ->whereBetween('penagihan_piutang.tanggal', [$tglAwal, $tglAkhir])
-            ->groupByRaw($sqlGroupBy);
+            ->groupByRaw($sqlGroupBy, [$tglAkhir, $tglAkhir, $tglAkhir, $tglAkhir]);
     }
 }

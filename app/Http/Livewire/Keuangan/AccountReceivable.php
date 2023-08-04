@@ -2,6 +2,8 @@
 
 namespace App\Http\Livewire\Keuangan;
 
+use App\Models\Keuangan\AkunBayar;
+use App\Models\Keuangan\BayarPiutang;
 use App\Models\Keuangan\PenagihanPiutangDetail;
 use App\Models\RekamMedis\Penjamin;
 use App\Support\Traits\Livewire\DeferredLoading;
@@ -11,7 +13,12 @@ use App\Support\Traits\Livewire\FlashComponent;
 use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
+use Carbon\Carbon;
+use Carbon\Exceptions\InvalidFormatException;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -25,21 +32,26 @@ class AccountReceivable extends Component
     /** @var string */
     public $tglAkhir;
 
-    /** @var bool */
-    public $hanyaBelumLunas;
-
     /** @var string */
     public $jaminanPasien;
 
     /** @var string */
     public $jenisPerawatan;
+    
+    /** @var string */
+    public $tglBayar;
+
+    /** @var string */
+    public $rekeningAkun;
+
+    /** @var array */
+    public $tagihanDipilih;
 
     protected function queryString(): array
     {
         return [
             'tglAwal'         => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir'        => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
-            'hanyaBelumLunas' => ['except' => false, 'as' => 'belum_lunas'],
             'jaminanPasien'   => ['except' => '-', 'as' => 'jaminan_pasien'],
             'jenisPerawatan'  => ['except' => 'semua', 'as' => 'jenis_perawatan'],
         ];
@@ -81,9 +93,14 @@ class AccountReceivable extends Component
                 ->paginate($this->perpage);
     }
 
-    public function getPenjaminProperty(): array
+    public function getPenjaminProperty(): Collection
     {
-        return Penjamin::where('status', '1')->pluck('png_jawab', 'kd_pj')->all();
+        return Penjamin::where('status', '1')->pluck('png_jawab', 'kd_pj');
+    }
+
+    public function getAkunBayarProperty(): Collection
+    {
+        return AkunBayar::pluck('nama_bayar');
     }
 
     public function getTotalPiutangAgingProperty(): array
@@ -119,14 +136,71 @@ class AccountReceivable extends Component
             ->layout(BaseLayout::class, ['title' => 'Piutang Aging (Account Receivable)']);
     }
 
+    public function validasiPiutang(): void
+    {
+        if (! Auth::user()->can('keuangan.account-receivable.validasi-piutang')) {
+            $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
+
+            return;
+        }
+        collect($this->tagihanDipilih)
+            ->filter()
+            ->keys()
+            // ->dd();
+            ->map(function (string $value) {
+                $data = str($value)->split('/\_/')->all();
+
+                $noTagihan = $data[0];
+                $kodePenjamin = $data[1];
+                $noRawat = Carbon::createFromFormat("Ymd", substr($data[2], 0, 8));
+
+                if (! $noRawat) {
+                    throw new InvalidFormatException(sprintf(
+                        "Invalid date string [%s] is not compatible with format: [%s]",
+                        substr($data[2], 0, 8), 'Ymd'
+                    ));
+                }
+
+                $noRawat = $noRawat->format('Y/m/d');
+                $noRawat .= '/';
+                $noRawat .= substr($data[2], -6);
+
+                return [
+                    'no_tagihan' => $noTagihan,
+                    'kd_pj' => $kodePenjamin,
+                    'no_rawat' => $noRawat,
+                ];
+            })
+            ->values()
+            ->dd();
+
+        tracker_start();
+
+        BayarPiutang::create([
+            'tgl_bayar' => $this->tglBayar,
+            'no_rkm_medis' => 0,
+            'besar_cicilan' => 0,
+            'catatan' => 0,
+            'no_rawat' => 0,
+            'kd_rek' => 0,
+            'kd_rek_kontra' => 0,
+            'diskon_piutang' => 0,
+            'kd_rek_diskon_piutang' => 0,
+            'tidak_terbayar' => 0,
+            'kd_rek_tidak_terbayar' => 0,
+        ]);
+
+        tracker_end();
+    }
+
     protected function defaultValues(): void
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
+        $this->tagihanDipilih = [];
+        $this->tglBayar = now()->format('Y-m-d');
+        $this->rekeningAkun = '';
+
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->hanyaBelumLunas = false;
         $this->jaminanPasien = '-';
         $this->jenisPerawatan = 'semua';
     }

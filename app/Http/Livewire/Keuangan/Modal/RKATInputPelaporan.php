@@ -88,7 +88,7 @@ class RKATInputPelaporan extends Component
 
                 $string = collect([$namaAnggaran, $namaBidang, $tahun])
                     ->joinStr(' - ')
-                    ->value();
+                    ->value;
 
                 return [$ab->id => $string];
             });
