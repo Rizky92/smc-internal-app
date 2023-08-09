@@ -1,7 +1,7 @@
 <div wire:init="loadProperties">
     <x-flash />
 
-    <x-card use-loading loading-target="loadProperties">
+    <x-card use-loading>
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.range-date />
@@ -28,8 +28,13 @@
                     <x-filter.select
                         model="rekeningAkun"
                         :options="$this->akunBayar"
+                        show-key
                     />
-                    <x-button variant="primary" size="sm" title="Validasi" icon="fas fa-check" wire:click="validasiPiutang" class="ml-3" />
+                </x-row-col-flex>
+                <x-row-col-flex class="mt-2">
+                    <x-filter.label constant-width class="font-weight-bold">Dibayar:</x-filter.label>
+                    <x-filter.label class="font-weight-bold">{{ rp($this->totalDibayar) }}</x-filter.label>
+                    <x-button variant="primary" size="sm" title="Validasi" icon="fas fa-check" wire:click="validasiPiutang" class="ml-auto" />
                 </x-row-col-flex>
             @endcan
         </x-slot>
@@ -42,7 +47,7 @@
                             id="ar-cb-all"
                             name="validateCheckbox"
                             lookup="ar-id-"
-                            model="tagihanDipilih"
+                            method="pilihSemua"
                         />
                     @endcan
                     <x-table.th style="width: 15ch" name="no_tagihan" title="No. Tagihan" />
@@ -72,8 +77,8 @@
                                 <x-table.td-checkbox
                                     livewire
                                     model="tagihanDipilih"
-                                    :id="str_replace('/', '', implode('_', [$item->no_tagihan, $item->kd_pj, $item->no_rawat]))"
-                                    :key="str_replace('/', '', implode('_', [$item->no_tagihan, $item->kd_pj, $item->no_rawat]))"
+                                    :id="str_replace('/', '-', implode('_', [$item->no_tagihan, $item->kd_pj, $item->no_rawat]))"
+                                    :key="implode('_', [$item->no_tagihan, $item->kd_pj, $item->no_rawat])"
                                     prefix="ar-id-"
                                 />
                             @endcan

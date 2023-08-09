@@ -100,7 +100,7 @@
                     <div class="col-12 col-md-6 col-lg-6">
                         <div class="form-group" wire:ignore>
                             <label class="text-sm" for="supplier">Supplier</label>
-                            <x-filter.select2 name="supplier" show-key :options="$this->supplier" style="width: 100%" />
+                            <x-filter.select2 name="supplier" show-key :options="$this->supplier" placeholder="-" placeholder-value="-" style="width: 100%" />
                         </div>
                     </div>
                 </x-row>

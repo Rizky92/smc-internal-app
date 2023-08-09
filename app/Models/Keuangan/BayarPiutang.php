@@ -21,4 +21,18 @@ class BayarPiutang extends Model
     public $incrementing = false;
 
     public $timestamps = false;
+
+    protected $fillable = [
+        'tgl_bayar',
+        'no_rkm_medis',
+        'catatan',
+        'no_rawat',
+        'kd_rek',
+        'kd_rek_kontra',
+        'besar_cicilan',
+        'diskon_piutang',
+        'kd_rek_diskon_piutang',
+        'tidak_terbayar',
+        'kd_rek_tidak_terbayar',
+    ];
 }

@@ -44,9 +44,9 @@ class LaporanDemografi extends Component
         return $this->isDeferred
             ? []
             : DemografiPasien::query()
-            ->search($this->cari)
-            ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
-            ->paginate($this->perpage);
+                ->search($this->cari)
+                ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
+                ->paginate($this->perpage);
     }
 
     public function render(): View
@@ -57,9 +57,6 @@ class LaporanDemografi extends Component
 
     protected function defaultValues(): void
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
@@ -69,8 +66,7 @@ class LaporanDemografi extends Component
         return [
             DemografiPasien::query()
                 ->laporanDemografiExcel($this->tglAwal, $this->tglAkhir)
-                ->cursor()
-                ->all(),
+                ->cursor(),
         ];
     }
 

@@ -18,7 +18,7 @@ class CustomStringable
         return function ($replace, string $with): Stringable {
             /** @var \Illuminate\Support\Stringable $this */
 
-            $value = $this->value;
+            $value = $this->value();
 
             if (is_string($replace)) {
                 $replace = [$replace];
@@ -41,9 +41,20 @@ class CustomStringable
     {
         /** @psalm-scope-this Illuminate\Support\Stringable */
         return fn (string $startsWith, ?string $endsWith = null): Stringable =>
-            is_null($endsWith)
-                ? new Stringable($startsWith .  $this->value . $startsWith)
-                : new Stringable($startsWith . $this->value . $endsWith);
+        is_null($endsWith)
+            ? new Stringable($startsWith .  $this->value . $startsWith)
+            : new Stringable($startsWith . $this->value . $endsWith);
+    }
+
+    /**
+     * Returns the underlying value.
+     * 
+     * @return \Closure(): string
+     */
+    public function value(): Closure
+    {
+        /** @psalm-scope-this Illuminate\Support\Stringable */
+        return fn (): string => $this->value;
     }
 
     /**

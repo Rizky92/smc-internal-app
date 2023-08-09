@@ -59,7 +59,7 @@ class Khanza extends Component
 
         $hakAksesTersedia = HakAkses::pluck('default_value', 'nama_field');
 
-        $hakAksesBaru = $hakAkses->diffKeys($hakAksesTersedia)->map(fn (?object $_): string => 'false');
+        $hakAksesBaru = $hakAkses->diffKeys($hakAksesTersedia)->map(fn ($_): string => 'false');
         $hakAksesDibuang = $hakAksesTersedia->diffKeys($hakAkses);
 
         $countBaru = $hakAksesBaru->count();

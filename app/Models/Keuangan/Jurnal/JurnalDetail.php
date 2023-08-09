@@ -24,6 +24,12 @@ class JurnalDetail extends Model
 
     public $timestamps = false;
 
+    protected $fillable = [
+        'kd_rek',
+        'debet',
+        'kredit',
+    ];
+
     public function jurnal(): BelongsTo
     {
         return $this->belongsTo(Jurnal::class, 'no_jurnal', 'no_jurnal');

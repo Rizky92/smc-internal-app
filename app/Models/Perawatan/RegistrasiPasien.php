@@ -98,7 +98,7 @@ class RegistrasiPasien extends Model
                 return 'Tidak ada';
             }
 
-            return 'Ada ' . $asmed->joinStr(', ')->wrap('(', ')')->value;
+            return 'Ada ' . $asmed->joinStr(', ')->wrap('(', ')')->value();
         });
     }
 
@@ -155,7 +155,7 @@ class RegistrasiPasien extends Model
                 return "Tidak ada";
             }
 
-            return 'Ada ' . $asmed->joinStr(', ')->wrap('(', ')')->value;
+            return 'Ada ' . $asmed->joinStr(', ')->wrap('(', ')')->value();
         });
     }
 

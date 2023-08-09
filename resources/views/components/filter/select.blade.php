@@ -11,7 +11,7 @@
         $options = collect($options);
     }
 
-    $isAssoc = $options->isAssoc();
+    $isList = $options->isList();
     
     $attrs = [
         'class' => 'custom-control custom-select text-sm',
@@ -20,13 +20,11 @@
     if ($model) {
         $attrs['wire:model.defer'] ??= $model;
     }
-    
-    if (!$isAssoc) {
-        $options = $options
-            ->mapWithKeys(fn($v, $k) => [$v => $v])
-            ->when($showKey, fn ($c) => $c->mapWithKeys(fn ($v, $k) => [$v => "{$v} - {$k}"]))
-            ->all();
-    }
+
+    $options = $options
+        ->when($isList, fn ($c) => $c->mapWithKeys(fn ($v, $k) => [$v => $v]))
+        ->when($showKey, fn ($c) => $c->mapWithKeys(fn ($v, $k) => [$k => "{$k} - {$v}"]))
+        ->all();
 @endphp
 
 <div class="input-group input-group-sm" style="width: max-content">

@@ -4,9 +4,14 @@ namespace App\Models\Keuangan\Jurnal;
 
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
+use Carbon\Carbon;
+use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+use LogicException;
 
 class Jurnal extends Model
 {
@@ -23,6 +28,15 @@ class Jurnal extends Model
     public $incrementing = false;
 
     public $timestamps = false;
+
+    protected $fillable = [
+        'no_jurnal',
+        'no_bukti',
+        'keterangan',
+        'jenis',
+        'tgl_jurnal',
+        'jam_jurnal',
+    ];
 
     public function detail(): HasMany
     {
@@ -111,5 +125,72 @@ class Jurnal extends Model
             ->join('rekening', 'detailjurnal.kd_rek', '=', 'rekening.kd_rek')
             ->when(!empty($kodeRekening), fn (Builder $q) => $q->where('detailjurnal.kd_rek', $kodeRekening))
             ->wherebetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir]);
+    }
+
+    public function noJurnalBaru(Carbon $date): string
+    {
+        $noJurnal = $this->newQuery()
+            ->where('tgl_jurnal', $date->format('Y-m-d'))
+            ->orderBy('tgl_jurnal', 'desc')
+            ->orderBy('no_jurnal', 'desc')
+            ->limit(1)
+            ->value('no_jurnal');
+
+        if (! $noJurnal) {
+            $noJurnal = "JR";
+            $noJurnal .= $date->format('Ymd');
+            $noJurnal .= "000000";
+        }
+
+        $noJurnal = str($noJurnal);
+
+        $tglJurnal = $noJurnal
+            ->substr(0, 10)
+            ->value();
+
+        $indexJurnal = $noJurnal
+            ->substr(-6)
+            ->toInt();
+
+        $indexJurnal += 1;
+
+        $noJurnalBaru = str($indexJurnal)
+            ->padLeft(6, '0')
+            ->prepend($tglJurnal)
+            ->value();
+
+        return $noJurnalBaru;
+    }
+
+    /**
+     * @psalm-param  "U"|"P" $jenis
+     * @psalm-param  array<array{rekening: string, debet: numeric, kredit: numeric}> $detail
+     */
+    public static function catat(string $noBukti, string $jenis, string $keterangan, Carbon $waktuTransaksi, array $detail): void
+    {
+        $noJurnal = (new static)->noJurnalBaru($waktuTransaksi);
+
+        $hasDetail = Arr::has($detail, ['*.kd_rek', '*.debet', '*.kredit']);
+
+        $detail = collect($detail);
+
+        throw_if($hasDetail, 'LogicException', 'Malformed array shape found.');
+
+        [$debet, $kredit] = [$detail->sum('debet'), $detail->sum('kredit')];
+
+        throw_if(round($detail->sum('debet'), 2) !== round($detail->sum('kredit'), 2), 'App\Exceptions\InequalJournalException', $debet, $kredit, $noJurnal);
+
+        $jurnal = static::create([
+            'no_jurnal'  => $noJurnal,
+            'no_bukti'   => $noBukti,
+            'keterangan' => $keterangan,
+            'jenis'      => $jenis,
+            'tgl_jurnal' => $waktuTransaksi->format('Y-m-d'),
+            'jam_jurnal' => $waktuTransaksi->format('H:i:s'),
+        ]);
+
+        $detail = $jurnal
+            ->detail()
+            ->createMany($detail);
     }
 }

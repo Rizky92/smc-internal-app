@@ -57,7 +57,7 @@ trait Searchable
             ->filter()
             ->map(fn (string $word): string => str($word)->trim()->wrap('%')->value);
 
-        $concatenatedColumns = $columns->joinStr(", ' ', ")->wrap('concat(', ')')->value;
+        $concatenatedColumns = $columns->joinStr(", ' ', ")->wrap('concat(', ')')->value();
 
         return $query->when(
             $search->isNotEmpty(),
