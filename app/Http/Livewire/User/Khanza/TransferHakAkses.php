@@ -90,7 +90,7 @@ class TransferHakAkses extends Component
 
         $hakAkses = collect($currentUser->getAttributes())
             ->except(['id_user', 'password'])
-            ->when($this->softTransfer, fn (Collection $c): Collection => $c->filter(fn (string $v): bool => $v === 'true'))
+            ->when($this->softTransfer, fn (Collection $c): Collection => $c->filter(fn ($v): bool => $v === 'true'))
             ->all();
 
         tracker_start('mysql_sik');
