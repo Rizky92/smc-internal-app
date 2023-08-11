@@ -6,6 +6,7 @@ use App\Database\Query\Grammars\MysqlGrammar;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Blade;
@@ -47,6 +48,9 @@ class AppServiceProvider extends ServiceProvider
         // https://carbon.nesbot.com/laravel/
         DB::connection('mysql_smc')->setQueryGrammar(new MysqlGrammar);
 
+        /** @psalm-scope-this \Illuminate\Database\Eloquent\Builder */
+        Builder::macro('isEagerLoaded', fn (string $name): bool => isset($this->eagerLoad[$name]));
+        
         $this->registerBladeDirectives();
         $this->registerModelConfigurations();
         $this->registerSuperadminRole();

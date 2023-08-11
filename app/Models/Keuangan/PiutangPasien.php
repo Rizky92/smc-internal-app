@@ -6,6 +6,8 @@ use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
@@ -24,6 +26,30 @@ class PiutangPasien extends Model
     public $incrementing = false;
 
     public $timestamps = false;
+
+    public function detail(): HasMany
+    {
+        return $this->hasMany(PiutangPasienDetail::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function detailPerPembayaran(): HasOne
+    {
+        return $this->hasOne(PiutangPasienDetail::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function scopeWithDetailPiutangPer(Builder $query, string $namaBayar = null, string $kodePenjamin = null): Builder
+    {
+        $data = fn ($q) => $q->where([
+            ['nama_bayar', '=', $namaBayar],
+            ['kd_pj', '=', $kodePenjamin],
+        ]);
+
+        if (empty($namaBayar) || empty($kodePenjamin)) {
+            return $query->with('detail');
+        }
+
+        return $query->with(['detail' => $data]);
+    }
     
     public function scopePiutangBelumLunas(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $penjamin = ''): Builder
     {

@@ -53,8 +53,7 @@ trait ExcelExportable
     public function exportToExcel(): void
     {
         $this->emit('flash.info', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
-        
-        // Validasi sebelum proses export dimulai
+
         $this->validateSheetNames();
 
         $this->emit('beginExcelExport');

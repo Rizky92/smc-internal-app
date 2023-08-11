@@ -6,6 +6,8 @@ use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -68,22 +70,20 @@ class JurnalMedis extends Model
 
     public static function refreshModel(): void
     {
-        $latest = static::latest('waktu_jurnal')->first();
+        $latest = static::latest('waktu_jurnal')->value('waktu_jurnal');
 
         DB::connection('mysql_sik')
             ->table('jurnal')
             ->when(
                 !is_null($latest),
-                fn ($query) => $query->whereRaw("timestamp(tgl_jurnal, jam_jurnal) > ?", $latest->waktu_jurnal),
-                fn ($query) => $query->where('tgl_jurnal', '>=', '2022-10-31')
+                fn (QueryBuilder $query) => $query->whereRaw("timestamp(tgl_jurnal, jam_jurnal) > ?", $latest),
+                fn (QueryBuilder $query) => $query->where('tgl_jurnal', '>=', '2022-10-31')
             )
             ->where('keterangan', 'like', '%BAYAR PELUNASAN HUTANG OBAT/BHP/ALKES NO.FAKTUR %%, OLEH %')
             ->where('keterangan', 'not like', '%adjustmen%')
             ->orderBy('no_jurnal')
-            ->chunk(500, function ($jurnal) {
-                /** @var \Illuminate\Support\Collection $jurnal */
-
-                $data = $jurnal->map(function ($value, $key) {
+            ->chunk(500, function (Collection $jurnal) {
+                $data = $jurnal->map(function (object $value): array {
                     $ket = Str::of($value->keterangan);
 
                     $status = $ket->startsWith('BATAL');

@@ -150,7 +150,7 @@ class Obat extends Model
             ->leftJoin($stokGudangIFI, 'databarang.kode_brng', '=', 'stok_gudang_ifi.kode_brng')
             ->where('databarang.status', '1')
             ->where('databarang.stokminimal', '>', 0)
-            ->whereRaw('(databarang.stokminimal - ifnull(stok_gudang_ap.stok_di_gudang, 0)) > ?', [0])
+            ->whereRaw('(databarang.stokminimal - ifnull(stok_gudang_ap.stok_di_gudang, 0)) > 0')
             ->whereRaw('ifnull(stok_gudang_ap.stok_di_gudang, 0) <= databarang.stokminimal')
             ->orderBy('databarang.nama_brng');
     }
@@ -175,7 +175,6 @@ class Obat extends Model
             (select sum(detailhibah_obat_bhp.jumlah2) from detailhibah_obat_bhp join hibah_obat_bhp on detailhibah_obat_bhp.no_hibah = hibah_obat_bhp.no_hibah where detailhibah_obat_bhp.kode_brng = databarang.kode_brng and hibah_obat_bhp.kd_bangsal = 'AP' and hibah_obat_bhp.tgl_hibah between ? and ?) hibah_obat,
             (select sum(detreturjual.jml_retur) from detreturjual join returjual on detreturjual.no_retur_jual = returjual.no_retur_jual where detreturjual.kode_brng = databarang.kode_brng and returjual.kd_bangsal = 'AP' and returjual.tgl_retur between ? and ?) retur_pasien,
             (select sum(detail_pemberian_obat.jml) from detail_pemberian_obat where detail_pemberian_obat.kode_brng = databarang.kode_brng and kd_bangsal = 'AP' and tgl_perawatan between ? and ?) pemberian_obat,
-            (select sum(riwayat_barang_medis.masuk) from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and kd_bangsal = 'AP' and tanggal between ? and ?) hapus_beriobat,
             (select sum(detailjual.jumlah) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.kd_bangsal = 'AP' and penjualan.tgl_jual between ? and ?) penjualan_obat,
             (select sum(mutasibarang.jml) from mutasibarang where mutasibarang.kode_brng = databarang.kode_brng and mutasibarang.kd_bangsaldari = 'AP' and date(mutasibarang.tanggal) between ? and ?) tf_keluar,
             (select sum(detreturbeli.jml_retur2) from detreturbeli join returbeli on detreturbeli.no_retur_beli = returbeli.no_retur_beli where detreturbeli.kode_brng = databarang.kode_brng and returbeli.kd_bangsal = 'AP' and returbeli.tgl_retur between ? and ?) retur_supplier
@@ -183,7 +182,6 @@ class Obat extends Model
 
         return $query
             ->selectRaw($sqlSelect, [
-                $tglAwal, $tglAkhir,
                 $tglAwal, $tglAkhir,
                 $tglAwal, $tglAkhir,
                 $tglAwal, $tglAkhir,
@@ -209,7 +207,6 @@ class Obat extends Model
                 'hibah_obat'      => 'float',
                 'retur_pasien'    => 'float',
                 'pemberian_obat'  => 'float',
-                'hapus_beriobat'  => 'float',
                 'penjualan_obat'  => 'float',
                 'tf_keluar'       => 'float',
                 'retur_supplier'  => 'float',

@@ -163,11 +163,16 @@ class Jurnal extends Model
     }
 
     /**
-     * @psalm-param  "U"|"P" $jenis
-     * @psalm-param  array<array{rekening: string, debet: numeric, kredit: numeric}> $detail
+     * @param  "U"|"P" $jenis
+     * @param  \Carbon\Carbon|\DateTime|string $waktuTransaksi
+     * @param  array<array{rekening: string, debet: numeric, kredit: numeric}> $detail
      */
-    public static function catat(string $noBukti, string $jenis, string $keterangan, Carbon $waktuTransaksi, array $detail): void
+    public static function catat(string $noBukti, string $jenis, string $keterangan, $waktuTransaksi, array $detail): void
     {
+        if (! $waktuTransaksi instanceof Carbon) {
+            $waktuTransaksi = carbon($waktuTransaksi);
+        }
+        
         $noJurnal = (new static)->noJurnalBaru($waktuTransaksi);
 
         $hasDetail = Arr::has($detail, ['*.kd_rek', '*.debet', '*.kredit']);

@@ -16,15 +16,10 @@ trait Filterable
         ]);
     }
 
-    public function pageName(): string
-    {
-        return 'page';
-    }
-
     public function searchData(): void
     {
         if (method_exists($this, 'resetPage')) {
-            $this->resetPage($this->pageName());
+            $this->resetPage();
         }
 
         $this->emit('$refresh');
