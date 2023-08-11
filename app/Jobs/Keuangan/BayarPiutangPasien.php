@@ -4,14 +4,13 @@ namespace App\Jobs\Keuangan;
 
 use App\Models\Keuangan\BayarPiutang;
 use App\Models\Keuangan\Jurnal\Jurnal;
+use App\Models\Keuangan\PenagihanPiutang;
 use App\Models\Keuangan\PenagihanPiutangDetail;
 use App\Models\Keuangan\PiutangPasien;
 use App\Models\Keuangan\PiutangPasienDetail;
 use DB;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -33,6 +32,9 @@ class BayarPiutangPasien implements ShouldQueue
     private string $namaBayar;
     private string $kodePenjamin;
 
+    private float $totalPiutang;
+    private float $cicilanSekarang;
+
     /**
      * Create a new job instance.
      * 
@@ -40,8 +42,9 @@ class BayarPiutangPasien implements ShouldQueue
      *     no_tagihan: string,
      *     no_rawat: string,
      *     no_rm: string,
+     *     tgl_bayar: string,
      *     user_id: string,
-     *     akun_bayar: string,
+     *     akun: string,
      *     akun_kontra: string,
      *     nominal: float,
      *     akun_diskon_piutang: string,
@@ -53,10 +56,11 @@ class BayarPiutangPasien implements ShouldQueue
     public function __construct(array $data)
     {
         $this->noTagihan = $data['no_tagihan'];
+        $this->tglBayar = $data['tgl_bayar'];
         $this->noRawat = $data['no_rawat'];
         $this->noRM = $data['no_rm'];
         $this->userId = $data['user_id'];
-        $this->akun = $data['akun_bayar'];
+        $this->akun = $data['akun'];
         $this->akunKontra = $data['akun_kontra'];
         $this->nominal = $data['nominal'];
         $this->akunDiskonPiutang = $data['akun_diskon_piutang'];
@@ -75,8 +79,6 @@ class BayarPiutangPasien implements ShouldQueue
 
     protected function proceed(): bool
     {
-        $transaction = false;
-
         DB::connection('mysql_sik')
             ->transaction(function () {
                 BayarPiutang::insert([
@@ -93,24 +95,19 @@ class BayarPiutangPasien implements ShouldQueue
                     'kd_rek_tidak_terbayar' => $this->akunTidakTerbayar,
                 ]);
 
-                $this->createJournal([
+                Jurnal::catat($this->noRawat, 'U', sprintf('BAYAR PIUTANG, OLEH %s', $this->userId), $this->tglBayar, [
                     ['kd_rek' => $this->akun, 'debet' => $this->nominal, 'kredit' => 0],
                     ['kd_rek' => $this->akunKontra, 'debet' => 0, 'kredit' => $this->nominal],
                 ]);
             });
 
-        return $transaction;
-    }
-
-    protected function createJournal(array $detail): void
-    {
-        Jurnal::catat($this->noRawat, 'U', sprintf('BAYAR PIUTANG, OLEH %s', $this->userId), $this->tglBayar, $detail);
+        $this->cekSisaPiutang();
     }
 
     /**
      * @template T of \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Relations\HasMany
      */
-    protected function cekTagihanPiutang(): bool
+    protected function setLunasPiutang(): bool
     {
         /** @var \Closure(T): T */
         $query = fn ($q) => $q->where([
@@ -124,24 +121,11 @@ class BayarPiutangPasien implements ShouldQueue
             ->whereHas('detail', $query)
             ->first();
 
-        if (! $piutangPasien) {
-            return false;
-        }
-
-        if ($this->sisaPiutang() === 0) {
-            $piutangPasien->update(['status' => 'Lunas']);
-        }
-
-        return true;
-    }
-
-    protected function sisaPiutang(): int
-    {
-        $sisaPiutang = PiutangPasienDetail::query()
+        $this->totalPiutang = PiutangPasienDetail::query()
             ->where('no_rawat', $this->noRawat)
             ->sum('sisapiutang');
 
-        $cicilanSekarang = BayarPiutang::query()
+        $this->cicilanSekarang = BayarPiutang::query()
             ->selectRaw(<<<SQL
                 ifnull(
                     sum(besar_cicilan) +
@@ -150,9 +134,24 @@ class BayarPiutangPasien implements ShouldQueue
                 ) total_cicilan
             SQL)
             ->where('no_rawat', $this->noRawat)
+            ->where('no_rkm_medis', $this->noRM)
             ->withCasts(['total_cicilan' => 'float'])
             ->value('total_cicilan');
 
-        return intval(round($sisaPiutang - $cicilanSekarang));
+        if (is_null($piutangPasien) || round($this->totalPiutang - $this->cicilanSekarang) > 0) {
+            return false;
+        }
+
+        return $piutangPasien->update(['status' => 'Lunas']);
+    }
+
+    protected function setSelesaiPenagihanPiutang(): bool
+    {
+        $tagihanPiutang = PenagihanPiutang::query()
+            ->with('detail')
+            ->where('no_tagihan', $this->noTagihan)
+            ->first();
+
+        
     }
 }

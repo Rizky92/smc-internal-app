@@ -165,7 +165,7 @@ class Jurnal extends Model
     /**
      * @param  "U"|"P" $jenis
      * @param  \Carbon\Carbon|\DateTime|string $waktuTransaksi
-     * @param  array<array{rekening: string, debet: numeric, kredit: numeric}> $detail
+     * @param  array<array-key, array{kd_rek: string, debet: numeric, kredit: numeric}> $detail
      */
     public static function catat(string $noBukti, string $jenis, string $keterangan, $waktuTransaksi, array $detail): void
     {
@@ -177,13 +177,13 @@ class Jurnal extends Model
 
         $hasDetail = Arr::has($detail, ['*.kd_rek', '*.debet', '*.kredit']);
 
-        $detail = collect($detail);
-
         throw_if($hasDetail, 'LogicException', 'Malformed array shape found.');
 
-        [$debet, $kredit] = [$detail->sum('debet'), $detail->sum('kredit')];
+        $detail = collect($detail);
 
-        throw_if(round($detail->sum('debet'), 2) !== round($detail->sum('kredit'), 2), 'App\Exceptions\InequalJournalException', $debet, $kredit, $noJurnal);
+        [$debet, $kredit] = [round($detail->sum('debet'), 2), round($detail->sum('kredit'), 2)];
+
+        throw_if($debet !== $kredit, 'App\Exceptions\InequalJournalException', $debet, $kredit, $noJurnal);
 
         $jurnal = static::create([
             'no_jurnal'  => $noJurnal,
