@@ -116,7 +116,7 @@ if (!function_exists('tracker_start')) {
 }
 
 if (!function_exists('tracker_end')) {
-    function tracker_end(string $connection = 'mysql_smc'): void
+    function tracker_end(string $connection = 'mysql_smc', string $userId = null): void
     {
         if (app('impersonate')->isImpersonating() || app()->runningUnitTests()) {
             DB::connection($connection)->disableQueryLog();
@@ -137,7 +137,7 @@ if (!function_exists('tracker_end')) {
             DB::connection('mysql_smc')->table('trackersql')->insert([
                 'tanggal'    => now(),
                 'sqle'       => (string) $sql,
-                'usere'      => Auth::user()->nik,
+                'usere'      => $userId ?? Auth::user()->nik,
                 'ip'         => request()->ip(),
                 'connection' => $connection,
             ]);

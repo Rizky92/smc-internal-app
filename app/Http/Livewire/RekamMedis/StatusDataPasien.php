@@ -133,8 +133,9 @@ class StatusDataPasien extends Component
             'Resume Ranap',
             'Triase IGD',
             'Askep IGD',
-            'Askep Poli',
-            'Askep RWI',
+            'Asmed IGD',
+            'Asmed Poli',
+            'Asmed RWI',
             'ICD 10',
             'ICD 9',
         ];

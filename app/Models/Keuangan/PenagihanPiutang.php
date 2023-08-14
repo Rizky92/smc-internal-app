@@ -27,6 +27,10 @@ class PenagihanPiutang extends Model
 
     public $timestamps = false;
 
+    protected $fillable = [
+        'status',
+    ];
+
     public function penagih(): BelongsTo
     {
         return $this->belongsTo(Petugas::class, 'nip', 'nip');
@@ -50,21 +54,5 @@ class PenagihanPiutang extends Model
     public function detail(): HasMany
     {
         return $this->hasMany(PenagihanPiutangDetail::class, 'no_tagihan', 'no_tagihan');
-    }
-
-    public function scopeTagihanPiutangAging(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
-    {
-        if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
-        }
-
-        if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
-        }
-
-        $sqlSelect = <<<SQL
-        SQL;
-
-        return $query;
     }
 }

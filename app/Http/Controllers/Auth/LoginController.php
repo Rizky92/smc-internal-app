@@ -7,12 +7,18 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use Illuminate\View\View;
 
 class LoginController
 {
-    public function create(): View
+    /**
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
+    public function create()
     {
+        if (Auth::check()) {
+            return redirect()->route('admin.dashboard');
+        }
+
         return view('auth.login');
     }
 

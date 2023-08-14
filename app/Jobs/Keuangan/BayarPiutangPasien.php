@@ -74,13 +74,15 @@ class BayarPiutangPasien implements ShouldQueue
      */
     public function handle(): void
     {
-        //
+        $this->proceed();
     }
 
-    protected function proceed(): bool
+    protected function proceed(): void
     {
         DB::connection('mysql_sik')
             ->transaction(function () {
+                tracker_start('mysql_sik');
+
                 BayarPiutang::insert([
                     'tgl_bayar'             => $this->tglBayar,
                     'no_rkm_medis'          => $this->noRM,
@@ -95,19 +97,26 @@ class BayarPiutangPasien implements ShouldQueue
                     'kd_rek_tidak_terbayar' => $this->akunTidakTerbayar,
                 ]);
 
-                Jurnal::catat($this->noRawat, 'U', sprintf('BAYAR PIUTANG, OLEH %s', $this->userId), $this->tglBayar, [
+                Jurnal::catat($this->noRawat, 'U', sprintf('BAYAR PIUTANG TAGIHAN %s, OLEH %s', $this->noTagihan, $this->userId), $this->tglBayar, [
                     ['kd_rek' => $this->akun, 'debet' => $this->nominal, 'kredit' => 0],
                     ['kd_rek' => $this->akunKontra, 'debet' => 0, 'kredit' => $this->nominal],
                 ]);
+
+                tracker_end('mysql_sik', $this->userId);
             });
 
-        $this->cekSisaPiutang();
+        DB::connection('mysql_sik')
+            ->transaction(function () {
+                $this->setLunasPiutang();
+
+                $this->setSelesaiPenagihanPiutang();
+            });
     }
 
     /**
      * @template T of \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Relations\HasMany
      */
-    protected function setLunasPiutang(): bool
+    protected function setLunasPiutang(): void
     {
         /** @var \Closure(T): T */
         $query = fn ($q) => $q->where([
@@ -125,33 +134,55 @@ class BayarPiutangPasien implements ShouldQueue
             ->where('no_rawat', $this->noRawat)
             ->sum('sisapiutang');
 
+        $this->totalPiutang = intval(round(floatval($this->totalPiutang)));
+
         $this->cicilanSekarang = BayarPiutang::query()
-            ->selectRaw(<<<SQL
-                ifnull(
-                    sum(besar_cicilan) +
-                    sum(diskon_piutang) +
-                    sum(tidak_terbayar)
-                ) total_cicilan
-            SQL)
             ->where('no_rawat', $this->noRawat)
             ->where('no_rkm_medis', $this->noRM)
-            ->withCasts(['total_cicilan' => 'float'])
-            ->value('total_cicilan');
+            ->sum(DB::raw('besar_cicilan + diskon_piutang + tidak_terbayar'));
 
-        if (is_null($piutangPasien) || round($this->totalPiutang - $this->cicilanSekarang) > 0) {
-            return false;
+        $this->cicilanSekarang = intval(round(floatval($this->cicilanSekarang)));
+
+        if (is_null($piutangPasien) || ($this->totalPiutang - $this->cicilanSekarang) > 0) {
+            return;
         }
 
-        return $piutangPasien->update(['status' => 'Lunas']);
+        tracker_start('mysql_sik');
+
+        $piutangPasien->update(['status' => 'Lunas']);
+
+        tracker_end('mysql_sik', $this->userId);
     }
 
-    protected function setSelesaiPenagihanPiutang(): bool
+    protected function setSelesaiPenagihanPiutang(): void
     {
         $tagihanPiutang = PenagihanPiutang::query()
             ->with('detail')
             ->where('no_tagihan', $this->noTagihan)
             ->first();
+            
+        if (is_null($tagihanPiutang)) {
+            return;
+        }
 
-        
+        $totalTagihanPiutang = $tagihanPiutang->detail->sum('sisapiutang');
+        $totalTagihanPiutang = intval(round(floatval($totalTagihanPiutang)));
+
+        $piutangDibayar = BayarPiutang::query()
+            ->whereIn('no_rawat', $tagihanPiutang->detail->pluck('no_rawat')->all())
+            ->where('kd_rek', $tagihanPiutang->kd_rek)
+            ->sum(DB::raw('besar_cicilan + diskon_piutang + tidak_terbayar'));
+
+        $piutangDibayar = intval(round(floatval($piutangDibayar)));
+
+        if ($totalTagihanPiutang !== $piutangDibayar) {
+            return;
+        }
+
+        tracker_start('mysql_sik');
+
+        $tagihanPiutang->update(['status' => 'Sudah Dibayar']);
+
+        tracker_end('mysql_sik');
     }
 }

@@ -165,7 +165,7 @@ class Jurnal extends Model
     /**
      * @param  "U"|"P" $jenis
      * @param  \Carbon\Carbon|\DateTime|string $waktuTransaksi
-     * @param  array<array-key, array{kd_rek: string, debet: numeric, kredit: numeric}> $detail
+     * @param  array<array{kd_rek: string, debet: int|float, kredit: int|float}> $detail
      */
     public static function catat(string $noBukti, string $jenis, string $keterangan, $waktuTransaksi, array $detail): void
     {

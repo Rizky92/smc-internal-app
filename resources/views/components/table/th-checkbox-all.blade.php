@@ -36,6 +36,10 @@
                     @endif
                 @endif
             })
+
+            $('#{{ $id }}').on('clear-selected', e => {
+
+            })
         })
     </script>
 @endpush

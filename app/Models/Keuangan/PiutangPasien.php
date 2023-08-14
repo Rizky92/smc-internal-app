@@ -27,6 +27,10 @@ class PiutangPasien extends Model
 
     public $timestamps = false;
 
+    protected $fillable = [
+        'status',
+    ];
+
     public function detail(): HasMany
     {
         return $this->hasMany(PiutangPasienDetail::class, 'no_rawat', 'no_rawat');

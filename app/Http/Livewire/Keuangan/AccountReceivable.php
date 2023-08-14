@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Keuangan;
 
+use App\Jobs\Keuangan\BayarPiutangPasien;
 use App\Models\Keuangan\AkunBayar;
 use App\Models\Keuangan\BayarPiutang;
 use App\Models\Keuangan\Jurnal\Jurnal;
@@ -136,6 +137,11 @@ class AccountReceivable extends Component
         $this->rekalkulasiPembayaran();
     }
 
+    public function hydrate(): void
+    {
+        $this->rekalkulasiPembayaran();
+    }
+
     public function render(): View
     {
         return view('livewire.keuangan.account-receivable')
@@ -210,45 +216,31 @@ class AccountReceivable extends Component
                 $akunDiskonPiutang,
                 $akunTidakTerbayar
             ) {
-                $akun = $this->akunBayar->get($this->rekeningAkun);
                 $akunKontra = DB::connection('mysql_sik')
                     ->table('akun_piutang')
                     ->where('nama_bayar', $model->nama_bayar)
                     ->value('kd_rek');
-                $tglBayar = $this->tglBayar;
 
-                DB::transaction(function () use (
-                    $akunDiskonPiutang,
-                    $akunTidakTerbayar,
-                    $akun,
-                    $akunKontra,
-                    $tglBayar,
-                    $model
-                ) {
-                    tracker_start('mysql_sik');
-
-                    BayarPiutang::insert([
-                        'tgl_bayar' => $tglBayar,
-                        'no_rkm_medis' => $model->no_rkm_medis,
-                        'catatan' => 'diverifikasi oleh ' . auth()->user()->nik,
-                        'no_rawat' => $model->no_rawat,
-                        'kd_rek' => $akun,
-                        'kd_rek_kontra' => $akunKontra,
-                        'besar_cicilan' => $model->sisa_piutang,
-                        'diskon_piutang' => 0,
-                        'kd_rek_diskon_piutang' => $akunDiskonPiutang,
-                        'tidak_terbayar' => 0,
-                        'kd_rek_tidak_terbayar' => $akunTidakTerbayar
-                    ]);
-
-                    Jurnal::catat($model->no_rawat, 'U', sprintf("BAYAR PIUTANG, OLEH %s", auth()->user()->nik), carbon($tglBayar), [
-                        ['kd_rek' => $akun, 'debet' => $model->sisa_piutang, 'kredit' => 0],
-                        ['kd_rek' => $akunKontra, 'debet' => 0, 'kredit' => $model->sisa_piutang],
-                    ]);
-
-                    tracker_end('mysql_sik');
-                });
+                BayarPiutangPasien::dispatch([
+                    'no_tagihan'          => $model->no_tagihan,
+                    'tgl_bayar'           => $this->tglBayar,
+                    'no_rawat'            => $model->no_rawat,
+                    'no_rm'               => (string) $model->no_rkm_medis,
+                    'user_id'             => (string) Auth::user()->nik,
+                    'akun'                => (string) $this->akunBayar->get($this->rekeningAkun),
+                    'akun_kontra'         => (string) $akunKontra,
+                    'nominal'             => (float) $model->sisa_piutang,
+                    'akun_diskon_piutang' => (string) $akunDiskonPiutang,
+                    'akun_tidak_terbayar' => (string) $akunTidakTerbayar,
+                    'nama_bayar'          => (string) $model->nama_bayar,
+                    'kd_pj'               => (string) $model->kd_pj,
+                ]);
             });
+
+        $this->reset('tagihanDipilih');
+        $this->dispatchBrowserEvent('clear-selected');
+
+        $this->flashInfo('Validasi piutang sedang diproses!');
     }
 
     protected function defaultValues(): void
