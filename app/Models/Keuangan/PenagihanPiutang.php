@@ -6,7 +6,6 @@ use App\Models\Kepegawaian\Petugas;
 use App\Models\RekamMedis\Penjamin;
 use App\Support\Traits\Eloquent\Searchable;
 use App\Support\Traits\Eloquent\Sortable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -17,9 +16,9 @@ class PenagihanPiutang extends Model
 
     protected $connection = 'mysql_sik';
 
-    protected $primaryKey = null;
+    protected $primaryKey = 'no_tagihan';
 
-    protected $keyType = null;
+    protected $keyType = 'string';
 
     protected $table = 'penagihan_piutang';
 

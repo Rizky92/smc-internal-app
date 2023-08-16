@@ -108,7 +108,10 @@ class BayarPiutangPasien implements ShouldQueue
         DB::connection('mysql_sik')
             ->transaction(function () {
                 $this->setLunasPiutang();
+            });
 
+        DB::connection('mysql_sik')
+            ->transaction(function () {
                 $this->setSelesaiPenagihanPiutang();
             });
     }
@@ -170,10 +173,13 @@ class BayarPiutangPasien implements ShouldQueue
 
         $piutangDibayar = BayarPiutang::query()
             ->whereIn('no_rawat', $tagihanPiutang->detail->pluck('no_rawat')->all())
-            ->where('kd_rek', $tagihanPiutang->kd_rek)
+            ->where('kd_rek', $this->akun)
+            ->where('kd_rek_kontra', $this->akunKontra)
             ->sum(DB::raw('besar_cicilan + diskon_piutang + tidak_terbayar'));
 
         $piutangDibayar = intval(round(floatval($piutangDibayar)));
+
+        dump($totalTagihanPiutang, $piutangDibayar);
 
         if ($totalTagihanPiutang !== $piutangDibayar) {
             return;
@@ -183,6 +189,6 @@ class BayarPiutangPasien implements ShouldQueue
 
         $tagihanPiutang->update(['status' => 'Sudah Dibayar']);
 
-        tracker_end('mysql_sik');
+        tracker_end('mysql_sik', $this->userId);
     }
 }
