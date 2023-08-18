@@ -77,8 +77,8 @@
                                 <x-table.td-checkbox
                                     livewire
                                     model="tagihanDipilih"
-                                    :id="str_replace('/', '-', implode('_', [$item->no_tagihan, $item->kd_pj, $item->no_rawat]))"
-                                    :key="implode('_', [$item->no_tagihan, $item->kd_pj, $item->no_rawat])"
+                                    :id="str_replace('/', '-', implode('_', [$item->no_tagihan, $item->kd_pj_tagihan, $item->no_rawat]))"
+                                    :key="implode('_', [$item->no_tagihan, $item->kd_pj_tagihan, $item->no_rawat])"
                                     prefix="ar-id-"
                                 />
                             @endcan
@@ -90,7 +90,7 @@
                             <x-table.td>{{ $item->no_rkm_medis }}</x-table.td>
                             <x-table.td>{{ $item->nm_pasien }}</x-table.td>
                             <x-table.td>{{ $item->penjab_pasien }}</x-table.td>
-                            <x-table.td>{{ $item->penjab_piutang }}</x-table.td>
+                            <x-table.td>{{ $item->penjab_tagihan }}</x-table.td>
                             <x-table.td>{{ $item->catatan }}</x-table.td>
                             <x-table.td>{{ $item->status }}</x-table.td>
                             <x-table.td>{{ $item->nama_bayar }}</x-table.td>
@@ -110,13 +110,13 @@
                     <x-table.tr>
                         <x-table.th :colspan="auth()->user()->can('keuangan.account-receivable.validasi-piutang') ? 12 : 11" />
                         <x-table.th title="TOTAL :" />
-                        <x-table.th :title="rp(optional($this->totalPiutangAging)['totalPiutang'])" />
-                        <x-table.th :title="rp(optional($this->totalPiutangAging)['totalCicilan'])" />
-                        <x-table.th :title="rp(optional($this->totalPiutangAging)['totalSisaCicilan'])" />
-                        <x-table.th :title="rp(optional(optional($this->totalPiutangAging)['totalSisaPerPeriode'])->get('periode_0_30'))" />
-                        <x-table.th :title="rp(optional(optional($this->totalPiutangAging)['totalSisaPerPeriode'])->get('periode_31_60'))" />
-                        <x-table.th :title="rp(optional(optional($this->totalPiutangAging)['totalSisaPerPeriode'])->get('periode_61_90'))" />
-                        <x-table.th :title="rp(optional(optional($this->totalPiutangAging)['totalSisaPerPeriode'])->get('periode_90_up'))" />
+                        <x-table.th :title="rp(optional($this->dataTotalAccountReceivable)['totalPiutang'])" />
+                        <x-table.th :title="rp(optional($this->dataTotalAccountReceivable)['totalCicilan'])" />
+                        <x-table.th :title="rp(optional($this->dataTotalAccountReceivable)['totalSisaCicilan'])" />
+                        <x-table.th :title="rp(optional(optional($this->dataTotalAccountReceivable)['totalSisaPerPeriode'])->get('periode_0_30'))" />
+                        <x-table.th :title="rp(optional(optional($this->dataTotalAccountReceivable)['totalSisaPerPeriode'])->get('periode_31_60'))" />
+                        <x-table.th :title="rp(optional(optional($this->dataTotalAccountReceivable)['totalSisaPerPeriode'])->get('periode_61_90'))" />
+                        <x-table.th :title="rp(optional(optional($this->dataTotalAccountReceivable)['totalSisaPerPeriode'])->get('periode_90_up'))" />
                     </x-table.tr>
                 </x-slot>
             </x-table>

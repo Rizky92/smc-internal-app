@@ -19,18 +19,17 @@ class BayarPiutangPasien implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private string $noTagihan;
+    private string $tglAwal;
+    private string $tglAkhir;
+    private string $jaminanPasien;
+    private string $jenisPerawatan;
+
+    private string $dataDipilih;
     private string $tglBayar;
-    private string $noRawat;
-    private string $noRM;
     private string $userId;
     private string $akun;
-    private string $akunKontra;
-    private float  $nominal;
     private string $akunDiskonPiutang;
     private string $akunTidakTerbayar;
-    private string $namaBayar;
-    private string $kodePenjamin;
 
     private float $totalPiutang;
     private float $cicilanSekarang;
@@ -39,34 +38,30 @@ class BayarPiutangPasien implements ShouldQueue
      * Create a new job instance.
      * 
      * @param  array{
-     *     no_tagihan: string,
-     *     no_rawat: string,
-     *     no_rm: string,
+     *     tgl_awal: string,
+     *     tgl_akhir: string,
+     *     jaminan_pasien: string,
+     *     jenis_perawatan: string,
+     *     data: string,
      *     tgl_bayar: string,
      *     user_id: string,
      *     akun: string,
-     *     akun_kontra: string,
-     *     nominal: float,
      *     akun_diskon_piutang: string,
      *     akun_tidak_terbayar: string,
-     *     nama_bayar: string,
-     *     kd_pj: string
-     * } $data
+     * } $params
      */
-    public function __construct(array $data)
+    public function __construct(array $params)
     {
-        $this->noTagihan = $data['no_tagihan'];
-        $this->tglBayar = $data['tgl_bayar'];
-        $this->noRawat = $data['no_rawat'];
-        $this->noRM = $data['no_rm'];
-        $this->userId = $data['user_id'];
-        $this->akun = $data['akun'];
-        $this->akunKontra = $data['akun_kontra'];
-        $this->nominal = $data['nominal'];
-        $this->akunDiskonPiutang = $data['akun_diskon_piutang'];
-        $this->akunTidakTerbayar = $data['akun_tidak_terbayar'];
-        $this->namaBayar = $data['nama_bayar'];
-        $this->kodePenjamin = $data['kd_pj'];
+        $this->tglAwal = $params['tgl_awal'];
+        $this->tglAkhir = $params['tgl_akhir'];
+        $this->jaminanPasien = $params['jaminan_pasien'];
+        $this->jenisPerawatan = $params['jenis_perawatan'];
+        $this->dataDipilih = $params['data'];
+        $this->tglBayar = $params['tgl_bayar'];
+        $this->userId = $params['user_id'];
+        $this->akun = $params['akun'];
+        $this->akunDiskonPiutang = $params['akun_diskon_piutang'];
+        $this->akunTidakTerbayar = $params['akun_tidak_terbayar'];
     }
 
     /**
@@ -79,69 +74,85 @@ class BayarPiutangPasien implements ShouldQueue
 
     protected function proceed(): void
     {
+        $model = PenagihanPiutang::query()
+            ->accountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
+            ->whereRaw(
+                'concat(penagihan_piutang.no_tagihan, "_", penagihan_piutang.kd_pj, "_", detail_penagihan_piutang.no_rawat) = ?',
+                $this->dataDipilih
+            )
+            ->first();
+
         DB::connection('mysql_sik')
-            ->transaction(function () {
+            ->transaction(function () use ($model) {
                 tracker_start('mysql_sik');
 
                 BayarPiutang::insert([
                     'tgl_bayar'             => $this->tglBayar,
-                    'no_rkm_medis'          => $this->noRM,
+                    'no_rkm_medis'          => $model->no_rkm_medis,
                     'catatan'               => sprintf('diverifikasi oleh %s', $this->userId),
-                    'no_rawat'              => $this->noRawat,
+                    'no_rawat'              => $model->no_rawat,
                     'kd_rek'                => $this->akun,
-                    'kd_rek_kontra'         => $this->akunKontra,
-                    'besar_cicilan'         => $this->nominal,
+                    'kd_rek_kontra'         => $model->kd_rek,
+                    'besar_cicilan'         => $model->sisa_piutang,
                     'diskon_piutang'        => 0,
                     'kd_rek_diskon_piutang' => $this->akunDiskonPiutang,
                     'tidak_terbayar'        => 0,
                     'kd_rek_tidak_terbayar' => $this->akunTidakTerbayar,
                 ]);
 
-                Jurnal::catat($this->noRawat, 'U', sprintf('BAYAR PIUTANG TAGIHAN %s, OLEH %s', $this->noTagihan, $this->userId), $this->tglBayar, [
-                    ['kd_rek' => $this->akun, 'debet' => $this->nominal, 'kredit' => 0],
-                    ['kd_rek' => $this->akunKontra, 'debet' => 0, 'kredit' => $this->nominal],
+                Jurnal::catat($model->no_rawat, 'U', sprintf('BAYAR PIUTANG TAGIHAN %s, OLEH %s', $model->no_tagihan, $this->userId), $this->tglBayar, [
+                    ['kd_rek' => $this->akun, 'debet' => $model->sisa_piutang, 'kredit' => 0],
+                    ['kd_rek' => $model->kd_rek, 'debet' => 0, 'kredit' => $model->sisa_piutang],
                 ]);
 
                 tracker_end('mysql_sik', $this->userId);
             });
 
         DB::connection('mysql_sik')
-            ->transaction(function () {
-                $this->setLunasPiutang();
+            ->transaction(function () use ($model) {
+                $this->setLunasPiutang($model->no_rawat, $model->no_rkm_medis, $model->nama_bayar, $model->kd_pj_tagihan);
             });
 
         DB::connection('mysql_sik')
-            ->transaction(function () {
-                $this->setSelesaiPenagihanPiutang();
+            ->transaction(function () use ($model) {
+                $this->setSelesaiPenagihanPiutang($model->no_tagihan, $model->kd_rek);
             });
     }
 
     /**
      * @template T of \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Relations\HasMany
      */
-    protected function setLunasPiutang(): void
-    {
+    protected function setLunasPiutang(
+        string $noRawat,
+        string $noRM,
+        string $namaBayar,
+        string $kodePenjamin
+    ): void {
+        if (empty($noRawat) || empty($noRM) || empty($namaBayar) || empty($kodePenjamin)) {
+            return;
+        }
+
         /** @var \Closure(T): T */
         $query = fn ($q) => $q->where([
-            ['nama_bayar', '=', $this->namaBayar],
-            ['kd_pj', '=', $this->kodePenjamin],
+            ['nama_bayar', '=', $namaBayar],
+            ['kd_pj', '=', $kodePenjamin],
         ]);
 
         $piutangPasien = PiutangPasien::query()
             ->with(['detail' => $query])
-            ->where('no_rawat', $this->noRawat)
+            ->where('no_rawat', $noRawat)
             ->whereHas('detail', $query)
             ->first();
 
         $this->totalPiutang = PiutangPasienDetail::query()
-            ->where('no_rawat', $this->noRawat)
+            ->where('no_rawat', $noRawat)
             ->sum('sisapiutang');
 
         $this->totalPiutang = intval(round(floatval($this->totalPiutang)));
 
         $this->cicilanSekarang = BayarPiutang::query()
-            ->where('no_rawat', $this->noRawat)
-            ->where('no_rkm_medis', $this->noRM)
+            ->where('no_rawat', $noRawat)
+            ->where('no_rkm_medis', $noRM)
             ->sum(DB::raw('besar_cicilan + diskon_piutang + tidak_terbayar'));
 
         $this->cicilanSekarang = intval(round(floatval($this->cicilanSekarang)));
@@ -157,11 +168,11 @@ class BayarPiutangPasien implements ShouldQueue
         tracker_end('mysql_sik', $this->userId);
     }
 
-    protected function setSelesaiPenagihanPiutang(): void
+    protected function setSelesaiPenagihanPiutang(string $noTagihan, string $akunKontra): void
     {
         $tagihanPiutang = PenagihanPiutang::query()
             ->with('detail')
-            ->where('no_tagihan', $this->noTagihan)
+            ->where('no_tagihan', $noTagihan)
             ->first();
             
         if (is_null($tagihanPiutang)) {
@@ -174,12 +185,10 @@ class BayarPiutangPasien implements ShouldQueue
         $piutangDibayar = BayarPiutang::query()
             ->whereIn('no_rawat', $tagihanPiutang->detail->pluck('no_rawat')->all())
             ->where('kd_rek', $this->akun)
-            ->where('kd_rek_kontra', $this->akunKontra)
+            ->where('kd_rek_kontra', $akunKontra)
             ->sum(DB::raw('besar_cicilan + diskon_piutang + tidak_terbayar'));
 
         $piutangDibayar = intval(round(floatval($piutangDibayar)));
-
-        dump($totalTagihanPiutang, $piutangDibayar);
 
         if ($totalTagihanPiutang !== $piutangDibayar) {
             return;
