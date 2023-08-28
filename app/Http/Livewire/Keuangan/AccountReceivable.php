@@ -194,6 +194,7 @@ class AccountReceivable extends Component
 
     public function validasiPiutang(): void
     {
+        dd($this->tagihanDipilih);
         if (! Auth::user()->can('keuangan.account-receivable.validasi-piutang')) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
 

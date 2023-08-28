@@ -64,9 +64,6 @@ class BayarPiutangPasien implements ShouldQueue
         $this->akunTidakTerbayar = $params['akun_tidak_terbayar'];
     }
 
-    /**
-     * Execute the job.
-     */
     public function handle(): void
     {
         $this->proceed();
@@ -100,6 +97,10 @@ class BayarPiutangPasien implements ShouldQueue
                     'kd_rek_tidak_terbayar' => $this->akunTidakTerbayar,
                 ]);
 
+                $this->setLunasPiutang($model->no_rawat, $model->no_rkm_medis, $model->nama_bayar, $model->kd_pj_tagihan);
+
+                $this->setSelesaiPenagihanPiutang($model->no_tagihan, $model->kd_rek);
+
                 Jurnal::catat($model->no_rawat, 'U', sprintf('BAYAR PIUTANG TAGIHAN %s, OLEH %s', $model->no_tagihan, $this->userId), $this->tglBayar, [
                     ['kd_rek' => $this->akun, 'debet' => $model->sisa_piutang, 'kredit' => 0],
                     ['kd_rek' => $model->kd_rek, 'debet' => 0, 'kredit' => $model->sisa_piutang],
@@ -107,20 +108,10 @@ class BayarPiutangPasien implements ShouldQueue
 
                 tracker_end('mysql_sik', $this->userId);
             });
-
-        DB::connection('mysql_sik')
-            ->transaction(function () use ($model) {
-                $this->setLunasPiutang($model->no_rawat, $model->no_rkm_medis, $model->nama_bayar, $model->kd_pj_tagihan);
-            });
-
-        DB::connection('mysql_sik')
-            ->transaction(function () use ($model) {
-                $this->setSelesaiPenagihanPiutang($model->no_tagihan, $model->kd_rek);
-            });
     }
 
     /**
-     * @template T of \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Relations\HasMany
+     * @template T
      */
     protected function setLunasPiutang(
         string $noRawat,
@@ -161,11 +152,7 @@ class BayarPiutangPasien implements ShouldQueue
             return;
         }
 
-        tracker_start('mysql_sik');
-
         $piutangPasien->update(['status' => 'Lunas']);
-
-        tracker_end('mysql_sik', $this->userId);
     }
 
     protected function setSelesaiPenagihanPiutang(string $noTagihan, string $akunKontra): void
@@ -194,10 +181,6 @@ class BayarPiutangPasien implements ShouldQueue
             return;
         }
 
-        tracker_start('mysql_sik');
-
         $tagihanPiutang->update(['status' => 'Sudah Dibayar']);
-
-        tracker_end('mysql_sik', $this->userId);
     }
 }
