@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             KhanzaHakAksesSeeder::class,
             SmcSeeder::class,
-            RKATSeeder::class,
         ]);
 
         Schema::connection('mysql_smc')->enableForeignKeyConstraints();
