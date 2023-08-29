@@ -102,10 +102,11 @@
                             <x-table.td>{{ rp($item->besar_cicilan) }}</x-table.td>
                             <x-table.td>{{ rp($item->sisa_piutang) }}</x-table.td>
                             <x-table.td>
-                                <div class="form-group">
+                                <div class="form-group m-0">
                                     <input
                                         type="number"
-                                        class="form-text"
+                                        class="form-control text-sm m-0"
+                                        style="width: 9rem; height: 1.4rem; padding: 0 0.5rem"
                                         id="{{ 'tagihanDipilih.' . implode('_', [$item->no_tagihan, $item->kd_pj_tagihan, $item->no_rawat]) . '.diskon_piutang' }}"
                                         wire:model.defer="{{ 'tagihanDipilih.' . implode('_', [$item->no_tagihan, $item->kd_pj_tagihan, $item->no_rawat]) . '.diskon_piutang' }}"
                                     >

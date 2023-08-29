@@ -9,6 +9,7 @@
                     <x-table.th name="tgl_registrasi" title="Tgl. Registrasi" />
                     <x-table.th name="no_rkm_medis" title="No. RM" />
                     <x-table.th name="nm_pasien" title="Pasien" />
+                    <x-table.th name="no_ktp" title="NIK" />
                     <x-table.th name="nama_brng" title="Obat Diberikan" />
                     <x-table.th name="total" align="right" title="Jumlah" />
                     <x-table.th name="nm_bangsal" title="Farmasi" />
