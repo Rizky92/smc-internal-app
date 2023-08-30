@@ -5,15 +5,14 @@ namespace App\Jobs\Keuangan;
 use App\Models\Keuangan\BayarPiutang;
 use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\PenagihanPiutang;
-use App\Models\Keuangan\PenagihanPiutangDetail;
 use App\Models\Keuangan\PiutangPasien;
 use App\Models\Keuangan\PiutangPasienDetail;
-use DB;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
 
 class BayarPiutangPasien implements ShouldQueue
 {
