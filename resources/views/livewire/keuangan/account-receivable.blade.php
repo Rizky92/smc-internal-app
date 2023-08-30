@@ -83,7 +83,6 @@
                                     :id="str_replace('/', '-', implode('_', [$item->no_tagihan, $item->kd_pj_tagihan, $item->no_rawat]))"
                                     :key="implode('_', [$item->no_tagihan, $item->kd_pj_tagihan, $item->no_rawat]) . '.selected'"
                                     prefix="ar-id-"
-                                    obscure-checkbox
                                 />
                             @endcan
                             <x-table.td>{{ $item->no_tagihan }}</x-table.td>
@@ -101,17 +100,19 @@
                             <x-table.td>{{ rp($item->total_piutang) }}</x-table.td>
                             <x-table.td>{{ rp($item->besar_cicilan) }}</x-table.td>
                             <x-table.td>{{ rp($item->sisa_piutang) }}</x-table.td>
-                            <x-table.td>
-                                <div class="form-group m-0">
-                                    <input
-                                        type="number"
-                                        class="form-control text-sm m-0"
-                                        style="width: 9rem; height: 1.4rem; padding: 0 0.5rem"
-                                        id="{{ 'tagihanDipilih.' . implode('_', [$item->no_tagihan, $item->kd_pj_tagihan, $item->no_rawat]) . '.diskon_piutang' }}"
-                                        wire:model.defer="{{ 'tagihanDipilih.' . implode('_', [$item->no_tagihan, $item->kd_pj_tagihan, $item->no_rawat]) . '.diskon_piutang' }}"
-                                    >
-                                </div>
-                            </x-table.td>
+                            @can('keuangan.account-receivable.validasi-piutang')    
+                                <x-table.td>
+                                    <div class="form-group m-0">
+                                        <input
+                                            type="number"
+                                            class="form-control text-sm m-0"
+                                            style="width: 9rem; height: 1.4rem; padding: 0 0.5rem; position: relative; z-index: 15"
+                                            id="{{ 'tagihanDipilih.' . implode('_', [$item->no_tagihan, $item->kd_pj_tagihan, $item->no_rawat]) . '.diskon_piutang' }}"
+                                            wire:model.defer="{{ 'tagihanDipilih.' . implode('_', [$item->no_tagihan, $item->kd_pj_tagihan, $item->no_rawat]) . '.diskon_piutang' }}"
+                                        >
+                                    </div>
+                                </x-table.td>
+                            @endcan
                             <x-table.td>{{ $item->umur_hari <= 30 ? rp($item->sisa_piutang) : '-' }}</x-table.td>
                             <x-table.td>{{ is_between($item->umur_hari, 31, 60, true) ? rp($item->sisa_piutang) : '-' }}</x-table.td>
                             <x-table.td>{{ is_between($item->umur_hari, 61, 90, true) ? rp($item->sisa_piutang) : '-' }}</x-table.td>
