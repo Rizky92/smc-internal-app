@@ -192,6 +192,7 @@ class Obat extends Model
                 $tglAwal, $tglAkhir,
                 $tglAwal, $tglAkhir,
                 $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir,
             ])
             ->join('golongan_barang', 'databarang.kode_golongan', '=', 'golongan_barang.kode')
             ->join('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
