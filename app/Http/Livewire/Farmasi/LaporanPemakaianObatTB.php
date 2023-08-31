@@ -11,9 +11,6 @@ use App\Support\Traits\Livewire\LiveTable;
 use App\Support\Traits\Livewire\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -79,6 +76,7 @@ class LaporanPemakaianObatTB extends Component
             'Tgl. Registrasi',
             'No. RM',
             'Pasien',
+            'NIK',
             'Obat Diberikan',
             'Jumlah',
             'Farmasi',

@@ -109,8 +109,9 @@ class AccountReceivable extends Component
 
     public function getDataTotalAccountReceivableProperty(): array
     {
-        if ($this->isDeferred)
+        if ($this->isDeferred) {
             return [];
+        }
 
         $total = PenagihanPiutang::query()
             ->totalAccountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
@@ -137,6 +138,12 @@ class AccountReceivable extends Component
 
     public function updatedTagihanDipilih(): void
     {
+        $this->rekalkulasiPembayaran();
+    }
+
+    public function updatedCari(): void
+    {
+        $this->tagihanDipilih = [];
         $this->rekalkulasiPembayaran();
     }
 
@@ -185,8 +192,12 @@ class AccountReceivable extends Component
                 'akun_piutang.nama_bayar',
             ])
             ->cursor(['no_tagihan', 'kd_pj', 'no_rawat'])
-            ->mapWithKeys(fn (PenagihanPiutang $model, $_): array =>
-                [implode('_', [$model->no_tagihan, $model->kd_pj_tagihan, $model->no_rawat]) => true])
+            ->mapWithKeys(fn (PenagihanPiutang $model, $_): array => [
+                    implode('_', [$model->no_tagihan, $model->kd_pj_tagihan, $model->no_rawat]) => [
+                        'selected' => true,
+                        'diskon_piutang' => 0,
+                    ]
+                ])
             ->all();
         
         $this->rekalkulasiPembayaran();
@@ -211,20 +222,39 @@ class AccountReceivable extends Component
         $akunDiskonPiutang = $akunLainnya->value('Diskon_Piutang');
         $akunTidakTerbayar = $akunLainnya->value('Piutang_Tidak_Terbayar');
 
-        foreach ($this->tagihanDipilih as $dataTagihan => $_) {
-            BayarPiutangPasien::dispatch([
-                'tgl_awal'            => $this->tglAwal,
-                'tgl_akhir'           => $this->tglAkhir,
-                'jaminan_pasien'      => $this->jaminanPasien,
-                'jenis_perawatan'     => $this->jenisPerawatan,
-                'data'                => $dataTagihan,
-                'tgl_bayar'           => $this->tglBayar,
-                'user_id'             => (string) Auth::user()->nik,
-                'akun'                => (string) $this->akunBayar->get($this->rekeningAkun),
-                'akun_diskon_piutang' => (string) $akunDiskonPiutang,
-                'akun_tidak_terbayar' => (string) $akunTidakTerbayar,
-            ]);
-        }
+        collect($this->tagihanDipilih)
+            ->filter(fn (array $value): bool => $value['selected'])
+            ->map(function (array $value, string $key): array {
+                [$noTagihan, $pjTagihan, $noRawat] = explode('_', $key);
+
+                $diskonPiutang = $value['diskon_piutang'] ?? 0;
+
+                return [
+                    'no_tagihan' => $noTagihan,
+                    'kd_pj' => $pjTagihan,
+                    'no_rawat' => $noRawat,
+                    'diskon_piutang' => $diskonPiutang
+                ];
+            })
+            ->values()
+            // ->dd();
+            ->each(function (array $value) use ($akunDiskonPiutang, $akunTidakTerbayar) {
+                BayarPiutangPasien::dispatch([
+                    'no_tagihan'          => $value['no_tagihan'],
+                    'kd_pj'               => $value['kd_pj'],
+                    'no_rawat'            => $value['no_rawat'],
+                    'diskon_piutang'      => $value['diskon_piutang'],
+                    'tgl_awal'            => $this->tglAwal,
+                    'tgl_akhir'           => $this->tglAkhir,
+                    'jaminan_pasien'      => $this->jaminanPasien,
+                    'jenis_perawatan'     => $this->jenisPerawatan,
+                    'tgl_bayar'           => $this->tglBayar,
+                    'user_id'             => (string) Auth::user()->nik,
+                    'akun'                => (string) $this->akunBayar->get($this->rekeningAkun),
+                    'akun_diskon_piutang' => (string) $akunDiskonPiutang,
+                    'akun_tidak_terbayar' => (string) $akunTidakTerbayar,
+                ]);
+            });
 
         $this->tagihanDipilih = [];
         $this->rekalkulasiPembayaran();

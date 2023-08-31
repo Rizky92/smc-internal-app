@@ -15,9 +15,9 @@ class PiutangPasienDetail extends Model
 
     protected $table = 'detail_piutang_pasien';
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = null;
 
-    protected $keyType = 'int';
+    protected $keyType = null;
 
     public $incrementing = false;
 

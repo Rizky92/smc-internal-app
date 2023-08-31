@@ -482,6 +482,7 @@ class RegistrasiPasien extends Model
             reg_periksa.tgl_registrasi,
             reg_periksa.no_rkm_medis,
             pasien.nm_pasien,
+            pasien.no_ktp,
             databarang.nama_brng,
             sum(detail_pemberian_obat.jml) as total,
             bangsal.nm_bangsal,

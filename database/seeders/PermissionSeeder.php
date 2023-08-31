@@ -92,7 +92,7 @@ class PermissionSeeder extends Seeder
             'keuangan.laba-rugi-rekening.read',
             'keuangan.laporan-potongan-biaya.read',
             'keuangan.laporan-selesai-billing.read',
-            'keuangan.laporan-tambahan-pasien.read',
+            'keuangan.laporan-tambahan-biaya.read',
             'keuangan.laporan-tindakan-lab.read',
             'keuangan.laporan-tindakan-radiologi.read',
             'keuangan.stok-obat-ruangan.read',

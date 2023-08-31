@@ -172,6 +172,10 @@ class Jurnal extends Model
         if (! $waktuTransaksi instanceof Carbon) {
             $waktuTransaksi = carbon($waktuTransaksi);
         }
+
+        if ($waktuTransaksi->isToday()) {
+            $waktuTransaksi = now();
+        }
         
         $noJurnal = (new static)->noJurnalBaru($waktuTransaksi);
 

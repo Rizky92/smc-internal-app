@@ -9,6 +9,7 @@
                     <x-table.th name="tgl_registrasi" title="Tgl. Registrasi" />
                     <x-table.th name="no_rkm_medis" title="No. RM" />
                     <x-table.th name="nm_pasien" title="Pasien" />
+                    <x-table.th name="no_ktp" title="NIK" />
                     <x-table.th name="nama_brng" title="Obat Diberikan" />
                     <x-table.th name="total" align="right" title="Jumlah" />
                     <x-table.th name="nm_bangsal" title="Farmasi" />
@@ -24,6 +25,7 @@
                             <x-table.td>{{ $item->tgl_registrasi }}</x-table.td>
                             <x-table.td>{{ $item->no_rkm_medis }}</x-table.td>
                             <x-table.td>{{ $item->nm_pasien }}</x-table.td>
+                            <x-table.td>{{ $item->no_ktp }}</x-table.td>
                             <x-table.td>{{ $item->nama_brng }}</x-table.td>
                             <x-table.td class="text-right">{{ round($item->total, 2) }}</x-table.td>
                             <x-table.td>{{ $item->nm_bangsal }}</x-table.td>
@@ -33,7 +35,7 @@
                             <x-table.td>{{ $item->alamat }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="11" padding />
+                        <x-table.tr-empty colspan="12" padding />
                     @endforelse
                 </x-slot>
             </x-table>
