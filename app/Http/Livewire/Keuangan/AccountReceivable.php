@@ -141,6 +141,12 @@ class AccountReceivable extends Component
         $this->rekalkulasiPembayaran();
     }
 
+    public function updatedCari(): void
+    {
+        $this->tagihanDipilih = [];
+        $this->rekalkulasiPembayaran();
+    }
+
     public function hydrate(): void
     {
         $this->rekalkulasiPembayaran();
@@ -186,8 +192,12 @@ class AccountReceivable extends Component
                 'akun_piutang.nama_bayar',
             ])
             ->cursor(['no_tagihan', 'kd_pj', 'no_rawat'])
-            ->mapWithKeys(fn (PenagihanPiutang $model, $_): array =>
-                [implode('_', [$model->no_tagihan, $model->kd_pj_tagihan, $model->no_rawat]) => true])
+            ->mapWithKeys(fn (PenagihanPiutang $model, $_): array => [
+                    implode('_', [$model->no_tagihan, $model->kd_pj_tagihan, $model->no_rawat]) => [
+                        'selected' => true,
+                        'diskon_piutang' => 0,
+                    ]
+                ])
             ->all();
         
         $this->rekalkulasiPembayaran();
@@ -195,8 +205,6 @@ class AccountReceivable extends Component
 
     public function validasiPiutang(): void
     {
-        // dd($this->tagihanDipilih);
-        
         if (! Auth::user()->can('keuangan.account-receivable.validasi-piutang')) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
 
@@ -215,7 +223,7 @@ class AccountReceivable extends Component
         $akunTidakTerbayar = $akunLainnya->value('Piutang_Tidak_Terbayar');
 
         collect($this->tagihanDipilih)
-            ->filter(fn (array $value, string $key): bool => $value['selected'])
+            ->filter(fn (array $value): bool => $value['selected'])
             ->map(function (array $value, string $key): array {
                 [$noTagihan, $pjTagihan, $noRawat] = explode('_', $key);
 
@@ -230,7 +238,7 @@ class AccountReceivable extends Component
             })
             ->values()
             // ->dd();
-            ->each(function ($value) {
+            ->each(function (array $value) use ($akunDiskonPiutang, $akunTidakTerbayar) {
                 BayarPiutangPasien::dispatch([
                     'no_tagihan'          => $value['no_tagihan'],
                     'kd_pj'               => $value['kd_pj'],

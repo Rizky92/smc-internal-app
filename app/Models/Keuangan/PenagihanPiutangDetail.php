@@ -28,6 +28,11 @@ class PenagihanPiutangDetail extends Model
 
     public $timestamps = false;
 
+    public function tagihan(): BelongsTo
+    {
+        return $this->belongsTo(PenagihanPiutang::class, 'no_tagihan', 'no_tagihan');
+    }
+
     public function registrasi(): BelongsTo
     {
         return $this->belongsTo(RegistrasiPasien::class, 'no_rawat', 'no_rawat');
