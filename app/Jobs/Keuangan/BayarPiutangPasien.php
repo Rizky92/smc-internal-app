@@ -94,9 +94,12 @@ class BayarPiutangPasien implements ShouldQueue
             ])
             ->first();
 
+        if (is_null($model)) {
+            return;
+        }
+
         DB::connection('mysql_sik')
             ->transaction(function () use ($model) {
-
                 $totalCicilan = $model->sisa_piutang;
 
                 $detailJurnal = collect();
@@ -163,9 +166,6 @@ class BayarPiutangPasien implements ShouldQueue
             });
     }
 
-    /**
-     * @template T
-     */
     protected function setLunasPiutang(
         string $noRM,
         string $namaBayar,
