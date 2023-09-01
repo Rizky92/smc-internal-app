@@ -44,17 +44,17 @@ class LaporanPemakaianObatNAPZA extends Component
         return $this->isDeferred
             ? []
             : Obat::query()
-                ->pemakaianObatNAPZA($this->tglAwal, $this->tglAkhir, 'narkotika')
-                ->search($this->cari, [
-                    'databarang.kode_brng',
-                    'databarang.nama_brng',
-                    'databarang.kode_golongan',
-                    'golongan_barang.nama',
-                    'kodesatuan.kode_sat',
-                    'kodesatuan.satuan',
-                ])
-                ->sortWithColumns($this->sortColumns)
-                ->paginate($this->perpage, ['*'], 'page_narkotika');
+            ->pemakaianObatNAPZA($this->tglAwal, $this->tglAkhir, 'narkotika')
+            ->search($this->cari, [
+                'databarang.kode_brng',
+                'databarang.nama_brng',
+                'databarang.kode_golongan',
+                'golongan_barang.nama',
+                'kodesatuan.kode_sat',
+                'kodesatuan.satuan',
+            ])
+            ->sortWithColumns($this->sortColumns)
+            ->paginate($this->perpage, ['*'], 'page_narkotika');
     }
 
     /**
@@ -65,17 +65,17 @@ class LaporanPemakaianObatNAPZA extends Component
         return $this->isDeferred
             ? []
             : Obat::query()
-                ->pemakaianObatNAPZA($this->tglAwal, $this->tglAkhir, 'psikotropika')
-                ->search($this->cari, [
-                    'databarang.kode_brng',
-                    'databarang.nama_brng',
-                    'databarang.kode_golongan',
-                    'golongan_barang.nama',
-                    'kodesatuan.kode_sat',
-                    'kodesatuan.satuan',
-                ])
-                ->sortWithColumns($this->sortColumns)
-                ->paginate($this->perpage, ['*'], 'page_psikotropika');
+            ->pemakaianObatNAPZA($this->tglAwal, $this->tglAkhir, 'psikotropika')
+            ->search($this->cari, [
+                'databarang.kode_brng',
+                'databarang.nama_brng',
+                'databarang.kode_golongan',
+                'golongan_barang.nama',
+                'kodesatuan.kode_sat',
+                'kodesatuan.satuan',
+            ])
+            ->sortWithColumns($this->sortColumns)
+            ->paginate($this->perpage, ['*'], 'page_psikotropika');
     }
 
     public function render(): View
@@ -104,11 +104,14 @@ class LaporanPemakaianObatNAPZA extends Component
                     'stok_awal'       => round($model->stok_awal, 2),
                     'tf_masuk'        => round($model->tf_masuk, 2),
                     'penerimaan_obat' => round($model->penerimaan_obat, 2),
-                    'total_masuk'     => $totalMasuk = round($model->tf_masuk + $model->penerimaan_obat, 2),
+                    'hibah_obat'      => round($model->hibah_obat, 2),
+                    'retur_pasien'    => round($model->retur_pasien, 2),
+                    'total_masuk'     => $totalMasuk = round($model->tf_masuk + $model->penerimaan_obat + $model->hibah_obat + $model->retur_pasien, 2),
                     'pemberian_obat'  => round($model->pemberian_obat, 2),
                     'penjualan_obat'  => round($model->penjualan_obat, 2),
                     'tf_keluar'       => round($model->tf_keluar, 2),
-                    'total_keluar'    => $totalKeluar = round($model->pemberian_obat + $model->penjualan_obat + $model->tf_keluar, 2),
+                    'retur_supplier'  => round($model->retur_supplier, 2),
+                    'total_keluar'    => $totalKeluar = round($model->pemberian_obat + $model->penjualan_obat + $model->tf_keluar + $model->retur_supplier, 2),
                     'stok_akhir'      => round($model->stok_awal + $totalMasuk - $totalKeluar, 2),
                 ]),
             'Psikotropika' => Obat::query()
@@ -122,11 +125,14 @@ class LaporanPemakaianObatNAPZA extends Component
                     'stok_awal'       => round($model->stok_awal, 2),
                     'tf_masuk'        => round($model->tf_masuk, 2),
                     'penerimaan_obat' => round($model->penerimaan_obat, 2),
+                    'hibah_obat'      => round($model->hibah_obat, 2),
+                    'retur_pasien'    => round($model->retur_pasien, 2),
                     'total_masuk'     => $totalMasuk = round($model->tf_masuk + $model->penerimaan_obat, 2),
                     'pemberian_obat'  => round($model->pemberian_obat, 2),
                     'penjualan_obat'  => round($model->penjualan_obat, 2),
                     'tf_keluar'       => round($model->tf_keluar, 2),
-                    'total_keluar'    => $totalKeluar = round($model->pemberian_obat + $model->penjualan_obat + $model->tf_keluar, 2),
+                    'retur_supplier'  => round($model->retur_supplier, 2),
+                    'total_keluar'    => $totalKeluar = round($model->pemberian_obat + $model->penjualan_obat + $model->tf_keluar + $model->retur_supplier, 2),
                     'stok_akhir'      => round($model->stok_awal + $totalMasuk - $totalKeluar, 2),
                 ]),
         ];
