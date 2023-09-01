@@ -151,6 +151,29 @@ class DaftarPasienRanap extends Component
                 ->daftarPasienRanap($this->tglAwal, $this->tglAkhir, $this->statusPerawatan)
                 ->orderBy('no_rawat')
                 ->get()
+                ->map(fn (RegistrasiPasien $model): array => [
+                    'no_rawat'     => $model->no_rawat,
+                    'no_rkm_medis' => $model->no_rkm_medis,
+                    'kamar'        => "{$model->kd_kamar} {$model->nm_bangsal}",
+                    'kelas'        => $model->kelas,
+                    'pasien'       => $model->nm_pasien,
+                    'alamat'       => $model->alamat,
+                    'agama'        => $model->agama,
+                    'p_jawab'      => $model->pj,
+                    'jenis_bayar'  => $model->png_jawab,
+                    'asal_poli'    => $model->nm_poli,
+                    'dokter_poli'  => $model->dokter_poli,
+                    'status'       => $model->stts_pulang,
+                    'tgl_masuk'    => $model->tgl_masuk,
+                    'jam_masuk'    => $model->jam_masuk,
+                    'tgl_keluar'   => $model->tgl_keluar,
+                    'jam_keluar'   => $model->jam_keluar,
+                    'tarif_kamar'  => (float) $model->trf_kamar,
+                    'lama'         => (int) $model->lama,
+                    'total'        => (float) $model->ttl_biaya,
+                    'dpjp'         => $model->dokter_ranap,
+                    'no_hp'        => $model->no_tlp,
+                ])
         ];
     }
 
@@ -174,7 +197,7 @@ class DaftarPasienRanap extends Component
             'Tgl. Keluar',
             'Jam Keluar',
             'Tarif Kamar (RP)',
-            'Lama (RP)',
+            'Lama',
             'Total (RP)',
             'DPJP',
             'No. HP',
