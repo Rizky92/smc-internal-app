@@ -104,6 +104,62 @@ if (!function_exists('map_bulan')) {
     }
 }
 
+if (!function_exists('trackersql')) {
+    /**
+     * @param  Closure|callable $callable
+     */
+    function trackersql(string $connection = 'mysql_smc', string $userId = null, $callable): void
+    {
+        if (app('impersonate')->isImpersonating() || app()->runningUnitTests() || ! is_callable($callable)) {
+            return;
+        }
+
+        DB::connection($connection)->enableQueryLog();
+
+        $callable();
+
+        foreach (DB::connection($connection)->getQueryLog() as $log) {
+            foreach ($log['bindings'] as $pos => $value) {
+                if (is_string($value)) {
+                    $log['bindings'][$pos] = "'{$value}'";
+                }
+
+                $log['bindings'] = collect($log['bindings'])->map(function ($value, $key) {
+                    if (! is_string($value)) {
+                        return $value;
+                    }
+
+                    $value = str($value);
+    
+                    if ($value->contains('\'')) {
+                        $value = $value->replace('\'', '\\\'');
+                    }
+    
+                    if ($value->contains('?')) {
+                        $value = $value->replace('?', '\?');
+                    }
+    
+                    return "'{$value->value()}'";
+                })->all();
+            }
+
+            $sql = Str::of($log['query'])
+                ->replaceArray('?', $log['bindings']);
+
+            DB::connection('mysql_smc')->table('trackersql')->insert([
+                'tanggal'    => now(),
+                'sqle'       => (string) $sql,
+                'usere'      => $userId ?? Auth::user()->nik,
+                'ip'         => request()->ip(),
+                'connection' => $connection,
+            ]);
+        }
+
+        DB::connection($connection)->flushQueryLog();
+        DB::connection($connection)->disableQueryLog();
+    }
+}
+
 if (!function_exists('tracker_start')) {
     function tracker_start(string $connection = 'mysql_smc'): void
     {
@@ -166,10 +222,10 @@ if (!function_exists('func_get_named_args')) {
      */
     function func_get_named_args($object, $name, $args): array
     {
-        $func = new ReflectionMethod($object, $name);
+        $method = new ReflectionMethod($object, $name);
         $res = [];
 
-        foreach ($func->getParameters() as $param) {
+        foreach ($method->getParameters() as $param) {
             $res[$param->name] = $args[$param->getPosition()] ?? $param->getDefaultValue();
         }
 
@@ -190,16 +246,17 @@ if (!function_exists('str')) {
 if (!function_exists('maybe')) {
     /**
      * @param  mixed $obj
+     * @param  \Closure|callable $default
      * 
      * @return mixed
      */
-    function maybe($obj, callable $default = null)
+    function maybe($obj, $default = null)
     {
         if (is_null($obj) && !is_null($default)) {
             return Closure::fromCallable($default);
         }
 
-        if (is_null($obj)) {
+        if (is_null($obj) && is_null($default)) {
             return null;
         }
 
