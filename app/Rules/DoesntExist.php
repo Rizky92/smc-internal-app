@@ -5,7 +5,7 @@ namespace App\Rules;
 use Illuminate\Contracts\Validation\Rule;
 
 /**
- * @template TModel as class-string<\Illuminate\Database\Eloquent\Model>
+ * @template TModel of class-string<\Illuminate\Database\Eloquent\Model>
  */
 class DoesntExist implements Rule
 {

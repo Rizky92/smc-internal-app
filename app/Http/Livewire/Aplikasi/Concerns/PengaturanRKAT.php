@@ -55,8 +55,8 @@ trait PengaturanRKAT
         app(RKATSettings::class)
             ->fill([
                 'tahun'                 => $validated['tahunRKAT'],
-                'batas_penetapan_awal'  => carbon($validated['tglAwalPenetapanRKAT']),
-                'batas_penetapan_akhir' => carbon($validated['tglAkhirPenetapanRKAT']),
+                'tgl_penetapan_awal'  => carbon($validated['tglAwalPenetapanRKAT']),
+                'tgl_penetapan_akhir' => carbon($validated['tglAkhirPenetapanRKAT']),
             ])
             ->save();
 
@@ -71,7 +71,7 @@ trait PengaturanRKAT
         $settings = app(RKATSettings::class);
 
         $this->tahunRKAT = $settings->tahun;
-        $this->tglAwalPenetapanRKAT = $settings->batas_penetapan_awal->format('Y-m-d');
-        $this->tglAkhirPenetapanRKAT = $settings->batas_penetapan_akhir->format('Y-m-d');
+        $this->tglAwalPenetapanRKAT = $settings->tgl_penetapan_awal->format('Y-m-d');
+        $this->tglAkhirPenetapanRKAT = $settings->tgl_penetapan_akhir->format('Y-m-d');
     }
 }

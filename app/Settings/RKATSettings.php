@@ -10,9 +10,9 @@ class RKATSettings extends Settings
 {
     public int $tahun;
 
-    public Carbon $batas_penetapan_awal;
+    public Carbon $tgl_penetapan_awal;
 
-    public Carbon $batas_penetapan_akhir;
+    public Carbon $tgl_penetapan_akhir;
     
     public static function group(): string
     {
@@ -22,8 +22,8 @@ class RKATSettings extends Settings
     public static function casts(): array
     {
         return [
-            'batas_penetapan_awal'  => DateTimeInterfaceCast::class,
-            'batas_penetapan_akhir' => DateTimeInterfaceCast::class,
+            'tgl_penetapan_awal'  => DateTimeInterfaceCast::class,
+            'tgl_penetapan_akhir' => DateTimeInterfaceCast::class,
         ];
     }
 }

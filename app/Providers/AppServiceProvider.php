@@ -51,7 +51,7 @@ class AppServiceProvider extends ServiceProvider
         // https://carbon.nesbot.com/laravel/
         DB::connection('mysql_smc')->setQueryGrammar(new MysqlGrammar);
 
-        /** @psalm-scope-this \Illuminate\Database\Eloquent\Builder */
+        /** @psalm-scope-this Illuminate\Database\Eloquent\Builder */
         Builder::macro('isEagerLoaded', fn (string $name): bool => isset($this->eagerLoad[$name]));
         
         $this->registerBladeDirectives();
