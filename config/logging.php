@@ -41,6 +41,12 @@ return [
             'ignore_exceptions' => false,
         ],
 
+        'khanza' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/khanza_error.log'),
+            'ignore_exceptions' => true,
+        ],
+
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),

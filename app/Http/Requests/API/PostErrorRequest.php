@@ -13,7 +13,7 @@ class PostErrorRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,10 @@ class PostErrorRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'message'   => ['required', 'string'],
+            'timestamp' => ['required', 'string'],
+            'stack'     => ['required', 'array'],
+            'stack.*'   => ['string'],
         ];
     }
 }
