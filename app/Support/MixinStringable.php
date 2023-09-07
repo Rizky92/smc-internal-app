@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Support\Mixins;
+namespace App\Support;
 
 use Closure;
 use Illuminate\Support\Stringable;
 
-class CustomStringable
+class MixinStringable
 {
     /**
      * replace all strings with provided value

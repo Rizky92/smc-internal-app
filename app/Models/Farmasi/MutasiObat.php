@@ -3,12 +3,12 @@
 namespace App\Models\Farmasi;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 
 class MutasiObat extends Model
 {
     protected $connection = 'mysql_sik';
-    
+
     protected $primaryKey = 'kode_brng';
 
     protected $keyType = 'string';

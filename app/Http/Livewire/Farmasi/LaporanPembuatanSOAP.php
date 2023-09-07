@@ -3,12 +3,12 @@
 namespace App\Http\Livewire\Farmasi;
 
 use App\Models\Perawatan\PemeriksaanRanap;
-use App\Support\Traits\Livewire\DeferredLoading;
-use App\Support\Traits\Livewire\ExcelExportable;
-use App\Support\Traits\Livewire\Filterable;
-use App\Support\Traits\Livewire\FlashComponent;
-use App\Support\Traits\Livewire\LiveTable;
-use App\Support\Traits\Livewire\MenuTracker;
+use App\Support\Livewire\Concerns\DeferredLoading;
+use App\Support\Livewire\Concerns\ExcelExportable;
+use App\Support\Livewire\Concerns\Filterable;
+use App\Support\Livewire\Concerns\FlashComponent;
+use App\Support\Livewire\Concerns\LiveTable;
+use App\Support\Livewire\Concerns\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -44,26 +44,26 @@ class LaporanPembuatanSOAP extends Component
         return $this->isDeferred
             ? []
             : PemeriksaanRanap::query()
-                ->pemeriksaanOlehFarmasi($this->tglAwal, $this->tglAkhir)
-                ->search($this->cari, [
-                    'pemeriksaan_ranap.no_rawat',
-                    'pasien.no_rkm_medis',
-                    'pasien.nm_pasien',
-                    'penjab.kd_pj',
-                    'penjab.png_jawab',
-                    'ifnull(pemeriksaan_ranap.alergi, "")',
-                    'ifnull(pemeriksaan_ranap.keluhan, "")',
-                    'ifnull(pemeriksaan_ranap.pemeriksaan, "")',
-                    'ifnull(pemeriksaan_ranap.penilaian, "")',
-                    'ifnull(pemeriksaan_ranap.rtl, "")',
-                    'ifnull(pemeriksaan_ranap.instruksi, "")',
-                    'ifnull(pemeriksaan_ranap.evaluasi, "")',
-                    'pemeriksaan_ranap.nip',
-                    'petugas.nama',
-                    'jabatan.nm_jbtn',
-                ])
-                ->sortWithColumns($this->sortColumns)
-                ->paginate($this->perpage);
+            ->pemeriksaanOlehFarmasi($this->tglAwal, $this->tglAkhir)
+            ->search($this->cari, [
+                'pemeriksaan_ranap.no_rawat',
+                'pasien.no_rkm_medis',
+                'pasien.nm_pasien',
+                'penjab.kd_pj',
+                'penjab.png_jawab',
+                'ifnull(pemeriksaan_ranap.alergi, "")',
+                'ifnull(pemeriksaan_ranap.keluhan, "")',
+                'ifnull(pemeriksaan_ranap.pemeriksaan, "")',
+                'ifnull(pemeriksaan_ranap.penilaian, "")',
+                'ifnull(pemeriksaan_ranap.rtl, "")',
+                'ifnull(pemeriksaan_ranap.instruksi, "")',
+                'ifnull(pemeriksaan_ranap.evaluasi, "")',
+                'pemeriksaan_ranap.nip',
+                'petugas.nama',
+                'jabatan.nm_jbtn',
+            ])
+            ->sortWithColumns($this->sortColumns)
+            ->paginate($this->perpage);
     }
 
     public function render(): View
@@ -90,7 +90,7 @@ class LaporanPembuatanSOAP extends Component
                     'no_rawat'      => $model->no_rawat,
                     'nm_pasien'     => $model->nm_pasien,
                     'png_jawab'     => $model->png_jawab,
-                'dpjp'          => optional($model->dpjp)->pluck('nm_dokter')->join('; '),
+                    'dpjp'          => optional($model->dpjp)->pluck('nm_dokter')->join('; '),
                     'alergi'        => $model->alergi,
                     'keluhan'       => $model->keluhan,
                     'pemeriksaan'   => $model->pemeriksaan,

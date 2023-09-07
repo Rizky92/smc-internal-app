@@ -3,10 +3,10 @@
 namespace App\Http\Livewire\Aplikasi;
 
 use App\Models\Bidang;
-use App\Support\Traits\Livewire\Filterable;
-use App\Support\Traits\Livewire\FlashComponent;
-use App\Support\Traits\Livewire\LiveTable;
-use App\Support\Traits\Livewire\MenuTracker;
+use App\Support\Livewire\Concerns\Filterable;
+use App\Support\Livewire\Concerns\FlashComponent;
+use App\Support\Livewire\Concerns\LiveTable;
+use App\Support\Livewire\Concerns\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;

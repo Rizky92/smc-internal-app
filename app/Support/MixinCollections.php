@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Mixins;
+namespace App\Support;
 
 use Closure;
 use Illuminate\Support\Arr;
@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 
-class CustomCollections
+class MixinCollections
 {
     /**
      * @return \Closure(string, string): \Illuminate\Support\Stringable
@@ -61,7 +61,9 @@ class CustomCollections
          * @psalm-scope-this Illuminate\Support\Collection
          */
         return fn (bool $condition, ...$values): Collection =>
-            $this->when($condition, fn (Collection $c) => 
+            $this->when(
+                $condition,
+                fn (Collection $c) =>
                 $c->push($values)
             );
     }
@@ -74,8 +76,10 @@ class CustomCollections
         /**
          * @psalm-scope-this Illuminate\Support\Collection
          */
-        return fn (bool $condition, ...$values): Collection => 
-            $this->unless($condition, fn (Collection $c) =>
+        return fn (bool $condition, ...$values): Collection =>
+            $this->unless(
+                $condition,
+                fn (Collection $c) =>
                 $c->push($values)
             );
     }
@@ -89,7 +93,8 @@ class CustomCollections
          * @psalm-scope-this Illuminate\Support\Collection
          */
         return fn (?string $search = null, int $maxDistance = 1): Collection =>
-            $this->filter(fn (string $v): bool =>
+            $this->filter(
+                fn (string $v): bool =>
                 empty($search) ?: levenshtein($v, $search) <= $maxDistance
             );
     }
@@ -103,7 +108,8 @@ class CustomCollections
          * @psalm-scope-this Illuminate\Support\Collection
          */
         return fn (?string $search = null, int $maxDistance = 1): bool =>
-            $this->contains(fn (string $v): bool =>
+            $this->contains(
+                fn (string $v): bool =>
                 empty($search) ?: levenshtein($v, $search) <= $maxDistance
             );
     }
@@ -118,13 +124,13 @@ class CustomCollections
          * 
          * @param  ...string $key
          */
-        return function ($key): bool {
+        return function (...$key): bool {
             /** @var \Illuminate\Support\Collection $this */
 
             $key = is_string($key) ? $key : func_get_args();
 
             if ($this->isAssoc() && is_string($key)) {
-                return ! $this->has($key);
+                return !$this->has($key);
             }
 
             if (is_string($key) && Str::startsWith($key, '*.')) {

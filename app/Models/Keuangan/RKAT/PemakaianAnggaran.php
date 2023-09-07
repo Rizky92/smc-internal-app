@@ -4,10 +4,10 @@ namespace App\Models\Keuangan\RKAT;
 
 use App\Models\Bidang;
 use App\Models\Kepegawaian\Petugas;
-use App\Support\Traits\Eloquent\Searchable;
-use App\Support\Traits\Eloquent\Sortable;
+use App\Support\Eloquent\Concerns\Searchable;
+use App\Support\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Znck\Eloquent\Relations\BelongsToThrough;
@@ -59,8 +59,10 @@ class PemakaianAnggaran extends Model
         return $query
             ->with(['petugas', 'anggaranBidang', 'anggaranBidang.anggaran', 'anggaranBidang.bidang'])
             ->withSum('detail as nominal_pemakaian', 'nominal')
-            ->when($bidangId !== -1,
-                fn (Builder $q): Builder => $q->whereHas('anggaranBidang.bidang',
+            ->when(
+                $bidangId !== -1,
+                fn (Builder $q): Builder => $q->whereHas(
+                    'anggaranBidang.bidang',
                     fn (Builder $q): Builder => $q->whereId($bidangId)
                 )
             );

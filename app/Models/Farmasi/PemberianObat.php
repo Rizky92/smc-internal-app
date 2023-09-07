@@ -2,10 +2,10 @@
 
 namespace App\Models\Farmasi;
 
-use App\Support\Traits\Eloquent\Searchable;
-use App\Support\Traits\Eloquent\Sortable;
+use App\Support\Eloquent\Concerns\Searchable;
+use App\Support\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
@@ -14,7 +14,7 @@ class PemberianObat extends Model
     use Searchable, Sortable;
 
     protected $connection = 'mysql_sik';
-    
+
     protected $primaryKey = false;
 
     protected $keyType = null;
@@ -64,7 +64,7 @@ class PemberianObat extends Model
     public function scopePendapatanObat(Builder $query, string $jenisPerawatan = '', string $year = '2022', bool $selainFarmasi = false): Builder
     {
         $date = carbon()->setYear(intval($year))->startOfYear()->toPeriod(carbon()->setYear(intval($year))->endOfYear());
-        
+
         return $query->selectRaw("
             round(sum(detail_pemberian_obat.total)) jumlah,
             month(detail_pemberian_obat.tgl_perawatan) bulan

@@ -2,7 +2,7 @@
 
 namespace App\Models\Kepegawaian;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 
 class Petugas extends Model
 {

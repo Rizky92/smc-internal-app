@@ -3,9 +3,9 @@
 namespace App\Http\Livewire\User\Khanza;
 
 use App\Models\Aplikasi\User;
-use App\Support\Traits\Livewire\DeferredModal;
-use App\Support\Traits\Livewire\Filterable;
-use App\Support\Traits\Livewire\LiveTable;
+use App\Support\Livewire\Concerns\DeferredModal;
+use App\Support\Livewire\Concerns\Filterable;
+use App\Support\Livewire\Concerns\LiveTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -58,12 +58,13 @@ class TransferHakAkses extends Component
         return $this->isDeferred
             ? []
             : User::query()
-                ->where(DB::raw('trim(pegawai.nik)'), '!=', $this->nrp)
-                ->where(fn (Builder $q): Builder => $q
+            ->where(DB::raw('trim(pegawai.nik)'), '!=', $this->nrp)
+            ->where(
+                fn (Builder $q): Builder => $q
                     ->search($this->cari)
                     ->when($this->showChecked, fn (Builder $q): Builder => $q->orWhereIn(DB::raw('trim(pegawai.nik)'), $checkedUsers))
-                )
-                ->get();
+            )
+            ->get();
     }
 
     public function render(): View

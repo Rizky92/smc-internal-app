@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Traits\Eloquent;
+namespace App\Support\Eloquent\Concerns;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
@@ -18,9 +18,9 @@ trait StatusOrder
 
     public function statusOrder(): Attribute
     {
-        return Attribute::get(fn ($_, array $attributes): string => 
-            ($attributes[$this->dateAttributeName()] === '0000-00-00' &&
-             $attributes[$this->timeAttributeName()] === '00:00:00')
+        return Attribute::get(
+            fn ($_, array $attributes): string => ($attributes[$this->dateAttributeName()] === '0000-00-00' &&
+                $attributes[$this->timeAttributeName()] === '00:00:00')
                 ? 'Belum Dilayani'
                 : 'Sudah Dilayani'
         );

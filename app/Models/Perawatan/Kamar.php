@@ -3,14 +3,14 @@
 namespace App\Models\Perawatan;
 
 use App\Models\Bangsal;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Kamar extends Model
 {
     protected $connection = 'mysql_sik';
-    
+
     protected $primaryKey = 'kd_kamar';
 
     protected $keyType = 'string';

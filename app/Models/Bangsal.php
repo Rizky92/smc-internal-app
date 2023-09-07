@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Bangsal extends Model
 {
     protected $connection = 'mysql_sik';
-    
+
     protected $primaryKey = 'kd_bangsal';
 
     protected $keyType = 'string';

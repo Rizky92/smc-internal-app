@@ -3,7 +3,7 @@
 namespace App\Http\Livewire\User\Siap;
 
 use App\Models\Aplikasi\TrackerMenu;
-use App\Support\Traits\Livewire\DeferredModal;
+use App\Support\Livewire\Concerns\DeferredModal;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -37,8 +37,8 @@ class LihatAktivitas extends Component
         return $this->isDeferred || empty($this->userId)
             ? []
             : TrackerMenu::lihatAktivitasUser($this->userId)
-                ->get()
-                ->groupBy(fn (TrackerMenu $model): string => carbon_immutable($model->waktu)->format('Y-m-d'));
+            ->get()
+            ->groupBy(fn (TrackerMenu $model): string => carbon_immutable($model->waktu)->format('Y-m-d'));
     }
 
     public function render(): View

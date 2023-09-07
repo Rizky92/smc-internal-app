@@ -3,8 +3,8 @@
 namespace App\Http\Livewire\Keuangan\Modal;
 
 use App\Models\Keuangan\RKAT\Anggaran;
-use App\Support\Traits\Livewire\DeferredModal;
-use App\Support\Traits\Livewire\Filterable;
+use App\Support\Livewire\Concerns\DeferredModal;
+use App\Support\Livewire\Concerns\Filterable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;

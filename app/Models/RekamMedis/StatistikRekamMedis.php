@@ -2,8 +2,8 @@
 
 namespace App\Models\RekamMedis;
 
-use App\Support\Traits\Eloquent\Searchable;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Concerns\Searchable;
+use App\Support\Eloquent\Model;
 
 class StatistikRekamMedis extends Model
 {

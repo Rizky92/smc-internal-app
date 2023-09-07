@@ -3,8 +3,8 @@
 namespace App\Http\Livewire\Aplikasi\Modal;
 
 use App\Models\Bidang;
-use App\Support\Traits\Livewire\DeferredModal;
-use App\Support\Traits\Livewire\Filterable;
+use App\Support\Livewire\Concerns\DeferredModal;
+use App\Support\Livewire\Concerns\Filterable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -62,7 +62,7 @@ class InputBidangUnit extends Component
             return;
         }
 
-        if (! Auth::user()->can('aplikasi.bidang-unit.create')) {
+        if (!Auth::user()->can('aplikasi.bidang-unit.create')) {
             $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini.');
 
@@ -81,7 +81,7 @@ class InputBidangUnit extends Component
 
     public function update(): void
     {
-        if (! Auth::user()->can('aplikasi.bidang-unit.update')) {
+        if (!Auth::user()->can('aplikasi.bidang-unit.update')) {
             $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini.');
 
@@ -90,7 +90,7 @@ class InputBidangUnit extends Component
 
         $bidang = Bidang::find($this->bidangId);
 
-        if (! $bidang) {
+        if (!$bidang) {
             $this->dispatchBrowserEvent('data-not-found');
             $this->emit('flash.error', 'Tidak dapat menemukan data yang bisa diupdate. Silahkan coba kembali.');
 

@@ -4,9 +4,9 @@ namespace App\Http\Livewire\User\Khanza;
 
 use App\Models\Aplikasi\HakAkses;
 use App\Models\Aplikasi\User;
-use App\Support\Traits\Livewire\DeferredModal;
-use App\Support\Traits\Livewire\Filterable;
-use App\Support\Traits\Livewire\LiveTable;
+use App\Support\Livewire\Concerns\DeferredModal;
+use App\Support\Livewire\Concerns\Filterable;
+use App\Support\Livewire\Concerns\LiveTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -56,15 +56,19 @@ class SetHakAkses extends Component
         return $this->isDeferred
             ? []
             : HakAkses::query()
-                ->search($this->cari, ['nama_field', 'judul_menu'])
-                ->when($this->showChecked, fn (Builder $q): Builder => $q
-                    ->orWhereIn('nama_field', collect($this->checkedHakAkses)
-                        ->filter()
-                        ->keys()
-                        ->all()
+            ->search($this->cari, ['nama_field', 'judul_menu'])
+            ->when(
+                $this->showChecked,
+                fn (Builder $q): Builder => $q
+                    ->orWhereIn(
+                        'nama_field',
+                        collect($this->checkedHakAkses)
+                            ->filter()
+                            ->keys()
+                            ->all()
                     )
-                )
-                ->get();
+            )
+            ->get();
     }
 
     public function render(): View

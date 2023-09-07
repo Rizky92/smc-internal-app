@@ -5,10 +5,10 @@ namespace App\Models;
 use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Models\Keuangan\RKAT\PemakaianAnggaran;
 use App\Models\Keuangan\RKAT\PemakaianAnggaranDetail;
-use App\Support\Traits\Eloquent\Searchable;
-use App\Support\Traits\Eloquent\Sortable;
+use App\Support\Eloquent\Concerns\Searchable;
+use App\Support\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
@@ -51,7 +51,7 @@ class Bidang extends Model
             PemakaianAnggaranDetail::class,
             [
                 AnggaranBidang::class,
-                PemakaianAnggaran::class,            
+                PemakaianAnggaran::class,
             ],
             [
                 'bidang_id',

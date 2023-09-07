@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Traits\Eloquent;
+namespace App\Support\Eloquent\Concerns;
 
 trait MergeCasts
 {
@@ -32,19 +32,27 @@ trait MergeCasts
                         if (count($cast) === 1) {
                             return $cast[0];
                         }
-    
+
                         [$cast, $arguments] = [array_shift($cast), $cast];
-    
-                        return $cast.':'.implode(',', $arguments);
+
+                        return $cast . ':' . implode(',', $arguments);
                     });
-                break;
+                    break;
 
                 default:
                     $casts[$attribute] = $cast;
-                break;
+                    break;
             }
         }
 
         return $casts;
+    }
+
+    public function getCasts()
+    {
+        if ($this->getIncrementing()) {
+            return array_merge([$this->getKeyName() => $this->getKeyType()], $this->casts);
+        }
+        return $this->casts;
     }
 }

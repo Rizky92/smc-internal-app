@@ -4,10 +4,10 @@ namespace App\Http\Livewire\HakAkses\Siap;
 
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
-use App\Support\Traits\Livewire\DeferredModal;
-use App\Support\Traits\Livewire\Filterable;
-use App\Support\Traits\Livewire\FlashComponent;
-use App\Support\Traits\Livewire\LiveTable;
+use App\Support\Livewire\Concerns\DeferredModal;
+use App\Support\Livewire\Concerns\Filterable;
+use App\Support\Livewire\Concerns\FlashComponent;
+use App\Support\Livewire\Concerns\LiveTable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;

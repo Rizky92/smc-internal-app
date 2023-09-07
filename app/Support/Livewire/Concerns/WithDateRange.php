@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Traits\Livewire;
+namespace App\Support\Livewire\Concerns;
 
 trait WithDateRange
 {
@@ -22,7 +22,7 @@ trait WithDateRange
     {
         $this->defaultValueWithDateRange();
     }
-    
+
     protected function defaultValueWithDateRange(): void
     {
         $this->tglAwal = now()->startOfMonth();

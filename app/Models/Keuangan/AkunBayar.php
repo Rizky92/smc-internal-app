@@ -2,7 +2,7 @@
 
 namespace App\Models\Keuangan;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 
 class AkunBayar extends Model
 {

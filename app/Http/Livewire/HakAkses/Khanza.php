@@ -4,10 +4,10 @@ namespace App\Http\Livewire\HakAkses;
 
 use App\Models\Aplikasi\HakAkses;
 use App\Models\Aplikasi\User;
-use App\Support\Traits\Livewire\Filterable;
-use App\Support\Traits\Livewire\FlashComponent;
-use App\Support\Traits\Livewire\LiveTable;
-use App\Support\Traits\Livewire\MenuTracker;
+use App\Support\Livewire\Concerns\Filterable;
+use App\Support\Livewire\Concerns\FlashComponent;
+use App\Support\Livewire\Concerns\LiveTable;
+use App\Support\Livewire\Concerns\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;

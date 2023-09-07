@@ -3,10 +3,10 @@
 namespace App\Models\Keuangan;
 
 use App\Models\Perawatan\RegistrasiPasien;
-use App\Support\Traits\Eloquent\Searchable;
-use App\Support\Traits\Eloquent\Sortable;
+use App\Support\Eloquent\Concerns\Searchable;
+use App\Support\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 

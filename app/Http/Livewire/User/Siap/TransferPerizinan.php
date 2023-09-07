@@ -3,9 +3,9 @@
 namespace App\Http\Livewire\User\Siap;
 
 use App\Models\Aplikasi\User;
-use App\Support\Traits\Livewire\DeferredModal;
-use App\Support\Traits\Livewire\Filterable;
-use App\Support\Traits\Livewire\LiveTable;
+use App\Support\Livewire\Concerns\DeferredModal;
+use App\Support\Livewire\Concerns\Filterable;
+use App\Support\Livewire\Concerns\LiveTable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
@@ -69,12 +69,12 @@ class TransferPerizinan extends Component
         return $this->isDeferred
             ? []
             : User::query()
-                ->with('roles')
-                ->whereRaw('trim(pegawai.nik) != ?', [$this->nrp])
-                ->where(fn (Builder $q): Builder => $q
-                    ->search($this->cari)
-                    ->when($this->showChecked, fn (Builder $q): Builder => $q->orWhereIn(DB::raw('trim(pegawai.nik)'), $checkedUsers)))
-                ->get();
+            ->with('roles')
+            ->whereRaw('trim(pegawai.nik) != ?', [$this->nrp])
+            ->where(fn (Builder $q): Builder => $q
+                ->search($this->cari)
+                ->when($this->showChecked, fn (Builder $q): Builder => $q->orWhereIn(DB::raw('trim(pegawai.nik)'), $checkedUsers)))
+            ->get();
     }
 
     public function prepareTransfer(string $nrp = '', string $nama = ''): void
@@ -86,8 +86,8 @@ class TransferPerizinan extends Component
             ->with(['roles', 'permissions'])
             ->whereRaw('trim(pegawai.nik) = ?', $nrp)
             ->first();
-        
-        if (! $user) {
+
+        if (!$user) {
             throw (new ModelNotFoundException())->setModel(User::class, [$nrp]);
         }
 
@@ -97,7 +97,7 @@ class TransferPerizinan extends Component
 
     public function save(): void
     {
-        if (! Auth::user()->hasRole(config('permission.superadmin_name'))) {
+        if (!Auth::user()->hasRole(config('permission.superadmin_name'))) {
             $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 

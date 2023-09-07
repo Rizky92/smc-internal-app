@@ -3,12 +3,12 @@
 namespace App\Http\Livewire\RekamMedis;
 
 use App\Models\Perawatan\RegistrasiPasien;
-use App\Support\Traits\Livewire\DeferredLoading;
-use App\Support\Traits\Livewire\ExcelExportable;
-use App\Support\Traits\Livewire\Filterable;
-use App\Support\Traits\Livewire\FlashComponent;
-use App\Support\Traits\Livewire\LiveTable;
-use App\Support\Traits\Livewire\MenuTracker;
+use App\Support\Livewire\Concerns\DeferredLoading;
+use App\Support\Livewire\Concerns\ExcelExportable;
+use App\Support\Livewire\Concerns\Filterable;
+use App\Support\Livewire\Concerns\FlashComponent;
+use App\Support\Livewire\Concerns\LiveTable;
+use App\Support\Livewire\Concerns\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\LazyCollection;
 use Illuminate\View\View;
@@ -53,19 +53,19 @@ class StatusDataPasien extends Component
         return $this->isDeferred
             ? []
             : RegistrasiPasien::query()
-                ->statusDataRM($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan, $this->semuaRegistrasi)
-                ->search($this->cari, [
-                    'reg_periksa.no_rawat',
-                    'reg_periksa.tgl_registrasi',
-                    'reg_periksa.stts',
-                    'dokter.nm_dokter',
-                    'reg_periksa.no_rkm_medis',
-                    'pasien.nm_pasien',
-                    'poliklinik.nm_poli',
-                    'reg_periksa.status_lanjut',
-                ])
-                ->sortWithColumns($this->sortColumns)
-                ->paginate($this->perpage);
+            ->statusDataRM($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan, $this->semuaRegistrasi)
+            ->search($this->cari, [
+                'reg_periksa.no_rawat',
+                'reg_periksa.tgl_registrasi',
+                'reg_periksa.stts',
+                'dokter.nm_dokter',
+                'reg_periksa.no_rkm_medis',
+                'pasien.nm_pasien',
+                'poliklinik.nm_poli',
+                'reg_periksa.status_lanjut',
+            ])
+            ->sortWithColumns($this->sortColumns)
+            ->paginate($this->perpage);
     }
 
     public function render(): View

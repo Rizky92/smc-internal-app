@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Traits\Eloquent;
+namespace App\Support\Eloquent\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
 

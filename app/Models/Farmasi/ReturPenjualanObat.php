@@ -3,7 +3,7 @@
 namespace App\Models\Farmasi;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 
 class ReturPenjualanObat extends Model
 {
@@ -33,7 +33,7 @@ class ReturPenjualanObat extends Model
     public static function totalReturObat(string $year = '2022'): array
     {
         $data = static::returObatPasien($year)->pluck('jumlah', 'bulan')->map(fn ($v) => floatval($v));
-        
+
         return map_bulan($data);
     }
 }

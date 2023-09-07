@@ -2,12 +2,12 @@
 
 namespace App\Models\Farmasi;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 
 class PenerimaanObatDetail extends Model
 {
     protected $connection = 'mysql_sik';
-    
+
     protected $primaryKey = false;
 
     protected $keyType = null;

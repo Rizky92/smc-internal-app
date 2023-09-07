@@ -4,12 +4,12 @@ namespace App\Http\Livewire\Keuangan;
 
 use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\Rekening;
-use App\Support\Traits\Livewire\DeferredLoading;
-use App\Support\Traits\Livewire\ExcelExportable;
-use App\Support\Traits\Livewire\Filterable;
-use App\Support\Traits\Livewire\FlashComponent;
-use App\Support\Traits\Livewire\LiveTable;
-use App\Support\Traits\Livewire\MenuTracker;
+use App\Support\Livewire\Concerns\DeferredLoading;
+use App\Support\Livewire\Concerns\ExcelExportable;
+use App\Support\Livewire\Concerns\Filterable;
+use App\Support\Livewire\Concerns\FlashComponent;
+use App\Support\Livewire\Concerns\LiveTable;
+use App\Support\Livewire\Concerns\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -49,23 +49,23 @@ class BukuBesar extends Component
         return $this->isDeferred
             ? []
             : Jurnal::query()
-                ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
-                ->search($this->cari, [
-                    'jurnal.tgl_jurnal',
-                    'jurnal.jam_jurnal',
-                    'jurnal.no_jurnal',
-                    'jurnal.no_bukti',
-                    'jurnal.keterangan',
-                    'detailjurnal.kd_rek',
-                    'rekening.nm_rek',
-                    'detailjurnal.debet',
-                    'detailjurnal.kredit',
-                ])
-                ->sortWithColumns($this->sortColumns, [], [
-                    'tgl_jurnal' => 'asc',
-                    'jam_jurnal' => 'asc',
-                ])
-                ->paginate($this->perpage);
+            ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
+            ->search($this->cari, [
+                'jurnal.tgl_jurnal',
+                'jurnal.jam_jurnal',
+                'jurnal.no_jurnal',
+                'jurnal.no_bukti',
+                'jurnal.keterangan',
+                'detailjurnal.kd_rek',
+                'rekening.nm_rek',
+                'detailjurnal.debet',
+                'detailjurnal.kredit',
+            ])
+            ->sortWithColumns($this->sortColumns, [], [
+                'tgl_jurnal' => 'asc',
+                'jam_jurnal' => 'asc',
+            ])
+            ->paginate($this->perpage);
     }
 
     /**

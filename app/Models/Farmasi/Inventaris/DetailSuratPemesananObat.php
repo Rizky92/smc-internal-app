@@ -2,7 +2,7 @@
 
 namespace App\Models\Farmasi\Inventaris;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 
 class DetailSuratPemesananObat extends Model
 {

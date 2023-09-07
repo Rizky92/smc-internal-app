@@ -2,17 +2,17 @@
 
 namespace App\Models\Keuangan\Jurnal;
 
-use App\Support\Traits\Eloquent\Searchable;
-use App\Support\Traits\Eloquent\Sortable;
+use App\Support\Eloquent\Concerns\Searchable;
+use App\Support\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class JurnalNonMedis extends Model
 {
     use Sortable, Searchable;
-    
+
     protected $connection = 'mysql_smc';
 
     protected $table = 'jurnal_non_medis';

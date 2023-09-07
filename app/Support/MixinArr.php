@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Support\Mixins;
+namespace App\Support;
 
 use Closure;
 
-class CustomArr
+class MixinArr
 {
     /**
      * @return \Closure(array): bool

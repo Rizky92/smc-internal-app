@@ -3,12 +3,12 @@
 namespace App\Models\Farmasi\Inventaris;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 
 class ReturSupplierObat extends Model
 {
     protected $connection = 'mysql_sik';
-    
+
     protected $primaryKey = 'no_retur_beli';
 
     protected $keyType = 'string';

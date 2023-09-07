@@ -3,7 +3,7 @@
 namespace App\Models\Aplikasi;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 
 class TrackerMenu extends Model
 {

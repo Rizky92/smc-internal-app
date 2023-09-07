@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\Eloquent\Model;
 use Closure;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Auth\Access\Gate;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
 class AuthorizeAny
@@ -47,7 +47,7 @@ class AuthorizeAny
             $abilities = str($abilities)->split('/\|/')->filter()->all();
         }
 
-        if (! $this->gate->any($abilities, $this->getGateArguments($request, $models))) {
+        if (!$this->gate->any($abilities, $this->getGateArguments($request, $models))) {
             throw new AuthorizationException;
         }
 
@@ -68,10 +68,10 @@ class AuthorizeAny
             return [];
         }
 
-        return collect($models)->map(fn ($model) => 
-            $model instanceof Model 
-                ? $model
-                : $this->getModel($request, $model));
+        return collect($models)->map(fn ($model) =>
+        $model instanceof Model
+            ? $model
+            : $this->getModel($request, $model));
     }
 
     /**
@@ -90,8 +90,8 @@ class AuthorizeAny
 
         return $request->route($model, null) ?: (
             (preg_match("/^['\"](.*)['\"]$/", trim($model), $matches))
-                ? $matches[1]
-                : null
+            ? $matches[1]
+            : null
         );
     }
 

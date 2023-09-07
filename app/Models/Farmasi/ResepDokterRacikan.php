@@ -2,10 +2,10 @@
 
 namespace App\Models\Farmasi;
 
-use App\Support\Traits\Eloquent\Searchable;
-use App\Support\Traits\Eloquent\Sortable;
+use App\Support\Eloquent\Concerns\Searchable;
+use App\Support\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 
 class ResepDokterRacikan extends Model
 {
@@ -23,7 +23,7 @@ class ResepDokterRacikan extends Model
 
     public $timestamps = false;
 
-protected array $searchColumns = [
+    protected array $searchColumns = [
         'no_resep',
         'no_racik',
         'nama_racik',
@@ -46,7 +46,7 @@ protected array $searchColumns = [
         if (empty($tglAkhir)) {
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
-        
+
         $sqlSelect = <<<SQL
             resep_obat.tgl_perawatan,
             timestamp(resep_obat.tgl_perawatan, resep_obat.jam) as waktu_validasi,

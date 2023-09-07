@@ -183,10 +183,10 @@ return [
         \Illuminate\Support\Facades\Session::class => \Illuminate\Session\Store::class,
         \Illuminate\Contracts\View\View::class => \Livewire\Macros\ViewMacros::class,
         \Illuminate\View\View::class => \Livewire\Macros\ViewMacros::class,
-        \Illuminate\Support\Arr::class => \App\Support\Mixins\CustomArr::class,
-        \Illuminate\Support\Collection::class => \App\Support\Mixins\CustomCollections::class,
-        \Illuminate\Support\Str::class => \App\Support\Mixins\CustomStr::class,
-        \Illuminate\Support\Stringable::class => \App\Support\Mixins\CustomStringable::class,
+        \Illuminate\Support\Arr::class => \App\Support\CustomArr::class,
+        \Illuminate\Support\Collection::class => \App\Support\CustomCollections::class,
+        \Illuminate\Support\Str::class => \App\Support\CustomStr::class,
+        \Illuminate\Support\Stringable::class => \App\Support\CustomStringable::class,
     ],
 
     'magic' => [

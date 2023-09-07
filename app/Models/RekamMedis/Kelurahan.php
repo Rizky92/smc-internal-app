@@ -2,7 +2,7 @@
 
 namespace App\Models\RekamMedis;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 
 class Kelurahan extends Model
 {

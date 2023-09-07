@@ -2,10 +2,10 @@
 
 namespace App\Models\Keuangan;
 
-use App\Support\Traits\Eloquent\Searchable;
-use App\Support\Traits\Eloquent\Sortable;
+use App\Support\Eloquent\Concerns\Searchable;
+use App\Support\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\JoinClause;
@@ -54,7 +54,7 @@ class PiutangPasien extends Model
 
         return $query->with(['detail' => $data]);
     }
-    
+
     public function scopePiutangBelumLunas(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $penjamin = ''): Builder
     {
         if (empty($tglAwal)) {

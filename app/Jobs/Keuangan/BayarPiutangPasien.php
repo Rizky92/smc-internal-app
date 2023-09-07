@@ -156,7 +156,6 @@ class BayarPiutangPasien implements ShouldQueue
 
                 Jurnal::catat(
                     $this->noRawat,
-                    'U',
                     sprintf('BAYAR PIUTANG TAGIHAN %s, OLEH %s', $this->noTagihan, $this->userId),
                     $this->tglBayar,
                     $detailJurnal->all()

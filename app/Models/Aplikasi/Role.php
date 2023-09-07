@@ -2,7 +2,7 @@
 
 namespace App\Models\Aplikasi;
 
-use App\Support\Traits\Eloquent\Searchable;
+use App\Support\Eloquent\Concerns\Searchable;
 use Spatie\Permission\Models\Role as BaseModel;
 
 class Role extends BaseModel

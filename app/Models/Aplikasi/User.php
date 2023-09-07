@@ -4,8 +4,8 @@ namespace App\Models\Aplikasi;
 
 use App\Casts\AESFromDatabaseCast;
 use App\Casts\BooleanCast;
-use App\Support\Traits\Eloquent\Searchable;
-use App\Support\Traits\Eloquent\Sortable;
+use App\Support\Eloquent\Concerns\Searchable;
+use App\Support\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -38,7 +38,8 @@ class User extends Authenticatable
         'permissions',
     ];
 
-    protected function searchColumns(): array {
+    protected function searchColumns(): array
+    {
         return [
             'pegawai.nik',
             'pegawai.nama',

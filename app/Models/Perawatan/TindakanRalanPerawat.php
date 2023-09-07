@@ -2,14 +2,14 @@
 
 namespace App\Models\Perawatan;
 
-use App\Support\Traits\Eloquent\Searchable;
-use App\Support\Traits\Eloquent\Sortable;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Concerns\Searchable;
+use App\Support\Eloquent\Concerns\Sortable;
+use App\Support\Eloquent\Model;
 
 class TindakanRalanPerawat extends Model
 {
     use Sortable, Searchable;
-    
+
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = false;

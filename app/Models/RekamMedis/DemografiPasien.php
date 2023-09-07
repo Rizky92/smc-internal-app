@@ -2,9 +2,9 @@
 
 namespace App\Models\RekamMedis;
 
-use App\Support\Traits\Eloquent\Searchable;
+use App\Support\Eloquent\Concerns\Searchable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 
 class DemografiPasien extends Model
 {

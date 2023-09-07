@@ -3,10 +3,10 @@
 namespace App\Models\Farmasi;
 
 use App\Models\Satuan;
-use App\Support\Traits\Eloquent\Searchable;
-use App\Support\Traits\Eloquent\Sortable;
+use App\Support\Eloquent\Concerns\Searchable;
+use App\Support\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -197,10 +197,11 @@ class Obat extends Model
             ->join('golongan_barang', 'databarang.kode_golongan', '=', 'golongan_barang.kode')
             ->join('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
             ->where('databarang.status', '1')
-            ->where(fn (Builder $query): Builder => $query
-                ->when($golongan === 'narkotika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G07'))
-                ->when($golongan === 'psikotropika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G01'))
-                ->when(empty($golongan), fn (Builder $q): Builder => $q->where('databarang.kode_golongan', '-'))
+            ->where(
+                fn (Builder $query): Builder => $query
+                    ->when($golongan === 'narkotika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G07'))
+                    ->when($golongan === 'psikotropika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G01'))
+                    ->when(empty($golongan), fn (Builder $q): Builder => $q->where('databarang.kode_golongan', '-'))
             )
             ->withCasts([
                 'stok_awal'       => 'float',

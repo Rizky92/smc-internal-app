@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use App\Support\Traits\Eloquent\Searchable;
-use App\Support\Traits\Eloquent\Sortable;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Concerns\Searchable;
+use App\Support\Eloquent\Concerns\Sortable;
+use App\Support\Eloquent\Model;
 
 class Perusahaan extends Model
 {

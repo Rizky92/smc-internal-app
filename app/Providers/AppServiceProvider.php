@@ -6,13 +6,16 @@ use App\Database\Query\Grammars\MysqlGrammar;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
+use App\Rules\DateBetween;
+use App\Rules\DoesntExist;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Rule;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,10 +23,10 @@ class AppServiceProvider extends ServiceProvider
      * @var array<class-string, class-string[]|class-string>
      */
     protected $mixins = [
-        \Illuminate\Support\Arr::class => \App\Support\Mixins\CustomArr::class,
-        \Illuminate\Support\Collection::class => \App\Support\Mixins\CustomCollections::class,
-        \Illuminate\Support\Str::class => \App\Support\Mixins\CustomStr::class,
-        \Illuminate\Support\Stringable::class => \App\Support\Mixins\CustomStringable::class,
+        \Illuminate\Support\Arr::class        => \App\Support\MixinArr::class,
+        \Illuminate\Support\Collection::class => \App\Support\MixinCollections::class,
+        \Illuminate\Support\Str::class        => \App\Support\MixinStr::class,
+        \Illuminate\Support\Stringable::class => \App\Support\MixinStringable::class,
     ];
 
     /**
@@ -53,11 +56,12 @@ class AppServiceProvider extends ServiceProvider
 
         /** @psalm-scope-this Illuminate\Database\Eloquent\Builder */
         Builder::macro('isEagerLoaded', fn (string $name): bool => isset($this->eagerLoad[$name]));
-        
+
         $this->registerBladeDirectives();
         $this->registerModelConfigurations();
         $this->registerSuperadminRole();
         $this->registerCollectionMacrosAndMixins();
+        $this->registerValidationRules();
     }
 
     public function registerBladeDirectives(): void
@@ -71,7 +75,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function registerModelConfigurations(): void
     {
-        Model::preventLazyLoading(! app()->isProduction());
+        Model::preventLazyLoading(!app()->isProduction());
 
         Relation::morphMap([
             'User'       => User::class,
@@ -88,7 +92,7 @@ class AppServiceProvider extends ServiceProvider
     public function registerCollectionMacrosAndMixins(): void
     {
         foreach ($this->mixins as $class => $mixins) {
-            if (! in_array('mixin', get_class_methods($class), $strict = true)) {
+            if (!in_array('mixin', get_class_methods($class), $strict = true)) {
                 continue;
             }
 
@@ -97,10 +101,16 @@ class AppServiceProvider extends ServiceProvider
 
                 continue;
             }
-    
+
             foreach ($mixins as $mixinClass) {
                 $class::mixin(new $mixinClass);
             }
         }
+    }
+
+    public function registerValidationRules(): void
+    {
+        Rule::macro('doesntExists', fn (string $model, string $column) => new DoesntExist($model, $column));
+        Rule::macro('dateBetween', fn ($start, $end) => new DateBetween($start, $end));
     }
 }

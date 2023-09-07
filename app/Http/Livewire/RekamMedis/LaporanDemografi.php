@@ -3,12 +3,12 @@
 namespace App\Http\Livewire\RekamMedis;
 
 use App\Models\RekamMedis\DemografiPasien;
-use App\Support\Traits\Livewire\DeferredLoading;
-use App\Support\Traits\Livewire\ExcelExportable;
-use App\Support\Traits\Livewire\Filterable;
-use App\Support\Traits\Livewire\FlashComponent;
-use App\Support\Traits\Livewire\LiveTable;
-use App\Support\Traits\Livewire\MenuTracker;
+use App\Support\Livewire\Concerns\DeferredLoading;
+use App\Support\Livewire\Concerns\ExcelExportable;
+use App\Support\Livewire\Concerns\Filterable;
+use App\Support\Livewire\Concerns\FlashComponent;
+use App\Support\Livewire\Concerns\LiveTable;
+use App\Support\Livewire\Concerns\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -44,9 +44,9 @@ class LaporanDemografi extends Component
         return $this->isDeferred
             ? []
             : DemografiPasien::query()
-                ->search($this->cari)
-                ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
-                ->paginate($this->perpage);
+            ->search($this->cari)
+            ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
+            ->paginate($this->perpage);
     }
 
     public function render(): View

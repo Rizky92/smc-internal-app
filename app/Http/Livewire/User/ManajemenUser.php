@@ -3,11 +3,11 @@
 namespace App\Http\Livewire\User;
 
 use App\Models\Aplikasi\User;
-use App\Support\Traits\Livewire\DeferredLoading;
-use App\Support\Traits\Livewire\Filterable;
-use App\Support\Traits\Livewire\FlashComponent;
-use App\Support\Traits\Livewire\LiveTable;
-use App\Support\Traits\Livewire\MenuTracker;
+use App\Support\Livewire\Concerns\DeferredLoading;
+use App\Support\Livewire\Concerns\Filterable;
+use App\Support\Livewire\Concerns\FlashComponent;
+use App\Support\Livewire\Concerns\LiveTable;
+use App\Support\Livewire\Concerns\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -46,13 +46,13 @@ class ManajemenUser extends Component
         return $this->isDeferred
             ? []
             : User::query()
-                ->tampilkanYangMemilikiHakAkses($this->tampilkanYangMemilikiHakAkses)
-                ->search($this->cari)
-                ->sortWithColumns($this->sortColumns, [
-                    'jbtn'  => DB::raw("coalesce(jabatan.nm_jbtn, spesialis.nm_sps, pegawai.jbtn, '-')"),
-                    'jenis' => DB::raw("(case when petugas.nip is not null then 'Petugas' when dokter.kd_dokter is not null then 'Dokter' else '-' end)"),
-                ])
-                ->paginate($this->perpage);
+            ->tampilkanYangMemilikiHakAkses($this->tampilkanYangMemilikiHakAkses)
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns, [
+                'jbtn'  => DB::raw("coalesce(jabatan.nm_jbtn, spesialis.nm_sps, pegawai.jbtn, '-')"),
+                'jenis' => DB::raw("(case when petugas.nip is not null then 'Petugas' when dokter.kd_dokter is not null then 'Dokter' else '-' end)"),
+            ])
+            ->paginate($this->perpage);
     }
 
     public function render(): View

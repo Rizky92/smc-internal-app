@@ -2,18 +2,18 @@
 
 namespace App\Models\Logistik;
 
-use App\Support\Traits\Eloquent\Searchable;
-use App\Support\Traits\Eloquent\Sortable;
+use App\Support\Eloquent\Concerns\Searchable;
+use App\Support\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class PemesananBarangNonMedis extends Model
 {
     use Sortable, Searchable;
-    
+
     protected $connection = 'mysql_sik';
-    
+
     protected $primaryKey = 'no_faktur';
 
     protected $keyType = 'string';
@@ -33,7 +33,7 @@ class PemesananBarangNonMedis extends Model
         if (empty($tglAkhir)) {
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
-        
+
         $sqlSelect = <<<SQL
             ipsrs_detail_titip_faktur.no_tagihan,
             ipsrspemesanan.no_order,

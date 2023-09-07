@@ -3,14 +3,14 @@
 namespace App\Models\Farmasi;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
 
 class PenjualanWalkInObat extends Model
 {
     protected $connection = 'mysql_sik';
-    
+
     protected $primaryKey = 'nota_jual';
 
     protected $keyType = 'string';

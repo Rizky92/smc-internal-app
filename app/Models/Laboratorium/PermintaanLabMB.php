@@ -2,10 +2,10 @@
 
 namespace App\Models\Laboratorium;
 
-use App\Support\Traits\Eloquent\StatusOrder;
-use App\Support\Traits\Eloquent\Searchable;
-use App\Support\Traits\Eloquent\Sortable;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Concerns\StatusOrder;
+use App\Support\Eloquent\Concerns\Searchable;
+use App\Support\Eloquent\Concerns\Sortable;
+use App\Support\Eloquent\Model;
 use Reedware\LaravelCompositeRelations\CompositeHasMany;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 

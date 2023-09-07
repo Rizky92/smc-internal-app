@@ -2,16 +2,16 @@
 
 namespace App\Models\RekamMedis;
 
-use App\Support\Traits\Eloquent\Searchable;
+use App\Support\Eloquent\Concerns\Searchable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 
 class Penjamin extends Model
 {
     use Searchable;
 
     protected $connection = 'mysql_sik';
-    
+
     protected $primaryKey = 'kd_pj';
 
     protected $keyType = 'string';
@@ -30,7 +30,8 @@ class Penjamin extends Model
 
     public function namaPenjamin(): Attribute
     {
-        return Attribute::get(fn (): string => 
+        return Attribute::get(
+            fn (): string =>
             !in_array($this->nama_perusahaan, ['-', ''])
                 ? $this->nama_perusahaan
                 : $this->png_jawab

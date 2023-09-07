@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Traits\Livewire;
+namespace App\Support\Livewire\Concerns;
 
 use Closure;
 use Illuminate\Support\Str;
@@ -83,7 +83,7 @@ trait ExcelExportable
             ->setPageHeaders($this->pageHeaders())
             ->setColumnHeaders($this->columnHeaders())
             ->setData($firstData);
-        
+
         array_shift($dataSheets);
 
         foreach ($dataSheets as $sheet => $data) {

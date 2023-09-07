@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire\HakAkses\Khanza;
 
-use App\Support\Traits\Livewire\DeferredModal;
+use App\Support\Livewire\Concerns\DeferredModal;
 use Illuminate\View\View;
 use Livewire\Component;
 

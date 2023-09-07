@@ -5,7 +5,7 @@ namespace App\Http\Livewire\User\Siap;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
-use App\Support\Traits\Livewire\DeferredModal;
+use App\Support\Livewire\Concerns\DeferredModal;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;

@@ -2,12 +2,12 @@
 
 namespace App\Models\Keuangan\Jurnal;
 
-use App\Support\Traits\Eloquent\Searchable;
-use App\Support\Traits\Eloquent\Sortable;
+use App\Support\Eloquent\Concerns\Searchable;
+use App\Support\Eloquent\Concerns\Sortable;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -136,7 +136,7 @@ class Jurnal extends Model
             ->limit(1)
             ->value('no_jurnal');
 
-        if (! $noJurnal) {
+        if (!$noJurnal) {
             $noJurnal = "JR";
             $noJurnal .= $date->format('Ymd');
             $noJurnal .= "000000";
@@ -167,16 +167,16 @@ class Jurnal extends Model
      * @param  \Carbon\Carbon|\DateTime|string $waktuTransaksi
      * @param  array<array{kd_rek: string, debet: int|float, kredit: int|float}> $detail
      */
-    public static function catat(string $noBukti, string $jenis, string $keterangan, $waktuTransaksi, array $detail): void
+    public static function catat(string $noBukti, string $keterangan, $waktuTransaksi, array $detail, string $jenis = 'U'): void
     {
-        if (! $waktuTransaksi instanceof Carbon) {
+        if (!$waktuTransaksi instanceof Carbon) {
             $waktuTransaksi = carbon($waktuTransaksi);
         }
 
         if ($waktuTransaksi->isToday()) {
             $waktuTransaksi = now();
         }
-        
+
         $noJurnal = (new static)->noJurnalBaru($waktuTransaksi);
 
         $hasDetail = Arr::has($detail, ['*.kd_rek', '*.debet', '*.kredit']);

@@ -2,10 +2,10 @@
 
 namespace App\Models\Radiologi;
 
-use App\Support\Traits\Eloquent\Searchable;
-use App\Support\Traits\Eloquent\Sortable;
-use App\Support\Traits\Eloquent\StatusOrder;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Concerns\Searchable;
+use App\Support\Eloquent\Concerns\Sortable;
+use App\Support\Eloquent\Concerns\StatusOrder;
+use App\Support\Eloquent\Model;
 use Reedware\LaravelCompositeRelations\CompositeHasMany;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 

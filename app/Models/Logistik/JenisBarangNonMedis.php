@@ -2,12 +2,12 @@
 
 namespace App\Models\Logistik;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Model;
 
 class JenisBarangNonMedis extends Model
 {
     protected $connection = 'mysql_sik';
-    
+
     protected $primaryKey = 'kd_jenis';
 
     protected $keyType = 'string';

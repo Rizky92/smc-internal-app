@@ -2,8 +2,8 @@
 
 namespace App\Http\Livewire\Aplikasi;
 
-use App\Support\Traits\Livewire\FlashComponent;
-use App\Support\Traits\Livewire\MenuTracker;
+use App\Support\Livewire\Concerns\FlashComponent;
+use App\Support\Livewire\Concerns\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;

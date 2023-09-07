@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Support\Mixins;
+namespace App\Support;
 
 use Closure;
 
-class CustomStr
+class MixinStr
 {
     /**
      * replace all strings with provided value
@@ -32,9 +32,9 @@ class CustomStr
     public function wrap(): Closure
     {
         return fn (string $value, string $startsWith, ?string $endsWith = null): string =>
-            is_null($endsWith)
-                ? $startsWith . $value . $startsWith
-                : $startsWith . $value . $endsWith;
+        is_null($endsWith)
+            ? $startsWith . $value . $startsWith
+            : $startsWith . $value . $endsWith;
     }
 
     /**

@@ -4,9 +4,9 @@ namespace App\Http\Livewire\Keuangan\Modal;
 
 use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\Jurnal\JurnalBackup;
-use App\Support\Traits\Livewire\DeferredModal;
-use App\Support\Traits\Livewire\Filterable;
-use App\Support\Traits\Livewire\FlashComponent;
+use App\Support\Livewire\Concerns\DeferredModal;
+use App\Support\Livewire\Concerns\Filterable;
+use App\Support\Livewire\Concerns\FlashComponent;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -60,10 +60,10 @@ class UbahTanggalJurnal extends Component
         return Auth::user()->cannot('keuangan.riwayat-jurnal-perbaikan.read')
             ? []
             : JurnalBackup::query()
-                ->with('pegawai:nik,nama')
-                ->where('no_jurnal', $this->noJurnal)
-                ->orderByDesc('tgl_jurnal_diubah')
-                ->get();
+            ->with('pegawai:nik,nama')
+            ->where('no_jurnal', $this->noJurnal)
+            ->orderByDesc('tgl_jurnal_diubah')
+            ->get();
     }
 
     public function render(): View

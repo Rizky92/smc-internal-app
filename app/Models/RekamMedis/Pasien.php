@@ -4,9 +4,9 @@ namespace App\Models\RekamMedis;
 
 use App\Models\Perawatan\RegistrasiPasien;
 use App\Models\Perusahaan;
-use App\Support\Traits\Eloquent\Searchable;
-use App\Support\Traits\Eloquent\Sortable;
-use Illuminate\Database\Eloquent\Model;
+use App\Support\Eloquent\Concerns\Searchable;
+use App\Support\Eloquent\Concerns\Sortable;
+use App\Support\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -17,7 +17,7 @@ class Pasien extends Model
     use Searchable, Sortable, HasRelationships;
 
     protected $connection = 'mysql_sik';
-    
+
     protected $primaryKey = 'no_rkm_medis';
 
     protected $keyType = 'string';
