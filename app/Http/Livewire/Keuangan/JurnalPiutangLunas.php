@@ -55,7 +55,7 @@ class JurnalPiutangLunas extends Component
     {
         return DB::connection('mysql_sik')
             ->table('rekening')
-            ->whereIn('kd_rek', PiutangDilunaskan::query()->groupBy('kd_rek')->pluck('kd_rek')->toArray())
+            ->whereIn('kd_rek', PiutangDilunaskan::select('kd_rek'))
             ->pluck('nm_rek', 'kd_rek')
             ->all();
     }
