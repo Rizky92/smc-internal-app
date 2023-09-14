@@ -3,7 +3,6 @@
 namespace App\Models\RekamMedis;
 
 use App\Casts\AESFromDatabaseCast;
-use App\Support\Eloquent\Concerns\MergeCasts;
 use App\Support\Eloquent\Concerns\Searchable;
 use App\Support\Eloquent\Concerns\Sortable;
 use App\Support\Eloquent\Model;
@@ -11,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PasienUser extends Model
 {
-    use Sortable, Searchable, MergeCasts;
+    use Sortable, Searchable;
 
     /**
      * The connection name for the model.

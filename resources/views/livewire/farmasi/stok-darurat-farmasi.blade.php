@@ -33,6 +33,8 @@
                     <x-table.th name="pemakaian_3_bulan" title="Pemakaian 3 Bulan" align="right" style="width: 40ch" />
                     <x-table.th name="pemakaian_1_bulan" title="Pemakaian 1 Bulan" align="right" style="width: 40ch" />
                     <x-table.th name="pemakaian_1_minggu" title="Pemakaian 1 Minggu" align="right" style="width: 40ch" />
+                    <x-table.th name="pemakaian_10_bulan" title="Pemakaian 10 Bulan" align="right" style="width: 40ch" />
+                    <x-table.th name="pemakaian_12_bulan" title="Pemakaian 12 Bulan" align="right" style="width: 40ch" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->stokDaruratObat as $obat)
@@ -41,23 +43,25 @@
                             <x-table.td>{{ $obat->nama_brng }}</x-table.td>
                             <x-table.td>{{ $obat->satuan_kecil }}</x-table.td>
                             <x-table.td>{{ $obat->kategori }}</x-table.td>
-                            <x-table.td class="text-right">{{ floatval($obat->stokminimal) }}</x-table.td>
-                            <x-table.td class="text-right">{{ floatval($obat->stok_sekarang_ap) }}</x-table.td>
-                            <x-table.td class="text-right">{{ floatval($obat->stok_sekarang_ifi) }}</x-table.td>
-                            <x-table.td class="text-right">{{ floatval($obat->saran_order) }}</x-table.td>
-                            <x-table.td class="text-right">{{ floatval($obat->ke_pasien_14_hari) }}</x-table.td>
+                            <x-table.td class="text-right">{{ $obat->stokminimal }}</x-table.td>
+                            <x-table.td class="text-right">{{ $obat->stok_sekarang_ap }}</x-table.td>
+                            <x-table.td class="text-right">{{ $obat->stok_sekarang_ifi }}</x-table.td>
+                            <x-table.td class="text-right">{{ $obat->saran_order }}</x-table.td>
+                            <x-table.td class="text-right">{{ $obat->ke_pasien_14_hari }}</x-table.td>
                             <x-table.td>{{ $obat->nama_industri }}</x-table.td>
                             <x-table.td-currency :value="$obat->harga_beli" />
                             <x-table.td-currency :value="$obat->harga_beli_total" />
                             <x-table.td-currency :value="$obat->harga_beli_terakhir" />
-                            <x-table.td class="text-right">{{ floatval($obat->diskon_terakhir) }}</x-table.td>
+                            <x-table.td class="text-right">{{ $obat->diskon_terakhir }}</x-table.td>
                             <x-table.td>{{ $obat->supplier_terakhir }}</x-table.td>
-                            <x-table.td class="text-right">{{ floatval($obat->pemakaian_3_bulan) }}</x-table.td>
-                            <x-table.td class="text-right">{{ floatval($obat->pemakaian_1_bulan) }}</x-table.td>
-                            <x-table.td class="text-right">{{ floatval($obat->pemakaian_1_minggu) }}</x-table.td>
+                            <x-table.td class="text-right">{{ $obat->pemakaian_3_bulan }}</x-table.td>
+                            <x-table.td class="text-right">{{ $obat->pemakaian_1_bulan }}</x-table.td>
+                            <x-table.td class="text-right">{{ $obat->pemakaian_1_minggu }}</x-table.td>
+                            <x-table.td class="text-right">{{ $obat->pemakaian_10_bulan }}</x-table.td>
+                            <x-table.td class="text-right">{{ $obat->pemakaian_12_bulan }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="21" padding />
+                        <x-table.tr-empty colspan="23" padding />
                     @endforelse
                 </x-slot>
             </x-table>
