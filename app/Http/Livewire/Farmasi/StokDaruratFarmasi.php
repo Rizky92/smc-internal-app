@@ -38,6 +38,7 @@ class StokDaruratFarmasi extends Component
                     'kodesatuan.satuan',
                     'kategori_barang.nama',
                     'industrifarmasi.nama_industri',
+                 
                 ])
                 ->sortWithColumns($this->sortColumns, [
                     'satuan_kecil'        => 'kodesatuan.satuan',
@@ -76,7 +77,28 @@ class StokDaruratFarmasi extends Component
         return [
             Obat::query()
                 ->daruratStok()
-                ->get(),
+                ->get()
+                ->map(fn (Obat $model, $_):array => [
+                    'kode_brng' => $model->nama_brng,
+                    'satuan_kecil' =>$model->satuan_kecil,
+                    'kategori' =>$model->kategori,
+                    'stok_minimal' =>$model->stokminimal,
+                    'stok_sekarang_ifi' =>$model->stok_sekarang_ifi,
+                    'stok_sekarang_ap' =>$model->stok_sekarang_ap,
+                    'ke_pasien_14_hari' =>$model->ke_pasien_14_hari,
+                    'saran_order' =>$model->saran_order,
+                    'nama_industri' =>$model->nama_industri,
+                    'harga_beli' =>$model->harga_beli,
+                    'harga_beli_total' =>$model->harga_beli_total,
+                    'harga_beli_terakhir' =>$model->harga_beli_terakhir,
+                    'diskon_terakhir' =>$model->diskon_terakhir,
+                    'supplier_terakhir' =>$model->supplier_terakhir,
+                    'pemakaian_3_bulan' =>$model->pemakaian_3_bulan,
+                    'pemakaian_1_bulan' =>$model->pemakaian_1_bulan,
+                    'pemakaian_1_minggu' =>$model->pemakaian_1_minggu,
+                    'pemakaian_10_bulan' =>$model->pemakaian_10_bulan,
+                    'pemakaian_12_bulan' =>$model->pemakaian_12_bulan,
+                ]),
         ];
     }
 
@@ -100,6 +122,8 @@ class StokDaruratFarmasi extends Component
             'Pemakaian 3 Bulan',
             'Pemakaian 1 Bulan',
             'Pemakaian 1 Minggu',
+            'Pemakaian 10 Bulan',
+            'Pemakaian 12 Bulan',
         ];
     }
 
