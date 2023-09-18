@@ -240,6 +240,7 @@ class Menu
                 'type' => 'dropdown',
                 'hasAnyPermissions' => $user->canAny([
                     'farmasi.stok-darurat.read',
+                    'farmasi.pemakaian-stok.read',
                     'farmasi.obat-per-dokter.read',
                     'farmasi.laporan-produksi.read',
                     'farmasi.kunjungan-per-bentuk-obat.read',
@@ -252,10 +253,16 @@ class Menu
                 ]),
                 'items' => [
                     [
-                        'name' => 'Stok Darurat',
+                        'name' => 'Rencana Order',
                         'icon' => 'far fa-newspaper',
                         'url' => route('admin.farmasi.stok-darurat'),
                         'hasAnyPermissions' => $user->can('farmasi.stok-darurat.read'),
+                    ],
+                    [
+                        'name' => 'Pemakaian Stok',
+                        'icon' => 'far fa-newspaper',
+                        'url' => route('admin.farmasi.pemakaian-stok'),
+                        'hasAnyPermissions' => $user->can('farmasi.pemakaian-stok.read'),
                     ],
                     [
                         'name' => 'Laporan Produksi',

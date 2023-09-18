@@ -147,6 +147,11 @@ Breadcrumbs::for('admin.farmasi', function (Trail $trail): void {
     $trail->push('Farmasi');
 });
 
+Breadcrumbs::for('admin.farmasi.pemakaian-stok', function (Trail $trail): void {
+    $trail->parent('admin.farmasi');
+    $trail->push('Pemakaian Stok', route('admin.farmasi.pemakaian-stok'));
+});
+
 Breadcrumbs::for('admin.farmasi.stok-darurat', function (Trail $trail): void {
     $trail->parent('admin.farmasi');
     $trail->push('Stok Darurat', route('admin.farmasi.stok-darurat'));
