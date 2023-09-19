@@ -190,24 +190,6 @@ class Obat extends Model
             ) pemakaian_12_bulan
         SQL;
 
-        $stokGudangAP = DB::raw("(
-            select kode_brng, sum(stok) stok_di_gudang
-            from gudangbarang
-            inner join bangsal on gudangbarang.kd_bangsal = bangsal.kd_bangsal
-            where bangsal.status = '1'
-            and gudangbarang.kd_bangsal = 'AP'
-            group by kode_brng
-        ) stok_gudang_ap");
-
-        $stokGudangIFI = DB::raw("(
-            select kode_brng, sum(stok) stok_di_gudang
-            from gudangbarang
-            inner join bangsal on gudangbarang.kd_bangsal = bangsal.kd_bangsal
-            where bangsal.status = '1'
-            and gudangbarang.kd_bangsal = 'IFI'
-            group by kode_brng
-        ) stok_gudang_ifi");
-
         return $query
             ->selectRaw($sqlSelect)
             ->withCasts([
@@ -218,15 +200,8 @@ class Obat extends Model
                 'pemakaian_10_bulan'  => 'float',
                 'pemakaian_12_bulan'  => 'float',
             ])
-            ->join('kategori_barang', 'databarang.kode_kategori', '=', 'kategori_barang.kode')
             ->join('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
-            ->join('industrifarmasi', 'databarang.kode_industri', '=', 'industrifarmasi.kode_industri')
-            ->leftJoin($stokGudangAP, 'databarang.kode_brng', '=', 'stok_gudang_ap.kode_brng')
-            ->leftJoin($stokGudangIFI, 'databarang.kode_brng', '=', 'stok_gudang_ifi.kode_brng')
             ->where('databarang.status', '1')
-            ->where('databarang.stokminimal', '>', 0)
-            ->whereRaw('(databarang.stokminimal - ifnull(stok_gudang_ap.stok_di_gudang, 0)) > 0')
-            ->whereRaw('ifnull(stok_gudang_ap.stok_di_gudang, 0) <= databarang.stokminimal')
             ->orderBy('databarang.nama_brng');
     }
 
