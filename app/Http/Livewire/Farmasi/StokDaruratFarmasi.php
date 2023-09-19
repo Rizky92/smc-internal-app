@@ -73,7 +73,7 @@ class StokDaruratFarmasi extends Component
                 ->daruratStok()
                 ->get()
                 ->map(fn (Obat $model, $_):array => [
-                    'kode_brng' => $model->nama_brng,
+                    'nama_brng' => $model->nama_brng,
                     'satuan_kecil' =>$model->satuan_kecil,
                     'kategori' =>$model->kategori,
                     'stok_minimal' =>$model->stokminimal,
