@@ -71,26 +71,20 @@ class StokDaruratFarmasi extends Component
             Obat::query()
                 ->daruratStok()
                 ->get()
-                ->map(fn (Obat $model, $_): array => [
-                    'kode_brng'           => $model->nama_brng,
-                    'satuan_kecil'        => $model->satuan_kecil,
-                    'kategori'            => $model->kategori,
-                    'stok_minimal'        => $model->stokminimal,
-                    'stok_sekarang_ifi'   => $model->stok_sekarang_ifi,
-                    'stok_sekarang_ap'    => $model->stok_sekarang_ap,
-                    // 'ke_pasien_14_hari'   => $model->ke_pasien_14_hari,
-                    'saran_order'         => $model->saran_order,
-                    'nama_industri'       => $model->nama_industri,
-                    'harga_beli'          => $model->harga_beli,
-                    'harga_beli_total'    => $model->harga_beli_total,
-                    'harga_beli_terakhir' => $model->harga_beli_terakhir,
-                    'diskon_terakhir'     => $model->diskon_terakhir,
-                    'supplier_terakhir'   => $model->supplier_terakhir,
-                    // 'pemakaian_3_bulan'   => $model->pemakaian_3_bulan,
-                    // 'pemakaian_1_bulan'   => $model->pemakaian_1_bulan,
-                    // 'pemakaian_1_minggu'  => $model->pemakaian_1_minggu,
-                    // 'pemakaian_10_bulan'  => $model->pemakaian_10_bulan,
-                    // 'pemakaian_12_bulan'  => $model->pemakaian_12_bulan,
+                ->map(fn (Obat $model, $_):array => [
+                    'kode_brng' => $model->nama_brng,
+                    'satuan_kecil' =>$model->satuan_kecil,
+                    'kategori' =>$model->kategori,
+                    'stok_minimal' =>$model->stokminimal,
+                    'stok_sekarang_ifi' =>$model->stok_sekarang_ifi,
+                    'stok_sekarang_ap' =>$model->stok_sekarang_ap,
+                    'saran_order' =>$model->saran_order,
+                    'nama_industri' =>$model->nama_industri,
+                    'harga_beli' =>$model->harga_beli,
+                    'harga_beli_total' =>$model->harga_beli_total,
+                    'harga_beli_terakhir' =>$model->harga_beli_terakhir,
+                    'diskon_terakhir' =>$model->diskon_terakhir,
+                    'supplier_terakhir' =>$model->supplier_terakhir,
                 ]),
         ];
     }
@@ -104,7 +98,6 @@ class StokDaruratFarmasi extends Component
             'Stok Minimal',
             'Stok Farmasi RWI',
             'Stok Farmasi B',
-            // 'Ke Pasien (14 Hari)',
             'Saran Order',
             'Supplier',
             'Harga per Unit (Rp)',
@@ -112,11 +105,6 @@ class StokDaruratFarmasi extends Component
             'Harga Beli Terakhir (Rp)',
             'Diskon Terakhir (%)',
             'Supplier Terakhir',
-            // 'Pemakaian 3 Bulan',
-            // 'Pemakaian 1 Bulan',
-            // 'Pemakaian 1 Minggu',
-            // 'Pemakaian 10 Bulan',
-            // 'Pemakaian 12 Bulan',
         ];
     }
 
