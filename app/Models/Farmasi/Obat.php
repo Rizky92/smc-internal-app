@@ -152,6 +152,7 @@ class Obat extends Model
             databarang.kode_brng,
             databarang.nama_brng,
             kodesatuan.satuan satuan_kecil,
+            kategori_barang.nama kategori,
             (
                 ifnull((select round(sum(detail_pemberian_obat.jml), 2) from detail_pemberian_obat where detail_pemberian_obat.kode_brng = databarang.kode_brng and detail_pemberian_obat.tgl_perawatan between date_sub(current_date(), interval 2 week) and current_date()), 0) + 
                 ifnull((select round(sum(detailjual.jumlah), 2) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.tgl_jual between date_sub(current_date(), interval 2 week) and current_date()), 0) 
@@ -194,6 +195,7 @@ class Obat extends Model
                 'pemakaian_10_bulan'  => 'float',
                 'pemakaian_12_bulan'  => 'float',
             ])
+            ->join('kategori_barang', 'databarang.kode_kategori', '=', 'kategori_barang.kode')
             ->join('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
             ->where('databarang.status', '1')
             ->orderBy('databarang.nama_brng');
