@@ -50,12 +50,6 @@ class StokDaruratFarmasi extends Component
                     'harga_beli_terakhir' => DB::raw("(select ifnull(round(dp.h_pesan / databarang.isi, 2), 0) from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1)"),
                     'diskon_terakhir'     => DB::raw("(select ifnull(dp.dis, '0') from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1)"),
                     'supplier_terakhir'   => DB::raw("(select ifnull(ds.nama_suplier, '-') from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur left join datasuplier ds on p.kode_suplier = ds.kode_suplier where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1)"),
-                    'ke_pasien_14_hari'   => DB::raw("(ifnull((select round(sum(detail_pemberian_obat.jml), 2) from detail_pemberian_obat where detail_pemberian_obat.kode_brng = databarang.kode_brng and detail_pemberian_obat.tgl_perawatan between date_sub(current_date(), interval 2 week) and current_date()), 0) + ifnull((select round(sum(detailjual.jumlah), 2) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.tgl_jual between date_sub(current_date(), interval 2 week) and current_date()), 0))"),
-                    'pemakaian_1_minggu'  => DB::raw("(ifnull((select round(sum(detail_pemberian_obat.jml), 2) from detail_pemberian_obat where detail_pemberian_obat.kode_brng = databarang.kode_brng and detail_pemberian_obat.tgl_perawatan between date_sub(current_date(), interval 1 week) and current_date()), 0) + ifnull((select round(sum(detailjual.jumlah), 2) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.tgl_jual between date_sub(current_date(), interval 1 week) and current_date()), 0) + ifnull((select round(sum(detail_pengeluaran_obat_bhp.jumlah), 2) from detail_pengeluaran_obat_bhp join pengeluaran_obat_bhp on detail_pengeluaran_obat_bhp.no_keluar = pengeluaran_obat_bhp.no_keluar where detail_pengeluaran_obat_bhp.kode_brng = databarang.kode_brng and pengeluaran_obat_bhp.tanggal between date_sub(current_date(), interval 1 week) and current_date()), 0))"),
-                    'pemakaian_1_bulan'   => DB::raw("(ifnull((select round(sum(detail_pemberian_obat.jml), 2) from detail_pemberian_obat where detail_pemberian_obat.kode_brng = databarang.kode_brng and detail_pemberian_obat.tgl_perawatan between date_sub(current_date(), interval 1 month) and current_date()), 0) + ifnull((select round(sum(detailjual.jumlah), 2) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.tgl_jual between date_sub(current_date(), interval 1 month) and current_date()), 0) + ifnull((select round(sum(detail_pengeluaran_obat_bhp.jumlah), 2) from detail_pengeluaran_obat_bhp join pengeluaran_obat_bhp on detail_pengeluaran_obat_bhp.no_keluar = pengeluaran_obat_bhp.no_keluar where detail_pengeluaran_obat_bhp.kode_brng = databarang.kode_brng and pengeluaran_obat_bhp.tanggal between date_sub(current_date(), interval 1 month) and current_date()), 0))"),
-                    'pemakaian_3_bulan'   => DB::raw("(ifnull((select round(sum(detail_pemberian_obat.jml), 2) from detail_pemberian_obat where detail_pemberian_obat.kode_brng = databarang.kode_brng and detail_pemberian_obat.tgl_perawatan between date_sub(current_date(), interval 3 month) and current_date()), 0) + ifnull((select round(sum(detailjual.jumlah), 2) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.tgl_jual between date_sub(current_date(), interval 3 month) and current_date()), 0) + ifnull((select round(sum(detail_pengeluaran_obat_bhp.jumlah), 2) from detail_pengeluaran_obat_bhp join pengeluaran_obat_bhp on detail_pengeluaran_obat_bhp.no_keluar = pengeluaran_obat_bhp.no_keluar where detail_pengeluaran_obat_bhp.kode_brng = databarang.kode_brng and pengeluaran_obat_bhp.tanggal between date_sub(current_date(), interval 3 month) and current_date()), 0))"),
-                    'pemakaian_10_bulan'  => DB::raw("(ifnull((select round(sum(detail_pemberian_obat.jml), 2) from detail_pemberian_obat where detail_pemberian_obat.kode_brng = databarang.kode_brng and detail_pemberian_obat.tgl_perawatan between date_sub(current_date(), interval 10 month) and current_date()), 0) +  ifnull((select round(sum(detailjual.jumlah), 2) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.tgl_jual between date_sub(current_date(), interval 10 month) and current_date()), 0) + ifnull((select round(sum(detail_pengeluaran_obat_bhp.jumlah), 2) from detail_pengeluaran_obat_bhp join pengeluaran_obat_bhp on detail_pengeluaran_obat_bhp.no_keluar = pengeluaran_obat_bhp.no_keluar where detail_pengeluaran_obat_bhp.kode_brng = databarang.kode_brng and pengeluaran_obat_bhp.tanggal between date_sub(current_date(), interval 10 month) and current_date()), 0))"),
-                    'pemakaian_12_bulan'  => DB::raw("(ifnull((select round(sum(detail_pemberian_obat.jml), 2) from detail_pemberian_obat where detail_pemberian_obat.kode_brng = databarang.kode_brng and detail_pemberian_obat.tgl_perawatan between date_sub(current_date(), interval 1 year) and current_date()), 0) +  ifnull((select round(sum(detailjual.jumlah), 2) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.tgl_jual between date_sub(current_date(), interval 1 year) and current_date()), 0) + ifnull((select round(sum(detail_pengeluaran_obat_bhp.jumlah), 2) from detail_pengeluaran_obat_bhp join pengeluaran_obat_bhp on detail_pengeluaran_obat_bhp.no_keluar = pengeluaran_obat_bhp.no_keluar where detail_pengeluaran_obat_bhp.kode_brng = databarang.kode_brng and pengeluaran_obat_bhp.tanggal between date_sub(current_date(), interval 1 year) and current_date()), 0))"),
                 ])
                 ->paginate($this->perpage);
     }
@@ -63,7 +57,7 @@ class StokDaruratFarmasi extends Component
     public function render(): View
     {
         return view('livewire.farmasi.stok-darurat-farmasi')
-            ->layout(BaseLayout::class, ['title' => 'Darurat Stok Farmasi']);
+            ->layout(BaseLayout::class, ['title' => 'Rencana Order Farmasi']);
     }
 
     protected function defaultValues(): void
@@ -84,7 +78,7 @@ class StokDaruratFarmasi extends Component
                     'stok_minimal'        => $model->stokminimal,
                     'stok_sekarang_ifi'   => $model->stok_sekarang_ifi,
                     'stok_sekarang_ap'    => $model->stok_sekarang_ap,
-                    'ke_pasien_14_hari'   => $model->ke_pasien_14_hari,
+                    // 'ke_pasien_14_hari'   => $model->ke_pasien_14_hari,
                     'saran_order'         => $model->saran_order,
                     'nama_industri'       => $model->nama_industri,
                     'harga_beli'          => $model->harga_beli,
@@ -92,11 +86,11 @@ class StokDaruratFarmasi extends Component
                     'harga_beli_terakhir' => $model->harga_beli_terakhir,
                     'diskon_terakhir'     => $model->diskon_terakhir,
                     'supplier_terakhir'   => $model->supplier_terakhir,
-                    'pemakaian_3_bulan'   => $model->pemakaian_3_bulan,
-                    'pemakaian_1_bulan'   => $model->pemakaian_1_bulan,
-                    'pemakaian_1_minggu'  => $model->pemakaian_1_minggu,
-                    'pemakaian_10_bulan'  => $model->pemakaian_10_bulan,
-                    'pemakaian_12_bulan'  => $model->pemakaian_12_bulan,
+                    // 'pemakaian_3_bulan'   => $model->pemakaian_3_bulan,
+                    // 'pemakaian_1_bulan'   => $model->pemakaian_1_bulan,
+                    // 'pemakaian_1_minggu'  => $model->pemakaian_1_minggu,
+                    // 'pemakaian_10_bulan'  => $model->pemakaian_10_bulan,
+                    // 'pemakaian_12_bulan'  => $model->pemakaian_12_bulan,
                 ]),
         ];
     }
@@ -110,7 +104,7 @@ class StokDaruratFarmasi extends Component
             'Stok Minimal',
             'Stok Farmasi RWI',
             'Stok Farmasi B',
-            'Ke Pasien (14 Hari)',
+            // 'Ke Pasien (14 Hari)',
             'Saran Order',
             'Supplier',
             'Harga per Unit (Rp)',
@@ -118,11 +112,11 @@ class StokDaruratFarmasi extends Component
             'Harga Beli Terakhir (Rp)',
             'Diskon Terakhir (%)',
             'Supplier Terakhir',
-            'Pemakaian 3 Bulan',
-            'Pemakaian 1 Bulan',
-            'Pemakaian 1 Minggu',
-            'Pemakaian 10 Bulan',
-            'Pemakaian 12 Bulan',
+            // 'Pemakaian 3 Bulan',
+            // 'Pemakaian 1 Bulan',
+            // 'Pemakaian 1 Minggu',
+            // 'Pemakaian 10 Bulan',
+            // 'Pemakaian 12 Bulan',
         ];
     }
 
@@ -130,7 +124,7 @@ class StokDaruratFarmasi extends Component
     {
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Darurat Stok Farmasi',
+            'Laporan Rencana Order Farmasi',
             'Per ' . now()->translatedFormat('d F Y'),
         ];
     }

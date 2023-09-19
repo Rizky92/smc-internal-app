@@ -177,6 +177,10 @@ Route::prefix('admin')
                     ->name('stok-darurat')
                     ->middleware('can:farmasi.stok-darurat.read');
 
+                Route::get('pemakaian-stok', Farmasi\PemakaianStokFarmasi::class)
+                    ->name('pemakaian-stok')
+                    ->middleware('can:farmasi.pemakaian-stok.read');
+
                 Route::get('penggunaan-obat-per-dokter', Farmasi\ObatPerDokter::class)
                     ->name('obat-per-dokter')
                     ->middleware('can:farmasi.obat-per-dokter.read');
