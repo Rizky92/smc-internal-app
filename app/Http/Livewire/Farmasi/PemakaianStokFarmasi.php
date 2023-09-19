@@ -65,7 +65,8 @@ class PemakaianStokFarmasi extends Component
             ->pemakaianStok()
             ->get()
             ->map(fn (Obat $model, $_):array => [
-                'kode_brng' => $model->nama_brng,
+                'kode_brng' => $model->kode_brng,
+                'nama_brng' => $model->nama_brng,
                 'satuan_kecil' =>$model->satuan_kecil,
                 'ke_pasien_14_hari' =>$model->ke_pasien_14_hari,
                 'pemakaian_3_bulan' =>$model->pemakaian_3_bulan,
@@ -80,6 +81,7 @@ class PemakaianStokFarmasi extends Component
     protected function columnHeaders(): array
     {
         return [
+            'Kode',
             'Nama',
             'Satuan kecil',
             'Ke Pasien (14 Hari)',
