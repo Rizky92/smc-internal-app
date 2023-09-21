@@ -136,18 +136,18 @@ class AccountReceivable extends Component
         return compact('totalPiutang', 'totalCicilan', 'totalSisaPerPeriode', 'totalSisaCicilan');
     }
 
-    public function updatedTagihanDipilih(): void
-    {
-        $this->rekalkulasiPembayaran();
-    }
+    // public function updatedTagihanDipilih(): void
+    // {
+    //     $this->rekalkulasiPembayaran();
+    // }
 
-    public function updatedCari(): void
-    {
-        $this->tagihanDipilih = [];
-        $this->rekalkulasiPembayaran();
-    }
+    // public function updatedCari(): void
+    // {
+    //     $this->tagihanDipilih = [];
+    //     $this->rekalkulasiPembayaran();
+    // }
 
-    public function hydrate(): void
+    public function dehydrate(): void
     {
         $this->rekalkulasiPembayaran();
     }
@@ -160,12 +160,8 @@ class AccountReceivable extends Component
 
     protected function rekalkulasiPembayaran(): void
     {   
-        $diskonPiutang = 0;
-        if(empty($this->tagihanDipilih)){
-            $diskonPiutang = 0;
-        }else{
-            $diskonPiutang = collect($this->tagihanDipilih)->filter(fn(array $value): bool => $value['selected'])->sum('diskon_piutang');           
-        }
+   
+        $diskonPiutang = collect($this->tagihanDipilih)->filter(fn(array $value): bool => $value['selected'])->sum('diskon_piutang');           
         $this->totalDibayar = PenagihanPiutang::query()
         ->join('detail_penagihan_piutang', 'penagihan_piutang.no_tagihan', '=', 'detail_penagihan_piutang.no_tagihan')
         ->whereIn(
