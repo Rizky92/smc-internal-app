@@ -81,9 +81,8 @@ class RKATPenetapan extends Component
 
         $isDevelop = $user->hasRole(config('permission.superadmin_name'));
 
-        $penetapanAwal = $settings->batas_penetapan_awal;
-        $penetapanAkhir = $settings->batas_penetapan_akhir;
-
+        $penetapanAwal = $settings->tgl_penetapan_awal;
+        $penetapanAkhir = $settings->tgl_penetapan_akhir;
         return (carbon()->between($penetapanAwal, $penetapanAkhir) && $hasPermission) || $isDevelop;
     }
 
