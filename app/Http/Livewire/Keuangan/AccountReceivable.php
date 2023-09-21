@@ -160,28 +160,20 @@ class AccountReceivable extends Component
 
     protected function rekalkulasiPembayaran(): void
     {   
-        if(empty($diskonPiutang)){
-            $diskonPiutang = collect($this->tagihanDipilih)->filter(fn(array $value): bool => $value['selected']);
+        $diskonPiutang = 0;
+        if(empty($this->tagihanDipilih)){
+            $diskonPiutang = 0;
         }else{
-            $diskonPiutang = collect($this->tagihanDipilih)->filter(fn(array $value): bool => $value['selected'])->sum('diskon_piutang');
-            $this->totalDibayar = PenagihanPiutang::query()
-                ->join('detail_penagihan_piutang', 'penagihan_piutang.no_tagihan', '=', 'detail_penagihan_piutang.no_tagihan')
-                ->whereIn(
-                    DB::raw('concat(penagihan_piutang.no_tagihan, "_", penagihan_piutang.kd_pj, "_", detail_penagihan_piutang.no_rawat)'),
-                    collect($this->tagihanDipilih)->filter(fn(array $value): bool =>$value['selected'])
-                    ->keys()->all()
-                )
-                ->sum('sisapiutang') - $diskonPiutang;
+            $diskonPiutang = collect($this->tagihanDipilih)->filter(fn(array $value): bool => $value['selected'])->sum('diskon_piutang');           
         }
-        $diskonPiutang = collect($this->tagihanDipilih)->filter(fn(array $value): bool => $value['selected'])->sum('diskon_piutang');
         $this->totalDibayar = PenagihanPiutang::query()
-            ->join('detail_penagihan_piutang', 'penagihan_piutang.no_tagihan', '=', 'detail_penagihan_piutang.no_tagihan')
-            ->whereIn(
-                DB::raw('concat(penagihan_piutang.no_tagihan, "_", penagihan_piutang.kd_pj, "_", detail_penagihan_piutang.no_rawat)'),
-                collect($this->tagihanDipilih)->filter(fn(array $value): bool =>$value['selected'])
-                ->keys()->all()
-            )
-            ->sum('sisapiutang') - $diskonPiutang;
+        ->join('detail_penagihan_piutang', 'penagihan_piutang.no_tagihan', '=', 'detail_penagihan_piutang.no_tagihan')
+        ->whereIn(
+            DB::raw('concat(penagihan_piutang.no_tagihan, "_", penagihan_piutang.kd_pj, "_", detail_penagihan_piutang.no_rawat)'),
+            collect($this->tagihanDipilih)->filter(fn(array $value): bool =>$value['selected'])
+            ->keys()->all()
+        )
+        ->sum('sisapiutang') - $diskonPiutang;
     }
 
     public function pilihSemua(bool $pilih): void
