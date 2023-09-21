@@ -161,7 +161,7 @@ class AccountReceivable extends Component
     protected function rekalkulasiPembayaran(): void
     {   
         if(empty($diskonPiutang)){
-            $diskonPiutang = 0;
+            $diskonPiutang = collect($this->tagihanDipilih)->filter(fn(array $value): bool => $value['selected']);
         }else{
             $diskonPiutang = collect($this->tagihanDipilih)->filter(fn(array $value): bool => $value['selected'])->sum('diskon_piutang');
             $this->totalDibayar = PenagihanPiutang::query()
