@@ -127,12 +127,12 @@ class AccountReceivable extends Component
                 'akun_piutang.nama_bayar',
             ])
             ->get();
-
         $totalPiutang = (float) $total->sum('total_piutang');
         $totalCicilan = (float) $total->sum('total_cicilan');
-        $totalSisaPerPeriode = $total->pluck('sisa_piutang', 'periode');
+        $totalSisaPerPeriode = $total->pluck('sisa_piutang', 'periode') ;
         $totalSisaCicilan = (float) $totalSisaPerPeriode->sum();
-
+        
+        
         return compact('totalPiutang', 'totalCicilan', 'totalSisaPerPeriode', 'totalSisaCicilan');
     }
 
@@ -159,14 +159,17 @@ class AccountReceivable extends Component
     }
 
     protected function rekalkulasiPembayaran(): void
-    {
+    {   
+        $diskonPiutang = 0;
+        $diskonPiutang = collect($this->tagihanDipilih)->filter(fn(array $value): bool => $value['selected'])->sum('diskon_piutang');
         $this->totalDibayar = PenagihanPiutang::query()
             ->join('detail_penagihan_piutang', 'penagihan_piutang.no_tagihan', '=', 'detail_penagihan_piutang.no_tagihan')
             ->whereIn(
                 DB::raw('concat(penagihan_piutang.no_tagihan, "_", penagihan_piutang.kd_pj, "_", detail_penagihan_piutang.no_rawat)'),
-                collect($this->tagihanDipilih)->filter()->keys()->all()
+                collect($this->tagihanDipilih)->filter(fn(array $value): bool =>$value['selected'])
+                ->keys()->all()
             )
-            ->sum('sisapiutang');
+            ->sum('sisapiutang') - $diskonPiutang;
     }
 
     public function pilihSemua(bool $pilih): void
