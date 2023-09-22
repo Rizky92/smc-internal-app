@@ -136,16 +136,16 @@ class AccountReceivable extends Component
         return compact('totalPiutang', 'totalCicilan', 'totalSisaPerPeriode', 'totalSisaCicilan');
     }
 
-    // public function updatedTagihanDipilih(): void
-    // {
-    //     $this->rekalkulasiPembayaran();
-    // }
+    public function updatedTagihanDipilih(): void
+    {
+        $this->rekalkulasiPembayaran();
+    }
 
-    // public function updatedCari(): void
-    // {
-    //     $this->tagihanDipilih = [];
-    //     $this->rekalkulasiPembayaran();
-    // }
+    public function updatedCari(): void
+    {
+        $this->tagihanDipilih = [];
+        $this->rekalkulasiPembayaran();
+    }
 
     public function dehydrate(): void
     {
