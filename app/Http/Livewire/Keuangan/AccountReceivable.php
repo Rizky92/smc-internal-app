@@ -136,10 +136,10 @@ class AccountReceivable extends Component
         return compact('totalPiutang', 'totalCicilan', 'totalSisaPerPeriode', 'totalSisaCicilan');
     }
 
-    public function updatedTagihanDipilih(): void
-    {
-        $this->rekalkulasiPembayaran();
-    }
+    // public function updatedTagihanDipilih(): void
+    // {
+    //     $this->rekalkulasiPembayaran();
+    // }
 
     public function updatedCari(): void
     {
@@ -160,13 +160,13 @@ class AccountReceivable extends Component
 
     protected function rekalkulasiPembayaran(): void
     {   
-   
+       
         $diskonPiutang = collect($this->tagihanDipilih)->filter(fn(array $value): bool => $value['selected'])
         ->map(fn(array $value)=> [
             'selected'          => $value['selected'],
             'diskon_piutang'    => empty($value['diskon_piutang']) ? 0 : $value['diskon_piutang']
-        ])->sum('diskon_piutang');           
-        
+        ])->sum('diskon_piutang');               
+    
         $this->totalDibayar = PenagihanPiutang::query()
         ->join('detail_penagihan_piutang', 'penagihan_piutang.no_tagihan', '=', 'detail_penagihan_piutang.no_tagihan')
         ->whereIn(
@@ -174,7 +174,7 @@ class AccountReceivable extends Component
             collect($this->tagihanDipilih)->filter(fn(array $value): bool =>$value['selected'])
             ->keys()->all()
         )
-        ->sum('sisapiutang') - (float)$diskonPiutang;
+        ->sum('sisapiutang') - $diskonPiutang;
     }
 
     public function pilihSemua(bool $pilih): void
