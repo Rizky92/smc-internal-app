@@ -160,21 +160,29 @@ class AccountReceivable extends Component
 
     protected function rekalkulasiPembayaran(): void
     {   
-   
-        $diskonPiutang = collect($this->tagihanDipilih)->filter(fn(array $value): bool => $value['selected'])
-        ->map(fn(array $value)=> [
-            'selected'          => $value['selected'],
-            'diskon_piutang'    => empty($value['diskon_piutang']) ? 0 : $value['diskon_piutang']
-        ])->sum('diskon_piutang');           
-        
+        $diskonPiutang = collect($this->tagihanDipilih)->filter(function (array $value) {
+            return isset($value['selected']) && $value['selected'];
+        })->map(function (array $value) {
+            return [
+                'selected'          => isset($value['selected']) ? $value['selected'] : false,
+                'diskon_piutang'    => empty($value['diskon_piutang']) ? 0 : $value['diskon_piutang'],
+            ];
+        })->sum('diskon_piutang');             
         $this->totalDibayar = PenagihanPiutang::query()
         ->join('detail_penagihan_piutang', 'penagihan_piutang.no_tagihan', '=', 'detail_penagihan_piutang.no_tagihan')
         ->whereIn(
             DB::raw('concat(penagihan_piutang.no_tagihan, "_", penagihan_piutang.kd_pj, "_", detail_penagihan_piutang.no_rawat)'),
-            collect($this->tagihanDipilih)->filter(fn(array $value): bool =>$value['selected'])
-            ->keys()->all()
-        )
-        ->sum('sisapiutang') - (float)$diskonPiutang;
+            collect($this->tagihanDipilih)->filter(function (array $value) {
+                return isset($value['selected']) && $value['selected'];
+            })->keys()->all()
+        )->sum('sisapiutang');
+            
+        // Check if $diskonPiutang is numeric; if not, set it to 0
+        $diskonPiutang = is_numeric($diskonPiutang) ? $diskonPiutang : 0;
+        $diskonPiutang = intval($diskonPiutang); 
+        
+        $this->totalDibayar -= $diskonPiutang;
+       
     }
 
     public function pilihSemua(bool $pilih): void
