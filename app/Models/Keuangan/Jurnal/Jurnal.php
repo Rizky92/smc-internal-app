@@ -4,6 +4,7 @@ namespace App\Models\Keuangan\Jurnal;
 
 use App\Support\Eloquent\Concerns\Searchable;
 use App\Support\Eloquent\Concerns\Sortable;
+use App\Models\Farmasi\PengeluaranObat; 
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
@@ -209,6 +210,11 @@ class Jurnal extends Model
     
     public function pengeluaranHarian()
     {
-    return $this->belongsTo(PengeluaranHarian::class,'no_bukti',  'no_keluar');
+        return $this->belongsTo(PengeluaranHarian::class, 'no_bukti', 'no_keluar');
     }
+    
+    // public function pengeluaranObatBHP()
+    // {
+    //     return $this->belongsTo(PengeluaranObat::class, 'no_bukti', 'no_keluar');
+    // }
 }
