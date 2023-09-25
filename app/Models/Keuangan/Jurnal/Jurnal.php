@@ -83,7 +83,8 @@ class Jurnal extends Model
         if (empty($tglAkhir)) {
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
-
+        
+        $query = Jurnal::query();
         $sqlSelect = <<<SQL
             jurnal.tgl_jurnal,
             jurnal.jam_jurnal,
@@ -102,6 +103,9 @@ class Jurnal extends Model
             ->join('rekening', 'detailjurnal.kd_rek', '=', 'rekening.kd_rek')
             ->when(!empty($kodeRekening), fn (Builder $q) => $q->where('detailjurnal.kd_rek', $kodeRekening))
             ->whereBetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir]);
+
+            $query->with('pengeluaranHarian');
+            $results = $query->get();
     }
 
     public function scopeJumlahDebetDanKreditBukuBesar(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodeRekening = ''): Builder
@@ -201,5 +205,10 @@ class Jurnal extends Model
         $detail = $jurnal
             ->detail()
             ->createMany($detail);
+    }
+    
+    public function pengeluaranHarian()
+    {
+    return $this->belongsTo(PengeluaranHarian::class,'no_bukti',  'no_keluar');
     }
 }

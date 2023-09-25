@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Keuangan;
 
 use App\Models\Keuangan\Jurnal\Jurnal;
+use App\Models\Keuangan\Jurnal\PengeluaranHarian;
 use App\Models\Keuangan\Rekening;
 use App\Support\Livewire\Concerns\DeferredLoading;
 use App\Support\Livewire\Concerns\ExcelExportable;
@@ -50,6 +51,7 @@ class BukuBesar extends Component
             ? []
             : Jurnal::query()
             ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
+            ->with('pengeluaranHarian')
             ->search($this->cari, [
                 'jurnal.tgl_jurnal',
                 'jurnal.jam_jurnal',
@@ -106,6 +108,7 @@ class BukuBesar extends Component
         return [
             Jurnal::query()
                 ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
+                ->with('pengeluaranHarian')
                 ->cursor()
                 ->map(fn (Jurnal $model): array => [
                     'tgl_jurnal' => $model->tgl_jurnal,
@@ -113,6 +116,7 @@ class BukuBesar extends Component
                     'no_jurnal'  => $model->no_jurnal,
                     'no_bukti'   => $model->no_bukti,
                     'keterangan' => $model->keterangan,
+                    'keterangan_harian' => optional($model->pengeluaranHarian)->keterangan,
                     'kd_rek'     => $model->kd_rek,
                     'nm_rek'     => $model->nm_rek,
                     'debet'      => round($model->debet, 2),
@@ -125,6 +129,7 @@ class BukuBesar extends Component
                         'no_jurnal'  => '',
                         'no_bukti'   => '',
                         'keterangan' => '',
+                        'keterangan_harian' => '',
                         'kd_rek'     => '',
                         'nm_rek'     => 'TOTAL :',
                         'debet'      => round(optional($this->totalDebetDanKredit)->debet, 2),
@@ -142,7 +147,8 @@ class BukuBesar extends Component
             'Jam',
             'No. Jurnal',
             'No. Bukti',
-            'Keterangan',
+            'Keterangan Jurnal',
+            'Keterangan Pengeluaran',
             'Kode',
             'Rekening',
             'Debet',

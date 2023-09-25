@@ -24,7 +24,8 @@
                     <x-table.th name="jam_jurnal" title="Jam" style="width: 9ch" />
                     <x-table.th name="no_jurnal" title="No. Jurnal" style="width: 15ch" />
                     <x-table.th name="no_bukti" title="No. Bukti" style="width: 17ch" />
-                    <x-table.th name="keterangan" title="Keterangan" />
+                    <x-table.th name="keterangan" title="Keterangan Jurnal" />
+                    <x-table.th name="keterangan" title="Keterangan Pengeluaran" />
                     <x-table.th name="kd_rek" title="Kode" style="width: 10ch" />
                     <x-table.th name="nm_rek" title="Rekening" style="width: 30ch" />
                     <x-table.th name="debet" title="Debet" style="width: 20ch" />
@@ -38,6 +39,7 @@
                             <x-table.td>{{ $jurnal->no_jurnal }}</x-table.td>
                             <x-table.td>{{ $jurnal->no_bukti }}</x-table.td>
                             <x-table.td>{{ $jurnal->keterangan }}</x-table.td>
+                            <x-table.td>{{ optional($jurnal->pengeluaranHarian)->keterangan }}</x-table.td>
                             <x-table.td>{{ $jurnal->kd_rek }}</x-table.td>
                             <x-table.td>{{ $jurnal->nm_rek }}</x-table.td>
                             <x-table.td>{{ rp($jurnal->debet) }}</x-table.td>
