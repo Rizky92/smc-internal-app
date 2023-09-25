@@ -50,6 +50,7 @@ class StokDaruratFarmasi extends Component
                     'harga_beli_terakhir' => DB::raw("(select ifnull(round(dp.h_pesan / databarang.isi, 2), 0) from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1)"),
                     'diskon_terakhir'     => DB::raw("(select ifnull(dp.dis, '0') from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1)"),
                     'supplier_terakhir'   => DB::raw("(select ifnull(ds.nama_suplier, '-') from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur left join datasuplier ds on p.kode_suplier = ds.kode_suplier where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1)"),
+                    'ke_pasien_14_hari'   => DB::raw("(ifnull((select round(sum(detail_pemberian_obat.jml), 2) from detail_pemberian_obat where detail_pemberian_obat.kode_brng = databarang.kode_brng and detail_pemberian_obat.tgl_perawatan between date_sub(current_date(), interval 2 week) and current_date()), 0) + ifnull((select round(sum(detailjual.jumlah), 2) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.tgl_jual between date_sub(current_date(), interval 2 week) and current_date()), 0))"),
                 ])
                 ->paginate($this->perpage);
     }
@@ -85,6 +86,7 @@ class StokDaruratFarmasi extends Component
                     'harga_beli_terakhir' =>$model->harga_beli_terakhir,
                     'diskon_terakhir' =>$model->diskon_terakhir,
                     'supplier_terakhir' =>$model->supplier_terakhir,
+                    'ke_pasien_14_hari' =>$model->ke_pasien_14_hari,
                 ]),
         ];
     }
@@ -105,6 +107,7 @@ class StokDaruratFarmasi extends Component
             'Harga Beli Terakhir (Rp)',
             'Diskon Terakhir (%)',
             'Supplier Terakhir',
+            'Ke Pasien (14 Hari)',
         ];
     }
 
