@@ -29,6 +29,7 @@
                     <x-table.th name="harga_beli_terakhir" colspan="2" title="Harga Beli Terakhir" align="right" style="width: 25ch" />
                     <x-table.th name="diskon_terakhir" title="Diskon Terakhir (%)" align="right" style="width: 24ch" />
                     <x-table.th name="supplier_terakhir" title="Supplier Terakhir" style="width: 40ch" />
+                    <x-table.th name="ke_pasien_14_hari" title="Jumlah Ke Pasien (14 Hari)" align="right" style="width: 40ch" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->stokDaruratObat as $obat)
@@ -47,6 +48,7 @@
                             <x-table.td-currency :value="$obat->harga_beli_terakhir" />
                             <x-table.td class="text-right">{{ $obat->diskon_terakhir }}</x-table.td>
                             <x-table.td>{{ $obat->supplier_terakhir }}</x-table.td>
+                            <x-table.td class="text-right">{{ $obat->ke_pasien_14_hari }}</x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="23" padding />
