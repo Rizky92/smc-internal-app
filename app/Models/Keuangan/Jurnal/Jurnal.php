@@ -136,13 +136,11 @@ class Jurnal extends Model
         {
         // Format tanggal dalam bentuk 'Ymd'
         $tanggal = $date->format('Ymd');
-
         // Cari nomor jurnal terbaru yang sesuai dengan tanggal
         $latestJournal = $this->newQuery()
             ->where('no_jurnal', 'LIKE', "JR{$tanggal}%")
             ->orderBy('no_jurnal', 'desc')
             ->first();
-
         if ($latestJournal) {
             // Jika ada nomor jurnal yang sama, ambil angka terakhir dan tambahkan 1
             $lastNumber = intval(substr($latestJournal->no_jurnal, -6)) + 1;
@@ -150,10 +148,8 @@ class Jurnal extends Model
             // Jika tidak ada nomor jurnal yang sama, gunakan '1' sebagai angka terakhir
             $lastNumber = 1;
         }
-
         // Format angka terakhir dengan 6 digit '0' di depan
         $formattedNumber = str_pad($lastNumber, 6, '0', STR_PAD_LEFT);
-
         // Gabungkan tanggal dan angka terakhir yang diformat untuk mendapatkan nomor jurnal baru
         $noJurnalBaru = "JR{$tanggal}{$formattedNumber}";
 
