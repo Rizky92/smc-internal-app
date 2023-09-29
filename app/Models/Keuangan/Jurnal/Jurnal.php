@@ -133,39 +133,66 @@ class Jurnal extends Model
     }
 
     public function noJurnalBaru(Carbon $date): string
-    {
-        $noJurnal = $this->newQuery()
-            ->where('tgl_jurnal', $date->format('Y-m-d'))
-            ->orderBy('tgl_jurnal', 'desc')
-            ->orderBy('no_jurnal', 'desc')
-            ->limit(1)
-            ->value('no_jurnal');
+        {
+        // Format tanggal dalam bentuk 'Ymd'
+        $tanggal = $date->format('Ymd');
 
-        if (!$noJurnal) {
-            $noJurnal = "JR";
-            $noJurnal .= $date->format('Ymd');
-            $noJurnal .= "000000";
+        // Cari nomor jurnal terbaru yang sesuai dengan tanggal
+        $latestJournal = $this->newQuery()
+            ->where('no_jurnal', 'LIKE', "JR{$tanggal}%")
+            ->orderBy('no_jurnal', 'desc')
+            ->first();
+
+        if ($latestJournal) {
+            // Jika ada nomor jurnal yang sama, ambil angka terakhir dan tambahkan 1
+            $lastNumber = intval(substr($latestJournal->no_jurnal, -6)) + 1;
+        } else {
+            // Jika tidak ada nomor jurnal yang sama, gunakan '1' sebagai angka terakhir
+            $lastNumber = 1;
         }
 
-        $noJurnal = str($noJurnal);
+        // Format angka terakhir dengan 6 digit '0' di depan
+        $formattedNumber = str_pad($lastNumber, 6, '0', STR_PAD_LEFT);
 
-        $tglJurnal = $noJurnal
-            ->substr(0, 10)
-            ->value();
-
-        $indexJurnal = $noJurnal
-            ->substr(-6)
-            ->toInt();
-
-        $indexJurnal += 1;
-
-        $noJurnalBaru = str($indexJurnal)
-            ->padLeft(6, '0')
-            ->prepend($tglJurnal)
-            ->value();
+        // Gabungkan tanggal dan angka terakhir yang diformat untuk mendapatkan nomor jurnal baru
+        $noJurnalBaru = "JR{$tanggal}{$formattedNumber}";
 
         return $noJurnalBaru;
-    }
+         
+            // $noJurnal = $this->newQuery()
+            //     ->where('tgl_jurnal', $tglJurnalAsli)
+            //     ->orderBy('tgl_jurnal', 'desc')
+            //     ->orderBy('no_jurnal', 'desc')
+            //     ->limit(1)
+            //     ->value('no_jurnal');
+
+            // if (!$noJurnal) {
+            //     $noJurnal = "JR";
+            //     $noJurnal .= $date->format('Ymd');
+            //     $noJurnal .= "000000";
+            // }
+
+            // $noJurnal = str($noJurnal);
+
+            // $tglJurnal = $noJurnal
+            //     ->substr(0, 10)
+            //     ->value();
+
+            // $indexJurnal = $noJurnal
+            //     ->substr(-6)
+            //     ->toInt();
+
+            // $indexJurnal += 1;
+
+            // $noJurnalBaru = str($indexJurnal)
+            //     ->padLeft(6, '0')
+            //     ->prepend($tglJurnal)
+            //     ->value();
+
+            // return $noJurnalBaru;
+        }
+
+
 
     /**
      * @param  "U"|"P" $jenis
