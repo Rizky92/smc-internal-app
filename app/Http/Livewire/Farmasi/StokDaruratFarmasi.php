@@ -38,7 +38,6 @@ class StokDaruratFarmasi extends Component
                     'kodesatuan.satuan',
                     'kategori_barang.nama',
                     'industrifarmasi.nama_industri',
-                 
                 ])
                 ->sortWithColumns($this->sortColumns, [
                     'satuan_kecil'        => 'kodesatuan.satuan',

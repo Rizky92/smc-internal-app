@@ -130,6 +130,7 @@ class Obat extends Model
         return $query
             ->selectRaw($sqlSelect)
             ->withCasts([
+                'stokminimal'         => 'float',
                 'stok_sekarang_ifi'   => 'float',
                 'stok_sekarang_ap'    => 'float',
                 'saran_order'         => 'float',

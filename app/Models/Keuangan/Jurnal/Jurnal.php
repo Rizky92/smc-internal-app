@@ -4,7 +4,7 @@ namespace App\Models\Keuangan\Jurnal;
 
 use App\Support\Eloquent\Concerns\Searchable;
 use App\Support\Eloquent\Concerns\Sortable;
-use App\Models\Farmasi\PengeluaranObat; 
+use App\Models\Farmasi\PengeluaranObat;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
@@ -84,7 +84,7 @@ class Jurnal extends Model
         if (empty($tglAkhir)) {
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
-        
+
         $query = Jurnal::query();
         $sqlSelect = <<<SQL
             jurnal.tgl_jurnal,
@@ -105,8 +105,8 @@ class Jurnal extends Model
             ->when(!empty($kodeRekening), fn (Builder $q) => $q->where('detailjurnal.kd_rek', $kodeRekening))
             ->whereBetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir]);
 
-            $query->with('pengeluaranHarian');
-            $results = $query->get();
+        $query->with('pengeluaranHarian');
+        $results = $query->get();
     }
 
     public function scopeJumlahDebetDanKreditBukuBesar(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodeRekening = ''): Builder
@@ -133,7 +133,7 @@ class Jurnal extends Model
     }
 
     public function noJurnalBaru(Carbon $date): string
-        {
+    {
         // Format tanggal dalam bentuk 'Ymd'
         $tanggal = $date->format('Ymd');
         // Cari nomor jurnal terbaru yang sesuai dengan tanggal
@@ -154,39 +154,39 @@ class Jurnal extends Model
         $noJurnalBaru = "JR{$tanggal}{$formattedNumber}";
 
         return $noJurnalBaru;
-         
-            // $noJurnal = $this->newQuery()
-            //     ->where('tgl_jurnal', $tglJurnalAsli)
-            //     ->orderBy('tgl_jurnal', 'desc')
-            //     ->orderBy('no_jurnal', 'desc')
-            //     ->limit(1)
-            //     ->value('no_jurnal');
 
-            // if (!$noJurnal) {
-            //     $noJurnal = "JR";
-            //     $noJurnal .= $date->format('Ymd');
-            //     $noJurnal .= "000000";
-            // }
+        // $noJurnal = $this->newQuery()
+        //     ->where('tgl_jurnal', $tglJurnalAsli)
+        //     ->orderBy('tgl_jurnal', 'desc')
+        //     ->orderBy('no_jurnal', 'desc')
+        //     ->limit(1)
+        //     ->value('no_jurnal');
 
-            // $noJurnal = str($noJurnal);
+        // if (!$noJurnal) {
+        //     $noJurnal = "JR";
+        //     $noJurnal .= $date->format('Ymd');
+        //     $noJurnal .= "000000";
+        // }
 
-            // $tglJurnal = $noJurnal
-            //     ->substr(0, 10)
-            //     ->value();
+        // $noJurnal = str($noJurnal);
 
-            // $indexJurnal = $noJurnal
-            //     ->substr(-6)
-            //     ->toInt();
+        // $tglJurnal = $noJurnal
+        //     ->substr(0, 10)
+        //     ->value();
 
-            // $indexJurnal += 1;
+        // $indexJurnal = $noJurnal
+        //     ->substr(-6)
+        //     ->toInt();
 
-            // $noJurnalBaru = str($indexJurnal)
-            //     ->padLeft(6, '0')
-            //     ->prepend($tglJurnal)
-            //     ->value();
+        // $indexJurnal += 1;
 
-            // return $noJurnalBaru;
-        }
+        // $noJurnalBaru = str($indexJurnal)
+        //     ->padLeft(6, '0')
+        //     ->prepend($tglJurnal)
+        //     ->value();
+
+        // return $noJurnalBaru;
+    }
 
 
 
@@ -230,12 +230,12 @@ class Jurnal extends Model
             ->detail()
             ->createMany($detail);
     }
-    
+
     public function pengeluaranHarian()
     {
         return $this->belongsTo(PengeluaranHarian::class, 'no_bukti', 'no_keluar');
     }
-    
+
     // public function pengeluaranObatBHP()
     // {
     //     return $this->belongsTo(PengeluaranObat::class, 'no_bukti', 'no_keluar');

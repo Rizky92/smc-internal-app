@@ -44,17 +44,17 @@ class LaporanPemakaianObatNAPZA extends Component
         return $this->isDeferred
             ? []
             : Obat::query()
-            ->pemakaianObatNAPZA($this->tglAwal, $this->tglAkhir, 'narkotika')
-            ->search($this->cari, [
-                'databarang.kode_brng',
-                'databarang.nama_brng',
-                'databarang.kode_golongan',
-                'golongan_barang.nama',
-                'kodesatuan.kode_sat',
-                'kodesatuan.satuan',
-            ])
-            ->sortWithColumns($this->sortColumns)
-            ->paginate($this->perpage, ['*'], 'page_narkotika');
+                ->pemakaianObatNAPZA($this->tglAwal, $this->tglAkhir, 'narkotika')
+                ->search($this->cari, [
+                    'databarang.kode_brng',
+                    'databarang.nama_brng',
+                    'databarang.kode_golongan',
+                    'golongan_barang.nama',
+                    'kodesatuan.kode_sat',
+                    'kodesatuan.satuan',
+                ])
+                ->sortWithColumns($this->sortColumns)
+                ->paginate($this->perpage, ['*'], 'page_narkotika');
     }
 
     /**
