@@ -2,9 +2,9 @@
 
 namespace App\Models\RekamMedis;
 
-use App\Support\Eloquent\Concerns\Searchable;
+use App\Database\Eloquent\Concerns\Searchable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use App\Support\Eloquent\Model;
+use App\Database\Eloquent\Model;
 
 class Penjamin extends Model
 {

@@ -2,7 +2,7 @@
 
 namespace App\Models\Kepegawaian;
 
-use App\Support\Eloquent\Model;
+use App\Database\Eloquent\Model;
 
 class Dokter extends Model
 {

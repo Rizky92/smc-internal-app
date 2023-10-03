@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Support\Eloquent\Model;
+use App\Database\Eloquent\Model;
 use Closure;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Auth\Access\Gate;

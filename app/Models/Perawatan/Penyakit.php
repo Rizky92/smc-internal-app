@@ -2,7 +2,7 @@
 
 namespace App\Models\Perawatan;
 
-use App\Support\Eloquent\Model;
+use App\Database\Eloquent\Model;
 
 class Penyakit extends Model
 {

@@ -3,7 +3,7 @@
 namespace App\Models\Perawatan;
 
 use App\Models\Bangsal;
-use App\Support\Eloquent\Model;
+use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 

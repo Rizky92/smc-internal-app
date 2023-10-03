@@ -2,7 +2,7 @@
 
 namespace App\Models\Keuangan;
 
-use App\Support\Eloquent\Model;
+use App\Database\Eloquent\Model;
 
 class DetailNotaRanap extends Model
 {

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Support\Eloquent\Model;
+use App\Database\Eloquent\Model;
 
 class Satuan extends Model
 {

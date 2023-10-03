@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Support\Eloquent\Model;
+use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Bangsal extends Model

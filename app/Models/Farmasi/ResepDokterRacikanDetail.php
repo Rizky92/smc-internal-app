@@ -2,7 +2,7 @@
 
 namespace App\Models\Farmasi;
 
-use App\Support\Eloquent\Model;
+use App\Database\Eloquent\Model;
 
 class ResepDokterRacikanDetail extends Model
 {

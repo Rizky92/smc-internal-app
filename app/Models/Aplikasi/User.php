@@ -4,10 +4,10 @@ namespace App\Models\Aplikasi;
 
 use App\Casts\AESFromDatabaseCast;
 use App\Casts\BooleanCast;
-use App\Support\Eloquent\Concerns\Searchable;
-use App\Support\Eloquent\Concerns\Sortable;
+use App\Database\Eloquent\Authenticatable;
+use App\Database\Eloquent\Concerns\Searchable;
+use App\Database\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Lab404\Impersonate\Models\Impersonate;
@@ -1060,7 +1060,6 @@ class User extends Authenticatable
         // Laravel tidak bisa melakukan query `whereHas` apabila berbeda koneksi database 
         // sehingga perlu melakukan pengecekan secara manual dengan mengkonversi query
         // builder menjadi bentuk raw SQL query sebagai workaround masalah tersebut.
-
         $sqlHasRoles = DB::table("{$db}.model_has_roles")
             ->whereRaw("model_type = 'User'")
             ->whereRaw('model_has_roles.model_id = user.id_user')
@@ -1104,7 +1103,7 @@ class User extends Authenticatable
         return static::query()
             ->withoutGlobalScopes()
             ->withHakAkses()
-            ->whereRaw("AES_DECRYPT(user.id_user, 'nur') = ?", $nrp)
+            ->whereRaw("AES_DECRYPT(user.id_user, ?) = ?", config('khanza.app.userkey'), $nrp)
             ->first($columns);
     }
 }

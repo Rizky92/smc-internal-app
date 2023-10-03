@@ -3,7 +3,7 @@
 namespace App\Models\Perawatan;
 
 use Illuminate\Database\Eloquent\Builder;
-use App\Support\Eloquent\Model;
+use App\Database\Eloquent\Model;
 
 class DiagnosaPasien extends Model
 {

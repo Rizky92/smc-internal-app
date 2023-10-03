@@ -2,7 +2,7 @@
 
 namespace App\Models\RekamMedis;
 
-use App\Support\Eloquent\Model;
+use App\Database\Eloquent\Model;
 
 class Kecamatan extends Model
 {

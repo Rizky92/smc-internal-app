@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Database\Eloquent\Model;
 use App\Database\Query\Grammars\MysqlGrammar;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
@@ -9,7 +10,6 @@ use App\Models\Aplikasi\User;
 use App\Rules\DateBetween;
 use App\Rules\DoesntExist;
 use Illuminate\Database\Eloquent\Builder;
-use App\Support\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
@@ -36,7 +36,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if ($this->app->environment('local')) {
+        if (
+            $this->app->environment('local') &&
+            class_exists(\Laravel\Telescope\TelescopeServiceProvider::class)
+        ) {
             $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
             $this->app->register(TelescopeServiceProvider::class);
         }

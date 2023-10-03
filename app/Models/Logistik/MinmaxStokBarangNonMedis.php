@@ -2,7 +2,7 @@
 
 namespace App\Models\Logistik;
 
-use App\Support\Eloquent\Model;
+use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MinmaxStokBarangNonMedis extends Model

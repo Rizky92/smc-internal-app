@@ -3,7 +3,7 @@
 namespace App\Models\Farmasi;
 
 use Illuminate\Database\Eloquent\Builder;
-use App\Support\Eloquent\Model;
+use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
 

@@ -3,9 +3,9 @@
 namespace App\Models\Keuangan\Jurnal;
 
 use App\Models\Kepegawaian\Pegawai;
-use App\Support\Eloquent\Concerns\Searchable;
-use App\Support\Eloquent\Concerns\Sortable;
-use App\Support\Eloquent\Model;
+use App\Database\Eloquent\Concerns\Searchable;
+use App\Database\Eloquent\Concerns\Sortable;
+use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class JurnalBackup extends Model
