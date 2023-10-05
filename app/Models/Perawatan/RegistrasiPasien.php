@@ -287,6 +287,58 @@ class RegistrasiPasien extends Model
         return $this->hasMany(BerkasDigitalKeperawatan::class, 'no_rawat', 'no_rawat');
     }
 
+    public function scopeLaporanStatistik(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfWeek()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfWeek()->format('Y-m-d');
+        }
+
+        $sqlSelect = <<<SQL
+            reg_periksa.no_rawat,
+            reg_periksa.no_rkm_medis,
+            pasien.nm_pasien,
+            pasien.no_ktp,
+            pasien.no_tlp,
+            pasien.jk,
+            pasien.tgl_lahir,
+            reg_periksa.umurdaftar,
+            reg_periksa.sttsumur,
+            pasien.agama,
+            suku_bangsa.nama_suku_bangsa,
+            reg_periksa.status_lanjut,
+            reg_periksa.status_poli,
+            poliklinik.nm_poli,
+            dokter.nm_dokter,
+            reg_periksa.stts,
+            reg_periksa.tgl_registrasi,
+            reg_periksa.jam_reg,
+            reg_periksa.status_bayar,
+            min()
+            (
+                select count(rp2.*) 
+                from reg_periksa rp2 
+                where rp2.no_rkm_medis = reg_periksa.no_rkm_medis 
+                and rp2.tgl_registrasi <= reg_periksa.tgl_registrasi
+            ) as kunjungan_ke
+        SQL;
+
+        $query
+            ->selectRaw($sqlSelect)
+            ->withCasts(['kunjungan_ke' => 'int'])
+            ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->leftJoin('suku_bangsa', 'pasien.suku_bangsa', '=', 'suku_bangsa.id')
+            ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
+            ->leftJoin('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
+            ->leftJoin('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+            ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir]);
+
+        return $query;
+    }
+
     public function scopeDaftarPasienRanap(
         Builder $query,
         string $tglAwal = '',
