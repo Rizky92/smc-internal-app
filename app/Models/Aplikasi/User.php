@@ -2,7 +2,6 @@
 
 namespace App\Models\Aplikasi;
 
-use App\Casts\AESFromDatabaseCast;
 use App\Casts\BooleanCast;
 use App\Database\Eloquent\Authenticatable;
 use App\Database\Eloquent\Concerns\Searchable;
