@@ -2,15 +2,11 @@
 
 namespace App\Models\Farmasi;
 
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
-use Illuminate\Database\Eloquent\Builder;
 use App\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class ResepDokter extends Model
 {
-    use Searchable, Sortable;
-
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = 'no_resep';
@@ -23,18 +19,13 @@ class ResepDokter extends Model
 
     public $timestamps = false;
 
-    protected array $searchColumns = [
-        'no_resep',
-        'kode_brng',
-        'aturan_pakai',
-    ];
+    protected $searchColumns = ['no_resep', 'kode_brng', 'aturan_pakai'];
 
     public function scopeKunjunganResepObatRegular(
         Builder $query,
         string $tglAwal = '',
         string $tglAkhir = '',
-        string $jenisPerawatan = '',
-        string $search
+        string $jenisPerawatan = ''
     ): Builder {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->format('Y-m-d');
@@ -57,8 +48,17 @@ class ResepDokter extends Model
             round(sum(resep_dokter.jml * databarang.h_beli)) total
         SQL;
 
+        $this->addSearchConditions([
+            'pasien.nm_pasien',
+            'penjab.png_jawab',
+            'reg_periksa.status_lanjut',
+            'dokter.nm_dokter',
+            'poliklinik.nm_poli',
+        ]);
+
         return $query
             ->selectRaw($sqlSelect)
+            ->withCasts(['total' => 'float'])
             ->join('resep_obat', 'resep_dokter.no_resep', '=', 'resep_obat.no_resep')
             ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
@@ -69,13 +69,6 @@ class ResepDokter extends Model
             ->where('reg_periksa.status_bayar', 'Sudah Bayar')
             ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
             ->when(!empty($jenisPerawatan), fn (Builder $query) => $query->where('reg_periksa.status_lanjut', $jenisPerawatan))
-            ->search($search, [
-                'pasien.nm_pasien',
-                'penjab.png_jawab',
-                'reg_periksa.status_lanjut',
-                'dokter.nm_dokter',
-                'poliklinik.nm_poli',
-            ])
             ->groupBy([
                 'resep_dokter.no_resep',
                 'dokter.nm_dokter',
@@ -83,13 +76,6 @@ class ResepDokter extends Model
                 'resep_obat.jam',
                 'pasien.nm_pasien',
                 'reg_periksa.status_lanjut',
-            ])
-            ->withCasts([
-                'tgl_perawatan' => 'date',
-                'waktu_validasi' => 'datetime',
-                'waktu_penyerahan' => 'datetime',
-                'total' => 'float',
-                'selisih' => 'datetime',
             ]);
     }
 }

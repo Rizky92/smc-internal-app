@@ -34,7 +34,7 @@ class BerkasDigitalKeperawatan extends Model
         // 
     ];
 
-    protected array $searchColumns = [
+    protected $searchColumns = [
         'no_rawat',
         'kode',
         'lokasi_file',

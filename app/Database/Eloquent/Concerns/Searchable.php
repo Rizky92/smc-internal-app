@@ -10,6 +10,22 @@ use LogicException;
 trait Searchable
 {
     /**
+     * @param  \Illuminate\Support\Collection<int, string>|string[]
+     * 
+     * @return $this
+     */
+    public function addSearchConditions($columns)
+    {
+        if ($columns instanceof Collection) {
+            $columns = $columns->all();
+        }
+
+        $this->searchColumns = array_merge($this->searchColumns, $columns);
+
+        return $this;
+    }
+
+    /**
      * @param  \Illuminate\Database\Eloquent\Builder $query
      * @param  string $search
      * @param  \Illuminate\Support\Collection<int, string>|array<array-key, string> $columns
@@ -57,7 +73,7 @@ trait Searchable
             ->filter()
             ->map(fn (string $word): string => str($word)->trim()->wrap('%')->value);
 
-        $concatenatedColumns = $columns->joinStr(", ' ', ")->wrap('concat(', ')')->value();
+        $concatenatedColumns = $columns->joinStr(', ')->wrap("concat_ws(' ', ", ')')->value();
 
         return $query->when(
             $search->isNotEmpty(),

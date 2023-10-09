@@ -33,7 +33,7 @@ class PenagihanPiutang extends Model
         'status',
     ];
 
-    protected array $searchColumns = [
+    protected $searchColumns = [
         'no_tagihan',
         'nip',
         'nip_menyetujui',

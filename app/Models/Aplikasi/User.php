@@ -4,8 +4,6 @@ namespace App\Models\Aplikasi;
 
 use App\Casts\BooleanCast;
 use App\Database\Eloquent\Authenticatable;
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +12,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use Notifiable, HasRoles, Searchable, Sortable, Impersonate;
+    use Notifiable, HasRoles, Impersonate;
 
     protected $connection = 'mysql_sik';
 

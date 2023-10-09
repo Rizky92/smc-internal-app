@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
 class RegistrasiPasien extends Model
@@ -38,7 +39,7 @@ class RegistrasiPasien extends Model
 
     public $timestamps = false;
 
-    protected array $searchColumns = [
+    protected $searchColumns = [
         'no_reg',
         'no_rawat',
         'kd_dokter',
@@ -267,6 +268,11 @@ class RegistrasiPasien extends Model
         return $this->hasMany(PemberianObat::class, 'no_rawat', 'no_rawat');
     }
 
+    public function berkasDigital(): HasMany
+    {
+        return $this->hasMany(BerkasDigitalKeperawatan::class, 'no_rawat', 'no_rawat');
+    }
+
     public function tindakanRalanPerawat(): HasMany
     {
         return $this->hasMany(TindakanRalanPerawat::class, 'no_rawat', 'no_rawat');
@@ -282,9 +288,19 @@ class RegistrasiPasien extends Model
         return $this->hasMany(TindakanRalanDokterPerawat::class, 'no_rawat', 'no_rawat');
     }
 
-    public function berkasDigital(): HasMany
+    public function tindakanRanapPerawat(): HasMany
     {
-        return $this->hasMany(BerkasDigitalKeperawatan::class, 'no_rawat', 'no_rawat');
+        return $this->hasMany(TindakanRanapPerawat::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function tindakanRanapDokter(): HasMany
+    {
+        return $this->hasMany(TindakanRanapDokter::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function tindakanRanapDokterPerawat(): HasMany
+    {
+        return $this->hasMany(TindakanRanapDokterPerawat::class, 'no_rawat', 'no_rawat');
     }
 
     public function scopeLaporanStatistik(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
@@ -298,45 +314,115 @@ class RegistrasiPasien extends Model
         }
 
         $sqlSelect = <<<SQL
-            reg_periksa.no_rawat,
-            reg_periksa.no_rkm_medis,
-            pasien.nm_pasien,
-            pasien.no_ktp,
-            pasien.no_tlp,
-            pasien.jk,
-            pasien.tgl_lahir,
+            reg_periksa.no_rawat as no_rawat,
+            reg_periksa.no_rkm_medis as no_rm,
+            pasien.nm_pasien as nm_pasien,
+            pasien.no_ktp as no_ktp,
+            pasien.jk as jk,
+            pasien.tgl_lahir as tgl_lahir,
             reg_periksa.umurdaftar,
             reg_periksa.sttsumur,
-            pasien.agama,
-            suku_bangsa.nama_suku_bangsa,
-            reg_periksa.status_lanjut,
-            reg_periksa.status_poli,
-            poliklinik.nm_poli,
-            dokter.nm_dokter,
-            reg_periksa.stts,
-            reg_periksa.tgl_registrasi,
-            reg_periksa.jam_reg,
-            reg_periksa.status_bayar,
-            min()
-            (
-                select count(rp2.*) 
-                from reg_periksa rp2 
-                where rp2.no_rkm_medis = reg_periksa.no_rkm_medis 
-                and rp2.tgl_registrasi <= reg_periksa.tgl_registrasi
-            ) as kunjungan_ke
+            pasien.agama as agama,
+            suku_bangsa.nama_suku_bangsa as suku,
+            reg_periksa.status_lanjut as status_lanjut,
+            reg_periksa.status_poli as status_poli,
+            poliklinik.nm_poli as nm_poli,
+            dokter.nm_dokter as nm_dokter,
+            reg_periksa.stts as status,
+            reg_periksa.tgl_registrasi as tgl_registrasi,
+            reg_periksa.jam_reg as jam_registrasi,
+            if(rawat_inap.tgl_keluar > '0000-00-00', rawat_inap.tgl_keluar, '-') as tgl_keluar,
+            if(rawat_inap.jam_keluar > '00:00:00', rawat_inap.jam_keluar, '-') as jam_keluar,
+            rawat_inap.diagnosa_awal as diagnosa_awal,
+            group_concat(distinct diagnosa_pasien.kd_penyakit separator '; ') as icd_diagnosa,
+            group_concat(distinct trim(concat_ws(' - ', diagnosa_pasien.kd_penyakit, penyakit.nm_penyakit)) separator '; ') as diagnosa,
+            group_concat(distinct perawatan_ralan.kd_jenis_prw separator '; ') as kd_tindakan_ralan,
+            group_concat(distinct trim(concat_ws(' - ', perawatan_ralan.kd_jenis_prw, jns_perawatan.nm_perawatan)) separator '; ') as nm_tindakan_ralan,
+            group_concat(distinct perawatan_ranap.kd_jenis_prw separator '; ') as kd_tindakan_ranap,
+            group_concat(distinct trim(concat_ws(' - ', perawatan_ranap.kd_jenis_prw, jns_perawatan_inap.nm_perawatan)) separator '; ') as nm_tindakan_ranap,
+            '-' as lama_operasi,
+            rujuk_masuk.perujuk as rujukan_masuk,
+            group_concat(distinct dokter_dpjp.nm_dokter separator '; ') as dokter_pj,
+            kamar.kelas as kelas,
+            penjab.png_jawab as penjamin,
+            reg_periksa.status_bayar as status_bayar,
+            rawat_inap.stts_pulang as status_pulang_ranap,
+            rujuk.rujuk_ke as rujuk_keluar_rs,
+            convert(pasien.alamat using ascii) as alamat,
+            pasien.no_tlp as no_hp,
+            (select count(rp2.no_rawat) from reg_periksa rp2 where rp2.no_rkm_medis = reg_periksa.no_rkm_medis and rp2.tgl_registrasi <= reg_periksa.tgl_registrasi) as kunjungan_ke
         SQL;
 
-        $query
+        $this->addSearchConditions([
+            'pasien.nm_pasien',
+            'pasien.no_ktp',
+            'suku_bangsa.nama_suku_bangsa',
+            'poliklinik.nm_poli',
+            'dokter.nm_dokter',
+            'rawat_inap.diagnosa_awal',
+            'diagnosa_pasien.kd_penyakit',
+            'penyakit.nm_penyakit',
+            'perawatan_ralan.kd_jenis_prw',
+            'jns_perawatan.nm_perawatan',
+            'perawatan_ranap.kd_jenis_prw',
+            'jns_perawatan_inap.nm_perawatan',
+            'rujuk_masuk.perujuk',
+            'dokter_dpjp.kd_dokter',
+            'dokter_dpjp.nm_dokter',
+            'kamar.kelas',
+            'penjab.png_jawab',
+            'rujuk.rujuk_ke',
+            'pasien.alamat',
+            'pasien.no_tlp'
+        ]);
+
+        $rawatInap = RawatInap::query()
+            ->select(['kd_kamar', 'no_rawat', 'diagnosa_awal', 'tgl_keluar', 'jam_keluar', 'lama', 'stts_pulang'])
+            ->whereRaw("kamar_inap.stts_pulang != 'Pindah Kamar'")
+            ->orderBy('no_rawat', 'desc')
+            ->orderBy('tgl_masuk', 'desc')
+            ->orderBy('jam_masuk', 'desc');
+
+        $dpjpRanap = DB::connection('mysql_sik')
+            ->table('dpjp_ranap')
+            ->selectRaw('dpjp_ranap.no_rawat, dokter.nm_dokter')
+            ->leftJoin('dokter', 'dpjp_ranap.kd_dokter', '=', 'dokter.kd_dokter')
+            ->toSql();
+
+        $perawatanRalan = TindakanRalanDokterPerawat::query()
+            ->select(['no_rawat', 'kd_jenis_prw'])
+            ->union(TindakanRalanDokter::query()->select(['no_rawat', 'kd_jenis_prw']))
+            ->union(TindakanRalanPerawat::query()->select(['no_rawat', 'kd_jenis_prw']));
+
+        $perawatanRanap = TindakanRanapDokterPerawat::query()
+            ->select(['no_rawat', 'kd_jenis_prw'])
+            ->union(TindakanRanapDokter::query()->select(['no_rawat', 'kd_jenis_prw']))
+            ->union(TindakanRanapPerawat::query()->select(['no_rawat', 'kd_jenis_prw']));
+
+        return $query
             ->selectRaw($sqlSelect)
-            ->withCasts(['kunjungan_ke' => 'int'])
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
-            ->leftJoin('suku_bangsa', 'pasien.suku_bangsa', '=', 'suku_bangsa.id')
+            ->leftJoin('suku_bangsa', 'pasien.suku_bangsa', 'suku_bangsa.id')
             ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->leftJoin('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
             ->leftJoin('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
-            ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir]);
-
-        return $query;
+            ->leftJoinSub($rawatInap, 'rawat_inap', fn (JoinClause $join) =>
+            $join->on('reg_periksa.no_rawat', '=', 'rawat_inap.no_rawat'))
+            ->leftJoin('dpjp_ranap', 'reg_periksa.no_rawat', '=', 'dpjp_ranap.no_rawat')
+            ->leftJoin(DB::raw('dokter dokter_dpjp'), 'dpjp_ranap.kd_dokter', '=', 'dokter_dpjp.kd_dokter')
+            ->leftJoin('kamar', 'rawat_inap.kd_kamar', '=', 'kamar.kd_kamar')
+            ->leftJoin('rujuk', 'reg_periksa.no_rawat', '=', 'rujuk.no_rawat')
+            ->leftJoin('rujuk_masuk', 'reg_periksa.no_rawat', '=', 'rujuk_masuk.no_rawat')
+            ->leftJoin('diagnosa_pasien', 'reg_periksa.no_rawat', '=', 'diagnosa_pasien.no_rawat')
+            ->leftJoin('penyakit', 'diagnosa_pasien.kd_penyakit', '=', 'penyakit.kd_penyakit')
+            ->leftJoinSub($perawatanRalan, 'perawatan_ralan', fn (JoinClause $join) =>
+            $join->on('reg_periksa.no_rawat', '=', 'perawatan_ralan.no_rawat'))
+            ->leftJoin('jns_perawatan', 'perawatan_ralan.kd_jenis_prw', '=', 'jns_perawatan.kd_jenis_prw')
+            ->leftJoinSub($perawatanRanap, 'perawatan_ranap', fn (JoinClause $join) =>
+            $join->on('reg_periksa.no_rawat', '=', 'perawatan_ranap.no_rawat'))
+            ->leftJoin('jns_perawatan_inap', 'perawatan_ranap.kd_jenis_prw', '=', 'jns_perawatan_inap.kd_jenis_prw')
+            ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
+            ->groupByRaw('reg_periksa.no_rawat');
     }
 
     public function scopeDaftarPasienRanap(

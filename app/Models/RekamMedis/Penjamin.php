@@ -22,7 +22,7 @@ class Penjamin extends Model
 
     public $timestamps = false;
 
-    protected array $searchColumns = [
+    protected $searchColumns = [
         'kd_pj',
         'png_jawab',
         'nama_perusahaan',

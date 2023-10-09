@@ -24,11 +24,9 @@
                     <x-table.th style="width: 20ch" title="Tgl. Pulang" />
                     <x-table.th style="width: 20ch" title="Jam Pulang" />
                     <x-table.th style="width: 20ch" title="Diagnosa Masuk" />
-                    <x-table.th style="width: 15ch" title="ICD Diagnosa" />
+                    <x-table.th style="width: 50ch" title="ICD-10" />
                     <x-table.th style="width: 50ch" title="Diagnosa" />
-                    <x-table.th style="width: 15ch" title="ICD Tindakan Ralan" />
                     <x-table.th style="width: 50ch" title="Tindakan Ralan" />
-                    <x-table.th style="width: 15ch" title="ICD Tindakan Ranap" />
                     <x-table.th style="width: 50ch" title="Tindakan Ranap" />
                     <x-table.th style="width: 15ch" title="Lama Operasi" />
                     <x-table.th style="width: 15ch" title="Rujukan Masuk" />
@@ -45,12 +43,10 @@
                 <x-slot name="body">
                     @forelse ($this->dataLaporanStatistik as $registrasi)
                         @php
-                            $kdDiagnosa = str($registrasi->kd_diagnosa)->split('/(, )/');
-                            $nmDiagnosa = str($registrasi->nm_diagnosa)->split('/(, )/');
-                            $kdTindakanRalan = str($registrasi->kd_tindakan_ralan)->split('/(, )/');
-                            $nmTindakanRalan = str($registrasi->nm_tindakan_ralan)->split('/(, )/');
-                            $kdTindakanRanap = str($registrasi->kd_tindakan_ranap)->split('/(, )/');
-                            $nmTindakanRanap = str($registrasi->nm_tindakan_ranap)->split('/(, )/');
+                            $icdDiagnosa = str($registrasi->icd_diagnosa)->split('/(; )/');
+                            $diagnosa = str($registrasi->diagnosa)->split('/(; )/');
+                            $tindakanRalan = str($registrasi->nm_tindakan_ralan)->split('/(; )/');
+                            $tindakanRanap = str($registrasi->nm_tindakan_ranap)->split('/(; )/');
                             $dokterPj = str($registrasi->dokter_pj)->split('/(; )/');
                         @endphp
                         <x-table.tr>
@@ -74,42 +70,28 @@
                             <x-table.td>{{ $registrasi->jam_keluar }}</x-table.td>
                             <x-table.td>{{ $registrasi->diagnosa_awal }}</x-table.td>
                             <x-table.td>
-                                @foreach ($kdDiagnosa as $item)
+                                @foreach ($icdDiagnosa as $item)
                                     {{ $item }} @if (!$loop->last)
                                         <br>
                                     @endif
                                 @endforeach
                             </x-table.td>
                             <x-table.td>
-                                @foreach ($nmDiagnosa as $item)
+                                @foreach ($diagnosa as $item)
                                     {{ $item }} @if (!$loop->last)
                                         <br>
                                     @endif
                                 @endforeach
                             </x-table.td>
                             <x-table.td>
-                                @foreach ($kdTindakanRalan as $item)
+                                @foreach ($tindakanRalan as $item)
                                     {{ $item }} @if (!$loop->last)
                                         <br>
                                     @endif
                                 @endforeach
                             </x-table.td>
                             <x-table.td>
-                                @foreach ($nmTindakanRalan as $item)
-                                    {{ $item }} @if (!$loop->last)
-                                        <br>
-                                    @endif
-                                @endforeach
-                            </x-table.td>
-                            <x-table.td>
-                                @foreach ($kdTindakanRanap as $item)
-                                    {{ $item }} @if (!$loop->last)
-                                        <br>
-                                    @endif
-                                @endforeach
-                            </x-table.td>
-                            <x-table.td>
-                                @foreach ($nmTindakanRanap as $item)
+                                @foreach ($tindakanRanap as $item)
                                     {{ $item }} @if (!$loop->last)
                                         <br>
                                     @endif
@@ -134,7 +116,7 @@
                             <x-table.td>{{ $registrasi->kunjungan_ke }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="36" padding />
+                        <x-table.tr-empty colspan="33" padding />
                     @endforelse
                 </x-slot>
             </x-table>

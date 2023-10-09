@@ -89,11 +89,8 @@ return new class extends Migration
         ) dpjp on rawat_inap.no_rawat = dpjp.no_rawat 
         left join $db.kamar kamar on rawat_inap.kd_kamar = kamar.kd_kamar
         left join $db.rujuk rujuk on reg_periksa.no_rawat = rujuk.no_rawat
-        left join (
-            select diagnosa_pasien.no_rawat, diagnosa_pasien.kd_penyakit, penyakit.nm_penyakit
-            from $db.diagnosa_pasien diagnosa_pasien
-            left join $db.penyakit penyakit on diagnosa_pasien.kd_penyakit = penyakit.kd_penyakit
-        ) diagnosa on reg_periksa.no_rawat = diagnosa.no_rawat
+        left join $db.diagnosa_pasien on reg_periksa.no_rawat = diagnosa_pasien.no_rawat
+        left join $db.penyakit on diagnosa_pasien.kd_penyakit = penyakit.kd_penyakit
         left join (
             select rawat_jl_dr.no_rawat, rawat_jl_dr.kd_jenis_prw
             from $db.rawat_jl_dr rawat_jl_dr

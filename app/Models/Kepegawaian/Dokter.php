@@ -6,6 +6,8 @@ use App\Database\Eloquent\Model;
 
 class Dokter extends Model
 {
+    protected $connection = 'mysql_sik';
+
     protected $primaryKey = 'kd_dokter';
 
     protected $keyType = 'string';

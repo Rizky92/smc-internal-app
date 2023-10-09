@@ -2,16 +2,12 @@
 
 namespace App\Models\Keuangan\Jurnal;
 
-use App\Models\Keuangan\Rekening;
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
 use App\Database\Eloquent\Model;
+use App\Models\Keuangan\Rekening;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class JurnalDetail extends Model
 {
-    use Sortable, Searchable;
-
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = 'no_jurnal';

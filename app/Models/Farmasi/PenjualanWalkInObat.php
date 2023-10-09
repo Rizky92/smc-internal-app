@@ -5,6 +5,7 @@ namespace App\Models\Farmasi;
 use Illuminate\Database\Eloquent\Builder;
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
 class PenjualanWalkInObat extends Model
@@ -23,10 +24,14 @@ class PenjualanWalkInObat extends Model
 
     public function scopeKunjunganWalkIn(Builder $query, string $year = '2022'): Builder
     {
-        return $query->selectRaw("
+        $sqlSelect = <<<SQL
             count(penjualan.nota_jual) jumlah,
             month(penjualan.tgl_jual) bulan
-        ")
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->withCasts(['jumlah' => 'int', 'bulan' => 'int'])
             ->where('status', 'Sudah Dibayar')
             ->whereBetween('tgl_jual', ["{$year}-01-01", "{$year}-12-31"])
             ->groupByRaw('month(penjualan.tgl_jual)');
@@ -34,15 +39,21 @@ class PenjualanWalkInObat extends Model
 
     public function scopePendapatanWalkIn(Builder $query, string $year = '2022'): Builder
     {
-        return $query->selectRaw("
-            round(sum(dj.total + penjualan.ppn)) jumlah,
+        $sqlSelect = <<<SQL
+            round(sum(detail_jual.total + penjualan.ppn)) jumlah,
             month(penjualan.tgl_jual) bulan
-        ")
-            ->leftJoin(DB::raw("(
-                select sum(detailjual.subtotal) total, detailjual.nota_jual
-                from detailjual
-                group by detailjual.nota_jual
-            ) dj"), 'penjualan.nota_jual', '=', 'dj.nota_jual')
+        SQL;
+
+        $sumDetailJual = DB::connection('mysql_sik')
+            ->table('detailjual')
+            ->select([DB::raw('sum(detailjual.subtotal) total'), 'detailjual.nota_jual'])
+            ->groupBy('detailjual.nota_jual');
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->withCasts(['jumlah' => 'float', 'bulan' => 'int'])
+            ->leftJoinSub($sumDetailJual, 'ddetail_jual', fn (JoinClause $join) =>
+                $join->on('penjualan.nota_jual', '=', 'detail_jual.nota_jual'))
             ->where('penjualan.status', 'Sudah Dibayar')
             ->whereBetween('penjualan.tgl_jual', ["{$year}-01-01", "{$year}-12-31"])
             ->groupByRaw('month(penjualan.tgl_jual)');
@@ -55,14 +66,14 @@ class PenjualanWalkInObat extends Model
 
     public static function totalKunjunganWalkIn(string $year = '2022'): array
     {
-        $data = static::kunjunganWalkIn($year)->pluck('jumlah', 'bulan')->map(fn ($v) => intval($v));
+        $data = static::kunjunganWalkIn($year)->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
     }
 
     public static function totalPendapatanWalkIn(string $year = '2022'): array
     {
-        $data = static::pendapatanWalkIn($year)->pluck('jumlah', 'bulan')->map(fn ($v) => floatval($v));
+        $data = static::pendapatanWalkIn($year)->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
     }

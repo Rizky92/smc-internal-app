@@ -28,7 +28,7 @@ class Pasien extends Model
 
     public $timestamps = false;
 
-    protected array $searchColumns = [
+    protected $searchColumns = [
         'no_rkm_medis',
         'nm_pasien',
         'no_ktp',

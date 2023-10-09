@@ -33,7 +33,7 @@ class KategoriBerkas extends Model
         // 
     ];
 
-    protected array $searchColumns = [
+    protected $searchColumns = [
         'kode',
         'nama',
     ];

@@ -2,8 +2,6 @@
 
 namespace App\Models\Farmasi\Inventaris;
 
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Query\JoinClause;
@@ -11,8 +9,6 @@ use Illuminate\Support\Facades\DB;
 
 class SuratPemesananObat extends Model
 {
-    use Searchable, Sortable;
-
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = 'no_pemesanan';

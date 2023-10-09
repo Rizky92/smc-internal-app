@@ -21,10 +21,14 @@ class ReturSupplierObat extends Model
 
     public function scopeReturKeSupplier(Builder $query, string $year = '2022'): Builder
     {
-        return $query->selectRaw("
+        $sqlSelect = <<<SQL
             ceil(sum(detreturbeli.total)) jumlah,
             month(returbeli.tgl_retur) bulan
-        ")
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->withCasts(['jumlah' => 'float', 'bulan' => 'int'])
             ->leftJoin('detreturbeli', 'returbeli.no_retur_beli', '=', 'detreturbeli.no_retur_beli')
             ->whereBetween('returbeli.tgl_retur', ["{$year}-01-01", "{$year}-12-31"])
             ->whereIn('returbeli.kd_bangsal', ['IFA', 'IFG', 'AP'])

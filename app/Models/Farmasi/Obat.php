@@ -3,19 +3,17 @@
 namespace App\Models\Farmasi;
 
 use App\Models\Satuan;
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use App\Database\Eloquent\Model;
+use App\Models\Farmasi\Inventaris\GudangObat;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
 class Obat extends Model
 {
-    use Searchable, Sortable;
-
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = 'kode_brng';
@@ -28,7 +26,7 @@ class Obat extends Model
 
     public $timestamps = false;
 
-    protected array $searchColumns = [
+    protected $searchColumns = [
         'kode_brng',
         'nama_brng',
         'kode_satbesar',
@@ -109,23 +107,15 @@ class Obat extends Model
             ke_pasien_14_hari
         SQL;
 
-        $stokGudangAP = DB::raw("(
-            select kode_brng, sum(stok) stok_di_gudang
-            from gudangbarang
-            inner join bangsal on gudangbarang.kd_bangsal = bangsal.kd_bangsal
-            where bangsal.status = '1'
-            and gudangbarang.kd_bangsal = 'AP'
-            group by kode_brng
-        ) stok_gudang_ap");
+        $stokGudangAP = GudangObat::query()
+            ->select(['kode_brng', DB::raw('sum(stok) as stok_di_gudang')])
+            ->where('kd_bangsal', 'AP')
+            ->groupBy('kode_brng');
 
-        $stokGudangIFI = DB::raw("(
-            select kode_brng, sum(stok) stok_di_gudang
-            from gudangbarang
-            inner join bangsal on gudangbarang.kd_bangsal = bangsal.kd_bangsal
-            where bangsal.status = '1'
-            and gudangbarang.kd_bangsal = 'IFI'
-            group by kode_brng
-        ) stok_gudang_ifi");
+        $stokGudangIFI = GudangObat::query()
+            ->select(['kode_brng', DB::raw('sum(stok) as stok_di_gudang')])
+            ->where('kd_bangsal', 'IFI')
+            ->groupBy('kode_brng');
 
         return $query
             ->selectRaw($sqlSelect)
@@ -138,13 +128,15 @@ class Obat extends Model
                 'harga_beli_total'    => 'float',
                 'harga_beli_terakhir' => 'float',
                 'diskon_terakhir'     => 'float',
-                'ke_pasien_14_hari'     => 'float',
+                'ke_pasien_14_hari'   => 'float',
             ])
             ->join('kategori_barang', 'databarang.kode_kategori', '=', 'kategori_barang.kode')
             ->join('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
             ->join('industrifarmasi', 'databarang.kode_industri', '=', 'industrifarmasi.kode_industri')
-            ->leftJoin($stokGudangAP, 'databarang.kode_brng', '=', 'stok_gudang_ap.kode_brng')
-            ->leftJoin($stokGudangIFI, 'databarang.kode_brng', '=', 'stok_gudang_ifi.kode_brng')
+            ->leftJoinSub($stokGudangAP, 'stok_gudang_ap', fn (JoinClause $join) =>
+            $join->on('databarang.kode_brng', '=', 'stok_gudang_ap.kode_brng'))
+            ->leftJoinSub($stokGudangIFI, 'stok_gudang_ifi', fn (JoinClause $join) =>
+            $join->on('databarang.kode_brng', '=', 'stok_gudang_ifi.kode_brng'))
             ->where('databarang.status', '1')
             ->where('databarang.stokminimal', '>', 0)
             ->whereRaw('(databarang.stokminimal - ifnull(stok_gudang_ap.stok_di_gudang, 0)) > 0')

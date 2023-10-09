@@ -45,11 +45,10 @@ class LaporanStatistik extends Component
     {
         return $this->isDeferred
             ? []
-            : StatistikRekamMedis::query()
-            ->search($this->cari)
-            ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
-            ->orderBy('no_rawat')
-            ->paginate($this->perpage);
+            : RegistrasiPasien::query()
+                ->laporanStatistik($this->tglAwal, $this->tglAkhir)
+                ->search($this->cari)
+                ->paginate($this->perpage);
     }
 
     public function render(): View
@@ -70,18 +69,18 @@ class LaporanStatistik extends Component
     protected function dataPerSheet(): array
     {
         return [
-            StatistikRekamMedis::query()
-                ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
-                ->orderBy('no_rawat')
+            RegistrasiPasien::query()
+                ->laporanStatistik($this->tglAwal, $this->tglAkhir)
+                ->search($this->cari)
                 ->cursor()
-                ->map(fn (StatistikRekamMedis $model): array => [
+                ->map(fn (RegistrasiPasien $model): array => [
                     Str::transliterate($model->no_rawat ?? ''),
                     Str::transliterate($model->no_rm ?? ''),
                     Str::transliterate($model->nm_pasien ?? ''),
                     Str::transliterate($model->no_ktp ?? ''),
                     Str::transliterate($model->jk ?? ''),
                     Str::transliterate($model->tgl_lahir ?? ''),
-                    Str::transliterate($model->umur ?? ''),
+                    Str::transliterate($model->umurdaftar . ' ' . $model->sttsumur),
                     Str::transliterate($model->agama ?? ''),
                     Str::transliterate($model->suku ?? ''),
                     Str::transliterate($model->status_lanjut ?? ''),
@@ -94,8 +93,8 @@ class LaporanStatistik extends Component
                     Str::transliterate($model->tgl_keluar ?? ''),
                     Str::transliterate($model->jam_keluar ?? ''),
                     Str::transliterate($model->diagnosa_awal ?? ''),
-                    Str::transliterate($model->kd_diagnosa ?? ''),
-                    Str::transliterate($model->nm_diagnosa ?? ''),
+                    Str::transliterate($model->icd_diagnosa ?? ''),
+                    Str::transliterate($model->diagnosa ?? ''),
                     Str::transliterate($model->kd_tindakan_ralan ?? ''),
                     Str::transliterate($model->nm_tindakan_ralan ?? ''),
                     Str::transliterate($model->kd_tindakan_ranap ?? ''),
@@ -111,8 +110,7 @@ class LaporanStatistik extends Component
                     Str::transliterate($model->alamat ?? ''),
                     Str::transliterate($model->no_hp ?? ''),
                     Str::transliterate($model->kunjungan_ke ?? ''),
-                ])
-                ->all()
+                ]),
         ];
     }
 

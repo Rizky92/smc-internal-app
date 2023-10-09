@@ -3,9 +3,13 @@
 namespace App\Database\Eloquent;
 
 use App\Database\Eloquent\Concerns\MergeCasts;
+use App\Database\Eloquent\Concerns\Searchable;
+use App\Database\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Model as BaseModel;
 
 abstract class Model extends BaseModel
 {
-    use MergeCasts;
+    use Searchable, Sortable, MergeCasts;
+
+    protected $searchColumns = [];
 }

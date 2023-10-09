@@ -2,16 +2,12 @@
 
 namespace App\Models\Keuangan\Jurnal;
 
-use App\Models\Kepegawaian\Pegawai;
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
 use App\Database\Eloquent\Model;
+use App\Models\Kepegawaian\Pegawai;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class JurnalBackup extends Model
 {
-    use Sortable, Searchable;
-
     protected $connection = 'mysql_smc';
 
     protected $table = 'jurnal_backup';

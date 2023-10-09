@@ -2,10 +2,8 @@
 
 namespace App\Models\Keuangan\Jurnal;
 
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
-use Illuminate\Database\Eloquent\Builder;
 use App\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -13,8 +11,6 @@ use Illuminate\Support\Str;
 
 class JurnalMedis extends Model
 {
-    use Sortable, Searchable;
-
     protected $connection = 'mysql_smc';
 
     protected $table = 'jurnal_medis';
@@ -59,6 +55,7 @@ class JurnalMedis extends Model
 
         return $query
             ->selectRaw($sqlSelect)
+            ->withCasts(['besar_bayar' => 'float'])
             ->join(DB::raw("{$db}.bayar_pemesanan bayar_pemesanan"), 'jurnal_medis.no_faktur', '=', 'bayar_pemesanan.no_faktur')
             ->leftJoin(DB::raw("{$db}.pemesanan pemesanan"), 'jurnal_medis.no_faktur', '=', 'pemesanan.no_faktur')
             ->leftJoin(DB::raw("{$db}.datasuplier datasuplier"), 'pemesanan.kode_suplier', '=', 'datasuplier.kode_suplier')

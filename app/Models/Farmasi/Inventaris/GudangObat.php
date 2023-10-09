@@ -2,19 +2,14 @@
 
 namespace App\Models\Farmasi\Inventaris;
 
+use App\Database\Eloquent\Model;
 use App\Models\Bangsal;
 use App\Models\Farmasi\Obat;
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Builder;
-use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Str;
 
 class GudangObat extends Model
 {
-    use Searchable, Sortable;
-
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = false;

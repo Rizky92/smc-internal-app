@@ -24,7 +24,7 @@ class BarangNonMedis extends Model
 
     public $timestamps = false;
 
-    protected array $searchColumns = [
+    protected $searchColumns = [
         'kode_brng',
         'nama_brng',
         'kode_sat',

@@ -2,22 +2,17 @@
 
 namespace App\Models\Keuangan\Jurnal;
 
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
-use App\Models\Farmasi\PengeluaranObat;
+use App\Database\Eloquent\Model;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
-use App\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use LogicException;
 
 class Jurnal extends Model
 {
-    use Searchable, Sortable;
-
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = 'no_jurnal';
@@ -43,17 +38,10 @@ class Jurnal extends Model
     {
         return $this->hasMany(JurnalDetail::class, 'no_jurnal', 'no_jurnal');
     }
-
-    /**
-     * @return static
-     */
-    public static function findLatest(string $tglJurnal, array $columns = ['*']): ?self
+    
+    public function pengeluaranHarian(): BelongsTo
     {
-        return (new static)::query()
-            ->where('tgl_jurnal', $tglJurnal)
-            ->orderBy('jam_jurnal', 'desc')
-            ->orderBy('no_jurnal', 'desc')
-            ->first($columns);
+        return $this->belongsTo(PengeluaranHarian::class, 'no_bukti', 'no_keluar');
     }
 
     public function scopeJurnalUmum(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
@@ -85,7 +73,6 @@ class Jurnal extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        $query = Jurnal::query();
         $sqlSelect = <<<SQL
             jurnal.tgl_jurnal,
             jurnal.jam_jurnal,
@@ -100,13 +87,11 @@ class Jurnal extends Model
 
         return $query
             ->selectRaw($sqlSelect)
+            ->withCasts(['debet' => 'float', 'kredit' => 'float'])
             ->join('detailjurnal', 'jurnal.no_jurnal', '=', 'detailjurnal.no_jurnal')
             ->join('rekening', 'detailjurnal.kd_rek', '=', 'rekening.kd_rek')
             ->when(!empty($kodeRekening), fn (Builder $q) => $q->where('detailjurnal.kd_rek', $kodeRekening))
             ->whereBetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir]);
-
-        $query->with('pengeluaranHarian');
-        $results = $query->get();
     }
 
     public function scopeJumlahDebetDanKreditBukuBesar(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodeRekening = ''): Builder
@@ -126,69 +111,33 @@ class Jurnal extends Model
 
         return $query
             ->selectRaw($sqlSelect)
+            ->withCasts(['debet' => 'float', 'kredit' => 'float'])
             ->join('detailjurnal', 'jurnal.no_jurnal', '=', 'detailjurnal.no_jurnal')
             ->join('rekening', 'detailjurnal.kd_rek', '=', 'rekening.kd_rek')
             ->when(!empty($kodeRekening), fn (Builder $q) => $q->where('detailjurnal.kd_rek', $kodeRekening))
             ->wherebetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir]);
     }
 
-    public function noJurnalBaru(Carbon $date): string
+    public static function noJurnalBaru(Carbon $date): string
     {
-        // Format tanggal dalam bentuk 'Ymd'
-        $tanggal = $date->format('Ymd');
-        // Cari nomor jurnal terbaru yang sesuai dengan tanggal
-        $latestJournal = $this->newQuery()
-            ->where('no_jurnal', 'LIKE', "JR{$tanggal}%")
+        $date = $date->format('Ymd');
+
+        $index = 1;
+
+        $noJurnalTerakhir = static::query()
+            ->where('no_jurnal', 'LIKE', "JR{$date}%")
             ->orderBy('no_jurnal', 'desc')
-            ->first();
-        if ($latestJournal) {
-            // Jika ada nomor jurnal yang sama, ambil angka terakhir dan tambahkan 1
-            $lastNumber = intval(substr($latestJournal->no_jurnal, -6)) + 1;
-        } else {
-            // Jika tidak ada nomor jurnal yang sama, gunakan '1' sebagai angka terakhir
-            $lastNumber = 1;
+            ->value('no_jurnal');
+        
+        if ($noJurnalTerakhir) {
+            $index += Str::of($noJurnalTerakhir)->substr(-6)->toInt();
         }
-        // Format angka terakhir dengan 6 digit '0' di depan
-        $formattedNumber = str_pad($lastNumber, 6, '0', STR_PAD_LEFT);
-        // Gabungkan tanggal dan angka terakhir yang diformat untuk mendapatkan nomor jurnal baru
-        $noJurnalBaru = "JR{$tanggal}{$formattedNumber}";
 
-        return $noJurnalBaru;
-
-        // $noJurnal = $this->newQuery()
-        //     ->where('tgl_jurnal', $tglJurnalAsli)
-        //     ->orderBy('tgl_jurnal', 'desc')
-        //     ->orderBy('no_jurnal', 'desc')
-        //     ->limit(1)
-        //     ->value('no_jurnal');
-
-        // if (!$noJurnal) {
-        //     $noJurnal = "JR";
-        //     $noJurnal .= $date->format('Ymd');
-        //     $noJurnal .= "000000";
-        // }
-
-        // $noJurnal = str($noJurnal);
-
-        // $tglJurnal = $noJurnal
-        //     ->substr(0, 10)
-        //     ->value();
-
-        // $indexJurnal = $noJurnal
-        //     ->substr(-6)
-        //     ->toInt();
-
-        // $indexJurnal += 1;
-
-        // $noJurnalBaru = str($indexJurnal)
-        //     ->padLeft(6, '0')
-        //     ->prepend($tglJurnal)
-        //     ->value();
-
-        // return $noJurnalBaru;
+        return Str::of('JR')
+            ->append($date)
+            ->append(Str::padLeft($index, '6', '0'))
+            ->value();
     }
-
-
 
     /**
      * @param  "U"|"P" $jenis
@@ -205,7 +154,7 @@ class Jurnal extends Model
             $waktuTransaksi = now();
         }
 
-        $noJurnal = (new static)->noJurnalBaru($waktuTransaksi);
+        $noJurnal = static::noJurnalBaru($waktuTransaksi);
 
         $hasDetail = Arr::has($detail, ['*.kd_rek', '*.debet', '*.kredit']);
 
@@ -230,14 +179,4 @@ class Jurnal extends Model
             ->detail()
             ->createMany($detail);
     }
-
-    public function pengeluaranHarian()
-    {
-        return $this->belongsTo(PengeluaranHarian::class, 'no_bukti', 'no_keluar');
-    }
-
-    // public function pengeluaranObatBHP()
-    // {
-    //     return $this->belongsTo(PengeluaranObat::class, 'no_bukti', 'no_keluar');
-    // }
 }

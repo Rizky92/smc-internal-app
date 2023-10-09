@@ -39,7 +39,7 @@ class PiutangPasienDetail extends Model
         'sisapiutang' => 'float',
     ];
 
-    protected array $searchColumns = [
+    protected $searchColumns = [
         'no_rawat',
         'nama_bayar',
         'kd_pj',

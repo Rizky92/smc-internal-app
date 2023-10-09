@@ -3,8 +3,6 @@
 namespace App\Models\Farmasi;
 
 use App\Models\Perawatan\RegistrasiPasien;
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,8 +12,6 @@ use Illuminate\Support\Str;
 
 class ResepObat extends Model
 {
-    use Searchable, Sortable;
-
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = 'no_resep';
@@ -99,6 +95,7 @@ class ResepObat extends Model
 
         return $query
             ->selectRaw($sqlSelect)
+            ->withCasts(['jml' => 'float'])
             ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
@@ -106,8 +103,8 @@ class ResepObat extends Model
             ->leftJoin('detail_pemberian_obat', 'reg_periksa.no_rawat', '=', 'detail_pemberian_obat.no_rawat')
             ->leftJoin('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
             ->leftJoin('kategori_barang', 'databarang.kode_kategori', '=', 'kategori_barang.kode')
-            ->whereRaw('detail_pemberian_obat.tgl_perawatan = resep_obat.tgl_perawatan')
-            ->whereRaw('detail_pemberian_obat.jam = resep_obat.jam')
+            ->whereColumn('detail_pemberian_obat.tgl_perawatan', 'resep_obat.tgl_perawatan')
+            ->whereColumn('detail_pemberian_obat.jam', 'resep_obat.jam')
             ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir]);
     }
 
@@ -154,7 +151,7 @@ class ResepObat extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        return $query->selectRaw("
+        $sqlSelect = <<<SQL
             reg_periksa.no_rawat,
             resep_obat.no_resep,
             pasien.nm_pasien,
@@ -162,7 +159,11 @@ class ResepObat extends Model
             resep_obat.jam,
             reg_periksa.status_lanjut,
             round(sum(resep_dokter.jml * databarang.h_beli)) total
-        ")
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->withCasts(['total' => 'float'])
             ->leftJoin('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
             ->leftJoin('resep_dokter', 'resep_obat.no_resep', '=', 'resep_dokter.no_resep')
             ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
@@ -182,10 +183,14 @@ class ResepObat extends Model
 
     public function scopeKunjunganPasien(Builder $query, string $jenisPerawatan = '', string $year = '2022'): Builder
     {
-        return $query->selectRaw("
+        $sqlSelect = <<<SQL
             count(resep_obat.no_resep) jumlah,
             month(resep_obat.tgl_perawatan) bulan
-        ")
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->withCasts(['jumlah' => 'int', 'bulan' => 'int'])
             ->leftJoin('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
             ->whereBetween('resep_obat.tgl_perawatan', ["{$year}-01-01", "{$year}-12-31"])
             ->when(!empty($jenisPerawatan), function (Builder $query) use ($jenisPerawatan) {
@@ -205,21 +210,21 @@ class ResepObat extends Model
 
     public static function kunjunganPasienRalan(string $year = '2022'): array
     {
-        $data = static::kunjunganPasien('ralan', $year)->pluck('jumlah', 'bulan')->map(fn ($v) => intval($v));
+        $data = static::kunjunganPasien('ralan', $year)->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
     }
 
     public static function kunjunganPasienRanap(string $year = '2022'): array
     {
-        $data = static::kunjunganPasien('ranap', $year)->pluck('jumlah', 'bulan')->map(fn ($v) => intval($v));
+        $data = static::kunjunganPasien('ranap', $year)->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
     }
 
     public static function kunjunganPasienIGD(string $year = '2022'): array
     {
-        $data = static::kunjunganPasien('IGD', $year)->pluck('jumlah', 'bulan')->map(fn ($v) => intval($v));
+        $data = static::kunjunganPasien('IGD', $year)->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
     }

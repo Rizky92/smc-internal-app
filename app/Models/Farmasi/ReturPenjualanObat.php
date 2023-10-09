@@ -2,8 +2,8 @@
 
 namespace App\Models\Farmasi;
 
-use Illuminate\Database\Eloquent\Builder;
 use App\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class ReturPenjualanObat extends Model
 {
@@ -21,10 +21,14 @@ class ReturPenjualanObat extends Model
 
     public function scopeReturObatPasien(Builder $query, string $year = '2022'): Builder
     {
-        return $query->selectRaw("
+        $sqlSelect = <<<SQL
             round(sum(detreturjual.subtotal)) jumlah,
             month(returjual.tgl_retur) bulan
-        ")
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->withCasts(['jumlah' => 'float', 'bulan' => 'int'])
             ->join('detreturjual', 'returjual.no_retur_jual', '=', 'detreturjual.no_retur_jual')
             ->whereBetween('returjual.tgl_retur', ["{$year}-01-01", "{$year}-12-31"])
             ->groupByRaw('month(returjual.tgl_retur)');
@@ -32,7 +36,7 @@ class ReturPenjualanObat extends Model
 
     public static function totalReturObat(string $year = '2022'): array
     {
-        $data = static::returObatPasien($year)->pluck('jumlah', 'bulan')->map(fn ($v) => floatval($v));
+        $data = static::returObatPasien($year)->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
     }
