@@ -2,14 +2,12 @@
 
 namespace App\Models\Perawatan;
 
+use App\Database\Eloquent\Model;
 use App\Models\Kepegawaian\Dokter;
 use App\Models\Keuangan\BayarPiutang;
 use App\Models\Keuangan\Billing;
 use App\Models\Keuangan\NotaRanap;
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Builder;
-use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -17,8 +15,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class RawatInap extends Model
 {
-    use Sortable, Searchable;
-
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = false;
@@ -36,51 +32,7 @@ class RawatInap extends Model
         'lama',
         'ttl_biaya',
     ];
-
-    public function scopePiutangRanap(
-        Builder $query,
-        string $tglAwal = '',
-        string $tglAkhir = '',
-        string $status = '',
-        string $jenisBayar = ''
-    ): Builder {
-        if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
-        }
-
-        if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
-        }
-
-        $sqlSelect = "
-            kamar_inap.no_rawat,
-            nota_inap.no_nota,
-            ifnull(rujuk_masuk.perujuk, '-') as perujuk,
-            reg_periksa.no_rkm_medis,
-            pasien.nm_pasien,
-            timestamp(kamar_inap.tgl_keluar, kamar_inap.jam_keluar) as waktu_keluar,
-            penjab.png_jawab,
-            concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal) as ruangan,
-            piutang_pasien.uangmuka,
-            piutang_pasien.totalpiutang
-        ";
-
-        return $query
-            ->selectRaw($sqlSelect)
-            ->join('reg_periksa', 'kamar_inap.no_rawat', '=', 'reg_periksa.no_rawat')
-            ->leftJoin('rujuk_masuk', 'kamar_inap.no_rawat', '=', 'rujuk_masuk.no_rawat')
-            ->leftJoin('nota_inap', 'reg_periksa.no_rawat', '=', 'nota_inap.no_rawat')
-            ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
-            ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
-            ->join('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
-            ->join('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
-            ->join('piutang_pasien', 'kamar_inap.no_rawat', '=', 'piutang_pasien.no_rawat')
-            ->whereNotIn('kamar_inap.stts_pulang', ['-', 'Pindah Kamar'])
-            ->whereBetween('kamar_inap.tgl_keluar', [$tglAwal, $tglAkhir])
-            ->when(!empty($status), fn (Builder $q): Builder => $q->where('piutang_pasien.status', $status))
-            ->where('reg_periksa.kd_pj', $jenisBayar);
-    }
-
+    
     public function billing(): HasMany
     {
         return $this->hasMany(Billing::class, 'no_rawat', 'no_rawat');
@@ -131,5 +83,50 @@ class RawatInap extends Model
     public function tindakanRanapDokterPerawat(): HasMany
     {
         return $this->hasMany(TindakanRanapDokterPerawat::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function scopePiutangRanap(
+        Builder $query,
+        string $tglAwal = '',
+        string $tglAkhir = '',
+        string $status = '',
+        string $jenisBayar = ''
+    ): Builder {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        }
+
+        $sqlSelect = <<<SQL
+            kamar_inap.no_rawat,
+            nota_inap.no_nota,
+            ifnull(rujuk_masuk.perujuk, '-') as perujuk,
+            reg_periksa.no_rkm_medis,
+            pasien.nm_pasien,
+            timestamp(kamar_inap.tgl_keluar, kamar_inap.jam_keluar) as waktu_keluar,
+            penjab.png_jawab,
+            concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal) as ruangan,
+            piutang_pasien.uangmuka,
+            piutang_pasien.totalpiutang
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->withCasts(['uangmuka' => 'float', 'totalpiutang' => 'float'])
+            ->join('reg_periksa', 'kamar_inap.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->leftJoin('rujuk_masuk', 'kamar_inap.no_rawat', '=', 'rujuk_masuk.no_rawat')
+            ->leftJoin('nota_inap', 'reg_periksa.no_rawat', '=', 'nota_inap.no_rawat')
+            ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+            ->join('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
+            ->join('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
+            ->join('piutang_pasien', 'kamar_inap.no_rawat', '=', 'piutang_pasien.no_rawat')
+            ->whereNotIn('kamar_inap.stts_pulang', ['-', 'Pindah Kamar'])
+            ->whereBetween('kamar_inap.tgl_keluar', [$tglAwal, $tglAkhir])
+            ->when(!empty($status), fn (Builder $q): Builder => $q->where('piutang_pasien.status', $status))
+            ->where('reg_periksa.kd_pj', $jenisBayar);
     }
 }

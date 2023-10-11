@@ -2,15 +2,11 @@
 
 namespace App\Models\Keuangan;
 
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PiutangPasienDetail extends Model
 {
-    use Sortable, Searchable;
-
     protected $connection = 'mysql_sik';
 
     protected $table = 'detail_piutang_pasien';

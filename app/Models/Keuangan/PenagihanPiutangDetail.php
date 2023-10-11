@@ -2,20 +2,13 @@
 
 namespace App\Models\Keuangan;
 
-use App\Models\Perawatan\RegistrasiPasien;
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
-use Illuminate\Database\Eloquent\Builder;
 use App\Database\Eloquent\Model;
+use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Query\JoinClause;
-use Illuminate\Support\Facades\DB;
 
 class PenagihanPiutangDetail extends Model
 {
-    use Sortable, Searchable;
-
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = 'no_tagihan';

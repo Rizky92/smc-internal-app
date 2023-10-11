@@ -26,7 +26,7 @@ class BaseLayout extends Component
      */
     public function __construct(string $title = 'Dashboard')
     {
-        /** @var \App\Models\Aplikasi\User $user */
+        /** @var \Illuminate\Contracts\Auth\Authenticatable&\App\Models\Aplikasi\User $user */
         $user = Auth::user();
 
         $this->title = $title;
@@ -34,7 +34,7 @@ class BaseLayout extends Component
         $this->nama = $user->nama;
         $this->nik = $user->nik;
 
-        $this->sidebarMenu = Menu::all();
+        $this->sidebarMenu = Menu::all($user);
     }
 
     /**

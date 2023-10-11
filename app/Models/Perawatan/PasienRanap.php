@@ -2,14 +2,10 @@
 
 namespace App\Models\Perawatan;
 
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
 use App\Database\Eloquent\Model;
 
 class PasienRanap extends Model
 {
-    use Searchable, Sortable;
-
     protected $connection = 'mysql_smc';
 
     protected $primaryKey = false;
@@ -22,9 +18,6 @@ class PasienRanap extends Model
 
     public $timestamps = false;
 
-    /** 
-     * @var string[]
-     */
     protected $searchColumns = [
         'no_rawat',
         'ruangan',

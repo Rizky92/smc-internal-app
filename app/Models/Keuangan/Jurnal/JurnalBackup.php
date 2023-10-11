@@ -20,8 +20,8 @@ class JurnalBackup extends Model
     ];
 
     protected $searchColumns = [
-        'jurnal_backup.no_jurnal',
-        'jurnal.keterangan',
+        'no_jurnal',
+        'keterangan',
     ];
 
     protected $casts = [

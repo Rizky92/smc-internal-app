@@ -2,6 +2,7 @@
 
 namespace App\Models\Perawatan;
 
+use App\Database\Eloquent\Model;
 use App\Models\Farmasi\PemberianObat;
 use App\Models\Kepegawaian\Dokter;
 use App\Models\Laboratorium\HasilPeriksaLab;
@@ -13,11 +14,8 @@ use App\Models\Radiologi\PermintaanRadiologi;
 use App\Models\RekamMedis\BerkasDigitalKeperawatan;
 use App\Models\RekamMedis\Pasien;
 use App\Models\RekamMedis\Penjamin;
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\JoinClause;
@@ -25,8 +23,6 @@ use Illuminate\Support\Facades\DB;
 
 class RegistrasiPasien extends Model
 {
-    use Searchable, Sortable;
-
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = 'no_rawat';
@@ -84,7 +80,7 @@ class RegistrasiPasien extends Model
 
     public function asmedRWI(): Attribute
     {
-        return Attribute::get(function (?string $_, array $attributes) {
+        return Attribute::get(function ($_, array $attributes) {
             $asmed = collect();
 
             if ($attributes['asmed_ranap_umum'] === "1") {
@@ -407,7 +403,7 @@ class RegistrasiPasien extends Model
             ->leftJoin('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
             ->leftJoin('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->leftJoinSub($rawatInap, 'rawat_inap', fn (JoinClause $join) =>
-            $join->on('reg_periksa.no_rawat', '=', 'rawat_inap.no_rawat'))
+                $join->on('reg_periksa.no_rawat', '=', 'rawat_inap.no_rawat'))
             ->leftJoin('dpjp_ranap', 'reg_periksa.no_rawat', '=', 'dpjp_ranap.no_rawat')
             ->leftJoin(DB::raw('dokter dokter_dpjp'), 'dpjp_ranap.kd_dokter', '=', 'dokter_dpjp.kd_dokter')
             ->leftJoin('kamar', 'rawat_inap.kd_kamar', '=', 'kamar.kd_kamar')
@@ -416,10 +412,10 @@ class RegistrasiPasien extends Model
             ->leftJoin('diagnosa_pasien', 'reg_periksa.no_rawat', '=', 'diagnosa_pasien.no_rawat')
             ->leftJoin('penyakit', 'diagnosa_pasien.kd_penyakit', '=', 'penyakit.kd_penyakit')
             ->leftJoinSub($perawatanRalan, 'perawatan_ralan', fn (JoinClause $join) =>
-            $join->on('reg_periksa.no_rawat', '=', 'perawatan_ralan.no_rawat'))
+                $join->on('reg_periksa.no_rawat', '=', 'perawatan_ralan.no_rawat'))
             ->leftJoin('jns_perawatan', 'perawatan_ralan.kd_jenis_prw', '=', 'jns_perawatan.kd_jenis_prw')
             ->leftJoinSub($perawatanRanap, 'perawatan_ranap', fn (JoinClause $join) =>
-            $join->on('reg_periksa.no_rawat', '=', 'perawatan_ranap.no_rawat'))
+                $join->on('reg_periksa.no_rawat', '=', 'perawatan_ranap.no_rawat'))
             ->leftJoin('jns_perawatan_inap', 'perawatan_ranap.kd_jenis_prw', '=', 'jns_perawatan_inap.kd_jenis_prw')
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
             ->groupByRaw('reg_periksa.no_rawat');
@@ -472,6 +468,7 @@ class RegistrasiPasien extends Model
 
         return $query
             ->selectRaw($sqlSelect)
+            ->withCasts(['trf_kamar' => 'float', 'lama' => 'int', 'ttl_biaya' => 'float'])
             ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->leftJoin('kamar_inap', 'reg_periksa.no_rawat', '=', 'kamar_inap.no_rawat')
             ->leftJoin('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')

@@ -2,15 +2,13 @@
 
 namespace App\Models\Keuangan;
 
+use App\Database\Eloquent\Model;
 use App\Models\Kepegawaian\Pegawai;
 use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Perawatan\RegistrasiPasien;
 use App\Models\RekamMedis\Pasien;
 use App\Models\RekamMedis\Penjamin;
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Builder;
-use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Database\Query\JoinClause;
@@ -19,19 +17,54 @@ use Illuminate\Support\Str;
 
 class PiutangDilunaskan extends Model
 {
-    use Sortable, Searchable;
-
     protected $connection = 'mysql_smc';
-
-    protected $primaryKey = 'id';
-
-    protected $keyType = 'int';
 
     protected $table = 'piutang_dilunaskan';
 
-    public $incrementing = true;
+    public function pasien(): BelongsTo
+    {
+        return $this->belongsTo(Pasien::class, 'no_rkm_medis', 'no_rkm_medis');
+    }
 
-    public $timestamps = true;
+    public function penagih(): BelongsTo
+    {
+        return $this->belongsTo(Pegawai::class, 'nik_penagih', 'nik');
+    }
+
+    public function penyetuju(): BelongsTo
+    {
+        return $this->belongsTo(Pegawai::class, 'nik_menyetujui', 'nik');
+    }
+
+    public function pemvalidasi(): BelongsTo
+    {
+        return $this->belongsTo(Pegawai::class, 'nik_validasi', 'nik');
+    }
+
+    public function jurnal(): BelongsTo
+    {
+        return $this->belongsTo(Jurnal::class, 'no_jurnal', 'no_jurnal');
+    }
+
+    public function penjamin(): BelongsTo
+    {
+        return $this->belongsTo(Penjamin::class, 'kd_pj', 'kd_pj');
+    }
+
+    public function tagihan(): BelongsTo
+    {
+        return $this->belongsTo(PenagihanPiutang::class, 'no_tagihan', 'no_tagihan');
+    }
+
+    public function registrasi(): BelongsTo
+    {
+        return $this->belongsTo(RegistrasiPasien::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function rekening(): BelongsTo
+    {
+        return $this->belongsTo(Rekening::class, 'kd_rek', 'kd_rek');
+    }
 
     public static function refreshModel(): void
     {
@@ -55,8 +88,7 @@ class PiutangDilunaskan extends Model
             jurnal.keterangan
         SQL;
 
-        DB::connection('mysql_sik')
-            ->table('jurnal')
+        Jurnal::query()
             ->selectRaw($sqlSelect)
             ->leftJoin('detail_penagihan_piutang', 'jurnal.no_bukti', '=', 'detail_penagihan_piutang.no_rawat')
             ->leftJoin('penagihan_piutang', 'detail_penagihan_piutang.no_tagihan', '=', 'penagihan_piutang.no_tagihan')
@@ -163,50 +195,5 @@ class PiutangDilunaskan extends Model
             ->leftJoin($pemvalidasi, 'piutang_dilunaskan.nik_validasi', '=', 'pemvalidasi.nik')
             ->where('kd_rek', $rekening)
             ->whereBetween($filterTgl, [$tglAwal, $tglAkhir]);
-    }
-
-    public function pasien(): BelongsTo
-    {
-        return $this->belongsTo(Pasien::class, 'no_rkm_medis', 'no_rkm_medis');
-    }
-
-    public function penagih(): BelongsTo
-    {
-        return $this->belongsTo(Pegawai::class, 'nik_penagih', 'nik');
-    }
-
-    public function penyetuju(): BelongsTo
-    {
-        return $this->belongsTo(Pegawai::class, 'nik_menyetujui', 'nik');
-    }
-
-    public function pemvalidasi(): BelongsTo
-    {
-        return $this->belongsTo(Pegawai::class, 'nik_validasi', 'nik');
-    }
-
-    public function jurnal(): BelongsTo
-    {
-        return $this->belongsTo(Jurnal::class, 'no_jurnal', 'no_jurnal');
-    }
-
-    public function penjamin(): BelongsTo
-    {
-        return $this->belongsTo(Penjamin::class, 'kd_pj', 'kd_pj');
-    }
-
-    public function tagihan(): BelongsTo
-    {
-        return $this->belongsTo(PenagihanPiutang::class, 'no_tagihan', 'no_tagihan');
-    }
-
-    public function registrasi(): BelongsTo
-    {
-        return $this->belongsTo(RegistrasiPasien::class, 'no_rawat', 'no_rawat');
-    }
-
-    public function rekening(): BelongsTo
-    {
-        return $this->belongsTo(Rekening::class, 'kd_rek', 'kd_rek');
     }
 }

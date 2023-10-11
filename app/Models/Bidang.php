@@ -2,13 +2,10 @@
 
 namespace App\Models;
 
+use App\Database\Eloquent\Model;
 use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Models\Keuangan\RKAT\PemakaianAnggaran;
 use App\Models\Keuangan\RKAT\PemakaianAnggaranDetail;
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
@@ -17,7 +14,7 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
 class Bidang extends Model
 {
-    use Sortable, Searchable, HasFactory, HasRelationships, HasRecursiveRelationships;
+    use HasRelationships, HasRecursiveRelationships;
 
     protected $connection = 'mysql_smc';
 
@@ -48,21 +45,9 @@ class Bidang extends Model
     public function totalPemakaian(): HasManyDeep
     {
         return $this->hasManyDeep(
-            PemakaianAnggaranDetail::class,
-            [
-                AnggaranBidang::class,
-                PemakaianAnggaran::class,
-            ],
-            [
-                'bidang_id',
-                'anggaran_bidang_id',
-                'pemakaian_anggaran_id',
-            ],
-            [
-                'id',
-                'id',
-                'id',
-            ]
+            PemakaianAnggaranDetail::class, [AnggaranBidang::class, PemakaianAnggaran::class],
+            ['bidang_id', 'anggaran_bidang_id', 'pemakaian_anggaran_id'],
+            ['id', 'id', 'id']
         );
     }
 }

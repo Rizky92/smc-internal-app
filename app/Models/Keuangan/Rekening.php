@@ -2,16 +2,12 @@
 
 namespace App\Models\Keuangan;
 
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
-use Illuminate\Database\Eloquent\Builder;
 use App\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 class Rekening extends Model
 {
-    use Sortable, Searchable;
-
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = 'kd_rek';
@@ -58,17 +54,18 @@ class Rekening extends Model
             $tglAkhir = now()->format('Y-m-d');
         }
 
-        $sqlSelect = "
+        $sqlSelect = <<<SQL
             rekening.kd_rek,
             rekening.nm_rek,
             rekening.balance,
             round(sum(detailjurnal.debet), 2) debet,
             round(sum(detailjurnal.kredit), 2) kredit
-        ";
+        SQL;
 
         return $query
             ->withoutGlobalScopes()
             ->selectRaw($sqlSelect)
+            ->withCasts(['debet' => 'float', 'kredit' => 'float'])
             ->leftJoin('detailjurnal', 'rekening.kd_rek', '=', 'detailjurnal.kd_rek')
             ->leftJoin('jurnal', 'detailjurnal.no_jurnal', '=', 'jurnal.no_jurnal')
             ->where('rekening.tipe', 'R')

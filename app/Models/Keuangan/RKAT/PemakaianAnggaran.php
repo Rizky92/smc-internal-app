@@ -2,12 +2,10 @@
 
 namespace App\Models\Keuangan\RKAT;
 
+use App\Database\Eloquent\Model;
 use App\Models\Bidang;
 use App\Models\Kepegawaian\Petugas;
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Builder;
-use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Znck\Eloquent\Relations\BelongsToThrough;
@@ -15,7 +13,7 @@ use Znck\Eloquent\Traits\BelongsToThrough as BelongsToThroughTrait;
 
 class PemakaianAnggaran extends Model
 {
-    use Sortable, Searchable, BelongsToThroughTrait;
+    use BelongsToThroughTrait;
 
     protected $connection = 'mysql_smc';
 

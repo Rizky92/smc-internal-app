@@ -2,14 +2,11 @@
 
 namespace App\Models\RekamMedis;
 
-use App\Database\Eloquent\Concerns\Searchable;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Penjamin extends Model
 {
-    use Searchable;
-
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = 'kd_pj';

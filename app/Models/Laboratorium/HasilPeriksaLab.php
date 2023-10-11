@@ -2,8 +2,6 @@
 
 namespace App\Models\Laboratorium;
 
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Builder;
 use App\Database\Eloquent\Model;
 use Reedware\LaravelCompositeRelations\CompositeBelongsTo;
@@ -11,7 +9,7 @@ use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 
 class HasilPeriksaLab extends Model
 {
-    use Searchable, Sortable, HasCompositeRelations;
+    use HasCompositeRelations;
 
     protected $connection = 'mysql_sik';
 
@@ -101,6 +99,7 @@ class HasilPeriksaLab extends Model
 
         return $query
             ->selectRaw($sqlSelect)
+            ->withCasts(['biaya' => 'float'])
             ->leftJoin('reg_periksa', 'periksa_lab.no_rawat', '=', 'reg_periksa.no_rawat')
             ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->leftJoin('petugas', 'periksa_lab.nip', '=', 'petugas.nip')

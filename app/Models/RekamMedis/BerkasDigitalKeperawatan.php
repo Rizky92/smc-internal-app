@@ -2,16 +2,12 @@
 
 namespace App\Models\RekamMedis;
 
-use App\Models\Perawatan\RegistrasiPasien;
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
 use App\Database\Eloquent\Model;
+use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class BerkasDigitalKeperawatan extends Model
 {
-    use Sortable, Searchable;
-
     protected $connection = 'mysql_sik';
 
     protected $table = 'berkas_digital_perawatan';
@@ -23,16 +19,6 @@ class BerkasDigitalKeperawatan extends Model
     public $incrementing = false;
 
     public $timestamps = false;
-
-    protected $perPage = 25;
-
-    protected $fillable = [
-        // 
-    ];
-
-    protected $casts = [
-        // 
-    ];
 
     protected $searchColumns = [
         'no_rawat',

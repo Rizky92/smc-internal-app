@@ -3,17 +3,15 @@
 namespace App\Models\Radiologi;
 
 use App\Casts\CastAsciiChars;
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
-use Illuminate\Database\Eloquent\Builder;
 use App\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Reedware\LaravelCompositeRelations\CompositeBelongsTo;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 
 class HasilPeriksaRadiologi extends Model
 {
-    use Searchable, Sortable, HasCompositeRelations;
+    use HasCompositeRelations;
 
     protected $connection = 'mysql_sik';
 
@@ -67,6 +65,7 @@ class HasilPeriksaRadiologi extends Model
 
         return $query
             ->selectRaw($sqlSelect)
+            ->withCasts(['biaya' => 'float'])
             ->leftJoin('reg_periksa', 'periksa_radiologi.no_rawat', '=', 'reg_periksa.no_rawat')
             ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->leftJoin('petugas', 'periksa_radiologi.nip', '=', 'petugas.nip')

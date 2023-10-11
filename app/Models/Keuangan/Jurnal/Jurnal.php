@@ -34,6 +34,12 @@ class Jurnal extends Model
         'jam_jurnal',
     ];
 
+    protected $searchColumns = [
+        'no_jurnal',
+        'no_bukti',
+        'keterangan',
+    ];
+
     public function detail(): HasMany
     {
         return $this->hasMany(JurnalDetail::class, 'no_jurnal', 'no_jurnal');

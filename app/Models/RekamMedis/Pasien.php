@@ -2,11 +2,9 @@
 
 namespace App\Models\RekamMedis;
 
+use App\Database\Eloquent\Model;
 use App\Models\Perawatan\RegistrasiPasien;
 use App\Models\Perusahaan;
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
-use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -14,7 +12,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 class Pasien extends Model
 {
-    use Searchable, Sortable, HasRelationships;
+    use HasRelationships;
 
     protected $connection = 'mysql_sik';
 

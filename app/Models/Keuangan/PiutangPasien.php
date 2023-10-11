@@ -2,10 +2,8 @@
 
 namespace App\Models\Keuangan;
 
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
-use Illuminate\Database\Eloquent\Builder;
 use App\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\JoinClause;
@@ -13,8 +11,6 @@ use Illuminate\Support\Facades\DB;
 
 class PiutangPasien extends Model
 {
-    use Searchable, Sortable;
-
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = 'no_rawat';
@@ -27,9 +23,7 @@ class PiutangPasien extends Model
 
     public $timestamps = false;
 
-    protected $fillable = [
-        'status',
-    ];
+    protected $fillable = ['status'];
 
     public function detail(): HasMany
     {
@@ -161,19 +155,16 @@ class PiutangPasien extends Model
             penjab.png_jawab penjamin
         SQL;
 
-        $sisaPiutang = DB::raw(<<<SQL
-            (
-                select ifnull(sum(besar_cicilan), 0) sisa, no_rawat
-                from bayar_piutang
-                group by no_rawat
-            ) sisa_piutang
-        SQL);
+        $sisaPiutang = BayarPiutang::query()
+            ->selectRaw('ifnull(sum(besar_cicilan), 0) sisa, no_rawat')
+            ->groupBy('no_rawat');
 
         return $query->selectRaw($sqlSelect)
             ->join('pasien', 'piutang_pasien.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join('reg_periksa', 'piutang_pasien.no_rawat', '=', 'reg_periksa.no_rawat')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
-            ->leftJoin($sisaPiutang, 'piutang_pasien.no_rawat', '=', 'sisa_piutang.no_rawat')
+            ->leftJoinSub($sisaPiutang, 'sisa_piutang', fn (JoinClause $join) => 
+                $join->on('piutang_pasien.no_rawat', '=', 'sisa_piutang.no_rawat'))
             ->whereBetween('piutang_pasien.tgl_piutang', [$tglAwal, $tglAkhir])
             ->when(!empty($penjamin), fn (Builder $query) => $query->where('reg_periksa.kd_pj', $penjamin));
     }

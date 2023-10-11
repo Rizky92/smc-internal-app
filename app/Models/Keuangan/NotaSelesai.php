@@ -13,8 +13,6 @@ use Illuminate\Support\Str;
 
 class NotaSelesai extends Model
 {
-    use Searchable, Sortable;
-
     protected $connection = 'mysql_smc';
 
     protected $table = 'nota_selesai';

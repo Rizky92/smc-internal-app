@@ -7,15 +7,12 @@ use App\Database\Query\Grammars\MysqlGrammar;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
-use App\Rules\DateBetween;
-use App\Rules\DoesntExist;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Validation\Rule;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -64,7 +61,6 @@ class AppServiceProvider extends ServiceProvider
         $this->registerModelConfigurations();
         $this->registerSuperadminRole();
         $this->registerCollectionMacrosAndMixins();
-        $this->registerValidationRules();
     }
 
     public function registerBladeDirectives(): void
@@ -109,11 +105,5 @@ class AppServiceProvider extends ServiceProvider
                 $class::mixin(new $mixinClass);
             }
         }
-    }
-
-    public function registerValidationRules(): void
-    {
-        Rule::macro('doesntExists', fn (string $model, string $column) => new DoesntExist($model, $column));
-        Rule::macro('dateBetween', fn ($start, $end) => new DateBetween($start, $end));
     }
 }

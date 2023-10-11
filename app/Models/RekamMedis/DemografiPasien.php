@@ -2,14 +2,11 @@
 
 namespace App\Models\RekamMedis;
 
-use App\Database\Eloquent\Concerns\Searchable;
-use Illuminate\Database\Eloquent\Builder;
 use App\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class DemografiPasien extends Model
 {
-    use Searchable;
-
     protected $connection = 'mysql_smc';
 
     protected $primaryKey = 'no_rawat';
@@ -22,9 +19,6 @@ class DemografiPasien extends Model
 
     public $timestamps = false;
 
-    /**
-     * @var string[]
-     */
     protected $searchColumns = [
         'kecamatan',
         'no_rm',

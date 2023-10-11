@@ -11,5 +11,10 @@ abstract class Model extends BaseModel
 {
     use Searchable, Sortable, MergeCasts;
 
+    /**
+     * The columns used for search query
+     * 
+     * @var string[]
+     */
     protected $searchColumns = [];
 }

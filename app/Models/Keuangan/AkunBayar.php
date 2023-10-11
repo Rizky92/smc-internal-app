@@ -18,12 +18,6 @@ class AkunBayar extends Model
 
     public $timestamps = false;
 
-    protected $perPage = 25;
-
-    protected $fillable = [
-        // 
-    ];
-
     protected $casts = [
         'ppn' => 'float',
     ];

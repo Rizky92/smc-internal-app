@@ -2,16 +2,12 @@
 
 namespace App\Models\Keuangan;
 
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 class TambahanBiaya extends Model
 {
-    use Searchable, Sortable;
-
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = false;
@@ -52,6 +48,7 @@ class TambahanBiaya extends Model
 
         return $query
             ->selectRaw($sqlSelect)
+            ->withCasts(['besar_biaya' => 'float'])
             ->leftJoin('reg_periksa', 'tambahan_biaya.no_rawat', '=', 'reg_periksa.no_rawat')
             ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->leftJoin('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')

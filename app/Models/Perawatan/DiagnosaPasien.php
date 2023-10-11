@@ -2,8 +2,8 @@
 
 namespace App\Models\Perawatan;
 
-use Illuminate\Database\Eloquent\Builder;
 use App\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class DiagnosaPasien extends Model
 {

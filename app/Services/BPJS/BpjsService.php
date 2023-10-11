@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\BPJS;
+namespace App\Services\BPJS;
 
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;

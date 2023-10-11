@@ -2,14 +2,10 @@
 
 namespace App\Models\Keuangan;
 
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
 use App\Database\Eloquent\Model;
 
 class BayarPiutang extends Model
 {
-    use Searchable, Sortable;
-
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = false;
@@ -34,5 +30,15 @@ class BayarPiutang extends Model
         'kd_rek_diskon_piutang',
         'tidak_terbayar',
         'kd_rek_tidak_terbayar',
+    ];
+
+    protected $searchColumns = [
+        'no_rkm_medis',
+        'no_rawat',
+        'kd_rek',
+        'kd_rek_kontra',
+        'kd_rek_diskon_piutang',
+        'kd_rek_tidak_terbayar',
+        'catatan',
     ];
 }

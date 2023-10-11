@@ -3,15 +3,14 @@
 namespace App\Support;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 
 class Menu
 {
-    public static function all(?string $search = null): Collection
+    /**
+     * @param  \Illuminate\Contracts\Auth\Authenticatable&\App\Database\Eloquent\Authenticatable $user
+     */
+    public static function all($user, ?string $search = null): Collection
     {
-        /** @var \App\Models\Aplikasi\User */
-        $user = Auth::user();
-
         $develop = config('permission.superadmin_name');
 
         return collect([

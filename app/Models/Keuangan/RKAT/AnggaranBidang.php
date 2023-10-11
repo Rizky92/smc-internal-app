@@ -4,8 +4,6 @@ namespace App\Models\Keuangan\RKAT;
 
 use App\Casts\Year;
 use App\Models\Bidang;
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,7 +12,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 class AnggaranBidang extends Model
 {
-    use Sortable, Searchable, HasRelationships;
+    use HasRelationships;
 
     protected $connection = 'mysql_smc';
 

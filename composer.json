@@ -88,7 +88,7 @@
             "@php artisan ide-helper:generate",
             "@php artisan ide-helper:models --nowrite",
             "@php artisan ide-helper:meta",
-            "@refactor"
+            "./vendor/bin/psalm"
         ],
         "lint:rebase": [
             "./vendor/bin/psalm --php-version=7.4 --set-baseline=psalm-baseline.xml",

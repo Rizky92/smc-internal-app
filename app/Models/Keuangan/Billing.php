@@ -2,18 +2,15 @@
 
 namespace App\Models\Keuangan;
 
-use App\Models\Perawatan\RegistrasiPasien;
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
-use Illuminate\Database\Eloquent\Builder;
 use App\Database\Eloquent\Model;
+use App\Models\Perawatan\RegistrasiPasien;
+use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
-
+use RuntimeException;
 
 class Billing extends Model
 {
-    use Searchable, Sortable;
-
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = false;
@@ -26,16 +23,12 @@ class Billing extends Model
 
     public $timestamps = false;
 
-    /**
-     * @template TRegistrasiPasien as \App\Models\Perawatan\RegistrasiPasien
-     * 
-     * @param  \Illuminate\Database\Eloquent\Builder $query
-     * @param  \Illuminate\Support\Collection<array-key, TRegistrasiPasien|string>|array<TRegistrasiPasien|string>|TRegistrasiPasien|string|null $noRawat
-     * 
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
     public function scopeTotalBillingan(Builder $query, $noRawat = null): Builder
     {
+        if (empty($noRawat)) {
+            throw new RuntimeException("Parameter of [\$noRawat] must not be empty.");
+        }
+
         if (is_array($noRawat)) {
             $noRawat = collect($noRawat);
         }

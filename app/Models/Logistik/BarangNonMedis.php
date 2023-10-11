@@ -2,16 +2,12 @@
 
 namespace App\Models\Logistik;
 
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
-use Illuminate\Database\Eloquent\Builder;
 use App\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 class BarangNonMedis extends Model
 {
-    use Searchable, Sortable;
-
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = 'kode_brng';
@@ -57,10 +53,6 @@ class BarangNonMedis extends Model
                 0
             ) total_harga
         SQL;
-
-        if ($export) {
-            $sqlSelect = str_replace("ifnull(ipsrssuplier.kode_suplier, '-') kode_supplier,", '', $sqlSelect);
-        }
 
         return $query
             ->selectRaw($sqlSelect)

@@ -2,12 +2,10 @@
 
 namespace App\Models\Keuangan;
 
+use App\Database\Eloquent\Model;
 use App\Models\Kepegawaian\Petugas;
 use App\Models\RekamMedis\Penjamin;
-use App\Database\Eloquent\Concerns\Searchable;
-use App\Database\Eloquent\Concerns\Sortable;
 use Illuminate\Database\Eloquent\Builder;
-use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\JoinClause;
@@ -15,8 +13,6 @@ use Illuminate\Support\Facades\DB;
 
 class PenagihanPiutang extends Model
 {
-    use Sortable, Searchable;
-
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = 'no_tagihan';
@@ -29,9 +25,7 @@ class PenagihanPiutang extends Model
 
     public $timestamps = false;
 
-    protected $fillable = [
-        'status',
-    ];
+    protected $fillable = ['status'];
 
     protected $searchColumns = [
         'no_tagihan',
@@ -119,20 +113,6 @@ class PenagihanPiutang extends Model
         return $query
             ->selectRaw($sqlSelect, [$tglAkhir])
             ->withCasts([
-                'no_tagihan'      => 'string',
-                'no_rawat'        => 'string',
-                'tgl_tagihan'     => 'string',
-                'tgl_jatuh_tempo' => 'string',
-                'tgl_bayar'       => 'string',
-                'no_rkm_medis'    => 'string',
-                'nm_pasien'       => 'string',
-                'kd_pj'           => 'string',
-                'penjab_pasien'   => 'string',
-                'penjab_piutang'  => 'string',
-                'catatan'         => 'string',
-                'status'          => 'string',
-                'kd_rek'          => 'string',
-                'nama_bayar'      => 'string',
                 'total_piutang'   => 'float',
                 'besar_cicilan'   => 'float',
                 'sisa_piutang'    => 'float',
