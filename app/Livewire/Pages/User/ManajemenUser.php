@@ -2,12 +2,12 @@
 
 namespace App\Livewire\Pages\User;
 
-use App\Models\Aplikasi\User;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Aplikasi\User;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -46,13 +46,13 @@ class ManajemenUser extends Component
         return $this->isDeferred
             ? []
             : User::query()
-            ->tampilkanYangMemilikiHakAkses($this->tampilkanYangMemilikiHakAkses)
-            ->search($this->cari)
-            ->sortWithColumns($this->sortColumns, [
-                'jbtn'  => DB::raw("coalesce(jabatan.nm_jbtn, spesialis.nm_sps, pegawai.jbtn, '-')"),
-                'jenis' => DB::raw("(case when petugas.nip is not null then 'Petugas' when dokter.kd_dokter is not null then 'Dokter' else '-' end)"),
-            ])
-            ->paginate($this->perpage);
+                ->tampilkanYangMemilikiHakAkses($this->tampilkanYangMemilikiHakAkses)
+                ->search($this->cari)
+                ->sortWithColumns($this->sortColumns, [
+                    'jbtn'  => DB::raw("coalesce(jabatan.nm_jbtn, spesialis.nm_sps, pegawai.jbtn, '-')"),
+                    'jenis' => DB::raw("(case when petugas.nip is not null then 'Petugas' when dokter.kd_dokter is not null then 'Dokter' else '-' end)"),
+                ])
+                ->paginate($this->perpage);
     }
 
     public function render(): View
@@ -101,11 +101,11 @@ class ManajemenUser extends Component
      */
     public function prepareUser($nrp, $nama, $roles, $permissions): void
     {
-        $this->emitTo('user.khanza.set-hak-akses', 'khanza.prepare-set', $nrp, $nama);
-        $this->emitTo('user.khanza.transfer-hak-akses', 'khanza.prepare-transfer', $nrp, $nama);
+        $this->emitTo('pages.user.khanza.set-hak-akses', 'khanza.prepare-set', $nrp, $nama);
+        $this->emitTo('pages.user.khanza.transfer-hak-akses', 'khanza.prepare-transfer', $nrp, $nama);
 
-        $this->emitTo('user.siap.lihat-aktivitas', 'siap.prepare-la', $nrp, $nama);
-        $this->emitTo('user.siap.set-perizinan', 'siap.prepare-set', $nrp, $nama, $roles, $permissions);
-        $this->emitTo('user.siap.transfer-perizinan', 'siap.prepare-transfer', $nrp, $nama);
+        $this->emitTo('pages.user.siap.lihat-aktivitas', 'siap.prepare-la', $nrp, $nama);
+        $this->emitTo('pages.user.siap.set-perizinan', 'siap.prepare-set', $nrp, $nama, $roles, $permissions);
+        $this->emitTo('pages.user.siap.transfer-perizinan', 'siap.prepare-transfer', $nrp, $nama);
     }
 }

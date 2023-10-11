@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Pages\User\Khanza;
 
-use App\Models\Aplikasi\HakAkses;
-use App\Models\Aplikasi\User;
 use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\LiveTable;
+use App\Models\Aplikasi\HakAkses;
+use App\Models\Aplikasi\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -56,19 +56,14 @@ class SetHakAkses extends Component
         return $this->isDeferred
             ? []
             : HakAkses::query()
-            ->search($this->cari, ['nama_field', 'judul_menu'])
-            ->when(
-                $this->showChecked,
-                fn (Builder $q): Builder => $q
-                    ->orWhereIn(
-                        'nama_field',
-                        collect($this->checkedHakAkses)
-                            ->filter()
-                            ->keys()
-                            ->all()
-                    )
-            )
-            ->get();
+                ->search($this->cari, ['nama_field', 'judul_menu'])
+                ->when($this->showChecked, fn (Builder $q): Builder => $q
+                    ->orWhereIn('nama_field', collect($this->checkedHakAkses)
+                        ->filter()
+                        ->keys()
+                        ->all()))
+                ->sortWithColumns($this->sortColumns)
+                ->get();
     }
 
     public function render(): View
@@ -90,8 +85,6 @@ class SetHakAkses extends Component
 
             return;
         }
-
-        $this->forgetComputed();
 
         $hakAksesUser = $this->hakAksesKhanza
             ->mapWithKeys(fn (HakAkses $hakAkses): array => [$hakAkses->nama_field => $hakAkses->default_value])
@@ -118,9 +111,9 @@ class SetHakAkses extends Component
 
         if (!$this->isDeferred) {
             $this->checkedHakAkses = collect($user->getAttributes())->except(['id_user', 'password'])
-                ->filter(fn (?string $v, ?string $k): bool => $v === 'true')
+                ->filter(fn (?string $v, $_): bool => $v === 'true')
                 ->keys()
-                ->mapWithKeys(fn (string $v, int $k): array => [$v => true])
+                ->mapWithKeys(fn (string $v, $_): array => [$v => true])
                 ->all();
         }
 

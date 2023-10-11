@@ -26,7 +26,7 @@
                 <p>{{ "{$nrp} {$nama}" }}</p>
             </x-row-col>
             <x-row-col class="pt-2">
-                <x-table zebra hover>
+                <x-table zebra hover sortable :sortColumns="$sortColumns">
                     <x-slot name="columns">
                         <x-table.th-checkbox-all
                             livewire
@@ -37,8 +37,8 @@
                             model="checkedHakAkses"
                             lookup="sha-"
                         />
-                        <x-table.th title="Nama Field" />
-                        <x-table.th title="Judul Menu" />
+                        <x-table.th name="nama_field" title="Nama Field" />
+                        <x-table.th name="judul_menu" title="Judul Menu" />
                     </x-slot>
                     <x-slot name="body">
                         @forelse ($this->hakAksesKhanza as $hakAkses)

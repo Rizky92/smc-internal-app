@@ -1014,20 +1014,6 @@ class User extends Authenticatable
         'zis_penghasilan_penerima_dankes' => BooleanCast::class,
         'zis_ternak_penerima_dankes' => BooleanCast::class,
         'zis_ukuran_rumah_penerima_dankes' => BooleanCast::class,
-        'sisa_diet_pasien' => BooleanCast::class,
-        'penilaian_awal_medis_ralan_bedah_mulut' => BooleanCast::class,
-        'penilaian_pasien_keracunan' => BooleanCast::class,
-        'bpjs_referensi_setting_apotek' => BooleanCast::class,
-        'bpjs_mapping_obat_apotek' => BooleanCast::class,
-        'penilaian_lanjutan_resiko_jatuh_psikiatri' => BooleanCast::class,
-        'pembayaran_bank_mandiri' => BooleanCast::class,
-        'penilaian_lanjutan_skrining_fungsional' => BooleanCast::class,
-        'penilaian_medis_ralan_rehab_medik' => BooleanCast::class,
-        'laporan_anestesi' => BooleanCast::class,
-        'template_persetujuan_penolakan_tindakan' => BooleanCast::class,
-        'penilaian_medis_ralan_gawat_darurat_psikiatri' => BooleanCast::class,
-        'penilaian_medis_hemodialisa' => BooleanCast::class,
-        'bpjs_referensi_obat_apotek' => BooleanCast::class,
     ];
 
     protected static function booted()

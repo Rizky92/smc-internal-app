@@ -86,7 +86,11 @@ class Khanza extends Component
 
         tracker_start('mysql_sik');
 
+        User::unguard();
+
         User::query()->update($hakAksesBaru->all());
+
+        User::reguard();
 
         tracker_end('mysql_sik');
 
