@@ -3,42 +3,42 @@
 
     <x-card use-default-filter use-loading wire:init="loadProperties">
         <x-slot name="body">
-            <x-table style="width: 450rem" zebra hover sticky nowrap>
+            <x-table zebra hover sticky nowrap style="width: 360rem">
                 <x-slot name="columns">
                     <x-table.th style="width: 20ch" title="No. Rawat" />
-                    <x-table.th style="width: 10ch" title="No RM" />
+                    <x-table.th style="width: 8ch" title="No RM" />
                     <x-table.th title="Pasien" />
-                    <x-table.th style="width: 20ch" title="NIK" />
+                    <x-table.th style="width: 18ch" title="NIK" />
                     <x-table.th style="width: 7ch" title="L / P" />
                     <x-table.th style="width: 12ch" title="Tgl. Lahir" />
-                    <x-table.th style="width: 15ch" title="Umur" />
-                    <x-table.th style="width: 10ch" title="Agama" />
-                    <x-table.th style="width: 10ch" title="Suku" />
-                    <x-table.th style="width: 17ch" title="Jenis Perawatan" />
-                    <x-table.th style="width: 21ch" title="Pasien Lama / Baru" />
-                    <x-table.th style="width: 12ch" title="Asal Poli" />
-                    <x-table.th style="width: 50ch" title="Dokter Poli" />
-                    <x-table.th style="width: 20ch" title="Status Ralan" />
-                    <x-table.th style="width: 20ch" title="Tgl. Masuk" />
-                    <x-table.th style="width: 20ch" title="Jam Masuk" />
-                    <x-table.th style="width: 20ch" title="Tgl. Pulang" />
-                    <x-table.th style="width: 20ch" title="Jam Pulang" />
-                    <x-table.th style="width: 20ch" title="Diagnosa Masuk" />
-                    <x-table.th style="width: 50ch" title="ICD-10" />
+                    <x-table.th style="width: 10ch" title="Umur" />
+                    <x-table.th style="width: 11ch" title="Agama" />
+                    <x-table.th style="width: 11ch" title="Suku" />
+                    <x-table.th style="width: 17ch" title="Jenis Rawat" />
+                    <x-table.th style="width: 19ch" title="Pasien Lama / Baru" />
+                    <x-table.th style="width: 15ch" title="Asal Poli" />
+                    <x-table.th style="width: 30ch" title="Dokter Poli" />
+                    <x-table.th style="width: 15ch" title="Status Ralan" />
+                    <x-table.th style="width: 15ch" title="Tgl. Masuk" />
+                    <x-table.th style="width: 15ch" title="Jam Masuk" />
+                    <x-table.th style="width: 15ch" title="Tgl. Pulang" />
+                    <x-table.th style="width: 15ch" title="Jam Pulang" />
+                    <x-table.th style="width: 18ch" title="Diagnosa Masuk" />
+                    <x-table.th style="width: 10ch" title="ICD-10" />
                     <x-table.th style="width: 50ch" title="Diagnosa" />
                     <x-table.th style="width: 50ch" title="Tindakan Ralan" />
                     <x-table.th style="width: 50ch" title="Tindakan Ranap" />
-                    <x-table.th style="width: 15ch" title="Lama Operasi" />
-                    <x-table.th style="width: 15ch" title="Rujukan Masuk" />
-                    <x-table.th style="width: 50ch" title="DPJP Ranap" />
+                    <x-table.th style="width: 13ch" title="Lama Operasi" />
+                    <x-table.th style="width: 20ch" title="Rujukan Masuk" />
+                    <x-table.th style="width: 30ch" title="DPJP Ranap" />
                     <x-table.th style="width: 8ch" title="Kelas" />
                     <x-table.th style="width: 30ch" title="Penjamin" />
                     <x-table.th style="width: 20ch" title="Status Bayar" />
                     <x-table.th style="width: 20ch" title="Status Pulang" />
                     <x-table.th style="width: 15ch" title="Rujukan Keluar" />
-                    <x-table.th style="width: 50ch" title="Alamat" />
-                    <x-table.th style="width: 16ch" title="No. HP" />
-                    <x-table.th style="width: 17ch" title="Kunjungan ke" />
+                    <x-table.th style="width: 40ch" title="Alamat" />
+                    <x-table.th style="width: 15ch" title="No. HP" />
+                    <x-table.th style="width: 15ch" title="Kunjungan ke" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->dataLaporanStatistik as $registrasi)
