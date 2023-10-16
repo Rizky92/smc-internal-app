@@ -93,8 +93,7 @@ class RKATPelaporan extends Component
                     'tahun'       => $model->anggaranBidang->tahun,
                     'tgl_dipakai' => $model->tgl_dipakai,
                     'nominal'     => floatval($model->nominal_pemakaian),
-                    'nip'         => $model->user_id,
-                    'petugas'     => $model->petugas->nama,
+                    'petugas'     => $model->user_id . ' ' .$model->petugas->nama,
                     'keterangan'  => $model->deskripsi,
                 ])
                 ->all(),
