@@ -3,6 +3,7 @@
 namespace App\Models\Keuangan\Jurnal;
 
 use App\Database\Eloquent\Model;
+use App\Models\Keuangan\PengeluaranHarian;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;

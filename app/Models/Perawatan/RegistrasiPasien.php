@@ -375,25 +375,18 @@ class RegistrasiPasien extends Model
         $rawatInap = RawatInap::query()
             ->select(['kd_kamar', 'no_rawat', 'diagnosa_awal', 'tgl_keluar', 'jam_keluar', 'lama', 'stts_pulang'])
             ->whereRaw("kamar_inap.stts_pulang != 'Pindah Kamar'")
-            ->orderBy('no_rawat', 'desc')
             ->orderBy('tgl_masuk', 'desc')
             ->orderBy('jam_masuk', 'desc');
 
-        $dpjpRanap = DB::connection('mysql_sik')
-            ->table('dpjp_ranap')
-            ->selectRaw('dpjp_ranap.no_rawat, dokter.nm_dokter')
-            ->leftJoin('dokter', 'dpjp_ranap.kd_dokter', '=', 'dokter.kd_dokter')
-            ->toSql();
-
         $perawatanRalan = TindakanRalanDokterPerawat::query()
             ->select(['no_rawat', 'kd_jenis_prw'])
-            ->union(TindakanRalanDokter::query()->select(['no_rawat', 'kd_jenis_prw']))
-            ->union(TindakanRalanPerawat::query()->select(['no_rawat', 'kd_jenis_prw']));
+            ->unionAll(TindakanRalanDokter::select(['no_rawat', 'kd_jenis_prw']))
+            ->unionAll(TindakanRalanPerawat::select(['no_rawat', 'kd_jenis_prw']));
 
         $perawatanRanap = TindakanRanapDokterPerawat::query()
             ->select(['no_rawat', 'kd_jenis_prw'])
-            ->union(TindakanRanapDokter::query()->select(['no_rawat', 'kd_jenis_prw']))
-            ->union(TindakanRanapPerawat::query()->select(['no_rawat', 'kd_jenis_prw']));
+            ->unionAll(TindakanRanapDokter::select(['no_rawat', 'kd_jenis_prw']))
+            ->unionAll(TindakanRanapPerawat::select(['no_rawat', 'kd_jenis_prw']));
 
         return $query
             ->selectRaw($sqlSelect)

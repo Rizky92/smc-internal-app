@@ -28,8 +28,8 @@ class LaporanStatistik extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'  => ['except' => now()->startOfWeek()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfWeek()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -62,8 +62,8 @@ class LaporanStatistik extends Component
         $this->cari = '';
         $this->perpage = 25;
         $this->sortColumns = [];
-        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfWeek()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfWeek()->format('Y-m-d');
     }
 
     protected function dataPerSheet(): array

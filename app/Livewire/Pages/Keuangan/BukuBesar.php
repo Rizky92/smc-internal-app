@@ -3,8 +3,6 @@
 namespace App\Livewire\Pages\Keuangan;
 
 use App\Models\Keuangan\Jurnal\Jurnal;
-use App\Models\Keuangan\Jurnal\PengeluaranHarian;
-use App\Models\Farmasi\PengeluaranObat;
 use App\Models\Keuangan\Rekening;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
@@ -51,24 +49,24 @@ class BukuBesar extends Component
         return $this->isDeferred
             ? []
             : Jurnal::query()
-            ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
-            ->with('pengeluaranHarian')
-            ->search($this->cari, [
-                'jurnal.tgl_jurnal',
-                'jurnal.jam_jurnal',
-                'jurnal.no_jurnal',
-                'jurnal.no_bukti',
-                'jurnal.keterangan',
-                'detailjurnal.kd_rek',
-                'rekening.nm_rek',
-                'detailjurnal.debet',
-                'detailjurnal.kredit',
-            ])
-            ->sortWithColumns($this->sortColumns, [], [
-                'tgl_jurnal' => 'asc',
-                'jam_jurnal' => 'asc',
-            ])
-            ->paginate($this->perpage);
+                ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
+                ->with('pengeluaranHarian')
+                ->search($this->cari, [
+                    'jurnal.tgl_jurnal',
+                    'jurnal.jam_jurnal',
+                    'jurnal.no_jurnal',
+                    'jurnal.no_bukti',
+                    'jurnal.keterangan',
+                    'detailjurnal.kd_rek',
+                    'rekening.nm_rek',
+                    'detailjurnal.debet',
+                    'detailjurnal.kredit',
+                ])
+                ->sortWithColumns($this->sortColumns, [], [
+                    'tgl_jurnal' => 'asc',
+                    'jam_jurnal' => 'asc',
+                ])
+                ->paginate($this->perpage);
     }
 
     /**
@@ -79,8 +77,8 @@ class BukuBesar extends Component
         return $this->isDeferred
             ? []
             : Jurnal::query()
-            ->jumlahDebetDanKreditBukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
-            ->first();
+                ->jumlahDebetDanKreditBukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
+                ->first();
     }
 
     public function getRekeningProperty(): array
@@ -123,20 +121,18 @@ class BukuBesar extends Component
                     'debet'      => round($model->debet, 2),
                     'kredit'     => round($model->kredit, 2),
                 ])
-                ->merge([
-                    [
-                        'tgl_jurnal' => '',
-                        'jam_jurnal' => '',
-                        'no_jurnal'  => '',
-                        'no_bukti'   => '',
-                        'keterangan' => '',
-                        'keterangan_pengeluaran' => '',
-                        'kd_rek'     => '',
-                        'nm_rek'     => 'TOTAL :',
-                        'debet'      => round(optional($this->totalDebetDanKredit)->debet, 2),
-                        'kredit'     => round(optional($this->totalDebetDanKredit)->kredit, 2),
-                    ]
-                ])
+                ->merge([[
+                    'tgl_jurnal' => '',
+                    'jam_jurnal' => '',
+                    'no_jurnal'  => '',
+                    'no_bukti'   => '',
+                    'keterangan' => '',
+                    'keterangan_pengeluaran' => '',
+                    'kd_rek'     => '',
+                    'nm_rek'     => 'TOTAL :',
+                    'debet'      => round(optional($this->totalDebetDanKredit)->debet, 2),
+                    'kredit'     => round(optional($this->totalDebetDanKredit)->kredit, 2),
+                ]])
                 ->all(),
         ];
     }

@@ -101,17 +101,18 @@ class PiutangDilunaskan extends Model
                 ->on('penagihan_piutang.kd_rek', '=', 'bayar_piutang.kd_rek'))
             ->when(
                 !is_null($latest),
-                fn (DatabaseBuilder $q): DatabaseBuilder => $q->whereRaw("timestamp(tgl_jurnal, jam_jurnal) > ?", $latest),
-                fn (DatabaseBuilder $q): DatabaseBuilder => $q->where('tgl_jurnal', '>=', '2022-10-31')
+                fn (Builder $q): Builder => $q->whereRaw("timestamp(tgl_jurnal, jam_jurnal) > ?", $latest),
+                fn (Builder $q): Builder => $q->where('tgl_jurnal', '>=', '2022-10-31')
             )
             ->where('penagihan_piutang.status', 'Sudah Dibayar')
-            ->where(fn (DatabaseBuilder $q): DatabaseBuilder => $q
+            ->where(fn (Builder $q): Builder => $q
                 ->where('keterangan', 'like', '%bayar piutang, oleh%')
+                ->orWhere('keterangan', 'like', '%bayar piutang tagihan% %oleh%')
                 ->orWhere('keterangan', 'like', '%pembatalan bayar piutang, oleh%'))
             ->orderBy('jurnal.tgl_jurnal')
             ->orderBy('jurnal.jam_jurnal')
             ->cursor()
-            ->each(function (object $jurnal): void {
+            ->each(function (Jurnal $jurnal): void {
                 $ket = Str::of($jurnal->keterangan);
 
                 $status = $ket->startsWith('BAYAR');

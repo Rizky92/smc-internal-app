@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Keuangan\Jurnal;
+namespace App\Models\Keuangan;
 
 use App\Database\Eloquent\Model;
 
