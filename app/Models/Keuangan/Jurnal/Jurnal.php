@@ -125,6 +125,55 @@ class Jurnal extends Model
             ->wherebetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir]);
     }
 
+    public function scopeSaldoAwalBulanSebelumnya(Builder $query, string $tglSaldo = ''): Builder
+    {
+        $tglSaldo = carbon($tglSaldo)->subMonth()->endOfMonth();
+
+        $sqlSelect = <<<SQL
+            detailjurnal.kd_rek,
+            case
+                when rekening.balance = "D" then round(rekeningtahun.saldo_awal + sum(detailjurnal.debet) - sum(detailjurnal.kredit), 2)
+                when rekening.balance = "K" then round(rekeningtahun.saldo_awal + sum(detailjurnal.kredit) - sum(detailjurnal.debet), 2)
+            end saldo_awal
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join('detailjurnal', 'jurnal.no_jurnal', '=', 'detailjurnal.no_jurnal')
+            ->leftJoin('rekening', 'detailjurnal.kd_rek', '=', 'rekening.kd_rek')
+            ->leftJoin('rekeningtahun', 'rekening.kd_rek', '=', 'rekeningtahun.kd_rek')
+            ->where('rekeningtahun.thn', $tglSaldo->format('Y'))
+            ->whereBetween('jurnal.tgl_jurnal', [$tglSaldo->startOfYear()->format('Y-m-d'), $tglSaldo->format('Y-m-d')])
+            ->groupBy('detailjurnal.kd_rek');
+    }
+
+    public function scopeTrialBalancePerTanggal(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = carbon($tglAwal)->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = carbon($tglAkhir)->format('Y-m-d');
+        }
+
+        $sqlSelect = <<<SQL
+            detailjurnal.kd_rek,
+            rekening.nm_rek,
+            rekening.balance,
+            round(sum(detailjurnal.debet), 2) total_debet,
+            round(sum(detailjurnal.kredit), 2) total_kredit
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->withCasts(['total_debet' => 'float', 'total_kredit' => 'float'])
+            ->join('detailjurnal', 'jurnal.no_jurnal', '=', 'detailjurnal.no_jurnal')
+            ->leftJoin('rekening', 'detailjurnal.kd_rek', '=', 'rekening.kd_rek')
+            ->whereBetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir])
+            ->groupBy('detailjurnal.kd_rek');
+    }
+
     public static function noJurnalBaru(Carbon $date): string
     {
         $date = $date->format('Ymd');
