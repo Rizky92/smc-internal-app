@@ -231,6 +231,13 @@ class Menu
                         'type' => 'link',
                         'hasAnyPermissions' => $user->canAny(['keuangan.account-payable.read-medis', 'keuangan.account-payable.read-nonmedis']),
                     ],
+                    [
+                        'name' => 'Laporan Trial Balance',
+                        'url' => route('admin.keuangan.laporan-trial-balance'),
+                        'icon' => "fas fa-book",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.laporan-trial-balance.read'),
+                    ],
                 ],
             ],
             [

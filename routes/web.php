@@ -168,6 +168,10 @@ Route::prefix('admin')
                 Route::get('account-payable', Keuangan\AccountPayable::class)
                     ->name('account-payable')
                     ->middleware('canany:keuangan.account-payable.read-medis|keuangan.account-payable.read-nonmedis');
+
+                Route::get('laporan-trial-balance', Keuangan\LaporanTrialBalance::class)
+                    ->name('laporan-trial-balance')
+                    ->middleware('can:keuangan.laporan-trial-balance.read');
             });
 
         Route::prefix('farmasi')

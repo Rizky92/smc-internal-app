@@ -25,7 +25,7 @@ trait WithDateRange
 
     protected function defaultValueWithDateRange(): void
     {
-        $this->tglAwal = now()->startOfMonth();
-        $this->tglAkhir = now()->endOfMonth();
+        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
+        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 }

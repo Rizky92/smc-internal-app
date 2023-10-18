@@ -141,6 +141,11 @@ Breadcrumbs::for('admin.keuangan.rkat-kategori', function (Trail $trail): void {
     $trail->push('kategori RKAT', route('admin.keuangan.rkat-kategori'));
 });
 
+Breadcrumbs::for('admin.keuangan.laporan-trial-balance', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('Trial Balance', route('admin.keuangan.laporan-trial-balance'));
+});
+
 
 Breadcrumbs::for('admin.farmasi', function (Trail $trail): void {
     $trail->parent('admin.dashboard');

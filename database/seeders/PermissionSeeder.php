@@ -27,13 +27,13 @@ class PermissionSeeder extends Seeder
 
         Permission::create(['name' => 'farmasi.kunjungan-per-bentuk-obat.read']);
         Permission::create(['name' => 'farmasi.kunjungan-per-poli.read']);
+        Permission::create(['name' => 'farmasi.laporan-pemakaian-obat-morphine.read']);
+        Permission::create(['name' => 'farmasi.laporan-pemakaian-obat-napza.read']);
         Permission::create(['name' => 'farmasi.laporan-produksi.read']);
         Permission::create(['name' => 'farmasi.obat-per-dokter.read']);
+        Permission::create(['name' => 'farmasi.pemakaian-stok.read']);
         Permission::create(['name' => 'farmasi.perbandingan-po-obat.read']);
         Permission::create(['name' => 'farmasi.stok-darurat.read']);
-        Permission::create(['name' => 'farmasi.pemakaian-stok.read']);
-        Permission::create(['name' => 'farmasi.laporan-pemakaian-obat-napza.read']);
-        Permission::create(['name' => 'farmasi.laporan-pemakaian-obat-morphine.read']);
 
         Permission::create(['name' => 'keuangan.account-payable.read-medis']);
         Permission::create(['name' => 'keuangan.account-payable.read-nonmedis']);
@@ -50,6 +50,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'keuangan.laporan-tambahan-biaya.read']);
         Permission::create(['name' => 'keuangan.laporan-tindakan-lab.read']);
         Permission::create(['name' => 'keuangan.laporan-tindakan-radiologi.read']);
+        Permission::create(['name' => 'keuangan.laporan-trial-balance.read']);
         Permission::create(['name' => 'keuangan.rkat-kategori.create']);
         Permission::create(['name' => 'keuangan.rkat-kategori.delete']);
         Permission::create(['name' => 'keuangan.rkat-kategori.read']);
@@ -98,6 +99,7 @@ class PermissionSeeder extends Seeder
             'keuangan.laporan-tindakan-radiologi.read',
             'keuangan.stok-obat-ruangan.read',
             'perawatan.laporan-transaksi-gantung.read',
+            'perawatan.laporan-trial-balance.read',
         ];
 
         $RKATPermissions = [
@@ -167,7 +169,6 @@ class PermissionSeeder extends Seeder
         $kasirRole->givePermissionTo($kasirPermissions);
         $MODRole->givePermissionTo($MODPermissions);
         
-        /** @var \App\Models\Aplikasi\User */
         $user = User::findByNRP('221203');
 
         $user->assignRole($superadminRole);

@@ -44,7 +44,9 @@ class LabaRugiRekeningPerPeriode extends Component
             return collect(['D' => [], 'K' => []]);
         }
 
-        $semuaRekening = Rekening::semuaRekening()->get();
+        $semuaRekening = Rekening::semuaRekening()
+            ->whereTipe('R')
+            ->get();
 
         $debetKredit = Rekening::query()
             ->hitungDebetKreditPerPeriode($this->tglAwal, $this->tglAkhir)

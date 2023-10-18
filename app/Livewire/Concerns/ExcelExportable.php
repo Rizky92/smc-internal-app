@@ -44,10 +44,9 @@ trait ExcelExportable
     protected function validateSheetNames(): void
     {
         $invalidSheet = collect(array_keys($this->dataPerSheet()))
-            ->filter(fn (string $v): bool => Str::containsAll($v, $this->invalidSheetCharacters))
-            ->first();
+            ->contains(fn (string $v): bool => Str::containsAll($v, $this->invalidSheetCharacters));
 
-        throw_if(!is_null($invalidSheet), 'RuntimeException', sprintf("Invalid characters found in sheet: '%s'", (string) $invalidSheet));
+        throw_if($invalidSheet, 'RuntimeException', sprintf("Invalid characters found in sheet: '%s'", (string) $invalidSheet));
     }
 
     public function exportToExcel(): void
@@ -59,12 +58,12 @@ trait ExcelExportable
         $this->emit('beginExcelExport');
     }
 
-    public function beginExcelExport(): ?\Symfony\Component\HttpFoundation\StreamedResponse
+    public function beginExcelExport(): ?StreamedResponse
     {
         $filename = now()->format('Ymd_His') . '_';
 
         $filename .= method_exists($this, 'filename')
-            ? Str::of($this->filename())->trim()->snake()
+            ? Str::of($this->filename())->trim()->snake()->value()
             : Str::snake(class_basename($this));
 
         $filename .= '.xlsx';
@@ -87,7 +86,7 @@ trait ExcelExportable
         array_shift($dataSheets);
 
         foreach ($dataSheets as $sheet => $data) {
-            if ($data instanceof Closure || is_callable($data)) {
+            if (is_callable($data)) {
                 $excel->addSheet($sheet)->setData($data());
             } else {
                 $excel->addSheet($sheet)->setData($data);
