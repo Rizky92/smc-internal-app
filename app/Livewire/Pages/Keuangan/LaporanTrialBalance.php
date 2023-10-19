@@ -190,7 +190,7 @@ class LaporanTrialBalance extends Component
             'Laporan Trial Balance Rekening',
             $periode,
             null,
-            'Saldo Awal per ' . $periodeAwal->startOfMonth()->format('Y-m-d'),
+            'Saldo Awal per ' . $periodeAwal->startOfMonth()->format('d F Y'),
         ];
     }
 }
