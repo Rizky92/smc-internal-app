@@ -8,10 +8,6 @@
                 <x-button class="ml-auto" size="sm" variant="danger" title="Rekalkulasi ulang" icon="fas fa-sync-alt" wire:click.prevent="resetCache" outline />
                 <x-filter.button-export-excel class="ml-2" />
             </x-row-col-flex>
-            <x-row-col-flex class="mt-2">
-                <x-filter.button-reset-filters class="ml-auto" />
-                <x-filter.search class="ml-2" />
-            </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
