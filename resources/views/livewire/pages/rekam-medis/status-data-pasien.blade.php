@@ -35,6 +35,7 @@
                     <x-table.th style="width: 32ch" name="resume_ranap" title="Resume Ranap" />
                     <x-table.th style="width: 32ch" name="triase_igd" title="Triase IGD" />
                     <x-table.th style="width: 32ch" name="askep_igd" title="Askep IGD" />
+                    <x-table.th style="width: 32ch" title="Askep Ranap" />
                     <x-table.th style="width: 32ch" name="asmed_igd" title="Asmed IGD" />
                     <x-table.th style="width: 35ch" title="Asmed Poli" />
                     <x-table.th style="width: 35ch" title="Asmed RWI" />
@@ -58,6 +59,7 @@
                             <x-table.td>{{ (bool) $item->resume_ranap ? 'Ada' : 'Tidak Ada' }}</x-table.td>
                             <x-table.td>{{ (bool) $item->triase_igd ? 'Ada' : 'Tidak Ada' }}</x-table.td>
                             <x-table.td>{{ (bool) $item->askep_igd ? 'Ada' : 'Tidak Ada' }}</x-table.td>
+                            <x-table.td>{{ $item->askep_ranap }}</x-table.td>
                             <x-table.td>{{ (bool) $item->asmed_igd ? 'Ada' : 'Tidak Ada' }}</x-table.td>
                             <x-table.td>{{ $item->asmed_poli }}</x-table.td>
                             <x-table.td>{{ $item->asmed_rwi }}</x-table.td>
@@ -65,7 +67,7 @@
                             <x-table.td>{{ (bool) $item->icd_9 ? 'Ada' : 'Tidak Ada' }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="29" padding />
+                        <x-table.tr-empty colspan="30" padding />
                     @endforelse
                 </x-slot>
             </x-table>

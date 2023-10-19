@@ -148,11 +148,40 @@ class RegistrasiPasien extends Model
                 $asmed->push('Poli THT');
             }
 
+            if ($attributes['asmed_poli_geriatri'] === "1") {
+                $asmed->push('Poli Geriatri');
+            }
+
+            if ($attributes['asmed_poli_kulit_kelamin'] === "1") {
+                $asmed->push('Poli Kulit & Kelamin');
+            }
+
             if ($asmed->isEmpty()) {
                 return "Tidak ada";
             }
 
             return 'Ada ' . $asmed->joinStr(', ')->wrap('(', ')')->value();
+        });
+    }
+
+    public function askepRanap(): Attribute
+    {
+        return Attribute::get(function ($_, array $attributes): ?string {
+            $askep = collect();
+
+            if ($attributes['askep_ranap_umum'] === "1") {
+                $askep->push("Umum");
+            }
+
+            if ($attributes['askep_ranap_bidan'] === "1") {
+                $askep->push("Kebidanan");
+            }
+
+            if ($askep->isEmpty()) {
+                return "Tidak ada";
+            }
+
+            return 'Ada ' . $askep->joinStr(', ')->wrap('(', ')')->value();
         });
     }
 
@@ -517,7 +546,8 @@ class RegistrasiPasien extends Model
             exists(select * from resume_pasien where resume_pasien.no_rawat = reg_periksa.no_rawat) resume_ralan,
             exists(select * from resume_pasien_ranap where resume_pasien_ranap.no_rawat = reg_periksa.no_rawat) resume_ranap,
             exists(select * from data_triase_igd where data_triase_igd.no_rawat = reg_periksa.no_rawat) triase_igd,
-            exists(select * from penilaian_awal_keperawatan_igd where penilaian_awal_keperawatan_igd.no_rawat = reg_periksa.no_rawat) askep_igd,
+            exists(select * from penilaian_awal_keperawatan_ranap where penilaian_awal_keperawatan_ranap.no_rawat = reg_periksa.no_rawat) askep_ranap_umum,
+            exists(select * from penilaian_awal_keperawatan_kebidanan_ranap where penilaian_awal_keperawatan_kebidanan_ranap.no_rawat = reg_periksa.no_rawat) askep_ranap_bidan,
             exists(select * from penilaian_medis_igd where penilaian_medis_igd.no_rawat = reg_periksa.no_rawat) asmed_igd,
             exists(select * from penilaian_medis_ralan where penilaian_medis_ralan.no_rawat = reg_periksa.no_rawat) asmed_poli_umum,
             exists(select * from penilaian_medis_ralan_anak where penilaian_medis_ralan_anak.no_rawat = reg_periksa.no_rawat) asmed_poli_anak,
@@ -530,6 +560,8 @@ class RegistrasiPasien extends Model
             exists(select * from penilaian_medis_ralan_penyakit_dalam where penilaian_medis_ralan_penyakit_dalam.no_rawat = reg_periksa.no_rawat) asmed_poli_penyakit_dalam,
             exists(select * from penilaian_medis_ralan_psikiatrik where penilaian_medis_ralan_psikiatrik.no_rawat = reg_periksa.no_rawat) asmed_poli_psikiatrik,
             exists(select * from penilaian_medis_ralan_tht where penilaian_medis_ralan_tht.no_rawat = reg_periksa.no_rawat) asmed_poli_tht,
+            exists(select * from penilaian_medis_ralan_geriatri where penilaian_medis_ralan_geriatri.no_rawat = reg_periksa.no_rawat) asmed_poli_geriatri,
+            exists(select * from penilaian_medis_ralan_kulitdankelamin where penilaian_medis_ralan_kulitdankelamin.no_rawat = reg_periksa.no_rawat) asmed_poli_kulit_kelamin,
             exists(select * from penilaian_medis_ranap where penilaian_medis_ranap.no_rawat = reg_periksa.no_rawat) asmed_ranap_umum,
             exists(select * from penilaian_medis_ranap_kandungan where penilaian_medis_ranap_kandungan.no_rawat = reg_periksa.no_rawat) asmed_ranap_kandungan,
             exists(select * from diagnosa_pasien where diagnosa_pasien.no_rawat = reg_periksa.no_rawat) icd_10,
