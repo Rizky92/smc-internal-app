@@ -38,8 +38,8 @@
                         <x-table.tr>
                             <x-table.td></x-table.td>
                             <x-table.td class="font-weight-bold" colspan="3">TOTAL :</x-table.td>
-                            <x-table.td>{{ rp($this->totalDebetKreditTrialBalance->total_debet) }}</x-table.td>
-                            <x-table.td>{{ rp($this->totalDebetKreditTrialBalance->total_kredit) }}</x-table.td>
+                            <x-table.td class="font-weight-bold">{{ rp($this->totalDebetKreditTrialBalance->total_debet) }}</x-table.td>
+                            <x-table.td class="font-weight-bold">{{ rp($this->totalDebetKreditTrialBalance->total_kredit) }}</x-table.td>
                             <x-table.td></x-table.td>
                         </x-table.tr>
                     @endif
