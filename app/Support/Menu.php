@@ -96,6 +96,7 @@ class Menu
                     'keuangan.rekap-piutang-pasien.read',
                     'keuangan.jurnal-perbaikan-riwayat.read',
                     'keuangan.stok-obat-ruangan.read',
+                    'keuangan.laporan-trial-balance.read',
                 ]),
                 'items' => [
                     [

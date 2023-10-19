@@ -9,7 +9,6 @@
                 <x-filter.button-export-excel class="ml-2" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
-                <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
             </x-row-col-flex>
@@ -39,6 +38,15 @@
                     @empty
                         <x-table.tr-empty colspan="7" padding />
                     @endforelse
+                    @if ($this->dataTrialBalancePerTanggal)
+                        <x-table.tr>
+                            <x-table.td></x-table.td>
+                            <x-table.td class="font-weight-bold" colspan="3">TOTAL :</x-table.td>
+                            <x-table.td>{{ rp($this->totalDebetKreditTrialBalance->total_debet) }}</x-table.td>
+                            <x-table.td>{{ rp($this->totalDebetKreditTrialBalance->total_kredit) }}</x-table.td>
+                            <x-table.td></x-table.td>
+                        </x-table.tr>
+                    @endif
                 </x-slot>
             </x-table>
         </x-slot>
