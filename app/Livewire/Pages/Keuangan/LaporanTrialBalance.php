@@ -64,8 +64,6 @@ class LaporanTrialBalance extends Component
 
         $trialBalance = Rekening::query()
             ->trialBalancePerTanggal($this->tglAwal, $this->tglAkhir)
-            ->search($this->cari)
-            ->sortWithColumns($this->sortColumns)
             ->get()
             ->map(function (Rekening $rekening) use ($saldoBulanSebelumnya) {
                 $rekening->setAttribute('saldo_awal', $saldoBulanSebelumnya->get($rekening->kd_rek));
