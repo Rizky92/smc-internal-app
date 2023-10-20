@@ -9,6 +9,7 @@ use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Keuangan\Rekening;
+use App\Models\Keuangan\RekeningTahun;
 use App\View\Components\BaseLayout;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
@@ -56,47 +57,39 @@ class LaporanTrialBalance extends Component
                 ->get()
         );
 
+        $rekeningPerTahun = Cache::remember(
+            'rekening_tahun', now()->addMonth(), fn (): Collection => RekeningTahun::query()
+                ->where('thn', carbon($this->tglAwal)->year)
+                ->pluck('saldo_awal', 'kd_rek')
+        );
+
         $saldoBulanSebelumnya = Cache::remember(
             'saldo_' . $bulan, now()->addWeek(), fn (): Collection => Rekening::query()
                 ->saldoAwalBulanSebelumnya($this->tglAwal)
-                ->pluck('saldo_awal', 'kd_rek')
+                ->pluck('total_transaksi', 'kd_rek')
         );
 
         $trialBalance = Rekening::query()
             ->trialBalancePerTanggal($this->tglAwal, $this->tglAkhir)
-            ->get()
-            ->map(function (Rekening $rekening) use ($saldoBulanSebelumnya) {
-                $rekening->setAttribute('saldo_awal', $saldoBulanSebelumnya->get($rekening->kd_rek));
-
-                $saldoAkhir = 0;
-
-                if ($rekening->balance === "D") {
-                    $saldoAkhir = $rekening->saldo_awal + $rekening->total_debet - $rekening->total_kredit;
-                } else {
-                    $saldoAkhir = $rekening->saldo_awal + $rekening->total_kredit - $rekening->total_debet;
-                }
-
-                $rekening->setAttribute('saldo_akhir', $saldoAkhir);
-
-                return $rekening;
-            });
+            ->get();
 
         return $semuaRekening
-            ->map(function (Rekening $rekening) use ($saldoBulanSebelumnya, $trialBalance) {
+            ->map(function (Rekening $rekening) use ($rekeningPerTahun, $saldoBulanSebelumnya, $trialBalance) {
                 $rekening->nm_rek = Str::transliterate($rekening->nm_rek);
 
-                $rekening->setAttribute('saldo_awal', $saldoBulanSebelumnya->get($rekening->kd_rek) ?? 0);
+                $saldoAwal = $rekeningPerTahun->get($rekening->kd_rek) + $saldoBulanSebelumnya->get($rekening->kd_rek);
+                $saldoAkhir = 0;
+
+                $rekening->setAttribute('saldo_awal', $saldoAwal);
 
                 $rekening->setAttribute('total_debet', optional($trialBalance->find($rekening->kd_rek))->total_debet ?? 0);
 
                 $rekening->setAttribute('total_kredit', optional($trialBalance->find($rekening->kd_rek))->total_kredit ?? 0);
 
-                $saldoAkhir = 0;
-
                 if ($rekening->balance === 'D') {
-                    $saldoAkhir = $rekening->saldo_awal + $rekening->total_debet - $rekening->total_kredit;
+                    $saldoAkhir = $saldoAwal + $rekening->total_debet - $rekening->total_kredit;
                 } else {
-                    $saldoAkhir = $rekening->saldo_awal + $rekening->total_kredit - $rekening->total_debet;
+                    $saldoAkhir = $saldoAwal + $rekening->total_kredit - $rekening->total_debet;
                 }
 
                 $rekening->setAttribute('saldo_akhir', $saldoAkhir);
@@ -106,7 +99,7 @@ class LaporanTrialBalance extends Component
     }
 
     /**
-     * @return array
+     * @return \Illuminate\Support\Fluent|array<never, never>
      */
     public function getTotalDebetKreditTrialBalanceProperty()
     {

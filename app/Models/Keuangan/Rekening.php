@@ -48,18 +48,16 @@ class Rekening extends Model
         $sqlSelect = <<<SQL
             rekening.kd_rek,
             case
-                when rekening.balance = "D" then round(rekeningtahun.saldo_awal + sum(detailjurnal.debet) - sum(detailjurnal.kredit), 2)
-                when rekening.balance = "K" then round(rekeningtahun.saldo_awal + sum(detailjurnal.kredit) - sum(detailjurnal.debet), 2)
-            end saldo_awal
+                when rekening.balance = "D" then round(sum(detailjurnal.debet) - sum(detailjurnal.kredit), 2)
+                when rekening.balance = "K" then round(sum(detailjurnal.kredit) - sum(detailjurnal.debet), 2)
+            end total_transaksi
         SQL;
 
         return $query
             ->selectRaw($sqlSelect)
             ->withCasts(['saldo_awal' => 'float'])
-            ->leftJoin('rekeningtahun', 'rekening.kd_rek', '=', 'rekeningtahun.kd_rek')
             ->leftJoin('detailjurnal', 'rekening.kd_rek', '=', 'detailjurnal.kd_rek')
-            ->join('jurnal', 'detailjurnal.no_jurnal', '=', 'jurnal.no_jurnal')
-            ->where('rekeningtahun.thn', $tglSaldo->format('Y'))
+            ->leftJoin('jurnal', 'detailjurnal.no_jurnal', '=', 'jurnal.no_jurnal')
             ->whereBetween('jurnal.tgl_jurnal', [$tglAwalTahun, $tglAkhirBulanLalu])
             ->groupBy('rekening.kd_rek');
     }
