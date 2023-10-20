@@ -132,6 +132,8 @@ class LaporanTrialBalance extends Component
 
         Cache::forget('saldo_' . $bulan);
 
+        Cache::forget('rekening_tahun');
+
         $this->searchData();
 
         $this->flashSuccess("Rekening berhasil direkalkulasi ulang!");
