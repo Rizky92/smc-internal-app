@@ -7,7 +7,18 @@ use Closure;
 class MixinStr
 {
     /**
-     * replace all strings with provided value
+     * Determine if a given string does not contain a given substring.
+     * 
+     * @return \Closure(string, string|string[]): bool
+     */
+    public function doesntContain(): Closure
+    {
+        /** @psalm-scope-this Illuminate\Support\Str */
+        return fn ($haystack, $needles): bool => !static::contains($haystack, $needles);
+    }
+
+    /**
+     * replace all strings with provided value.
      * 
      * @return \Closure(string|string[], string, string): string
      */
@@ -32,9 +43,9 @@ class MixinStr
     public function wrap(): Closure
     {
         return fn (string $value, string $startsWith, ?string $endsWith = null): string =>
-        is_null($endsWith)
-            ? $startsWith . $value . $startsWith
-            : $startsWith . $value . $endsWith;
+            is_null($endsWith)
+                ? $startsWith . $value . $startsWith
+                : $startsWith . $value . $endsWith;
     }
 
     /**

@@ -41,9 +41,9 @@ class MixinStringable
     {
         /** @psalm-scope-this Illuminate\Support\Stringable */
         return fn (string $startsWith, ?string $endsWith = null): Stringable =>
-        is_null($endsWith)
-            ? new Stringable($startsWith .  $this->value . $startsWith)
-            : new Stringable($startsWith . $this->value . $endsWith);
+            is_null($endsWith)
+                ? new Stringable($startsWith . $this->value . $startsWith)
+                : new Stringable($startsWith . $this->value . $endsWith);
     }
 
     /**

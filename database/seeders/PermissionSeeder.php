@@ -21,9 +21,9 @@ class PermissionSeeder extends Seeder
         Permission::truncate();
         Role::truncate();
 
-        DB::table('model_has_roles')->truncate();
-        DB::table('model_has_permissions')->truncate();
-        DB::table('role_has_permissions')->truncate();
+        DB::connection('mysql_smc')->table('model_has_roles')->truncate();
+        DB::connection('mysql_smc')->table('model_has_permissions')->truncate();
+        DB::connection('mysql_smc')->table('role_has_permissions')->truncate();
 
         Permission::create(['name' => 'farmasi.kunjungan-per-bentuk-obat.read']);
         Permission::create(['name' => 'farmasi.kunjungan-per-poli.read']);
@@ -169,6 +169,7 @@ class PermissionSeeder extends Seeder
         $kasirRole->givePermissionTo($kasirPermissions);
         $MODRole->givePermissionTo($MODPermissions);
         
+        /** @var \App\Models\Aplikasi\User */
         $user = User::findByNRP('221203');
 
         $user->assignRole($superadminRole);

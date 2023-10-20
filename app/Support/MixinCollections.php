@@ -11,13 +11,29 @@ use Illuminate\Support\Stringable;
 class MixinCollections
 {
     /**
+     * @return \Closure(): \Illuminate\Support\Collection
+     */
+    public function dot(): Closure
+    {
+        /** @psalm-scope-this Illuminate\Support\Collection */
+        return fn (): Collection => new Collection(Arr::dot($this->items));
+    }
+
+    /**
+     * @return \Closure(int|string|null): mixed
+     */
+    public function getByDot(): Closure
+    {
+        /** @psalm-scope-this Illuminate\Support\Collection */
+        return fn ($key) => Arr::get($this->items, $key);
+    }
+
+    /**
      * @return \Closure(string, string): \Illuminate\Support\Stringable
      */
     public function joinStr(): Closure
     {
-        /** 
-         * @psalm-scope-this Illuminate\Support\Collection
-         */
+        /** @psalm-scope-this Illuminate\Support\Collection */
         return fn (string $glue, string $finalGlue = ''): Stringable =>
             new Stringable($this->join($glue, $finalGlue));
     }
@@ -27,9 +43,7 @@ class MixinCollections
      */
     public function isAssoc(): Closure
     {
-        /**
-         * @psalm-scope-this Illuminate\Support\Collection
-         */
+        /** @psalm-scope-this Illuminate\Support\Collection */
         return function (): bool {
             $keys = array_keys($this->items);
 
@@ -42,9 +56,7 @@ class MixinCollections
      */
     public function isList(): Closure
     {
-        /**
-         * @psalm-scope-this Illuminate\Support\Collection
-         */
+        /** @psalm-scope-this Illuminate\Support\Collection */
         return function (): bool {
             $keys = array_keys($this->items);
 
@@ -57,15 +69,9 @@ class MixinCollections
      */
     public function pushIf(): Closure
     {
-        /**
-         * @psalm-scope-this Illuminate\Support\Collection
-         */
+        /** @psalm-scope-this Illuminate\Support\Collection */
         return fn (bool $condition, ...$values): Collection =>
-            $this->when(
-                $condition,
-                fn (Collection $c) =>
-                $c->push($values)
-            );
+            $this->when($condition, fn (Collection $c) => $c->push($values));
     }
 
     /**
@@ -77,11 +83,7 @@ class MixinCollections
          * @psalm-scope-this Illuminate\Support\Collection
          */
         return fn (bool $condition, ...$values): Collection =>
-            $this->unless(
-                $condition,
-                fn (Collection $c) =>
-                $c->push($values)
-            );
+            $this->unless($condition, fn (Collection $c) => $c->push($values));
     }
 
     /**
@@ -94,8 +96,7 @@ class MixinCollections
          */
         return fn (?string $search = null, int $maxDistance = 1): Collection =>
             $this->filter(
-                fn (string $v): bool =>
-                empty($search) ?: levenshtein($v, $search) <= $maxDistance
+                fn (string $v): bool => empty($search) ?: levenshtein($v, $search) <= $maxDistance
             );
     }
 
@@ -109,21 +110,16 @@ class MixinCollections
          */
         return fn (?string $search = null, int $maxDistance = 1): bool =>
             $this->contains(
-                fn (string $v): bool =>
-                empty($search) ?: levenshtein($v, $search) <= $maxDistance
+                fn (string $v): bool => empty($search) ?: levenshtein($v, $search) <= $maxDistance
             );
     }
 
     /**
-     * @return \Closure(string[]|string): bool
+     * @return \Closure(string|mixed): bool
      */
     public function doesntHave(): Closure
     {
-        /**
-         * @psalm-scope-this Illuminate\Support\Collection 
-         * 
-         * @param  ...string $key
-         */
+        /** @psalm-scope-this Illuminate\Support\Collection */
         return function (...$key): bool {
             /** @var \Illuminate\Support\Collection $this */
 
@@ -136,7 +132,7 @@ class MixinCollections
             if (is_string($key) && Str::startsWith($key, '*.')) {
                 $key = Str::remove('*.', $key);
             } elseif (is_array($key)) {
-                $map = fn (string $value): string => (is_string($value) && Str::startsWith($value, '*.'))
+                $map = fn (string $value): string => (Str::startsWith($value, '*.'))
                     ? Str::remove('*.', $value)
                     : $value;
 

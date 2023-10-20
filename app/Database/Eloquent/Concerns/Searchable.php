@@ -46,13 +46,11 @@ trait Searchable
 
         if (property_exists($this, 'searchColumns') && is_array($this->searchColumns)) {
             $searchColumns = collect($this->searchColumns)
-                ->map(function (string $column) {
-                    if (Str::contains($column, ['(', ')', '<', '>', '=', '.', '-'])) {
-                        return $column;
-                    }
-
-                    return $this->qualifyColumn($column);
-                })
+                ->map(fn (string $column) =>
+                    Str::doesntContain($column, ['(', ')', '<', '>', '=', '.', '-'])
+                        ? $this->qualifyColumn($column)
+                        : $column
+                )
                 ->all();
 
             $columns = $columns->merge($this->qualifyColumns($searchColumns));
@@ -66,7 +64,7 @@ trait Searchable
             throw new LogicException("No columns are defined to perform search.");
         }
 
-        // Convert to lowercase, split search queries to each words, filter any white-space character, and wrap each words with "%".
+        // Convert to lowercase, split search queries to each words, filter any white-space characters, and wrap each words with "%".
         $search = Str::of($search)
             ->lower()
             ->split('/\s+/')
