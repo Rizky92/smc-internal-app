@@ -125,14 +125,17 @@ class Jurnal extends Model
             ->wherebetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir]);
     }
 
-    public static function noJurnalBaru(Carbon $date): string
+    /**
+     * @param  \DateTimeInterface|string $date
+     */
+    public static function noJurnalBaru($date): string
     {
-        $date = $date->format('Ymd');
+        $date = carbon($date)->format('Ymd');
 
         $index = 1;
 
         $noJurnalTerakhir = static::query()
-            ->where('no_jurnal', 'LIKE', "JR{$date}%")
+            ->whereRaw('no_jurnal like ?', ["JR{$date}%"])
             ->orderBy('no_jurnal', 'desc')
             ->value('no_jurnal');
         
@@ -142,7 +145,7 @@ class Jurnal extends Model
 
         return Str::of('JR')
             ->append($date)
-            ->append(Str::padLeft($index, '6', '0'))
+            ->append(Str::padLeft((string) $index, 6, '0'))
             ->value();
     }
 
