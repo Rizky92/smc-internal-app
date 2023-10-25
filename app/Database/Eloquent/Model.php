@@ -12,9 +12,16 @@ abstract class Model extends BaseModel
     use Searchable, Sortable, MergeCasts;
 
     /**
-     * The columns used for search query
+     * The columns used for search query.
      * 
      * @var string[]
      */
     protected $searchColumns = [];
+
+    /**
+     * The initial columns used for column ordering.
+     * 
+     * @var string[]
+     */
+    protected $sortColumns = [];
 }
