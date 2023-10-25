@@ -88,7 +88,9 @@ class Khanza extends Component
 
         User::unguard();
 
-        User::query()->update($hakAksesBaru->all());
+        User::query()
+            ->withoutGlobalScopes()
+            ->update($hakAksesBaru->all());
 
         User::reguard();
 
