@@ -21,7 +21,7 @@
             </div>
             <form class="mt-8 space-y-6" action="#" method="POST" action="{{ route('login') }}" autocomplete="off">
                 @error('user')
-                    <span class="mt-4 block text-center text-sm text-red-500 font-medium">Username atau password salah!</span>
+                    <span class="mt-4 block text-center text-sm text-red-500 font-medium">{{ $message }}</span>
                 @enderror
                 <input autocomplete="false" name="__hidden" type="text" style="display:none;">
                 @csrf
