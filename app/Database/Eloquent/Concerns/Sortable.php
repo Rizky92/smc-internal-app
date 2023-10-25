@@ -4,8 +4,31 @@ namespace App\Database\Eloquent\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * @template TKey
+ * @template TValue of \Illuminate\Database\Query\Expression|string
+ */
 trait Sortable
 {
+    protected function sortColumns(): array
+    {
+        return [];
+    }
+
+    /**
+     * @param  \Illuminate\Support\Collection<TKey, TValue>|array<TValue> $columns
+     * 
+     * @return $this
+     */
+    public function addSortColumns($columns)
+    {
+        $this->sortColumns = collect($this->sortColumns)
+            ->merge($columns)
+            ->all();
+
+        return $this;
+    }
+
     /**
      * @param  \Illuminate\Database\Eloquent\Builder $query
      * @param  array<string, string> $columns
@@ -14,13 +37,21 @@ trait Sortable
      * 
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeSortWithColumns(Builder $query, array $columns = [], array $rawColumns = [], array $initialColumnOrder = []): Builder
+    public function scopeSortWithColumns(Builder $query, array $sortColumns = [], array $rawColumns = [], array $initialColumnOrders = []): Builder
     {
-        if (!empty($initialColumnOrder) && empty($columns)) {
-            $rawColumns = collect($rawColumns);
+        $columns = collect($rawColumns)
+            ->merge($this->sortColumns)
+            ->merge($this->sortColumns());
 
-            foreach ($initialColumnOrder as $column => $direction) {
-                $query->orderBy($rawColumns->get($column) ?? $column, $direction);
+        if (empty($columns)) {
+            return $query;
+        }
+
+        if (! empty($initialColumnOrders)) {
+            $query->reorder();
+
+            foreach ($initialColumnOrders as $column => $order) {
+                $query->orderBy($columns->get($column) ?? $column, $order);
             }
 
             return $query;
@@ -28,14 +59,8 @@ trait Sortable
 
         $query->reorder();
 
-        $mappedColumns = collect($columns)->flatMap(fn ($_, $key): array => [$key => $key]);
-
-        if (!empty($rawColumns)) {
-            $mappedColumns = $mappedColumns->merge($rawColumns);
-        }
-
-        foreach ($columns as $column => $direction) {
-            $query->orderBy($mappedColumns->get($column), $direction);
+        foreach ($sortColumns as $column => $order) {
+            $query->orderBy($columns->get($column) ?? $column, $order);
         }
 
         return $query;

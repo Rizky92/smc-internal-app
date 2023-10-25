@@ -2,25 +2,29 @@
 
 namespace App\Database\Eloquent\Concerns;
 
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use LogicException;
 
 trait Searchable
 {
+    protected function searchColumns(): array
+    {
+        return [];
+    }
+
     /**
-     * @param  \Illuminate\Support\Collection<int, string>|string[]
+     * @param  \Illuminate\Support\Collection<int, string>|string[] $columns
      * 
      * @return $this
      */
     public function addSearchConditions($columns)
     {
-        if ($columns instanceof Collection) {
-            $columns = $columns->all();
-        }
-
-        $this->searchColumns = array_merge($this->searchColumns, $columns);
+        $this->searchColumns = collect($this->searchColumns)
+            ->merge($columns)
+            ->all();
 
         return $this;
     }
@@ -40,28 +44,35 @@ trait Searchable
             return $query;
         }
 
-        if (is_array($columns)) {
-            $columns = collect($columns);
-        }
+        $searchBindings = [];
 
-        if (property_exists($this, 'searchColumns') && is_array($this->searchColumns)) {
-            $searchColumns = collect($this->searchColumns)
-                ->map(fn (string $column) =>
-                    Str::doesntContain($column, ['(', ')', '<', '>', '=', '.', '-'])
-                        ? $this->qualifyColumn($column)
-                        : $column
-                )
-                ->all();
+        $columns = collect($columns)
+            ->merge($this->searchColumns)
+            ->merge($this->searchColumns())
+            ->map(function ($column) use (&$searchBindings) {
+                if (is_array($column)) {
+                    if (isset($column['bindings'])) {
+                        $searchBindings = array_merge($searchBindings, $column['bindings']);
+                    }
 
-            $columns = $columns->merge($this->qualifyColumns($searchColumns));
-        }
+                    if (isset($column['query'])) {
+                        $column = $column['query'];
+                    }
+                }
 
-        if (method_exists($this, 'searchColumns')) {
-            $columns = $columns->merge($this->searchColumns());
-        }
+                if ($column instanceof Expression) {
+                    return $column->getValue();
+                }
+
+                if (Str::doesntContain($column, ['(', ')', '<', '>', '=', '.', '-'])) {
+                    return $this->qualifyColumn($column);
+                }
+
+                return $column;
+            });
 
         if ($columns->isEmpty()) {
-            throw new LogicException("No columns are defined to perform search.");
+            throw new Exception("No columns are defined to perform search.");
         }
 
         // Convert to lowercase, split search queries to each words, filter any white-space characters, and wrap each words with "%".
@@ -71,13 +82,13 @@ trait Searchable
             ->filter()
             ->map(fn (string $word): string => str($word)->trim()->wrap('%')->value);
 
-        $concatenatedColumns = $columns->joinStr(', ')->wrap("concat_ws(' ', ", ')')->value();
+        $concatenatedColumns = $columns->joinStr(', ')->wrap("concat_ws(' ', ", ') like ?')->value();
 
         return $query->when(
             $search->isNotEmpty(),
-            fn (Builder $query): Builder => $query->where(function (Builder $query) use ($search, $concatenatedColumns): Builder {
+            fn (Builder $query): Builder => $query->where(function (Builder $query) use ($search, $concatenatedColumns, $searchBindings): Builder {
                 foreach ($search as $word) {
-                    $query->whereRaw("{$concatenatedColumns} like ?", $word);
+                    $query->whereRaw($concatenatedColumns, [...$searchBindings, $word]);
                 }
 
                 return $query;
