@@ -29,5 +29,6 @@
     <issueHandlers>
         <UnsafeInstantiation errorLevel="suppress" />
         <PropertyNotSetInConstructor errorLevel="suppress" />
+        <PossiblyInvalidArgument errorLevel="suppress" />
     </issueHandlers>
 </psalm>
