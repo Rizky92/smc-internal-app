@@ -46,6 +46,10 @@ class ManajemenUser extends Component
         return $this->isDeferred
             ? []
             : User::query()
+                ->with([
+                    'roles.permissions',
+                    'permissions',
+                ])
                 ->tampilkanYangMemilikiHakAkses($this->tampilkanYangMemilikiHakAkses)
                 ->search($this->cari)
                 ->sortWithColumns($this->sortColumns, [
