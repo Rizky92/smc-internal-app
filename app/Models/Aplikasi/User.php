@@ -30,11 +30,6 @@ class User extends Authenticatable
 
     protected $guarded = ['id_user', 'password'];
 
-    protected $with = [
-        'roles.permissions',
-        'permissions',
-    ];
-
     protected function searchColumns(): array
     {
         return [
