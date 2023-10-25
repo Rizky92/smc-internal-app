@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\Aplikasi\User;
+use Illuminate\Auth\Events\Lockout;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 
 class LoginController
@@ -24,6 +27,8 @@ class LoginController
 
     public function store(Request $request): RedirectResponse
     {
+        $this->ensureIsNotRateLimited($request);
+
         $request->validate([
             'user' => ['required', 'string', 'max:20'],
             'pass' => ['required', 'string', 'max:20'],
@@ -35,10 +40,14 @@ class LoginController
             ->first();
 
         if (! $user) {
+            RateLimiter::hit($this->throttleKey($request));
+
             throw ValidationException::withMessages([
-                'user' => 'username atau password salah'
+                'user' => 'Username atau Password salah'
             ]);
         }
+
+        RateLimiter::clear($this->throttleKey($request));
         
         Auth::guard('web')
             ->login($user);
@@ -46,5 +55,28 @@ class LoginController
         $request->session()->regenerate();
 
         return redirect()->intended(route('admin.dashboard'));
+    }
+
+    protected function ensureIsNotRateLimited(Request $request): void
+    {
+        if (! RateLimiter::tooManyAttempts($this->throttleKey($request), 3)) {
+            return;
+        }
+
+        event(new Lockout($request));
+
+        $seconds = RateLimiter::availableIn($this->throttleKey($request));
+
+        throw ValidationException::withMessages([
+            'user' => trans('auth.throttle', [
+                'seconds' => $seconds,
+                'minutes' => ceil($seconds / 60),
+            ]),
+        ]);
+    }
+
+    protected function throttleKey(Request $request): string
+    {
+        return Str::transliterate($request->ip());
     }
 }
