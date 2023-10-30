@@ -1,9 +1,24 @@
 <?php
 
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
+
+if (! function_exists('user')) {
+    function user(?string $guard = null): Authenticatable
+    {
+        $user = Auth::guard($guard)->user();
+
+        if (! $user) {
+            throw new AuthenticationException('Unauthenticated', [$guard]);
+        }
+
+        return $user;
+    }
+}
 
 if (!function_exists('time_length')) {
     /**
