@@ -39,21 +39,19 @@
                             <x-table.td>{{ $jurnal->no_jurnal }}</x-table.td>
                             <x-table.td>{{ $jurnal->no_bukti }}</x-table.td>
                             <x-table.td>{{ $jurnal->keterangan }}</x-table.td>
-                            <x-table.td>
-                                {{ optional($jurnal->pengeluaranHarian)->keterangan ?? "-" }}
-                            </x-table.td>
+                            <x-table.td>{{ optional($jurnal->pengeluaranHarian)->keterangan ?? "-" }}</x-table.td>
                             <x-table.td>{{ $jurnal->kd_rek }}</x-table.td>
                             <x-table.td>{{ $jurnal->nm_rek }}</x-table.td>
                             <x-table.td>{{ rp($jurnal->debet) }}</x-table.td>
                             <x-table.td>{{ rp($jurnal->kredit) }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="9" padding />
+                        <x-table.tr-empty colspan="10" padding />
                     @endforelse
                 </x-slot>
                 <x-slot name="footer">
                     <x-table.tr>
-                        <x-table.th colspan="6" />
+                        <x-table.th colspan="7" />
                         <x-table.th title="TOTAL :" />
                         <x-table.th :title="rp(optional($this->totalDebetDanKredit)->debet)" />
                         <x-table.th :title="rp(optional($this->totalDebetDanKredit)->kredit)" />
