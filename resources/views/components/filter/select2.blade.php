@@ -11,10 +11,8 @@
 ])
 
 @php
-    if (! $options instanceof \Illuminate\Support\Collection) {
-        $options = collect($options);
-    }
-    
+    $options = collect($options);
+
     $isList = $options->isList();
     
     $id = Str::slug($name);
@@ -87,7 +85,7 @@
 
 <div wire:ignore {{ $attributes
     ->only('class')
-    ->merge(['style' => 'width: max-content'])
+    ->merge(['style' => 'width: 20rem; max-width: max-content'])
 }}>
     <select id="{{ $id }}" name="{{ $name }}" class="form-control form-control-sm simple-select2-sm input-sm" autocomplete="off">
         @if ($placeholder)

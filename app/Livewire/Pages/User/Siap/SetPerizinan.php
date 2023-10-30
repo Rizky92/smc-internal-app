@@ -8,25 +8,26 @@ use App\Models\Aplikasi\User;
 use App\Livewire\Concerns\DeferredModal;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class SetPerizinan extends Component
 {
     use DeferredModal;
 
-    /** @var ?string */
+    /** @var string */
     public $nrp;
 
-    /** @var ?string */
+    /** @var string */
     public $nama;
 
-    /** @var ?array */
+    /** @var array */
     public $checkedRoles;
 
-    /** @var ?array */
+    /** @var array */
     public $checkedPermissions;
 
-    /** @var ?bool */
+    /** @var bool */
     public $showChecked;
 
     protected $listeners = [
@@ -41,22 +42,16 @@ class SetPerizinan extends Component
         $this->defaultValues();
     }
 
-    public function render(): \Illuminate\View\View
+    public function render(): View
     {
         return view('livewire.pages.user.siap.set-perizinan');
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Collection<\App\Models\Aplikasi\Role>
-     */
     public function getRolesProperty(): Collection
     {
         return Role::with('permissions')->get();
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Collection<\App\Models\Aplikasi\Permission>
-     */
     public function getOtherPermissionsProperty(): Collection
     {
         return Permission::whereDoesntHave('roles')->get();
@@ -72,7 +67,7 @@ class SetPerizinan extends Component
 
     public function save(): void
     {
-        if (!Auth::user()->hasRole(config('permission.superadmin_name'))) {
+        if (! auth()->user()->hasRole(config('permission.superadmin_name'))) {
             $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
