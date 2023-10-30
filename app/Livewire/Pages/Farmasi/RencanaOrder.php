@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class StokDaruratFarmasi extends Component
+class RencanaOrder extends Component
 {
     use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
@@ -31,33 +31,15 @@ class StokDaruratFarmasi extends Component
         return $this->isDeferred
             ? []
             : Obat::query()
-            ->daruratStok()
-            ->search($this->cari, [
-                'databarang.kode_brng',
-                'nama_brng',
-                'kodesatuan.satuan',
-                'kategori_barang.nama',
-                'industrifarmasi.nama_industri',
-            ])
-            ->sortWithColumns($this->sortColumns, [
-                'satuan_kecil'        => 'kodesatuan.satuan',
-                'kategori'            => 'kategori_barang.nama',
-                'stok_sekarang_ap'    => DB::raw('ifnull(round(stok_gudang_ap.stok_di_gudang, 2), 0)'),
-                'stok_sekarang_ifi'   => DB::raw('ifnull(round(stok_gudang_ifi.stok_di_gudang, 2), 0)'),
-                'saran_order'         => DB::raw('(databarang.stokminimal - ifnull(stok_gudang_ap.stok_di_gudang, 0))'),
-                'harga_beli'          => DB::raw('round(databarang.h_beli)'),
-                'harga_beli_total'    => DB::raw('round((databarang.stokminimal - ifnull(stok_gudang_ap.stok_di_gudang, 0)) * databarang.h_beli)'),
-                'harga_beli_terakhir' => DB::raw("(select ifnull(round(dp.h_pesan / databarang.isi, 2), 0) from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1)"),
-                'diskon_terakhir'     => DB::raw("(select ifnull(dp.dis, '0') from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1)"),
-                'supplier_terakhir'   => DB::raw("(select ifnull(ds.nama_suplier, '-') from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur left join datasuplier ds on p.kode_suplier = ds.kode_suplier where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1)"),
-                'ke_pasien_14_hari'   => DB::raw("(ifnull((select round(sum(detail_pemberian_obat.jml), 2) from detail_pemberian_obat where detail_pemberian_obat.kode_brng = databarang.kode_brng and detail_pemberian_obat.tgl_perawatan between date_sub(current_date(), interval 2 week) and current_date()), 0) + ifnull((select round(sum(detailjual.jumlah), 2) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.tgl_jual between date_sub(current_date(), interval 2 week) and current_date()), 0))"),
-            ])
-            ->paginate($this->perpage);
+                ->daruratStok()
+                ->search($this->cari)
+                ->sortWithColumns($this->sortColumns)
+                ->paginate($this->perpage);
     }
 
     public function render(): View
     {
-        return view('livewire.pages.farmasi.stok-darurat-farmasi')
+        return view('livewire.pages.farmasi.rencana-order')
             ->layout(BaseLayout::class, ['title' => 'Rencana Order Farmasi']);
     }
 

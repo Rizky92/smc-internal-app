@@ -177,7 +177,7 @@ Route::prefix('admin')
         Route::prefix('farmasi')
             ->as('farmasi.')
             ->group(function () {
-                Route::get('stok-darurat', Farmasi\StokDaruratFarmasi::class)
+                Route::get('stok-darurat', Farmasi\RencanaOrder::class)
                     ->name('stok-darurat')
                     ->middleware('can:farmasi.stok-darurat.read');
 
