@@ -207,7 +207,7 @@
             ])">
                 <x-filter.range-date />
                 <x-filter.label class="ml-auto pr-3">Berdasarkan:</x-filter.label>
-                <x-filter.select model="statusPerawatan" :options="[
+                <x-filter.select model="jenisRawat" :options="[
                     '-' => 'Sedang Dirawat',
                     'tanggal_masuk' => 'Tgl. Masuk',
                     'tanggal_keluar' => 'Tgl. Keluar',

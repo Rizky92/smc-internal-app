@@ -33,8 +33,8 @@ class DaftarPasienRanap extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal'         => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir'        => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'    => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir'   => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
             'jenisRawat' => ['except' => '-', 'as' => 'status'],
         ];
     }
