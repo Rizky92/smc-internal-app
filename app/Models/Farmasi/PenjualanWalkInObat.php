@@ -52,7 +52,7 @@ class PenjualanWalkInObat extends Model
         return $query
             ->selectRaw($sqlSelect)
             ->withCasts(['jumlah' => 'float', 'bulan' => 'int'])
-            ->leftJoinSub($sumDetailJual, 'ddetail_jual', fn (JoinClause $join) =>
+            ->leftJoinSub($sumDetailJual, 'detail_jual', fn (JoinClause $join) =>
                 $join->on('penjualan.nota_jual', '=', 'detail_jual.nota_jual'))
             ->where('penjualan.status', 'Sudah Dibayar')
             ->whereBetween('penjualan.tgl_jual', ["{$year}-01-01", "{$year}-12-31"])
