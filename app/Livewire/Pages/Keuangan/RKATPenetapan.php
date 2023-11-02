@@ -89,7 +89,7 @@ class RKATPenetapan extends Component
 
     protected function defaultValues(): void
     {
-        $this->tahun = now()->format('Y');
+        $this->tahun = (string) app(RKATSettings::class)->tahun;
     }
 
     protected function dataPerSheet(): array
