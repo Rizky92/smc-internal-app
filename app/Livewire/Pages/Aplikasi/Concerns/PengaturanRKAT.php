@@ -62,7 +62,7 @@ trait PengaturanRKAT
 
         app(RKATSettings::class)
             ->fill([
-                'tahun'                 => $validated['tahunRKAT'],
+                'tahun'               => $validated['tahunRKAT'],
                 'tgl_penetapan_awal'  => carbon($validated['tglAwalPenetapanRKAT']),
                 'tgl_penetapan_akhir' => carbon($validated['tglAkhirPenetapanRKAT']),
             ])

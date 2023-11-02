@@ -43,8 +43,7 @@ class RKATPemantauan extends Component
             ->select('tahun')
             ->groupBy('tahun')
             ->orderBy('tahun', 'asc')
-            ->get()
-            ->mapWithKeys(fn (object $row): array => [$row->tahun => $row->tahun])
+            ->pluck('tahun', 'tahun')
             ->all();
     }
 
