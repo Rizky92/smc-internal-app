@@ -81,6 +81,11 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'rekam-medis.laporan-statistik.read']);
         Permission::create(['name' => 'rekam-medis.status-data-pasien.read']);
 
+        Permission::create(['name' => 'aplikasi.bidang-unit.create']);
+        Permission::create(['name' => 'aplikasi.bidang-unit.read']);
+        Permission::create(['name' => 'aplikasi.bidang-unit.update']);
+        Permission::create(['name' => 'aplikasi.bidang-unit.delete']);
+
         $keuanganPermissions = [
             'keuangan.account-payable.read-medis',
             'keuangan.account-payable.read-nonmedis',
