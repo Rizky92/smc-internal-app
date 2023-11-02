@@ -63,7 +63,7 @@ Route::prefix('admin')
 
                 Route::get('pengaturan', Aplikasi\Pengaturan::class)
                     ->name('pengaturan')
-                    ->middleware('role:' . config('permission.superadmin_name'));
+                    ->middleware('canany:'.Aplikasi\Pengaturan::permissions());
             });
 
         Route::prefix('perawatan')

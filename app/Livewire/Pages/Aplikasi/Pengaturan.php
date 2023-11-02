@@ -6,6 +6,7 @@ use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 class Pengaturan extends Component
@@ -19,5 +20,21 @@ class Pengaturan extends Component
     {
         return view('livewire.pages.aplikasi.pengaturan')
             ->layout(BaseLayout::class, ['title' => 'Pengaturan']);
+    }
+
+    public static function permissions(): string
+    {
+        $permissions = [];
+
+        $settings = collect(class_uses_recursive(static::class))
+            ->map(fn (string $value) => class_basename($value))
+            ->filter(fn (string $value): bool => Str::startsWith($value, 'Pengaturan'))
+            ->each(function (string $value, string $key) use (&$permissions) {
+                $name = 'get' . $value . 'Permissions';
+
+                $permissions = array_merge($permissions, $key::{$name}());
+            });
+
+        return implode('|', $permissions);
     }
 }

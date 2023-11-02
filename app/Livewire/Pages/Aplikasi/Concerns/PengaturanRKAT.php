@@ -18,6 +18,14 @@ trait PengaturanRKAT
     /** @var string */
     public $tglAkhirPenetapanRKAT;
 
+    public static function getPengaturanRKATPermissions(): array
+    {
+        return [
+            'aplikasi.pengaturan-rkat.read',
+            'aplikasi.pengaturan-rkat.update',
+        ];
+    }
+
     public function mountPengaturanRKAT(): void
     {
         $this->defaultValuesPengaturanRKAT();
@@ -37,7 +45,7 @@ trait PengaturanRKAT
 
     public function updatePengaturanRKAT(): void
     {
-        if (!Auth::user()->hasRole(config('permission.superadmin_name'))) {
+        if (!Auth::user()->can('aplikasi.pengaturan-rkat.update')) {
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('pengaturan-rkat.data-denied');
 

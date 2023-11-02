@@ -1,5 +1,7 @@
 <div>
     <x-flash />
 
-    @include('livewire.pages.aplikasi._inc.pengaturan-rkat')
+    @canany(\App\Livewire\Pages\Aplikasi\Pengaturan::getPengaturanRKATPermissions())
+        @include('livewire.pages.aplikasi._inc.pengaturan-rkat')
+    @endcanany
 </div>
