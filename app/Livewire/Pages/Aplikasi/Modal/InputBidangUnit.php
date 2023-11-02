@@ -71,7 +71,7 @@ class InputBidangUnit extends Component
 
         tracker_start();
 
-        Bidang::create(['nama' => $this->nama, 'parent_id' => $this->parentId]);
+        Bidang::create(['nama' => $this->nama, 'parent_id' => $this->parentId === -1 ? null : $this->parentId]);
 
         tracker_end();
 
