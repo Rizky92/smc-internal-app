@@ -39,6 +39,7 @@ class InputBidangUnit extends Component
     {
         return Bidang::query()
             ->whereNull('parent_id')
+            ->where('id', '!=', $this->bidangId)
             ->pluck('nama', 'id');
     }
 
