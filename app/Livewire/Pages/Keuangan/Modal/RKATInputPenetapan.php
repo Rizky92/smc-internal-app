@@ -27,6 +27,9 @@ class RKATInputPenetapan extends Component
     /** @var int */
     public $bidangId;
 
+    /** @var string */
+    public $namaKegiatan;
+
     /** @var int|float */
     public $nominalAnggaran;
 
@@ -42,6 +45,7 @@ class RKATInputPenetapan extends Component
         $rules = collect([
             'anggaranId'      => ['required', 'exists:anggaran,id'],
             'bidangId'        => ['required', 'exists:bidang,id'],
+            'namaKegiatan'    => ['string'],
             'nominalAnggaran' => ['required', 'numeric'],
         ]);
 
