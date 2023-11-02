@@ -83,6 +83,7 @@ class RKATPenetapan extends Component
 
         $penetapanAwal = $settings->tgl_penetapan_awal;
         $penetapanAkhir = $settings->tgl_penetapan_akhir;
+        
         return (carbon()->between($penetapanAwal, $penetapanAkhir) && $hasPermission) || $isDevelop;
     }
 
