@@ -106,7 +106,7 @@ class RKATInputPenetapan extends Component
 
         $settings = app(RKATSettings::class);
 
-        if (now()->between($settings->batas_input_awal, $settings->batas_input_akhir)) {
+        if (now()->between($settings->tgl_penetapan_awal, $settings->tgl_penetapan_akhir)) {
             $this->flashError('Batas waktu penetapan RKAT melewati periode yang ditetapkan!');
             $this->dispatchBrowserEvent('data-denied');
 
