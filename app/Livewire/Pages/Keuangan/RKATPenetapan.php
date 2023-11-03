@@ -40,7 +40,7 @@ class RKATPenetapan extends Component
     public function getDataAnggaranBidangProperty(): Paginator
     {
         return AnggaranBidang::query()
-            ->with(['anggaran', 'bidang'])
+            ->with(['anggaran', 'bidang', 'bidang.parent'])
             ->where('tahun', $this->tahun)
             ->paginate($this->perpage);
     }
