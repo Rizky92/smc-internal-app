@@ -1,15 +1,16 @@
 <?php
 
+use App\Database\Eloquent\Authenticatable;
 use Illuminate\Auth\AuthenticationException;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 
 if (! function_exists('user')) {
-    function user(?string $guard = null): Authenticatable
+    function user(?string $guard = 'web'): Authenticatable
     {
+        /** @var \App\Database\Eloquent\Authenticatable|null */
         $user = Auth::guard($guard)->user();
 
         if (! $user) {
