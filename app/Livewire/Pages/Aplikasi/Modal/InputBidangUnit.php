@@ -5,6 +5,7 @@ namespace App\Livewire\Pages\Aplikasi\Modal;
 use App\Models\Bidang;
 use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\Filterable;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -63,7 +64,7 @@ class InputBidangUnit extends Component
             return;
         }
 
-        if (!Auth::user()->can('aplikasi.bidang-unit.create')) {
+        if (user()->cannot('aplikasi.bidang-unit.create')) {
             $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini.');
 
@@ -82,9 +83,33 @@ class InputBidangUnit extends Component
 
     public function update(): void
     {
-        if (!Auth::user()->can('aplikasi.bidang-unit.update')) {
+        if (user()->cannot('aplikasi.bidang-unit.update')) {
             $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini.');
+
+            return;
+        }
+
+        tracker_start('mysql_smc');
+
+        Bidang::query()
+            ->where('id', $this->bidangId)
+            ->update([
+                'nama' => $this->nama,
+                'parent_id' => $this->parentId,
+            ]);
+
+        tracker_end('mysql_smc');
+
+        $this->dispatchBrowserEvent('data-saved');
+        $this->emit('flash.success', 'Data bidang berhasil diubah!');
+    }
+
+    public function delete(): void
+    {
+        if (user()->cannot('aplikasi.bidang-unit.delete')) {
+            $this->dispatchBrowserEvent('data-denied');
+            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
         }
@@ -93,18 +118,29 @@ class InputBidangUnit extends Component
 
         if (!$bidang) {
             $this->dispatchBrowserEvent('data-not-found');
-            $this->emit('flash.error', 'Tidak dapat menemukan data yang bisa diupdate. Silahkan coba kembali.');
+            $this->emit('flash.error', 'Tidak dapat menemukan data yang bisa dihapus. Silahkan coba kembali.');
 
             return;
         }
 
-        $bidang->nama = $this->nama;
-        $bidang->parent_id = $this->parentId;
+        if (Bidang::has('children')->exists()) {
+            $this->dispatchBrowserEvent('data-denied');
+            $this->emit('flash.error', "Bidang terkait masih ada sub-bidang! Tidak boleh dihapus!");
 
-        $bidang->save();
+            return;
+        }
 
-        $this->dispatchBrowserEvent('data-saved');
-        $this->emit('flash.success', 'Data bidang berhasil diubah!');
+        tracker_start('mysql_smc');
+
+        Bidang::query()
+            ->where('id', $this->bidangId)
+            ->whereDoesntHave('children')
+            ->delete();
+
+        tracker_end('mysql_smc');
+
+        $this->dispatchBrowserEvent('data-success');
+        $this->emit('flash.success', 'Data bidang berhasil dihapus!');
     }
 
     protected function defaultValues(): void

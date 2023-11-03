@@ -84,7 +84,7 @@ class UbahTanggalJurnal extends Component
 
     public function updateTglJurnal(): void
     {
-        if (!Auth::user()->can('keuangan.jurnal-perbaikan.ubah-tanggal')) {
+        if (user()->cannot('keuangan.jurnal-perbaikan.ubah-tanggal')) {
             $this->flashError();
 
             return;
@@ -135,7 +135,7 @@ class UbahTanggalJurnal extends Component
 
     public function restoreTglJurnal(int $backupId): void
     {
-        if (!Auth::user()->can('keuangan.jurnal-perbaikan.ubah-tanggal')) {
+        if (user()->cannot('keuangan.jurnal-perbaikan.ubah-tanggal')) {
             $this->flasError();
 
             return;

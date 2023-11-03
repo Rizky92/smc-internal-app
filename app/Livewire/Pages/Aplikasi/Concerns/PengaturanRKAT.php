@@ -45,7 +45,7 @@ trait PengaturanRKAT
 
     public function updatePengaturanRKAT(): void
     {
-        if (!Auth::user()->can('aplikasi.pengaturan-rkat.update')) {
+        if (user()->cannot('aplikasi.pengaturan-rkat.update')) {
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('pengaturan-rkat.data-denied');
 

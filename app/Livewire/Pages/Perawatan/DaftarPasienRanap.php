@@ -61,7 +61,7 @@ class DaftarPasienRanap extends Component
 
     public function updateHargaKamar(string $noRawat, string $kodeKamar, string $tglMasuk, string $jamMasuk, int $hargaKamarBaru, int $lamaInap): void
     {
-        if (!Auth::user()->can('perawatan.daftar-pasien-ranap.update-harga-kamar')) {
+        if (user()->cannot('perawatan.daftar-pasien-ranap.update-harga-kamar')) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
