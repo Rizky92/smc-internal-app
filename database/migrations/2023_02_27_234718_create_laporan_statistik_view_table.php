@@ -6,16 +6,8 @@ use Staudenmeir\LaravelMigrationViews\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * The name of the database connection to use.
-     *
-     * @var ?string
-     */
     protected $connection = 'mysql_smc';
-    
-    /**
-     * Run the migrations.
-     */
+
     public function up(): void
     {
         $db = DB::connection('mysql_sik')->getDatabaseName();

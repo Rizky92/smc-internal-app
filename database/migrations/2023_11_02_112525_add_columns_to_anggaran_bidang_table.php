@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    protected $connection = 'mysql_smc';
+
     public function up(): void
     {
         Schema::table('anggaran_bidang', function (Blueprint $table): void {

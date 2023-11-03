@@ -6,16 +6,8 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * The name of the database connection to use.
-     *
-     * @var ?string
-     */
     protected $connection = 'mysql_smc';
-    
-    /**
-     * Run the migrations.
-     */
+
     public function up(): void
     {
         Schema::connection('mysql_smc')->create('khanza_mapping_akses', function (Blueprint $table): void {
