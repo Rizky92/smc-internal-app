@@ -116,14 +116,14 @@ class InputBidangUnit extends Component
 
         $bidang = Bidang::find($this->bidangId);
 
-        if (!$bidang) {
+        if (! $bidang) {
             $this->dispatchBrowserEvent('data-not-found');
             $this->emit('flash.error', 'Tidak dapat menemukan data yang bisa dihapus. Silahkan coba kembali.');
 
             return;
         }
 
-        if (Bidang::has('children')->exists()) {
+        if (Bidang::whereId($this->bidangId)->hasChildren()->exists()) {
             $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', "Bidang terkait masih ada sub-bidang! Tidak boleh dihapus!");
 
@@ -132,10 +132,7 @@ class InputBidangUnit extends Component
 
         tracker_start('mysql_smc');
 
-        Bidang::query()
-            ->where('id', $this->bidangId)
-            ->whereDoesntHave('children')
-            ->delete();
+        $bidang->delete();
 
         tracker_end('mysql_smc');
 
