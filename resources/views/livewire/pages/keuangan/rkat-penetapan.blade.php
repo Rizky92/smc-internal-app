@@ -62,7 +62,7 @@
                             <x-table.td>{{ $item->created_at->format('Y-m-d') }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="4" padding />
+                        <x-table.tr-empty colspan="7" padding />
                     @endforelse
                 </x-slot>
             </x-table>
