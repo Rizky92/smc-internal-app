@@ -21,6 +21,8 @@ class AnggaranBidang extends Model
     protected $fillable = [
         'anggaran_id',
         'bidang_id',
+        'nama_kegiatan',
+        'deskripsi',
         'tahun',
         'nominal_anggaran',
     ];
