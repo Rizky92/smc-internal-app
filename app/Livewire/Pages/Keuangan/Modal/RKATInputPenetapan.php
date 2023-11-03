@@ -10,7 +10,6 @@ use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -50,7 +49,7 @@ class RKATInputPenetapan extends Component
             'anggaranId'      => ['required', 'exists:anggaran,id'],
             'bidangId'        => ['required', 'exists:bidang,id'],
             'namaKegiatan'    => ['required', 'string'],
-            'deskripsi'       => ['string'],
+            'deskripsi'       => ['nullable', 'string'],
             'nominalAnggaran' => ['required', 'numeric'],
         ]);
 
