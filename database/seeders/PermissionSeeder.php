@@ -34,6 +34,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'farmasi.pemakaian-stok.read']);
         Permission::create(['name' => 'farmasi.perbandingan-po-obat.read']);
         Permission::create(['name' => 'farmasi.stok-darurat.read']);
+        Permission::create(['name' => 'farmasi.defecta-depo.read']);
 
         Permission::create(['name' => 'keuangan.account-payable.read-medis']);
         Permission::create(['name' => 'keuangan.account-payable.read-nonmedis']);

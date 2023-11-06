@@ -83,6 +83,11 @@ class Obat extends Model
         return $this->hasMany(PemberianObat::class, 'kode_brng', 'kode_brng');
     }
 
+    public function scopeDefectaDepo(Builder $query): Builder
+    {
+        return $query;
+    }
+
     public function scopeDaruratStok(Builder $query): Builder
     {
         $sqlSelect = <<<SQL
