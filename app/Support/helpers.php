@@ -190,6 +190,10 @@ if (!function_exists('tracker_start')) {
 if (!function_exists('tracker_end')) {
     function tracker_end(string $connection = 'mysql_smc', string $userId = null): void
     {
+        if (! DB::connection($connection)->logging()) {
+            return;
+        }
+        
         if (app('impersonate')->isImpersonating() || app()->runningUnitTests()) {
             DB::connection($connection)->disableQueryLog();
 
