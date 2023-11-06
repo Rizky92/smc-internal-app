@@ -43,8 +43,8 @@
             <x-table :sortColumns="$sortColumns" style="min-width: 100%" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="tahun" title="Tahun" />
-                    <x-table.th title="Unit" />
-                    <x-table.th name="bidang_id" title="Bidang" />
+                    <x-table.th title="Bidang" />
+                    <x-table.th name="bidang_id" title="Unit" />
                     <x-table.th name="anggaran_id" title="Anggaran" />
                     <x-table.th name="nama_kegiatan" title="Nama Kegiatan" />
                     <x-table.th name="nominal_anggaran" title="Nominal" />
