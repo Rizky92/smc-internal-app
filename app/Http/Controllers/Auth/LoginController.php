@@ -37,7 +37,7 @@ class LoginController
 
         $timebox = new Timebox;
 
-        $user = $timebox->call(function (Timebox $t) use ($request) {
+        $user = $timebox->call(function (Timebox $t) use ($request): ?User {
             $user = User::query()
                 ->whereRaw('AES_DECRYPT(id_user, ?) = ?', [config('khanza.app.userkey'), $request->get('user')])
                 ->whereRaw('AES_DECRYPT(password, ?) = ?', [config('khanza.app.passkey'), $request->get('pass')])
