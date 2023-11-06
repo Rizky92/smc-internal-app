@@ -79,6 +79,9 @@
             </x-form>
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
+            @if ($this->isUpdating() && user()->can('keuangan.rkat-penetapan.delete'))
+                <x-button size="sm" variant="danger" data-dismiss="modal" id="hapus" title="Hapus" icon="fas fa-trash" wire:click="delete" />
+            @endif
             <x-button size="sm" class="ml-auto" data-dismiss="modal" id="batalsimpan" title="Batal" />
             <x-button size="sm" variant="primary" type="submit" class="ml-2" id="simpandata" title="Simpan" icon="fas fa-save" form="form-input-penetapan-rkat" />
         </x-slot>

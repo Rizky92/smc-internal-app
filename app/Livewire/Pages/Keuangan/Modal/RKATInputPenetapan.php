@@ -30,7 +30,7 @@ class RKATInputPenetapan extends Component
     /** @var string */
     public $namaKegiatan;
 
-    /** @var string */
+    /** @var ?string */
     public $deskripsi;
 
     /** @var int|float */
@@ -72,7 +72,7 @@ class RKATInputPenetapan extends Component
 
     public function getBidangUnitProperty(): Collection
     {
-        return Cache::remember('semua_bidang', now()->addMinutes(5), fn (): Collection =>
+        return Cache::remember('semua_bidang', now()->addDay(), fn (): Collection =>
             Bidang::query()
                 ->with('parent')
                 ->hasParent()
@@ -108,6 +108,7 @@ class RKATInputPenetapan extends Component
     public function save(): void
     {
         if (user()->cannot(['keuangan.rkat-penetapan.create', 'keuangan.rkat-penetapan.update'])) {
+            $this->defaultValues();
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 
@@ -125,7 +126,7 @@ class RKATInputPenetapan extends Component
 
         $this->validate();
 
-        tracker_start();
+        tracker_start('mysql_smc');
 
         AnggaranBidang::updateOrCreate(
             ['id' => $this->anggaranBidangId],
@@ -139,11 +140,48 @@ class RKATInputPenetapan extends Component
             ]
         );
 
-        tracker_end();
+        tracker_end('mysql_smc');
 
         $this->defaultValues();
         $this->dispatchBrowserEvent('data-saved');
         $this->emit('flash.success', 'Data berhasil disimpan!');
+    }
+
+    public function delete(): void
+    {
+        if (user()->cannot('keuangan.rkat-penetapan.delete')) {
+            $this->defaultValues();
+            $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatchBrowserEvent('data-denied');
+        }
+
+        if (! $this->isUpdating()) {
+            $this->flashError('Tidak dapat menemukan penetapan anggaran!');
+            $this->dispatchBrowserEvent('data-not-found');
+
+            return;
+        }
+
+        tracker_start('mysql_smc');
+
+        $deleteBidang = AnggaranBidang::find($this->anggaranBidangId)
+            ->delete();
+
+        if (! $deleteBidang) {
+            $this->defaultValues();
+            $this->dispatchBrowserEvent('data-delete-failed');
+            $this->emit('flash.info', 'Anggaran sudah digunakan, tidak dapat dihapus!');
+
+            tracker_dispose('mysql_smc');
+
+            return;
+        }
+
+        tracker_end('mysql_smc');
+
+        $this->defaultValues();
+        $this->dispatchBrowserEvent('data-deleted');
+        $this->emit('flash.success', 'Data berhasil dihapus!');
     }
 
     public function isUpdating(): bool
