@@ -13,7 +13,6 @@
         "infyomlabs/routes-explorer": "^1.0.0",
         "lab404/laravel-impersonate": "^1.7.4",
         "laravel/framework": "^8.83.27",
-        "laravel/sanctum": "^2.15",
         "laravel/tinker": "^2.8.1",
         "livewire/livewire": "<=2.10.7",
         "noprotocol/php-mysql-aes-crypt": "^2.0",
