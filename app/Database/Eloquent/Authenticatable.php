@@ -2,7 +2,7 @@
 
 namespace App\Database\Eloquent;
 
-use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
+use Illuminate\Auth\Authenticatable as AuthenticatableConcerns;
 use Illuminate\Auth\MustVerifyEmail;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -15,5 +15,8 @@ class Authenticatable extends Model implements
     AuthorizableContract,
     CanResetPasswordContract
 {
-    use AuthenticatableTrait, Authorizable, CanResetPassword, MustVerifyEmail;
+    use AuthenticatableConcerns,
+        Authorizable,
+        CanResetPassword,
+        MustVerifyEmail;
 }
