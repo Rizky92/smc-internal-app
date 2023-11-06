@@ -39,9 +39,15 @@ trait Sortable
      */
     public function scopeSortWithColumns(Builder $query, array $sortColumns = [], array $rawColumns = [], array $initialColumnOrders = []): Builder
     {
-        $columns = collect($rawColumns)
+        $columns = collect()
             ->merge($this->sortColumns)
             ->merge($this->sortColumns());
+
+        if (empty($sortColumns) && in_array(head($rawColumns), ['asc', 'desc'])) {
+            $initialColumnOrders = $rawColumns;
+        } else {
+            $columns = $columns->merge($rawColumns);
+        }
 
         if (empty($columns)) {
             return $query;
