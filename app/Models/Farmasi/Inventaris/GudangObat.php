@@ -5,8 +5,10 @@ namespace App\Models\Farmasi\Inventaris;
 use App\Database\Eloquent\Model;
 use App\Models\Bangsal;
 use App\Models\Farmasi\Obat;
+use App\Models\Farmasi\PemberianObat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class GudangObat extends Model
@@ -74,5 +76,60 @@ class GudangObat extends Model
             ->leftJoin('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
             ->leftJoin('bangsal', 'gudangbarang.kd_bangsal', '=', 'bangsal.kd_bangsal')
             ->when($kodeBangsal !== '-', fn (Builder $query) => $query->where('gudangbarang.kd_bangsal', $kodeBangsal));
+    }
+    
+    public function scopeDefectaDepo(Builder $query, string $tanggal, string $shift): Builder
+    {
+        $tanggal = carbon_immutable($tanggal);
+
+        /** 
+         * @var object
+         * 
+         * @psalm-var object{jam_masuk: string, jam_pulang: string}
+         */
+        $waktuShift = Cache::remember('waktu_shift', now()->addDay(), function () use ($shift) {
+            return DB::connection('mysql_sik')
+                ->table('closing_kasir')
+                ->where('shift', $shift)
+                ->first(['jam_masuk', 'jam_pulang']);
+        });
+
+        $pemberianObat = PemberianObat::query()
+            ->selectRaw(<<<SQL
+                kd_bangsal,
+                kode_brng,
+                sum(jml) as jumlah
+            SQL)
+            ->whereIn('kd_bangsa', ['IFA', 'IFG', 'IFI'])
+            ->groupByRaw('kd_bangsal, kode_brng');
+
+        $waktuAwalShift = $tanggal->setTimeFromTimeString($waktuShift->jam_masuk);
+        $waktuAkhirShift = $tanggal->setTimeFromTimeString($waktuShift->jam_pulang);
+
+        if ($shift === 'Malam') {
+            $waktuAkhirShift = $waktuAkhirShift->addDay();
+        }
+
+        $pemberianObatPerShift = $pemberianObat
+            ->whereBetween(
+                DB::raw("cast(concat(tgl_perawatan, ' ', jam) as datetime)"),
+                [$waktuAwalShift->toDateTimeString(), $waktuAkhirShift->toDateTimeString()]
+            );
+
+        $pemberianObat3HariTerakhir = $pemberianObat
+            ->whereBetween('tgl_perawatan', [$tanggal->subDays(3)->toDateString(), $tanggal->toDateString()]);
+
+        $sqlSelect = <<<SQL
+            databarang.kode_brng,
+            databarang.nama_brng,
+            databarang.kode_sat,
+            kodesatuan.satuan,
+            pemberian_obat_shift.jumlah jumlah_shift,
+            pemberian_obat_3hari.jumlah jumlah_3hari,
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->withCasts(['jumlah_shift' => 'float', 'jumlah_3hari' => 'float']);
     }
 }

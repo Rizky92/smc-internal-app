@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class Obat extends Model
@@ -81,11 +82,6 @@ class Obat extends Model
     public function pemberian(): HasMany
     {
         return $this->hasMany(PemberianObat::class, 'kode_brng', 'kode_brng');
-    }
-
-    public function scopeDefectaDepo(Builder $query): Builder
-    {
-        return $query;
     }
 
     public function scopeDaruratStok(Builder $query): Builder
