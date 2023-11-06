@@ -14,7 +14,6 @@ use App\Livewire\Concerns\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -75,11 +74,9 @@ class RKATPenetapan extends Component
     {
         $settings = app(RKATSettings::class);
 
-        $user = Auth::user();
+        $hasPermission = user()->can('keuangan.rkat-penetapan.create');
 
-        $hasPermission = $user->can('keuangan.rkat-penetapan.create');
-
-        $isDevelop = $user->hasRole(config('permission.superadmin_name'));
+        $isDevelop = user()->hasRole(config('permission.superadmin_name'));
 
         $penetapanAwal = $settings->tgl_penetapan_awal;
         $penetapanAkhir = $settings->tgl_penetapan_akhir;
@@ -101,8 +98,8 @@ class RKATPenetapan extends Component
                 ->get()
                 ->map(fn (AnggaranBidang $model): array => [
                     'tahun'          => $model->tahun,
-                    'unit'           => $model->bidang->parent->nama,
-                    'bidang'         => $model->bidang->nama,
+                    'bidang'         => $model->bidang->parent->nama,
+                    'unit'           => $model->bidang->nama,
                     'anggaran'       => $model->anggaran->nama,
                     'nama_kegiatan'  => $model->nama_kegiatan,
                     'nominal'        => $model->nominal_anggaran,
@@ -115,8 +112,8 @@ class RKATPenetapan extends Component
     {
         return [
             'Tahun',
-            'Unit',
             'Bidang',
+            'Unit',
             'Anggaran',
             'Nama Kegiatan',
             'Nominal (Rp)',
