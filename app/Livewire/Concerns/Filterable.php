@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Concerns;
 
+use Illuminate\Support\Str;
+
 trait Filterable
 {
     abstract protected function defaultValues(): void;
@@ -14,6 +16,16 @@ trait Filterable
             'resetFilters',
             'fullRefresh',
         ]);
+    }
+
+    protected function getDefaultValues()
+    {
+        $defaultValues = [];
+
+        $traits = collect(class_uses_recursive(static::class))
+            ->filter(fn (string $v) => Str::startsWith($v, 'App\\Livewire\\Concerns\\'))
+            ->map(fn (string $v) => 'defaultValues'.class_basename($v))
+            ->all();
     }
 
     public function searchData(): void
