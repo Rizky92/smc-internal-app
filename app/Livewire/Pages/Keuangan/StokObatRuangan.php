@@ -10,6 +10,7 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -37,23 +38,19 @@ class StokObatRuangan extends Component
     {
         return GudangObat::query()
             ->stokPerRuangan($this->kodeBangsal)
-            ->search($this->cari, [
-                'bangsal.nm_bangsal',
-                'gudangbarang.kode_brng',
-                'databarang.nama_brng',
-                'kodesatuan.satuan',
-            ])
+            ->search($this->cari)
             ->sortWithColumns(
                 $this->sortColumns,
-                ['projeksi_harga' => DB::raw('round(databarang.h_beli * if(gudangbarang.stok < 0, 0, gudangbarang.stok))')],
                 ['databarang.nama_brng' => 'asc']
             )
             ->paginate($this->perpage);
     }
 
-    public function getBangsalProperty(): array
+    public function getBangsalProperty(): Collection
     {
-        return GudangObat::bangsalYangAda()->pluck('nm_bangsal', 'kd_bangsal')->all();
+        return GudangObat::query()
+            ->bangsalYangAda()
+            ->pluck('nm_bangsal', 'kd_bangsal');
     }
 
     public function render(): View
@@ -77,7 +74,6 @@ class StokObatRuangan extends Component
                 ->stokPerRuangan($this->kodeBangsal)
                 ->sortWithColumns(
                     $this->sortColumns,
-                    ['projeksi_harga' => DB::raw('round(databarang.h_beli * if(gudangbarang.stok < 0, 0, gudangbarang.stok))')],
                     ['nama_brng' => 'asc']
                 )
                 ->get()
