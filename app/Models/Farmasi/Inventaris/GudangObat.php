@@ -84,21 +84,15 @@ class GudangObat extends Model
     {
         $tanggal = carbon_immutable($tanggal);
 
-        $waktuShift = Cache::remember('waktu_shift', now()->addDay(), function () use ($shift) {
-            return DB::connection('mysql_sik')
-                ->table('closing_kasir')
-                ->where('shift', $shift)
-                ->first(['jam_masuk', 'jam_pulang']);
-        });
+        $waktuShift = DB::connection('mysql_sik')
+            ->table('closing_kasir')
+            ->where('shift', $shift)
+            ->first(['jam_masuk', 'jam_pulang']);
 
         $pemberianObat = PemberianObat::query()
-            ->selectRaw(<<<SQL
-                kd_bangsal,
-                kode_brng,
-                sum(jml) as jumlah
-            SQL)
-            ->whereIn('kd_bangsa', ['IFA', 'IFG', 'IFI'])
-            ->groupByRaw('kd_bangsal, kode_brng');
+            ->select(['kd_bangsal', 'kode_brng', DB::raw('sum(ifnull(`jml`, 0)) as `jumlah`')])
+            ->whereIn('kd_bangsal', ['IFA', 'IFG', 'IFI'])
+            ->groupBy(['kd_bangsal', 'kode_brng']);
 
         $waktuAwalShift = $tanggal->setTimeFromTimeString($waktuShift->jam_masuk);
         $waktuAkhirShift = $tanggal->setTimeFromTimeString($waktuShift->jam_pulang);
@@ -107,34 +101,36 @@ class GudangObat extends Model
             $waktuAkhirShift = $waktuAkhirShift->addDay();
         }
 
-        $pemberianObatPerShift = $pemberianObat
+        $pemberianObatPerShift = $pemberianObat->clone()
             ->whereBetween(
-                DB::raw("cast(concat(tgl_perawatan, ' ', jam) as datetime)"),
+                DB::raw("cast(concat(`tgl_perawatan`, ' ', `jam`) as datetime)"),
                 [$waktuAwalShift->toDateTimeString(), $waktuAkhirShift->toDateTimeString()]
             );
 
-        $pemberianObat3Hari = $pemberianObat
+        $pemberianObat3Hari = $pemberianObat->clone()
             ->whereBetween('tgl_perawatan', [$tanggal->subDays(3)->toDateString(), $tanggal->toDateString()]);
 
         $sqlSelect = <<<SQL
-            gudangbarang.kode_brng,
-            databarang.nama_brng,
-            kodesatuan.satuan,
-            gudangbarang.stok,
-            pemberian_obat_shift.jumlah jumlah_shift,
-            pemberian_obat_3hari.jumlah jumlah_3hari,
+            `gudangbarang`.`kode_brng`,
+            `databarang`.`nama_brng`,
+            `kodesatuan`.`satuan`,
+            `gudangbarang`.`stok`,
+            ifnull(`pemberian_obat_shift`.`jumlah`, 0) as `jumlah_shift`,
+            ifnull(`pemberian_obat_3hari`.`jumlah`, 0) as `jumlah_3hari`
         SQL;
 
         $this->addSearchConditions([
-            'gudangbarang.kode_brng',
-            'databarang.nama_brng',
-            'databarang.kode_sat',
-            'kodesatuan.satuan',
+            '`gudangbarang`.`kode_brng`',
+            '`databarang`.`nama_brng`',
+            '`databarang`.`kode_sat`',
+            '`kodesatuan`.`satuan`',
         ]);
 
         return $query
             ->selectRaw($sqlSelect)
-            ->withCasts(['jumlah_shift' => 'float', 'jumlah_3hari' => 'float'])
+            ->withCasts(['stok' => 'float', 'jumlah_shift' => 'float', 'jumlah_3hari' => 'float'])
+            ->join('databarang', 'gudangbarang.kode_brng', '=', 'databarang.kode_brng')
+            ->leftJoin('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
             ->leftJoinSub($pemberianObatPerShift, 'pemberian_obat_shift', fn (JoinClause $join) => $join
                 ->on('gudangbarang.kode_brng', '=', 'pemberian_obat_shift.kode_brng')
                 ->on('gudangbarang.kd_bangsal', '=', 'pemberian_obat_shift.kd_bangsal'))

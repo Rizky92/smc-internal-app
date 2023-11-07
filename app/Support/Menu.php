@@ -257,6 +257,7 @@ class Menu
                     'farmasi.laporan-pemakaian-obat-napza.read',
                     'farmasi.laporan-pemakaian-obat-morphine.read',
                     'farmasi.laporan-pemakaian-obat-tb.read',
+                    'farmasi.defecta-depo.read',
                 ]),
                 'items' => [
                     [
@@ -324,6 +325,12 @@ class Menu
                         'icon' => 'fas fa-file-invoice',
                         'url' => route('admin.farmasi.laporan-pemakaian-obat-tb'),
                         'hasAnyPermissions' => $user->can('farmasi.laporan-pemakaian-obat-tb.read'),
+                    ],
+                    [
+                        'name' => 'Defecta Depo',
+                        'icon' => 'fas fa-shopping-cart',
+                        'url' => route('admin.farmasi.defecta-depo'),
+                        'hasAnyPermissions' => $user->can('farmasi.defecta-depo.read'),
                     ],
                 ],
             ],

@@ -207,6 +207,11 @@ Breadcrumbs::for('admin.farmasi.laporan-pemakaian-obat-tb', function (Trail $tra
     $trail->push('Pemakaian Obat TB', route('admin.farmasi.laporan-pemakaian-obat-tb'));
 });
 
+Breadcrumbs::for('admin.farmasi.defecta-depo', function (Trail $trail): void {
+    $trail->parent('admin.farmasi');
+    $trail->push('Defecta Depo', route('admin.farmasi.defecta-depo'));
+});
+
 
 Breadcrumbs::for('admin.rekam-medis', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
