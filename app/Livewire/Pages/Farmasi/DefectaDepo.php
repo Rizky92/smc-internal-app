@@ -77,7 +77,7 @@ class DefectaDepo extends Component
     public function render(): View
     {
         return view('livewire.pages.farmasi.defecta-depo')
-            ->layout(BaseLayout::class, ['title' => 'DefectaDepo']);
+            ->layout(BaseLayout::class, ['title' => 'Defecta per Depo Farmasi']);
     }
 
     protected function defaultValues(): void
