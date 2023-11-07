@@ -128,6 +128,7 @@ class PermissionSeeder extends Seeder
             'farmasi.stok-darurat.read',
             'farmasi.pemakaian-stok.read',
             'keuangan.stok-obat-ruangan.read',
+            'farmasi.defecta-depo.read',
         ];
 
         $perawatanPermissions = [

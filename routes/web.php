@@ -177,6 +177,10 @@ Route::prefix('admin')
         Route::prefix('farmasi')
             ->as('farmasi.')
             ->group(function () {
+                Route::get('defecta-depo', Farmasi\DefectaDepo::class)
+                    ->name('defecta-depo')
+                    ->middleware('can:farmasi.defecta-depo.read');
+
                 Route::get('stok-darurat', Farmasi\RencanaOrder::class)
                     ->name('stok-darurat')
                     ->middleware('can:farmasi.stok-darurat.read');
