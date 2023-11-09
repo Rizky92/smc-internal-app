@@ -105,7 +105,7 @@ class PermissionSeeder extends Seeder
             'keuangan.laporan-tindakan-radiologi.read',
             'keuangan.stok-obat-ruangan.read',
             'perawatan.laporan-transaksi-gantung.read',
-            'perawatan.laporan-trial-balance.read',
+            'keuangan.laporan-trial-balance.read',
         ];
 
         $RKATPermissions = [
