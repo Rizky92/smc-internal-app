@@ -134,7 +134,7 @@ class NotaSelesai extends Model
                     $statusPasien = $ket->after('PASIEN')->words(2, '')->trim();
 
                     $noRawat = $ket->matchAll('/\d+/')->take(4)->join('/');
-                    $petugas = $ket->matchAll('/\d+/')->last();
+                    $petugas = $ket->split('/\s+/')->last();
 
                     return [
                         'no_rawat'         => $noRawat,
