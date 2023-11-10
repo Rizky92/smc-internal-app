@@ -122,9 +122,9 @@ if (!function_exists('map_bulan')) {
 
 if (!function_exists('trackersql')) {
     /**
-     * @param  Closure|callable $callable
+     * @param  Closure|callable|null $callable
      */
-    function trackersql(string $connection = 'mysql_smc', string $userId = null, $callable): void
+    function trackersql(string $connection = 'mysql_smc', ?string $userId = null, $callable = null): void
     {
         if (app('impersonate')->isImpersonating() || app()->runningUnitTests() || ! is_callable($callable)) {
             return;
