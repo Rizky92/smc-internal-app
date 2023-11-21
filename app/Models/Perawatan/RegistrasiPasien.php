@@ -644,6 +644,19 @@ class RegistrasiPasien extends Model
             reg_periksa.jam_reg
         SQL;
 
+        $this->addSearchConditions([
+            'reg_periksa.no_rawat',
+            'reg_periksa.no_rkm_medis',
+            'reg_periksa.kd_poli',
+            'reg_periksa.p_jawab',
+            'reg_periksa.almt_pj',
+            'reg_periksa.kd_pj',
+            'pasien.nm_pasien',
+            'coalesce(penjab.nama_perusahaan, penjab.png_jawab, "-")',
+            'dokter.nm_dokter',
+            'poliklinik.nm_poli',
+        ]);
+
         return $query
             ->selectRaw($sqlSelect)
             ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')

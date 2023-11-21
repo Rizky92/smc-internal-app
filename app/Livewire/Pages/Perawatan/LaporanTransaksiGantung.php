@@ -47,8 +47,6 @@ class LaporanTransaksiGantung extends Component
 
     /**
      * @return string[]
-     *
-     * @psalm-return array{semua: 'SEMUA', belum: 'Belum', sudah: 'Sudah', batal: 'Batal', diterima: 'Berkas Diterima', dirujuk: 'Dirujuk', meninggal: 'Meninggal', dirawat: 'Dirawat', 'pulang-paksa': 'Pulang Paksa'}
      */
     public function getStatusRegistrasiProperty(): array
     {
@@ -69,18 +67,7 @@ class LaporanTransaksiGantung extends Component
     {
         return RegistrasiPasien::query()
             ->laporanTransaksiGantung($this->tglAwal, $this->tglAkhir, $this->jenis, $this->status)
-            ->search($this->cari, [
-                'reg_periksa.no_rawat',
-                'reg_periksa.no_rkm_medis',
-                'reg_periksa.kd_poli',
-                'reg_periksa.p_jawab',
-                'reg_periksa.almt_pj',
-                'reg_periksa.kd_pj',
-                'pasien.nm_pasien',
-                'coalesce(penjab.nama_perusahaan, penjab.png_jawab, "-")',
-                'dokter.nm_dokter',
-                'poliklinik.nm_poli',
-            ])
+            ->search($this->cari)
             ->paginate($this->perpage);
     }
 
