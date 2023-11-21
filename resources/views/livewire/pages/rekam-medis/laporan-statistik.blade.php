@@ -15,6 +15,7 @@
                     <x-table.th style="width: 11ch" title="Agama" />
                     <x-table.th style="width: 11ch" title="Suku" />
                     <x-table.th style="width: 17ch" title="Jenis Rawat" />
+                    <x-table.th style="width: 17ch" title="Ruangan" />
                     <x-table.th style="width: 19ch" title="Pasien Lama / Baru" />
                     <x-table.th style="width: 15ch" title="Asal Poli" />
                     <x-table.th style="width: 30ch" title="Dokter Poli" />
@@ -43,6 +44,7 @@
                 <x-slot name="body">
                     @forelse ($this->dataLaporanStatistik as $registrasi)
                         @php
+                            $ruangan = str($registrasi->ruangan)->split('/(; )/');
                             $icdDiagnosa = str($registrasi->icd_diagnosa)->split('/(; )/');
                             $diagnosa = str($registrasi->diagnosa)->split('/(; )/');
                             $tindakanRalan = str($registrasi->nm_tindakan_ralan)->split('/(; )/');
@@ -60,6 +62,13 @@
                             <x-table.td>{{ $registrasi->agama }}</x-table.td>
                             <x-table.td>{{ $registrasi->suku }}</x-table.td>
                             <x-table.td>{{ $registrasi->status_lanjut }}</x-table.td>
+                            <x-table.td>
+                                @foreach ($ruangan as $item)
+                                    {{ $item }} @if (!$loop->last)
+                                        <br>
+                                    @endif
+                                @endforeach
+                            </x-table.td>
                             <x-table.td>{{ $registrasi->status_poli }}</x-table.td>
                             <x-table.td>{{ $registrasi->nm_poli }}</x-table.td>
                             <x-table.td>{{ $registrasi->nm_dokter }}</x-table.td>
