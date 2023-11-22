@@ -350,6 +350,7 @@ class RegistrasiPasien extends Model
             pasien.agama as agama,
             suku_bangsa.nama_suku_bangsa as suku,
             reg_periksa.status_lanjut as status_lanjut,
+            group_concat(distinct trim(concat_ws('-', kamar.kd_kamar, bangsal.nm_bangsal)) separator '; ') as ruangan,
             reg_periksa.status_poli as status_poli,
             poliklinik.nm_poli as nm_poli,
             dokter.nm_dokter as nm_dokter,
@@ -390,6 +391,7 @@ class RegistrasiPasien extends Model
             'perawatan_ralan.kd_jenis_prw',
             'jns_perawatan.nm_perawatan',
             'perawatan_ranap.kd_jenis_prw',
+            'kamar.kd_kamar',
             'jns_perawatan_inap.nm_perawatan',
             'rujuk_masuk.perujuk',
             'dokter_dpjp.kd_dokter',
@@ -429,6 +431,7 @@ class RegistrasiPasien extends Model
             ->leftJoin('dpjp_ranap', 'reg_periksa.no_rawat', '=', 'dpjp_ranap.no_rawat')
             ->leftJoin(DB::raw('dokter dokter_dpjp'), 'dpjp_ranap.kd_dokter', '=', 'dokter_dpjp.kd_dokter')
             ->leftJoin('kamar', 'rawat_inap.kd_kamar', '=', 'kamar.kd_kamar')
+            ->leftJoin('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
             ->leftJoin('rujuk', 'reg_periksa.no_rawat', '=', 'rujuk.no_rawat')
             ->leftJoin('rujuk_masuk', 'reg_periksa.no_rawat', '=', 'rujuk_masuk.no_rawat')
             ->leftJoin('diagnosa_pasien', 'reg_periksa.no_rawat', '=', 'diagnosa_pasien.no_rawat')
