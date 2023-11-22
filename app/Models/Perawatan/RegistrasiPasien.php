@@ -392,6 +392,8 @@ class RegistrasiPasien extends Model
             'jns_perawatan.nm_perawatan',
             'perawatan_ranap.kd_jenis_prw',
             'kamar.kd_kamar',
+            'bangsal.kd_bangsal',
+            'bangsal.nm_bangsal',
             'jns_perawatan_inap.nm_perawatan',
             'rujuk_masuk.perujuk',
             'dokter_dpjp.kd_dokter',
