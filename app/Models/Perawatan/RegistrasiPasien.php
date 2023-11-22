@@ -350,7 +350,7 @@ class RegistrasiPasien extends Model
             pasien.agama as agama,
             suku_bangsa.nama_suku_bangsa as suku,
             reg_periksa.status_lanjut as status_lanjut,
-            group_concat(distinct trim(concat_ws('-', kamar.kd_kamar, bangsal.nm_bangsal)) separator '; ') as ruangan,
+            concat_ws(' ', rawat_inap.kd_kamar, bangsal.nm_bangsal) as ruangan,
             reg_periksa.status_poli as status_poli,
             poliklinik.nm_poli as nm_poli,
             dokter.nm_dokter as nm_dokter,
@@ -360,8 +360,8 @@ class RegistrasiPasien extends Model
             if(rawat_inap.tgl_keluar > '0000-00-00', rawat_inap.tgl_keluar, '-') as tgl_keluar,
             if(rawat_inap.jam_keluar > '00:00:00', rawat_inap.jam_keluar, '-') as jam_keluar,
             rawat_inap.diagnosa_awal as diagnosa_awal,
-            group_concat(distinct diagnosa_pasien.kd_penyakit separator '; ') as icd_diagnosa,
-            group_concat(distinct trim(concat_ws(' - ', diagnosa_pasien.kd_penyakit, penyakit.nm_penyakit)) separator '; ') as diagnosa,
+            group_concat(distinct diagnosa_pasien.kd_penyakit order by diagnosa_pasien.prioritas asc separator '; ') as icd_diagnosa,
+            group_concat(distinct trim(concat_ws(' - ', diagnosa_pasien.kd_penyakit, penyakit.nm_penyakit)) order by diagnosa_pasien.prioritas asc separator '; ') as diagnosa,
             group_concat(distinct perawatan_ralan.kd_jenis_prw separator '; ') as kd_tindakan_ralan,
             group_concat(distinct trim(concat_ws(' - ', perawatan_ralan.kd_jenis_prw, jns_perawatan.nm_perawatan)) separator '; ') as nm_tindakan_ralan,
             group_concat(distinct perawatan_ranap.kd_jenis_prw separator '; ') as kd_tindakan_ranap,
@@ -405,9 +405,23 @@ class RegistrasiPasien extends Model
 
         $rawatInap = RawatInap::query()
             ->select(['kd_kamar', 'no_rawat', 'diagnosa_awal', 'tgl_keluar', 'jam_keluar', 'lama', 'stts_pulang'])
-            ->whereRaw("kamar_inap.stts_pulang != 'Pindah Kamar'")
-            ->orderBy('tgl_masuk', 'desc')
-            ->orderBy('jam_masuk', 'desc');
+            ->whereNotIn('kamar_inap.stts_pulang', ['Pindah Kamar'])
+            ->orderByRaw(<<<SQL
+                cast(
+                    concat_ws(' ',
+                        if (
+                            kamar_inap.tgl_keluar is not null or kamar_inap.tgl_keluar > '0000-00-00',
+                            kamar_inap.tgl_keluar,
+                            current_date()
+                        ),
+                        if (
+                            kamar_inap.jam_keluar is not null or kamar_inap.jam_keluar > '00:00:00',
+                            kamar_inap.jam_keluar,
+                            current_time()
+                        )
+                    ) as datetime
+                ) desc
+            SQL);
 
         $perawatanRalan = TindakanRalanDokterPerawat::query()
             ->select(['no_rawat', 'kd_jenis_prw'])
@@ -421,6 +435,7 @@ class RegistrasiPasien extends Model
 
         return $query
             ->selectRaw($sqlSelect)
+            ->withCasts(['kunjungan_ke' => 'int'])
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->leftJoin('suku_bangsa', 'pasien.suku_bangsa', 'suku_bangsa.id')
             ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
