@@ -91,8 +91,8 @@ class GudangObat extends Model
 
         $pemberianObat = PemberianObat::query()
             ->select(['kd_bangsal', 'kode_brng', DB::raw('sum(ifnull(`jml`, 0)) as `jumlah`')])
-            ->whereIn('kd_bangsal', [$bangsal]) // Sesuaikan dengan nama depo yang diperlukan
-            ->groupBy(['kd_bangsal', 'kode_brng']);
+            ->where('kd_bangsal', $bangsal)
+            ->groupBy('kode_brng');
 
         $waktuAwalShift = $tanggal->setTimeFromTimeString($waktuShift->jam_masuk);
         $waktuAkhirShift = $tanggal->setTimeFromTimeString($waktuShift->jam_pulang);
@@ -120,10 +120,10 @@ class GudangObat extends Model
         SQL;
 
         $this->addSearchConditions([
-            '`gudangbarang`.`kode_brng`',
-            '`databarang`.`nama_brng`',
-            '`databarang`.`kode_sat`',
-            '`kodesatuan`.`satuan`',
+            'gudangbarang.kode_brng',
+            'databarang.nama_brng',
+            'databarang.kode_sat',
+            'kodesatuan.satuan',
         ]);
 
         return $query
@@ -131,18 +131,15 @@ class GudangObat extends Model
             ->withCasts(['stok' => 'float', 'jumlah_shift' => 'float', 'jumlah_3hari' => 'float'])
             ->join('databarang', 'gudangbarang.kode_brng', '=', 'databarang.kode_brng')
             ->leftJoin('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
-            ->leftJoinSub($pemberianObatPerShift, 'pemberian_obat_shift', function ($join) {
-                $join->on('gudangbarang.kode_brng', '=', 'pemberian_obat_shift.kode_brng')
-                    ->on('gudangbarang.kd_bangsal', '=', 'pemberian_obat_shift.kd_bangsal');
-            })
-            ->leftJoinSub($pemberianObat3Hari, 'pemberian_obat_3hari', function ($join) {
-                $join->on('gudangbarang.kode_brng', '=', 'pemberian_obat_3hari.kode_brng')
-                    ->on('gudangbarang.kd_bangsal', '=', 'pemberian_obat_3hari.kd_bangsal');
-            })
+            ->leftJoinSub($pemberianObatPerShift, 'pemberian_obat_shift', fn (JoinClause $join) => $join
+                ->on('gudangbarang.kode_brng', '=', 'pemberian_obat_shift.kode_brng')
+                ->on('gudangbarang.kd_bangsal', '=', 'pemberian_obat_shift.kd_bangsal'))
+            ->leftJoinSub($pemberianObat3Hari, 'pemberian_obat_3hari', fn (JoinClause $join) => $join
+                ->on('gudangbarang.kode_brng', '=', 'pemberian_obat_3hari.kode_brng')
+                ->on('gudangbarang.kd_bangsal', '=', 'pemberian_obat_3hari.kd_bangsal'))
             ->where('gudangbarang.kd_bangsal', $bangsal)
-            ->where(function ($query) {
-                $query->where('pemberian_obat_shift.jumlah', '>', 0)
-                    ->orWhere('pemberian_obat_3hari.jumlah', '>', 0);
-            });
+            ->where(fn (Builder $query) => $query
+                ->where('pemberian_obat_shift.jumlah', '>', 0)
+                ->orWhere('pemberian_obat_3hari.jumlah', '>', 0));
     }
 }

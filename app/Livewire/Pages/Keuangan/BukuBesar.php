@@ -26,7 +26,7 @@ class BukuBesar extends Component
 
     /** @var string */
     public $tglAkhir;
-    
+
     protected function queryString(): array
     {
         return [
@@ -44,22 +44,12 @@ class BukuBesar extends Component
     public function getBukuBesarProperty()
     {
         return $this->isDeferred
-            ? collect([])
+            ? []
             : Jurnal::query()
                 ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
                 ->with('pengeluaranHarian')
-                ->search($this->cari, [
-                    'jurnal.tgl_jurnal',
-                    'jurnal.jam_jurnal',
-                    'jurnal.no_jurnal',
-                    'jurnal.no_bukti',
-                    'jurnal.keterangan',
-                    'detailjurnal.kd_rek',
-                    'rekening.nm_rek',
-                    'detailjurnal.debet',
-                    'detailjurnal.kredit',
-                ])
-                ->sortWithColumns($this->sortColumns, [], [
+                ->search($this->cari)
+                ->sortWithColumns($this->sortColumns, [
                     'tgl_jurnal' => 'asc',
                     'jam_jurnal' => 'asc',
                 ])
@@ -72,17 +62,7 @@ class BukuBesar extends Component
             ? []
             : Jurnal::query()
                 ->jumlahDebetDanKreditBukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
-                ->search($this->cari, [
-                    'jurnal.tgl_jurnal',
-                    'jurnal.jam_jurnal',
-                    'jurnal.no_jurnal',
-                    'jurnal.no_bukti',
-                    'jurnal.keterangan',
-                    'detailjurnal.kd_rek',
-                    'rekening.nm_rek',
-                    'detailjurnal.debet',
-                    'detailjurnal.kredit',
-                ])
+                ->search($this->cari)
                 ->first();
     }
 
@@ -101,44 +81,40 @@ class BukuBesar extends Component
     }
 
     protected function dataPerSheet(): array
-{
-    // Fetch detailed data based on the current filters
-    $jurnalData = $this->bukuBesar
-        ->map(function ($model) {
-            return [
-                'tgl_jurnal'             => $model->tgl_jurnal,
-                'jam_jurnal'             => $model->jam_jurnal,
-                'no_jurnal'              => $model->no_jurnal,
-                'keterangan'             => $model->keterangan,
-                'keterangan_pengeluaran' => optional($model->pengeluaranHarian)->keterangan ?? "Default Value",
-                'kd_rek'                 => $model->kd_rek,
-                'nm_rek'                 => $model->nm_rek,
-                'debet'                  => round($model->debet, 2),
-                'kredit'                 => round($model->kredit, 2),
-            ];
-        })
-        ->toArray();
-
-    $totalData = [
-        [
-            'tgl_jurnal'             => '',
-            'jam_jurnal'             => '',
-            'no_jurnal'              => '',
-            'no_bukti'               => '',
-            'keterangan'             => '',
-            'keterangan_pengeluaran' => '',
-            'kd_rek'                 => '',
-            'nm_rek'                 => 'TOTAL',
-            'debet'                  => round(optional($this->totalDebetDanKredit)->debet, 2),
-            'kredit'                 => round(optional($this->totalDebetDanKredit)->kredit, 2),
-        ],
-    ];
-
-    // Combine detailed data and total data
-    $combinedData = array_merge($jurnalData, $totalData);
-
-    return [$combinedData];
-}
+    {
+        return [
+            Jurnal::query()
+                ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
+                ->with('pengeluaranHarian')
+                ->search($this->cari)
+                ->cursor()
+                ->map(fn (Jurnal $model): array => [
+                    'tgl_jurnal'             => $model->tgl_jurnal,
+                    'jam_jurnal'             => $model->jam_jurnal,
+                    'no_jurnal'              => $model->no_jurnal,
+                    'no_bukti'               => $model->no_bukti,
+                    'keterangan'             => $model->keterangan,
+                    'keterangan_pengeluaran' => optional($model->pengeluaranHarian)->keterangan ?? '-',
+                    'kd_rek'                 => $model->kd_rek,
+                    'nm_rek'                 => $model->nm_rek,
+                    'debet'                  => round($model->debet, 2),
+                    'kredit'                 => round($model->kredit, 2),
+                ])
+                ->merge([[
+                    'tgl_jurnal'             => '',
+                    'jam_jurnal'             => '',
+                    'no_jurnal'              => '',
+                    'no_bukti'               => '',
+                    'keterangan'             => '',
+                    'keterangan_pengeluaran' => '',
+                    'kd_rek'                 => '',
+                    'nm_rek'                 => 'TOTAL',
+                    'debet'                  => round(optional($this->totalDebetDanKredit)->debet, 2),
+                    'kredit'                 => round(optional($this->totalDebetDanKredit)->kredit, 2),
+                ]])
+                ->all()
+        ];
+    }
 
 
     protected function columnHeaders(): array
@@ -147,6 +123,7 @@ class BukuBesar extends Component
             "Tgl",
             "Jam",
             "No. Jurnal",
+            "No. Bukti",
             "Keterangan Jurnal",
             "Keterangan Pengeluaran",
             "Kode",

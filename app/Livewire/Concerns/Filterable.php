@@ -18,14 +18,16 @@ trait Filterable
         ]);
     }
 
-    protected function getDefaultValues()
+    protected function getDefaultValues(): void
     {
-        $defaultValues = [];
-
-        $traits = collect(class_uses_recursive(static::class))
+        collect(class_uses_recursive(static::class))
             ->filter(fn (string $v) => Str::startsWith($v, 'App\\Livewire\\Concerns\\'))
             ->map(fn (string $v) => 'defaultValues'.class_basename($v))
-            ->all();
+            ->each(function (string $method) {
+                if (method_exists($this, $method)) {
+                    $this->{$method}();
+                }
+            });
     }
 
     public function searchData(): void
@@ -46,7 +48,7 @@ trait Filterable
 
     public function resetFilters(): void
     {
-        $this->defaultValues();
+        $this->getDefaultValues();
 
         $this->searchData();
     }

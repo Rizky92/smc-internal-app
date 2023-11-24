@@ -25,8 +25,8 @@ trait DeferredModal
     {
         $this->undefer();
 
-        if (method_exists($this, 'defaultValues')) {
-            $this->defaultValues();
+        if (method_exists($this, 'resetFilters')) {
+            $this->resetFilters();
         }
 
         $this->dispatchBrowserEvent('modal-unloaded');

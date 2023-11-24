@@ -80,6 +80,14 @@ class Jurnal extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
+        $this->addSearchConditions([
+            'jurnal.no_jurnal',
+            'jurnal.no_bukti',
+            'jurnal.keterangan',
+            'detailjurnal.kd_rek',
+            'rekening.nm_rek',
+        ]);
+
         $sqlSelect = <<<SQL
             jurnal.tgl_jurnal,
             jurnal.jam_jurnal,
@@ -115,6 +123,14 @@ class Jurnal extends Model
             ifnull(round(sum(detailjurnal.debet), 2), 0) debet,
             ifnull(round(sum(detailjurnal.kredit), 2), 0) kredit
         SQL;
+
+        $this->addSearchConditions([
+            'jurnal.no_jurnal',
+            'jurnal.no_bukti',
+            'jurnal.keterangan',
+            'detailjurnal.kd_rek',
+            'rekening.nm_rek',
+        ]);
 
         return $query
             ->selectRaw($sqlSelect)
