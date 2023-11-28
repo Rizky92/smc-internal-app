@@ -34,9 +34,9 @@
                             <x-table.td>{{ $obat->satuan_kecil }}</x-table.td>
                             <x-table.td>{{ $obat->kategori }}</x-table.td>
                             <x-table.td class="text-right">{{ $obat->ke_pasien_14_hari }}</x-table.td>
-                            <x-table.td class="text-right">{{ $obat->pemakaian_3_bulan }}</x-table.td>
-                            <x-table.td class="text-right">{{ $obat->pemakaian_1_bulan }}</x-table.td>
                             <x-table.td class="text-right">{{ $obat->pemakaian_1_minggu }}</x-table.td>
+                            <x-table.td class="text-right">{{ $obat->pemakaian_1_bulan }}</x-table.td>
+                            <x-table.td class="text-right">{{ $obat->pemakaian_3_bulan }}</x-table.td>
                             <x-table.td class="text-right">{{ $obat->pemakaian_10_bulan }}</x-table.td>
                             <x-table.td class="text-right">{{ $obat->pemakaian_12_bulan }}</x-table.td>
                         </x-table.tr>
