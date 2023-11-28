@@ -23,4 +23,12 @@ class Bangsal extends Model
     {
         return $this->belongsToMany(Bidang::class, 'mapping_bidang', 'bidang_id', 'kd_bangsal', 'id', 'kd_bangsal');
     }
+
+    public function scopeActiveWithKamar($query)
+    {   
+        return $query->select('bangsal.*', 'kamar.kelas')
+        ->leftJoin('kamar', 'bangsal.kd_bangsal', '=', 'kamar.kd_bangsal')
+        ->where('bangsal.status', '1')
+        ->where('kamar.statusdata', '1');
+    }
 }
