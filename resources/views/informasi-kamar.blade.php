@@ -59,6 +59,20 @@
 @endif
 
 <script>
+    function refreshPage() {
+    setTimeout(function () {
+        location.reload(true); // Reload halaman dengan membersihkan cache
+    }, 40000); // Waktu dalam milidetik (60 detik)
+    }
+    
+    document.addEventListener('DOMContentLoaded', function () {
+    refreshPage();
+    });
+
+    setInterval(function () {
+        updateDateTime();
+        refreshPage();
+    }, 40000); // Set interval untuk memastikan halaman direfresh setiap 60 detik
     function startScrollAnimation() {
         const scrollingContent = document.getElementById('scrollingContent');
         scrollingContent.style.animation = 'none';
@@ -77,7 +91,7 @@
         const scrollingContent = document.getElementById('scrollingContent');
         scrollingContent.classList.remove('hidden');
         startScrollAnimation();
-    }, 60000);
+    }, 40000);
 </script>
 </body>
 </html>

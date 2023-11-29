@@ -1,9 +1,10 @@
 #scrollingContent {
     max-height: 100vh;
     overflow-y: hidden;
+    scroll-behavior: linear;
 }
 #scrollingContent table {
-    animation: marqueeAnimation 60s linear infinite;
+    animation: marqueeAnimation 60s linear;
     transform-origin: 0% 0%;
     display: table;
     width: 100%;
