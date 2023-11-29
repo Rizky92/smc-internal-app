@@ -11,6 +11,7 @@
 }
 
 span {
+    font-weight: bold;
     font-size: 64px;
     color: #198754;
 }

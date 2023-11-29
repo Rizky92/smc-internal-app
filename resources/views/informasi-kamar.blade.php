@@ -16,7 +16,7 @@
       <div class="container-fluid d-flex justify-content-center">
         <img src="img/logo.png" alt="" width="100" height="80" class="d-inline-block align-text-top">
           <span>
-              Bed Management RS SMC
+              BED MANAGEMENT RS SMC
             </span>
       </div>
     </nav>
