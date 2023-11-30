@@ -9,7 +9,6 @@ use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
