@@ -4,7 +4,6 @@ namespace App\View\Components;
 
 use App\Support\Menu;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
 use Illuminate\View\Component;
 use Illuminate\View\View;
@@ -26,8 +25,7 @@ class BaseLayout extends Component
      */
     public function __construct(string $title = 'Dashboard')
     {
-        /** @var \Illuminate\Contracts\Auth\Authenticatable&\App\Models\Aplikasi\User $user */
-        $user = Auth::user();
+        $user = user();
 
         $this->title = $title;
         $this->current = URL::current();

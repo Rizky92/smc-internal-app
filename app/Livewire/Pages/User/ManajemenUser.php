@@ -68,9 +68,6 @@ class ManajemenUser extends Component
     protected function defaultValues(): void
     {
         $this->tampilkanYangMemilikiHakAkses = false;
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
     }
 
     /**
@@ -78,7 +75,7 @@ class ManajemenUser extends Component
      */
     public function impersonateAsUser(string $nrp = '')
     {
-        if (!Auth::user()->hasRole(config('permission.superadmin_name'))) {
+        if (!user()->hasRole(config('permission.superadmin_name'))) {
             $this->flashError('Anda tidak memiliki izin untuk melakukan tindakan ini!');
 
             return;
@@ -90,7 +87,7 @@ class ManajemenUser extends Component
             return;
         }
 
-        Auth::user()->impersonate(User::findByNRP($nrp));
+        user()->impersonate(User::findByNRP($nrp));
 
         return redirect(route('admin.dashboard'))
             ->with('flash.type', 'dark')

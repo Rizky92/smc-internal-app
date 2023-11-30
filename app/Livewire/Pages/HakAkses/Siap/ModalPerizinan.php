@@ -69,7 +69,7 @@ class ModalPerizinan extends Component
 
     public function create(): void
     {
-        if (!Auth::user()->hasRole(config('permission.superadmin_name'))) {
+        if (!user()->hasRole(config('permission.superadmin_name'))) {
             $this->flashError();
 
             return;
@@ -92,7 +92,7 @@ class ModalPerizinan extends Component
 
     public function update(): void
     {
-        if (!Auth::user()->hasRole(config('permission.superadmin_name'))) {
+        if (!user()->hasRole(config('permission.superadmin_name'))) {
             $this->flashError();
 
             return;

@@ -7,13 +7,13 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 
-if (! function_exists('user')) {
+if (!function_exists('user')) {
     function user(?string $guard = 'web'): Authenticatable
     {
         /** @var \App\Database\Eloquent\Authenticatable|null */
         $user = Auth::guard($guard)->user();
 
-        if (! $user) {
+        if (!$user) {
             throw new AuthenticationException('Unauthenticated', [$guard]);
         }
 
@@ -126,7 +126,7 @@ if (!function_exists('trackersql')) {
      */
     function trackersql(string $connection = 'mysql_smc', ?string $userId = null, $callable = null): void
     {
-        if (app('impersonate')->isImpersonating() || app()->runningUnitTests() || ! is_callable($callable)) {
+        if (app('impersonate')->isImpersonating() || app()->runningUnitTests() || !is_callable($callable)) {
             return;
         }
 
@@ -141,20 +141,20 @@ if (!function_exists('trackersql')) {
                 }
 
                 $log['bindings'] = collect($log['bindings'])->map(function ($value, $key) {
-                    if (! is_string($value)) {
+                    if (!is_string($value)) {
                         return $value;
                     }
 
                     $value = str($value);
-    
+
                     if ($value->contains('\'')) {
                         $value = $value->replace('\'', '\\\'');
                     }
-    
+
                     if ($value->contains('?')) {
                         $value = $value->replace('?', '\?');
                     }
-    
+
                     return "'{$value->value()}'";
                 })->all();
             }
@@ -165,7 +165,7 @@ if (!function_exists('trackersql')) {
             DB::connection('mysql_smc')->table('trackersql')->insert([
                 'tanggal'    => now(),
                 'sqle'       => (string) $sql,
-                'usere'      => $userId ?? Auth::user()->nik,
+                'usere'      => $userId ?? user()->nik,
                 'ip'         => request()->ip(),
                 'connection' => $connection,
             ]);
@@ -190,10 +190,10 @@ if (!function_exists('tracker_start')) {
 if (!function_exists('tracker_end')) {
     function tracker_end(string $connection = 'mysql_smc', string $userId = null): void
     {
-        if (! DB::connection($connection)->logging()) {
+        if (!DB::connection($connection)->logging()) {
             return;
         }
-        
+
         if (app('impersonate')->isImpersonating() || app()->runningUnitTests()) {
             DB::connection($connection)->disableQueryLog();
 
@@ -213,7 +213,7 @@ if (!function_exists('tracker_end')) {
             DB::connection('mysql_smc')->table('trackersql')->insert([
                 'tanggal'    => now(),
                 'sqle'       => (string) $sql,
-                'usere'      => $userId ?? Auth::user()->nik,
+                'usere'      => $userId ?? user()->nik,
                 'ip'         => request()->ip(),
                 'connection' => $connection,
             ]);

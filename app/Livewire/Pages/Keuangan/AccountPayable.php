@@ -180,7 +180,7 @@ class AccountPayable extends Component
     {
         $export = [];
 
-        if (Auth::user()->can('keuangan.account-payable.read-medis')) {
+        if (user()->can('keuangan.account-payable.read-medis')) {
             $totalMedis = PenerimaanObat::query()
                 ->totalHutangAging($this->tglAwal, $this->tglAkhir)
                 ->get();
@@ -238,7 +238,7 @@ class AccountPayable extends Component
                 ->all();
         }
 
-        if (Auth::user()->can('keuangan.account-payable.read-nonmedis')) {
+        if (user()->can('keuangan.account-payable.read-nonmedis')) {
             $totalNonMedis = PemesananBarangNonMedis::query()
                 ->totalHutangAging($this->tglAwal, $this->tglAkhir)
                 ->get();
@@ -328,11 +328,11 @@ class AccountPayable extends Component
     {
         $appends = [];
 
-        if (Auth::user()->can('keuangan.account-payable.read-medis')) {
+        if (user()->can('keuangan.account-payable.read-medis')) {
             $appends[] = 'Medis';
         }
 
-        if (Auth::user()->can('keuangan.account-payable.read-nonmedis')) {
+        if (user()->can('keuangan.account-payable.read-nonmedis')) {
             $appends[] = 'Non Medis';
         }
 

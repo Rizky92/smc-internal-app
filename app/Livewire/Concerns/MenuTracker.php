@@ -42,7 +42,7 @@ trait MenuTracker
                 'waktu'       => now(),
                 'breadcrumbs' => $breadcrumbs,
                 'route_name'  => $route,
-                'user_id'     => (string) Str::of(Auth::user()->nik)->trim(),
+                'user_id'     => (string) Str::of(user()->nik)->trim(),
                 'ip_address'  => request()->ip(),
             ]);
     }

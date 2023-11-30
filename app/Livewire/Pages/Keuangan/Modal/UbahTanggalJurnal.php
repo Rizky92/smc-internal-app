@@ -57,13 +57,13 @@ class UbahTanggalJurnal extends Component
      */
     public function getBackupJurnalProperty()
     {
-        return Auth::user()->cannot('keuangan.riwayat-jurnal-perbaikan.read')
+        return user()->cannot('keuangan.riwayat-jurnal-perbaikan.read')
             ? []
             : JurnalBackup::query()
-            ->with('pegawai:nik,nama')
-            ->where('no_jurnal', $this->noJurnal)
-            ->orderByDesc('tgl_jurnal_diubah')
-            ->get();
+                ->with('pegawai:nik,nama')
+                ->where('no_jurnal', $this->noJurnal)
+                ->orderByDesc('tgl_jurnal_diubah')
+                ->get();
     }
 
     public function render(): View
@@ -91,11 +91,7 @@ class UbahTanggalJurnal extends Component
         }
 
         // $jurnalBackup = JurnalBackup::query()->where('no_jurnal', $this->noJurnal)->exists();
-        $jurnalDiubah = Jurnal::query()->find($this->noJurnal);
-
-        if (is_null($jurnalDiubah)) {
-            throw (new ModelNotFoundException)->setModel(Jurnal::class, [$this->noJurnal]);
-        }
+        $jurnalDiubah = Jurnal::query()->findOrFail($this->noJurnal);
 
         $jurnalTerakhirPerTgl = Jurnal::query()
             ->where('tgl_jurnal', $this->tglJurnalLama)
@@ -123,7 +119,7 @@ class UbahTanggalJurnal extends Component
                 'no_jurnal'         => $jurnalDiubah->no_jurnal,
                 'tgl_jurnal_asli'   => $this->tglJurnalLama,
                 'tgl_jurnal_diubah' => $jurnalDiubah->tgl_jurnal,
-                'nip'               => Auth::user()->nik,
+                'nip'               => user()->nik,
             ]);
 
             tracker_end();

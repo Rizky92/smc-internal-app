@@ -97,7 +97,7 @@ class TransferPerizinan extends Component
 
     public function save(): void
     {
-        if (!Auth::user()->hasRole(config('permission.superadmin_name'))) {
+        if (!user()->hasRole(config('permission.superadmin_name'))) {
             $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 

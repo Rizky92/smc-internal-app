@@ -49,7 +49,7 @@ class Khanza extends Component
 
     public function syncHakAkses(): void
     {
-        if (!Auth::user()->hasRole(config('permission.superadmin_name'))) {
+        if (!user()->hasRole(config('permission.superadmin_name'))) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
@@ -103,7 +103,7 @@ class Khanza extends Component
 
     public function simpanHakAkses(string $field, string $judul): void
     {
-        if (!Auth::user()->hasRole(config('permission.superadmin_name'))) {
+        if (!user()->hasRole(config('permission.superadmin_name'))) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
