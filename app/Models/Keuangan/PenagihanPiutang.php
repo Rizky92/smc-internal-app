@@ -110,6 +110,28 @@ class PenagihanPiutang extends Model
             ->groupBy('detail_piutang_pasien.no_rawat')
             ->havingRaw('round(sum(detail_piutang_pasien.totalpiutang - bayar_piutang.besar_cicilan - bayar_piutang.diskon_piutang - bayar_piutang.tidak_terbayar), 2) != 0');
 
+        $this->addSearchConditions([
+            'detail_penagihan_piutang.no_rawat',
+            'reg_periksa.no_rkm_medis',
+            'pasien.nm_pasien',
+            'penjab_tagihan.png_jawab',
+            'reg_periksa.kd_pj',
+            'penjab_pasien.png_jawab',
+            'piutang_pasien.status',
+            'akun_piutang.kd_rek',
+            'akun_piutang.nama_bayar',
+        ]);
+
+        $this->addSortColumns([
+            'tgl_tagihan'     => 'penagihan_piutang.tanggal',
+            'tgl_jatuh_tempo' => 'penagihan_piutang.tanggaltempo',
+            'penjab_pasien'   => 'penjab_pasien.png_jawab',
+            'penjab_piutang'  => 'penjab_tagihan.png_jawab',
+            'total_piutang'   => DB::raw('round(detail_piutang_pasien.totalpiutang, 2)'),
+            'besar_cicilan'   => DB::raw('round(bayar_piutang.besar_cicilan, 2)'),
+            'sisa_piutang'    => DB::raw('round(detail_piutang_pasien.totalpiutang - ifnull(bayar_piutang.besar_cicilan, 0), 2)'),
+        ]);
+
         return $query
             ->selectRaw($sqlSelect, [$tglAkhir])
             ->withCasts([
@@ -187,6 +209,18 @@ class PenagihanPiutang extends Model
                 ->on('akun_piutang.kd_rek', '=', 'bayar_piutang.kd_rek_kontra'))
             ->groupBy('detail_piutang_pasien.no_rawat')
             ->havingRaw('round(sum(detail_piutang_pasien.totalpiutang - bayar_piutang.besar_cicilan - bayar_piutang.diskon_piutang - bayar_piutang.tidak_terbayar), 2) != 0');
+
+        $this->addSearchConditions([
+            'detail_penagihan_piutang.no_rawat',
+            'reg_periksa.no_rkm_medis',
+            'pasien.nm_pasien',
+            'penjab_tagihan.png_jawab',
+            'reg_periksa.kd_pj',
+            'penjab_pasien.png_jawab',
+            'piutang_pasien.status',
+            'akun_piutang.kd_rek',
+            'akun_piutang.nama_bayar',
+        ]);
 
         return $query
             ->selectRaw($sqlSelect, [$tglAkhir, $tglAkhir, $tglAkhir, $tglAkhir])

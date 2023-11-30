@@ -9,10 +9,14 @@ use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -50,6 +54,32 @@ class AppServiceProvider extends ServiceProvider
 
         /** @psalm-scope-this Illuminate\Database\Eloquent\Builder */
         Builder::macro('isEagerLoaded', fn (string $name): bool => isset($this->eagerLoad[$name]));
+
+        /** @psalm-scope-this Illuminate\Database\Eloquent\Builder */
+        Builder::macro('orderByField', function ($column, $values, $direction = 'asc') {
+            $binds = [];
+
+            for ($i = 0; $i < count($values); $i++) {
+                $binds[] = '?';
+            }
+
+            $binds = implode(', ', $binds);
+
+            if ($column instanceof Expression) {
+                $column = $column->getValue();
+            }
+
+            $direction = strtolower($direction);
+
+            if (! in_array($direction, ['asc', 'desc'], true)) {
+                throw new InvalidArgumentException('Order direction must be "asc" or "desc".');
+            }
+
+            $startsWith = sprintf('field(%s, ', $column);
+            $endsWith = sprintf(') %s', $direction);
+
+            return $this->orderByRaw(Str::wrap($binds, $startsWith, $endsWith), $values);
+        });
 
         $this->registerBladeDirectives();
         $this->registerModelConfigurations();

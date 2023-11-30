@@ -4,10 +4,7 @@ namespace App\Livewire\Pages\Keuangan;
 
 use App\Jobs\Keuangan\BayarPiutangPasien;
 use App\Models\Keuangan\AkunBayar;
-use App\Models\Keuangan\BayarPiutang;
-use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\PenagihanPiutang;
-use App\Models\Keuangan\PenagihanPiutangDetail;
 use App\Models\RekamMedis\Penjamin;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
@@ -16,6 +13,7 @@ use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\View\Components\BaseLayout;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -47,6 +45,9 @@ class AccountReceivable extends Component
     /** @var array */
     public $tagihanDipilih;
 
+    /** @var array */
+    public $sortBySelected;
+
     /** @var int|float */
     public $totalDibayar;
 
@@ -73,28 +74,15 @@ class AccountReceivable extends Component
         return $this->isDeferred
             ? []
             : PenagihanPiutang::query()
-            ->accountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
-            ->search($this->cari, [
-                'detail_penagihan_piutang.no_rawat',
-                'reg_periksa.no_rkm_medis',
-                'pasien.nm_pasien',
-                'penjab_tagihan.png_jawab',
-                'reg_periksa.kd_pj',
-                'penjab_pasien.png_jawab',
-                'piutang_pasien.status',
-                'akun_piutang.kd_rek',
-                'akun_piutang.nama_bayar',
-            ])
-            ->sortWithColumns($this->sortColumns, [
-                'tgl_tagihan'     => 'penagihan_piutang.tanggal',
-                'tgl_jatuh_tempo' => 'penagihan_piutang.tanggaltempo',
-                'penjab_pasien'   => 'penjab_pasien.png_jawab',
-                'penjab_piutang'  => 'penjab_tagihan.png_jawab',
-                'total_piutang'   => DB::raw('round(detail_piutang_pasien.totalpiutang, 2)'),
-                'besar_cicilan'   => DB::raw('round(bayar_piutang.besar_cicilan, 2)'),
-                'sisa_piutang'    => DB::raw('round(detail_piutang_pasien.totalpiutang - ifnull(bayar_piutang.besar_cicilan, 0), 2)'),
-            ])
-            ->paginate($this->perpage);
+                ->accountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
+                ->search($this->cari)
+                ->when(! empty($this->tagihanDipilih), fn (Builder $q): Builder => $q->orWhereIn(
+                    DB::raw("concat_ws('_', penagihan_piutang.no_tagihan, penagihan_piutang.kd_pj, detail_penagihan_piutang.no_rawat)"),
+                    array_keys($this->tagihanDipilih)))
+                ->when(! empty($this->sortBySelected), fn (Builder $q): Builder => $q
+                    ->orderByField(DB::raw("concat_ws('_', penagihan_piutang.no_tagihan, detail_penagihan_piutang.no_rawat, penjab_tagihan.nama_penjab)"), $this->sortBySelected))
+                ->sortWithColumns($this->sortColumns)
+                ->paginate($this->perpage);
     }
 
     public function getPenjaminProperty(): Collection
@@ -115,17 +103,7 @@ class AccountReceivable extends Component
 
         $total = PenagihanPiutang::query()
             ->totalAccountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
-            ->search($this->cari, [
-                'detail_penagihan_piutang.no_rawat',
-                'reg_periksa.no_rkm_medis',
-                'pasien.nm_pasien',
-                'penjab_tagihan.png_jawab',
-                'reg_periksa.kd_pj',
-                'penjab_pasien.png_jawab',
-                'piutang_pasien.status',
-                'akun_piutang.kd_rek',
-                'akun_piutang.nama_bayar',
-            ])
+            ->search($this->cari)
             ->get();
 
         $totalPiutang = (float) $total->sum('total_piutang');
@@ -136,26 +114,32 @@ class AccountReceivable extends Component
         return compact('totalPiutang', 'totalCicilan', 'totalSisaPerPeriode', 'totalSisaCicilan');
     }
 
-    public function updatedTagihanDipilih(): void
-    {
-        $this->rekalkulasiPembayaran();
-    }
-
-    public function updatedCari(): void
-    {
-        $this->tagihanDipilih = [];
-        $this->rekalkulasiPembayaran();
-    }
-
-    public function dehydrate(): void
-    {
-        $this->rekalkulasiPembayaran();
-    }
-
     public function render(): View
     {
+        $this->rekalkulasiPembayaran();
+
+        $this->prosesSortBySelected();
+
         return view('livewire.pages.keuangan.account-receivable')
             ->layout(BaseLayout::class, ['title' => 'Piutang Aging (Account Receivable)']);
+    }
+
+    protected function prosesSortBySelected(): void
+    {
+        if (empty($this->tagihanDipilih)) {
+            return;
+        }
+
+        $this->sortBySelected = PenagihanPiutang::query()
+            ->join('detail_penagihan_piutang', 'penagihan_piutang.no_tagihan', '=', 'detail_penagihan_piutang.no_tagihan')
+            ->join('penjab', 'penagihan_piutang.kd_pj', '=', 'penjab.kd_pj')
+            ->whereIn(
+                DB::raw('concat_ws("_", penagihan_piutang.no_tagihan, penagihan_piutang.kd_pj, detail_penagihan_piutang.no_rawat)'),
+                array_keys($this->tagihanDipilih)
+            )
+            ->get()
+            ->map(fn (PenagihanPiutang $model): string => implode('_', [$model->no_tagihan, $model->no_rawat, $model->png_jawab]))
+            ->all();
     }
 
     protected function rekalkulasiPembayaran(): void
@@ -183,26 +167,19 @@ class AccountReceivable extends Component
 
     public function pilihSemua(bool $pilih): void
     {
-        if (!$pilih) {
+        if (! $pilih) {
             $this->tagihanDipilih = [];
+            $this->sortBySelected = [];
             $this->totalDibayar = 0;
 
             return;
         }
 
-        $this->tagihanDipilih = PenagihanPiutang::query()
+        $query = PenagihanPiutang::query()
             ->accountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
-            ->search($this->cari, [
-                'detail_penagihan_piutang.no_rawat',
-                'reg_periksa.no_rkm_medis',
-                'pasien.nm_pasien',
-                'penjab_tagihan.png_jawab',
-                'reg_periksa.kd_pj',
-                'penjab_pasien.png_jawab',
-                'piutang_pasien.status',
-                'akun_piutang.kd_rek',
-                'akun_piutang.nama_bayar',
-            ])
+            ->search($this->cari);
+
+        $this->tagihanDipilih = $query
             ->cursor(['no_tagihan', 'kd_pj', 'no_rawat'])
             ->mapWithKeys(fn (PenagihanPiutang $model, $_): array => [
                 implode('_', [$model->no_tagihan, $model->kd_pj_tagihan, $model->no_rawat]) => [
@@ -249,7 +226,6 @@ class AccountReceivable extends Component
                 ];
             })
             ->values()
-            // ->dd();
             ->each(function (array $value) use ($akunDiskonPiutang, $akunTidakTerbayar) {
                 BayarPiutangPasien::dispatch([
                     'no_tagihan'          => $value['no_tagihan'],
@@ -261,7 +237,7 @@ class AccountReceivable extends Component
                     'jaminan_pasien'      => $this->jaminanPasien,
                     'jenis_perawatan'     => $this->jenisPerawatan,
                     'tgl_bayar'           => $this->tglBayar,
-                    'user_id'             => (string) Auth::user()->nik,
+                    'user_id'             => (string) user()->nik,
                     'akun'                => (string) $this->akunBayar->get($this->rekeningAkun),
                     'akun_diskon_piutang' => (string) $akunDiskonPiutang,
                     'akun_tidak_terbayar' => (string) $akunTidakTerbayar,
@@ -269,6 +245,7 @@ class AccountReceivable extends Component
             });
 
         $this->tagihanDipilih = [];
+        $this->sortBySelected = [];
         $this->rekalkulasiPembayaran();
         $this->dispatchBrowserEvent('clear-selected');
 
@@ -277,14 +254,17 @@ class AccountReceivable extends Component
 
     protected function defaultValues(): void
     {
-        $this->tagihanDipilih = [];
-        $this->tglBayar = now()->format('Y-m-d');
-        $this->rekeningAkun = '-';
-
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+
+        $this->rekeningAkun = '-';
         $this->jaminanPasien = '-';
         $this->jenisPerawatan = 'semua';
+        $this->tglBayar = now()->format('Y-m-d');
+
+        $this->tagihanDipilih = [];
+        $this->sortBySelected = [];
+        $this->totalDibayar = 0;
     }
 
     protected function dataPerSheet(): array
