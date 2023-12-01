@@ -90,7 +90,7 @@
             "./vendor/bin/psalm"
         ],
         "lint:rebase": [
-            "./vendor/bin/psalm --php-version=7.4 --set-baseline=psalm-baseline.xml",
+            "./vendor/bin/psalm --update-baseline",
             "@refactor"
         ],
         "psalm-init": [
@@ -98,7 +98,7 @@
             "./vendor/bin/psalm-plugin enable psalm/plugin-laravel"
         ],
         "refactor": [
-            "./vendor/bin/psalm --php-version=7.4 --alter --issues=MissingReturnType,MissingClosureReturnType,InvalidReturnType,InvalidNullableReturnType,InvalidFalsableReturnType,MismatchingDocblockParamType,MismatchingDocblockReturnType,ParamNameMismatch,PossiblyUndefinedVariable,PossiblyUndefinedGlobalVariable,UnnecessaryVarAnnotation --allow-backwards-incompatible-changes=true"
+            "./vendor/bin/psalm --alter --issues=MissingReturnType,MissingClosureReturnType,InvalidReturnType,InvalidNullableReturnType,InvalidFalsableReturnType,MismatchingDocblockParamType,MismatchingDocblockReturnType,ParamNameMismatch,PossiblyUndefinedVariable,PossiblyUndefinedGlobalVariable,UnnecessaryVarAnnotation --allow-backwards-incompatible-changes=true"
         ],
         "optimize": [
             "@php artisan optimize -q",
