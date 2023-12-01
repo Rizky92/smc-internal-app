@@ -6,190 +6,115 @@
       <code>environmentFilePath</code>
     </UndefinedInterfaceMethod>
   </file>
-  <file src="app/Http/Controllers/Auth/LoginController.php">
-    <PossiblyUndefinedMethod occurrences="1">
-      <code>login</code>
-    </PossiblyUndefinedMethod>
+  <file src="app/Database/Eloquent/Concerns/Sortable.php">
+    <ImplicitToStringCast occurrences="1">
+      <code>$order</code>
+    </ImplicitToStringCast>
+    <RedundantCondition occurrences="1">
+      <code>empty($initialColumnOrders)</code>
+    </RedundantCondition>
+    <TooManyTemplateParams occurrences="1">
+      <code>array&lt;string, \Illuminate\Database\Query\Expression&lt;string&gt;|string&gt;</code>
+    </TooManyTemplateParams>
   </file>
-  <file src="app/Http/Controllers/Auth/LogoutController.php">
-    <PossiblyUndefinedMethod occurrences="1">
-      <code>logout</code>
-    </PossiblyUndefinedMethod>
+  <file src="app/Http/Controllers/Auth/LogoutOtherSessionsController.php">
+    <PossiblyNullArgument occurrences="1">
+      <code>$request-&gt;getPassword()</code>
+    </PossiblyNullArgument>
   </file>
-  <file src="app/Http/Controllers/BPJS/MobileJKNController.php">
-    <UndefinedMethod occurrences="1">
-      <code>BpjsService::start()</code>
-    </UndefinedMethod>
+  <file src="app/Http/Middleware/TrustProxies.php">
+    <NonInvariantDocblockPropertyType occurrences="1">
+      <code>$headers</code>
+    </NonInvariantDocblockPropertyType>
   </file>
-  <file src="app/Http/Livewire/Aplikasi/Concerns/PengaturanRKAT.php">
+  <file src="app/Jobs/Keuangan/BayarPiutangPasien.php">
+    <ImplicitToStringCast occurrences="2">
+      <code>DB::raw('besar_cicilan + diskon_piutang + tidak_terbayar')</code>
+      <code>DB::raw('besar_cicilan + diskon_piutang + tidak_terbayar')</code>
+    </ImplicitToStringCast>
+  </file>
+  <file src="app/Livewire/Concerns/LiveTable.php">
+    <RedundantCondition occurrences="1">
+      <code>null</code>
+    </RedundantCondition>
+  </file>
+  <file src="app/Livewire/Concerns/MenuTracker.php">
+    <PossiblyInvalidMethodCall occurrences="1">
+      <code>ip</code>
+    </PossiblyInvalidMethodCall>
+    <PossiblyNullReference occurrences="1">
+      <code>ip</code>
+    </PossiblyNullReference>
+  </file>
+  <file src="app/Livewire/Pages/Aplikasi/Concerns/PengaturanRKAT.php">
     <InvalidPropertyAssignmentValue occurrences="1">
       <code>$settings-&gt;tahun</code>
     </InvalidPropertyAssignmentValue>
+  </file>
+  <file src="app/Livewire/Pages/HakAkses/Khanza.php">
+    <UndefinedMagicMethod occurrences="2">
+      <code>hasRole</code>
+      <code>hasRole</code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Livewire/Pages/HakAkses/Siap/ModalPerizinan.php">
+    <UndefinedMagicMethod occurrences="2">
+      <code>hasRole</code>
+      <code>hasRole</code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Livewire/Pages/Keuangan/AccountReceivable.php">
+    <ImplicitToStringCast occurrences="1">
+      <code>DB::raw('concat(penagihan_piutang.no_tagihan, "_", penagihan_piutang.kd_pj, "_", detail_penagihan_piutang.no_rawat)')</code>
+    </ImplicitToStringCast>
+  </file>
+  <file src="app/Livewire/Pages/Keuangan/LabaRugiRekeningPerPeriode.php">
+    <UndefinedMagicMethod occurrences="1">
+      <code>whereTipe</code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="app/Livewire/Pages/Keuangan/LaporanTrialBalance.php">
+    <PossiblyNullArgument occurrences="1">
+      <code>$rekening-&gt;nm_rek</code>
+    </PossiblyNullArgument>
+    <UndefinedMagicPropertyFetch occurrences="4">
+      <code>$rekening-&gt;total_debet</code>
+      <code>$rekening-&gt;total_debet</code>
+      <code>$rekening-&gt;total_kredit</code>
+      <code>$rekening-&gt;total_kredit</code>
+    </UndefinedMagicPropertyFetch>
+  </file>
+  <file src="app/Livewire/Pages/Keuangan/Modal/RKATInputPenetapan.php">
     <PossiblyNullReference occurrences="1">
-      <code>hasRole</code>
-    </PossiblyNullReference>
-    <UndefinedInterfaceMethod occurrences="1">
-      <code>hasRole</code>
-    </UndefinedInterfaceMethod>
-  </file>
-  <file src="app/Http/Livewire/Aplikasi/Modal/InputBidangUnit.php">
-    <PossiblyNullReference occurrences="2">
-      <code>can</code>
-      <code>can</code>
-    </PossiblyNullReference>
-    <UndefinedInterfaceMethod occurrences="2">
-      <code>can</code>
-      <code>can</code>
-    </UndefinedInterfaceMethod>
-  </file>
-  <file src="app/Http/Livewire/HakAkses/Khanza.php">
-    <PossiblyNullReference occurrences="2">
-      <code>hasRole</code>
-      <code>hasRole</code>
-    </PossiblyNullReference>
-    <UndefinedInterfaceMethod occurrences="2">
-      <code>hasRole</code>
-      <code>hasRole</code>
-    </UndefinedInterfaceMethod>
-  </file>
-  <file src="app/Http/Livewire/HakAkses/Siap/ModalPerizinan.php">
-    <PossiblyNullReference occurrences="2">
-      <code>hasRole</code>
-      <code>hasRole</code>
-    </PossiblyNullReference>
-    <UndefinedInterfaceMethod occurrences="2">
-      <code>hasRole</code>
-      <code>hasRole</code>
-    </UndefinedInterfaceMethod>
-  </file>
-  <file src="app/Http/Livewire/Keuangan/AccountPayable.php">
-    <PossiblyNullReference occurrences="8">
-      <code>can</code>
-      <code>can</code>
-      <code>can</code>
-      <code>can</code>
-      <code>can</code>
-      <code>can</code>
-      <code>can</code>
-      <code>can</code>
-    </PossiblyNullReference>
-    <UndefinedInterfaceMethod occurrences="8">
-      <code>can</code>
-      <code>can</code>
-      <code>can</code>
-      <code>can</code>
-      <code>can</code>
-      <code>can</code>
-      <code>can</code>
-      <code>can</code>
-    </UndefinedInterfaceMethod>
-  </file>
-  <file src="app/Http/Livewire/Keuangan/Modal/RKATInputKategori.php">
-    <PossiblyNullReference occurrences="2">
-      <code>can</code>
-      <code>can</code>
-    </PossiblyNullReference>
-    <UndefinedInterfaceMethod occurrences="2">
-      <code>can</code>
-      <code>can</code>
-    </UndefinedInterfaceMethod>
-  </file>
-  <file src="app/Http/Livewire/Keuangan/Modal/RKATInputPelaporan.php">
-    <NoInterfaceProperties occurrences="1">
-      <code>Auth::user()-&gt;nik</code>
-    </NoInterfaceProperties>
-    <PossiblyNullPropertyFetch occurrences="1">
-      <code>Auth::user()-&gt;nik</code>
-    </PossiblyNullPropertyFetch>
-    <PossiblyNullReference occurrences="4">
-      <code>can</code>
-      <code>can</code>
-      <code>can</code>
       <code>delete</code>
     </PossiblyNullReference>
-    <UndefinedInterfaceMethod occurrences="3">
-      <code>can</code>
-      <code>can</code>
-      <code>can</code>
-    </UndefinedInterfaceMethod>
   </file>
-  <file src="app/Http/Livewire/Keuangan/Modal/RKATInputPenetapan.php">
-    <PossiblyNullReference occurrences="2">
-      <code>can</code>
-      <code>can</code>
-    </PossiblyNullReference>
-    <UndefinedInterfaceMethod occurrences="2">
-      <code>can</code>
-      <code>can</code>
-    </UndefinedInterfaceMethod>
+  <file src="app/Livewire/Pages/Keuangan/Modal/UbahTanggalJurnal.php">
+    <UndefinedPropertyFetch occurrences="1">
+      <code>$jurnalBackup-&gt;tgl_jurnal_asli</code>
+    </UndefinedPropertyFetch>
   </file>
-  <file src="app/Http/Livewire/Keuangan/Modal/UbahTanggalJurnal.php">
-    <NoInterfaceProperties occurrences="1">
-      <code>Auth::user()-&gt;nik</code>
-    </NoInterfaceProperties>
-    <PossiblyNullPropertyFetch occurrences="1">
-      <code>Auth::user()-&gt;nik</code>
-    </PossiblyNullPropertyFetch>
-    <PossiblyNullReference occurrences="3">
-      <code>can</code>
-      <code>can</code>
-      <code>cannot</code>
-    </PossiblyNullReference>
-    <UndefinedInterfaceMethod occurrences="3">
-      <code>can</code>
-      <code>can</code>
-      <code>cannot</code>
-    </UndefinedInterfaceMethod>
+  <file src="app/Livewire/Pages/Keuangan/RKATPemantauan.php">
+    <UndefinedMagicPropertyFetch occurrences="2">
+      <code>$item-&gt;bulan</code>
+      <code>$item-&gt;total_dipakai</code>
+    </UndefinedMagicPropertyFetch>
   </file>
-  <file src="app/Http/Livewire/Keuangan/RKATPemantauan.php">
-    <PossiblyInvalidArgument occurrences="1">
-      <code>$pemakaianAnggaranBidang</code>
-    </PossiblyInvalidArgument>
-  </file>
-  <file src="app/Http/Livewire/Keuangan/RKATPenetapan.php">
-    <PossiblyNullReference occurrences="2">
-      <code>can</code>
+  <file src="app/Livewire/Pages/Keuangan/RKATPenetapan.php">
+    <UndefinedMagicMethod occurrences="1">
       <code>hasRole</code>
-    </PossiblyNullReference>
-    <UndefinedInterfaceMethod occurrences="2">
-      <code>can</code>
-      <code>hasRole</code>
-    </UndefinedInterfaceMethod>
+    </UndefinedMagicMethod>
   </file>
-  <file src="app/Http/Livewire/Logistik/InputMinmaxStok.php">
-    <PossiblyNullReference occurrences="1">
-      <code>can</code>
-    </PossiblyNullReference>
-    <UndefinedInterfaceMethod occurrences="1">
-      <code>can</code>
-    </UndefinedInterfaceMethod>
-  </file>
-  <file src="app/Http/Livewire/Perawatan/DaftarPasienRanap.php">
-    <PossiblyNullReference occurrences="1">
-      <code>can</code>
-    </PossiblyNullReference>
-    <UndefinedInterfaceMethod occurrences="1">
-      <code>can</code>
-    </UndefinedInterfaceMethod>
-  </file>
-  <file src="app/Http/Livewire/RekamMedis/LaporanStatistik.php">
-    <UndefinedMethod occurrences="1">
-      <code>map</code>
-    </UndefinedMethod>
-  </file>
-  <file src="app/Http/Livewire/User/Khanza/SetHakAkses.php">
-    <PossiblyNullReference occurrences="1">
-      <code>hasRole</code>
-    </PossiblyNullReference>
+  <file src="app/Livewire/Pages/User/Khanza/SetHakAkses.php">
     <RedundantCondition occurrences="2">
       <code>!$this-&gt;isDeferred</code>
       <code>$this-&gt;isDeferred</code>
     </RedundantCondition>
-    <UndefinedInterfaceMethod occurrences="1">
+    <UndefinedMagicMethod occurrences="1">
       <code>hasRole</code>
-    </UndefinedInterfaceMethod>
+    </UndefinedMagicMethod>
   </file>
-  <file src="app/Http/Livewire/User/Khanza/TransferHakAkses.php">
+  <file src="app/Livewire/Pages/User/Khanza/TransferHakAkses.php">
     <ImplicitToStringCast occurrences="2">
       <code>DB::raw('trim(pegawai.nik)')</code>
       <code>DB::raw('trim(pegawai.nik)')</code>
@@ -197,67 +122,69 @@
     <PossiblyNullArgument occurrences="1">
       <code>$this-&gt;nrp</code>
     </PossiblyNullArgument>
-    <PossiblyNullReference occurrences="1">
+    <UndefinedMagicMethod occurrences="1">
       <code>hasRole</code>
-    </PossiblyNullReference>
-    <UndefinedInterfaceMethod occurrences="1">
-      <code>hasRole</code>
-    </UndefinedInterfaceMethod>
+    </UndefinedMagicMethod>
   </file>
-  <file src="app/Http/Livewire/User/Manajamen.php">
-    <PossiblyNullReference occurrences="2">
+  <file src="app/Livewire/Pages/User/ManajemenUser.php">
+    <UndefinedMagicMethod occurrences="2">
       <code>hasRole</code>
       <code>impersonate</code>
-    </PossiblyNullReference>
-    <UndefinedInterfaceMethod occurrences="2">
-      <code>hasRole</code>
-      <code>impersonate</code>
-    </UndefinedInterfaceMethod>
+    </UndefinedMagicMethod>
   </file>
-  <file src="app/Http/Livewire/User/Siap/SetPerizinan.php">
-    <InvalidReturnStatement occurrences="1">
-      <code>Permission::whereDoesntHave('roles')-&gt;get()</code>
-    </InvalidReturnStatement>
-    <LessSpecificReturnStatement occurrences="1">
-      <code>Role::with('permissions')-&gt;get()</code>
-    </LessSpecificReturnStatement>
+  <file src="app/Livewire/Pages/User/Siap/LihatAktivitas.php">
+    <LessSpecificReturnStatement occurrences="1"/>
     <MoreSpecificReturnType occurrences="1">
-      <code>\Illuminate\Database\Eloquent\Collection&lt;\App\Models\Aplikasi\Role&gt;</code>
+      <code>\Illuminate\Database\Eloquent\Collection|array&lt;empty, empty&gt;</code>
     </MoreSpecificReturnType>
-    <PossiblyNullArgument occurrences="2">
-      <code>$this-&gt;checkedRoles</code>
-      <code>$this-&gt;nrp</code>
-    </PossiblyNullArgument>
-    <PossiblyNullReference occurrences="2">
-      <code>hasRole</code>
+  </file>
+  <file src="app/Livewire/Pages/User/Siap/SetPerizinan.php">
+    <PossiblyNullReference occurrences="1">
       <code>syncRoles</code>
     </PossiblyNullReference>
-    <UndefinedInterfaceMethod occurrences="1">
-      <code>hasRole</code>
-    </UndefinedInterfaceMethod>
+    <PossiblyUndefinedMethod occurrences="1">
+      <code>user</code>
+    </PossiblyUndefinedMethod>
   </file>
-  <file src="app/Http/Livewire/User/Siap/TransferPerizinan.php">
+  <file src="app/Livewire/Pages/User/Siap/TransferPerizinan.php">
     <ImplicitToStringCast occurrences="1">
       <code>DB::raw('trim(pegawai.nik)')</code>
     </ImplicitToStringCast>
     <PossiblyNullArgument occurrences="1">
       <code>$this-&gt;roles</code>
     </PossiblyNullArgument>
-    <PossiblyNullReference occurrences="1">
+    <UndefinedMagicMethod occurrences="1">
       <code>hasRole</code>
-    </PossiblyNullReference>
-    <UndefinedInterfaceMethod occurrences="1">
-      <code>hasRole</code>
-    </UndefinedInterfaceMethod>
+    </UndefinedMagicMethod>
   </file>
-  <file src="app/Http/Middleware/TrustProxies.php">
-    <NonInvariantDocblockPropertyType occurrences="1">
-      <code>$headers</code>
-    </NonInvariantDocblockPropertyType>
+  <file src="app/Models/Aplikasi/Permission.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>getModelForGuard($this-&gt;attributes['guard_name'] ?? config('auth.defaults.guard'))</code>
+    </ArgumentTypeCoercion>
+    <InvalidReturnStatement occurrences="1">
+      <code>static::getPermissions($params, true)-&gt;first()</code>
+    </InvalidReturnStatement>
+    <InvalidReturnType occurrences="1">
+      <code>\Spatie\Permission\Contracts\Permission</code>
+    </InvalidReturnType>
+    <PossiblyNullArgument occurrences="1">
+      <code>getModelForGuard($this-&gt;attributes['guard_name'] ?? config('auth.defaults.guard'))</code>
+    </PossiblyNullArgument>
+  </file>
+  <file src="app/Models/Aplikasi/Role.php">
+    <ArgumentTypeCoercion occurrences="1">
+      <code>getModelForGuard($this-&gt;attributes['guard_name'] ?? config('auth.defaults.guard'))</code>
+    </ArgumentTypeCoercion>
+    <MoreSpecificImplementedParamType occurrences="1">
+      <code>$permission</code>
+    </MoreSpecificImplementedParamType>
+    <PossiblyNullArgument occurrences="1">
+      <code>getModelForGuard($this-&gt;attributes['guard_name'] ?? config('auth.defaults.guard'))</code>
+    </PossiblyNullArgument>
   </file>
   <file src="app/Models/Aplikasi/User.php">
     <ImplicitToStringCast occurrences="7">
-      <code>DB::raw('AES_DECRYPT(id_user, "nur")')</code>
+      <code>DB::raw('trim(AES_DECRYPT(id_user, "nur"))')</code>
       <code>DB::raw('trim(dokter.kd_dokter)')</code>
       <code>DB::raw('trim(pegawai.nik)')</code>
       <code>DB::raw('trim(pegawai.nik)')</code>
@@ -266,20 +193,21 @@
       <code>DB::raw('trim(petugas.nip)')</code>
     </ImplicitToStringCast>
   </file>
+  <file src="app/Models/Farmasi/Inventaris/GudangObat.php">
+    <PossiblyNullArgument occurrences="2">
+      <code>$waktuShift-&gt;jam_masuk</code>
+      <code>$waktuShift-&gt;jam_pulang</code>
+    </PossiblyNullArgument>
+    <PossiblyNullPropertyFetch occurrences="2">
+      <code>$waktuShift-&gt;jam_masuk</code>
+      <code>$waktuShift-&gt;jam_pulang</code>
+    </PossiblyNullPropertyFetch>
+  </file>
   <file src="app/Models/Farmasi/Inventaris/SuratPemesananObat.php">
     <ImplicitToStringCast occurrences="2">
       <code>$jumlahObatYangBerbeda</code>
       <code>$pemesananYangDatang</code>
     </ImplicitToStringCast>
-  </file>
-  <file src="app/Models/Farmasi/Obat.php">
-    <ImplicitToStringCast occurrences="2">
-      <code>$stokGudangAP</code>
-      <code>$stokGudangIFI</code>
-    </ImplicitToStringCast>
-  </file>
-  <file src="app/Models/Farmasi/PenjualanWalkInObat.php">
-    <ImplicitToStringCast occurrences="1"/>
   </file>
   <file src="app/Models/Farmasi/ResepObat.php">
     <ImplicitToStringCast occurrences="2">
@@ -296,9 +224,6 @@
       <code>DB::raw("{$db}.pemesanan pemesanan")</code>
       <code>DB::raw("{$db}.rekening rekening")</code>
     </ImplicitToStringCast>
-    <PossiblyNullPropertyFetch occurrences="1">
-      <code>$latest-&gt;waktu_jurnal</code>
-    </PossiblyNullPropertyFetch>
   </file>
   <file src="app/Models/Keuangan/Jurnal/JurnalNonMedis.php">
     <ImplicitToStringCast occurrences="6">
@@ -326,7 +251,7 @@
       <code>DB::raw($sik . '.reg_periksa reg_periksa')</code>
     </ImplicitToStringCast>
   </file>
-  <file src="app/Models/Keuangan/PenagihanPiutangDetail.php">
+  <file src="app/Models/Keuangan/PenagihanPiutang.php">
     <ImplicitToStringCast occurrences="4">
       <code>DB::raw('penjab penjab_pasien')</code>
       <code>DB::raw('penjab penjab_pasien')</code>
@@ -351,11 +276,26 @@
       <code>DB::raw('pegawai pegawai_menyetujui')</code>
       <code>DB::raw('pegawai pegawai_penagih')</code>
     </ImplicitToStringCast>
+    <PossiblyNullArgument occurrences="1">
+      <code>$jurnal-&gt;keterangan</code>
+    </PossiblyNullArgument>
+    <UndefinedMagicPropertyFetch occurrences="13">
+      <code>$jurnal-&gt;besar_cicilan</code>
+      <code>$jurnal-&gt;kd_pj</code>
+      <code>$jurnal-&gt;kd_rek</code>
+      <code>$jurnal-&gt;nama_bank</code>
+      <code>$jurnal-&gt;nip</code>
+      <code>$jurnal-&gt;nip_menyetujui</code>
+      <code>$jurnal-&gt;no_rawat</code>
+      <code>$jurnal-&gt;no_rkm_medis</code>
+      <code>$jurnal-&gt;no_tagihan</code>
+      <code>$jurnal-&gt;tgl_bayar</code>
+      <code>$jurnal-&gt;tgl_jatuh_tempo</code>
+      <code>$jurnal-&gt;tgl_penagihan</code>
+      <code>$jurnal-&gt;waktu_jurnal</code>
+    </UndefinedMagicPropertyFetch>
   </file>
   <file src="app/Models/Keuangan/PiutangPasien.php">
-    <ImplicitToStringCast occurrences="1">
-      <code>$sisaPiutang</code>
-    </ImplicitToStringCast>
     <UndefinedMagicMethod occurrences="1">
       <code>endOfMont</code>
     </UndefinedMagicMethod>
@@ -372,16 +312,21 @@
     </ImplicitToStringCast>
   </file>
   <file src="app/Models/Perawatan/RegistrasiPasien.php">
-    <ImplicitToStringCast occurrences="1">
+    <ImplicitToStringCast occurrences="2">
+      <code>DB::raw('dokter dokter_dpjp')</code>
       <code>DB::raw('dokter dokter_pj')</code>
     </ImplicitToStringCast>
+    <UndefinedThisPropertyFetch occurrences="2">
+      <code>$this-&gt;alamat</code>
+      <code>$this-&gt;alamat</code>
+    </UndefinedThisPropertyFetch>
   </file>
   <file src="app/Providers/AppServiceProvider.php">
     <UndefinedInterfaceMethod occurrences="1">
       <code>setQueryGrammar</code>
     </UndefinedInterfaceMethod>
   </file>
-  <file src="app/Support/BPJS/BpjsService.php">
+  <file src="app/Services/BPJS/BpjsService.php">
     <PossiblyNullArgument occurrences="2">
       <code>$key</code>
       <code>$this-&gt;response[$key]</code>
@@ -396,59 +341,39 @@
       <code>$this-&gt;response</code>
     </PossiblyNullReference>
   </file>
-  <file src="app/Support/Traits/Eloquent/Searchable.php">
-    <RedundantCondition occurrences="2">
-      <code>is_array($this-&gt;searchColumns)</code>
-      <code>property_exists($this, 'searchColumns') &amp;&amp; is_array($this-&gt;searchColumns)</code>
-    </RedundantCondition>
-  </file>
-  <file src="app/Support/Traits/Eloquent/Sortable.php">
-    <ImplicitToStringCast occurrences="1">
-      <code>$direction</code>
-    </ImplicitToStringCast>
-    <TooManyTemplateParams occurrences="2">
-      <code>array&lt;string, \Illuminate\Database\Query\Expression&lt;string&gt;|string&gt;</code>
-      <code>array&lt;string, \Illuminate\Database\Query\Expression&lt;string&gt;|string&gt;</code>
-    </TooManyTemplateParams>
-  </file>
-  <file src="app/Support/Traits/Livewire/LiveTable.php">
-    <RedundantCondition occurrences="1">
-      <code>null</code>
-    </RedundantCondition>
-  </file>
-  <file src="app/Support/Traits/Livewire/MenuTracker.php">
-    <NoInterfaceProperties occurrences="1">
-      <code>Auth::user()-&gt;nik</code>
-    </NoInterfaceProperties>
-    <PossiblyInvalidMethodCall occurrences="1">
-      <code>ip</code>
-    </PossiblyInvalidMethodCall>
-    <PossiblyNullPropertyFetch occurrences="1">
-      <code>Auth::user()-&gt;nik</code>
-    </PossiblyNullPropertyFetch>
-    <PossiblyNullReference occurrences="1">
-      <code>ip</code>
-    </PossiblyNullReference>
+  <file src="app/Support/Menu.php">
+    <UndefinedInterfaceMethod occurrences="8">
+      <code>hasRole</code>
+      <code>hasRole</code>
+      <code>hasRole</code>
+      <code>hasRole</code>
+      <code>hasRole</code>
+      <code>hasRole</code>
+      <code>hasRole</code>
+      <code>hasRole</code>
+    </UndefinedInterfaceMethod>
   </file>
   <file src="app/Support/helpers.php">
-    <NoInterfaceProperties occurrences="1">
-      <code>Auth::user()-&gt;nik</code>
-    </NoInterfaceProperties>
-    <PossiblyInvalidMethodCall occurrences="1">
+    <PossiblyInvalidMethodCall occurrences="2">
+      <code>ip</code>
       <code>ip</code>
     </PossiblyInvalidMethodCall>
-    <PossiblyNullPropertyFetch occurrences="1">
-      <code>Auth::user()-&gt;nik</code>
-    </PossiblyNullPropertyFetch>
-    <PossiblyNullReference occurrences="1">
+    <PossiblyNullReference occurrences="2">
+      <code>ip</code>
       <code>ip</code>
     </PossiblyNullReference>
-    <UndefinedInterfaceMethod occurrences="5">
+    <RedundantCondition occurrences="1">
+      <code>is_null($default)</code>
+    </RedundantCondition>
+    <UndefinedInterfaceMethod occurrences="8">
       <code>disableQueryLog</code>
       <code>disableQueryLog</code>
       <code>disableQueryLog</code>
       <code>enableQueryLog</code>
+      <code>flushQueryLog</code>
+      <code>flushQueryLog</code>
       <code>getQueryLog</code>
+      <code>logging</code>
     </UndefinedInterfaceMethod>
   </file>
 </files>
