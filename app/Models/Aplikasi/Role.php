@@ -38,7 +38,12 @@ class Role extends Model implements RoleContract
         return config('permission.table_names.roles', parent::getTable());
     }
 
-    public static function create(array $attributes = [])
+    /**
+     * @return static&\Illuminate\Database\Eloquent\Builder
+     *
+     * @psalm-return static&\Illuminate\Database\Eloquent\Builder<static>
+     */
+    public static function create(array $attributes = []): self
     {
         $attributes['guard_name'] = $attributes['guard_name'] ?? Guard::getDefaultName(static::class);
 
@@ -143,7 +148,12 @@ class Role extends Model implements RoleContract
         return $role;
     }
 
-    protected static function findByParam(array $params = [])
+    /**
+     * @return null|static&\Illuminate\Database\Eloquent\Builder
+     *
+     * @psalm-return null|static&\Illuminate\Database\Eloquent\Builder<static>
+     */
+    protected static function findByParam(array $params = []): ?self
     {
         $query = static::query();
 

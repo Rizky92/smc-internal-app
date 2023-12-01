@@ -38,7 +38,12 @@ class Permission extends Model implements PermissionContract
         return config('permission.table_names.permissions', parent::getTable());
     }
 
-    public static function create(array $attributes = [])
+    /**
+     * @return static&\Illuminate\Database\Eloquent\Builder
+     *
+     * @psalm-return static&\Illuminate\Database\Eloquent\Builder<static>
+     */
+    public static function create(array $attributes = []): self
     {
         $attributes['guard_name'] = $attributes['guard_name'] ?? Guard::getDefaultName(static::class);
 
@@ -145,9 +150,11 @@ class Permission extends Model implements PermissionContract
     /**
      * Get the current cached first permission.
      *
-     * @return \Spatie\Permission\Contracts\Permission
+     * @return \Illuminate\Database\Eloquent\Model|null
+     *
+     * @psalm-return TModel|null
      */
-    protected static function getPermission(array $params = []): ?PermissionContract
+    protected static function getPermission(array $params = [])
     {
         return static::getPermissions($params, true)->first();
     }
