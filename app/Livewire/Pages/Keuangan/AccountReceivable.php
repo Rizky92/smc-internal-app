@@ -15,7 +15,6 @@ use App\Livewire\Concerns\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -45,9 +44,6 @@ class AccountReceivable extends Component
     /** @var array */
     public $tagihanDipilih;
 
-    /** @var array */
-    public $sortBySelected;
-
     /** @var int|float */
     public $totalDibayar;
 
@@ -76,12 +72,15 @@ class AccountReceivable extends Component
             : PenagihanPiutang::query()
                 ->accountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
                 ->search($this->cari)
-                ->when(! empty($this->tagihanDipilih), fn (Builder $q): Builder => $q->orWhereIn(
-                    DB::raw("concat_ws('_', penagihan_piutang.no_tagihan, penagihan_piutang.kd_pj, detail_penagihan_piutang.no_rawat)"),
-                    array_keys($this->tagihanDipilih)))
-                ->when(! empty($this->sortBySelected), fn (Builder $q): Builder => $q
-                    ->orderByField(DB::raw("concat_ws('_', penagihan_piutang.no_tagihan, detail_penagihan_piutang.no_rawat, penjab_tagihan.nama_penjab)"), $this->sortBySelected))
                 ->sortWithColumns($this->sortColumns)
+                ->when(! empty($this->tagihanDipilih), fn (Builder $q): Builder => $q
+                    ->orWhereIn(
+                        DB::raw("concat_ws('_', penagihan_piutang.no_tagihan, penagihan_piutang.kd_pj, detail_penagihan_piutang.no_rawat)"),
+                        array_keys($this->tagihanDipilih))
+                    ->orderByField(
+                        DB::raw("concat_ws('_', penagihan_piutang.no_tagihan, penagihan_piutang.kd_pj, detail_penagihan_piutang.no_rawat)"),
+                        array_keys($this->tagihanDipilih))
+                )
                 ->paginate($this->perpage);
     }
 
@@ -118,28 +117,8 @@ class AccountReceivable extends Component
     {
         $this->rekalkulasiPembayaran();
 
-        $this->prosesSortBySelected();
-
         return view('livewire.pages.keuangan.account-receivable')
             ->layout(BaseLayout::class, ['title' => 'Piutang Aging (Account Receivable)']);
-    }
-
-    protected function prosesSortBySelected(): void
-    {
-        if (empty($this->tagihanDipilih)) {
-            return;
-        }
-
-        $this->sortBySelected = PenagihanPiutang::query()
-            ->join('detail_penagihan_piutang', 'penagihan_piutang.no_tagihan', '=', 'detail_penagihan_piutang.no_tagihan')
-            ->join('penjab', 'penagihan_piutang.kd_pj', '=', 'penjab.kd_pj')
-            ->whereIn(
-                DB::raw('concat_ws("_", penagihan_piutang.no_tagihan, penagihan_piutang.kd_pj, detail_penagihan_piutang.no_rawat)'),
-                array_keys($this->tagihanDipilih)
-            )
-            ->get()
-            ->map(fn (PenagihanPiutang $model): string => implode('_', [$model->no_tagihan, $model->no_rawat, $model->png_jawab]))
-            ->all();
     }
 
     protected function rekalkulasiPembayaran(): void
@@ -169,7 +148,6 @@ class AccountReceivable extends Component
     {
         if (! $pilih) {
             $this->tagihanDipilih = [];
-            $this->sortBySelected = [];
             $this->totalDibayar = 0;
 
             return;
@@ -245,7 +223,6 @@ class AccountReceivable extends Component
             });
 
         $this->tagihanDipilih = [];
-        $this->sortBySelected = [];
         $this->rekalkulasiPembayaran();
         $this->dispatchBrowserEvent('clear-selected');
 
@@ -263,7 +240,6 @@ class AccountReceivable extends Component
         $this->tglBayar = now()->format('Y-m-d');
 
         $this->tagihanDipilih = [];
-        $this->sortBySelected = [];
         $this->totalDibayar = 0;
     }
 

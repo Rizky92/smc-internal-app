@@ -43,6 +43,10 @@ trait Sortable
             ->merge($this->sortColumns)
             ->merge($this->sortColumns());
 
+        if (empty($rawColumns) || empty($initialColumnOrders)) {
+            return $query;
+        }
+
         if (empty($sortColumns) && in_array(head($rawColumns), ['asc', 'desc'])) {
             $initialColumnOrders = $rawColumns;
         } else {

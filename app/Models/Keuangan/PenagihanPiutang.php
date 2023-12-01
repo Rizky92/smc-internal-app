@@ -153,13 +153,13 @@ class PenagihanPiutang extends Model
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join(DB::raw('penjab penjab_tagihan'), 'penagihan_piutang.kd_pj', '=', 'penjab_tagihan.kd_pj')
             ->join(DB::raw('penjab penjab_pasien'), 'reg_periksa.kd_pj', '=', 'penjab_pasien.kd_pj')
+            ->whereBetween('penagihan_piutang.tanggal', [$tglAwal, $tglAkhir])
             ->when($belumLunas, fn (Builder $q): Builder => $q->where('piutang_pasien.status', '!=', 'Lunas'))
             ->when($jaminanPasien !== '-', fn (Builder $q): Builder => $q->where('reg_periksa.kd_pj', $jaminanPasien))
             ->when($jenisPerawatan !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.status_lanjut', $jenisPerawatan))
             ->where(fn (Builder $q): Builder => $q
                 ->whereNull('bayar_piutang.no_rawat')
                 ->orWhereIn('detail_penagihan_piutang.no_rawat', $sqlFilterOnlyPaid))
-            ->whereBetween('penagihan_piutang.tanggal', [$tglAwal, $tglAkhir])
             ->orderByRaw('datediff(?, penagihan_piutang.tanggal) desc', [$tglAkhir])
             ->orderBy('detail_penagihan_piutang.no_rawat', 'asc')
             ->orderBy('detail_penagihan_piutang.no_tagihan', 'asc');
