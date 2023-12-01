@@ -4,6 +4,7 @@ namespace App\Models\Perawatan;
 
 use App\Database\Eloquent\Model;
 use App\Models\Farmasi\PemberianObat;
+use App\Models\Perawatan\Poliklinik;
 use App\Models\Kepegawaian\Dokter;
 use App\Models\Laboratorium\HasilPeriksaLab;
 use App\Models\Laboratorium\PermintaanLabMB;
@@ -743,5 +744,13 @@ class RegistrasiPasien extends Model
                 'detail_pemberian_obat.kode_brng',
                 'detail_pemberian_obat.kd_bangsal',
             ]);
+    }
+
+    public static function hitungData($kd_poli, $kd_dokter, $tanggal)
+    {
+        return self::where('kd_poli', $kd_poli)
+            ->where('kd_dokter', $kd_dokter)
+            ->whereDate('tgl_registrasi', $tanggal)
+            ->count();
     }
 }

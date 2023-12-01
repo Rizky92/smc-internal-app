@@ -6,6 +6,8 @@ use App\Http\Controllers\Auth\LogoutOtherSessionsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KamarController;
+use App\Http\Controllers\AntrianPoliController;
+use App\Http\Controllers\JadwalController;
 use App\Livewire\Pages\Aplikasi;
 use App\Livewire\Pages\Farmasi;
 use App\Livewire\Pages\HakAkses;
@@ -14,7 +16,6 @@ use App\Livewire\Pages\Laboratorium;
 use App\Livewire\Pages\Logistik;
 use App\Livewire\Pages\Perawatan;
 use App\Livewire\Pages\RekamMedis;
-// use App\Livewire\Pages\Informasi;
 use App\Livewire\Pages\User;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Support\Facades\Route;
@@ -35,6 +36,11 @@ use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 Route::get('/', HomeController::class);
 
 Route::get('/informasi-kamar', [KamarController::class, 'index']);
+
+Route::get('/jadwal', [JadwalController::class, 'jadwal']);
+
+Route::get('/antrian/{kd_poli}/{kd_dokter}', [AntrianPoliController::class, 'show'])
+    ->name('antrian.show');
 
 Route::get('login', [LoginController::class, 'create'])->name('login');
 Route::post('login', [LoginController::class, 'store']);
