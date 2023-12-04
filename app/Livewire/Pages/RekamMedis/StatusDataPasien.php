@@ -68,6 +68,32 @@ class StatusDataPasien extends Component
                 ->paginate($this->perpage);
     }
 
+    protected function formatAskepRalan($item)
+    {
+        $askepRalanArray = [
+            'umum' => $item->askep_ralan_umum,
+            'gigi' => $item->askep_ralan_gigi,
+            'bidan' => $item->askep_ralan_bidan,
+            'bayi' => $item->askep_ralan_bayi,
+            'psikiatri' => $item->askep_ralan_psikiatri,   
+            'geriatri' => $item->askep_ralan_geriatri,
+        ];
+
+        // Filter out empty values
+        $askepRalanArray = array_filter($askepRalanArray);
+
+        // Convert the keys to capitalize the first letter
+        $askepRalanArray = array_map(function ($key) {
+            return ucfirst($key);
+        }, array_keys($askepRalanArray));
+
+        // Combine the non-empty values with '/'
+        $formattedAskepRalan = implode(', ', $askepRalanArray);
+
+        return $formattedAskepRalan ? 'Ada (' . $formattedAskepRalan . ')' : 'Tidak Ada';
+    }
+
+
     public function render(): View
     {
         return view('livewire.pages.rekam-medis.status-data-pasien')
