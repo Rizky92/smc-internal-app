@@ -12,14 +12,12 @@
     <title>{{ config('app.name') }}</title>
   </head>
   <body>
-
     <header class="d-flex flex-wrap justify-content-center pb-3 mb-4 border-bottom shadow header">
         <div class="container-fluid d-flex justify-content-center">
             <img src="{{ asset('img/logo.png') }}" alt="" width="100" height="80" class="d-inline-block align-text-top">
             <a class="text-pandan text-decoration-none" href="#">ANTRIAN POLIKLINIK RS SMC</a>
         </div>
     </header>
-    
     <div class="container-fluid">
         <div class="row">
             <div class="col text-center">
@@ -30,26 +28,19 @@
                     @if ($nextAntrian)
                         <span>{{ $nextAntrian->no_reg }}</span>
                         <script>
+                            function callPasien() {
+                                let noAntrian = '{{ $nextAntrian->no_reg }}';
+                                let poli = '{{ $namaPoli }}';
+                                    
+                                let message = `Nomor antrian ${noAntrian}, ${poli}`;
+                        
+                                responsiveVoice.speak(message, 'Indonesian Female', {
+                                    rate: 0.7
+                                });
+                            }
                             document.addEventListener('DOMContentLoaded', function () {
                                 callPasien();
-                            });
-                            function callPasien() {
-                                @foreach ($antrianPasien as $pasien)
-                                    let noRawat = '{{ $pasien->no_rawat }}';
-                                    axios.get(`/get-antrian-info/${noRawat}`)
-                                        .then(response => {
-                                            let noAntrian = response.data.no_reg;
-                                            let poli = response.data.nm_poli;
-
-                                            responsiveVoice.speak(`Nomor antrian ${noAntrian}, ${poli}`, 'Indonesian Female', {
-                                                rate: 0.7
-                                            });
-                                        })
-                                        .catch(error => {
-                                            console.error('Error fetching data:', error);
-                                        });
-                                @endforeach
-                            }
+                             });
                         </script>
                     @endif
                     <h2><strong>{{ $namaPoli }}</strong></h2>
@@ -59,69 +50,33 @@
           <div class="col text-white scrollable-content">
             <div class="row">
                 <div class="col-12">
-                <p style="height: 30px;"></p>
-                <p style="height: 30px;"></p>
-                <p style="height: 30px;"></p>
-                <p style="height: 30px;"></p>
-                <p style="height: 30px;"></p>
-                <p style="height: 30px;"></p>
-                <p style="height: 30px;"></p>
-                <p style="height: 30px;"></p>
-                <p style="height: 30px;"></p>
-                <p style="height: 30px;"></p>
-                <p style="height: 30px;"></p>
-                <p style="height: 30px;"></p>
-                <p style="height: 30px;"></p>
-                <p style="height: 30px;"></p>
-                <p style="height: 30px;"></p>
-                <p style="height: 30px;"></p>
-                <p style="height: 30px;"></p>
-                <p style="height: 30px;"></p>
-                <p style="height: 30px;"></p>
-                <p style="height: 30px;"></p>
-                    @foreach ($antrianPasien as $pasien)
-                        <div class="container pb-3">
-                            <div class="row bg-pandan">
-                                <div class="col-5 align-self-center px-4">
-                                    <h1 class="display-1"><strong>{{ $pasien->no_reg }}</strong></h1>
-                                </div>
-                                <div class="col-7">
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <h1 class="display-4">
-                                                {{ $namaPoli }}
-                                            </h1>
-                                        </div>
-                                        <div class="col-12">
-                                            <h1 class="display-3">{{ $namaDokter }}</h1>
-                                        </div>
+                @foreach ($antrianPasien as $pasien)
+                    <div class="container pb-3">
+                        <div class="row bg-pandan">
+                            <div class="col-5 align-self-center px-4">
+                                <h1 class="display-1"><strong>{{ $pasien->no_reg }}</strong></h1>
+                            </div>
+                            <div class="col-7">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h1 class="display-4">
+                                            {{ $namaPoli }}
+                                        </h1>
+                                    </div>
+                                    <div class="col-12">
+                                        <h1 class="display-3">{{ $namaDokter }}</h1>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    @endforeach
+                    </div>
+                @endforeach
                 </div>
             </div>
           </div>
         </div>
     </div>
-
-    <script> 
-        function refreshPage() {
-            setTimeout(function () {
-                location.reload(true);
-            }, 40000);
-        }
-        document.addEventListener('DOMContentLoaded', function () {
-            refreshPage();
-        });
-        setInterval(function () {
-            updateDateTime();
-            refreshPage();
-        }, 40000);
-    </script>
     <script src="https://code.responsivevoice.org/responsivevoice.js?key=OGPOBj1g"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
   </body>
 </html>                       
 @endif
