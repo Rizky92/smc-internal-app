@@ -59,7 +59,7 @@
                             <x-table.td>{{ (bool) $item->resume_ralan ? 'Ada' : 'Tidak Ada' }}</x-table.td>
                             <x-table.td>{{ (bool) $item->resume_ranap ? 'Ada' : 'Tidak Ada' }}</x-table.td>
                             <x-table.td>{{ (bool) $item->triase_igd ? 'Ada' : 'Tidak Ada' }}</x-table.td>
-                            <x-table.td>{{ $this->formatAskepRalan($item) }}</x-table.td>
+                            <x-table.td>{{ $item->askep_ralan }}</x-table.td>
                             <x-table.td>{{ (bool) $item->askep_igd ? 'Ada' : 'Tidak Ada' }}</x-table.td>
                             <x-table.td>{{ $item->askep_ranap }}</x-table.td>
                             <x-table.td>{{ (bool) $item->asmed_igd ? 'Ada' : 'Tidak Ada' }}</x-table.td>
@@ -69,7 +69,7 @@
                             <x-table.td>{{ (bool) $item->icd_9 ? 'Ada' : 'Tidak Ada' }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="30" padding />
+                        <x-table.tr-empty colspan="21" padding />
                     @endforelse
                 </x-slot>
             </x-table>

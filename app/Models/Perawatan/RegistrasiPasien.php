@@ -95,13 +95,13 @@ class RegistrasiPasien extends Model
                 return 'Tidak ada';
             }
 
-            return 'Ada ' . $asmed->joinStr(', ')->wrap('(', ')')->value();
+            return $asmed->joinStr(', ')->wrap('Ada (', ')')->value();
         });
     }
 
     public function asmedPoli(): Attribute
     {
-        return Attribute::get(function (?string $_, array $attributes) {
+        return Attribute::get(function ($_, array $attributes) {
             $asmed = collect();
 
             if ($attributes['asmed_poli_umum'] === "1") {
@@ -160,7 +160,44 @@ class RegistrasiPasien extends Model
                 return "Tidak ada";
             }
 
-            return 'Ada ' . $asmed->joinStr(', ')->wrap('(', ')')->value();
+            return $asmed->joinStr(', ')->wrap('Ada (', ')')->value();
+        });
+    }
+
+    public function askepRalan(): Attribute
+    {
+        return Attribute::get(function ($_, array $attributes): ?string {
+            $askep = collect();
+
+            if ($attributes['askep_ralan_umum'] === "1") {
+                $askep->push("Umum");
+            }
+
+            if ($attributes['askep_ralan_gigi'] === "1") {
+                $askep->push("Gigi");
+            }
+
+            if ($attributes['askep_ralan_bidan'] === "1") {
+                $askep->push("Kebidanan");
+            }
+
+            if ($attributes['askep_ralan_bayi'] === "1") {
+                $askep->push("Bayi");
+            }
+
+            if ($attributes['askep_ralan_psikiatri'] === "1") {
+                $askep->push("Psikiatri");
+            }
+
+            if ($attributes['askep_ralan_geriatri'] === "1") {
+                $askep->push("Geriatri");
+            }
+
+            if ($askep->isEmpty()) {
+                return "Tidak ada";
+            }
+
+            return $askep->joinStr(', ')->wrap('Ada (', ')')->value();
         });
     }
 
@@ -181,7 +218,7 @@ class RegistrasiPasien extends Model
                 return "Tidak ada";
             }
 
-            return 'Ada ' . $askep->joinStr(', ')->wrap('(', ')')->value();
+            return $askep->joinStr(', ')->wrap('Ada (', ')')->value();
         });
     }
 
@@ -602,10 +639,10 @@ class RegistrasiPasien extends Model
             exists(select * from data_triase_igd where data_triase_igd.no_rawat = reg_periksa.no_rawat) triase_igd,
             exists(select * from penilaian_awal_keperawatan_ralan where penilaian_awal_keperawatan_ralan.no_rawat = reg_periksa.no_rawat) askep_ralan_umum,
             exists(select * from penilaian_awal_keperawatan_gigi where penilaian_awal_keperawatan_gigi.no_rawat = reg_periksa.no_rawat) askep_ralan_gigi,
-            exists(select * from penilaian_awal_keperawatan_kebidanan where penilaian_awal_keperawatan_kebidanan.no_rawat = reg_periksa.no_rawat)askep_ralan_bidan,
+            exists(select * from penilaian_awal_keperawatan_kebidanan where penilaian_awal_keperawatan_kebidanan.no_rawat = reg_periksa.no_rawat) askep_ralan_bidan,
             exists(select * from penilaian_awal_keperawatan_ralan_bayi where penilaian_awal_keperawatan_ralan_bayi.no_rawat = reg_periksa.no_rawat) askep_ralan_bayi,
             exists(select * from penilaian_awal_keperawatan_ralan_psikiatri where penilaian_awal_keperawatan_ralan_psikiatri.no_rawat = reg_periksa.no_rawat) askep_ralan_psikiatri,
-            exists(select * from penilaian_awal_keperawatan_ralan_geriatri where penilaian_awal_keperawatan_ralan_geriatri.no_rawat = reg_periksa.no_rawat)askep_ralan_geriatri,
+            exists(select * from penilaian_awal_keperawatan_ralan_geriatri where penilaian_awal_keperawatan_ralan_geriatri.no_rawat = reg_periksa.no_rawat) askep_ralan_geriatri,
             exists(select * from penilaian_awal_keperawatan_igd where penilaian_awal_keperawatan_igd.no_rawat = reg_periksa.no_rawat) askep_igd,
             exists(select * from penilaian_awal_keperawatan_ranap where penilaian_awal_keperawatan_ranap.no_rawat = reg_periksa.no_rawat) askep_ranap_umum,
             exists(select * from penilaian_awal_keperawatan_kebidanan_ranap where penilaian_awal_keperawatan_kebidanan_ranap.no_rawat = reg_periksa.no_rawat) askep_ranap_bidan,
@@ -629,6 +666,12 @@ class RegistrasiPasien extends Model
             exists(select * from prosedur_pasien where prosedur_pasien.no_rawat = reg_periksa.no_rawat) icd_9
         SQL;
 
+        $this->addSearchConditions([
+            'dokter.nm_dokter',
+            'pasien.nm_pasien',
+            'poliklinik.nm_poli',
+        ]);
+
         return $query
             ->selectRaw($sqlSelect)
             ->join('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
@@ -636,7 +679,7 @@ class RegistrasiPasien extends Model
             ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
-            ->when(!$semuaRegistrasi, fn (Builder $q): Builder => $q->whereNotIn('reg_periksa.stts', ['Batal', 'Belum']))
+            ->when(! $semuaRegistrasi, fn (Builder $q): Builder => $q->whereNotIn('reg_periksa.stts', ['Batal', 'Belum']))
             ->when($jenisPerawatan !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.status_lanjut', $jenisPerawatan));
     }
 

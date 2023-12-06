@@ -54,45 +54,10 @@ class StatusDataPasien extends Component
             ? []
             : RegistrasiPasien::query()
                 ->statusDataRM($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan, $this->semuaRegistrasi)
-                ->search($this->cari, [
-                    'reg_periksa.no_rawat',
-                    'reg_periksa.tgl_registrasi',
-                    'reg_periksa.stts',
-                    'dokter.nm_dokter',
-                    'reg_periksa.no_rkm_medis',
-                    'pasien.nm_pasien',
-                    'poliklinik.nm_poli',
-                    'reg_periksa.status_lanjut',
-                ])
+                ->search($this->cari)
                 ->sortWithColumns($this->sortColumns)
                 ->paginate($this->perpage);
     }
-
-    protected function formatAskepRalan($item)
-    {
-        $askepRalanArray = [
-            'umum' => $item->askep_ralan_umum,
-            'gigi' => $item->askep_ralan_gigi,
-            'bidan' => $item->askep_ralan_bidan,
-            'bayi' => $item->askep_ralan_bayi,
-            'psikiatri' => $item->askep_ralan_psikiatri,   
-            'geriatri' => $item->askep_ralan_geriatri,
-        ];
-
-        // Filter out empty values
-        $askepRalanArray = array_filter($askepRalanArray);
-
-        // Convert the keys to capitalize the first letter
-        $askepRalanArray = array_map(function ($key) {
-            return ucfirst($key);
-        }, array_keys($askepRalanArray));
-
-        // Combine the non-empty values with '/'
-        $formattedAskepRalan = implode(', ', $askepRalanArray);
-
-        return $formattedAskepRalan ? 'Ada (' . $formattedAskepRalan . ')' : 'Tidak Ada';
-    }
-
 
     public function render(): View
     {
@@ -129,6 +94,7 @@ class StatusDataPasien extends Component
                     'resume_ranap'   => boolval($model->resume_ranap) ? 'Ada' : 'Tidak ada',
                     'triase_igd'     => boolval($model->triase_igd) ? 'Ada' : 'Tidak ada',
                     'askep_igd'      => boolval($model->askep_igd) ? 'Ada' : 'Tidak ada',
+                    'askep_ranap'    => $model->askep_ralan,
                     'askep_ranap'    => $model->askep_ranap,
                     'asmed_igd'      => boolval($model->asmed_igd) ? 'Ada' : 'Tidak ada',
                     'asmed_poli'     => $model->asmed_poli,
@@ -157,6 +123,7 @@ class StatusDataPasien extends Component
             'Resume Ranap',
             'Triase IGD',
             'Askep IGD',
+            'Askep Ralan',
             'Askep Ranap',
             'Asmed IGD',
             'Asmed Poli',
