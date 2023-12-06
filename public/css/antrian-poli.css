@@ -54,11 +54,11 @@ span {
     
 }
 
-/* @keyframes marqueeAnimation {
+@keyframes marqueeAnimation {
     0% {
         transform: translateY(0);
     }
     100% {
         transform: translateY(calc(-300% + 300px));
     }
-} */
+}

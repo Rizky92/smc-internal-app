@@ -42,6 +42,9 @@ Route::get('/jadwal', [JadwalController::class, 'jadwal']);
 Route::get('/antrian/{kd_poli}/{kd_dokter}', [AntrianPoliController::class, 'show'])
     ->name('antrian.show');
 
+Route::post('/antrian/check-data-changes/{kd_poli}/{kd_dokter}', [AntrianPoliController::class, 'checkDataChanges'])
+    ->name('antrian.checkDataChanges');
+
 Route::get('login', [LoginController::class, 'create'])->name('login');
 Route::post('login', [LoginController::class, 'store']);
 
