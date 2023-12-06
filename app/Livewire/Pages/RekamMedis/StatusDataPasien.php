@@ -35,8 +35,8 @@ class StatusDataPasien extends Component
         return [
             'jenisPerawatan'  => ['except' => 'semua', 'as' => 'jenis_rawat'],
             'semuaRegistrasi' => ['except' => false, 'as' => 'semua'],
-            'tglAwal'         => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir'        => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'         => ['except' => now()->startOfMonth()->toDateString(), 'as' => 'tgl_awal'],
+            'tglAkhir'        => ['except' => now()->endOfMonth()->toDateString(), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -102,11 +102,8 @@ class StatusDataPasien extends Component
 
     protected function defaultValues(): void
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
-        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->toDateString();
+        $this->tglAkhir = now()->endOfMonth()->toDateString();
         $this->semuaRegistrasi = false;
         $this->jenisPerawatan = 'semua';
     }
