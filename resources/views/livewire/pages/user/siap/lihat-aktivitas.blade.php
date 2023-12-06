@@ -30,7 +30,7 @@
                                     <span class="badge badge-secondary text-xs" style="margin-inline-end: 1.25rem">{{ carbon_immutable($item->waktu)->format('H:i') }}</span>
                                     <div class="mt-n1 flex-fill">
                                         <h6 style="margin-top: 0.2rem; margin-bottom: 0.25rem">
-                                            Mengunjungi <a href="{{ Route::has($item->route_name) ? route($item->route_name) : '#' }}">{{ Str::of($item->breadcrumbs)->afterLast('/')->trim() }}</a>
+                                            Mengunjungi <a href="{{ Route::has($item->route_name) ? route($item->route_name) : '#' }}">{{ str($item->breadcrumbs)->afterLast('/')->trim() }}</a>
                                         </h6>
                                         <div class="d-flex w-100 justify-content-start align-items-baseline">
                                             <p class="m-0 d-block">{{ $item->breadcrumbs }}</p>

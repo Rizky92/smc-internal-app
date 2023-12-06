@@ -5,11 +5,11 @@
         <x-slot name="body">
             <x-navtabs livewire selected="medis" with-permissions>
                 <x-slot name="tabs">
-                    <x-navtabs.tab id="medis" title="Medis" :hasPermission="auth()->user()->can('keuangan.account-payable.read-medis')" />
-                    <x-navtabs.tab id="nonmedis" title="Non Medis" :hasPermission="auth()->user()->can('keuangan.account-payable.read-nonmedis')" />
+                    <x-navtabs.tab id="medis" title="Medis" :hasPermission="user()->can('keuangan.account-payable.read-medis')" />
+                    <x-navtabs.tab id="nonmedis" title="Non Medis" :hasPermission="user()->can('keuangan.account-payable.read-nonmedis')" />
                 </x-slot>
                 <x-slot name="contents">
-                    <x-navtabs.content id="medis" :hasPermission="auth()->user()->can('keuangan.account-payable.read-medis')">
+                    <x-navtabs.content id="medis" :hasPermission="user()->can('keuangan.account-payable.read-medis')">
                         <x-table :sortColumns="$sortColumns" style="width: 180rem" sortable zebra hover sticky nowrap>
                             <x-slot name="columns">
                                 <x-table.th style="width: 20ch" name="no_tagihan" title="No. Tagihan" />
@@ -74,7 +74,7 @@
                         </x-table>
                         <x-paginator class="px-4 py-3 bg-light" :data="$this->dataAccountPayableMedis" />
                     </x-navtabs.content>
-                    <x-navtabs.content id="nonmedis" :hasPermission="auth()->user()->can('keuangan.account-payable.read-nonmedis')">
+                    <x-navtabs.content id="nonmedis" :hasPermission="user()->can('keuangan.account-payable.read-nonmedis')">
                         <x-table :sortColumns="$sortColumns" style="width: 180rem" sortable zebra hover sticky nowrap>
                             <x-slot name="columns">
                                 <x-table.th style="width: 20ch" name="no_tagihan" title="No. Tagihan" />

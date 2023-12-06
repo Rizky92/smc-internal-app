@@ -113,10 +113,10 @@ class PiutangDilunaskan extends Model
             ->orderBy('jurnal.jam_jurnal')
             ->cursor()
             ->each(function (Jurnal $jurnal): void {
-                $ket = Str::of($jurnal->keterangan);
+                $ket = str($jurnal->keterangan);
 
                 $status = $ket->startsWith('BAYAR');
-                $verifikator = $ket->afterLast('OLEH ')->trim();
+                $verifikator = $ket->afterLast('OLEH ')->trim()->value();
 
                 $mapped = [
                     'no_jurnal'       => $jurnal->no_jurnal,

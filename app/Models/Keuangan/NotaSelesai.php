@@ -128,10 +128,10 @@ class NotaSelesai extends Model
             ->orderBy('no_jurnal')
             ->chunk(500, function (Collection $chunk) {
                 $data = $chunk->map(function (object $value, int $key) {
-                    $ket = Str::of($value->keterangan);
+                    $ket = str($value->keterangan);
 
-                    $bentukBayar = $ket->before('PASIEN')->words(1, '')->trim();
-                    $statusPasien = $ket->after('PASIEN')->words(2, '')->trim();
+                    $bentukBayar = $ket->before('PASIEN')->words(1, '')->trim()->value();
+                    $statusPasien = $ket->after('PASIEN')->words(2, '')->trim()->value();
 
                     $noRawat = $ket->matchAll('/\d+/')->take(4)->join('/');
                     $petugas = $ket->split('/\s+/')->last();

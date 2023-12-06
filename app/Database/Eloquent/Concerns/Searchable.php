@@ -76,11 +76,11 @@ trait Searchable
         }
 
         // Convert to lowercase, split search queries to each words, filter any white-space characters, and wrap each words with "%".
-        $search = Str::of($search)
+        $search = str($search)
             ->lower()
             ->split('/\s+/')
             ->filter()
-            ->map(fn (string $word): string => str($word)->trim()->wrap('%')->value);
+            ->map(fn (string $word): string => str($word)->trim()->wrap('%')->value());
 
         $concatenatedColumns = $columns->joinStr(', ')->wrap("concat_ws(' ', ", ') like ?')->value();
 

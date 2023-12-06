@@ -63,7 +63,7 @@ trait ExcelExportable
         $filename = now()->format('Ymd_His') . '_';
 
         $filename .= method_exists($this, 'filename')
-            ? Str::of($this->filename())->trim()->snake()->value()
+            ? str($this->filename())->trim()->snake()->value()
             : Str::snake(class_basename($this));
 
         $filename .= '.xlsx';

@@ -45,7 +45,7 @@ class Jurnal extends Model
     {
         return $this->hasMany(JurnalDetail::class, 'no_jurnal', 'no_jurnal');
     }
-    
+
     public function pengeluaranHarian(): BelongsTo
     {
         return $this->belongsTo(PengeluaranHarian::class, 'no_bukti', 'no_keluar');
@@ -151,15 +151,15 @@ class Jurnal extends Model
         $index = 1;
 
         $noJurnalTerakhir = static::query()
-            ->whereRaw('no_jurnal like ?', ["JR{$date}%"])
+            ->whereRaw('no_jurnal like ?', [str($date)->wrap('JR', '%')->value()])
             ->orderBy('no_jurnal', 'desc')
             ->value('no_jurnal');
-        
+
         if ($noJurnalTerakhir) {
-            $index += Str::of($noJurnalTerakhir)->substr(-6)->toInt();
+            $index += str($noJurnalTerakhir)->substr(-6)->toInt();
         }
 
-        return Str::of('JR')
+        return str('JR')
             ->append($date)
             ->append(Str::padLeft((string) $index, 6, '0'))
             ->value();

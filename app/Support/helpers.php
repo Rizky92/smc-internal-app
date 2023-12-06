@@ -159,7 +159,7 @@ if (!function_exists('trackersql')) {
                 })->all();
             }
 
-            $sql = Str::of($log['query'])
+            $sql = str($log['query'])
                 ->replaceArray('?', $log['bindings']);
 
             DB::connection('mysql_smc')->table('trackersql')->insert([
@@ -207,7 +207,7 @@ if (!function_exists('tracker_end')) {
                 }
             }
 
-            $sql = Str::of($log['query'])
+            $sql = str($log['query'])
                 ->replaceArray('?', $log['bindings']);
 
             DB::connection('mysql_smc')->table('trackersql')->insert([

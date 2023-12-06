@@ -250,7 +250,7 @@
                     @forelse ($this->daftarPasienRanap as $pasien)
                         <x-table.tr>
                             <x-table.td
-                                :clickable="auth()->user()->can('perawatan.daftar-pasien-ranap.update-harga-kamar')"
+                                :clickable="user()->can('perawatan.daftar-pasien-ranap.update-harga-kamar')"
                                 data-no-rawat="{{ $pasien->no_rawat }}"
                                 data-kamar="{{ $pasien->kd_kamar }} {{ $pasien->nm_bangsal }}"
                                 data-pasien="{{ $pasien->nm_pasien }} {{ $pasien->umur }}"

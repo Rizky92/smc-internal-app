@@ -81,11 +81,11 @@ class JurnalMedis extends Model
             ->orderBy('no_jurnal')
             ->chunk(500, function (Collection $jurnal) {
                 $data = $jurnal->map(function (object $value): array {
-                    $ket = Str::of($value->keterangan);
+                    $ket = str($value->keterangan);
 
                     $status = $ket->startsWith('BATAL');
-                    $noFaktur = (string) $ket->after('NO.FAKTUR ')->beforeLast(',')->trim();
-                    $petugas = (string) $ket->after('OLEH ')->trim();
+                    $noFaktur = $ket->after('NO.FAKTUR ')->beforeLast(',')->trim()->value();
+                    $petugas = $ket->after('OLEH ')->trim()->value();
 
                     return [
                         'no_jurnal' => $value->no_jurnal,

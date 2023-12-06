@@ -96,7 +96,7 @@
                     @foreach ($this->roles as $role)
                         <li class="custom-control custom-checkbox">
                             <input class="custom-control-input" id="role-{{ $role->id }}" name="roles" type="checkbox" value="{{ $role->id }}">
-                            <label class="custom-control-label" for="role-{{ $role->id }}">{{ Str::of($role->name)->upper() }}</label>
+                            <label class="custom-control-label" for="role-{{ $role->id }}">{{ str($role->name)->upper() }}</label>
                             <ul class="form-group" style="list-style: none">
                                 @foreach ($role->permissions as $permission)
                                     <li class="custom-control custom-checkbox">
