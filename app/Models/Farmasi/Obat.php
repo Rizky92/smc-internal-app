@@ -6,11 +6,11 @@ use App\Models\Satuan;
 use Illuminate\Database\Eloquent\Builder;
 use App\Database\Eloquent\Model;
 use App\Models\Farmasi\Inventaris\GudangObat;
+use BadMethodCallException;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Query\JoinClause;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class Obat extends Model
@@ -227,8 +227,12 @@ class Obat extends Model
      */
     public function scopePemakaianObatNAPZA(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $golongan = 'narkotika'): Builder
     {
-        $tglAwal = carbon($tglAwal)->startOfMonth();
-        $tglAkhir = carbon($tglAkhir)->endOfMonth();
+        if (! in_array($golongan, ['narkotika', 'psikotropika'])) {
+            throw new BadMethodCallException('Invalid value provied for parameter [golongan]');
+        }
+
+        $tglAwal = carbon($tglAwal)->startOfMonth()->toDateString();
+        $tglAkhir = carbon($tglAkhir)->endOfMonth()->toDateString();
 
         $sqlSelect = <<<SQL
             databarang.kode_brng,
@@ -237,6 +241,7 @@ class Obat extends Model
             golongan_barang.nama,
             kodesatuan.satuan,
             (select riwayat_barang_medis.stok_awal from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and riwayat_barang_medis.kd_bangsal = 'AP' and riwayat_barang_medis.tanggal between ? and ? order by riwayat_barang_medis.tanggal asc, riwayat_barang_medis.jam asc limit 1) stok_awal,
+            (select riwayat_barang_medis.stok_akhir from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and riwayat_barang_medis.kd_bangsal = 'AP' and riwayat_barang_medis.tanggal between '0000-00-00' and date_sub(?, interval 1 day) order by riwayat_barang_medis.tanggal desc, riwayat_barang_medis.jam desc limit 1) stok_awal_terakhir,
             (select sum(mutasibarang.jml) from mutasibarang where mutasibarang.kode_brng = databarang.kode_brng and mutasibarang.kd_bangsalke = 'AP' and date(mutasibarang.tanggal) between ? and ?) tf_masuk,
             (select sum(detailpesan.jumlah2) from detailpesan join pemesanan on detailpesan.no_faktur = pemesanan.no_faktur where detailpesan.kode_brng = databarang.kode_brng and pemesanan.kd_bangsal = 'AP' and pemesanan.tgl_pesan between ? and ?) penerimaan_obat,
             (select sum(detailhibah_obat_bhp.jumlah2) from detailhibah_obat_bhp join hibah_obat_bhp on detailhibah_obat_bhp.no_hibah = hibah_obat_bhp.no_hibah where detailhibah_obat_bhp.kode_brng = databarang.kode_brng and hibah_obat_bhp.kd_bangsal = 'AP' and hibah_obat_bhp.tgl_hibah between ? and ?) hibah_obat,
@@ -248,9 +253,16 @@ class Obat extends Model
             (select sum(detreturbeli.jml_retur2) from detreturbeli join returbeli on detreturbeli.no_retur_beli = returbeli.no_retur_beli where detreturbeli.kode_brng = databarang.kode_brng and returbeli.kd_bangsal = 'AP' and returbeli.tgl_retur between ? and ?) retur_supplier
         SQL;
 
+        $this->addSearchConditions([
+            'golongan_barang.nama',
+            'kodesatuan.kode_sat',
+            'kodesatuan.satuan',
+        ]);
+
         return $query
             ->selectRaw($sqlSelect, [
                 $tglAwal, $tglAkhir,
+                $tglAwal,
                 $tglAwal, $tglAkhir,
                 $tglAwal, $tglAkhir,
                 $tglAwal, $tglAkhir,
@@ -261,25 +273,23 @@ class Obat extends Model
                 $tglAwal, $tglAkhir,
                 $tglAwal, $tglAkhir,
             ])
+            ->withCasts([
+                'stok_awal'          => 'float',
+                'stok_awal_terakhir' => 'float',
+                'tf_masuk'           => 'float',
+                'penerimaan_obat'    => 'float',
+                'hibah_obat'         => 'float',
+                'retur_pasien'       => 'float',
+                'pemberian_obat'     => 'float',
+                'penjualan_obat'     => 'float',
+                'tf_keluar'          => 'float',
+                'retur_supplier'     => 'float',
+            ])
             ->join('golongan_barang', 'databarang.kode_golongan', '=', 'golongan_barang.kode')
             ->join('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
             ->where('databarang.status', '1')
-            ->where(
-                fn (Builder $query): Builder => $query
-                    ->when($golongan === 'narkotika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G07'))
-                    ->when($golongan === 'psikotropika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G01'))
-                    ->when(empty($golongan), fn (Builder $q): Builder => $q->where('databarang.kode_golongan', '-'))
-            )
-            ->withCasts([
-                'stok_awal'       => 'float',
-                'tf_masuk'        => 'float',
-                'penerimaan_obat' => 'float',
-                'hibah_obat'      => 'float',
-                'retur_pasien'    => 'float',
-                'pemberian_obat'  => 'float',
-                'penjualan_obat'  => 'float',
-                'tf_keluar'       => 'float',
-                'retur_supplier'  => 'float',
-            ]);
+            ->where(fn (Builder $query): Builder => $query
+                ->when($golongan === 'narkotika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G07'))
+                ->when($golongan === 'psikotropika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G01')));
     }
 }
