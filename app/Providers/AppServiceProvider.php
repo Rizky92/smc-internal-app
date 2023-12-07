@@ -68,7 +68,7 @@ class AppServiceProvider extends ServiceProvider
                 $column = $column->getValue();
             }
 
-            $direction = strtolower($direction);
+            $direction = Str::lower($direction);
 
             if (! in_array($direction, ['asc', 'desc'], true)) {
                 throw new InvalidArgumentException('Order direction must be "asc" or "desc".');

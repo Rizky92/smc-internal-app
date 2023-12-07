@@ -79,8 +79,7 @@ class AccountReceivable extends Component
                         array_keys($this->tagihanDipilih))
                     ->orderByField(
                         DB::raw("concat_ws('_', penagihan_piutang.no_tagihan, penagihan_piutang.kd_pj, detail_penagihan_piutang.no_rawat)"),
-                        array_keys($this->tagihanDipilih))
-                )
+                        array_keys($this->tagihanDipilih)))
                 ->paginate($this->perpage);
     }
 

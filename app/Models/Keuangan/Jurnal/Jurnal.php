@@ -169,8 +169,10 @@ class Jurnal extends Model
      * @param  "U"|"P" $jenis
      * @param  \Carbon\Carbon|\DateTime|string $waktuTransaksi
      * @param  array<array{kd_rek: string, debet: int|float, kredit: int|float}> $detail
+     * 
+     * @return static
      */
-    public static function catat(string $noBukti, string $keterangan, $waktuTransaksi, array $detail, string $jenis = 'U'): void
+    public static function catat(string $noBukti, string $keterangan, $waktuTransaksi, array $detail, string $jenis = 'U'): ?self
     {
         if (!$waktuTransaksi instanceof Carbon) {
             $waktuTransaksi = carbon($waktuTransaksi);
@@ -204,5 +206,7 @@ class Jurnal extends Model
         $detail = $jurnal
             ->detail()
             ->createMany($detail);
+
+        return $jurnal->load('detail');
     }
 }

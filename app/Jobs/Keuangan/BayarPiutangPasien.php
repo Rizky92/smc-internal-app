@@ -2,9 +2,11 @@
 
 namespace App\Jobs\Keuangan;
 
+use App\Models\Keuangan\AkunBayar;
 use App\Models\Keuangan\BayarPiutang;
 use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\PenagihanPiutang;
+use App\Models\Keuangan\PiutangDilunaskan;
 use App\Models\Keuangan\PiutangPasien;
 use App\Models\Keuangan\PiutangPasienDetail;
 use Illuminate\Bus\Queueable;
@@ -17,6 +19,8 @@ use Illuminate\Support\Facades\DB;
 class BayarPiutangPasien implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    private $jurnal = null;
 
     private string $noTagihan;
     private string $jaminanPiutang;
@@ -154,7 +158,7 @@ class BayarPiutangPasien implements ShouldQueue
 
                 tracker_start('mysql_sik');
 
-                Jurnal::catat(
+                $this->jurnal = Jurnal::catat(
                     $this->noRawat,
                     sprintf('BAYAR PIUTANG TAGIHAN %s, OLEH %s', $this->noTagihan, $this->userId),
                     $this->tglBayar,
@@ -231,5 +235,33 @@ class BayarPiutangPasien implements ShouldQueue
         $tagihanPiutang->update(['status' => 'Sudah Dibayar']);
 
         tracker_end('mysql_sik', $this->userId);
+    }
+
+    protected function masukkanKeJurnalPiutangLunas(
+        string $noRM, 
+        float $besarCicilan, 
+        string $tglTagihan, 
+        string $tglJatuhTempo,
+        string $penagih,
+        string $menyetujui
+    ): void {
+        PiutangDilunaskan::create([
+            'no_jurnal'       => $this->jurnal->no_jurnal,
+            'waktu_jurnal'    => carbon($this->jurnal->tgl_jurnal)->setTimeFromTimeString($this->jurnal->jam_jurnal),
+            'no_rawat'        => $this->noRawat,
+            'no_rkm_medis'    => $noRM,
+            'no_tagihan'      => $this->noTagihan,
+            'kd_pj'           => $this->jaminanPiutang,
+            'piutang_dibayar' => $besarCicilan,
+            'tgl_penagihan'   => $tglTagihan,
+            'tgl_jatuh_tempo' => $tglJatuhTempo,
+            'tgl_bayar'       => $this->tglBayar,
+            'status'          => 'Bayar',
+            'kd_rek'          => $this->akun,
+            'nm_rek'          => AkunBayar::where('kd_rek', $this->akun)->value('nm_rek'),
+            'nik_penagih'     => $penagih,
+            'nik_menyetujui'  => $menyetujui,
+            'nik_validasi'    => $this->userId,
+        ]);
     }
 }

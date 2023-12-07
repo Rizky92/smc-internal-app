@@ -160,7 +160,7 @@ class PenagihanPiutang extends Model
             ->where(fn (Builder $q): Builder => $q
                 ->whereNull('bayar_piutang.no_rawat')
                 ->orWhereIn('detail_penagihan_piutang.no_rawat', $sqlFilterOnlyPaid))
-            ->orderByRaw('datediff(?, penagihan_piutang.tanggal) desc', [$tglAkhir])
+            ->orderBy('penagihan_piutang.tanggal', 'desc')
             ->orderBy('detail_penagihan_piutang.no_rawat', 'asc')
             ->orderBy('detail_penagihan_piutang.no_tagihan', 'asc');
     }

@@ -5,6 +5,7 @@ namespace App\Livewire\Concerns;
 use Closure;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\File;
 use Rizky92\Xlswriter\ExcelExport;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -77,6 +78,8 @@ trait ExcelExportable
             : $dataSheets[$firstSheet];
 
         $firstData = is_callable($firstData) ? $firstData() : $firstData;
+
+        File::ensureDirectoryExists(storage_path('app/public/excel'));
 
         $excel = ExcelExport::make($filename, $firstSheet)
             ->setPageHeaders($this->pageHeaders())

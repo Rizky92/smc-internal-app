@@ -43,7 +43,7 @@ trait Sortable
             ->merge($this->sortColumns)
             ->merge($this->sortColumns());
 
-        if (empty($rawColumns) || empty($initialColumnOrders)) {
+        if (empty($sortColumns) && (empty($initialColumnOrders) || empty($rawColumns))) {
             return $query;
         }
 
