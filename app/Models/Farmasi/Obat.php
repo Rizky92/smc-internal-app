@@ -236,7 +236,7 @@ class Obat extends Model
             databarang.kode_golongan,
             golongan_barang.nama,
             kodesatuan.satuan,
-            (select riwayat_barang_medis.stok_awal from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and riwayat_barang_medis.kd_bangsal = 'AP' and riwayat_barang_medis.tanggal between ? and ? order by riwayat_barang_medis.tanggal asc, riwayat_barang_medis.jam asc limit 1) stok_awal,
+            ifnull((select riwayat_barang_medis.stok_awal from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and riwayat_barang_medis.kd_bangsal = 'AP' and riwayat_barang_medis.tanggal between ? and ? order by riwayat_barang_medis.tanggal asc, riwayat_barang_medis.jam asc limit 1), (select riwayat_barang_medis.stok_akhir from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and riwayat_barang_medis.kd_bangsal = 'AP' and riwayat_barang_medis.tanggal < ? order by riwayat_barang_medis.tanggal desc, riwayat_barang_medis.jam desc limit 1)) as stok_awal,
             (select sum(mutasibarang.jml) from mutasibarang where mutasibarang.kode_brng = databarang.kode_brng and mutasibarang.kd_bangsalke = 'AP' and date(mutasibarang.tanggal) between ? and ?) tf_masuk,
             (select sum(detailpesan.jumlah2) from detailpesan join pemesanan on detailpesan.no_faktur = pemesanan.no_faktur where detailpesan.kode_brng = databarang.kode_brng and pemesanan.kd_bangsal = 'AP' and pemesanan.tgl_pesan between ? and ?) penerimaan_obat,
             (select sum(detailhibah_obat_bhp.jumlah2) from detailhibah_obat_bhp join hibah_obat_bhp on detailhibah_obat_bhp.no_hibah = hibah_obat_bhp.no_hibah where detailhibah_obat_bhp.kode_brng = databarang.kode_brng and hibah_obat_bhp.kd_bangsal = 'AP' and hibah_obat_bhp.tgl_hibah between ? and ?) hibah_obat,
@@ -250,7 +250,7 @@ class Obat extends Model
 
         return $query
             ->selectRaw($sqlSelect, [
-                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir, $tglAwal,
                 $tglAwal, $tglAkhir,
                 $tglAwal, $tglAkhir,
                 $tglAwal, $tglAkhir,
