@@ -48,6 +48,7 @@ trait Filterable
 
     public function resetFilters(): void
     {
+        $this->defaultValues();
         $this->getDefaultValues();
 
         $this->searchData();
