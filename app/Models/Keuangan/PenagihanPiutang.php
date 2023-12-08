@@ -165,6 +165,26 @@ class PenagihanPiutang extends Model
             ->orderBy('detail_penagihan_piutang.no_tagihan', 'asc');
     }
 
+    public function scopeAccountReceivableDipilih(Builder $query, array $tagihanDipilih = []): Builder
+    {
+        if (empty($tagihanDipilih)) {
+            return $query;
+        }
+
+        $query->reorder();
+
+        return $query
+            ->orWhereIn(
+                DB::raw("concat_ws('_', penagihan_piutang.no_tagihan, penagihan_piutang.kd_pj, detail_penagihan_piutang.no_rawat)"),
+                array_keys($tagihanDipilih))
+            ->orderByFieldFirst(
+                DB::raw("concat_ws('_', penagihan_piutang.no_tagihan, penagihan_piutang.kd_pj, detail_penagihan_piutang.no_rawat)"),
+                array_keys($tagihanDipilih))
+            ->orderBy('penagihan_piutang.tanggal', 'desc')
+            ->orderBy('detail_penagihan_piutang.no_rawat', 'asc')
+            ->orderBy('detail_penagihan_piutang.no_tagihan', 'asc');
+    }
+
     public function scopeTotalAccountReceivable(
         Builder $query,
         string $tglAwal = '',

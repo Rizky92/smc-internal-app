@@ -72,14 +72,8 @@ class AccountReceivable extends Component
             : PenagihanPiutang::query()
                 ->accountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
                 ->search($this->cari)
+                ->accountReceivableDipilih($this->tagihanDipilih)
                 ->sortWithColumns($this->sortColumns)
-                ->when(! empty($this->tagihanDipilih), fn (Builder $q): Builder => $q
-                    ->orWhereIn(
-                        DB::raw("concat_ws('_', penagihan_piutang.no_tagihan, penagihan_piutang.kd_pj, detail_penagihan_piutang.no_rawat)"),
-                        array_keys($this->tagihanDipilih))
-                    ->orderByField(
-                        DB::raw("concat_ws('_', penagihan_piutang.no_tagihan, penagihan_piutang.kd_pj, detail_penagihan_piutang.no_rawat)"),
-                        array_keys($this->tagihanDipilih)))
                 ->paginate($this->perpage);
     }
 
@@ -102,6 +96,9 @@ class AccountReceivable extends Component
         $total = PenagihanPiutang::query()
             ->totalAccountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
             ->search($this->cari)
+            ->when(! empty($this->tagihanDipilih), fn (Builder $q): Builder => $q->orWhereIn(
+                DB::raw("concat_ws('_', penagihan_piutang.no_tagihan, penagihan_piutang.kd_pj, detail_penagihan_piutang.no_rawat)"),
+                array_keys($this->tagihanDipilih)))
             ->get();
 
         $totalPiutang = (float) $total->sum('total_piutang');
