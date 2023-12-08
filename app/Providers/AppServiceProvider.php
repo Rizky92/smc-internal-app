@@ -80,6 +80,34 @@ class AppServiceProvider extends ServiceProvider
             return $this->orderByRaw(Str::wrap($binds, $startsWith, $endsWith), $values);
         });
 
+        /** @psalm-scope-this Illuminate\Database\Eloquent\Builder */
+        Builder::macro('orderByFieldFirst', function ($column, $values, $direction = 'asc') {
+            $binds = [];
+
+            for ($i = 0; $i < count($values); $i++) {
+                $binds[] = '?';
+            }
+
+            $binds = implode(', ', $binds);
+
+            if ($column instanceof Expression) {
+                $column = $column->getValue();
+            }
+
+            $direction = Str::lower($direction);
+
+            if (! in_array($direction, ['asc', 'desc'], true)) {
+                throw new InvalidArgumentException('Order direction must be "asc" or "desc".');
+            }
+
+            $startsWith = sprintf('(field(%s, ', $column);
+            $endsWith = ') != 0) desc';
+
+            return $this
+                ->orderByRaw(Str::wrap($binds, $startsWith, $endsWith), $values)
+                ->orderByField($column, $values, $direction);
+        });
+
         $this->registerBladeDirectives();
         $this->registerModelConfigurations();
         $this->registerSuperadminRole();
