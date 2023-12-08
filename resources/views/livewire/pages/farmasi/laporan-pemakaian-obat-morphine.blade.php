@@ -1,7 +1,22 @@
-<div>
+<div wire:init="loadProperties">
     <x-flash />
 
-    <x-card use-default-filter use-loading loading-target="loadProperties">
+    <x-card use-loading>
+        <x-slot name="header">
+            <x-row-col-flex>
+                <x-filter.range-date />
+                <x-filter.button-export-excel class="ml-auto" />
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
+                <x-filter.select-perpage />
+                <x-filter.button-reset-filters class="ml-auto" />
+                <x-filter.search class="ml-2" />
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
+                <x-filter.label class="ml-auto pr-3">Gudang:</x-filter.label>
+                <x-filter.select model="bangsal" :options="['IFA' => 'Farmasi A', 'AP' => 'Farmasi B', 'IFG' => 'Farmasi IGD', 'IFI' => 'Farmasi Rawat Inap']" />
+            </x-row-col-flex>
+        </x-slot>
         <x-slot name="body">
             <x-navtabs livewire :selected="Str::replace('.', '', '02.05.0011')">
                 <x-slot name="tabs">

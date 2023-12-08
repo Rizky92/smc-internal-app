@@ -1,0 +1,50 @@
+#scrollingContent {
+    max-height: 100vh;
+    overflow-y: hidden;
+    scroll-behavior: linear;
+}
+#scrollingContent table {
+    animation: marqueeAnimation 60s linear;
+    transform-origin: 0% 0%;
+    display: table;
+    width: 100%;
+}
+
+span {
+    font-family: 'Poppins', sans-serif;
+    font-size: 64px;
+    color: #198754;
+}
+
+thead {
+    background-color: #198754;
+}
+
+
+
+#scrollingContent table tbody {
+    display: table-row-group;
+}
+#scrollingContent table tbody tr:nth-child(even) {
+    background-color: #198754;
+    color: white;
+    }
+
+@keyframes marqueeAnimation {
+  0% {
+      transform: translateY(0);
+  }
+  100% {
+      transform: translateY(calc(-300% + 300px));
+  }
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #28a745;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+}

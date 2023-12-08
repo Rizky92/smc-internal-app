@@ -17,4 +17,16 @@ class Dokter extends Model
     public $incrementing = false;
 
     public $timestamps = false;
+
+    public function jadwal()
+    {
+        return $this->hasMany(Jadwal::class, 'kd_dokter', 'kd_dokter');
+    }
+
+    public function registrasi(): HasMany
+{
+    return $this->hasMany(RegistrasiPasien::class, 'kd_dokter', 'kd_dokter');
 }
+}
+
+

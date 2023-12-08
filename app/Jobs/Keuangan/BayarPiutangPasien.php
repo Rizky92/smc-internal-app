@@ -9,6 +9,7 @@ use App\Models\Keuangan\PenagihanPiutang;
 use App\Models\Keuangan\PiutangDilunaskan;
 use App\Models\Keuangan\PiutangPasien;
 use App\Models\Keuangan\PiutangPasienDetail;
+use App\Models\Keuangan\Rekening;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -167,6 +168,17 @@ class BayarPiutangPasien implements ShouldQueue
 
                 tracker_end('mysql_sik', $this->userId);
             });
+
+        $tagihan = PenagihanPiutang::find($model->no_tagihan);
+
+        $this->masukkanKeJurnalPiutangLunas(
+            $model->no_rkm_medis,
+            $model->sisa_piutang,
+            $model->tgl_tagihan,
+            $model->tgl_jatuh_tempo,
+            $tagihan->nip,
+            $tagihan->nip_menyetujui
+        );
     }
 
     protected function setLunasPiutang(
@@ -245,6 +257,8 @@ class BayarPiutangPasien implements ShouldQueue
         string $penagih,
         string $menyetujui
     ): void {
+        tracker_start('mysql_smc');
+
         PiutangDilunaskan::create([
             'no_jurnal'       => $this->jurnal->no_jurnal,
             'waktu_jurnal'    => carbon($this->jurnal->tgl_jurnal)->setTimeFromTimeString($this->jurnal->jam_jurnal),
@@ -258,10 +272,12 @@ class BayarPiutangPasien implements ShouldQueue
             'tgl_bayar'       => $this->tglBayar,
             'status'          => 'Bayar',
             'kd_rek'          => $this->akun,
-            'nm_rek'          => AkunBayar::where('kd_rek', $this->akun)->value('nm_rek'),
+            'nm_rek'          => Rekening::where('kd_rek', $this->akun)->value('nm_rek'),
             'nik_penagih'     => $penagih,
             'nik_menyetujui'  => $menyetujui,
             'nik_validasi'    => $this->userId,
         ]);
+
+        tracker_end('mysql_smc', $this->userId);
     }
 }

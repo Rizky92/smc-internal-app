@@ -5,6 +5,9 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\LogoutOtherSessionsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\KamarController;
+use App\Http\Controllers\AntrianPoliController;
+use App\Http\Controllers\JadwalController;
 use App\Livewire\Pages\Aplikasi;
 use App\Livewire\Pages\Farmasi;
 use App\Livewire\Pages\HakAkses;
@@ -31,6 +34,16 @@ use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 */
 
 Route::get('/', HomeController::class);
+
+Route::get('/informasi-kamar', [KamarController::class, 'index']);
+
+Route::get('/jadwal', [JadwalController::class, 'jadwal']);
+
+Route::get('/antrian/{kd_poli}/{kd_dokter}', [AntrianPoliController::class, 'show'])
+    ->name('antrian.show');
+
+Route::post('/antrian/check-data-changes/{kd_poli}/{kd_dokter}', [AntrianPoliController::class, 'checkDataChanges'])
+    ->name('antrian.checkDataChanges');
 
 Route::get('login', [LoginController::class, 'create'])->name('login');
 Route::post('login', [LoginController::class, 'store']);
@@ -241,6 +254,14 @@ Route::prefix('admin')
                     ->name('status-data-pasien')
                     ->middleware('can:rekam-medis.status-data-pasien.read');
             });
+
+        // Route::prefix('informasi')
+        //     ->as('informasi.')
+        //     ->group(function () {
+        //         Route::get('informasi-kamar', Informasi\InformasiKamar::class)
+        //         ->name('informasi-kamar')
+        //         ->middleware('can:informasi.informasi-kamar.read');
+        //     });
 
         Route::prefix('logistik')
             ->as('logistik.')

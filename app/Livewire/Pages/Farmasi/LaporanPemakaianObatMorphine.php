@@ -27,11 +27,15 @@ class LaporanPemakaianObatMorphine extends Component
     /** @var string */
     public $tglAkhir;
 
+    /** @var "IFA"|"AP"|"IFG"|"IFI" */
+    public $bangsal;
+
     protected function queryString(): array
     {
         return [
             'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'bangsal' => ['as' => 'depo'],
         ];
     }
 
@@ -51,7 +55,7 @@ class LaporanPemakaianObatMorphine extends Component
     public function getDataLaporanPemakaianObatMorphine02050011Property(): Paginator
     {
         return PemberianObat::query()
-            ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, '02.05.0011')
+            ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, $this->bangsal, '02.05.0011')
             ->search($this->cari, [
                 'pasien.no_rkm_medis',
                 'pasien.nm_pasien',
@@ -65,7 +69,7 @@ class LaporanPemakaianObatMorphine extends Component
     public function getDataLaporanPemakaianObatMorphine02050012Property(): Paginator
     {
         return PemberianObat::query()
-            ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, '02.05.0012')
+            ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, $this->bangsal, '02.05.0012')
             ->search($this->cari, [
                 'pasien.no_rkm_medis',
                 'pasien.nm_pasien',
@@ -79,7 +83,7 @@ class LaporanPemakaianObatMorphine extends Component
     public function getDataLaporanPemakaianObatMorphine02050013Property(): Paginator
     {
         return PemberianObat::query()
-            ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, '02.05.0013')
+            ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, $this->bangsal, '02.05.0013')
             ->search($this->cari, [
                 'pasien.no_rkm_medis',
                 'pasien.nm_pasien',
@@ -93,7 +97,7 @@ class LaporanPemakaianObatMorphine extends Component
     public function getDataLaporanPemakaianObatMorphine02050014Property(): Paginator
     {
         return PemberianObat::query()
-            ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, '02.05.0014')
+            ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, $this->bangsal, '02.05.0014')
             ->search($this->cari, [
                 'pasien.no_rkm_medis',
                 'pasien.nm_pasien',
@@ -114,6 +118,7 @@ class LaporanPemakaianObatMorphine extends Component
     {
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->bangsal = 'IFA';
     }
 
     protected function dataPerSheet(): array
@@ -123,7 +128,7 @@ class LaporanPemakaianObatMorphine extends Component
             ->pluck('nama_brng', 'kode_brng')
             ->mapWithKeys(fn (string $v, string $k): array => [
                 $v => PemberianObat::query()
-                    ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, $k)
+                    ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, $this->bangsal, $k)
                     ->get()
             ])
             ->all();
@@ -145,8 +150,26 @@ class LaporanPemakaianObatMorphine extends Component
 
     protected function pageHeaders(): array
     {
+        $periodeAwal = carbon($this->tglAwal);
+        $periodeAkhir = carbon($this->tglAkhir);
+
+        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+
+        if ($periodeAwal->isSameDay($periodeAkhir)) {
+            $periode = $periodeAwal->translatedFormat('d F Y');
+        }
+
+        $gudang = [
+            'IFA' => 'Farmasi A',
+            'AP' => 'Farmasi B',
+            'IFG' => 'Farmasi IGD',
+            'IFI' => 'Farmasi Rawat Inap',
+        ];
+        
         return [
-            //
+            'RS Samarinda Medika Citra',
+            'Pemakaian Obat Morfin ' . $gudang[$this->bangsal],
+            $periode,
         ];
     }
 }

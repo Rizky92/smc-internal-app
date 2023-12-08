@@ -297,3 +297,13 @@ Breadcrumbs::for('admin.log-viewer', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Log Viewer', route('admin.log-viewer'));
 });
+
+Breadcrumbs::for('admin.informasi', function (Trail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Informasi');
+});
+
+Breadcrumbs::for('admin.informasi.informasi-kamar', function (Trail $trail): void {
+    $trail->parent('admin.informasi');
+    $trail->push('Informasi Kamar', route('admin.informasi.informasi-kamar'));
+});

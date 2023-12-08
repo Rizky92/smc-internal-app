@@ -21,6 +21,25 @@ class PiutangDilunaskan extends Model
 
     protected $table = 'piutang_dilunaskan';
 
+    protected $fillable = [
+        'no_jurnal',
+        'waktu_jurnal',
+        'no_rawat',
+        'no_rkm_medis',
+        'no_tagihan',
+        'kd_pj',
+        'piutang_dibayar',
+        'tgl_penagihan',
+        'tgl_jatuh_tempo',
+        'tgl_bayar',
+        'status',
+        'kd_rek',
+        'nm_rek',
+        'nik_penagih',
+        'nik_menyetujui',
+        'nik_validasi',
+    ];
+
     public function pasien(): BelongsTo
     {
         return $this->belongsTo(Pasien::class, 'no_rkm_medis', 'no_rkm_medis');
