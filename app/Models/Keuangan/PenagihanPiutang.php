@@ -160,6 +160,13 @@ class PenagihanPiutang extends Model
             ->where(fn (Builder $q): Builder => $q
                 ->whereNull('bayar_piutang.no_rawat')
                 ->orWhereIn('detail_penagihan_piutang.no_rawat', $sqlFilterOnlyPaid))
+            ->whereNotIn(
+                DB::raw("concat_ws('_', penagihan_piutang.no_tagihan, penagihan_piutang.kd_pj, detail_penagihan_piutang.no_rawat)"),
+                DB::connection('mysql_smc')
+                    ->table('selected_values')
+                    ->select('key')
+                    ->where('name', 'admin.keuangan.account-receivable.tagihan_dipilih')
+            )
             ->orderBy('penagihan_piutang.tanggal', 'desc')
             ->orderBy('detail_penagihan_piutang.no_rawat', 'asc')
             ->orderBy('detail_penagihan_piutang.no_tagihan', 'asc');

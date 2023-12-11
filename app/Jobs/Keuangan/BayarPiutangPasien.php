@@ -10,6 +10,7 @@ use App\Models\Keuangan\PiutangDilunaskan;
 use App\Models\Keuangan\PiutangPasien;
 use App\Models\Keuangan\PiutangPasienDetail;
 use App\Models\Keuangan\Rekening;
+use Cache;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -169,7 +170,7 @@ class BayarPiutangPasien implements ShouldQueue
                 tracker_end('mysql_sik', $this->userId);
             });
 
-        $tagihan = PenagihanPiutang::find($model->no_tagihan);
+        $tagihan = PenagihanPiutang::find($this->noTagihan);
 
         $this->masukkanKeJurnalPiutangLunas(
             $model->no_rkm_medis,
@@ -179,6 +180,14 @@ class BayarPiutangPasien implements ShouldQueue
             $tagihan->nip,
             $tagihan->nip_menyetujui
         );
+
+        $selected = implode('_', [$this->noTagihan, $this->jaminanPiutang, $this->noRawat]);
+
+        DB::connection('mysql_smc')
+            ->table('selected_values')
+            ->where('name', 'admin.keuangan.account-receivable.tagihan_dipilih')
+            ->where('key', $selected)
+            ->delete();
     }
 
     protected function setLunasPiutang(

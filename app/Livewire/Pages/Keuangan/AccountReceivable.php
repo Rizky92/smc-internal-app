@@ -201,6 +201,14 @@ class AccountReceivable extends Component
             })
             ->values()
             ->each(function (array $value) use ($akunDiskonPiutang, $akunTidakTerbayar) {
+                DB::connection('mysql_smc')
+                    ->table('selected_values')
+                    ->insert([
+                        'key'        => implode('_', [$value['no_tagihan'], $value['kd_pj'], $value['no_rawat']]),
+                        'name'       => 'admin.keuangan.account-receivable.tagihan_dipilih',
+                        'created_at' => now()->timestamp,
+                    ]);
+
                 BayarPiutangPasien::dispatch([
                     'no_tagihan'          => $value['no_tagihan'],
                     'kd_pj'               => $value['kd_pj'],
@@ -211,10 +219,10 @@ class AccountReceivable extends Component
                     'jaminan_pasien'      => $this->jaminanPasien,
                     'jenis_perawatan'     => $this->jenisPerawatan,
                     'tgl_bayar'           => $this->tglBayar,
-                    'user_id'             => (string) user()->nik,
-                    'akun'                => (string) $this->akunBayar->get($this->rekeningAkun),
-                    'akun_diskon_piutang' => (string) $akunDiskonPiutang,
-                    'akun_tidak_terbayar' => (string) $akunTidakTerbayar,
+                    'user_id'             => user()->nik,
+                    'akun'                => $this->akunBayar->get($this->rekeningAkun),
+                    'akun_diskon_piutang' => $akunDiskonPiutang,
+                    'akun_tidak_terbayar' => $akunTidakTerbayar,
                 ]);
             });
 
