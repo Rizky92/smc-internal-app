@@ -1,20 +1,19 @@
 @if ($antrianPasien)
     <!DOCTYPE html>
         <head>
-            <!-- Required meta tags -->
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width, initial-scale=1">
-            <!-- Bootstrap CSS -->
             <link rel="stylesheet" href="{{ asset('css/adminlte.min.css') }}">
-            <!-- Custom CSS -->
             <link rel="stylesheet" href="{{ asset('css/antrian-poli.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap4.min.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/responsive.bootstrap4.min.css') }}">
             <title>{{ config('app.name') }}</title>
         </head>
         <body>
-            <header class="d-flex flex-wrap justify-content-center pb-3 mb-4 border-bottom shadow header">
+            <header class="d-flex flex-wrap justify-content-center py-2 pb-2 mb-4 border-bottom shadow header">
                 <div class="container-fluid d-flex justify-content-center">
-                    <img src="{{ asset('img/logo.png') }}" alt="" width="100" height="80" class="d-inline-block align-text-top">
-                    <a class="text-pandan text-decoration-none" href="#">ANTREAN POLIKLINIK RS SMC</a>
+                    <img src="{{ asset('img/logo.png') }}" alt="" width="120">
+                   <span>ANTREAN POLIKLINIK RS SMC</span>
                 </div>
             </header>
             <div class="container-fluid">
@@ -25,7 +24,7 @@
                                 <div class="bg-pandan">
                                     <h1 class="display-5 text-white">ANTREAN DIPANGGIL</h1>
                                 </div>
-                                <span>{{ $nextAntrian->no_reg }}</span>
+                                <a class="text-danger">{{ $nextAntrian->no_reg }}</a>
                                 <h2><strong id="namaPoli"> {{ $namaPoli }}</strong></h2>
                                     <script>
                                         var namaPoli = '{{ $namaPoli }}';
@@ -101,7 +100,16 @@
                     </div>
                 </div>
             </div>
-            
+            <script>
+                function refreshPage() {
+                setTimeout(function () {
+                    location.reload(true);
+                }, 32000);
+                }
+                document.addEventListener('DOMContentLoaded', function () {
+                refreshPage();
+                });
+            </script>
             <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
             <script src="https://code.responsivevoice.org/responsivevoice.js?key=OGPOBj1g"></script>
         </body>

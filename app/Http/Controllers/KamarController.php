@@ -3,17 +3,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Perawatan\Kamar;
 use App\Models\Bangsal;
-// use App\View\Components\BaseLayout;
 use Illuminate\Http\Request;
-use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
-use Livewire\Component;
 
-
-class KamarController extends Component
+class KamarController
 {
-    public function getInformasiKamarProperty(): Paginator
+    public function getInformasiKamarProperty()
     {
         return Bangsal::activeWithKamar()
             ->distinct()
@@ -39,10 +34,9 @@ class KamarController extends Component
     }
 
     public function index(Request $request): View
-{
-    $informasiKamar = $this->getInformasiKamarProperty();
+    {
+        $informasiKamar = $this->getInformasiKamarProperty();
 
-    return view('informasi-kamar', compact('informasiKamar'))
-        ->layout(BaseLayout::class, ['title' => 'Informasi Kamar']);
-}
+        return view('informasi-kamar', compact('informasiKamar'));
+    }
 }

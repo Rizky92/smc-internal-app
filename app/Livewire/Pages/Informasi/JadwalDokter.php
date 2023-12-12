@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Livewire\Pages\Informasi;
 
 use App\Models\Perawatan\RegistrasiPasien;
 use App\Models\Antrian\Jadwal;
-use Illuminate\Http\Request;
+use Illuminate\View\View;
+use Livewire\Component;
 
-class JadwalController
+class JadwalDokter extends Component
 {
-    public function jadwal()
+
+    public function getDataJadwalDokterProperty(): Paginator
     {
         $hari = now()->format('l'); 
         $namahari = $this->getNamaHari($hari);
@@ -27,8 +29,6 @@ class JadwalController
                 );
                 $jadwalItem->register = $count;
             }
-
-        return view('jadwal', compact('jadwal', 'namahari'));
     }
 
     private function getNamaHari($hari)
@@ -52,4 +52,30 @@ class JadwalController
                 return '';
         }
     }
+
+    public function render(): View
+    {
+        return view('livewire.pages.informasi.jadwal-dokter', compact('namahari'));
+    }
+
+    protected function defaultValues(): void
+    {
+        
+    }
+
+    protected function pageHeaders(): array
+    {
+        //
+    }
+
+    protected function columnHeaders(): array
+    {
+        //
+    }   
+
+    protected function dataPerSheet(): array
+    {
+        //
+    }
 }
+

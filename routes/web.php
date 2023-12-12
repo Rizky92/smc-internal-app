@@ -8,6 +8,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KamarController;
 use App\Http\Controllers\AntrianPoliController;
 use App\Http\Controllers\JadwalController;
+use App\Livewire\Pages\Informasi\JadwalDokter;
+use App\Livewire\Pages\Informasi;
 use App\Livewire\Pages\Aplikasi;
 use App\Livewire\Pages\Farmasi;
 use App\Livewire\Pages\HakAkses;
@@ -17,6 +19,7 @@ use App\Livewire\Pages\Logistik;
 use App\Livewire\Pages\Perawatan;
 use App\Livewire\Pages\RekamMedis;
 use App\Livewire\Pages\User;
+use App\Livewire\Pages\Tes;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Support\Facades\Route;
 use InfyOm\RoutesExplorer\RoutesExplorer;
@@ -35,7 +38,13 @@ use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 
 Route::get('/', HomeController::class);
 
-Route::get('/informasi-kamar', [KamarController::class, 'index']);
+Route::get('/tes', [Tes\Tes::class, 'index']);
+
+Route::get('/informasi-kamar', Informasi\InformasiKamar::class);
+
+// Route::get('/informasi-kamar', [KamarController::class, 'index']);
+
+Route::get('/jadwal-dokter', Informasi\JadwalDokter::class);
 
 Route::get('/jadwal', [JadwalController::class, 'jadwal']);
 
@@ -44,6 +53,9 @@ Route::get('/antrian/{kd_poli}/{kd_dokter}', [AntrianPoliController::class, 'sho
 
 Route::post('/antrian/check-data-changes/{kd_poli}/{kd_dokter}', [AntrianPoliController::class, 'checkDataChanges'])
     ->name('antrian.checkDataChanges');
+
+Route::get('/jadwal-dokter', JadwalDokter::class)
+    ->name('jadwal-dokter');
 
 Route::get('login', [LoginController::class, 'create'])->name('login');
 Route::post('login', [LoginController::class, 'store']);
@@ -255,13 +267,16 @@ Route::prefix('admin')
                     ->middleware('can:rekam-medis.status-data-pasien.read');
             });
 
-        // Route::prefix('informasi')
-        //     ->as('informasi.')
-        //     ->group(function () {
-        //         Route::get('informasi-kamar', Informasi\InformasiKamar::class)
-        //         ->name('informasi-kamar')
-        //         ->middleware('can:informasi.informasi-kamar.read');
-        //     });
+        Route::prefix('informasi')
+            ->as('informasi.')
+            ->group(function () {
+                Route::get('informasi-kamar', Informasi\InformasiKamar::class)
+                ->name('informasi-kamar')
+                ->middleware('can:informasi.informasi-kamar.read');
+
+                Route::get('jadwal-dokter', Informasi\JadwalDokter::class)
+                ->name('jadwal-dokter');
+            });
 
         Route::prefix('logistik')
             ->as('logistik.')

@@ -1,11 +1,19 @@
-.bold {
+span {
     font-size: 64px;
+    font-weight: bold;
+    color: #198754;
 }
-
-.bg-pandan{
+thead {
     background-color: #198754;
 }
-
-.text-pandan {
-    color: #198754;
+a {
+    color: black;
+}
+@media (min-width: 768) {
+    img{
+        width: 150px;
+    }
+    span {
+        font-size: 72px;
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Models\Perawatan;
 
 use App\Database\Eloquent\Model;
 use App\Models\Bangsal;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -29,5 +30,30 @@ class Kamar extends Model
     public function rawatInap(): BelongsToMany
     {
         return $this->belongsToMany(RegistrasiPasien::class, 'kamar_inap', 'kd_kamar', 'no_rawat');
+    }
+
+    public function scopeInformasiKamar(Builder $query)
+    {
+        $sqlSelect = <<<SQL
+        kamar.kd_kamar,
+        kamar.trf_kamar,
+        kamar.kelas,
+        kamar.statusdata,
+        bangsal.nm_bangsal,
+        bangsal.status
+        SQL;
+
+        $this->addSearchConditions([
+            'kamar.kd_kamar',
+            'kamar.trf_kamar',
+            'kamar.status',
+            'kamar.kelas',
+            'kamar.statusdata',
+            'bangsal.nm_bangsal',
+        ]);
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join('bangsal', 'bangsal.kd_bangsal', '=', 'kamar.kd_bangsal');
     }
 }
