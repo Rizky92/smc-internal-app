@@ -1,3 +1,11 @@
+@extends('layouts.app')
+
+@section('jadwal-dokter')
+
+@push('styles')
+    <link rel="stylesheet" href="{{ asset('css/jadwal.css') }}">
+@endpush
+
 <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom shadow">
     <div class="container-fluid d-flex justify-content-center">
         <img src="{{ asset('img/logo.png') }}" alt="logo" width="120">
@@ -5,7 +13,6 @@
     </div>
 </header>
 @if ($jadwal->isNotEmpty()) 
-<div id="scrollingContent">
     <table class="table">
         <thead class="thead bg-pandan text-white">
             <tr>
@@ -35,27 +42,4 @@
 @else
     <p>Tidak ada jadwal dokter untuk hari ini.</p>
 @endif
-
-{{-- <div>
-    <x-flash />
-    <x-slot name="columns">
-        <x-table.th name="kd_dokter" title="Nama Dokter" />
-        <x-table.th name="hari_kerja" title="Hari Kerja" />
-        <x-table.th name="jam_mulai" title="Jam Mulai" />
-        <x-table.th name="jam_selesai" title="Jam Selesai" />
-        <x-table.th name="nm_poli" title="Poliklinik" />
-    </x-slot>
-    <x-slot name="body">
-        @forelse ($this->dataJadwalDokter as $item)
-        <x-table.tr>
-            <x-table.td>{{ $item->nm_dokter }}</x-table.td>
-            <x-table.td>{{ $item->hari_kerja }}</x-table.td>
-            <x-table.td>{{ $item->jam_mulai }}</x-table.td>
-            <x-table.td>{{ $item->jam_selesai }}</x-table.td>
-            <x-table.td>{{ $item->nm_poli }}</x-table.td>
-        </x-table.tr>
-        @empty
-            <x-table.tr-empty colspan="1" padding />
-        @endforelse
-    </x-slot>
-</div> --}}
+@endsection

@@ -39,30 +39,4 @@ class InformasiKamar extends Component
         $informasiKamar = $this->getDataInformasiKamarProperty();
         return view('livewire.pages.informasi.informasi-kamar',  compact('informasiKamar'));
     }
-
-    public function refetch()
-    {
-        $this->getDataInformasiKamarProperty();
-        $this->emit('refreshData');
-    }
-    
-    protected function defaultValues(): void
-    {
-        //
-    }
-
-    protected function dataPerSheet(): array
-    {
-        //
-    }
-
-    protected function columnHeaders(): array
-    {
-        //
-    }
-
-    protected function pageHeaders(): array
-    {
-        //
-    }
 }

@@ -8,16 +8,19 @@
 
     <link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/responsive.bootstrap4.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/bed.css') }}">
     <link href="{{ asset('css/adminlte.min.css') }}" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="{{ asset('logo.ico') }}">
+
+    @stack('styles')
 
     @livewireStyles
 </head>
 
 <body>
 
-    @yield('content')
+    @yield('informasi-kamar')
+
+    @yield('jadwal-dokter')
 
     <script src="{{ asset('js/jquery.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>

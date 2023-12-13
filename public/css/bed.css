@@ -24,10 +24,11 @@ span {
 }
 thead {
     background-color: #198754;
-    text-align: center;
+    font-size: 24px;
 }
 tbody{
-    text-align: center;
+    color: #198754;
+    font-size: 24px;
 }
 #scrollingContent table tbody {
     display: table-row-group;
@@ -43,47 +44,4 @@ tbody{
   100% {
       transform: translateY(calc(-300% + 300px));
   }
-}
-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: #28a745;
-    color: white;
-    text-align: center;
-    padding: 1rem;
-}
-@media (min-width: 768) {
-    img{
-        width: 150px;
-    }
-    span {
-        font-size: 72px;
-    }
-}
-@media (min-width: 1080px) {
-    img{
-        width: 120px;
-    }
-    span {
-        font-size: 72px;
-    }
-    
-}
-@media (min-width: 2160px) {
-    img{
-        width: 300px;
-    }
-    span {
-        font-size: 168px;
-    }
-    thead {
-        font-size: 48px;
-    }
-    tbody{
-        font-size: 48px;
-    }
-    .padding{
-        height: 1000px; 
-    }
 }

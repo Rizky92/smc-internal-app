@@ -46,7 +46,7 @@ Route::get('/informasi-kamar', Informasi\InformasiKamar::class);
 
 Route::get('/jadwal-dokter', Informasi\JadwalDokter::class);
 
-Route::get('/jadwal', [JadwalController::class, 'jadwal']);
+// Route::get('/jadwal', [JadwalController::class, 'jadwal']);
 
 Route::get('/antrian/{kd_poli}/{kd_dokter}', [AntrianPoliController::class, 'show'])
     ->name('antrian.show');

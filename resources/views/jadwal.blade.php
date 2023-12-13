@@ -17,7 +17,7 @@
             <span>RS SAMARINDA MEDIKA CITRA</span>
         </div>
     </header>
-    @if ($getDataJadwalDokterProperty->isNotEmpty()) 
+    @if ($jadwal->isNotEmpty()) 
     <div id="scrollingContent">
         <table class="table">
             <thead class="thead bg-pandan text-white">
@@ -30,7 +30,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($getDataJadwalDokterProperty as $data)
+                @foreach ($jadwal as $data)
                     <tr>
                         <td>
                             <a href="{{ route('antrian.show', ['kd_poli' => $data->kd_poli, 'kd_dokter' => $data->kd_dokter]) }}">
