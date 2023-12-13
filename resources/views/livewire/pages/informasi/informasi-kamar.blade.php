@@ -30,7 +30,7 @@
                     <tr>
                         <td width="30%">{{ $bangsal->nm_bangsal }}</td>
                         <td width="20%">{{ $bangsal->kelas }}</td>
-                        <td>Terisi : {{ app(App\Http\Controllers\KamarController::class)->countOccupiedRooms($bangsal->kd_bangsal) }} | Tersedia : {{ app(App\Http\Controllers\KamarController::class)->countEmptyRooms($bangsal->kd_bangsal) }}</td>
+                        <td>Terisi: {{ $bangsal->countOccupiedRooms() }} | Tersedia: {{ $bangsal->countEmptyRooms() }}</td>
                     </tr>
                 @endforeach
             </tbody>

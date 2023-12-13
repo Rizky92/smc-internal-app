@@ -18,22 +18,6 @@ class InformasiKamar extends Component
             ->paginate(200);
     }
 
-    public function countEmptyRooms($kdBangsal)
-    {
-        return Kamar::where('statusdata', '1')
-            ->where('kd_bangsal', $kdBangsal)
-            ->where('status', 'KOSONG')
-            ->count();
-    }
-
-    public function countOccupiedRooms($kdBangsal)
-    {
-        return Kamar::where('statusdata', '1')
-            ->where('kd_bangsal', $kdBangsal)
-            ->where('status', 'ISI')
-            ->count();
-    }
-
     public function render(): View
     {
         $informasiKamar = $this->getDataInformasiKamarProperty();
