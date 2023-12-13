@@ -4,7 +4,13 @@ span {
     color: #198754;
 }
 thead {
+    text-align: center;
+    font-size: 22px;
     background-color: #198754;
+}
+tbody {
+    font-size: 22px;
+    text-align: center;
 }
 a {
     color: black;

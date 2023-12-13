@@ -5,11 +5,8 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\LogoutOtherSessionsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\KamarController;
-use App\Http\Controllers\AntrianPoliController;
-use App\Http\Controllers\JadwalController;
-use App\Livewire\Pages\Informasi\JadwalDokter;
 use App\Livewire\Pages\Informasi;
+use App\Livewire\Pages\Antrian;
 use App\Livewire\Pages\Aplikasi;
 use App\Livewire\Pages\Farmasi;
 use App\Livewire\Pages\HakAkses;
@@ -42,20 +39,13 @@ Route::get('/tes', [Tes\Tes::class, 'index']);
 
 Route::get('/informasi-kamar', Informasi\InformasiKamar::class);
 
-// Route::get('/informasi-kamar', [KamarController::class, 'index']);
-
 Route::get('/jadwal-dokter', Informasi\JadwalDokter::class);
 
-// Route::get('/jadwal', [JadwalController::class, 'jadwal']);
+Route::get('/antrian-poli/{kd_poli}/{kd_dokter}', Antrian\AntrianPoli::class)
+    ->name('antrian-poli');
 
-Route::get('/antrian/{kd_poli}/{kd_dokter}', [AntrianPoliController::class, 'show'])
-    ->name('antrian.show');
-
-Route::post('/antrian/check-data-changes/{kd_poli}/{kd_dokter}', [AntrianPoliController::class, 'checkDataChanges'])
-    ->name('antrian.checkDataChanges');
-
-Route::get('/jadwal-dokter', JadwalDokter::class)
-    ->name('jadwal-dokter');
+Route::post('/antrian-poli/check-data-changes/{kd_poli}/{kd_dokter}', [Antrian\AntrianPoli::class, 'checkDataChanges'])
+    ->name('antrian-poli.checkDataChanges');
 
 Route::get('login', [LoginController::class, 'create'])->name('login');
 Route::post('login', [LoginController::class, 'store']);
