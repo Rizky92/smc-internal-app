@@ -7,15 +7,11 @@ use App\Database\Query\Grammars\MysqlGrammar;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
-use InvalidArgumentException;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,10 +19,12 @@ class AppServiceProvider extends ServiceProvider
      * @var array<class-string, class-string[]|class-string>
      */
     protected $mixins = [
-        \Illuminate\Support\Arr::class        => \App\Support\MixinArr::class,
-        \Illuminate\Support\Collection::class => \App\Support\MixinCollections::class,
-        \Illuminate\Support\Str::class        => \App\Support\MixinStr::class,
-        \Illuminate\Support\Stringable::class => \App\Support\MixinStringable::class,
+        \Illuminate\Support\Arr::class               => \App\Support\MixinArr::class,
+        \Illuminate\Support\Collection::class        => \App\Support\MixinCollections::class,
+        \Illuminate\Support\Str::class               => \App\Support\MixinStr::class,
+        \Illuminate\Support\Stringable::class        => \App\Support\MixinStringable::class,
+        \Illuminate\Database\Query\Builder::class    => \App\Support\MixinQueryBuilder::class,
+        \Illuminate\Database\Eloquent\Builder::class => \App\Support\MixinEloquentBuilder::class,
     ];
 
     /**
@@ -51,67 +49,10 @@ class AppServiceProvider extends ServiceProvider
         // https://carbon.nesbot.com/laravel/
         DB::connection('mysql_smc')->setQueryGrammar(new MysqlGrammar);
 
-        /** @psalm-scope-this Illuminate\Database\Eloquent\Builder */
-        Builder::macro('isEagerLoaded', fn (string $name): bool => isset($this->eagerLoad[$name]));
-
-        /** @psalm-scope-this Illuminate\Database\Eloquent\Builder */
-        Builder::macro('orderByField', function ($column, $values, $direction = 'asc') {
-            $binds = [];
-
-            for ($i = 0; $i < count($values); $i++) {
-                $binds[] = '?';
-            }
-
-            $binds = implode(', ', $binds);
-
-            if ($column instanceof Expression) {
-                $column = $column->getValue();
-            }
-
-            $direction = Str::lower($direction);
-
-            if (! in_array($direction, ['asc', 'desc'], true)) {
-                throw new InvalidArgumentException('Order direction must be "asc" or "desc".');
-            }
-
-            $startsWith = sprintf('field(%s, ', $column);
-            $endsWith = sprintf(') %s', $direction);
-
-            return $this->orderByRaw(Str::wrap($binds, $startsWith, $endsWith), $values);
-        });
-
-        /** @psalm-scope-this Illuminate\Database\Eloquent\Builder */
-        Builder::macro('orderByFieldFirst', function ($column, $values, $direction = 'asc') {
-            $binds = [];
-
-            for ($i = 0; $i < count($values); $i++) {
-                $binds[] = '?';
-            }
-
-            $binds = implode(', ', $binds);
-
-            if ($column instanceof Expression) {
-                $column = $column->getValue();
-            }
-
-            $direction = Str::lower($direction);
-
-            if (! in_array($direction, ['asc', 'desc'], true)) {
-                throw new InvalidArgumentException('Order direction must be "asc" or "desc".');
-            }
-
-            $startsWith = sprintf('(field(%s, ', $column);
-            $endsWith = ') != 0) desc';
-
-            return $this
-                ->orderByRaw(Str::wrap($binds, $startsWith, $endsWith), $values)
-                ->orderByField($column, $values, $direction);
-        });
-
         $this->registerBladeDirectives();
         $this->registerModelConfigurations();
         $this->registerSuperadminRole();
-        $this->registerCollectionMacrosAndMixins();
+        $this->registerMacrosAndMixins();
     }
 
     public function registerBladeDirectives(): void
@@ -139,7 +80,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::before(fn (User $user) => $user->hasRole(config('permission.superadmin_name')) ?: null);
     }
 
-    public function registerCollectionMacrosAndMixins(): void
+    public function registerMacrosAndMixins(): void
     {
         foreach ($this->mixins as $class => $mixins) {
             if (!in_array('mixin', get_class_methods($class), $strict = true)) {
