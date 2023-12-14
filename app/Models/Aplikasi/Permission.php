@@ -39,8 +39,6 @@ class Permission extends Model implements PermissionContract
     }
 
     /**
-     * @return static&\Illuminate\Database\Eloquent\Builder
-     *
      * @psalm-return static&\Illuminate\Database\Eloquent\Builder<static>
      */
     public static function create(array $attributes = []): self
@@ -84,13 +82,13 @@ class Permission extends Model implements PermissionContract
     }
 
     /**
-     * Find a permission by its name (and optionally guardName).
+     *  Find a permission by its name (and optionally guardName).
      *
-     * @param  string|null  $guardName
+     * @param string|null  $guardName
      *
      * @throws \Spatie\Permission\Exceptions\PermissionDoesNotExist
      */
-    public static function findByName(string $name, $guardName = null): PermissionContract
+    public static function findByName(string $name, $guardName = null): TModel
     {
         $guardName = $guardName ?? Guard::getDefaultName(static::class);
         $permission = static::getPermission(['name' => $name, 'guard_name' => $guardName]);
@@ -102,13 +100,13 @@ class Permission extends Model implements PermissionContract
     }
 
     /**
-     * Find a permission by its id (and optionally guardName).
+     *  Find a permission by its id (and optionally guardName).
      *
-     * @param  string|null  $guardName
+     * @param string|null  $guardName
      *
      * @throws \Spatie\Permission\Exceptions\PermissionDoesNotExist
      */
-    public static function findById(int $id, $guardName = null): PermissionContract
+    public static function findById(int $id, $guardName = null): TModel
     {
         $guardName = $guardName ?? Guard::getDefaultName(static::class);
         $permission = static::getPermission([(new static())->getKeyName() => $id, 'guard_name' => $guardName]);
@@ -121,11 +119,15 @@ class Permission extends Model implements PermissionContract
     }
 
     /**
-     * Find or create permission by its name (and optionally guardName).
+     *  Find or create permission by its name (and optionally guardName).
      *
-     * @param  string|null  $guardName
+     * @param string|null  $guardName
+     *
+     * @return TModel|static&\Illuminate\Database\Eloquent\Builder
+     *
+     * @psalm-return TModel|static&\Illuminate\Database\Eloquent\Builder<static>
      */
-    public static function findOrCreate(string $name, $guardName = null): PermissionContract
+    public static function findOrCreate(string $name, $guardName = null)
     {
         $guardName = $guardName ?? Guard::getDefaultName(static::class);
         $permission = static::getPermission(['name' => $name, 'guard_name' => $guardName]);

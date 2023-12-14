@@ -59,7 +59,7 @@ class StatusDataPasien extends Component
                 ->paginate($this->perpage);
     }
 
-    protected function formatAskepRalan($item)
+    protected function formatAskepRalan($item): string
     {
         $askepRalanArray = [
             'umum' => $item->askep_ralan_umum,

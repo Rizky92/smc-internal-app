@@ -12,7 +12,7 @@ use Livewire\Component;
 
 class AntrianPoliController extends Component
 {
-    public function show($kd_poli, $kd_dokter)
+    public function show($kd_poli, $kd_dokter): \Illuminate\View\View
     {
         $tanggal = now()->format('Y-m-d');
 
@@ -39,7 +39,7 @@ class AntrianPoliController extends Component
         return view('antrian-poli', compact('antrianPasien', 'namaDokter', 'namaPoli', 'nextAntrian', 'kd_poli', 'kd_dokter'));
     }
 
-    public function checkDataChanges(Request $request, $kd_poli, $kd_dokter)
+    public function checkDataChanges(Request $request, $kd_poli, $kd_dokter): \Illuminate\Http\JsonResponse
     {
         $tanggal = now()->format('Y-m-d');
 
@@ -65,7 +65,7 @@ class AntrianPoliController extends Component
         return response()->json($response);
     }
 
-    private function isDataChanged($nextAntrian, $lastNoReg)
+    private function isDataChanged($nextAntrian, $lastNoReg): bool
     {
         if ($lastNoReg !== $nextAntrian->no_reg) {
             return true;

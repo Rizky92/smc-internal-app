@@ -23,12 +23,18 @@ class Jadwal extends Model
 
     protected $fillable = ['kd_dokter', 'hari_kerja', 'jam_mulai', 'jam_selesai', 'kd_poli', 'kuota'];
     
-    public function dokter()
+    /**
+     * @psalm-return \Illuminate\Database\Eloquent\Relations\BelongsTo<Dokter>
+     */
+    public function dokter(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Dokter::class, 'kd_dokter', 'kd_dokter');
     }
 
-    public function poliklinik()
+    /**
+     * @psalm-return \Illuminate\Database\Eloquent\Relations\BelongsTo<Poliklinik>
+     */
+    public function poliklinik(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Poliklinik::class, 'kd_poli', 'kd_poli');
     }

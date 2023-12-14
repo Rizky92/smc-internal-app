@@ -39,8 +39,6 @@ class Role extends Model implements RoleContract
     }
 
     /**
-     * @return static&\Illuminate\Database\Eloquent\Builder
-     *
      * @psalm-return static&\Illuminate\Database\Eloquent\Builder<static>
      */
     public static function create(array $attributes = []): self
@@ -90,14 +88,15 @@ class Role extends Model implements RoleContract
     }
 
     /**
-     * Find a role by its name and guard name.
+     *  Find a role by its name and guard name.
      *
-     * @param  string|null  $guardName
-     * @return \Spatie\Permission\Contracts\Role|\Spatie\Permission\Models\Role
+     * @param string|null  $guardName
      *
      * @throws \Spatie\Permission\Exceptions\RoleDoesNotExist
+     *
+     * @psalm-return \Illuminate\Database\Eloquent\Builder<static>
      */
-    public static function findByName(string $name, $guardName = null): RoleContract
+    public static function findByName(string $name, $guardName = null): \Illuminate\Database\Eloquent\Builder
     {
         $guardName = $guardName ?? Guard::getDefaultName(static::class);
 
@@ -111,12 +110,13 @@ class Role extends Model implements RoleContract
     }
 
     /**
-     * Find a role by its id (and optionally guardName).
+     *  Find a role by its id (and optionally guardName).
      *
-     * @param  string|null  $guardName
-     * @return \Spatie\Permission\Contracts\Role|\Spatie\Permission\Models\Role
+     * @param string|null  $guardName
+     *
+     * @psalm-return \Illuminate\Database\Eloquent\Builder<static>
      */
-    public static function findById(int $id, $guardName = null): RoleContract
+    public static function findById(int $id, $guardName = null): \Illuminate\Database\Eloquent\Builder
     {
         $guardName = $guardName ?? Guard::getDefaultName(static::class);
 
@@ -130,12 +130,15 @@ class Role extends Model implements RoleContract
     }
 
     /**
-     * Find or create role by its name (and optionally guardName).
+     *  Find or create role by its name (and optionally guardName).
      *
-     * @param  string|null  $guardName
-     * @return \Spatie\Permission\Contracts\Role|\Spatie\Permission\Models\Role
+     * @param string|null  $guardName
+     *
+     * @return \Illuminate\Database\Eloquent\Builder&\Illuminate\Database\Eloquent\Builder|static&\Illuminate\Database\Eloquent\Builder
+     *
+     * @psalm-return \Illuminate\Database\Eloquent\Builder<static>&\Illuminate\Database\Eloquent\Builder<static>|static&\Illuminate\Database\Eloquent\Builder<static>
      */
-    public static function findOrCreate(string $name, $guardName = null): RoleContract
+    public static function findOrCreate(string $name, $guardName = null)
     {
         $guardName = $guardName ?? Guard::getDefaultName(static::class);
 
@@ -149,7 +152,7 @@ class Role extends Model implements RoleContract
     }
 
     /**
-     * @return null|static&\Illuminate\Database\Eloquent\Builder
+     * @return null|self
      *
      * @psalm-return null|static&\Illuminate\Database\Eloquent\Builder<static>
      */

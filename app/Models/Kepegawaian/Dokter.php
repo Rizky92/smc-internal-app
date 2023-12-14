@@ -18,12 +18,18 @@ class Dokter extends Model
 
     public $timestamps = false;
 
-    public function jadwal()
+    /**
+     * @psalm-return \Illuminate\Database\Eloquent\Relations\HasMany<Jadwal>
+     */
+    public function jadwal(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Jadwal::class, 'kd_dokter', 'kd_dokter');
     }
 
-    public function registrasi(): HasMany
+    /**
+     * @psalm-return \Illuminate\Database\Eloquent\Relations\HasMany<RegistrasiPasien>
+     */
+    public function registrasi(): \Illuminate\Database\Eloquent\Relations\HasMany
 {
     return $this->hasMany(RegistrasiPasien::class, 'kd_dokter', 'kd_dokter');
 }

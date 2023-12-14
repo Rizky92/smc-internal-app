@@ -22,7 +22,7 @@ class KamarController extends Component
             ->paginate(200);
     }
 
-    public function countOccupiedRooms($kdBangsal)
+    public function countOccupiedRooms($kdBangsal): int
     {
         return Kamar::where('statusdata', '1')
             ->where('kd_bangsal', $kdBangsal)
@@ -30,7 +30,7 @@ class KamarController extends Component
             ->count();
     }
 
-    public function countEmptyRooms($kdBangsal)
+    public function countEmptyRooms($kdBangsal): int
     {
         return Kamar::where('statusdata', '1')
             ->where('kd_bangsal', $kdBangsal)

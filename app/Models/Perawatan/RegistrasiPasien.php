@@ -795,7 +795,7 @@ class RegistrasiPasien extends Model
             ]);
     }
 
-    public static function hitungData($kd_poli, $kd_dokter, $tanggal)
+    public static function hitungData($kd_poli, $kd_dokter, $tanggal): int
     {
         return self::where('kd_poli', $kd_poli)
             ->where('kd_dokter', $kd_dokter)

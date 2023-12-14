@@ -10,7 +10,7 @@ use Livewire\Component;
 
 class JadwalController extends Component
 {
-    public function jadwal()
+    public function jadwal(): \Illuminate\View\View
     {
         $hari = now()->format('l'); // Mendapatkan nama hari dalam Bahasa Inggris
         $namahari = $this->getNamaHari($hari);
@@ -34,7 +34,7 @@ class JadwalController extends Component
     }
 
 
-    private function getNamaHari($hari)
+    private function getNamaHari($hari): string
     {
         switch ($hari) {
             case 'Sunday':
