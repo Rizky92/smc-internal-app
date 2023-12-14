@@ -1,3 +1,6 @@
+body {
+    overflow-y: hidden;
+}
 #scrollingContent {
     max-height: 100vh;
     overflow-y: hidden;
@@ -9,19 +12,24 @@
     display: table;
     width: 100%;
 }
-
 span {
-    font-family: 'Poppins', sans-serif;
     font-size: 64px;
+    font-weight: bold;
     color: #198754;
 }
-
+.padding{
+    height: 500px; 
+    z-index: 1; 
+    position: relative;
+}
 thead {
     background-color: #198754;
+    font-size: 24px;
 }
-
-
-
+tbody{
+    color: #198754;
+    font-size: 24px;
+}
 #scrollingContent table tbody {
     display: table-row-group;
 }
@@ -29,7 +37,6 @@ thead {
     background-color: #198754;
     color: white;
     }
-
 @keyframes marqueeAnimation {
   0% {
       transform: translateY(0);
@@ -37,14 +44,4 @@ thead {
   100% {
       transform: translateY(calc(-300% + 300px));
   }
-}
-
-footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: #28a745;
-    color: white;
-    text-align: center;
-    padding: 1rem;
 }

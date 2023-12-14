@@ -1,59 +1,43 @@
-*{
-    font-family: 'Poppins', sans-serif;
-}
-
 body {
     overflow: hidden;
     z-index: 1000;
     top: 1;
 }
-
 .header {
     position: sticky;
     top: 0;
     background-color: #ffffff;
     z-index: 1000;
 }
-
 .display-1 {
     font-size: 128px;
     font-weight: 700;
 }
-
 .display-4 {
     font-size: 48px;
     font-weight: 600;
 }
-
 .display-3 {
     font-size: 32px;
     font-weight: 600;
 }
-
 a {
-    font-size: 64px;
-    font-weight: bold;
-}
-
-span {
     font-weight: 700;
     font-size: 240px;
     color: red;
 }
-
+span {
+    font-size: 64px;
+    font-weight: bold;
+    color: #198754;
+}
 .bg-pandan{
     background-color: #198754;
 }
-
-.text-pandan {
-    color: #198754;
-}
-
 .scrollable-content {
     animation: marqueeAnimation 45s linear;
     
 }
-
 @keyframes marqueeAnimation {
     0% {
         transform: translateY(0);

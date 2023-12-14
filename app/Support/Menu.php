@@ -425,7 +425,29 @@ class Menu
                     [
                         'name' => 'SMC Internal App',
                         'url' => route('admin.hak-akses.siap'),
-                        'icon' => 'fas fa-key',
+                        'icon' => 'fas fa-circle',
+                        'type' => 'dropdown',
+                        'hasAnyPermissions' => $user->hasRole($develop),
+                    ],
+                ],
+            ],
+            [
+                'name' => 'Informasi',
+                'icon' => "far fa-circle",
+                'type' => 'dropdown',
+                'hasAnyPermissions' => $user->hasRole($develop),
+                'items' => [
+                    [
+                        'name' => 'Informasi Kamar',
+                        'url' => route('admin.informasi.informasi-kamar'),
+                        'icon' => 'fas fa-info',
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->hasRole($develop),
+                    ],
+                    [
+                        'name' => 'Jadwal Dokter',
+                        'url' => route('admin.informasi.jadwal-dokter'),
+                        'icon' => 'fas fa-calendar',
                         'type' => 'link',
                         'hasAnyPermissions' => $user->hasRole($develop),
                     ],

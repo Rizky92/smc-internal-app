@@ -2,24 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Livewire\Concerns\FlashComponent;
 use App\Models\Perawatan\RegistrasiPasien;
 use App\Models\Antrian\Jadwal;
 use Illuminate\Http\Request;
-use Livewire\Component;
 
-class JadwalController extends Component
+class JadwalController
 {
     public function jadwal(): \Illuminate\View\View
     {
-        $hari = now()->format('l'); // Mendapatkan nama hari dalam Bahasa Inggris
+        $hari = now()->format('l'); 
         $namahari = $this->getNamaHari($hari);
 
         $jadwal = Jadwal::with(['dokter', 'poliklinik'])
             ->where('hari_kerja', $namahari)
             ->get();
 
-            $tanggal = now(); // Sesuaikan dengan cara Anda mendapatkan tanggal
+            $tanggal = now();
 
             foreach ($jadwal as $jadwalItem) {
                 $count = RegistrasiPasien::hitungData(
@@ -30,11 +28,10 @@ class JadwalController extends Component
                 $jadwalItem->register = $count;
             }
 
-            return view('jadwal', compact('jadwal', 'namahari'));
+        return view('jadwal', compact('jadwal', 'namahari'));
     }
 
-
-    private function getNamaHari($hari): string
+    private function getNamaHari($hari)
     {
         switch ($hari) {
             case 'Sunday':

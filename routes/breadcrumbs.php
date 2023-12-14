@@ -307,3 +307,12 @@ Breadcrumbs::for('admin.informasi.informasi-kamar', function (Trail $trail): voi
     $trail->parent('admin.informasi');
     $trail->push('Informasi Kamar', route('admin.informasi.informasi-kamar'));
 });
+
+Breadcrumbs::for('admin.informasi.jadwal-dokter', function (Trail $trail): void {
+    $trail->parent('admin.informasi');
+    $trail->push('Jadwal Dokter', route('admin.informasi.jadwal-dokter'));
+});
+
+Breadcrumbs::for('jadwal-dokter', function (Trail $trail): void {
+    $trail->push('Jadwal Dokter', route('jadwal-dokter'));
+});
