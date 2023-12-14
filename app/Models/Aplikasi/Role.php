@@ -96,7 +96,7 @@ class Role extends Model implements RoleContract
      *
      * @psalm-return \Illuminate\Database\Eloquent\Builder<static>
      */
-    public static function findByName(string $name, $guardName = null): \Illuminate\Database\Eloquent\Builder
+    public static function findByName(string $name, $guardName = null): self
     {
         $guardName = $guardName ?? Guard::getDefaultName(static::class);
 
@@ -116,7 +116,7 @@ class Role extends Model implements RoleContract
      *
      * @psalm-return \Illuminate\Database\Eloquent\Builder<static>
      */
-    public static function findById(int $id, $guardName = null): \Illuminate\Database\Eloquent\Builder
+    public static function findById(int $id, $guardName = null): self
     {
         $guardName = $guardName ?? Guard::getDefaultName(static::class);
 
@@ -138,7 +138,7 @@ class Role extends Model implements RoleContract
      *
      * @psalm-return \Illuminate\Database\Eloquent\Builder<static>&\Illuminate\Database\Eloquent\Builder<static>|static&\Illuminate\Database\Eloquent\Builder<static>
      */
-    public static function findOrCreate(string $name, $guardName = null)
+    public static function findOrCreate(string $name, $guardName = null): self
     {
         $guardName = $guardName ?? Guard::getDefaultName(static::class);
 

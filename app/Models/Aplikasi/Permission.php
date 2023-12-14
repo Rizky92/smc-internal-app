@@ -88,7 +88,7 @@ class Permission extends Model implements PermissionContract
      *
      * @throws \Spatie\Permission\Exceptions\PermissionDoesNotExist
      */
-    public static function findByName(string $name, $guardName = null): TModel
+    public static function findByName(string $name, $guardName = null): self
     {
         $guardName = $guardName ?? Guard::getDefaultName(static::class);
         $permission = static::getPermission(['name' => $name, 'guard_name' => $guardName]);
@@ -106,7 +106,7 @@ class Permission extends Model implements PermissionContract
      *
      * @throws \Spatie\Permission\Exceptions\PermissionDoesNotExist
      */
-    public static function findById(int $id, $guardName = null): TModel
+    public static function findById(int $id, $guardName = null): self
     {
         $guardName = $guardName ?? Guard::getDefaultName(static::class);
         $permission = static::getPermission([(new static())->getKeyName() => $id, 'guard_name' => $guardName]);
@@ -127,7 +127,7 @@ class Permission extends Model implements PermissionContract
      *
      * @psalm-return TModel|static&\Illuminate\Database\Eloquent\Builder<static>
      */
-    public static function findOrCreate(string $name, $guardName = null)
+    public static function findOrCreate(string $name, $guardName = null): self
     {
         $guardName = $guardName ?? Guard::getDefaultName(static::class);
         $permission = static::getPermission(['name' => $name, 'guard_name' => $guardName]);
