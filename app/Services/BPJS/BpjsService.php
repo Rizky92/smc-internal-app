@@ -3,14 +3,10 @@
 namespace App\Services\BPJS;
 
 use Illuminate\Http\Client\Response;
-use Illuminate\Support\Facades\Http;
 use LZCompressor\LZString;
 
 class BpjsService
 {
-    private const URL_DASHBOARD_PER_BULAN = "https://apijkn.bpjs-kesehatan.go.id/antreanrs/dashboard/waktutunggu/bulan/{param}/tahun/{param}/waktu/{param}";
-    private const URL_GET_LIST_TASK = "https://apijkn.bpjs-kesehatan.go.id/antreanrs/antrean/getlisttask";
-
     protected string $timestamp;
 
     protected ?Response $response = null;
@@ -32,42 +28,6 @@ class BpjsService
         ];
     }
 
-    /**
-     * @param  string $bulan
-     * @param  string $tahun
-     * @param  string $waktu
-     * @psalm-param  "rs"|"server" $waktu
-     * 
-     * @return static
-     */
-    public function dashboardPerBulan(string $bulan, string $tahun, string $waktu): ?self
-    {
-        $url = str(self::URL_DASHBOARD_PER_BULAN)
-            ->replaceArray('{param}', [$bulan, $tahun, $waktu]);
-        
-        $this->response = Http::withHeaders($this->headers)
-            ->get((string) $url);
-
-        $this->decryptResponse();
-
-        return $this;
-    }
-
-    /**
-     * @param  string $noBooking
-     * 
-     * @return static
-     */
-    public function getListTask($noBooking): ?self
-    {
-        $this->response = Http::withHeaders($this->headers)
-            ->post(self::URL_GET_LIST_TASK, ['kodebooking' => $noBooking]);
-        
-        $this->decryptResponse();
-
-        return $this;
-    }
-
     protected function generateSignature(): string
     {
         $consid = config('bpjs.consid');
@@ -78,7 +38,7 @@ class BpjsService
         return base64_encode($signature);
     }
 
-    protected function decryptResponse(?string $key = null): void
+    protected function decryptResponse(?string $key = null): \Illuminate\Support\Collection
     {
         $consid = config('bpjs.consid');
         $secret = config('bpjs.secret');
@@ -99,13 +59,7 @@ class BpjsService
             $depth = 512,
             JSON_OBJECT_AS_ARRAY
         );
-    }
 
-    /**
-     * @return mixed
-     */
-    public function response()
-    {
-        return $this->response;
+        return $this->response->collect($key);
     }
 }
