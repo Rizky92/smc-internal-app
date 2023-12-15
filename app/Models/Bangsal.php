@@ -30,21 +30,48 @@ class Bangsal extends Model
         return $this->hasMany(Kamar::class, 'kd_bangsal', 'kd_bangsal');
     }
 
-    public function countEmptyRooms()
+    public function countEmptyRooms($class = null)
     {
-        return $this->kamar()->where('statusdata', '1')->where('status', 'KOSONG')->count();
+        $query = $this->kamar()->where('statusdata', '1')->where('status', 'KOSONG');
+
+        if ($class) {
+            $query->where('kelas', $class);
+        }
+
+        return $query->count();
     }
 
-    public function countOccupiedRooms()
+    public function countOccupiedRooms($class = null)
     {
-        return $this->kamar()->where('statusdata', '1')->where('status', 'ISI')->count();
-    }
+        $query = $this->kamar()->where('statusdata', '1')->where('status', 'ISI');
 
+        if ($class) {
+            $query->where('kelas', $class);
+        }
+
+        return $query->count();
+    }
     public function scopeActiveWithKamar($query)
     {   
-        return $query->select('bangsal.*', 'kamar.kelas')
-        ->leftJoin('kamar', 'bangsal.kd_bangsal', '=', 'kamar.kd_bangsal')
-        ->where('bangsal.status', '1')
-        ->where('kamar.statusdata', '1');
+        $subquery = Kamar::selectRaw('bangsal.kd_bangsal, kelas, COUNT(*) as total')
+            ->join('bangsal', 'bangsal.kd_bangsal', '=', 'kamar.kd_bangsal')
+            ->where('kamar.statusdata', '1')
+            ->groupBy('bangsal.kd_bangsal', 'kamar.kelas');
+
+        return $query->select('bangsal.*', 'subquery.kelas')
+            ->leftJoinSub($subquery, 'subquery', function ($join) {
+                $join->on('bangsal.kd_bangsal', '=', 'subquery.kd_bangsal');
+            })
+            ->where('bangsal.status', '1')
+            ->orderBy('nm_bangsal')
+            ->orderBy('kelas');
     }
+
+    public static function getKelasList()
+    {
+        return Kamar::select('kelas')->distinct()->pluck('kelas');
+    }
+
+
+
 }

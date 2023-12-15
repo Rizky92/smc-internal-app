@@ -11,16 +11,19 @@ class InformasiKamar extends Component
 {
     public function getDataInformasiKamarProperty()
     {
-        return Bangsal::activeWithKamar()
+        return Bangsal::with('kamar')
+            ->activeWithKamar()
             ->distinct()
             ->orderBy('nm_bangsal')
             ->orderBy('kelas')
-            ->paginate(200);
+            ->get();
     }
 
     public function render(): View
     {
         $informasiKamar = $this->getDataInformasiKamarProperty();
-        return view('livewire.pages.informasi.informasi-kamar',  compact('informasiKamar'));
+        $kelasList = Bangsal::getKelasList();
+
+        return view('livewire.pages.informasi.informasi-kamar', compact('informasiKamar', 'kelasList'));
     }
 }

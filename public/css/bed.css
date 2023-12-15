@@ -7,28 +7,28 @@ body {
     scroll-behavior: linear;
 }
 #scrollingContent table {
-    animation: marqueeAnimation 60s linear;
+    animation: marqueeAnimation 80s linear;
     transform-origin: 0% 0%;
     display: table;
     width: 100%;
 }
 span {
-    font-size: 64px;
+    font-size: 4vw;
     font-weight: bold;
     color: #198754;
 }
 .padding{
-    height: 500px; 
+    height: 43vw; 
     z-index: 1; 
     position: relative;
 }
 thead {
     background-color: #198754;
-    font-size: 24px;
+    font-size: 2vw;
 }
 tbody{
     color: #198754;
-    font-size: 24px;
+    font-size: 2vw;
 }
 #scrollingContent table tbody {
     display: table-row-group;
