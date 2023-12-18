@@ -16,12 +16,19 @@ trait Sortable
     }
 
     /**
-     * @param  \Illuminate\Support\Collection<TKey, TValue>|array<TValue> $columns
+     * @param  \Illuminate\Support\Collection<TKey, TValue>|array<TValue>|string $columns
+     * @param  \Illuminate\Database\Query\Expression|string|null $condition
      * 
      * @return $this
      */
-    public function addSortColumns($columns)
+    public function addSortColumns($columns, $condition = null)
     {
+        if (is_string($columns) && $condition) {
+            $this->sortColumns = array_merge($this->sortColumns, [$columns => $condition]);
+
+            return $this;
+        }
+
         $this->sortColumns = collect($this->sortColumns)
             ->merge($columns)
             ->all();
