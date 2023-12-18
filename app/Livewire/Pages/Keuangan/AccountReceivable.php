@@ -59,6 +59,9 @@ class AccountReceivable extends Component
 
     public function mount(): void
     {
+        $this->tagihanDipilih = [];
+        $this->totalDibayar = 0;
+
         $this->defaultValues();
     }
 
@@ -227,7 +230,7 @@ class AccountReceivable extends Component
             });
 
         $this->tagihanDipilih = [];
-        $this->rekalkulasiPembayaran();
+        $this->totalDibayar = 0;
         $this->dispatchBrowserEvent('clear-selected');
 
         $this->flashInfo('Validasi piutang sedang diproses!');
@@ -242,9 +245,6 @@ class AccountReceivable extends Component
         $this->jaminanPasien = '-';
         $this->jenisPerawatan = 'semua';
         $this->tglBayar = now()->format('Y-m-d');
-
-        $this->tagihanDipilih = [];
-        $this->totalDibayar = 0;
     }
 
     protected function dataPerSheet(): array
