@@ -94,7 +94,7 @@
                             <x-table.td>{{ $item->umur_hari > 90 ? rp($item->sisa_piutang) : '-' }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty :colspan="user()->can('keuangan.account-receivable.validasi-piutang') ? 20 : 19" padding />
+                        <x-table.tr-empty :colspan="user()->can('keuangan.account-receivable.validasi-piutang') ? 21 : 19" padding />
                     @endforelse
                 </x-slot>
                 <x-slot name="footer">
