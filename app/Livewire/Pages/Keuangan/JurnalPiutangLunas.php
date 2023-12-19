@@ -73,27 +73,8 @@ class JurnalPiutangLunas extends Component
     {
         return PiutangDilunaskan::query()
             ->dataPiutangDilunaskan($this->tglAwal, $this->tglAkhir, $this->kodeRekening, $this->jenisPeriode)
-            ->search($this->cari, [
-                'piutang_dilunaskan.no_jurnal',
-                'jurnal.keterangan',
-                'piutang_dilunaskan.no_rawat',
-                'piutang_dilunaskan.no_tagihan',
-                'piutang_dilunaskan.no_rkm_medis',
-                'pasien.nm_pasien',
-                'piutang_dilunaskan.kd_pj',
-                "if(penjamin.nama_perusahaan = '' or penjamin.nama_perusahaan = '-', penjamin.png_jawab, penjamin.nama_perusahaan)",
-                'piutang_dilunaskan.nik_penagih',
-                "ifnull(penagih.nama, '-')",
-                'piutang_dilunaskan.nik_menyetujui',
-                "ifnull(penyetuju.nama, '-')",
-                'piutang_dilunaskan.nik_validasi',
-                "ifnull(pemvalidasi.nama, '-')",
-                'piutang_dilunaskan.kd_rek',
-                'piutang_dilunaskan.nm_rek',
-            ])
-            ->sortWithColumns($this->sortColumns, [
-                'nama_penjamin' => DB::raw("if(penjamin.nama_perusahaan = '' or penjamin.nama_perusahaan = '-', penjamin.png_jawab, penjamin.nama_perusahaan)"),
-            ])
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
     }
 

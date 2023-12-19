@@ -53,6 +53,24 @@ class JurnalMedis extends Model
             trim(concat(jurnal_medis.nik, ' ', coalesce(pegawai.nama, ''))) nm_pegawai
         SQL;
 
+        $this->addSearchConditions([
+            "jurnal_medis.id",
+            "jurnal_medis.no_jurnal",
+            "jurnal_medis.waktu_jurnal",
+            "jurnal_medis.no_faktur",
+            "jurnal_medis.ket",
+            "jurnal_medis.status",
+            "bayar_pemesanan.besar_bayar",
+            "bayar_pemesanan.nama_bayar",
+            "rekening.kd_rek",
+            "rekening.nm_rek",
+            "datasuplier.nama_suplier",
+            "jurnal_medis.nik",
+            "pegawai.nama",
+        ]);
+
+        $this->addRawColumns('nm_pegawai', DB::raw("trim(concat(jurnal_medis.nik, ' ', coalesce(pegawai.nama, '')))"));
+
         return $query
             ->selectRaw($sqlSelect)
             ->withCasts(['besar_bayar' => 'float'])

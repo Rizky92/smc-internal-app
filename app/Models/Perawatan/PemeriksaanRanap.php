@@ -53,6 +53,24 @@ class PemeriksaanRanap extends Model
             jabatan.nm_jbtn
         SQL;
 
+        $this->addSearchConditions([
+            'pemeriksaan_ranap.no_rawat',
+            'pasien.no_rkm_medis',
+            'pasien.nm_pasien',
+            'penjab.kd_pj',
+            'penjab.png_jawab',
+            'ifnull(pemeriksaan_ranap.alergi, "")',
+            'ifnull(pemeriksaan_ranap.keluhan, "")',
+            'ifnull(pemeriksaan_ranap.pemeriksaan, "")',
+            'ifnull(pemeriksaan_ranap.penilaian, "")',
+            'ifnull(pemeriksaan_ranap.rtl, "")',
+            'ifnull(pemeriksaan_ranap.instruksi, "")',
+            'ifnull(pemeriksaan_ranap.evaluasi, "")',
+            'pemeriksaan_ranap.nip',
+            'petugas.nama',
+            'jabatan.nm_jbtn',
+        ]);
+
         return $query
             ->selectRaw($sqlSelect)
             ->leftJoin('reg_periksa', 'pemeriksaan_ranap.no_rawat', '=', 'reg_periksa.no_rawat')

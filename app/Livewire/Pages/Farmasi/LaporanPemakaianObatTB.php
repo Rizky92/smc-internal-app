@@ -41,10 +41,9 @@ class LaporanPemakaianObatTB extends Component
     public function getDataLaporanPemakaianObatTBProperty(): Paginator
     {
         return RegistrasiPasien::query()
-            ->riwayatPemakaianObatTB($this->tglAwal, $this->tglAkhir, $this->cari)
-            ->sortWithColumns($this->sortColumns, [
-                'total' => DB::raw('sum(detail_pemberian_obat.jml)')
-            ])
+            ->riwayatPemakaianObatTB($this->tglAwal, $this->tglAkhir)
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
     }
 
@@ -64,7 +63,8 @@ class LaporanPemakaianObatTB extends Component
     {
         return [
             RegistrasiPasien::query()
-                ->riwayatPemakaianObatTB($this->tglAwal, $this->tglAkhir, $this->cari)
+                ->riwayatPemakaianObatTB($this->tglAwal, $this->tglAkhir)
+                ->search($this->cari)
                 ->cursor()
         ];
     }

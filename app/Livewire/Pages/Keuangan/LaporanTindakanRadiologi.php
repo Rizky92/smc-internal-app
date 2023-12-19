@@ -42,21 +42,7 @@ class LaporanTindakanRadiologi extends Component
     {
         return HasilPeriksaRadiologi::query()
             ->laporanTindakanRadiologi($this->tglAwal, $this->tglAkhir)
-            ->search($this->cari, [
-                'periksa_radiologi.no_rawat',
-                'reg_periksa.no_rkm_medis',
-                'pasien.nm_pasien',
-                'penjab.png_jawab',
-                'petugas.nama',
-                'periksa_radiologi.dokter_perujuk',
-                'jns_perawatan_radiologi.kd_jenis_prw',
-                'jns_perawatan_radiologi.nm_perawatan',
-                'reg_periksa.status_bayar',
-                'periksa_radiologi.status',
-                'periksa_radiologi.kd_dokter',
-                'dokter.nm_dokter',
-                'hasil_radiologi.hasil',
-            ])
+            ->search($this->cari)
             ->sortWithColumns($this->sortColumns, [
                 'no_rawat'          => 'periksa_radiologi.no_rawat',
                 'no_rkm_medis'      => 'reg_periksa.no_rkm_medis',

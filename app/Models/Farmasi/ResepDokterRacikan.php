@@ -4,6 +4,7 @@ namespace App\Models\Farmasi;
 
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class ResepDokterRacikan extends Model
 {
@@ -61,6 +62,10 @@ class ResepDokterRacikan extends Model
             'reg_periksa.status_lanjut',
             'dokter.nm_dokter',
             'poliklinik.nm_poli',
+        ]);
+
+        $this->addRawColumns([
+            'total' => DB::raw('round(sum(resep_dokter_racikan_detail.jml * databarang.h_beli))'),
         ]);
 
         return $query

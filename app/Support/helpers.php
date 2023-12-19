@@ -255,10 +255,27 @@ if (!function_exists('func_get_named_args')) {
 
 if (!function_exists('str')) {
     /**
-     * @param  string|mixed $value
+     * @param  string|null $value
+     * 
+     * @return \Illuminate\Support\Stringable|string|mixed
      */
-    function str($value = ''): Stringable
+    function str($value = null)
     {
+        if (func_num_args() === 0) {
+            return new class
+            {
+                public function __call($method, $parameters)
+                {
+                    return Str::$method(...$parameters);
+                }
+
+                public function __toString()
+                {
+                    return '';
+                }
+            };
+        }
+
         return Str::of($value);
     }
 }

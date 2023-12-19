@@ -44,26 +44,10 @@ class LaporanPembuatanSOAP extends Component
         return $this->isDeferred
             ? []
             : PemeriksaanRanap::query()
-            ->pemeriksaanOlehFarmasi($this->tglAwal, $this->tglAkhir)
-            ->search($this->cari, [
-                'pemeriksaan_ranap.no_rawat',
-                'pasien.no_rkm_medis',
-                'pasien.nm_pasien',
-                'penjab.kd_pj',
-                'penjab.png_jawab',
-                'ifnull(pemeriksaan_ranap.alergi, "")',
-                'ifnull(pemeriksaan_ranap.keluhan, "")',
-                'ifnull(pemeriksaan_ranap.pemeriksaan, "")',
-                'ifnull(pemeriksaan_ranap.penilaian, "")',
-                'ifnull(pemeriksaan_ranap.rtl, "")',
-                'ifnull(pemeriksaan_ranap.instruksi, "")',
-                'ifnull(pemeriksaan_ranap.evaluasi, "")',
-                'pemeriksaan_ranap.nip',
-                'petugas.nama',
-                'jabatan.nm_jbtn',
-            ])
-            ->sortWithColumns($this->sortColumns)
-            ->paginate($this->perpage);
+                ->pemeriksaanOlehFarmasi($this->tglAwal, $this->tglAkhir)
+                ->search($this->cari)
+                ->sortWithColumns($this->sortColumns)
+                ->paginate($this->perpage);
     }
 
     public function render(): View

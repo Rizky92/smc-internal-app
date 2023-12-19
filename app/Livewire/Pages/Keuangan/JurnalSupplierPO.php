@@ -11,7 +11,6 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -42,24 +41,8 @@ class JurnalSupplierPO extends Component
     {
         return JurnalMedis::query()
             ->jurnalPenerimaanBarang($this->tglAwal, $this->tglAkhir)
-            ->search($this->cari, [
-                "jurnal_medis.id",
-                "jurnal_medis.no_jurnal",
-                "jurnal_medis.waktu_jurnal",
-                "jurnal_medis.no_faktur",
-                "jurnal_medis.ket",
-                "jurnal_medis.status",
-                "bayar_pemesanan.besar_bayar",
-                "bayar_pemesanan.nama_bayar",
-                "rekening.kd_rek",
-                "rekening.nm_rek",
-                "datasuplier.nama_suplier",
-                "jurnal_medis.nik",
-                "pegawai.nama",
-            ])
-            ->sortWithColumns($this->sortColumns, [
-                'nm_pegawai' => DB::raw("trim(concat(jurnal_medis.nik, ' ', coalesce(pegawai.nama, '')))"),
-            ])
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage, ['*'], 'page_medis');
     }
 
@@ -67,24 +50,8 @@ class JurnalSupplierPO extends Component
     {
         return JurnalNonMedis::query()
             ->jurnalPenerimaanBarang($this->tglAwal, $this->tglAkhir)
-            ->search($this->cari, [
-                'jurnal_non_medis.id',
-                'jurnal_non_medis.no_jurnal',
-                'jurnal_non_medis.waktu_jurnal',
-                'jurnal_non_medis.no_faktur',
-                'jurnal_non_medis.ket',
-                'jurnal_non_medis.status',
-                'bayar_pemesanan_non_medis.besar_bayar',
-                'bayar_pemesanan_non_medis.nama_bayar',
-                'rekening.kd_rek',
-                'rekening.nm_rek',
-                'ipsrssuplier.nama_suplier',
-                "jurnal_non_medis.nik",
-                "pegawai.nama",
-            ])
-            ->sortWithColumns($this->sortColumns, [
-                'nm_pegawai' => DB::raw("trim(concat(jurnal_non_medis.nik, ' ', coalesce(pegawai.nama, '')))")
-            ])
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage, ['*'], 'page_nonmedis');
     }
 
@@ -107,9 +74,6 @@ class JurnalSupplierPO extends Component
 
     protected function defaultValues(): void
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }

@@ -63,7 +63,7 @@ class GudangObat extends Model
             'kodesatuan.kode_sat',
         ]);
 
-        $this->addSortColumns([
+        $this->addRawColumns([
             'projeksi_harga' => DB::raw('round(databarang.h_beli * if(gudangbarang.stok < 0, 0, gudangbarang.stok))')
         ]);
 
@@ -79,7 +79,7 @@ class GudangObat extends Model
             ->leftJoin('bangsal', 'gudangbarang.kd_bangsal', '=', 'bangsal.kd_bangsal')
             ->when($kodeBangsal !== '-', fn (Builder $query) => $query->where('gudangbarang.kd_bangsal', $kodeBangsal));
     }
-    
+
     public function scopeDefectaDepo(Builder $query, string $tanggal, string $shift, string $bangsal): Builder
     {
         $tanggal = carbon_immutable($tanggal);

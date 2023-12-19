@@ -51,6 +51,24 @@ class JurnalNonMedis extends Model
             trim(concat(jurnal_non_medis.nik, ' ', coalesce(pegawai.nama, ''))) nm_pegawai
         SQL;
 
+        $this->addSearchConditions([
+            'jurnal_non_medis.id',
+            'jurnal_non_medis.no_jurnal',
+            'jurnal_non_medis.waktu_jurnal',
+            'jurnal_non_medis.no_faktur',
+            'jurnal_non_medis.ket',
+            'jurnal_non_medis.status',
+            'bayar_pemesanan_non_medis.besar_bayar',
+            'bayar_pemesanan_non_medis.nama_bayar',
+            'rekening.kd_rek',
+            'rekening.nm_rek',
+            'ipsrssuplier.nama_suplier',
+            "jurnal_non_medis.nik",
+            "pegawai.nama",
+        ]);
+
+        $this->addRawColumns('nm_pegawai', DB::raw("trim(concat(jurnal_non_medis.nik, ' ', coalesce(pegawai.nama, '')))"));
+
         return $query
             ->selectRaw($sqlSelect)
             ->withCasts(['besar_bayar' => 'float'])

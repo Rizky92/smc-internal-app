@@ -45,29 +45,10 @@ class LaporanSelesaiBillingPasien extends Component
         return $this->isDeferred
             ? []
             : NotaSelesai::query()
-            ->billingYangDiselesaikan($this->tglAwal, $this->tglAkhir)
-            ->search($this->cari, [
-                "nota_selesai.no_rawat",
-                "pasien.no_rkm_medis",
-                "pasien.nm_pasien",
-                "ifnull(nota_pasien.no_nota, '-')",
-                "ifnull(kamar.kd_kamar, '-')",
-                "ifnull(bangsal.kd_bangsal, '-')",
-                "ifnull(bangsal.nm_bangsal, '-')",
-                "nota_selesai.status_pasien",
-                "nota_selesai.bentuk_bayar",
-                "penjab.png_jawab",
-                "nota_selesai.tgl_penyelesaian",
-                "nota_selesai.user_id",
-                "pegawai.nama",
-            ])
-            ->sortWithColumns($this->sortColumns, [
-                'nm_pasien'    => DB::raw("trim(pasien.nm_pasien)"),
-                'ruangan'      => DB::raw("ifnull(concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal), '-')"),
-                'nama_pegawai' => DB::raw("concat(nota_selesai.user_id, ' ', pegawai.nama)"),
-                'besar_bayar'  => DB::raw("coalesce(nota_pasien.besar_bayar, piutang_pasien.totalpiutang)"),
-            ])
-            ->paginate($this->perpage);
+                ->billingYangDiselesaikan($this->tglAwal, $this->tglAkhir)
+                ->search($this->cari)
+                ->sortWithColumns($this->sortColumns)
+                ->paginate($this->perpage);
     }
 
     public function render(): View
@@ -87,9 +68,6 @@ class LaporanSelesaiBillingPasien extends Component
 
     protected function defaultValues(): void
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }

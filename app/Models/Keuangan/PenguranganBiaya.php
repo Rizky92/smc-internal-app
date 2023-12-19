@@ -46,6 +46,24 @@ class PenguranganBiaya extends Model
             reg_periksa.status_bayar
         SQL;
 
+        $this->addSearchConditions([
+            "pasien.nm_pasien",
+            "reg_periksa.no_rkm_medis",
+            "pengurangan_biaya.no_rawat",
+            "pengurangan_biaya.nama_pengurangan",
+            "penjab.png_jawab",
+            "dokter.nm_dokter",
+            "coalesce(nullif(trim(dokter_pj.nm_dokter), ''), '-')",
+            "poliklinik.nm_poli",
+            "reg_periksa.status_lanjut",
+            "reg_periksa.status_bayar",
+        ]);
+
+        $this->addRawColumns([
+            'dokter_ralan' => DB::raw("dokter.nm_dokter"),
+            'dokter_ranap' => DB::raw("coalesce(nullif(trim(dokter_pj.nm_dokter), ''), '-')"),
+        ]);
+
         return $query
             ->selectRaw($sqlSelect)
             ->withCasts(['besar_pengurangan' => 'float'])

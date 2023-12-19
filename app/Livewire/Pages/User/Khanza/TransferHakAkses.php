@@ -58,13 +58,13 @@ class TransferHakAkses extends Component
         return $this->isDeferred
             ? []
             : User::query()
-            ->where(DB::raw('trim(pegawai.nik)'), '!=', $this->nrp)
-            ->where(
-                fn (Builder $q): Builder => $q
-                    ->search($this->cari)
-                    ->when($this->showChecked, fn (Builder $q): Builder => $q->orWhereIn(DB::raw('trim(pegawai.nik)'), $checkedUsers))
-            )
-            ->get();
+                ->where(DB::raw('trim(pegawai.nik)'), '!=', $this->nrp)
+                ->where(
+                    fn (Builder $q): Builder => $q
+                        ->search($this->cari)
+                        ->when($this->showChecked, fn (Builder $q): Builder => $q->orWhereIn(DB::raw('trim(pegawai.nik)'), $checkedUsers))
+                )
+                ->get();
     }
 
     public function render(): View

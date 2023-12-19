@@ -19,7 +19,11 @@ class ResepDokter extends Model
 
     public $timestamps = false;
 
-    protected $searchColumns = ['no_resep', 'kode_brng', 'aturan_pakai'];
+    protected $searchColumns = [
+        'no_resep', 
+        'kode_brng', 
+        'aturan_pakai'
+    ];
 
     public function scopeKunjunganResepObatRegular(
         Builder $query,

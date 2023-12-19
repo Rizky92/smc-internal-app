@@ -93,6 +93,18 @@ class ResepObat extends Model
             penjab.png_jawab
         SQL;
 
+        $this->addSearchConditions([
+            'resep_obat.no_resep',
+            'databarang.nama_brng',
+            'kategori_barang.nama',
+            'dokter.kd_dokter',
+            'dokter.nm_dokter',
+            'resep_obat.status',
+            'poliklinik.nm_poli',
+            'reg_periksa.kd_pj',
+            'penjab.png_jawab',
+        ]);
+
         return $query
             ->selectRaw($sqlSelect)
             ->withCasts(['jml' => 'float'])

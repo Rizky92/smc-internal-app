@@ -53,10 +53,6 @@ class NotaSelesai extends Model
             'nama_pegawai' => DB::raw("concat(nota_selesai.user_id, ' ', pegawai.nama) nama_pegawai"),
         ];
 
-        $sqlSelectCasts = [
-            'besar_bayar' => 'float',
-        ];
-
         $notaPasien = <<<SQL
             (select
                     nota_jalan.no_rawat,
@@ -88,8 +84,32 @@ class NotaSelesai extends Model
             ) nota_pasien
         SQL;
 
+        $this->addSearchConditions([
+            "nota_selesai.no_rawat",
+            "pasien.no_rkm_medis",
+            "pasien.nm_pasien",
+            "ifnull(nota_pasien.no_nota, '-')",
+            "ifnull(kamar.kd_kamar, '-')",
+            "ifnull(bangsal.kd_bangsal, '-')",
+            "ifnull(bangsal.nm_bangsal, '-')",
+            "nota_selesai.status_pasien",
+            "nota_selesai.bentuk_bayar",
+            "penjab.png_jawab",
+            "nota_selesai.tgl_penyelesaian",
+            "nota_selesai.user_id",
+            "pegawai.nama",
+        ]);
+
+        $this->addRawColumns([
+            'nm_pasien'    => DB::raw("trim(pasien.nm_pasien)"),
+            'ruangan'      => DB::raw("ifnull(concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal), '-')"),
+            'nama_pegawai' => DB::raw("concat(nota_selesai.user_id, ' ', pegawai.nama)"),
+            'besar_bayar'  => DB::raw("coalesce(nota_pasien.besar_bayar, piutang_pasien.totalpiutang)"),
+        ]);
+
         return $query
             ->select($sqlSelect)
+            ->withCasts(['besar_bayar' => 'float'])
             ->leftJoin(DB::raw($sik . '.reg_periksa reg_periksa'), 'nota_selesai.no_rawat', '=', 'reg_periksa.no_rawat')
             ->leftJoin(DB::raw($sik . '.kamar_inap kamar_inap'), 'nota_selesai.no_rawat', '=', 'kamar_inap.no_rawat')
             ->leftJoin(DB::raw($sik . '.piutang_pasien piutang_pasien'), 'nota_selesai.no_rawat', '=', 'piutang_pasien.no_rawat')
@@ -100,13 +120,10 @@ class NotaSelesai extends Model
             ->leftJoin(DB::raw($sik . '.pasien pasien'), 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->leftJoin(DB::raw($sik . '.pegawai'), 'nota_selesai.user_id', '=', 'pegawai.nik')
             ->whereBetween(DB::raw("date(nota_selesai.tgl_penyelesaian)"), [$tglAwal, $tglAkhir])
-            ->groupByRaw(<<<SQL
-                nota_selesai.no_rawat,
-                nota_selesai.status_pasien,
-                nota_selesai.bentuk_bayar,
-                nota_selesai.tgl_penyelesaian
-            SQL)
-            ->withCasts($sqlSelectCasts);
+            ->groupBy('nota_selesai.no_rawat')
+            ->groupBy('nota_selesai.status_pasien')
+            ->groupBy('nota_selesai.bentuk_bayar')
+            ->groupBy('nota_selesai.tgl_penyelesaian');
     }
 
     public static function refreshModel(): void

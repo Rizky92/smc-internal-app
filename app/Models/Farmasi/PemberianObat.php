@@ -47,6 +47,14 @@ class PemberianObat extends Model
             "RS Samarinda Medika Citra" alamat_dokter
         SQL;
 
+        $this->addSearchConditions([
+            'pasien.no_rkm_medis',
+            'pasien.nm_pasien',
+            'pasien.alamat',
+            'dokter.kd_dokter',
+            'dokter.nm_dokter',
+        ]);
+
         return $query
             ->selectRaw($sqlSelect)
             ->withCasts(['jml' => 'int'])

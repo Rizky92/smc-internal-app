@@ -47,30 +47,13 @@ class LaporanPotonganBiayaPasien extends Component
     {
         return PenguranganBiaya::query()
             ->potonganBiayaPasien($this->tglAwal, $this->tglAkhir)
-            ->search($this->cari, [
-                "pasien.nm_pasien",
-                "reg_periksa.no_rkm_medis",
-                "pengurangan_biaya.no_rawat",
-                "pengurangan_biaya.nama_pengurangan",
-                "penjab.png_jawab",
-                "dokter.nm_dokter",
-                "coalesce(nullif(trim(dokter_pj.nm_dokter), ''), '-')",
-                "poliklinik.nm_poli",
-                "reg_periksa.status_lanjut",
-                "reg_periksa.status_bayar",
-            ])
-            ->sortWithColumns($this->sortColumns, [
-                'dokter_ralan' => DB::raw("dokter.nm_dokter"),
-                'dokter_ranap' => DB::raw("coalesce(nullif(trim(dokter_pj.nm_dokter), ''), '-')"),
-            ])
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
     }
 
     protected function defaultValues(): void
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }

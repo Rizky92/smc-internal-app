@@ -10,7 +10,6 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Database\Eloquent\Casts\AsStringable;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -41,17 +40,7 @@ class ObatPerDokter extends Component
     {
         return ResepObat::query()
             ->penggunaanObatPerDokter($this->tglAwal, $this->tglAkhir)
-            ->search($this->cari, [
-                'resep_obat.no_resep',
-                'databarang.nama_brng',
-                'kategori_barang.nama',
-                'dokter.kd_dokter',
-                'dokter.nm_dokter',
-                'resep_obat.status',
-                'poliklinik.nm_poli',
-                'reg_periksa.kd_pj',
-                'penjab.png_jawab',
-            ])
+            ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
     }
@@ -64,9 +53,6 @@ class ObatPerDokter extends Component
 
     protected function defaultValues(): void
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
@@ -76,9 +62,6 @@ class ObatPerDokter extends Component
         return [
             ResepObat::query()
                 ->penggunaanObatPerDokter($this->tglAwal, $this->tglAkhir)
-                ->withCasts([
-                    'status' => AsStringable::class,
-                ])
                 ->get()
                 ->map(fn (ResepObat $model): array => [
                     'no_resep'      => $model->no_resep,
@@ -88,7 +71,7 @@ class ObatPerDokter extends Component
                     'nama'          => $model->nama,
                     'jml'           => floatval($model->jml),
                     'nm_dokter'     => $model->nm_dokter,
-                    'status'        => (string) $model->status->title(),
+                    'status'        => str()->title($model->status),
                     'nm_poli'       => $model->nm_poli,
                     'png_jawab'     => $model->png_jawab,
                 ]),

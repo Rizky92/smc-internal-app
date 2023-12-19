@@ -482,7 +482,7 @@ class RegistrasiPasien extends Model
             ->leftJoin('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
             ->leftJoin('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->leftJoinSub($rawatInap, 'rawat_inap', fn (JoinClause $join) =>
-                $join->on('reg_periksa.no_rawat', '=', 'rawat_inap.no_rawat'))
+            $join->on('reg_periksa.no_rawat', '=', 'rawat_inap.no_rawat'))
             ->leftJoin('dpjp_ranap', 'reg_periksa.no_rawat', '=', 'dpjp_ranap.no_rawat')
             ->leftJoin(DB::raw('dokter dokter_dpjp'), 'dpjp_ranap.kd_dokter', '=', 'dokter_dpjp.kd_dokter')
             ->leftJoin('kamar', 'rawat_inap.kd_kamar', '=', 'kamar.kd_kamar')
@@ -492,10 +492,10 @@ class RegistrasiPasien extends Model
             ->leftJoin('diagnosa_pasien', 'reg_periksa.no_rawat', '=', 'diagnosa_pasien.no_rawat')
             ->leftJoin('penyakit', 'diagnosa_pasien.kd_penyakit', '=', 'penyakit.kd_penyakit')
             ->leftJoinSub($perawatanRalan, 'perawatan_ralan', fn (JoinClause $join) =>
-                $join->on('reg_periksa.no_rawat', '=', 'perawatan_ralan.no_rawat'))
+            $join->on('reg_periksa.no_rawat', '=', 'perawatan_ralan.no_rawat'))
             ->leftJoin('jns_perawatan', 'perawatan_ralan.kd_jenis_prw', '=', 'jns_perawatan.kd_jenis_prw')
             ->leftJoinSub($perawatanRanap, 'perawatan_ranap', fn (JoinClause $join) =>
-                $join->on('reg_periksa.no_rawat', '=', 'perawatan_ranap.no_rawat'))
+            $join->on('reg_periksa.no_rawat', '=', 'perawatan_ranap.no_rawat'))
             ->leftJoin('jns_perawatan_inap', 'perawatan_ranap.kd_jenis_prw', '=', 'jns_perawatan_inap.kd_jenis_prw')
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
             ->groupByRaw('reg_periksa.no_rawat');
@@ -569,7 +569,7 @@ class RegistrasiPasien extends Model
             'pasien.no_tlp',
         ]);
 
-        $this->addSortColumns([
+        $this->addRawColumns([
             'ruangan'       => DB::raw("concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal)"),
             'data_pasien'   => DB::raw("concat(pasien.nm_pasien, ' (', reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur, ')')"),
             'alamat_pasien' => DB::raw("concat(pasien.alamat, ', Kel. ', kelurahan.nm_kel, ', Kec. ', kecamatan.nm_kec, ', ', kabupaten.nm_kab, ', ', propinsi.nm_prop)"),
@@ -680,7 +680,7 @@ class RegistrasiPasien extends Model
             ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
-            ->when(! $semuaRegistrasi, fn (Builder $q): Builder => $q->whereNotIn('reg_periksa.stts', ['Batal', 'Belum']))
+            ->when(!$semuaRegistrasi, fn (Builder $q): Builder => $q->whereNotIn('reg_periksa.stts', ['Batal', 'Belum']))
             ->when($jenisPerawatan !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.status_lanjut', $jenisPerawatan));
     }
 
@@ -745,7 +745,7 @@ class RegistrasiPasien extends Model
             ]);
     }
 
-    public function scopeRiwayatPemakaianObatTB(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $cari = ''): Builder
+    public function scopeRiwayatPemakaianObatTB(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->format('Y-m-d');
@@ -770,6 +770,17 @@ class RegistrasiPasien extends Model
             pasien.alamat
         SQL;
 
+        $this->addSearchConditions([
+            'pasien.nm_pasien',
+            'databarang.nama_brng',
+            'bangsal.nm_bangsal',
+            'penjab.png_jawab',
+            'pasien.no_tlp',
+            'pasien.alamat',
+        ]);
+
+        $this->addRawColumns('total', DB::raw('sum(detail_pemberian_obat.jml)'));
+
         return $query
             ->selectRaw($sqlSelect)
             ->withCasts(['total' => 'float'])
@@ -780,14 +791,6 @@ class RegistrasiPasien extends Model
             ->leftJoin('bangsal', 'detail_pemberian_obat.kd_bangsal', '=', 'bangsal.kd_bangsal')
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
             ->whereIn('databarang.kode_kategori', ['2.14', '2.15'])
-            ->search($cari, [
-                'pasien.nm_pasien',
-                'databarang.nama_brng',
-                'bangsal.nm_bangsal',
-                'penjab.png_jawab',
-                'pasien.no_tlp',
-                'pasien.alamat',
-            ])
             ->groupBy([
                 'reg_periksa.no_rawat',
                 'detail_pemberian_obat.kode_brng',

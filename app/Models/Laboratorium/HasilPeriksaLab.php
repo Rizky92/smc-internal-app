@@ -97,6 +97,22 @@ class HasilPeriksaLab extends Model
             dokter.nm_dokter
         SQL;
 
+        $this->addSearchConditions([
+            'periksa_lab.no_rawat',
+            'reg_periksa.no_rkm_medis',
+            'pasien.nm_pasien',
+            'penjab.png_jawab',
+            'petugas.nama',
+            'periksa_lab.dokter_perujuk',
+            'jns_perawatan_lab.kd_jenis_prw',
+            'jns_perawatan_lab.nm_perawatan',
+            'periksa_lab.kategori',
+            'reg_periksa.status_bayar',
+            'periksa_lab.status',
+            'periksa_lab.kd_dokter',
+            'dokter.nm_dokter',
+        ]);
+
         return $query
             ->selectRaw($sqlSelect)
             ->withCasts(['biaya' => 'float'])

@@ -13,7 +13,6 @@ class Pengaturan extends Component
 {
     use FlashComponent, MenuTracker;
 
-    // Pengaturan per kategori aplikasi masuk jadi Traits
     use Concerns\PengaturanRKAT;
 
     public function render(): View
@@ -26,8 +25,8 @@ class Pengaturan extends Component
     {
         $permissions = [];
 
-        $settings = collect(class_uses_recursive(static::class))
-            ->map(fn (string $value) => class_basename($value))
+        collect(class_uses_recursive(static::class))
+            ->map(fn (string $value): string => class_basename($value))
             ->filter(fn (string $value): bool => Str::startsWith($value, 'Pengaturan'))
             ->each(function (string $value, string $key) use (&$permissions) {
                 $name = 'get' . $value . 'Permissions';

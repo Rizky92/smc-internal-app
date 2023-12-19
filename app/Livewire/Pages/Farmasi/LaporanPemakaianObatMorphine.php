@@ -33,9 +33,9 @@ class LaporanPemakaianObatMorphine extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
-            'bangsal' => ['as' => 'depo'],
+            'bangsal'  => ['as' => 'depo'],
         ];
     }
 
@@ -56,13 +56,7 @@ class LaporanPemakaianObatMorphine extends Component
     {
         return PemberianObat::query()
             ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, $this->bangsal, '02.05.0011')
-            ->search($this->cari, [
-                'pasien.no_rkm_medis',
-                'pasien.nm_pasien',
-                'pasien.alamat',
-                'dokter.kd_dokter',
-                'dokter.nm_dokter',
-            ])
+            ->search($this->cari)
             ->paginate($this->perpage, ['*'], 'page_obat_a');
     }
 
@@ -70,13 +64,7 @@ class LaporanPemakaianObatMorphine extends Component
     {
         return PemberianObat::query()
             ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, $this->bangsal, '02.05.0012')
-            ->search($this->cari, [
-                'pasien.no_rkm_medis',
-                'pasien.nm_pasien',
-                'pasien.alamat',
-                'dokter.kd_dokter',
-                'dokter.nm_dokter',
-            ])
+            ->search($this->cari)
             ->paginate($this->perpage, ['*'], 'page_obat_b');
     }
 
@@ -84,13 +72,7 @@ class LaporanPemakaianObatMorphine extends Component
     {
         return PemberianObat::query()
             ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, $this->bangsal, '02.05.0013')
-            ->search($this->cari, [
-                'pasien.no_rkm_medis',
-                'pasien.nm_pasien',
-                'pasien.alamat',
-                'dokter.kd_dokter',
-                'dokter.nm_dokter',
-            ])
+            ->search($this->cari)
             ->paginate($this->perpage, ['*'], 'page_obat_c');
     }
 
@@ -98,13 +80,7 @@ class LaporanPemakaianObatMorphine extends Component
     {
         return PemberianObat::query()
             ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, $this->bangsal, '02.05.0014')
-            ->search($this->cari, [
-                'pasien.no_rkm_medis',
-                'pasien.nm_pasien',
-                'pasien.alamat',
-                'dokter.kd_dokter',
-                'dokter.nm_dokter',
-            ])
+            ->search($this->cari)
             ->paginate($this->perpage, ['*'], 'page_obat_d');
     }
 

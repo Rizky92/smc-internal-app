@@ -41,22 +41,8 @@ class LaporanTambahanBiayaPasien extends Component
     {
         return TambahanBiaya::query()
             ->biayaTambahanUntukHonorDokter($this->tglAwal, $this->tglAkhir)
-            ->search($this->cari, [
-                'pasien.nm_pasien',
-                'reg_periksa.no_rkm_medis',
-                'tambahan_biaya.no_rawat',
-                'tambahan_biaya.nama_biaya',
-                'penjab.png_jawab',
-                'dokter.nm_dokter',
-                "coalesce(nullif(trim(dokter_pj.nm_dokter), ''), '-')",
-                'poliklinik.nm_poli',
-                'reg_periksa.status_lanjut',
-                'reg_periksa.status_bayar',
-            ])
-            ->sortWithColumns($this->sortColumns, [
-                'dokter_ralan' => DB::raw("dokter.nm_dokter"),
-                'dokter_ranap' => DB::raw("coalesce(nullif(trim(dokter_pj.nm_dokter), ''), '-')"),
-            ])
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
     }
 
@@ -68,9 +54,6 @@ class LaporanTambahanBiayaPasien extends Component
 
     protected function defaultValues(): void
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }

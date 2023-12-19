@@ -63,6 +63,22 @@ class HasilPeriksaRadiologi extends Model
             ifnull(LEFT(hasil_radiologi.hasil, 200), '-') hasil_pemeriksaan
         SQL;
 
+        $this->addSearchConditions([
+            'periksa_radiologi.no_rawat',
+            'reg_periksa.no_rkm_medis',
+            'pasien.nm_pasien',
+            'penjab.png_jawab',
+            'petugas.nama',
+            'periksa_radiologi.dokter_perujuk',
+            'jns_perawatan_radiologi.kd_jenis_prw',
+            'jns_perawatan_radiologi.nm_perawatan',
+            'reg_periksa.status_bayar',
+            'periksa_radiologi.status',
+            'periksa_radiologi.kd_dokter',
+            'dokter.nm_dokter',
+            'hasil_radiologi.hasil',
+        ]);
+
         return $query
             ->selectRaw($sqlSelect)
             ->withCasts(['biaya' => 'float'])

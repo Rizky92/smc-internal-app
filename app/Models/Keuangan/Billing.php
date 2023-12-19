@@ -4,7 +4,6 @@ namespace App\Models\Keuangan;
 
 use App\Database\Eloquent\Model;
 use App\Models\Perawatan\RegistrasiPasien;
-use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use RuntimeException;
@@ -23,7 +22,7 @@ class Billing extends Model
 
     public $timestamps = false;
 
-    public function scopeTotalBillingan(Builder $query, $noRawat = null): Builder
+    public function scopeTotalBillingan(Builder $query, $noRawat): Builder
     {
         if (empty($noRawat)) {
             throw new RuntimeException("Parameter of [\$noRawat] must not be empty.");

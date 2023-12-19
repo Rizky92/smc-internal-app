@@ -62,9 +62,7 @@ class KunjunganPerBentukObat extends Component
     {
         return ResepDokterRacikan::query()
             ->kunjunganResepObatRacikan($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan, $this->cari)
-            ->sortWithColumns($this->sortColumns, [
-                'total' => DB::raw('round(sum(resep_dokter_racikan_detail.jml * databarang.h_beli))'),
-            ])
+            ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage, ['*'], 'page_racikan');
     }
 

@@ -122,7 +122,7 @@ class PenagihanPiutang extends Model
             'akun_piutang.nama_bayar',
         ]);
 
-        $this->addSortColumns([
+        $this->addRawColumns([
             'tgl_tagihan'     => 'penagihan_piutang.tanggal',
             'tgl_jatuh_tempo' => 'penagihan_piutang.tanggaltempo',
             'penjab_pasien'   => 'penjab_pasien.png_jawab',
@@ -183,10 +183,12 @@ class PenagihanPiutang extends Model
         return $query
             ->orWhereIn(
                 DB::raw("concat_ws('_', penagihan_piutang.no_tagihan, penagihan_piutang.kd_pj, detail_penagihan_piutang.no_rawat)"),
-                array_keys($tagihanDipilih))
+                array_keys($tagihanDipilih)
+            )
             ->orderByFieldFirst(
                 DB::raw("concat_ws('_', penagihan_piutang.no_tagihan, penagihan_piutang.kd_pj, detail_penagihan_piutang.no_rawat)"),
-                array_keys($tagihanDipilih))
+                array_keys($tagihanDipilih)
+            )
             ->orderBy('penagihan_piutang.tanggal', 'desc')
             ->orderBy('detail_penagihan_piutang.no_rawat', 'asc')
             ->orderBy('detail_penagihan_piutang.no_tagihan', 'asc');
