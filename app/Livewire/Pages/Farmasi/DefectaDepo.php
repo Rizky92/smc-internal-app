@@ -25,7 +25,7 @@ class DefectaDepo extends Component
     /** @var "Pagi"|"Siang"|"Malam" */
     public $shift;
 
-    /** @var "IFA"|"IFG"|"IFI" */
+    /** @var "IFA"|"IFG"|"IFI"|"KO" */
     public $bangsal;
 
     protected function queryString(): array
@@ -116,6 +116,7 @@ class DefectaDepo extends Component
             'IFA' => 'Farmasi A',
             'IFG' => 'Farmasi IGD',
             'IFI' => 'Farmasi Rawat Inap',
+            'KO'  => 'Kamar Operasi OK',
         ];
 
         $shift = $this->dataShiftKerja();

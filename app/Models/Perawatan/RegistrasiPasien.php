@@ -202,6 +202,43 @@ class RegistrasiPasien extends Model
         });
     }
 
+    public function askepRalan(): Attribute
+    {
+        return Attribute::get(function ($_, array $attributes): ?string {
+            $askep = collect();
+
+            if ($attributes['askep_ralan_umum'] === "1") {
+                $askep->push("Umum");
+            }
+
+            if ($attributes['askep_ralan_bidan'] === "1") {
+                $askep->push("Kebidanan");
+            }
+
+            if ($attributes['askep_ralan_gigi'] === "1") {
+                $askep->push("Gigi");
+            }
+
+            if ($attributes['askep_ralan_bayi'] === "1") {
+                $askep->push("Bayi");
+            }
+
+            if ($attributes['askep_ralan_psikiatri'] === "1") {
+                $askep->push("Psikiatri");
+            }
+
+            if ($attributes['askep_ralan_geriatri'] === "1") {
+                $askep->push("Geriatri");
+            }
+
+            if ($askep->isEmpty()) {
+                return "Tidak ada";
+            }
+
+            return 'Ada ' . $askep->joinStr(', ')->wrap('(', ')')->value();
+        });
+    }
+
     public function askepRanap(): Attribute
     {
         return Attribute::get(function ($_, array $attributes): ?string {

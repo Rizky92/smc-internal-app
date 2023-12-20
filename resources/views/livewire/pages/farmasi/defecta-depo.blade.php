@@ -11,7 +11,7 @@
                 <x-filter.label constant-width>Shift Kerja:</x-filter.label>
                 <x-filter.select model="shift" :options="['Pagi' => 'Pagi', 'Siang' => 'Siang', 'Malam' => 'Malam']" />
                 <x-filter.label class="ml-auto pr-3">Gudang:</x-filter.label>
-                <x-filter.select model="bangsal" :options="['IFA' => 'Farmasi A', 'IFG' => 'Farmasi IGD', 'IFI' => 'Farmasi Rawat Inap']" />
+                <x-filter.select model="bangsal" :options="['IFA' => 'Farmasi A', 'IFG' => 'Farmasi IGD', 'IFI' => 'Farmasi Rawat Inap', 'KO' => 'Kamar Operasi OK']" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
