@@ -1,9 +1,9 @@
-<div>
+<div wire:init="loadProperties">
     <x-flash />
 
     <livewire:pages.keuangan.modal.ubah-tanggal-jurnal />
 
-    <x-card use-loading wire:init="loadProperties">
+    <x-card use-loading>
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.range-date />

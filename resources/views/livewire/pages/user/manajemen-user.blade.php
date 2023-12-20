@@ -82,7 +82,7 @@
     <livewire:pages.user.khanza.transfer-hak-akses />
     <livewire:pages.user.siap.lihat-aktivitas />
 
-    <x-card use-loading loading-target="loadProperties">
+    <x-card use-loading>
         <x-slot name="header">
             <x-row>
                 <div class="col-2">

@@ -1,7 +1,7 @@
-<div>
+<div wire:init="loadProperties">
     <x-flash />
 
-    <x-card use-default-filter use-loading wire:init="loadProperties">
+    <x-card use-default-filter use-loading>
         <x-slot name="body">
             <x-table zebra hover sticky nowrap style="width: 360rem">
                 <x-slot name="columns">

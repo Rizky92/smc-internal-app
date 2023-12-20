@@ -81,7 +81,7 @@
         @endpush
     @endonce
 
-    <x-card>
+    <x-card use-loading>
         <x-slot name="header">
             @canany(['logistik.input-minmax-stok.create', 'logistik.input-minmax-stok.update'])
                 <x-row>

@@ -1,7 +1,7 @@
 <div>
     <x-flash />
 
-    <x-card>
+    <x-card use-loading>
         <x-slot name="header">
             @can('perawatan.daftar-pasien-ranap.update-harga-kamar')
                 @once

@@ -1,7 +1,7 @@
-<div>
+<div wire:init="loadProperties">
     <x-flash />
 
-    <x-card use-loading wire:init="loadProperties">
+    <x-card use-loading>
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.label class="pr-3">Tahun :</x-filter.label>

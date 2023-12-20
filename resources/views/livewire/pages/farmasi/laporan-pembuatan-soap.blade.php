@@ -1,7 +1,7 @@
 <div wire:init="loadProperties">
     <x-flash />
 
-    <x-card use-default-filter>
+    <x-card use-default-filter use-loading>
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" style="min-width: 100%" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">

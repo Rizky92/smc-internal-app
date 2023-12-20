@@ -1,7 +1,7 @@
 <div>
     <x-flash />
 
-    <x-card use-default-filter>
+    <x-card use-default-filter use-loading>
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" style="width: 185rem" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">

@@ -68,7 +68,7 @@
         @endpush
     @endonce
 
-    <x-card>
+    <x-card use-loading>
         <x-slot name="header">
             <x-row livewire>
                 <div class="col-5">

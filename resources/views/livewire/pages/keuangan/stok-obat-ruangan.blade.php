@@ -1,7 +1,7 @@
 <div>
     <x-flash />
 
-    <x-card>
+    <x-card use-loading>
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.label constant-width>Ruangan :</x-filter.label>

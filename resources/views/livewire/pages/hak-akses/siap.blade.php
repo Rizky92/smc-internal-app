@@ -3,7 +3,7 @@
 
     <livewire:pages.hak-akses.siap.modal-perizinan />
 
-    <x-card>
+    <x-card use-loading>
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.select-perpage />

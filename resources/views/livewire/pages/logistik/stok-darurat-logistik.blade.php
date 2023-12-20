@@ -1,7 +1,7 @@
 <div>
     <x-flash />
 
-    <x-card>
+    <x-card use-loading>
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.toggle model="tampilkanSaranOrderNol" title="Tampilkan Saran Order Nol" />

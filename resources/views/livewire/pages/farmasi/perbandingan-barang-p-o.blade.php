@@ -1,7 +1,7 @@
 <div>
     <x-flash />
 
-    <x-card>
+    <x-card use-loading>
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.range-date title="Tgl. SPM" />
