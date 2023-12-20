@@ -59,9 +59,6 @@ class LaporanStatistik extends Component
 
     protected function defaultValues(): void
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
         $this->tglAwal = now()->startOfWeek()->format('Y-m-d');
         $this->tglAkhir = now()->endOfWeek()->format('Y-m-d');
     }

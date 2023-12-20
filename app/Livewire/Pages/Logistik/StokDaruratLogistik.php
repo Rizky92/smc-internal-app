@@ -37,21 +37,8 @@ class StokDaruratLogistik extends Component
     {
         return BarangNonMedis::query()
             ->daruratStok($this->tampilkanSaranOrderNol)
-            ->search($this->cari, [
-                'ipsrsbarang.kode_brng',
-                'ipsrsbarang.nama_brng',
-                "IFNULL(ipsrssuplier.nama_suplier, '-')",
-                'ipsrsjenisbarang.nm_jenis',
-                'kodesatuan.satuan',
-            ])
-            ->sortWithColumns($this->sortColumns, [
-                'nama_supplier' => "IFNULL(ipsrssuplier.nama_suplier, '-')",
-                'jenis'         => 'ipsrsjenisbarang.nm_jenis',
-                'stokmin'       => DB::raw("IFNULL(smc.ipsrs_minmax_stok_barang.stok_min, 0)"),
-                'stokmax'       => DB::raw("IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0)"),
-                'saran_order'   => DB::raw("IFNULL(IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok, '0')"),
-                'total_harga'   => DB::raw("(ipsrsbarang.harga * (IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok))"),
-            ], ['ipsrsbarang.nama_brng' => 'asc'])
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns, ['ipsrsbarang.nama_brng' => 'asc'])
             ->paginate($this->perpage);
     }
 
@@ -63,9 +50,6 @@ class StokDaruratLogistik extends Component
 
     protected function defaultValues(): void
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
         $this->tampilkanSaranOrderNol = true;
     }
 

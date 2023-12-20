@@ -41,20 +41,8 @@ class KunjunganPerPoli extends Component
     {
         return ResepObat::query()
             ->kunjunganPerPoli($this->tglAwal, $this->tglAkhir)
-            ->search($this->cari, [
-                'resep_obat.no_rawat',
-                'resep_obat.no_resep',
-                'pasien.nm_pasien',
-                'dokter_peresep.nm_dokter',
-                'dokter_poli.nm_dokter',
-                'reg_periksa.status_lanjut',
-                'poliklinik.nm_poli',
-            ])
-            ->sortWithColumns($this->sortColumns, [
-                'umur' => DB::raw("concat(reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur)"),
-                'nm_dokter_peresep' => 'dokter_peresep.nm_dokter',
-                'nm_dokter_poli' => 'dokter_poli.nm_dokter',
-            ])
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
     }
 

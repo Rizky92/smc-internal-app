@@ -44,9 +44,9 @@ class LaporanDemografi extends Component
         return $this->isDeferred
             ? []
             : DemografiPasien::query()
-            ->search($this->cari)
-            ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
-            ->paginate($this->perpage);
+                ->search($this->cari)
+                ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
+                ->paginate($this->perpage);
     }
 
     public function render(): View

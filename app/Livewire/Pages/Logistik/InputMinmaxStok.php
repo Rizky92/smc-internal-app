@@ -37,23 +37,8 @@ class InputMinmaxStok extends Component
 
         return BarangNonMedis::query()
             ->denganMinmax()
-            ->search($this->cari, [
-                "ipsrsbarang.kode_brng",
-                "ipsrsbarang.nama_brng",
-                "IFNULL(ipsrssuplier.kode_suplier, '-')",
-                "IFNULL(ipsrssuplier.nama_suplier, '-')",
-                "ipsrsjenisbarang.nm_jenis",
-                "kodesatuan.satuan",
-            ])
-            ->sortWithColumns($this->sortColumns, [
-                'kode_supplier' => DB::raw("IFNULL(ipsrssuplier.kode_suplier, '-')"),
-                'nama_supplier' => DB::raw("IFNULL(ipsrssuplier.nama_suplier, '-')"),
-                'jenis'         => "ipsrsjenisbarang.nm_jenis",
-                'stokmin'       => DB::raw("IFNULL({$db}.ipsrs_minmax_stok_barang.stok_min, 0)"),
-                'stokmax'       => DB::raw("IFNULL({$db}.ipsrs_minmax_stok_barang.stok_max, 0)"),
-                'saran_order'   => DB::raw("IF(ipsrsbarang.stok <= IFNULL({$db}.ipsrs_minmax_stok_barang.stok_min, 0), IFNULL(IFNULL({$db}.ipsrs_minmax_stok_barang.stok_max, IFNULL({$db}.ipsrs_minmax_stok_barang.stok_min, 0)) - ipsrsbarang.stok, 0), 0)"),
-                'total_harga'   => DB::raw("IF(ipsrsbarang.stok <= IFNULL({$db}.ipsrs_minmax_stok_barang.stok_min, 0), ipsrsbarang.harga * (IFNULL({$db}.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok), 0)"),
-            ])
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
     }
 

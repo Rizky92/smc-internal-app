@@ -11,7 +11,6 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -44,23 +43,6 @@ class LaporanTindakanRadiologi extends Component
             ->laporanTindakanRadiologi($this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns, [
-                'no_rawat'          => 'periksa_radiologi.no_rawat',
-                'no_rkm_medis'      => 'reg_periksa.no_rkm_medis',
-                'nm_pasien'         => 'pasien.nm_pasien',
-                'png_jawab'         => 'penjab.png_jawab',
-                'nama_petugas'      => 'petugas.nama',
-                'tgl_periksa'       => 'periksa_radiologi.tgl_periksa',
-                'jam'               => 'periksa_radiologi.jam',
-                'dokter_perujuk'    => 'periksa_radiologi.dokter_perujuk',
-                'kd_jenis_prw'      => 'jns_perawatan_radiologi.kd_jenis_prw',
-                'nm_perawatan'      => 'jns_perawatan_radiologi.nm_perawatan',
-                'biaya'             => 'periksa_radiologi.biaya',
-                'status_bayar'      => 'reg_periksa.status_bayar',
-                'status'            => 'periksa_radiologi.status',
-                'kd_dokter'         => 'periksa_radiologi.kd_dokter',
-                'nm_dokter'         => 'dokter.nm_dokter',
-                'hasil_pemeriksaan' => DB::raw('LEFT(hasil_radiologi.hasil, 200)'),
-            ], [
                 'periksa_radiologi.tgl_periksa' => 'asc',
                 'periksa_radiologi.jam'         => 'asc',
             ])
@@ -75,9 +57,6 @@ class LaporanTindakanRadiologi extends Component
 
     protected function defaultValues(): void
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }

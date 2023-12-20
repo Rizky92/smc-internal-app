@@ -45,19 +45,8 @@ class PerbandinganBarangPO extends Component
     {
         return SuratPemesananObat::query()
             ->perbandinganPemesananObatPO($this->tglAwal, $this->tglAkhir, $this->barangSelisih)
-            ->search($this->cari, [
-                "surat_pemesanan_medis.no_pemesanan",
-                "databarang.nama_brng",
-                "datasuplier.nama_suplier",
-                "ifnull(pemesanan_datang.nama_suplier, '-')",
-            ])
-            ->sortWithColumns($this->sortColumns, [
-                'suplier_pesan' => "datasuplier.nama_suplier",
-                'suplier_datang' => DB::raw("ifnull(pemesanan_datang.nama_suplier, '-')"),
-                'jumlah_pesan' => "detail_surat_pemesanan_medis.jumlah2",
-                'jumlah_datang' => DB::raw("ifnull(pemesanan_datang.jumlah, 0)"),
-                'selisih' => DB::raw("ifnull((detail_surat_pemesanan_medis.jumlah2 - pemesanan_datang.jumlah), 'Barang belum datang')"),
-            ])
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
     }
 
@@ -69,9 +58,6 @@ class PerbandinganBarangPO extends Component
 
     protected function defaultValues(): void
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
         $this->barangSelisih = false;

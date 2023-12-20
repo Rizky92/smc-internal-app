@@ -54,6 +54,25 @@ class BarangNonMedis extends Model
             ) total_harga
         SQL;
 
+        $this->addSearchConditions([
+            "ipsrsbarang.kode_brng",
+            "ipsrsbarang.nama_brng",
+            "IFNULL(ipsrssuplier.kode_suplier, '-')",
+            "IFNULL(ipsrssuplier.nama_suplier, '-')",
+            "ipsrsjenisbarang.nm_jenis",
+            "kodesatuan.satuan",
+        ]);
+
+        $this->addRawColumns([
+            'kode_supplier' => DB::raw("IFNULL(ipsrssuplier.kode_suplier, '-')"),
+            'nama_supplier' => DB::raw("IFNULL(ipsrssuplier.nama_suplier, '-')"),
+            'jenis'         => "ipsrsjenisbarang.nm_jenis",
+            'stokmin'       => DB::raw("IFNULL({$db}.ipsrs_minmax_stok_barang.stok_min, 0)"),
+            'stokmax'       => DB::raw("IFNULL({$db}.ipsrs_minmax_stok_barang.stok_max, 0)"),
+            'saran_order'   => DB::raw("IF(ipsrsbarang.stok <= IFNULL({$db}.ipsrs_minmax_stok_barang.stok_min, 0), IFNULL(IFNULL({$db}.ipsrs_minmax_stok_barang.stok_max, IFNULL({$db}.ipsrs_minmax_stok_barang.stok_min, 0)) - ipsrsbarang.stok, 0), 0)"),
+            'total_harga'   => DB::raw("IF(ipsrsbarang.stok <= IFNULL({$db}.ipsrs_minmax_stok_barang.stok_min, 0), ipsrsbarang.harga * (IFNULL({$db}.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok), 0)"),
+        ]);
+
         return $query
             ->selectRaw($sqlSelect)
             ->leftJoin('ipsrsjenisbarang', 'ipsrsbarang.jenis', '=', 'ipsrsjenisbarang.kd_jenis')
@@ -80,6 +99,23 @@ class BarangNonMedis extends Model
             ipsrsbarang.harga,
             (ipsrsbarang.harga * (ifnull({$db}.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok)) total_harga
         SQL;
+
+        $this->addSearchConditions([
+            'ipsrsbarang.kode_brng',
+            'ipsrsbarang.nama_brng',
+            "IFNULL(ipsrssuplier.nama_suplier, '-')",
+            'ipsrsjenisbarang.nm_jenis',
+            'kodesatuan.satuan',
+        ]);
+
+        $this->addRawColumns([
+            'nama_supplier' => "IFNULL(ipsrssuplier.nama_suplier, '-')",
+            'jenis'         => 'ipsrsjenisbarang.nm_jenis',
+            'stokmin'       => DB::raw("IFNULL(smc.ipsrs_minmax_stok_barang.stok_min, 0)"),
+            'stokmax'       => DB::raw("IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0)"),
+            'saran_order'   => DB::raw("IFNULL(IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok, '0')"),
+            'total_harga'   => DB::raw("(ipsrsbarang.harga * (IFNULL(smc.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok))"),
+        ]);
 
         return $query
             ->selectRaw($sqlSelect)

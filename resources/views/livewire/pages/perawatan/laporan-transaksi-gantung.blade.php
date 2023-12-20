@@ -15,7 +15,17 @@
                     'ranap' => 'Rawat Inap',
                 ]" />
                 <x-filter.label class="ml-auto pr-3">Status Registrasi</x-filter.label>
-                <x-filter.select model="status" :options="$this->statusRegistrasi" />
+                <x-filter.select model="status" :options="[
+                    'semua'        => 'SEMUA',
+                    'belum'        => 'Belum',
+                    'sudah'        => 'Sudah',
+                    'batal'        => 'Batal',
+                    'diterima'     => 'Berkas Diterima',
+                    'dirujuk'      => 'Dirujuk',
+                    'meninggal'    => 'Meninggal',
+                    'dirawat'      => 'Dirawat',
+                    'pulang-paksa' => 'Pulang Paksa',
+                ]" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />

@@ -45,24 +45,6 @@ class LaporanTransaksiGantung extends Component
         $this->defaultValues();
     }
 
-    /**
-     * @return string[]
-     */
-    public function getStatusRegistrasiProperty(): array
-    {
-        return [
-            'semua'        => 'SEMUA',
-            'belum'        => 'Belum',
-            'sudah'        => 'Sudah',
-            'batal'        => 'Batal',
-            'diterima'     => 'Berkas Diterima',
-            'dirujuk'      => 'Dirujuk',
-            'meninggal'    => 'Meninggal',
-            'dirawat'      => 'Dirawat',
-            'pulang-paksa' => 'Pulang Paksa',
-        ];
-    }
-
     public function getDataLaporanTransaksiGantungProperty(): Paginator
     {
         return RegistrasiPasien::query()

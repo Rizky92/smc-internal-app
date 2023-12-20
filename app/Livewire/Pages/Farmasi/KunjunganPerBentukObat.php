@@ -51,17 +51,17 @@ class KunjunganPerBentukObat extends Component
     public function getDataKunjunganResepObatRegularProperty(): Paginator
     {
         return ResepDokter::query()
-            ->kunjunganResepObatRegular($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan, $this->cari)
-            ->sortWithColumns($this->sortColumns, [
-                'total' => DB::raw('round(sum(resep_dokter.jml * databarang.h_beli))'),
-            ])
+            ->kunjunganResepObatRegular($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage, ['*'], 'page_regular');
     }
 
     public function getDataKunjunganResepObatRacikanProperty(): Paginator
     {
         return ResepDokterRacikan::query()
-            ->kunjunganResepObatRacikan($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan, $this->cari)
+            ->kunjunganResepObatRacikan($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
+            ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage, ['*'], 'page_racikan');
     }

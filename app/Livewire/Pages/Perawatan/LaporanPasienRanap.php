@@ -63,9 +63,6 @@ class LaporanPasienRanap extends Component
 
     protected function defaultValues(): void
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
         $this->tanggal = now()->format('Y-m-d');
         $this->statusPerawatan = 'tanggal_masuk';
         $this->semuaPasien = false;

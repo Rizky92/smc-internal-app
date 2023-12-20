@@ -35,7 +35,7 @@ class BidangUnit extends Component
     {
         return Bidang::query()
             ->whereNull('parent_id')
-            ->search($this->cari, ['nama'])
+            ->search($this->cari)
             ->with(['descendants' => fn (Descendants $q): Descendants => $q->depthFirst()])
             ->get();
     }

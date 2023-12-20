@@ -39,10 +39,7 @@ class StokObatRuangan extends Component
         return GudangObat::query()
             ->stokPerRuangan($this->kodeBangsal)
             ->search($this->cari)
-            ->sortWithColumns(
-                $this->sortColumns,
-                ['databarang.nama_brng' => 'asc']
-            )
+            ->sortWithColumns($this->sortColumns, ['databarang.nama_brng' => 'asc'])
             ->paginate($this->perpage);
     }
 
@@ -61,9 +58,6 @@ class StokObatRuangan extends Component
 
     protected function defaultValues(): void
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
         $this->kodeBangsal = '-';
     }
 
@@ -72,10 +66,7 @@ class StokObatRuangan extends Component
         return [
             GudangObat::query()
                 ->stokPerRuangan($this->kodeBangsal)
-                ->sortWithColumns(
-                    $this->sortColumns,
-                    ['nama_brng' => 'asc']
-                )
+                ->sortWithColumns($this->sortColumns, ['nama_brng' => 'asc'])
                 ->get()
                 ->map(fn (GudangObat $model): array => [
                     'nm_bangsal'     => $model->nm_bangsal,

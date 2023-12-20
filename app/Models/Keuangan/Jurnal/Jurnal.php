@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class Jurnal extends Model
@@ -60,6 +61,8 @@ class Jurnal extends Model
         if (empty($tglAkhir)) {
             $tglAkhir = now()->format('Y-m-d');
         }
+
+        $this->addRawColumns('waktu_jurnal', DB::raw('timestamp(jurnal.tgl_jurnal, jurnal.jam_jurnal)'));
 
         return $query
             ->with([

@@ -143,6 +143,22 @@ class ResepObat extends Model
             poliklinik.nm_poli
         SQL;
 
+        $this->addSearchConditions([
+            'resep_obat.no_rawat',
+            'resep_obat.no_resep',
+            'pasien.nm_pasien',
+            'dokter_peresep.nm_dokter',
+            'dokter_poli.nm_dokter',
+            'reg_periksa.status_lanjut',
+            'poliklinik.nm_poli',
+        ]);
+
+        $this->addRawColumns([
+            'umur' => DB::raw("concat(reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur)"),
+            'nm_dokter_peresep' => 'dokter_peresep.nm_dokter',
+            'nm_dokter_poli' => 'dokter_poli.nm_dokter',
+        ]);
+
         return $query
             ->selectRaw($sqlSelect)
             ->leftJoin('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')

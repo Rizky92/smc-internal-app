@@ -45,14 +45,8 @@ class JurnalPerbaikan extends Component
             ? []
             : Jurnal::query()
                 ->jurnalUmum($this->tglAwal, $this->tglAkhir)
-                ->search($this->cari, [
-                    'jurnal.no_jurnal',
-                    'jurnal.no_bukti',
-                    'jurnal.keterangan',
-                ])
-                ->sortWithColumns($this->sortColumns, [
-                    'waktu_jurnal' => DB::raw('timestamp(jurnal.tgl_jurnal, jurnal.jam_jurnal)'),
-                ])
+                ->search($this->cari)
+                ->sortWithColumns($this->sortColumns)
                 ->paginate($this->perpage);
     }
 
@@ -64,9 +58,6 @@ class JurnalPerbaikan extends Component
 
     protected function defaultValues(): void
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
         $this->tglAwal = now()->format('Y-m-d');
         $this->tglAkhir = now()->format('Y-m-d');
     }

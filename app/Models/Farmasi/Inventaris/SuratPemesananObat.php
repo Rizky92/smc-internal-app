@@ -61,6 +61,21 @@ class SuratPemesananObat extends Model
 
         $jumlahObatYangBerbeda = DB::raw('(detail_surat_pemesanan_medis.jumlah2 - ifnull(pemesanan_datang.jumlah, 0))');
 
+        $this->addSearchConditions([
+            "surat_pemesanan_medis.no_pemesanan",
+            "databarang.nama_brng",
+            "datasuplier.nama_suplier",
+            "ifnull(pemesanan_datang.nama_suplier, '-')",
+        ]);
+
+        $this->addRawColumns([
+            'suplier_pesan' => "datasuplier.nama_suplier",
+            'suplier_datang' => DB::raw("ifnull(pemesanan_datang.nama_suplier, '-')"),
+            'jumlah_pesan' => "detail_surat_pemesanan_medis.jumlah2",
+            'jumlah_datang' => DB::raw("ifnull(pemesanan_datang.jumlah, 0)"),
+            'selisih' => DB::raw("ifnull((detail_surat_pemesanan_medis.jumlah2 - pemesanan_datang.jumlah), 'Barang belum datang')"),
+        ]);
+
         return $query
             ->selectRaw($sqlSelect)
             ->join('datasuplier', 'surat_pemesanan_medis.kode_suplier', '=', 'datasuplier.kode_suplier')
