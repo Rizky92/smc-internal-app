@@ -12,6 +12,7 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Keuangan\PenagihanPiutangDetail;
 use App\View\Components\BaseLayout;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -133,12 +134,12 @@ class AccountReceivable extends Component
             ->sum('diskon_piutang');
 
         $this->totalDibayar = PenagihanPiutang::query()
-            ->join('detail_penagihan_piutang', 'penagihan_piutang.no_tagihan', '=', 'detail_penagihan_piutang.no_tagihan')
+            ->accountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
             ->whereIn(
-                DB::raw('concat(penagihan_piutang.no_tagihan, "_", penagihan_piutang.kd_pj, "_", detail_penagihan_piutang.no_rawat)'),
+                DB::raw("concat_ws('_', penagihan_piutang.no_tagihan, penagihan_piutang.kd_pj, detail_penagihan_piutang.no_rawat)"),
                 $tagihanDipilih->keys()->all()
             )
-            ->sum('sisapiutang');
+            ->sum(DB::raw("round(detail_piutang_pasien.totalpiutang - ifnull(bayar_piutang.besar_cicilan, 0), 2)"));
 
         $this->totalDibayar -= $diskonPiutang;
     }

@@ -68,7 +68,7 @@ class PenagihanPiutang extends Model
         string $tglAkhir = '',
         string $jaminanPasien = '-',
         string $jenisPerawatan = 'semua',
-        bool $belumLunas = false
+        bool $tagihanDipilih = true
     ): Builder {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->format('Y-m-d');
@@ -154,19 +154,18 @@ class PenagihanPiutang extends Model
             ->join(DB::raw('penjab penjab_tagihan'), 'penagihan_piutang.kd_pj', '=', 'penjab_tagihan.kd_pj')
             ->join(DB::raw('penjab penjab_pasien'), 'reg_periksa.kd_pj', '=', 'penjab_pasien.kd_pj')
             ->whereBetween('penagihan_piutang.tanggal', [$tglAwal, $tglAkhir])
-            ->when($belumLunas, fn (Builder $q): Builder => $q->where('piutang_pasien.status', '!=', 'Lunas'))
-            ->when($jaminanPasien !== '-', fn (Builder $q): Builder => $q->where('reg_periksa.kd_pj', $jaminanPasien))
-            ->when($jenisPerawatan !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.status_lanjut', $jenisPerawatan))
-            ->where(fn (Builder $q): Builder => $q
-                ->whereNull('bayar_piutang.no_rawat')
-                ->orWhereIn('detail_penagihan_piutang.no_rawat', $sqlFilterOnlyPaid))
-            ->whereNotIn(
+            ->when($tagihanDipilih, fn (Builder $q): Builder => $q->orWhereNotIn(
                 DB::raw("concat_ws('_', penagihan_piutang.no_tagihan, penagihan_piutang.kd_pj, detail_penagihan_piutang.no_rawat)"),
                 DB::connection('mysql_smc')
                     ->table('selected_values')
                     ->select('key')
                     ->where('name', 'admin.keuangan.account-receivable.tagihan_dipilih')
-            )
+            ))
+            ->when($jaminanPasien !== '-', fn (Builder $q): Builder => $q->where('reg_periksa.kd_pj', $jaminanPasien))
+            ->when($jenisPerawatan !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.status_lanjut', $jenisPerawatan))
+            ->where(fn (Builder $q): Builder => $q
+                ->whereNull('bayar_piutang.no_rawat')
+                ->orWhereIn('detail_penagihan_piutang.no_rawat', $sqlFilterOnlyPaid))
             ->orderBy('penagihan_piutang.tanggal', 'desc')
             ->orderBy('detail_penagihan_piutang.no_rawat', 'asc')
             ->orderBy('detail_penagihan_piutang.no_tagihan', 'asc');
@@ -200,7 +199,7 @@ class PenagihanPiutang extends Model
         string $tglAkhir = '',
         string $jaminanPasien = '-',
         string $jenisPerawatan = 'semua',
-        bool $belumLunas = false
+        bool $tagihanDipilih = true
     ): Builder {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->format('Y-m-d');
@@ -272,7 +271,13 @@ class PenagihanPiutang extends Model
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join(DB::raw('penjab penjab_tagihan'), 'penagihan_piutang.kd_pj', '=', 'penjab_tagihan.kd_pj')
             ->join(DB::raw('penjab penjab_pasien'), 'reg_periksa.kd_pj', '=', 'penjab_pasien.kd_pj')
-            ->when($belumLunas, fn (Builder $q): Builder => $q->where('piutang_pasien.status', '!=', 'Lunas'))
+            ->when($tagihanDipilih, fn (Builder $q): Builder => $q->orWhereNotIn(
+                DB::raw("concat_ws('_', penagihan_piutang.no_tagihan, penagihan_piutang.kd_pj, detail_penagihan_piutang.no_rawat)"),
+                DB::connection('mysql_smc')
+                    ->table('selected_values')
+                    ->select('key')
+                    ->where('name', 'admin.keuangan.account-receivable.tagihan_dipilih')
+            ))
             ->when($jaminanPasien !== '-', fn (Builder $q): Builder => $q->where('reg_periksa.kd_pj', $jaminanPasien))
             ->when($jenisPerawatan !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.status_lanjut', $jenisPerawatan))
             ->where(fn (Builder $q): Builder => $q->whereNull('bayar_piutang.no_rawat')->orWhereIn('detail_penagihan_piutang.no_rawat', $sqlFilterOnlyPaid))

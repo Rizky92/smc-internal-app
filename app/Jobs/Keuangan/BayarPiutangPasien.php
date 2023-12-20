@@ -92,7 +92,7 @@ class BayarPiutangPasien implements ShouldQueue
     protected function proceed(): void
     {
         $model = PenagihanPiutang::query()
-            ->accountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
+            ->accountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan, false)
             ->where([
                 ['penagihan_piutang.no_tagihan', '=', $this->noTagihan],
                 ['penagihan_piutang.kd_pj', '=', $this->jaminanPiutang],
@@ -103,6 +103,12 @@ class BayarPiutangPasien implements ShouldQueue
         if (is_null($model)) {
             return;
         }
+
+        DB::connection('mysql_smc')
+            ->table('selected_values')
+            ->where('name', 'admin.keuangan.account-receivable.tagihan_dipilih')
+            ->where('key', implode('_', [$this->noTagihan, $this->jaminanPiutang, $this->noRawat]))
+            ->delete();
 
         DB::connection('mysql_sik')
             ->transaction(function () use ($model) {
@@ -148,7 +154,7 @@ class BayarPiutangPasien implements ShouldQueue
                     ->where('nama_bayar', $model->nama_bayar)
                     ->where('kd_pj', $model->kd_pj_tagihan)
                     ->update([
-                        'sisapiutang' => $model->sisa_piutang - 
+                        'sisapiutang' => $model->sisa_piutang -
                             ($totalCicilan + $this->diskonPiutang + $this->tidakTerbayar)
                     ]);
 
@@ -180,14 +186,6 @@ class BayarPiutangPasien implements ShouldQueue
             $tagihan->nip,
             $tagihan->nip_menyetujui
         );
-
-        $selected = implode('_', [$this->noTagihan, $this->jaminanPiutang, $this->noRawat]);
-
-        DB::connection('mysql_smc')
-            ->table('selected_values')
-            ->where('name', 'admin.keuangan.account-receivable.tagihan_dipilih')
-            ->where('key', $selected)
-            ->delete();
     }
 
     protected function setLunasPiutang(
@@ -231,7 +229,7 @@ class BayarPiutangPasien implements ShouldQueue
             ->with('detail')
             ->where('no_tagihan', $this->noTagihan)
             ->first();
-            
+
         if (is_null($tagihanPiutang)) {
             return;
         }
@@ -259,9 +257,9 @@ class BayarPiutangPasien implements ShouldQueue
     }
 
     protected function masukkanKeJurnalPiutangLunas(
-        string $noRM, 
-        float $besarCicilan, 
-        string $tglTagihan, 
+        string $noRM,
+        float $besarCicilan,
+        string $tglTagihan,
         string $tglJatuhTempo,
         string $penagih,
         string $menyetujui
