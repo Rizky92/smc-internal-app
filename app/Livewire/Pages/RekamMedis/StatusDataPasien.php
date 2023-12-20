@@ -10,7 +10,6 @@ use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\LazyCollection;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -59,32 +58,6 @@ class StatusDataPasien extends Component
                 ->paginate($this->perpage);
     }
 
-    protected function formatAskepRalan($item): string
-    {
-        $askepRalanArray = [
-            'umum' => $item->askep_ralan_umum,
-            'gigi' => $item->askep_ralan_gigi,
-            'bidan' => $item->askep_ralan_bidan,
-            'bayi' => $item->askep_ralan_bayi,
-            'psikiatri' => $item->askep_ralan_psikiatri,   
-            'geriatri' => $item->askep_ralan_geriatri,
-        ];
-
-        // Filter out empty values
-        $askepRalanArray = array_filter($askepRalanArray);
-
-        // Convert the keys to capitalize the first letter
-        $askepRalanArray = array_map(function ($key) {
-            return ucfirst($key);
-        }, array_keys($askepRalanArray));
-
-        // Combine the non-empty values with '/'
-        $formattedAskepRalan = implode(', ', $askepRalanArray);
-
-        return $formattedAskepRalan ? 'Ada (' . $formattedAskepRalan . ')' : 'Tidak Ada';
-    }
-
-
     public function render(): View
     {
         return view('livewire.pages.rekam-medis.status-data-pasien')
@@ -119,11 +92,10 @@ class StatusDataPasien extends Component
                     'resume_ralan'   => boolval($model->resume_ralan) ? 'Ada' : 'Tidak ada',
                     'resume_ranap'   => boolval($model->resume_ranap) ? 'Ada' : 'Tidak ada',
                     'triase_igd'     => boolval($model->triase_igd) ? 'Ada' : 'Tidak ada',
-                    'askep_ralan' => $this->formatAskepRalan($model),
-                    'askep_igd'      => boolval($model->askep_igd) ? 'Ada' : 'Tidak ada',
-                    'askep_ranap'    => $model->askep_ralan,
+                    'askep_igd'      => $model->askep_igd ? 'Ada' : 'Tidak ada',
+                    'askep_ralan'    => $model->askep_ralan,
                     'askep_ranap'    => $model->askep_ranap,
-                    'asmed_igd'      => boolval($model->asmed_igd) ? 'Ada' : 'Tidak ada',
+                    'asmed_igd'      => $model->asmed_igd ? 'Ada' : 'Tidak ada',
                     'asmed_poli'     => $model->asmed_poli,
                     'asmed_rwi'      => $model->asmed_rwi,
                     'icd_10'         => boolval($model->icd_10) ? 'Ada' : 'Tidak ada',
@@ -149,12 +121,11 @@ class StatusDataPasien extends Component
             'Resume Ralan',
             'Resume Ranap',
             'Triase IGD',
-            'Askep Ralan',
             'Askep IGD',
-            'Askep Ralan',
-            'Askep Ranap',
             'Asmed IGD',
+            'Askep Ralan',
             'Asmed Poli',
+            'Askep Ranap',
             'Asmed RWI',
             'ICD 10',
             'ICD 9',
