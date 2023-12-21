@@ -10,8 +10,8 @@
                     <x-table.th name="nm_pasien" title="Nama Pasien" style="width: 40ch" />
                     <x-table.th name="no_rkm_medis" title="No. RM" style="width: 10ch" />
                     <x-table.th name="no_rawat" title="No. Registrasi" style="width: 20ch" />
-                    <x-table.th name="nama_biaya" title="Nama Biaya" style="width: 50ch" />
-                    <x-table.th name="besar_biaya" title="Nominal" style="width: 20ch" />
+                    <x-table.th name="nama_pengurangan" title="Nama Biaya" style="width: 50ch" />
+                    <x-table.th name="besar_pengurangan" title="Nominal" style="width: 20ch" />
                     <x-table.th name="png_jawab" title="Jenis Bayar" style="width: 40ch" />
                     <x-table.th name="dokter_ralan" title="Dokter Ralan" style="width: 40ch" />
                     <x-table.th name="dokter_ranap" title="Dokter Ranap" style="width: 40ch" />

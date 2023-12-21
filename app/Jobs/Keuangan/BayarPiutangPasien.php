@@ -2,7 +2,6 @@
 
 namespace App\Jobs\Keuangan;
 
-use App\Models\Keuangan\AkunBayar;
 use App\Models\Keuangan\BayarPiutang;
 use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\PenagihanPiutang;
@@ -10,7 +9,6 @@ use App\Models\Keuangan\PiutangDilunaskan;
 use App\Models\Keuangan\PiutangPasien;
 use App\Models\Keuangan\PiutangPasienDetail;
 use App\Models\Keuangan\Rekening;
-use Cache;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -48,9 +46,7 @@ class BayarPiutangPasien implements ShouldQueue
      * Create a new job instance.
      * 
      * @param  array{
-     *     no_tagihan: string,
-     *     kd_pj: string,
-     *     no_rawat: string,
+     *     key: string,
      *     tgl_awal: string,
      *     tgl_akhir: string,
      *     jaminan_pasien: string,
@@ -66,9 +62,7 @@ class BayarPiutangPasien implements ShouldQueue
      */
     public function __construct(array $params)
     {
-        $this->noTagihan = $params['no_tagihan'];
-        $this->jaminanPiutang = $params['kd_pj'];
-        $this->noRawat = $params['no_rawat'];
+        [$this->noTagihan, $this->jaminanPiutang, $this->noRawat] = explode('_', $params['key']);
 
         $this->tglAwal = $params['tgl_awal'];
         $this->tglAkhir = $params['tgl_akhir'];
@@ -92,7 +86,7 @@ class BayarPiutangPasien implements ShouldQueue
     protected function proceed(): void
     {
         $model = PenagihanPiutang::query()
-            ->accountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan, false)
+            ->accountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
             ->where([
                 ['penagihan_piutang.no_tagihan', '=', $this->noTagihan],
                 ['penagihan_piutang.kd_pj', '=', $this->jaminanPiutang],
@@ -103,12 +97,6 @@ class BayarPiutangPasien implements ShouldQueue
         if (is_null($model)) {
             return;
         }
-
-        DB::connection('mysql_smc')
-            ->table('selected_values')
-            ->where('name', 'admin.keuangan.account-receivable.tagihan_dipilih')
-            ->where('key', implode('_', [$this->noTagihan, $this->jaminanPiutang, $this->noRawat]))
-            ->delete();
 
         DB::connection('mysql_sik')
             ->transaction(function () use ($model) {
@@ -154,8 +142,11 @@ class BayarPiutangPasien implements ShouldQueue
                     ->where('nama_bayar', $model->nama_bayar)
                     ->where('kd_pj', $model->kd_pj_tagihan)
                     ->update([
-                        'sisapiutang' => $model->sisa_piutang -
-                            ($totalCicilan + $this->diskonPiutang + $this->tidakTerbayar)
+                        'sisapiutang' => $model->sisa_piutang - (
+                            $totalCicilan + 
+                            $this->diskonPiutang + 
+                            $this->tidakTerbayar
+                        )
                     ]);
 
                 tracker_end('mysql_sik', $this->userId);
@@ -188,11 +179,8 @@ class BayarPiutangPasien implements ShouldQueue
         );
     }
 
-    protected function setLunasPiutang(
-        string $noRM,
-        string $namaBayar,
-        string $kodePenjamin
-    ): void {
+    protected function setLunasPiutang(string $noRM, string $namaBayar, string $kodePenjamin): void
+    {
         if (empty($noRM) || empty($namaBayar) || empty($kodePenjamin)) {
             return;
         }

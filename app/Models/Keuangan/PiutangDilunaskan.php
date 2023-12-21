@@ -245,7 +245,7 @@ SQL;
         Builder $query,
         string $tglAwal = '',
         string $tglAkhir = '',
-        string $rekening = '112010',
+        string $rekening = '-',
         string $berdasarkanTgl = 'jurnal'
     ): Builder {
         if (empty($tglAwal)) {
@@ -313,7 +313,7 @@ SQL;
             ->leftJoin($penagih, 'piutang_dilunaskan.nik_penagih', '=', 'penagih.nik')
             ->leftJoin($penyetuju, 'piutang_dilunaskan.nik_menyetujui', '=', 'penyetuju.nik')
             ->leftJoin($pemvalidasi, 'piutang_dilunaskan.nik_validasi', '=', 'pemvalidasi.nik')
-            ->where('kd_rek', $rekening)
+            ->when($rekening !== '-', fn (Builder $q): Builder => $q->where('kd_rek', $rekening))
             ->whereBetween($filterTgl, [$tglAwal, $tglAkhir]);
     }
 }

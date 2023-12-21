@@ -5,7 +5,6 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Illuminate\Support\Stringable;
 
 if (!function_exists('user')) {
     function user(?string $guard = 'web'): Authenticatable
@@ -208,11 +207,12 @@ if (!function_exists('tracker_end')) {
             }
 
             $sql = str($log['query'])
-                ->replaceArray('?', $log['bindings']);
+                ->replaceArray('?', $log['bindings'])
+                ->value();
 
             DB::connection('mysql_smc')->table('trackersql')->insert([
                 'tanggal'    => now(),
-                'sqle'       => (string) $sql,
+                'sqle'       => $sql,
                 'usere'      => $userId ?? user()->nik,
                 'ip'         => request()->ip(),
                 'connection' => $connection,

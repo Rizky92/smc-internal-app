@@ -35,8 +35,9 @@ class JurnalPiutangLunas extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'      => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir'     => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'kodeRekening' => ['except' => '-', 'as' => 'rekening'],
         ];
     }
 
@@ -80,7 +81,7 @@ class JurnalPiutangLunas extends Component
 
     protected function defaultValues(): void
     {
-        $this->kodeRekening = '112010';
+        $this->kodeRekening = '-';
         $this->jenisPeriode = 'jurnal';
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');

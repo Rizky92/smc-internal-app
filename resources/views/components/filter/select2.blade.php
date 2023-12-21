@@ -2,6 +2,7 @@
     'livewire' => false,
 
     'name',
+    'model' => null,
     'options' => [],
     'placeholder' => null,
     'placeholderValue' => null,
@@ -16,7 +17,7 @@
     $isList = $options->isList();
     
     $id = Str::slug($name);
-    $model = Str::camel($name);
+    $model ??= Str::camel($name);
     
     $options = $options
         ->when($isList, fn ($c) => $c->mapWithKeys(fn ($v, $k) => [$v => $v]))

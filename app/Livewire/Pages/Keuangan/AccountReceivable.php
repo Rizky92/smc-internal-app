@@ -191,32 +191,12 @@ class AccountReceivable extends Component
 
         collect($this->tagihanDipilih)
             ->filter(fn (array $value): bool => $value['selected'])
-            ->map(function (array $value, string $key): array {
-                [$noTagihan, $pjTagihan, $noRawat] = explode('_', $key);
-
-                $diskonPiutang = $value['diskon_piutang'] ?? 0;
-
-                return [
-                    'no_tagihan' => $noTagihan,
-                    'kd_pj' => $pjTagihan,
-                    'no_rawat' => $noRawat,
-                    'diskon_piutang' => $diskonPiutang
-                ];
-            })
-            ->values()
-            ->each(function (array $value) use ($akunDiskonPiutang, $akunTidakTerbayar) {
-                DB::connection('mysql_smc')
-                    ->table('selected_values')
-                    ->insert([
-                        'key'        => implode('_', [$value['no_tagihan'], $value['kd_pj'], $value['no_rawat']]),
-                        'name'       => 'admin.keuangan.account-receivable.tagihan_dipilih',
-                        'created_at' => now()->timestamp,
-                    ]);
-
+            ->map(fn (array $value): array => [
+                'diskon_piutang' => $value['diskon_piutang'] ?? 0
+            ])
+            ->each(function (array $value, string $key) use ($akunDiskonPiutang, $akunTidakTerbayar) {
                 BayarPiutangPasien::dispatch([
-                    'no_tagihan'          => $value['no_tagihan'],
-                    'kd_pj'               => $value['kd_pj'],
-                    'no_rawat'            => $value['no_rawat'],
+                    'key'                 => $key,
                     'diskon_piutang'      => $value['diskon_piutang'],
                     'tgl_awal'            => $this->tglAwal,
                     'tgl_akhir'           => $this->tglAkhir,
