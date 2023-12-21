@@ -183,7 +183,7 @@ class RegistrasiPasien extends Model
             }
 
             if ($attributes['askep_ralan_bayi'] === "1") {
-                $askep->push("Bayi");
+                $askep->push("Bayi/Anak");
             }
 
             if ($attributes['askep_ralan_psikiatri'] === "1") {
