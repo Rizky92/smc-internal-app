@@ -1,5 +1,3 @@
-@extends('layouts.app')
-
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/bed.css') }}">
 @endpush
@@ -7,7 +5,7 @@
 @section('informasi-kamar')
     <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom shadow">
         <div class="container-fluid d-flex justify-content-center">
-            <img src="img/logo.png" alt="logo" style="max-width: 120px; height: auto;">
+            <img src="{{ asset('img/logo.png') }}" alt="logo" width="120" loading="lazy">
             <span>KETERSEDIAAN KAMAR</span>
         </div>
     </header>
@@ -29,22 +27,22 @@
                     @php
                         $processedCombos = [];
                     @endphp
-    
+
                     @foreach ($informasiKamar as $bangsal)
                         @foreach ($kelasList as $kelas)
                             @php
                                 $comboKey = $bangsal->kd_bangsal . '_' . $kelas;
-                                $occupiedRooms = $bangsal->countOccupiedRooms($kelas);
-                                $emptyRooms = $bangsal->countEmptyRooms($kelas);
-                                $showRow = $occupiedRooms > 0 || $emptyRooms > 0;
-    
-                                if (!in_array($comboKey, $processedCombos) && $showRow) {
-                                    array_push($processedCombos, $comboKey);
+
+                                if (!in_array($comboKey, $processedCombos)) {
+                                    $processedCombos[] = $comboKey;
+                                    $occupiedRooms = $bangsal->countOccupiedRooms($kelas);
+                                    $emptyRooms = $bangsal->countEmptyRooms($kelas);
+                                    $showRow = $occupiedRooms > 0 || $emptyRooms > 0;
                                 } else {
-                                    continue;
+                                    $showRow = false;
                                 }
                             @endphp
-    
+
                             @if ($showRow)
                                 <tr>
                                     <td width="30%">{{ $bangsal->nm_bangsal }}</td>
@@ -60,6 +58,7 @@
             </table>
         </div>
 
+        @push('js')
         <script>
             function refreshPage() {
                 setTimeout(function () {
@@ -70,6 +69,8 @@
                 refreshPage();
             });
         </script>
+        @endpush
+        
     @else
         <p>No data available</p>
     @endif

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Informasi;
 
+use App\View\Components\CustomerLayout;
 use App\Models\Perawatan\Kamar;
 use App\Models\Bangsal;
 use Illuminate\View\View;
@@ -24,6 +25,7 @@ class InformasiKamar extends Component
         $informasiKamar = $this->getDataInformasiKamarProperty();
         $kelasList = Bangsal::getKelasList();
 
-        return view('livewire.pages.informasi.informasi-kamar', compact('informasiKamar', 'kelasList'));
+        return view('livewire.pages.informasi.informasi-kamar', compact('informasiKamar', 'kelasList'))
+            ->layout(CustomerLayout::class, ['title' => 'Informasi Kamar']);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Antrian;
 
+use App\View\Components\CustomerLayout;
 use App\Models\Perawatan\RegistrasiPasien;
 use App\Models\Antrian\AntriPoli;
 use App\Models\Perawatan\Poliklinik;
@@ -80,6 +81,7 @@ class AntrianPoli extends Component
 
     public function render()
     {
-        return view('livewire.pages.antrian.antrian-poli');
+        return view('livewire.pages.antrian.antrian-poli')
+            ->layout(CustomerLayout::class, ['title' => 'Antrian Poliklinik']);
     }
 }

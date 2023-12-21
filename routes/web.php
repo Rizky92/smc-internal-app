@@ -16,7 +16,6 @@ use App\Livewire\Pages\Logistik;
 use App\Livewire\Pages\Perawatan;
 use App\Livewire\Pages\RekamMedis;
 use App\Livewire\Pages\User;
-use App\Livewire\Pages\Tes;
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Support\Facades\Route;
 use InfyOm\RoutesExplorer\RoutesExplorer;
@@ -35,14 +34,14 @@ use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 
 Route::get('/', HomeController::class);
 
-Route::get('/tes', [Tes\Tes::class, 'index']);
+Route::get('/display-jadwal-dokter', Informasi\DisplayJadwalDokter::class);
 
 Route::get('/informasi-kamar', Informasi\InformasiKamar::class);
 
 Route::get('/jadwal-dokter', Informasi\JadwalDokter::class);
 
-Route::get('/antrian-poli/{kd_poli}/{kd_dokter}', Antrian\AntrianPoli::class)
-    ->name('antrian-poli');
+Route::get('admin/antrian-poli/{kd_poli}/{kd_dokter}', Antrian\AntrianPoli::class)
+    ->name('admin.antrian-poli');
 
 Route::post('/antrian-poli/check-data-changes/{kd_poli}/{kd_dokter}', [Antrian\AntrianPoli::class, 'checkDataChanges'])
     ->name('antrian-poli.checkDataChanges');

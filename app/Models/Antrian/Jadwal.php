@@ -32,10 +32,12 @@ class Jadwal extends Model
         return $this->belongsTo(Poliklinik::class, 'kd_poli', 'kd_poli');
     }
 
-    public function scopeJadwalDokter(Builder $query)
+    public function scopeJadwalDokter(Builder $query): Builder
     {
         $sqlSelect = <<<SQL
-        dokter.nm_dokter, 
+        dokter.kd_dokter,
+        dokter.nm_dokter,
+        poliklinik.kd_poli, 
         poliklinik.nm_poli,
         jadwal.hari_kerja,
         jadwal.jam_mulai, 
@@ -44,13 +46,12 @@ class Jadwal extends Model
 
         $this->addSearchConditions([
             'dokter.nm_dokter',
-            'jadwal.hari_kerja',
             'poliklinik.nm_poli',
         ]);
 
         return $query
             ->selectRaw($sqlSelect)
-            ->join('dokter', 'dokter.kd_dokter', '=', 'jadwal.kd_dokter')
-            ->leftJoin('poliklinik', 'poliklinik.kd_poli', '=', 'jadwal.kd_poli');
+            ->leftJoin('dokter', 'jadwal.kd_dokter', '=', 'dokter.kd_dokter')
+            ->leftJoin('poliklinik', 'jadwal.kd_poli', '=', 'poliklinik.kd_poli');
     }
 }
