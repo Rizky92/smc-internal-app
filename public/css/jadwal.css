@@ -1,19 +1,50 @@
+body {
+    overflow: hidden;
+}
 span {
-    font-size: 64px;
+    font-size: 6vw;
     font-weight: bold;
     color: #198754;
 }
 thead {
     text-align: center;
-    font-size: 22px;
+    font-size: 2vw;
     background-color: #198754;
 }
 tbody {
-    font-size: 22px;
+    font-size: 2vw;
     text-align: center;
 }
-a {
-    color: black;
+.padding{
+    height: 43vw; 
+    z-index: 1; 
+    position: relative;
+}
+#scrollingContent {
+    max-height: 100vh;
+    overflow-y: hidden;
+    scroll-behavior: linear;
+}
+#scrollingContent table {
+    animation: marqueeAnimation 180s linear;
+    transform-origin: 0% 0%;
+    display: table;
+    width: 100%;
+}
+#scrollingContent table tbody {
+    display: table-row-group;
+}
+#scrollingContent table tbody tr:nth-child(even) {
+    background-color: #198754;
+    color: white;
+    }
+@keyframes marqueeAnimation {
+  0% {
+      transform: translateY(0);
+  }
+  100% {
+      transform: translateY(calc(-300% + 300px));
+  }
 }
 @media (min-width: 768) {
     img{

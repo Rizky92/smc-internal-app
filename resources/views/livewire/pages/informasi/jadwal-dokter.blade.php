@@ -1,45 +1,40 @@
-@extends('layouts.app')
-
-@section('jadwal-dokter')
-
-@push('styles')
-    <link rel="stylesheet" href="{{ asset('css/jadwal.css') }}">
-@endpush
-
-<header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom shadow">
-    <div class="container-fluid d-flex justify-content-center">
-        <img src="{{ asset('img/logo.png') }}" alt="logo" width="120">
-        <span>ANTREAN POLIKLINIK</span>
-    </div>
-</header>
-@if ($jadwal->isNotEmpty()) 
-    <table class="table">
-        <thead class="thead bg-pandan text-white">
-            <tr>
-                <th width="30%">Nama Dokter</th>
-                <th>Poliklinik</th>
-                <th>Jam Mulai</th>
-                <th>Jam Selesai</th>
-                <th>Register</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($jadwal as $data)
-                <tr>
-                    <td style="text-align: left;">
-                        <a href="{{ route('antrian-poli', ['kd_poli' => $data->kd_poli, 'kd_dokter' => $data->kd_dokter]) }}">
-                            {{ $data->dokter->nm_dokter }}
-                        </a>
-                    </td>
-                    <td>{{ $data->poliklinik->nm_poli }}</td>
-                    <td>{{ $data->jam_mulai }}</td>
-                    <td>{{ $data->jam_selesai }}</td>
-                    <td>{{ $data->register }}</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
-@else
-    <p>Tidak ada jadwal dokter untuk hari ini.</p>
-@endif
-@endsection
+<div>
+    <x-card use loading>
+        <x-slot name="header">
+            <x-row-col-flex>
+                <x-filter.select-perpage />
+                <x-filter.button-reset-filters class="ml-auto" />
+                <x-filter.search />
+            </x-row-col-flex>
+        </x-slot>
+        <x-slot name="body">
+           <x-table :sortColumns="$sortColumns" style="min-width: 100%" hover sticky nowrap>
+                <x-slot name="columns">
+                    <x-table.th name="nm_dokter" title="Nama Dokter" />
+                    <x-table.th name="nm_poli" title="Poliklinik" />
+                    <x-table.th name="jam_mulai" title="Jam Mulai" />
+                    <x-table.th name="jam_selesai" title="Jam Selesai" />
+                    <x-table.th name="register" title="Register" />
+                </x-slot>
+                <x-slot name="body">
+                    @forelse ($this->dataJadwalDokter as $item )
+                        <x-table.tr>
+                            <x-table.td>
+                                <a href="{{ route('admin.antrian-poli',['kd_poli' => $item->poliklinik->kd_poli, 'kd_dokter' => $item->dokter->kd_dokter]) }}" target="_blank">{{ $item->nm_dokter }}</a>
+                            </x-table.td>
+                            <x-table.td>{{ $item->nm_poli }}</x-table.td>
+                            <x-table.td>{{ $item->jam_mulai }}</x-table.td>
+                            <x-table.td>{{ $item->jam_selesai }}</x-table.td>
+                            <x-table.td>{{ $item->register }}</x-table.td>
+                        </x-table.tr>
+                    @empty
+                        <x-table.tr-empty colspan="10" padding />
+                    @endforelse
+                </x-slot>
+           </x-table>
+        </x-slot>
+        <x-slot name="footer">
+            <x-paginator :data="$this->dataJadwalDokter" />
+        </x-slot>
+    </x-card>
+</div>

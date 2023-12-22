@@ -2,14 +2,20 @@
 
 namespace App\Livewire\Pages\Informasi;
 
+use App\Livewire\Concerns\Filterable;
+use App\Livewire\Concerns\FlashComponent;
+use App\Livewire\Concerns\LiveTable;
 use App\Models\Perawatan\RegistrasiPasien;
+use App\View\Components\BaseLayout;
 use App\Models\Antrian\Jadwal;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class JadwalDokter extends Component
 {
-    private function getNamaHari($hari)
+    use FlashComponent, Filterable, LiveTable;
+
+     private function getNamaHari($hari)
     {
         switch ($hari) {
             case 'Sunday':
@@ -38,44 +44,41 @@ class JadwalDokter extends Component
 
     public function getDataJadwalDokterProperty()
     {
-        $hari = now()->format('l'); 
+        $hari = now()->format('l');
         $namahari = $this->getNamaHari($hari);
+        $jadwal=Jadwal::query()
+        ->jadwalDokter()
+        ->with(['dokter', 'poliklinik'])
+        ->where('hari_kerja', $namahari)
+        ->search($this->cari)
+        ->sortWithColumns($this->sortColumns)
+        ->paginate($this->perpage);
+        $jadwal->transform(function ($jadwalItem) {
+        $count = RegistrasiPasien::hitungData(
+            $jadwalItem->kd_poli,
+            $jadwalItem->kd_dokter,
+            now()->format('Y-m-d')
+        );
+        $jadwalItem->register = $count;
 
-        $jadwal = Jadwal::with(['dokter', 'poliklinik'])
-            ->where('hari_kerja', $namahari)
-            ->get();
+        return $jadwalItem;
+    });
 
-        $tanggal = now();
-
-        foreach ($jadwal as $jadwalItem) {
-            $count = RegistrasiPasien::hitungData(
-                $jadwalItem->kd_poli,
-                $jadwalItem->kd_dokter,
-                $tanggal
-            );
-            $jadwalItem->register = $count;
-        }
-
-        return $jadwal;
+    return $jadwal;
     }
 
     public function render(): View
     {
         $hari = now()->format('l');
         $namahari = $this->getNamaHari($hari);
-        $jadwal = Jadwal::with(['dokter', 'poliklinik'])
-            ->where('hari_kerja', $namahari)
-            ->get();
-
-        foreach ($jadwal as $jadwalItem) {
-            $jadwalItem->register = $this->hitungRegistrasi(
-                $jadwalItem->kd_poli,
-                $jadwalItem->kd_dokter,
-                now()->format('Y-m-d')
-            );
-        }
-
-        return view('livewire.pages.informasi.jadwal-dokter', compact('jadwal', 'namahari'));
+        $jadwal = $this->getDataJadwalDokterProperty();
+        return view('livewire.pages.informasi.jadwal-dokter', compact('jadwal', 'namahari'))
+            ->layout(BaseLayout::class, ['title' => 'Jadwal Dokter Hari Ini']);
     }
+ 
+     protected function defaultValues(): void
+     {
+        //
+     }
 }
 
