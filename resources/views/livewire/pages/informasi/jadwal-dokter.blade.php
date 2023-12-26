@@ -15,13 +15,13 @@
                     <x-table.th name="nm_poli" title="Poliklinik" />
                     <x-table.th name="jam_mulai" title="Jam Mulai" />
                     <x-table.th name="jam_selesai" title="Jam Selesai" />
-                    <x-table.th name="register" title="Register" />
+                    <x-table.th name="register" title="Jumlah Pasien" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->dataJadwalDokter as $item )
                         <x-table.tr>
                             <x-table.td>
-                                <a href="{{ route('admin.antrian-poli',['kd_poli' => $item->poliklinik->kd_poli, 'kd_dokter' => $item->dokter->kd_dokter]) }}" target="_blank">{{ $item->nm_dokter }}</a>
+                                <a href="{{ route('admin.antrian-poli', ['kd_poli' => $item->kd_poli, 'kd_dokter' => $item->kd_dokter]) }}" target="_blank" class="text-decoration-none text-black">{{ $item->nm_dokter }}</a>
                             </x-table.td>
                             <x-table.td>{{ $item->nm_poli }}</x-table.td>
                             <x-table.td>{{ $item->jam_mulai }}</x-table.td>
@@ -29,7 +29,7 @@
                             <x-table.td>{{ $item->register }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="10" padding />
+                        <x-table.tr-empty colspan="5" padding />
                     @endforelse
                 </x-slot>
            </x-table>

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Farmasi;
 
+use App\Livewire\Concerns\DeferredLoading;
 use App\Models\Farmasi\Inventaris\SuratPemesananObat;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
@@ -16,7 +17,7 @@ use Livewire\Component;
 
 class PerbandinganBarangPO extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
+    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
     /** @var string */
     public $tglAwal;
@@ -41,9 +42,12 @@ class PerbandinganBarangPO extends Component
         $this->defaultValues();
     }
 
-    public function getPerbandinganOrderObatPOProperty(): Paginator
+    /**
+     * @return (T is array ? array<empty, empty> : \Illuminate\Contracts\Pagination\Paginator)
+     */
+    public function getPerbandinganOrderObatPOProperty()
     {
-        return SuratPemesananObat::query()
+        return $this->isDeferred ? [] : SuratPemesananObat::query()
             ->perbandinganPemesananObatPO($this->tglAwal, $this->tglAkhir, $this->barangSelisih)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
@@ -74,9 +78,9 @@ class PerbandinganBarangPO extends Component
                     'nama_brng'      => $model->nama_brng,
                     'suplier_pesan'  => $model->suplier_pesan,
                     'suplier_datang' => $model->suplier_datang,
-                    'jumlah_pesan'   => floatval($model->jumlah_pesan),
-                    'jumlah_datang'  => floatval($model->jumlah_datang),
-                    'selisih'        => floatval($model->selisih),
+                    'jumlah_pesan'   => $model->jumlah_pesan,
+                    'jumlah_datang'  => $model->jumlah_datang,
+                    'selisih'        => $model->keterangan ?? $model->selisih,
                 ])
         ];
     }

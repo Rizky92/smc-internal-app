@@ -6,6 +6,19 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+if (! function_exists('hari')) {
+    /**
+     * @param  \DateTime|\Carbon|string|null
+     */
+    function hari($date): string
+    {
+        return str(carbon($date)->translatedFormat('l'))
+            ->upper()
+            ->replace('MINGGU', 'AKHAD')
+            ->value();
+    }
+}
+
 if (!function_exists('user')) {
     function user(?string $guard = 'web'): Authenticatable
     {

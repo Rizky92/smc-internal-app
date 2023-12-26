@@ -5,6 +5,7 @@ namespace App\Models\Antrian;
 use App\Models\Kepegawaian\Dokter;
 use App\Models\Perawatan\Poliklinik;
 use App\Database\Eloquent\Model;
+use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Builder;
 
 
@@ -38,12 +39,12 @@ class Jadwal extends Model
         return $this->belongsTo(Poliklinik::class, 'kd_poli', 'kd_poli');
     }
 
-    public function scopeJadwalDokter(Builder $query): Builder
+    public function scopeJadwalDokter(Builder $query, bool $semuaPoli = false): Builder
     {
         $sqlSelect = <<<SQL
-        dokter.kd_dokter,
-        dokter.nm_dokter,
-        poliklinik.kd_poli, 
+        jadwal.kd_dokter, 
+        dokter.nm_dokter, 
+        jadwal.kd_poli,
         poliklinik.nm_poli,
         jadwal.hari_kerja,
         jadwal.jam_mulai, 
@@ -55,9 +56,20 @@ class Jadwal extends Model
             'poliklinik.nm_poli',
         ]);
 
+        $registrasiPasien = RegistrasiPasien::query()
+            ->selectRaw('count(*)')
+            ->whereColumn('reg_periksa.kd_poli', 'jadwal.kd_poli')
+            ->whereColumn('reg_periksa.kd_dokter', 'jadwal.kd_dokter')
+            ->whereDate('reg_periksa.tgl_registrasi', now());
+
         return $query
             ->selectRaw($sqlSelect)
-            ->leftJoin('dokter', 'jadwal.kd_dokter', '=', 'dokter.kd_dokter')
-            ->leftJoin('poliklinik', 'jadwal.kd_poli', '=', 'poliklinik.kd_poli');
+            ->addSelect(['jumlah_pasien' => $registrasiPasien])
+            ->join('dokter', 'jadwal.kd_dokter', '=', 'dokter.kd_dokter')
+            ->join('poliklinik', 'jadwal.kd_poli', '=', 'poliklinik.kd_poli')
+            ->where('hari_kerja', hari('now'))
+            ->when(! $semuaPoli, fn (Builder $q): Builder => $q->where('jadwal.kd_poli', '!=', 'U0038'))
+            ->orderBy('poliklinik.nm_poli')
+            ->orderBy('dokter.nm_dokter');
     }
 }

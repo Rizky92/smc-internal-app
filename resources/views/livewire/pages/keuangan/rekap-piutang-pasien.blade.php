@@ -1,4 +1,4 @@
-<div>
+<div wire:init="loadProperties">
     <x-flash />
 
     <x-card use-loading>

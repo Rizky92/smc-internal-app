@@ -1,4 +1,4 @@
-<div>
+<div wire:init="loadProperties">
     <x-flash />
 
     <x-card use-loading>
@@ -34,7 +34,7 @@
                             <x-table.td>{{ $obat->suplier_datang }}</x-table.td>
                             <x-table.td>{{ $obat->jumlah_pesan }}</x-table.td>
                             <x-table.td>{{ $obat->jumlah_datang }}</x-table.td>
-                            <x-table.td>{{ $obat->selisih }}</x-table.td>
+                            <x-table.td>{{ $obat->keterangan ?? $obat->selisih }}</x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="7" padding />

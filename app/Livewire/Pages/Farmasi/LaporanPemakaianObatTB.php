@@ -40,7 +40,7 @@ class LaporanPemakaianObatTB extends Component
 
     public function getDataLaporanPemakaianObatTBProperty(): Paginator
     {
-        return RegistrasiPasien::query()
+        return $this->isDeferred ? [] : RegistrasiPasien::query()
             ->riwayatPemakaianObatTB($this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)

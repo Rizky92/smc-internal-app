@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Farmasi;
 
+use App\Livewire\Concerns\DeferredLoading;
 use App\Models\Farmasi\ResepObat;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
@@ -15,7 +16,7 @@ use Livewire\Component;
 
 class ObatPerDokter extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
+    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
 
     /** @var string */
     public $tglAwal;
@@ -38,7 +39,7 @@ class ObatPerDokter extends Component
 
     public function getObatPerDokterProperty(): Paginator
     {
-        return ResepObat::query()
+        return $this->isDeferred ? [] : ResepObat::query()
             ->penggunaanObatPerDokter($this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
