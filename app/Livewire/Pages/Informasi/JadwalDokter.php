@@ -8,12 +8,23 @@ use App\Livewire\Concerns\LiveTable;
 use App\Models\Perawatan\RegistrasiPasien;
 use App\View\Components\BaseLayout;
 use App\Models\Antrian\Jadwal;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class JadwalDokter extends Component
 {
     use FlashComponent, Filterable, LiveTable;
+
+    /** @var bool */
+    public $semuaPoli;
+
+    protected function queryString(): array
+    {
+        return [
+            'semuaPoli'     => ['except' => false, 'as' => 'tampilkan_semua_poli'],
+        ];
+    }
 
      private function getNamaHari($hari)
     {
@@ -47,24 +58,31 @@ class JadwalDokter extends Component
         $hari = now()->format('l');
         $namahari = $this->getNamaHari($hari);
         $jadwal=Jadwal::query()
-        ->jadwalDokter()
-        ->with(['dokter', 'poliklinik'])
-        ->where('hari_kerja', $namahari)
-        ->search($this->cari)
-        ->sortWithColumns($this->sortColumns)
-        ->paginate($this->perpage);
+            ->jadwalDokter()
+            ->with(['dokter', 'poliklinik'])
+            ->where('hari_kerja', $namahari);
+
+        if (!$this->semuaPoli) {
+            $jadwal->where('poliklinik.nm_poli', '<>', 'Poli Eksekutif');
+        }
+
+        $jadwal = $jadwal
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
+            ->paginate($this->perpage);
+
         $jadwal->transform(function ($jadwalItem) {
-        $count = RegistrasiPasien::hitungData(
-            $jadwalItem->kd_poli,
-            $jadwalItem->kd_dokter,
-            now()->format('Y-m-d')
-        );
-        $jadwalItem->register = $count;
+            $count = $this->hitungRegistrasi(
+                $jadwalItem->poliklinik->kd_poli,
+                $jadwalItem->dokter->kd_dokter,
+                now()->format('Y-m-d')
+            );
+            $jadwalItem->register = $count;
 
-        return $jadwalItem;
-    });
+            return $jadwalItem;
+        });
 
-    return $jadwal;
+        return $jadwal;
     }
 
     public function render(): View
@@ -78,7 +96,7 @@ class JadwalDokter extends Component
  
      protected function defaultValues(): void
      {
-        //
+        $this->semuaPoli = false;
      }
 }
 

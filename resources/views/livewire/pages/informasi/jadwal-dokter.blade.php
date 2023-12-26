@@ -3,6 +3,7 @@
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.select-perpage />
+                <x-filter.toggle class="ml-3" model="semuaPoli" title="Tampilkan Semua Poli" />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search />
             </x-row-col-flex>
