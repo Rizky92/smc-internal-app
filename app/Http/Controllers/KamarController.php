@@ -8,7 +8,7 @@ use Illuminate\View\View;
 
 class KamarController
 {
-    public function getInformasiKamarProperty()
+    public function getInformasiKamarProperty(): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         return Bangsal::activeWithKamar()
             ->distinct()

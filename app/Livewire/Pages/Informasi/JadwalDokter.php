@@ -31,7 +31,7 @@ class JadwalDokter extends Component
             ->jadwalDokter($this->semuaPoli)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
-            ->paginate($this->perpage);
+            ->get();
     }
 
     public function mount(): void

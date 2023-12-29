@@ -3,8 +3,8 @@
 namespace App\Models\Perawatan;
 
 use App\Database\Eloquent\Model;
+use App\Models\Antrian\Jadwal;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Poliklinik extends Model
 {
@@ -25,9 +25,6 @@ class Poliklinik extends Model
         return $this->hasMany(RegistrasiPasien::class, 'kd_poli', 'kd_poli');
     }
 
-    /**
-     * @psalm-return HasMany<Jadwal>
-     */
     public function jadwal(): HasMany
     {
         return $this->hasMany(Jadwal::class, 'kd_poli', 'kd_poli');

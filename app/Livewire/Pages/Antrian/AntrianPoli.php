@@ -19,7 +19,7 @@ class AntrianPoli extends Component
     public $kd_poli;
     public $kd_dokter;
 
-    public function mount($kd_poli, $kd_dokter)
+    public function mount($kd_poli, $kd_dokter): void
     {
         $this->kd_poli = $kd_poli;
         $this->kd_dokter = $kd_dokter;
@@ -44,7 +44,7 @@ class AntrianPoli extends Component
             ->first();
     }
 
-    public function checkDataChanges(Request $request, $kd_poli, $kd_dokter)
+    public function checkDataChanges(Request $request, $kd_poli, $kd_dokter): \Illuminate\Http\JsonResponse
     {
         $tanggal = now()->format('Y-m-d');
 
@@ -70,7 +70,7 @@ class AntrianPoli extends Component
         return response()->json($response);
     }
 
-    private function isDataChanged($nextAntrian, $lastNoReg)
+    private function isDataChanged($nextAntrian, $lastNoReg): bool
     {
         if ($lastNoReg !== $nextAntrian->no_reg) {
             return true;

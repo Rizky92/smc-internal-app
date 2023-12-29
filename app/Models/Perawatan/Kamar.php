@@ -32,7 +32,10 @@ class Kamar extends Model
         return $this->belongsToMany(RegistrasiPasien::class, 'kamar_inap', 'kd_kamar', 'no_rawat');
     }
 
-    public function scopeInformasiKamar(Builder $query)
+    /**
+     * @psalm-return Builder<\Illuminate\Database\Eloquent\Model>
+     */
+    public function scopeInformasiKamar(Builder $query): Builder
     {
         $sqlSelect = <<<SQL
         kamar.kd_kamar,

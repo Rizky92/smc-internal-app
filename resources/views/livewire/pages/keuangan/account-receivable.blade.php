@@ -89,8 +89,8 @@
                                 </x-table.td>
                             @endcan
                             <x-table.td>{{ $item->umur_hari <= 30 ? rp($item->sisa_piutang) : '-' }}</x-table.td>
-                            <x-table.td>{{ is_between($item->umur_hari, 31, 60, true) ? rp($item->sisa_piutang) : '-' }}</x-table.td>
-                            <x-table.td>{{ is_between($item->umur_hari, 61, 90, true) ? rp($item->sisa_piutang) : '-' }}</x-table.td>
+                            <x-table.td>{{ between($item->umur_hari, 31, 60, true) ? rp($item->sisa_piutang) : '-' }}</x-table.td>
+                            <x-table.td>{{ between($item->umur_hari, 61, 90, true) ? rp($item->sisa_piutang) : '-' }}</x-table.td>
                             <x-table.td>{{ $item->umur_hari > 90 ? rp($item->sisa_piutang) : '-' }}</x-table.td>
                         </x-table.tr>
                     @empty

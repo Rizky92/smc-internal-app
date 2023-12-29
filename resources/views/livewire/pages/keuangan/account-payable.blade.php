@@ -47,9 +47,9 @@
                                         <x-table.td>{{ rp($item->tagihan) }}</x-table.td>
                                         <x-table.td>{{ rp($item->dibayar) }}</x-table.td>
                                         <x-table.td>{{ rp($item->sisa) }}</x-table.td>
-                                        <x-table.td>{{ is_between($item->umur_hari, 0, 30) ? rp($item->sisa) : rp() }}</x-table.td>
-                                        <x-table.td>{{ is_between($item->umur_hari, 31, 60) ? rp($item->sisa) : rp() }}</x-table.td>
-                                        <x-table.td>{{ is_between($item->umur_hari, 61, 90) ? rp($item->sisa) : rp() }}</x-table.td>
+                                        <x-table.td>{{ between($item->umur_hari, 0, 30) ? rp($item->sisa) : rp() }}</x-table.td>
+                                        <x-table.td>{{ between($item->umur_hari, 31, 60) ? rp($item->sisa) : rp() }}</x-table.td>
+                                        <x-table.td>{{ between($item->umur_hari, 61, 90) ? rp($item->sisa) : rp() }}</x-table.td>
                                         <x-table.td>{{ $item->umur_hari > 90 ? rp($item->sisa) : rp() }}</x-table.td>
                                         <x-table.td>{{ $item->keterangan }}</x-table.td>
                                     </x-table.tr>
@@ -112,9 +112,9 @@
                                         <x-table.td>{{ rp($item->tagihan) }}</x-table.td>
                                         <x-table.td>{{ rp($item->dibayar) }}</x-table.td>
                                         <x-table.td>{{ rp($item->sisa) }}</x-table.td>
-                                        <x-table.td>{{ is_between($item->umur_hari, 0, 30) ? rp($item->sisa) : rp() }}</x-table.td>
-                                        <x-table.td>{{ is_between($item->umur_hari, 31, 60) ? rp($item->sisa) : rp() }}</x-table.td>
-                                        <x-table.td>{{ is_between($item->umur_hari, 61, 90) ? rp($item->sisa) : rp() }}</x-table.td>
+                                        <x-table.td>{{ between($item->umur_hari, 0, 30) ? rp($item->sisa) : rp() }}</x-table.td>
+                                        <x-table.td>{{ between($item->umur_hari, 31, 60) ? rp($item->sisa) : rp() }}</x-table.td>
+                                        <x-table.td>{{ between($item->umur_hari, 61, 90) ? rp($item->sisa) : rp() }}</x-table.td>
                                         <x-table.td>{{ $item->umur_hari > 90 ? rp($item->sisa) : rp() }}</x-table.td>
                                         <x-table.td>{{ $item->keterangan }}</x-table.td>
                                     </x-table.tr>

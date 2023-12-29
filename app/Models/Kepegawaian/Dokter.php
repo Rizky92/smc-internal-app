@@ -3,6 +3,9 @@
 namespace App\Models\Kepegawaian;
 
 use App\Database\Eloquent\Model;
+use App\Models\Antrian\Jadwal;
+use App\Models\Perawatan\RegistrasiPasien;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Dokter extends Model
 {
@@ -18,21 +21,13 @@ class Dokter extends Model
 
     public $timestamps = false;
 
-    /**
-     * @psalm-return \Illuminate\Database\Eloquent\Relations\HasMany<Jadwal>
-     */
-    public function jadwal(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function jadwal(): HasMany
     {
         return $this->hasMany(Jadwal::class, 'kd_dokter', 'kd_dokter');
     }
 
-    /**
-     * @psalm-return \Illuminate\Database\Eloquent\Relations\HasMany<RegistrasiPasien>
-     */
-    public function registrasi(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function registrasi(): HasMany
 {
     return $this->hasMany(RegistrasiPasien::class, 'kd_dokter', 'kd_dokter');
 }
 }
-
-

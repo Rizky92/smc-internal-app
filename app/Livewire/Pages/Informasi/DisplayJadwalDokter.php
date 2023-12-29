@@ -10,7 +10,7 @@ use Livewire\Component;
 
 class DisplayJadwalDokter extends Component
 {
-    private function getNamaHari($hari)
+    private function getNamaHari($hari): string
     {
         switch ($hari) {
             case 'Sunday':
@@ -32,12 +32,15 @@ class DisplayJadwalDokter extends Component
         }
     }
 
-    private function hitungRegistrasi($kdPoli, $kdDokter, $tanggal)
+    private function hitungRegistrasi($kdPoli, $kdDokter, $tanggal): int
     {
         return RegistrasiPasien::hitungData($kdPoli, $kdDokter, $tanggal);
     }
 
-    public function getDataJadwalDokterProperty()
+    /**
+     * @psalm-return \Illuminate\Database\Eloquent\Collection<\Illuminate\Database\Eloquent\Model>
+     */
+    public function getDataJadwalDokterProperty(): \Illuminate\Database\Eloquent\Collection
     {
         $hari = now()->format('l'); 
         $namahari = $this->getNamaHari($hari);

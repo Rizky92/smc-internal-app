@@ -801,6 +801,67 @@ class RegistrasiPasien extends Model
             ]);
     }
 
+    public function scopeDemografiPasien(Builder $query, string $tglAwal = '', string $tglAkhir = '', bool $export = false): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        }
+
+        $sqlSelect = <<<SQL
+kecamatan.nm_kec,
+reg_periksa.no_rkm_medis,
+reg_periksa.no_rawat,
+pasien.alamat,
+diagnosa_pasien.kd_penyakit,
+penyakit.nm_penyakit,
+pasien.pnd,
+bahasa_pasien.nama_bahasa,
+suku_bangsa.nama_suku_bangsa,
+pasien.nm_pasien,
+reg_periksa.umurdaftar,
+reg_periksa.sttsumur,
+reg_periksa.tgl_registrasi,
+pasien.jk,
+pasien.agama
+SQL;
+
+        $this->addSortColumns('umur', DB::raw("concat(field(reg_periksa.sttsumur, 'Hr', 'Bl', 'Th'), ' ', reg_periksa.umurdaftar)"));
+
+        $this->addSearchConditions([
+            'kecamatan.nm_kec',
+            'pasien.nm_pasien',
+            'pasien.alamat',
+            'pasien.jk',
+            'penyakit.nm_penyakit',
+            'pasien.agama',
+            'pasien.pnd',
+            'bahasa_pasien.nama_bahasa',
+            'suku_bangsa.nama_suku_bangsa',
+        ]);
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->withCasts(['umurdaftar' => 'int'])
+            ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->leftJoin('kecamatan', 'pasien.kd_kec', '=', 'kecamatan.kd_kec')
+            ->leftJoin('bahasa_pasien', 'pasien.bahasa_pasien', '=', 'bahasa_pasien.id')
+            ->leftJoin('suku_bangsa', 'pasien.suku_bangsa', '=', 'suku_bangsa.id')
+            ->leftJoin('diagnosa_pasien', 'reg_periksa.no_rawat', '=', 'diagnosa_pasien.no_rawat')
+            ->leftJoin('penyakit', 'diagnosa_pasien.kd_penyakit', 'penyakit.kd_penyakit')
+            ->whereNotIn('reg_periksa.stts', ['batal', 'belum'])
+            ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
+            ->groupBy([
+                'kecamatan.kd_kec',
+                'reg_periksa.no_rkm_medis',
+                'reg_periksa.no_rawat'
+            ])
+            ->orderBy('reg_periksa.no_rawat');
+    }
+
     public static function hitungData($kd_poli, $kd_dokter, $tanggal): int
     {
         return self::where('kd_poli', $kd_poli)

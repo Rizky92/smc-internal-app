@@ -314,7 +314,7 @@ if (!function_exists('maybe')) {
     }
 }
 
-if (!function_exists('is_between')) {
+if (!function_exists('between')) {
     /**
      * @param  float|int $value
      * @param  float|int $start
@@ -322,7 +322,7 @@ if (!function_exists('is_between')) {
      * 
      * @return bool
      */
-    function is_between($value, $start = 0, $end = 0, bool $equal = false): bool
+    function between($value, $start = 0, $end = 0, bool $equal = false): bool
     {
         if ($equal) {
             return ($value >= $start) && ($value <= $end);

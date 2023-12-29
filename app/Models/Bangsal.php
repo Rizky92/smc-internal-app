@@ -25,7 +25,10 @@ class Bangsal extends Model
         return $this->belongsToMany(Bidang::class, 'mapping_bidang', 'bidang_id', 'kd_bangsal', 'id', 'kd_bangsal');
     }
 
-    public function kamar()
+    /**
+     * @psalm-return \Illuminate\Database\Eloquent\Relations\HasMany<Kamar>
+     */
+    public function kamar(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Kamar::class, 'kd_bangsal', 'kd_bangsal');
     }
@@ -67,7 +70,7 @@ class Bangsal extends Model
             ->orderBy('kelas');
     }
 
-    public static function getKelasList()
+    public static function getKelasList(): \Illuminate\Support\Collection
     {
         return Kamar::select('kelas')->distinct()->pluck('kelas');
     }

@@ -1,8 +1,7 @@
 <div>
-    <x-card use loading>
+    <x-card use-loading>
         <x-slot name="header">
             <x-row-col-flex>
-                <x-filter.select-perpage />
                 <x-filter.toggle class="ml-3" model="semuaPoli" title="Tampilkan Semua Poli" />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search />
@@ -26,16 +25,13 @@
                             <x-table.td>{{ $item->nm_poli }}</x-table.td>
                             <x-table.td>{{ $item->jam_mulai }}</x-table.td>
                             <x-table.td>{{ $item->jam_selesai }}</x-table.td>
-                            <x-table.td>{{ $item->register }}</x-table.td>
+                            <x-table.td>{{ $item->jumlah_pasien }}</x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="5" padding />
                     @endforelse
                 </x-slot>
            </x-table>
-        </x-slot>
-        <x-slot name="footer">
-            <x-paginator :data="$this->dataJadwalDokter" />
         </x-slot>
     </x-card>
 </div>

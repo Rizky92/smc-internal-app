@@ -31,7 +31,7 @@ class JadwalController
         return view('jadwal', compact('jadwal', 'namahari'));
     }
 
-    private function getNamaHari($hari)
+    private function getNamaHari($hari): string
     {
         switch ($hari) {
             case 'Sunday':
