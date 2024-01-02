@@ -4,6 +4,7 @@ namespace App\Models\Keuangan\Jurnal;
 
 use App\Database\Eloquent\Model;
 use App\Models\Keuangan\PengeluaranHarian;
+use App\Models\Keuangan\PenagihanPiutang;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
@@ -52,6 +53,17 @@ class Jurnal extends Model
         return $this->belongsTo(PengeluaranHarian::class, 'no_bukti', 'no_keluar');
     }
 
+    public function penagihanPiutangByNoTagihan()
+    {
+        preg_match('/TAGIHAN (\S+),/', $this->keterangan, $matches);
+        
+        if (!empty($matches[1])) {
+            return PenagihanPiutang::where('no_tagihan', $matches[1])->first();
+        }
+
+        return null;
+    }
+    
     public function scopeJurnalUmum(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
