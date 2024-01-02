@@ -16,8 +16,7 @@ class MixinCollections
     public function mergeWhen(): Closure
     {
         /** @psalm-scope-this Illuminate\Support\Collection */
-        return fn (bool $expression, $values): Collection =>
-            $this->when($expression, fn (Collection $c): Collection => $c->merge($values));
+        return fn (bool $expression, $values): Collection => $this->when($expression, fn (Collection $c): Collection => $c->merge($values));
     }
 
     /**
@@ -44,8 +43,7 @@ class MixinCollections
     public function joinStr(): Closure
     {
         /** @psalm-scope-this Illuminate\Support\Collection */
-        return fn (string $glue, string $finalGlue = ''): Stringable =>
-            new Stringable($this->join($glue, $finalGlue));
+        return fn (string $glue, string $finalGlue = ''): Stringable => new Stringable($this->join($glue, $finalGlue));
     }
 
     /**
@@ -80,8 +78,7 @@ class MixinCollections
     public function pushIf(): Closure
     {
         /** @psalm-scope-this Illuminate\Support\Collection */
-        return fn (bool $condition, ...$values): Collection =>
-            $this->when($condition, fn (Collection $c) => $c->push($values));
+        return fn (bool $condition, ...$values): Collection => $this->when($condition, fn (Collection $c) => $c->push($values));
     }
 
     /**
@@ -90,8 +87,7 @@ class MixinCollections
     public function pushUnless(): Closure
     {
         /** @psalm-scope-this Illuminate\Support\Collection */
-        return fn (bool $condition, ...$values): Collection =>
-            $this->unless($condition, fn (Collection $c) => $c->push($values));
+        return fn (bool $condition, ...$values): Collection => $this->unless($condition, fn (Collection $c) => $c->push($values));
     }
 
     /**
@@ -100,10 +96,9 @@ class MixinCollections
     public function whereLike(): Closure
     {
         /** @psalm-scope-this Illuminate\Support\Collection */
-        return fn (?string $search = null, int $maxDistance = 1): Collection =>
-            $this->filter(
-                fn (string $v): bool => empty($search) ?: levenshtein($v, $search) <= $maxDistance
-            );
+        return fn (?string $search = null, int $maxDistance = 1): Collection => $this->filter(
+            fn (string $v): bool => empty($search) ?: levenshtein($v, $search) <= $maxDistance
+        );
     }
 
     /**
@@ -112,10 +107,9 @@ class MixinCollections
     public function containsLike(): Closure
     {
         /** @psalm-scope-this Illuminate\Support\Collection */
-        return fn (?string $search = null, int $maxDistance = 1): bool =>
-            $this->contains(
-                fn (string $v): bool => empty($search) ?: levenshtein($v, $search) <= $maxDistance
-            );
+        return fn (?string $search = null, int $maxDistance = 1): bool => $this->contains(
+            fn (string $v): bool => empty($search) ?: levenshtein($v, $search) <= $maxDistance
+        );
     }
 
     /**
@@ -126,11 +120,10 @@ class MixinCollections
         /** @psalm-scope-this Illuminate\Support\Collection */
         return function (...$key): bool {
             /** @var \Illuminate\Support\Collection $this */
-
             $key = count($key) > 1 ? $key[array_keys($key)[0]] : $key;
 
             if ($this->isAssoc() && is_string($key)) {
-                return !$this->has($key);
+                return ! $this->has($key);
             }
 
             if (is_string($key) && Str::startsWith($key, '*.')) {
@@ -148,12 +141,12 @@ class MixinCollections
             $this->each(function (array $value) use ($key, &$check) {
                 $check = Arr::has($value, $key);
 
-                if (!$check) {
+                if (! $check) {
                     return $check;
                 }
             });
 
-            return !$check;
+            return ! $check;
         };
     }
 }

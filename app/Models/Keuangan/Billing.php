@@ -25,7 +25,7 @@ class Billing extends Model
     public function scopeTotalBillingan(Builder $query, $noRawat): Builder
     {
         if (empty($noRawat)) {
-            throw new RuntimeException("Parameter of [\$noRawat] must not be empty.");
+            throw new RuntimeException('Parameter of [$noRawat] must not be empty.');
         }
 
         if (is_array($noRawat)) {
@@ -51,10 +51,10 @@ class Billing extends Model
             'Registrasi', 'Ralan Paramedis', 'Ralan Dokter', 'Ralan Dokter Paramedis',
             'Ranap Paramedis', 'Ranap Dokter', 'Ranap Dokter Paramedis', 'Obat', 'Resep Pulang',
             'Laborat', 'Radiologi', 'Potongan', 'Tambahan', 'Kamar', 'Service', 'Operasi',
-            'Harian', 'Retur Obat'
+            'Harian', 'Retur Obat',
         ];
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             no_rawat,
             status,
             sum(totalbiaya) total
@@ -62,7 +62,7 @@ class Billing extends Model
 
         return $query
             ->selectRaw($sqlSelect)
-            ->when(!is_null($noRawat), fn (Builder $query): Builder => $query->whereIn('no_rawat', $noRawat))
+            ->when(! is_null($noRawat), fn (Builder $query): Builder => $query->whereIn('no_rawat', $noRawat))
             ->whereIn('status', $kategoriBilling)
             ->groupBy(['no_rawat', 'status']);
     }

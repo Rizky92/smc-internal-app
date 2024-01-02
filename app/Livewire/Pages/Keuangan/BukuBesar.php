@@ -2,21 +2,26 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
-use App\Models\Keuangan\Jurnal\Jurnal;
-use App\Models\Keuangan\Rekening;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Keuangan\Jurnal\Jurnal;
+use App\Models\Keuangan\Rekening;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class BukuBesar extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $kodeRekening;
@@ -57,7 +62,7 @@ class BukuBesar extends Component
                 ->each(function ($jurnal) {
                     $jurnal->catatanPenagihan = optional($jurnal->penagihanPiutangByNoTagihan())->catatan;
                 });
-    }    
+    }
 
     public function getTotalDebetDanKreditProperty()
     {
@@ -117,25 +122,24 @@ class BukuBesar extends Component
                     'debet'                  => round(optional($this->totalDebetDanKredit)->debet, 2),
                     'kredit'                 => round(optional($this->totalDebetDanKredit)->kredit, 2),
                 ]])
-                ->all()
+                ->all(),
         ];
     }
-
 
     protected function columnHeaders(): array
     {
         return [
-            "Tgl",
-            "Jam",
-            "No. Jurnal",
-            "No. Bukti",
-            "Keterangan Jurnal",
-            "Keterangan Pengeluaran",
-            "Catatan Penagihan",
-            "Kode",
-            "Rekening",
-            "Debet",
-            "Kredit",
+            'Tgl',
+            'Jam',
+            'No. Jurnal',
+            'No. Bukti',
+            'Keterangan Jurnal',
+            'Keterangan Pengeluaran',
+            'Catatan Penagihan',
+            'Kode',
+            'Rekening',
+            'Debet',
+            'Kredit',
         ];
     }
 
@@ -146,7 +150,7 @@ class BukuBesar extends Component
         $periodeAwal = carbon($this->tglAwal);
         $periodeAkhir = carbon($this->tglAkhir);
 
-        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+        $periode = 'Periode '.$periodeAwal->translatedFormat('d F Y').' s.d. '.$periodeAkhir->translatedFormat('d F Y');
 
         if ($periodeAwal->isSameDay($periodeAkhir)) {
             $periode = $periodeAwal->translatedFormat('d F Y');
@@ -154,7 +158,7 @@ class BukuBesar extends Component
 
         return [
             'RS Samarinda Medika Citra',
-            'Buku Besar rekening ' . $rekening,
+            'Buku Besar rekening '.$rekening,
             now()->translatedFormat('d F Y'),
             $periode,
         ];

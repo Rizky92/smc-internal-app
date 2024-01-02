@@ -14,7 +14,12 @@ use Livewire\Component;
 
 class ValidasiPiutang extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $tglAwal;

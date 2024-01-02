@@ -5,18 +5,17 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\LogoutOtherSessionsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
-use App\Livewire\Pages\Informasi;
 use App\Livewire\Pages\Antrian;
 use App\Livewire\Pages\Aplikasi;
 use App\Livewire\Pages\Farmasi;
 use App\Livewire\Pages\HakAkses;
+use App\Livewire\Pages\Informasi;
 use App\Livewire\Pages\Keuangan;
 use App\Livewire\Pages\Laboratorium;
 use App\Livewire\Pages\Logistik;
 use App\Livewire\Pages\Perawatan;
 use App\Livewire\Pages\RekamMedis;
 use App\Livewire\Pages\User;
-use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Support\Facades\Route;
 use InfyOm\RoutesExplorer\RoutesExplorer;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
@@ -260,11 +259,11 @@ Route::prefix('admin')
             ->as('informasi.')
             ->group(function () {
                 Route::get('informasi-kamar', Informasi\InformasiKamar::class)
-                ->name('informasi-kamar')
-                ->middleware('can:informasi.informasi-kamar.read');
+                    ->name('informasi-kamar')
+                    ->middleware('can:informasi.informasi-kamar.read');
 
                 Route::get('jadwal-dokter', Informasi\JadwalDokter::class)
-                ->name('jadwal-dokter');
+                    ->name('jadwal-dokter');
             });
 
         Route::prefix('logistik')
@@ -279,7 +278,7 @@ Route::prefix('admin')
                     ->middleware('can:logistik.stok-darurat.read');
             });
 
-        Route::middleware('role:' . config('permission.superadmin_name'))
+        Route::middleware('role:'.config('permission.superadmin_name'))
             ->group(function () {
                 Route::get('manajemen-user', User\ManajemenUser::class)
                     ->name('manajemen-user');

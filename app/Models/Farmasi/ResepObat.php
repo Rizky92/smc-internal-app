@@ -2,9 +2,9 @@
 
 namespace App\Models\Farmasi;
 
+use App\Database\Eloquent\Model;
 use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Builder;
-use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
@@ -45,7 +45,7 @@ class ResepObat extends Model
             $tglAkhir = now()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             resep_obat.no_resep,
             resep_obat.no_rawat,
             reg_periksa.no_rkm_medis,
@@ -80,7 +80,7 @@ class ResepObat extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             resep_obat.no_resep,
             resep_obat.tgl_perawatan,
             resep_obat.jam,
@@ -130,7 +130,7 @@ class ResepObat extends Model
             $tglAkhir = now()->endofMonth()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             resep_obat.no_rawat,
             resep_obat.no_resep,
             pasien.nm_pasien,
@@ -154,9 +154,9 @@ class ResepObat extends Model
         ]);
 
         $this->addRawColumns([
-            'umur' => DB::raw("concat(reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur)"),
+            'umur'              => DB::raw("concat(reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur)"),
             'nm_dokter_peresep' => 'dokter_peresep.nm_dokter',
-            'nm_dokter_poli' => 'dokter_poli.nm_dokter',
+            'nm_dokter_poli'    => 'dokter_poli.nm_dokter',
         ]);
 
         return $query
@@ -179,7 +179,7 @@ class ResepObat extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             reg_periksa.no_rawat,
             resep_obat.no_resep,
             pasien.nm_pasien,
@@ -198,7 +198,7 @@ class ResepObat extends Model
             ->leftJoin('databarang', 'resep_dokter.kode_brng', '=', 'databarang.kode_brng')
             ->where('reg_periksa.status_bayar', 'Sudah Bayar')
             ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
-            ->when(!empty($jenisPerawatan), fn (Builder $query) => $query->where('reg_periksa.status_lanjut', $jenisPerawatan))
+            ->when(! empty($jenisPerawatan), fn (Builder $query) => $query->where('reg_periksa.status_lanjut', $jenisPerawatan))
             ->groupBy([
                 'reg_periksa.no_rawat',
                 'resep_obat.no_resep',
@@ -211,7 +211,7 @@ class ResepObat extends Model
 
     public function scopeKunjunganPasien(Builder $query, string $jenisPerawatan = '', string $year = '2022'): Builder
     {
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             count(resep_obat.no_resep) jumlah,
             month(resep_obat.tgl_perawatan) bulan
         SQL;
@@ -221,7 +221,7 @@ class ResepObat extends Model
             ->withCasts(['jumlah' => 'int', 'bulan' => 'int'])
             ->leftJoin('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
             ->whereBetween('resep_obat.tgl_perawatan', ["{$year}-01-01", "{$year}-12-31"])
-            ->when(!empty($jenisPerawatan), function (Builder $query) use ($jenisPerawatan) {
+            ->when(! empty($jenisPerawatan), function (Builder $query) use ($jenisPerawatan) {
                 switch (Str::lower($jenisPerawatan)) {
                     case 'ralan':
                         return $query->where('resep_obat.status', 'Ralan')

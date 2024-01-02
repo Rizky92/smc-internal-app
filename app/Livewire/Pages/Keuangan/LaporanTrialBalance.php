@@ -15,13 +15,18 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Fluent;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
-use Illuminate\Support\Str;
 
 class LaporanTrialBalance extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $tglAwal;
@@ -47,24 +52,32 @@ class LaporanTrialBalance extends Component
      */
     public function getDataTrialBalancePerTanggalProperty()
     {
-        if ($this->isDeferred) return [];
+        if ($this->isDeferred) {
+            return [];
+        }
 
         $bulan = carbon($this->tglAwal)->subMonth()->format('Y_m');
 
         $semuaRekening = Cache::remember(
-            'semua_rekening', now()->addMonth(), fn (): EloquentCollection => Rekening::query()
+            'semua_rekening',
+            now()->addMonth(),
+            fn (): EloquentCollection => Rekening::query()
                 ->semuaRekening()
                 ->get()
         );
 
         $rekeningPerTahun = Cache::remember(
-            'rekening_tahun', now()->addMonth(), fn (): Collection => RekeningTahun::query()
+            'rekening_tahun',
+            now()->addMonth(),
+            fn (): Collection => RekeningTahun::query()
                 ->where('thn', carbon($this->tglAwal)->year)
                 ->pluck('saldo_awal', 'kd_rek')
         );
 
         $saldoBulanSebelumnya = Cache::remember(
-            'saldo_' . $bulan, now()->addWeek(), fn (): Collection => Rekening::query()
+            'saldo_'.$bulan,
+            now()->addWeek(),
+            fn (): Collection => Rekening::query()
                 ->saldoAwalBulanSebelumnya($this->tglAwal)
                 ->pluck('total_transaksi', 'kd_rek')
         );
@@ -103,20 +116,22 @@ class LaporanTrialBalance extends Component
      */
     public function getTotalDebetKreditTrialBalanceProperty()
     {
-        if ($this->isDeferred) return [];
+        if ($this->isDeferred) {
+            return [];
+        }
 
         $totalDebet = $this->dataTrialBalancePerTanggal->sum('total_debet');
 
         $totalKredit = $this->dataTrialBalancePerTanggal->sum('total_kredit');
 
         return new Fluent([
-            'kd_rek' => null,
-            'nm_rek' => 'TOTAL',
-            'tipe' => null,
-            'saldo_awal' => null,
-            'total_debet' => $totalDebet,
+            'kd_rek'       => null,
+            'nm_rek'       => 'TOTAL',
+            'tipe'         => null,
+            'saldo_awal'   => null,
+            'total_debet'  => $totalDebet,
             'total_kredit' => $totalKredit,
-            'saldo_akhir' => null,
+            'saldo_akhir'  => null,
         ]);
     }
 
@@ -130,13 +145,13 @@ class LaporanTrialBalance extends Component
     {
         $bulan = carbon($this->tglAwal)->subMonth()->format('Y_m');
 
-        Cache::forget('saldo_' . $bulan);
+        Cache::forget('saldo_'.$bulan);
 
         Cache::forget('rekening_tahun');
 
         $this->searchData();
 
-        $this->flashSuccess("Rekening berhasil direkalkulasi ulang!");
+        $this->flashSuccess('Rekening berhasil direkalkulasi ulang!');
     }
 
     protected function defaultValues(): void
@@ -149,7 +164,7 @@ class LaporanTrialBalance extends Component
     {
         return [
             $this->dataTrialBalancePerTanggal
-                ->push($this->totalDebetKreditTrialBalance)
+                ->push($this->totalDebetKreditTrialBalance),
         ];
     }
 
@@ -171,7 +186,7 @@ class LaporanTrialBalance extends Component
         $periodeAwal = carbon($this->tglAwal);
         $periodeAkhir = carbon($this->tglAkhir);
 
-        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+        $periode = 'Periode '.$periodeAwal->translatedFormat('d F Y').' s.d. '.$periodeAkhir->translatedFormat('d F Y');
 
         if ($periodeAwal->isSameDay($periodeAkhir)) {
             $periode = $periodeAwal->translatedFormat('d F Y');
@@ -182,7 +197,7 @@ class LaporanTrialBalance extends Component
             'Laporan Trial Balance Rekening',
             $periode,
             null,
-            'Saldo Awal per ' . $periodeAwal->startOfMonth()->format('d F Y'),
+            'Saldo Awal per '.$periodeAwal->startOfMonth()->format('d F Y'),
         ];
     }
 }

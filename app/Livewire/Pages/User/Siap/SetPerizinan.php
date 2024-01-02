@@ -2,12 +2,11 @@
 
 namespace App\Livewire\Pages\User\Siap;
 
+use App\Livewire\Concerns\DeferredModal;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
-use App\Livewire\Concerns\DeferredModal;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 

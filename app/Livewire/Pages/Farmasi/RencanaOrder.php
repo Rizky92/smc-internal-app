@@ -2,21 +2,25 @@
 
 namespace App\Livewire\Pages\Farmasi;
 
-use App\Models\Farmasi\Obat;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Farmasi\Obat;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class RencanaOrder extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     public function mount(): void
     {
@@ -98,7 +102,7 @@ class RencanaOrder extends Component
         return [
             'RS Samarinda Medika Citra',
             'Laporan Rencana Order Farmasi',
-            'Per ' . now()->translatedFormat('d F Y'),
+            'Per '.now()->translatedFormat('d F Y'),
         ];
     }
 }

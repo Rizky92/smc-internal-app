@@ -5,15 +5,15 @@ namespace App\Livewire\Pages\Aplikasi;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\MenuTracker;
 use App\View\Components\BaseLayout;
-use Illuminate\View\View;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class Pengaturan extends Component
 {
-    use FlashComponent, MenuTracker;
-
     use Concerns\PengaturanRKAT;
+    use FlashComponent;
+    use MenuTracker;
 
     public function render(): View
     {
@@ -29,7 +29,7 @@ class Pengaturan extends Component
             ->map(fn (string $value): string => class_basename($value))
             ->filter(fn (string $value): bool => Str::startsWith($value, 'Pengaturan'))
             ->each(function (string $value, string $key) use (&$permissions) {
-                $name = 'get' . $value . 'Permissions';
+                $name = 'get'.$value.'Permissions';
 
                 $permissions = array_merge($permissions, $key::{$name}());
             });

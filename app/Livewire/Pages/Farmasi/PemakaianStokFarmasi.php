@@ -2,26 +2,31 @@
 
 namespace App\Livewire\Pages\Farmasi;
 
-use App\Models\Farmasi\Obat;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Farmasi\Obat;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class PemakaianStokFarmasi extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     public function mount(): void
     {
         $this->defaultValues();
     }
+
     /**
      * @return \Illuminate\Contracts\Pagination\Paginator|array<empty, empty>
      */
@@ -54,14 +59,14 @@ class PemakaianStokFarmasi extends Component
                 ->pemakaianStok()
                 ->get()
                 ->map(fn (Obat $model, $_): array => [
-                    'kode_brng' => $model->kode_brng,
-                    'nama_brng' => $model->nama_brng,
-                    'satuan_kecil' => $model->satuan_kecil,
-                    'kategori' => $model->kategori,
-                    'ke_pasien_14_hari' => $model->ke_pasien_14_hari,
+                    'kode_brng'          => $model->kode_brng,
+                    'nama_brng'          => $model->nama_brng,
+                    'satuan_kecil'       => $model->satuan_kecil,
+                    'kategori'           => $model->kategori,
+                    'ke_pasien_14_hari'  => $model->ke_pasien_14_hari,
                     'pemakaian_1_minggu' => $model->pemakaian_1_minggu,
-                    'pemakaian_1_bulan' => $model->pemakaian_1_bulan,
-                    'pemakaian_3_bulan' => $model->pemakaian_3_bulan,
+                    'pemakaian_1_bulan'  => $model->pemakaian_1_bulan,
+                    'pemakaian_3_bulan'  => $model->pemakaian_3_bulan,
                     'pemakaian_10_bulan' => $model->pemakaian_10_bulan,
                     'pemakaian_12_bulan' => $model->pemakaian_12_bulan,
                 ]),
@@ -89,7 +94,7 @@ class PemakaianStokFarmasi extends Component
         return [
             'RS Samarinda Medika Citra',
             'Laporan Pemakaian Stok Farmasi',
-            'Per ' . now()->translatedFormat('d F Y'),
+            'Per '.now()->translatedFormat('d F Y'),
         ];
     }
 }

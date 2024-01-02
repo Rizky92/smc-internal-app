@@ -2,8 +2,8 @@
 
 namespace App\Models\Farmasi\Inventaris;
 
-use Illuminate\Database\Eloquent\Builder;
 use App\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class ReturSupplierObat extends Model
 {
@@ -21,7 +21,7 @@ class ReturSupplierObat extends Model
 
     public function scopeReturKeSupplier(Builder $query, string $year = '2022'): Builder
     {
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             ceil(sum(detreturbeli.total)) jumlah,
             month(returbeli.tgl_retur) bulan
         SQL;

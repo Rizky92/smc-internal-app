@@ -15,7 +15,7 @@ trait WithDateRange
     protected function queryStringWithDateRange(): array
     {
         return [
-            'tglAwal' => ['except' => $this->firstDateValue()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAwal'  => ['except' => $this->firstDateValue()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => $this->lastDateValue()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }

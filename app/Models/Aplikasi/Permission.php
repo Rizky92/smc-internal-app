@@ -82,9 +82,9 @@ class Permission extends Model implements PermissionContract
     }
 
     /**
-     *  Find a permission by its name (and optionally guardName).
+     * Find a permission by its name (and optionally guardName).
      *
-     * @param string|null  $guardName
+     * @param  string|null  $guardName
      *
      * @throws \Spatie\Permission\Exceptions\PermissionDoesNotExist
      */
@@ -100,9 +100,9 @@ class Permission extends Model implements PermissionContract
     }
 
     /**
-     *  Find a permission by its id (and optionally guardName).
+     * Find a permission by its id (and optionally guardName).
      *
-     * @param string|null  $guardName
+     * @param  string|null  $guardName
      *
      * @throws \Spatie\Permission\Exceptions\PermissionDoesNotExist
      */
@@ -119,11 +119,9 @@ class Permission extends Model implements PermissionContract
     }
 
     /**
-     *  Find or create permission by its name (and optionally guardName).
+     * Find or create permission by its name (and optionally guardName).
      *
-     * @param string|null  $guardName
-     *
-     * @return TModel|static&\Illuminate\Database\Eloquent\Builder
+     * @param  string|null  $guardName
      *
      * @psalm-return TModel|static&\Illuminate\Database\Eloquent\Builder<static>
      */

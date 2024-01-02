@@ -2,13 +2,13 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
-use App\Models\Laboratorium\HasilPeriksaLab;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Laboratorium\HasilPeriksaLab;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\View\View;
@@ -16,7 +16,12 @@ use Livewire\Component;
 
 class LaporanTindakanLab extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $tglAwal;
@@ -27,7 +32,7 @@ class LaporanTindakanLab extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal' => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
@@ -47,7 +52,7 @@ class LaporanTindakanLab extends Component
                 ['nama_petugas' => 'petugas.nama'],
                 [
                     'periksa_lab.tgl_periksa' => 'asc',
-                    'periksa_lab.jam' => 'asc',
+                    'periksa_lab.jam'         => 'asc',
                 ]
             )
             ->paginate($this->perpage);
@@ -95,22 +100,22 @@ class LaporanTindakanLab extends Component
     protected function columnHeaders(): array
     {
         return [
-            "No. Rawat",
-            "No. RM",
-            "Pasien",
-            "Jenis Bayar",
-            "Petugas",
-            "Tgl. Periksa",
-            "Jam",
-            "Perujuk",
-            "Kode Tindakan",
-            "Nama Tindakan",
-            "Kategori",
-            "Biaya (Rp)",
-            "Status Bayar",
-            "Jenis Perawatan",
-            "Kode Dokter",
-            "Nama Dokter Pemeriksa",
+            'No. Rawat',
+            'No. RM',
+            'Pasien',
+            'Jenis Bayar',
+            'Petugas',
+            'Tgl. Periksa',
+            'Jam',
+            'Perujuk',
+            'Kode Tindakan',
+            'Nama Tindakan',
+            'Kategori',
+            'Biaya (Rp)',
+            'Status Bayar',
+            'Jenis Perawatan',
+            'Kode Dokter',
+            'Nama Dokter Pemeriksa',
         ];
     }
 
@@ -119,7 +124,7 @@ class LaporanTindakanLab extends Component
         $periodeAwal = carbon($this->tglAwal);
         $periodeAkhir = carbon($this->tglAkhir);
 
-        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+        $periode = 'Periode '.$periodeAwal->translatedFormat('d F Y').' s.d. '.$periodeAkhir->translatedFormat('d F Y');
 
         if ($periodeAwal->isSameDay($periodeAkhir)) {
             $periode = $periodeAwal->translatedFormat('d F Y');

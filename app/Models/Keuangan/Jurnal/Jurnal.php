@@ -3,10 +3,9 @@
 namespace App\Models\Keuangan\Jurnal;
 
 use App\Database\Eloquent\Model;
-use App\Models\Keuangan\PengeluaranHarian;
 use App\Models\Keuangan\PenagihanPiutang;
+use App\Models\Keuangan\PengeluaranHarian;
 use Carbon\Carbon;
-use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -53,17 +52,17 @@ class Jurnal extends Model
         return $this->belongsTo(PengeluaranHarian::class, 'no_bukti', 'no_keluar');
     }
 
-    public function penagihanPiutangByNoTagihan()
+    public function penagihanPiutangByNoTagihan(): ?object
     {
         preg_match('/TAGIHAN (\S+),/', $this->keterangan, $matches);
-        
-        if (!empty($matches[1])) {
+
+        if (! empty($matches[1])) {
             return PenagihanPiutang::where('no_tagihan', $matches[1])->first();
         }
 
         return null;
     }
-    
+
     public function scopeJurnalUmum(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
@@ -103,7 +102,7 @@ class Jurnal extends Model
             'rekening.nm_rek',
         ]);
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             jurnal.tgl_jurnal,
             jurnal.jam_jurnal,
             jurnal.no_jurnal,
@@ -120,7 +119,7 @@ class Jurnal extends Model
             ->withCasts(['debet' => 'float', 'kredit' => 'float'])
             ->join('detailjurnal', 'jurnal.no_jurnal', '=', 'detailjurnal.no_jurnal')
             ->join('rekening', 'detailjurnal.kd_rek', '=', 'rekening.kd_rek')
-            ->when(!empty($kodeRekening), fn (Builder $q) => $q->where('detailjurnal.kd_rek', $kodeRekening))
+            ->when(! empty($kodeRekening), fn (Builder $q) => $q->where('detailjurnal.kd_rek', $kodeRekening))
             ->whereBetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir]);
     }
 
@@ -134,7 +133,7 @@ class Jurnal extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             ifnull(round(sum(detailjurnal.debet), 2), 0) debet,
             ifnull(round(sum(detailjurnal.kredit), 2), 0) kredit
         SQL;
@@ -152,12 +151,12 @@ class Jurnal extends Model
             ->withCasts(['debet' => 'float', 'kredit' => 'float'])
             ->join('detailjurnal', 'jurnal.no_jurnal', '=', 'detailjurnal.no_jurnal')
             ->join('rekening', 'detailjurnal.kd_rek', '=', 'rekening.kd_rek')
-            ->when(!empty($kodeRekening), fn (Builder $q) => $q->where('detailjurnal.kd_rek', $kodeRekening))
+            ->when(! empty($kodeRekening), fn (Builder $q) => $q->where('detailjurnal.kd_rek', $kodeRekening))
             ->wherebetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir]);
     }
 
     /**
-     * @param  \DateTimeInterface|string $date
+     * @param  \DateTimeInterface|string  $date
      */
     public static function noJurnalBaru($date): string
     {
@@ -181,15 +180,14 @@ class Jurnal extends Model
     }
 
     /**
-     * @param  "U"|"P" $jenis
-     * @param  \Carbon\Carbon|\DateTime|string $waktuTransaksi
-     * @param  array<array{kd_rek: string, debet: int|float, kredit: int|float}> $detail
-     * 
+     * @param  "U"|"P"  $jenis
+     * @param  \Carbon\Carbon|\DateTime|string  $waktuTransaksi
+     * @param  array<array{kd_rek: string, debet: int|float, kredit: int|float}>  $detail
      * @return static
      */
     public static function catat(string $noBukti, string $keterangan, $waktuTransaksi, array $detail, string $jenis = 'U'): ?self
     {
-        if (!$waktuTransaksi instanceof Carbon) {
+        if (! $waktuTransaksi instanceof Carbon) {
             $waktuTransaksi = carbon($waktuTransaksi);
         }
 

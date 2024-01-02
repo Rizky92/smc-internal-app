@@ -19,8 +19,8 @@ class KhanzaHakAksesSeeder extends Seeder
         $mapping = collect(config('khanza.mapping_akses'));
 
         $mapping->transform(fn (string $judul, string $field): array => [
-            'nama_field' => $field,
-            'judul_menu' => $judul,
+            'nama_field'    => $field,
+            'judul_menu'    => $judul,
             'default_value' => 'false',
         ]);
 

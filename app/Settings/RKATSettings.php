@@ -13,7 +13,7 @@ class RKATSettings extends Settings
     public Carbon $tgl_penetapan_awal;
 
     public Carbon $tgl_penetapan_akhir;
-    
+
     public static function group(): string
     {
         return 'rkat';

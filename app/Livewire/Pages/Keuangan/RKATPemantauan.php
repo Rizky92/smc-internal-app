@@ -2,25 +2,30 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
-use App\Models\Bidang;
-use App\Models\Keuangan\RKAT\AnggaranBidang;
-use App\Models\Keuangan\RKAT\PemakaianAnggaran;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Bidang;
+use App\Models\Keuangan\RKAT\AnggaranBidang;
+use App\Models\Keuangan\RKAT\PemakaianAnggaran;
 use App\View\Components\BaseLayout;
-use Illuminate\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class RKATPemantauan extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $tahun;
@@ -52,7 +57,7 @@ class RKATPemantauan extends Component
         return Bidang::query()
             ->with([
                 'anggaranBidang' => fn (HasMany $q) => $q->withSum('detailPemakaian as total_pemakaian', 'nominal'),
-                'anggaranBidang.anggaran'
+                'anggaranBidang.anggaran',
             ])
             ->get();
     }
@@ -71,10 +76,10 @@ class RKATPemantauan extends Component
     protected function dataPerSheet(): array
     {
         $pemakaianAnggaran = PemakaianAnggaran::query()
-            ->selectRaw("anggaran_bidang_id, month(tgl_dipakai) as bulan, sum(pemakaian_anggaran_detail.nominal) as total_dipakai")
+            ->selectRaw('anggaran_bidang_id, month(tgl_dipakai) as bulan, sum(pemakaian_anggaran_detail.nominal) as total_dipakai')
             ->join('pemakaian_anggaran_detail', 'pemakaian_anggaran.id', '=', 'pemakaian_anggaran_detail.pemakaian_anggaran_id')
             ->whereRaw('year(tgl_dipakai) = ?', $this->tahun)
-            ->groupByRaw("anggaran_bidang_id, month(tgl_dipakai)")
+            ->groupByRaw('anggaran_bidang_id, month(tgl_dipakai)')
             ->withCasts(['bulan' => 'int', 'total_dipakai' => 'float'])
             ->get();
 
@@ -136,8 +141,8 @@ class RKATPemantauan extends Component
     {
         return [
             'RS Samarinda Medika Citra',
-            'Pemantauan Pemakaian RKAT Tahun ' . $this->tahun,
-            'Per ' . now()->translatedFormat('d F Y'),
+            'Pemantauan Pemakaian RKAT Tahun '.$this->tahun,
+            'Per '.now()->translatedFormat('d F Y'),
         ];
     }
 }

@@ -2,12 +2,11 @@
 
 namespace App\Models\Antrian;
 
+use App\Database\Eloquent\Model;
 use App\Models\Kepegawaian\Dokter;
 use App\Models\Perawatan\Poliklinik;
-use App\Database\Eloquent\Model;
 use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Builder;
-
 
 class Jadwal extends Model
 {
@@ -41,7 +40,7 @@ class Jadwal extends Model
 
     public function scopeJadwalDokter(Builder $query, bool $semuaPoli = false): Builder
     {
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
         jadwal.kd_dokter, 
         dokter.nm_dokter, 
         jadwal.kd_poli,

@@ -9,7 +9,8 @@ use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 
 class PermintaanRadiologi extends Model
 {
-    use HasCompositeRelations, StatusOrder;
+    use HasCompositeRelations;
+    use StatusOrder;
 
     protected $connection = 'mysql_sik';
 

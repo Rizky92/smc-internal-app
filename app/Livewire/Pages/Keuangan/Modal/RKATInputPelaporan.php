@@ -2,23 +2,24 @@
 
 namespace App\Livewire\Pages\Keuangan\Modal;
 
+use App\Livewire\Concerns\DeferredModal;
+use App\Livewire\Concerns\Filterable;
+use App\Livewire\Concerns\FlashComponent;
 use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Models\Keuangan\RKAT\PemakaianAnggaran;
 use App\Models\Keuangan\RKAT\PemakaianAnggaranDetail;
 use App\Settings\RKATSettings;
-use App\Livewire\Concerns\DeferredModal;
-use App\Livewire\Concerns\Filterable;
-use App\Livewire\Concerns\FlashComponent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class RKATInputPelaporan extends Component
 {
-    use FlashComponent, Filterable, DeferredModal;
+    use DeferredModal;
+    use Filterable;
+    use FlashComponent;
 
     /** @var int */
     public $pemakaianAnggaranId;
@@ -160,7 +161,7 @@ class RKATInputPelaporan extends Component
 
     public function update(): void
     {
-        if (!$this->isUpdating()) {
+        if (! $this->isUpdating()) {
             $this->create();
         }
 

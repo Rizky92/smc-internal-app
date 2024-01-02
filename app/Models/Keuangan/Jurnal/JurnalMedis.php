@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class JurnalMedis extends Model
 {
@@ -38,7 +37,7 @@ class JurnalMedis extends Model
 
         $db = DB::connection('mysql_sik')->getDatabaseName();
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             jurnal_medis.id,
             jurnal_medis.no_jurnal,
             jurnal_medis.waktu_jurnal,
@@ -54,19 +53,19 @@ class JurnalMedis extends Model
         SQL;
 
         $this->addSearchConditions([
-            "jurnal_medis.id",
-            "jurnal_medis.no_jurnal",
-            "jurnal_medis.waktu_jurnal",
-            "jurnal_medis.no_faktur",
-            "jurnal_medis.ket",
-            "jurnal_medis.status",
-            "bayar_pemesanan.besar_bayar",
-            "bayar_pemesanan.nama_bayar",
-            "rekening.kd_rek",
-            "rekening.nm_rek",
-            "datasuplier.nama_suplier",
-            "jurnal_medis.nik",
-            "pegawai.nama",
+            'jurnal_medis.id',
+            'jurnal_medis.no_jurnal',
+            'jurnal_medis.waktu_jurnal',
+            'jurnal_medis.no_faktur',
+            'jurnal_medis.ket',
+            'jurnal_medis.status',
+            'bayar_pemesanan.besar_bayar',
+            'bayar_pemesanan.nama_bayar',
+            'rekening.kd_rek',
+            'rekening.nm_rek',
+            'datasuplier.nama_suplier',
+            'jurnal_medis.nik',
+            'pegawai.nama',
         ]);
 
         $this->addRawColumns('nm_pegawai', DB::raw("trim(concat(jurnal_medis.nik, ' ', coalesce(pegawai.nama, '')))"));
@@ -90,8 +89,8 @@ class JurnalMedis extends Model
         DB::connection('mysql_sik')
             ->table('jurnal')
             ->when(
-                !is_null($latest),
-                fn (QueryBuilder $query) => $query->whereRaw("timestamp(tgl_jurnal, jam_jurnal) > ?", $latest),
+                ! is_null($latest),
+                fn (QueryBuilder $query) => $query->whereRaw('timestamp(tgl_jurnal, jam_jurnal) > ?', $latest),
                 fn (QueryBuilder $query) => $query->where('tgl_jurnal', '>=', '2022-10-31')
             )
             ->where('keterangan', 'like', '%BAYAR PELUNASAN HUTANG OBAT/BHP/ALKES NO.FAKTUR %%, OLEH %')
@@ -106,12 +105,12 @@ class JurnalMedis extends Model
                     $petugas = $ket->after('OLEH ')->trim()->value();
 
                     return [
-                        'no_jurnal' => $value->no_jurnal,
+                        'no_jurnal'    => $value->no_jurnal,
                         'waktu_jurnal' => "{$value->tgl_jurnal} {$value->jam_jurnal}",
-                        'no_faktur' => $noFaktur,
-                        'status' => $status ? 'Batal' : 'Sudah',
-                        'ket' => $value->keterangan,
-                        'nik' => $petugas,
+                        'no_faktur'    => $noFaktur,
+                        'status'       => $status ? 'Batal' : 'Sudah',
+                        'ket'          => $value->keterangan,
+                        'nik'          => $petugas,
                     ];
                 });
 

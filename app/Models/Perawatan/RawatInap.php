@@ -32,7 +32,7 @@ class RawatInap extends Model
         'lama',
         'ttl_biaya',
     ];
-    
+
     public function billing(): HasMany
     {
         return $this->hasMany(Billing::class, 'no_rawat', 'no_rawat');
@@ -61,8 +61,6 @@ class RawatInap extends Model
     /**
      * @psalm-suppress InvalidReturnType
      * @psalm-suppress InvalidReturnStatement
-     * 
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function diagnosa(): HasMany
     {
@@ -100,7 +98,7 @@ class RawatInap extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             kamar_inap.no_rawat,
             nota_inap.no_nota,
             ifnull(rujuk_masuk.perujuk, '-') as perujuk,
@@ -126,7 +124,7 @@ class RawatInap extends Model
             ->join('piutang_pasien', 'kamar_inap.no_rawat', '=', 'piutang_pasien.no_rawat')
             ->whereNotIn('kamar_inap.stts_pulang', ['-', 'Pindah Kamar'])
             ->whereBetween('kamar_inap.tgl_keluar', [$tglAwal, $tglAkhir])
-            ->when(!empty($status), fn (Builder $q): Builder => $q->where('piutang_pasien.status', $status))
+            ->when(! empty($status), fn (Builder $q): Builder => $q->where('piutang_pasien.status', $status))
             ->where('reg_periksa.kd_pj', $jenisBayar);
     }
 }

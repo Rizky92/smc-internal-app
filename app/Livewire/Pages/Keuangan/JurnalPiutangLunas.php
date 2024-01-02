@@ -2,13 +2,13 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
-use App\Models\Keuangan\PiutangDilunaskan;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Keuangan\PiutangDilunaskan;
 use App\View\Components\BaseLayout;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +18,12 @@ use Livewire\Component;
 
 class JurnalPiutangLunas extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $tglAwal;
@@ -97,18 +102,18 @@ class JurnalPiutangLunas extends Component
                     'no_jurnal'       => $model->no_jurnal,
                     'waktu_jurnal'    => carbon($model->waktu_jurnal)->format('Y-m-d'),
                     'no_rawat'        => $model->no_rawat,
-                    'no_rkm_medis'    => $model->no_rkm_medis . ' ' . $model->nm_pasien . ' ' . "({$model->umur})",
+                    'no_rkm_medis'    => $model->no_rkm_medis.' '.$model->nm_pasien.' '."({$model->umur})",
                     'nama_penjamin'   => $model->nama_penjamin,
                     'no_tagihan'      => $model->no_tagihan,
-                    'nik_penagih'     => $model->nik_penagih . ' ' . $model->nama_penagih,
-                    'nik_penyetuju'   => $model->nik_penyetuju . ' ' . $model->nama_penyetuju,
+                    'nik_penagih'     => $model->nik_penagih.' '.$model->nama_penagih,
+                    'nik_penyetuju'   => $model->nik_penyetuju.' '.$model->nama_penyetuju,
                     'piutang_dibayar' => floatval($model->piutang_dibayar),
                     'tgl_penagihan'   => carbon($model->tgl_penagihan)->format('Y-m-d'),
                     'tgl_jatuh_tempo' => carbon($model->tgl_jatuh_tempo)->format('Y-m-d'),
                     'tgl_bayar'       => carbon($model->tgl_bayar)->format('Y-m-d'),
                     'status'          => $model->status,
-                    'nik_validasi'    => $model->nik_validasi . ' ' . $model->nama_pemvalidasi,
-                    'kd_rek'          => $model->kd_rek . ' ' . $model->nm_rek,
+                    'nik_validasi'    => $model->nik_validasi.' '.$model->nama_pemvalidasi,
+                    'kd_rek'          => $model->kd_rek.' '.$model->nm_rek,
                     'keterangan'      => $model->keterangan,
                 ])
                 ->all(),
@@ -142,7 +147,7 @@ class JurnalPiutangLunas extends Component
         $periodeAwal = carbon($this->tglAwal);
         $periodeAkhir = carbon($this->tglAkhir);
 
-        $periode = 'periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+        $periode = 'periode '.$periodeAwal->translatedFormat('d F Y').' s.d. '.$periodeAkhir->translatedFormat('d F Y');
 
         if ($periodeAwal->isSameDay($periodeAkhir)) {
             $periode = $periodeAwal->translatedFormat('d F Y');
@@ -152,7 +157,7 @@ class JurnalPiutangLunas extends Component
             'RS Samarinda Medika Citra',
             'Penarikan Data Penagihan Piutang Dibayar dari Jurnal',
             now()->translatedFormat('d F Y'),
-            'Berdasarkan Tgl. ' . Str::title($this->jenisPeriode) . ', ' . $periode,
+            'Berdasarkan Tgl. '.Str::title($this->jenisPeriode).', '.$periode,
         ];
     }
 }

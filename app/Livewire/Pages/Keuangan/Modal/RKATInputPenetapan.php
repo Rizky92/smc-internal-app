@@ -2,13 +2,13 @@
 
 namespace App\Livewire\Pages\Keuangan\Modal;
 
+use App\Livewire\Concerns\DeferredModal;
+use App\Livewire\Concerns\Filterable;
+use App\Livewire\Concerns\FlashComponent;
 use App\Models\Bidang;
 use App\Models\Keuangan\RKAT\Anggaran;
 use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Settings\RKATSettings;
-use App\Livewire\Concerns\DeferredModal;
-use App\Livewire\Concerns\Filterable;
-use App\Livewire\Concerns\FlashComponent;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
@@ -16,7 +16,9 @@ use Livewire\Component;
 
 class RKATInputPenetapan extends Component
 {
-    use FlashComponent, Filterable, DeferredModal;
+    use DeferredModal;
+    use Filterable;
+    use FlashComponent;
 
     /** @var int */
     public $anggaranBidangId;
@@ -72,8 +74,10 @@ class RKATInputPenetapan extends Component
 
     public function getBidangUnitProperty(): Collection
     {
-        return Cache::remember('semua_bidang', now()->addDay(), fn (): Collection =>
-            Bidang::query()
+        return Cache::remember(
+            'semua_bidang',
+            now()->addDay(),
+            fn (): Collection => Bidang::query()
                 ->with('parent')
                 ->hasParent()
                 ->get()

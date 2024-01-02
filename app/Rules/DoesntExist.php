@@ -14,16 +14,12 @@ class DoesntExist implements Rule
      */
     private string $model;
 
-    /**
-     * @var string
-     */
     private string $column;
 
     /**
      * Create a new rule instance.
-     * 
-     * @param  TModel $model
-     * @param  string $column
+     *
+     * @param  TModel  $model
      */
     public function __construct(string $model, string $column)
     {
@@ -34,13 +30,13 @@ class DoesntExist implements Rule
     /**
      * Determine if the validation rule passes.
      *
-     * @param  string $attribute
-     * @param  mixed $value
+     * @param  string  $attribute
+     * @param  mixed  $value
      * @return bool
      */
     public function passes($attribute, $value)
     {
-        return !$this->model::where($this->column, $value)->exists();
+        return ! $this->model::where($this->column, $value)->exists();
     }
 
     /**

@@ -10,13 +10,10 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 
-class Authenticatable extends Model implements
-    AuthenticatableContract,
-    AuthorizableContract,
-    CanResetPasswordContract
+class Authenticatable extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract
 {
-    use AuthenticatableConcerns,
-        Authorizable,
-        CanResetPassword,
-        MustVerifyEmail;
+    use AuthenticatableConcerns;
+    use Authorizable;
+    use CanResetPassword;
+    use MustVerifyEmail;
 }

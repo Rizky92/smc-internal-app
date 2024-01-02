@@ -17,7 +17,12 @@ use Livewire\Component;
 
 class DefectaDepo extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $tanggal;
@@ -39,10 +44,9 @@ class DefectaDepo extends Component
 
     protected function dataShiftKerja(): object
     {
-        $waktuShiftSemua = Cache::remember('waktu_shift_semua', now()->addWeek(), fn () =>
-            DB::connection('mysql_sik')
-                ->table('closing_kasir')
-                ->get());
+        $waktuShiftSemua = Cache::remember('waktu_shift_semua', now()->addWeek(), fn () => DB::connection('mysql_sik')
+            ->table('closing_kasir')
+            ->get());
 
         if (! empty($this->shift)) {
             return $waktuShiftSemua
@@ -51,10 +55,10 @@ class DefectaDepo extends Component
         }
 
         return $waktuShiftSemua
-            ->filter(fn ($waktuShift) => 
-                now()->floorHour()->diffInHours(
-                    now()->setHour($waktuShift->jam_masuk), false
-                ) <= 0)
+            ->filter(fn ($waktuShift) => now()->floorHour()->diffInHours(
+                now()->setHour($waktuShift->jam_masuk),
+                false
+            ) <= 0)
             ->first();
     }
 
@@ -110,7 +114,7 @@ class DefectaDepo extends Component
 
     protected function pageHeaders(): array
     {
-        $periode = 'Tgl. ' . carbon($this->tanggal)->translatedFormat('d F Y');
+        $periode = 'Tgl. '.carbon($this->tanggal)->translatedFormat('d F Y');
 
         $gudang = [
             'IFA' => 'Farmasi A',
@@ -123,7 +127,7 @@ class DefectaDepo extends Component
 
         return [
             'RS Samarinda Medika Citra',
-            'Defecta Depo ' . $gudang[$this->bangsal],
+            'Defecta Depo '.$gudang[$this->bangsal],
             sprintf('Shift kerja %s (%s s.d. %s)', $this->shift, $shift->jam_masuk, $shift->jam_pulang),
             $periode,
         ];

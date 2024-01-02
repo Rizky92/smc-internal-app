@@ -6,9 +6,9 @@ use App\Models\Aplikasi\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Illuminate\Support\Timebox;
 use Illuminate\Validation\ValidationException;
 
@@ -35,7 +35,7 @@ class LoginController
             'pass' => ['required', 'string', 'max:20'],
         ], $request->only(['user', 'pass']));
 
-        $timebox = new Timebox;
+        $timebox = new Timebox();
 
         $user = $timebox->call(function (Timebox $t) use ($request): ?User {
             $user = User::query()
@@ -54,12 +54,12 @@ class LoginController
             RateLimiter::hit($this->throttleKey($request));
 
             throw ValidationException::withMessages([
-                'user' => 'Username atau Password salah'
+                'user' => 'Username atau Password salah',
             ]);
         }
 
         RateLimiter::clear($this->throttleKey($request));
-        
+
         Auth::login($user);
 
         $request->session()->regenerate();
@@ -87,6 +87,6 @@ class LoginController
 
     protected function throttleKey(Request $request): string
     {
-        return Str::transliterate($request->ip() ?? "");
+        return Str::transliterate($request->ip() ?? '');
     }
 }

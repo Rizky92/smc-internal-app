@@ -8,13 +8,14 @@ use App\Livewire\Concerns\LiveTable;
 use App\Models\Aplikasi\HakAkses;
 use App\Models\Aplikasi\User;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class SetHakAkses extends Component
 {
-    use Filterable, LiveTable, DeferredModal;
+    use DeferredModal;
+    use Filterable;
+    use LiveTable;
 
     /** @var string */
     public $nrp;
@@ -79,7 +80,7 @@ class SetHakAkses extends Component
 
     public function save(): void
     {
-        if (!user()->hasRole(config('permission.superadmin_name'))) {
+        if (! user()->hasRole(config('permission.superadmin_name'))) {
             $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
@@ -109,7 +110,7 @@ class SetHakAkses extends Component
 
         $user = User::rawFindByNRP($this->nrp);
 
-        if (!$this->isDeferred) {
+        if (! $this->isDeferred) {
             $this->checkedHakAkses = collect($user->getAttributes())->except(['id_user', 'password'])
                 ->filter(fn (?string $v, $_): bool => $v === 'true')
                 ->keys()

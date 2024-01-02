@@ -2,13 +2,13 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
-use App\Models\Keuangan\Rekening;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Keuangan\Rekening;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Fluent;
@@ -17,7 +17,12 @@ use Livewire\Component;
 
 class LabaRugiRekeningPerPeriode extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $tglAwal;
@@ -71,9 +76,9 @@ class LabaRugiRekeningPerPeriode extends Component
                 return new Fluent(array_merge(
                     $rekening->only('kd_rek', 'nm_rek', 'balance'),
                     [
-                        'debet' => floatval($debet),
+                        'debet'  => floatval($debet),
                         'kredit' => floatval($kredit),
-                        'total' => floatval($total),
+                        'total'  => floatval($total),
                     ],
                 ));
             })
@@ -173,7 +178,7 @@ class LabaRugiRekeningPerPeriode extends Component
         $periodeAwal = carbon($this->tglAwal);
         $periodeAkhir = carbon($this->tglAkhir);
 
-        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+        $periode = 'Periode '.$periodeAwal->translatedFormat('d F Y').' s.d. '.$periodeAkhir->translatedFormat('d F Y');
 
         if ($periodeAwal->isSameDay($periodeAkhir)) {
             $periode = $periodeAwal->translatedFormat('d F Y');

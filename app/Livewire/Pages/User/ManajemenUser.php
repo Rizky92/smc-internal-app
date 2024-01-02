@@ -9,14 +9,17 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Aplikasi\User;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class ManajemenUser extends Component
 {
-    use FlashComponent, Filterable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var bool */
     public $tampilkanYangMemilikiHakAkses;
@@ -75,7 +78,7 @@ class ManajemenUser extends Component
      */
     public function impersonateAsUser(string $nrp = '')
     {
-        if (!user()->hasRole(config('permission.superadmin_name'))) {
+        if (! user()->hasRole(config('permission.superadmin_name'))) {
             $this->flashError('Anda tidak memiliki izin untuk melakukan tindakan ini!');
 
             return;
@@ -95,10 +98,10 @@ class ManajemenUser extends Component
     }
 
     /**
-     * @param  string|null $nrp
-     * @param  string|null $nama
-     * @param  array<string|int, bool|string> $roles
-     * @param  array<string|int, bool|string> $permissions
+     * @param  string|null  $nrp
+     * @param  string|null  $nama
+     * @param  array<string|int, bool|string>  $roles
+     * @param  array<string|int, bool|string>  $permissions
      */
     public function prepareUser($nrp, $nama, $roles, $permissions): void
     {

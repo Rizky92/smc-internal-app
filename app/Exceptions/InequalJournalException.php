@@ -9,14 +9,13 @@ class InequalJournalException extends RuntimeException
     /**
      * @psalm-param numeric $debit
      * @psalm-param numeric $credit
-     * 
      */
     public function __construct($debit, $credit, string $journalNo)
     {
         $message = [
             'journalNo' => $journalNo,
-            'debit' => $debit,
-            'credit' => $credit,
+            'debit'     => $debit,
+            'credit'    => $credit,
         ];
 
         $this->message = str(collect($message)->toJson())

@@ -2,24 +2,29 @@
 
 namespace App\Livewire\Pages\Farmasi;
 
-use App\Models\Farmasi\Obat;
-use App\Models\Farmasi\PemberianObat;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Farmasi\Obat;
+use App\Models\Farmasi\PemberianObat;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Collection;
-use Illuminate\View\View;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class LaporanPemakaianObatMorphine extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $tglAwal;
@@ -105,7 +110,7 @@ class LaporanPemakaianObatMorphine extends Component
             ->mapWithKeys(fn (string $v, string $k): array => [
                 $v => PemberianObat::query()
                     ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, $this->bangsal, $k)
-                    ->get()
+                    ->get(),
             ])
             ->all();
     }
@@ -129,7 +134,7 @@ class LaporanPemakaianObatMorphine extends Component
         $periodeAwal = carbon($this->tglAwal);
         $periodeAkhir = carbon($this->tglAkhir);
 
-        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+        $periode = 'Periode '.$periodeAwal->translatedFormat('d F Y').' s.d. '.$periodeAkhir->translatedFormat('d F Y');
 
         if ($periodeAwal->isSameDay($periodeAkhir)) {
             $periode = $periodeAwal->translatedFormat('d F Y');
@@ -137,14 +142,14 @@ class LaporanPemakaianObatMorphine extends Component
 
         $gudang = [
             'IFA' => 'Farmasi A',
-            'AP' => 'Farmasi B',
+            'AP'  => 'Farmasi B',
             'IFG' => 'Farmasi IGD',
             'IFI' => 'Farmasi Rawat Inap',
         ];
-        
+
         return [
             'RS Samarinda Medika Citra',
-            'Pemakaian Obat Morfin ' . $gudang[$this->bangsal],
+            'Pemakaian Obat Morfin '.$gudang[$this->bangsal],
             $periode,
         ];
     }

@@ -2,16 +2,16 @@
 
 namespace App\Livewire\Pages\Keuangan\Modal;
 
-use App\Models\Keuangan\RKAT\Anggaran;
 use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\Filterable;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Keuangan\RKAT\Anggaran;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class RKATInputKategori extends Component
 {
-    use DeferredModal, Filterable;
+    use DeferredModal;
+    use Filterable;
 
     /** @var int */
     public $anggaranId;
@@ -64,7 +64,7 @@ class RKATInputKategori extends Component
         tracker_start();
 
         Anggaran::create([
-            'nama' => $this->nama,
+            'nama'      => $this->nama,
             'deskripsi' => empty($this->deskripsi) ? null : $this->deskripsi,
         ]);
 
@@ -85,7 +85,7 @@ class RKATInputKategori extends Component
 
         $anggaran = Anggaran::find($this->anggaranId);
 
-        if (!$anggaran) {
+        if (! $anggaran) {
             $this->dispatchBrowserEvent('data-not-found');
             $this->emit('flash.error', 'Tidak dapat menemukan data yang bisa diupdate. Silahkan coba kembali.');
 

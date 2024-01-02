@@ -14,7 +14,8 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\HasRecursiveRelationships;
 
 class Bidang extends Model
 {
-    use HasRelationships, HasRecursiveRelationships;
+    use HasRecursiveRelationships;
+    use HasRelationships;
 
     protected $connection = 'mysql_smc';
 
@@ -45,7 +46,8 @@ class Bidang extends Model
     public function totalPemakaian(): HasManyDeep
     {
         return $this->hasManyDeep(
-            PemakaianAnggaranDetail::class, [AnggaranBidang::class, PemakaianAnggaran::class],
+            PemakaianAnggaranDetail::class,
+            [AnggaranBidang::class, PemakaianAnggaran::class],
             ['bidang_id', 'anggaran_bidang_id', 'pemakaian_anggaran_id'],
             ['id', 'id', 'id']
         );

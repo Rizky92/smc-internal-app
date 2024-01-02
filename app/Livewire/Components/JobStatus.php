@@ -2,9 +2,9 @@
 
 namespace App\Livewire\Components;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
-use Illuminate\Support\Facades\DB;
 
 class JobStatus extends Component
 {

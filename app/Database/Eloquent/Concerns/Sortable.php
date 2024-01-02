@@ -16,7 +16,7 @@ trait Sortable
         return [];
     }
 
-    public function addRawColumns($columns, $expression = null)
+    public function addRawColumns($columns, $expression = null): \App\Database\Eloquent\Model
     {
         if (is_string($columns) && $expression) {
             $this->rawColumns = array_merge($this->rawColumns, [$columns => $expression]);
@@ -32,9 +32,8 @@ trait Sortable
     }
 
     /**
-     * @param  \Illuminate\Support\Collection<TKey, TValue>|array<TValue>|string $columns
-     * @param  \Illuminate\Database\Query\Expression|string|null $condition
-     * 
+     * @param  \Illuminate\Support\Collection<TKey, TValue>|array<TValue>|string  $columns
+     * @param  \Illuminate\Database\Query\Expression|string|null  $condition
      * @return $this
      */
     public function addSortColumns($columns, $condition = null)
@@ -53,12 +52,9 @@ trait Sortable
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Builder $query
-     * @param  array<string, string> $columns
-     * @param  array<string, \Illuminate\Database\Query\Expression<string>|string> $rawColumns
-     * @param  array<string, \Illuminate\Database\Query\Expression<string>|string> $initialColumnOrder
-     * 
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  array<string, string>  $columns
+     * @param  array<string, \Illuminate\Database\Query\Expression<string>|string>  $rawColumns
+     * @param  array<string, \Illuminate\Database\Query\Expression<string>|string>  $initialColumnOrder
      */
     public function scopeSortWithColumns(Builder $query, array $sortColumns = [], array $rawColumns = [], array $initialColumnOrders = []): Builder
     {

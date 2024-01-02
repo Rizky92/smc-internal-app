@@ -9,7 +9,7 @@ class MixinStringable
 {
     /**
      * replace all strings with provided value
-     * 
+     *
      * @return \Closure(string|string[], string): \Illuminate\Support\Stringable
      */
     public function replaceWith(): Closure
@@ -17,7 +17,6 @@ class MixinStringable
         /** @psalm-scope-this Illuminate\Support\Stringable */
         return function ($replace, string $with): Stringable {
             /** @var \Illuminate\Support\Stringable $this */
-
             $value = $this->value();
 
             if (is_string($replace)) {
@@ -34,21 +33,20 @@ class MixinStringable
 
     /**
      * Wrap the underlying string with given values
-     * 
+     *
      * @return \Closure(string, ?string): \Illuminate\Support\Stringable
      */
     public function wrap(): Closure
     {
         /** @psalm-scope-this Illuminate\Support\Stringable */
-        return fn (string $startsWith, ?string $endsWith = null): Stringable =>
-            is_null($endsWith)
-                ? new Stringable($startsWith . $this->value . $startsWith)
-                : new Stringable($startsWith . $this->value . $endsWith);
+        return fn (string $startsWith, ?string $endsWith = null): Stringable => is_null($endsWith)
+                ? new Stringable($startsWith.$this->value.$startsWith)
+                : new Stringable($startsWith.$this->value.$endsWith);
     }
 
     /**
      * Returns the underlying value.
-     * 
+     *
      * @return \Closure(): string
      */
     public function value(): Closure
@@ -59,7 +57,7 @@ class MixinStringable
 
     /**
      * Returns the underlying value in type integer
-     * 
+     *
      * @return \Closure(): int
      */
     public function toInt(): Closure
@@ -71,7 +69,7 @@ class MixinStringable
     /**
      * Alias of toFloat()
      * Returns the underlying value in type float
-     * 
+     *
      * @return \Closure(): float
      */
     public function toDouble(): Closure
@@ -82,7 +80,7 @@ class MixinStringable
 
     /**
      * Returns the underlying value in type float
-     * 
+     *
      * @return \Closure(): float
      */
     public function toFloat(): Closure
@@ -91,10 +89,9 @@ class MixinStringable
         return fn (): float => floatval($this->value);
     }
 
-
     /**
      * Returns the underlying value in type boolean
-     * 
+     *
      * @return \Closure(): bool
      */
     public function toBoolean(): Closure

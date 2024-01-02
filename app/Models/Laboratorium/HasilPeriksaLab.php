@@ -2,8 +2,8 @@
 
 namespace App\Models\Laboratorium;
 
-use Illuminate\Database\Eloquent\Builder;
 use App\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Reedware\LaravelCompositeRelations\CompositeBelongsTo;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 
@@ -78,7 +78,7 @@ class HasilPeriksaLab extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             periksa_lab.no_rawat,
             reg_periksa.no_rkm_medis,
             pasien.nm_pasien,

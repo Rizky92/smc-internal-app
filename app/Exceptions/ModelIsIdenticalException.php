@@ -4,7 +4,4 @@ namespace App\Exceptions;
 
 use Exception;
 
-class ModelIsIdenticalException extends Exception
-{
-    
-}
+class ModelIsIdenticalException extends Exception {}

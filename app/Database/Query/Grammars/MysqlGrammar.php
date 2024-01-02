@@ -7,7 +7,7 @@ use Illuminate\Database\Query\Grammars\MySqlGrammar as BaseMysqlGrammar;
 class MysqlGrammar extends BaseMysqlGrammar
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getDateFormat(): string
     {

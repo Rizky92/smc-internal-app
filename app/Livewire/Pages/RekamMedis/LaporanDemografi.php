@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Pages\RekamMedis;
 
-use App\Models\RekamMedis\DemografiPasien;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
@@ -16,7 +15,12 @@ use Livewire\Component;
 
 class LaporanDemografi extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $tglAwal;
@@ -37,7 +41,7 @@ class LaporanDemografi extends Component
         $this->defaultValues();
     }
 
-    /** 
+    /**
      * @return \Illuminate\Contracts\Pagination\Paginator|array<empty, empty>
      */
     public function getDemografiPasienProperty()
@@ -80,20 +84,28 @@ class LaporanDemografi extends Component
                     switch (true) {
                         case $model->sttsumur === 'Hr' && $model->umurdaftar < 28:
                             $u1 = '1';
+                            // no break
                         case $model->sttsumur === 'Hr' && $model->umurdaftar >= 28:
                             $u2 = '1';
+                            // no break
                         case $model->sttsumur === 'Bl' && $model->umurdaftar < 12:
                             $u2 = '1';
+                            // no break
                         case $model->sttsumur === 'Th' && between($model->umurdaftar, 1, 4, true):
                             $u3 = '1';
+                            // no break
                         case $model->sttsumur === 'Th' && between($model->umurdaftar, 5, 14, true):
                             $u4 = '1';
+                            // no break
                         case $model->sttsumur === 'Th' && between($model->umurdaftar, 15, 24, true):
                             $u5 = '1';
+                            // no break
                         case $model->sttsumur === 'Th' && between($model->umurdaftar, 25, 44, true):
                             $u6 = '1';
+                            // no break
                         case $model->sttsumur === 'Th' && between($model->umurdaftar, 45, 64, true):
                             $u7 = '1';
+                            // no break
                         case $model->sttsumur === 'Th' && $model->umurdaftar >= 65:
                             $u8 = '1';
                     }
@@ -157,7 +169,7 @@ class LaporanDemografi extends Component
         $periodeAwal = carbon($this->tglAwal);
         $periodeAkhir = carbon($this->tglAkhir);
 
-        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+        $periode = 'Periode '.$periodeAwal->translatedFormat('d F Y').' s.d. '.$periodeAkhir->translatedFormat('d F Y');
 
         if ($periodeAwal->isSameDay($periodeAkhir)) {
             $periode = $periodeAwal->translatedFormat('d F Y');

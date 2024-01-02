@@ -18,33 +18,48 @@ use Illuminate\Support\Facades\DB;
 
 class BayarPiutangPasien implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     private $jurnal = null;
 
     private string $noTagihan;
+
     private string $jaminanPiutang;
+
     private string $noRawat;
 
     private string $tglAwal;
+
     private string $tglAkhir;
+
     private string $jaminanPasien;
+
     private string $jenisPerawatan;
 
     private string $tglBayar;
+
     private string $userId;
+
     private string $akun;
+
     private float $diskonPiutang;
+
     private string $akunDiskonPiutang;
+
     private float $tidakTerbayar;
+
     private string $akunTidakTerbayar;
 
     private float $totalPiutang;
+
     private float $cicilanSekarang;
 
     /**
      * Create a new job instance.
-     * 
+     *
      * @param  array{
      *     key: string,
      *     tgl_awal: string,
@@ -143,10 +158,10 @@ class BayarPiutangPasien implements ShouldQueue
                     ->where('kd_pj', $model->kd_pj_tagihan)
                     ->update([
                         'sisapiutang' => $model->sisa_piutang - (
-                            $totalCicilan + 
-                            $this->diskonPiutang + 
+                            $totalCicilan +
+                            $this->diskonPiutang +
                             $this->tidakTerbayar
-                        )
+                        ),
                     ]);
 
                 tracker_end('mysql_sik', $this->userId);

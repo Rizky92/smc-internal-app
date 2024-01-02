@@ -30,7 +30,7 @@ class PenguranganBiaya extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             reg_periksa.tgl_registrasi,
             reg_periksa.jam_reg,
             pasien.nm_pasien,
@@ -47,20 +47,20 @@ class PenguranganBiaya extends Model
         SQL;
 
         $this->addSearchConditions([
-            "pasien.nm_pasien",
-            "reg_periksa.no_rkm_medis",
-            "pengurangan_biaya.no_rawat",
-            "pengurangan_biaya.nama_pengurangan",
-            "penjab.png_jawab",
-            "dokter.nm_dokter",
+            'pasien.nm_pasien',
+            'reg_periksa.no_rkm_medis',
+            'pengurangan_biaya.no_rawat',
+            'pengurangan_biaya.nama_pengurangan',
+            'penjab.png_jawab',
+            'dokter.nm_dokter',
             "coalesce(nullif(trim(dokter_pj.nm_dokter), ''), '-')",
-            "poliklinik.nm_poli",
-            "reg_periksa.status_lanjut",
-            "reg_periksa.status_bayar",
+            'poliklinik.nm_poli',
+            'reg_periksa.status_lanjut',
+            'reg_periksa.status_bayar',
         ]);
 
         $this->addRawColumns([
-            'dokter_ralan' => DB::raw("dokter.nm_dokter"),
+            'dokter_ralan' => DB::raw('dokter.nm_dokter'),
             'dokter_ranap' => DB::raw("coalesce(nullif(trim(dokter_pj.nm_dokter), ''), '-')"),
         ]);
 

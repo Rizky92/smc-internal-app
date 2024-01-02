@@ -159,14 +159,14 @@ class PermissionSeeder extends Seeder
 
         // Superadmin role name, bypasses all permissions
         $superadminRole = Role::create(['name' => config('permission.superadmin_name')]);
-        
-        $perawatanRole  = Role::create(['name' => 'Perawatan']);
-        $keuanganRole   = Role::create(['name' => 'Keuangan']);
-        $farmasiRole    = Role::create(['name' => 'Farmasi']);
+
+        $perawatanRole = Role::create(['name' => 'Perawatan']);
+        $keuanganRole = Role::create(['name' => 'Keuangan']);
+        $farmasiRole = Role::create(['name' => 'Farmasi']);
         $rekamMedisRole = Role::create(['name' => 'Rekam Medis']);
-        $logistikRole   = Role::create(['name' => 'Logistik']);
-        $kasirRole      = Role::create(['name' => 'Kasir']);
-        $MODRole        = Role::create(['name' => 'MOD']);
+        $logistikRole = Role::create(['name' => 'Logistik']);
+        $kasirRole = Role::create(['name' => 'Kasir']);
+        $MODRole = Role::create(['name' => 'MOD']);
 
         $keuanganRole->givePermissionTo($keuanganPermissions);
         $perawatanRole->givePermissionTo($perawatanPermissions);
@@ -175,7 +175,7 @@ class PermissionSeeder extends Seeder
         $logistikRole->givePermissionTo($logistikPermissions);
         $kasirRole->givePermissionTo($kasirPermissions);
         $MODRole->givePermissionTo($MODPermissions);
-        
+
         /** @var \App\Models\Aplikasi\User */
         $user = User::findByNRP('221203');
 

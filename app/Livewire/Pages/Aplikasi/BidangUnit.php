@@ -2,11 +2,11 @@
 
 namespace App\Livewire\Pages\Aplikasi;
 
-use App\Models\Bidang;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Bidang;
 use App\View\Components\BaseLayout;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
@@ -15,7 +15,10 @@ use Staudenmeir\LaravelAdjacencyList\Eloquent\Relations\Descendants;
 
 class BidangUnit extends Component
 {
-    use FlashComponent, Filterable, LiveTable, MenuTracker;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     public function mount(): void
     {

@@ -1,8 +1,9 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use App\Models\Perawatan\Kamar;
 use App\Models\Bangsal;
+use App\Models\Perawatan\Kamar;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 

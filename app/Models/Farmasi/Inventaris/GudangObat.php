@@ -9,7 +9,6 @@ use App\Models\Farmasi\PemberianObat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\JoinClause;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class GudangObat extends Model
@@ -39,13 +38,13 @@ class GudangObat extends Model
     public function scopeBangsalYangAda(Builder $query): Builder
     {
         return $query
-            ->selectRaw("distinct(gudangbarang.kd_bangsal) kd_bangsal, bangsal.nm_bangsal")
+            ->selectRaw('distinct(gudangbarang.kd_bangsal) kd_bangsal, bangsal.nm_bangsal')
             ->join('bangsal', 'gudangbarang.kd_bangsal', '=', 'bangsal.kd_bangsal');
     }
 
     public function scopeStokPerRuangan(Builder $query, string $kodeBangsal = '-'): Builder
     {
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             bangsal.nm_bangsal,
             gudangbarang.kode_brng,
             databarang.nama_brng,
@@ -64,14 +63,14 @@ class GudangObat extends Model
         ]);
 
         $this->addRawColumns([
-            'projeksi_harga' => DB::raw('round(databarang.h_beli * if(gudangbarang.stok < 0, 0, gudangbarang.stok))')
+            'projeksi_harga' => DB::raw('round(databarang.h_beli * if(gudangbarang.stok < 0, 0, gudangbarang.stok))'),
         ]);
 
         return $query
             ->selectRaw($sqlSelect)
             ->withCasts([
-                'stok' => 'float',
-                'h_beli' => 'float',
+                'stok'           => 'float',
+                'h_beli'         => 'float',
                 'projeksi_harga' => 'float',
             ])
             ->leftJoin('databarang', 'gudangbarang.kode_brng', '=', 'databarang.kode_brng')
@@ -110,7 +109,7 @@ class GudangObat extends Model
         $pemberianObat3Hari = $pemberianObat->clone()
             ->whereBetween('tgl_perawatan', [$tanggal->subDays(3)->toDateString(), $tanggal->toDateString()]);
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             `gudangbarang`.`kode_brng`,
             `databarang`.`nama_brng`,
             `kodesatuan`.`satuan`,

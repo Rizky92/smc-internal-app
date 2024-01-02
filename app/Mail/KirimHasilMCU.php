@@ -9,7 +9,8 @@ use Illuminate\Queue\SerializesModels;
 
 class KirimHasilMCU extends Mailable implements ShouldQueue
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     private array $data;
 
@@ -32,13 +33,10 @@ class KirimHasilMCU extends Mailable implements ShouldQueue
     {
         return $this
             ->markdown('emails.kirim-hasil-mcu')
-            ->attach(base_path() . \DIRECTORY_SEPARATOR . 'analysis.txt');
+            ->attach(base_path().\DIRECTORY_SEPARATOR.'analysis.txt');
     }
 
-    public function markEmailSent(): void
-    {
-
-    }
+    public function markEmailSent(): void {}
 
     protected function findData(): void
     {

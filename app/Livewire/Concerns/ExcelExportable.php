@@ -2,10 +2,9 @@
 
 namespace App\Livewire\Concerns;
 
-use Closure;
-use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Rizky92\Xlswriter\ExcelExport;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -13,7 +12,7 @@ trait ExcelExportable
 {
     /**
      * List of invalid characters used in Excel Sheet
-     * 
+     *
      * @var string[]
      */
     private $invalidSheetCharacters = [
@@ -38,8 +37,6 @@ trait ExcelExportable
     }
 
     /**
-     * @return void
-     * 
      * @throws \RuntimeException
      */
     protected function validateSheetNames(): void
@@ -61,7 +58,7 @@ trait ExcelExportable
 
     public function beginExcelExport(): ?StreamedResponse
     {
-        $filename = now()->format('Ymd_His') . '_';
+        $filename = now()->format('Ymd_His').'_';
 
         $filename .= method_exists($this, 'filename')
             ? str($this->filename())->trim()->snake()->value()

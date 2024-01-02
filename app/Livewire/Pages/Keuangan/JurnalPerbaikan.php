@@ -2,20 +2,23 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
-use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Keuangan\Jurnal\Jurnal;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class JurnalPerbaikan extends Component
 {
-    use FlashComponent, Filterable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $tglAwal;

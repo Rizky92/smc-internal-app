@@ -27,7 +27,7 @@ class Dokter extends Model
     }
 
     public function registrasi(): HasMany
-{
-    return $this->hasMany(RegistrasiPasien::class, 'kd_dokter', 'kd_dokter');
-}
+    {
+        return $this->hasMany(RegistrasiPasien::class, 'kd_dokter', 'kd_dokter');
+    }
 }

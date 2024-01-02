@@ -3,16 +3,15 @@
 namespace App\Livewire\Pages\Keuangan;
 
 use App\Jobs\Keuangan\BayarPiutangPasien;
-use App\Models\Keuangan\AkunBayar;
-use App\Models\Keuangan\PenagihanPiutang;
-use App\Models\RekamMedis\Penjamin;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
-use App\Models\Keuangan\PenagihanPiutangDetail;
+use App\Models\Keuangan\AkunBayar;
+use App\Models\Keuangan\PenagihanPiutang;
+use App\Models\RekamMedis\Penjamin;
 use App\View\Components\BaseLayout;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -22,7 +21,12 @@ use Livewire\Component;
 
 class AccountReceivable extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $tglAwal;
@@ -66,7 +70,7 @@ class AccountReceivable extends Component
         $this->defaultValues();
     }
 
-    /** 
+    /**
      * @return \Illuminate\Contracts\Pagination\Paginator|array<empty, empty>
      */
     public function getDataAccountReceivableProperty()
@@ -102,7 +106,8 @@ class AccountReceivable extends Component
             ->search($this->cari)
             ->when(! empty($this->tagihanDipilih), fn (Builder $q): Builder => $q->orWhereIn(
                 DB::raw("concat_ws('_', penagihan_piutang.no_tagihan, penagihan_piutang.kd_pj, detail_penagihan_piutang.no_rawat)"),
-                array_keys($this->tagihanDipilih)))
+                array_keys($this->tagihanDipilih)
+            ))
             ->get();
 
         $totalPiutang = (float) $total->sum('total_piutang');
@@ -139,7 +144,7 @@ class AccountReceivable extends Component
                 DB::raw("concat_ws('_', penagihan_piutang.no_tagihan, penagihan_piutang.kd_pj, detail_penagihan_piutang.no_rawat)"),
                 $tagihanDipilih->keys()->all()
             )
-            ->sum(DB::raw("round(detail_piutang_pasien.totalpiutang - ifnull(bayar_piutang.besar_cicilan, 0), 2)"));
+            ->sum(DB::raw('round(detail_piutang_pasien.totalpiutang - ifnull(bayar_piutang.besar_cicilan, 0), 2)'));
 
         $this->totalDibayar -= $diskonPiutang;
     }
@@ -161,9 +166,9 @@ class AccountReceivable extends Component
             ->cursor(['no_tagihan', 'kd_pj', 'no_rawat'])
             ->mapWithKeys(fn (PenagihanPiutang $model, $_): array => [
                 implode('_', [$model->no_tagihan, $model->kd_pj_tagihan, $model->no_rawat]) => [
-                    'selected' => true,
+                    'selected'       => true,
                     'diskon_piutang' => 0,
-                ]
+                ],
             ])
             ->all();
 
@@ -192,7 +197,7 @@ class AccountReceivable extends Component
         collect($this->tagihanDipilih)
             ->filter(fn (array $value): bool => $value['selected'])
             ->map(fn (array $value): array => [
-                'diskon_piutang' => $value['diskon_piutang'] ?? 0
+                'diskon_piutang' => $value['diskon_piutang'] ?? 0,
             ])
             ->each(function (array $value, string $key) use ($akunDiskonPiutang, $akunTidakTerbayar) {
                 BayarPiutangPasien::dispatch([
@@ -294,26 +299,26 @@ class AccountReceivable extends Component
     protected function columnHeaders(): array
     {
         return [
-            "No. Tagihan",
-            "No. Rawat",
-            "Tgl. Tagihan",
-            "Tgl. Jatuh Tempo",
-            "Tgl. Bayar",
-            "No RM",
-            "Pasien",
-            "Jaminan Pasien",
-            "Jaminan Akun Piutang",
-            "Catatan",
-            "Status Piutang",
-            "Nama Bayar",
-            "Piutang",
-            "Cicilan",
-            "Sisa",
-            "0 - 30",
-            "31 - 60",
-            "61 - 90",
-            "> 90",
-            "Umur Hari",
+            'No. Tagihan',
+            'No. Rawat',
+            'Tgl. Tagihan',
+            'Tgl. Jatuh Tempo',
+            'Tgl. Bayar',
+            'No RM',
+            'Pasien',
+            'Jaminan Pasien',
+            'Jaminan Akun Piutang',
+            'Catatan',
+            'Status Piutang',
+            'Nama Bayar',
+            'Piutang',
+            'Cicilan',
+            'Sisa',
+            '0 - 30',
+            '31 - 60',
+            '61 - 90',
+            '> 90',
+            'Umur Hari',
         ];
     }
 
@@ -322,7 +327,7 @@ class AccountReceivable extends Component
         $periodeAwal = carbon($this->tglAwal);
         $periodeAkhir = carbon($this->tglAkhir);
 
-        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+        $periode = 'Periode '.$periodeAwal->translatedFormat('d F Y').' s.d. '.$periodeAkhir->translatedFormat('d F Y');
 
         if ($periodeAwal->isSameDay($periodeAkhir)) {
             $periode = $periodeAwal->translatedFormat('d F Y');
@@ -331,7 +336,7 @@ class AccountReceivable extends Component
         return [
             'RS Samarinda Medika Citra',
             'Piutang Aging (Account Receivable)',
-            'Per ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
+            'Per '.carbon($this->tglAkhir)->translatedFormat('d F Y'),
             $periode,
         ];
     }

@@ -2,18 +2,17 @@
 
 namespace App\Livewire\Pages\Aplikasi\Modal;
 
-use App\Models\Bidang;
 use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\Filterable;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Models\Bidang;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class InputBidangUnit extends Component
 {
-    use DeferredModal, Filterable;
+    use DeferredModal;
+    use Filterable;
 
     /** @var int */
     public $bidangId;
@@ -95,7 +94,7 @@ class InputBidangUnit extends Component
         Bidang::query()
             ->where('id', $this->bidangId)
             ->update([
-                'nama' => $this->nama,
+                'nama'      => $this->nama,
                 'parent_id' => $this->parentId,
             ]);
 
@@ -125,7 +124,7 @@ class InputBidangUnit extends Component
 
         if (Bidang::whereId($this->bidangId)->hasChildren()->exists()) {
             $this->dispatchBrowserEvent('data-denied');
-            $this->emit('flash.error', "Bidang terkait masih ada sub-bidang! Tidak boleh dihapus!");
+            $this->emit('flash.error', 'Bidang terkait masih ada sub-bidang! Tidak boleh dihapus!');
 
             return;
         }

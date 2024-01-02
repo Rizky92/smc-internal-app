@@ -2,21 +2,23 @@
 
 namespace App\Livewire\Pages\HakAkses\Siap;
 
-use App\Models\Aplikasi\Permission;
-use App\Models\Aplikasi\Role;
 use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
+use App\Models\Aplikasi\Permission;
+use App\Models\Aplikasi\Role;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class ModalPerizinan extends Component
 {
-    use Filterable, LiveTable, DeferredModal, FlashComponent;
+    use DeferredModal;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
 
     /** @var int */
     public $roleId;
@@ -30,8 +32,8 @@ class ModalPerizinan extends Component
     /** @var mixed */
     protected $listeners = [
         'siap.prepare' => 'prepare',
-        'siap.show' => 'showModal',
-        'siap.hide' => 'hideModal',
+        'siap.show'    => 'showModal',
+        'siap.hide'    => 'hideModal',
     ];
 
     public function mount(): void
@@ -69,7 +71,7 @@ class ModalPerizinan extends Component
 
     public function create(): void
     {
-        if (!user()->hasRole(config('permission.superadmin_name'))) {
+        if (! user()->hasRole(config('permission.superadmin_name'))) {
             $this->flashError();
 
             return;
@@ -92,7 +94,7 @@ class ModalPerizinan extends Component
 
     public function update(): void
     {
-        if (!user()->hasRole(config('permission.superadmin_name'))) {
+        if (! user()->hasRole(config('permission.superadmin_name'))) {
             $this->flashError();
 
             return;

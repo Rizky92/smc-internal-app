@@ -2,9 +2,8 @@
 
 namespace App\Livewire\Pages\Informasi;
 
-use App\View\Components\CustomerLayout;
-use App\Models\Perawatan\Kamar;
 use App\Models\Bangsal;
+use App\View\Components\CustomerLayout;
 use Illuminate\View\View;
 use Livewire\Component;
 

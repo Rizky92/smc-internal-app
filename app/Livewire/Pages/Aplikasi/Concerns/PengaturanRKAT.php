@@ -5,7 +5,6 @@ namespace App\Livewire\Pages\Aplikasi\Concerns;
 use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Rules\DoesntExist;
 use App\Settings\RKATSettings;
-use Illuminate\Support\Facades\Auth;
 
 trait PengaturanRKAT
 {

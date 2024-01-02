@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Staudenmeir\LaravelMigrationViews\Facades\Schema;
 
-return new class extends Migration
+return new class() extends Migration
 {
     protected $connection = 'mysql_smc';
 
@@ -12,7 +12,7 @@ return new class extends Migration
     {
         $db = DB::connection('mysql_sik')->getDatabaseName();
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             reg_periksa.no_rawat,
             reg_periksa.tgl_registrasi,
             reg_periksa.jam_reg,
@@ -37,7 +37,7 @@ return new class extends Migration
             end as status_ranap
         SQL;
 
-        $sqlGroupBy = <<<SQL
+        $sqlGroupBy = <<<'SQL'
             reg_periksa.no_rawat,
             kamar_inap.tgl_masuk,
             kamar_inap.jam_masuk,
@@ -71,7 +71,7 @@ return new class extends Migration
             ->leftJoin(DB::raw("{$db}.poliklinik poliklinik"), 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->join($kamarInapMin, 'kamar_inap.no_rawat', '=', 'kamar_inap_min.no_rawat')
             ->groupByRaw($sqlGroupBy);
-            
+
         Schema::connection('mysql_smc')->createOrReplaceView('laporan_pasien_ranap', $query);
     }
 };

@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\JoinClause;
-use Illuminate\Support\Facades\DB;
 
 class PiutangPasien extends Model
 {
@@ -35,7 +34,7 @@ class PiutangPasien extends Model
         return $this->hasOne(PiutangPasienDetail::class, 'no_rawat', 'no_rawat');
     }
 
-    public function scopeWithDetailPiutangPer(Builder $query, string $namaBayar = null, string $kodePenjamin = null): Builder
+    public function scopeWithDetailPiutangPer(Builder $query, ?string $namaBayar = null, ?string $kodePenjamin = null): Builder
     {
         $data = fn ($q) => $q->where([
             ['nama_bayar', '=', $namaBayar],
@@ -59,7 +58,7 @@ class PiutangPasien extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             piutang_pasien.no_rawat,
             piutang_pasien.tgl_piutang,
             piutang_pasien.no_rkm_medis, 
@@ -78,7 +77,7 @@ class PiutangPasien extends Model
             ->join('reg_periksa', 'piutang_pasien.no_rawat', '=', 'reg_periksa.no_rawat')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->where('piutang_pasien.status', 'Belum Lunas')
-            ->when(!empty($penjamin), fn (Builder $q): Builder => $q->where('reg_periksa.kd_pj', $penjamin));
+            ->when(! empty($penjamin), fn (Builder $q): Builder => $q->where('reg_periksa.kd_pj', $penjamin));
     }
 
     public function scopePiutangPasienSudahLunas(
@@ -96,7 +95,7 @@ class PiutangPasien extends Model
             $tglAkhir = now()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             piutang_pasien.no_rawat,
             piutang_pasien.no_rkm_medis,
             pasien.nm_pasien,
@@ -124,7 +123,7 @@ class PiutangPasien extends Model
             ->where('piutang_pasien.status', 'Lunas')
             ->wherebetween('bayar_piutang.tgl_bayar', [$tglAwal, $tglAkhir])
             ->where('bayar_piutang.kd_rek', $rekening)
-            ->when(!empty($penjamin), fn (Builder $q) => $q->where('reg_periksa.kd_pj', $penjamin));
+            ->when(! empty($penjamin), fn (Builder $q) => $q->where('reg_periksa.kd_pj', $penjamin));
     }
 
     public function scopeRekapPiutangPasien(
@@ -141,7 +140,7 @@ class PiutangPasien extends Model
             $tglAkhir = now()->endOfMont()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             piutang_pasien.no_rawat,
             piutang_pasien.no_rkm_medis,
             pasien.nm_pasien,
@@ -163,9 +162,8 @@ class PiutangPasien extends Model
             ->join('pasien', 'piutang_pasien.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join('reg_periksa', 'piutang_pasien.no_rawat', '=', 'reg_periksa.no_rawat')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
-            ->leftJoinSub($sisaPiutang, 'sisa_piutang', fn (JoinClause $join) => 
-                $join->on('piutang_pasien.no_rawat', '=', 'sisa_piutang.no_rawat'))
+            ->leftJoinSub($sisaPiutang, 'sisa_piutang', fn (JoinClause $join) => $join->on('piutang_pasien.no_rawat', '=', 'sisa_piutang.no_rawat'))
             ->whereBetween('piutang_pasien.tgl_piutang', [$tglAwal, $tglAkhir])
-            ->when(!empty($penjamin), fn (Builder $query) => $query->where('reg_periksa.kd_pj', $penjamin));
+            ->when(! empty($penjamin), fn (Builder $query) => $query->where('reg_periksa.kd_pj', $penjamin));
     }
 }

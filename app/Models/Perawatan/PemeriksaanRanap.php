@@ -2,9 +2,9 @@
 
 namespace App\Models\Perawatan;
 
+use App\Database\Eloquent\Model;
 use App\Models\Kepegawaian\Dokter;
 use Illuminate\Database\Eloquent\Builder;
-use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
 
@@ -27,7 +27,7 @@ class PemeriksaanRanap extends Model
         return $this->belongsToMany(Dokter::class, 'dpjp_ranap', 'no_rawat', 'kd_dokter', 'no_rawat', 'kd_dokter');
     }
 
-    public function scopePemeriksaanOlehFarmasi(Builder $query, string $tglAwal = '', string $tglAkhir): Builder
+    public function scopePemeriksaanOlehFarmasi(Builder $query, string $tglAwal, string $tglAkhir): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->format('Y-m-d');
@@ -37,7 +37,7 @@ class PemeriksaanRanap extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             pemeriksaan_ranap.tgl_perawatan,
             pemeriksaan_ranap.jam_rawat,
             pemeriksaan_ranap.no_rawat,

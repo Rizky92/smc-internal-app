@@ -10,10 +10,9 @@ class RoleMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure $next
-     * @param  array|string $role
-     * @param  string $guard
+     * @param  \Illuminate\Http\Request  $request
+     * @param  array|string  $role
+     * @param  string  $guard
      * @return mixed
      */
     public function handle($request, Closure $next, $role, $guard = null)

@@ -2,27 +2,32 @@
 
 namespace App\Livewire\Pages\Farmasi;
 
-use App\Models\Farmasi\MutasiObat;
-use App\Models\Farmasi\PemberianObat;
-use App\Models\Farmasi\PengeluaranObat;
-use App\Models\Farmasi\PenjualanWalkInObat;
-use App\Models\Farmasi\ResepObat;
-use App\Models\Farmasi\ReturPenjualanObat;
-use App\Models\Farmasi\PenerimaanObat;
-use App\Models\Farmasi\Inventaris\ReturSupplierObat;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Farmasi\Inventaris\ReturSupplierObat;
+use App\Models\Farmasi\MutasiObat;
+use App\Models\Farmasi\PemberianObat;
+use App\Models\Farmasi\PenerimaanObat;
+use App\Models\Farmasi\PengeluaranObat;
+use App\Models\Farmasi\PenjualanWalkInObat;
+use App\Models\Farmasi\ResepObat;
+use App\Models\Farmasi\ReturPenjualanObat;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class LaporanProduksiTahunan extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $tahun;
@@ -229,7 +234,7 @@ class LaporanProduksiTahunan extends Component
         return [
             'RS Samarinda Medika Citra',
             "Laporan Produksi Farmasi Tahun {$this->tahun}",
-            'Per ' . now()->translatedFormat('d F Y'),
+            'Per '.now()->translatedFormat('d F Y'),
         ];
     }
 }

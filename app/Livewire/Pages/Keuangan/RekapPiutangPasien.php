@@ -2,13 +2,13 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
-use App\Models\Keuangan\PiutangPasien;
-use App\Models\RekamMedis\Penjamin;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Keuangan\PiutangPasien;
+use App\Models\RekamMedis\Penjamin;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +17,11 @@ use Livewire\Component;
 
 class RekapPiutangPasien extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $caraBayar;
@@ -132,7 +136,7 @@ class RekapPiutangPasien extends Component
                     'sisa'         => round(floatval($query->sum(DB::raw('round(piutang_pasien.sisapiutang - ifnull(sisa_piutang.sisa, 0), 2)'))), 2),
                     'tgltempo'     => '',
                     'penjamin'     => '',
-                ])
+                ]),
         ];
     }
 
@@ -158,7 +162,7 @@ class RekapPiutangPasien extends Component
         $periodeAwal = carbon($this->tglAwal);
         $periodeAkhir = carbon($this->tglAkhir);
 
-        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+        $periode = 'Periode '.$periodeAwal->translatedFormat('d F Y').' s.d. '.$periodeAkhir->translatedFormat('d F Y');
 
         if ($periodeAwal->isSameDay($periodeAkhir)) {
             $periode = $periodeAwal->translatedFormat('d F Y');

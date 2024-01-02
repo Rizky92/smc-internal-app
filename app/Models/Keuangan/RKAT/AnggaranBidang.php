@@ -3,8 +3,8 @@
 namespace App\Models\Keuangan\RKAT;
 
 use App\Casts\Year;
-use App\Models\Bidang;
 use App\Database\Eloquent\Model;
+use App\Models\Bidang;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -28,7 +28,7 @@ class AnggaranBidang extends Model
     ];
 
     protected $casts = [
-        'tahun' => Year::class,
+        'tahun'            => Year::class,
         'nominal_anggaran' => 'float',
     ];
 

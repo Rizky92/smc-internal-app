@@ -14,17 +14,17 @@ class BpjsService
     protected array $headers;
 
     /**
-     * @param  ?string $timestamp
+     * @param  ?string  $timestamp
      */
     public function __construct(?string $timestamp = null)
     {
         $this->timestamp = $timestamp ?? now()->format('U');
 
         $this->headers = [
-            'x-cons-id' => config('bpjs.consid'),
+            'x-cons-id'   => config('bpjs.consid'),
             'x-timestamp' => $this->timestamp,
             'x-signature' => $this->generateSignature(),
-            'user_key' => config('bpjs.userkey'),
+            'user_key'    => config('bpjs.userkey'),
         ];
     }
 
@@ -43,7 +43,7 @@ class BpjsService
         $consid = config('bpjs.consid');
         $secret = config('bpjs.secret');
 
-        $hash = hex2bin(hash('sha256', $consid . $secret . $this->timestamp));
+        $hash = hex2bin(hash('sha256', $consid.$secret.$this->timestamp));
 
         $iv = substr($hash, 0, 16);
 

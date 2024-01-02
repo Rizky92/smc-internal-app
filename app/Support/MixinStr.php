@@ -8,18 +8,18 @@ class MixinStr
 {
     /**
      * Determine if a given string does not contain a given substring.
-     * 
+     *
      * @return \Closure(string, string|string[]): bool
      */
     public function doesntContain(): Closure
     {
         /** @psalm-scope-this Illuminate\Support\Str */
-        return fn ($haystack, $needles): bool => !static::contains($haystack, $needles);
+        return fn ($haystack, $needles): bool => ! static::contains($haystack, $needles);
     }
 
     /**
      * replace all strings with provided value.
-     * 
+     *
      * @return \Closure(string|string[], string, string): string
      */
     public function replaceWith(): Closure
@@ -37,15 +37,14 @@ class MixinStr
         };
     }
 
-    /** 
+    /**
      * @return \Closure(string, string, ?string): string
      */
     public function wrap(): Closure
     {
-        return fn (string $value, string $startsWith, ?string $endsWith = null): string =>
-            is_null($endsWith)
-                ? $startsWith . $value . $startsWith
-                : $startsWith . $value . $endsWith;
+        return fn (string $value, string $startsWith, ?string $endsWith = null): string => is_null($endsWith)
+                ? $startsWith.$value.$startsWith
+                : $startsWith.$value.$endsWith;
     }
 
     /**

@@ -20,8 +20,7 @@ class AuthorizeAny
     /**
      * Create a new middleware instance.
      *
-     * @param  \Illuminate\Contracts\Auth\Access\Gate $gate
-     * 
+     *
      * @return void
      */
     public function __construct(Gate $gate)
@@ -32,12 +31,10 @@ class AuthorizeAny
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure $next
-     * @param  string $abilities
-     * @param  array|null $models
-     * 
+     * @param  string  $abilities
+     * @param  array|null  $models
      * @return mixed
+     *
      * @throws \Illuminate\Auth\AuthenticationException
      * @throws \Illuminate\Auth\Access\AuthorizationException
      */
@@ -47,8 +44,8 @@ class AuthorizeAny
             $abilities = str($abilities)->split('/\|/')->filter()->all();
         }
 
-        if (!$this->gate->any($abilities, $this->getGateArguments($request, $models))) {
-            throw new AuthorizationException;
+        if (! $this->gate->any($abilities, $this->getGateArguments($request, $models))) {
+            throw new AuthorizationException();
         }
 
         return $next($request);
@@ -57,9 +54,8 @@ class AuthorizeAny
     /**
      * Get the arguments parameter for the gate.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  array|null $models
-     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @param  array|null  $models
      * @return \Illuminate\Support\Collection<array-key, \Illuminate\Database\Eloquent\Model>|array
      */
     protected function getGateArguments($request, $models)
@@ -68,8 +64,7 @@ class AuthorizeAny
             return [];
         }
 
-        return collect($models)->map(fn ($model) =>
-        $model instanceof Model
+        return collect($models)->map(fn ($model) => $model instanceof Model
             ? $model
             : $this->getModel($request, $model));
     }
@@ -77,9 +72,8 @@ class AuthorizeAny
     /**
      *  Get the model to authorize.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param string $model
-     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $model
      * @return null|object|string
      */
     protected function getModel($request, $model)
@@ -98,8 +92,7 @@ class AuthorizeAny
     /**
      * Checks if the given string looks like a fully qualified class name.
      *
-     * @param  string $value
-     * 
+     * @param  string  $value
      * @return bool
      */
     protected function isClassName($value)

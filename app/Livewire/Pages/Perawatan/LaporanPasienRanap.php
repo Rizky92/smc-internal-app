@@ -2,12 +2,12 @@
 
 namespace App\Livewire\Pages\Perawatan;
 
-use App\Models\Perawatan\PasienRanap;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Perawatan\PasienRanap;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,7 +16,11 @@ use Livewire\Component;
 
 class LaporanPasienRanap extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $tanggal;
@@ -128,7 +132,7 @@ class LaporanPasienRanap extends Component
         return [
             'RS Samarinda Medika Citra',
             'Laporan Pasien Masuk Rawat Inap',
-            'Per ' . carbon($this->tanggal)->translatedFormat('d F Y'),
+            'Per '.carbon($this->tanggal)->translatedFormat('d F Y'),
         ];
     }
 }

@@ -23,7 +23,7 @@ class PasienUser extends Model
     protected function casts(): array
     {
         return [
-            'password' => AESFromDatabaseCast::class . ':' . config('khanza.app.passkey'),
+            'password' => AESFromDatabaseCast::class.':'.config('khanza.app.passkey'),
         ];
     }
 

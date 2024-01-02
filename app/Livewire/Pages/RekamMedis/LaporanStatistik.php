@@ -2,14 +2,13 @@
 
 namespace App\Livewire\Pages\RekamMedis;
 
-use App\Models\Perawatan\RegistrasiPasien;
-use App\Models\RekamMedis\StatistikRekamMedis;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Perawatan\RegistrasiPasien;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -17,7 +16,12 @@ use Livewire\Component;
 
 class LaporanStatistik extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $tglAwal;
@@ -77,7 +81,7 @@ class LaporanStatistik extends Component
                     Str::transliterate($model->no_ktp ?? ''),
                     Str::transliterate($model->jk ?? ''),
                     Str::transliterate($model->tgl_lahir ?? ''),
-                    Str::transliterate($model->umurdaftar . ' ' . $model->sttsumur ?? ''),
+                    Str::transliterate($model->umurdaftar.' '.$model->sttsumur ?? ''),
                     Str::transliterate($model->agama ?? ''),
                     Str::transliterate($model->suku ?? ''),
                     Str::transliterate($model->status_lanjut ?? ''),
@@ -160,7 +164,7 @@ class LaporanStatistik extends Component
         $periodeAwal = carbon($this->tglAwal);
         $periodeAkhir = carbon($this->tglAkhir);
 
-        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+        $periode = 'Periode '.$periodeAwal->translatedFormat('d F Y').' s.d. '.$periodeAkhir->translatedFormat('d F Y');
 
         if ($periodeAwal->isSameDay($periodeAkhir)) {
             $periode = $periodeAwal->translatedFormat('d F Y');

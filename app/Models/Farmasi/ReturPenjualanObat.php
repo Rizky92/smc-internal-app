@@ -21,7 +21,7 @@ class ReturPenjualanObat extends Model
 
     public function scopeReturObatPasien(Builder $query, string $year = '2022'): Builder
     {
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             round(sum(detreturjual.subtotal)) jumlah,
             month(returjual.tgl_retur) bulan
         SQL;

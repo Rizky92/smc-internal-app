@@ -88,9 +88,9 @@ class Role extends Model implements RoleContract
     }
 
     /**
-     *  Find a role by its name and guard name.
+     * Find a role by its name and guard name.
      *
-     * @param string|null  $guardName
+     * @param  string|null  $guardName
      *
      * @throws \Spatie\Permission\Exceptions\RoleDoesNotExist
      *
@@ -110,9 +110,9 @@ class Role extends Model implements RoleContract
     }
 
     /**
-     *  Find a role by its id (and optionally guardName).
+     * Find a role by its id (and optionally guardName).
      *
-     * @param string|null  $guardName
+     * @param  string|null  $guardName
      *
      * @psalm-return \Illuminate\Database\Eloquent\Builder<static>
      */
@@ -130,11 +130,9 @@ class Role extends Model implements RoleContract
     }
 
     /**
-     *  Find or create role by its name (and optionally guardName).
+     * Find or create role by its name (and optionally guardName).
      *
-     * @param string|null  $guardName
-     *
-     * @return \Illuminate\Database\Eloquent\Builder&\Illuminate\Database\Eloquent\Builder|static&\Illuminate\Database\Eloquent\Builder
+     * @param  string|null  $guardName
      *
      * @psalm-return \Illuminate\Database\Eloquent\Builder<static>&\Illuminate\Database\Eloquent\Builder<static>|static&\Illuminate\Database\Eloquent\Builder<static>
      */
@@ -152,8 +150,6 @@ class Role extends Model implements RoleContract
     }
 
     /**
-     * @return null|self
-     *
      * @psalm-return null|static&\Illuminate\Database\Eloquent\Builder<static>
      */
     protected static function findByParam(array $params = []): ?self

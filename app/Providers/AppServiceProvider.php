@@ -47,7 +47,7 @@ class AppServiceProvider extends ServiceProvider
         // Menggunakan custom grammar untuk driver db mysql agar bisa
         // melakukan pencatatan timestamp dengan presisi tingkat 6
         // https://carbon.nesbot.com/laravel/
-        DB::connection('mysql_smc')->setQueryGrammar(new MysqlGrammar);
+        DB::connection('mysql_smc')->setQueryGrammar(new MysqlGrammar());
 
         $this->registerBladeDirectives();
         $this->registerModelConfigurations();
@@ -61,12 +61,12 @@ class AppServiceProvider extends ServiceProvider
 
         Blade::if('null', fn ($expr): bool => is_null($expr));
 
-        Blade::if('notnull', fn ($expr): bool => !is_null($expr));
+        Blade::if('notnull', fn ($expr): bool => ! is_null($expr));
     }
 
     public function registerModelConfigurations(): void
     {
-        Model::preventLazyLoading(!app()->isProduction());
+        Model::preventLazyLoading(! app()->isProduction());
 
         Relation::morphMap([
             'User'       => User::class,
@@ -83,18 +83,18 @@ class AppServiceProvider extends ServiceProvider
     public function registerMacrosAndMixins(): void
     {
         foreach ($this->mixins as $class => $mixins) {
-            if (!in_array('mixin', get_class_methods($class), $strict = true)) {
+            if (! in_array('mixin', get_class_methods($class), $strict = true)) {
                 continue;
             }
 
             if (is_string($mixins)) {
-                $class::mixin(new $mixins);
+                $class::mixin(new $mixins());
 
                 continue;
             }
 
             foreach ($mixins as $mixinClass) {
-                $class::mixin(new $mixinClass);
+                $class::mixin(new $mixinClass());
             }
         }
     }

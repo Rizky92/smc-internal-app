@@ -2,8 +2,8 @@
 
 namespace App\Models\Farmasi;
 
-use Illuminate\Database\Eloquent\Builder;
 use App\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class PengeluaranObat extends Model
 {
@@ -21,7 +21,7 @@ class PengeluaranObat extends Model
 
     public function scopeStokKeluarMedis(Builder $query, string $year = '2022'): Builder
     {
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             round(sum(detail_pengeluaran_obat_bhp.total)) jumlah,
             month(pengeluaran_obat_bhp.tanggal) bulan
         SQL;

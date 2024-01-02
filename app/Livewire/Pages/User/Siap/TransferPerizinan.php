@@ -2,20 +2,21 @@
 
 namespace App\Livewire\Pages\User\Siap;
 
-use App\Models\Aplikasi\User;
 use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\LiveTable;
+use App\Models\Aplikasi\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class TransferPerizinan extends Component
 {
-    use Filterable, LiveTable, DeferredModal;
+    use DeferredModal;
+    use Filterable;
+    use LiveTable;
 
     /** @var ?string */
     public $nrp;
@@ -69,12 +70,12 @@ class TransferPerizinan extends Component
         return $this->isDeferred
             ? []
             : User::query()
-            ->with('roles')
-            ->whereRaw('trim(pegawai.nik) != ?', [$this->nrp])
-            ->where(fn (Builder $q): Builder => $q
-                ->search($this->cari)
-                ->when($this->showChecked, fn (Builder $q): Builder => $q->orWhereIn(DB::raw('trim(pegawai.nik)'), $checkedUsers)))
-            ->get();
+                ->with('roles')
+                ->whereRaw('trim(pegawai.nik) != ?', [$this->nrp])
+                ->where(fn (Builder $q): Builder => $q
+                    ->search($this->cari)
+                    ->when($this->showChecked, fn (Builder $q): Builder => $q->orWhereIn(DB::raw('trim(pegawai.nik)'), $checkedUsers)))
+                ->get();
     }
 
     public function prepareTransfer(string $nrp = '', string $nama = ''): void
@@ -87,7 +88,7 @@ class TransferPerizinan extends Component
             ->whereRaw('trim(pegawai.nik) = ?', $nrp)
             ->first();
 
-        if (!$user) {
+        if (! $user) {
             throw (new ModelNotFoundException())->setModel(User::class, [$nrp]);
         }
 
@@ -97,7 +98,7 @@ class TransferPerizinan extends Component
 
     public function save(): void
     {
-        if (!user()->hasRole(config('permission.superadmin_name'))) {
+        if (! user()->hasRole(config('permission.superadmin_name'))) {
             $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
@@ -123,7 +124,7 @@ class TransferPerizinan extends Component
         tracker_end('mysql_smc');
 
         $this->dispatchBrowserEvent('data-saved');
-        $this->emit('flash.success', "Transfer perizinan SIAP berhasil!");
+        $this->emit('flash.success', 'Transfer perizinan SIAP berhasil!');
     }
 
     protected function defaultValues(): void

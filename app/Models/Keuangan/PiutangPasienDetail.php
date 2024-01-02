@@ -32,7 +32,7 @@ class PiutangPasienDetail extends Model
 
     protected $casts = [
         'totalpiutang' => 'float',
-        'sisapiutang' => 'float',
+        'sisapiutang'  => 'float',
     ];
 
     protected $searchColumns = [

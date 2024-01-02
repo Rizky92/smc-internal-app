@@ -2,13 +2,13 @@
 
 namespace App\Livewire\Pages\Perawatan;
 
-use App\Models\Perawatan\RegistrasiPasien;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Perawatan\RegistrasiPasien;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\View\View;
@@ -16,7 +16,12 @@ use Livewire\Component;
 
 class LaporanTransaksiGantung extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $tglAwal;
@@ -123,7 +128,7 @@ class LaporanTransaksiGantung extends Component
         $periodeAwal = carbon($this->tglAwal);
         $periodeAkhir = carbon($this->tglAkhir);
 
-        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+        $periode = 'Periode '.$periodeAwal->translatedFormat('d F Y').' s.d. '.$periodeAkhir->translatedFormat('d F Y');
 
         if ($periodeAwal->isSameDay($periodeAkhir)) {
             $periode = $periodeAwal->translatedFormat('d F Y');
@@ -131,7 +136,7 @@ class LaporanTransaksiGantung extends Component
 
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Transaksi Gantung Pasien ' . ($this->status === 'ralan' ? 'Rawat Jalan' : 'Rawat Inap'),
+            'Laporan Transaksi Gantung Pasien '.($this->status === 'ralan' ? 'Rawat Jalan' : 'Rawat Inap'),
             now()->translatedFormat('d F Y'),
             $periode,
         ];

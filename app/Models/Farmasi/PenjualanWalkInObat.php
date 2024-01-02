@@ -2,8 +2,8 @@
 
 namespace App\Models\Farmasi;
 
-use Illuminate\Database\Eloquent\Builder;
 use App\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
@@ -24,7 +24,7 @@ class PenjualanWalkInObat extends Model
 
     public function scopeKunjunganWalkIn(Builder $query, string $year = '2022'): Builder
     {
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             count(penjualan.nota_jual) jumlah,
             month(penjualan.tgl_jual) bulan
         SQL;
@@ -39,7 +39,7 @@ class PenjualanWalkInObat extends Model
 
     public function scopePendapatanWalkIn(Builder $query, string $year = '2022'): Builder
     {
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             round(sum(detail_jual.total + penjualan.ppn)) jumlah,
             month(penjualan.tgl_jual) bulan
         SQL;
@@ -52,8 +52,7 @@ class PenjualanWalkInObat extends Model
         return $query
             ->selectRaw($sqlSelect)
             ->withCasts(['jumlah' => 'float', 'bulan' => 'int'])
-            ->leftJoinSub($sumDetailJual, 'detail_jual', fn (JoinClause $join) =>
-                $join->on('penjualan.nota_jual', '=', 'detail_jual.nota_jual'))
+            ->leftJoinSub($sumDetailJual, 'detail_jual', fn (JoinClause $join) => $join->on('penjualan.nota_jual', '=', 'detail_jual.nota_jual'))
             ->where('penjualan.status', 'Sudah Dibayar')
             ->whereBetween('penjualan.tgl_jual', ["{$year}-01-01", "{$year}-12-31"])
             ->groupByRaw('month(penjualan.tgl_jual)');

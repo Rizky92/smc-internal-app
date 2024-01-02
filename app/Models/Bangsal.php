@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Perawatan\Kamar;
 use App\Database\Eloquent\Model;
+use App\Models\Perawatan\Kamar;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Bangsal extends Model
@@ -33,7 +33,7 @@ class Bangsal extends Model
         return $this->hasMany(Kamar::class, 'kd_bangsal', 'kd_bangsal');
     }
 
-    public function countEmptyRooms($class = null)
+    public function countEmptyRooms($class = null): int
     {
         $query = $this->kamar()->where('statusdata', '1')->where('status', 'KOSONG');
 
@@ -44,7 +44,7 @@ class Bangsal extends Model
         return $query->count();
     }
 
-    public function countOccupiedRooms($class = null)
+    public function countOccupiedRooms($class = null): int
     {
         $query = $this->kamar()->where('statusdata', '1')->where('status', 'ISI');
 
@@ -54,8 +54,9 @@ class Bangsal extends Model
 
         return $query->count();
     }
+
     public function scopeActiveWithKamar($query)
-    {   
+    {
         $subquery = Kamar::selectRaw('bangsal.kd_bangsal, kelas, COUNT(*) as total')
             ->join('bangsal', 'bangsal.kd_bangsal', '=', 'kamar.kd_bangsal')
             ->where('kamar.statusdata', '1')
@@ -74,7 +75,4 @@ class Bangsal extends Model
     {
         return Kamar::select('kelas')->distinct()->pluck('kelas');
     }
-
-
-
 }

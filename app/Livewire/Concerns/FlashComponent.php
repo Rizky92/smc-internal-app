@@ -16,7 +16,7 @@ trait FlashComponent
     }
 
     /**
-     * @param  array<string, string> $flash
+     * @param  array<string, string>  $flash
      */
     public function flash(array $flash): void
     {
@@ -25,7 +25,7 @@ trait FlashComponent
         }
     }
 
-    public function flashSuccess(string $message = "Sukses melakukan perubahan data"): void
+    public function flashSuccess(string $message = 'Sukses melakukan perubahan data'): void
     {
         $this->flash([
             'flash.message' => $message,
@@ -34,7 +34,7 @@ trait FlashComponent
         ]);
     }
 
-    public function flashInfo(string $message = "Terjadi sesuatu!"): void
+    public function flashInfo(string $message = 'Terjadi sesuatu!'): void
     {
         $this->flash([
             'flash.message' => $message,
@@ -43,7 +43,7 @@ trait FlashComponent
         ]);
     }
 
-    public function flashWarning(string $message = "Terjadi sesuatu!"): void
+    public function flashWarning(string $message = 'Terjadi sesuatu!'): void
     {
         $this->flash([
             'flash.message' => $message,
@@ -52,7 +52,7 @@ trait FlashComponent
         ]);
     }
 
-    public function flashError(string $message = "Anda tidak diizinkan untuk melakukan aksi ini!"): void
+    public function flashError(string $message = 'Anda tidak diizinkan untuk melakukan aksi ini!'): void
     {
         $this->flash([
             'flash.message' => $message,

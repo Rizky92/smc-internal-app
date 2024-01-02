@@ -2,20 +2,20 @@
 
 namespace App\Livewire\Pages\Keuangan\Modal;
 
-use App\Models\Keuangan\Jurnal\Jurnal;
-use App\Models\Keuangan\Jurnal\JurnalBackup;
 use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Keuangan\Jurnal\Jurnal;
+use App\Models\Keuangan\Jurnal\JurnalBackup;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class UbahTanggalJurnal extends Component
 {
-    use DeferredModal, Filterable, FlashComponent;
+    use DeferredModal;
+    use Filterable;
+    use FlashComponent;
 
     /** @var string */
     public $noJurnal;
@@ -43,8 +43,8 @@ class UbahTanggalJurnal extends Component
     /** @var mixed */
     protected $listeners = [
         'utj.prepare' => 'prepareJurnal',
-        'utj.show' => 'showModal',
-        'utj.hide' => 'hideModal',
+        'utj.show'    => 'showModal',
+        'utj.hide'    => 'hideModal',
     ];
 
     public function mount(): void

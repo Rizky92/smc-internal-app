@@ -25,7 +25,7 @@ class JurnalBackup extends Model
     ];
 
     protected $casts = [
-        'waktu_jurnal_asli' => 'datetime',
+        'waktu_jurnal_asli'   => 'datetime',
         'waktu_jurnal_diubah' => 'datetime',
     ];
 

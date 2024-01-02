@@ -2,13 +2,13 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
-use App\Models\Radiologi\HasilPeriksaRadiologi;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Radiologi\HasilPeriksaRadiologi;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\View\View;
@@ -16,7 +16,12 @@ use Livewire\Component;
 
 class LaporanTindakanRadiologi extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $tglAwal;
@@ -91,22 +96,22 @@ class LaporanTindakanRadiologi extends Component
     protected function columnHeaders(): array
     {
         return [
-            "No. Rawat",
-            "No. RM",
-            "Pasien",
-            "Jenis Bayar",
-            "Petugas",
-            "Tgl. Periksa",
-            "Jam",
-            "Perujuk",
-            "Kode Tindakan",
-            "Nama Tindakan",
-            "Biaya (Rp)",
-            "Status Bayar",
-            "Jenis Perawatan",
-            "Kode Dokter",
-            "Nama Dokter Pemeriksa",
-            "Hasil Pemeriksaan",
+            'No. Rawat',
+            'No. RM',
+            'Pasien',
+            'Jenis Bayar',
+            'Petugas',
+            'Tgl. Periksa',
+            'Jam',
+            'Perujuk',
+            'Kode Tindakan',
+            'Nama Tindakan',
+            'Biaya (Rp)',
+            'Status Bayar',
+            'Jenis Perawatan',
+            'Kode Dokter',
+            'Nama Dokter Pemeriksa',
+            'Hasil Pemeriksaan',
         ];
     }
 
@@ -115,7 +120,7 @@ class LaporanTindakanRadiologi extends Component
         $periodeAwal = carbon($this->tglAwal);
         $periodeAkhir = carbon($this->tglAkhir);
 
-        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+        $periode = 'Periode '.$periodeAwal->translatedFormat('d F Y').' s.d. '.$periodeAkhir->translatedFormat('d F Y');
 
         if ($periodeAwal->isSameDay($periodeAkhir)) {
             $periode = $periodeAwal->translatedFormat('d F Y');

@@ -2,8 +2,8 @@
 
 namespace App\Models\Farmasi;
 
-use Illuminate\Database\Eloquent\Builder;
 use App\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class MutasiObat extends Model
 {
@@ -21,7 +21,7 @@ class MutasiObat extends Model
 
     public function scopeJumlahTransferOrder(Builder $query, string $year = '2022'): Builder
     {
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             round(sum(mutasibarang.jml * mutasibarang.harga)) jumlah,
             month(mutasibarang.tanggal) bulan
         SQL;

@@ -7,12 +7,7 @@
     </UndefinedInterfaceMethod>
   </file>
   <file src="app/Database/Eloquent/Concerns/Sortable.php">
-    <ImplicitToStringCast occurrences="1">
-      <code>$order</code>
-    </ImplicitToStringCast>
-    <RedundantCondition occurrences="1">
-      <code>empty($initialColumnOrders)</code>
-    </RedundantCondition>
+    <ImplicitToStringCast occurrences="1"/>
     <TooManyTemplateParams occurrences="1">
       <code>array&lt;string, \Illuminate\Database\Query\Expression&lt;string&gt;|string&gt;</code>
     </TooManyTemplateParams>
@@ -63,11 +58,6 @@
       <code>hasRole</code>
     </UndefinedMagicMethod>
   </file>
-  <file src="app/Livewire/Pages/Keuangan/AccountReceivable.php">
-    <ImplicitToStringCast occurrences="1">
-      <code>DB::raw('concat(penagihan_piutang.no_tagihan, "_", penagihan_piutang.kd_pj, "_", detail_penagihan_piutang.no_rawat)')</code>
-    </ImplicitToStringCast>
-  </file>
   <file src="app/Livewire/Pages/Keuangan/LabaRugiRekeningPerPeriode.php">
     <UndefinedMagicMethod occurrences="1">
       <code>whereTipe</code>
@@ -107,7 +97,6 @@
   </file>
   <file src="app/Livewire/Pages/User/Khanza/SetHakAkses.php">
     <RedundantCondition occurrences="2">
-      <code>!$this-&gt;isDeferred</code>
       <code>$this-&gt;isDeferred</code>
     </RedundantCondition>
     <UndefinedMagicMethod occurrences="1">
@@ -142,9 +131,6 @@
     <PossiblyNullReference occurrences="1">
       <code>syncRoles</code>
     </PossiblyNullReference>
-    <PossiblyUndefinedMethod occurrences="1">
-      <code>user</code>
-    </PossiblyUndefinedMethod>
   </file>
   <file src="app/Livewire/Pages/User/Siap/TransferPerizinan.php">
     <ImplicitToStringCast occurrences="1">
@@ -164,9 +150,7 @@
     <InvalidReturnStatement occurrences="1">
       <code>static::getPermissions($params, true)-&gt;first()</code>
     </InvalidReturnStatement>
-    <InvalidReturnType occurrences="1">
-      <code>\Spatie\Permission\Contracts\Permission</code>
-    </InvalidReturnType>
+    <InvalidReturnType occurrences="1"/>
     <PossiblyNullArgument occurrences="1">
       <code>getModelForGuard($this-&gt;attributes['guard_name'] ?? config('auth.defaults.guard'))</code>
     </PossiblyNullArgument>
@@ -203,12 +187,6 @@
       <code>$waktuShift-&gt;jam_pulang</code>
     </PossiblyNullPropertyFetch>
   </file>
-  <file src="app/Models/Farmasi/Inventaris/SuratPemesananObat.php">
-    <ImplicitToStringCast occurrences="2">
-      <code>$jumlahObatYangBerbeda</code>
-      <code>$pemesananYangDatang</code>
-    </ImplicitToStringCast>
-  </file>
   <file src="app/Models/Farmasi/ResepObat.php">
     <ImplicitToStringCast occurrences="2">
       <code>DB::raw('dokter dokter_peresep')</code>
@@ -241,14 +219,6 @@
   <file src="app/Models/Keuangan/NotaSelesai.php">
     <ImplicitToStringCast occurrences="9">
       <code>DB::raw($notaPasien)</code>
-      <code>DB::raw($sik . '.bangsal bangsal')</code>
-      <code>DB::raw($sik . '.kamar kamar')</code>
-      <code>DB::raw($sik . '.kamar_inap kamar_inap')</code>
-      <code>DB::raw($sik . '.pasien pasien')</code>
-      <code>DB::raw($sik . '.pegawai')</code>
-      <code>DB::raw($sik . '.penjab penjab')</code>
-      <code>DB::raw($sik . '.piutang_pasien piutang_pasien')</code>
-      <code>DB::raw($sik . '.reg_periksa reg_periksa')</code>
     </ImplicitToStringCast>
   </file>
   <file src="app/Models/Keuangan/PenagihanPiutang.php">
@@ -276,9 +246,6 @@
       <code>DB::raw('pegawai pegawai_menyetujui')</code>
       <code>DB::raw('pegawai pegawai_penagih')</code>
     </ImplicitToStringCast>
-    <PossiblyNullArgument occurrences="1">
-      <code>$jurnal-&gt;keterangan</code>
-    </PossiblyNullArgument>
     <UndefinedMagicPropertyFetch occurrences="13">
       <code>$jurnal-&gt;besar_cicilan</code>
       <code>$jurnal-&gt;kd_pj</code>

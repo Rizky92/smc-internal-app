@@ -35,7 +35,7 @@ trait MergeCasts
 
                         [$cast, $arguments] = [array_shift($cast), $cast];
 
-                        return $cast . ':' . implode(',', $arguments);
+                        return $cast.':'.implode(',', $arguments);
                     });
                     break;
 
@@ -53,6 +53,7 @@ trait MergeCasts
         if ($this->getIncrementing()) {
             return array_merge([$this->getKeyName() => $this->getKeyType()], $this->casts);
         }
+
         return $this->casts;
     }
 }

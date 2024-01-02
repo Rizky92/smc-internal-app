@@ -37,7 +37,7 @@ class Kamar extends Model
      */
     public function scopeInformasiKamar(Builder $query): Builder
     {
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
         kamar.kd_kamar,
         kamar.trf_kamar,
         kamar.kelas,

@@ -2,22 +2,25 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
-use App\Models\Farmasi\Inventaris\GudangObat;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Farmasi\Inventaris\GudangObat;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class StokObatRuangan extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $kodeBangsal;
@@ -98,7 +101,7 @@ class StokObatRuangan extends Component
         return [
             'RS Samarinda Medika Citra',
             'Stok Obat per Ruangan',
-            'Per ' . now()->translatedFormat('d F Y'),
+            'Per '.now()->translatedFormat('d F Y'),
         ];
     }
 }

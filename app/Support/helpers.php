@@ -19,13 +19,13 @@ if (! function_exists('hari')) {
     }
 }
 
-if (!function_exists('user')) {
+if (! function_exists('user')) {
     function user(?string $guard = 'web'): Authenticatable
     {
         /** @var \App\Database\Eloquent\Authenticatable|null */
         $user = Auth::guard($guard)->user();
 
-        if (!$user) {
+        if (! $user) {
             throw new AuthenticationException('Unauthenticated', [$guard]);
         }
 
@@ -33,12 +33,10 @@ if (!function_exists('user')) {
     }
 }
 
-if (!function_exists('time_length')) {
+if (! function_exists('time_length')) {
     /**
-     * @param  \Illuminate\Support\Carbon|\DateTimeInterface|string $start
-     * @param  \Illuminate\Support\Carbon|\DateTimeInterface|string|null $end
-     * 
-     * @return string|null
+     * @param  \Illuminate\Support\Carbon|\DateTimeInterface|string  $start
+     * @param  \Illuminate\Support\Carbon|\DateTimeInterface|string|null  $end
      */
     function time_length($start, $end): ?string
     {
@@ -66,45 +64,44 @@ if (!function_exists('time_length')) {
     }
 }
 
-if (!function_exists('rp')) {
+if (! function_exists('rp')) {
     /**
-     * @param  int|float $nominal
+     * @param  int|float  $nominal
      */
     function rp($nominal = 0, int $decimalCount = 0): string
     {
-        return 'Rp. ' . number_format($nominal, $decimalCount, ',', '.');
+        return 'Rp. '.number_format($nominal, $decimalCount, ',', '.');
     }
 }
 
-if (!function_exists('money')) {
+if (! function_exists('money')) {
     /**
-     * @param  int|float $nominal
+     * @param  int|float  $nominal
      */
     function money($nominal = 0, int $decimalCount = 0, string $name = 'Rp. '): string
     {
-        return $name . number_format($nominal, $decimalCount, ',', '.');
+        return $name.number_format($nominal, $decimalCount, ',', '.');
     }
 }
 
-if (!function_exists('map_bulan')) {
+if (! function_exists('map_bulan')) {
     /**
-     * @param  \Illuminate\Support\Collection<int, int|float>|array<int, int|float>|null $data
-     * @param  mixed $default
-     * 
+     * @param  \Illuminate\Support\Collection<int, int|float>|array<int, int|float>|null  $data
+     * @param  mixed  $default
      * @return mixed[]
      */
     function map_bulan($data, $default = 0)
     {
         $arr = [
-            1 => $default,
-            2 => $default,
-            3 => $default,
-            4 => $default,
-            5 => $default,
-            6 => $default,
-            7 => $default,
-            8 => $default,
-            9 => $default,
+            1  => $default,
+            2  => $default,
+            3  => $default,
+            4  => $default,
+            5  => $default,
+            6  => $default,
+            7  => $default,
+            8  => $default,
+            9  => $default,
             10 => $default,
             11 => $default,
             12 => $default,
@@ -132,13 +129,13 @@ if (!function_exists('map_bulan')) {
     }
 }
 
-if (!function_exists('trackersql')) {
+if (! function_exists('trackersql')) {
     /**
-     * @param  Closure|callable|null $callable
+     * @param  Closure|callable|null  $callable
      */
     function trackersql(string $connection = 'mysql_smc', ?string $userId = null, $callable = null): void
     {
-        if (app('impersonate')->isImpersonating() || app()->runningUnitTests() || !is_callable($callable)) {
+        if (app('impersonate')->isImpersonating() || app()->runningUnitTests() || ! is_callable($callable)) {
             return;
         }
 
@@ -153,7 +150,7 @@ if (!function_exists('trackersql')) {
                 }
 
                 $log['bindings'] = collect($log['bindings'])->map(function ($value, $key) {
-                    if (!is_string($value)) {
+                    if (! is_string($value)) {
                         return $value;
                     }
 
@@ -188,7 +185,7 @@ if (!function_exists('trackersql')) {
     }
 }
 
-if (!function_exists('tracker_start')) {
+if (! function_exists('tracker_start')) {
     function tracker_start(string $connection = 'mysql_smc'): void
     {
         if (app('impersonate')->isImpersonating() || app()->runningUnitTests()) {
@@ -199,10 +196,10 @@ if (!function_exists('tracker_start')) {
     }
 }
 
-if (!function_exists('tracker_end')) {
-    function tracker_end(string $connection = 'mysql_smc', string $userId = null): void
+if (! function_exists('tracker_end')) {
+    function tracker_end(string $connection = 'mysql_smc', ?string $userId = null): void
     {
-        if (!DB::connection($connection)->logging()) {
+        if (! DB::connection($connection)->logging()) {
             return;
         }
 
@@ -237,7 +234,7 @@ if (!function_exists('tracker_end')) {
     }
 }
 
-if (!function_exists('tracker_dispose')) {
+if (! function_exists('tracker_dispose')) {
     function tracker_dispose(string $connection): void
     {
         DB::connection($connection)->flushQueryLog();
@@ -245,12 +242,11 @@ if (!function_exists('tracker_dispose')) {
     }
 }
 
-if (!function_exists('func_get_named_args')) {
+if (! function_exists('func_get_named_args')) {
     /**
-     * @param  object $object
-     * @param  string $name
-     * @param  mixed[] $args
-     * 
+     * @param  object  $object
+     * @param  string  $name
+     * @param  mixed[]  $args
      * @return mixed[]
      */
     function func_get_named_args($object, $name, $args): array
@@ -266,16 +262,15 @@ if (!function_exists('func_get_named_args')) {
     }
 }
 
-if (!function_exists('str')) {
+if (! function_exists('str')) {
     /**
-     * @param  string|null $value
-     * 
+     * @param  string|null  $value
      * @return \Illuminate\Support\Stringable|string|mixed
      */
     function str($value = null)
     {
         if (func_num_args() === 0) {
-            return new class
+            return new class()
             {
                 public function __call($method, $parameters)
                 {
@@ -293,16 +288,15 @@ if (!function_exists('str')) {
     }
 }
 
-if (!function_exists('maybe')) {
+if (! function_exists('maybe')) {
     /**
-     * @param  mixed $obj
-     * @param  \Closure|callable $default
-     * 
+     * @param  mixed  $obj
+     * @param  \Closure|callable  $default
      * @return mixed
      */
     function maybe($obj, $default = null)
     {
-        if (is_null($obj) && !is_null($default)) {
+        if (is_null($obj) && ! is_null($default)) {
             return Closure::fromCallable($default);
         }
 
@@ -314,13 +308,11 @@ if (!function_exists('maybe')) {
     }
 }
 
-if (!function_exists('between')) {
+if (! function_exists('between')) {
     /**
-     * @param  float|int $value
-     * @param  float|int $start
-     * @param  float|int $end
-     * 
-     * @return bool
+     * @param  float|int  $value
+     * @param  float|int  $start
+     * @param  float|int  $end
      */
     function between($value, $start = 0, $end = 0, bool $equal = false): bool
     {
@@ -332,11 +324,11 @@ if (!function_exists('between')) {
     }
 }
 
-if (!function_exists('attr')) {
+if (! function_exists('attr')) {
     function attr(string $name, array $attributes): string
     {
         $attr = collect($attributes)->filter()->keys()->first();
 
-        return $name . '=' . Str::wrap($attr, '"');
+        return $name.'='.Str::wrap($attr, '"');
     }
 }

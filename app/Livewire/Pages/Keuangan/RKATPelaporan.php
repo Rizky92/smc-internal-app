@@ -2,14 +2,14 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
-use App\Models\Bidang;
-use App\Models\Keuangan\RKAT\PemakaianAnggaran;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Bidang;
+use App\Models\Keuangan\RKAT\PemakaianAnggaran;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Collection;
@@ -18,7 +18,12 @@ use Livewire\Component;
 
 class RKATPelaporan extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $tglAwal;
@@ -93,7 +98,7 @@ class RKATPelaporan extends Component
                     'tahun'       => $model->anggaranBidang->tahun,
                     'tgl_dipakai' => $model->tgl_dipakai,
                     'nominal'     => floatval($model->nominal_pemakaian),
-                    'petugas'     => $model->user_id . ' ' .$model->petugas->nama,
+                    'petugas'     => $model->user_id.' '.$model->petugas->nama,
                     'keterangan'  => $model->deskripsi,
                 ])
                 ->all(),
@@ -119,7 +124,7 @@ class RKATPelaporan extends Component
         $periodeAwal = carbon($this->tglAwal);
         $periodeAkhir = carbon($this->tglAkhir);
 
-        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+        $periode = 'Periode '.$periodeAwal->translatedFormat('d F Y').' s.d. '.$periodeAkhir->translatedFormat('d F Y');
 
         if ($periodeAwal->isSameDay($periodeAkhir)) {
             $periode = $periodeAwal->translatedFormat('d F Y');
@@ -127,8 +132,8 @@ class RKATPelaporan extends Component
 
         return [
             'RS Samarinda Medika Citra',
-            'Pelaporan RKAT tahun ' .  $this->tahun,
-            'Per ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
+            'Pelaporan RKAT tahun '.$this->tahun,
+            'Per '.carbon($this->tglAkhir)->translatedFormat('d F Y'),
             $periode,
         ];
     }

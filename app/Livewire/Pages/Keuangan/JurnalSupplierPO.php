@@ -2,13 +2,13 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
-use App\Models\Keuangan\Jurnal\JurnalMedis;
-use App\Models\Keuangan\Jurnal\JurnalNonMedis;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Keuangan\Jurnal\JurnalMedis;
+use App\Models\Keuangan\Jurnal\JurnalNonMedis;
 use App\View\Components\BaseLayout;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
@@ -16,7 +16,11 @@ use Livewire\Component;
 
 class JurnalSupplierPO extends Component
 {
-    use FlashComponent, Filterable, LiveTable, MenuTracker, ExcelExportable;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $tglAwal;
@@ -148,7 +152,7 @@ class JurnalSupplierPO extends Component
         $periodeAwal = carbon($this->tglAwal);
         $periodeAkhir = carbon($this->tglAkhir);
 
-        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+        $periode = 'Periode '.$periodeAwal->translatedFormat('d F Y').' s.d. '.$periodeAkhir->translatedFormat('d F Y');
 
         if ($periodeAwal->isSameDay($periodeAkhir)) {
             $periode = $periodeAwal->translatedFormat('d F Y');

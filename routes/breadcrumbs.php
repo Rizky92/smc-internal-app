@@ -3,11 +3,9 @@
 use Diglactic\Breadcrumbs\Breadcrumbs;
 use Diglactic\Breadcrumbs\Generator as Trail;
 
-
 Breadcrumbs::for('admin.dashboard', function (Trail $trail): void {
     $trail->push('Dashboard', route('admin.dashboard'));
 });
-
 
 Breadcrumbs::for('admin.perawatan', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
@@ -29,7 +27,6 @@ Breadcrumbs::for('admin.perawatan.laporan-transaksi-gantung', function (Trail $t
     $trail->push('Transaksi Gantung', route('admin.perawatan.laporan-transaksi-gantung'));
 });
 
-
 Breadcrumbs::for('admin.lab', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Laboratorium');
@@ -39,7 +36,6 @@ Breadcrumbs::for('admin.lab.hasil-mcu-karyawan', function (Trail $trail): void {
     $trail->parent('admin.lab');
     $trail->push('Hasil MCU Karyawan', route('admin.lab.hasil-mcu-karyawan'));
 });
-
 
 Breadcrumbs::for('admin.keuangan', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
@@ -146,7 +142,6 @@ Breadcrumbs::for('admin.keuangan.laporan-trial-balance', function (Trail $trail)
     $trail->push('Trial Balance', route('admin.keuangan.laporan-trial-balance'));
 });
 
-
 Breadcrumbs::for('admin.farmasi', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Farmasi');
@@ -212,7 +207,6 @@ Breadcrumbs::for('admin.farmasi.defecta-depo', function (Trail $trail): void {
     $trail->push('Defecta Depo', route('admin.farmasi.defecta-depo'));
 });
 
-
 Breadcrumbs::for('admin.rekam-medis', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Rekam Medis');
@@ -233,7 +227,6 @@ Breadcrumbs::for('admin.rekam-medis.status-data-pasien', function (Trail $trail)
     $trail->push('Status Data Pasien', route('admin.rekam-medis.status-data-pasien'));
 });
 
-
 Breadcrumbs::for('admin.logistik', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Logistik');
@@ -249,12 +242,10 @@ Breadcrumbs::for('admin.logistik.stok-darurat', function (Trail $trail): void {
     $trail->push('Stok Darurat', route('admin.logistik.stok-darurat'));
 });
 
-
 Breadcrumbs::for('admin.manajemen-user', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Manajemen User', route('admin.manajemen-user'));
 });
-
 
 Breadcrumbs::for('admin.hak-akses', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
@@ -271,7 +262,6 @@ Breadcrumbs::for('admin.hak-akses.khanza', function (Trail $trail): void {
     $trail->push('SIMRS Khanza', route('admin.hak-akses.khanza'));
 });
 
-
 Breadcrumbs::for('admin.aplikasi', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Aplikasi');
@@ -286,7 +276,6 @@ Breadcrumbs::for('admin.aplikasi.pengaturan', function (Trail $trail): void {
     $trail->parent('admin.aplikasi');
     $trail->push('Pengaturan', route('admin.aplikasi.pengaturan'));
 });
-
 
 Breadcrumbs::for('admin.route-list', function (Trail $trail): void {
     $trail->parent('admin.dashboard');

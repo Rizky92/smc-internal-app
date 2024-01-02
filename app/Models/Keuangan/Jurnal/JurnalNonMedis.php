@@ -5,7 +5,6 @@ namespace App\Models\Keuangan\Jurnal;
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class JurnalNonMedis extends Model
 {
@@ -36,7 +35,7 @@ class JurnalNonMedis extends Model
 
         $db = DB::connection('mysql_sik')->getDatabaseName();
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             jurnal_non_medis.id,
             jurnal_non_medis.no_jurnal,
             jurnal_non_medis.waktu_jurnal,
@@ -63,8 +62,8 @@ class JurnalNonMedis extends Model
             'rekening.kd_rek',
             'rekening.nm_rek',
             'ipsrssuplier.nama_suplier',
-            "jurnal_non_medis.nik",
-            "pegawai.nama",
+            'jurnal_non_medis.nik',
+            'pegawai.nama',
         ]);
 
         $this->addRawColumns('nm_pegawai', DB::raw("trim(concat(jurnal_non_medis.nik, ' ', coalesce(pegawai.nama, '')))"));
@@ -88,8 +87,8 @@ class JurnalNonMedis extends Model
         DB::connection('mysql_sik')
             ->table('jurnal')
             ->when(
-                !is_null($latest),
-                fn ($query) => $query->whereRaw("timestamp(tgl_jurnal, jam_jurnal) > ?", $latest->waktu_jurnal),
+                ! is_null($latest),
+                fn ($query) => $query->whereRaw('timestamp(tgl_jurnal, jam_jurnal) > ?', $latest->waktu_jurnal),
                 fn ($query) => $query->where('tgl_jurnal', '>=', '2022-10-31')
             )
             ->where(fn ($query) => $query
@@ -99,7 +98,6 @@ class JurnalNonMedis extends Model
             ->orderBy('no_jurnal')
             ->chunk(500, function ($jurnal) {
                 /** @var \Illuminate\Support\Collection $jurnal */
-
                 $data = $jurnal->map(function ($value, $key) {
                     $ket = str($value->keterangan);
 
@@ -108,12 +106,12 @@ class JurnalNonMedis extends Model
                     $petugas = $ket->after('OLEH ')->trim()->value();
 
                     return [
-                        'no_jurnal' => $value->no_jurnal,
+                        'no_jurnal'    => $value->no_jurnal,
                         'waktu_jurnal' => "{$value->tgl_jurnal} {$value->jam_jurnal}",
-                        'no_faktur' => $noFaktur,
-                        'status' => $status ? 'Batal' : 'Sudah',
-                        'ket' => $value->keterangan,
-                        'nik' => $petugas,
+                        'no_faktur'    => $noFaktur,
+                        'status'       => $status ? 'Batal' : 'Sudah',
+                        'ket'          => $value->keterangan,
+                        'nik'          => $petugas,
                     ];
                 });
 

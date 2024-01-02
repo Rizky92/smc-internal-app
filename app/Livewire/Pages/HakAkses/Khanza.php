@@ -2,21 +2,23 @@
 
 namespace App\Livewire\Pages\HakAkses;
 
-use App\Models\Aplikasi\HakAkses;
-use App\Models\Aplikasi\User;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Aplikasi\HakAkses;
+use App\Models\Aplikasi\User;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class Khanza extends Component
 {
-    use FlashComponent, Filterable, LiveTable, MenuTracker;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     public function mount(): void
     {
@@ -49,7 +51,7 @@ class Khanza extends Component
 
     public function syncHakAkses(): void
     {
-        if (!user()->hasRole(config('permission.superadmin_name'))) {
+        if (! user()->hasRole(config('permission.superadmin_name'))) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
@@ -103,7 +105,7 @@ class Khanza extends Component
 
     public function simpanHakAkses(string $field, string $judul): void
     {
-        if (!user()->hasRole(config('permission.superadmin_name'))) {
+        if (! user()->hasRole(config('permission.superadmin_name'))) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;

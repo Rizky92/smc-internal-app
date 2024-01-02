@@ -30,7 +30,7 @@ class TambahanBiaya extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             reg_periksa.tgl_registrasi,
             reg_periksa.jam_reg,
             pasien.nm_pasien,
@@ -60,7 +60,7 @@ class TambahanBiaya extends Model
         ]);
 
         $this->addRawColumns([
-            'dokter_ralan' => DB::raw("dokter.nm_dokter"),
+            'dokter_ralan' => DB::raw('dokter.nm_dokter'),
             'dokter_ranap' => DB::raw("coalesce(nullif(trim(dokter_pj.nm_dokter), ''), '-')"),
         ]);
 

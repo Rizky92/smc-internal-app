@@ -22,7 +22,7 @@ class PenerimaanObat extends Model
 
     public function scopePembelianFarmasi(Builder $query, string $year = '2022'): Builder
     {
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             round(sum(detailpesan.total)) jumlah,
             month(pemesanan.tgl_pesan) bulan
         SQL;
@@ -32,7 +32,7 @@ class PenerimaanObat extends Model
             ->withCasts(['jumlah' => 'float', 'bulan' => 'int'])
             ->join('detailpesan', 'pemesanan.no_faktur', '=', 'detailpesan.no_faktur')
             ->whereBetween('pemesanan.tgl_pesan', ["{$year}-01-01", "{$year}-12-31"])
-            ->groupByRaw("month(pemesanan.tgl_pesan)");
+            ->groupByRaw('month(pemesanan.tgl_pesan)');
     }
 
     public function scopeHutangAging(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
@@ -45,7 +45,7 @@ class PenerimaanObat extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             detail_titip_faktur.no_tagihan,
             pemesanan.no_order,
             pemesanan.no_faktur,
@@ -91,7 +91,7 @@ class PenerimaanObat extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             case
                 when datediff(?, titip_faktur.tanggal) <= 30 then 'periode_0_30'
                 when datediff(?, titip_faktur.tanggal) between 31 and 60 then 'periode_31_60'
@@ -103,7 +103,7 @@ class PenerimaanObat extends Model
             round(sum(pemesanan.tagihan - ifnull(bayar_pemesanan.besar_bayar, 0)), 2) sisa_tagihan
         SQL;
 
-        $sqlGroupBy = <<<SQL
+        $sqlGroupBy = <<<'SQL'
             datediff(?, titip_faktur.tanggal) <= 30,
             datediff(?, titip_faktur.tanggal) between 31 and 60,
             datediff(?, titip_faktur.tanggal) between 61 and 90,

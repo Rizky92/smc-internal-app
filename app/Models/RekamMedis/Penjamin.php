@@ -28,8 +28,7 @@ class Penjamin extends Model
     public function namaPenjamin(): Attribute
     {
         return Attribute::get(
-            fn (): string =>
-            !in_array($this->nama_perusahaan, ['-', ''])
+            fn (): string => ! in_array($this->nama_perusahaan, ['-', ''])
                 ? $this->nama_perusahaan
                 : $this->png_jawab
         );

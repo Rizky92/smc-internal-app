@@ -5,7 +5,6 @@ namespace App\Database\Eloquent\Concerns;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 trait Searchable
@@ -16,8 +15,7 @@ trait Searchable
     }
 
     /**
-     * @param  \Illuminate\Support\Collection<int, string>|string[] $columns
-     * 
+     * @param  \Illuminate\Support\Collection<int, string>|string[]  $columns
      * @return $this
      */
     public function addSearchConditions($columns)
@@ -30,11 +28,7 @@ trait Searchable
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Builder $query
-     * @param  string $search
-     * @param  \Illuminate\Support\Collection<int, string>|array<array-key, string> $columns
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  \Illuminate\Support\Collection<int, string>|array<array-key, string>  $columns
      *
      * @throws \LogicException
      */
@@ -72,7 +66,7 @@ trait Searchable
             });
 
         if ($columns->isEmpty()) {
-            throw new Exception("No columns are defined to perform search.");
+            throw new Exception('No columns are defined to perform search.');
         }
 
         // Convert to lowercase, split search queries to each words, filter any white-space characters, and wrap each words with "%".

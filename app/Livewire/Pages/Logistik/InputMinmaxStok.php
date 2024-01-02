@@ -2,24 +2,27 @@
 
 namespace App\Livewire\Pages\Logistik;
 
-use App\Models\Logistik\BarangNonMedis;
-use App\Models\Logistik\MinmaxStokBarangNonMedis;
-use App\Models\Logistik\SupplierNonMedis;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Logistik\BarangNonMedis;
+use App\Models\Logistik\MinmaxStokBarangNonMedis;
+use App\Models\Logistik\SupplierNonMedis;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class InputMinmaxStok extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     public function mount(): void
     {
@@ -63,8 +66,8 @@ class InputMinmaxStok extends Component
         MinmaxStokBarangNonMedis::updateOrCreate([
             'kode_brng' => $kodeBarang,
         ], [
-            'stok_min' => $stokMin,
-            'stok_max' => $stokMax,
+            'stok_min'     => $stokMin,
+            'stok_max'     => $stokMax,
             'kode_suplier' => $kodeSupplier,
         ]);
 
@@ -86,7 +89,7 @@ class InputMinmaxStok extends Component
         return [
             BarangNonMedis::query()
                 ->denganMinmax($export = true)
-                ->get()
+                ->get(),
         ];
     }
 

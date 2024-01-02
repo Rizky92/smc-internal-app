@@ -77,7 +77,7 @@ class PenagihanPiutang extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             penagihan_piutang.no_tagihan,
             detail_penagihan_piutang.no_rawat,
             penagihan_piutang.tanggal tgl_tagihan,
@@ -200,7 +200,7 @@ class PenagihanPiutang extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             case
                 when datediff(?, penagihan_piutang.tanggal) <= 30 then 'periode_0_30'
                 when datediff(?, penagihan_piutang.tanggal) between 31 and 60 then 'periode_31_60'
@@ -212,7 +212,7 @@ class PenagihanPiutang extends Model
             round(sum(detail_piutang_pasien.totalpiutang - ifnull(bayar_piutang.besar_cicilan, 0)), 2) sisa_piutang
         SQL;
 
-        $sqlGroupBy = <<<SQL
+        $sqlGroupBy = <<<'SQL'
             datediff(?, penagihan_piutang.tanggal) <= 30,
             datediff(?, penagihan_piutang.tanggal) between 31 and 60,
             datediff(?, penagihan_piutang.tanggal) between 61 and 90,
@@ -244,10 +244,10 @@ class PenagihanPiutang extends Model
         return $query
             ->selectRaw($sqlSelect, [$tglAkhir, $tglAkhir, $tglAkhir, $tglAkhir])
             ->withCasts([
-                'periode' => 'int',
+                'periode'       => 'int',
                 'total_piutang' => 'float',
                 'total_cicilan' => 'float',
-                'sisa_piutang' => 'float',
+                'sisa_piutang'  => 'float',
             ])
             ->join('detail_penagihan_piutang', 'penagihan_piutang.no_tagihan', '=', 'detail_penagihan_piutang.no_tagihan')
             ->leftJoin('detail_piutang_pasien', fn (JoinClause $join) => $join

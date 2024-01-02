@@ -87,7 +87,7 @@ class PiutangDilunaskan extends Model
     {
         $latest = static::query()->latest('waktu_jurnal')->value('waktu_jurnal');
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
 jurnal.no_jurnal,
 timestamp(jurnal.tgl_jurnal, jurnal.jam_jurnal) as waktu_jurnal,
 jurnal.no_bukti,
@@ -121,8 +121,8 @@ SQL;
                 ->on('detail_penagihan_piutang.no_rawat', '=', 'bayar_piutang.no_rawat')
                 ->on('akun_piutang.kd_rek', '=', 'bayar_piutang.kd_rek_kontra'))
             ->when(
-                !is_null($latest),
-                fn (Builder $q): Builder => $q->whereRaw("timestamp(tgl_jurnal, jam_jurnal) > ?", $latest),
+                ! is_null($latest),
+                fn (Builder $q): Builder => $q->whereRaw('timestamp(tgl_jurnal, jam_jurnal) > ?', $latest),
                 fn (Builder $q): Builder => $q->where('tgl_jurnal', '>=', '2022-10-31')
             )
             ->where('penagihan_piutang.status', 'Sudah Dibayar')
@@ -168,7 +168,7 @@ SQL;
     {
         $latest = static::query()->latest('waktu_jurnal')->value('waktu_jurnal');
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             jurnal.no_jurnal,
             timestamp(jurnal.tgl_jurnal, jurnal.jam_jurnal) waktu_jurnal,
             detail_penagihan_piutang.no_rawat,
@@ -198,8 +198,8 @@ SQL;
                 ->on('detail_penagihan_piutang.no_rawat', '=', 'bayar_piutang.no_rawat')
                 ->on('penagihan_piutang.kd_rek', '=', 'bayar_piutang.kd_rek'))
             ->when(
-                !is_null($latest),
-                fn (Builder $q): Builder => $q->whereRaw("timestamp(tgl_jurnal, jam_jurnal) > ?", $latest),
+                ! is_null($latest),
+                fn (Builder $q): Builder => $q->whereRaw('timestamp(tgl_jurnal, jam_jurnal) > ?', $latest),
                 fn (Builder $q): Builder => $q->where('tgl_jurnal', '>=', '2022-10-31')
             )
             ->where('penagihan_piutang.status', 'Sudah Dibayar')
@@ -257,14 +257,14 @@ SQL;
         }
 
         $filterTgl = [
-            'jurnal'    => DB::raw("date(waktu_jurnal)"),
+            'jurnal'    => DB::raw('date(waktu_jurnal)'),
             'penagihan' => 'tgl_penagihan',
             'bayar'     => 'tgl_bayar',
         ][$berdasarkanTgl];
 
         $db = DB::connection('mysql_sik')->getDatabaseName();
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             piutang_dilunaskan.*,
             jurnal.keterangan,
             concat(registrasi.umurdaftar, ' ', registrasi.sttsumur) umur,

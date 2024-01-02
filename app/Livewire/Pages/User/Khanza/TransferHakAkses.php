@@ -2,20 +2,21 @@
 
 namespace App\Livewire\Pages\User\Khanza;
 
-use App\Models\Aplikasi\User;
 use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\LiveTable;
+use App\Models\Aplikasi\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class TransferHakAkses extends Component
 {
-    use Filterable, LiveTable, DeferredModal;
+    use DeferredModal;
+    use Filterable;
+    use LiveTable;
 
     /** @var ?string */
     public $nrp;
@@ -80,7 +81,7 @@ class TransferHakAkses extends Component
 
     public function save(): void
     {
-        if (!user()->hasRole(config('permission.superadmin_name'))) {
+        if (! user()->hasRole(config('permission.superadmin_name'))) {
             $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
@@ -103,7 +104,7 @@ class TransferHakAkses extends Component
         tracker_end('mysql_sik');
 
         $this->dispatchBrowserEvent('data-saved');
-        $this->emit('flash.success', "Transfer hak akses SIMRS Khanza berhasil!");
+        $this->emit('flash.success', 'Transfer hak akses SIMRS Khanza berhasil!');
     }
 
     protected function defaultValues(): void

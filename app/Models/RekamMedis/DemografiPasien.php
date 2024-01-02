@@ -42,7 +42,7 @@ class DemografiPasien extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             kecamatan,
             no_rm,
             no_rawat,

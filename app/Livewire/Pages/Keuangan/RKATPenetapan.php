@@ -2,15 +2,15 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
-use App\Models\Bidang;
-use App\Models\Keuangan\RKAT\AnggaranBidang;
-use App\Settings\RKATSettings;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Bidang;
+use App\Models\Keuangan\RKAT\AnggaranBidang;
+use App\Settings\RKATSettings;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Collection;
@@ -19,7 +19,12 @@ use Livewire\Component;
 
 class RKATPenetapan extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $tahun;
@@ -80,7 +85,7 @@ class RKATPenetapan extends Component
 
         $penetapanAwal = $settings->tgl_penetapan_awal;
         $penetapanAkhir = $settings->tgl_penetapan_akhir;
-        
+
         return (carbon()->between($penetapanAwal, $penetapanAkhir) && $hasPermission) || $isDevelop;
     }
 
@@ -125,8 +130,8 @@ class RKATPenetapan extends Component
     {
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Penetapan RKAT Tahun ' . $this->tahun,
-            'Per ' . now()->translatedFormat('d F Y'),
+            'Laporan Penetapan RKAT Tahun '.$this->tahun,
+            'Per '.now()->translatedFormat('d F Y'),
         ];
     }
 }

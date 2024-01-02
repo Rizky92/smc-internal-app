@@ -44,7 +44,7 @@ class HasilPeriksaRadiologi extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             periksa_radiologi.no_rawat,
             reg_periksa.no_rkm_medis,
             pasien.nm_pasien,
@@ -112,10 +112,10 @@ class HasilPeriksaRadiologi extends Model
                 ->on('periksa_radiologi.tgl_periksa', '=', 'hasil_radiologi.tgl_periksa')
                 ->on('periksa_radiologi.jam', '=', 'hasil_radiologi.jam'))
             ->whereBetween('periksa_radiologi.tgl_periksa', [$tglAwal, $tglAkhir])
-            ->groupByRaw("concat(
+            ->groupByRaw('concat(
                 periksa_radiologi.no_rawat,
                 periksa_radiologi.tgl_periksa,
                 periksa_radiologi.jam
-            )");
+            )');
     }
 }

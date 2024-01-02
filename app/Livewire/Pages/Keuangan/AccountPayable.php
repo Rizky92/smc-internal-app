@@ -2,23 +2,27 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
-use App\Models\Farmasi\PenerimaanObat;
-use App\Models\Logistik\PemesananBarangNonMedis;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Farmasi\PenerimaanObat;
+use App\Models\Logistik\PemesananBarangNonMedis;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class AccountPayable extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $tglAwal;
@@ -339,7 +343,7 @@ class AccountPayable extends Component
         $periodeAwal = carbon($this->tglAwal);
         $periodeAkhir = carbon($this->tglAkhir);
 
-        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+        $periode = 'Periode '.$periodeAwal->translatedFormat('d F Y').' s.d. '.$periodeAkhir->translatedFormat('d F Y');
 
         if ($periodeAwal->isSameDay($periodeAkhir)) {
             $periode = $periodeAwal->translatedFormat('d F Y');
@@ -347,8 +351,8 @@ class AccountPayable extends Component
 
         return [
             'RS Samarinda Medika Citra',
-            'Hutang Aging (Account Payable) ' . collect($appends)->join(', ', ' dan '),
-            'Per ' . carbon($this->tglAkhir)->translatedFormat('d F Y'),
+            'Hutang Aging (Account Payable) '.collect($appends)->join(', ', ' dan '),
+            'Per '.carbon($this->tglAkhir)->translatedFormat('d F Y'),
             $periode,
         ];
     }

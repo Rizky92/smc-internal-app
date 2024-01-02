@@ -2,15 +2,15 @@
 
 namespace App\Livewire\Pages\Informasi;
 
-use App\View\Components\CustomerLayout;
-use App\Models\Perawatan\RegistrasiPasien;
 use App\Models\Antrian\Jadwal;
+use App\Models\Perawatan\RegistrasiPasien;
+use App\View\Components\CustomerLayout;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class DisplayJadwalDokter extends Component
 {
-    private function getNamaHari($hari): string
+    private function getNamaHari(string $hari): string
     {
         switch ($hari) {
             case 'Sunday':
@@ -32,7 +32,7 @@ class DisplayJadwalDokter extends Component
         }
     }
 
-    private function hitungRegistrasi($kdPoli, $kdDokter, $tanggal): int
+    private function hitungRegistrasi($kdPoli, $kdDokter, string $tanggal): int
     {
         return RegistrasiPasien::hitungData($kdPoli, $kdDokter, $tanggal);
     }
@@ -42,7 +42,7 @@ class DisplayJadwalDokter extends Component
      */
     public function getDataJadwalDokterProperty(): \Illuminate\Database\Eloquent\Collection
     {
-        $hari = now()->format('l'); 
+        $hari = now()->format('l');
         $namahari = $this->getNamaHari($hari);
 
         $jadwal = Jadwal::with(['dokter', 'poliklinik'])
@@ -72,7 +72,7 @@ class DisplayJadwalDokter extends Component
             ->get();
 
         foreach ($jadwal as $jadwalItem) {
-                $jadwalItem->register = $this->hitungRegistrasi(
+            $jadwalItem->register = $this->hitungRegistrasi(
                 $jadwalItem->kd_poli,
                 $jadwalItem->kd_dokter,
                 now()->format('Y-m-d')
@@ -83,4 +83,3 @@ class DisplayJadwalDokter extends Component
             ->layout(CustomerLayout::class, ['title' => 'Display Jadwal Dokter']);
     }
 }
-

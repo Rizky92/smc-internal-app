@@ -21,9 +21,9 @@ class ResepDokter extends Model
     public $timestamps = false;
 
     protected $searchColumns = [
-        'no_resep', 
-        'kode_brng', 
-        'aturan_pakai'
+        'no_resep',
+        'kode_brng',
+        'aturan_pakai',
     ];
 
     public function scopeKunjunganResepObatRegular(
@@ -40,7 +40,7 @@ class ResepDokter extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             resep_obat.tgl_perawatan,
             timestamp(resep_obat.tgl_perawatan, resep_obat.jam) as waktu_validasi,
             timestamp(resep_obat.tgl_penyerahan, resep_obat.jam_penyerahan) as waktu_penyerahan,
@@ -75,7 +75,7 @@ class ResepDokter extends Model
             ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->where('reg_periksa.status_bayar', 'Sudah Bayar')
             ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
-            ->when(!empty($jenisPerawatan), fn (Builder $query) => $query->where('reg_periksa.status_lanjut', $jenisPerawatan))
+            ->when(! empty($jenisPerawatan), fn (Builder $query) => $query->where('reg_periksa.status_lanjut', $jenisPerawatan))
             ->groupBy([
                 'resep_dokter.no_resep',
                 'dokter.nm_dokter',

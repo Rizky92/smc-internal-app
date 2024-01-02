@@ -45,7 +45,7 @@ class Rekening extends Model
         $tglAwalTahun = $tglSaldo->startOfYear()->format('Y-m-d');
         $tglAkhirBulanLalu = $tglSaldo->subMonth()->endOfMonth()->format('Y-m-d');
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             rekening.kd_rek,
             case
                 when rekening.balance = "D" then round(sum(detailjurnal.debet) - sum(detailjurnal.kredit), 2)
@@ -74,7 +74,7 @@ class Rekening extends Model
             $tglAkhir = carbon($tglAkhir)->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             detailjurnal.kd_rek,
             round(sum(detailjurnal.debet), 2) total_debet,
             round(sum(detailjurnal.kredit), 2) total_kredit
@@ -106,7 +106,7 @@ class Rekening extends Model
             $tglAkhir = now()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             rekening.kd_rek,
             rekening.nm_rek,
             rekening.balance,

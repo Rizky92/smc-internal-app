@@ -2,36 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Perawatan\RegistrasiPasien;
 use App\Models\Antrian\Jadwal;
-use Illuminate\Http\Request;
+use App\Models\Perawatan\RegistrasiPasien;
 
 class JadwalController
 {
     public function jadwal(): \Illuminate\View\View
     {
-        $hari = now()->format('l'); 
+        $hari = now()->format('l');
         $namahari = $this->getNamaHari($hari);
 
         $jadwal = Jadwal::with(['dokter', 'poliklinik'])
             ->where('hari_kerja', $namahari)
             ->get();
 
-            $tanggal = now();
+        $tanggal = now();
 
-            foreach ($jadwal as $jadwalItem) {
-                $count = RegistrasiPasien::hitungData(
-                    $jadwalItem->kd_poli,
-                    $jadwalItem->kd_dokter,
-                    $tanggal
-                );
-                $jadwalItem->register = $count;
-            }
+        foreach ($jadwal as $jadwalItem) {
+            $count = RegistrasiPasien::hitungData(
+                $jadwalItem->kd_poli,
+                $jadwalItem->kd_dokter,
+                $tanggal
+            );
+            $jadwalItem->register = $count;
+        }
 
         return view('jadwal', compact('jadwal', 'namahari'));
     }
 
-    private function getNamaHari($hari): string
+    private function getNamaHari(string $hari): string
     {
         switch ($hari) {
             case 'Sunday':

@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Perawatan\RegistrasiPasien;
 use App\Models\Antrian\AntriPoli;
-use App\Models\Perawatan\Poliklinik;
 use App\Models\Kepegawaian\Dokter;
-use Illuminate\Support\Facades\Date;
+use App\Models\Perawatan\Poliklinik;
+use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Http\Request;
 use Livewire\Component;
 
@@ -34,7 +33,6 @@ class AntrianPoliController extends Component
             ->where('antripoli.kd_poli', $kd_poli)
             ->where('antripoli.kd_dokter', $kd_dokter)
             ->first();
-        
 
         return view('antrian-poli', compact('antrianPasien', 'namaDokter', 'namaPoli', 'nextAntrian', 'kd_poli', 'kd_dokter'));
     }
@@ -52,7 +50,7 @@ class AntrianPoliController extends Component
         if ($nextAntrian) {
             $lastNoReg = $request->input('lastNoReg');
             if ($this->isDataChanged($nextAntrian, $lastNoReg)) {
-                \Illuminate\Support\Facades\Log::info('Data Changed: ' . json_encode($nextAntrian));
+                \Illuminate\Support\Facades\Log::info('Data Changed: '.json_encode($nextAntrian));
                 $response = ['changed' => true, 'data' => $nextAntrian];
             } else {
                 \Illuminate\Support\Facades\Log::info('No Data Change');
@@ -65,11 +63,12 @@ class AntrianPoliController extends Component
         return response()->json($response);
     }
 
-    private function isDataChanged($nextAntrian, $lastNoReg): bool
+    private function isDataChanged(object $nextAntrian, $lastNoReg): bool
     {
         if ($lastNoReg !== $nextAntrian->no_reg) {
             return true;
         }
+
         return false;
     }
 }
