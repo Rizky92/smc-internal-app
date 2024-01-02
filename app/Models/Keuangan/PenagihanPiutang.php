@@ -93,9 +93,9 @@ class PenagihanPiutang extends Model
             piutang_pasien.status,
             akun_piutang.kd_rek,
             akun_piutang.nama_bayar,
-            round(detail_piutang_pasien.totalpiutang, 2) total_piutang,
-            round(bayar_piutang.besar_cicilan, 2) besar_cicilan,
-            round(detail_piutang_pasien.totalpiutang - ifnull(bayar_piutang.besar_cicilan, 0), 2) sisa_piutang,
+            round(ifnull(detail_piutang_pasien.totalpiutang, detail_penagihan_piutang.sisapiutang), 2) total_piutang,
+            round(ifnull(bayar_piutang.besar_cicilan, 0), 2) besar_cicilan,
+            round(ifnull(detail_piutang_pasien.totalpiutang - ifnull(bayar_piutang.besar_cicilan, 0), detail_penagihan_piutang.sisapiutang), 2) sisa_piutang,
             datediff(?, penagihan_piutang.tanggal) umur_hari
         SQL;
 
@@ -143,7 +143,7 @@ class PenagihanPiutang extends Model
             ->leftJoin('detail_piutang_pasien', fn (JoinClause $join) => $join
                 ->on('detail_penagihan_piutang.no_rawat', '=', 'detail_piutang_pasien.no_rawat')
                 ->on('penagihan_piutang.kd_pj', '=', 'detail_piutang_pasien.kd_pj'))
-            ->join('piutang_pasien', 'detail_piutang_pasien.no_rawat', '=', 'piutang_pasien.no_rawat')
+            ->leftJoin('piutang_pasien', 'detail_penagihan_piutang.no_rawat', '=', 'piutang_pasien.no_rawat')
             ->leftJoin('akun_piutang', 'detail_piutang_pasien.nama_bayar', '=', 'akun_piutang.nama_bayar')
             ->leftJoin('bayar_piutang', fn (JoinClause $join) => $join
                 ->on('detail_penagihan_piutang.no_rawat', '=', 'bayar_piutang.no_rawat')

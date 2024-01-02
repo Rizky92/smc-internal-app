@@ -93,9 +93,15 @@
             "./vendor/bin/psalm --update-baseline",
             "@refactor"
         ],
-        "psalm-init": [
+        "psalm:init": [
             "./vendor/bin/psalm --init",
             "./vendor/bin/psalm-plugin enable psalm/plugin-laravel"
+        ],
+        "psalm:clear-cache": [
+            "./vendor/bin/psalm --clear-cache"
+        ],
+        "psalm:refactor": [
+            "@refactor"
         ],
         "refactor": [
             "./vendor/bin/psalm --alter --issues=MissingReturnType,MissingClosureReturnType,InvalidReturnType,InvalidNullableReturnType,InvalidFalsableReturnType,MismatchingDocblockParamType,MismatchingDocblockReturnType,ParamNameMismatch,PossiblyUndefinedVariable,PossiblyUndefinedGlobalVariable,UnnecessaryVarAnnotation --allow-backwards-incompatible-changes=true"
