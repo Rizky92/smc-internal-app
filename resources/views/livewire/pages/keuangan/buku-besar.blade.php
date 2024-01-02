@@ -41,7 +41,7 @@
                             <x-table.td>{{ $jurnal->no_bukti }}</x-table.td>
                             <x-table.td>{{ $jurnal->keterangan }}</x-table.td>
                             <x-table.td>{{ optional($jurnal->pengeluaranHarian)->keterangan ?? "-" }}</x-table.td>
-                            <x-table.td>{{ optional($jurnal->penagihanPiutangByNoTagihan())->catatan ?? '-' }}</x-table.td>
+                            <x-table.td>{{ $jurnal->catatanPenagihan }}</x-table.td>
                             <x-table.td>{{ $jurnal->kd_rek }}</x-table.td>
                             <x-table.td>{{ $jurnal->nm_rek }}</x-table.td>
                             <x-table.td>{{ rp($jurnal->debet) }}</x-table.td>

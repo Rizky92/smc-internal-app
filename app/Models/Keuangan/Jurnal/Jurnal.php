@@ -5,6 +5,7 @@ namespace App\Models\Keuangan\Jurnal;
 use App\Database\Eloquent\Model;
 use App\Models\Keuangan\PengeluaranHarian;
 use App\Models\Keuangan\PenagihanPiutang;
+use App\Models\Keuangan\PenagihanPiutangDetail;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
@@ -52,17 +53,25 @@ class Jurnal extends Model
         return $this->belongsTo(PengeluaranHarian::class, 'no_bukti', 'no_keluar');
     }
 
-    public function penagihanPiutangByNoTagihan()
+    public function catatanPenagihan()
     {
-        preg_match('/TAGIHAN (\S+),/', $this->keterangan, $matches);
-        
-        if (!empty($matches[1])) {
-            return PenagihanPiutang::where('no_tagihan', $matches[1])->first();
+        $penagihanDetail = PenagihanPiutangDetail::where('no_rawat', $this->no_bukti)->first();
+
+        if ($penagihanDetail) {
+            $noTagihan = $penagihanDetail->no_tagihan;
+            $penagihan = PenagihanPiutang::where('no_tagihan', $noTagihan)->first();
+
+            return $penagihan ? $penagihan->catatan : '-';
         }
 
-        return null;
+        return '-';
     }
     
+    public function getCatatanPenagihanAttribute()
+    {
+        return $this->catatanPenagihan();
+    }
+
     public function scopeJurnalUmum(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
