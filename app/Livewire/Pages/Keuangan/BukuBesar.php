@@ -48,22 +48,23 @@ class BukuBesar extends Component
 
     public function getBukuBesarProperty()
     {
-        return $this->isDeferred
-            ? []
-            : Jurnal::query()
-                ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
-                ->with('pengeluaranHarian')
-                ->search($this->cari)
-                ->sortWithColumns($this->sortColumns, [
-                    'tgl_jurnal' => 'asc',
-                    'jam_jurnal' => 'asc',
-                ])
-                ->paginate($this->perpage)
-                ->each(function ($jurnal) {
-                    $jurnal->catatanPenagihan = optional($jurnal->penagihanPiutangByNoTagihan())->catatan;
-                });
+        if ($this->isDeferred) {
+            return [];
+        }
+    
+        $jurnals = Jurnal::query()
+            ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
+            ->with('pengeluaranHarian')
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns, [
+                'tgl_jurnal' => 'asc',
+                'jam_jurnal' => 'asc',
+            ])
+            ->paginate($this->perpage);
+    
+        return $jurnals;
     }
-
+    
     public function getTotalDebetDanKreditProperty()
     {
         return $this->isDeferred
@@ -96,32 +97,21 @@ class BukuBesar extends Component
                 ->with('pengeluaranHarian')
                 ->search($this->cari)
                 ->cursor()
-                ->map(fn (Jurnal $model): array => [
-                    'tgl_jurnal'             => $model->tgl_jurnal,
-                    'jam_jurnal'             => $model->jam_jurnal,
-                    'no_jurnal'              => $model->no_jurnal,
-                    'no_bukti'               => $model->no_bukti,
-                    'keterangan'             => $model->keterangan,
-                    'keterangan_pengeluaran' => optional($model->pengeluaranHarian)->keterangan ?? '-',
-                    'catatan_penagihan'      => optional($model->penagihanPiutangByNoTagihan())->catatan ?? '-',
-                    'kd_rek'                 => $model->kd_rek,
-                    'nm_rek'                 => $model->nm_rek,
-                    'debet'                  => round($model->debet, 2),
-                    'kredit'                 => round($model->kredit, 2),
-                ])
-                ->merge([[
-                    'tgl_jurnal'             => '',
-                    'jam_jurnal'             => '',
-                    'no_jurnal'              => '',
-                    'no_bukti'               => '',
-                    'keterangan'             => '',
-                    'keterangan_pengeluaran' => '',
-                    'catatan_penagihan'      => '',
-                    'kd_rek'                 => '',
-                    'nm_rek'                 => 'TOTAL',
-                    'debet'                  => round(optional($this->totalDebetDanKredit)->debet, 2),
-                    'kredit'                 => round(optional($this->totalDebetDanKredit)->kredit, 2),
-                ]])
+                ->map(function (Jurnal $model) {
+                    return [
+                        'tgl_jurnal'             => $model->tgl_jurnal,
+                        'jam_jurnal'             => $model->jam_jurnal,
+                        'no_jurnal'              => $model->no_jurnal,
+                        'no_bukti'               => $model->no_bukti,
+                        'keterangan'             => $model->keterangan,
+                        'keterangan_pengeluaran' => optional($model->pengeluaranHarian)->keterangan ?? '-',
+                        'catatan_penagihan'      => $model->catatanPenagihan(),
+                        'kd_rek'                 => $model->kd_rek,
+                        'nm_rek'                 => $model->nm_rek,
+                        'debet'                  => round($model->debet, 2),
+                        'kredit'                 => round($model->kredit, 2),
+                    ];
+                })
                 ->all(),
         ];
     }
