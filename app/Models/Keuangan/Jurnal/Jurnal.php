@@ -4,8 +4,8 @@ namespace App\Models\Keuangan\Jurnal;
 
 use App\Database\Eloquent\Model;
 use App\Models\Keuangan\PenagihanPiutang;
-use App\Models\Keuangan\PengeluaranHarian;
 use App\Models\Keuangan\PenagihanPiutangDetail;
+use App\Models\Keuangan\PengeluaranHarian;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -66,7 +66,7 @@ class Jurnal extends Model
 
         return '-';
     }
-    
+
     public function getCatatanPenagihanAttribute()
     {
         return $this->catatanPenagihan();

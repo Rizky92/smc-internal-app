@@ -48,11 +48,7 @@ class BukuBesar extends Component
 
     public function getBukuBesarProperty()
     {
-        if ($this->isDeferred) {
-            return [];
-        }
-    
-        $jurnals = Jurnal::query()
+        return $this->isDeferred ? [] : Jurnal::query()
             ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
             ->with('pengeluaranHarian')
             ->search($this->cari)
@@ -61,10 +57,8 @@ class BukuBesar extends Component
                 'jam_jurnal' => 'asc',
             ])
             ->paginate($this->perpage);
-    
-        return $jurnals;
     }
-    
+
     public function getTotalDebetDanKreditProperty()
     {
         return $this->isDeferred
@@ -97,21 +91,19 @@ class BukuBesar extends Component
                 ->with('pengeluaranHarian')
                 ->search($this->cari)
                 ->cursor()
-                ->map(function (Jurnal $model) {
-                    return [
-                        'tgl_jurnal'             => $model->tgl_jurnal,
-                        'jam_jurnal'             => $model->jam_jurnal,
-                        'no_jurnal'              => $model->no_jurnal,
-                        'no_bukti'               => $model->no_bukti,
-                        'keterangan'             => $model->keterangan,
-                        'keterangan_pengeluaran' => optional($model->pengeluaranHarian)->keterangan ?? '-',
-                        'catatan_penagihan'      => $model->catatanPenagihan(),
-                        'kd_rek'                 => $model->kd_rek,
-                        'nm_rek'                 => $model->nm_rek,
-                        'debet'                  => round($model->debet, 2),
-                        'kredit'                 => round($model->kredit, 2),
-                    ];
-                })
+                ->map(fn (Jurnal $model): array => [
+                    'tgl_jurnal'             => $model->tgl_jurnal,
+                    'jam_jurnal'             => $model->jam_jurnal,
+                    'no_jurnal'              => $model->no_jurnal,
+                    'no_bukti'               => $model->no_bukti,
+                    'keterangan'             => $model->keterangan,
+                    'keterangan_pengeluaran' => optional($model->pengeluaranHarian)->keterangan ?? '-',
+                    'catatan_penagihan'      => $model->catatanPenagihan(),
+                    'kd_rek'                 => $model->kd_rek,
+                    'nm_rek'                 => $model->nm_rek,
+                    'debet'                  => round($model->debet, 2),
+                    'kredit'                 => round($model->kredit, 2),
+                ])
                 ->all(),
         ];
     }
