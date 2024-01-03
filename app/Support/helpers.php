@@ -2,6 +2,8 @@
 
 use App\Database\Eloquent\Authenticatable;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -22,7 +24,7 @@ if (! function_exists('hari')) {
 if (! function_exists('user')) {
     function user(?string $guard = 'web'): Authenticatable
     {
-        /** @var \App\Database\Eloquent\Authenticatable|null */
+        /** @var Authenticatable|null */
         $user = Auth::guard($guard)->user();
 
         if (! $user) {
@@ -35,8 +37,8 @@ if (! function_exists('user')) {
 
 if (! function_exists('time_length')) {
     /**
-     * @param  \Illuminate\Support\Carbon|\DateTimeInterface|string  $start
-     * @param  \Illuminate\Support\Carbon|\DateTimeInterface|string|null  $end
+     * @param  Carbon|\DateTimeInterface|string  $start
+     * @param  Carbon|\DateTimeInterface|string|null  $end
      */
     function time_length($start, $end): ?string
     {
@@ -66,7 +68,7 @@ if (! function_exists('time_length')) {
 
 if (! function_exists('rp')) {
     /**
-     * @param  int|float  $nominal
+     * @param  \int|float  $nominal
      */
     function rp($nominal = 0, int $decimalCount = 0): string
     {
@@ -76,7 +78,7 @@ if (! function_exists('rp')) {
 
 if (! function_exists('money')) {
     /**
-     * @param  int|float  $nominal
+     * @param  \int|float  $nominal
      */
     function money($nominal = 0, int $decimalCount = 0, string $name = 'Rp. '): string
     {
@@ -86,9 +88,9 @@ if (! function_exists('money')) {
 
 if (! function_exists('map_bulan')) {
     /**
-     * @param  \Illuminate\Support\Collection<int, int|float>|array<int, int|float>|null  $data
-     * @param  mixed  $default
-     * @return mixed[]
+     * @param  Collection<int, int|float>|array<int, int|float>|null  $data
+     * @param  \mixed  $default
+     * @return \mixed[]
      */
     function map_bulan($data, $default = 0)
     {
@@ -131,7 +133,7 @@ if (! function_exists('map_bulan')) {
 
 if (! function_exists('trackersql')) {
     /**
-     * @param  Closure|callable|null  $callable
+     * @param  \Closure|callable|null  $callable
      */
     function trackersql(string $connection = 'mysql_smc', ?string $userId = null, $callable = null): void
     {
@@ -244,10 +246,10 @@ if (! function_exists('tracker_dispose')) {
 
 if (! function_exists('func_get_named_args')) {
     /**
-     * @param  object  $object
-     * @param  string  $name
-     * @param  mixed[]  $args
-     * @return mixed[]
+     * @param  \object  $object
+     * @param  \string  $name
+     * @param  \mixed[]  $args
+     * @return \mixed[]
      */
     function func_get_named_args($object, $name, $args): array
     {
@@ -264,13 +266,13 @@ if (! function_exists('func_get_named_args')) {
 
 if (! function_exists('str')) {
     /**
-     * @param  string|null  $value
+     * @param  \string|null  $value
      * @return \Illuminate\Support\Stringable|string|mixed
      */
     function str($value = null)
     {
         if (func_num_args() === 0) {
-            return new class()
+            return new class
             {
                 public function __call($method, $parameters)
                 {
@@ -290,9 +292,9 @@ if (! function_exists('str')) {
 
 if (! function_exists('maybe')) {
     /**
-     * @param  mixed  $obj
+     * @param  \mixed  $obj
      * @param  \Closure|callable  $default
-     * @return mixed
+     * @return \mixed
      */
     function maybe($obj, $default = null)
     {
@@ -310,9 +312,9 @@ if (! function_exists('maybe')) {
 
 if (! function_exists('between')) {
     /**
-     * @param  float|int  $value
-     * @param  float|int  $start
-     * @param  float|int  $end
+     * @param  \float|int  $value
+     * @param  \float|int  $start
+     * @param  \float|int  $end
      */
     function between($value, $start = 0, $end = 0, bool $equal = false): bool
     {

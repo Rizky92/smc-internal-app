@@ -42,7 +42,7 @@ class ModalPerizinan extends Component
     }
 
     /**
-     * @return \Illuminate\Support\Collection<int, string>
+     * @return Collection<int, string>
      */
     public function getPermissionsProperty(): Collection
     {
@@ -61,7 +61,7 @@ class ModalPerizinan extends Component
         $this->roleId = $id;
 
         if ($id !== -1) {
-            /** @var \App\Models\Aplikasi\Role */
+            /** @var Role */
             $role = Role::findById($id);
 
             $this->roleName = $role->name;
@@ -100,7 +100,7 @@ class ModalPerizinan extends Component
             return;
         }
 
-        /** @var \App\Models\Aplikasi\Role */
+        /** @var Role */
         $role = Role::findById($this->roleId);
 
         tracker_start();

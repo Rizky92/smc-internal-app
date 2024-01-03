@@ -99,7 +99,7 @@ class RKATInputPenetapan extends Component
     {
         $this->anggaranBidangId = $id;
 
-        /** @var \App\Models\Keuangan\RKAT\AnggaranBidang */
+        /** @var AnggaranBidang */
         $data = AnggaranBidang::find($id);
 
         $this->anggaranId = $data->anggaran_id;

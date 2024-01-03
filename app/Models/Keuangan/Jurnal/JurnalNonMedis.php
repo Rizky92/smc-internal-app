@@ -4,6 +4,7 @@ namespace App\Models\Keuangan\Jurnal;
 
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class JurnalNonMedis extends Model
@@ -97,7 +98,7 @@ class JurnalNonMedis extends Model
             ->where('keterangan', 'not like', '%adjustmen%')
             ->orderBy('no_jurnal')
             ->chunk(500, function ($jurnal) {
-                /** @var \Illuminate\Support\Collection $jurnal */
+                /** @var Collection $jurnal */
                 $data = $jurnal->map(function ($value, $key) {
                     $ket = str($value->keterangan);
 

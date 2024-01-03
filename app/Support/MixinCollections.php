@@ -11,7 +11,7 @@ use Illuminate\Support\Stringable;
 class MixinCollections
 {
     /**
-     * @return \Closure(bool, mixed): \Illuminate\Support\Collection
+     * @return Closure(bool, mixed): \Illuminate\Support\Collection
      */
     public function mergeWhen(): Closure
     {
@@ -20,7 +20,7 @@ class MixinCollections
     }
 
     /**
-     * @return \Closure(): \Illuminate\Support\Collection
+     * @return Closure(): \Illuminate\Support\Collection
      */
     public function dot(): Closure
     {
@@ -29,7 +29,7 @@ class MixinCollections
     }
 
     /**
-     * @return \Closure(int|string|null): mixed
+     * @return Closure(int|string|null): mixed
      */
     public function getByDot(): Closure
     {
@@ -38,7 +38,7 @@ class MixinCollections
     }
 
     /**
-     * @return \Closure(string, string): \Illuminate\Support\Stringable
+     * @return Closure(string, string): \Illuminate\Support\Stringable
      */
     public function joinStr(): Closure
     {
@@ -47,7 +47,7 @@ class MixinCollections
     }
 
     /**
-     * @return \Closure(): bool
+     * @return Closure(): bool
      */
     public function isAssoc(): Closure
     {
@@ -60,7 +60,7 @@ class MixinCollections
     }
 
     /**
-     * @return \Closure(): bool
+     * @return Closure(): bool
      */
     public function isList(): Closure
     {
@@ -73,7 +73,7 @@ class MixinCollections
     }
 
     /**
-     * @return \Closure(bool $condition, mixed ...$values): \Illuminate\Support\Collection
+     * @return Closure(bool $condition, mixed ...$values): \Illuminate\Support\Collection
      */
     public function pushIf(): Closure
     {
@@ -82,7 +82,7 @@ class MixinCollections
     }
 
     /**
-     * @return \Closure(bool, ...mixed): \Illuminate\Support\Collection
+     * @return Closure(bool, ...mixed): \Illuminate\Support\Collection
      */
     public function pushUnless(): Closure
     {
@@ -91,7 +91,7 @@ class MixinCollections
     }
 
     /**
-     * @return \Closure(string|null, int): \Illuminate\Support\Collection
+     * @return Closure(string|null, int): \Illuminate\Support\Collection
      */
     public function whereLike(): Closure
     {
@@ -102,7 +102,7 @@ class MixinCollections
     }
 
     /**
-     * @return \Closure(string|null, int): bool
+     * @return Closure(string|null, int): bool
      */
     public function containsLike(): Closure
     {
@@ -113,13 +113,13 @@ class MixinCollections
     }
 
     /**
-     * @return \Closure(string|mixed): bool
+     * @return Closure(string|mixed): bool
      */
     public function doesntHave(): Closure
     {
         /** @psalm-scope-this Illuminate\Support\Collection */
         return function (...$key): bool {
-            /** @var \Illuminate\Support\Collection $this */
+            /** @var Collection $this */
             $key = count($key) > 1 ? $key[array_keys($key)[0]] : $key;
 
             if ($this->isAssoc() && is_string($key)) {

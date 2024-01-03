@@ -86,7 +86,7 @@ class Permission extends Model implements PermissionContract
      *
      * @param  string|null  $guardName
      *
-     * @throws \Spatie\Permission\Exceptions\PermissionDoesNotExist
+     * @throws PermissionDoesNotExist
      */
     public static function findByName(string $name, $guardName = null): self
     {
@@ -104,12 +104,12 @@ class Permission extends Model implements PermissionContract
      *
      * @param  string|null  $guardName
      *
-     * @throws \Spatie\Permission\Exceptions\PermissionDoesNotExist
+     * @throws PermissionDoesNotExist
      */
     public static function findById(int $id, $guardName = null): self
     {
         $guardName = $guardName ?? Guard::getDefaultName(static::class);
-        $permission = static::getPermission([(new static())->getKeyName() => $id, 'guard_name' => $guardName]);
+        $permission = static::getPermission([(new static)->getKeyName() => $id, 'guard_name' => $guardName]);
 
         if (! $permission) {
             throw PermissionDoesNotExist::withId($id, $guardName);

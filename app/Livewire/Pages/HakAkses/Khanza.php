@@ -9,6 +9,7 @@ use App\Livewire\Concerns\MenuTracker;
 use App\Models\Aplikasi\HakAkses;
 use App\Models\Aplikasi\User;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -26,7 +27,7 @@ class Khanza extends Component
     }
 
     /**
-     * @psalm-return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @psalm-return LengthAwarePaginator
      */
     public function getHakAksesKhanzaProperty(): Paginator
     {

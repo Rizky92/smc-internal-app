@@ -3,6 +3,7 @@
 namespace App\Services\BPJS;
 
 use Illuminate\Http\Client\Response;
+use Illuminate\Support\Collection;
 use LZCompressor\LZString;
 
 class BpjsService
@@ -38,7 +39,7 @@ class BpjsService
         return base64_encode($signature);
     }
 
-    protected function decryptResponse(?string $key = null): \Illuminate\Support\Collection
+    protected function decryptResponse(?string $key = null): Collection
     {
         $consid = config('bpjs.consid');
         $secret = config('bpjs.secret');

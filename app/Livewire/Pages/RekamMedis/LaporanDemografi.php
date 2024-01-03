@@ -10,6 +10,7 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Perawatan\RegistrasiPasien;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -42,7 +43,7 @@ class LaporanDemografi extends Component
     }
 
     /**
-     * @return \Illuminate\Contracts\Pagination\Paginator|array<empty, empty>
+     * @return Paginator|array<empty, empty>
      */
     public function getDemografiPasienProperty()
     {

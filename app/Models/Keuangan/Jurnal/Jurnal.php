@@ -181,7 +181,7 @@ class Jurnal extends Model
 
     /**
      * @param  "U"|"P"  $jenis
-     * @param  \Carbon\Carbon|\DateTime|string  $waktuTransaksi
+     * @param  Carbon|\DateTime|string  $waktuTransaksi
      * @param  array<array{kd_rek: string, debet: int|float, kredit: int|float}>  $detail
      * @return static
      */

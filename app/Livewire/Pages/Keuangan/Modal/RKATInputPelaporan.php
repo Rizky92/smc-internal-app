@@ -9,6 +9,7 @@ use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Models\Keuangan\RKAT\PemakaianAnggaran;
 use App\Models\Keuangan\RKAT\PemakaianAnggaranDetail;
 use App\Settings\RKATSettings;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
@@ -27,7 +28,7 @@ class RKATInputPelaporan extends Component
     /** @var int */
     public $anggaranBidangId;
 
-    /** @var \Carbon\Carbon|\DateTime|string */
+    /** @var Carbon|\DateTime|string */
     public $tglPakai;
 
     /** @var string */
@@ -175,7 +176,7 @@ class RKATInputPelaporan extends Component
         $this->validate();
         $this->validasiNominalPemakaian();
 
-        /** @var \App\Models\Keuangan\RKAT\PemakaianAnggaran */
+        /** @var PemakaianAnggaran */
         $pemakaianAnggaran = PemakaianAnggaran::find($this->pemakaianAnggaranId);
 
         tracker_start();

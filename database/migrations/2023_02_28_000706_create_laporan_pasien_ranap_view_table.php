@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Staudenmeir\LaravelMigrationViews\Facades\Schema;
 
-return new class() extends Migration
+return new class extends Migration
 {
     protected $connection = 'mysql_smc';
 

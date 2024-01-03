@@ -2,12 +2,13 @@
 
 namespace App\Support;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Collection;
 
 class Menu
 {
     /**
-     * @param  \Illuminate\Contracts\Auth\Authenticatable&\App\Database\Eloquent\Authenticatable  $user
+     * @param  Authenticatable&\App\Database\Eloquent\Authenticatable  $user
      */
     public static function all($user, ?string $search = null): Collection
     {

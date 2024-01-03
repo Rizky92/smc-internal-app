@@ -7,6 +7,7 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\LiveTable;
 use App\Models\Aplikasi\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -58,7 +59,7 @@ class TransferPerizinan extends Component
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection<\App\Models\Aplikasi\User>|array<empty, empty>
+     * @return Collection<\App\Models\Aplikasi\User>|array<empty, empty>
      */
     public function getAvailableUsersProperty()
     {
@@ -89,7 +90,7 @@ class TransferPerizinan extends Component
             ->first();
 
         if (! $user) {
-            throw (new ModelNotFoundException())->setModel(User::class, [$nrp]);
+            throw (new ModelNotFoundException)->setModel(User::class, [$nrp]);
         }
 
         $this->roles = $user->roles->pluck('name', 'id')->all();

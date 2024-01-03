@@ -9,7 +9,7 @@ class CreateJobBatchesTable extends Migration
     /**
      * Run the migrations.
      *
-     * @return void
+     * @return \void
      */
     public function up()
     {
@@ -30,7 +30,7 @@ class CreateJobBatchesTable extends Migration
     /**
      * Reverse the migrations.
      *
-     * @return void
+     * @return \void
      */
     public function down()
     {

@@ -176,7 +176,7 @@ class PermissionSeeder extends Seeder
         $kasirRole->givePermissionTo($kasirPermissions);
         $MODRole->givePermissionTo($MODPermissions);
 
-        /** @var \App\Models\Aplikasi\User */
+        /** @var User */
         $user = User::findByNRP('221203');
 
         $user->assignRole($superadminRole);

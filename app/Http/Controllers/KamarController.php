@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Bangsal;
 use App\Models\Perawatan\Kamar;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class KamarController
 {
-    public function getInformasiKamarProperty(): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    public function getInformasiKamarProperty(): LengthAwarePaginator
     {
         return Bangsal::activeWithKamar()
             ->distinct()

@@ -5,6 +5,7 @@ namespace App\Livewire\Pages\Informasi;
 use App\Models\Antrian\Jadwal;
 use App\Models\Perawatan\RegistrasiPasien;
 use App\View\Components\CustomerLayout;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -38,9 +39,9 @@ class DisplayJadwalDokter extends Component
     }
 
     /**
-     * @psalm-return \Illuminate\Database\Eloquent\Collection<\Illuminate\Database\Eloquent\Model>
+     * @psalm-return Collection<\Illuminate\Database\Eloquent\Model>
      */
-    public function getDataJadwalDokterProperty(): \Illuminate\Database\Eloquent\Collection
+    public function getDataJadwalDokterProperty(): Collection
     {
         $hari = now()->format('l');
         $namahari = $this->getNamaHari($hari);

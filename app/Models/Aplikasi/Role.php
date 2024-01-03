@@ -92,7 +92,7 @@ class Role extends Model implements RoleContract
      *
      * @param  string|null  $guardName
      *
-     * @throws \Spatie\Permission\Exceptions\RoleDoesNotExist
+     * @throws RoleDoesNotExist
      *
      * @psalm-return \Illuminate\Database\Eloquent\Builder<static>
      */
@@ -120,7 +120,7 @@ class Role extends Model implements RoleContract
     {
         $guardName = $guardName ?? Guard::getDefaultName(static::class);
 
-        $role = static::findByParam([(new static())->getKeyName() => $id, 'guard_name' => $guardName]);
+        $role = static::findByParam([(new static)->getKeyName() => $id, 'guard_name' => $guardName]);
 
         if (! $role) {
             throw RoleDoesNotExist::withId($id);
@@ -176,7 +176,7 @@ class Role extends Model implements RoleContract
      *
      * @param  string|Permission  $permission
      *
-     * @throws \Spatie\Permission\Exceptions\GuardDoesNotMatch
+     * @throws GuardDoesNotMatch
      */
     public function hasPermissionTo($permission): bool
     {

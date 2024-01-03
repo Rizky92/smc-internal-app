@@ -13,7 +13,7 @@ class AuthorizeAny
     /**
      * The gate instance.
      *
-     * @var \Illuminate\Contracts\Auth\Access\Gate
+     * @var Gate
      */
     protected $gate;
 
@@ -36,7 +36,7 @@ class AuthorizeAny
      * @return mixed
      *
      * @throws \Illuminate\Auth\AuthenticationException
-     * @throws \Illuminate\Auth\Access\AuthorizationException
+     * @throws AuthorizationException
      */
     public function handle(Request $request, Closure $next, $abilities, ...$models)
     {
@@ -45,7 +45,7 @@ class AuthorizeAny
         }
 
         if (! $this->gate->any($abilities, $this->getGateArguments($request, $models))) {
-            throw new AuthorizationException();
+            throw new AuthorizationException;
         }
 
         return $next($request);
@@ -54,7 +54,7 @@ class AuthorizeAny
     /**
      * Get the arguments parameter for the gate.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @param  array|null  $models
      * @return \Illuminate\Support\Collection<array-key, \Illuminate\Database\Eloquent\Model>|array
      */
@@ -72,7 +72,7 @@ class AuthorizeAny
     /**
      *  Get the model to authorize.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @param  string  $model
      * @return null|object|string
      */

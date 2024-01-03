@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Database\Eloquent\Model;
 use App\Models\Perawatan\Kamar;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 class Bangsal extends Model
 {
@@ -26,9 +28,9 @@ class Bangsal extends Model
     }
 
     /**
-     * @psalm-return \Illuminate\Database\Eloquent\Relations\HasMany<Kamar>
+     * @psalm-return HasMany<Kamar>
      */
-    public function kamar(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function kamar(): HasMany
     {
         return $this->hasMany(Kamar::class, 'kd_bangsal', 'kd_bangsal');
     }
@@ -71,7 +73,7 @@ class Bangsal extends Model
             ->orderBy('kelas');
     }
 
-    public static function getKelasList(): \Illuminate\Support\Collection
+    public static function getKelasList(): Collection
     {
         return Kamar::select('kelas')->distinct()->pluck('kelas');
     }

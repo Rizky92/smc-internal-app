@@ -4,6 +4,7 @@ namespace App\Livewire\Pages\User\Siap;
 
 use App\Livewire\Concerns\DeferredModal;
 use App\Models\Aplikasi\TrackerMenu;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -30,7 +31,7 @@ class LihatAktivitas extends Component
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection|array<empty, empty>
+     * @return Collection|array<empty, empty>
      */
     public function getAktivitasUserProperty()
     {

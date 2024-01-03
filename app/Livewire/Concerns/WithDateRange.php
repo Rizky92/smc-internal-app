@@ -6,10 +6,10 @@ use Carbon\Carbon;
 
 trait WithDateRange
 {
-    /** @var \Carbon\Carbon|string */
+    /** @var Carbon|string */
     public $tglAwal;
 
-    /** @var \Carbon\Carbon|string */
+    /** @var Carbon|string */
     public $tglAkhir;
 
     protected function queryStringWithDateRange(): array

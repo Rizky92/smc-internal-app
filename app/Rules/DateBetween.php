@@ -14,8 +14,8 @@ class DateBetween implements Rule
     /**
      * Create a new rule instance.
      *
-     * @param  \Carbon\Carbon|\DateTime|string  $start
-     * @param  \Carbon\Carbon|\DateTime|string  $end
+     * @param  Carbon|\DateTime|string  $start
+     * @param  Carbon|\DateTime|string  $end
      * @return void
      */
     public function __construct($start, $end)
@@ -28,7 +28,7 @@ class DateBetween implements Rule
      * Determine if the validation rule passes.
      *
      * @param  string  $attribute
-     * @param  \Carbon\Carbon|\DateTime|string|mixed  $value
+     * @param  Carbon|\DateTime|string|mixed  $value
      * @return bool
      */
     public function passes($attribute, $value)

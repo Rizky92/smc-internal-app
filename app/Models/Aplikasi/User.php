@@ -5,6 +5,7 @@ namespace App\Models\Aplikasi;
 use App\Casts\BooleanCast;
 use App\Database\Eloquent\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Lab404\Impersonate\Models\Impersonate;
@@ -1089,12 +1090,12 @@ class User extends Authenticatable
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Model|static|null
+     * @return Model|static|null
      */
     public static function findByNRP(string $nrp, array $columns = ['*'])
     {
         if (empty($nrp)) {
-            return new static();
+            return new static;
         }
 
         return static::query()
@@ -1108,7 +1109,7 @@ class User extends Authenticatable
     public static function rawFindByNRP(string $nrp, array $columns = ['*']): self
     {
         if (empty($nrp)) {
-            return new static();
+            return new static;
         }
 
         return static::query()

@@ -6,12 +6,15 @@ use App\Models\Antrian\AntriPoli;
 use App\Models\Kepegawaian\Dokter;
 use App\Models\Perawatan\Poliklinik;
 use App\Models\Perawatan\RegistrasiPasien;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class AntrianPoliController extends Component
 {
-    public function show($kd_poli, $kd_dokter): \Illuminate\View\View
+    public function show($kd_poli, $kd_dokter): View
     {
         $tanggal = now()->format('Y-m-d');
 
@@ -37,7 +40,7 @@ class AntrianPoliController extends Component
         return view('antrian-poli', compact('antrianPasien', 'namaDokter', 'namaPoli', 'nextAntrian', 'kd_poli', 'kd_dokter'));
     }
 
-    public function checkDataChanges(Request $request, $kd_poli, $kd_dokter): \Illuminate\Http\JsonResponse
+    public function checkDataChanges(Request $request, $kd_poli, $kd_dokter): JsonResponse
     {
         $tanggal = now()->format('Y-m-d');
 
@@ -50,10 +53,10 @@ class AntrianPoliController extends Component
         if ($nextAntrian) {
             $lastNoReg = $request->input('lastNoReg');
             if ($this->isDataChanged($nextAntrian, $lastNoReg)) {
-                \Illuminate\Support\Facades\Log::info('Data Changed: '.json_encode($nextAntrian));
+                Log::info('Data Changed: '.json_encode($nextAntrian));
                 $response = ['changed' => true, 'data' => $nextAntrian];
             } else {
-                \Illuminate\Support\Facades\Log::info('No Data Change');
+                Log::info('No Data Change');
                 $response = ['changed' => false, 'data' => $nextAntrian];
             }
         } else {

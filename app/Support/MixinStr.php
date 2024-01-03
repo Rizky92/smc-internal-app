@@ -9,7 +9,7 @@ class MixinStr
     /**
      * Determine if a given string does not contain a given substring.
      *
-     * @return \Closure(string, string|string[]): bool
+     * @return Closure(string, string|string[]): bool
      */
     public function doesntContain(): Closure
     {
@@ -20,7 +20,7 @@ class MixinStr
     /**
      * replace all strings with provided value.
      *
-     * @return \Closure(string|string[], string, string): string
+     * @return Closure(string|string[], string, string): string
      */
     public function replaceWith(): Closure
     {
@@ -38,7 +38,7 @@ class MixinStr
     }
 
     /**
-     * @return \Closure(string, string, ?string): string
+     * @return Closure(string, string, ?string): string
      */
     public function wrap(): Closure
     {
@@ -48,7 +48,7 @@ class MixinStr
     }
 
     /**
-     * @return \Closure(string): int
+     * @return Closure(string): int
      */
     public function parseInt(): Closure
     {
@@ -56,7 +56,7 @@ class MixinStr
     }
 
     /**
-     * @return \Closure(string): float
+     * @return Closure(string): float
      */
     public function parseDouble(): Closure
     {
@@ -64,7 +64,7 @@ class MixinStr
     }
 
     /**
-     * @return \Closure(string): float
+     * @return Closure(string): float
      */
     public function parseFloat(): Closure
     {
@@ -72,7 +72,7 @@ class MixinStr
     }
 
     /**
-     * @return \Closure(string): bool
+     * @return Closure(string): bool
      */
     public function parseBoolean(): Closure
     {

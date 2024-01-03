@@ -7,7 +7,7 @@ use Closure;
 class MixinArr
 {
     /**
-     * @return \Closure(array): bool
+     * @return Closure(array): bool
      */
     public function isList(): Closure
     {

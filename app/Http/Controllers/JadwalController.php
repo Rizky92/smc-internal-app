@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Antrian\Jadwal;
 use App\Models\Perawatan\RegistrasiPasien;
+use Illuminate\View\View;
 
 class JadwalController
 {
-    public function jadwal(): \Illuminate\View\View
+    public function jadwal(): View
     {
         $hari = now()->format('l');
         $namahari = $this->getNamaHari($hari);

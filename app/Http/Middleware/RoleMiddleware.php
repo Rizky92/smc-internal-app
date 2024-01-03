@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Aplikasi\User;
 use Closure;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class RoleMiddleware
@@ -10,14 +12,14 @@ class RoleMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @param  array|string  $role
      * @param  string  $guard
      * @return mixed
      */
     public function handle($request, Closure $next, $role, $guard = null)
     {
-        /** @var \App\Models\Aplikasi\User */
+        /** @var User */
         $user = Auth::guard($guard)->user();
 
         $roles = is_array($role)

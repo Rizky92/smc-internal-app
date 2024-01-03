@@ -7,6 +7,7 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\Jurnal\JurnalBackup;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -53,7 +54,7 @@ class UbahTanggalJurnal extends Component
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection<\App\Models\Keuangan\Jurnal\JurnalBackup>|array<empty, empty>
+     * @return Collection<\App\Models\Keuangan\Jurnal\JurnalBackup>|array<empty, empty>
      */
     public function getBackupJurnalProperty()
     {

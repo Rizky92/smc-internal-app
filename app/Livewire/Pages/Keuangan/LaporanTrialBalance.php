@@ -112,7 +112,7 @@ class LaporanTrialBalance extends Component
     }
 
     /**
-     * @return \Illuminate\Support\Fluent|array<never, never>
+     * @return Fluent|array<never, never>
      */
     public function getTotalDebetKreditTrialBalanceProperty()
     {

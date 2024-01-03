@@ -2,6 +2,7 @@
 
 namespace App\Database\Eloquent\Concerns;
 
+use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
@@ -16,7 +17,7 @@ trait Sortable
         return [];
     }
 
-    public function addRawColumns($columns, $expression = null): \App\Database\Eloquent\Model
+    public function addRawColumns($columns, $expression = null): Model
     {
         if (is_string($columns) && $expression) {
             $this->rawColumns = array_merge($this->rawColumns, [$columns => $expression]);
@@ -32,7 +33,7 @@ trait Sortable
     }
 
     /**
-     * @param  \Illuminate\Support\Collection<TKey, TValue>|array<TValue>|string  $columns
+     * @param  Collection<TKey, TValue>|array<TValue>|string  $columns
      * @param  \Illuminate\Database\Query\Expression|string|null  $condition
      * @return $this
      */

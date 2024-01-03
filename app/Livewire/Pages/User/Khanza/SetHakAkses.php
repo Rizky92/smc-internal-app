@@ -8,6 +8,7 @@ use App\Livewire\Concerns\LiveTable;
 use App\Models\Aplikasi\HakAkses;
 use App\Models\Aplikasi\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -50,7 +51,7 @@ class SetHakAkses extends Component
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection|array<empty, empty>
+     * @return Collection|array<empty, empty>
      */
     public function getHakAksesKhanzaProperty()
     {

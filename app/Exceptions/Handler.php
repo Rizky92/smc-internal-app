@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
@@ -33,7 +34,7 @@ class Handler extends ExceptionHandler
      *
      * @return void
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function report(Throwable $e)
     {
@@ -43,15 +44,15 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @return \Symfony\Component\HttpFoundation\Response
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function render($request, Throwable $e)
     {
         if ($e instanceof AuthorizationException) {
-            $e = new NotFoundHttpException();
+            $e = new NotFoundHttpException;
         }
 
         return parent::render($request, $e);

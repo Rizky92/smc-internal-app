@@ -32,7 +32,7 @@ class BidangUnit extends Component
     }
 
     /**
-     * @psalm-return \Illuminate\Database\Eloquent\Collection<Bidang>
+     * @psalm-return Collection<Bidang>
      */
     public function getBidangUnitProperty(): Collection
     {

@@ -13,6 +13,7 @@ use App\Models\Keuangan\AkunBayar;
 use App\Models\Keuangan\PenagihanPiutang;
 use App\Models\RekamMedis\Penjamin;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -71,7 +72,7 @@ class AccountReceivable extends Component
     }
 
     /**
-     * @return \Illuminate\Contracts\Pagination\Paginator|array<empty, empty>
+     * @return Paginator|array<empty, empty>
      */
     public function getDataAccountReceivableProperty()
     {

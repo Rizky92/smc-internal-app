@@ -7,6 +7,7 @@ use App\Models\Kepegawaian\Dokter;
 use App\Models\Perawatan\Poliklinik;
 use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Jadwal extends Model
 {
@@ -23,17 +24,17 @@ class Jadwal extends Model
     public $timestamps = false;
 
     /**
-     * @psalm-return \Illuminate\Database\Eloquent\Relations\BelongsTo<Dokter>
+     * @psalm-return BelongsTo<Dokter>
      */
-    public function dokter(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function dokter(): BelongsTo
     {
         return $this->belongsTo(Dokter::class, 'kd_dokter', 'kd_dokter');
     }
 
     /**
-     * @psalm-return \Illuminate\Database\Eloquent\Relations\BelongsTo<Poliklinik>
+     * @psalm-return BelongsTo<Poliklinik>
      */
-    public function poliklinik(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function poliklinik(): BelongsTo
     {
         return $this->belongsTo(Poliklinik::class, 'kd_poli', 'kd_poli');
     }

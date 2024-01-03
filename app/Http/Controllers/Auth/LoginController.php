@@ -15,7 +15,7 @@ use Illuminate\Validation\ValidationException;
 class LoginController
 {
     /**
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     * @return RedirectResponse|\Illuminate\View\View
      */
     public function create()
     {
@@ -35,7 +35,7 @@ class LoginController
             'pass' => ['required', 'string', 'max:20'],
         ], $request->only(['user', 'pass']));
 
-        $timebox = new Timebox();
+        $timebox = new Timebox;
 
         $user = $timebox->call(function (Timebox $t) use ($request): ?User {
             $user = User::query()

@@ -5,6 +5,7 @@ namespace App\Database\Eloquent\Concerns;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 trait Searchable
@@ -15,7 +16,7 @@ trait Searchable
     }
 
     /**
-     * @param  \Illuminate\Support\Collection<int, string>|string[]  $columns
+     * @param  Collection<int, string>|string[]  $columns
      * @return $this
      */
     public function addSearchConditions($columns)
@@ -28,7 +29,7 @@ trait Searchable
     }
 
     /**
-     * @param  \Illuminate\Support\Collection<int, string>|array<array-key, string>  $columns
+     * @param  Collection<int, string>|array<array-key, string>  $columns
      *
      * @throws \LogicException
      */
