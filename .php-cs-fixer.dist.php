@@ -104,7 +104,7 @@ class LaravelPhpdocAlignmentFixer implements FixerInterface
 return (new PhpCsFixer\Config())
     ->setFinder($finder)
     ->setRules([
-        '@PER' => true,
+        '@PER-CS2.0' => true,
         'array_indentation' => true,
         'array_syntax' => ['syntax' => 'short'],
         'binary_operator_spaces' => [
@@ -161,7 +161,10 @@ return (new PhpCsFixer\Config())
         'elseif' => true,
         'encoding' => true,
         'full_opening_tag' => true,
-        'fully_qualified_strict_types' => true,
+        'fully_qualified_strict_types' => [
+            'import_symbols' => true,
+            'leading_backslash_in_global_namespace' => true,
+        ],
         'function_declaration' => [
             'closure_function_spacing' => 'one',
             'closure_fn_spacing' => 'one',
@@ -190,6 +193,10 @@ return (new PhpCsFixer\Config())
         ],
         'native_function_casing' => true,
         'native_type_declaration_casing' => true,
+        'new_with_parentheses' => [
+            'anonymous_class' => false,
+            'named_class' => false,
+        ],
         'no_alias_functions' => true,
         'no_alias_language_construct_call' => true,
         'no_alternative_syntax' => true,
