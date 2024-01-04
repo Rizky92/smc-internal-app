@@ -8,6 +8,8 @@ use App\Models\Keuangan\PenagihanPiutang;
 use App\Models\Keuangan\PenagihanPiutangDetail;
 use App\Models\Keuangan\TitipFaktur;
 use App\Models\Keuangan\TitipFakturDetail;
+use App\Models\Logistik\TitipFakturNonMedis;
+use App\Models\Logistik\TitipFakturDetailNonMedis;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
@@ -99,6 +101,33 @@ class Jurnal extends Model
     public function getKeteranganMedisAttribute(): string
     {
         return $this->keteranganMedis();
+    }
+
+    public function keteranganNonMedis(): string
+    {
+        preg_match('/NO\.FAKTUR (\w+)/', $this->keterangan, $matches);
+
+        $no_faktur = $matches[1] ?? null;
+
+        if ($no_faktur) {
+            $titipFakturDetailNonMedis = TitipFakturDetailNonMedis::where('no_faktur', $no_faktur)->first();
+
+            if ($titipFakturDetailNonMedis) {
+                $titipFakturNonMedis = TitipFakturNonMedis::where('no_tagihan', $titipFakturDetailNonMedis->no_tagihan)->first();
+                
+                if ($titipFakturNonMedis) {
+
+                    return $titipFakturNonMedis->keterangan;
+                }
+            }
+        }
+
+        return '-';
+    }
+
+    public function getKeteranganNonMedisAttribute(): string
+    {
+        return $this->keteranganNonMedis();
     }
     
     public function scopeJurnalUmum(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
