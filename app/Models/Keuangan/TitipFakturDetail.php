@@ -3,6 +3,7 @@
 namespace App\Models\Keuangan;
 
 use App\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TitipFakturDetail extends Model
 {
@@ -14,7 +15,10 @@ class TitipFakturDetail extends Model
 
     public $timestamps = false;
 
-    public function titipFaktur()
+    /**
+     * @psalm-return BelongsTo<TitipFaktur>
+     */
+    public function titipFaktur(): BelongsTo
     {
         return $this->belongsTo(TitipFaktur::class, 'no_tagihan', 'no_tagihan');
     }

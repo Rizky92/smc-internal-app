@@ -83,7 +83,7 @@ class Jurnal extends Model
 
     //         if ($titipFakturDetail) {
     //             $titipFaktur = TitipFaktur::where('no_tagihan', $titipFakturDetail->no_tagihan)->first();
-                
+
     //             if ($titipFaktur) {
 
     //                 return $titipFaktur->keterangan;
@@ -110,7 +110,7 @@ class Jurnal extends Model
 
     //         if ($titipFakturDetailNonMedis) {
     //             $titipFakturNonMedis = TitipFakturNonMedis::where('no_tagihan', $titipFakturDetailNonMedis->no_tagihan)->first();
-                
+
     //             if ($titipFakturNonMedis) {
 
     //                 return $titipFakturNonMedis->keterangan;
@@ -125,7 +125,7 @@ class Jurnal extends Model
     // {
     //     return $this->keteranganNonMedis();
     // }
-    
+
     public function scopeJurnalUmum(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
