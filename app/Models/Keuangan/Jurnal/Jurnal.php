@@ -72,6 +72,60 @@ class Jurnal extends Model
         return $this->catatanPenagihan();
     }
 
+    // public function keteranganMedis(): string
+    // {
+    //     preg_match('/NO\.FAKTUR (\w+)/', $this->keterangan, $matches);
+
+    //     $medicalInvoiceNumber = $matches[1] ?? null;
+
+    //     if ($medicalInvoiceNumber) {
+    //         $titipFakturDetail = TitipFakturDetail::where('no_faktur', $medicalInvoiceNumber)->first();
+
+    //         if ($titipFakturDetail) {
+    //             $titipFaktur = TitipFaktur::where('no_tagihan', $titipFakturDetail->no_tagihan)->first();
+                
+    //             if ($titipFaktur) {
+
+    //                 return $titipFaktur->keterangan;
+    //             }
+    //         }
+    //     }
+
+    //     return '-';
+    // }
+
+    // public function getKeteranganMedisAttribute(): string
+    // {
+    //     return $this->keteranganMedis();
+    // }
+
+    // public function keteranganNonMedis(): string
+    // {
+    //     preg_match('/NO\.FAKTUR (\w+)/', $this->keterangan, $matches);
+
+    //     $no_faktur = $matches[1] ?? null;
+
+    //     if ($no_faktur) {
+    //         $titipFakturDetailNonMedis = TitipFakturDetailNonMedis::where('no_faktur', $no_faktur)->first();
+
+    //         if ($titipFakturDetailNonMedis) {
+    //             $titipFakturNonMedis = TitipFakturNonMedis::where('no_tagihan', $titipFakturDetailNonMedis->no_tagihan)->first();
+                
+    //             if ($titipFakturNonMedis) {
+
+    //                 return $titipFakturNonMedis->keterangan;
+    //             }
+    //         }
+    //     }
+
+    //     return '-';
+    // }
+
+    // public function getKeteranganNonMedisAttribute(): string
+    // {
+    //     return $this->keteranganNonMedis();
+    // }
+    
     public function scopeJurnalUmum(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {

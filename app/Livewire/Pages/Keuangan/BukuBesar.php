@@ -118,6 +118,8 @@ class BukuBesar extends Component
             'Keterangan Jurnal',
             'Keterangan Pengeluaran',
             'Catatan Penagihan',
+            // "Keterangan Medis",
+            // "Keterangan Non Medis",
             'Kode',
             'Rekening',
             'Debet',
