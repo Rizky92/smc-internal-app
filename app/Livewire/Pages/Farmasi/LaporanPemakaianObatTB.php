@@ -42,7 +42,7 @@ class LaporanPemakaianObatTB extends Component
         $this->defaultValues();
     }
 
-    public function getDataLaporanPemakaianObatTBProperty(): Paginator
+    public function getDataLaporanPemakaianObatTBProperty()
     {
         return $this->isDeferred ? [] : RegistrasiPasien::query()
             ->riwayatPemakaianObatTB($this->tglAwal, $this->tglAkhir)

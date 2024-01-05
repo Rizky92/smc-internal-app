@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Logistik;
 
+use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
@@ -23,6 +24,7 @@ class InputMinmaxStok extends Component
     use FlashComponent;
     use LiveTable;
     use MenuTracker;
+    use DeferredLoading;
 
     public function mount(): void
     {
@@ -34,11 +36,9 @@ class InputMinmaxStok extends Component
         return SupplierNonMedis::pluck('nama_suplier', 'kode_suplier')->all();
     }
 
-    public function getBarangLogistikProperty(): Paginator
+    public function getBarangLogistikProperty()
     {
-        $db = DB::connection('mysql_smc')->getDatabaseName();
-
-        return BarangNonMedis::query()
+        return $this->isDeferred ? [] : BarangNonMedis::query()
             ->denganMinmax()
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
@@ -88,7 +88,7 @@ class InputMinmaxStok extends Component
     {
         return [
             BarangNonMedis::query()
-                ->denganMinmax($export = true)
+                ->denganMinmax()
                 ->get(),
         ];
     }

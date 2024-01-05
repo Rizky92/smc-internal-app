@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
+use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
@@ -20,6 +21,7 @@ class LaporanTambahanBiayaPasien extends Component
     use FlashComponent;
     use LiveTable;
     use MenuTracker;
+    use DeferredLoading;
 
     /** @var string */
     public $tglAwal;
@@ -40,9 +42,9 @@ class LaporanTambahanBiayaPasien extends Component
         $this->defaultValues();
     }
 
-    public function getDataTambahanBiayaPasienProperty(): Paginator
+    public function getDataTambahanBiayaPasienProperty()
     {
-        return TambahanBiaya::query()
+        return $this->isDeferred ? [] : TambahanBiaya::query()
             ->biayaTambahanUntukHonorDokter($this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)

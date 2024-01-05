@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Logistik;
 
+use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
@@ -20,6 +21,7 @@ class StokDaruratLogistik extends Component
     use FlashComponent;
     use LiveTable;
     use MenuTracker;
+    use DeferredLoading;
 
     /** @var bool */
     public $tampilkanSaranOrderNol;
@@ -36,9 +38,9 @@ class StokDaruratLogistik extends Component
         $this->defaultValues();
     }
 
-    public function getStokDaruratLogistikProperty(): Paginator
+    public function getStokDaruratLogistikProperty()
     {
-        return BarangNonMedis::query()
+        return $this->isDeferred ? [] : BarangNonMedis::query()
             ->daruratStok($this->tampilkanSaranOrderNol)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns, ['ipsrsbarang.nama_brng' => 'asc'])

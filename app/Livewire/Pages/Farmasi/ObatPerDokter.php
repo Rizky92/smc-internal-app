@@ -42,7 +42,7 @@ class ObatPerDokter extends Component
         $this->defaultValues();
     }
 
-    public function getObatPerDokterProperty(): Paginator
+    public function getObatPerDokterProperty()
     {
         return $this->isDeferred ? [] : ResepObat::query()
             ->penggunaanObatPerDokter($this->tglAwal, $this->tglAkhir)

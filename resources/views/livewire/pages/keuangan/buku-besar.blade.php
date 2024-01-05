@@ -57,7 +57,7 @@
                 </x-slot>
                 <x-slot name="footer">
                     <x-table.tr>
-                        <x-table.th colspan="7" />
+                        <x-table.th colspan="8" />
                         <x-table.th title="TOTAL :" />
                         <x-table.th :title="rp(optional($this->totalDebetDanKredit)->debet)" />
                         <x-table.th :title="rp(optional($this->totalDebetDanKredit)->kredit)" />

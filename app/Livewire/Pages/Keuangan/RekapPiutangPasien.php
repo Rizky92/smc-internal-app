@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
+use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
@@ -22,6 +23,7 @@ class RekapPiutangPasien extends Component
     use FlashComponent;
     use LiveTable;
     use MenuTracker;
+    use DeferredLoading;
 
     /** @var string */
     public $caraBayar;
@@ -51,9 +53,9 @@ class RekapPiutangPasien extends Component
         return Penjamin::where('status', '1')->pluck('png_jawab', 'kd_pj')->all();
     }
 
-    public function getPiutangPasienProperty(): Paginator
+    public function getPiutangPasienProperty()
     {
-        return PiutangPasien::query()
+        return $this->isDeferred ? [] : PiutangPasien::query()
             ->rekapPiutangPasien($this->tglAwal, $this->tglAkhir, $this->caraBayar)
             ->search($this->cari, [
                 'piutang_pasien.no_rawat',
@@ -74,7 +76,7 @@ class RekapPiutangPasien extends Component
 
     public function getTotalTagihanPiutangPasienProperty(): float
     {
-        return PiutangPasien::query()
+        return $this->isDeferred ? [] : PiutangPasien::query()
             ->rekapPiutangPasien($this->tglAwal, $this->tglAkhir, $this->caraBayar)
             ->search($this->cari, [
                 'piutang_pasien.no_rawat',

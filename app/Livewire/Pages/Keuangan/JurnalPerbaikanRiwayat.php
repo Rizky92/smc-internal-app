@@ -43,9 +43,9 @@ class JurnalPerbaikanRiwayat extends Component
         $this->defaultValues();
     }
 
-    public function getDataRiwayatJurnalPerbaikanProperty(): Paginator
+    public function getDataRiwayatJurnalPerbaikanProperty()
     {
-        return JurnalBackup::query()
+        return $this->isDeferred ? [] : JurnalBackup::query()
             ->with([
                 'pegawai',
                 'jurnal' => fn (BelongsTo $query): BelongsTo => $query
@@ -78,7 +78,14 @@ class JurnalPerbaikanRiwayat extends Component
     protected function columnHeaders(): array
     {
         return [
-            //
+            'No. Jurnal',
+            'Tgl. Asli',
+            'Tgl. Baru',
+            'Keterangan',
+            'Total Debet',
+            'Total Kredit',
+            'NIP',
+            'Nama Petugas',
         ];
     }
 

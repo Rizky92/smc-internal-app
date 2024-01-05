@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
+use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
@@ -20,6 +21,7 @@ class LaporanPotonganBiayaPasien extends Component
     use FlashComponent;
     use LiveTable;
     use MenuTracker;
+    use DeferredLoading;
 
     /** @var string */
     public $tglAwal;
@@ -46,9 +48,9 @@ class LaporanPotonganBiayaPasien extends Component
             ->layout(BaseLayout::class, ['title' => 'Laporan Potongan Biaya Pasien']);
     }
 
-    public function getDataPotonganBiayaPasienProperty(): Paginator
+    public function getDataPotonganBiayaPasienProperty()
     {
-        return PenguranganBiaya::query()
+        return $this->isDeferred ? [] : PenguranganBiaya::query()
             ->potonganBiayaPasien($this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)

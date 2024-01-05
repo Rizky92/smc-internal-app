@@ -27,7 +27,7 @@ class BarangNonMedis extends Model
         'jenis',
     ];
 
-    public function scopeDenganMinmax(Builder $query, bool $export = false): Builder
+    public function scopeDenganMinmax(Builder $query): Builder
     {
         $db = DB::connection('mysql_smc')->getDatabaseName();
 

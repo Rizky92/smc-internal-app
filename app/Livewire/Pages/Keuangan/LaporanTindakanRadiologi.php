@@ -42,9 +42,9 @@ class LaporanTindakanRadiologi extends Component
         $this->defaultValues();
     }
 
-    public function getDataLaporanTindakanRadiologiProperty(): Paginator
+    public function getDataLaporanTindakanRadiologiProperty()
     {
-        return HasilPeriksaRadiologi::query()
+        return $this->isDeferred ? [] : HasilPeriksaRadiologi::query()
             ->laporanTindakanRadiologi($this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns, [

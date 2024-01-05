@@ -104,6 +104,19 @@ class BukuBesar extends Component
                     'debet'                  => round($model->debet, 2),
                     'kredit'                 => round($model->kredit, 2),
                 ])
+                ->merge([[
+                    'tgl_jurnal'             => '',
+                    'jam_jurnal'             => '',
+                    'no_jurnal'              => '',
+                    'no_bukti'               => '',
+                    'keterangan'             => '',
+                    'keterangan_pengeluaran' => '',
+                    'catatan_penagihan'      => '',
+                    'kd_rek'                 => '',
+                    'nm_rek'                 => 'TOTAL :',
+                    'debet'                  => round(optional($this->totalDebetDanKredit)->debet, 2),
+                    'kredit'                 => round(optional($this->totalDebetDanKredit)->kredit, 2),
+                ]])
                 ->all(),
         ];
     }

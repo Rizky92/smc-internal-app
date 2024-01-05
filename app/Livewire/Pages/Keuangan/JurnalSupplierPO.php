@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
+use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
@@ -21,6 +22,7 @@ class JurnalSupplierPO extends Component
     use FlashComponent;
     use LiveTable;
     use MenuTracker;
+    use DeferredLoading;
 
     /** @var string */
     public $tglAwal;
@@ -41,18 +43,18 @@ class JurnalSupplierPO extends Component
         $this->defaultValues();
     }
 
-    public function getJurnalBarangMedisProperty(): LengthAwarePaginator
+    public function getJurnalBarangMedisProperty()
     {
-        return JurnalMedis::query()
+        return $this->isDeferred ? [] : JurnalMedis::query()
             ->jurnalPenerimaanBarang($this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage, ['*'], 'page_medis');
     }
 
-    public function getJurnalBarangNonMedisProperty(): LengthAwarePaginator
+    public function getJurnalBarangNonMedisProperty()
     {
-        return JurnalNonMedis::query()
+        return $this->isDeferred ? [] : JurnalNonMedis::query()
             ->jurnalPenerimaanBarang($this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)

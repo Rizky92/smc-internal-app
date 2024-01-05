@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\BPJS;
+namespace App\Services;
 
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
