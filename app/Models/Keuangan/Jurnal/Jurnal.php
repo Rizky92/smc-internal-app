@@ -6,10 +6,10 @@ use App\Database\Eloquent\Model;
 use App\Models\Keuangan\PengeluaranHarian;
 use App\Models\Keuangan\PenagihanPiutang;
 use App\Models\Keuangan\PenagihanPiutangDetail;
-use App\Models\Keuangan\TitipFaktur;
-use App\Models\Keuangan\TitipFakturDetail;
-use App\Models\Logistik\TitipFakturNonMedis;
-use App\Models\Logistik\TitipFakturDetailNonMedis;
+// use App\Models\Keuangan\TitipFaktur;
+// use App\Models\Keuangan\TitipFakturDetail;
+// use App\Models\Logistik\TitipFakturNonMedis;
+// use App\Models\Logistik\TitipFakturDetailNonMedis;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
@@ -76,59 +76,59 @@ class Jurnal extends Model
         return $this->catatanPenagihan();
     }
 
-    public function keteranganMedis(): string
-    {
-        preg_match('/NO\.FAKTUR (\w+)/', $this->keterangan, $matches);
+    // public function keteranganMedis(): string
+    // {
+    //     preg_match('/NO\.FAKTUR (\w+)/', $this->keterangan, $matches);
 
-        $medicalInvoiceNumber = $matches[1] ?? null;
+    //     $medicalInvoiceNumber = $matches[1] ?? null;
 
-        if ($medicalInvoiceNumber) {
-            $titipFakturDetail = TitipFakturDetail::where('no_faktur', $medicalInvoiceNumber)->first();
+    //     if ($medicalInvoiceNumber) {
+    //         $titipFakturDetail = TitipFakturDetail::where('no_faktur', $medicalInvoiceNumber)->first();
 
-            if ($titipFakturDetail) {
-                $titipFaktur = TitipFaktur::where('no_tagihan', $titipFakturDetail->no_tagihan)->first();
+    //         if ($titipFakturDetail) {
+    //             $titipFaktur = TitipFaktur::where('no_tagihan', $titipFakturDetail->no_tagihan)->first();
                 
-                if ($titipFaktur) {
+    //             if ($titipFaktur) {
 
-                    return $titipFaktur->keterangan;
-                }
-            }
-        }
+    //                 return $titipFaktur->keterangan;
+    //             }
+    //         }
+    //     }
 
-        return '-';
-    }
+    //     return '-';
+    // }
 
-    public function getKeteranganMedisAttribute(): string
-    {
-        return $this->keteranganMedis();
-    }
+    // public function getKeteranganMedisAttribute(): string
+    // {
+    //     return $this->keteranganMedis();
+    // }
 
-    public function keteranganNonMedis(): string
-    {
-        preg_match('/NO\.FAKTUR (\w+)/', $this->keterangan, $matches);
+    // public function keteranganNonMedis(): string
+    // {
+    //     preg_match('/NO\.FAKTUR (\w+)/', $this->keterangan, $matches);
 
-        $no_faktur = $matches[1] ?? null;
+    //     $no_faktur = $matches[1] ?? null;
 
-        if ($no_faktur) {
-            $titipFakturDetailNonMedis = TitipFakturDetailNonMedis::where('no_faktur', $no_faktur)->first();
+    //     if ($no_faktur) {
+    //         $titipFakturDetailNonMedis = TitipFakturDetailNonMedis::where('no_faktur', $no_faktur)->first();
 
-            if ($titipFakturDetailNonMedis) {
-                $titipFakturNonMedis = TitipFakturNonMedis::where('no_tagihan', $titipFakturDetailNonMedis->no_tagihan)->first();
+    //         if ($titipFakturDetailNonMedis) {
+    //             $titipFakturNonMedis = TitipFakturNonMedis::where('no_tagihan', $titipFakturDetailNonMedis->no_tagihan)->first();
                 
-                if ($titipFakturNonMedis) {
+    //             if ($titipFakturNonMedis) {
 
-                    return $titipFakturNonMedis->keterangan;
-                }
-            }
-        }
+    //                 return $titipFakturNonMedis->keterangan;
+    //             }
+    //         }
+    //     }
 
-        return '-';
-    }
+    //     return '-';
+    // }
 
-    public function getKeteranganNonMedisAttribute(): string
-    {
-        return $this->keteranganNonMedis();
-    }
+    // public function getKeteranganNonMedisAttribute(): string
+    // {
+    //     return $this->keteranganNonMedis();
+    // }
     
     public function scopeJurnalUmum(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
