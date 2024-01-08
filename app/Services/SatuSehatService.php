@@ -1,6 +1,3 @@
 <?php
 
-class SatuSehatService
-{
-    
-}
+class SatuSehatService {}

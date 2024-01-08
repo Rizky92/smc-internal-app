@@ -16,12 +16,12 @@ use Livewire\Component;
 
 class LaporanPasienRanap extends Component
 {
+    use DeferredLoading;
     use ExcelExportable;
     use Filterable;
     use FlashComponent;
     use LiveTable;
     use MenuTracker;
-    use DeferredLoading;
 
     /** @var string */
     public $tanggal;

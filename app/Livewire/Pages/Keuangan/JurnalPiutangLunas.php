@@ -12,7 +12,6 @@ use App\Models\Keuangan\BayarPiutang;
 use App\Models\Keuangan\PiutangDilunaskan;
 use App\View\Components\BaseLayout;
 use Cache;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -62,11 +61,10 @@ class JurnalPiutangLunas extends Component
 
     public function getAkunPenagihanPiutangProperty()
     {
-        return Cache::remember('akun_piutang_lunas', now()->addDay(), fn () => 
-            DB::connection('mysql_sik')
-                ->table('rekening')
-                ->whereIn('kd_rek', BayarPiutang::select('kd_rek'))
-                ->pluck('nm_rek', 'kd_rek'));
+        return Cache::remember('akun_piutang_lunas', now()->addDay(), fn () => DB::connection('mysql_sik')
+            ->table('rekening')
+            ->whereIn('kd_rek', BayarPiutang::select('kd_rek'))
+            ->pluck('nm_rek', 'kd_rek'));
     }
 
     public function tarikDataTerbaru(): void

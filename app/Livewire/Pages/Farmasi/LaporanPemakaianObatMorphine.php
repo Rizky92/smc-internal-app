@@ -11,7 +11,6 @@ use App\Livewire\Concerns\MenuTracker;
 use App\Models\Farmasi\Obat;
 use App\Models\Farmasi\PemberianObat;
 use App\View\Components\BaseLayout;
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\View\View;

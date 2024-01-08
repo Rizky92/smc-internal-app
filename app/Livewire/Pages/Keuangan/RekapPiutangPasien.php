@@ -11,19 +11,18 @@ use App\Livewire\Concerns\MenuTracker;
 use App\Models\Keuangan\PiutangPasien;
 use App\Models\RekamMedis\Penjamin;
 use App\View\Components\BaseLayout;
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class RekapPiutangPasien extends Component
 {
+    use DeferredLoading;
     use ExcelExportable;
     use Filterable;
     use FlashComponent;
     use LiveTable;
     use MenuTracker;
-    use DeferredLoading;
 
     /** @var string */
     public $caraBayar;

@@ -10,7 +10,7 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Keuangan\Jurnal\JurnalBackup;
 use App\View\Components\BaseLayout;
-use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -43,6 +43,11 @@ class JurnalPerbaikanRiwayat extends Component
         $this->defaultValues();
     }
 
+    /**
+     * @return LengthAwarePaginator|array
+     *
+     * @psalm-return LengthAwarePaginator|array<empty, empty>
+     */
     public function getDataRiwayatJurnalPerbaikanProperty()
     {
         return $this->isDeferred ? [] : JurnalBackup::query()

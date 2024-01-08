@@ -9,7 +9,6 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Keuangan\Jurnal\Jurnal;
 use App\View\Components\BaseLayout;
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -43,10 +42,10 @@ class JurnalPerbaikan extends Component
     public function getJurnalProperty()
     {
         return $this->isDeferred ? [] : Jurnal::query()
-                ->jurnalUmum($this->tglAwal, $this->tglAkhir)
-                ->search($this->cari)
-                ->sortWithColumns($this->sortColumns)
-                ->paginate($this->perpage);
+            ->jurnalUmum($this->tglAwal, $this->tglAkhir)
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
+            ->paginate($this->perpage);
     }
 
     public function render(): View

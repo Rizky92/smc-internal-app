@@ -12,19 +12,17 @@ use App\Models\Logistik\BarangNonMedis;
 use App\Models\Logistik\MinmaxStokBarangNonMedis;
 use App\Models\Logistik\SupplierNonMedis;
 use App\View\Components\BaseLayout;
-use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class InputMinmaxStok extends Component
 {
+    use DeferredLoading;
     use ExcelExportable;
     use Filterable;
     use FlashComponent;
     use LiveTable;
     use MenuTracker;
-    use DeferredLoading;
 
     public function mount(): void
     {

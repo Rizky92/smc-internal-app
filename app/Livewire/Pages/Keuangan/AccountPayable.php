@@ -12,7 +12,6 @@ use App\Models\Farmasi\PenerimaanObat;
 use App\Models\Logistik\PemesananBarangNonMedis;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 

@@ -91,7 +91,7 @@ class PemesananBarangNonMedis extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             case
                 when datediff(?, ipsrs_titip_faktur.tanggal) <= 30 then 'periode_0_30'
                 when datediff(?, ipsrs_titip_faktur.tanggal) between 31 and 60 then 'periode_31_60'
@@ -103,7 +103,7 @@ class PemesananBarangNonMedis extends Model
             round(sum(ipsrspemesanan.tagihan - ifnull(bayar_pemesanan_non_medis.besar_bayar, 0)), 2) sisa_tagihan
         SQL;
 
-        $sqlGroupBy = <<<SQL
+        $sqlGroupBy = <<<'SQL'
             datediff(?, ipsrs_titip_faktur.tanggal) <= 30,
             datediff(?, ipsrs_titip_faktur.tanggal) between 31 and 60,
             datediff(?, ipsrs_titip_faktur.tanggal) between 61 and 90,

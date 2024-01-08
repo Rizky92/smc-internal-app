@@ -11,18 +11,17 @@ use App\Livewire\Concerns\MenuTracker;
 use App\Models\Keuangan\Jurnal\JurnalMedis;
 use App\Models\Keuangan\Jurnal\JurnalNonMedis;
 use App\View\Components\BaseLayout;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class JurnalSupplierPO extends Component
 {
+    use DeferredLoading;
     use ExcelExportable;
     use Filterable;
     use FlashComponent;
     use LiveTable;
     use MenuTracker;
-    use DeferredLoading;
 
     /** @var string */
     public $tglAwal;
