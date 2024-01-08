@@ -33,13 +33,11 @@ class PemakaianStokFarmasi extends Component
      */
     public function getPemakaianStokObatProperty()
     {
-        return $this->isDeferred
-            ? []
-            : Obat::query()
-                ->pemakaianStok()
-                ->search($this->cari)
-                ->sortWithColumns($this->sortColumns)
-                ->paginate($this->perpage);
+        return $this->isDeferred ? [] : Obat::query()
+            ->pemakaianStok()
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
+            ->paginate($this->perpage);
     }
 
     public function render(): View

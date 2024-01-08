@@ -11,6 +11,7 @@ use App\Livewire\Concerns\MenuTracker;
 use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\Rekening;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -61,20 +62,18 @@ class BukuBesar extends Component
 
     public function getTotalDebetDanKreditProperty()
     {
-        return $this->isDeferred
-            ? []
-            : Jurnal::query()
-                ->jumlahDebetDanKreditBukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
-                ->search($this->cari)
-                ->first();
+        return $this->isDeferred ? [] : Jurnal::query()
+            ->jumlahDebetDanKreditBukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
+            ->search($this->cari)
+            ->first();
     }
 
     public function getRekeningProperty(): array
     {
-        return Rekening::query()
+        return Cache::remember('rekening_bukubesar', now()->addDay(), fn () => Rekening::query()
             ->orderBy('kd_rek')
             ->pluck('nm_rek', 'kd_rek')
-            ->all();
+            ->all());
     }
 
     public function render(): View

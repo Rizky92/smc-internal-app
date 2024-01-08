@@ -10,7 +10,7 @@ class Menu
     /**
      * @param  Authenticatable&\App\Database\Eloquent\Authenticatable  $user
      */
-    public static function all($user, ?string $search = null): Collection
+    public static function all($user): Collection
     {
         $develop = config('permission.superadmin_name');
 
@@ -94,7 +94,6 @@ class Menu
                     'keuangan.laporan-tambahan-biaya.read',
                     'keuangan.laporan-tindakan-lab.read',
                     'keuangan.laporan-tindakan-radiologi.read',
-                    'keuangan.rekap-piutang-pasien.read',
                     'keuangan.jurnal-perbaikan-riwayat.read',
                     'keuangan.stok-obat-ruangan.read',
                     'keuangan.laporan-trial-balance.read',
@@ -134,13 +133,6 @@ class Menu
                         'icon'              => 'fas fa-shapes',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.stok-obat-ruangan.read'),
-                    ],
-                    [
-                        'name'              => 'Rekap Piutang Pasien',
-                        'url'               => route('admin.keuangan.rekap-piutang-pasien'),
-                        'icon'              => 'fas fa-file-invoice',
-                        'type'              => 'link',
-                        'hasAnyPermissions' => $user->can('keuangan.rekap-piutang-pasien.read'),
                     ],
                     [
                         'name'              => 'Laporan Tambahan Biaya',

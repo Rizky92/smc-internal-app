@@ -8,8 +8,11 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Keuangan\BayarPiutang;
 use App\Models\Keuangan\PiutangDilunaskan;
 use App\View\Components\BaseLayout;
+use Cache;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -57,13 +60,13 @@ class JurnalPiutangLunas extends Component
             ->layout(BaseLayout::class, ['title' => 'Penarikan Data Penagihan Piutang Dibayar dari Jurnal']);
     }
 
-    public function getAkunPenagihanPiutangProperty(): array
+    public function getAkunPenagihanPiutangProperty()
     {
-        return DB::connection('mysql_sik')
-            ->table('rekening')
-            ->whereIn('kd_rek', PiutangDilunaskan::select('kd_rek'))
-            ->pluck('nm_rek', 'kd_rek')
-            ->all();
+        return Cache::remember('akun_piutang_lunas', now()->addDay(), fn () => 
+            DB::connection('mysql_sik')
+                ->table('rekening')
+                ->whereIn('kd_rek', BayarPiutang::select('kd_rek'))
+                ->pluck('nm_rek', 'kd_rek'));
     }
 
     public function tarikDataTerbaru(): void

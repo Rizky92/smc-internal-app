@@ -126,10 +126,6 @@ Route::prefix('admin')
                     ->name('stok-obat-ruangan')
                     ->middleware('can:keuangan.stok-obat-ruangan.read');
 
-                Route::get('rekap-piutang-pasien', Keuangan\RekapPiutangPasien::class)
-                    ->name('rekap-piutang-pasien')
-                    ->middleware('can:keuangan.rekap-piutang-pasien.read');
-
                 Route::get('laporan-tambahan-biaya-pasien', Keuangan\LaporanTambahanBiayaPasien::class)
                     ->name('laporan-tambahan-biaya')
                     ->middleware('can:keuangan.laporan-tambahan-biaya.read');

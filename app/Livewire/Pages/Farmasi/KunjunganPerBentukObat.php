@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Farmasi;
 
+use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
@@ -21,6 +22,7 @@ class KunjunganPerBentukObat extends Component
     use FlashComponent;
     use LiveTable;
     use MenuTracker;
+    use DeferredLoading;
 
     /** @var string */
     public $tglAwal;
@@ -51,18 +53,18 @@ class KunjunganPerBentukObat extends Component
             ->layout(BaseLayout::class, ['title' => 'Kunjungan Resep Pasien Per Bentuk Obat']);
     }
 
-    public function getDataKunjunganResepObatRegularProperty(): Paginator
+    public function getDataKunjunganResepObatRegularProperty()
     {
-        return ResepDokter::query()
+        return $this->isDeferred ? [] : ResepDokter::query()
             ->kunjunganResepObatRegular($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage, ['*'], 'page_regular');
     }
 
-    public function getDataKunjunganResepObatRacikanProperty(): Paginator
+    public function getDataKunjunganResepObatRacikanProperty()
     {
-        return ResepDokterRacikan::query()
+        return $this->isDeferred ? [] : ResepDokterRacikan::query()
             ->kunjunganResepObatRacikan($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)

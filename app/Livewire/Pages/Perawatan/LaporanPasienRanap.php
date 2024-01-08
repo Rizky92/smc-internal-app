@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Perawatan;
 
+use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
@@ -9,7 +10,6 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Perawatan\PasienRanap;
 use App\View\Components\BaseLayout;
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -21,6 +21,7 @@ class LaporanPasienRanap extends Component
     use FlashComponent;
     use LiveTable;
     use MenuTracker;
+    use DeferredLoading;
 
     /** @var string */
     public $tanggal;
@@ -45,9 +46,9 @@ class LaporanPasienRanap extends Component
         $this->defaultValues();
     }
 
-    public function getLaporanPasienRanapProperty(): Paginator
+    public function getLaporanPasienRanapProperty()
     {
-        return PasienRanap::query()
+        return $this->isDeferred ? [] : PasienRanap::query()
             ->search($this->cari)
             ->whereBetween('tgl_masuk', [$this->tanggal, $this->tanggal])
             ->when(

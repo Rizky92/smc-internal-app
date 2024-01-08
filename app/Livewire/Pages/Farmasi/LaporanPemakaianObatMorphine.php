@@ -57,33 +57,33 @@ class LaporanPemakaianObatMorphine extends Component
             ->mapWithKeys(fn (string $value, string $key): array => [Str::replace('.', '', $key) => $value]);
     }
 
-    public function getDataLaporanPemakaianObatMorphine02050011Property(): Paginator
+    public function getDataLaporanPemakaianObatMorphine02050011Property()
     {
-        return PemberianObat::query()
+        return $this->isDeferred ? [] : PemberianObat::query()
             ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, $this->bangsal, '02.05.0011')
             ->search($this->cari)
             ->paginate($this->perpage, ['*'], 'page_obat_a');
     }
 
-    public function getDataLaporanPemakaianObatMorphine02050012Property(): Paginator
+    public function getDataLaporanPemakaianObatMorphine02050012Property()
     {
-        return PemberianObat::query()
+        return $this->isDeferred ? [] : PemberianObat::query()
             ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, $this->bangsal, '02.05.0012')
             ->search($this->cari)
             ->paginate($this->perpage, ['*'], 'page_obat_b');
     }
 
-    public function getDataLaporanPemakaianObatMorphine02050013Property(): Paginator
+    public function getDataLaporanPemakaianObatMorphine02050013Property()
     {
-        return PemberianObat::query()
+        return $this->isDeferred ? [] : PemberianObat::query()
             ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, $this->bangsal, '02.05.0013')
             ->search($this->cari)
             ->paginate($this->perpage, ['*'], 'page_obat_c');
     }
 
-    public function getDataLaporanPemakaianObatMorphine02050014Property(): Paginator
+    public function getDataLaporanPemakaianObatMorphine02050014Property()
     {
-        return PemberianObat::query()
+        return $this->isDeferred ? [] : PemberianObat::query()
             ->laporanPemakaianObatMorphine($this->tglAwal, $this->tglAkhir, $this->bangsal, '02.05.0014')
             ->search($this->cari)
             ->paginate($this->perpage, ['*'], 'page_obat_d');

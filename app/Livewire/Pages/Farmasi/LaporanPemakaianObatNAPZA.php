@@ -46,13 +46,11 @@ class LaporanPemakaianObatNAPZA extends Component
      */
     public function getDataPemakaianObatNarkotikaProperty()
     {
-        return $this->isDeferred
-            ? []
-            : Obat::query()
-                ->pemakaianObatNAPZA($this->tglAwal, $this->tglAkhir, 'narkotika')
-                ->search($this->cari)
-                ->sortWithColumns($this->sortColumns)
-                ->paginate($this->perpage, ['*'], 'page_narkotika');
+        return $this->isDeferred ? [] : Obat::query()
+            ->pemakaianObatNAPZA($this->tglAwal, $this->tglAkhir, 'narkotika')
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
+            ->paginate($this->perpage, ['*'], 'page_narkotika');
     }
 
     /**
@@ -60,13 +58,11 @@ class LaporanPemakaianObatNAPZA extends Component
      */
     public function getDataPemakaianObatPsikotropikaProperty()
     {
-        return $this->isDeferred
-            ? []
-            : Obat::query()
-                ->pemakaianObatNAPZA($this->tglAwal, $this->tglAkhir, 'psikotropika')
-                ->search($this->cari)
-                ->sortWithColumns($this->sortColumns)
-                ->paginate($this->perpage, ['*'], 'page_psikotropika');
+        return $this->isDeferred ? [] : Obat::query()
+            ->pemakaianObatNAPZA($this->tglAwal, $this->tglAkhir, 'psikotropika')
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
+            ->paginate($this->perpage, ['*'], 'page_psikotropika');
     }
 
     public function render(): View

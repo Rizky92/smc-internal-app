@@ -47,11 +47,6 @@ Breadcrumbs::for('admin.keuangan.stok-obat-ruangan', function (Trail $trail): vo
     $trail->push('Stok Obat Ruangan', route('admin.keuangan.stok-obat-ruangan'));
 });
 
-Breadcrumbs::for('admin.keuangan.rekap-piutang-pasien', function (Trail $trail): void {
-    $trail->parent('admin.keuangan');
-    $trail->push('Rekap Piutang Pasien', route('admin.keuangan.rekap-piutang-pasien'));
-});
-
 Breadcrumbs::for('admin.keuangan.laporan-tambahan-biaya', function (Trail $trail): void {
     $trail->parent('admin.keuangan');
     $trail->push('Laporan Tambahan Biaya', route('admin.keuangan.laporan-tambahan-biaya'));

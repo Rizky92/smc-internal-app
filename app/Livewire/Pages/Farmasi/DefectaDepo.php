@@ -69,13 +69,11 @@ class DefectaDepo extends Component
 
     public function getDataDefectaDepoProperty()
     {
-        return $this->isDeferred
-            ? []
-            : GudangObat::query()
-                ->defectaDepo($this->tanggal, $this->shift, $this->bangsal)
-                ->search($this->cari)
-                ->sortWithColumns($this->sortColumns)
-                ->paginate($this->perpage);
+        return $this->isDeferred ? [] : GudangObat::query()
+            ->defectaDepo($this->tanggal, $this->shift, $this->bangsal)
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
+            ->paginate($this->perpage);
     }
 
     public function render(): View

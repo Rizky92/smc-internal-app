@@ -45,9 +45,6 @@ class PerbandinganBarangPO extends Component
         $this->defaultValues();
     }
 
-    /**
-     * @return (T is array ? array<empty, empty> : \Illuminate\Contracts\Pagination\Paginator)
-     */
     public function getPerbandinganOrderObatPOProperty()
     {
         return $this->isDeferred ? [] : SuratPemesananObat::query()

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Farmasi;
 
+use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
@@ -20,6 +21,7 @@ class KunjunganPerPoli extends Component
     use FlashComponent;
     use LiveTable;
     use MenuTracker;
+    use DeferredLoading;
 
     /** @var string */
     public $tglAwal;
@@ -40,9 +42,9 @@ class KunjunganPerPoli extends Component
         $this->defaultValues();
     }
 
-    public function getDataKunjunganResepPasienProperty(): Paginator
+    public function getDataKunjunganResepPasienProperty()
     {
-        return ResepObat::query()
+        return $this->isDeferred ? [] : ResepObat::query()
             ->kunjunganPerPoli($this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)

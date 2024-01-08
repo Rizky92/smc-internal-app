@@ -63,6 +63,28 @@ class PenerimaanObat extends Model
             datediff(?, titip_faktur.tanggal) umur_hari
         SQL;
 
+        $this->addSearchConditions([
+            'detail_titip_faktur.no_tagihan',
+            'pemesanan.no_order',
+            'pemesanan.no_faktur',
+            'datasuplier.nama_suplier',
+            'pemesanan.status',
+            "ifnull(bayar_pemesanan.nama_bayar, '-')",
+            "ifnull(bayar_pemesanan.keterangan, '-')",
+        ]);
+
+        $this->addRawColumns([
+            'tgl_tagihan'   => 'titip_faktur.tanggal',
+            'tgl_terima'    => 'pemesanan.tgl_pesan',
+            'tagihan'       => DB::raw('round(pemesanan.tagihan, 2)'),
+            'dibayar'       => DB::raw('round(bayar_pemesanan.besar_bayar, 2)'),
+            'sisa'          => DB::raw('round(pemesanan.tagihan - ifnull(bayar_pemesanan.besar_bayar, 0), 2)'),
+            'periode_0_30'  => DB::raw("datediff('{$this->tglAkhir}', titip_faktur.tanggal) <= 30"),
+            'periode_31_60' => DB::raw("datediff('{$this->tglAkhir}', titip_faktur.tanggal) between 31 and 60"),
+            'periode_61_90' => DB::raw("datediff('{$this->tglAkhir}', titip_faktur.tanggal) between 61 and 90"),
+            'periode_90_up' => DB::raw("datediff('{$this->tglAkhir}', titip_faktur.tanggal) > 90"),
+        ]);
+
         return $query
             ->selectRaw($sqlSelect, [$tglAkhir])
             ->withCasts([
@@ -109,6 +131,16 @@ class PenerimaanObat extends Model
             datediff(?, titip_faktur.tanggal) between 61 and 90,
             datediff(?, titip_faktur.tanggal) > 90
         SQL;
+
+        $this->addSearchConditions([
+            'detail_titip_faktur.no_tagihan',
+            'pemesanan.no_order',
+            'pemesanan.no_faktur',
+            'datasuplier.nama_suplier',
+            'pemesanan.status',
+            'bayar_pemesanan.nama_bayar',
+            'bayar_pemesanan.keterangan',
+        ]);
 
         return $query
             ->selectRaw($sqlSelect, [$tglAkhir, $tglAkhir, $tglAkhir, $tglAkhir])

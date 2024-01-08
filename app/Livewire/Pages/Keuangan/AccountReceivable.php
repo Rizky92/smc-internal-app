@@ -13,7 +13,6 @@ use App\Models\Keuangan\AkunBayar;
 use App\Models\Keuangan\PenagihanPiutang;
 use App\Models\RekamMedis\Penjamin;
 use App\View\Components\BaseLayout;
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -71,19 +70,14 @@ class AccountReceivable extends Component
         $this->defaultValues();
     }
 
-    /**
-     * @return Paginator|array<empty, empty>
-     */
     public function getDataAccountReceivableProperty()
     {
-        return $this->isDeferred
-            ? []
-            : PenagihanPiutang::query()
-                ->accountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
-                ->search($this->cari)
-                ->accountReceivableDipilih($this->tagihanDipilih)
-                ->sortWithColumns($this->sortColumns)
-                ->paginate($this->perpage);
+        return $this->isDeferred ? [] : PenagihanPiutang::query()
+            ->accountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
+            ->search($this->cari)
+            ->accountReceivableDipilih($this->tagihanDipilih)
+            ->sortWithColumns($this->sortColumns)
+            ->paginate($this->perpage);
     }
 
     public function getPenjaminProperty(): Collection

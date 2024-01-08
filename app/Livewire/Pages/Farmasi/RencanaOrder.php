@@ -28,18 +28,13 @@ class RencanaOrder extends Component
         $this->defaultValues();
     }
 
-    /**
-     * @return Paginator|array<empty, empty>
-     */
     public function getStokDaruratObatProperty()
     {
-        return $this->isDeferred
-            ? []
-            : Obat::query()
-                ->daruratStok()
-                ->search($this->cari)
-                ->sortWithColumns($this->sortColumns)
-                ->paginate($this->perpage);
+        return $this->isDeferred ? [] : Obat::query()
+            ->daruratStok()
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
+            ->paginate($this->perpage);
     }
 
     public function render(): View

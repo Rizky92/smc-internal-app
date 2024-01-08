@@ -46,13 +46,11 @@ class LaporanPembuatanSOAP extends Component
      */
     public function getDataLaporanPembuatanSOAPProperty()
     {
-        return $this->isDeferred
-            ? []
-            : PemeriksaanRanap::query()
-                ->pemeriksaanOlehFarmasi($this->tglAwal, $this->tglAkhir)
-                ->search($this->cari)
-                ->sortWithColumns($this->sortColumns)
-                ->paginate($this->perpage);
+        return $this->isDeferred ? [] : PemeriksaanRanap::query()
+            ->pemeriksaanOlehFarmasi($this->tglAwal, $this->tglAkhir)
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
+            ->paginate($this->perpage);
     }
 
     public function render(): View

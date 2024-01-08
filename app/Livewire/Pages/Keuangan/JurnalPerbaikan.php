@@ -40,14 +40,9 @@ class JurnalPerbaikan extends Component
         $this->defaultValues();
     }
 
-    /**
-     * @return Paginator|array<empty, empty>
-     */
     public function getJurnalProperty()
     {
-        return $this->isDeferred
-            ? []
-            : Jurnal::query()
+        return $this->isDeferred ? [] : Jurnal::query()
                 ->jurnalUmum($this->tglAwal, $this->tglAkhir)
                 ->search($this->cari)
                 ->sortWithColumns($this->sortColumns)
