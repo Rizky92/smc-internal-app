@@ -43,21 +43,17 @@ class BukuBesar extends Component
 
     public function getBukuBesarProperty()
     {
-        if ($this->isDeferred) {
-            return [];
-        }
-    
-        $jurnals = Jurnal::query()
-            ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
-            ->with('pengeluaranHarian')
-            ->search($this->cari)
-            ->sortWithColumns($this->sortColumns, [
-                'tgl_jurnal' => 'asc',
-                'jam_jurnal' => 'asc',
-            ])
-            ->paginate($this->perpage);
-    
-        return $jurnals;
+        return $this->isDeferred
+            ? []
+            : Jurnal::query()
+                ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
+                ->with(['pengeluaranHarian', 'piutangDilunaskan.tagihan'])
+                ->search($this->cari)
+                ->sortWithColumns($this->sortColumns, [
+                    'tgl_jurnal' => 'asc',
+                    'jam_jurnal' => 'asc',
+                ])
+                ->paginate($this->perpage);
     }
     
     public function getTotalDebetDanKreditProperty()
@@ -89,7 +85,7 @@ class BukuBesar extends Component
         return [
             Jurnal::query()
                 ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
-                ->with('pengeluaranHarian')
+                ->with(['pengeluaranHarian', 'piutangDilunaskan'])
                 ->search($this->cari)
                 ->cursor()
                 ->map(function (Jurnal $model) {
@@ -100,9 +96,6 @@ class BukuBesar extends Component
                         'no_bukti'               => $model->no_bukti,
                         'keterangan'             => $model->keterangan,
                         'keterangan_pengeluaran' => optional($model->pengeluaranHarian)->keterangan ?? '-',
-                        'catatan_penagihan'      => $model->catatanPenagihan(),
-                        // 'keterangan_medis'       => $model->keteranganMedis(),
-                        // 'keterangan_non_medis'   => $model->keteranganNonMedis(),
                         'kd_rek'                 => $model->kd_rek,
                         'nm_rek'                 => $model->nm_rek,
                         'debet'                  => round($model->debet, 2),
@@ -116,9 +109,6 @@ class BukuBesar extends Component
                     'no_bukti'   => '',
                     'keterangan' => '',
                     'keterangan_pengeluaran' => '',
-                    'catatan_penagihan' => '',
-                    // 'keterangan_medis' => '',
-                    // 'keterangan_non_medis' => '',
                     'kd_rek'     => '',
                     'nm_rek'     => 'TOTAL :',
                     'debet'      => round(optional($this->totalDebetDanKredit)->debet, 2),
@@ -138,9 +128,6 @@ class BukuBesar extends Component
             "No. Bukti",
             "Keterangan Jurnal",
             "Keterangan Pengeluaran",
-            "Catatan Penagihan",
-            // "Keterangan Medis",
-            // "Keterangan Non Medis",
             "Kode",
             "Rekening",
             "Debet",

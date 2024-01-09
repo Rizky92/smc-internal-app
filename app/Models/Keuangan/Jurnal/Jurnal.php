@@ -4,6 +4,7 @@ namespace App\Models\Keuangan\Jurnal;
 
 use App\Database\Eloquent\Model;
 use App\Models\Keuangan\PengeluaranHarian;
+use App\Models\Keuangan\PiutangDilunaskan;
 use App\Models\Keuangan\PenagihanPiutang;
 use App\Models\Keuangan\PenagihanPiutangDetail;
 // use App\Models\Keuangan\TitipFaktur;
@@ -15,6 +16,7 @@ use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
@@ -51,83 +53,37 @@ class Jurnal extends Model
     {
         return $this->hasMany(JurnalDetail::class, 'no_jurnal', 'no_jurnal');
     }
-    
+
+    public function piutangDilunaskan(): HasOne
+    {
+        return $this->hasOne(PiutangDilunaskan::class, 'no_jurnal', 'no_jurnal');
+    }
+        
     public function pengeluaranHarian(): BelongsTo
     {
         return $this->belongsTo(PengeluaranHarian::class, 'no_bukti', 'no_keluar');
     }
 
-    public function catatanPenagihan()
+    public function tagihan(): BelongsTo
     {
-        $penagihanDetail = PenagihanPiutangDetail::where('no_rawat', $this->no_bukti)->first();
-
-        if ($penagihanDetail) {
-            $noTagihan = $penagihanDetail->no_tagihan;
-            $penagihan = PenagihanPiutang::where('no_tagihan', $noTagihan)->first();
-
-            return $penagihan ? $penagihan->catatan : '-';
-        }
-
-        return '-';
-    }
-    
-    public function getCatatanPenagihanAttribute()
-    {
-        return $this->catatanPenagihan();
+        return $this->belongsTo(DetailPenagihanPiutang::class, 'no_bukti', 'no_rawat');
     }
 
-    // public function keteranganMedis(): string
+
+    // public function penagihanPiutangByNoTagihan()
     // {
-    //     preg_match('/NO\.FAKTUR (\w+)/', $this->keterangan, $matches);
+    //     preg_match('/TAGIHAN (\S+),/', $this->keterangan, $matches);
 
-    //     $medicalInvoiceNumber = $matches[1] ?? null;
-
-    //     if ($medicalInvoiceNumber) {
-    //         $titipFakturDetail = TitipFakturDetail::where('no_faktur', $medicalInvoiceNumber)->first();
-
-    //         if ($titipFakturDetail) {
-    //             $titipFaktur = TitipFaktur::where('no_tagihan', $titipFakturDetail->no_tagihan)->first();
-                
-    //             if ($titipFaktur) {
-
-    //                 return $titipFaktur->keterangan;
-    //             }
-    //         }
+    //     if (!empty($matches[1])) {
+    //         return PenagihanPiutang::where('no_tagihan', $matches[1])->first();
     //     }
 
-    //     return '-';
+    //     return null;
     // }
 
-    // public function getKeteranganMedisAttribute(): string
+    // public function getPenagihanPiutangAttribute()
     // {
-    //     return $this->keteranganMedis();
-    // }
-
-    // public function keteranganNonMedis(): string
-    // {
-    //     preg_match('/NO\.FAKTUR (\w+)/', $this->keterangan, $matches);
-
-    //     $no_faktur = $matches[1] ?? null;
-
-    //     if ($no_faktur) {
-    //         $titipFakturDetailNonMedis = TitipFakturDetailNonMedis::where('no_faktur', $no_faktur)->first();
-
-    //         if ($titipFakturDetailNonMedis) {
-    //             $titipFakturNonMedis = TitipFakturNonMedis::where('no_tagihan', $titipFakturDetailNonMedis->no_tagihan)->first();
-                
-    //             if ($titipFakturNonMedis) {
-
-    //                 return $titipFakturNonMedis->keterangan;
-    //             }
-    //         }
-    //     }
-
-    //     return '-';
-    // }
-
-    // public function getKeteranganNonMedisAttribute(): string
-    // {
-    //     return $this->keteranganNonMedis();
+    //     return $this->penagihanPiutangByNoTagihan();
     // }
     
     public function scopeJurnalUmum(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
