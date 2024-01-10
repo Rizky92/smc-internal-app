@@ -266,8 +266,12 @@ if (! function_exists('func_get_named_args')) {
 
 if (! function_exists('str')) {
     /**
-     * @param  \string|null  $value
+     * @template  T of string|null
+     *
+     * @param  \T  $value
      * @return \Illuminate\Support\Stringable|string|mixed
+     *
+     * @psalm-return (T is null ? object : \Illuminate\Support\Stringable)
      */
     function str($value = null)
     {
