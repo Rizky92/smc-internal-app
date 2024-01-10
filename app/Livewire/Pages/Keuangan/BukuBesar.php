@@ -114,21 +114,21 @@ class BukuBesar extends Component
                     'no_bukti'               => '',
                     'keterangan'             => '',
                     'keterangan_pengeluaran' => '',
-                    'catatan' => '',
-                    'kd_rek'     => '',
-                    'nm_rek'     => 'TOTAL :',
-                    'debet'      => round(optional($this->totalDebetDanKredit)->debet, 2),
-                    'kredit'     => round(optional($this->totalDebetDanKredit)->kredit, 2),
+                    'catatan'                => '',
+                    'kd_rek'                 => '',
+                    'nm_rek'                 => 'TOTAL :',
+                    'debet'                  => round(optional($this->totalDebetDanKredit)->debet, 2),
+                    'kredit'                 => round(optional($this->totalDebetDanKredit)->kredit, 2),
                 ]])
                 ->all(),
         ];
     }
 
-    protected function getCatatanPiutang($model): string
+    protected function getCatatanPiutang(Jurnal $model): string
     {
-        return optional(optional($model->piutangDilunaskan)->tagihan)->catatan ?? "-";
+        return optional(optional($model->piutangDilunaskan)->tagihan)->catatan ?? '-';
     }
-    
+
     protected function columnHeaders(): array
     {
         return [
