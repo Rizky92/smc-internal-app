@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Pages\Informasi;
 
+use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
-use App\Models\Perawatan\RegistrasiPasien;
 use App\View\Components\BaseLayout;
 use App\Models\Antrian\Jadwal;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,7 +14,7 @@ use Livewire\Component;
 
 class JadwalDokter extends Component
 {
-    use FlashComponent, Filterable, LiveTable;
+    use FlashComponent, Filterable, LiveTable, DeferredLoading;
 
     /** @var bool */
     public $semuaPoli;
@@ -26,71 +26,32 @@ class JadwalDokter extends Component
         ];
     }
 
-     private function getNamaHari($hari)
+    public function mount(): void
     {
-        switch ($hari) {
-            case 'Sunday':
-                return 'AKHAD';
-            case 'Monday':
-                return 'SENIN';
-            case 'Tuesday':
-                return 'SELASA';
-            case 'Wednesday':
-                return 'RABU';
-            case 'Thursday':
-                return 'KAMIS';
-            case 'Friday':
-                return 'JUMAT';
-            case 'Saturday':
-                return 'SABTU';
-            default:
-                return '';
-        }
-    }
-
-    private function hitungRegistrasi($kdPoli, $kdDokter, $tanggal)
-    {
-        return RegistrasiPasien::hitungData($kdPoli, $kdDokter, $tanggal);
+        $this->defaultValues();
     }
 
     public function getDataJadwalDokterProperty()
     {
-        $hari = now()->format('l');
-        $namahari = $this->getNamaHari($hari);
-        $jadwal=Jadwal::query()
+        return $this->isDeferred
+        ? []
+        : Jadwal::query()
             ->jadwalDokter()
             ->with(['dokter', 'poliklinik'])
-            ->where('hari_kerja', $namahari);
-
-        if (!$this->semuaPoli) {
-            $jadwal->where('poliklinik.nm_poli', '<>', 'Poli Eksekutif');
-        }
-
-        $jadwal = $jadwal
+            ->when(
+                !$this->semuaPoli,
+                fn (Builder $query) => $query->where('poliklinik.nm_poli', '<>', 'Poli Eksekutif'),    
+            )
             ->search($this->cari)
-            ->sortWithColumns($this->sortColumns)
+            ->sortWithColumns($this->sortColumns, [
+                'jam_mulai' => 'asc',
+            ])
             ->paginate($this->perpage);
-
-        $jadwal->transform(function ($jadwalItem) {
-            $count = $this->hitungRegistrasi(
-                $jadwalItem->poliklinik->kd_poli,
-                $jadwalItem->dokter->kd_dokter,
-                now()->format('Y-m-d')
-            );
-            $jadwalItem->register = $count;
-
-            return $jadwalItem;
-        });
-
-        return $jadwal;
     }
 
     public function render(): View
     {
-        $hari = now()->format('l');
-        $namahari = $this->getNamaHari($hari);
-        $jadwal = $this->getDataJadwalDokterProperty();
-        return view('livewire.pages.informasi.jadwal-dokter', compact('jadwal', 'namahari'))
+        return view('livewire.pages.informasi.jadwal-dokter')
             ->layout(BaseLayout::class, ['title' => 'Jadwal Dokter Hari Ini']);
     }
  

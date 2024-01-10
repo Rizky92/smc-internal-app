@@ -10,15 +10,15 @@
         <span>JADWAL DOKTER HARI INI</span>
     </div>
 </header>
-@if ($jadwal->isNotEmpty()) 
     <table class="table table-bordered">
         <thead class="thead bg-pandan text-white">
             <tr>
                 <th width="30%">Nama Dokter</th>
                 <th width="20%">Poliklinik</th>
-                <th width="20%">Jam Mulai</th>
-                <th width="20%">Jam Selesai</th>
+                <th width="10%">Jam Mulai</th>
+                <th width="10%">Jam Selesai</th>
                 <th width="10%">Register</th>
+                <th width="10%">Kuota</th>
             </tr>
         </thead>
     </table>
@@ -26,15 +26,19 @@
         <table class="table table-bordered">
             <div class="padding"></div>
             <tbody>
-                @foreach ($jadwal as $data)
+                @forelse ($this->dataJadwalDokter as $item)
                     <tr>
-                        <td style="text-align: left;" width="30%">{{ $data->dokter->nm_dokter }}</td>
-                        <td width="20%">{{ $data->poliklinik->nm_poli }}</td>
-                        <td width="20%">{{ $data->jam_mulai }}</td>
-                        <td width="20%">{{ $data->jam_selesai }}</td>
-                        <td width="10%">{{ $data->register }}</td>
+                        
+                        <td style="text-align: left;" width="30%">{{ $item->nm_dokter }}</td>
+                        <td width="20%">{{ $item->nm_poli }}</td>
+                        <td width="10%">{{ $item->jam_mulai }}</td>
+                        <td width="10%">{{ $item->jam_selesai }}</td>
+                        <td width="10%">{{ $item->total_registrasi }}</td>
+                        <td width="10%">{{ $item->kuota }}</td>
+                        @empty
+                        <tr></tr>
+                        @endforelse
                     </tr>
-                @endforeach
             </tbody>
         </table>
     </div>
@@ -49,8 +53,5 @@
             refreshPage();
         });
     </script>
-@else
-    <p>Tidak ada jadwal dokter untuk hari ini.</p>
-@endif
 @endsection
 

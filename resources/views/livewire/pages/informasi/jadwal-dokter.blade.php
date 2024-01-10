@@ -1,4 +1,4 @@
-<div>
+<div wire:init="loadProperties">
     <x-card use loading>
         <x-slot name="header">
             <x-row-col-flex>
@@ -26,7 +26,7 @@
                             <x-table.td>{{ $item->nm_poli }}</x-table.td>
                             <x-table.td>{{ $item->jam_mulai }}</x-table.td>
                             <x-table.td>{{ $item->jam_selesai }}</x-table.td>
-                            <x-table.td>{{ $item->register }}</x-table.td>
+                            <x-table.td>{{ $item->total_registrasi }}</x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="10" padding />
