@@ -26,9 +26,7 @@
                     <x-table.th name="no_bukti" title="No. Bukti" style="width: 17ch" />
                     <x-table.th name="keterangan" title="Keterangan Jurnal" />
                     <x-table.th name="keterangan_pengeluaran" title="Keterangan Pengeluaran" />
-                    <x-table.th name="catatan_penagihan" title="Catatan Penagihan" />
-                    {{-- <x-table.th name="keterangan_medis" title="Keterangan Medis" />
-                    <x-table.th name="keterangan_non_medis" title="Keterangan Non Medis" /> --}}
+                    <x-table.th name="catatan" title="Catatan" />
                     <x-table.th name="kd_rek" title="Kode" style="width: 10ch" />
                     <x-table.th name="nm_rek" title="Rekening" style="width: 30ch" />
                     <x-table.th name="debet" title="Debet" style="width: 20ch" />
@@ -43,16 +41,20 @@
                             <x-table.td>{{ $jurnal->no_bukti }}</x-table.td>
                             <x-table.td>{{ $jurnal->keterangan }}</x-table.td>
                             <x-table.td>{{ optional($jurnal->pengeluaranHarian)->keterangan ?? "-" }}</x-table.td>
-                            <x-table.td>{{ $jurnal->catatanPenagihan }}</x-table.td>
-                            {{-- <x-table.td>{{ $jurnal->keteranganMedis() }}</x-table.td>
-                            <x-table.td>{{ $jurnal->keteranganNonMedis() }}</x-table.td> --}}
+                            <x-table.td>
+                                @if($jurnal->piutangDilunaskan && $jurnal->piutangDilunaskan->tagihan)
+                                    {{ $jurnal->piutangDilunaskan->tagihan->catatan }}
+                                @else
+                                    -
+                                @endif
+                            </x-table.td>                            
                             <x-table.td>{{ $jurnal->kd_rek }}</x-table.td>
                             <x-table.td>{{ $jurnal->nm_rek }}</x-table.td>
                             <x-table.td>{{ rp($jurnal->debet) }}</x-table.td>
                             <x-table.td>{{ rp($jurnal->kredit) }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="10" padding />
+                        <x-table.tr-empty colspan="12" padding />
                     @endforelse
                 </x-slot>
                 <x-slot name="footer">
