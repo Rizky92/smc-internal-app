@@ -56,8 +56,7 @@ class DefectaDepo extends Component
 
         return $waktuShiftSemua
             ->filter(fn ($waktuShift) => now()->floorHour()->diffInHours(
-                now()->setHour($waktuShift->jam_masuk),
-                false
+                now()->setHour($waktuShift->jam_masuk), false
             ) <= 0)
             ->first();
     }
