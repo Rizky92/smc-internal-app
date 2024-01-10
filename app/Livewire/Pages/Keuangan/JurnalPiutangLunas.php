@@ -12,7 +12,6 @@ use App\Models\Keuangan\BayarPiutang;
 use App\Models\Keuangan\PiutangDilunaskan;
 use App\View\Components\BaseLayout;
 use Cache;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -76,9 +75,9 @@ class JurnalPiutangLunas extends Component
         $this->flashSuccess('Data Berhasil Diperbaharui!');
     }
 
-    public function getDataPiutangDilunaskanProperty(): LengthAwarePaginator
+    public function getDataPiutangDilunaskanProperty()
     {
-        return PiutangDilunaskan::query()
+        return $this->isDeferred ? [] : PiutangDilunaskan::query()
             ->dataPiutangDilunaskan($this->tglAwal, $this->tglAkhir, $this->kodeRekening, $this->jenisPeriode)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)

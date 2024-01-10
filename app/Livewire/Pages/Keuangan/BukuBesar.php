@@ -49,17 +49,15 @@ class BukuBesar extends Component
 
     public function getBukuBesarProperty()
     {
-        return $this->isDeferred
-            ? []
-            : Jurnal::query()
-                ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
-                ->with(['pengeluaranHarian', 'piutangDilunaskan.tagihan'])
-                ->search($this->cari)
-                ->sortWithColumns($this->sortColumns, [
-                    'tgl_jurnal' => 'asc',
-                    'jam_jurnal' => 'asc',
-                ])
-                ->paginate($this->perpage);
+        return $this->isDeferred ? [] : Jurnal::query()
+            ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
+            ->with(['pengeluaranHarian', 'piutangDilunaskan.tagihan'])
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns, [
+                'tgl_jurnal' => 'asc',
+                'jam_jurnal' => 'asc',
+            ])
+            ->paginate($this->perpage);
     }
 
     public function getTotalDebetDanKreditProperty()
@@ -92,21 +90,19 @@ class BukuBesar extends Component
                 ->with(['pengeluaranHarian', 'piutangDilunaskan'])
                 ->search($this->cari)
                 ->cursor()
-                ->map(function (Jurnal $model) {
-                    return [
-                        'tgl_jurnal'             => $model->tgl_jurnal,
-                        'jam_jurnal'             => $model->jam_jurnal,
-                        'no_jurnal'              => $model->no_jurnal,
-                        'no_bukti'               => $model->no_bukti,
-                        'keterangan'             => $model->keterangan,
-                        'keterangan_pengeluaran' => optional($model->pengeluaranHarian)->keterangan ?? '-',
-                        'catatan'                => $this->getCatatanPiutang($model),
-                        'kd_rek'                 => $model->kd_rek,
-                        'nm_rek'                 => $model->nm_rek,
-                        'debet'                  => round($model->debet, 2),
-                        'kredit'                 => round($model->kredit, 2),
-                    ];
-                })
+                ->map(fn (Jurnal $model): array => [
+                    'tgl_jurnal'             => $model->tgl_jurnal,
+                    'jam_jurnal'             => $model->jam_jurnal,
+                    'no_jurnal'              => $model->no_jurnal,
+                    'no_bukti'               => $model->no_bukti,
+                    'keterangan'             => $model->keterangan,
+                    'keterangan_pengeluaran' => optional($model->pengeluaranHarian)->keterangan ?? '-',
+                    'catatan'                => $this->getCatatanPiutang($model),
+                    'kd_rek'                 => $model->kd_rek,
+                    'nm_rek'                 => $model->nm_rek,
+                    'debet'                  => round($model->debet, 2),
+                    'kredit'                 => round($model->kredit, 2),
+                ])
                 ->merge([[
                     'tgl_jurnal'             => '',
                     'jam_jurnal'             => '',
@@ -139,8 +135,6 @@ class BukuBesar extends Component
             'Keterangan Jurnal',
             'Keterangan Pengeluaran',
             'Catatan Penagihan',
-            // "Keterangan Medis",
-            // "Keterangan Non Medis",
             'Kode',
             'Rekening',
             'Debet',

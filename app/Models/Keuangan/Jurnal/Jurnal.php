@@ -3,7 +3,6 @@
 namespace App\Models\Keuangan\Jurnal;
 
 use App\Database\Eloquent\Model;
-use App\Models\Keuangan\PenagihanPiutangDetail;
 use App\Models\Keuangan\PengeluaranHarian;
 use App\Models\Keuangan\PiutangDilunaskan;
 use Carbon\Carbon;
