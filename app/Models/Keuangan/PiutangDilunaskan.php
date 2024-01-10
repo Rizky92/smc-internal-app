@@ -69,58 +69,55 @@ class PiutangDilunaskan extends Model
     public static function refreshModel(): void
     {
         $latest = static::query()->latest('waktu_jurnal')->value('waktu_jurnal');
-    
+
         $sqlSelect = <<<SQL
             jurnal.no_jurnal,
-            concat(jurnal.tgl_jurnal, ' ', jurnal.jam_jurnal) as waktu_jurnal,
+            timestamp(jurnal.tgl_jurnal, jurnal.jam_jurnal) waktu_jurnal,
             detail_penagihan_piutang.no_rawat,
             bayar_piutang.no_rkm_medis,
             penagihan_piutang.no_tagihan,
-            penagihan_piutang.kd_pj as kd_pj_tagihan,
-            detail_piutang_pasien.kd_pj,
-            penagihan_piutang.catatan,
-            detail_piutang_pasien.totalpiutang,
+            penagihan_piutang.kd_pj,
             bayar_piutang.besar_cicilan,
-            penagihan_piutang.tanggal as tgl_tagihan,
-            penagihan_piutang.tanggaltempo as tgl_jatuhtempo,
+            penagihan_piutang.tanggal tgl_penagihan,
+            penagihan_piutang.tanggaltempo tgl_jatuh_tempo,
             bayar_piutang.tgl_bayar,
-            bayar_piutang.kd_rek,
-            bayar_piutang.kd_rek_kontra,
+            penagihan_piutang.kd_rek,
+            akun_penagihan_piutang.nama_bank,
             penagihan_piutang.nip,
             penagihan_piutang.nip_menyetujui,
             jurnal.keterangan
         SQL;
-    
+
         Jurnal::query()
             ->selectRaw($sqlSelect)
-            ->join('detailjurnal', 'jurnal.no_jurnal', '=', 'detailjurnal.no_jurnal')
             ->leftJoin('detail_penagihan_piutang', 'jurnal.no_bukti', '=', 'detail_penagihan_piutang.no_rawat')
-            ->join('penagihan_piutang', 'detail_penagihan_piutang.no_tagihan', '=', 'penagihan_piutang.no_tagihan')
-            ->join('detail_piutang_pasien', 'detail_penagihan_piutang.no_rawat', '=', 'detail_piutang_pasien.no_rawat')
-            ->join('akun_piutang', 'detail_piutang_pasien.nama_bayar', '=', 'akun_piutang.nama_bayar')
-            ->leftJoin('bayar_piutang', function ($join) {
-                $join->on('detail_penagihan_piutang.no_rawat', '=', 'bayar_piutang.no_rawat')
-                     ->on('akun_piutang.kd_rek', '=', 'bayar_piutang.kd_rek_kontra');
-            })
-            ->where(function ($q) {
-                $q->where('jurnal.keterangan', 'like', 'bayar piutang% %oleh%')
-                  ->orWhere('jurnal.keterangan', 'like', 'bayar piutang tagihan% %oleh%');
-            })
-            ->where('detailjurnal.kredit', '>', 0)
-            ->whereColumn('detailjurnal.kd_rek', 'akun_piutang.kd_rek')
-            ->whereBetween('jurnal.tgl_jurnal', ['2023-08-01', '2023-08-31'])
-            ->whereColumn('penagihan_piutang.kd_pj', 'detail_piutang_pasien.kd_pj')
-            // the whereIn subquery has been moved to a raw where clause
-            ->whereRaw("detail_penagihan_piutang.no_rawat IN (SELECT detail_penagihan_piutang.no_rawat FROM detail_penagihan_piutang GROUP BY detail_penagihan_piutang.no_rawat HAVING COUNT(*) > 1)")
+            ->leftJoin('penagihan_piutang', 'detail_penagihan_piutang.no_tagihan', '=', 'penagihan_piutang.no_tagihan')
+            ->join(DB::raw('pegawai pegawai_penagih'), 'penagihan_piutang.nip', '=', 'pegawai_penagih.nik')
+            ->join(DB::raw('pegawai pegawai_menyetujui'), 'penagihan_piutang.nip_menyetujui', '=', 'pegawai_menyetujui.nik')
+            ->join('penjab', 'penagihan_piutang.kd_pj', '=', 'penjab.kd_pj')
+            ->join('akun_penagihan_piutang', 'penagihan_piutang.kd_rek', '=', 'akun_penagihan_piutang.kd_rek')
+            ->join('bayar_piutang', fn (JoinClause $join) => $join
+                ->on('detail_penagihan_piutang.no_rawat', '=', 'bayar_piutang.no_rawat')
+                ->on('penagihan_piutang.kd_rek', '=', 'bayar_piutang.kd_rek'))
+            ->when(
+                !is_null($latest),
+                fn (Builder $q): Builder => $q->whereRaw("timestamp(tgl_jurnal, jam_jurnal) > ?", $latest),
+                fn (Builder $q): Builder => $q->where('tgl_jurnal', '>=', '2022-10-31')
+            )
+            ->where('penagihan_piutang.status', 'Sudah Dibayar')
+            ->where(fn (Builder $q): Builder => $q
+                ->where('keterangan', 'like', '%bayar piutang, oleh%')
+                ->orWhere('keterangan', 'like', '%bayar piutang tagihan% %oleh%')
+                ->orWhere('keterangan', 'like', '%pembatalan bayar piutang, oleh%'))
             ->orderBy('jurnal.tgl_jurnal')
             ->orderBy('jurnal.jam_jurnal')
             ->cursor()
-            ->each(function ($jurnal) {
+            ->each(function (Jurnal $jurnal): void {
                 $ket = Str::of($jurnal->keterangan);
-    
+
                 $status = $ket->startsWith('BAYAR');
                 $verifikator = $ket->afterLast('OLEH ')->trim();
-    
+
                 $mapped = [
                     'no_jurnal'       => $jurnal->no_jurnal,
                     'waktu_jurnal'    => $jurnal->waktu_jurnal,
@@ -128,23 +125,20 @@ class PiutangDilunaskan extends Model
                     'no_rkm_medis'    => $jurnal->no_rkm_medis,
                     'no_tagihan'      => $jurnal->no_tagihan,
                     'kd_pj'           => $jurnal->kd_pj,
-                    // 'catatan'         => $jurnal->catatan,
-                    // 'totalpiutang'    => $jurnal->totalpiutang,
-                    // 'besar_cicilan'   => $jurnal->besar_cicilan,
-                    // 'tgl_tagihan'     => $jurnal->tgl_tagihan,
-                    // 'tgl_jatuhtempo'  => $jurnal->tgl_jatuhtempo,
+                    'piutang_dibayar' => $jurnal->besar_cicilan,
+                    'tgl_penagihan'   => $jurnal->tgl_penagihan,
+                    'tgl_jatuh_tempo' => $jurnal->tgl_jatuh_tempo,
                     'tgl_bayar'       => $jurnal->tgl_bayar,
-                    'kd_rek'          => $jurnal->kd_rek,
-                    // 'kd_rek_kontra'   => $jurnal->kd_rek_kontra,
-                    // 'nip'             => $jurnal->nip,
-                    // 'nip_menyetujui'  => $jurnal->nip_menyetujui,    
-                    // 'keterangan'      => $jurnal->keterangan,
                     'status'          => $status ? 'Bayar' : 'Batal Bayar',
+                    'kd_rek'          => $jurnal->kd_rek,
+                    'nm_rek'          => $jurnal->nama_bank,
+                    'nik_penagih'     => $jurnal->nip,
+                    'nik_menyetujui'  => $jurnal->nip_menyetujui,
                     'nik_validasi'    => (string) $verifikator,
                     'created_at'      => now(),
                     'updated_at'      => now(),
                 ];
-    
+
                 static::insert($mapped);
             });
     }

@@ -96,6 +96,7 @@ class BukuBesar extends Component
                         'no_bukti'               => $model->no_bukti,
                         'keterangan'             => $model->keterangan,
                         'keterangan_pengeluaran' => optional($model->pengeluaranHarian)->keterangan ?? '-',
+                        'catatan'                => $this->getCatatanPiutang($model),
                         'kd_rek'                 => $model->kd_rek,
                         'nm_rek'                 => $model->nm_rek,
                         'debet'                  => round($model->debet, 2),
@@ -109,6 +110,7 @@ class BukuBesar extends Component
                     'no_bukti'   => '',
                     'keterangan' => '',
                     'keterangan_pengeluaran' => '',
+                    'catatan' => '',
                     'kd_rek'     => '',
                     'nm_rek'     => 'TOTAL :',
                     'debet'      => round(optional($this->totalDebetDanKredit)->debet, 2),
@@ -118,7 +120,11 @@ class BukuBesar extends Component
         ];
     }
 
-
+    protected function getCatatanPiutang($model): string
+    {
+        return optional(optional($model->piutangDilunaskan)->tagihan)->catatan ?? "-";
+    }
+    
     protected function columnHeaders(): array
     {
         return [
@@ -128,6 +134,7 @@ class BukuBesar extends Component
             "No. Bukti",
             "Keterangan Jurnal",
             "Keterangan Pengeluaran",
+            "Catatan",
             "Kode",
             "Rekening",
             "Debet",
