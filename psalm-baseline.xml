@@ -123,9 +123,7 @@
   </file>
   <file src="app/Livewire/Pages/User/Siap/LihatAktivitas.php">
     <LessSpecificReturnStatement occurrences="1"/>
-    <MoreSpecificReturnType occurrences="1">
-      <code>\Illuminate\Database\Eloquent\Collection|array&lt;empty, empty&gt;</code>
-    </MoreSpecificReturnType>
+    <MoreSpecificReturnType occurrences="1"/>
   </file>
   <file src="app/Livewire/Pages/User/Siap/SetPerizinan.php">
     <PossiblyNullReference occurrences="1">
@@ -142,29 +140,6 @@
     <UndefinedMagicMethod occurrences="1">
       <code>hasRole</code>
     </UndefinedMagicMethod>
-  </file>
-  <file src="app/Models/Aplikasi/Permission.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>getModelForGuard($this-&gt;attributes['guard_name'] ?? config('auth.defaults.guard'))</code>
-    </ArgumentTypeCoercion>
-    <InvalidReturnStatement occurrences="1">
-      <code>static::getPermissions($params, true)-&gt;first()</code>
-    </InvalidReturnStatement>
-    <InvalidReturnType occurrences="1"/>
-    <PossiblyNullArgument occurrences="1">
-      <code>getModelForGuard($this-&gt;attributes['guard_name'] ?? config('auth.defaults.guard'))</code>
-    </PossiblyNullArgument>
-  </file>
-  <file src="app/Models/Aplikasi/Role.php">
-    <ArgumentTypeCoercion occurrences="1">
-      <code>getModelForGuard($this-&gt;attributes['guard_name'] ?? config('auth.defaults.guard'))</code>
-    </ArgumentTypeCoercion>
-    <MoreSpecificImplementedParamType occurrences="1">
-      <code>$permission</code>
-    </MoreSpecificImplementedParamType>
-    <PossiblyNullArgument occurrences="1">
-      <code>getModelForGuard($this-&gt;attributes['guard_name'] ?? config('auth.defaults.guard'))</code>
-    </PossiblyNullArgument>
   </file>
   <file src="app/Models/Aplikasi/User.php">
     <ImplicitToStringCast occurrences="7">
@@ -292,21 +267,6 @@
     <UndefinedInterfaceMethod occurrences="1">
       <code>setQueryGrammar</code>
     </UndefinedInterfaceMethod>
-  </file>
-  <file src="app/Services/BPJS/BpjsService.php">
-    <PossiblyNullArgument occurrences="2">
-      <code>$key</code>
-      <code>$this-&gt;response[$key]</code>
-    </PossiblyNullArgument>
-    <PossiblyNullArrayAccess occurrences="1">
-      <code>$this-&gt;response[$key]</code>
-    </PossiblyNullArrayAccess>
-    <PossiblyNullArrayOffset occurrences="1">
-      <code>$this-&gt;response</code>
-    </PossiblyNullArrayOffset>
-    <PossiblyNullReference occurrences="1">
-      <code>$this-&gt;response</code>
-    </PossiblyNullReference>
   </file>
   <file src="app/Support/Menu.php">
     <UndefinedInterfaceMethod occurrences="8">
