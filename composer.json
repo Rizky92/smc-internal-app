@@ -88,9 +88,9 @@
             "@php artisan ide-helper:generate",
             "@php artisan ide-helper:models --nowrite",
             "@php artisan ide-helper:meta",
-            "./vendor/bin/psalm --clear-cache",
-            "./vendor/bin/psalm --alter --issues=MissingParamType,MissingReturnType,MissingClosureReturnType,InvalidReturnType,InvalidNullableReturnType,InvalidFalsableReturnType,MismatchingDocblockParamType,MismatchingDocblockReturnType,ParamNameMismatch,PossiblyUndefinedVariable,PossiblyUndefinedGlobalVariable,UnnecessaryVarAnnotation --allow-backwards-incompatible-changes=true",
-            "./vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php"
+            "@psalm:clear-cache",
+            "@psalm:alter",
+            "@cs"
         ],
         "psalm:update-baseline": [
             "./vendor/bin/psalm --update-baseline"
@@ -100,8 +100,17 @@
             "./vendor/bin/psalm-plugin enable psalm/plugin-laravel",
             "./vendor/bin/psalm --set-baseline=psalm-baseline.xml"
         ],
+        "psalm:scan": [
+            "./vendor/bin/psalm"
+        ],
+        "psalm:alter": [
+            "./vendor/bin/psalm --alter --issues=MissingParamType,MissingReturnType,MissingClosureReturnType,InvalidReturnType,InvalidNullableReturnType,InvalidFalsableReturnType,MismatchingDocblockParamType,MismatchingDocblockReturnType,ParamNameMismatch,PossiblyUndefinedVariable,PossiblyUndefinedGlobalVariable,UnnecessaryVarAnnotation --allow-backwards-incompatible-changes=true"
+        ],
         "psalm:clear-cache": [
             "./vendor/bin/psalm --clear-cache"
+        ],
+        "cs": [
+            "./vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php"
         ],
         "optimize": [
             "@php artisan optimize -q",
