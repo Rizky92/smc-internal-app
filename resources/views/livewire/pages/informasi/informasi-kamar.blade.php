@@ -9,56 +9,35 @@
             <span>KETERSEDIAAN KAMAR</span>
         </div>
     </header>
-
-    @if ($informasiKamar->count() > 0)
-        <table class="table table-bordered table-striped text-white">   
-            <thead>
-                <tr>
-                    <th width="30%">Bangsal</th>
-                    <th width="20%">Kelas</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
+    <table class="table table-bordered table-striped text-white">   
+        <thead>
+            <tr>
+                <th width="30%">Bangsal</th>
+                <th width="30%">Kelas</th>
+                <th width="40%">Status</th>
+            </tr>
+        </thead>
+    </table>
+    <div id="scrollingContent">
+        <table class="table table-bordered">
+            <div class="padding"></div>
+            <tbody>
+                @forelse ($this->dataInformasiKamar as $item )
+                    <tr>
+                        <td width="30%">{{ $item->nm_bangsal }}</td>
+                        <td width="30%">{{ $item->kelas }}</td>
+                        <td width="40%">
+                            Terisi: {{ $item->total_terisi }} | Tersedia: {{ $item->total_tersedia }}
+                        </td>
+                    </tr>
+                @empty
+                    <tr colspan="10" style="height: 20%"></tr>
+                @endforelse
+            </tbody>
         </table>
-        <div id="scrollingContent">
-            <table class="table table-bordered">
-                <div class="padding"></div>
-                <tbody>
-                    @php
-                        $processedCombos = [];
-                    @endphp
+    </div>
 
-                    @foreach ($informasiKamar as $bangsal)
-                        @foreach ($kelasList as $kelas)
-                            @php
-                                $comboKey = $bangsal->kd_bangsal . '_' . $kelas;
-
-                                if (!in_array($comboKey, $processedCombos)) {
-                                    $processedCombos[] = $comboKey;
-                                    $occupiedRooms = $bangsal->countOccupiedRooms($kelas);
-                                    $emptyRooms = $bangsal->countEmptyRooms($kelas);
-                                    $showRow = $occupiedRooms > 0 || $emptyRooms > 0;
-                                } else {
-                                    $showRow = false;
-                                }
-                            @endphp
-
-                            @if ($showRow)
-                                <tr>
-                                    <td width="30%">{{ $bangsal->nm_bangsal }}</td>
-                                    <td width="20%">{{ $kelas }}</td>
-                                    <td>
-                                        Terisi: {{ $occupiedRooms }} | Tersedia: {{ $emptyRooms }}
-                                    </td>
-                                </tr>
-                            @endif
-                        @endforeach
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-
-        @push('js')
+    @push('js')
         <script>
             function refreshPage() {
                 setTimeout(function () {
@@ -69,9 +48,6 @@
                 refreshPage();
             });
         </script>
-        @endpush
-        
-    @else
-        <p>No data available</p>
-    @endif
+    @endpush
+
 @endsection

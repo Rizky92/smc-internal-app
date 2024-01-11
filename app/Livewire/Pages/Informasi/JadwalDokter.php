@@ -2,19 +2,17 @@
 
 namespace App\Livewire\Pages\Informasi;
 
+use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
-use App\Models\Antrian\Jadwal;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class JadwalDokter extends Component
 {
-    use Filterable;
-    use FlashComponent;
-    use LiveTable;
+    use FlashComponent, Filterable, LiveTable, DeferredLoading;
 
     /** @var bool */
     public $semuaPoli;
@@ -26,18 +24,27 @@ class JadwalDokter extends Component
         ];
     }
 
-    public function getDataJadwalDokterProperty()
-    {
-        return Jadwal::query()
-            ->jadwalDokter($this->semuaPoli)
-            ->search($this->cari)
-            ->sortWithColumns($this->sortColumns)
-            ->get();
-    }
-
     public function mount(): void
     {
         $this->defaultValues();
+    }
+
+    public function getDataJadwalDokterProperty()
+    {
+        return $this->isDeferred
+        ? []
+        : Jadwal::query()
+            ->jadwalDokter()
+            ->with(['dokter', 'poliklinik'])
+            ->when(
+                !$this->semuaPoli,
+                fn (Builder $query) => $query->where('poliklinik.nm_poli', '<>', 'Poli Eksekutif'),    
+            )
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns, [
+                'jam_mulai' => 'asc',
+            ])
+            ->paginate($this->perpage);
     }
 
     public function render(): View

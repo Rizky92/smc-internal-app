@@ -6,6 +6,7 @@ use App\Database\Eloquent\Model;
 use App\Models\Kepegawaian\Dokter;
 use App\Models\Perawatan\Poliklinik;
 use App\Models\Perawatan\RegistrasiPasien;
+use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -41,35 +42,44 @@ class Jadwal extends Model
 
     public function scopeJadwalDokter(Builder $query, bool $semuaPoli = false): Builder
     {
-        $sqlSelect = <<<'SQL'
-        jadwal.kd_dokter, 
-        dokter.nm_dokter, 
-        jadwal.kd_poli,
-        poliklinik.nm_poli,
-        jadwal.hari_kerja,
-        jadwal.jam_mulai, 
-        jadwal.jam_selesai
+        $sqlSelect = <<<SQL
+            dokter.kd_dokter,
+            dokter.nm_dokter,
+            poliklinik.kd_poli, 
+            poliklinik.nm_poli,
+            jadwal.hari_kerja,
+            jadwal.jam_mulai, 
+            jadwal.jam_selesai,
+            jadwal.kuota,
+            (
+                SELECT COUNT(*) 
+                FROM reg_periksa 
+                WHERE kd_poli = poliklinik.kd_poli 
+                    AND kd_dokter = jadwal.kd_dokter 
+                    AND tgl_registrasi = CURDATE()
+            ) AS total_registrasi
         SQL;
-
+    
         $this->addSearchConditions([
             'dokter.nm_dokter',
             'poliklinik.nm_poli',
         ]);
-
-        $registrasiPasien = RegistrasiPasien::query()
-            ->selectRaw('count(*)')
-            ->whereColumn('reg_periksa.kd_poli', 'jadwal.kd_poli')
-            ->whereColumn('reg_periksa.kd_dokter', 'jadwal.kd_dokter')
-            ->whereDate('reg_periksa.tgl_registrasi', now());
-
+    
+        $dayOfWeekMap = [
+            'Sunday' => 'AHAD',
+            'Monday' => 'SENIN',
+            'Tuesday' => 'SELASA',
+            'Wednesday' => 'RABU',
+            'Thursday' => 'KAMIS',
+            'Friday' => 'JUMAT',
+            'Saturday' => 'SABTU',
+        ];
+    
         return $query
             ->selectRaw($sqlSelect)
-            ->addSelect(['jumlah_pasien' => $registrasiPasien])
             ->join('dokter', 'jadwal.kd_dokter', '=', 'dokter.kd_dokter')
             ->join('poliklinik', 'jadwal.kd_poli', '=', 'poliklinik.kd_poli')
-            ->where('hari_kerja', hari('now'))
-            ->when(! $semuaPoli, fn (Builder $q): Builder => $q->where('jadwal.kd_poli', '!=', 'U0038'))
-            ->orderBy('poliklinik.nm_poli')
-            ->orderBy('dokter.nm_dokter');
+            ->where('jadwal.hari_kerja', '=', strtoupper($dayOfWeekMap[date('l')]));
     }
+    
 }
