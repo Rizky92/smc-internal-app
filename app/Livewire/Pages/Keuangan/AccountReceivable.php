@@ -109,12 +109,20 @@ class AccountReceivable extends Component
             ))
             ->get();
 
+        $totalDiskonPiutang = collect($this->tagihanDipilih)
+            ->filter(fn (array $value): bool => isset($value['selected']) && $value['selected'])
+            ->map(fn (array $value): array => [
+                'selected'          => isset($value['selected']) ? $value['selected'] : false,
+                'diskon_piutang'    => empty($value['diskon_piutang']) ? 0 : $value['diskon_piutang'],
+            ])
+            ->sum('diskon_piutang');
+
         $totalPiutang = (float) $total->sum('total_piutang');
         $totalCicilan = (float) $total->sum('total_cicilan');
         $totalSisaPerPeriode = $total->pluck('sisa_piutang', 'periode');
         $totalSisaCicilan = (float) $totalSisaPerPeriode->sum();
 
-        return compact('totalPiutang', 'totalCicilan', 'totalSisaPerPeriode', 'totalSisaCicilan');
+        return compact('totalPiutang', 'totalCicilan', 'totalSisaPerPeriode', 'totalSisaCicilan', 'totalDiskonPiutang');
     }
 
     public function render(): View

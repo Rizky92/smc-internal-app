@@ -200,9 +200,9 @@ class PenagihanPiutang extends Model
                 when datediff(?, penagihan_piutang.tanggal) between 61 and 90 then 'periode_61_90'
                 when datediff(?, penagihan_piutang.tanggal) > 90 then 'periode_90_up'
             end periode,
-            round(sum(detail_piutang_pasien.totalpiutang), 2) total_piutang,
-            round(sum(bayar_piutang.besar_cicilan), 2) total_cicilan,
-            round(sum(detail_piutang_pasien.totalpiutang - ifnull(bayar_piutang.besar_cicilan, 0)), 2) sisa_piutang
+            round(sum(ifnull(detail_piutang_pasien.totalpiutang, detail_penagihan_piutang.sisapiutang)), 2) total_piutang,
+            round(sum(ifnull(bayar_piutang.besar_cicilan, 0)), 2) total_cicilan,
+            round(sum(ifnull(detail_piutang_pasien.totalpiutang, detail_penagihan_piutang.sisapiutang) - ifnull(bayar_piutang.besar_cicilan, 0) - ifnull(bayar_piutang.diskon_piutang, 0) - ifnull(bayar_piutang.tidak_terbayar, 0)), 2) sisa_piutang
         SQL;
 
         $sqlGroupBy = <<<'SQL'
@@ -211,16 +211,6 @@ class PenagihanPiutang extends Model
             datediff(?, penagihan_piutang.tanggal) between 61 and 90,
             datediff(?, penagihan_piutang.tanggal) > 90
         SQL;
-
-        $sqlFilterOnlyPaid = DB::connection('mysql_sik')
-            ->table('detail_piutang_pasien')
-            ->select('detail_piutang_pasien.no_rawat')
-            ->join('akun_piutang', 'detail_piutang_pasien.nama_bayar', '=', 'akun_piutang.nama_bayar')
-            ->join('bayar_piutang', fn (JoinClause $join) => $join
-                ->on('detail_piutang_pasien.no_rawat', '=', 'bayar_piutang.no_rawat')
-                ->on('akun_piutang.kd_rek', '=', 'bayar_piutang.kd_rek_kontra'))
-            ->groupBy('detail_piutang_pasien.no_rawat')
-            ->havingRaw('round(sum(detail_piutang_pasien.totalpiutang - bayar_piutang.besar_cicilan - bayar_piutang.diskon_piutang - bayar_piutang.tidak_terbayar), 2) != 0');
 
         $this->addSearchConditions([
             'detail_penagihan_piutang.no_rawat',
@@ -257,8 +247,11 @@ class PenagihanPiutang extends Model
             ->join(DB::raw('penjab penjab_pasien'), 'reg_periksa.kd_pj', '=', 'penjab_pasien.kd_pj')
             ->when($jaminanPasien !== '-', fn (Builder $q): Builder => $q->where('reg_periksa.kd_pj', $jaminanPasien))
             ->when($jenisPerawatan !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.status_lanjut', $jenisPerawatan))
-            ->where(fn (Builder $q): Builder => $q->whereNull('bayar_piutang.no_rawat')->orWhereIn('detail_penagihan_piutang.no_rawat', $sqlFilterOnlyPaid))
+            ->where(fn (Builder $q): Builder => $q
+                ->whereNull('bayar_piutang.no_rawat')
+                ->orWhereRaw('(round(ifnull(detail_piutang_pasien.totalpiutang, detail_penagihan_piutang.sisapiutang) - ifnull(bayar_piutang.besar_cicilan, 0) - ifnull(bayar_piutang.diskon_piutang, 0) - ifnull(bayar_piutang.tidak_terbayar, 0), 2)) != 0'))
             ->whereBetween('penagihan_piutang.tanggal', [$tglAwal, $tglAkhir])
-            ->groupByRaw($sqlGroupBy, [$tglAkhir, $tglAkhir, $tglAkhir, $tglAkhir]);
+            ->groupByRaw($sqlGroupBy, [$tglAkhir, $tglAkhir, $tglAkhir, $tglAkhir])
+            ->havingRaw('round(sum(detail_piutang_pasien.sisapiutang), 2) != 0');
     }
 }

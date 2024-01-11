@@ -105,6 +105,9 @@
                         <x-table.th :title="rp(optional($this->dataTotalAccountReceivable)['totalPiutang'])" />
                         <x-table.th :title="rp(optional($this->dataTotalAccountReceivable)['totalCicilan'])" />
                         <x-table.th :title="rp(optional($this->dataTotalAccountReceivable)['totalSisaCicilan'])" />
+                        @if (user()->can('keuangan.account-receivable.validasi-piutang'))
+                            <x-table.th :title="rp(optional($this->dataTotalAccountReceivable)['totalDiskonPiutang'])" />
+                        @endif
                         <x-table.th :title="rp(optional(optional($this->dataTotalAccountReceivable)['totalSisaPerPeriode'])->get('periode_0_30'))" />
                         <x-table.th :title="rp(optional(optional($this->dataTotalAccountReceivable)['totalSisaPerPeriode'])->get('periode_31_60'))" />
                         <x-table.th :title="rp(optional(optional($this->dataTotalAccountReceivable)['totalSisaPerPeriode'])->get('periode_61_90'))" />
