@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Perawatan\Kamar;
 use App\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Bangsal extends Model
@@ -30,48 +31,24 @@ class Bangsal extends Model
         return $this->hasMany(Kamar::class, 'kd_bangsal', 'kd_bangsal');
     }
 
-    public function countEmptyRooms($class = null)
+    public function scopeInformasiKamar(Builder $query): Builder
     {
-        $query = $this->kamar()->where('statusdata', '1')->where('status', 'KOSONG');
+        $sqlSelect = <<<SQL
+            bangsal.nm_bangsal,
+            kamar.kelas,
+            SUM(kamar.status = 'ISI') as total_terisi,
+            SUM(kamar.status = 'KOSONG') as total_tersedia
+        SQL;
 
-        if ($class) {
-            $query->where('kelas', $class);
-        }
+        $this->addSearchConditions([
+            'bangsal.nm_bangsal',
+        ]);
 
-        return $query->count();
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join('kamar', 'bangsal.kd_bangsal', '=', 'kamar.kd_bangsal')
+            ->groupBy('bangsal.nm_bangsal', 'kamar.kelas')
+            ->where('bangsal.status', '=', '1');
     }
-
-    public function countOccupiedRooms($class = null)
-    {
-        $query = $this->kamar()->where('statusdata', '1')->where('status', 'ISI');
-
-        if ($class) {
-            $query->where('kelas', $class);
-        }
-
-        return $query->count();
-    }
-    public function scopeActiveWithKamar($query)
-    {   
-        $subquery = Kamar::selectRaw('bangsal.kd_bangsal, kelas, COUNT(*) as total')
-            ->join('bangsal', 'bangsal.kd_bangsal', '=', 'kamar.kd_bangsal')
-            ->where('kamar.statusdata', '1')
-            ->groupBy('bangsal.kd_bangsal', 'kamar.kelas');
-
-        return $query->select('bangsal.*', 'subquery.kelas')
-            ->leftJoinSub($subquery, 'subquery', function ($join) {
-                $join->on('bangsal.kd_bangsal', '=', 'subquery.kd_bangsal');
-            })
-            ->where('bangsal.status', '1')
-            ->orderBy('nm_bangsal')
-            ->orderBy('kelas');
-    }
-
-    public static function getKelasList()
-    {
-        return Kamar::select('kelas')->distinct()->pluck('kelas');
-    }
-
-
 
 }
