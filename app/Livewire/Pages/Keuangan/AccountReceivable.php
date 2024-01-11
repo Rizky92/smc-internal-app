@@ -52,13 +52,17 @@ class AccountReceivable extends Component
     /** @var int|float */
     public $totalDibayar;
 
+    /** @var bool */
+    public $bedaJaminan;
+
     protected function queryString(): array
     {
         return [
-            'tglAwal'         => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir'        => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
-            'jaminanPasien'   => ['except' => '-', 'as' => 'jaminan_pasien'],
-            'jenisPerawatan'  => ['except' => 'semua', 'as' => 'jenis_perawatan'],
+            'tglAwal'        => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir'       => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'jaminanPasien'  => ['except' => '-', 'as' => 'jaminan_pasien'],
+            'jenisPerawatan' => ['except' => 'semua', 'as' => 'jenis_perawatan'],
+            'bedaJaminan'    => ['except' => false, 'as' => 'beda_jaminan'],
         ];
     }
 
@@ -73,7 +77,7 @@ class AccountReceivable extends Component
     public function getDataAccountReceivableProperty()
     {
         return $this->isDeferred ? [] : PenagihanPiutang::query()
-            ->accountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
+            ->accountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan, $this->bedaJaminan)
             ->search($this->cari)
             ->accountReceivableDipilih($this->tagihanDipilih)
             ->sortWithColumns($this->sortColumns)
@@ -117,6 +121,10 @@ class AccountReceivable extends Component
     {
         $this->rekalkulasiPembayaran();
 
+        $this->tagihanDipilih = collect($this->tagihanDipilih)
+            ->reject(fn (array $v): bool => isset($v['selected']) && ! $v['selected'])
+            ->all();
+
         return view('livewire.pages.keuangan.account-receivable')
             ->layout(BaseLayout::class, ['title' => 'Piutang Aging (Account Receivable)']);
     }
@@ -154,7 +162,7 @@ class AccountReceivable extends Component
         }
 
         $query = PenagihanPiutang::query()
-            ->accountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
+            ->accountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan, $this->bedaJaminan)
             ->search($this->cari);
 
         $this->tagihanDipilih = $query
@@ -222,6 +230,7 @@ class AccountReceivable extends Component
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
 
+        $this->bedaJaminan = false;
         $this->rekeningAkun = '-';
         $this->jaminanPasien = '-';
         $this->jenisPerawatan = 'semua';
@@ -241,7 +250,7 @@ class AccountReceivable extends Component
 
         return [
             PenagihanPiutang::query()
-                ->accountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan)
+                ->accountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan, $this->bedaJaminan)
                 ->cursor()
                 ->map(fn (PenagihanPiutang $model) => [
                     'no_tagihan'      => $model->no_tagihan,

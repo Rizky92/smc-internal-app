@@ -5,11 +5,12 @@
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.range-date />
+                <x-filter.toggle model="bedaJaminan" title="Tampilkan Beda Jaminan" class="ml-3" />
                 <x-filter.button-export-excel class="ml-auto" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.label constant-width>Status:</x-filter.label>
-                <x-filter.select model="jenisPerawatan" :options="['semua' => 'Semua', 'ralan' => 'Rawat Jalan', 'ranap' => 'Rawat Inap']" selected="semua" />
+                <x-filter.select model="jenisPerawatan" :options="['semua' => 'Semua', 'ralan' => 'Rawat Jalan', 'ranap' => 'Rawat Inap']" selected="semua" />'
                 <x-filter.label class="ml-auto">Asuransi Pasien:</x-filter.label>
                 <x-filter.select2 livewire name="jaminanPasien" show-key class="ml-3" :options="$this->penjamin" selected="-" />
             </x-row-col-flex>
