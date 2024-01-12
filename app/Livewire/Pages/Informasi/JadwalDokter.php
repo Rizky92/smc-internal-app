@@ -12,7 +12,10 @@ use Livewire\Component;
 
 class JadwalDokter extends Component
 {
-    use FlashComponent, Filterable, LiveTable, DeferredLoading;
+    use DeferredLoading;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
 
     /** @var bool */
     public $semuaPoli;
@@ -37,8 +40,8 @@ class JadwalDokter extends Component
             ->jadwalDokter()
             ->with(['dokter', 'poliklinik'])
             ->when(
-                !$this->semuaPoli,
-                fn (Builder $query) => $query->where('poliklinik.nm_poli', '<>', 'Poli Eksekutif'),    
+                ! $this->semuaPoli,
+                fn (Builder $query) => $query->where('poliklinik.nm_poli', '<>', 'Poli Eksekutif'),
             )
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns, [

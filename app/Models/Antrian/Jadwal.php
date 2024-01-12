@@ -5,8 +5,6 @@ namespace App\Models\Antrian;
 use App\Database\Eloquent\Model;
 use App\Models\Kepegawaian\Dokter;
 use App\Models\Perawatan\Poliklinik;
-use App\Models\Perawatan\RegistrasiPasien;
-use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -42,7 +40,7 @@ class Jadwal extends Model
 
     public function scopeJadwalDokter(Builder $query, bool $semuaPoli = false): Builder
     {
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             dokter.kd_dokter,
             dokter.nm_dokter,
             poliklinik.kd_poli, 
@@ -59,27 +57,26 @@ class Jadwal extends Model
                     AND tgl_registrasi = CURDATE()
             ) AS total_registrasi
         SQL;
-    
+
         $this->addSearchConditions([
             'dokter.nm_dokter',
             'poliklinik.nm_poli',
         ]);
-    
+
         $dayOfWeekMap = [
-            'Sunday' => 'AHAD',
-            'Monday' => 'SENIN',
-            'Tuesday' => 'SELASA',
+            'Sunday'    => 'AHAD',
+            'Monday'    => 'SENIN',
+            'Tuesday'   => 'SELASA',
             'Wednesday' => 'RABU',
-            'Thursday' => 'KAMIS',
-            'Friday' => 'JUMAT',
-            'Saturday' => 'SABTU',
+            'Thursday'  => 'KAMIS',
+            'Friday'    => 'JUMAT',
+            'Saturday'  => 'SABTU',
         ];
-    
+
         return $query
             ->selectRaw($sqlSelect)
             ->join('dokter', 'jadwal.kd_dokter', '=', 'dokter.kd_dokter')
             ->join('poliklinik', 'jadwal.kd_poli', '=', 'poliklinik.kd_poli')
             ->where('jadwal.hari_kerja', '=', strtoupper($dayOfWeekMap[date('l')]));
     }
-    
 }

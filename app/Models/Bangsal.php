@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use App\Database\Eloquent\Model;
+use App\Models\Perawatan\Kamar;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Collection;
 
 class Bangsal extends Model
 {
@@ -37,7 +37,7 @@ class Bangsal extends Model
 
     public function scopeInformasiKamar(Builder $query): Builder
     {
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             bangsal.nm_bangsal,
             kamar.kelas,
             SUM(kamar.status = 'ISI') as total_terisi,
@@ -54,5 +54,4 @@ class Bangsal extends Model
             ->groupBy('bangsal.nm_bangsal', 'kamar.kelas')
             ->where('bangsal.status', '=', '1');
     }
-
 }

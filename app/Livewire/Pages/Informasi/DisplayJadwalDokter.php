@@ -3,9 +3,7 @@
 namespace App\Livewire\Pages\Informasi;
 
 use App\Models\Antrian\Jadwal;
-use App\Models\Perawatan\RegistrasiPasien;
 use App\View\Components\CustomerLayout;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -14,9 +12,9 @@ class DisplayJadwalDokter extends Component
     public function getDataJadwalDokterProperty()
     {
         return Jadwal::query()
-        ->jadwalDokter()
-        ->with(['dokter', 'poliklinik'])
-        ->get();
+            ->jadwalDokter()
+            ->with(['dokter', 'poliklinik'])
+            ->get();
     }
 
     public function render(): View
