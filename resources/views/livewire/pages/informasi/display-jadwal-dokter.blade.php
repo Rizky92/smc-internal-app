@@ -19,8 +19,6 @@
                 <th width="13%">Jam Mulai</th>
                 <th width="13%">Jam Selesai</th>
                 <th width="20%">Total Register & Kuota</th>
-                {{-- <th width="10%">Register</th>
-                <th width="10%">Kuota</th> --}}
             </tr>
         </thead>
     </table>
@@ -29,13 +27,20 @@
             <div class="padding"></div>
             <tbody>
                 @forelse ($this->dataJadwalDokter as $item)
-                    <tr>
-                        
+                    <tr class="@if($item->total_registrasi == $item->kuota) bg-danger @endif">
                         <td width="33%">{{ $item->nm_dokter }}</td>
                         <td width="21%">{{ $item->nm_poli }}</td>
                         <td width="13%">{{ $item->jam_mulai }}</td>
-                        <td width="13%">{{ $item->jam_selesai }}</td>
-                        <td width="20%">Register : <b>{{ $item->total_registrasi }}</b> | Kuota : <b>{{ $item->kuota }}</b></td>                 
+                        <td width="13%">{{ $item->jam_selesai }}</td>       
+                        <td width="20%">
+                            @if($item->total_registrasi == $item->kuota)
+                                Register : <b style="color: white">{{ $item->total_registrasi }}</b> |
+                                Kuota : <b style="color: white">{{ $item->kuota }}</b>
+                            @else
+                                Register : <b style="color: red">{{ $item->total_registrasi }}</b> |
+                                Kuota : <b style="color: red">{{ $item->kuota }}</b>
+                            @endif
+                        </td>                 
                         @empty
                         <tr></tr>
                         @endforelse
