@@ -28,9 +28,9 @@ abstract class Model extends BaseModel
     protected $sortColumns = [];
 
     /**
-     * List of columns that uses raw queries.
+     * List of columns that uses explicitly defined queries.
      *
-     * @var array<TKey, \Illuminate\Database\Query\Expression|string>
+     * @var array<string, \Illuminate\Database\Query\Expression|string>
      */
     protected $rawColumns = [];
 }
