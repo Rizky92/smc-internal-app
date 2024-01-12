@@ -6,7 +6,9 @@ use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
+use App\Models\Antrian\Jadwal;
 use App\View\Components\BaseLayout;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -34,9 +36,7 @@ class JadwalDokter extends Component
 
     public function getDataJadwalDokterProperty()
     {
-        return $this->isDeferred
-        ? []
-        : Jadwal::query()
+        return $this->isDeferred ? [] : Jadwal::query()
             ->jadwalDokter()
             ->with(['dokter', 'poliklinik'])
             ->when(

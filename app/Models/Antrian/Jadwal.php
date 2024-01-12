@@ -79,6 +79,5 @@ class Jadwal extends Model
             ->join('poliklinik', 'jadwal.kd_poli', '=', 'poliklinik.kd_poli')
             ->where('jadwal.hari_kerja', '=', strtoupper($dayOfWeekMap[date('l')]))
             ->orderByRaw("CASE WHEN poliklinik.nm_poli = 'Poli Eksekutif' THEN 1 ELSE 0 END, poliklinik.nm_poli");
-    }    
-    
+    }
 }
