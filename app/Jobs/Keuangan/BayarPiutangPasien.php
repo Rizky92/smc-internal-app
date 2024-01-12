@@ -120,12 +120,14 @@ class BayarPiutangPasien implements ShouldQueue
                 $detailJurnal = collect();
 
                 if ($this->diskonPiutang > 0) {
+                    $this->diskonPiutang = clamp($this->diskonPiutang, 0, $totalCicilan);
                     $totalCicilan -= $this->diskonPiutang;
 
                     $detailJurnal->push(['kd_rek' => $this->akunDiskonPiutang, 'debet' => $this->diskonPiutang, 'kredit' => 0]);
                 }
 
                 if ($this->tidakTerbayar > 0) {
+                    $this->tidakTerbayar = clamp($this->tidakTerbayar, 0, $totalCicilan);
                     $totalCicilan -= $this->tidakTerbayar;
 
                     $detailJurnal->push(['kd_rek' => $this->akunTidakTerbayar, 'debet' => $this->tidakTerbayar, 'kredit' => 0]);
@@ -176,7 +178,12 @@ class BayarPiutangPasien implements ShouldQueue
                     $this->noRawat,
                     sprintf('BAYAR PIUTANG TAGIHAN %s, OLEH %s', $this->noTagihan, $this->userId),
                     $this->tglBayar,
-                    $detailJurnal->all()
+                    $detailJurnal
+                        ->reject(fn (array $value): bool => 
+                            isset($value['kd_rek'], $value['debet'], $value['kredit']) && 
+                            (round($value['debet'], 2) === 0.00 && round($value['kredit'], 2) === 0.00)
+                        )
+                        ->all()
                 );
 
                 tracker_end('mysql_sik', $this->userId);
