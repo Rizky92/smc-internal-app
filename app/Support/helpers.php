@@ -8,9 +8,24 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+if (! function_exists('clamp')) {
+    /**
+     * Clamp the given number between the given minimum and maximum.
+     *
+     * @param  \int|float  $number
+     * @param  \int|float  $min
+     * @param  \int|float  $max
+     * @return \int|float
+     */
+    function clamp($number, $min, $max)
+    {
+        return min(max($number, $min), $max);
+    }
+}
+
 if (! function_exists('hari')) {
     /**
-     * @param  \DateTime|\Carbon|string|null
+     * @param  \DateTime|\Illuminate\Support\Carbon|string|null  $date
      */
     function hari($date): string
     {
