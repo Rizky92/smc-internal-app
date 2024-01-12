@@ -1,19 +1,18 @@
 body {
     overflow: hidden;
 }
-span {
-    font-size: 6vw;
-    font-weight: bold;
-    color: #198754;
-}
 thead {
-    text-align: center;
-    font-size: 2vw;
-    background-color: #198754;
+    font-size: 20px;
+}
+.head {
+    font-size: 64px;
+    font-weight: bold;
 }
 tbody {
-    font-size: 2vw;
-    text-align: center;
+    font-size: 18px;
+}
+b {
+    color: red;
 }
 .padding{
     height: 43vw; 
@@ -34,10 +33,6 @@ tbody {
 #scrollingContent table tbody {
     display: table-row-group;
 }
-#scrollingContent table tbody tr:nth-child(even) {
-    background-color: #198754;
-    color: white;
-    }
 @keyframes marqueeAnimation {
   0% {
       transform: translateY(0);
