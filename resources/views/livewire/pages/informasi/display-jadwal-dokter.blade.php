@@ -4,21 +4,23 @@
     <link rel="stylesheet" href="{{ asset('css/jadwal.css') }}">
 @endpush
 
-<header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom shadow">
+<header class="d-flex flex-wrap justify-content-center mb-4 border-bottom shadow">
     <div class="container-fluid d-flex justify-content-center">
-        <img src="{{ asset('img/logo.png') }}" alt="logo" width="120">
-        <span>JADWAL DOKTER HARI INI</span>
+        <img src="{{ asset('img/logo.png') }}" alt="logo" width="100px" height="80px">
+        <h1 class="text-success head">JADWAL DOKTER HARI INI</h1>
     </div>
 </header>
+
     <table class="table table-bordered">
-        <thead class="thead bg-pandan text-white">
+        <thead class="bg-success">
             <tr>
-                <th width="30%">Nama Dokter</th>
-                <th width="20%">Poliklinik</th>
-                <th width="15%">Jam Mulai</th>
-                <th width="15%">Jam Selesai</th>
-                <th width="10%">Register</th>
-                <th width="10%">Kuota</th>
+                <th width="33%">Nama Dokter</th>
+                <th width="21%">Poliklinik</th>
+                <th width="13%">Jam Mulai</th>
+                <th width="13%">Jam Selesai</th>
+                <th width="20%">Total Register & Kuota</th>
+                {{-- <th width="10%">Register</th>
+                <th width="10%">Kuota</th> --}}
             </tr>
         </thead>
     </table>
@@ -29,12 +31,11 @@
                 @forelse ($this->dataJadwalDokter as $item)
                     <tr>
                         
-                        <td style="text-align: left;" width="30%">{{ $item->nm_dokter }}</td>
-                        <td width="20%">{{ $item->nm_poli }}</td>
-                        <td width="15%">{{ $item->jam_mulai }}</td>
-                        <td width="15%">{{ $item->jam_selesai }}</td>
-                        <td width="10%">{{ $item->total_registrasi }}</td>
-                        <td width="10%">{{ $item->kuota }}</td>
+                        <td width="33%">{{ $item->nm_dokter }}</td>
+                        <td width="21%">{{ $item->nm_poli }}</td>
+                        <td width="13%">{{ $item->jam_mulai }}</td>
+                        <td width="13%">{{ $item->jam_selesai }}</td>
+                        <td width="20%">Register : <b>{{ $item->total_registrasi }}</b> | Kuota : <b>{{ $item->kuota }}</b></td>                 
                         @empty
                         <tr></tr>
                         @endforelse
@@ -47,7 +48,7 @@
         function refreshPage() {
             setTimeout(function () {
                 location.reload(true);
-            }, 65000);
+            }, 80000);
         }
         document.addEventListener('DOMContentLoaded', function () {
             refreshPage();
