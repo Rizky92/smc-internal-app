@@ -29,11 +29,5 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-
-    'satusehat' => [
-        'organization_id' => env('SATUSEHAT_ORGANIZATION_ID'),
-        'client' => env('SATUSEHAT_CLIENT'),
-        'secret' => env('SATUSEHAT_SECRET'),
-    ],
-
+    
 ];
