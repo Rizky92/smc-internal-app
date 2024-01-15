@@ -1,41 +1,36 @@
 <?php
 
 return [
-    
+
     /*
     |--------------------------------------------------------------------------
     | Environment
     |--------------------------------------------------------------------------
     |
-    | This value is the name of your application. This value is used when the
-    | framework needs to place the application's name in a notification or
-    | any other location as required by the application or its packages.
+    | Atur environment untuk terhubung ke Satu Sehat.
     |
     */
 
-    'environment' => env('SATUSEHAT_ENV'),
-    
+    'environment' => env('SATUSEHAT_ENV', 'development'),
+
     /*
     |--------------------------------------------------------------------------
     | Organization ID
     |--------------------------------------------------------------------------
     |
-    | This value is the name of your application. This value is used when the
-    | framework needs to place the application's name in a notification or
-    | any other location as required by the application or its packages.
+    | @TODO untuk saat ini belum digunakan
     |
     */
 
     'organization_id' => env('SATUSEHAT_ORG_ID'),
-    
+
     /*
     |--------------------------------------------------------------------------
     | API Configuration
     |--------------------------------------------------------------------------
     |
-    | This value is the name of your application. This value is used when the
-    | framework needs to place the application's name in a notification or
-    | any other location as required by the application or its packages.
+    | Atur client key dan secret key. Diharap **UNTUK TIDAK HARDCODE VALUENYA DISINI**.
+    | Simpan value client dan secret di file .env
     |
     */
 
