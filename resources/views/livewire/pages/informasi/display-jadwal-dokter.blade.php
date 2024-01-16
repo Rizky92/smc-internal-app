@@ -14,8 +14,8 @@
     <table class="table table-bordered">
         <thead class="bg-success">
             <tr>
-                <th width="33%">Nama Dokter</th>
-                <th width="21%">Poliklinik</th>
+                <th width="34%">Nama Dokter</th>
+                <th width="20%">Poliklinik</th>
                 <th width="13%">Jam Mulai</th>
                 <th width="13%">Jam Selesai</th>
                 <th width="20%">Total Register & Kuota</th>
@@ -27,13 +27,13 @@
             <div class="padding"></div>
             <tbody>
                 @forelse ($this->dataJadwalDokter as $item)
-                    <tr class="@if($item->total_registrasi == $item->kuota) bg-danger @endif">
-                        <td width="33%">{{ $item->nm_dokter }}</td>
-                        <td width="21%">{{ $item->nm_poli }}</td>
+                    <tr class="@if($item->total_registrasi >= $item->kuota) bg-danger @endif">
+                        <td width="34%">{{ $item->nm_dokter }}</td>
+                        <td width="20%">{{ $item->nm_poli }}</td>
                         <td width="13%">{{ $item->jam_mulai }}</td>
                         <td width="13%">{{ $item->jam_selesai }}</td>       
                         <td width="20%">
-                            @if($item->total_registrasi == $item->kuota)
+                            @if($item->total_registrasi >= $item->kuota)
                                 Register : <b style="color: white">{{ $item->total_registrasi }}</b> |
                                 Kuota : <b style="color: white">{{ $item->kuota }}</b>
                             @else
@@ -41,9 +41,9 @@
                                 Kuota : <b style="color: red">{{ $item->kuota }}</b>
                             @endif
                         </td>                 
-                        @empty
-                        <tr></tr>
-                        @endforelse
+                @empty
+                    <tr></tr>
+                @endforelse
                     </tr>
             </tbody>
         </table>

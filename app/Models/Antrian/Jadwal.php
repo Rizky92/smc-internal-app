@@ -44,12 +44,15 @@ class Jadwal extends Model
             jadwal.jam_mulai, 
             jadwal.jam_selesai,
             jadwal.kuota,
-            (
-                SELECT COUNT(*) 
-                FROM reg_periksa 
-                WHERE kd_poli = poliklinik.kd_poli 
-                    AND kd_dokter = jadwal.kd_dokter 
-                    AND tgl_registrasi = CURDATE()
+            (SELECT
+                CASE
+                    WHEN COUNT(*) > jadwal.kuota THEN jadwal.kuota
+                    ELSE COUNT(*)
+                END   
+            FROM reg_periksa 
+            WHERE kd_poli = poliklinik.kd_poli 
+            AND kd_dokter = jadwal.kd_dokter 
+            AND tgl_registrasi = CURDATE()
             ) AS total_registrasi
         SQL;
     

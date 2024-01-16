@@ -16,6 +16,7 @@
                     <x-table.th name="jam_mulai" title="Jam Mulai" />
                     <x-table.th name="jam_selesai" title="Jam Selesai" />
                     <x-table.th name="register" title="Register" />
+                    <x-table.th name="kuota" title="Kuota" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->dataJadwalDokter as $item )
@@ -27,6 +28,7 @@
                             <x-table.td>{{ $item->jam_mulai }}</x-table.td>
                             <x-table.td>{{ $item->jam_selesai }}</x-table.td>
                             <x-table.td>{{ $item->total_registrasi }}</x-table.td>
+                            <x-table.td>{{ $item->kuota }}</x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="10" padding />
