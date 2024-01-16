@@ -27,7 +27,7 @@ if (! function_exists('hari')) {
     /**
      * @param  \DateTime|\Illuminate\Support\Carbon|string|null  $date
      */
-    function hari($date): string
+    function hari($date = null): string
     {
         return str(carbon($date)->translatedFormat('l'))
             ->upper()
