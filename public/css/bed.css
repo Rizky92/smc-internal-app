@@ -13,22 +13,22 @@ body {
     width: 100%;
 }
 span {
-    font-size: 6vw;
+    font-size: 8vh;
     font-weight: bold;
     color: #198754;
 }
 .padding{
-    height: 43vw; 
+    height: 80vh; 
     z-index: 1; 
     position: relative;
 }
 thead {
     background-color: #198754;
-    font-size: 2vw;
+    font-size: 3vh;
 }
 tbody{
     color: #198754;
-    font-size: 2vw;
+    font-size: 3vh;
 }
 #scrollingContent table tbody {
     display: table-row-group;

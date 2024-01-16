@@ -3,18 +3,18 @@
 @endpush
 
 @section('informasi-kamar')
-    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom shadow">
+    <header class="d-flex flex-wrap justify-content-center mb-4 border-bottom shadow">
         <div class="container-fluid d-flex justify-content-center">
-            <img src="{{ asset('img/logo.png') }}" alt="logo" width="120" loading="lazy">
+            <img src="{{ asset('img/logo.png') }}" alt="logo" width="100vh" height="auto">
             <span>KETERSEDIAAN KAMAR</span>
         </div>
     </header>
     <table class="table table-bordered table-striped text-white">   
         <thead>
             <tr>
-                <th width="30%">Bangsal</th>
+                <th width="40%">Bangsal</th>
                 <th width="30%">Kelas</th>
-                <th width="40%">Status</th>
+                <th width="30%">Status</th>
             </tr>
         </thead>
     </table>
@@ -24,9 +24,9 @@
             <tbody>
                 @forelse ($this->dataInformasiKamar as $item )
                     <tr>
-                        <td width="30%">{{ $item->nm_bangsal }}</td>
+                        <td width="40%">{{ $item->nm_bangsal }}</td>
                         <td width="30%">{{ $item->kelas }}</td>
-                        <td width="40%">
+                        <td width="30%">
                             Terisi: {{ $item->total_terisi }} | Tersedia: {{ $item->total_tersedia }}
                         </td>
                     </tr>
@@ -42,7 +42,7 @@
             function refreshPage() {
                 setTimeout(function () {
                     location.reload(true);
-                }, 36000);
+                }, 40000);
             }
             document.addEventListener('DOMContentLoaded', function () {
                 refreshPage();
