@@ -7,9 +7,13 @@ use Illuminate\Support\Facades\Http;
 class SatuSehatService
 {
     protected $client;
+
     protected $secret;
+
     protected $environment;
+
     protected $token;
+
     protected $issuedAt;
 
     public function __construct(array $config = [])
@@ -18,13 +22,7 @@ class SatuSehatService
         $this->secret = $config['secret'] ?? config('satusehat.secret');
     }
 
-    /**
-     * @return static
-     */
-    public static function create()
-    {
-        
-    }
+    public static function create(): void {}
 
     protected function authenticate(): string
     {

@@ -14,6 +14,5 @@ class VerifikasiKYCSatuSehat
     {
         $input = $request->validated();
 
-        
     }
 }
