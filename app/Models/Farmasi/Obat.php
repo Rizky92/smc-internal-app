@@ -95,7 +95,7 @@ class Obat extends Model
             ifnull(round(stok_gudang_ifi.stok_di_gudang, 2), 0) stok_sekarang_ifi,
             ifnull(round(stok_gudang_ap.stok_di_gudang, 2), 0) stok_sekarang_ap,
             (
-                ifnull((select round(sum(detail_pengeluaran_obat_bhp.jumlah), 2) from detail_pengeluaran_obat_bhp where detail_pengeluaran_obat_bhp.kode_brng = databarang.kode_brng and pengeluaran_obat_bhp.tanggal between date_sub(current_date(), interval 2 week) and current_date()), 0)
+                ifnull((select round(sum(detail_pengeluaran_obat_bhp.jumlah), 2) from detail_pengeluaran_obat_bhp join pengeluaran_obat_bhp on detail_pengeluaran_obat_bhp.no_keluar = pengeluaran_obat_bhp.no_keluar where detail_pengeluaran_obat_bhp.kode_brng = databarang.kode_brng and pengeluaran_obat_bhp.tanggal between date_sub(current_date(), interval 2 week) and current_date()), 0)
             )
             stok_keluar_medis_14_hari,
             round(databarang.stokminimal - ifnull(stok_gudang_ap.stok_di_gudang, 0), 2) saran_order,
@@ -130,13 +130,12 @@ class Obat extends Model
             'industrifarmasi.nama_industri',
         ]);
 
-        $this->addRawColumns([
-            'satuan_kecil'              => 'kodesatuan.satuan',
-            'kategori'                  => 'kategori_barang.nama',
-            'stok_sekarang_ap'          => DB::raw('ifnull(round(stok_gudang_ap.stok_di_gudang, 2), 0)'),
-            'stok_sekarang_ifi'         => DB::raw('ifnull(round(stok_gudang_ifi.stok_di_gudang, 2), 0)'),
-            'stok_keluar_medis_14_hari' => DB::raw('            (
-            ifnull((select round(sum(detail_pengeluaran_obat_bhp.jumlah), 2) from detail_pengeluaran_obat_bhp where detail_pengeluaran_obat_bhp.kode_brng = databarang.kode_brng and pengeluaran_obat_bhp.tanggal between date_sub(current_date(), interval 2 week) and current_date()), 0))'),
+        $this->addSortColumns([
+            'satuan_kecil'        => 'kodesatuan.satuan',
+            'kategori'            => 'kategori_barang.nama',
+            'stok_sekarang_ap'    => DB::raw('ifnull(round(stok_gudang_ap.stok_di_gudang, 2), 0)'),
+            'stok_sekarang_ifi'   => DB::raw('ifnull(round(stok_gudang_ifi.stok_di_gudang, 2), 0)'),
+            'stok_keluar_medis_14_hari' => DB::raw("(ifnull((select round(sum(detail_pengeluaran_obat_bhp.jumlah), 2) from detail_pengeluaran_obat_bhp join pengeluaran_obat_bhp on detail_pengeluaran_obat_bhp.no_keluar = pengeluaran_obat_bhp.no_keluar where detail_pengeluaran_obat_bhp.kode_brng = databarang.kode_brng and pengeluaran_obat_bhp.tanggal between date_sub(current_date(), interval 2 week) and current_date()), 0))"),
             'saran_order'         => DB::raw('(databarang.stokminimal - ifnull(stok_gudang_ap.stok_di_gudang, 0))'),
             'harga_beli'          => DB::raw('round(databarang.h_beli)'),
             'harga_beli_total'    => DB::raw('round((databarang.stokminimal - ifnull(stok_gudang_ap.stok_di_gudang, 0)) * databarang.h_beli)'),
@@ -163,10 +162,10 @@ class Obat extends Model
             ->join('kategori_barang', 'databarang.kode_kategori', '=', 'kategori_barang.kode')
             ->join('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
             ->join('industrifarmasi', 'databarang.kode_industri', '=', 'industrifarmasi.kode_industri')
-            ->join('detail_pengeluaran_obat_bhp', 'databarang.kode_brng', '=', 'detail_pengeluaran_obat_bhp.kode_brng')
-            ->join('pengeluaran_obat_bhp', 'detail_pengeluaran_obat_bhp.no_keluar', '=', 'pengeluaran_obat_bhp.no_keluar')
-            ->leftJoinSub($stokGudangAP, 'stok_gudang_ap', fn (JoinClause $join) => $join->on('databarang.kode_brng', '=', 'stok_gudang_ap.kode_brng'))
-            ->leftJoinSub($stokGudangIFI, 'stok_gudang_ifi', fn (JoinClause $join) => $join->on('databarang.kode_brng', '=', 'stok_gudang_ifi.kode_brng'))
+            ->leftJoinSub($stokGudangAP, 'stok_gudang_ap', fn (JoinClause $join) =>
+                $join->on('databarang.kode_brng', '=', 'stok_gudang_ap.kode_brng'))
+            ->leftJoinSub($stokGudangIFI, 'stok_gudang_ifi', fn (JoinClause $join) =>
+                $join->on('databarang.kode_brng', '=', 'stok_gudang_ifi.kode_brng'))
             ->where('databarang.status', '1')
             ->where('databarang.stokminimal', '>', 0)
             ->whereRaw('(databarang.stokminimal - ifnull(stok_gudang_ap.stok_di_gudang, 0)) > 0')
