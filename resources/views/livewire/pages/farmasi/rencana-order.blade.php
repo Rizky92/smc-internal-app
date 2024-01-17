@@ -20,9 +20,10 @@
                     <x-table.th name="satuan_kecil" title="Satuan" style="width: 12ch" />
                     <x-table.th name="kategori" title="Kategori" style="width: 25ch" />
                     <x-table.th name="stokminimal" title="Stok minimal" align="right" style="width: 24ch" />
-                    <x-table.th name="stok_sekarang_ap" title="Stok Farmasi B Sekarang" align="right" style="width: 17ch" />
-                    <x-table.th name="stok_sekarang_ifi" title="Stok Farmasi RWI Sekarang" align="right" style="width: 17ch" />
-                    <x-table.th name="saran_order" title="Saran order" align="right" style="width: 14ch" />
+                    <x-table.th name="stok_sekarang_ap" title="Stok Farmasi B Sekarang" align="right" style="width: 11ch" />
+                    <x-table.th name="stok_sekarang_ifi" title="Stok Farmasi RWI Sekarang" align="right" style="width: 11ch" />
+                    <x-table.th name="stok_keluar_medis_14_hari" title="Stok Keluar Medis (14 Hari)" align="right" style="width: 11ch" />
+                    <x-table.th name="saran_order" title="Saran order" align="right" style="width: 15ch" />
                     <x-table.th name="nama_industri" title="Supplier" style="width: 40ch" />
                     <x-table.th name="harga_beli" colspan="2" title="Harga Per Unit" align="right" style="width: 18ch" />
                     <x-table.th name="harga_beli_total" colspan="2" title="Total Harga" align="right" style="width: 15ch" />
@@ -41,6 +42,7 @@
                             <x-table.td class="text-right">{{ $obat->stokminimal }}</x-table.td>
                             <x-table.td class="text-right">{{ $obat->stok_sekarang_ap }}</x-table.td>
                             <x-table.td class="text-right">{{ $obat->stok_sekarang_ifi }}</x-table.td>
+                            <x-table.td class="text-right">{{ $obat->stok_keluar_medis_14_hari }}</x-table.td>
                             <x-table.td class="text-right">{{ $obat->saran_order }}</x-table.td>
                             <x-table.td>{{ $obat->nama_industri }}</x-table.td>
                             <x-table.td-currency :value="$obat->harga_beli" />
