@@ -11,6 +11,19 @@ use Illuminate\Support\Stringable;
 class MixinCollections
 {
     /**
+     * @return \Closure(array-key, mixed): \Illuminate\Support\Collection
+     */
+    public function set(): Closure
+    {
+        /** @psalm-scope-this Illuminate\Support\Collection */
+        return function ($key, $value) {
+            $this->items[$key] = $value;
+
+            return $this;
+        };
+    }
+
+    /**
      * @return Closure(bool, mixed): \Illuminate\Support\Collection
      */
     public function mergeWhen(): Closure
