@@ -3,6 +3,7 @@
 namespace App\Models\Kepegawaian;
 
 use App\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class Pegawai extends Model
 {
@@ -17,4 +18,17 @@ class Pegawai extends Model
     public $incrementing = true;
 
     public $timestamps = false;
+
+    public static function findNIP(string $nip): self
+    {
+        $pegawai = static::query()
+            ->where('nik', $nip)
+            ->first();
+
+        if (! $pegawai) {
+            throw new ModelNotFoundException;
+        }
+
+        return $pegawai;
+    }
 }
