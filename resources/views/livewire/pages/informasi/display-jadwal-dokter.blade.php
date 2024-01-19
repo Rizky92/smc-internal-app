@@ -33,12 +33,12 @@
                         <td width="13%">{{ $item->jam_mulai }}</td>
                         <td width="13%">{{ $item->jam_selesai }}</td>       
                         <td width="20%">
-                            @if($item->total_registrasi >= $item->kuota)
-                                Register : <b style="color: white">{{ $item->total_registrasi }}</b> |
-                                Kuota : <b style="color: white">{{ $item->kuota }}</b>
+                            @if ($item->total_registrasi >= $item->kuota)
+                                Register : <b class="text-white">{{ $item->total_registrasi > $item->kuota ? $item->kuota : $item->total_registrasi }}</b> |
+                                Kuota : <b class="text-white">{{ $item->kuota }}</b>
                             @else
-                                Register : <b style="color: red">{{ $item->total_registrasi }}</b> |
-                                Kuota : <b style="color: red">{{ $item->kuota }}</b>
+                                Register : <b class="text-danger">{{ $item->total_registrasi > $item->kuota ? $item->kuota : $item->total_registrasi }}</b> |
+                                Kuota : <b class="text-danger">{{ $item->kuota }}</b>
                             @endif
                         </td>                 
                 @empty

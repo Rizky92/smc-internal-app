@@ -36,26 +36,17 @@ class Jadwal extends Model
     public function scopeJadwalDokter(Builder $query): Builder
     {
         $sqlSelect = <<<SQL
-            dokter.kd_dokter,
-            dokter.nm_dokter,
-            poliklinik.kd_poli, 
-            poliklinik.nm_poli,
-            jadwal.hari_kerja,
-            jadwal.jam_mulai, 
-            jadwal.jam_selesai,
-            jadwal.kuota,
-            (SELECT
-                CASE
-                    WHEN COUNT(*) > jadwal.kuota THEN jadwal.kuota
-                    ELSE COUNT(*)
-                END   
-            FROM reg_periksa 
-            WHERE kd_poli = poliklinik.kd_poli 
-            AND kd_dokter = jadwal.kd_dokter 
-            AND tgl_registrasi = CURDATE()
-            ) AS total_registrasi
-        SQL;
-    
+        dokter.kd_dokter,
+        dokter.nm_dokter,
+        poliklinik.kd_poli, 
+        poliklinik.nm_poli,
+        jadwal.hari_kerja,
+        jadwal.jam_mulai, 
+        jadwal.jam_selesai,
+        jadwal.kuota,
+        (select count(*) from reg_periksa where kd_dokter = jadwal.kd_dokter and kd_poli = jadwal.kd_poli and tgl_registrasi = curdate()) as total_registrasi
+    SQL;
+                        
         $this->addSearchConditions([
             'dokter.nm_dokter',
             'poliklinik.nm_poli',
@@ -102,21 +93,24 @@ class Jadwal extends Model
                 ->where('kd_poli', $kd_poli)
                 ->where('tgl_registrasi', $tgl_registrasi)
                 ->count();
-
-            if ($total_registrasi_jadwal1 < $jadwal1->kuota) {
-                // Hitung total registrasi seperti biasa untuk jadwal yang jam_mulai lebih awal
-                return $total_registrasi_jadwal1;
-            } else {
-                // Hitung total registrasi untuk jadwal yang jam_mulai lebih lambat
-                return RegistrasiPasien::where('kd_dokter', $kd_dokter)
-                    ->where('kd_poli', $kd_poli)
-                    ->where('tgl_registrasi', $tgl_registrasi)
-                    ->count();
-            }
+    
+            // Hitung total registrasi seperti biasa untuk jadwal yang jam_mulai lebih awal
+            $total_registrasi_jadwal1 = min($total_registrasi_jadwal1, $jadwal1->kuota);
+    
+            // Hitung total registrasi untuk jadwal yang jam_mulai lebih lambat
+            $total_registrasi_jadwal2 = RegistrasiPasien::where('kd_dokter', $kd_dokter)
+                ->where('kd_poli', $kd_poli)
+                ->where('tgl_registrasi', $tgl_registrasi)
+                ->count();
+    
+            // Kurangi total registrasi jadwal pertama dengan kuota jadwal pertama
+            $total_registrasi_jadwal2 = max(0, $total_registrasi_jadwal2 - $total_registrasi_jadwal1);
+    
+            return [$total_registrasi_jadwal1, $total_registrasi_jadwal2];
         }
 
         // Jika hanya ada satu jadwal atau tidak ada jadwal yang memenuhi kondisi
-        return 0;
+        return [0, 0];
     }
     
 }
