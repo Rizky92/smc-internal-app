@@ -4,6 +4,7 @@ namespace App\Models\Farmasi;
 
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class ResepDokterRacikan extends Model
 {
@@ -76,7 +77,18 @@ class ResepDokterRacikan extends Model
             ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->where('reg_periksa.status_bayar', 'Sudah Bayar')
             ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
-            ->when(!empty($jenisPerawatan), fn (Builder $query) => $query->where('reg_periksa.status_lanjut', $jenisPerawatan))
+            ->when(!empty($jenisPerawatan), function (Builder $query) use ($jenisPerawatan) {
+                switch (Str::lower($jenisPerawatan)) {
+                    case 'ralan':
+                        return $query->where('resep_obat.status', 'Ralan')
+                            ->where('reg_periksa.kd_poli', '!=', 'IGDK');
+                    case 'ranap':
+                        return $query->where('resep_obat.status', 'Ranap');
+                    case 'igd':
+                        return $query->where('resep_obat.status', 'Ralan')
+                            ->where('reg_periksa.kd_poli', '=', 'IGDK');
+                }
+            })
             ->groupBy([
                 'resep_dokter_racikan.no_resep',
                 'dokter.nm_dokter',

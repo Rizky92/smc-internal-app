@@ -1,7 +1,7 @@
-<div>
+<div wire:init="loadProperties">
     <x-flash />
 
-    <x-card>
+    <x-card use-loading>
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.range-date />
@@ -14,6 +14,7 @@
                     '-' => 'Semua',
                     'ralan' => 'Rawat Jalan',
                     'ranap' => 'Rawat Inap',
+                    'igd' => 'Rawat IGD',
                 ]" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
@@ -46,18 +47,18 @@
                             <x-slot name="body">
                                 @forelse ($this->dataKunjunganResepObatRegular as $resep)
                                     <x-table.tr>
-                                        <x-table.td>{{ $resep->tgl_perawatan->translatedFormat('Y-m-d') }}</x-table.td>
+                                        <x-table.td>{{ $resep->tgl_perawatan  }}</x-table.td>
                                         <x-table.td>{{ $resep->no_resep }}</x-table.td>
                                         <x-table.td>{{ $resep->nm_pasien }}</x-table.td>
                                         <x-table.td>{{ $resep->png_jawab }}</x-table.td>
                                         <x-table.td>{{ $resep->status_lanjut }}</x-table.td>
                                         <x-table.td>{{ $resep->nm_poli }}</x-table.td>
                                         <x-table.td>{{ $resep->nm_dokter }}</x-table.td>
-                                        <x-table.td>{{ $resep->waktu_validasi->translatedFormat('Y-m-d H:i:s') }}</x-table.td>
-                                        <x-table.td>{{ optional($resep->waktu_penyerahan)->translatedFormat('Y-m-d H:i:s') }}</x-table.td>
+                                        <x-table.td>{{ $resep->waktu_validasi }}</x-table.td>
+                                        <x-table.td>{{ $resep->waktu_penyerahan }}</x-table.td>
                                         <x-table.td>{{
-                                            !is_null($resep->waktu_penyerahan) && !is_null($resep->waktu_validasi)
-                                                ? $resep->waktu_validasi->diff($resep->waktu_penyerahan)->format('%R %H:%I:%S')
+                                            ($resep->waktu_penyerahan && $resep->waktu_validasi)
+                                                ? carbon_immutable($resep->waktu_validasi)->diff(carbon($resep->waktu_penyerahan))->format('%R %H:%I:%S')
                                                 : null
                                         }}</x-table.td>
                                         <x-table.td>{{ rp($resep->total) }}</x-table.td>
@@ -87,18 +88,18 @@
                             <x-slot name="body">
                                 @forelse ($this->dataKunjunganResepObatRacikan as $resep)
                                     <x-table.tr>
-                                        <x-table.td>{{ $resep->tgl_perawatan->translatedFormat('d-m-Y') }}</x-table.td>
+                                        <x-table.td>{{ $resep->tgl_perawatan  }}</x-table.td>
                                         <x-table.td>{{ $resep->no_resep }}</x-table.td>
                                         <x-table.td>{{ $resep->nm_pasien }}</x-table.td>
                                         <x-table.td>{{ $resep->png_jawab }}</x-table.td>
                                         <x-table.td>{{ $resep->status_lanjut }}</x-table.td>
                                         <x-table.td>{{ $resep->nm_poli }}</x-table.td>
                                         <x-table.td>{{ $resep->nm_dokter }}</x-table.td>
-                                        <x-table.td>{{ $resep->waktu_validasi->translatedFormat('Y-m-d H:i:s') }}</x-table.td>
-                                        <x-table.td>{{ optional($resep->waktu_penyerahan)->translatedFormat('Y-m-d H:i:s') }}</x-table.td>
+                                        <x-table.td>{{ $resep->waktu_validasi }}</x-table.td>
+                                        <x-table.td>{{ $resep->waktu_penyerahan }}</x-table.td>
                                         <x-table.td>{{
-                                            !is_null($resep->waktu_penyerahan) && !is_null($resep->waktu_validasi)
-                                                ? $resep->waktu_validasi->diff($resep->waktu_penyerahan)->format('%R %H:%I:%S')
+                                            ($resep->waktu_penyerahan && $resep->waktu_validasi)
+                                                ? carbon_immutable($resep->waktu_validasi)->diff(carbon($resep->waktu_penyerahan))->format('%R %H:%I:%S')
                                                 : null
                                         }}</x-table.td>
                                         <x-table.td>{{ rp($resep->total) }}</x-table.td>

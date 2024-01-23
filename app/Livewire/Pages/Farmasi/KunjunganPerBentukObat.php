@@ -2,22 +2,26 @@
 
 namespace App\Livewire\Pages\Farmasi;
 
-use App\Models\Farmasi\ResepDokter;
-use App\Models\Farmasi\ResepDokterRacikan;
+use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Farmasi\ResepDokter;
+use App\Models\Farmasi\ResepDokterRacikan;
 use App\View\Components\BaseLayout;
-use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class KunjunganPerBentukObat extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker;
+    use DeferredLoading;
+    use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $tglAwal;
@@ -48,31 +52,26 @@ class KunjunganPerBentukObat extends Component
             ->layout(BaseLayout::class, ['title' => 'Kunjungan Resep Pasien Per Bentuk Obat']);
     }
 
-    public function getDataKunjunganResepObatRegularProperty(): Paginator
+    public function getDataKunjunganResepObatRegularProperty()
     {
-        return ResepDokter::query()
-            ->kunjunganResepObatRegular($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan, $this->cari)
-            ->sortWithColumns($this->sortColumns, [
-                'total' => DB::raw('round(sum(resep_dokter.jml * databarang.h_beli))'),
-            ])
+        return $this->isDeferred ? [] : ResepDokter::query()
+            ->kunjunganResepObatRegular($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage, ['*'], 'page_regular');
     }
 
-    public function getDataKunjunganResepObatRacikanProperty(): Paginator
+    public function getDataKunjunganResepObatRacikanProperty()
     {
-        return ResepDokterRacikan::query()
-            ->kunjunganResepObatRacikan($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan, $this->cari)
-            ->sortWithColumns($this->sortColumns, [
-                'total' => DB::raw('round(sum(resep_dokter_racikan_detail.jml * databarang.h_beli))'),
-            ])
+        return $this->isDeferred ? [] : ResepDokterRacikan::query()
+            ->kunjunganResepObatRacikan($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage, ['*'], 'page_racikan');
     }
 
     protected function defaultValues(): void
     {
-        $this->cari = '';
-        $this->perpage = 25;
-        $this->sortColumns = [];
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
         $this->jenisPerawatan = '';
@@ -93,15 +92,15 @@ class KunjunganPerBentukObat extends Component
                 ->kunjunganResepObatRegular($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
                 ->get()
                 ->map(fn (ResepDokter $model): array => [
-                    'tgl_perawatan' => $model->tgl_perawatan->format('Y-m-d'),
+                    'tgl_perawatan' => $model->tgl_perawatan,
                     'no_resep'      => $model->no_resep,
                     'nm_pasien'     => $model->nm_pasien,
                     'png_jawab'     => $model->png_jawab,
                     'status_lanjut' => $model->status_lanjut,
                     'nm_poli'       => $model->nm_poli,
                     'nm_dokter'     => $model->nm_dokter,
-                    'validasi'      => $model->waktu_validasi->translatedFormat('Y-m-d H:i:s'),
-                    'penyerahan'    => optional($model->waktu_penyerahan)->translatedFormat('Y-m-d H:i:s'),
+                    'validasi'      => $model->waktu_validasi,
+                    'penyerahan'    => $model->waktu_penyerahan,
                     'selisih'       => time_length($model->waktu_validasi, $model->waktu_penyerahan),
                     'total'         => floatval($model->total),
                 ]),
@@ -110,15 +109,15 @@ class KunjunganPerBentukObat extends Component
                 ->kunjunganResepObatRacikan($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
                 ->get()
                 ->map(fn (ResepDokterRacikan $model): array => [
-                    'tgl_perawatan' => $model->tgl_perawatan->format('Y-m-d'),
+                    'tgl_perawatan' => $model->tgl_perawatan,
                     'no_resep'      => $model->no_resep,
                     'nm_pasien'     => $model->nm_pasien,
                     'png_jawab'     => $model->png_jawab,
                     'status_lanjut' => $model->status_lanjut,
                     'nm_poli'       => $model->nm_poli,
                     'nm_dokter'     => $model->nm_dokter,
-                    'validasi'      => $model->waktu_validasi->translatedFormat('Y-m-d H:i:s'),
-                    'penyerahan'    => optional($model->waktu_penyerahan)->translatedFormat('Y-m-d H:i:s'),
+                    'validasi'      => $model->waktu_validasi,
+                    'penyerahan'    => $model->waktu_penyerahan,
                     'selisih'       => time_length($model->waktu_validasi, $model->waktu_penyerahan),
                     'total'         => floatval($model->total),
                 ]),
@@ -147,7 +146,7 @@ class KunjunganPerBentukObat extends Component
         $periodeAwal = carbon($this->tglAwal);
         $periodeAkhir = carbon($this->tglAkhir);
 
-        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+        $periode = 'Periode '.$periodeAwal->translatedFormat('d F Y').' s.d. '.$periodeAkhir->translatedFormat('d F Y');
 
         if ($periodeAwal->isSameDay($periodeAkhir)) {
             $periode = $periodeAwal->translatedFormat('d F Y');
