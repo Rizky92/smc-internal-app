@@ -14,6 +14,7 @@
                     '-' => 'Semua',
                     'ralan' => 'Rawat Jalan',
                     'ranap' => 'Rawat Inap',
+                    'igd' => 'Rawat IGD',
                 ]" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
