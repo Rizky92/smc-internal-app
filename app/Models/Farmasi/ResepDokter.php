@@ -3,9 +3,6 @@
 namespace App\Models\Farmasi;
 
 use App\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class ResepDokter extends Model
 {
@@ -26,75 +23,4 @@ class ResepDokter extends Model
         'kode_brng',
         'aturan_pakai',
     ];
-
-    public function scopeKunjunganResepObatRegular(
-        Builder $query,
-        string $tglAwal = '',
-        string $tglAkhir = '',
-        string $jenisPerawatan = ''
-    ): Builder {
-        if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
-        }
-
-        if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
-        }
-
-        $sqlSelect = <<<'SQL'
-            resep_obat.tgl_perawatan,
-            timestamp(resep_obat.tgl_perawatan, resep_obat.jam) as waktu_validasi,
-            timestamp(resep_obat.tgl_penyerahan, resep_obat.jam_penyerahan) as waktu_penyerahan,
-            resep_dokter.no_resep,
-            pasien.nm_pasien,
-            penjab.png_jawab,
-            reg_periksa.status_lanjut,
-            dokter.nm_dokter,
-            poliklinik.nm_poli,
-            round(sum(resep_dokter.jml * databarang.h_beli)) total
-        SQL;
-
-        $this->addSearchConditions([
-            'pasien.nm_pasien',
-            'penjab.png_jawab',
-            'reg_periksa.status_lanjut',
-            'dokter.nm_dokter',
-            'poliklinik.nm_poli',
-        ]);
-
-        $this->addRawColumns('total', DB::raw('round(sum(resep_dokter.jml * databarang.h_beli))'));
-
-        return $query
-            ->selectRaw($sqlSelect)
-            ->withCasts(['total' => 'float'])
-            ->join('resep_obat', 'resep_dokter.no_resep', '=', 'resep_obat.no_resep')
-            ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
-            ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
-            ->join('databarang', 'resep_dokter.kode_brng', '=', 'databarang.kode_brng')
-            ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
-            ->join('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
-            ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
-            ->where('reg_periksa.status_bayar', 'Sudah Bayar')
-            ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
-            ->when(!empty($jenisPerawatan), function (Builder $query) use ($jenisPerawatan) {
-                switch (Str::lower($jenisPerawatan)) {
-                    case 'ralan':
-                        return $query->where('resep_obat.status', 'Ralan')
-                            ->where('reg_periksa.kd_poli', '!=', 'IGDK');
-                    case 'ranap':
-                        return $query->where('resep_obat.status', 'Ranap');
-                    case 'igd':
-                        return $query->where('resep_obat.status', 'Ralan')
-                            ->where('reg_periksa.kd_poli', '=', 'IGDK');
-                }
-            })
-            ->groupBy([
-                'resep_dokter.no_resep',
-                'dokter.nm_dokter',
-                'resep_obat.tgl_perawatan',
-                'resep_obat.jam',
-                'pasien.nm_pasien',
-                'reg_periksa.status_lanjut',
-            ]);
-    }
 }

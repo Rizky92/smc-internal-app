@@ -10,6 +10,7 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Farmasi\ResepDokter;
 use App\Models\Farmasi\ResepDokterRacikan;
+use App\Models\Farmasi\ResepObat;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -30,12 +31,12 @@ class KunjunganPerBentukObat extends Component
     public $tglAkhir;
 
     /** @var string */
-    public $jenisPerawatan;
+    public $jenisKunjungan;
 
     protected function queryString(): array
     {
         return [
-            'jenisPerawatan' => ['except' => '', 'as' => 'jenis_perawatan'],
+            'jenisKunjungan' => ['except' => '', 'as' => 'jenis_kunjungan'],
             'tglAwal'        => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir'       => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
@@ -49,22 +50,22 @@ class KunjunganPerBentukObat extends Component
     public function render(): View
     {
         return view('livewire.pages.farmasi.kunjungan-per-bentuk-obat')
-            ->layout(BaseLayout::class, ['title' => 'Kunjungan Resep Pasien Per Bentuk Obat']);
+            ->layout(BaseLayout::class, ['title' => 'Kunjungan Resep Pasien Per Bentuk Resep']);
     }
 
     public function getDataKunjunganResepObatRegularProperty()
     {
-        return $this->isDeferred ? [] : ResepDokter::query()
-            ->kunjunganResepObatRegular($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
+        return $this->isDeferred ? [] : ResepObat::query()
+            ->kunjunganResep($this->jenisKunjungan, 'umum', $this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
-            ->paginate($this->perpage, ['*'], 'page_regular');
+            ->paginate($this->perpage, ['*'], 'page_umum');
     }
 
     public function getDataKunjunganResepObatRacikanProperty()
     {
-        return $this->isDeferred ? [] : ResepDokterRacikan::query()
-            ->kunjunganResepObatRacikan($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
+        return $this->isDeferred ? [] : ResepObat::query()
+            ->kunjunganResep($this->jenisKunjungan, 'racikan', $this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage, ['*'], 'page_racikan');
@@ -74,7 +75,7 @@ class KunjunganPerBentukObat extends Component
     {
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->jenisPerawatan = '';
+        $this->jenisKunjungan = 'semua';
     }
 
     public function searchData(): void
@@ -87,40 +88,29 @@ class KunjunganPerBentukObat extends Component
 
     protected function dataPerSheet(): array
     {
-        return [
-            'Obat Regular' => ResepDokter::query()
-                ->kunjunganResepObatRegular($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
-                ->get()
-                ->map(fn (ResepDokter $model): array => [
-                    'tgl_perawatan' => $model->tgl_perawatan,
-                    'no_resep'      => $model->no_resep,
-                    'nm_pasien'     => $model->nm_pasien,
-                    'png_jawab'     => $model->png_jawab,
-                    'status_lanjut' => $model->status_lanjut,
-                    'nm_poli'       => $model->nm_poli,
-                    'nm_dokter'     => $model->nm_dokter,
-                    'validasi'      => $model->waktu_validasi,
-                    'penyerahan'    => $model->waktu_penyerahan,
-                    'selisih'       => time_length($model->waktu_validasi, $model->waktu_penyerahan),
-                    'total'         => floatval($model->total),
-                ]),
+        $map = fn (ResepObat $model): array => [
+            'tgl_perawatan' => $model->tgl_perawatan,
+            'no_resep'      => $model->no_resep,
+            'nm_pasien'     => $model->nm_pasien,
+            'png_jawab'     => $model->png_jawab,
+            'status_lanjut' => $model->status_lanjut,
+            'nm_poli'       => $model->nm_poli,
+            'nm_dokter'     => $model->nm_dokter,
+            'validasi'      => $model->waktu_validasi,
+            'penyerahan'    => $model->waktu_penyerahan,
+            'selisih'       => time_length($model->waktu_validasi, $model->waktu_penyerahan),
+            'total'         => $model->total,
+        ];
 
-            'Obat Racikan' => ResepDokterRacikan::query()
-                ->kunjunganResepObatRacikan($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan)
-                ->get()
-                ->map(fn (ResepDokterRacikan $model): array => [
-                    'tgl_perawatan' => $model->tgl_perawatan,
-                    'no_resep'      => $model->no_resep,
-                    'nm_pasien'     => $model->nm_pasien,
-                    'png_jawab'     => $model->png_jawab,
-                    'status_lanjut' => $model->status_lanjut,
-                    'nm_poli'       => $model->nm_poli,
-                    'nm_dokter'     => $model->nm_dokter,
-                    'validasi'      => $model->waktu_validasi,
-                    'penyerahan'    => $model->waktu_penyerahan,
-                    'selisih'       => time_length($model->waktu_validasi, $model->waktu_penyerahan),
-                    'total'         => floatval($model->total),
-                ]),
+        return [
+            'Umum' => ResepObat::query()
+                ->kunjunganResep($this->jenisKunjungan, 'umum', $this->tglAwal, $this->tglAkhir)
+                ->cursor()
+                ->map($map),
+            'Racikan' => ResepObat::query()
+                ->kunjunganResep($this->jenisKunjungan, 'racikan', $this->tglAwal, $this->tglAkhir)
+                ->cursor()
+                ->map($map),
         ];
     }
 
@@ -154,7 +144,7 @@ class KunjunganPerBentukObat extends Component
 
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Kunjungan Resep Farmasi per Bentuk Obat',
+            'Laporan Kunjungan Resep Farmasi per Bentuk Resep',
             now()->translatedFormat('d F Y'),
             $periode,
         ];

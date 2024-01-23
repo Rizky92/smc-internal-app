@@ -7,6 +7,7 @@ use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -24,6 +25,13 @@ class ResepObat extends Model
 
     public $timestamps = false;
 
+    protected $searchColumns = [
+        'no_resep',
+        'no_rawat',
+        'status',
+        'kd_dokter',
+    ];
+
     public function registrasi(): BelongsTo
     {
         return $this->belongsTo(RegistrasiPasien::class, 'no_rawat', 'no_rawat');
@@ -33,6 +41,29 @@ class ResepObat extends Model
     {
         return $this->belongsToMany(Obat::class, 'resep_dokter', 'no_resep', 'kode_brng', 'no_resep', 'kode_brng')
             ->withPivot('jml');
+    }
+
+    public function scopePerJenisKunjungan(Builder $query, string $jenisKunjungan = 'semua'): Builder
+    {
+        $joinedTables = collect($query->toBase()->joins);
+
+        if ($joinedTables->doesntContain(fn (JoinClause $join): bool => $join->table === 'reg_periksa')) {
+            return $query;
+        }
+
+        return $query
+            ->when($jenisKunjungan !== 'semua', function ($query) use ($jenisKunjungan) {
+                switch (Str::lower($jenisKunjungan)) {
+                    case 'ralan':
+                        return $query->where('resep_obat.status', 'Ralan')
+                            ->where('reg_periksa.kd_poli', '!=', 'IGDK');
+                    case 'ranap':
+                        return $query->where('resep_obat.status', 'Ranap');
+                    case 'igd':
+                        return $query->where('resep_obat.status', 'Ralan')
+                            ->where('reg_periksa.kd_poli', '=', 'IGDK');
+                }
+            });
     }
 
     public function scopePenyerahanMelaluiDriveThru(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
@@ -68,6 +99,54 @@ class ResepObat extends Model
                 ->where('resep_obat.jam_peresepan', '!=', '00:00:00'))
             ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
             ->orderBy('resep_obat.no_resep', 'desc');
+    }
+
+    public function scopeKunjunganResep(Builder $query, string $jenisResep = 'umum', string $tglAwal = '', string $tglAkhir = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        }
+
+        $sqlSelect = <<<SQL
+resep_obat.tgl_perawatan,
+concat(resep_obat.tgl_perawatan, ' ', resep_obat.jam) as waktu_validasi,
+nullif(concat(resep_obat.tgl_penyerahan, ' ', resep_obat.jam_penyerahan), '0000-00-00 00:00:00') as waktu_penyerahan,
+resep_obat.no_resep,
+pasien.nm_pasien,
+penjab.png_jawab,
+resep_obat.status,
+dokter.nm_dokter,
+poliklinik.nm_poli,
+(select round(sum(detail_pemberian_obat.total)) from detail_pemberian_obat where detail_pemberian_obat.no_rawat = resep_obat.no_rawat and detail_pemberian_obat.tgl_perawatan = resep_obat.tgl_perawatan and detail_pemberian_obat.jam = resep_obat.jam) as total
+SQL;
+
+        $this->addSearchConditions([
+            'pasien.nm_pasien',
+            'penjab.png_jawab',
+            'dokter.nm_dokter',
+            'poliklinik.nm_poli',
+        ]);
+        
+        return $query
+            ->selectRaw($sqlSelect)
+            ->withCasts(['total' => 'float'])
+            ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+            ->join('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
+            ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
+            ->where('reg_periksa.status_bayar', 'Sudah Bayar')
+            ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
+            ->where('resep_obat.tgl_perawatan', '>', '0000-00-00')
+            ->when($jenisResep === 'racikan', fn ($q) => $q
+                ->whereExists(fn ($q) => $q
+                    ->select(['*'])
+                    ->from('resep_dokter_racikan')
+                    ->whereColumn('resep_dokter_racikan.no_resep', 'resep_obat.no_resep')));
     }
 
     public function scopePenggunaanObatPerDokter(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder

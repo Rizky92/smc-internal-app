@@ -9,9 +9,9 @@
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
-                <x-filter.label class="ml-auto pr-3">Jenis Perawatan:</x-filter.label>
-                <x-filter.select model="jenisPerawatan" :options="[
-                    '-' => 'Semua',
+                <x-filter.label class="ml-auto pr-3">Jenis Kunjungan:</x-filter.label>
+                <x-filter.select model="jenisKunjungan" :options="[
+                    'semua' => 'Semua',
                     'ralan' => 'Rawat Jalan',
                     'ranap' => 'Rawat Inap',
                     'igd' => 'Rawat IGD',
