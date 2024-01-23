@@ -25,7 +25,9 @@ if (! function_exists('clamp')) {
 
 if (! function_exists('hari')) {
     /**
-     * @param  \DateTime|\Illuminate\Support\Carbon|string|null  $date
+     * @template TDateTime of \DateTime|\DateTimeImmutable
+     * 
+     * @param  TDateTime|string|null  $date
      */
     function hari($date = null): string
     {
