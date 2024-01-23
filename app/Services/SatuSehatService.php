@@ -24,7 +24,7 @@ class SatuSehatService
 
     public static function create(): void {}
 
-    protected function authenticate()
+    protected function authenticate(): void
     {
         $response = Http::asForm()
             ->post('https://api-satusehat-dev.dto.kemkes.go.id/oauth2/v1/accesstoken?grant_type=client_credentials', [
