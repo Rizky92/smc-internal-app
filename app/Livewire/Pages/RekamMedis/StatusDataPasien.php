@@ -55,13 +55,11 @@ class StatusDataPasien extends Component
      */
     public function getDataStatusRekamMedisPasienProperty()
     {
-        return $this->isDeferred
-            ? []
-            : RegistrasiPasien::query()
-                ->statusDataRM($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan, $this->semuaRegistrasi)
-                ->search($this->cari)
-                ->sortWithColumns($this->sortColumns)
-                ->paginate($this->perpage);
+        return $this->isDeferred ? [] : RegistrasiPasien::query()
+            ->statusDataRM($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan, $this->semuaRegistrasi)
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
+            ->paginate($this->perpage);
     }
 
     public function render(): View
