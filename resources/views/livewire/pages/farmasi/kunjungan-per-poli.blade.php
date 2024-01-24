@@ -17,7 +17,7 @@
                     <x-table.th name="nm_poli" title="Asal Poli" />
                 </x-slot>
                 <x-slot name="body">
-                    @forelse ($this->dataKunjunganResepPasien as $pasien)
+                    @forelse ($this->dataKunjunganPerPoli as $pasien)
                         <x-table.tr>
                             <x-table.td>{{ $pasien->no_rawat }}</x-table.td>
                             <x-table.td>{{ $pasien->no_resep }}</x-table.td>
@@ -37,7 +37,7 @@
             </x-table>
         </x-slot>
         <x-slot name="footer">
-            <x-paginator :data="$this->dataKunjunganResepPasien" />
+            <x-paginator :data="$this->dataKunjunganPerPoli" />
         </x-slot>
     </x-card>
 </div>
