@@ -36,7 +36,7 @@
                                 <x-table.th style="width: 13ch" name="no_resep" title="No. Resep" />
                                 <x-table.th name="nm_pasien" title="Pasien" />
                                 <x-table.th style="width: 25ch" name="png_jawab" title="Jenis Bayar" />
-                                <x-table.th style="width: 18ch" name="status_lanjut" title="Jenis Perawatan" />
+                                <x-table.th style="width: 18ch" name="status" title="Jenis Perawatan" />
                                 <x-table.th style="width: 20ch" name="nm_poli" title="Asal Poli" />
                                 <x-table.th style="width: 40ch" name="nm_dokter" title="Dokter Peresep" />
                                 <x-table.th style="width: 19ch" name="waktu_validasi" title="Waktu Validasi" />
@@ -51,7 +51,7 @@
                                         <x-table.td>{{ $resep->no_resep }}</x-table.td>
                                         <x-table.td>{{ $resep->nm_pasien }}</x-table.td>
                                         <x-table.td>{{ $resep->png_jawab }}</x-table.td>
-                                        <x-table.td>{{ $resep->status_lanjut }}</x-table.td>
+                                        <x-table.td>{{ $resep->status }}</x-table.td>
                                         <x-table.td>{{ $resep->nm_poli }}</x-table.td>
                                         <x-table.td>{{ $resep->nm_dokter }}</x-table.td>
                                         <x-table.td>{{ $resep->waktu_validasi }}</x-table.td>
