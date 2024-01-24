@@ -41,7 +41,7 @@ trait ExcelExportable
     protected function validateSheetNames(): void
     {
         $invalidSheet = collect(array_keys($this->dataPerSheet()))
-            ->contains(fn (string $v): bool => Str::containsAll($v, $this->invalidSheetCharacters));
+            ->contains(fn (string $v): bool => str()->containsAll($v, $this->invalidSheetCharacters));
 
         throw_if($invalidSheet, 'RuntimeException', sprintf("Invalid characters found in sheet: '%s'", (string) $invalidSheet));
     }
