@@ -4,7 +4,6 @@ namespace App\Livewire\Concerns;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 use Rizky92\Xlswriter\ExcelExport;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -62,7 +61,7 @@ trait ExcelExportable
 
         $filename .= method_exists($this, 'filename')
             ? str($this->filename())->trim()->snake()->value()
-            : Str::snake(class_basename($this));
+            : str()->snake(class_basename($this));
 
         $filename .= '.xlsx';
 
