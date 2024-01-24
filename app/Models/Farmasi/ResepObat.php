@@ -109,8 +109,10 @@ SQL;
             ->when($jenisResep === 'racikan', fn ($q) => $q
                 ->whereExists(fn ($q) => $q
                     ->select(['*'])
-                    ->from('resep_dokter_racikan')
-                    ->whereColumn('resep_dokter_racikan.no_resep', 'resep_obat.no_resep')));
+                    ->from('detail_obat_racikan')
+                    ->whereColumn('detail_obat_racikan.no_rawat', 'resep_obat.no_rawat')
+                    ->whereColumn('detail_obat_racikan.tgl_perawatan', 'resep_obat.tgl_perawatan')
+                    ->whereColumn('detail_obat_racikan.jam', 'resep_obat.jam')));
     }
 
     public function scopePenggunaanObatPerDokter(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
