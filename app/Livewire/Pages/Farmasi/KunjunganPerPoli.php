@@ -41,7 +41,7 @@ class KunjunganPerPoli extends Component
         $this->defaultValues();
     }
 
-    public function getDataKunjunganResepPasienProperty()
+    public function getDataKunjunganPerPoliProperty()
     {
         return $this->isDeferred ? [] : ResepObat::query()
             ->kunjunganPerPoli($this->tglAwal, $this->tglAkhir)
@@ -67,7 +67,7 @@ class KunjunganPerPoli extends Component
         return [
             ResepObat::query()
                 ->kunjunganPerPoli($this->tglAwal, $this->tglAkhir)
-                ->get()
+                ->cursor()
                 ->map(fn (ResepObat $model): array => [
                     'no_rawat'          => $model->no_rawat,
                     'no_resep'          => $model->no_resep,
