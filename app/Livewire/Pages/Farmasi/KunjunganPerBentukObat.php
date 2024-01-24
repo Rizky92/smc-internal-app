@@ -8,8 +8,6 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
-use App\Models\Farmasi\ResepDokter;
-use App\Models\Farmasi\ResepDokterRacikan;
 use App\Models\Farmasi\ResepObat;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
@@ -56,7 +54,8 @@ class KunjunganPerBentukObat extends Component
     public function getDataKunjunganResepObatRegularProperty()
     {
         return $this->isDeferred ? [] : ResepObat::query()
-            ->kunjunganResep($this->jenisKunjungan, 'umum', $this->tglAwal, $this->tglAkhir)
+            ->kunjunganResep('umum', $this->tglAwal, $this->tglAkhir)
+            ->jenisKunjungan($this->jenisKunjungan)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage, ['*'], 'page_umum');
@@ -65,7 +64,8 @@ class KunjunganPerBentukObat extends Component
     public function getDataKunjunganResepObatRacikanProperty()
     {
         return $this->isDeferred ? [] : ResepObat::query()
-            ->kunjunganResep($this->jenisKunjungan, 'racikan', $this->tglAwal, $this->tglAkhir)
+            ->kunjunganResep('racikan', $this->tglAwal, $this->tglAkhir)
+            ->jenisKunjungan($this->jenisKunjungan)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage, ['*'], 'page_racikan');
@@ -103,12 +103,14 @@ class KunjunganPerBentukObat extends Component
         ];
 
         return [
-            'Umum' => ResepObat::query()
-                ->kunjunganResep($this->jenisKunjungan, 'umum', $this->tglAwal, $this->tglAkhir)
+            'Obat Regular' => ResepObat::query()
+                ->kunjunganResep('umum', $this->tglAwal, $this->tglAkhir)
+                ->jenisKunjungan($this->jenisKunjungan)
                 ->cursor()
                 ->map($map),
-            'Racikan' => ResepObat::query()
-                ->kunjunganResep($this->jenisKunjungan, 'racikan', $this->tglAwal, $this->tglAkhir)
+            'Obat Racikan' => ResepObat::query()
+                ->jenisKunjungan($this->jenisKunjungan)
+                ->kunjunganResep('racikan', $this->tglAwal, $this->tglAkhir)
                 ->cursor()
                 ->map($map),
         ];
