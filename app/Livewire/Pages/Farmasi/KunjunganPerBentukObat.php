@@ -93,7 +93,7 @@ class KunjunganPerBentukObat extends Component
             'no_resep'      => $model->no_resep,
             'nm_pasien'     => $model->nm_pasien,
             'png_jawab'     => $model->png_jawab,
-            'status_lanjut' => $model->status_lanjut,
+            'status'        => $model->status,
             'nm_poli'       => $model->nm_poli,
             'nm_dokter'     => $model->nm_dokter,
             'validasi'      => $model->waktu_validasi,
