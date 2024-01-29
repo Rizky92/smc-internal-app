@@ -97,6 +97,7 @@ class Menu
                     'keuangan.jurnal-perbaikan-riwayat.read',
                     'keuangan.stok-obat-ruangan.read',
                     'keuangan.laporan-trial-balance.read',
+                    'keuangan.posting-jurnal',
                 ]),
                 'items' => [
                     [
@@ -238,6 +239,13 @@ class Menu
                         'icon' => "fas fa-book",
                         'type' => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.laporan-trial-balance.read'),
+                    ],
+                    [
+                        'name' => 'Posting Jurnal',
+                        'url' => route('admin.keuangan.posting-jurnal'),
+                        'icon' => "fas fa-book",
+                        'type' => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.posting-jurnal.read'),
                     ],
                 ],
             ],

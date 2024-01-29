@@ -146,6 +146,10 @@ Breadcrumbs::for('admin.keuangan.laporan-trial-balance', function (Trail $trail)
     $trail->push('Trial Balance', route('admin.keuangan.laporan-trial-balance'));
 });
 
+Breadcrumbs::for('admin.keuangan.posting-jurnal', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('Posting Jurnal', route('admin.keuangan.posting-jurnal'));
+});
 
 Breadcrumbs::for('admin.farmasi', function (Trail $trail): void {
     $trail->parent('admin.dashboard');

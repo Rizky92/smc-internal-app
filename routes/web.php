@@ -186,6 +186,10 @@ Route::prefix('admin')
                 Route::get('laporan-trial-balance', Keuangan\LaporanTrialBalance::class)
                     ->name('laporan-trial-balance')
                     ->middleware('can:keuangan.laporan-trial-balance.read');
+
+                Route::get('posting-jurnal', Keuangan\PostingJurnal::class)
+                    ->name('posting-jurnal')
+                    ->middleware('can:keuangan.posting-jurnal.read');
             });
 
         Route::prefix('farmasi')
