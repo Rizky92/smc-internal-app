@@ -97,7 +97,9 @@ class PenagihanPiutang extends Model
             round(ifnull(detail_piutang_pasien.totalpiutang, detail_penagihan_piutang.sisapiutang), 2) total_piutang,
             round(ifnull(bayar_piutang.besar_cicilan, 0), 2) besar_cicilan,
             round(ifnull(detail_piutang_pasien.totalpiutang, detail_penagihan_piutang.sisapiutang) - ifnull(bayar_piutang.besar_cicilan, 0) - ifnull(bayar_piutang.diskon_piutang, 0) - ifnull(bayar_piutang.tidak_terbayar, 0), 2) sisa_piutang,
-            datediff(?, penagihan_piutang.tanggal) umur_hari
+            datediff(?, penagihan_piutang.tanggal) umur_hari,
+            akun_penagihan_piutang.kd_rek kd_rek_tagihan,
+            akun_penagihan_piutang.nama_bank
         SQL;
 
         $this->addSearchConditions([
@@ -110,6 +112,7 @@ class PenagihanPiutang extends Model
             'piutang_pasien.status',
             'akun_piutang.kd_rek',
             'akun_piutang.nama_bayar',
+            'akun_penagihan_piutang.nama_bank',
         ]);
 
         $this->addRawColumns([
@@ -131,6 +134,7 @@ class PenagihanPiutang extends Model
                 'umur_hari'       => 'int',
             ])
             ->join('detail_penagihan_piutang', 'penagihan_piutang.no_tagihan', '=', 'detail_penagihan_piutang.no_tagihan')
+            ->join('akun_penagihan_piutang', 'penagihan_piutang.kd_rek', '=', 'akun_penagihan_piutang.kd_rek')
             ->leftJoin('detail_piutang_pasien', fn (JoinClause $join) => $join
                 ->on('detail_penagihan_piutang.no_rawat', '=', 'detail_piutang_pasien.no_rawat')
                 ->on('penagihan_piutang.kd_pj', '=', 'detail_piutang_pasien.kd_pj'))

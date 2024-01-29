@@ -60,6 +60,7 @@
                     <x-table.th style="width: 20ch" title="31 - 60" />
                     <x-table.th style="width: 20ch" title="61 - 90" />
                     <x-table.th style="width: 20ch" title="> 90" />
+                    <x-table.th name="kd_rek_tagihan" style="width: 20ch" title="Rekening Penagihan" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->dataAccountReceivable as $item)
@@ -93,9 +94,10 @@
                             <x-table.td>{{ between($item->umur_hari, 31, 60, true) ? rp($item->sisa_piutang) : '-' }}</x-table.td>
                             <x-table.td>{{ between($item->umur_hari, 61, 90, true) ? rp($item->sisa_piutang) : '-' }}</x-table.td>
                             <x-table.td>{{ $item->umur_hari > 90 ? rp($item->sisa_piutang) : '-' }}</x-table.td>
+                            <x-table.td>{{ $item->kd_rek_tagihan . ' ' . $item->nama_bank }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty :colspan="user()->can('keuangan.account-receivable.validasi-piutang') ? 21 : 19" padding />
+                        <x-table.tr-empty :colspan="user()->can('keuangan.account-receivable.validasi-piutang') ? 22 : 20" padding />
                     @endforelse
                 </x-slot>
                 <x-slot name="footer">
