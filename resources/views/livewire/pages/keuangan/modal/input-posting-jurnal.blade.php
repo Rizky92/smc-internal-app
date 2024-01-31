@@ -16,7 +16,7 @@
     @endpush
     <x-modal id="modal-input-posting-jurnal" :title="('Posting Jurnal Baru')" livewire centered>
         <x-slot name="body" style="overflow-x: hidden">
-            <x-form id="form-input-posting-jurnal">
+            <x-form id="form-input-posting-jurnal" wire:submit.prevent="create">
                 <div class="form-group d-flex justify-content-start align-items-center m-0 p-0">
                     <div class="form-group mt-3">
                         <label for="no_bukti">No. Bukti</label>
@@ -32,6 +32,10 @@
                         <label for="jenis">Jenis</label>
                         <x-form.select id="jenis" model="jenis" :options="['U' => 'Umum', 'P' => 'Penyesuaian']" />
                         <x-form.error name="jenis" />
+                    </div>
+                    <div class="form-group mt-3 px-5">
+                        <label for="jenis">Waktu</label>
+                        <input type="time" id="jamJurnal" wire:model.defer="jam_jurnal" class="form-control form-control-sm">
                     </div>
                 </div>
 
@@ -50,12 +54,12 @@
                     <ul class="p-0 m-0 mt-2 mb-3 d-flex flex-column" style="row-gap: 0.5rem" id="detail-jurnal">
                         @foreach($this->detail as $index => $item)
                         <li class="d-flex justify-content-start align-items-center m-0 p-0" wire:key="detail-junal-{{ $index }}">
-                            <x-form.select2 id="kode-rekening-{{ $index }}" 
-                            model="kodeRekening" :options="$this->rekening" />
+                            <input type="text" class="form-control form-control-sm" wire:model.defer="detail.{{ $index }}.kd_rek" />
+                            {{-- <x-form.select2 id="kode-rekening-{{ $index }}" model="kodeRekening" :options="$this->rekening" /> --}}
                             <span class="ml-4 text-sm" style="width: 3rem">Rp.</span>
-                            <input type="text" class="form-control form-control-sm text-right w-25" wire:model.defer="detail.{{ $index }}.debet">
+                            <input type="number" class="form-control form-control-sm text-right w-25" wire:model.defer="detail.{{ $index }}.debet">
                             <span class="ml-4 text-sm" style="width: 3rem">Rp.</span>
-                            <input type="text" class="form-control form-control-sm text-right w-25" wire:model.defer="detail.{{ $index }}.kredit">
+                            <input type="number" class="form-control form-control-sm text-right w-25" wire:model.defer="detail.{{ $index }}.kredit">
                             <button type="button" wire:click="removeDetail({{ $index }})" class="btn btn-sm btn-danger ml-3"><i class="fas fa-trash"></i></button>
                         </li>
                         @endforeach
@@ -63,13 +67,16 @@
                     <div class="form-group d-flex justify-content-start align-items-center m-0 p-0">
                         <x-button size="sm" variant="secondary" title="Tambah Detail" icon="fas fa-plus" wire:click="addDetail" />
                         <div class="mt-1">
-                            <x-form.error name="nominalPemakaian" />
+                            <x-form.error name="totalDebitKredit" />
+                        </div>
+                        <div class="ml-3" style="width: calc(29% - 1.6rem)">
+                            <strong>Total :</strong>
                         </div>
                         <div class="ml-3 px-5">
-                            <strong>Total Debet:</strong> Rp. {{ number_format($totalDebet, 2) }}
+                            Rp. {{ number_format($totalDebet, 2) }}
                         </div>
-                        <div class="ml-3">
-                            <strong>Total Kredit:</strong> Rp. {{ number_format($totalKredit, 2) }}
+                        <div class="ml-3 px-5">
+                            Rp. {{ number_format($totalKredit, 2) }}
                         </div>
                     </div>
 

@@ -18,9 +18,23 @@ class InputPostingJurnal extends Component
 {
     use FlashComponent, Filterable, DeferredModal;
 
-    /** @var string */
-    public $kodeRekening;
+    /** @var array */
+    public $kodeRekening = [];
 
+    /** @var string */
+    public $noJurnalBaru;
+
+    /** @var string */
+    public $no_bukti;
+
+    /** @var string */
+    public $jam_jurnal;
+
+    /** @var string */
+    public $keterangan;
+
+    /** @var string */
+    public $tgl_jurnal;
     /** @var array */
     public $detail;
 
@@ -33,9 +47,28 @@ class InputPostingJurnal extends Component
         'posting-jurnal.hide-modal' => 'hideModal',
         'posting-jurnal.show-modal' => 'showModal',
     ];
+    
 
-    public function mount(): void
+    public function rules()
     {
+        $rules = [
+            'no_bukti'   => 'required|string',
+            'tgl_jurnal' => 'required|date',
+            'jam_jurnal'  => 'required|string',
+        ];
+
+        foreach ($this->detail as $index => $detailItem) {
+            $rules["detail.$index.kd_rek"]  = 'required|string'; 
+            $rules["detail.$index.debet"]   = 'required|numeric'; 
+            $rules["detail.$index.kredit"]  = 'required|numeric'; 
+        }
+
+        return $rules;
+    }
+
+    public function mount(Jurnal $jurnal): void
+    {
+        $this->noJurnalBaru = $jurnal->no_jurnal;
         $this->defaultValues();
     }
 
@@ -71,35 +104,31 @@ class InputPostingJurnal extends Component
     
     public function prepare(array $options): void
     {
-        $this->kodeRekening = $options['kd_rek'] ?? -1;
+        $jurnal = Jurnal::query()
+        ->where('no_jurnal', $this->noJurnalBaru)
+        ->first();
+
+        $this->keterangan = $jurnal ? $jurnal->keterangan : '';
 
         $detail = JurnalDetail::query()
-            ->where('kd_rek', $this->kodeRekening)
             ->get();
     
         $this->detail = $detail->isEmpty()
             ? []
             : $detail
                 ->map(fn (JurnalDetail $model): array => [
-                    'kodeRekening' => $model->kodeRekening,
+                    'kd_rek' => $model->kd_rek,
                     'debet' => round($model->debet),
                     'kredit' => round($model->kredit),
                 ])
                 ->all();
     }
 
-    public function create():void
+    public function create(): void
     {
-        if ($this->isUpdating()) {
-            $this->update();
-
-            return;
-        }
-
         if (user()->cannot('keuangan.postin-jurnal.create')) {
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
-
             return;
         }
 
@@ -107,22 +136,29 @@ class InputPostingJurnal extends Component
         $this->validasiTotalDebitKredit();
 
         tracker_start();
-        $postingJurnal = Jurnal::create([
-            'no_jurnal'         => $this->no_jurnal,
-            'tgl_jurnal'        => $this->tgl_jurnal,
-            'jam_jurnal'        => $this->jam_jurnal,
-            'jenis'             => $this->jenis,
-            'keterangan'        => $this->keterangan,
-        ]);
 
-        $detailJurnal
-            ->detail()
-            ->createMany($this->detail);
-        
+        $noJurnalBaru = Jurnal::noJurnalBaru($this->tgl_jurnal);
+
+        $attributes = [
+            'no_jurnal'   => $noJurnalBaru,
+            'no_bukti'    => $this->no_bukti,
+            'tgl_jurnal'  => $this->tgl_jurnal,
+            'jam_jurnal'  => $this->jam_jurnal,
+            'jenis'       => $this->jenis,
+            'keterangan'  => $this->keterangan,
+        ];
+
+        if ($this->isUpdating()) {
+            Jurnal::where('no_jurnal', $this->noJurnalBaru)->update($attributes);
+        } else {
+            $postingJurnal = Jurnal::create($attributes);
+            $postingJurnal->detail()->createMany($this->detail);
+        }
+
         tracker_end();
 
         $this->dispatchBrowserEvent('data-saved');
-        $this->emit('flash.success', 'Posting Jurnal baru berhasil ditambahkan!');
+        $this->emit('flash.success', 'Posting Jurnal berhasil ditambahkan!');
     }
 
     private function calculateTotal($field): float
@@ -144,13 +180,22 @@ class InputPostingJurnal extends Component
     public function removeDetail(int $index): void
     {
         unset($this->detail[$index]);
+        unset($this->kodeRekening[$index]);
+
+        $this->detail = array_values($this->detail);
+        $this->kodeRekening = array_values($this->kodeRekening);
+    }
+
+    public function isUpdating(): bool
+    {
+        return $this->noJurnalBaru !== -1;
     }
 
     protected function defaultValues(): void
     {
         $this->jenis = 'U';
         $this->detail = [[
-            'kd_rek'    => '',
+            'kd_rek' => '',
             'debet'     => 0,
             'kredit'     => 0,
         ]];
@@ -158,15 +203,13 @@ class InputPostingJurnal extends Component
 
     private function validasiTotalDebitKredit(): void
     {
-        $totaldebit = round(floatval(collect($this->detail)->sum('debit')), 2);
-
+        $totaldebit = round(floatval(collect($this->detail)->sum('debet')), 2);
         $totalkredit = round(floatval(collect($this->detail)->sum('kredit')), 2);
-
-
-        if ($totaldebit != totalkredit) {
+    
+        if ($totaldebit != $totalkredit) {
             throw ValidationException::withMessages([
                 'totalDebitKredit' => 'Total debit dan kredit tidak sesuai'
             ]);
         }
-    }
+    }    
 }
