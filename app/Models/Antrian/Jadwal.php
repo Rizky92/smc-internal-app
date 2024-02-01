@@ -41,17 +41,16 @@ class Jadwal extends Model
     public function scopeJadwalDokter(Builder $query, bool $semuaPoli = false): Builder
     {
         $sqlSelect = <<<SQL
-        dokter.kd_dokter,
-        dokter.nm_dokter,
-        poliklinik.kd_poli, 
-        poliklinik.nm_poli,
-        jadwal.hari_kerja,
-        jadwal.jam_mulai, 
-        jadwal.jam_selesai,
-        jadwal.kuota,
-        (select count(*) from reg_periksa where kd_dokter = jadwal.kd_dokter and kd_poli = jadwal.kd_poli and tgl_registrasi = curdate()) as total_registrasi
-    SQL;
-
+            dokter.kd_dokter,
+            dokter.nm_dokter,
+            poliklinik.kd_poli, 
+            poliklinik.nm_poli,
+            jadwal.hari_kerja,
+            jadwal.jam_mulai, 
+            jadwal.jam_selesai,
+            jadwal.kuota
+        SQL;
+                        
         $this->addSearchConditions([
             'dokter.nm_dokter',
             'poliklinik.nm_poli',
@@ -73,6 +72,33 @@ class Jadwal extends Model
             ->join('poliklinik', 'jadwal.kd_poli', '=', 'poliklinik.kd_poli')
             ->where('jadwal.hari_kerja', '=', strtoupper($dayOfWeekMap[date('l')]))
             ->orderByRaw("CASE WHEN poliklinik.nm_poli = 'Poli Eksekutif' THEN 1 ELSE 0 END, poliklinik.nm_poli");
+    }
+
+    public function scopeTotalRegistrasi (Builder $query) :Builder
+    { 
+        return $query
+        ->select('kd_dokter','kd_poli', DB::raw('count(*) as total_registrasi'))
+        ->where('tgl_registrasi', now()->format('Y-m-d'))
+        ->groupBy('kd_dokter','kd_poli');
+
+    }
+
+    public function scopeTotalKuota (Builder $query) :Builder
+    {
+        $dayOfWeekMap = [
+            'Sunday' => 'AHAD',
+            'Monday' => 'SENIN',
+            'Tuesday' => 'SELASA',
+            'Wednesday' => 'RABU',
+            'Thursday' => 'KAMIS',
+            'Friday' => 'JUMAT',
+            'Saturday' => 'SABTU',
+        ];
+        
+        return $query
+        ->select(['kd_dokter','kd_poli', DB::raw('sum(kuota) as total_kuota')])
+        ->where('jadwal.hari_kerja', '=', strtoupper($dayOfWeekMap[date('l')]))
+        ->groupBy('kd_dokter','kd_poli');
     }
 
     public static function hitungTotalRegistrasi($kd_dokter, $kd_poli, $hari_kerja, $tgl_registrasi)
