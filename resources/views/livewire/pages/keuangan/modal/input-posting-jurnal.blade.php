@@ -53,9 +53,16 @@
                     </div>
                     <ul class="p-0 m-0 mt-2 mb-3 d-flex flex-column" style="row-gap: 0.5rem" id="detail-jurnal">
                         @foreach($this->detail as $index => $item)
-                        <li class="d-flex justify-content-start align-items-center m-0 p-0" wire:key="detail-junal-{{ $index }}">
-                            <input type="text" class="form-control form-control-sm" wire:model.defer="detail.{{ $index }}.kd_rek" />
-                            {{-- <x-form.select2 id="kode-rekening-{{ $index }}" model="kodeRekening" :options="$this->rekening" /> --}}
+                        <li class="d-flex justify-content-start align-items-center m-0 p-0" wire:key="detail-junal-{{ $index }}">  
+                            <div class="form-group mt-2">
+                                <select id="kd_rek_{{ $index }}" wire:model.defer="detail.{{ $index }}.kd_rek" class="form-control form-control-sm">
+                                    <option value="">Pilih Rekening</option>
+                                    @foreach($this->rekening as $kd_rek => $rekening)
+                                        <option value="{{ $kd_rek }}">{{ $rekening }}</option>
+                                    @endforeach
+                                </select>
+                                <x-form.error name="detail.{{ $index }}.kd_rek" />
+                            </div>
                             <span class="ml-4 text-sm" style="width: 3rem">Rp.</span>
                             <input type="number" class="form-control form-control-sm text-right w-25" wire:model.defer="detail.{{ $index }}.debet">
                             <span class="ml-4 text-sm" style="width: 3rem">Rp.</span>
