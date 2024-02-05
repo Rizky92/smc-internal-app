@@ -10,6 +10,7 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -131,58 +132,64 @@ class InputPostingJurnal extends Component
             return;
         }
     
-        $this->validate();
-        $this->validasiTotalDebitKredit();
+        DB::beginTransaction();
     
-        tracker_start();
+        try {
+            $this->validate();
+            $this->validasiTotalDebitKredit();
+            tracker_start();
     
-        $attributes = [
-            'no_bukti'   => $this->no_bukti,
-            'tgl_jurnal' => $this->tgl_jurnal,
-            'jam_jurnal' => $this->jam_jurnal,
-            'jenis'      => $this->jenis,
-            'keterangan' => $this->keterangan,
-        ];
-    
-        $attributes['no_jurnal'] = Jurnal::noJurnalBaru($this->tgl_jurnal);
-    
-        $noJurnalBaru = $attributes['no_jurnal'];
-    
-        if ($this->isUpdating()) {
-            Jurnal::where('no_jurnal', $noJurnalBaru)->update($attributes);
-            JurnalDetail::where('no_jurnal', $noJurnalBaru)->delete();
-        } else {
-            $postingJurnal = Jurnal::create($attributes);
-        }
-    
-        $jurnalDetailData = collect($this->detail)->map(function ($detail) use ($noJurnalBaru) {
-            return [
-                'no_jurnal' => $noJurnalBaru,
-                'kd_rek'    => $detail['kd_rek'],
-                'debet'     => $detail['debet'],
-                'kredit'    => $detail['kredit'],
+            $attributes = [
+                'no_bukti'   => $this->no_bukti,
+                'tgl_jurnal' => $this->tgl_jurnal,
+                'jam_jurnal' => $this->jam_jurnal,
+                'jenis'      => $this->jenis,
+                'keterangan' => $this->keterangan,
             ];
-        });
     
-        $noJurnalBaru = $attributes['no_jurnal'];
+            $attributes['no_jurnal'] = Jurnal::noJurnalBaru($this->tgl_jurnal);
     
-        $jurnal = Jurnal::create([
-            'no_jurnal'   => $noJurnalBaru,
-            'no_bukti'    => $this->no_bukti,
-            'tgl_jurnal'  => $this->tgl_jurnal,
-            'jam_jurnal'  => $this->jam_jurnal,
-            'jenis'       => $this->jenis,
-            'keterangan'  => $this->keterangan,
-        ]);
+            $noJurnalBaru = $attributes['no_jurnal'];
     
-        JurnalDetail::insert($jurnalDetailData->toArray());
+            if ($this->isUpdating()) {
+                Jurnal::where('no_jurnal', $noJurnalBaru)->update($attributes);
+                JurnalDetail::where('no_jurnal', $noJurnalBaru)->delete();
+            } else {
+                $postingJurnal = Jurnal::create($attributes);
+            }
     
-        tracker_end();
+            $jurnalDetailData = collect($this->detail)->map(function ($detail) use ($noJurnalBaru) {
+                return [
+                    'no_jurnal' => $noJurnalBaru,
+                    'kd_rek'    => $detail['kd_rek'],
+                    'debet'     => $detail['debet'],
+                    'kredit'    => $detail['kredit'],
+                ];
+            });
     
-        $this->dispatchBrowserEvent('data-saved');
-        $this->emit('flash.success', 'Posting Jurnal berhasil ditambahkan!');
+            $jurnal = Jurnal::create([
+                'no_jurnal'   => $noJurnalBaru,
+                'no_bukti'    => $this->no_bukti,
+                'tgl_jurnal'  => $this->tgl_jurnal,
+                'jam_jurnal'  => $this->jam_jurnal,
+                'jenis'       => $this->jenis,
+                'keterangan'  => $this->keterangan,
+            ]);
+    
+            JurnalDetail::insert($jurnalDetailData->toArray());
+    
+            tracker_end();
+    
+            $this->dispatchBrowserEvent('data-saved');
+            $this->emit('flash.success', 'Posting Jurnal berhasil ditambahkan');
+    
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->emit('flash.error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
+        }
     }
-    
+     
     private function calculateTotal($field): float
     {
         return collect($this->detail)->sum(function ($item) use ($field) {
