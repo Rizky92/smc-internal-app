@@ -214,6 +214,8 @@ class InputPostingJurnal extends Component
             'debet'  => 0,
             'kredit' => 0,
         ];
+
+        $this->emit('detailAdded');
     }
 
     public function removeDetail(int $index): void
