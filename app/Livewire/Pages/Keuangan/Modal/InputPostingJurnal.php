@@ -79,22 +79,30 @@ class InputPostingJurnal extends Component
         $this->emit('select2.hydrate');
     }
 
-    public function getRekeningProperty()
+    public function getRekeningProperty(): array
     {
         return Rekening::query()
-            ->get()
-            ->mapWithKeys(function (Rekening $r): array {
-                $kd_rek = $r->kd_rek;
-                $nm_rek = $r->nm_rek;
-                $balance = $r->balance;
-
-                $string = collect([$kd_rek, $nm_rek, $balance])
-                    ->joinStr(' - ')
-                    ->value();
-
-                return [$r->kd_rek => $string];
-            });
+            ->orderBy('kd_rek')
+            ->pluck('nm_rek', 'kd_rek')
+            ->all();
     }
+
+    // public function getRekeningProperty()
+    // {
+    //     return Rekening::query()
+    //         ->get()
+    //         ->mapWithKeys(function (Rekening $r): array {
+    //             $kd_rek = $r->kd_rek;
+    //             $nm_rek = $r->nm_rek;
+    //             $balance = $r->balance;
+
+    //             $string = collect([$kd_rek, $nm_rek, $balance])
+    //                 ->joinStr(' - ')
+    //                 ->value();
+
+    //             return [$r->kd_rek => $string];
+    //         });
+    // }
 
     public function render(): View
     {
@@ -206,6 +214,8 @@ class InputPostingJurnal extends Component
             'debet'  => 0,
             'kredit' => 0,
         ];
+
+        $this->emit('detailAdded');
     }
 
     public function removeDetail(int $index): void

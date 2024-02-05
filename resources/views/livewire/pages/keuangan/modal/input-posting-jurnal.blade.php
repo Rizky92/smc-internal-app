@@ -54,14 +54,53 @@
                     <ul class="p-0 m-0 mt-2 mb-3 d-flex flex-column" style="row-gap: 0.5rem" id="detail-jurnal">
                         @foreach($this->detail as $index => $item)
                         <li class="d-flex justify-content-start align-items-center m-0 p-0" wire:key="detail-junal-{{ $index }}">  
-                            <div class="form-group mt-2">
-                                <select id="kd_rek_{{ $index }}" wire:model.defer="detail.{{ $index }}.kd_rek" class="form-control form-control-sm">
+                            <div class="form-group mt-2" wire:ignore>
+                                <select id="kd_rek_{{ $index }}" wire:model.defer="detail.{{ $index }}.kd_rek" class="form-control form-control-sm select2" data-index="{{ $index }}">
                                     <option value="">Pilih Rekening</option>
                                     @foreach($this->rekening as $kd_rek => $rekening)
-                                        <option value="{{ $kd_rek }}">{{ $rekening }}</option>
+                                        <option value="{{ $kd_rek }}">{{ $kd_rek }} - {{ $rekening }}</option>
                                     @endforeach
                                 </select>
                                 <x-form.error name="detail.{{ $index }}.kd_rek" />
+                                @push('css')
+                                    @once
+                                        <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet">
+                                        <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet">
+                                        <style>
+                                            .select2-selection__arrow {
+                                                top: 0 !important;
+                                            }
+
+                                            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                                                height: 2rem !important;
+                                            }
+
+                                            .select2-container .select2-selection--single .select2-selection__rendered {
+                                                padding-left: 0 !important;
+                                                margin-left: -0.125rem !important;
+                                            }
+                                        </style>
+                                    @endonce
+                                @endpush
+                                @push('js')
+                                    @once
+                                        <script src="{{ asset('js/select2.full.min.js') }}"></script>
+                                    @endonce
+                                    <script>
+                                        document.addEventListener('livewire:load', function () {
+                                            Livewire.on('detailAdded', function () {
+                                                $('.select2').select2();
+                                            })
+                                        })
+                                        $(document).ready(function () {
+                                            $('.select2').select2()
+                                            $(document).on('change', '.select2', function (e) {
+                                                var data = $(this).val()
+                                                @this.set('detail.' + $(this).data('index') + '.kd_rek', data)
+                                            });
+                                        });
+                                    </script>
+                                @endpush
                             </div>
                             <span class="ml-4 text-sm" style="width: 3rem">Rp.</span>
                             <input type="number" class="form-control form-control-sm text-right w-25" wire:model.defer="detail.{{ $index }}.debet">
