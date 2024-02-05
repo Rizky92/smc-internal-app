@@ -87,23 +87,6 @@ class InputPostingJurnal extends Component
             ->all();
     }
 
-    // public function getRekeningProperty()
-    // {
-    //     return Rekening::query()
-    //         ->get()
-    //         ->mapWithKeys(function (Rekening $r): array {
-    //             $kd_rek = $r->kd_rek;
-    //             $nm_rek = $r->nm_rek;
-    //             $balance = $r->balance;
-
-    //             $string = collect([$kd_rek, $nm_rek, $balance])
-    //                 ->joinStr(' - ')
-    //                 ->value();
-
-    //             return [$r->kd_rek => $string];
-    //         });
-    // }
-
     public function render(): View
     {
         return view('livewire.pages.keuangan.modal.input-posting-jurnal', [
@@ -232,6 +215,7 @@ class InputPostingJurnal extends Component
     protected function defaultValues(): void
     {
         $this->jenis = 'U';
+        $this->jam_jurnal = now()->format('H:i');
         $this->detail = [
             [
                 'kd_rek' => '',
