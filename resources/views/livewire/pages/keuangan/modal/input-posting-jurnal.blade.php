@@ -35,7 +35,7 @@
                     </div>
                     <div class="form-group mt-3 px-5">
                         <label for="jenis">Waktu</label>
-                        <input type="time" id="jamJurnal" wire:model.defer="jam_jurnal" class="form-control form-control-sm">
+                        <input type="text" id="jamJurnal" wire:model.defer="jam_jurnal" class="form-control form-control-sm">
                     </div>
                 </div>
 
@@ -54,7 +54,7 @@
                     <ul class="p-0 m-0 mt-2 mb-3 d-flex flex-column" style="row-gap: 0.5rem" id="detail-jurnal">
                         @foreach($this->detail as $index => $item)
                         <li class="d-flex justify-content-start align-items-center m-0 p-0" wire:key="detail-junal-{{ $index }}">  
-                            <div class="form-group mt-2" wire:ignore>
+                            <div style="width:100%" wire:ignore>
                                 <select id="kd_rek_{{ $index }}" wire:model.defer="detail.{{ $index }}.kd_rek" class="form-control form-control-sm select2" data-index="{{ $index }}">
                                     <option value="">Pilih Rekening</option>
                                     @foreach($this->rekening as $kd_rek => $rekening)
