@@ -5,6 +5,7 @@ namespace App\Livewire\Pages\Keuangan\Modal;
 use App\Models\Keuangan\Rekening;
 use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\Jurnal\JurnalDetail;
+use App\Models\Keuangan\Jurnal\PostingJurnal;
 use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
@@ -157,7 +158,14 @@ class InputPostingJurnal extends Component
             } else {
                 $postingJurnal = Jurnal::create($attributes);
             }
-    
+
+            $postingJurnalData = [
+                'no_jurnal'  => $noJurnalBaru,
+                'tgl_jurnal' => $this->tgl_jurnal,
+            ];
+
+            PostingJurnal::updateOrCreate(['no_jurnal' => $noJurnalBaru], $postingJurnalData);
+
             $jurnalDetailData = collect($this->detail)->map(function ($detail) use ($noJurnalBaru) {
                 return [
                     'no_jurnal' => $noJurnalBaru,
@@ -166,7 +174,7 @@ class InputPostingJurnal extends Component
                     'kredit'    => $detail['kredit'],
                 ];
             });
-    
+            
             $jurnal = Jurnal::create([
                 'no_jurnal'   => $noJurnalBaru,
                 'no_bukti'    => $this->no_bukti,
