@@ -132,12 +132,13 @@ class InputPostingJurnal extends Component
             $this->dispatchBrowserEvent('data-denied');
             return;
         }
+
+        $this->validate();
+        $this->validasiTotalDebitKredit();
     
         DB::beginTransaction();
     
         try {
-            $this->validate();
-            $this->validasiTotalDebitKredit();
             tracker_start();
     
             $attributes = [
@@ -190,6 +191,7 @@ class InputPostingJurnal extends Component
     
             $this->dispatchBrowserEvent('data-saved');
             $this->emit('flash.success', 'Posting Jurnal berhasil ditambahkan');
+            $this->reset(['no_bukti', 'tgl_jurnal', 'keterangan']);
     
             DB::commit();
         } catch (\Exception $e) {
@@ -230,7 +232,8 @@ class InputPostingJurnal extends Component
     protected function defaultValues(): void
     {
         $this->jenis = 'U';
-        $this->jam_jurnal = now()->format('H:i');
+        $this->tgl_jurnal = now()->format('Y-m-d');
+        $this->jam_jurnal = now()->format('H:i:s');
         $this->detail = [
             [
                 'kd_rek' => '',

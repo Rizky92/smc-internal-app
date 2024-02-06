@@ -35,7 +35,7 @@
                     </div>
                     <div class="form-group mt-3 px-5">
                         <label for="jenis">Waktu</label>
-                        <input type="time" id="jamJurnal" wire:model.defer="jam_jurnal" class="form-control form-control-sm">
+                        <input type="text" id="jamJurnal" wire:model.defer="jam_jurnal" class="form-control form-control-sm">
                     </div>
                 </div>
 
