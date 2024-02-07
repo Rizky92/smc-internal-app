@@ -20,9 +20,6 @@ class InputPostingJurnal extends Component
 {
     use FlashComponent, Filterable, DeferredModal;
 
-    /** @var array */
-    public $kodeRekening = [];
-
     /** @var string */
     public $noJurnalBaru;
 
@@ -40,6 +37,9 @@ class InputPostingJurnal extends Component
     
     /** @var array */
     public $detail;
+
+    /** @var array */
+    public $jurnalSementara = [];
 
     /** @var "U"|"P" */
     public $jenis;
@@ -94,6 +94,7 @@ class InputPostingJurnal extends Component
         return view('livewire.pages.keuangan.modal.input-posting-jurnal', [
             'totalDebet'  => $this->calculateTotal('debet'),
             'totalKredit' => $this->calculateTotal('kredit'),
+            'jurnalSementara' => $this->jurnalSementara,
         ]);
     }
 
@@ -125,7 +126,7 @@ class InputPostingJurnal extends Component
                 ->all();
     }
 
-    public function create(): void
+    public function add(): void 
     {
         if (user()->cannot('keuangan.postin-jurnal.create')) {
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
@@ -135,58 +136,67 @@ class InputPostingJurnal extends Component
 
         $this->validate();
         $this->validasiTotalDebitKredit();
+
+        $jurnalSementaraData = [
+            'no_bukti'   => $this->no_bukti,
+            'tgl_jurnal' => $this->tgl_jurnal,
+            'jam_jurnal' => $this->jam_jurnal,
+            'jenis'      => $this->jenis,
+            'keterangan' => $this->keterangan,
+            'detail'     => $this->detail,
+        ];
+
+        $this->jurnalSementara[] = $jurnalSementaraData;
+
+        $this->resetAdd();
+
+    }
+    
+    public function create(): void
+    {
+        if (user()->cannot('keuangan.postin-jurnal.create')) {
+            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatchBrowserEvent('data-denied');
+            return;
+        }
     
         DB::beginTransaction();
     
         try {
             tracker_start();
     
-            $attributes = [
-                'no_bukti'   => $this->no_bukti,
-                'tgl_jurnal' => $this->tgl_jurnal,
-                'jam_jurnal' => $this->jam_jurnal,
-                'jenis'      => $this->jenis,
-                'keterangan' => $this->keterangan,
-            ];
+            foreach ($this->jurnalSementara as $jurnalSementaraData) {
+                $noJurnalBaru = Jurnal::noJurnalBaru($jurnalSementaraData['tgl_jurnal']);
     
-            $attributes['no_jurnal'] = Jurnal::noJurnalBaru($this->tgl_jurnal);
+                Jurnal::create([
+                    'no_jurnal'   => $noJurnalBaru,
+                    'no_bukti'    => $jurnalSementaraData['no_bukti'],
+                    'tgl_jurnal'  => $jurnalSementaraData['tgl_jurnal'],
+                    'jam_jurnal'  => $jurnalSementaraData['jam_jurnal'],
+                    'jenis'       => $jurnalSementaraData['jenis'],
+                    'keterangan'  => $jurnalSementaraData['keterangan'],
+                ]);
     
-            $noJurnalBaru = $attributes['no_jurnal'];
+                $jurnalDetailData = collect($jurnalSementaraData['detail'])->map(function ($detail) use ($noJurnalBaru) {
+                    return [
+                        'no_jurnal' => $noJurnalBaru,
+                        'kd_rek'    => $detail['kd_rek'],
+                        'debet'     => $detail['debet'],
+                        'kredit'    => $detail['kredit'],
+                    ];
+                });
     
-            if ($this->isUpdating()) {
-                Jurnal::where('no_jurnal', $noJurnalBaru)->update($attributes);
-                JurnalDetail::where('no_jurnal', $noJurnalBaru)->delete();
-            } else {
-                $postingJurnal = Jurnal::create($attributes);
+                JurnalDetail::insert($jurnalDetailData->toArray());
+
+                PostingJurnal::updateOrCreate(
+                    ['no_jurnal' => $noJurnalBaru],
+                    [
+                        'no_jurnal'  => $noJurnalBaru,
+                        'tgl_jurnal' => $jurnalSementaraData['tgl_jurnal'],
+                    ]
+                );
             }
-
-            $postingJurnalData = [
-                'no_jurnal'  => $noJurnalBaru,
-                'tgl_jurnal' => $this->tgl_jurnal,
-            ];
-
-            PostingJurnal::updateOrCreate(['no_jurnal' => $noJurnalBaru], $postingJurnalData);
-
-            $jurnalDetailData = collect($this->detail)->map(function ($detail) use ($noJurnalBaru) {
-                return [
-                    'no_jurnal' => $noJurnalBaru,
-                    'kd_rek'    => $detail['kd_rek'],
-                    'debet'     => $detail['debet'],
-                    'kredit'    => $detail['kredit'],
-                ];
-            });
             
-            $jurnal = Jurnal::create([
-                'no_jurnal'   => $noJurnalBaru,
-                'no_bukti'    => $this->no_bukti,
-                'tgl_jurnal'  => $this->tgl_jurnal,
-                'jam_jurnal'  => $this->jam_jurnal,
-                'jenis'       => $this->jenis,
-                'keterangan'  => $this->keterangan,
-            ]);
-    
-            JurnalDetail::insert($jurnalDetailData->toArray());
-    
             tracker_end();
     
             $this->dispatchBrowserEvent('data-saved');
@@ -198,6 +208,8 @@ class InputPostingJurnal extends Component
             DB::rollBack();
             $this->emit('flash.error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
         }
+
+        $this->defaultValues();
     }
      
     private function calculateTotal($field): float
@@ -231,9 +243,30 @@ class InputPostingJurnal extends Component
 
     protected function defaultValues(): void
     {
+        $this->no_bukti = '';
+        $this->keterangan = '';
         $this->jenis = 'U';
         $this->tgl_jurnal = now()->format('Y-m-d');
         $this->jam_jurnal = now()->format('H:i:s');
+        $this->detail = [
+            [
+                'kd_rek' => '',
+                'debet'  => 0,
+                'kredit' => 0,
+            ]
+        ];
+    }
+
+    public function resetData(): void
+    {
+        $this->reset(['no_bukti', 'tgl_jurnal', 'jenis', 'jam_jurnal', 'keterangan', 'detail', 'jurnalSementara']);
+        $this->defaultValues();
+    }
+
+    protected function resetAdd(): void
+    {
+        $this->keterangan = '';
+        $this->jenis = 'U';
         $this->detail = [
             [
                 'kd_rek' => '',
