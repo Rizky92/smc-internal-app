@@ -69,6 +69,11 @@ class Jurnal extends Model
         return $this->belongsTo(DetailPenagihanPiutang::class, 'no_bukti', 'no_rawat');
     }
 
+    public function postingJurnal(): BelongsTo
+    {
+        return $this->belongsTo(PostingJurnal::class, 'no_jurnal', 'no_jurnal');
+    }
+
 
     // public function penagihanPiutangByNoTagihan()
     // {
