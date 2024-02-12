@@ -4,7 +4,8 @@ namespace App\Models\Keuangan\Jurnal;
 
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use App\Database\Eloquent\Relation\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PostingJurnal extends Model
 {
@@ -25,6 +26,11 @@ class PostingJurnal extends Model
     public function jurnal(): HasOne
     {
         return $this->hasOne(Jurnal::class, 'no_jurnal', 'no_jurnal');
+    }
+
+    public function detail(): HasMany
+    {
+        return $this->hasMany(JurnalDetail::class, 'no_jurnal','no_jurnal');
     }
 
     public function scopePostingJurnal(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $jenis = ''): Builder

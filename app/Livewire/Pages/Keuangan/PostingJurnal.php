@@ -11,6 +11,7 @@ use App\Livewire\Concerns\MenuTracker;
 use App\Models\Keuangan\Jurnal\PostingJurnal as ModelPostingJurnal;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Redirect;
 use Livewire\Component;
 
 class PostingJurnal extends Component
@@ -67,6 +68,16 @@ class PostingJurnal extends Component
     {
         return view('livewire.pages.keuangan.posting-jurnal')
             ->layout(BaseLayout::class, ['title' => 'Posting Jurnal']);
+    }
+
+    public function prepareAndPrint()
+    {
+        $data = [
+            'dataPostingJurnal' => $this->dataPostingJurnal,
+            'totalDebetDanKredit' => optional($this->totalDebetDanKredit),
+        ];
+
+        return Redirect::route('print-layout', ['no_jurnal' => $this->dataPostingJurnal[0]->no_jurnal])->with($data);
     }
 
     protected function defaultValues(): void

@@ -49,6 +49,7 @@ class InputPostingJurnal extends Component
         'prepare',
         'posting-jurnal.hide-modal' => 'hideModal',
         'posting-jurnal.show-modal' => 'showModal',
+        'redirectToPrintLayout' => 'redirectToPrintLayout',
     ];
 
     public function rules()
@@ -164,11 +165,12 @@ class InputPostingJurnal extends Component
     
         try {
             tracker_start();
+            $savedData = [];
     
             foreach ($this->jurnalSementara as $jurnalSementaraData) {
                 $noJurnalBaru = Jurnal::noJurnalBaru($jurnalSementaraData['tgl_jurnal']);
     
-                Jurnal::create([
+                $savedJurnal = Jurnal::create([
                     'no_jurnal'   => $noJurnalBaru,
                     'no_bukti'    => $jurnalSementaraData['no_bukti'],
                     'tgl_jurnal'  => $jurnalSementaraData['tgl_jurnal'],
@@ -188,6 +190,11 @@ class InputPostingJurnal extends Component
     
                 JurnalDetail::insert($jurnalDetailData->toArray());
 
+                foreach ($jurnalDetailData as &$detailItem) {
+                    $rekening = Rekening::where('kd_rek', $detailItem['kd_rek'])->first();
+                    $detailItem['nm_rek'] = optional($rekening)->nm_rek;
+                }
+                
                 PostingJurnal::updateOrCreate(
                     ['no_jurnal' => $noJurnalBaru],
                     [
@@ -195,6 +202,11 @@ class InputPostingJurnal extends Component
                         'tgl_jurnal' => $jurnalSementaraData['tgl_jurnal'],
                     ]
                 );
+            
+                $savedData[] = [
+                    'jurnal' => $savedJurnal->toArray(),
+                    'details' => $jurnalDetailData->toArray(),
+                ];
             }
             
             tracker_end();
@@ -204,12 +216,19 @@ class InputPostingJurnal extends Component
             $this->reset(['no_bukti', 'tgl_jurnal', 'keterangan']);
     
             DB::commit();
+            $this->emit('redirectToPrintLayout', $savedData);
+
         } catch (\Exception $e) {
             DB::rollBack();
             $this->emit('flash.error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
         }
 
         $this->defaultValues();
+    }
+
+    public function redirectToPrintLayout($savedData): void
+    {
+        $this->redirect(route('print-layout', ['no_jurnal' => $savedData[0]['jurnal']['no_jurnal']]));
     }
      
     private function calculateTotal($field): float

@@ -56,24 +56,13 @@
     </style>
     @endpush
     
-    <x-card use loading>
+    <x-card>
         <x-slot name="header">
             <div id="normalHeader">
                 <x-row-col-flex>
                     <x-filter.range-date />
                     <x-filter.button-export-excel class="ml-auto mx-2" />
-                    <livewire:pages.keuangan.cetak-p-d-f-posting-jurnal :data="$this->dataPostingJurnal" />   
-                        @once
-                        @push('js')
-                        <script>
-                            document.addEventListener('livewire:load', function () {
-                                Livewire.on('openPrintWindow', () => {
-                                    window.print();
-                                });
-                            });
-                        </script>
-                        @endpush
-                    @endonce
+                    <x-button variant="primary" size="sm" title="Print" icon="fas fa-print" wire:click="prepareAndPrint" />
                 </x-row-col-flex>
                 <x-row-col-flex class="mt-2 mb-3">
                     <x-filter.select-perpage />
