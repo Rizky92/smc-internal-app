@@ -44,6 +44,9 @@ class InputPostingJurnal extends Component
     /** @var "U"|"P" */
     public $jenis;
 
+    /** @var array */
+    public $savedData;
+
     /** @var mixed */
     protected $listeners = [
         'prepare',
@@ -189,12 +192,6 @@ class InputPostingJurnal extends Component
                 });
     
                 JurnalDetail::insert($jurnalDetailData->toArray());
-
-                foreach ($jurnalDetailData as &$detailItem) {
-                    $rekening = Rekening::where('kd_rek', $detailItem['kd_rek'])->first();
-                    $detailItem['nm_rek'] = optional($rekening)->nm_rek;
-                }
-                
                 PostingJurnal::updateOrCreate(
                     ['no_jurnal' => $noJurnalBaru],
                     [
@@ -228,7 +225,7 @@ class InputPostingJurnal extends Component
 
     public function redirectToPrintLayout($savedData): void
     {
-        $this->redirect(route('print-layout', ['no_jurnal' => $savedData[0]['jurnal']['no_jurnal']]));
+        $this->emit('redirectToPrintLayout', $savedData);
     }
      
     private function calculateTotal($field): float

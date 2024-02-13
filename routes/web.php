@@ -37,7 +37,7 @@ Route::get('/', HomeController::class);
 
 Route::get('/display-jadwal-dokter', Informasi\DisplayJadwalDokter::class);
 
-Route::get('/print-layout/{no_jurnal}', [PrintLayoutController::class, 'printPage'])->name('print-layout');
+Route::get('/print-layout', [PrintLayoutController::class, 'index']);
 
 Route::get('/informasi-kamar', Informasi\InformasiKamar::class);
 
