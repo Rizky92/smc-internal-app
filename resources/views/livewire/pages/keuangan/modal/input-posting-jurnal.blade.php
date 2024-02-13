@@ -7,6 +7,7 @@
 
             $('#modal-input-posting-jurnal').on('hide.bs.modal', e => {
                 @this.emit('posting-jurnal.hide-modal')
+                @this.call('resetData')
             })
 
             $(document).on('data-saved', () => {
@@ -112,11 +113,9 @@
                     </ul>
                     <div class="form-group d-flex justify-content-start align-items-center m-0 p-0">
                         <x-button size="sm" variant="secondary" title="Tambah Detail" icon="fas fa-plus" wire:click="addDetail" />
-                        <div class="mt-1">
-                            <x-form.error name="totalDebitKredit" />
-                        </div>
                         <div class="ml-3" style="width: calc(29% - 1.6rem)">
                             <strong>Total :</strong>
+                            <x-form.error name="totalDebitKredit" />
                         </div>
                         <div class="ml-3 px-5">
                             Rp. {{ number_format($totalDebet, 2) }}
@@ -127,11 +126,42 @@
                     </div>
 
                 </div>
+                <div class="mt-4">
+                    <h5>Data Jurnal Sementara</h5>
+                    @if(!empty($this->jurnalSementara) && is_array($this->jurnalSementara))
+                        <ul class="list-group">
+                            @foreach($this->jurnalSementara as $index => $jurnalSementara)
+                                <li class="list-group-item">
+                                    <strong>No. Bukti:</strong> {{ $jurnalSementara['no_bukti'] }} <br>
+                                    <strong>Tgl. Jurnal:</strong> {{ $jurnalSementara['tgl_jurnal'] }} <br>
+                                    <strong>Jam Jurnal:</strong> {{ $jurnalSementara['jam_jurnal'] }} <br>
+                                    <strong>Jenis:</strong> {{ $jurnalSementara['jenis'] }} <br>
+                                    <strong>Keterangan:</strong> {{ $jurnalSementara['keterangan'] }} <br>
+                
+                                    <ul class="list-group mt-2">
+                                        @foreach($jurnalSementara['detail'] as $detail)
+                                            <li class="list-group-item">
+                                                <strong>Kode Rekening:</strong> {{ $detail['kd_rek'] }} <br>
+                                                <strong>Debet:</strong> Rp. {{ number_format($detail['debet'], 2) }} <br>
+                                                <strong>Kredit:</strong> Rp. {{ number_format($detail['kredit'], 2) }} <br>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p>Data jurnal sementara kosong.</p>
+                    @endif
+                </div>
             </x-form>
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
+            <x-button size="sm" variant="success" title="Tambah Jurnal" icon="fas fa-plus" wire:click="add" />
             <x-button size="sm" class="ml-auto" data-dismiss="modal" id="batalsimpan" title="Batal" />
-            <x-button size="sm" variant="primary" type="submit" class="ml-2" id="simpandata" title="Simpan" icon="fas fa-save" form="form-input-posting-jurnal" />
+            <x-button size="sm" variant="primary" type="submit" class="ml-2" id="simpandata" title="Simpan" icon="fas fa-save" form="form-input-posting-jurnal"
+            :disabled="empty($this->jurnalSementara)">
+        </x-button>
         </x-slot>
     </x-modal>
 </div>

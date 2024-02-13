@@ -58,6 +58,32 @@ class Jurnal extends Model
         return $this->belongsTo(PengeluaranHarian::class, 'no_bukti', 'no_keluar');
     }
 
+    public function tagihan(): BelongsTo
+    {
+        return $this->belongsTo(DetailPenagihanPiutang::class, 'no_bukti', 'no_rawat');
+    }
+
+    public function postingJurnal(): BelongsTo
+    {
+        return $this->belongsTo(PostingJurnal::class, 'no_jurnal', 'no_jurnal');
+    }
+
+    // public function penagihanPiutangByNoTagihan()
+    // {
+    //     preg_match('/TAGIHAN (\S+),/', $this->keterangan, $matches);
+
+    //     if (!empty($matches[1])) {
+    //         return PenagihanPiutang::where('no_tagihan', $matches[1])->first();
+    //     }
+
+    //     return null;
+    // }
+
+    // public function getPenagihanPiutangAttribute()
+    // {
+    //     return $this->penagihanPiutangByNoTagihan();
+    // }
+    
     public function scopeJurnalUmum(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {

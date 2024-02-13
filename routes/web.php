@@ -5,6 +5,8 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\LogoutOtherSessionsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PrintLayoutController;
+use App\Livewire\Pages\Informasi;
 use App\Livewire\Pages\Antrian;
 use App\Livewire\Pages\Aplikasi;
 use App\Livewire\Pages\Farmasi;
@@ -34,6 +36,8 @@ use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 Route::get('/', HomeController::class);
 
 Route::get('/display-jadwal-dokter', Informasi\DisplayJadwalDokter::class);
+
+Route::get('/print-layout/{no_jurnal}', [PrintLayoutController::class, 'printPage'])->name('print-layout');
 
 Route::get('/informasi-kamar', Informasi\InformasiKamar::class);
 
