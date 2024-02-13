@@ -3,6 +3,7 @@
 namespace App\Models\Keuangan\Jurnal;
 
 use App\Database\Eloquent\Model;
+use App\Models\Keuangan\PenagihanPiutangDetail;
 use App\Models\Keuangan\PengeluaranHarian;
 use App\Models\Keuangan\PiutangDilunaskan;
 use Carbon\Carbon;
@@ -60,7 +61,7 @@ class Jurnal extends Model
 
     public function tagihan(): BelongsTo
     {
-        return $this->belongsTo(DetailPenagihanPiutang::class, 'no_bukti', 'no_rawat');
+        return $this->belongsTo(PenagihanPiutangDetail::class, 'no_bukti', 'no_rawat');
     }
 
     public function postingJurnal(): BelongsTo
@@ -68,22 +69,6 @@ class Jurnal extends Model
         return $this->belongsTo(PostingJurnal::class, 'no_jurnal', 'no_jurnal');
     }
 
-    // public function penagihanPiutangByNoTagihan()
-    // {
-    //     preg_match('/TAGIHAN (\S+),/', $this->keterangan, $matches);
-
-    //     if (!empty($matches[1])) {
-    //         return PenagihanPiutang::where('no_tagihan', $matches[1])->first();
-    //     }
-
-    //     return null;
-    // }
-
-    // public function getPenagihanPiutangAttribute()
-    // {
-    //     return $this->penagihanPiutangByNoTagihan();
-    // }
-    
     public function scopeJurnalUmum(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
