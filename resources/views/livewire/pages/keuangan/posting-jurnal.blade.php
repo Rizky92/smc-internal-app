@@ -25,44 +25,64 @@
 
     @push('css')
     <style>
-        body * {
-            visibility: visible;
-            margin: 0;
-            padding: 0;
-        }
-    
-        #printHeader {
+        .print {
             display: none;
         }
-    
+
+        .signature {
+            display: none;
+        }
+        
+        .time {
+            display: none;
+        }
+
         @media print {
-            #normalHeader {
-                display: none;
-            }
-    
-            #printHeader {
-                display: block !important;
-            }
-    
-            #printTable,
-            #printTable * {
-                visibility: visible;
+            @page {
+                size: landscape;
+                margin: none;
             }
 
-            @page {
-                    size: landscape;
-                }
+            .print {
+                display: flex; 
+                text-align: center;
+                margin-top: none;
+                padding: 0;
+            }
+
+            .time {
+                display: flex;
+                justify-content: end;
+            }
+
+            .signature {
+                display: flex; 
+                justify-content: space-between;
+            }
+
+            h3 {
+                font-size: 20px;
+                margin-top: 0px;
+                padding: 0;
+            }
+
+            .no-print {
+                display: none;
+            }
         }
     </style>
     @endpush
     
     <x-card>
         <x-slot name="header">
-            <div id="normalHeader">
+            <div class="print" >
+                <h3>POSTING JURNAL</h3>
+            </div>
+            <div class="no-print">
                 <x-row-col-flex>
                     <x-filter.range-date />
                     <x-filter.button-export-excel class="ml-auto mx-2" />
-                    <x-button variant="primary" size="sm" title="Print" icon="fas fa-print" wire:click="prepareAndPrint" />
+                    <x-button variant="primary" size="sm" title="Print" icon="fas fa-print" onclick="window.print()" />
                 </x-row-col-flex>
                 <x-row-col-flex class="mt-2 mb-3">
                     <x-filter.select-perpage />
@@ -77,20 +97,6 @@
                     @endcan
                 </x-row-col-flex>
             </div>
-            <div id="printHeader">
-                <div style="text-align: center;">
-                    <img src="{{ asset('img/logo.png') }}" margin="0" style=" display: inline-block; vertical-align: middle;" width="80px">
-                    <div style="display: inline-block; vertical-align: middle;">
-                        <h2 style="font-family: 'Arial', serif; font-size:20px ; margin: 0;">RS SAMARINDA MEDIKA CITRA</h2>
-                        <p style="font-size: 14px; margin: 1px;">Jl. Kadrie Oening no.85, RT.35, Kel. Air Putih, Kec. Samarinda Ulu, Samarinda, Kalimantan Timur
-                            <br>TEL:0541-7273000
-                            <br>E-mail:info@rssmc.co.id
-                        </p>
-                    </div>
-                </div>
-                <hr style="border-top: 2px solid #333; margin-top: 10px; margin-bottom: 1px;">
-                <hr style="border-top: 2px solid #333; margin-top: 1px; margin-bottom: 10px; padding-top:2px">
-            </div>       
         </x-slot>
         <x-slot name="body">
             <x-table id="printTable" :sortColumns="$sortColumns" style="min-width: 100%" sortable zebra hover sticky nowrap>
@@ -99,6 +105,7 @@
                     <x-table.th title="No. Bukti" />
                     <x-table.th name="tgl_jurnal" title="Tgl. Jurnal" />
                     <x-table.th name="jam_jurnal" title="Jam Jurnal" />
+                    <x-table.th title="Jenis" />
                     <x-table.th title="Keterangan" />
                     <x-table.th title="Rekening" />
                     <x-table.th title="Debet" />
@@ -111,18 +118,17 @@
                             <x-table.td>{{ $item->no_bukti }}</x-table.td>
                             <x-table.td>{{ $item->tgl_jurnal }}</x-table.td>
                             <x-table.td>{{ $item->jam_jurnal }}</x-table.td>
+                            <x-table.td>{{ $item->jenis  === 'U' ? 'Umum' : 'Penyesuaian' }}</x-table.td>
                             <x-table.td>{{ $item->keterangan }}</x-table.td>
                             <x-table.td>{{ $item->nm_rek }}</x-table.td>
                             <x-table.td>{{ $item->debet }}</x-table.td>
                             <x-table.td>{{ $item->kredit }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="8" padding />
+                        <x-table.tr-empty colspan="12" padding />
                     @endforelse
-                </x-slot>
-                <x-slot name="footer">
                     <x-table.tr>
-                        <x-table.th colspan="5" />
+                        <x-table.th colspan="6" />
                         <x-table.th title="TOTAL :" />
                         <x-table.th :title="rp(optional($this->totalDebetDanKredit)->debet)" />
                         <x-table.th :title="rp(optional($this->totalDebetDanKredit)->kredit)" />
@@ -130,7 +136,29 @@
                 </x-slot>
             </x-table>
         </x-slot>
+
         <x-slot name="footer">
+            <div class="time">
+                <p><b>Samarinda,{{ now()->formatLocalized('%d %B %Y') }}</b></p>
+            </div>
+            <div class="signature">
+                <div style="text-align: center">
+                    <p><b>Menyetujui</b></p>
+                    <br>
+                    <br>
+                    <br>
+                    <p><b>dr. Daisy Wijaya</b></p>
+                    <p><b>Manager Keuangan</b></p>
+                </div>
+                <div style="text-align: center"> 
+                    <p><b>Mengetahui</b></p>
+                    <br>
+                    <br>
+                    <br>
+                    <p><b>dr. Teguh Nurwanto, MARS</b></p>
+                    <p><b>Direktur</b></p>
+                </div>
+            </div>
             <x-paginator :data="$this->dataPostingJurnal" />
         </x-slot>
     </x-card>

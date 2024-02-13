@@ -70,16 +70,6 @@ class PostingJurnal extends Component
             ->layout(BaseLayout::class, ['title' => 'Posting Jurnal']);
     }
 
-    public function prepareAndPrint()
-    {
-        $data = [
-            'dataPostingJurnal' => $this->dataPostingJurnal,
-            'totalDebetDanKredit' => optional($this->totalDebetDanKredit),
-        ];
-
-        return Redirect::route('print-layout', ['no_jurnal' => $this->dataPostingJurnal[0]->no_jurnal])->with($data);
-    }
-
     protected function defaultValues(): void
     {
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');

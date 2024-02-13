@@ -162,6 +162,15 @@
             <x-button size="sm" variant="primary" type="submit" class="ml-2" id="simpandata" title="Simpan" icon="fas fa-save" form="form-input-posting-jurnal"
             :disabled="empty($this->jurnalSementara)">
         </x-button>
+        @push('js')
+            <script>
+                document.addEventListener('livewire:load', function () {
+                    Livewire.on('redirectToPrintLayout', function (jurnalSementara) {
+                        window.location.href = '/print-layout?jurnalSementara=' + encodeURIComponent(JSON.stringify(jurnalSementara));
+                    });
+                });
+            </script>        
+        @endpush
         </x-slot>
     </x-modal>
 </div>
