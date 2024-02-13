@@ -6,7 +6,6 @@ use App\Http\Controllers\Auth\LogoutOtherSessionsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PrintLayoutController;
-use App\Livewire\Pages\Informasi;
 use App\Livewire\Pages\Antrian;
 use App\Livewire\Pages\Aplikasi;
 use App\Livewire\Pages\Farmasi;
