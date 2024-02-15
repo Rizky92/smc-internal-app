@@ -93,6 +93,11 @@ class InputPostingJurnal extends Component
             ->all();
     }
 
+    public function getRekeningName($kdRek)
+    {
+        return $this->rekening[$kdRek] ?? '';
+    }
+
     public function render(): View
     {
         return view('livewire.pages.keuangan.modal.input-posting-jurnal', [
@@ -154,6 +159,11 @@ class InputPostingJurnal extends Component
 
         $this->resetAdd();
 
+    }
+
+    public function hapusJurnalSementara(): void
+    {
+        array_pop($this->jurnalSementara);
     }
     
     public function create(): void
@@ -294,13 +304,20 @@ class InputPostingJurnal extends Component
 
     private function validasiTotalDebitKredit(): void
     {
-        $totaldebit = round(floatval(collect($this->detail)->sum('debet')), 2);
-        $totalkredit = round(floatval(collect($this->detail)->sum('kredit')), 2);
-
-        if ($totaldebit != $totalkredit) {
+        $totalDebit = round(floatval(collect($this->detail)->sum('debet')), 2);
+        $totalKredit = round(floatval(collect($this->detail)->sum('kredit')), 2);
+    
+        if ($totalDebit != $totalKredit) {
             throw ValidationException::withMessages([
-                'totalDebitKredit' => 'Total debit dan kredit tidak sesuai'
+                'totalDebitKredit' => 'Total debet dan total kredit harus balance...!!!'
+            ]);
+        }
+    
+        if ($totalDebit == 0 || $totalKredit == 0) {
+            throw ValidationException::withMessages([
+                'totalDebitKredit' => 'Debet atau kredit tidak boleh kosong...!!!'
             ]);
         }
     }
+    
 }
