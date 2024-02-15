@@ -129,39 +129,65 @@
                 <div class="mt-4">
                     <h5>Data Jurnal Sementara</h5>
                     @if(!empty($this->jurnalSementara) && is_array($this->jurnalSementara))
-                        <ul class="list-group">
+                    <x-table>
+                        <x-slot name="columns">
+                            <x-table.th title="No. Bukti" />
+                            <x-table.th title="Tgl. Jurnal" />
+                            <x-table.th title="Jam Jurnal" />
+                            <x-table.th title="Jenis" />
+                            <x-table.th title="Keterangan" />
+                            <x-table.th title="Rekening" />
+                            <x-table.th title="Debet" />
+                            <x-table.th title="Kredit" />
+                        </x-slot>
+                        <x-slot name="body">
                             @foreach($this->jurnalSementara as $index => $jurnalSementara)
-                                <li class="list-group-item">
-                                    <strong>No. Bukti:</strong> {{ $jurnalSementara['no_bukti'] }} <br>
-                                    <strong>Tgl. Jurnal:</strong> {{ $jurnalSementara['tgl_jurnal'] }} <br>
-                                    <strong>Jam Jurnal:</strong> {{ $jurnalSementara['jam_jurnal'] }} <br>
-                                    <strong>Jenis:</strong> {{ $jurnalSementara['jenis'] }} <br>
-                                    <strong>Keterangan:</strong> {{ $jurnalSementara['keterangan'] }} <br>
-                
-                                    <ul class="list-group mt-2">
-                                        @foreach($jurnalSementara['detail'] as $detail)
-                                            <li class="list-group-item">
-                                                <strong>Kode Rekening:</strong> {{ $detail['kd_rek'] }} <br>
-                                                <strong>Debet:</strong> Rp. {{ number_format($detail['debet'], 2) }} <br>
-                                                <strong>Kredit:</strong> Rp. {{ number_format($detail['kredit'], 2) }} <br>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </li>
+                                @foreach($jurnalSementara['detail'] as $detail)
+                                    <x-table.tr>
+                                        <x-table.td>{{ $jurnalSementara['no_bukti'] }}</x-table.td>
+                                        <x-table.td>{{ $jurnalSementara['tgl_jurnal'] }}</x-table.td>
+                                        <x-table.td>{{ $jurnalSementara['jam_jurnal'] }}</x-table.td>
+                                        <x-table.td>{{ $jurnalSementara['jenis'] === 'U' ? 'Umum' : 'Penyesuaian'}}</x-table.td>
+                                        <x-table.td>{{ $jurnalSementara['keterangan'] }}</x-table.td>
+                                        <x-table.td>
+                                            {{ $detail['kd_rek'] }} - {{ $this->getRekeningName($detail['kd_rek']) }}
+                                        </x-table.td>
+                                        <x-table.td>Rp. {{ number_format($detail['debet'], 2) }}</x-table.td>
+                                        <x-table.td>Rp. {{ number_format($detail['kredit'], 2) }}</x-table.td>
+                                    </x-table.tr>
+                                @endforeach
                             @endforeach
-                        </ul>
+                        </x-slot>
+                        
+                    </x-table>
                     @else
-                        <p>Data jurnal sementara kosong.</p>
+                        <x-table>
+                            <x-slot name="columns">
+                                <x-table.th title="No. Bukti" />
+                                <x-table.th title="Tgl. Jurnal" />
+                                <x-table.th title="Jam Jurnal" />
+                                <x-table.th title="Jenis" />
+                                <x-table.th title="Keterangan" />
+                                <x-table.th title="Rekening" />
+                                <x-table.th title="Debet" />
+                                <x-table.th title="Kredit" />
+                            </x-slot>
+                            <x-slot name="body">
+                                <x-table.tr-empty colspan="12" padding />
+                            </x-slot>
+                        </x-table>
                     @endif
                 </div>
+                
+                            
             </x-form>
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
             <x-button size="sm" variant="success" title="Tambah Jurnal" icon="fas fa-plus" wire:click="add" />
+            <x-button size="sm" variant="danger" title="Hapus" icon="fas fa-trash" wire:click="hapusJurnalSementara" :disabled="empty($this->jurnalSementara)" />
             <x-button size="sm" class="ml-auto" data-dismiss="modal" id="batalsimpan" title="Batal" />
             <x-button size="sm" variant="primary" type="submit" class="ml-2" id="simpandata" title="Simpan" icon="fas fa-save" form="form-input-posting-jurnal"
-            :disabled="empty($this->jurnalSementara)">
-        </x-button>
+            :disabled="empty($this->jurnalSementara)" />
         @push('js')
             <script>
                 document.addEventListener('livewire:load', function () {
