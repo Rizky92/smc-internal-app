@@ -26,13 +26,15 @@ class DisplayJadwalDokter extends Component
                     now()->format('Y-m-d') // Ubah sesuai kebutuhan format tanggal
                 );
 
+                // Periksa apakah $item memiliki duplikat
+                if ($item->isDuplicate()) {
                     // Ambil jadwal pertama dari hasil sortasi
                     $firstJadwal = Jadwal::where('kd_dokter', $item->kd_dokter)
                         ->where('kd_poli', $item->kd_poli)
                         ->where('hari_kerja', $item->hari_kerja)
                         ->orderBy('jam_mulai', 'asc')
                         ->first();
-    
+
                     // Periksa apakah $item merupakan jadwal pertama atau kedua
                     if ($item->jam_mulai === $firstJadwal->jam_mulai) {
                         // Jadwal pertama, tampilkan sesuai kuota
@@ -41,8 +43,12 @@ class DisplayJadwalDokter extends Component
                         // Jadwal kedua, terus menjumlahkan sisanya
                         $item->total_registrasi = $total_registrasi_jadwal2;
                     }
-    
-                    return $item;
+                } else {
+                    // Jika tidak ada duplikat, hitung total registrasi tanpa batasan kuota
+                    $item->total_registrasi = $total_registrasi_jadwal1;
+                }
+
+                return $item;
             });
     }
     
