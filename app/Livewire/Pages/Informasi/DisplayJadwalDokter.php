@@ -15,6 +15,7 @@ class DisplayJadwalDokter extends Component
         return Jadwal::query()
             ->jadwalDokter()
             ->with(['dokter', 'poliklinik'])
+            ->orderBY('jam_mulai')
             ->get() // Menggunakan get() untuk mengeksekusi query dan mendapatkan hasilnya dalam bentuk koleksi
             ->map(function ($item) {
                 // Hitung total registrasi menggunakan fungsi pada model Jadwal
@@ -25,13 +26,23 @@ class DisplayJadwalDokter extends Component
                     now()->format('Y-m-d') // Ubah sesuai kebutuhan format tanggal
                 );
 
-                // Periksa apakah saat ini adalah jadwal pertama atau kedua
-                $current_jadwal = ($item->jam_mulai <= now()->format('H:i:s')) ? $total_registrasi_jadwal1 : $total_registrasi_jadwal2;
-
-                // Update property pada objek item dengan total registrasi yang sesuai
-                $item->total_registrasi = $current_jadwal;
-
-                return $item;
+                    // Ambil jadwal pertama dari hasil sortasi
+                    $firstJadwal = Jadwal::where('kd_dokter', $item->kd_dokter)
+                        ->where('kd_poli', $item->kd_poli)
+                        ->where('hari_kerja', $item->hari_kerja)
+                        ->orderBy('jam_mulai', 'asc')
+                        ->first();
+    
+                    // Periksa apakah $item merupakan jadwal pertama atau kedua
+                    if ($item->jam_mulai === $firstJadwal->jam_mulai) {
+                        // Jadwal pertama, tampilkan sesuai kuota
+                        $item->total_registrasi = min($total_registrasi_jadwal1, $item->kuota);
+                    } else {
+                        // Jadwal kedua, terus menjumlahkan sisanya
+                        $item->total_registrasi = $total_registrasi_jadwal2;
+                    }
+    
+                    return $item;
             });
     }
     

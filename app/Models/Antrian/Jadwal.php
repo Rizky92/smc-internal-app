@@ -69,33 +69,6 @@ class Jadwal extends Model
             ->orderByRaw("CASE WHEN poliklinik.nm_poli = 'Poli Eksekutif' THEN 1 ELSE 0 END, poliklinik.nm_poli");
     }
 
-    public function scopeTotalRegistrasi (Builder $query) :Builder
-    { 
-        return $query
-        ->select('kd_dokter','kd_poli', DB::raw('count(*) as total_registrasi'))
-        ->where('tgl_registrasi', now()->format('Y-m-d'))
-        ->groupBy('kd_dokter','kd_poli');
-
-    }
-
-    public function scopeTotalKuota (Builder $query) :Builder
-    {
-        $dayOfWeekMap = [
-            'Sunday' => 'AHAD',
-            'Monday' => 'SENIN',
-            'Tuesday' => 'SELASA',
-            'Wednesday' => 'RABU',
-            'Thursday' => 'KAMIS',
-            'Friday' => 'JUMAT',
-            'Saturday' => 'SABTU',
-        ];
-        
-        return $query
-        ->select(['kd_dokter','kd_poli', DB::raw('sum(kuota) as total_kuota')])
-        ->where('jadwal.hari_kerja', '=', strtoupper($dayOfWeekMap[date('l')]))
-        ->groupBy('kd_dokter','kd_poli');
-    }
-
     public static function hitungTotalRegistrasi($kd_dokter, $kd_poli, $hari_kerja, $tgl_registrasi)
     {
         // Mendapatkan dua jadwal dengan kondisi yang diinginkan
@@ -108,8 +81,7 @@ class Jadwal extends Model
         $jadwal2 = self::where('kd_dokter', $kd_dokter)
             ->where('kd_poli', $kd_poli)
             ->where('hari_kerja', $hari_kerja)
-            ->where('jam_mulai', '>', $jadwal1->jam_mulai) // Jadwal yang jam_mulai lebih lambat
-            ->orderBy('jam_mulai', 'asc') // Urutkan berdasarkan jam_mulai
+            ->orderBy('jam_mulai', 'desc') // Urutkan berdasarkan jam_mulai
             ->first();
 
         // Jika ada dua jadwal dengan kondisi tersebut
