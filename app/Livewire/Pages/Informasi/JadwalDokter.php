@@ -46,7 +46,7 @@ class JadwalDokter extends Component
                 ->sortWithColumns($this->sortColumns, [
                     'jam_mulai' => 'asc',
                 ])
-                ->paginate($this->perpage)
+                ->get()
                 ->map(function ($item) {
                     // Hitung total registrasi menggunakan fungsi pada model Jadwal
                     [$total_registrasi_jadwal1, $total_registrasi_jadwal2] = Jadwal::hitungTotalRegistrasi(
