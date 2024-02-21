@@ -137,7 +137,7 @@ class InputPostingJurnal extends Component
 
     public function add(): void 
     {
-        if (user()->cannot('keuangan.postin-jurnal.create')) {
+        if (user()->cannot('keuangan.posting-jurnal.create')) {
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
             return;
@@ -170,7 +170,7 @@ class InputPostingJurnal extends Component
     
     public function create(): void
     {
-        if (user()->cannot('keuangan.postin-jurnal.create')) {
+        if (user()->cannot('keuangan.posting-jurnal.create')) {
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
             return;
