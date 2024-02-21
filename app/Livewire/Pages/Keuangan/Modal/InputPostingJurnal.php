@@ -161,9 +161,11 @@ class InputPostingJurnal extends Component
 
     }
 
-    public function hapusJurnalSementara(): void
+    public function hapusJurnalSementara($index)
     {
-        array_pop($this->jurnalSementara);
+        if (isset($this->jurnalSementara[$index])) {
+            unset($this->jurnalSementara[$index]);
+        }
     }
     
     public function create(): void

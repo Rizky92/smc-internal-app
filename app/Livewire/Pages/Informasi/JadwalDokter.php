@@ -49,7 +49,7 @@ class JadwalDokter extends Component
                 ->sortWithColumns($this->sortColumns, [
                     'jam_mulai' => 'asc',
                 ])
-                ->paginate($this->perpage)
+                ->get()
                 ->map(function ($item) {
                     // Hitung total registrasi menggunakan fungsi pada model Jadwal
                     [$total_registrasi_jadwal1, $total_registrasi_jadwal2] = Jadwal::hitungTotalRegistrasi(
@@ -58,13 +58,29 @@ class JadwalDokter extends Component
                         $item->hari_kerja,
                         now()->format('Y-m-d') // Ubah sesuai kebutuhan format tanggal
                     );
-
-                    // Periksa apakah saat ini adalah jadwal pertama atau kedua
-                    $current_jadwal = ($item->jam_mulai <= now()->format('H:i:s')) ? $total_registrasi_jadwal1 : $total_registrasi_jadwal2;
-
-                    // Update property pada objek item dengan total registrasi yang sesuai
-                    $item->total_registrasi = $current_jadwal;
-
+    
+                    // Periksa apakah $item memiliki duplikat
+                    if ($item->isDuplicate()) {
+                        // Ambil jadwal pertama dari hasil sortasi
+                        $firstJadwal = Jadwal::where('kd_dokter', $item->kd_dokter)
+                            ->where('kd_poli', $item->kd_poli)
+                            ->where('hari_kerja', $item->hari_kerja)
+                            ->orderBy('jam_mulai', 'asc')
+                            ->first();
+    
+                        // Periksa apakah $item merupakan jadwal pertama atau kedua
+                        if ($item->jam_mulai === $firstJadwal->jam_mulai) {
+                            // Jadwal pertama, tampilkan sesuai kuota
+                            $item->total_registrasi = min($total_registrasi_jadwal1, $item->kuota);
+                        } else {
+                            // Jadwal kedua, terus menjumlahkan sisanya
+                            $item->total_registrasi = $total_registrasi_jadwal2;
+                        }
+                    } else {
+                        // Jika tidak ada duplikat, hitung total registrasi tanpa batasan kuota
+                        $item->total_registrasi = $total_registrasi_jadwal1;
+                    }
+    
                     return $item;
                 });
     }

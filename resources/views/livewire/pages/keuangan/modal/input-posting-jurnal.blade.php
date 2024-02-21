@@ -131,24 +131,36 @@
                     @if(!empty($this->jurnalSementara) && is_array($this->jurnalSementara))
                     <x-table>
                         <x-slot name="columns">
+                            <x-table.th title="Aksi" />
                             <x-table.th title="No. Bukti" />
                             <x-table.th title="Tgl. Jurnal" />
                             <x-table.th title="Jam Jurnal" />
                             <x-table.th title="Jenis" />
                             <x-table.th title="Keterangan" />
-                            <x-table.th title="Rekening" />
                             <x-table.th title="Debet" />
                             <x-table.th title="Kredit" />
                         </x-slot>
                         <x-slot name="body">
                             @foreach($this->jurnalSementara as $index => $jurnalSementara)
+                                <x-table.tr>
+                                    <x-table.td>
+                                        <button type="button" wire:click="hapusJurnalSementara({{ $index }})" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                    </x-table.td>
+                                    <x-table.td>{{ $jurnalSementara['no_bukti'] }}</x-table.td>
+                                    <x-table.td>{{ $jurnalSementara['tgl_jurnal'] }}</x-table.td>
+                                    <x-table.td>{{ $jurnalSementara['jam_jurnal'] }}</x-table.td>
+                                    <x-table.td>{{ $jurnalSementara['jenis'] === 'U' ? 'Umum' : 'Penyesuaian'}}</x-table.td>
+                                    <x-table.td>{{ $jurnalSementara['keterangan'] }}</x-table.td>
+                                    <x-table.td></x-table.td>
+                                    <x-table.td></x-table.td>
+                                </x-table.tr>
                                 @foreach($jurnalSementara['detail'] as $detail)
                                     <x-table.tr>
-                                        <x-table.td>{{ $jurnalSementara['no_bukti'] }}</x-table.td>
-                                        <x-table.td>{{ $jurnalSementara['tgl_jurnal'] }}</x-table.td>
-                                        <x-table.td>{{ $jurnalSementara['jam_jurnal'] }}</x-table.td>
-                                        <x-table.td>{{ $jurnalSementara['jenis'] === 'U' ? 'Umum' : 'Penyesuaian'}}</x-table.td>
-                                        <x-table.td>{{ $jurnalSementara['keterangan'] }}</x-table.td>
+                                        <x-table.td></x-table.td>
+                                        <x-table.td></x-table.td>
+                                        <x-table.td></x-table.td>
+                                        <x-table.td></x-table.td>
+                                        <x-table.td></x-table.td>
                                         <x-table.td>
                                             {{ $detail['kd_rek'] }} - {{ $this->getRekeningName($detail['kd_rek']) }}
                                         </x-table.td>
@@ -163,12 +175,12 @@
                     @else
                         <x-table>
                             <x-slot name="columns">
+                                <x-table.th title="Aksi" />
                                 <x-table.th title="No. Bukti" />
                                 <x-table.th title="Tgl. Jurnal" />
                                 <x-table.th title="Jam Jurnal" />
                                 <x-table.th title="Jenis" />
                                 <x-table.th title="Keterangan" />
-                                <x-table.th title="Rekening" />
                                 <x-table.th title="Debet" />
                                 <x-table.th title="Kredit" />
                             </x-slot>
@@ -184,7 +196,6 @@
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
             <x-button size="sm" variant="success" title="Tambah Jurnal" icon="fas fa-plus" wire:click="add" />
-            <x-button size="sm" variant="danger" title="Hapus" icon="fas fa-trash" wire:click="hapusJurnalSementara" :disabled="empty($this->jurnalSementara)" />
             <x-button size="sm" class="ml-auto" data-dismiss="modal" id="batalsimpan" title="Batal" />
             <x-button size="sm" variant="primary" type="submit" class="ml-2" id="simpandata" title="Simpan" icon="fas fa-save" form="form-input-posting-jurnal"
             :disabled="empty($this->jurnalSementara)" />
