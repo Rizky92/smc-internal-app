@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\LogoutOtherSessionsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PrintLayoutController;
 use App\Livewire\Pages\Antrian;
 use App\Livewire\Pages\Aplikasi;
 use App\Livewire\Pages\Farmasi;
@@ -34,6 +35,8 @@ use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 Route::get('/', HomeController::class);
 
 Route::get('/display-jadwal-dokter', Informasi\DisplayJadwalDokter::class);
+
+Route::get('/print-layout', [PrintLayoutController::class, 'index']);
 
 Route::get('/informasi-kamar', Informasi\InformasiKamar::class);
 
@@ -181,6 +184,10 @@ Route::prefix('admin')
                 Route::get('laporan-trial-balance', Keuangan\LaporanTrialBalance::class)
                     ->name('laporan-trial-balance')
                     ->middleware('can:keuangan.laporan-trial-balance.read');
+
+                Route::get('posting-jurnal', Keuangan\PostingJurnal::class)
+                    ->name('posting-jurnal')
+                    ->middleware('can:keuangan.posting-jurnal.read');
             });
 
         Route::prefix('farmasi')

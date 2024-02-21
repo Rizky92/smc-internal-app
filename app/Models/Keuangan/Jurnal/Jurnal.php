@@ -3,6 +3,7 @@
 namespace App\Models\Keuangan\Jurnal;
 
 use App\Database\Eloquent\Model;
+use App\Models\Keuangan\PenagihanPiutangDetail;
 use App\Models\Keuangan\PengeluaranHarian;
 use App\Models\Keuangan\PiutangDilunaskan;
 use Carbon\Carbon;
@@ -56,6 +57,16 @@ class Jurnal extends Model
     public function pengeluaranHarian(): BelongsTo
     {
         return $this->belongsTo(PengeluaranHarian::class, 'no_bukti', 'no_keluar');
+    }
+
+    public function tagihan(): BelongsTo
+    {
+        return $this->belongsTo(PenagihanPiutangDetail::class, 'no_bukti', 'no_rawat');
+    }
+
+    public function postingJurnal(): BelongsTo
+    {
+        return $this->belongsTo(PostingJurnal::class, 'no_jurnal', 'no_jurnal');
     }
 
     public function scopeJurnalUmum(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
