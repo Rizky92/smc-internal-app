@@ -81,8 +81,7 @@
             <div class="no-print">
                 <x-row-col-flex>
                     <x-filter.range-date />
-                    <x-filter.button-export-excel class="ml-auto mx-2" />
-                    <x-button variant="primary" size="sm" title="Print" icon="fas fa-print" onclick="window.print()" />
+                    <x-button class="ml-auto" outline="true" variant="primary" size="sm" title="Print" icon="fas fa-print" onclick="window.print()" />
                 </x-row-col-flex>
                 <x-row-col-flex class="mt-2 mb-3">
                     <x-filter.select-perpage />
@@ -107,28 +106,58 @@
                     <x-table.th name="jam_jurnal" title="Jam Jurnal" />
                     <x-table.th title="Jenis" />
                     <x-table.th title="Keterangan" />
-                    <x-table.th title="Rekening" />
+                    <x-table.th title="Kode Akun" />
+                    <x-table.th title="Nama Akun" />
                     <x-table.th title="Debet" />
                     <x-table.th title="Kredit" />
                 </x-slot>
                 <x-slot name="body">
                         @forelse ($this->dataPostingJurnal as $item )
-                        <x-table.tr>
-                            <x-table.td>{{ $item->no_jurnal }}</x-table.td>
-                            <x-table.td>{{ $item->no_bukti }}</x-table.td>
-                            <x-table.td>{{ $item->tgl_jurnal }}</x-table.td>
-                            <x-table.td>{{ $item->jam_jurnal }}</x-table.td>
-                            <x-table.td>{{ $item->jenis  === 'U' ? 'Umum' : 'Penyesuaian' }}</x-table.td>
-                            <x-table.td>{{ $item->keterangan }}</x-table.td>
-                            <x-table.td>{{ $item->nm_rek }}</x-table.td>
-                            <x-table.td>{{ $item->debet }}</x-table.td>
-                            <x-table.td>{{ $item->kredit }}</x-table.td>
+
+                        @php
+                            $odd = $loop->iteration % 2 === 0 ? '255 255 255' : '247 247 247';
+                            
+                            $count = $item->detail->count();
+
+                            $firstDetail = $item->detail->first();
+                        @endphp
+
+                        <x-table.tr style="background-color: rgb({{ $odd }})">
+                            <x-table.td rowspan="{{ $count }}">{{ $item->no_jurnal }}</x-table.td>
+                            <x-table.td rowspan="{{ $count }}">{{ $item->no_bukti }}</x-table.td>
+                            <x-table.td rowspan="{{ $count }}">{{ $item->tgl_jurnal }}</x-table.td>
+                            <x-table.td rowspan="{{ $count }}">{{ $item->jam_jurnal }}</x-table.td>
+                            <x-table.td rowspan="{{ $count }}">{{ $item->jenis  === 'U' ? 'Umum' : 'Penyesuaian' }}</x-table.td>
+                            <x-table.td rowspan="{{ $count }}">{{ $item->keterangan }}</x-table.td>
+                            <x-table.td>{{ optional($firstDetail)->kd_rek}}</x-table.td>
+                            <x-table.td>
+                                @if (optional($firstDetail)->kredit > 0)
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                @endif
+                                {{ optional(optional($firstDetail)->rekening)->nm_rek }}
+                            </x-table.td>
+                            <x-table.td>{{ optional($firstDetail)->debet > 0 ? rp(optional($firstDetail)->debet) : null }}</x-table.td>
+                            <x-table.td>{{ optional($firstDetail)->kredit > 0 ? rp(optional($firstDetail)->kredit) : null }}</x-table.td>
                         </x-table.tr>
+                        @if ($item->detail->skip(1)->count() > 0)
+                            @foreach ($item->detail->skip(1) as $detail)
+                                <x-table.tr style="background-color: rgb({{ $odd }})">
+                                    <x-table.td class="p-1 border-0">{{ $detail->kd_rek }}</x-table.td>
+                                    <x-table.td class="border-0">
+                                        @if ($detail->kredit > 0)
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        @endif {{ optional($detail->rekening)->nm_rek }}
+                                    </x-table.td>
+                                    <x-table.td class="border-0">{{ $detail->debet > 0 ? rp($detail->debet) : null }}</x-table.td>
+                                    <x-table.td class="border-0">{{ $detail->kredit > 0 ? rp($detail->kredit) : null }}</x-table.td>
+                                </x-table.tr>
+                            @endforeach
+                        @endif
                     @empty
                         <x-table.tr-empty colspan="12" padding />
                     @endforelse
                     <x-table.tr>
-                        <x-table.th colspan="6" />
+                        <x-table.th colspan="7" />
                         <x-table.th title="TOTAL :" />
                         <x-table.th :title="rp(optional($this->totalDebetDanKredit)->debet)" />
                         <x-table.th :title="rp(optional($this->totalDebetDanKredit)->kredit)" />

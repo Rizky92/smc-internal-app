@@ -66,6 +66,7 @@ class PostingJurnal extends Model
     
         return $query
             ->selectRaw($sqlSelect)
+            ->with(['jurnal','detail','detail.rekening'])
             ->withCasts(['debet' => 'float', 'kredit' => 'float'])
             ->join('sik.jurnal', 'smc.posting_jurnal.no_jurnal', '=', 'sik.jurnal.no_jurnal')
             ->join('sik.detailjurnal', 'sik.jurnal.no_jurnal', '=', 'sik.detailjurnal.no_jurnal')
@@ -74,7 +75,8 @@ class PostingJurnal extends Model
             ->whereBetween('sik.jurnal.tgl_jurnal', [$tglAwal, $tglAkhir])
             ->orderBy('sik.jurnal.tgl_jurnal')
             ->orderBy('sik.jurnal.jam_jurnal')
-            ->orderBy('sik.jurnal.no_jurnal');
+            ->orderBy('sik.jurnal.no_jurnal')
+            ->groupBy('smc.posting_jurnal.no_jurnal');
     }
 
     public function scopeJumlahDebetDanKreditPostingJurnal(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $jenis = ''): Builder

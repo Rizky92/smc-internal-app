@@ -16,7 +16,11 @@ use Livewire\Component;
 
 class PostingJurnal extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use Filterable; 
+    use FlashComponent;
+    use LiveTable; 
+    use MenuTracker; 
 
     /** @var string */
     public $tglAwal;
@@ -75,26 +79,5 @@ class PostingJurnal extends Component
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
         $this->jenis = 'U';
-    }
-
-    protected function dataPerSheet(): array
-    {
-        return [
-            //
-        ];
-    }
-
-    protected function columnHeaders(): array
-    {
-        return [
-            //
-        ];
-    }
-
-    protected function pageHeaders(): array
-    {
-        return [
-            //
-        ];
     }
 }
