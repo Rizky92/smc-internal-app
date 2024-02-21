@@ -5,6 +5,7 @@ namespace App\Models\Antrian;
 use App\Database\Eloquent\Model;
 use App\Models\Kepegawaian\Dokter;
 use App\Models\Perawatan\Poliklinik;
+use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
