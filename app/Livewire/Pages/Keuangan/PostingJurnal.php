@@ -16,7 +16,11 @@ use Livewire\Component;
 
 class PostingJurnal extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use DeferredLoading;
+    use Filterable; 
+    use FlashComponent;
+    use LiveTable; 
+    use MenuTracker; 
 
     /** @var string */
     public $tglAwal;
@@ -49,7 +53,7 @@ class PostingJurnal extends Component
             ->postingJurnal($this->tglAwal, $this->tglAkhir, $this->jenis)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns, [
-                'tgl_jurnal' => 'asc',
+                'jurnal.tgl_jurnal' => 'asc',
             ])
             ->paginate($this->perpage);
     }
@@ -75,26 +79,5 @@ class PostingJurnal extends Component
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
         $this->jenis = 'U';
-    }
-
-    protected function dataPerSheet(): array
-    {
-        return [
-            //
-        ];
-    }
-
-    protected function columnHeaders(): array
-    {
-        return [
-            //
-        ];
-    }
-
-    protected function pageHeaders(): array
-    {
-        return [
-            //
-        ];
     }
 }
