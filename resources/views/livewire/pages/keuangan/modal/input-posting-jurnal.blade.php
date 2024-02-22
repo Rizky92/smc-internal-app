@@ -118,10 +118,10 @@
                             <x-form.error name="totalDebitKredit" />
                         </div>
                         <div class="ml-3 px-5">
-                            Rp. {{ number_format($totalDebet, 2) }}
+                            Rp. {{ number_format($totalDebet) }}
                         </div>
                         <div class="ml-3 px-5">
-                            Rp. {{ number_format($totalKredit, 2) }}
+                            Rp. {{ number_format($totalKredit) }}
                         </div>
                     </div>
 
@@ -129,45 +129,77 @@
                 <div class="mt-4">
                     <h5>Data Jurnal Sementara</h5>
                     @if(!empty($this->jurnalSementara) && is_array($this->jurnalSementara))
-                    <x-table>
+                    <x-table sticky nowrap>
                         <x-slot name="columns">
-                            <x-table.th title="Aksi" />
+                            <x-table.th title="#" />
                             <x-table.th title="No. Bukti" />
                             <x-table.th title="Tgl. Jurnal" />
                             <x-table.th title="Jam Jurnal" />
                             <x-table.th title="Jenis" />
                             <x-table.th title="Keterangan" />
+                            <x-table.th title="Kode Rekening" />
+                            <x-table.th title="Nama Rekening" />
                             <x-table.th title="Debet" />
                             <x-table.th title="Kredit" />
                         </x-slot>
                         <x-slot name="body">
                             @foreach($this->jurnalSementara as $index => $jurnalSementara)
-                                <x-table.tr>
-                                    <x-table.td>
+                                @php
+                                    $odd = $loop->iteration % 2 === 0 ? '255 255 255' : '247 247 247';
+
+                                    $count = count($jurnalSementara['detail']);
+
+                                    $firstDetail = ($count > 0) ? $jurnalSementara['detail'][0] : null;
+                                @endphp
+                                
+                                <x-table.tr style="background-color: rgb({{ $odd }})">
+                                    <x-table.td rowspan="{{ $count }}">
                                         <button type="button" wire:click="hapusJurnalSementara({{ $index }})" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
                                     </x-table.td>
-                                    <x-table.td>{{ $jurnalSementara['no_bukti'] }}</x-table.td>
-                                    <x-table.td>{{ $jurnalSementara['tgl_jurnal'] }}</x-table.td>
-                                    <x-table.td>{{ $jurnalSementara['jam_jurnal'] }}</x-table.td>
-                                    <x-table.td>{{ $jurnalSementara['jenis'] === 'U' ? 'Umum' : 'Penyesuaian'}}</x-table.td>
-                                    <x-table.td>{{ $jurnalSementara['keterangan'] }}</x-table.td>
-                                    <x-table.td></x-table.td>
-                                    <x-table.td></x-table.td>
+                                    <x-table.td rowspan="{{ $count }}">{{ $jurnalSementara['no_bukti'] }}</x-table.td>
+                                    <x-table.td rowspan="{{ $count }}">{{ $jurnalSementara['tgl_jurnal'] }}</x-table.td>
+                                    <x-table.td rowspan="{{ $count }}">{{ $jurnalSementara['jam_jurnal'] }}</x-table.td>
+                                    <x-table.td rowspan="{{ $count }}">{{ $jurnalSementara['jenis'] === 'U' ? 'Umum' : 'Penyesuaian'}}</x-table.td>
+                                    <x-table.td rowspan="{{ $count }}">{{ $jurnalSementara['keterangan'] }}</x-table.td>
+                                    <x-table.td>{{ $firstDetail['kd_rek'] ?? '' }}</x-table.td>
+                                    <x-table.td>
+                                        @if (optional($firstDetail)->kredit > 0)
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        @endif
+                                        {{ $this->getRekeningName($firstDetail['kd_rek']) ?? '' }}
+                                    </x-table.td>
+                                    <x-table.td>
+                                        @if ($firstDetail['debet'] > 0)
+                                            Rp. {{ number_format($firstDetail['debet']) }}
+                                        @endif
+                                    </x-table.td>
+                                    <x-table.td>
+                                        @if ($firstDetail['kredit'] > 0)
+                                            Rp. {{ number_format($firstDetail['kredit']) }}
+                                        @endif
+                                    </x-table.td>
                                 </x-table.tr>
-                                @foreach($jurnalSementara['detail'] as $detail)
-                                    <x-table.tr>
-                                        <x-table.td></x-table.td>
-                                        <x-table.td></x-table.td>
-                                        <x-table.td></x-table.td>
-                                        <x-table.td></x-table.td>
-                                        <x-table.td></x-table.td>
-                                        <x-table.td>
-                                            {{ $detail['kd_rek'] }} - {{ $this->getRekeningName($detail['kd_rek']) }}
-                                        </x-table.td>
-                                        <x-table.td>Rp. {{ number_format($detail['debet'], 2) }}</x-table.td>
-                                        <x-table.td>Rp. {{ number_format($detail['kredit'], 2) }}</x-table.td>
-                                    </x-table.tr>
-                                @endforeach
+                                @if ($count > 1)
+                                    @foreach (array_slice($jurnalSementara['detail'], 1) as $detail)
+                                        @php
+                                            $nm_rek = $this->getRekeningName($detail['kd_rek']);
+                                        @endphp
+                                        <x-table.tr style="background-color: rgb({{ $odd }})">
+                                            <x-table.td  class="border-0">{{ $detail['kd_rek'] }}</x-table.td>
+                                            <x-table.td class="border-0">{{ $nm_rek }}</x-table.td>
+                                            <x-table.td class="border-0">
+                                                @if ($detail['debet'] > 0)
+                                                    Rp. {{ number_format($detail['debet']) }}
+                                                @endif
+                                            </x-table.td>
+                                            <x-table.td class="border-0">
+                                                @if ($detail['kredit'] > 0)
+                                                    Rp. {{ number_format($detail['kredit']) }}
+                                                @endif
+                                            </x-table.td>
+                                        </x-table.tr>
+                                    @endforeach
+                                @endif
                             @endforeach
                         </x-slot>
                         
@@ -181,6 +213,8 @@
                                 <x-table.th title="Jam Jurnal" />
                                 <x-table.th title="Jenis" />
                                 <x-table.th title="Keterangan" />
+                                <x-table.th title="Kode Rekening" />
+                                <x-table.th title="Nama Rekening" />
                                 <x-table.th title="Debet" />
                                 <x-table.th title="Kredit" />
                             </x-slot>

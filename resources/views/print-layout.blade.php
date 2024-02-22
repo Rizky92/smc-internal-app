@@ -43,9 +43,14 @@
         border-collapse: collapse;
         margin-bottom: 20px;
     }
+    
+    thead {
+        background: #F0F0DC;
+        border-top: 1px solid #333;
+        border-bottom: 1px solid #333;
+    }
 
     th, td {
-        border: 1px solid #333;
         padding: 8px;
         text-align: left;
     }
@@ -77,6 +82,10 @@
         display: flex; 
         justify-content: space-between;
     }
+
+    .no-border-table, .no-border-table th, .no-border-table td {
+        border: none !important;
+    }
 </style>
 
 <div id="printHeader">
@@ -97,64 +106,53 @@
 <h2>POSTING JURNAL</h2>
 
 @if(!empty($jurnalSementara) && is_array($jurnalSementara))
-    <table class="">
+    <table class="table">
         <thead>
-            <th>No. Jurnal</th>
-            <th>No. Bukti</th>
-            <th>Tgl. Jurnal</th>
-            <th>Jam Jurnal</th>
-            <th>Jenis</th>
-            <th>Keterangan</th>
-            <th>Rekening</th>
-            <th>Debet</th>
-            <th>Kredit</th>
+            <tr>
+                <td>No. Jurnal</td>
+                <td>No. Bukti</td>
+                <td>Tgl. Jurnal</td>
+                <td>Jam Jurnal</td>
+                <td>Jenis</td>
+                <td>Keterangan</td>
+                <td>Kode Akun</td>
+                <td>Nama Akun</td>
+                <td>Debet</td>
+                <td>Kredit</td>
+            </tr>
         </thead>
-        <tbody>
+        <tbody class="no-border-table">
             @php
                 $totalDebet = 0;
                 $totalKredit = 0;
             @endphp
 
-            @foreach($jurnalSementara as $index => $jurnalSementaraData)
-                @foreach($jurnalSementaraData['details'] as $detail)
-                    <tr>
-                        <td>{{ $jurnalSementaraData['jurnal']['no_jurnal'] }}</td>
-                        <td>{{ $jurnalSementaraData['jurnal']['no_bukti'] }}</td>
-                        <td>{{ $jurnalSementaraData['jurnal']['tgl_jurnal'] }}</td>
-                        <td>{{ $jurnalSementaraData['jurnal']['jam_jurnal'] }}</td>
-                        <td>
-                            @if($jurnalSementaraData['jurnal']['jenis'] === 'U')
-                                Umum
-                            @elseif($jurnalSementaraData['jurnal']['jenis'] === 'P')
-                                Penyesuaian
-                            @else
-                                {{ $jurnalSementaraData['jurnal']['jenis'] }}
-                            @endif
-                        </td>
-                        <td>{{ $jurnalSementaraData['jurnal']['keterangan'] }}</td>
-                        <td>
-                            @if(isset($rekeningData[$detail['kd_rek']]))
-                                {{ $detail['kd_rek'] }} - {{ $rekeningData[$detail['kd_rek']] }}
-                            @else
-                                Rekening not found for {{ $detail['kd_rek'] }}
-                            @endif
-                        </td>
-                        <td>Rp. {{ number_format($detail['debet'], 2) }}</td>
-                        <td>Rp. {{ number_format($detail['kredit'], 2) }}</td>
-                    </tr>
-
+            @foreach ($jurnalSementara as $jurnal)
+                @foreach ($jurnal['details'] as $detail)
                     @php
                         $totalDebet += $detail['debet'];
                         $totalKredit += $detail['kredit'];
                     @endphp
+                    <tr>
+                        <td>{{ $loop->first ? $jurnal['jurnal']['no_jurnal'] : '' }}</td>
+                        <td>{{ $loop->first ? $jurnal['jurnal']['no_bukti'] : '' }}</td>
+                        <td>{{ $loop->first ? $jurnal['jurnal']['tgl_jurnal'] : '' }}</td>
+                        <td>{{ $loop->first ? $jurnal['jurnal']['jam_jurnal'] : '' }}</td>
+                        <td>{{ $loop->first ? $jurnal['jurnal']['jenis'] === 'U' ? 'Umum' : 'Penyesuaian' : '' }}</td>
+                        <td>{{ $loop->first ? $jurnal['jurnal']['keterangan'] : '' }}</td>
+                        <td>{{ $detail['kd_rek'] }}</td>
+                        <td>{{ $rekeningData[$detail['kd_rek']] ?? '' }}</td>
+                        <td>{{ $detail['debet'] != 0 ? $detail['debet'] : '' }}</td>
+                        <td>{{ $detail['kredit'] != 0 ? $detail['kredit'] : '' }}</td>
+                    </tr>
                 @endforeach
             @endforeach
         </tbody>
-        <tfoot>
+        <tfoot class="no-border-table">
             <tr>
-                <td colspan="7" style="font-weight: bold;">Jumlah Total</td>
-                <td>Rp. {{ number_format($totalDebet, 2) }}</td>
-                <td>Rp. {{ number_format($totalKredit, 2) }}</td>
+                <td colspan="8">Jumlah Total:</td>
+                <td>{{ $totalDebet }}</td>
+                <td>{{ $totalKredit }}</td>
             </tr>
         </tfoot>
     </table>

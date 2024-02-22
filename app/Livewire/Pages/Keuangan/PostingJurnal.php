@@ -53,7 +53,7 @@ class PostingJurnal extends Component
             ->postingJurnal($this->tglAwal, $this->tglAkhir, $this->jenis)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns, [
-                'tgl_jurnal' => 'asc',
+                'jurnal.tgl_jurnal' => 'asc',
             ])
             ->paginate($this->perpage);
     }
