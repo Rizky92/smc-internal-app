@@ -12,7 +12,7 @@ body {
     display: table;
     width: 100%;
 }
-span {
+span.header {
     font-size: 8vh;
     font-weight: bold;
     color: #198754;

@@ -6,7 +6,7 @@
     <header class="d-flex flex-wrap justify-content-center mb-4 border-bottom shadow">
         <div class="container-fluid d-flex justify-content-center">
             <img src="{{ asset('img/logo.png') }}" alt="logo" width="100vh" height="auto">
-            <span>KETERSEDIAAN KAMAR</span>
+            <span class="header">KETERSEDIAAN KAMAR</span>
         </div>
     </header>
     <table class="table table-bordered table-striped text-white">   

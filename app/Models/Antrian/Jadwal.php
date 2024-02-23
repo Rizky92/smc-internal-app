@@ -72,7 +72,10 @@ class Jadwal extends Model
             ->join('dokter', 'jadwal.kd_dokter', '=', 'dokter.kd_dokter')
             ->join('poliklinik', 'jadwal.kd_poli', '=', 'poliklinik.kd_poli')
             ->where('jadwal.hari_kerja', '=', strtoupper($dayOfWeekMap[date('l')]))
-            ->orderByRaw("CASE WHEN poliklinik.nm_poli = 'Poli Eksekutif' THEN 1 ELSE 0 END, poliklinik.nm_poli");
+            ->orderByRaw("CASE WHEN poliklinik.nm_poli = 'Poli Eksekutif' THEN 1 ELSE 0 END, poliklinik.nm_poli")
+            ->orderBy('poliklinik.nm_poli', 'asc')
+            ->orderBy('dokter.nm_dokter', 'asc')
+            ->orderBy('jadwal.jam_mulai', 'asc');
     }
 
     public function isDuplicate()
