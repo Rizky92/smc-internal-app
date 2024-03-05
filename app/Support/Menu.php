@@ -30,7 +30,6 @@ class Menu
                     'perawatan.daftar-pasien-ranap.read',
                     'perawatan.laporan-pasien-ranap.read',
                     'perawatan.laporan-transaksi-gantung.read',
-                    'perawatan.laporan-hasil-pemeriksaan.read',
                 ]),
                 'items' => [
                     [
@@ -53,13 +52,6 @@ class Menu
                         'icon'              => 'fas fa-file-alt',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('perawatan.laporan-transaksi-gantung.read'),
-                    ],
-                    [
-                        'name'              => 'Laporan Hasil Pemeriksaan',
-                        'url'               => route('admin.perawatan.laporan-hasil-pemeriksaan'),
-                        'icon'              => 'fas fa-file-alt',
-                        'type'              => 'link',
-                        'hasAnyPermissions' => $user->can('perawatan.laporan-hasil-pemeriksaan.read'),
                     ],
                 ],
             ],

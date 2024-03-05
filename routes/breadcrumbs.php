@@ -27,11 +27,6 @@ Breadcrumbs::for('admin.perawatan.laporan-transaksi-gantung', function (Trail $t
     $trail->push('Transaksi Gantung', route('admin.perawatan.laporan-transaksi-gantung'));
 });
 
-Breadcrumbs::for('admin.perawatan.laporan-hasil-pemeriksaan', function (Trail $trail): void {
-    $trail->parent('admin.perawatan');
-    $trail->push('Laporan Hasil Pemeriksaan', route('admin.perawatan.laporan-hasil-pemeriksaan'));
-});
-
 Breadcrumbs::for('admin.lab', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Laboratorium');
