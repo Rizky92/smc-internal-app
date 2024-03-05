@@ -1,15 +1,16 @@
 body {
     overflow: hidden;
+    text-transform: uppercase;
 }
 thead {
-    font-size: 20px;
+    font-size: 17px;
 }
 .head {
     font-size: 64px;
     font-weight: bold;
 }
 tbody {
-    font-size: 16px;
+    font-size: 17px;
 }
 .padding{
     height: 43vw; 

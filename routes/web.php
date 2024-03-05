@@ -96,6 +96,7 @@ Route::prefix('admin')
                 Route::get('laporan-transaksi-gantung', Perawatan\LaporanTransaksiGantung::class)
                     ->name('laporan-transaksi-gantung')
                     ->middleware('can:perawatan.laporan-transaksi-gantung.read');
+
             });
 
         Route::prefix('laboratorium')

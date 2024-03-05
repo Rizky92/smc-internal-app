@@ -47,8 +47,8 @@ class Jadwal extends Model
             poliklinik.kd_poli, 
             poliklinik.nm_poli,
             jadwal.hari_kerja,
-            jadwal.jam_mulai, 
-            jadwal.jam_selesai,
+            DATE_FORMAT(jadwal.jam_mulai, '%H:%i') AS jam_mulai, 
+            DATE_FORMAT(jadwal.jam_selesai, '%H:%i') AS jam_selesai,
             jadwal.kuota
         SQL;
                         

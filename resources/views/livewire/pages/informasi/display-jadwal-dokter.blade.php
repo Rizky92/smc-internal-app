@@ -15,9 +15,9 @@
         <thead class="bg-success">
             <tr>
                 <th width="34%">Nama Dokter</th>
-                <th width="20%">Poliklinik</th>
-                <th width="13%">Jam Mulai</th>
-                <th width="13%">Jam Selesai</th>
+                <th width="26%">Poliklinik</th>
+                <th width="10%" style="text-align: center">Jam Mulai</th>
+                <th width="10%" style="text-align: center">Jam Selesai</th>
                 <th width="20%">Total Register & Kuota</th>
             </tr>
         </thead>
@@ -29,9 +29,9 @@
                 @forelse ($this->dataJadwalDokter as $item)
                     <tr class="@if($item->total_registrasi >= $item->kuota) bg-danger @endif">
                         <td width="34%">{{ $item->nm_dokter }}</td>
-                        <td width="20%">{{ $item->nm_poli }}</td>
-                        <td width="13%">{{ $item->jam_mulai }}</td>
-                        <td width="13%">{{ $item->jam_selesai }}</td>       
+                        <td width="26%">{{ $item->nm_poli }}</td>
+                        <td width="10%" style="text-align: center">{{ $item->jam_mulai }}</td>
+                        <td width="10%" style="text-align: center">{{ $item->jam_selesai }}</td>       
                         <td width="20%">
                             @if ($item->total_registrasi >= $item->kuota)
                                 Register : <b class="text-white">{{ $item->total_registrasi }}</b> |

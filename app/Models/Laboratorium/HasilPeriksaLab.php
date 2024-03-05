@@ -124,4 +124,5 @@ class HasilPeriksaLab extends Model
             ->leftJoin('jns_perawatan_lab', 'periksa_lab.kd_jenis_prw', '=', 'jns_perawatan_lab.kd_jenis_prw')
             ->whereBetween('periksa_lab.tgl_periksa', [$tglAwal, $tglAkhir]);
     }
+
 }
