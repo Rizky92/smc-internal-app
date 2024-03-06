@@ -86,6 +86,12 @@
     .no-border-table, .no-border-table th, .no-border-table td {
         border: none !important;
     }
+
+    @media print {
+        @page {
+            size: portrait;
+        }
+    }
 </style>
 
 <div id="printHeader">
@@ -142,8 +148,8 @@
                         <td>{{ $loop->first ? $jurnal['jurnal']['keterangan'] : '' }}</td>
                         <td>{{ $detail['kd_rek'] }}</td>
                         <td>{{ $rekeningData[$detail['kd_rek']] ?? '' }}</td>
-                        <td>{{ $detail['debet'] != 0 ? $detail['debet'] : '' }}</td>
-                        <td>{{ $detail['kredit'] != 0 ? $detail['kredit'] : '' }}</td>
+                        <td>{{ $detail['debet'] != 0 ? 'Rp ' . number_format($detail['debet'], 0, ',', '.') : '' }}</td>
+                        <td>{{ $detail['kredit'] != 0 ? 'Rp ' . number_format($detail['kredit'], 0, ',', '.') : '' }}</td>                       
                     </tr>
                 @endforeach
             @endforeach
@@ -151,8 +157,8 @@
         <tfoot class="no-border-table">
             <tr>
                 <td colspan="8">Jumlah Total:</td>
-                <td>{{ $totalDebet }}</td>
-                <td>{{ $totalKredit }}</td>
+                <td>{{ $totalDebet != 0 ? 'Rp ' . number_format($totalDebet, 0, ',', '.') : '' }}</td>
+                <td>{{ $totalKredit != 0 ? 'Rp ' . number_format($totalKredit, 0, ',', '.') : '' }}</td>
             </tr>
         </tfoot>
     </table>
