@@ -52,7 +52,6 @@ class InputPostingJurnal extends Component
         'prepare',
         'posting-jurnal.hide-modal' => 'hideModal',
         'posting-jurnal.show-modal' => 'showModal',
-        'redirectToPrintLayout' => 'redirectToPrintLayout',
     ];
 
     public function rules()
@@ -129,8 +128,8 @@ class InputPostingJurnal extends Component
             : $detail
                 ->map(fn (JurnalDetail $model): array => [
                     'kd_rek' => $model->kd_rek,
-                    'debet'  => round($model->debet),
-                    'kredit' => round($model->kredit),
+                    'debet'  => $model->debet,
+                    'kredit' => $model->kredit,
                 ])
                 ->all();
     }
@@ -225,7 +224,10 @@ class InputPostingJurnal extends Component
             $this->reset(['no_bukti', 'tgl_jurnal', 'keterangan']);
     
             DB::commit();
-            $this->emit('redirectToPrintLayout', $savedData);
+
+            session()->put('savedData', $savedData);
+            
+            $this->redirect('cetak-pdf-posting-jurnal');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -233,11 +235,6 @@ class InputPostingJurnal extends Component
         }
 
         $this->defaultValues();
-    }
-
-    public function redirectToPrintLayout($savedData): void
-    {
-        $this->emit('redirectToPrintLayout', $savedData);
     }
      
     private function calculateTotal($field): float
@@ -306,8 +303,8 @@ class InputPostingJurnal extends Component
 
     private function validasiTotalDebitKredit(): void
     {
-        $totalDebit = round(floatval(collect($this->detail)->sum('debet')), 2);
-        $totalKredit = round(floatval(collect($this->detail)->sum('kredit')), 2);
+            $totalDebit = collect($this->detail)->sum('debet');
+            $totalKredit = collect($this->detail)->sum('kredit');
     
         if ($totalDebit != $totalKredit) {
             throw ValidationException::withMessages([
