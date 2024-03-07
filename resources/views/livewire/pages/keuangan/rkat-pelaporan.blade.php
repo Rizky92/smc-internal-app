@@ -55,6 +55,7 @@
                     <x-table.th title="Bidang" />
                     <x-table.th title="Anggaran" />
                     <x-table.th title="Tahun" />
+                    <x-table.th title="Nama Kegiatan" />
                     <x-table.th title="Tgl. Pakai" />
                     <x-table.th title="Judul" />
                     <x-table.th title="Nominal" />
@@ -67,6 +68,7 @@
                             <x-table.td :clickable="user()->can('keuangan.rkat-pelaporan.update')" data-pemakaian-anggaran-id="{{ $penggunaan->id }}" data-anggaran-bidang-id="{{ $penggunaan->anggaran_bidang_id }}" data-tgl-pakai="{{ $penggunaan->tgl_dipakai }}" data-keterangan="{{ $penggunaan->judul }}">{{ $penggunaan->anggaranBidang->bidang->nama }}</x-table.td>
                             <x-table.td>{{ $penggunaan->anggaranBidang->anggaran->nama }}</x-table.td>
                             <x-table.td>{{ $penggunaan->anggaranBidang->tahun }}</x-table.td>
+                            <x-table.td>{{ $penggunaan->anggaranBidang->nama_kegiatan }}</x-table.td>
                             <x-table.td>{{ $penggunaan->tgl_dipakai }}</x-table.td>
                             <x-table.td>{{ $penggunaan->judul ?? '-' }}</x-table.td>
                             <x-table.td>{{ rp($penggunaan->nominal_pemakaian) }}</x-table.td>
@@ -74,7 +76,7 @@
                             <x-table.td>{{ $penggunaan->user_id }} {{ optional($penggunaan->petugas)->nama }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="8" padding />
+                        <x-table.tr-empty colspan="9" padding />
                     @endforelse
                 </x-slot>
             </x-table>
