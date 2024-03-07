@@ -84,11 +84,11 @@ class RKATInputPelaporan extends Component
             ->where('tahun', $this->tahun)
             ->get()
             ->mapWithKeys(function (AnggaranBidang $ab): array {
-                $namaAnggaran = $ab->anggaran->nama;
                 $namaBidang = $ab->bidang->nama;
                 $tahun = $ab->tahun;
+                $namaKegiatan = $ab->nama_kegiatan;
 
-                $string = collect([$namaAnggaran, $namaBidang, $tahun])
+                $string = collect([$namaBidang, $tahun, $namaKegiatan])
                     ->joinStr(' - ')
                     ->value();
 
