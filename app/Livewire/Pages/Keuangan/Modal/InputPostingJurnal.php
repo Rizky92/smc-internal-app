@@ -57,7 +57,7 @@ class InputPostingJurnal extends Component
     public function rules()
     {
         $rules = [
-            'no_bukti'   => 'required|string',
+            'no_bukti'   => 'required|string|max:20',
             'tgl_jurnal' => 'required|date',
             'jam_jurnal' => 'required|string',
             'jenis'      => 'required|in:U,P',
@@ -178,8 +178,9 @@ class InputPostingJurnal extends Component
         DB::beginTransaction();
     
         try {
-            tracker_start();
             $savedData = [];
+            
+            tracker_start('mysql_smc');
     
             foreach ($this->jurnalSementara as $jurnalSementaraData) {
                 $noJurnalBaru = Jurnal::noJurnalBaru($jurnalSementaraData['tgl_jurnal']);
@@ -217,7 +218,7 @@ class InputPostingJurnal extends Component
                 ];
             }
             
-            tracker_end();
+            tracker_end('mysql_smc');
     
             $this->dispatchBrowserEvent('data-saved');
             $this->emit('flash.success', 'Posting Jurnal berhasil ditambahkan');
@@ -230,8 +231,10 @@ class InputPostingJurnal extends Component
             $this->redirect('cetak-pdf-posting-jurnal');
 
         } catch (\Exception $e) {
+    
+            $this->flashError('Terjadi kesalahan saat menyimpan data');
+            $this->dispatchBrowserEvent('data-denied');
             DB::rollBack();
-            $this->emit('flash.error', 'Terjadi kesalahan saat menyimpan data: ' . $e->getMessage());
         }
 
         $this->defaultValues();
