@@ -33,9 +33,16 @@
         
             table {
                 width: 100%;
+                padding: 0;
                 border-collapse: collapse;
                 margin-bottom: 20px;
-                font-size: 9px;
+                font-size: 0.70em;
+            }
+
+            td {
+                vertical-align: top;
+                padding: 0;
+                margin: 0;
             }
             
             thead {
@@ -64,7 +71,8 @@
 
             .conclusion {
                 display: grid;
-                page-break-after: auto; 
+                page-break-inside: avoid;
+                font-size: 0.70em;
             }
         
             .time {
@@ -84,7 +92,7 @@
             @media print {
 
                 @page {
-                    size: portrait;
+                    size: landscape;
                 }
             }
         </style>
@@ -96,8 +104,8 @@
                     <img src="{{ asset('img/logo.png') }}" margin="0" width="80px">
                 </div>
                 <div class="col-11">
-                    <h2 style="font-size: 12px; margin: 0;">RS SAMARINDA MEDIKA CITRA</h2>
-                    <p style="font-size: 9px; margin: 1px;">Jl. Kadrie Oening no.85, RT.35, Kel. Air Putih, Kec. Samarinda Ulu, Samarinda, Kalimantan Timur
+                    <h2 style="font-size: 12pt; margin: 0;">RS SAMARINDA MEDIKA CITRA</h2>
+                    <p style="font-size: 9pt; margin: 1px;">Jl. Kadrie Oening no.85, RT.35, Kel. Air Putih, Kec. Samarinda Ulu, Samarinda, Kalimantan Timur
                         <br>TEL:0541-7273000
                         <br>E-mail:info@rssmc.co.id
                     </p>
@@ -113,23 +121,23 @@
             
         </div>
         <div class="col-11">
-            <h2 style="font-size: 11px">POSTING JURNAL</h2>
+            <h2 style="font-size: 12pt">POSTING JURNAL</h2>
         </div>
     </div>
 
     @if(!empty($savedData) && is_array($savedData))
-        <table style="width: 100%">
+        <table style="min-width: 100%;">
             <thead>
                 <tr>
-                    <td style="width: 10%">No. Jurnal</td>
-                    <td style="width: 10%">No. Bukti</td>
-                    <td style="width: 10%">Tgl. Jurnal</td>
-                    <td style="width: 5%">Jenis</td>
-                    <td style="width: 10%">Keterangan</td>
-                    <td>Kode Akun</td>
-                    <td style="width: 35%">Nama Akun</td>
-                    <td style="text-align: right; width: 10%">Debet</td>
-                    <td style="text-align: right; width: 10%">Kredit</td>
+                    <td style="width: 10%;">No. Jurnal</td>
+                    <td style="width: 10%;">No. Bukti</td>
+                    <td style="width: 6%;">Tgl. Jurnal</td>
+                    <td style="width: 4%;">Jenis</td>
+                    <td style="width: 22%;">Keterangan</td>
+                    <td style="width: 4%;">Kode</td>
+                    <td style="width: 22%;">Rekening</td>
+                    <td style="text-align: right; width: 11%;">Debet</td>
+                    <td style="text-align: right; width: 11%;">Kredit</td>
                 </tr>
             </thead>
             <tbody class="no-border-table">
@@ -158,13 +166,11 @@
                     @endforeach
                 @endforeach
             </tbody>
-            <tfoot class="no-border-table">
-                <tr>
-                    <td colspan="7">Jumlah Total:</td>
-                    <td style="text-align: right">{{ $totalDebet != 0 ? 'Rp. ' . number_format($totalDebet, 0, '.', '.') : '' }}</td>
-                    <td style="text-align: right">{{ $totalKredit != 0 ? 'Rp. ' . number_format($totalKredit, 0, '.', '.') : '' }}</td>
-                </tr>
-            </tfoot>
+            <tr>
+                <td colspan="7">Jumlah Total:</td>
+                <td style="vertical-align: top; text-align: right">{{ $totalDebet != 0 ? 'Rp. ' . number_format($totalDebet, 0, '.', '.') : '' }}</td>
+                <td style="vertical-align: top; text-align: right">{{ $totalKredit != 0 ? 'Rp. ' . number_format($totalKredit, 0, '.', '.') : '' }}</td>
+            </tr>
         </table>
     @else
         <p>Data jurnal sementara kosong.</p>
@@ -172,10 +178,10 @@
     
     <div class="conclusion">
         <div class="time">
-            <p style="font-size: 10px"><b>Samarinda,{{ now()->formatLocalized('%d %B %Y') }}</b></p>
+            <p><b>Samarinda,{{ now()->formatLocalized('%d %B %Y') }}</b></p>
         </div>
         <div class="signature">
-            <div style="text-align: center; font-size: 10px;">
+            <div style="text-align: center;">
                 <p><b>Menyetujui</b></p>
                 <br>
                 <br>
@@ -183,7 +189,7 @@
                 <p><b>dr. Daisy Wijaya</b></p>
                 <p><b>Manager Keuangan</b></p>
             </div>
-            <div style="text-align: center; font-size: 10px;"> 
+            <div style="text-align: center;"> 
                 <p><b>Mengetahui</b></p>
                 <br>
                 <br>

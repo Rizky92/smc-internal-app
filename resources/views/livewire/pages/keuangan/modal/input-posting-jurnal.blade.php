@@ -15,8 +15,9 @@
             })
         </script>
     @endpush
-    <x-modal id="modal-input-posting-jurnal" :title="('Posting Jurnal Baru')" livewire centered>
+    <x-modal id="modal-input-posting-jurnal" size="xl" :title="('Posting Jurnal Baru')" livewire centered>
         <x-slot name="body" style="overflow-x: hidden">
+            <x-flash class="mx-3 mt-3" />
             <x-form id="form-input-posting-jurnal" wire:submit.prevent="create">
                 <div class="form-group d-flex justify-content-start align-items-center m-0 p-0">
                     <div class="form-group mt-3">
@@ -46,12 +47,19 @@
                     <x-form.error name="keterangan" />
                 </div>
                 <div class="form-group mt-3">
-                    <div class="d-flex justify-content-start align-items-center">
-                        <span class="d-block font-weight-bold" style="width: calc(60% - 1.6rem)">Rekening</span>
-                        <span class="d-block font-weight-bold">Debet</span>
-                        <span class="d-block font-weight-bold px-5"></span>
-                        <span class="d-block font-weight-bold px-5">Kredit</span>
-                    </div>
+                    <table width="100%">
+                        <tr>
+                            <td style="width: 58%">
+                                <label>Rekening</label>
+                            </td>
+                            <td style="width: 21%">
+                                <label>Debit</label>
+                            </td>
+                            <td style="width: 21%">
+                                <label>Kredit</label>
+                            </td>
+                        </tr>
+                    </table>
                     <ul class="p-0 m-0 mt-2 mb-3 d-flex flex-column" style="row-gap: 0.5rem" id="detail-jurnal">
                         @foreach($this->detail as $index => $item)
                         <li class="d-flex justify-content-start align-items-center m-0 p-0" wire:key="detail-junal-{{ $index }}">  
@@ -111,19 +119,16 @@
                         </li>
                         @endforeach
                     </ul>
-                    <div class="form-group d-flex justify-content-start align-items-center m-0 p-0">
-                        <x-button size="sm" variant="secondary" title="Tambah Detail" icon="fas fa-plus" wire:click="addDetail" />
-                        <div class="ml-3" style="width: calc(29% - 1.6rem)">
-                            <strong>Total :</strong>
-                            <x-form.error name="totalDebitKredit" />
-                        </div>
-                        <div class="ml-3 px-5">
-                            Rp. {{ number_format($totalDebet) }}
-                        </div>
-                        <div class="ml-3 px-5">
-                            Rp. {{ number_format($totalKredit) }}
-                        </div>
-                    </div>
+                    <table width="100%">
+                        <tr>
+                            <td style="width: 58%">
+                                <x-button size="sm" variant="secondary" title="Tambah Detail" icon="fas fa-plus" wire:click="addDetail" />
+                                <x-form.error name="totalDebitKredit" />
+                            </td>
+                            <td style="width: 21%">Rp. {{ number_format($totalDebet) }}</td>
+                            <td style="width: 21%">Rp. {{ number_format($totalKredit) }}</td>
+                        </tr>
+                    </table>
 
                 </div>
                 <div class="mt-4">
@@ -233,15 +238,6 @@
             <x-button size="sm" class="ml-auto" data-dismiss="modal" id="batalsimpan" title="Batal" />
             <x-button size="sm" variant="primary" type="submit" class="ml-2" id="simpandata" title="Simpan" icon="fas fa-save" form="form-input-posting-jurnal"
             :disabled="empty($this->jurnalSementara)" />
-        @push('js')
-            <script>
-                document.addEventListener('livewire:load', function () {
-                    Livewire.on('redirectToPrintLayout', function (jurnalSementara) {
-                        window.location.href = '/print-layout?jurnalSementara=' + encodeURIComponent(JSON.stringify(jurnalSementara));
-                    });
-                });
-            </script>        
-        @endpush
         </x-slot>
     </x-modal>
 </div>
