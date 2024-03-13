@@ -11,9 +11,11 @@ use App\Livewire\Concerns\MenuTracker;
 use App\Models\Perawatan\RegistrasiPasien;
 use App\Models\Perusahaan;
 use App\Models\RekamMedis\Pasien;
+use App\Models\Laboratorium\HasilPeriksaLab;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -54,9 +56,9 @@ class LaporanHasilPemeriksaan extends Component
         return Pasien::query()
             ->with(['perusahaan'])
             ->search($this->cari)
-            ->when($this->perusahaan !== '-', fn (Builder $q): Builder => $q->where('perusahaan_pasien', $this->perusahaan))
+            ->when($this->perusahaan !== '-', fn (Builder $q): Builder =>$q->where('perusahaan_pasien', $this->perusahaan))
             ->sortWithColumns($this->sortColumns)
-            ->paginate($this->perPage);
+            ->paginate($this->perpage);
     }
 
     public function getDataPasienPoliMCUProperty(): Paginator
@@ -65,10 +67,10 @@ class LaporanHasilPemeriksaan extends Component
             ->with([
                 'pasien',
                 'pasien.perusahaan',
-                'berkasDigital',
                 'poliklinik',
                 'penjamin',
             ])
+            ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
             ->where('kd_poli', 'U0036')
             ->when($this->perusahaan !== '-', fn (Builder $q): Builder => $q->whereRelation('pasien.perusahaan', 'perusahaan_pasien', $this->perusahaan))
             ->search($this->cari)
@@ -79,6 +81,29 @@ class LaporanHasilPemeriksaan extends Component
     public function getDataPerusahaanProperty(): Collection
     {
         return Perusahaan::pluck('nama_perusahaan', 'kode_perusahaan');
+    }
+
+    public function getPemeriksaanProperty()
+    {
+        $data = HasilPeriksaLab::query()
+            ->laporanTindakanLabDetail($this->tglAwal, $this->tglAkhir)
+            ->where('kd_poli', 'U0036')
+            ->select('Pemeriksaan', 'satuan', 'nilai_rujukan', 'nilai')
+            ->search($this->cari)
+            ->get();
+
+        $pemeriksaan = [];
+
+        foreach ($data as $key) {
+            $pemeriksaan[$key['Pemeriksaan']] = [
+                'Periksa' => $key['Pemeriksaan'],
+                'Satuan' => $key['satuan'],
+                'Nilai Rujukan' => $key['nilai_rujukan'],
+                'Nilai' => $key['nilai'],
+            ];
+        }
+
+        return $pemeriksaan;
     }
 
     public function render(): View
@@ -96,22 +121,47 @@ class LaporanHasilPemeriksaan extends Component
 
     protected function dataPerSheet(): array
     {
-        return [
-            //
-        ];
-    }
+        $headers = ['Satuan', 'Nilai Rujukan', 'Nilai'];
 
+        $data = array_map(function ($header) {
+            return array_map(function ($pemeriksaan) use ($header) {
+                return $pemeriksaan[$header];
+            }, $this->pemeriksaan);
+        }, $headers);
+
+        dump([$data]);
+
+        return [$data];
+    }
+ 
     protected function columnHeaders(): array
     {
-        return [
-            //
-        ];
+        $columnHeaders = array_merge([
+            'tindakan'
+        ], array_keys($this->pemeriksaan));
+
+        return $columnHeaders;
     }
 
     protected function pageHeaders(): array
     {
+        $perusahaan = $this->perusahaan === '-' ? 'Semua Perusahaan' : Perusahaan::find($this->perusahaan)->nama_perusahaan;
+
+        $periodeAwal = carbon($this->tglAwal);
+        $periodeAkhir = carbon($this->tglAkhir);
+
+        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s/d ' . $periodeAkhir->translatedFormat('d F Y');
+
+        if ($periodeAwal->isSameDay($periodeAkhir)) {
+            $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y');
+        }
+
         return [
-            //
+            'RS Samarinda Medika Citra',
+            'Laporan Hasil Pemeriksaan '. $perusahaan,
+            now()->translatedFormat('d F Y'),
+            $periode,
         ];
+
     }
 }
