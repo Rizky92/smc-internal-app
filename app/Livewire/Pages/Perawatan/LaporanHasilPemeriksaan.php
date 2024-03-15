@@ -9,8 +9,7 @@ use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Perawatan\RegistrasiPasien;
-use App\Models\Perusahaan;
-use App\Models\RekamMedis\Pasien;
+use App\Models\RekamMedis\Penjamin;
 use App\Models\Laboratorium\HasilPeriksaLab;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -35,14 +34,14 @@ class LaporanHasilPemeriksaan extends Component
     public $tglAkhir;
 
     /** @var string */
-    public $perusahaan;
+    public $penjamin;
 
     protected function queryString(): array
     {
         return [
             'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
-            'perusahaan' => ['except' => '-'],
+            'penjamin' => ['except' => '-'],
         ];
     }
 
@@ -51,59 +50,60 @@ class LaporanHasilPemeriksaan extends Component
         $this->defaultValues();
     }
 
-    public function getDataPasienProperty(): Paginator
-    {
-        return Pasien::query()
-            ->with(['perusahaan'])
-            ->search($this->cari)
-            ->when($this->perusahaan !== '-', fn (Builder $q): Builder =>$q->where('perusahaan_pasien', $this->perusahaan))
-            ->sortWithColumns($this->sortColumns)
-            ->paginate($this->perpage);
-    }
-
     public function getDataPasienPoliMCUProperty(): Paginator
     {
         return RegistrasiPasien::query()
             ->with([
                 'pasien',
-                'pasien.perusahaan',
                 'poliklinik',
                 'penjamin',
             ])
             ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
             ->where('kd_poli', 'U0036')
-            ->when($this->perusahaan !== '-', fn (Builder $q): Builder => $q->whereRelation('pasien.perusahaan', 'perusahaan_pasien', $this->perusahaan))
+            ->when($this->penjamin !== '-', fn (Builder $query) => $query->where('kd_pj', $this->penjamin))
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
     }
 
-    public function getDataPerusahaanProperty(): Collection
+    public function getUniquePemeriksaanProperty()
     {
-        return Perusahaan::pluck('nama_perusahaan', 'kode_perusahaan');
+        $uniquePemeriksaan = [];
+
+        foreach ($this->pemeriksaan as $no_rawat => $hasilPeriksaLab) {
+            foreach ($hasilPeriksaLab as $pemeriksaan) {
+                $uniquePemeriksaan[$pemeriksaan->Pemeriksaan] = $pemeriksaan->Pemeriksaan;
+            }
+        }
+
+        return $uniquePemeriksaan;
     }
 
     public function getPemeriksaanProperty()
     {
-        $data = HasilPeriksaLab::query()
-            ->laporanTindakanLabDetail($this->tglAwal, $this->tglAkhir)
-            ->where('kd_poli', 'U0036')
-            ->select('Pemeriksaan', 'satuan', 'nilai_rujukan', 'nilai')
-            ->search($this->cari)
-            ->get();
+        if ($this->isDeferred) {
+            return [];
+        }
 
         $pemeriksaan = [];
 
-        foreach ($data as $key) {
-            $pemeriksaan[$key['Pemeriksaan']] = [
-                'Periksa' => $key['Pemeriksaan'],
-                'Satuan' => $key['satuan'],
-                'Nilai Rujukan' => $key['nilai_rujukan'],
-                'Nilai' => $key['nilai'],
-            ];
+        foreach ($this->dataPasienPoliMCU as $pasien) {
+            $pemeriksaanPasien = HasilPeriksaLab::laporanTindakanLabDetail($this->tglAwal, $this->tglAkhir)
+                ->where('periksa_lab.no_rawat', $pasien->no_rawat)
+                ->where('reg_periksa.kd_poli', 'U0036')
+                ->search($this->cari)
+                ->get()
+                ->keyBy('Pemeriksaan');
+
+            $pemeriksaan[$pasien->no_rawat] = $pemeriksaanPasien;
         }
 
         return $pemeriksaan;
+    }
+
+    public function getDataPenjaminProperty(): Collection
+    {
+        return Penjamin::pluck('png_jawab', 'kd_pj');
     }
 
     public function render(): View
@@ -116,36 +116,100 @@ class LaporanHasilPemeriksaan extends Component
     {
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->perusahaan = '-';
+        $this->penjamin = '-';
     }
 
     protected function dataPerSheet(): array
     {
-        $headers = ['Satuan', 'Nilai Rujukan', 'Nilai'];
+        $data = [];
 
-        $data = array_map(function ($header) {
-            return array_map(function ($pemeriksaan) use ($header) {
-                return $pemeriksaan[$header];
-            }, $this->pemeriksaan);
-        }, $headers);
+        $rowSatuan = [
+            'Penjamin' => '',
+            'No. Rawat' => '',
+            'No. RM' => '',
+            'Nama' => '',
+            'Jenis Kelamin' => '',
+            'Agama' => '',
+            'tgl_registrasi' => '',
+            'Poli' => '',
+            'Tindakan' => 'Satuan',
+        ];
 
-        dump([$data]);
+        foreach ($this->uniquePemeriksaan as $pemeriksaan) {
+            $rowSatuan[$pemeriksaan] = $this->pemeriksaan[$this->dataPasienPoliMCU[0]->no_rawat][$pemeriksaan]->satuan ?? '-';
+        }
+
+        $data[] = $rowSatuan;
+
+        $rujukanTypes = ['ld', 'la', 'pd', 'pa'];
+
+        foreach ($rujukanTypes as $type) {
+            $rowRujukan = [
+                'Penjamin' => '',
+                'No. Rawat' => '',
+                'No. RM' => '',
+                'Nama' => '',
+                'Jenis Kelamin' => '',
+                'Agama' => '',
+                'tgl_registrasi' => '',
+                'Poli' => '',
+                'Tindakan' => 'Nilai Rujukan (' . strtoupper($type) . ')',
+            ];
+        
+            foreach ($this->uniquePemeriksaan as $pemeriksaan) {
+                $rowRujukan[$pemeriksaan] = $this->pemeriksaan[$this->dataPasienPoliMCU[0]->no_rawat][$pemeriksaan]->{'nilai_rujukan_' . $type} ?? '-';
+            }
+        
+            $data[] = $rowRujukan;
+        }
+
+        foreach ($this->dataPasienPoliMCU as $pasien) {
+            $row = [];
+            
+            $row['Penjamin'] = $pasien->penjamin->png_jawab;
+            $row['No. Rawat'] = $pasien->no_rawat;
+            $row['No. RM'] = $pasien->pasien->no_rkm_medis;
+            $row['Nama'] = $pasien->pasien->nm_pasien;
+            $row['Jenis Kelamin'] = $pasien->pasien->jk;
+            $row['Agama'] = $pasien->pasien->agama;
+            $row['tgl_registrasi'] = $pasien->tgl_registrasi;
+            $row['Poli'] = $pasien->poliklinik->nm_poli;
+            $row['Tindakan'] = '';
+
+            foreach ($this->uniquePemeriksaan as $pemeriksaan) {
+                $row[$pemeriksaan] = $this->pemeriksaan[$pasien->no_rawat][$pemeriksaan]->nilai ?? '-';
+            }
+
+            $data[] = $row;
+        }
 
         return [$data];
     }
- 
+
     protected function columnHeaders(): array
     {
-        $columnHeaders = array_merge([
-            'tindakan'
-        ], array_keys($this->pemeriksaan));
+        $headers = [
+            'Penjamin',
+            'No. Rawat',
+            'No. RM',
+            'Nama',
+            'Jenis Kelamin',
+            'Agama',
+            'tgl_registrasi',
+            'Poli',
+            'Tindakan',
+        ];
 
-        return $columnHeaders;
+        foreach ($this->uniquePemeriksaan as $pemeriksaan) {
+            $headers[] = $pemeriksaan;
+        }
+
+        return $headers;
     }
 
     protected function pageHeaders(): array
     {
-        $perusahaan = $this->perusahaan === '-' ? 'Semua Perusahaan' : Perusahaan::find($this->perusahaan)->nama_perusahaan;
+        $penjamin = $this->penjamin === '-' ? 'Semua penjamin' : Penjamin::find($this->penjamin)->png_jawab;
 
         $periodeAwal = carbon($this->tglAwal);
         $periodeAkhir = carbon($this->tglAkhir);
@@ -158,7 +222,7 @@ class LaporanHasilPemeriksaan extends Component
 
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Hasil Pemeriksaan '. $perusahaan,
+            'Laporan Hasil Pemeriksaan '. $penjamin,
             now()->translatedFormat('d F Y'),
             $periode,
         ];
