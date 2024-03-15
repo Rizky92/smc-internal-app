@@ -163,7 +163,10 @@ class HasilPeriksaLab extends Model
             template_laboratorium.Pemeriksaan,
             detail_periksa_lab.nilai,
             template_laboratorium.satuan,
-            detail_periksa_lab.nilai_rujukan,
+            template_laboratorium.nilai_rujukan_ld,
+            template_laboratorium.nilai_rujukan_la,
+            template_laboratorium.nilai_rujukan_pd,
+            template_laboratorium.nilai_rujukan_pa,
             detail_periksa_lab.keterangan,
             template_laboratorium.urut          
         SQL;
