@@ -43,7 +43,11 @@
 
         @media print {
             @page {
-                size: potrait;
+                size: landscape;
+            }
+
+            body {
+                margin: 0;
             }
 
             .print {
@@ -108,15 +112,15 @@
         <x-slot name="body">
             <x-table id="printTable" style="min-width: 100%" zebra hover sticky nowrap borderless>
                 <x-slot name="columns">
-                    <x-table.th style="10%" title="No. Jurnal" />
-                    <x-table.th style="10%" title="No. Bukti" />
-                    <x-table.th style="10%" title="Tgl. Jurnal" />
-                    <x-table.th style="10%" title="Jenis" />
-                    <x-table.th style="10%" title="Keterangan" />
-                    <x-table.th style="10%" title="Kode Akun" />
-                    <x-table.th style="10%" title="Nama Akun" />
-                    <x-table.th style="10%" title="Debet" style="text-align: right;" />
-                    <x-table.th style="10%" title="Kredit" style="text-align: right;" />
+                    <x-table.th style="width: 10%" title="No. Jurnal" />
+                    <x-table.th style="width: 10%" title="No. Bukti" />
+                    <x-table.th style="width: 6%" title="Tgl. Jurnal" />
+                    <x-table.th style="width: 4%" title="Jenis" />
+                    <x-table.th style="width: 22%" title="Keterangan" />
+                    <x-table.th style="width: 4%" title="Kode" />
+                    <x-table.th style="width: 22%" title="Rekening" />
+                    <x-table.th style="width: 11%" title="Debet" style="text-align: right;" />
+                    <x-table.th style="width: 11%" title="Kredit" style="text-align: right;" />
                 </x-slot>
                 <x-slot name="body">
                         @forelse ($this->dataPostingJurnal as $item )
@@ -173,10 +177,10 @@
         <x-slot name="footer">
             <div class="conclusion">
                 <div class="time">
-                    <p style="font-size: 10px"><b>Samarinda,{{ now()->formatLocalized('%d %B %Y') }}</b></p>
+                    <p style="font-size: 0.70em"><b>Samarinda,{{ now()->formatLocalized('%d %B %Y') }}</b></p>
                 </div>
                 <div class="signature">
-                    <div style="text-align: center; font-size: 10px;">
+                    <div style="text-align: center; font-size: 0.70em;">
                         <p><b>Menyetujui</b></p>
                         <br>
                         <br>
@@ -184,7 +188,7 @@
                         <p><b>dr. Daisy Wijaya</b></p>
                         <p><b>Manager Keuangan</b></p>
                     </div>
-                    <div style="text-align: center; font-size: 10px;"> 
+                    <div style="text-align: center; font-size: 0.70em;"> 
                         <p><b>Mengetahui</b></p>
                         <br>
                         <br>
