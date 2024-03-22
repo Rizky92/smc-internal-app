@@ -6,21 +6,15 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    protected $connection = 'mysql_smc';
-
     public function up(): void
     {
         Schema::disableForeignKeyConstraints();
 
         Schema::table('anggaran_bidang', function (Blueprint $table): void {
-            $table->string('nama_kegiatan')
-                ->after('bidang_id');
+            $table->dropColumn('nama_kegiatan');
+            $table->dropColumn('deskripsi');
 
-            $table->text('deskripsi')
-                ->nullable()
-                ->after('nama_kegiatan');
-
-            $table->dropUnique(['anggaran_id', 'bidang_id', 'tahun']);
+            $table->unique(['anggaran_id', 'bidang_id', 'tahun']);
         });
 
         Schema::enableForeignKeyConstraints();

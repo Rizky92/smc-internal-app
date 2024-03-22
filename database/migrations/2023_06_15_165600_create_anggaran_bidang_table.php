@@ -17,6 +17,8 @@ return new class extends Migration
             $table->year('tahun');
             $table->double('nominal_anggaran');
             $table->timestamps($precision = 6);
+
+            $table->unique(['anggaran_id', 'bidang_id', 'tahun']);
         });
     }
 };
