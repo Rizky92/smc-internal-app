@@ -99,7 +99,7 @@ class RKATInputPenetapan extends Component
             return;
         }
 
-        if (!Auth::user()->can('keuangan.rkat-penetapan.create')) {
+        if (user()->cannot('keuangan.rkat-penetapan.create')) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 
@@ -137,43 +137,6 @@ class RKATInputPenetapan extends Component
         }
     }
 
-    public function delete(): void
-    {
-        if (user()->cannot('keuangan.rkat-penetapan.delete')) {
-            $this->defaultValues();
-            $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->dispatchBrowserEvent('data-denied');
-        }
-
-        if (! $this->isUpdating()) {
-            $this->flashError('Tidak dapat menemukan penetapan anggaran!');
-            $this->dispatchBrowserEvent('data-not-found');
-
-            return;
-        }
-
-        tracker_start('mysql_smc');
-
-        try {
-            $deleteBidang = AnggaranBidang::find($this->anggaranBidangId)
-                ->delete();
-
-            tracker_end('mysql_smc');
-
-            $this->defaultValues();
-            $this->dispatchBrowserEvent('data-deleted');
-            $this->emit('flash.success', 'Data berhasil dihapus!');
-        } catch (\Exception $e) {
-            tracker_dispose('mysql_smc');
-
-            if ($e->getCode() == 23000) {
-                $this->emit('flash.info', 'Anggaran sudah digunakan, tidak dapat dihapus!');
-            } else {
-                $this->emit('flash.error', 'Terjadi kesalahan saat menghapus data: ' . $e->getMessage());
-            }
-        }
-    }
-    
     public function update(): void
     {
         if (!$this->isUpdating()) {
@@ -182,7 +145,7 @@ class RKATInputPenetapan extends Component
             return;
         }
 
-        if (!Auth::user()->can('keuangan.rkat-penetapan.update')) {
+        if (user()->cannot('keuangan.rkat-penetapan.update')) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 
