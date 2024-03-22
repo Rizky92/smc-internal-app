@@ -99,7 +99,7 @@ class RKATInputPenetapan extends Component
             return;
         }
 
-        if (user()->cannot('keuangan.rkat-penetapan.create')) {
+        if (!Auth::user()->can('keuangan.rkat-penetapan.create')) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 
@@ -145,7 +145,7 @@ class RKATInputPenetapan extends Component
             return;
         }
 
-        if (user()->cannot('keuangan.rkat-penetapan.update')) {
+        if (!Auth::user()->can('keuangan.rkat-penetapan.update')) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 
