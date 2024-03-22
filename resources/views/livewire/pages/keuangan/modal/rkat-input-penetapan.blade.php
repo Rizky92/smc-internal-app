@@ -57,22 +57,8 @@
                 </x-row-col-flex>
                 <x-row-col class="mt-3">
                     <div class="form-group">
-                        <label for="nama-kegiatan">Nama Kegiatan</label>
-                        <input type="text" id="nama-kegiatan" wire:model.defer="namaKegiatan" class="form-control form-control-sm" />
-                        <x-form.error name="namaKegiatan" />
-                    </div>
-                </x-row-col>
-                <x-row-col class="mt-3">
-                    <div class="form-group">
-                        <label for="deskripsi">Deskripsi</label>
-                        <textarea id="deskripsi" rows="3" wire:model.defer="deskripsi" class="form-control form-control-sm"></textarea>
-                        <x-form.error name="deskripsi" />
-                    </div>
-                </x-row-col>
-                <x-row-col class="mt-3">
-                    <div class="form-group">
-                        <label for="nominal-anggaran">Nominal Anggaran (Rp.)</label>
-                        <input type="number" id="nominal-anggaran" wire:model.defer="nominalAnggaran" class="form-control form-control-sm" />
+                        <label for="nominal-anggaran">Nominal Anggaran</label>
+                        <input type="text" id="nominal-anggaran" wire:model.defer="nominalAnggaran" class="form-control form-control-sm" />
                         <x-form.error name="nominalAnggaran" />
                     </div>
                 </x-row-col>

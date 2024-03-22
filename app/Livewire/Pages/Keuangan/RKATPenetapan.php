@@ -98,17 +98,14 @@ class RKATPenetapan extends Component
     {
         return [
             AnggaranBidang::query()
-                ->with(['anggaran', 'bidang', 'bidang.parent'])
+                ->with(['anggaran', 'bidang'])
                 ->whereTahun($this->tahun)
                 ->get()
                 ->map(fn (AnggaranBidang $model): array => [
-                    'tahun'          => $model->tahun,
-                    'bidang'         => $model->bidang->parent->nama,
-                    'unit'           => $model->bidang->nama,
-                    'anggaran'       => $model->anggaran->nama,
-                    'nama_kegiatan'  => $model->nama_kegiatan,
-                    'nominal'        => $model->nominal_anggaran,
-                    'tgl_ditetapkan' => $model->created_at->format('Y-m-d'),
+                    'tahun'    => $model->tahun,
+                    'bidang'   => $model->bidang->nama,
+                    'anggaran' => $model->anggaran->nama,
+                    'nominal'  => $model->nominal_anggaran,
                 ]),
         ];
     }
@@ -120,9 +117,7 @@ class RKATPenetapan extends Component
             'Bidang',
             'Unit',
             'Anggaran',
-            'Nama Kegiatan',
             'Nominal (Rp)',
-            'Tgl. Ditetapkan',
         ];
     }
 
