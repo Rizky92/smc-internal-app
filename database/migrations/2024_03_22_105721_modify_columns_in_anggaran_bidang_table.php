@@ -13,6 +13,8 @@ return new class extends Migration
         Schema::table('anggaran_bidang', function (Blueprint $table): void {
             $table->dropColumn('nama_kegiatan');
             $table->dropColumn('deskripsi');
+
+            $table->unique(['anggaran_id', 'bidang_id', 'tahun']);
         });
 
         Schema::enableForeignKeyConstraints();
