@@ -123,6 +123,7 @@ class RKATPenetapan extends Component
             'Unit',
             'Anggaran',
             'Nominal (Rp)',
+            'Tgl. Ditetapkan',
         ];
     }
 
