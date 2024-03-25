@@ -10,7 +10,7 @@ use App\Models\Keuangan\RKAT\Anggaran;
 use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Settings\RKATSettings;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -29,12 +29,6 @@ class RKATInputPenetapan extends Component
     /** @var int */
     public $bidangId;
 
-    /** @var string */
-    public $namaKegiatan;
-
-    /** @var ?string */
-    public $deskripsi;
-
     /** @var int|float */
     public $nominalAnggaran;
 
@@ -50,8 +44,6 @@ class RKATInputPenetapan extends Component
         $rules = collect([
             'anggaranId'      => ['required', 'exists:anggaran,id'],
             'bidangId'        => ['required', 'exists:bidang,id'],
-            'namaKegiatan'    => ['required', 'string'],
-            'deskripsi'       => ['nullable', 'string'],
             'nominalAnggaran' => ['required', 'numeric'],
         ]);
 
@@ -74,15 +66,7 @@ class RKATInputPenetapan extends Component
 
     public function getBidangUnitProperty(): Collection
     {
-        return Cache::remember(
-            'semua_bidang',
-            now()->addDay(),
-            fn (): Collection => Bidang::query()
-                ->with('parent')
-                ->hasParent()
-                ->get()
-                ->mapWithKeys(fn (Bidang $model) => [$model->id => sprintf('%s - %s', $model->parent->nama, $model->nama)])
-        );
+        return Bidang::pluck('nama', 'id');
     }
 
     public function getTahunProperty(): int
@@ -105,14 +89,17 @@ class RKATInputPenetapan extends Component
         $this->anggaranId = $data->anggaran_id;
         $this->bidangId = $data->bidang_id;
         $this->nominalAnggaran = $data->nominal_anggaran;
-        $this->namaKegiatan = $data->nama_kegiatan;
-        $this->deskripsi = $data->deskripsi;
     }
 
-    public function save(): void
+    public function create(): void
     {
-        if (user()->cannot(['keuangan.rkat-penetapan.create', 'keuangan.rkat-penetapan.update'])) {
-            $this->defaultValues();
+        if ($this->isUpdating()) {
+            $this->update();
+
+            return;
+        }
+
+        if (!Auth::user()->can('keuangan.rkat-penetapan.create')) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 
@@ -121,7 +108,7 @@ class RKATInputPenetapan extends Component
 
         $settings = app(RKATSettings::class);
 
-        if (! now()->between($settings->tgl_penetapan_awal, $settings->tgl_penetapan_akhir)) {
+        if (now()->between($settings->tgl_penetapan_awal, $settings->tgl_penetapan_akhir)) {
             $this->flashError('Batas waktu penetapan RKAT melewati periode yang ditetapkan!');
             $this->dispatchBrowserEvent('data-denied');
 
@@ -130,25 +117,24 @@ class RKATInputPenetapan extends Component
 
         $this->validate();
 
-        tracker_start('mysql_smc');
-
-        AnggaranBidang::updateOrCreate(
-            ['id' => $this->anggaranBidangId],
-            [
+        try {
+            tracker_start('mysql_smc');
+    
+            AnggaranBidang::create([
                 'anggaran_id'      => $this->anggaranId,
                 'bidang_id'        => $this->bidangId,
-                'nama_kegiatan'    => $this->namaKegiatan,
-                'deskripsi'        => $this->deskripsi,
                 'tahun'            => $settings->tahun,
                 'nominal_anggaran' => round($this->nominalAnggaran, 2),
-            ]
-        );
-
-        tracker_end('mysql_smc');
-
-        $this->defaultValues();
-        $this->dispatchBrowserEvent('data-saved');
-        $this->emit('flash.success', 'Data berhasil disimpan!');
+            ]);
+    
+            tracker_end('mysql_smc');
+    
+            $this->dispatchBrowserEvent('data-saved');
+            $this->emit('flash.success', 'Data berhasil disimpan!');
+        } catch (\Exception $e) {
+            $this->flashError('Terjadi kesalahan saat menyimpan data!');
+            $this->dispatchBrowserEvent('data-denied');
+        }
     }
 
     public function delete(): void
@@ -168,24 +154,53 @@ class RKATInputPenetapan extends Component
 
         tracker_start('mysql_smc');
 
-        $deleteBidang = AnggaranBidang::find($this->anggaranBidangId)
-            ->delete();
+        try {
+            $deleteBidang = AnggaranBidang::find($this->anggaranBidangId)
+                ->delete();
 
-        if (! $deleteBidang) {
+            tracker_end('mysql_smc');
+
             $this->defaultValues();
-            $this->dispatchBrowserEvent('data-delete-failed');
-            $this->emit('flash.info', 'Anggaran sudah digunakan, tidak dapat dihapus!');
-
+            $this->dispatchBrowserEvent('data-deleted');
+            $this->emit('flash.success', 'Data berhasil dihapus!');
+        } catch (\Exception $e) {
             tracker_dispose('mysql_smc');
+
+            if ($e->getCode() == 23000) {
+                $this->emit('flash.info', 'Anggaran sudah digunakan, tidak dapat dihapus!');
+            } else {
+                $this->emit('flash.error', 'Terjadi kesalahan saat menghapus data: ' . $e->getMessage());
+            }
+        }
+    }
+    
+    public function update(): void
+    {
+        if (!$this->isUpdating()) {
+            $this->create();
 
             return;
         }
 
-        tracker_end('mysql_smc');
+        if (!Auth::user()->can('keuangan.rkat-penetapan.update')) {
+            $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatchBrowserEvent('data-denied');
 
-        $this->defaultValues();
-        $this->dispatchBrowserEvent('data-deleted');
-        $this->emit('flash.success', 'Data berhasil dihapus!');
+            return;
+        }
+
+        $this->validate();
+
+        AnggaranBidang::query()
+            ->whereId($this->anggaranBidangId)
+            ->update([
+                'anggaran_id'      => $this->anggaranId,
+                'bidang_id'        => $this->bidangId,
+                'nominal_anggaran' => round($this->nominalAnggaran, 2),
+            ]);
+
+        $this->dispatchBrowserEvent('data-saved');
+        $this->emit('flash.success', 'Data berhasil diupdate!');
     }
 
     public function isUpdating(): bool
@@ -198,8 +213,6 @@ class RKATInputPenetapan extends Component
         $this->anggaranBidangId = -1;
         $this->anggaranId = -1;
         $this->bidangId = -1;
-        $this->namaKegiatan = '';
-        $this->deskripsi = '';
         $this->nominalAnggaran = 0;
     }
 }

@@ -30,7 +30,7 @@
     <x-modal id="modal-input-penetapan-rkat" :title="($this->isUpdating() ? 'Edit' : 'Input') . ' Data Anggaran Tahun ' . $this->tahun" livewire centered>
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-flash class="mx-3 mt-3" />
-            <x-form id="form-input-penetapan-rkat" livewire submit="save" class="py-1 px-3">
+            <x-form id="form-input-penetapan-rkat" livewire submit="create" class="py-1 px-3">
                 <x-row-col-flex col-gap="1rem">
                     <div class="form-group w-100">
                         <label for="bidang-id">Bidang:</label>
@@ -57,22 +57,8 @@
                 </x-row-col-flex>
                 <x-row-col class="mt-3">
                     <div class="form-group">
-                        <label for="nama-kegiatan">Nama Kegiatan</label>
-                        <input type="text" id="nama-kegiatan" wire:model.defer="namaKegiatan" class="form-control form-control-sm" />
-                        <x-form.error name="namaKegiatan" />
-                    </div>
-                </x-row-col>
-                <x-row-col class="mt-3">
-                    <div class="form-group">
-                        <label for="deskripsi">Deskripsi</label>
-                        <textarea id="deskripsi" rows="3" wire:model.defer="deskripsi" class="form-control form-control-sm"></textarea>
-                        <x-form.error name="deskripsi" />
-                    </div>
-                </x-row-col>
-                <x-row-col class="mt-3">
-                    <div class="form-group">
-                        <label for="nominal-anggaran">Nominal Anggaran (Rp.)</label>
-                        <input type="number" id="nominal-anggaran" wire:model.defer="nominalAnggaran" class="form-control form-control-sm" />
+                        <label for="nominal-anggaran">Nominal Anggaran</label>
+                        <input type="text" id="nominal-anggaran" wire:model.defer="nominalAnggaran" class="form-control form-control-sm" />
                         <x-form.error name="nominalAnggaran" />
                     </div>
                 </x-row-col>

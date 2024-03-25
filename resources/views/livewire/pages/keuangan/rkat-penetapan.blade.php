@@ -43,23 +43,17 @@
             <x-table :sortColumns="$sortColumns" style="min-width: 100%" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="tahun" title="Tahun" />
-                    <x-table.th title="Bidang" />
-                    <x-table.th name="bidang_id" title="Unit" />
+                    <x-table.th name="bidang_id" title="Bidang" />
                     <x-table.th name="anggaran_id" title="Anggaran" />
-                    <x-table.th name="nama_kegiatan" title="Nama Kegiatan" />
                     <x-table.th name="nominal_anggaran" title="Nominal" />
-                    <x-table.th name="created_at" title="Tgl. Ditetapkan" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->dataAnggaranBidang as $item)
                         <x-table.tr>
                             <x-table.td :clickable="$this->bisaTetapkanRKAT()" data-id="{{ $item->id }}">{{ $item->tahun }}</x-table.td>
-                            <x-table.td>{{ $item->bidang->parent->nama }}</x-table.td>
                             <x-table.td>{{ $item->bidang->nama }}</x-table.td>
                             <x-table.td>{{ $item->anggaran->nama }}</x-table.td>
-                            <x-table.td>{{ $item->nama_kegiatan }}</x-table.td>
                             <x-table.td>{{ rp($item->nominal_anggaran) }}</x-table.td>
-                            <x-table.td>{{ $item->created_at->format('Y-m-d') }}</x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="7" padding />
