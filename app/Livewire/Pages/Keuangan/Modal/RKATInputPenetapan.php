@@ -137,17 +137,10 @@ class RKATInputPenetapan extends Component
         }
     }
 
-    public function delete(): void
+    public function update(): void
     {
-        if (user()->cannot('keuangan.rkat-penetapan.delete')) {
-            $this->defaultValues();
-            $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->dispatchBrowserEvent('data-denied');
-        }
-
-        if (! $this->isUpdating()) {
-            $this->flashError('Tidak dapat menemukan penetapan anggaran!');
-            $this->dispatchBrowserEvent('data-not-found');
+        if (!$this->isUpdating()) {
+            $this->create();
 
             return;
         }
