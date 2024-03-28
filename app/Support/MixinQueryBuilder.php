@@ -15,6 +15,10 @@ class MixinQueryBuilder
     {
         /** psalm-scope-this Illuminate\Database\Query\Builder */
         return function ($column, $values, $direction = 'asc') {
+            if (! in_array($direction, ['asc', 'desc'], true)) {
+                throw new InvalidArgumentException('Order direction must be "asc" or "desc".');
+            }
+            
             $binds = [];
 
             for ($i = 0; $i < count($values); $i++) {
@@ -28,10 +32,6 @@ class MixinQueryBuilder
             }
 
             $direction = Str::lower($direction);
-
-            if (! in_array($direction, ['asc', 'desc'], true)) {
-                throw new InvalidArgumentException('Order direction must be "asc" or "desc".');
-            }
 
             $startsWith = sprintf('field(%s, ', $column);
             $endsWith = sprintf(') %s', $direction);

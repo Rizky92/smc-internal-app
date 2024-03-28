@@ -24,6 +24,17 @@
                 .w-20 {
                     width: 20% !important;
                 }
+
+                input::-webkit-outer-spin-button,
+                input::-webkit-inner-spin-button {
+                    -webkit-appearance: none;
+                    margin: 0;
+                }
+
+                /* Firefox */
+                input[type=number] {
+                    -moz-appearance: textfield;
+                }
             </style>
         @endonce
     @endpush
@@ -34,31 +45,22 @@
                 <x-row-col-flex col-gap="1rem">
                     <div class="form-group w-100">
                         <label for="bidang-id">Bidang:</label>
-                        <x-form.select
-                            id="bidang-id"
-                            model="bidangId"
-                            :options="$this->bidangUnit"
-                            placeholder="-"
-                            width="full-width"
-                        />
+                        <x-form.select id="bidang-id" model="bidangId" :options="$this->bidangUnit" placeholder="-" width="full-width" />
                         <x-form.error name="bidangId" />
                     </div>
                     <div class="form-group w-100">
                         <label for="anggaran-id">Kategori Anggaran:</label>
-                        <x-form.select
-                            id="anggaran-id"
-                            model="anggaranId"
-                            :options="$this->kategoriAnggaran"
-                            placeholder="-"
-                            width="full-width"
-                        />
+                        <x-form.select id="anggaran-id" model="anggaranId" :options="$this->kategoriAnggaran" placeholder="-" width="full-width" />
                         <x-form.error name="anggaranId" />
                     </div>
                 </x-row-col-flex>
                 <x-row-col class="mt-3">
                     <div class="form-group">
                         <label for="nominal-anggaran">Nominal Anggaran</label>
-                        <input type="text" id="nominal-anggaran" wire:model.defer="nominalAnggaran" class="form-control form-control-sm" />
+                        <div class="d-flex">
+                            <span class="mt-1">Rp.</span>
+                            <input type="number" id="nominal-anggaran" wire:model.defer="nominalAnggaran" class="form-control form-control-sm ml-3 text-right" />
+                        </div>
                         <x-form.error name="nominalAnggaran" />
                     </div>
                 </x-row-col>

@@ -52,7 +52,7 @@ trait PengaturanRKAT
         }
 
         $validated = $this->validate([
-            'tahunRKAT'              => ['required', new DoesntExist(AnggaranBidang::class, 'tahun')],
+            'tahunRKAT'              => ['required'],
             'tglAwalPenetapanRKAT'   => ['required', 'date'],
             'tglAkhirPenetapanRKAT'  => ['required', 'date'],
         ]);
@@ -66,6 +66,8 @@ trait PengaturanRKAT
                 'tgl_penetapan_akhir' => carbon($validated['tglAkhirPenetapanRKAT']),
             ])
             ->save();
+
+        app(RKATSettings::class)->refresh();
 
         tracker_end();
 

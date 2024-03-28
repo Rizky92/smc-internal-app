@@ -88,7 +88,7 @@ class RKATInputPelaporan extends Component
                 $namaBidang = $ab->bidang->nama;
                 $tahun = $ab->tahun;
 
-                $string = collect([$namaAnggaran ,$namaBidang, $tahun])
+                $string = collect([$namaBidang, $tahun, $namaAnggaran])
                     ->joinStr(' - ')
                     ->value();
 
@@ -113,14 +113,12 @@ class RKATInputPelaporan extends Component
             ->where('pemakaian_anggaran_id', $this->pemakaianAnggaranId)
             ->get();
 
-        $this->detail = $detail->isEmpty()
-            ? []
-            : $detail
-                ->map(fn (PemakaianAnggaranDetail $model): array => [
-                    'keterangan' => $model->keterangan,
-                    'nominal'    => round($model->nominal),
-                ])
-                ->all();
+        $this->detail = $detail->isEmpty() ? [] : $detail
+            ->map(fn (PemakaianAnggaranDetail $model): array => [
+                'keterangan' => $model->keterangan,
+                'nominal'    => round($model->nominal),
+            ])
+            ->all();
     }
 
     public function create(): void
@@ -162,7 +160,7 @@ class RKATInputPelaporan extends Component
 
     public function update(): void
     {
-        if (! $this->isUpdating()) {
+        if (!$this->isUpdating()) {
             $this->create();
         }
 
@@ -245,7 +243,7 @@ class RKATInputPelaporan extends Component
     {
         $this->pemakaianAnggaranId = -1;
         $this->anggaranBidangId = -1;
-        $this->tglPakai = '';
+        $this->tglPakai = now()->format('Y-m-d');
         $this->keterangan = '';
         $this->detail = [[
             'keterangan' => '',
