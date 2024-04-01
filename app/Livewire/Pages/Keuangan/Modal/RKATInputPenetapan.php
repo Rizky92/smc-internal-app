@@ -166,7 +166,7 @@ class RKATInputPenetapan extends Component
 
         $settings = app(RKATSettings::class);
 
-        if (now()->between($settings->tgl_penetapan_awal, $settings->tgl_penetapan_akhir)) {
+        if (! now()->between($settings->tgl_penetapan_awal, $settings->tgl_penetapan_akhir)) {
             $this->flashError('Batas waktu penetapan RKAT melewati periode yang ditetapkan!');
             $this->dispatchBrowserEvent('data-denied');
 
@@ -200,14 +200,14 @@ class RKATInputPenetapan extends Component
 
     public function delete(): void
     {
-        if (!$this->isUpdating()) {
+        if ($this->isUpdating()) {
             $this->flashError('Data tidak ditemukan!');
             $this->dispatchBrowserEvent('data-denied');
 
             return;
         }
 
-        if (user()->cannot('keuangan.rkat-penetapan.update')) {
+        if (user()->cannot('keuangan.rkat-penetapan.delete')) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 
@@ -216,7 +216,7 @@ class RKATInputPenetapan extends Component
 
         $settings = app(RKATSettings::class);
 
-        if (now()->between($settings->tgl_penetapan_awal, $settings->tgl_penetapan_akhir)) {
+        if (! now()->between($settings->tgl_penetapan_awal, $settings->tgl_penetapan_akhir)) {
             $this->flashError('Batas waktu penetapan RKAT melewati periode yang ditetapkan!');
             $this->dispatchBrowserEvent('data-denied');
 

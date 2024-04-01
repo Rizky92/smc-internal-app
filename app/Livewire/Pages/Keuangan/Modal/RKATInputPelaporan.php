@@ -104,7 +104,6 @@ class RKATInputPelaporan extends Component
     public function prepare(array $options): void
     {
         $this->anggaranBidangId = $options['anggaranBidangId'] ?? -1;
-
         $this->pemakaianAnggaranId = $options['pemakaianAnggaranId'] ?? -1;
         $this->tglPakai = $options['tglPakai'];
         $this->keterangan = $options['keterangan'];
@@ -137,7 +136,6 @@ class RKATInputPelaporan extends Component
         }
 
         $this->validate();
-        $this->validasiNominalPemakaian();
 
         tracker_start();
 
@@ -172,12 +170,11 @@ class RKATInputPelaporan extends Component
         }
 
         $this->validate();
-        $this->validasiNominalPemakaian();
 
         /** @var PemakaianAnggaran */
         $pemakaianAnggaran = PemakaianAnggaran::find($this->pemakaianAnggaranId);
 
-        tracker_start();
+        tracker_start('mysql_smc');
 
         $pemakaianAnggaran->update([
             'judul'              => $this->keterangan,
@@ -194,7 +191,7 @@ class RKATInputPelaporan extends Component
             ->detail()
             ->createMany($this->detail);
 
-        tracker_end();
+        tracker_end('mysql_smc');
 
         $this->dispatchBrowserEvent('data-saved');
         $this->emit('flash.success', 'Data Pemakaian RKAT baru berhasil diupdate!');
@@ -209,13 +206,13 @@ class RKATInputPelaporan extends Component
             return;
         }
 
-        tracker_start();
+        tracker_start('mysql_smc');
 
         PemakaianAnggaran::query()
             ->where('id', $this->pemakaianAnggaranId)
             ->delete();
 
-        tracker_end();
+        tracker_end('mysql_smc');
 
         $this->dispatchBrowserEvent('data-saved');
         $this->emit('flash.success', 'Data Pemakaian RKAT baru berhasil dihapus!');
@@ -249,25 +246,5 @@ class RKATInputPelaporan extends Component
             'keterangan' => '',
             'nominal'    => 0,
         ]];
-    }
-
-    private function validasiNominalPemakaian(): void
-    {
-        $nominalAnggaran = round(AnggaranBidang::whereId($this->anggaranBidangId)->value('nominal_anggaran'), 2);
-
-        $anggaranDigunakan = round(PemakaianAnggaran::query()
-            ->whereAnggaranBidangId($this->anggaranBidangId)
-            ->when($this->pemakaianAnggaranId !== -1, fn (Builder $q): Builder => $q->whereId($this->pemakaianAnggaranId))
-            ->withSum('detail as total_pemakaian', 'nominal')
-            ->withCasts(['total_pemakaian' => 'float'])
-            ->value('total_pemakaian'), 2);
-
-        $pemakaianBaru = round(floatval(collect($this->detail)->sum('nominal')), 2);
-
-        if ($pemakaianBaru > ($nominalAnggaran - $anggaranDigunakan)) {
-            throw ValidationException::withMessages([
-                'nominalPemakaian' => 'Pemakaian anggaran melebihi sisa anggaran yang masih ada',
-            ]);
-        }
     }
 }

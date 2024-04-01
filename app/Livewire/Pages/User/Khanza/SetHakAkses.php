@@ -57,8 +57,10 @@ class SetHakAkses extends Component
     {
         return $this->isDeferred ? [] : HakAkses::query()
             ->search($this->cari, ['nama_field', 'judul_menu'])
-            ->when($this->showChecked, fn (Builder $q): Builder => $q
-                ->orWhereIn('nama_field', collect($this->checkedHakAkses)->filter()->keys()->all())
+            ->when(
+                $this->showChecked,
+                fn (Builder $q): Builder => $q
+                    ->orWhereIn('nama_field', collect($this->checkedHakAkses)->filter()->keys()->all())
             )
             ->sortWithColumns($this->sortColumns)
             ->get();
@@ -88,8 +90,6 @@ class SetHakAkses extends Component
             ->mapWithKeys(fn (HakAkses $hakAkses): array => [$hakAkses->nama_field => $hakAkses->default_value])
             ->merge($this->checkedHakAkses)
             ->all();
-
-        dd($hakAksesUser);
 
         tracker_start('mysql_sik');
 
