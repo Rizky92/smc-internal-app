@@ -55,17 +55,13 @@ class SetHakAkses extends Component
      */
     public function getHakAksesKhanzaProperty()
     {
-        return $this->isDeferred
-            ? []
-            : HakAkses::query()
-                ->search($this->cari, ['nama_field', 'judul_menu'])
-                ->when($this->showChecked, fn (Builder $q): Builder => $q
-                    ->orWhereIn('nama_field', collect($this->checkedHakAkses)
-                        ->filter()
-                        ->keys()
-                        ->all()))
-                ->sortWithColumns($this->sortColumns)
-                ->get();
+        return $this->isDeferred ? [] : HakAkses::query()
+            ->search($this->cari, ['nama_field', 'judul_menu'])
+            ->when($this->showChecked, fn (Builder $q): Builder => $q
+                ->orWhereIn('nama_field', collect($this->checkedHakAkses)->filter()->keys()->all())
+            )
+            ->sortWithColumns($this->sortColumns)
+            ->get();
     }
 
     public function render(): View
@@ -81,7 +77,7 @@ class SetHakAkses extends Component
 
     public function save(): void
     {
-        if (! user()->hasRole(config('permission.superadmin_name'))) {
+        if (!user()->hasRole(config('permission.superadmin_name'))) {
             $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
@@ -92,6 +88,8 @@ class SetHakAkses extends Component
             ->mapWithKeys(fn (HakAkses $hakAkses): array => [$hakAkses->nama_field => $hakAkses->default_value])
             ->merge($this->checkedHakAkses)
             ->all();
+
+        dd($hakAksesUser);
 
         tracker_start('mysql_sik');
 
@@ -111,7 +109,7 @@ class SetHakAkses extends Component
 
         $user = User::rawFindByNRP($this->nrp);
 
-        if (! $this->isDeferred) {
+        if (!$this->isDeferred) {
             $this->checkedHakAkses = collect($user->getAttributes())->except(['id_user', 'password'])
                 ->filter(fn (?string $v, $_): bool => $v === 'true')
                 ->keys()
