@@ -63,6 +63,7 @@ class LaporanHasilPemeriksaan extends Component
             ->when($this->penjamin !== '-', fn (Builder $query) => $query->where('kd_pj', $this->penjamin))
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
+            ->orderByRaw("case when kd_pj = 'UMUM/PERSONAL' then 0 else 1 end, kd_pj")
             ->paginate($this->perpage);
     }
 
