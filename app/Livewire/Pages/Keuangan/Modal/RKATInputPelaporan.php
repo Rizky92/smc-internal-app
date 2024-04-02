@@ -52,7 +52,7 @@ class RKATInputPelaporan extends Component
             'keterangan'          => ['required', 'string'],
             'detail'              => ['array'],
             'detail.*.keterangan' => ['nullable', 'string'],
-            'detail.*.nominal'    => ['required', 'numeric'],
+            'detail.*.nominal'    => ['required', 'numeric', 'min:0'],
         ]);
 
         if ($this->isUpdating()) {

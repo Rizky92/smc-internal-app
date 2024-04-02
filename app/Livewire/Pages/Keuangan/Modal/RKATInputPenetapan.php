@@ -45,7 +45,7 @@ class RKATInputPenetapan extends Component
         $rules = collect([
             'anggaranId'      => ['required', 'exists:anggaran,id'],
             'bidangId'        => ['required', 'exists:bidang,id'],
-            'nominalAnggaran' => ['required', 'numeric'],
+            'nominalAnggaran' => ['required', 'numeric', 'min:0'],
         ]);
 
         if ($this->isUpdating()) {
