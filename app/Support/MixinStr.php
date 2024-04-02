@@ -42,7 +42,7 @@ class MixinStr
      */
     public function wrap(): Closure
     {
-        return fn (string $value, string $startsWith, ?string $endsWith = null): string => is_null($endsWith)
+        return fn (string $value, string $startsWith, ?string $endsWith = null): string => empty($endsWith)
                 ? $startsWith.$value.$startsWith
                 : $startsWith.$value.$endsWith;
     }

@@ -15,46 +15,42 @@
             <x-table :sortColumns="$sortColumns" style="min-width: 100%" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th title="Bidang" />
-                    <x-table.th title="Anggaran" />
-                    <x-table.th title="Total Pemakaian" />
-                    <x-table.th title="Selisih" />
-                    <x-table.th title="Persentase" />
+                    <x-table.th title="Anggaran (A)" />
+                    <x-table.th title="Total Pemakaian (B)" />
+                    <x-table.th title="Selisih (A - B)" />
+                    <x-table.th title="Persentase (B / A)" />
                 </x-slot>
                 <x-slot name="body">
-                    @forelse ($this->dataLaporanRKAT as $anggaran)
+                    @forelse ($this->dataLaporanRKAT as $bidang)
+                        @php
+                            $totalAnggaran = 0;
+                            $totalPemakaian = 0;
+                        @endphp
                         <x-table.tr>
-                            <x-table.td colspan="5">{{ $anggaran->nama }}</x-table.td>
+                            <x-table.td colspan="5">{{ $bidang->nama }}</x-table.td>
                         </x-table.tr>
-                        @foreach ($anggaran->anggaranBidang as $detail)
-                            <x-table.tr>
-                                <x-table.td>{{ $detail->anggaran->nama }}</x-table.td>
-                                <x-table.td>{{ rp($detail->nominal_anggaran) }}</x-table.td>
-                                <x-table.td>{{ rp($detail->total_pemakaian) }}</x-table.td>
-                                <x-table.td>{{ rp($detail->nominal_anggaran - $detail->total_pemakaian) }}</x-table.td>
-                                <x-table.td>
-                                    {{ number_format(
-                                        $detail->total_pemakaian > 0 && $detail->nominal_anggaran > 0
-                                            ? ($detail->total_pemakaian / $detail->nominal_anggaran) * 100
-                                            : 0,
-                                    2, ',', '.') }}%
-                                </x-table.td>
-                            </x-table.tr>
+                        @foreach ($bidang->descendants as $unit)
+                            @foreach ($unit->anggaranBidang as $anggaran)
+                                @php
+                                    $totalAnggaran += $anggaran->nominal_anggaran;
+                                    $totalPemakaian += $anggaran->total_pemakaian;
+                                @endphp
+                                <x-table.tr>
+                                    <x-table.td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ $anggaran->anggaran->nama }}</x-table.td>
+                                    <x-table.td>{{ rp($anggaran->nominal_anggaran) }}</x-table.td>
+                                    <x-table.td>{{ rp($anggaran->total_pemakaian) }}</x-table.td>
+                                    <x-table.td>{{ rp($anggaran->nominal_anggaran - $anggaran->total_pemakaian) }}</x-table.td>
+                                    <x-table.td>{{ number_format($anggaran->total_pemakaian > 0 && $anggaran->nominal_anggaran > 0 ? ($anggaran->total_pemakaian / $anggaran->nominal_anggaran) * 100 : 0, 2, ',', '.') }}%</x-table.td>
+                                </x-table.tr>
+                            @endforeach
                         @endforeach
                         <x-table.tr>
-                            <x-table.td>Total</x-table.td>
-                            @php
-                                $totalAnggaran = $anggaran->anggaranBidang->sum('nominal_anggaran');
-                                $totalPemakaian = $anggaran->anggaranBidang->sum('total_pemakaian');
-                            @endphp
+                            <x-table.td>TOTAL</x-table.td>
                             <x-table.td>{{ rp($totalAnggaran) }}</x-table.td>
                             <x-table.td>{{ rp($totalPemakaian) }}</x-table.td>
                             <x-table.td>{{ rp($totalAnggaran - $totalPemakaian) }}</x-table.td>
                             <x-table.td>
-                                {{ number_format(
-                                    $totalAnggaran > 0 && $totalPemakaian > 0
-                                        ? ($totalPemakaian / $totalAnggaran) * 100
-                                        : 0,
-                                2, ',', '.') }}%
+                                {{ number_format($totalAnggaran > 0 && $totalPemakaian > 0 ? ($totalPemakaian / $totalAnggaran) * 100 : 0, 2, ',', '.') }}%
                             </x-table.td>
                         </x-table.tr>
                         <x-table.tr>

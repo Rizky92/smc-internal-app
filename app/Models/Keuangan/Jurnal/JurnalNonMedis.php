@@ -4,6 +4,7 @@ namespace App\Models\Keuangan\Jurnal;
 
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -89,17 +90,16 @@ class JurnalNonMedis extends Model
             ->table('jurnal')
             ->when(
                 ! is_null($latest),
-                fn ($query) => $query->whereRaw('timestamp(tgl_jurnal, jam_jurnal) > ?', $latest->waktu_jurnal),
-                fn ($query) => $query->where('tgl_jurnal', '>=', '2022-10-31')
+                fn (QueryBuilder $query) => $query->whereRaw('timestamp(tgl_jurnal, jam_jurnal) > ?', $latest->waktu_jurnal),
+                fn (QueryBuilder $query) => $query->where('tgl_jurnal', '>=', '2022-10-31')
             )
-            ->where(fn ($query) => $query
-                ->where('keterangan', 'like', '%BAYAR PELUNASAN HUTANG BARANG NON MEDIS NO.FAKTUR %%, OLEH %')
-                ->orWhere('keterangan', 'like', '%BATAL BAYAR PELUNASAN BARANG NON MEDIS NO.FAKTUR %%, OLEH %'))
+            ->where(fn (QueryBuilder $query) => $query
+                ->where('keterangan', 'like', 'BAYAR PELUNASAN HUTANG BARANG NON MEDIS NO.FAKTUR %%, OLEH %')
+                ->orWhere('keterangan', 'like', 'BATAL BAYAR PELUNASAN BARANG NON MEDIS NO.FAKTUR %%, OLEH %'))
             ->where('keterangan', 'not like', '%adjustmen%')
             ->orderBy('no_jurnal')
-            ->chunk(500, function ($jurnal) {
-                /** @var Collection $jurnal */
-                $data = $jurnal->map(function ($value, $key) {
+            ->chunk(500, function (Collection $jurnal) {
+                $data = $jurnal->map(function (object $value, $_) {
                     $ket = str($value->keterangan);
 
                     $status = $ket->startsWith('BATAL');
