@@ -10,9 +10,9 @@ return new class extends Migration
 
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
+        Schema::connection('mysql_smc')->disableForeignKeyConstraints();
 
-        Schema::table('anggaran_bidang', function (Blueprint $table): void {
+        Schema::connection('mysql_smc')->table('anggaran_bidang', function (Blueprint $table): void {
             $table->string('nama_kegiatan')
                 ->after('bidang_id');
 
@@ -23,6 +23,6 @@ return new class extends Migration
             $table->dropUnique(['anggaran_id', 'bidang_id', 'tahun']);
         });
 
-        Schema::enableForeignKeyConstraints();
+        Schema::connection('mysql_smc')->enableForeignKeyConstraints();
     }
 };
