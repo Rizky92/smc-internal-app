@@ -11,8 +11,6 @@ return new class extends Migration
     {
         Schema::connection('mysql_smc')->disableForeignKeyConstraints();
 
-        AnggaranBidang::truncate();
-
         Schema::connection('mysql_smc')->table('anggaran_bidang', function (Blueprint $table): void {
             $table->dropColumn('nama_kegiatan');
             $table->dropColumn('deskripsi');
