@@ -95,7 +95,7 @@ class JurnalMedis extends Model
             )
             ->where(fn (QueryBuilder $q) => $q
                 ->where('keterangan', 'like', 'BAYAR PELUNASAN HUTANG OBAT/BHP/ALKES NO.FAKTUR %%, OLEH %')
-                ->where('keterangan', 'like', 'BATAL BAYAR PELUNASAN HUTANG OBAT/BHP/ALKES NO.FAKTUR %%, OLEH %'))
+                ->orWhere('keterangan', 'like', 'BATAL BAYAR PELUNASAN HUTANG OBAT/BHP/ALKES NO.FAKTUR %%, OLEH %'))
             ->orderBy('no_jurnal')
             ->chunk(500, function (Collection $jurnal) {
                 $data = $jurnal->map(function (object $value): array {
