@@ -93,11 +93,14 @@ class JurnalMedis extends Model
                 fn (QueryBuilder $query) => $query->whereRaw('timestamp(tgl_jurnal, jam_jurnal) > ?', $latest),
                 fn (QueryBuilder $query) => $query->where('tgl_jurnal', '>=', '2022-10-31')
             )
-            ->where('keterangan', 'like', '%BAYAR PELUNASAN HUTANG OBAT/BHP/ALKES NO.FAKTUR %%, OLEH %')
-            ->where('keterangan', 'not like', '%adjustmen%')
+            ->where(fn (QueryBuilder $q) => $q
+                ->where('keterangan', 'like', 'BAYAR PELUNASAN HUTANG OBAT/BHP/ALKES NO.FAKTUR %%, OLEH %')
+                ->where('keterangan', 'like', 'BATAL BAYAR PELUNASAN HUTANG OBAT/BHP/ALKES NO.FAKTUR %%, OLEH %'))
             ->orderBy('no_jurnal')
             ->chunk(500, function (Collection $jurnal) {
                 $data = $jurnal->map(function (object $value): array {
+                    /** @var object{no_jurnal: string, no_bukti: string, tgl_jurnal: string, jam_jurnal: string, jenis: "U"|"P", keterangan: string} $value */
+                    
                     $ket = str($value->keterangan);
 
                     $status = $ket->startsWith('BATAL');

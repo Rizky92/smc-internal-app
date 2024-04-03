@@ -3619,16 +3619,16 @@
         },
         {
             "name": "psy/psysh",
-            "version": "v0.12.2",
+            "version": "v0.12.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/psysh.git",
-                "reference": "9185c66c2165bbf4d71de78a69dccf4974f9538d"
+                "reference": "b6b6cce7d3ee8fbf31843edce5e8f5a72eff4a73"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/9185c66c2165bbf4d71de78a69dccf4974f9538d",
-                "reference": "9185c66c2165bbf4d71de78a69dccf4974f9538d",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/b6b6cce7d3ee8fbf31843edce5e8f5a72eff4a73",
+                "reference": "b6b6cce7d3ee8fbf31843edce5e8f5a72eff4a73",
                 "shasum": ""
             },
             "require": {
@@ -3692,9 +3692,9 @@
             ],
             "support": {
                 "issues": "https://github.com/bobthecow/psysh/issues",
-                "source": "https://github.com/bobthecow/psysh/tree/v0.12.2"
+                "source": "https://github.com/bobthecow/psysh/tree/v0.12.3"
             },
-            "time": "2024-03-17T01:53:00+00:00"
+            "time": "2024-04-02T15:57:53+00:00"
         },
         {
             "name": "ralouphie/getallheaders",
@@ -7834,16 +7834,16 @@
         },
         {
             "name": "composer/xdebug-handler",
-            "version": "3.0.3",
+            "version": "3.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/xdebug-handler.git",
-                "reference": "ced299686f41dce890debac69273b47ffe98a40c"
+                "reference": "4f988f8fdf580d53bdb2d1278fe93d1ed5462255"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/xdebug-handler/zipball/ced299686f41dce890debac69273b47ffe98a40c",
-                "reference": "ced299686f41dce890debac69273b47ffe98a40c",
+                "url": "https://api.github.com/repos/composer/xdebug-handler/zipball/4f988f8fdf580d53bdb2d1278fe93d1ed5462255",
+                "reference": "4f988f8fdf580d53bdb2d1278fe93d1ed5462255",
                 "shasum": ""
             },
             "require": {
@@ -7854,7 +7854,7 @@
             "require-dev": {
                 "phpstan/phpstan": "^1.0",
                 "phpstan/phpstan-strict-rules": "^1.1",
-                "symfony/phpunit-bridge": "^6.0"
+                "phpunit/phpunit": "^8.5 || ^9.6 || ^10.5"
             },
             "type": "library",
             "autoload": {
@@ -7878,9 +7878,9 @@
                 "performance"
             ],
             "support": {
-                "irc": "irc://irc.freenode.org/composer",
+                "irc": "ircs://irc.libera.chat:6697/composer",
                 "issues": "https://github.com/composer/xdebug-handler/issues",
-                "source": "https://github.com/composer/xdebug-handler/tree/3.0.3"
+                "source": "https://github.com/composer/xdebug-handler/tree/3.0.4"
             },
             "funding": [
                 {
@@ -7896,7 +7896,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-02-25T21:32:43+00:00"
+            "time": "2024-03-26T18:29:49+00:00"
         },
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -8899,25 +8899,27 @@
         },
         {
             "name": "maximebf/debugbar",
-            "version": "v1.21.3",
+            "version": "v1.22.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/maximebf/php-debugbar.git",
-                "reference": "0b407703b08ea0cf6ebc61e267cc96ff7000911b"
+                "reference": "d7b6e1dc2dc85c01ed63ab158b00a7f46abdebcc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/maximebf/php-debugbar/zipball/0b407703b08ea0cf6ebc61e267cc96ff7000911b",
-                "reference": "0b407703b08ea0cf6ebc61e267cc96ff7000911b",
+                "url": "https://api.github.com/repos/maximebf/php-debugbar/zipball/d7b6e1dc2dc85c01ed63ab158b00a7f46abdebcc",
+                "reference": "d7b6e1dc2dc85c01ed63ab158b00a7f46abdebcc",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1|^8",
+                "php": "^7.2|^8",
                 "psr/log": "^1|^2|^3",
                 "symfony/var-dumper": "^4|^5|^6|^7"
             },
             "require-dev": {
-                "phpunit/phpunit": ">=7.5.20 <10.0",
+                "dbrekelmans/bdi": "^1",
+                "phpunit/phpunit": "^8|^9",
+                "symfony/panther": "^1|^2.1",
                 "twig/twig": "^1.38|^2.7|^3.0"
             },
             "suggest": {
@@ -8928,7 +8930,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.21-dev"
+                    "dev-master": "1.22-dev"
                 }
             },
             "autoload": {
@@ -8959,9 +8961,9 @@
             ],
             "support": {
                 "issues": "https://github.com/maximebf/php-debugbar/issues",
-                "source": "https://github.com/maximebf/php-debugbar/tree/v1.21.3"
+                "source": "https://github.com/maximebf/php-debugbar/tree/v1.22.1"
             },
-            "time": "2024-03-12T14:23:07+00:00"
+            "time": "2024-04-01T10:44:20+00:00"
         },
         {
             "name": "mockery/mockery",
@@ -9298,22 +9300,22 @@
         },
         {
             "name": "orchestra/testbench",
-            "version": "v6.43.1",
+            "version": "v6.43.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/orchestral/testbench.git",
-                "reference": "2578c6c4cf302c66d911291d522d030b5f7010a3"
+                "reference": "387d6d4aa9eb79c0f24047fa467d1dbedece3990"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/testbench/zipball/2578c6c4cf302c66d911291d522d030b5f7010a3",
-                "reference": "2578c6c4cf302c66d911291d522d030b5f7010a3",
+                "url": "https://api.github.com/repos/orchestral/testbench/zipball/387d6d4aa9eb79c0f24047fa467d1dbedece3990",
+                "reference": "387d6d4aa9eb79c0f24047fa467d1dbedece3990",
                 "shasum": ""
             },
             "require": {
                 "laravel/framework": "^8.83.27",
                 "mockery/mockery": "^1.4.4",
-                "orchestra/testbench-core": "^6.49.4",
+                "orchestra/testbench-core": "^6.49.5",
                 "php": "^7.3 || ^8.0",
                 "phpunit/phpunit": "^8.5.21 || ^9.5.10",
                 "spatie/laravel-ray": "^1.29.7"
@@ -9347,22 +9349,22 @@
             ],
             "support": {
                 "issues": "https://github.com/orchestral/testbench/issues",
-                "source": "https://github.com/orchestral/testbench/tree/v6.43.1"
+                "source": "https://github.com/orchestral/testbench/tree/v6.43.2"
             },
-            "time": "2024-03-19T12:50:31+00:00"
+            "time": "2024-03-25T09:54:59+00:00"
         },
         {
             "name": "orchestra/testbench-core",
-            "version": "v6.49.4",
+            "version": "v6.49.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/orchestral/testbench-core.git",
-                "reference": "e99d51d095da503373ae47f508d9df426a2fe9d2"
+                "reference": "45418b85d24a146f5a2f5caeff3f85e481d65b6c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/testbench-core/zipball/e99d51d095da503373ae47f508d9df426a2fe9d2",
-                "reference": "e99d51d095da503373ae47f508d9df426a2fe9d2",
+                "url": "https://api.github.com/repos/orchestral/testbench-core/zipball/45418b85d24a146f5a2f5caeff3f85e481d65b6c",
+                "reference": "45418b85d24a146f5a2f5caeff3f85e481d65b6c",
                 "shasum": ""
             },
             "require": {
@@ -9438,7 +9440,7 @@
                 "issues": "https://github.com/orchestral/testbench/issues",
                 "source": "https://github.com/orchestral/testbench-core"
             },
-            "time": "2024-03-19T11:14:04+00:00"
+            "time": "2024-03-25T04:15:06+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -9683,16 +9685,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.64",
+            "version": "1.10.66",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "fb9f270daffedcb5ff46275dcafe92538b1bc4bb"
+                "reference": "94779c987e4ebd620025d9e5fdd23323903950bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/fb9f270daffedcb5ff46275dcafe92538b1bc4bb",
-                "reference": "fb9f270daffedcb5ff46275dcafe92538b1bc4bb",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/94779c987e4ebd620025d9e5fdd23323903950bd",
+                "reference": "94779c987e4ebd620025d9e5fdd23323903950bd",
                 "shasum": ""
             },
             "require": {
@@ -9741,7 +9743,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-03-21T09:57:47+00:00"
+            "time": "2024-03-28T16:17:31+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -11417,16 +11419,16 @@
         },
         {
             "name": "spatie/laravel-ray",
-            "version": "1.35.1",
+            "version": "1.36.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-ray.git",
-                "reference": "f504d3787d88c7e5de7a4290658f7ad9b1352f22"
+                "reference": "f15936b5d308ae391ee67370a5628f0712537c34"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-ray/zipball/f504d3787d88c7e5de7a4290658f7ad9b1352f22",
-                "reference": "f504d3787d88c7e5de7a4290658f7ad9b1352f22",
+                "url": "https://api.github.com/repos/spatie/laravel-ray/zipball/f15936b5d308ae391ee67370a5628f0712537c34",
+                "reference": "f15936b5d308ae391ee67370a5628f0712537c34",
                 "shasum": ""
             },
             "require": {
@@ -11488,7 +11490,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-ray/issues",
-                "source": "https://github.com/spatie/laravel-ray/tree/1.35.1"
+                "source": "https://github.com/spatie/laravel-ray/tree/1.36.0"
             },
             "funding": [
                 {
@@ -11500,7 +11502,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2024-02-13T14:19:41+00:00"
+            "time": "2024-03-29T09:10:11+00:00"
         },
         {
             "name": "spatie/macroable",

@@ -99,7 +99,9 @@ class JurnalNonMedis extends Model
             ->where('keterangan', 'not like', '%adjustmen%')
             ->orderBy('no_jurnal')
             ->chunk(500, function (Collection $jurnal) {
-                $data = $jurnal->map(function (object $value, $_) {
+                $data = $jurnal->map(function (object $value) {
+                    /** @var object{no_jurnal: string, no_bukti: string, tgl_jurnal: string, jam_jurnal: string, jenis: "U"|"P", keterangan: string} $value */
+
                     $ket = str($value->keterangan);
 
                     $status = $ket->startsWith('BATAL');
