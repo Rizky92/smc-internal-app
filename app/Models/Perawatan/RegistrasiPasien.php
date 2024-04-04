@@ -509,10 +509,13 @@ reg_periksa.no_rawat as no_rawat,
 reg_periksa.tgl_registrasi as tgl_registrasi,
 reg_periksa.jam_reg as jam_reg,
 kamar.kelas as kelas,
-concat(kamar.kd_kamar, ' ', bangsal.nm_bangsal) as ruangan,
+kamar_inap.kd_kamar,
+bangsal.nm_bangsal,
 kamar_inap.trf_kamar as trf_kamar,
 reg_periksa.no_rkm_medis as no_rkm_medis,
-concat(pasien.nm_pasien, ' (', reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur, ')') as data_pasien,
+pasien.nm_pasien,
+reg_periksa.umurdaftar,
+reg_periksa.sttsumur,
 penjab.png_jawab as png_jawab,
 poliklinik.nm_poli as nm_poli,
 dokter.nm_dokter as nm_dokter,
@@ -522,21 +525,32 @@ kamar_inap.jam_masuk as jam_masuk,
 if (kamar_inap.tgl_keluar = '0000-00-00', '-', kamar_inap.tgl_keluar) as tgl_keluar,
 if (kamar_inap.jam_keluar = '00:00:00', '-', kamar_inap.jam_keluar) as jam_keluar,
 group_concat(dokter_pj.nm_dokter separator ', ') as dpjp,
-case
-    when timestamp(kamar_inap.tgl_masuk, kamar_inap.jam_masuk) = kamar_inap_min.waktu_masuk and kamar_inap.stts_pulang <> 'pindah kamar' then 1
-    when timestamp(kamar_inap.tgl_masuk, kamar_inap.jam_masuk) = kamar_inap_min.waktu_masuk and kamar_inap.stts_pulang = 'pindah kamar' then 2
-    when timestamp(kamar_inap.tgl_masuk, kamar_inap.jam_masuk) >= kamar_inap_min.waktu_masuk then 3
-end as status_ranap
+case when timestamp(kamar_inap.tgl_masuk, kamar_inap.jam_masuk) = kamar_inap_min.waktu_masuk and kamar_inap.stts_pulang <> 'pindah kamar' then 1 when timestamp(kamar_inap.tgl_masuk, kamar_inap.jam_masuk) = kamar_inap_min.waktu_masuk and kamar_inap.stts_pulang = 'pindah kamar' then 2 when timestamp(kamar_inap.tgl_masuk, kamar_inap.jam_masuk) >= kamar_inap_min.waktu_masuk then 3 end as status_ranap
 SQL;
+
+        $this->addSearchConditions([
+            'kamar.kelas',
+            'kamar.kd_kamar',
+            'bangsal.nm_bangsal',
+            'pasien.nm_pasien',
+            'penjab.png_jawab',
+            'poliklinik.nm_poli',
+            'dokter.nm_dokter',
+            'kamar_inap.stts_pulang',
+            'dokter_pj.nm_dokter',
+        ]);
 
         $kamarInapPertama = RawatInap::query()
             ->select(['no_rawat', 'stts_pulang', DB::raw('min(concat(kamar_inap.tgl_masuk, kamar_inap.jam_masuk)) as waktu_masuk')])
             ->groupBy('no_rawat');
 
-        $query
+        $statusKamarPasien = DB::raw("case when timestamp(kamar_inap.tgl_masuk, kamar_inap.jam_masuk) = kamar_inap_min.waktu_masuk and kamar_inap.stts_pulang != 'Pindah kamar' then 1 when timestamp(kamar_inap.tgl_masuk, kamar_inap.jam_masuk) = kamar_inap_min.waktu_masuk and kamar_inap.stts_pulang = 'Pindah kamar' then 2 when timestamp(kamar_inap.tgl_masuk, kamar_inap.jam_masuk) >= kamar_inap_min.waktu_masuk then 3 end");
+
+        return $query
             ->selectRaw($sqlSelect)
             ->join('kamar_inap', 'reg_periksa.no_rawat', '=', 'kamar_inap.no_rawat')
-            ->join('kamar', 'kamar_inap.kd_bangsal', '=', 'kamar.kd_bangsal')
+            ->join('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
+            ->join('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->join('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
@@ -544,6 +558,11 @@ SQL;
             ->leftJoin('dpjp_ranap', 'kamar_inap.no_rawat', '=', 'dpjp_ranap.no_rawat')
             ->leftJoin(DB::raw('dokter dokter_pj'), 'dpjp_ranap.kd_dokter', '=', 'dokter_pj.kd_dokter')
             ->joinSub($kamarInapPertama, 'kamar_inap_min', 'kamar_inap.no_rawat', '=', 'kamar_inap_min.no_rawat')
+            ->whereBetween('tgl_masuk', [$tanggal, $tanggal])
+            ->when($semuaPasien,
+                fn (Builder $q) => $q->where($statusKamarPasien, '<=', 3),
+                fn (Builder $q) => $q->where($statusKamarPasien, '<=', 2)
+            )
             ->groupBy([
                 'reg_periksa.no_rawat',
                 'kamar_inap.tgl_masuk',
@@ -552,8 +571,6 @@ SQL;
                 'kamar_inap.tgl_keluar',
                 'kamar_inap.jam_keluar',
             ]);
-        
-        return $query;
     }
 
     public function scopeDaftarPasienRanap(
@@ -571,35 +588,35 @@ SQL;
         }
 
         $sqlSelect = <<<'SQL'
-            kamar_inap.kd_kamar,
-            reg_periksa.no_rawat,
-            bangsal.nm_bangsal,
-            kamar.kelas,
-            reg_periksa.no_rkm_medis,
-            pasien.nm_pasien,
-            reg_periksa.umurdaftar,
-            reg_periksa.sttsumur,
-            pasien.alamat,
-            kelurahan.nm_kel,
-            kecamatan.nm_kec,
-            kabupaten.nm_kab,
-            propinsi.nm_prop,
-            pasien.agama,
-            concat(pasien.namakeluarga, ' (', pasien.keluarga, ')') pj,
-            penjab.png_jawab,
-            poliklinik.nm_poli,
-            dokter.nm_dokter dokter_poli,
-            kamar_inap.stts_pulang,
-            kamar_inap.tgl_masuk,
-            kamar_inap.jam_masuk,
-            if(kamar_inap.tgl_keluar = '0000-00-00', '-', kamar_inap.tgl_keluar) tgl_keluar,
-            if(kamar_inap.jam_keluar = '00:00:00', '-', kamar_inap.jam_keluar) jam_keluar,
-            kamar_inap.trf_kamar,
-            kamar_inap.lama,
-            kamar_inap.ttl_biaya,
-            ifnull(group_concat(dokter_pj.nm_dokter separator ', '), '-') dokter_ranap,
-            pasien.no_tlp
-        SQL;
+kamar_inap.kd_kamar,
+reg_periksa.no_rawat,
+bangsal.nm_bangsal,
+kamar.kelas,
+reg_periksa.no_rkm_medis,
+pasien.nm_pasien,
+reg_periksa.umurdaftar,
+reg_periksa.sttsumur,
+pasien.alamat,
+kelurahan.nm_kel,
+kecamatan.nm_kec,
+kabupaten.nm_kab,
+propinsi.nm_prop,
+pasien.agama,
+concat(pasien.namakeluarga, ' (', pasien.keluarga, ')') pj,
+penjab.png_jawab,
+poliklinik.nm_poli,
+dokter.nm_dokter dokter_poli,
+kamar_inap.stts_pulang,
+kamar_inap.tgl_masuk,
+kamar_inap.jam_masuk,
+if(kamar_inap.tgl_keluar = '0000-00-00', '-', kamar_inap.tgl_keluar) tgl_keluar,
+if(kamar_inap.jam_keluar = '00:00:00', '-', kamar_inap.jam_keluar) jam_keluar,
+kamar_inap.trf_kamar,
+kamar_inap.lama,
+kamar_inap.ttl_biaya,
+ifnull(group_concat(dokter_pj.nm_dokter separator ', '), '-') dokter_ranap,
+pasien.no_tlp
+SQL;
 
         $this->addSearchConditions([
             'kamar_inap.kd_kamar',
