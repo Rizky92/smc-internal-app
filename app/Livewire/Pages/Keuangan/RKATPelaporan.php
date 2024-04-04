@@ -68,7 +68,18 @@ class RKATPelaporan extends Component
 
     public function getDataBidangProperty(): Collection
     {
-        return Bidang::pluck('nama', 'id');
+        return Bidang::query()
+            ->with('descendantsAndSelf')
+            ->isRoot()
+            ->get()
+            ->map
+            ->descendantsAndSelf
+            ->flatten()
+            ->mapWithKeys(fn (Bidang $model) => [
+                $model->id => str($model->nama)
+                    ->padLeft(strlen($model->nama) + (intval($model->depth) * 8), html_entity_decode('&nbsp;'))
+                    ->value()
+            ]);
     }
 
     public function render(): View

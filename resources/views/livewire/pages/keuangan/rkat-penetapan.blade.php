@@ -8,9 +8,7 @@
             @push('js')
                 <script>
                     function loadData(e) {
-                        let {
-                            id
-                        } = e.dataset
+                        let { id } = e.dataset
 
                         @this.emit('prepare', id)
 
@@ -46,7 +44,6 @@
                     <x-table.th title="Bidang" />
                     <x-table.th name="bidang_id" title="Unit" />
                     <x-table.th name="anggaran_id" title="Anggaran" />
-                    <x-table.th name="nama_kegiatan" title="Nama Kegiatan" />
                     <x-table.th name="nominal_anggaran" title="Nominal" />
                     <x-table.th name="created_at" title="Tgl. Ditetapkan" />
                 </x-slot>
@@ -57,12 +54,11 @@
                             <x-table.td>{{ $item->bidang->parent->nama }}</x-table.td>
                             <x-table.td>{{ $item->bidang->nama }}</x-table.td>
                             <x-table.td>{{ $item->anggaran->nama }}</x-table.td>
-                            <x-table.td>{{ $item->nama_kegiatan }}</x-table.td>
                             <x-table.td>{{ rp($item->nominal_anggaran) }}</x-table.td>
                             <x-table.td>{{ $item->created_at->format('Y-m-d') }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="7" padding />
+                        <x-table.tr-empty colspan="6" padding />
                     @endforelse
                 </x-slot>
             </x-table>

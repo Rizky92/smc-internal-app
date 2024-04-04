@@ -31,20 +31,20 @@ class PenguranganBiaya extends Model
         }
 
         $sqlSelect = <<<'SQL'
-            reg_periksa.tgl_registrasi,
-            reg_periksa.jam_reg,
-            pasien.nm_pasien,
-            reg_periksa.no_rkm_medis,
-            pengurangan_biaya.no_rawat,
-            pengurangan_biaya.nama_pengurangan,
-            pengurangan_biaya.besar_pengurangan,
-            penjab.png_jawab,
-            dokter.nm_dokter dokter_ralan,
-            coalesce(nullif(trim(dokter_pj.nm_dokter), ''), '-') dokter_ranap,
-            poliklinik.nm_poli,
-            reg_periksa.status_lanjut,
-            reg_periksa.status_bayar
-        SQL;
+reg_periksa.tgl_registrasi,
+reg_periksa.jam_reg,
+pasien.nm_pasien,
+reg_periksa.no_rkm_medis,
+pengurangan_biaya.no_rawat,
+pengurangan_biaya.nama_pengurangan,
+pengurangan_biaya.besar_pengurangan,
+penjab.png_jawab,
+dokter.nm_dokter dokter_ralan,
+coalesce(nullif(trim(dokter_pj.nm_dokter), ''), '-') dokter_ranap,
+poliklinik.nm_poli,
+reg_periksa.status_lanjut,
+reg_periksa.status_bayar
+SQL;
 
         $this->addSearchConditions([
             'pasien.nm_pasien',

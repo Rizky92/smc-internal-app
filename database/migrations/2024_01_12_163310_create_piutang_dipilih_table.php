@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('piutang_dipilih', function (Blueprint $table): void {
+        Schema::connection('mysql_smc')->create('piutang_dipilih', function (Blueprint $table): void {
             $table->id();
             $table->string('key');
             $table->timestamps($precision = 6);
