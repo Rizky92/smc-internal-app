@@ -63,6 +63,11 @@
                     @this.set('{{ $model }}', data, true)
                 @endif
             })
+
+            @if ($placeholder)
+                $('select#{{ $id }}').val('-')
+                $('select#{{ $id }}').trigger('change')
+            @endif
         }
 
         @if ($livewire)

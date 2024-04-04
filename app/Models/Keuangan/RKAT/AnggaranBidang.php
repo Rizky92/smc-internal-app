@@ -5,6 +5,7 @@ namespace App\Models\Keuangan\RKAT;
 use App\Casts\Year;
 use App\Database\Eloquent\Model;
 use App\Models\Bidang;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -21,8 +22,6 @@ class AnggaranBidang extends Model
     protected $fillable = [
         'anggaran_id',
         'bidang_id',
-        'nama_kegiatan',
-        'deskripsi',
         'tahun',
         'nominal_anggaran',
     ];
@@ -31,6 +30,15 @@ class AnggaranBidang extends Model
         'tahun'            => Year::class,
         'nominal_anggaran' => 'float',
     ];
+
+    public function scopeAnggaranPerBidangUnit(Builder $query, string $tahun): Builder
+    {
+        $sqlSelect = <<<SQL
+anggaran_bidang.id, anggaran_bidang.anggaran_id, anggaran_bidang.bidang_id, 
+SQL;
+
+        return $query;
+    }
 
     public function anggaran(): BelongsTo
     {

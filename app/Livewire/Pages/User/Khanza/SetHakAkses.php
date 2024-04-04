@@ -89,6 +89,8 @@ class SetHakAkses extends Component
             ->merge($this->checkedHakAkses)
             ->all();
 
+        dd($hakAksesUser);
+
         tracker_start('mysql_sik');
 
         User::rawFindByNRP($this->nrp)
