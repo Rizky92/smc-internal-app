@@ -254,6 +254,6 @@ class RKATInputPenetapan extends Component
         $this->anggaranBidangId = -1;
         $this->anggaranId = -1;
         $this->bidangId = -1;
-        $this->nominalAnggaran = 0;
+        $this->nominalAnggaran = '';
     }
 }
