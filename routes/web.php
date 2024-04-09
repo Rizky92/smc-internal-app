@@ -247,6 +247,10 @@ Route::prefix('admin')
                 Route::get('laporan-pemakaian-obat-tb', Farmasi\LaporanPemakaianObatTB::class)
                     ->name('laporan-pemakaian-obat-tb')
                     ->middleware('can:farmasi.laporan-pemakaian-obat-tb.read');
+
+                Route::get('daftar-riwayat-obat-alkes', Farmasi\DaftarRiwayatObatAlkes::class)
+                    ->name('daftar-riwayat-obat-alkes')
+                    ->middleware('can:farmasi.daftar-riwayat-obat-alkes.read');
             });
 
         Route::prefix('rekam-medis')

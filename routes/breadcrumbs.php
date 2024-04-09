@@ -212,6 +212,11 @@ Breadcrumbs::for('admin.farmasi.defecta-depo', function (Trail $trail): void {
     $trail->push('Defecta Depo', route('admin.farmasi.defecta-depo'));
 });
 
+Breadcrumbs::for('admin.farmasi.daftar-riwayat-obat-alkes', function (Trail $trail): void {
+    $trail->parent('admin.farmasi');
+    $trail->push('Riwayat Obat Alkes', route('admin.farmasi.daftar-riwayat-obat-alkes'));
+});
+
 Breadcrumbs::for('admin.rekam-medis', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Rekam Medis');

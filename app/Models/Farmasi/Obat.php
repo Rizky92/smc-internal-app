@@ -311,4 +311,45 @@ class Obat extends Model
                 ->when($golongan === 'narkotika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G07'))
                 ->when($golongan === 'psikotropika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G01')));
     }
+
+    public function scopeDaftarRiwayat(Builder $query, string $kategori = 'obat', string $tanggal): Builder
+    {
+        if (empty($tanggal)) {
+            $tanggal = now()->format('Y-m-d');
+        }
+
+        $tanggalSatuTahunSebelumnya = date('Y-m-d', strtotime('-1 year', strtotime($tanggal)));
+
+        $sqlSelect = <<<SQL
+            databarang.kode_brng,
+            databarang.nama_brng,
+            (select stok_akhir from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng order by rbm2.tanggal desc limit 1) as stok_akhir,
+            (select masuk from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.masuk != 0 order by rbm2.tanggal desc limit 1) as order_terakhir,
+            (select keterangan from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.masuk != 0 order by rbm2.tanggal desc limit 1) as keterangan_order_terakhir,
+            (select tanggal from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.masuk != 0 order by rbm2.tanggal desc limit 1) as tanggal_order_terakhir,
+            (select status from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.masuk != 0 order by rbm2.tanggal desc limit 1) as status_order_terakhir,
+            (select keluar from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.keluar != 0 order by rbm2.tanggal desc limit 1) as penggunaan_terakhir,
+            (select keterangan from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.keluar != 0 order by rbm2.tanggal desc limit 1) as keterangan_penggunaan_terakhir,
+            (select tanggal from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.keluar != 0 order by rbm2.tanggal desc limit 1) as tanggal_penggunaan_terakhir,
+            (select status from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.keluar != 0 order by rbm2.tanggal desc limit 1) as status_penggunaan_terakhir
+        SQL;
+
+        $this->addSearchConditions([
+            'databarang.nama_brng',
+            'riwayat_barang_medis.tanggal',
+        ]);
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join('riwayat_barang_medis', 'databarang.kode_brng', '=', 'riwayat_barang_medis.kode_brng')
+            ->whereBetween('riwayat_barang_medis.tanggal', [$tanggalSatuTahunSebelumnya, $tanggal])
+            ->when($kategori === 'obat', function ($query) {
+                return $query->where('databarang.kode_kategori', 'LIKE', '2.%');
+            })
+            ->when($kategori === 'alkes', function ($query) {
+                return $query->where('databarang.kode_kategori', 'LIKE', '3.%');
+            })
+            ->groupBy('riwayat_barang_medis.kode_brng')
+            ->orderBy('riwayat_barang_medis.tanggal', 'desc');
+    }
 }
