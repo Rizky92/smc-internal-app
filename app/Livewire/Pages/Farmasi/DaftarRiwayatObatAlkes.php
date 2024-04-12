@@ -77,22 +77,72 @@ class DaftarRiwayatObatAlkes extends Component
 
     protected function dataPerSheet(): array
     {
+        $map = fn (Obat $model): array => [
+            'kode_brng'                         => $model->kode_brng,
+            'nama_brng'                         => $model->nama_brng,
+            'stok_akhir'                        => $model->stok_akhir,
+            'order_terakhir'                    => $model->order_terakhir ?? '-',
+            'keterangan_order_terakhir'         => $model->keterangan_order_terakhir ?? '-',
+            'tanggal_order_terakhir'            => $model->tanggal_order_terakhir ?? '-',
+            'status_order_terakhir'             => $model->status_order_terakhir ?? '-',
+            'posisi_order_terakhir'             => $model->posisi_order_terakhir ?? '-',
+            'penggunaan_terakhir'               => $model->penggunaan_terakhir ?? '-',
+            'keterangan_penggunaan_terakhir'    => $model->keterangan_penggunaan_terakhir ?? '-',
+            'tanggal_penggunaan_terakhir'       => $model->tanggal_penggunaan_terakhir ?? '-',
+            'status_penggunaan_terakhir'        => $model->status_penggunaan_terakhir ?? '-',
+            'posisi_penggunaan_terakhir'        => $model->posisi_penggunaan_terakhir ?? '-',
+        ];
+
         return [
-            //
+            'obat' => Obat::query()
+                ->daftarRiwayat('obat', $this->tanggal)
+                ->cursor()
+                ->map($map),
+            'alkes' => Obat::query()
+                ->daftarRiwayat('alkes', $this->tanggal)
+                ->cursor()
+                ->map($map),
         ];
     }
 
     protected function columnHeaders(): array
     {
         return [
-            //
+            'Kode Item',
+            'Nama Item',
+            'Stok Akhir',
+            'Order Terakhir',
+            'Keterangan Order Terakhir',
+            'Tanggal Order Terakhir',
+            'Status Order Terakhir',
+            'Posisi Order Terakhir',
+            'Penggunaan Terakhir',
+            'Keterangan Penggunaan Terakhir',
+            'Tanggal Penggunaan Terakhir',
+            'Status Penggunaan Terakhir',
+            'Posisi Penggunaan Terakhir',
         ];
     }
 
     protected function pageHeaders(): array
     {
+        $periodeAwalCarbon = \Carbon\Carbon::parse($this->tanggal)->subYear();
+        $periodeAwal = $periodeAwalCarbon->format('Y-m-d');
+        $periodeAkhir = \Carbon\Carbon::parse($this->tanggal)->format('Y-m-d');
+
+        $periodeAkhirCarbon = now()->createFromDate($periodeAkhir);
+        
+        $periode = 'Periode ' . $periodeAwal . ' s/d ' . $periodeAkhirCarbon->translatedFormat('d F Y');
+        
+        if ($periodeAkhir !== now()->format('Y-m-d')) {
+            $periode .= ' (' . $periodeAwalCarbon->translatedFormat('d F Y') . ' s/d ' . $periodeAkhirCarbon->translatedFormat('d F Y') . ')';
+        }
+
         return [
-            //
+            'RS Samarinda Medika Citra',
+            'Daftar Riwayat Obat/Alkes',
+            now()->translatedFormat('d F Y'),
+            $periode,
         ];
     }
 }

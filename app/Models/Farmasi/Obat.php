@@ -317,23 +317,25 @@ class Obat extends Model
         if (empty($tanggal)) {
             $tanggal = now()->format('Y-m-d');
         }
-
+    
         $tanggalSatuTahunSebelumnya = date('Y-m-d', strtotime('-1 year', strtotime($tanggal)));
-
+    
         $sqlSelect = <<<SQL
             databarang.kode_brng,
             databarang.nama_brng,
-            (select stok_akhir from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng order by rbm2.tanggal desc limit 1) as stok_akhir,
-            (select masuk from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.masuk != 0 order by rbm2.tanggal desc limit 1) as order_terakhir,
-            (select keterangan from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.masuk != 0 order by rbm2.tanggal desc limit 1) as keterangan_order_terakhir,
-            (select tanggal from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.masuk != 0 order by rbm2.tanggal desc limit 1) as tanggal_order_terakhir,
-            (select status from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.masuk != 0 order by rbm2.tanggal desc limit 1) as status_order_terakhir,
-            (select keluar from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.keluar != 0 order by rbm2.tanggal desc limit 1) as penggunaan_terakhir,
-            (select keterangan from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.keluar != 0 order by rbm2.tanggal desc limit 1) as keterangan_penggunaan_terakhir,
-            (select tanggal from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.keluar != 0 order by rbm2.tanggal desc limit 1) as tanggal_penggunaan_terakhir,
-            (select status from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.keluar != 0 order by rbm2.tanggal desc limit 1) as status_penggunaan_terakhir
+            (select stok_akhir from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng order by rbm2.tanggal desc, rbm2.jam desc limit 1)as stok_akhir,
+            (select masuk from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.masuk != 0 order by rbm2.tanggal desc, rbm2.jam desc limit 1) as order_terakhir,
+            (select keterangan from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.masuk != 0 order by rbm2.tanggal desc, rbm2.jam desc limit 1) as keterangan_order_terakhir,
+            (select tanggal from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.masuk != 0 order by rbm2.tanggal desc, rbm2.jam desc limit 1) as tanggal_order_terakhir,
+            (select status from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.masuk != 0 order by rbm2.tanggal desc, rbm2.jam desc limit 1) as status_order_terakhir,
+            (select posisi from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.masuk != 0 order by rbm2.tanggal desc, rbm2.jam desc limit 1) as posisi_order_terakhir,
+            (select keluar from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.keluar != 0 order by rbm2.tanggal desc, rbm2.jam desc limit 1) as penggunaan_terakhir,
+            (select keterangan from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.keluar != 0 order by rbm2.tanggal desc, rbm2.jam desc limit 1) as keterangan_penggunaan_terakhir,
+            (select tanggal from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.keluar != 0 order by rbm2.tanggal desc, rbm2.jam desc limit 1) as tanggal_penggunaan_terakhir,
+            (select status from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.keluar != 0 order by rbm2.tanggal desc, rbm2.jam desc limit 1) as status_penggunaan_terakhir,
+            (select posisi from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.keluar != 0 order by rbm2.tanggal desc, rbm2.jam desc limit 1) as posisi_penggunaan_terakhir
         SQL;
-
+    
         $this->addSearchConditions([
             'databarang.nama_brng',
             'riwayat_barang_medis.tanggal',
@@ -341,6 +343,7 @@ class Obat extends Model
 
         return $query
             ->selectRaw($sqlSelect)
+            ->withCasts(['stok_akhir' => 'float', 'order_terakhir' => 'float', 'penggunaan_terakhir' => 'float'])
             ->join('riwayat_barang_medis', 'databarang.kode_brng', '=', 'riwayat_barang_medis.kode_brng')
             ->whereBetween('riwayat_barang_medis.tanggal', [$tanggalSatuTahunSebelumnya, $tanggal])
             ->when($kategori === 'obat', function ($query) {
@@ -349,7 +352,7 @@ class Obat extends Model
             ->when($kategori === 'alkes', function ($query) {
                 return $query->where('databarang.kode_kategori', 'LIKE', '3.%');
             })
-            ->groupBy('riwayat_barang_medis.kode_brng')
-            ->orderBy('riwayat_barang_medis.tanggal', 'desc');
+            ->orderBy('riwayat_barang_medis.tanggal', 'desc', 'riwayat_barang_medis.jam', 'desc')
+            ->groupBy('riwayat_barang_medis.kode_brng');
     }
 }
