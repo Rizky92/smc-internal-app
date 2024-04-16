@@ -93,7 +93,7 @@ class LaporanTransaksiGantung extends Component
                     'jam_reg'        => $model->jam_reg,
                     'diagnosa'       => $model->diagnosa ? 'Ada' : 'Tidak ada',
                     'tindakan'       => $model->ralan_perawat ? 'Ada' : 'Tidak ada',
-                    'obat'           => $model->obat ? 'Ada' : 'Tidak ada',
+                    'obat'           => $model->status_resep,
                     'lab'            => $model->status_order_lab,
                     'rad'            => $model->status_order_rad,
                 ]),
