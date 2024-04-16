@@ -312,13 +312,15 @@ class Obat extends Model
                 ->when($golongan === 'psikotropika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G01')));
     }
 
-    public function scopeDaftarRiwayat(Builder $query, string $kategori = 'obat', string $tanggal): Builder
+    public function scopeDaftarRiwayat(Builder $query, string $kategori = 'obat', string $tglAwal, string $tglAkhir): Builder
     {
-        if (empty($tanggal)) {
-            $tanggal = now()->format('Y-m-d');
+        if (empty($tglAwal)) {
+            $tglAwal = now()->subYear()->format('Y-m-d');
         }
-    
-        $tanggalSatuTahunSebelumnya = date('Y-m-d', strtotime('-1 year', strtotime($tanggal)));
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->format('Y-m-d');
+        }
     
         $sqlSelect = <<<SQL
             databarang.kode_brng,
@@ -345,7 +347,7 @@ class Obat extends Model
             ->selectRaw($sqlSelect)
             ->withCasts(['stok_akhir' => 'float', 'order_terakhir' => 'float', 'penggunaan_terakhir' => 'float'])
             ->join('riwayat_barang_medis', 'databarang.kode_brng', '=', 'riwayat_barang_medis.kode_brng')
-            ->whereBetween('riwayat_barang_medis.tanggal', [$tanggalSatuTahunSebelumnya, $tanggal])
+            ->whereBetween('riwayat_barang_medis.tanggal', [$tglAwal, $tglAkhir])
             ->when($kategori === 'obat', function ($query) {
                 return $query->where('databarang.kode_kategori', 'LIKE', '2.%');
             })

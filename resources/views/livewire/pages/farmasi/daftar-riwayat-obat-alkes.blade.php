@@ -28,12 +28,12 @@
                                 <x-table.th title="Stok Saat Ini" />
                                 <x-table.th title="Order Terakhir" />
                                 <x-table.th title="Keterangan Order Terakhir" />
-                                <x-table.th title="Tanggal Order Terakhir" />
+                                <x-table.th name="tanggal_order_terakhir" title="Tanggal Order Terakhir" />
                                 <x-table.th title="Status Order Terakhir" />
                                 <x-table.th title="Posisi Order Terakhir" />
                                 <x-table.th title="Penggunaan Terakhir" />
                                 <x-table.th title="Keterangan Penggunaan" />
-                                <x-table.th title="Tanggal Penggunaan Terakhir" />
+                                <x-table.th name="tanggal_penggunaan_terakhir" title="Tanggal Penggunaan Terakhir" />
                                 <x-table.th title="Status Penggunaan Terakhir" />
                                 <x-table.th title="Posisi Penggunaan Terakhir" />
                             </x-slot>
@@ -69,12 +69,12 @@
                                 <x-table.th title="Stok Saat Ini" />
                                 <x-table.th title="Order Terakhir" />
                                 <x-table.th title="Keterangan Order Terakhir" />
-                                <x-table.th title="Tanggal Order Terakhir" />
+                                <x-table.th name="tanggal_order_terakhir" title="Tanggal Order Terakhir" />
                                 <x-table.th title="Status Order Terakhir" />
                                 <x-table.th title="Posisi Order Terakhir" />
                                 <x-table.th title="Penggunaan Terakhir" />
                                 <x-table.th title="Keterangan Penggunaan" />
-                                <x-table.th title="Tanggal Penggunaan Terakhir" />
+                                <x-table.th name="tanggal_penggunaan_terakhir" title="Tanggal Penggunaan Terakhir" />
                                 <x-table.th title="Status Penggunaan Terakhir" />
                                 <x-table.th title="Posisi Penggunaan Terakhir" />
                             </x-slot>
