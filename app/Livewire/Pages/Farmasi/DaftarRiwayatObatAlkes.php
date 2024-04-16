@@ -23,16 +23,12 @@ class DaftarRiwayatObatAlkes extends Component
     use MenuTracker;
 
     /** @var string */
-    public $tglAwal;
-
-    /** @var string */
-    public $tglAkhir;
+    public $tanggal;
 
     protected function queryString(): array
     {
         return [
-            'tglAwal' => ['except' => now()->subYear()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tanggal' => ['except' => now()->format('Y-m-d'), 'as' => 'tanggal'],
         ];
     }
 
@@ -41,6 +37,7 @@ class DaftarRiwayatObatAlkes extends Component
         $this->defaultValues();
     }
 
+    
     public function render(): View
     {
         return view('livewire.pages.farmasi.daftar-riwayat-obat-alkes')
@@ -50,31 +47,30 @@ class DaftarRiwayatObatAlkes extends Component
     public function getDataRiwayatObatProperty()
     {
         return $this->isDeferred ? [] : Obat::query()
-            ->daftarRiwayat('obat', $this->tglAwal, $this->tglAkhir)
+            ->daftarRiwayat('obat',$this->tanggal)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
-            ->paginate($this->perpage, ['*'], 'page_obat');
+            ->paginate($this->perpage, ['*'], 'page-obat');
     }
 
     public function getDataRiwayatAlkesProperty()
     {
         return $this->isDeferred ? [] : Obat::query()
-            ->daftarRiwayat('alkes', $this->tglAwal, $this->tglAkhir)
+            ->daftarRiwayat('alkes',$this->tanggal)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
-            ->paginate($this->perpage, ['*'], 'page_alkes');
+            ->paginate($this->perpage, ['*'], 'page-alkes');
     }
 
     protected function defaultValues(): void
     {
-        $this->tglAwal = now()->subYear()->format('Y-m-d');
-        $this->tglAkhir = now()->format('Y-m-d');
+        $this->tanggal = now()->format('Y-m-d');
     }
 
     public function searchData(): void
     {
-        $this->resetPage('page_obat');
-        $this->resetPage('page_alkes');
+        $this->resetPage('page-obat');
+        $this->resetPage('page-alkes');
 
         $this->emit('$refresh');
     }
@@ -99,11 +95,11 @@ class DaftarRiwayatObatAlkes extends Component
 
         return [
             'obat' => Obat::query()
-                ->daftarRiwayat('obat', $this->tglAwal, $this->tglAkhir)
+                ->daftarRiwayat('obat', $this->tanggal)
                 ->cursor()
                 ->map($map),
             'alkes' => Obat::query()
-                ->daftarRiwayat('alkes', $this->tglAwal, $this->tglAkhir)
+                ->daftarRiwayat('alkes', $this->tanggal)
                 ->cursor()
                 ->map($map),
         ];
@@ -130,13 +126,16 @@ class DaftarRiwayatObatAlkes extends Component
 
     protected function pageHeaders(): array
     {
-        $periodeAwal = carbon($this->tglAwal);
-        $periodeAkhir = carbon($this->tglAkhir);
+        $periodeAwalCarbon = \Carbon\Carbon::parse($this->tanggal)->subYear();
+        $periodeAwal = $periodeAwalCarbon->format('Y-m-d');
+        $periodeAkhir = \Carbon\Carbon::parse($this->tanggal)->format('Y-m-d');
 
-        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s/d ' . $periodeAkhir->translatedFormat('d F Y');
-
-        if ($periodeAwal->isSameDay($periodeAkhir)) {
-            $periode = $periodeAwal->translatedFormat('d F Y');
+        $periodeAkhirCarbon = now()->createFromDate($periodeAkhir);
+        
+        $periode = 'Periode ' . $periodeAwal . ' s/d ' . $periodeAkhirCarbon->translatedFormat('d F Y');
+        
+        if ($periodeAkhir !== now()->format('Y-m-d')) {
+            $periode .= ' (' . $periodeAwalCarbon->translatedFormat('d F Y') . ' s/d ' . $periodeAkhirCarbon->translatedFormat('d F Y') . ')';
         }
 
         return [
