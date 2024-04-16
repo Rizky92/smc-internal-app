@@ -126,16 +126,13 @@ class DaftarRiwayatObatAlkes extends Component
 
     protected function pageHeaders(): array
     {
-        $periodeAwalCarbon = \Carbon\Carbon::parse($this->tanggal)->subYear();
-        $periodeAwal = $periodeAwalCarbon->format('Y-m-d');
-        $periodeAkhir = \Carbon\Carbon::parse($this->tanggal)->format('Y-m-d');
+        $periodeAwal = carbon($this->tanggal)->subYear();
+        $periodeAkhir = carbon($this->tanggal);
+        
+        $periode = 'Periode '.$periodeAwal->translatedFormat('d F Y').' s.d. '.$periodeAkhir->translatedFormat('d F Y');
 
-        $periodeAkhirCarbon = now()->createFromDate($periodeAkhir);
-        
-        $periode = 'Periode ' . $periodeAwal . ' s/d ' . $periodeAkhirCarbon->translatedFormat('d F Y');
-        
-        if ($periodeAkhir !== now()->format('Y-m-d')) {
-            $periode .= ' (' . $periodeAwalCarbon->translatedFormat('d F Y') . ' s/d ' . $periodeAkhirCarbon->translatedFormat('d F Y') . ')';
+        if ($periodeAwal->isSameDay($periodeAkhir)) {
+            $periode = $periodeAwal->translatedFormat('d F Y');
         }
 
         return [

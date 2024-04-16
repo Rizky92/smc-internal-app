@@ -318,7 +318,7 @@ class Obat extends Model
             $tanggal = now()->format('Y-m-d');
         }
     
-        $tanggalSatuTahunSebelumnya = date('Y-m-d', strtotime('-1 year', strtotime($tanggal)));
+        $tanggalSatuTahunSebelumnya = carbon($tanggal)->subYear()->format('Y-m-d');
     
         $sqlSelect = <<<SQL
             databarang.kode_brng,
@@ -346,12 +346,9 @@ class Obat extends Model
             ->withCasts(['stok_akhir' => 'float', 'order_terakhir' => 'float', 'penggunaan_terakhir' => 'float'])
             ->join('riwayat_barang_medis', 'databarang.kode_brng', '=', 'riwayat_barang_medis.kode_brng')
             ->whereBetween('riwayat_barang_medis.tanggal', [$tanggalSatuTahunSebelumnya, $tanggal])
-            ->when($kategori === 'obat', function ($query) {
-                return $query->where('databarang.kode_kategori', 'LIKE', '2.%');
-            })
-            ->when($kategori === 'alkes', function ($query) {
-                return $query->where('databarang.kode_kategori', 'LIKE', '3.%');
-            })
+            ->where(fn (Builder $query): Builder => $query
+                ->when($kategori === 'obat', fn (Builder $q): Builder => $q->where('databarang.kode_kategori', 'like', '2.%'))
+                ->when($kategori === 'alkes', fn (Builder $q): Builder => $q->where('databarang.kode_kategori', 'like', '3.%')))
             ->orderBy('riwayat_barang_medis.tanggal', 'desc', 'riwayat_barang_medis.jam', 'desc')
             ->groupBy('riwayat_barang_medis.kode_brng');
     }
