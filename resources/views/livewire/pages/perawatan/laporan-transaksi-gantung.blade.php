@@ -71,7 +71,7 @@
                             <x-table.td>{{ $item->jam_reg }}</x-table.td>
                             <x-table.td>{{ $item->diagnosa ? 'Ada' : 'Tidak ada' }}</x-table.td>
                             <x-table.td>{{ $item->ralan_perawat ? 'Ada' : 'Tidak ada' }}</x-table.td>
-                            <x-table.td>{{ $item->obat ? 'Ada' : 'Tidak ada' }}</x-table.td>
+                            <x-table.td>{{ $item->status_resep }}</x-table.td>
                             <x-table.td>{{ $item->status_order_lab }}</x-table.td>
                             <x-table.td>{{ $item->status_order_rad }}</x-table.td>
                         </x-table.tr>

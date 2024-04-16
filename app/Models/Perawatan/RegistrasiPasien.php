@@ -4,6 +4,7 @@ namespace App\Models\Perawatan;
 
 use App\Database\Eloquent\Model;
 use App\Models\Farmasi\PemberianObat;
+use App\Models\Farmasi\ResepObat;
 use App\Models\Kepegawaian\Dokter;
 use App\Models\Laboratorium\HasilPeriksaLab;
 use App\Models\Laboratorium\PermintaanLabMB;
@@ -225,25 +226,29 @@ class RegistrasiPasien extends Model
 
     public function statusOrderLab(): Attribute
     {
-        return Attribute::get(function ($_, array $attributes): ?string {
+        return Attribute::get(function ($_, array $attributes): string {
             if (
                 ! $this->relationLoaded('permintaanLabPK') &&
-                ! $this->relationLoaded('permintaanLabPA')
+                ! $this->relationLoaded('permintaanLabPA') &&
+                ! $this->relationLoaded('permintaanLabMB')
             ) {
-                return null;
+                return 'Tidak Ada';
             }
 
-            if (
-                $this->permintaanLabPK->isEmpty() &&
-                $this->permintaanLabPA->isEmpty()
-            ) {
-                return 'Tidak ada';
+            $adaOrderLab = $this->permintaanLabPK->isNotEmpty()
+                         + $this->permintaanLabPA->isNotEmpty()
+                         + $this->permintaanLabMB->isNotEmpty();
+            $adaOrderLab *= 10;
+
+            $statusOrder = $this->permintaanLabPK->containsStrict('tgl_hasil', '0000-00-00')
+                         + $this->permintaanLabPA->containsStrict('tgl_hasil', '0000-00-00')
+                         + $this->permintaanLabMB->containsStrict('tgl_hasil', '0000-00-00');
+
+            if ($adaOrderLab === 0) {
+                return 'Tidak Ada';
             }
 
-            $statusOrderPK = optional($this->permintaanLabPK)->containsStrict('status_order', 'Sudah Dilayani');
-            $statusOrderPA = optional($this->permintaanLabPA)->containsStrict('status_order', 'Sudah Dilayani');
-
-            return ($statusOrderPK || $statusOrderPA)
+            return ($adaOrderLab + $statusOrder) % 10 === 0
                 ? 'Sudah Dilayani'
                 : 'Belum Dilayani';
         });
@@ -251,18 +256,33 @@ class RegistrasiPasien extends Model
 
     public function statusOrderRad(): Attribute
     {
-        return Attribute::get(function ($_, array $attributes): ?string {
+        return Attribute::get(function ($_, array $attributes): string {
             if (! $this->relationLoaded('permintaanRadiologi')) {
-                return null;
+                return 'Tidak Ada';
             }
 
             if ($this->permintaanRadiologi->isEmpty()) {
-                return 'Tidak ada';
+                return 'Tidak Ada';
             }
 
-            return optional($this->permintaanRadiologi)->containsStrict('status_order', 'Sudah Dilayani')
-                ? 'Sudah Dilayani'
-                : 'Belum Dilayani';
+            return $this->permintaanRadiologi->every(fn (PermintaanRadiologi $rad): bool => $rad->tgl_hasil === '0000-00-00' || empty($rad->tgl_hasil))
+                ? 'Belum Dilayani' : 'Sudah Dilayani';
+        });
+    }
+
+    public function statusResep(): Attribute
+    {
+        return Attribute::get(function ($_, array $attributes): string {
+            if (! $this->relationLoaded('resepObat')) {
+                return 'Tidak Ada';
+            }
+
+            if ($this->resepObat->isEmpty()) {
+                return 'Tidak Ada';
+            }
+
+            return $this->resepObat->every(fn (ResepObat $resep): bool => $resep->tgl_perawatan === '0000-00-00' || empty($resep->tgl_perawatan))
+                ? 'Belum Dilayani' : 'Sudah Dilayani';
         });
     }
 
@@ -324,6 +344,11 @@ class RegistrasiPasien extends Model
     public function hasilRadiologi(): HasMany
     {
         return $this->hasMany(HasilPeriksaRadiologi::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function resepObat(): HasMany
+    {
+        return $this->hasMany(ResepObat::class, 'no_rawat', 'no_rawat');
     }
 
     public function pemberianObat(): HasMany
@@ -775,27 +800,21 @@ SQL;
         }
 
         $sqlSelect = <<<'SQL'
-            dokter.nm_dokter,
-            reg_periksa.no_rkm_medis,
-            pasien.nm_pasien,
-            poliklinik.nm_poli,
-            reg_periksa.p_jawab,
-            reg_periksa.almt_pj,
-            reg_periksa.hubunganpj,
-            coalesce(penjab.nama_perusahaan, penjab.png_jawab) penjamin,
-            reg_periksa.stts,
-            reg_periksa.no_rawat,
-            reg_periksa.tgl_registrasi,
-            reg_periksa.jam_reg
-        SQL;
+dokter.nm_dokter,
+reg_periksa.no_rkm_medis,
+pasien.nm_pasien,
+poliklinik.nm_poli,
+reg_periksa.p_jawab,
+reg_periksa.almt_pj,
+reg_periksa.hubunganpj,
+coalesce(penjab.nama_perusahaan, penjab.png_jawab) penjamin,
+reg_periksa.stts,
+reg_periksa.no_rawat,
+reg_periksa.tgl_registrasi,
+reg_periksa.jam_reg
+SQL;
 
         $this->addSearchConditions([
-            'reg_periksa.no_rawat',
-            'reg_periksa.no_rkm_medis',
-            'reg_periksa.kd_poli',
-            'reg_periksa.p_jawab',
-            'reg_periksa.almt_pj',
-            'reg_periksa.kd_pj',
             'pasien.nm_pasien',
             'coalesce(penjab.nama_perusahaan, penjab.png_jawab, "-")',
             'dokter.nm_dokter',
@@ -808,14 +827,13 @@ SQL;
             ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->leftJoin('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->leftJoin('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
-            ->with(['permintaanLabPK', 'permintaanLabPA', 'permintaanRadiologi'])
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
             ->when($jenis !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.status_lanjut', $jenis))
             ->when($status !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.stts', $status))
             ->where('reg_periksa.status_bayar', 'belum bayar')
+            ->with(['permintaanLabPK', 'permintaanLabPA', 'permintaanLabMB', 'permintaanRadiologi', 'resepObat'])
             ->withExists([
                 'diagnosa as diagnosa' => fn (Builder $q): Builder => $q->where('status', $jenis),
-                'pemberianObat as obat',
                 'tindakanRalanPerawat as ralan_perawat',
             ]);
     }
@@ -831,19 +849,19 @@ SQL;
         }
 
         $sqlSelect = <<<'SQL'
-            reg_periksa.no_rawat,
-            reg_periksa.tgl_registrasi,
-            reg_periksa.no_rkm_medis,
-            pasien.nm_pasien,
-            pasien.no_ktp,
-            databarang.nama_brng,
-            sum(detail_pemberian_obat.jml) as total,
-            bangsal.nm_bangsal,
-            reg_periksa.status_lanjut,
-            penjab.png_jawab,
-            pasien.no_tlp,
-            pasien.alamat
-        SQL;
+reg_periksa.no_rawat,
+reg_periksa.tgl_registrasi,
+reg_periksa.no_rkm_medis,
+pasien.nm_pasien,
+pasien.no_ktp,
+databarang.nama_brng,
+sum(detail_pemberian_obat.jml) as total,
+bangsal.nm_bangsal,
+reg_periksa.status_lanjut,
+penjab.png_jawab,
+pasien.no_tlp,
+pasien.alamat
+SQL;
 
         $this->addSearchConditions([
             'pasien.nm_pasien',
