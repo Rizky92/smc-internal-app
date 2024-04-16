@@ -100,7 +100,6 @@ Route::prefix('admin')
                 Route::get('laporan-hasil-pemeriksaan', Perawatan\LaporanHasilPemeriksaan::class)
                     ->name('laporan-hasil-pemeriksaan')
                     ->middleware('can:perawatan.laporan-hasil-pemeriksaan.read');
-
             });
 
         Route::prefix('laboratorium')

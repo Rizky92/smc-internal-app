@@ -30,6 +30,7 @@ class Menu
                     'perawatan.daftar-pasien-ranap.read',
                     'perawatan.laporan-pasien-ranap.read',
                     'perawatan.laporan-transaksi-gantung.read',
+                    'perawatan.laporan-hasil-pemeriksaan.read',
                 ]),
                 'items' => [
                     [
