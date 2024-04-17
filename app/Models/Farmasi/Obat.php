@@ -323,33 +323,60 @@ class Obat extends Model
         $sqlSelect = <<<SQL
             databarang.kode_brng,
             databarang.nama_brng,
-            (select stok_akhir from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng order by rbm2.tanggal desc, rbm2.jam desc limit 1)as stok_akhir,
-            (select masuk from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.masuk != 0 order by rbm2.tanggal desc, rbm2.jam desc limit 1) as order_terakhir,
-            (select keterangan from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.masuk != 0 order by rbm2.tanggal desc, rbm2.jam desc limit 1) as keterangan_order_terakhir,
-            (select tanggal from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.masuk != 0 order by rbm2.tanggal desc, rbm2.jam desc limit 1) as tanggal_order_terakhir,
-            (select status from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.masuk != 0 order by rbm2.tanggal desc, rbm2.jam desc limit 1) as status_order_terakhir,
-            (select posisi from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.masuk != 0 order by rbm2.tanggal desc, rbm2.jam desc limit 1) as posisi_order_terakhir,
-            (select keluar from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.keluar != 0 order by rbm2.tanggal desc, rbm2.jam desc limit 1) as penggunaan_terakhir,
-            (select keterangan from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.keluar != 0 order by rbm2.tanggal desc, rbm2.jam desc limit 1) as keterangan_penggunaan_terakhir,
-            (select tanggal from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.keluar != 0 order by rbm2.tanggal desc, rbm2.jam desc limit 1) as tanggal_penggunaan_terakhir,
-            (select status from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.keluar != 0 order by rbm2.tanggal desc, rbm2.jam desc limit 1) as status_penggunaan_terakhir,
-            (select posisi from riwayat_barang_medis as rbm2 where rbm2.kode_brng = riwayat_barang_medis.kode_brng and rbm2.keluar != 0 order by rbm2.tanggal desc, rbm2.jam desc limit 1) as posisi_penggunaan_terakhir
+            rbm.stok_akhir,
+            masuk_terakhir.masuk as order_terakhir,
+            masuk_terakhir.keterangan as keterangan_order_terakhir,
+            masuk_terakhir.tanggal as tanggal_order_terakhir,
+            masuk_terakhir.status as status_order_terakhir,
+            masuk_terakhir.posisi as posisi_order_terakhir,
+            keluar_terakhir.keluar as penggunaan_terakhir,
+            keluar_terakhir.keterangan as keterangan_penggunaan_terakhir,
+            keluar_terakhir.tanggal as tanggal_penggunaan_terakhir,
+            keluar_terakhir.status as status_penggunaan_terakhir,
+            keluar_terakhir.posisi as posisi_penggunaan_terakhir
         SQL;
     
         $this->addSearchConditions([
-            'databarang.nama_brng',
-            'riwayat_barang_medis.tanggal',
+            'databarang.kode_brng',
+            'nama_brng',
         ]);
 
         return $query
             ->selectRaw($sqlSelect)
             ->withCasts(['stok_akhir' => 'float', 'order_terakhir' => 'float', 'penggunaan_terakhir' => 'float'])
-            ->join('riwayat_barang_medis', 'databarang.kode_brng', '=', 'riwayat_barang_medis.kode_brng')
-            ->whereBetween('riwayat_barang_medis.tanggal', [$tanggalSatuTahunSebelumnya, $tanggal])
-            ->where(fn (Builder $query): Builder => $query
-                ->when($kategori === 'obat', fn (Builder $q): Builder => $q->where('databarang.kode_kategori', 'like', '2.%'))
-                ->when($kategori === 'alkes', fn (Builder $q): Builder => $q->where('databarang.kode_kategori', 'like', '3.%')))
-            ->orderBy('riwayat_barang_medis.tanggal', 'desc', 'riwayat_barang_medis.jam', 'desc')
-            ->groupBy('riwayat_barang_medis.kode_brng');
-    }
+            ->join('riwayat_barang_medis as rbm', function ($join) {
+                $join->on('databarang.kode_brng', '=', 'rbm.kode_brng');
+                $join->whereIn(DB::raw('(rbm.kode_brng, rbm.tanggal, rbm.jam)'), function ($query) {
+                    $query->select(DB::raw('rbm.kode_brng, MAX(rbm.tanggal), MAX(rbm.jam)'))
+                        ->from('riwayat_barang_medis as rbm')
+                        ->where('rbm.masuk', '!=', 0)
+                        ->orderBy('rbm.tanggal', 'desc')
+                        ->orderBy('rbm.jam', 'desc')
+                        ->groupBy('rbm.kode_brng');
+                });
+            })
+            ->leftJoin('riwayat_barang_medis as masuk_terakhir', function ($join) {
+                $join->on('databarang.kode_brng', '=', 'masuk_terakhir.kode_brng')
+                    ->on('rbm.tanggal', '=', 'masuk_terakhir.tanggal')
+                    ->on('rbm.jam', '=', 'masuk_terakhir.jam')
+                    ->where('masuk_terakhir.masuk', '!=', 0);
+            })
+            ->leftJoin('riwayat_barang_medis as keluar_terakhir', function ($join) {
+                $join->on('databarang.kode_brng', '=', 'keluar_terakhir.kode_brng')
+                    ->on('rbm.tanggal', '=', 'keluar_terakhir.tanggal')
+                    ->on('rbm.jam', '=', 'keluar_terakhir.jam')
+                    ->where('keluar_terakhir.keluar', '!=', 0);
+            })
+            ->whereBetween('rbm.tanggal', [$tanggalSatuTahunSebelumnya, $tanggal])
+            ->where(function ($query) use ($kategori) {
+                if ($kategori === 'obat') {
+                    $query->where('databarang.kode_kategori', 'like', '2.%');
+                } elseif ($kategori === 'alkes') {
+                    $query->where('databarang.kode_kategori', 'like', '3.%');
+                }
+            })
+            ->orderBy('masuk_terakhir.tanggal', 'desc')
+            ->orderBy('masuk_terakhir.jam', 'desc')
+            ->groupBy('databarang.kode_brng');
+    }    
 }

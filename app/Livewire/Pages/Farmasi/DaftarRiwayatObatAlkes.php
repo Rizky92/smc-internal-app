@@ -82,15 +82,15 @@ class DaftarRiwayatObatAlkes extends Component
             'nama_brng'                         => $model->nama_brng,
             'stok_akhir'                        => $model->stok_akhir,
             'order_terakhir'                    => $model->order_terakhir ?? '-',
-            'keterangan_order_terakhir'         => $model->keterangan_order_terakhir ?? '-',
-            'tanggal_order_terakhir'            => $model->tanggal_order_terakhir ?? '-',
-            'status_order_terakhir'             => $model->status_order_terakhir ?? '-',
-            'posisi_order_terakhir'             => $model->posisi_order_terakhir ?? '-',
             'penggunaan_terakhir'               => $model->penggunaan_terakhir ?? '-',
-            'keterangan_penggunaan_terakhir'    => $model->keterangan_penggunaan_terakhir ?? '-',
+            'tanggal_order_terakhir'            => $model->tanggal_order_terakhir ?? '-',
             'tanggal_penggunaan_terakhir'       => $model->tanggal_penggunaan_terakhir ?? '-',
+            'status_order_terakhir'             => $model->status_order_terakhir ?? '-',
             'status_penggunaan_terakhir'        => $model->status_penggunaan_terakhir ?? '-',
+            'posisi_order_terakhir'             => $model->posisi_order_terakhir ?? '-',
             'posisi_penggunaan_terakhir'        => $model->posisi_penggunaan_terakhir ?? '-',
+            'keterangan_order_terakhir'         => $model->keterangan_order_terakhir ?? '-',
+            'keterangan_penggunaan_terakhir'    => $model->keterangan_penggunaan_terakhir ?? '-',
         ];
 
         return [
@@ -112,15 +112,15 @@ class DaftarRiwayatObatAlkes extends Component
             'Nama Item',
             'Stok Akhir',
             'Order Terakhir',
-            'Keterangan Order Terakhir',
-            'Tanggal Order Terakhir',
-            'Status Order Terakhir',
-            'Posisi Order Terakhir',
             'Penggunaan Terakhir',
-            'Keterangan Penggunaan Terakhir',
+            'Tanggal Order Terakhir',
             'Tanggal Penggunaan Terakhir',
+            'Status Order Terakhir',
             'Status Penggunaan Terakhir',
+            'Posisi Order Terakhir',
             'Posisi Penggunaan Terakhir',
+            'Keterangan Order Terakhir',
+            'Keterangan Penggunaan Terakhir',
         ];
     }
 

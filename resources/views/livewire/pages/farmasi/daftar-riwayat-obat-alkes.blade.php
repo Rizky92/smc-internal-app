@@ -27,15 +27,15 @@
                                 <x-table.th title="Nama Item" />
                                 <x-table.th title="Stok Saat Ini" />
                                 <x-table.th title="Order Terakhir" />
-                                <x-table.th title="Keterangan Order Terakhir" />
-                                <x-table.th name="tanggal_order_terakhir" title="Tanggal Order Terakhir" />
-                                <x-table.th title="Status Order Terakhir" />
-                                <x-table.th title="Posisi Order Terakhir" />
                                 <x-table.th title="Penggunaan Terakhir" />
-                                <x-table.th title="Keterangan Penggunaan" />
+                                <x-table.th name="tanggal_order_terakhir" title="Tanggal Order Terakhir" />
                                 <x-table.th name="tanggal_penggunaan_terakhir" title="Tanggal Penggunaan Terakhir" />
+                                <x-table.th title="Status Order Terakhir" />
                                 <x-table.th title="Status Penggunaan Terakhir" />
+                                <x-table.th title="Posisi Order Terakhir" />
                                 <x-table.th title="Posisi Penggunaan Terakhir" />
+                                <x-table.th title="Keterangan Order Terakhir" />
+                                <x-table.th title="Keterangan Penggunaan Terakhir" />
                             </x-slot>
                             <x-slot name="body">
                                 @forelse ($this->dataRiwayatObat as $item)
@@ -44,15 +44,15 @@
                                         <x-table.td>{{ $item->nama_brng }}</x-table.td>
                                         <x-table.td>{{ $item->stok_akhir }}</x-table.td>
                                         <x-table.td>{{ $item->order_terakhir ?? '-' }}</x-table.td>
-                                        <x-table.td>{{ $item->keterangan_order_terakhir ?? '-' }}</x-table.td>
-                                        <x-table.td>{{ $item->tanggal_order_terakhir ?? '-' }}</x-table.td>
-                                        <x-table.td>{{ $item->status_order_terakhir ?? '-' }}</x-table.td>
-                                        <x-table.td>{{ $item->posisi_order_terakhir ?? '-' }}</x-table.td>
                                         <x-table.td>{{ $item->penggunaan_terakhir ?? '-' }}</x-table.td>
-                                        <x-table.td>{{ $item->keterangan_penggunaan_terakhir ?? '-' }}</x-table.td>
+                                        <x-table.td>{{ $item->tanggal_order_terakhir ?? '-' }}</x-table.td>
                                         <x-table.td>{{ $item->tanggal_penggunaan_terakhir ?? '-' }}</x-table.td>
+                                        <x-table.td>{{ $item->status_order_terakhir ?? '-' }}</x-table.td>
                                         <x-table.td>{{ $item->status_penggunaan_terakhir ?? '-' }}</x-table.td>
+                                        <x-table.td>{{ $item->posisi_order_terakhir ?? '-' }}</x-table.td>
                                         <x-table.td>{{ $item->posisi_penggunaan_terakhir ?? '-' }}</x-table.td>
+                                        <x-table.td>{{ $item->keterangan_order_terakhir ?? '-' }}</x-table.td>
+                                        <x-table.td>{{ $item->keterangan_penggunaan_terakhir ?? '-' }}</x-table.td>
                                     </x-table.tr>
                                 @empty
                                     <x-table.tr-empty colspan="13" padding />
@@ -68,15 +68,15 @@
                                 <x-table.th title="Nama Item" />
                                 <x-table.th title="Stok Saat Ini" />
                                 <x-table.th title="Order Terakhir" />
-                                <x-table.th title="Keterangan Order Terakhir" />
-                                <x-table.th name="tanggal_order_terakhir" title="Tanggal Order Terakhir" />
-                                <x-table.th title="Status Order Terakhir" />
-                                <x-table.th title="Posisi Order Terakhir" />
                                 <x-table.th title="Penggunaan Terakhir" />
-                                <x-table.th title="Keterangan Penggunaan" />
+                                <x-table.th name="tanggal_order_terakhir" title="Tanggal Order Terakhir" />
                                 <x-table.th name="tanggal_penggunaan_terakhir" title="Tanggal Penggunaan Terakhir" />
+                                <x-table.th title="Status Order Terakhir" />
                                 <x-table.th title="Status Penggunaan Terakhir" />
+                                <x-table.th title="Posisi Order Terakhir" />
                                 <x-table.th title="Posisi Penggunaan Terakhir" />
+                                <x-table.th title="Keterangan Order Terakhir" />
+                                <x-table.th title="Keterangan Penggunaan Terakhir" />
                             </x-slot>
                             <x-slot name="body">
                                 @forelse ($this->dataRiwayatAlkes as $item)
@@ -85,15 +85,15 @@
                                         <x-table.td>{{ $item->nama_brng }}</x-table.td>
                                         <x-table.td>{{ $item->stok_akhir }}</x-table.td>
                                         <x-table.td>{{ $item->order_terakhir ?? '-' }}</x-table.td>
-                                        <x-table.td>{{ $item->keterangan_order_terakhir ?? '-' }}</x-table.td>
-                                        <x-table.td>{{ $item->tanggal_order_terakhir ?? '-' }}</x-table.td>
-                                        <x-table.td>{{ $item->status_order_terakhir ?? '-' }}</x-table.td>
-                                        <x-table.td>{{ $item->posisi_order_terakhir ?? '-' }}</x-table.td>
                                         <x-table.td>{{ $item->penggunaan_terakhir ?? '-' }}</x-table.td>
-                                        <x-table.td>{{ $item->keterangan_penggunaan_terakhir ?? '-' }}</x-table.td>
+                                        <x-table.td>{{ $item->tanggal_order_terakhir ?? '-' }}</x-table.td>
                                         <x-table.td>{{ $item->tanggal_penggunaan_terakhir ?? '-' }}</x-table.td>
+                                        <x-table.td>{{ $item->status_order_terakhir ?? '-' }}</x-table.td>
                                         <x-table.td>{{ $item->status_penggunaan_terakhir ?? '-' }}</x-table.td>
+                                        <x-table.td>{{ $item->posisi_order_terakhir ?? '-' }}</x-table.td>
                                         <x-table.td>{{ $item->posisi_penggunaan_terakhir ?? '-' }}</x-table.td>
+                                        <x-table.td>{{ $item->keterangan_order_terakhir ?? '-' }}</x-table.td>
+                                        <x-table.td>{{ $item->keterangan_penggunaan_terakhir ?? '-' }}</x-table.td>
                                     </x-table.tr>
                                 @empty
                                     <x-table.tr-empty colspan="13" padding />
