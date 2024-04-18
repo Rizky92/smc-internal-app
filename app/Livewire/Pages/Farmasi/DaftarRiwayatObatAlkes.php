@@ -10,6 +10,7 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Farmasi\Obat;
 use App\View\Components\BaseLayout;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -23,12 +24,20 @@ class DaftarRiwayatObatAlkes extends Component
     use MenuTracker;
 
     /** @var string */
-    public $tanggal;
+    public $tglAwal;
+
+    /** @var string */
+    public $tglAkhir;
+
+    /** @var bool */
+    public $barangNol;
 
     protected function queryString(): array
     {
         return [
-            'tanggal' => ['except' => now()->format('Y-m-d'), 'as' => 'tanggal'],
+            'tglAwal'  => ['except' => now()->subYear()->toDateString(), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->toDateString(), 'as' => 'tgl_akhir'],
+            'barangNol' => ['except' => false, 'as' => 'barang_nol'],
         ];
     }
 
@@ -36,8 +45,7 @@ class DaftarRiwayatObatAlkes extends Component
     {
         $this->defaultValues();
     }
-
-    
+  
     public function render(): View
     {
         return view('livewire.pages.farmasi.daftar-riwayat-obat-alkes')
@@ -47,7 +55,7 @@ class DaftarRiwayatObatAlkes extends Component
     public function getDataRiwayatObatProperty()
     {
         return $this->isDeferred ? [] : Obat::query()
-            ->daftarRiwayat('obat',$this->tanggal)
+            ->daftarRiwayat('obat',$this->tglAwal, $this->tglAkhir, $this->barangNol)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage, ['*'], 'page-obat');
@@ -56,7 +64,7 @@ class DaftarRiwayatObatAlkes extends Component
     public function getDataRiwayatAlkesProperty()
     {
         return $this->isDeferred ? [] : Obat::query()
-            ->daftarRiwayat('alkes',$this->tanggal)
+            ->daftarRiwayat('alkes',$this->tglAwal, $this->tglAkhir, $this->barangNol)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage, ['*'], 'page-alkes');
@@ -64,7 +72,9 @@ class DaftarRiwayatObatAlkes extends Component
 
     protected function defaultValues(): void
     {
-        $this->tanggal = now()->format('Y-m-d');
+        $this->tglAwal = now()->subYear()->toDateString();
+        $this->tglAkhir = now()->toDateString();
+        $this->barangNol = false;
     }
 
     public function searchData(): void
@@ -81,25 +91,19 @@ class DaftarRiwayatObatAlkes extends Component
             'kode_brng'                         => $model->kode_brng,
             'nama_brng'                         => $model->nama_brng,
             'stok_akhir'                        => $model->stok_akhir,
-            'order_terakhir'                    => $model->order_terakhir ?? '-',
-            'penggunaan_terakhir'               => $model->penggunaan_terakhir ?? '-',
-            'tanggal_order_terakhir'            => $model->tanggal_order_terakhir ?? '-',
-            'tanggal_penggunaan_terakhir'       => $model->tanggal_penggunaan_terakhir ?? '-',
-            'status_order_terakhir'             => $model->status_order_terakhir ?? '-',
-            'status_penggunaan_terakhir'        => $model->status_penggunaan_terakhir ?? '-',
-            'posisi_order_terakhir'             => $model->posisi_order_terakhir ?? '-',
-            'posisi_penggunaan_terakhir'        => $model->posisi_penggunaan_terakhir ?? '-',
-            'keterangan_order_terakhir'         => $model->keterangan_order_terakhir ?? '-',
-            'keterangan_penggunaan_terakhir'    => $model->keterangan_penggunaan_terakhir ?? '-',
+            'order_terakhir'                    => $model->order_terakhir,
+            'penggunaan_terakhir'               => $model->penggunaan_terakhir,
+            'tanggal_order_terakhir'            => $model->tanggal_order_terakhir,
+            'tanggal_penggunaan_terakhir'       => $model->tanggal_penggunaan_terakhir,
         ];
 
         return [
             'obat' => Obat::query()
-                ->daftarRiwayat('obat', $this->tanggal)
+                ->daftarRiwayat('obat', $this->tglAwal, $this->tglAkhir, $this->barangNol)
                 ->cursor()
                 ->map($map),
             'alkes' => Obat::query()
-                ->daftarRiwayat('alkes', $this->tanggal)
+                ->daftarRiwayat('alkes', $this->tglAwal, $this->tglAkhir, $this->barangNol)
                 ->cursor()
                 ->map($map),
         ];
@@ -115,20 +119,14 @@ class DaftarRiwayatObatAlkes extends Component
             'Penggunaan Terakhir',
             'Tanggal Order Terakhir',
             'Tanggal Penggunaan Terakhir',
-            'Status Order Terakhir',
-            'Status Penggunaan Terakhir',
-            'Posisi Order Terakhir',
-            'Posisi Penggunaan Terakhir',
-            'Keterangan Order Terakhir',
-            'Keterangan Penggunaan Terakhir',
         ];
     }
 
     protected function pageHeaders(): array
     {
-        $periodeAwal = carbon($this->tanggal)->subYear();
-        $periodeAkhir = carbon($this->tanggal);
-        
+        $periodeAwal = carbon($this->tglAwal);
+        $periodeAkhir = carbon($this->tglAkhir);
+
         $periode = 'Periode '.$periodeAwal->translatedFormat('d F Y').' s.d. '.$periodeAkhir->translatedFormat('d F Y');
 
         if ($periodeAwal->isSameDay($periodeAkhir)) {
@@ -137,7 +135,7 @@ class DaftarRiwayatObatAlkes extends Component
 
         return [
             'RS Samarinda Medika Citra',
-            'Daftar Riwayat Obat/Alkes',
+            'Laporan Daftar Riwayat Obat/Alkes',
             now()->translatedFormat('d F Y'),
             $periode,
         ];
