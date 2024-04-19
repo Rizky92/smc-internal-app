@@ -58,7 +58,7 @@ class DaftarRiwayatObatAlkes extends Component
             ->daftarRiwayat('obat',$this->tglAwal, $this->tglAkhir, $this->barangNol)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
-            ->paginate($this->perpage, ['*'], 'page-obat');
+            ->paginate($this->perpage, ['*'], 'page_obat');
     }
 
     public function getDataRiwayatAlkesProperty()
@@ -67,7 +67,7 @@ class DaftarRiwayatObatAlkes extends Component
             ->daftarRiwayat('alkes',$this->tglAwal, $this->tglAkhir, $this->barangNol)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
-            ->paginate($this->perpage, ['*'], 'page-alkes');
+            ->paginate($this->perpage, ['*'], 'page_alkes');
     }
 
     protected function defaultValues(): void
@@ -79,8 +79,8 @@ class DaftarRiwayatObatAlkes extends Component
 
     public function searchData(): void
     {
-        $this->resetPage('page-obat');
-        $this->resetPage('page-alkes');
+        $this->resetPage('page_obat');
+        $this->resetPage('page_alkes');
 
         $this->emit('$refresh');
     }
@@ -95,6 +95,8 @@ class DaftarRiwayatObatAlkes extends Component
             'penggunaan_terakhir'               => $model->penggunaan_terakhir,
             'tanggal_order_terakhir'            => $model->tanggal_order_terakhir,
             'tanggal_penggunaan_terakhir'       => $model->tanggal_penggunaan_terakhir,
+            'posisi_order_terakhir'             => $model->posisi_order_terakhir,
+            'posisi_penggunaan_terakhir'        => $model->posisi_penggunaan_terakhir,
         ];
 
         return [
@@ -119,6 +121,8 @@ class DaftarRiwayatObatAlkes extends Component
             'Penggunaan Terakhir',
             'Tanggal Order Terakhir',
             'Tanggal Penggunaan Terakhir',
+            'Posisi Order Terakhir',
+            'Posisi Penggunaan Terakhir',
         ];
     }
 

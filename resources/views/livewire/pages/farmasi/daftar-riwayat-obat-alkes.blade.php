@@ -24,25 +24,31 @@
                     <x-navtabs.content id="obat">
                         <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                             <x-slot name="columns">
+                                <x-table.th title="Kode Item" />
                                 <x-table.th title="Nama Item" />
                                 <x-table.th title="Stok Saat Ini" />
                                 <x-table.th title="Order Terakhir" />
                                 <x-table.th title="Penggunaan Terakhir" />
-                                <x-table.th title="Tanggal Order Terakhir" />
-                                <x-table.th title="Tanggal Penggunaan Terakhir" />
+                                <x-table.th name="tanggal_order_terakhir" title="Tanggal Order Terakhir" />
+                                <x-table.th name="tanggal_penggunaan_terakhir" title="Tanggal Penggunaan Terakhir" />
+                                <x-table.th title="Posisi Order Terakhir" />
+                                <x-table.th title="Posisi Penggunaan Terakhir" />
                             </x-slot>
                             <x-slot name="body">
                                 @forelse ($this->dataRiwayatObat as $item)
                                     <x-table.tr>
+                                        <x-table.td>{{ $item->kode_brng }}</x-table.td>
                                         <x-table.td>{{ $item->nama_brng }}</x-table.td>
                                         <x-table.td>{{ $item->stok_akhir }}</x-table.td>
                                         <x-table.td>{{ $item->order_terakhir}}</x-table.td>
                                         <x-table.td>{{ $item->penggunaan_terakhir}}</x-table.td>
                                         <x-table.td>{{ $item->tanggal_order_terakhir}}</x-table.td>
                                         <x-table.td>{{ $item->tanggal_penggunaan_terakhir}}</x-table.td>
+                                        <x-table.td>{{ $item->posisi_order_terakhir}}</x-table.td>
+                                        <x-table.td>{{ $item->posisi_penggunaan_terakhir}}</x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty colspan="13" padding />
+                                    <x-table.tr-empty colspan="9" padding />
                                 @endforelse
                             </x-slot>
                         </x-table>
@@ -51,25 +57,31 @@
                     <x-navtabs.content id="alkes">
                         <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                             <x-slot name="columns">
+                                <x-table.th title="Kode Item" />
                                 <x-table.th title="Nama Item" />
                                 <x-table.th title="Stok Saat Ini" />
                                 <x-table.th title="Order Terakhir" />
                                 <x-table.th title="Penggunaan Terakhir" />
-                                <x-table.th title="Tanggal Order Terakhir" />
-                                <x-table.th title="Tanggal Penggunaan Terakhir" />
+                                <x-table.th name="tanggal_order_terakhir" title="Tanggal Order Terakhir" />
+                                <x-table.th name="tanggal_penggunaan_terakhir" title="Tanggal Penggunaan Terakhir" />
+                                <x-table.th title="Posisi Order Terakhir" />
+                                <x-table.th title="Posisi Penggunaan Terakhir" />
                             </x-slot>
                             <x-slot name="body">
                                 @forelse ($this->dataRiwayatAlkes as $item)
                                     <x-table.tr>
+                                        <x-table.td>{{ $item->kode_brng }}</x-table.td>
                                         <x-table.td>{{ $item->nama_brng }}</x-table.td>
                                         <x-table.td>{{ $item->stok_akhir }}</x-table.td>
                                         <x-table.td>{{ $item->order_terakhir}}</x-table.td>
                                         <x-table.td>{{ $item->penggunaan_terakhir}}</x-table.td>
                                         <x-table.td>{{ $item->tanggal_order_terakhir}}</x-table.td>
                                         <x-table.td>{{ $item->tanggal_penggunaan_terakhir}}</x-table.td>
+                                        <x-table.td>{{ $item->posisi_order_terakhir}}</x-table.td>
+                                        <x-table.td>{{ $item->posisi_penggunaan_terakhir}}</x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty colspan="13" padding />
+                                    <x-table.tr-empty colspan="9" padding />
                                 @endforelse
                             </x-slot>
                         </x-table>
