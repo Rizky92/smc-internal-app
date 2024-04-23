@@ -27,6 +27,11 @@ Breadcrumbs::for('admin.perawatan.laporan-transaksi-gantung', function (Trail $t
     $trail->push('Transaksi Gantung', route('admin.perawatan.laporan-transaksi-gantung'));
 });
 
+Breadcrumbs::for('admin.perawatan.laporan-hasil-pemeriksaan', function (Trail $trail): void {
+    $trail->parent('admin.perawatan');
+    $trail->push('Laporan Hasil Pemeriksaan', route('admin.perawatan.laporan-hasil-pemeriksaan'));
+});
+
 Breadcrumbs::for('admin.lab', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Laboratorium');
@@ -205,6 +210,11 @@ Breadcrumbs::for('admin.farmasi.laporan-pemakaian-obat-tb', function (Trail $tra
 Breadcrumbs::for('admin.farmasi.defecta-depo', function (Trail $trail): void {
     $trail->parent('admin.farmasi');
     $trail->push('Defecta Depo', route('admin.farmasi.defecta-depo'));
+});
+
+Breadcrumbs::for('admin.farmasi.daftar-riwayat-obat-alkes', function (Trail $trail): void {
+    $trail->parent('admin.farmasi');
+    $trail->push('Riwayat Obat Alkes', route('admin.farmasi.daftar-riwayat-obat-alkes'));
 });
 
 Breadcrumbs::for('admin.rekam-medis', function (Trail $trail): void {

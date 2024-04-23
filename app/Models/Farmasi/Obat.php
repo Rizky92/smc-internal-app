@@ -311,4 +311,60 @@ class Obat extends Model
                 ->when($golongan === 'narkotika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G07'))
                 ->when($golongan === 'psikotropika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G01')));
     }
+
+    public function scopeDaftarRiwayat(
+        Builder $query,
+        string $kategori = 'obat', 
+        string $tglAwal = '', 
+        string $tglAkhir = '', 
+        bool $hanyaTampilkanYangNol = false): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->subYear()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->format('Y-m-d');
+        }
+
+        $sqlSelect = <<<SQL
+            databarang.kode_brng,
+            databarang.nama_brng,
+            ifnull((select stok_akhir from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and riwayat_barang_medis.tanggal between ? and ? order by tanggal desc, jam desc limit 1), "-") stok_akhir,
+            ifnull((select masuk from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and masuk != 0 and riwayat_barang_medis.tanggal between ? and ? order by tanggal desc, jam desc limit 1), "-") order_terakhir,
+            ifnull((select concat(riwayat_barang_medis.tanggal, ' ', riwayat_barang_medis.jam) from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and masuk != 0 and riwayat_barang_medis.tanggal between ? and ? order by tanggal desc, jam desc limit 1), "-")  tanggal_order_terakhir,
+            ifnull((select posisi from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and masuk != 0 and riwayat_barang_medis.tanggal between ? and ? order by tanggal desc, jam desc limit 1), "-") posisi_order_terakhir,
+            ifnull((select keluar from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and keluar != 0 and riwayat_barang_medis.tanggal between ? and ? order by tanggal desc, jam desc limit 1), "-") penggunaan_terakhir,
+            ifnull((select concat (riwayat_barang_medis.tanggal, ' ', riwayat_barang_medis.jam) from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and keluar != 0 and riwayat_barang_medis.tanggal between ? and ? order by tanggal desc, jam desc limit 1), "-") tanggal_penggunaan_terakhir,
+            ifnull((select posisi from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and keluar != 0 and riwayat_barang_medis.tanggal between ? and ? order by tanggal desc, jam desc limit 1), "-") posisi_penggunaan_terakhir
+        SQL;
+    
+        $this->addSearchConditions([
+            'databarang.kode_brng',
+            'nama_brng',
+        ]);
+
+        return $query
+            ->selectRaw($sqlSelect, [
+                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir,
+            ])
+            ->join('riwayat_barang_medis', 'databarang.kode_brng', '=', 'riwayat_barang_medis.kode_brng')
+            ->withCasts(['stok_akhir' => 'float', 'order_terakhir' => 'float', 'penggunaan_terakhir' => 'float'])
+            ->whereBetween('riwayat_barang_medis.tanggal', [$tglAwal, $tglAkhir])
+            ->whereIn('riwayat_barang_medis.kd_bangsal', ['AP', 'IFA', 'IFG', 'IFI'])
+            ->where(fn (Builder $query): Builder => $query
+                ->when($kategori === 'obat', fn (Builder $q): Builder => $q->where('databarang.kode_kategori', 'like', '2.%'))
+                ->when($kategori === 'alkes', fn (Builder $q): Builder => $q->where('databarang.kode_kategori', 'like', '3.%')))
+            ->when($hanyaTampilkanYangNol, fn (Builder $query) => $query
+                ->whereRaw('ifnull((select stok_akhir from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and riwayat_barang_medis.tanggal between ? and ? order by tanggal desc, jam desc limit 1), 0) = 0', [$tglAwal, $tglAkhir]))
+            ->orderBy('riwayat_barang_medis.tanggal', 'desc')
+            ->orderBy('riwayat_barang_medis.jam', 'desc')
+            ->groupBy('databarang.kode_brng');
+    }
 }
