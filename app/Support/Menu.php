@@ -30,6 +30,7 @@ class Menu
                     'perawatan.daftar-pasien-ranap.read',
                     'perawatan.laporan-pasien-ranap.read',
                     'perawatan.laporan-transaksi-gantung.read',
+                    'perawatan.laporan-hasil-pemeriksaan.read',
                 ]),
                 'items' => [
                     [
@@ -52,6 +53,13 @@ class Menu
                         'icon'              => 'fas fa-file-alt',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('perawatan.laporan-transaksi-gantung.read'),
+                    ],
+                    [
+                        'name'              => 'Laporan Hasil Pemeriksaan',
+                        'url'               => route('admin.perawatan.laporan-hasil-pemeriksaan'),
+                        'icon'              => 'fas fa-file-alt',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('perawatan.laporan-hasil-pemeriksaan.read'),
                     ],
                 ],
             ],
@@ -259,6 +267,7 @@ class Menu
                     'farmasi.laporan-pemakaian-obat-morphine.read',
                     'farmasi.laporan-pemakaian-obat-tb.read',
                     'farmasi.defecta-depo.read',
+                    'farmasi.daftar-riwayat-obat-alkes.read'
                 ]),
                 'items' => [
                     [
@@ -332,6 +341,12 @@ class Menu
                         'icon'              => 'fas fa-shopping-cart',
                         'url'               => route('admin.farmasi.defecta-depo'),
                         'hasAnyPermissions' => $user->can('farmasi.defecta-depo.read'),
+                    ],
+                    [
+                        'name'              => 'Daftar Riwayat Obat/Alkes',
+                        'icon'              => 'fas fa-history',
+                        'url'               => route('admin.farmasi.daftar-riwayat-obat-alkes'),
+                        'hasAnyPermissions' => $user->can('farmasi.daftar-riwayat-obat-alkes.read'),
                     ],
                 ],
             ],

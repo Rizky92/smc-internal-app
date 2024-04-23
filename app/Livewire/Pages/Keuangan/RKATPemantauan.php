@@ -86,7 +86,8 @@ class RKATPemantauan extends Component
         $pemakaianAnggaran = PemakaianAnggaran::query()
             ->selectRaw('anggaran_bidang_id, month(tgl_dipakai) as bulan, sum(pemakaian_anggaran_detail.nominal) as total_dipakai')
             ->join('pemakaian_anggaran_detail', 'pemakaian_anggaran.id', '=', 'pemakaian_anggaran_detail.pemakaian_anggaran_id')
-            ->whereRaw('year(tgl_dipakai) = ?', $this->tahun)
+            ->join('anggaran_bidang', 'pemakaian_anggaran.anggaran_bidang_id', '=', 'anggaran_bidang.id')
+            ->where('anggaran_bidang.tahun', $this->tahun)
             ->groupByRaw('anggaran_bidang_id, month(tgl_dipakai)')
             ->withCasts(['bulan' => 'int', 'total_dipakai' => 'float'])
             ->get();
@@ -113,8 +114,8 @@ class RKATPemantauan extends Component
                     : 0;
 
                 $output = collect([
-                    'bidang'     => $model->bidang->parent->nama,
-                    'unit'   => $model->bidang->nama,
+                    'bidang'   => optional($model->bidang->parent)->nama ?? $model->bidang->nama,
+                    'unit'     => $model->bidang->nama,
                     'anggaran' => $model->anggaran->nama,
                     'nominal'  => $nominal,
                 ])
