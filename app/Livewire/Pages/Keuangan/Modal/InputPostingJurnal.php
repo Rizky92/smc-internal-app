@@ -175,11 +175,13 @@ class InputPostingJurnal extends Component
             return;
         }
     
-        DB::beginTransaction();
+        DB::connection('mysql_smc')->beginTransaction();
+        DB::connection('mysql_sik')->beginTransaction();
     
         try {
             $savedData = [];
             
+            tracker_start('mysql_sik');
             tracker_start('mysql_smc');
     
             foreach ($this->jurnalSementara as $jurnalSementaraData) {
@@ -204,8 +206,7 @@ class InputPostingJurnal extends Component
                 });
     
                 JurnalDetail::insert($jurnalDetailData->toArray());
-                PostingJurnal::updateOrCreate(
-                    ['no_jurnal' => $noJurnalBaru],
+                PostingJurnal::create(
                     [
                         'no_jurnal'  => $noJurnalBaru,
                         'tgl_jurnal' => $jurnalSementaraData['tgl_jurnal'],
@@ -219,22 +220,25 @@ class InputPostingJurnal extends Component
             }
             
             tracker_end('mysql_smc');
+            tracker_end('mysql_sik');
     
             $this->dispatchBrowserEvent('data-saved');
             $this->emit('flash.success', 'Posting Jurnal berhasil ditambahkan');
             $this->reset(['no_bukti', 'tgl_jurnal', 'keterangan']);
     
-            DB::commit();
+            DB::connection('mysql_smc')->commit();
+            DB::connection('mysql_sik')->commit();
 
             session()->put('savedData', $savedData);
             
             $this->redirect('cetak-pdf-posting-jurnal');
 
         } catch (\Exception $e) {
+            DB::connection('mysql_smc')->rollBack();
+            DB::connection('mysql_sik')->rollBack();
     
             $this->flashError('Terjadi kesalahan saat menyimpan data');
-            $this->dispatchBrowserEvent('data-denied');
-            DB::rollBack();
+            $this->dispatchBrowserEvent('data-denied');     
         }
 
         $this->defaultValues();
