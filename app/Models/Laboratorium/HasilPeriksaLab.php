@@ -82,6 +82,7 @@ class HasilPeriksaLab extends Model
             periksa_lab.no_rawat no_rawat,
             reg_periksa.no_rkm_medis,
             pasien.nm_pasien,
+            penjab.png_jawab,
             petugas.nama nama_petugas,
             periksa_lab.tgl_periksa,
             periksa_lab.jam,
