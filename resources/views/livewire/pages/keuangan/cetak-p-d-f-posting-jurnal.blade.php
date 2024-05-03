@@ -104,10 +104,10 @@
                     <img src="{{ asset('img/logo.png') }}" margin="0" width="80px">
                 </div>
                 <div class="col-11">
-                    <h2 style="font-size: 12pt; margin: 0;">RS SAMARINDA MEDIKA CITRA</h2>
-                    <p style="font-size: 9pt; margin: 1px;">Jl. Kadrie Oening no.85, RT.35, Kel. Air Putih, Kec. Samarinda Ulu, Samarinda, Kalimantan Timur
-                        <br>TEL:0541-7273000
-                        <br>E-mail:info@rssmc.co.id
+                    <h2 style="font-size: 12pt; margin: 0;">{{ $this->SIMRSSettings->nama_instansi }}</h2>
+                    <p style="font-size: 9pt; margin: 1px;">{{ $this->SIMRSSettings->alamat_instansi }}
+                        <br>{{ $this->SIMRSSettings->kontak }}
+                        <br>E-mail: {{ $this->SIMRSSettings->email }}
                     </p>
                 </div>
             </div>
@@ -125,60 +125,64 @@
         </div>
     </div>
 
-    @if(!empty($savedData) && is_array($savedData))
-        <table style="min-width: 100%;">
-            <thead>
-                <tr>
-                    <td style="width: 10%;">No. Jurnal</td>
-                    <td style="width: 10%;">No. Bukti</td>
-                    <td style="width: 6%;">Tgl. Jurnal</td>
-                    <td style="width: 4%;">Jenis</td>
-                    <td style="width: 22%;">Keterangan</td>
-                    <td style="width: 4%;">Kode</td>
-                    <td style="width: 22%;">Rekening</td>
-                    <td style="text-align: right; width: 11%;">Debet</td>
-                    <td style="text-align: right; width: 11%;">Kredit</td>
-                </tr>
-            </thead>
-            <tbody class="no-border-table">
-                @php
-                    $totalDebet = 0;
-                    $totalKredit = 0;
-                @endphp
-
-                @foreach ($savedData as $jurnal)
-                    @foreach ($jurnal['details'] as $detail)
-                        @php
-                            $totalDebet += $detail['debet'];
-                            $totalKredit += $detail['kredit'];
-                        @endphp
-                        <tr>
-                            <td>{{ $loop->first ? $jurnal['jurnal']['no_jurnal'] : '' }}</td>
-                            <td>{{ $loop->first ? $jurnal['jurnal']['no_bukti'] : '' }}</td>
-                            <td>{{ $loop->first ? $jurnal['jurnal']['tgl_jurnal'] : '' }} {{ $loop->first ? $jurnal['jurnal']['jam_jurnal'] : '' }}</td>
-                            <td>{{ $loop->first ? $jurnal['jurnal']['jenis'] === 'U' ? 'Umum' : 'Penyesuaian' : '' }}</td>
-                            <td>{{ $loop->first ? $jurnal['jurnal']['keterangan'] : '' }}</td>
-                            <td>{{ $detail['kd_rek'] }}</td>
-                            <td>{{ $rekeningData[$detail['kd_rek']] ?? '' }}</td>
-                            <td style="text-align: right">{{ $detail['debet'] != 0 ? 'Rp. ' . number_format($detail['debet'], 0, '.', '.') : '' }}</td>
-                            <td style="text-align: right">{{ $detail['kredit'] != 0 ? 'Rp. ' . number_format($detail['kredit'], 0, '.', '.') : '' }}</td>                       
-                        </tr>
-                    @endforeach
-                @endforeach
-            </tbody>
+    <table style="min-width: 100%;">
+        <thead>
             <tr>
-                <td colspan="7">Jumlah Total:</td>
+                <td style="width: 10%;">No. Jurnal</td>
+                <td style="width: 10%;">No. Bukti</td>
+                <td style="width: 6%;">Tgl. Jurnal</td>
+                <td style="width: 4%;">Jenis</td>
+                <td style="width: 22%;">Keterangan</td>
+                <td style="width: 4%;">Kode</td>
+                <td style="width: 22%;">Rekening</td>
+                <td style="text-align: right; width: 11%;">Debet</td>
+                <td style="text-align: right; width: 11%;">Kredit</td>
+            </tr>
+        </thead>
+        <tbody class="no-border-table">
+            @php
+                $totalDebet = 0;
+                $totalKredit = 0;
+            @endphp
+
+            @foreach ($dataJurnal as $jurnal)
+                @php
+                    $detailPertama = $jurnal->detail->first();
+                    $totalDebet += $jurnal->detail->sum('debet');
+                    $totalKredit += $jurnal->detail->sum('kredit');
+                @endphp
+                <tr>
+                    <td>{{ $jurnal->no_jurnal }}</td>
+                    <td>{{ $jurnal->no_bukti }}</td>
+                    <td>{{ $jurnal->tgl_jurnal }} {{ $jurnal->jam_jurnal }}</td>
+                    <td>{{ $jurnal->jenis === 'U' ? 'UMUM' : 'PENYESUAIAN' }}</td>
+                    <td>{{ $jurnal->keterangan }}</td>
+                    <td>{{ $detailPertama->kd_rek }}</td>
+                    <td>{{ $detailPertama->rekening->nm_rek }}</td>
+                    <td style="text-align: right">{{ rp($detailPertama->debet) }}</td>
+                    <td style="text-align: right">{{ rp($detailPertama->kredit) }}</td>
+                </tr>
+                @foreach ($jurnal->detail as $detail)
+                    <td colspan="5">&nbsp;</td>
+                    <td>{{ $detail->kd_rek }}</td>
+                    <td>{{ $detail->rekening->nm_rek }}</td>
+                    <td style="text-align: right">{{ rp($detail->debet) }}</td>
+                    <td style="text-align: right">{{ rp($detail->kredit) }}</td>
+                @endforeach
+            @endforeach
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="7">Total:</td>
                 <td style="vertical-align: top; text-align: right">{{ $totalDebet != 0 ? 'Rp. ' . number_format($totalDebet, 0, '.', '.') : '' }}</td>
                 <td style="vertical-align: top; text-align: right">{{ $totalKredit != 0 ? 'Rp. ' . number_format($totalKredit, 0, '.', '.') : '' }}</td>
             </tr>
-        </table>
-    @else
-        <p>Data jurnal sementara kosong.</p>
-    @endif
+        </tfoot>
+    </table>
     
     <div class="conclusion">
         <div class="time">
-            <p><b>Samarinda,{{ now()->formatLocalized('%d %B %Y') }}</b></p>
+            <p><b>Samarinda, {{ now()->formatLocalized('%d %B %Y') }}</b></p>
         </div>
         <div class="signature">
             <div style="text-align: center;">
@@ -199,13 +203,9 @@
             </div>
         </div>
     </div>
-
     @push('js')
         <script>
-            window.onload = function () {
-                window.print();
-            }
+            window.onload = () => window.print()
         </script>
     @endpush
-
 </div>

@@ -125,8 +125,8 @@
                                 <x-button size="sm" variant="secondary" title="Tambah Detail" icon="fas fa-plus" wire:click="addDetail" />
                                 <x-form.error name="totalDebitKredit" />
                             </td>
-                            <td style="width: 21%">Rp. {{ number_format($totalDebet) }}</td>
-                            <td style="width: 21%">Rp. {{ number_format($totalKredit) }}</td>
+                            <td style="width: 21%">{{ rp($this->totalDebet) }}</td>
+                            <td style="width: 21%">{{ rp($this->totalKredit) }}</td>
                         </tr>
                     </table>
 

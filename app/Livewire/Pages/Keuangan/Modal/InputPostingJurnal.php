@@ -9,8 +9,7 @@ use App\Models\Keuangan\Jurnal\PostingJurnal;
 use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -19,9 +18,6 @@ use Livewire\Component;
 class InputPostingJurnal extends Component
 {
     use FlashComponent, Filterable, DeferredModal;
-
-    /** @var string */
-    public $noJurnalBaru;
 
     /** @var string */
     public $no_bukti;
@@ -47,6 +43,12 @@ class InputPostingJurnal extends Component
     /** @var array */
     public $savedData;
 
+    /** @var numeric */
+    public $totalDebet;
+
+    /** @var numeric */
+    public $totalKredit;
+
     /** @var mixed */
     protected $listeners = [
         'prepare',
@@ -54,28 +56,21 @@ class InputPostingJurnal extends Component
         'posting-jurnal.show-modal' => 'showModal',
     ];
 
-    public function rules()
+    /** @var mixed */
+    public $rules = [
+        'no_bukti'        => ['required', 'string', 'max:20'],
+        'tgl_jurnal'      => ['required', 'date'],
+        'jam_jurnal'      => ['required', 'string'],
+        'jenis'           => ['required', 'in:U,P'],
+        'keterangan'      => ['required', 'string'],
+        'detail'          => ['array'],
+        'detail.*.kd_rek' => ['required', 'string'],
+        'detail.*.debet'  => ['required', 'numeric'],
+        'detail.*.kredit' => ['required', 'numeric'],
+    ];
+
+    public function mount(): void
     {
-        $rules = [
-            'no_bukti'   => 'required|string|max:20',
-            'tgl_jurnal' => 'required|date',
-            'jam_jurnal' => 'required|string',
-            'jenis'      => 'required|in:U,P',
-            'keterangan' => 'required|string',
-        ];
-
-        foreach ($this->detail as $index => $detailItem) {
-            $rules["detail.$index.kd_rek"]  = 'required|string';
-            $rules["detail.$index.debet"]   = 'required|numeric';
-            $rules["detail.$index.kredit"]  = 'required|numeric';
-        }
-
-        return $rules;
-    }
-
-    public function mount(Jurnal $jurnal): void
-    {
-        $this->noJurnalBaru = $jurnal->no_jurnal;
         $this->defaultValues();
     }
 
@@ -99,11 +94,7 @@ class InputPostingJurnal extends Component
 
     public function render(): View
     {
-        return view('livewire.pages.keuangan.modal.input-posting-jurnal', [
-            'totalDebet'  => $this->calculateTotal('debet'),
-            'totalKredit' => $this->calculateTotal('kredit'),
-            'jurnalSementara' => $this->jurnalSementara,
-        ]);
+        return view('livewire.pages.keuangan.modal.input-posting-jurnal');
     }
 
     public function prepare(array $options): void
@@ -116,22 +107,19 @@ class InputPostingJurnal extends Component
         $this->tgl_jurnal = $jurnal ? $jurnal->tgl_jurnal : '';
         $this->jam_jurnal = $jurnal ? $jurnal->jam_jurnal : '';
         $this->jenis = $jurnal ? $jurnal->jenis : '';
-
         $this->keterangan = $jurnal ? $jurnal->keterangan : '';
 
         $detail = JurnalDetail::query()
             ->where('no_jurnal', $this->noJurnalBaru)
             ->get();
 
-        $this->detail = $detail->isEmpty()
-            ? []
-            : $detail
-                ->map(fn (JurnalDetail $model): array => [
-                    'kd_rek' => $model->kd_rek,
-                    'debet'  => $model->debet,
-                    'kredit' => $model->kredit,
-                ])
-                ->all();
+        $this->detail = $detail->isEmpty() ? [] : $detail
+            ->map(fn (JurnalDetail $model): array => [
+                'kd_rek' => $model->kd_rek,
+                'debet'  => $model->debet,
+                'kredit' => $model->kredit,
+            ])
+            ->all();
     }
 
     public function add(): void 
@@ -145,7 +133,7 @@ class InputPostingJurnal extends Component
         $this->validate();
         $this->validasiTotalDebitKredit();
 
-        $jurnalSementaraData = [
+        $this->jurnalSementara[] = [
             'no_bukti'   => $this->no_bukti,
             'tgl_jurnal' => $this->tgl_jurnal,
             'jam_jurnal' => $this->jam_jurnal,
@@ -154,10 +142,7 @@ class InputPostingJurnal extends Component
             'detail'     => $this->detail,
         ];
 
-        $this->jurnalSementara[] = $jurnalSementaraData;
-
         $this->resetAdd();
-
     }
 
     public function hapusJurnalSementara($index)
@@ -174,74 +159,48 @@ class InputPostingJurnal extends Component
             $this->dispatchBrowserEvent('data-denied');
             return;
         }
-    
-        DB::connection('mysql_smc')->beginTransaction();
-        DB::connection('mysql_sik')->beginTransaction();
-    
+
+        $jurnalTercatat = [];
+
         try {
-            $savedData = [];
-            
-            tracker_start('mysql_sik');
+            DB::connection('mysql_sik')->transaction(function () use (&$jurnalTercatat) {
+                tracker_start('mysql_sik');
+    
+                foreach ($this->jurnalSementara as $temp) {
+                    $jurnal = Jurnal::catat(
+                        $temp['no_bukti'],
+                        str($temp['keterangan'])->upper()->trim()->replaceLast('.', '')->append(', OLEH ' . user()->nik),
+                        carbon($temp['tgl_jurnal'])->setTimeFromTimeString($temp['jam_jurnal']),
+                        $temp['detail']
+                    );
+    
+                    $jurnalTercatat[] = [
+                        'no_jurnal' => $jurnal->no_jurnal,
+                        'tgl_jurnal' => $temp['tgl_jurnal'],
+                    ];
+                }
+    
+                tracker_end('mysql_sik');
+            });
+    
             tracker_start('mysql_smc');
     
-            foreach ($this->jurnalSementara as $jurnalSementaraData) {
-                $noJurnalBaru = Jurnal::noJurnalBaru($jurnalSementaraData['tgl_jurnal']);
+            PostingJurnal::insert($jurnalTercatat);
     
-                $savedJurnal = Jurnal::create([
-                    'no_jurnal'   => $noJurnalBaru,
-                    'no_bukti'    => $jurnalSementaraData['no_bukti'],
-                    'tgl_jurnal'  => $jurnalSementaraData['tgl_jurnal'],
-                    'jam_jurnal'  => $jurnalSementaraData['jam_jurnal'],
-                    'jenis'       => $jurnalSementaraData['jenis'],
-                    'keterangan'  => $jurnalSementaraData['keterangan'],
-                ]);
-    
-                $jurnalDetailData = collect($jurnalSementaraData['detail'])->map(function ($detail) use ($noJurnalBaru) {
-                    return [
-                        'no_jurnal' => $noJurnalBaru,
-                        'kd_rek'    => $detail['kd_rek'],
-                        'debet'     => $detail['debet'],
-                        'kredit'    => $detail['kredit'],
-                    ];
-                });
-    
-                JurnalDetail::insert($jurnalDetailData->toArray());
-                PostingJurnal::create(
-                    [
-                        'no_jurnal'  => $noJurnalBaru,
-                        'tgl_jurnal' => $jurnalSementaraData['tgl_jurnal'],
-                    ]
-                );
-            
-                $savedData[] = [
-                    'jurnal' => $savedJurnal->toArray(),
-                    'details' => $jurnalDetailData->toArray(),
-                ];
-            }
-            
             tracker_end('mysql_smc');
-            tracker_end('mysql_sik');
-    
-            $this->dispatchBrowserEvent('data-saved');
-            $this->emit('flash.success', 'Posting Jurnal berhasil ditambahkan');
-            $this->reset(['no_bukti', 'tgl_jurnal', 'keterangan']);
-    
-            DB::connection('mysql_smc')->commit();
-            DB::connection('mysql_sik')->commit();
-
-            session()->put('savedData', $savedData);
-            
-            $this->redirect('cetak-pdf-posting-jurnal');
-
-        } catch (\Exception $e) {
-            DB::connection('mysql_smc')->rollBack();
-            DB::connection('mysql_sik')->rollBack();
-    
+        } catch (Exception $_) {
             $this->flashError('Terjadi kesalahan saat menyimpan data');
-            $this->dispatchBrowserEvent('data-denied');     
+            $this->dispatchBrowserEvent('data-denied');
+            $this->defaultValues();
         }
 
+        session()->put('savedData', $jurnalTercatat);
+
+        $this->redirect('cetak-pdf-posting-jurnal');
+
         $this->defaultValues();
+        $this->dispatchBrowserEvent('data-saved');
+        $this->emit('flash.success', 'Posting Jurnal berhasil ditambahkan');
     }
      
     private function calculateTotal($field): float
@@ -287,6 +246,8 @@ class InputPostingJurnal extends Component
                 'kredit' => 0,
             ]
         ];
+        $this->totalDebet = 0;
+        $this->totalKredit = 0;
     }
 
     public function resetData(): void
@@ -310,8 +271,8 @@ class InputPostingJurnal extends Component
 
     private function validasiTotalDebitKredit(): void
     {
-            $totalDebit = collect($this->detail)->sum('debet');
-            $totalKredit = collect($this->detail)->sum('kredit');
+        $totalDebit = collect($this->detail)->sum('debet');
+        $totalKredit = collect($this->detail)->sum('kredit');
     
         if ($totalDebit != $totalKredit) {
             throw ValidationException::withMessages([
@@ -324,6 +285,5 @@ class InputPostingJurnal extends Component
                 'totalDebitKredit' => 'Debet atau kredit tidak boleh kosong...!!!'
             ]);
         }
-    }
-    
+    }    
 }

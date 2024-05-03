@@ -28,13 +28,13 @@ class PostingJurnal extends Component
     /** @var string */
     public $tglAkhir;
 
-    /** @var "U"|"P" */
+    /** @var "-"|"U"|"P" */
     public $jenis;
     
     protected function queryString(): array
     {
         return [
-            'jenis'    => ['as' => 'jenis'],
+            'jenis'    => ['except' => '-', 'as' => 'jenis'],
             'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
@@ -47,9 +47,7 @@ class PostingJurnal extends Component
 
     public function getDataPostingJurnalProperty()
     {
-        return $this->isDeferred
-        ? [] 
-        : ModelPostingJurnal::query()
+        return $this->isDeferred ? [] : ModelPostingJurnal::query()
             ->postingJurnal($this->tglAwal, $this->tglAkhir, $this->jenis)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns, [
@@ -60,12 +58,10 @@ class PostingJurnal extends Component
 
     public function getTotalDebetDanKreditProperty()
     {
-        return $this->isDeferred
-            ? []
-            : ModelPostingJurnal::query()
-                ->jumlahDebetDanKreditPostingJurnal($this->tglAwal, $this->tglAkhir, $this->jenis)
-                ->search($this->cari)
-                ->first();
+        return $this->isDeferred ? [] : ModelPostingJurnal::query()
+            ->jumlahDebetDanKreditPostingJurnal($this->tglAwal, $this->tglAkhir, $this->jenis)
+            ->search($this->cari)
+            ->first();
     }
 
     public function render(): View
@@ -78,6 +74,6 @@ class PostingJurnal extends Component
     {
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
-        $this->jenis = 'U';
+        $this->jenis = '-';
     }
 }
