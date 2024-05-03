@@ -101,7 +101,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-1">
-                    <img src="{{ asset('img/logo.png') }}" margin="0" width="80px">
+                    <img src="data:image/jpeg;base64,{{ base64_encode($this->SIMRSSettings->logo) }}" margin="0" width="80px">
                 </div>
                 <div class="col-11">
                     <h2 style="font-size: 12pt; margin: 0;">{{ $this->SIMRSSettings->nama_instansi }}</h2>
@@ -147,9 +147,9 @@
 
             @foreach ($dataJurnal as $jurnal)
                 @php
-                    $detailPertama = $jurnal->detail->first();
-                    $totalDebet += $jurnal->detail->sum('debet');
-                    $totalKredit += $jurnal->detail->sum('kredit');
+                    $detailPertama  = $jurnal->detail->first();
+                    $totalDebet    += $jurnal->detail->sum('debet');
+                    $totalKredit   += $jurnal->detail->sum('kredit');
                 @endphp
                 <tr>
                     <td>{{ $jurnal->no_jurnal }}</td>
@@ -181,7 +181,6 @@
             </tr>
         </tfoot>
     </table>
-    
     <div class="conclusion">
         <div class="time">
             <p><b>Samarinda, {{ now()->formatLocalized('%d %B %Y') }}</b></p>

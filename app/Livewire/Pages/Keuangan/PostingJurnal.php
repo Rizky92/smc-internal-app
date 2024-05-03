@@ -8,6 +8,7 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\Jurnal\PostingJurnal as ModelPostingJurnal;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
@@ -47,19 +48,16 @@ class PostingJurnal extends Component
 
     public function getDataPostingJurnalProperty()
     {
-        return $this->isDeferred ? [] : ModelPostingJurnal::query()
-            ->postingJurnal($this->tglAwal, $this->tglAkhir, $this->jenis)
-            ->search($this->cari)
-            ->sortWithColumns($this->sortColumns, [
-                'jurnal.tgl_jurnal' => 'asc',
-            ])
+        return $this->isDeferred ? [] : Jurnal::query()
+            ->jurnalPosting($this->tglAwal, $this->tglAkhir)
+            ->search($this->cari, ['no_jurnal', 'tgl_jurnal', 'jam_jurnal', 'keterangan'])
             ->paginate($this->perpage);
     }
 
-    public function getTotalDebetDanKreditProperty()
+    public function getTotalDebetKreditProperty()
     {
-        return $this->isDeferred ? [] : ModelPostingJurnal::query()
-            ->jumlahDebetDanKreditPostingJurnal($this->tglAwal, $this->tglAkhir, $this->jenis)
+        return $this->isDeferred ? [] : Jurnal::query()
+            ->jumlahDebetKreditJurnalPosting($this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->first();
     }

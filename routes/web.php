@@ -193,8 +193,9 @@ Route::prefix('admin')
                     ->name('posting-jurnal')
                     ->middleware('can:keuangan.posting-jurnal.read');
                 
-                Route::get('cetak-pdf-posting-jurnal', Keuangan\CetakPDFPostingJurnal::class)
-                    ->name('cetak-pdf-posting-jurnal');
+                Route::get('cetak-posting-jurnal', Keuangan\Cetak\HasilPostingJurnal::class)
+                    ->name('cetak-posting-jurnal')
+                    ->middleware('can:keuangan.posting-jurnal.read');
             });
 
         Route::prefix('farmasi')

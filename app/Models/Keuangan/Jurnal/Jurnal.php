@@ -90,6 +90,24 @@ class Jurnal extends Model
             ->whereBetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir]);
     }
 
+    public function scopeJurnalPosting(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    {
+        $sik = $query->getQuery()->getConnection()->getDatabaseName();
+        $smc = PostingJurnal::query()->getConnection()->getDatabaseName();
+
+        return $query->jurnalUmum($tglAwal, $tglAkhir)
+            ->whereRaw("exists(select * from $smc.posting_jurnal where $smc.posting_jurnal.no_jurnal = $sik.jurnal.no_jurnal)");
+    }
+
+    public function scopeJumlahDebetKreditJurnalPosting(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    {
+        $sik = $query->getQuery()->getConnection()->getDatabaseName();
+        $smc = PostingJurnal::query()->getConnection()->getDatabaseName();
+
+        return $query->jumlahDebetKreditBukuBesar($tglAwal, $tglAkhir)
+            ->whereRaw("exists(select * from $smc.posting_jurnal where $smc.posting_jurnal.no_jurnal = $sik.jurnal.no_jurnal)");
+    }
+
     public function scopeBukuBesar(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodeRekening = ''): Builder
     {
         if (empty($tglAwal)) {
@@ -109,16 +127,16 @@ class Jurnal extends Model
         ]);
 
         $sqlSelect = <<<'SQL'
-            jurnal.tgl_jurnal,
-            jurnal.jam_jurnal,
-            jurnal.no_jurnal,
-            jurnal.no_bukti,
-            jurnal.keterangan,
-            detailjurnal.kd_rek,
-            rekening.nm_rek,
-            detailjurnal.debet,
-            detailjurnal.kredit
-        SQL;
+jurnal.tgl_jurnal,
+jurnal.jam_jurnal,
+jurnal.no_jurnal,
+jurnal.no_bukti,
+jurnal.keterangan,
+detailjurnal.kd_rek,
+rekening.nm_rek,
+detailjurnal.debet,
+detailjurnal.kredit
+SQL;
 
         return $query
             ->selectRaw($sqlSelect)
@@ -129,7 +147,7 @@ class Jurnal extends Model
             ->whereBetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir]);
     }
 
-    public function scopeJumlahDebetDanKreditBukuBesar(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodeRekening = ''): Builder
+    public function scopeJumlahDebetKreditBukuBesar(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodeRekening = ''): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->format('Y-m-d');
@@ -140,9 +158,8 @@ class Jurnal extends Model
         }
 
         $sqlSelect = <<<'SQL'
-            ifnull(round(sum(detailjurnal.debet), 2), 0) debet,
-            ifnull(round(sum(detailjurnal.kredit), 2), 0) kredit
-        SQL;
+ifnull(round(sum(detailjurnal.debet), 2), 0) debet, ifnull(round(sum(detailjurnal.kredit), 2), 0) kredit
+SQL;
 
         $this->addSearchConditions([
             'jurnal.no_jurnal',

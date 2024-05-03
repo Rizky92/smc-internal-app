@@ -58,9 +58,9 @@ class InputPostingJurnal extends Component
 
     /** @var mixed */
     public $rules = [
-        'no_bukti'        => ['required', 'string', 'max:20'],
-        'tgl_jurnal'      => ['required', 'date'],
-        'jam_jurnal'      => ['required', 'string'],
+        'noBukti'         => ['required', 'string', 'max:20'],
+        'tanggal'         => ['required', 'date'],
+        'jam'             => ['required', 'string'],
         'jenis'           => ['required', 'in:U,P'],
         'keterangan'      => ['required', 'string'],
         'detail'          => ['array'],
@@ -97,7 +97,7 @@ class InputPostingJurnal extends Component
         return view('livewire.pages.keuangan.modal.input-posting-jurnal');
     }
 
-    public function prepare(array $options): void
+    public function prepare(): void
     {
         $jurnal = Jurnal::query()
             ->where('no_jurnal', $this->noJurnalBaru)

@@ -8,14 +8,8 @@
             @push('js')
                 <script>
                     function loadData(e) {
-                        let {
-                            keterangan
-                        } = e.dataset
-
-                        @this.emit('prepare', {
-                            keternangan: keterangan
-                        })
-
+                        let { keterangan } = e.dataset
+                        @this.emit('prepare', { keterangan: keterangan })
                         $('#modal-input-posting-jurnal').modal('show');
                     }
                 </script>
@@ -24,70 +18,70 @@
     @endcan
 
     @push('css')
-    <style>
-        .print {
-            display: none;
-        }
-
-        .conclusion {
-            display: none;
-        }
-
-        .signature {
-            display: none;
-        }
-        
-        .time {
-            display: none;
-        }
-
-        @media print {
-            @page {
-                size: landscape;
-            }
-
-            body {
-                margin: 0;
-            }
-
+        <style>
             .print {
-                display: flex; 
-                text-align: center;
-                margin-top: none;
-                padding: 0;
+                display: none;
             }
 
             .conclusion {
-                display: grid;
-                page-break-after: auto; 
-            }
-
-            .time {
-                display: flex;
-                justify-content: end;
+                display: none;
             }
 
             .signature {
-                display: flex; 
-                justify-content: space-between;
-            }
-
-            h3 {
-                font-size: 20px;
-                margin-top: 0px;
-                padding: 0;
-            }
-
-            .no-print {
                 display: none;
             }
-        }
-    </style>
+
+            .time {
+                display: none;
+            }
+
+            @media print {
+                @page {
+                    size: landscape;
+                }
+
+                body {
+                    margin: 0;
+                }
+
+                .print {
+                    display: flex;
+                    text-align: center;
+                    margin-top: none;
+                    padding: 0;
+                }
+
+                .conclusion {
+                    display: grid;
+                    page-break-after: auto;
+                }
+
+                .time {
+                    display: flex;
+                    justify-content: end;
+                }
+
+                .signature {
+                    display: flex;
+                    justify-content: space-between;
+                }
+
+                h3 {
+                    font-size: 20px;
+                    margin-top: 0px;
+                    padding: 0;
+                }
+
+                .no-print {
+                    display: none;
+                }
+            }
+        </style>
     @endpush
-    
+
     <x-card>
         <x-slot name="header">
-            <div class="print" >
+            <div class="print">
                 <h3 style="font-family: tahoma; font-size: 11px;">POSTING JURNAL</h3>
             </div>
             <div class="no-print">
@@ -102,7 +96,7 @@
                 </x-row-col-flex>
                 <x-row-col-flex class="pt-3 border-top">
                     <x-filter.label constant-width>Jenis:</x-filter.label>
-                    <x-filter.select model="jenis" :options="['U' => 'Umum', 'P' => 'Penyesuaian']"/>
+                    <x-filter.select model="jenis" :options="['U' => 'Umum', 'P' => 'Penyesuaian']" />
                     @can('keuangan.posting-jurnal.create')
                         <x-button variant="primary" size="sm" title="Jurnal Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-posting-jurnal" class="btn-primary ml-auto" />
                     @endcan
@@ -123,13 +117,10 @@
                     <x-table.th style="width: 11%" title="Kredit" style="text-align: right;" />
                 </x-slot>
                 <x-slot name="body">
-                        @forelse ($this->dataPostingJurnal as $item )
-
+                    @forelse ($this->dataPostingJurnal as $item )
                         @php
                             $odd = $loop->iteration % 2 === 0 ? '255 255 255' : '247 247 247';
-                            
                             $count = $item->detail->count();
-
                             $firstDetail = $item->detail->first();
                         @endphp
 
@@ -137,9 +128,9 @@
                             <x-table.td rowspan="{{ $count }}">{{ $item->no_jurnal }}</x-table.td>
                             <x-table.td rowspan="{{ $count }}">{{ $item->no_bukti }}</x-table.td>
                             <x-table.td rowspan="{{ $count }}">{{ $item->tgl_jurnal }} {{ $item->jam_jurnal }}</x-table.td>
-                            <x-table.td rowspan="{{ $count }}">{{ $item->jenis  === 'U' ? 'Umum' : 'Penyesuaian' }}</x-table.td>
+                            <x-table.td rowspan="{{ $count }}">{{ $item->jenis === 'U' ? 'Umum' : 'Penyesuaian' }}</x-table.td>
                             <x-table.td rowspan="{{ $count }}">{{ $item->keterangan }}</x-table.td>
-                            <x-table.td>{{ optional($firstDetail)->kd_rek}}</x-table.td>
+                            <x-table.td>{{ optional($firstDetail)->kd_rek }}</x-table.td>
                             <x-table.td>
                                 @if (optional($firstDetail)->kredit > 0)
                                 @endif
@@ -165,10 +156,10 @@
                         <x-table.tr-empty colspan="11" padding />
                     @endforelse
                     <x-table.tr>
-                        <x-table.td> Jumlah Total: </x-table.td>
+                        <x-table.td>TOTAL: </x-table.td>
                         <x-table.td colspan="6" />
-                        <x-table.td style="text-align: right;">{{ rp(optional($this->totalDebetDanKredit)->debet) }}</x-table.td>
-                        <x-table.td style="text-align: right;">{{ rp(optional($this->totalDebetDanKredit)->kredit) }}</x-table.td>
+                        <x-table.td style="text-align: right;">{{ rp(optional($this->totalDebetKredit)->debet) }}</x-table.td>
+                        <x-table.td style="text-align: right;">{{ rp(optional($this->totalDebetKredit)->kredit) }}</x-table.td>
                     </x-table.tr>
                 </x-slot>
             </x-table>
@@ -188,7 +179,7 @@
                         <p><b>dr. Daisy Wijaya</b></p>
                         <p><b>Manager Keuangan</b></p>
                     </div>
-                    <div style="text-align: center; font-size: 0.70em;"> 
+                    <div style="text-align: center; font-size: 0.70em;">
                         <p><b>Mengetahui</b></p>
                         <br>
                         <br>

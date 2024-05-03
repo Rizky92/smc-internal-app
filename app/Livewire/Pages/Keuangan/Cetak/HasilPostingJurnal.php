@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Pages\Keuangan;
+namespace App\Livewire\Pages\Keuangan\Cetak;
 
 use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\Rekening;
@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
-class CetakPDFPostingJurnal extends Component
+class HasilPostingJurnal extends Component
 {
     public $savedData;
 
@@ -37,7 +37,7 @@ class CetakPDFPostingJurnal extends Component
             ->with('detail.rekening')
             ->get();
 
-        return view('livewire.pages.keuangan.cetak-p-d-f-posting-jurnal', compact('dataJurnal'))
+        return view('livewire.pages.keuangan.cetak.hasil-posting-jurnal', compact('dataJurnal'))
             ->layout(CustomerLayout::class, ['title' => 'Cetak PDF Posting Jurnal']);
     }
 }
