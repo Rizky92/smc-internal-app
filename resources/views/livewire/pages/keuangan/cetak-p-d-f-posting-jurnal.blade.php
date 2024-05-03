@@ -163,11 +163,13 @@
                     <td style="text-align: right">{{ rp($detailPertama->kredit) }}</td>
                 </tr>
                 @foreach ($jurnal->detail as $detail)
-                    <td colspan="5">&nbsp;</td>
-                    <td>{{ $detail->kd_rek }}</td>
-                    <td>{{ $detail->rekening->nm_rek }}</td>
-                    <td style="text-align: right">{{ rp($detail->debet) }}</td>
-                    <td style="text-align: right">{{ rp($detail->kredit) }}</td>
+                    <tr>
+                        <td colspan="5">&nbsp;</td>
+                        <td>{{ $detail->kd_rek }}</td>
+                        <td>{{ $detail->rekening->nm_rek }}</td>
+                        <td style="text-align: right">{{ rp($detail->debet) }}</td>
+                        <td style="text-align: right">{{ rp($detail->kredit) }}</td>
+                    </tr>
                 @endforeach
             @endforeach
         </tbody>
