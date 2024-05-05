@@ -8,9 +8,8 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::connection('mysql_smc')->create('{{ table }}', function (Blueprint $table): void {
-            $table->id();
-            $table->timestamps($precision = 6);
+        Schema::connection('mysql_smc')->table('nota_selesai', function (Blueprint $table): void {
+            $table->string('status_bayar', 10)->after('bentuk_bayar');
         });
     }
 };

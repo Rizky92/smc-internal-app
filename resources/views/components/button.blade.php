@@ -2,11 +2,11 @@
     'as' => 'button',
     'title' => null,
     'icon' => null,
+    'id' => null,
     'size' => 'default',
     'variant' => 'default',
     'outline' => false,
     'disabled' => false,
-
     'hideTitle' => false,
 ])
 
@@ -45,7 +45,7 @@
         ->filter()
         ->join(' ');
 
-    $id ??= str($title)->slug();
+    $id ??= str($title)->slug()->value();
 @endphp
 
 @once
@@ -65,21 +65,15 @@
 
 @switch($as)
     @case('button')
-        <button {{ $attributes
-            ->merge([
-                'class' => $finalClass,
-                'type' => 'button',
-                'id' => $id,
-                'title' => $title,
-                'disabled' => $disabled,
-            ])
-        }}>
-            @if ($icon)
-                <i class="{{ $icon }}"></i>
-            @endif
-            @if ($title)
-                <span class="{{ Arr::toCssClasses(['ml-1' => $icon, 'sr-only' => $hideTitle]) }}">{{ $title ?? $slot }}</span>
-            @endif
+        <button {{ $attributes->merge([
+            'class' => $finalClass,
+            'type' => 'button',
+            'id' => $id,
+            'title' => $title,
+            'disabled' => $disabled,
+        ]) }}>
+            @if ($icon) <i class="{{ $icon }}"></i> @endif
+            @if ($title) <span class="{{ Arr::toCssClasses(['ml-1' => $icon, 'sr-only' => $hideTitle]) }}">{{ $title ?? $slot }}</span> @endif
         </button>
     @break
 
@@ -88,12 +82,8 @@
             ->merge(['class' => $finalClass, 'role' => 'button', 'id' => $id, 'title' => $title])
             ->when($disabled, fn ($attrs) => $attrs->except('href'))
         }}>
-            @if ($icon)
-                <i class="{{ $icon }}"></i>
-            @endif
-            @if ($title)
-                <span class="{{ Arr::toCssClasses(['ml-1' => $icon, 'sr-only' => $hideTitle]) }}">{{ $title ?? $slot }}</span>
-            @endif
+            @if ($icon) <i class="{{ $icon }}"></i> @endif
+            @if ($title) <span class="{{ Arr::toCssClasses(['ml-1' => $icon, 'sr-only' => $hideTitle]) }}">{{ $title ?? $slot }}</span> @endif
         </a>
     @break
 @endswitch

@@ -1,20 +1,18 @@
 @props(['variant' => 'secondary'])
 
 @php
-    $class = collect(['badge']);
+    $class = 'badge ';
 
-    $variants = [
-        'primary' => 'badge-primary',
+    $class .= [
+        'primary'   => 'badge-primary',
         'secondary' => 'badge-secondary',
-        'success' => 'badge-success',
-        'info' => 'badge-info',
-        'warning' => 'badge-warning',
-        'danger' => 'badge-danger',
-        'light' => 'badge-light',
-        'dark' => 'badge-dark',
-    ];
-
-    $class = $class->push($variants[$variant])->join(' ');
+        'success'   => 'badge-success',
+        'info'      => 'badge-info',
+        'warning'   => 'badge-warning',
+        'danger'    => 'badge-danger',
+        'light'     => 'badge-light',
+        'dark'      => 'badge-dark',
+    ][$variant];
 @endphp
 
 <span {{ $attributes->merge(['class' => $class]) }}>{{ $slot }}</span>

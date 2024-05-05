@@ -79,7 +79,7 @@ class Jurnal extends Model
             $tglAkhir = now()->format('Y-m-d');
         }
 
-        $this->addRawColumns('waktu_jurnal', DB::raw('timestamp(jurnal.tgl_jurnal, jurnal.jam_jurnal)'));
+        $this->addRawColumns('waktu_jurnal', DB::raw("concat(jurnal.tgl_jurnal, ' ', jurnal.jam_jurnal)"));
 
         return $query
             ->with([

@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use Closure;
+use Illuminate\Support\Fluent;
 
 class MixinArr
 {
@@ -16,5 +17,13 @@ class MixinArr
 
             return array_keys($keys) === $keys;
         };
+    }
+
+    /**
+     * @return \Closure(array): \Illuminate\Support\Fluent
+     */
+    public function fluent(): Closure
+    {
+        return fn (array $values): Fluent => new Fluent($values);
     }
 }

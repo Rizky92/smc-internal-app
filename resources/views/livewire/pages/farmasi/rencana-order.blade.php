@@ -45,9 +45,9 @@
                             <x-table.td class="text-right">{{ $obat->stok_keluar_medis_14_hari }}</x-table.td>
                             <x-table.td class="text-right">{{ $obat->saran_order }}</x-table.td>
                             <x-table.td>{{ $obat->nama_industri }}</x-table.td>
-                            <x-table.td-currency :value="$obat->harga_beli" />
-                            <x-table.td-currency :value="$obat->harga_beli_total" />
-                            <x-table.td-currency :value="$obat->harga_beli_terakhir" />
+                            <x-table.td-money :value="$obat->harga_beli" />
+                            <x-table.td-money :value="$obat->harga_beli_total" />
+                            <x-table.td-money :value="$obat->harga_beli_terakhir" />
                             <x-table.td class="text-right">{{ $obat->diskon_terakhir }}</x-table.td>
                             <x-table.td>{{ $obat->supplier_terakhir }}</x-table.td>
                             <x-table.td class="text-right">{{ $obat->ke_pasien_14_hari }}</x-table.td>

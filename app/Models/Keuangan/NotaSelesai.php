@@ -138,25 +138,31 @@ class NotaSelesai extends Model
                 ->where('keterangan', 'like', 'PEMBAYARAN PASIEN RAWAT JALAN% %DIPOSTING OLEH%')
                 ->orWhere('keterangan', 'like', 'PEMBAYARAN PASIEN RAWAT INAP% %DIPOSTING OLEH%')
                 ->orWhere('keterangan', 'like', 'PIUTANG PASIEN RAWAT JALAN% %DIPOSTING OLEH%')
-                ->orWhere('keterangan', 'like', 'PIUTANG PASIEN RAWAT INAP% %DIPOSTING OLEH%'))
+                ->orWhere('keterangan', 'like', 'PIUTANG PASIEN RAWAT INAP% %DIPOSTING OLEH%')
+                ->orWhere('keterangan', 'like', 'PEMBATALAN PEMBAYARAN PASIEN RAWAT JALAN% %DIPOSTING OLEH%')
+                ->orWhere('keterangan', 'like', 'PEMBATALAN PEMBAYARAN PASIEN RAWAT INAP% %DIPOSTING OLEH%')
+                ->orWhere('keterangan', 'like', 'PEMBATALAN PIUTANG PASIEN RAWAT JALAN% %DIPOSTING OLEH%')
+                ->orWhere('keterangan', 'like', 'PEMBATALAN PIUTANG PASIEN RAWAT INAP% %DIPOSTING OLEH%')
+            )
             ->orderBy('no_jurnal')
-            ->chunk(500, function (Collection $chunk) {
+            ->chunk(1000, function (Collection $chunk) {
                 $data = $chunk->map(function (object $value, int $key) {
                     /** @var object{no_jurnal: string, no_bukti: string, tgl_jurnal: string, jam_jurnal: string, jenis: "U"|"P", keterangan: string} $value */
                     
                     $ket = str($value->keterangan);
 
-                    $bentukBayar = $ket->before('PASIEN')->words(1, '')->trim()->value();
                     $statusPasien = $ket->after('PASIEN')->words(2, '')->trim()->value();
-
+                    $bentukBayar = $ket->before('PASIEN')->words(1, '')->trim()->value();
+                    $batalBayar = $ket->words(1, '')->contains('BATAL');
                     $noRawat = $ket->matchAll('/\d+/')->take(4)->join('/');
                     $petugas = $ket->afterLast('OLEH ')->trim()->value();
 
                     return [
                         'no_rawat'         => $noRawat,
                         'tgl_penyelesaian' => "{$value->tgl_jurnal} {$value->jam_jurnal}",
-                        'bentuk_bayar'     => $bentukBayar,
                         'status_pasien'    => $statusPasien,
+                        'bentuk_bayar'     => $bentukBayar,
+                        'status_bayar'     => $batalBayar ? 'OPEN' : 'CLOSING',
                         'user_id'          => $petugas,
                     ];
                 });

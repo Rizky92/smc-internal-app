@@ -46,7 +46,10 @@
             }
             
             thead {
-                background: #F0F0DC;
+                color-adjust: exact!important;
+                -webkit-print-color-adjust: exact!important;
+                print-color-adjust: exact!important;
+                background-color: #F0F0DC;
                 border-top: 1px solid #333;
                 border-bottom: 1px solid #333;
             }
@@ -99,11 +102,9 @@
     @endpush
     <div id="printHeader">
         <div class="container">
+            <img src="data:image/jpeg;base64,{{ base64_encode($this->SIMRSSettings->logo) }}" style="display: block; width: 88px; position: absolute; left: 5%; top: 1%; transform: translate(-5% -1%)">
             <div class="row">
-                <div class="col-1">
-                    <img src="data:image/jpeg;base64,{{ base64_encode($this->SIMRSSettings->logo) }}" margin="0" width="80px">
-                </div>
-                <div class="col-11">
+                <div class="col-12">
                     <h2 style="font-size: 12pt; margin: 0;">{{ $this->SIMRSSettings->nama_instansi }}</h2>
                     <p style="font-size: 9pt; margin: 1px;">{{ $this->SIMRSSettings->alamat_instansi }}
                         <br>{{ $this->SIMRSSettings->kontak }}
@@ -117,10 +118,7 @@
     </div>
 
     <div class="row">
-        <div class="col-1">
-            
-        </div>
-        <div class="col-11">
+        <div class="col-12">
             <h2 style="font-size: 12pt">POSTING JURNAL</h2>
         </div>
     </div>
@@ -145,7 +143,7 @@
                 $totalKredit = 0;
             @endphp
 
-            @foreach ($dataJurnal as $jurnal)
+            @foreach ($printJurnal as $jurnal)
                 @php
                     $detailPertama  = $jurnal->detail->first();
                     $totalDebet    += $jurnal->detail->sum('debet');
@@ -174,34 +172,32 @@
             @endforeach
         </tbody>
         <tfoot>
-            <tr>
+            <tr style="border-top: 1px solid #202020; border-bottom: 1px solid #202020;">
                 <td colspan="7">Total:</td>
-                <td style="vertical-align: top; text-align: right">{{ $totalDebet != 0 ? 'Rp. ' . number_format($totalDebet, 0, '.', '.') : '' }}</td>
-                <td style="vertical-align: top; text-align: right">{{ $totalKredit != 0 ? 'Rp. ' . number_format($totalKredit, 0, '.', '.') : '' }}</td>
+                <td style="vertical-align: top; text-align: right; font-weight: bold">{{ $totalDebet != 0 ? 'Rp. ' . number_format($totalDebet, 0, '.', '.') : '' }}</td>
+                <td style="vertical-align: top; text-align: right; font-weight: bold">{{ $totalKredit != 0 ? 'Rp. ' . number_format($totalKredit, 0, '.', '.') : '' }}</td>
             </tr>
         </tfoot>
     </table>
-    <div class="conclusion">
-        <div class="time">
-            <p><b>Samarinda, {{ now()->formatLocalized('%d %B %Y') }}</b></p>
+    <div style="display: grid; grid-template-columns: max-content 1fr max-content; font-size: 0.70em; font-weight: bold; page-break-inside: avoid">
+        <div style="text-align: center">
+            <div></div>
+            <div>Menyetujui</div>
+            <br>
+            <br>
+            <br>
+            <div>dr. DAISY WIJAYA</div>
+            <div>dr. MANAGER KEUANGAN</div>
         </div>
-        <div class="signature">
-            <div style="text-align: center;">
-                <p><b>Menyetujui</b></p>
-                <br>
-                <br>
-                <br>
-                <p><b>dr. Daisy Wijaya</b></p>
-                <p><b>Manager Keuangan</b></p>
-            </div>
-            <div style="text-align: center;"> 
-                <p><b>Mengetahui</b></p>
-                <br>
-                <br>
-                <br>
-                <p><b>dr. Teguh Nurwanto, MARS</b></p>
-                <p><b>Direktur</b></p>
-            </div>
+        <div></div>
+        <div style="text-align: center">
+            <div>Samarinda, {{ now()->translatedFormat('d F Y') }}</div>
+            <div>Mengetahui</div>
+            <br>
+            <br>
+            <br>
+            <div>dr. TEGUH NURWANTO, MARS</div>
+            <div>DIREKTUR</div>
         </div>
     </div>
     @push('js')

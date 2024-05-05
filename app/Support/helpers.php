@@ -97,15 +97,15 @@ if (! function_exists('money')) {
     /**
      * @param  \int|float  $nominal
      */
-    function money($nominal = 0, int $decimalCount = 0, string $name = ''): string
+    function money($nominal = 0, int $decimalCount = 0, string $denom = ''): string
     {
         switch ($nominal <=> 0) {
             case -1:
-                return '-'.$name.number_format(abs($nominal), $decimalCount, ',', '.');
+                return '-'.$denom.number_format(abs($nominal), $decimalCount, ',', '.');
             case 0:
-                return '-';
+                return $denom.'0';
             case 1:
-                return $name.number_format($nominal, $decimalCount, ',', '.');
+                return $denom.number_format($nominal, $decimalCount, ',', '.');
         }
     }
 }

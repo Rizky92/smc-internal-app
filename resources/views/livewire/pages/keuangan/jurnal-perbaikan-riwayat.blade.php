@@ -21,8 +21,8 @@
                             <x-table.td>{{ $item->tgl_jurnal_asli }}</x-table.td>
                             <x-table.td>{{ $item->tgl_jurnal_diubah }}</x-table.td>
                             <x-table.td>{{ $item->jurnal->keterangan }}</x-table.td>
-                            <x-table.td-currency :value="$item->jurnal->total_debet" />
-                            <x-table.td-currency :value="$item->jurnal->total_kredit" />
+                            <x-table.td-money :value="$item->jurnal->total_debet" />
+                            <x-table.td-money :value="$item->jurnal->total_kredit" />
                             <x-table.td>{{ $item->nip }}</x-table.td>
                             <x-table.td>{{ $item->pegawai->nama }}</x-table.td>
                         </x-table.tr>

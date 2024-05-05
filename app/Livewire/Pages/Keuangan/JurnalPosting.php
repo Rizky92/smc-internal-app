@@ -3,25 +3,23 @@
 namespace App\Livewire\Pages\Keuangan;
 
 use App\Livewire\Concerns\DeferredLoading;
-use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Keuangan\Jurnal\Jurnal;
-use App\Models\Keuangan\Jurnal\PostingJurnal as ModelPostingJurnal;
 use App\View\Components\BaseLayout;
+use Hash;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\Redirect;
 use Livewire\Component;
 
-class PostingJurnal extends Component
+class JurnalPosting extends Component
 {
     use DeferredLoading;
-    use Filterable; 
+    use Filterable;
     use FlashComponent;
-    use LiveTable; 
-    use MenuTracker; 
+    use LiveTable;
+    use MenuTracker;
 
     /** @var string */
     public $tglAwal;
@@ -31,7 +29,7 @@ class PostingJurnal extends Component
 
     /** @var "-"|"U"|"P" */
     public $jenis;
-    
+
     protected function queryString(): array
     {
         return [
@@ -46,7 +44,7 @@ class PostingJurnal extends Component
         $this->defaultValues();
     }
 
-    public function getDataPostingJurnalProperty()
+    public function getDataJurnalPostingProperty()
     {
         return $this->isDeferred ? [] : Jurnal::query()
             ->jurnalPosting($this->tglAwal, $this->tglAkhir)
@@ -64,7 +62,7 @@ class PostingJurnal extends Component
 
     public function render(): View
     {
-        return view('livewire.pages.keuangan.posting-jurnal')
+        return view('livewire.pages.keuangan.jurnal-posting')
             ->layout(BaseLayout::class, ['title' => 'Posting Jurnal']);
     }
 
@@ -73,5 +71,17 @@ class PostingJurnal extends Component
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
         $this->jenis = '-';
+    }
+
+    public function cetak(): void
+    {
+        $hashed = base64_encode(Jurnal::query()
+            ->jurnalPosting($this->tglAwal, $this->tglAkhir)
+            ->search($this->cari, ['no_jurnal', 'tgl_jurnal', 'jam_jurnal', 'keterangan'])
+            ->pluck('no_jurnal'));
+        
+        $this->redirectRoute('admin.keuangan.cetak-posting-jurnal', [
+            'dataJurnal' => $hashed,
+        ]);
     }
 }

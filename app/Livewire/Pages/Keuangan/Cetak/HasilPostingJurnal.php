@@ -7,15 +7,20 @@ use App\Models\Keuangan\Rekening;
 use App\View\Components\CustomerLayout;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class HasilPostingJurnal extends Component
 {
-    public $savedData;
+    /** @var \Illuminate\Support\Collection */
+    public $dataJurnal;
 
-    public function mount()
+    /** 
+     * @param  mixed  $dataJurnal
+     */
+    public function mount($dataJurnal): void
     {
-        $this->savedData = session()->pull('savedData');
+        $this->dataJurnal = collect(json_decode(base64_decode($dataJurnal), true));
     }
 
     public function getRekeningProperty(): Collection
@@ -23,21 +28,21 @@ class HasilPostingJurnal extends Component
         return Rekening::pluck('nm_rek', 'kd_rek');
     }
 
-    public function getSIMRSSettingsProperty(): object
+    public function getSIMRSSettingsProperty(): ?object
     {
         return DB::connection('mysql_sik')->table('setting')->first([
             'nama_instansi', 'alamat_instansi', 'kontak', 'email', 'logo'
         ]);
     }
 
-    public function render()
+    public function render(): View
     {
-        $dataJurnal = Jurnal::query()
-            ->whereIn('no_jurnal', collect($this->savedData)->pluck('no_jurnal')->all())
+        $printJurnal = Jurnal::query()
+            ->whereIn('no_jurnal', $this->dataJurnal->all())
             ->with('detail.rekening')
             ->get();
 
-        return view('livewire.pages.keuangan.cetak.hasil-posting-jurnal', compact('dataJurnal'))
+        return view('livewire.pages.keuangan.cetak.hasil-posting-jurnal', compact('printJurnal'))
             ->layout(CustomerLayout::class, ['title' => 'Cetak PDF Posting Jurnal']);
     }
 }

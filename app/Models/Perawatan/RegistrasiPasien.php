@@ -402,45 +402,45 @@ class RegistrasiPasien extends Model
         }
 
         $sqlSelect = <<<'SQL'
-            reg_periksa.no_rawat as no_rawat,
-            reg_periksa.no_rkm_medis as no_rm,
-            pasien.nm_pasien as nm_pasien,
-            pasien.no_ktp as no_ktp,
-            pasien.jk as jk,
-            pasien.tgl_lahir as tgl_lahir,
-            reg_periksa.umurdaftar,
-            reg_periksa.sttsumur,
-            pasien.agama as agama,
-            suku_bangsa.nama_suku_bangsa as suku,
-            reg_periksa.status_lanjut as status_lanjut,
-            concat_ws(' ', rawat_inap.kd_kamar, bangsal.nm_bangsal) as ruangan,
-            reg_periksa.status_poli as status_poli,
-            poliklinik.nm_poli as nm_poli,
-            dokter.nm_dokter as nm_dokter,
-            reg_periksa.stts as status,
-            reg_periksa.tgl_registrasi as tgl_registrasi,
-            reg_periksa.jam_reg as jam_registrasi,
-            if(rawat_inap.tgl_keluar > '0000-00-00', rawat_inap.tgl_keluar, '-') as tgl_keluar,
-            if(rawat_inap.jam_keluar > '00:00:00', rawat_inap.jam_keluar, '-') as jam_keluar,
-            rawat_inap.diagnosa_awal as diagnosa_awal,
-            group_concat(distinct diagnosa_pasien.kd_penyakit order by diagnosa_pasien.prioritas asc separator '; ') as icd_diagnosa,
-            group_concat(distinct trim(concat_ws(' - ', diagnosa_pasien.kd_penyakit, penyakit.nm_penyakit)) order by diagnosa_pasien.prioritas asc separator '; ') as diagnosa,
-            group_concat(distinct perawatan_ralan.kd_jenis_prw separator '; ') as kd_tindakan_ralan,
-            group_concat(distinct trim(concat_ws(' - ', perawatan_ralan.kd_jenis_prw, jns_perawatan.nm_perawatan)) separator '; ') as nm_tindakan_ralan,
-            group_concat(distinct perawatan_ranap.kd_jenis_prw separator '; ') as kd_tindakan_ranap,
-            group_concat(distinct trim(concat_ws(' - ', perawatan_ranap.kd_jenis_prw, jns_perawatan_inap.nm_perawatan)) separator '; ') as nm_tindakan_ranap,
-            '-' as lama_operasi,
-            rujuk_masuk.perujuk as rujukan_masuk,
-            group_concat(distinct dokter_dpjp.nm_dokter separator '; ') as dokter_pj,
-            kamar.kelas as kelas,
-            penjab.png_jawab as penjamin,
-            reg_periksa.status_bayar as status_bayar,
-            rawat_inap.stts_pulang as status_pulang_ranap,
-            rujuk.rujuk_ke as rujuk_keluar_rs,
-            convert(pasien.alamat using ascii) as alamat,
-            pasien.no_tlp as no_hp,
-            (select count(rp2.no_rawat) from reg_periksa rp2 where rp2.no_rkm_medis = reg_periksa.no_rkm_medis and rp2.tgl_registrasi <= reg_periksa.tgl_registrasi) as kunjungan_ke
-        SQL;
+reg_periksa.no_rawat as no_rawat,
+reg_periksa.no_rkm_medis as no_rm,
+pasien.nm_pasien as nm_pasien,
+pasien.no_ktp as no_ktp,
+pasien.jk as jk,
+pasien.tgl_lahir as tgl_lahir,
+reg_periksa.umurdaftar,
+reg_periksa.sttsumur,
+pasien.agama as agama,
+suku_bangsa.nama_suku_bangsa as suku,
+reg_periksa.status_lanjut as status_lanjut,
+concat_ws(' ', rawat_inap.kd_kamar, bangsal.nm_bangsal) as ruangan,
+reg_periksa.status_poli as status_poli,
+poliklinik.nm_poli as nm_poli,
+dokter.nm_dokter as nm_dokter,
+reg_periksa.stts as status,
+reg_periksa.tgl_registrasi as tgl_registrasi,
+reg_periksa.jam_reg as jam_registrasi,
+if(rawat_inap.tgl_keluar > '0000-00-00', rawat_inap.tgl_keluar, '-') as tgl_keluar,
+if(rawat_inap.jam_keluar > '00:00:00', rawat_inap.jam_keluar, '-') as jam_keluar,
+rawat_inap.diagnosa_awal as diagnosa_awal,
+group_concat(distinct diagnosa_pasien.kd_penyakit order by diagnosa_pasien.prioritas asc separator '; ') as icd_diagnosa,
+group_concat(distinct trim(concat_ws(' - ', diagnosa_pasien.kd_penyakit, penyakit.nm_penyakit)) order by diagnosa_pasien.prioritas asc separator '; ') as diagnosa,
+group_concat(distinct perawatan_ralan.kd_jenis_prw separator '; ') as kd_tindakan_ralan,
+group_concat(distinct trim(concat_ws(' - ', perawatan_ralan.kd_jenis_prw, jns_perawatan.nm_perawatan)) separator '; ') as nm_tindakan_ralan,
+group_concat(distinct perawatan_ranap.kd_jenis_prw separator '; ') as kd_tindakan_ranap,
+group_concat(distinct trim(concat_ws(' - ', perawatan_ranap.kd_jenis_prw, jns_perawatan_inap.nm_perawatan)) separator '; ') as nm_tindakan_ranap,
+'-' as lama_operasi,
+rujuk_masuk.perujuk as rujukan_masuk,
+group_concat(distinct dokter_dpjp.nm_dokter separator '; ') as dokter_pj,
+kamar.kelas as kelas,
+penjab.png_jawab as penjamin,
+reg_periksa.status_bayar as status_bayar,
+rawat_inap.stts_pulang as status_pulang_ranap,
+rujuk.rujuk_ke as rujuk_keluar_rs,
+convert(pasien.alamat using ascii) as alamat,
+pasien.no_tlp as no_hp,
+(select count(rp2.no_rawat) from reg_periksa rp2 where rp2.no_rkm_medis = reg_periksa.no_rkm_medis and rp2.tgl_registrasi <= reg_periksa.tgl_registrasi) as kunjungan_ke
+SQL;
 
         $this->addSearchConditions([
             'pasien.nm_pasien',
@@ -472,21 +472,9 @@ class RegistrasiPasien extends Model
             ->select(['kd_kamar', 'no_rawat', 'diagnosa_awal', 'tgl_keluar', 'jam_keluar', 'lama', 'stts_pulang'])
             ->whereNotIn('kamar_inap.stts_pulang', ['Pindah Kamar'])
             ->orderByRaw(<<<'SQL'
-                cast(
-                    concat_ws(' ',
-                        if (
-                            kamar_inap.tgl_keluar is not null or kamar_inap.tgl_keluar > '0000-00-00',
-                            kamar_inap.tgl_keluar,
-                            current_date()
-                        ),
-                        if (
-                            kamar_inap.jam_keluar is not null or kamar_inap.jam_keluar > '00:00:00',
-                            kamar_inap.jam_keluar,
-                            current_time()
-                        )
-                    ) as datetime
-                ) desc
-            SQL);
+cast(concat_ws(' ', if (kamar_inap.tgl_keluar is not null or kamar_inap.tgl_keluar > '0000-00-00', kamar_inap.tgl_keluar, current_date()), if (kamar_inap.jam_keluar is not null or kamar_inap.jam_keluar > '00:00:00', kamar_inap.jam_keluar, current_time())) as datetime) desc
+SQL
+            );
 
         $perawatanRalan = TindakanRalanDokterPerawat::query()
             ->select(['no_rawat', 'kd_jenis_prw'])
@@ -722,50 +710,47 @@ SQL;
         }
 
         $sqlSelect = <<<'SQL'
-            reg_periksa.no_rawat,
-            reg_periksa.tgl_registrasi,
-            reg_periksa.stts,
-            dokter.nm_dokter,
-            reg_periksa.no_rkm_medis,
-            pasien.nm_pasien,
-            poliklinik.nm_poli,
-            reg_periksa.status_lanjut,
-            exists(select * from pemeriksaan_ralan where pemeriksaan_ralan.no_rawat = reg_periksa.no_rawat) soapie_ralan,
-            exists(select * from pemeriksaan_ranap where pemeriksaan_ranap.no_rawat = reg_periksa.no_rawat) soapie_ranap,
-            exists(select * from resume_pasien where resume_pasien.no_rawat = reg_periksa.no_rawat) resume_ralan,
-            exists(select * from resume_pasien_ranap where resume_pasien_ranap.no_rawat = reg_periksa.no_rawat) resume_ranap,
-            exists(select * from data_triase_igd where data_triase_igd.no_rawat = reg_periksa.no_rawat) triase_igd,
-            -- IGD
-            exists(select * from penilaian_awal_keperawatan_igd where penilaian_awal_keperawatan_igd.no_rawat = reg_periksa.no_rawat) askep_igd,
-            exists(select * from penilaian_medis_igd where penilaian_medis_igd.no_rawat = reg_periksa.no_rawat) asmed_igd,
-            -- RALAN
-            exists(select * from penilaian_awal_keperawatan_ralan where penilaian_awal_keperawatan_ralan.no_rawat = reg_periksa.no_rawat) askep_ralan_umum,
-            exists(select * from penilaian_awal_keperawatan_gigi where penilaian_awal_keperawatan_gigi.no_rawat = reg_periksa.no_rawat) askep_ralan_gigi,
-            exists(select * from penilaian_awal_keperawatan_kebidanan where penilaian_awal_keperawatan_kebidanan.no_rawat = reg_periksa.no_rawat) askep_ralan_bidan,
-            exists(select * from penilaian_awal_keperawatan_ralan_bayi where penilaian_awal_keperawatan_ralan_bayi.no_rawat = reg_periksa.no_rawat) askep_ralan_bayi,
-            exists(select * from penilaian_awal_keperawatan_ralan_psikiatri where penilaian_awal_keperawatan_ralan_psikiatri.no_rawat = reg_periksa.no_rawat) askep_ralan_psikiatri,
-            exists(select * from penilaian_awal_keperawatan_ralan_geriatri where penilaian_awal_keperawatan_ralan_geriatri.no_rawat = reg_periksa.no_rawat) askep_ralan_geriatri,
-            exists(select * from penilaian_medis_ralan where penilaian_medis_ralan.no_rawat = reg_periksa.no_rawat) asmed_poli_umum,
-            exists(select * from penilaian_medis_ralan_anak where penilaian_medis_ralan_anak.no_rawat = reg_periksa.no_rawat) asmed_poli_anak,
-            exists(select * from penilaian_medis_ralan_bedah where penilaian_medis_ralan_bedah.no_rawat = reg_periksa.no_rawat) asmed_poli_bedah,
-            exists(select * from penilaian_medis_ralan_bedah_mulut where penilaian_medis_ralan_bedah_mulut.no_rawat = reg_periksa.no_rawat) asmed_poli_bedah_mulut,
-            exists(select * from penilaian_medis_ralan_kandungan where penilaian_medis_ralan_kandungan.no_rawat = reg_periksa.no_rawat) asmed_poli_kandungan,
-            exists(select * from penilaian_medis_ralan_mata where penilaian_medis_ralan_mata.no_rawat = reg_periksa.no_rawat) asmed_poli_mata,
-            exists(select * from penilaian_medis_ralan_neurologi where penilaian_medis_ralan_neurologi.no_rawat = reg_periksa.no_rawat) asmed_poli_neurologi,
-            exists(select * from penilaian_medis_ralan_orthopedi where penilaian_medis_ralan_orthopedi.no_rawat = reg_periksa.no_rawat) asmed_poli_orthopedi,
-            exists(select * from penilaian_medis_ralan_penyakit_dalam where penilaian_medis_ralan_penyakit_dalam.no_rawat = reg_periksa.no_rawat) asmed_poli_penyakit_dalam,
-            exists(select * from penilaian_medis_ralan_psikiatrik where penilaian_medis_ralan_psikiatrik.no_rawat = reg_periksa.no_rawat) asmed_poli_psikiatrik,
-            exists(select * from penilaian_medis_ralan_tht where penilaian_medis_ralan_tht.no_rawat = reg_periksa.no_rawat) asmed_poli_tht,
-            exists(select * from penilaian_medis_ralan_geriatri where penilaian_medis_ralan_geriatri.no_rawat = reg_periksa.no_rawat) asmed_poli_geriatri,
-            exists(select * from penilaian_medis_ralan_kulitdankelamin where penilaian_medis_ralan_kulitdankelamin.no_rawat = reg_periksa.no_rawat) asmed_poli_kulit_kelamin,
-            -- RANAP
-            exists(select * from penilaian_awal_keperawatan_ranap where penilaian_awal_keperawatan_ranap.no_rawat = reg_periksa.no_rawat) askep_ranap_umum,
-            exists(select * from penilaian_awal_keperawatan_kebidanan_ranap where penilaian_awal_keperawatan_kebidanan_ranap.no_rawat = reg_periksa.no_rawat) askep_ranap_bidan,
-            exists(select * from penilaian_medis_ranap where penilaian_medis_ranap.no_rawat = reg_periksa.no_rawat) asmed_ranap_umum,
-            exists(select * from penilaian_medis_ranap_kandungan where penilaian_medis_ranap_kandungan.no_rawat = reg_periksa.no_rawat) asmed_ranap_kandungan,
-            exists(select * from diagnosa_pasien where diagnosa_pasien.no_rawat = reg_periksa.no_rawat) icd_10,
-            exists(select * from prosedur_pasien where prosedur_pasien.no_rawat = reg_periksa.no_rawat) icd_9
-        SQL;
+reg_periksa.no_rawat,
+reg_periksa.tgl_registrasi,
+reg_periksa.stts,
+dokter.nm_dokter,
+reg_periksa.no_rkm_medis,
+pasien.nm_pasien,
+poliklinik.nm_poli,
+reg_periksa.status_lanjut,
+exists(select * from pemeriksaan_ralan where pemeriksaan_ralan.no_rawat = reg_periksa.no_rawat) soapie_ralan,
+exists(select * from pemeriksaan_ranap where pemeriksaan_ranap.no_rawat = reg_periksa.no_rawat) soapie_ranap,
+exists(select * from resume_pasien where resume_pasien.no_rawat = reg_periksa.no_rawat) resume_ralan,
+exists(select * from resume_pasien_ranap where resume_pasien_ranap.no_rawat = reg_periksa.no_rawat) resume_ranap,
+exists(select * from data_triase_igd where data_triase_igd.no_rawat = reg_periksa.no_rawat) triase_igd,
+exists(select * from penilaian_awal_keperawatan_igd where penilaian_awal_keperawatan_igd.no_rawat = reg_periksa.no_rawat) askep_igd,
+exists(select * from penilaian_medis_igd where penilaian_medis_igd.no_rawat = reg_periksa.no_rawat) asmed_igd,
+exists(select * from penilaian_awal_keperawatan_ralan where penilaian_awal_keperawatan_ralan.no_rawat = reg_periksa.no_rawat) askep_ralan_umum,
+exists(select * from penilaian_awal_keperawatan_gigi where penilaian_awal_keperawatan_gigi.no_rawat = reg_periksa.no_rawat) askep_ralan_gigi,
+exists(select * from penilaian_awal_keperawatan_kebidanan where penilaian_awal_keperawatan_kebidanan.no_rawat = reg_periksa.no_rawat) askep_ralan_bidan,
+exists(select * from penilaian_awal_keperawatan_ralan_bayi where penilaian_awal_keperawatan_ralan_bayi.no_rawat = reg_periksa.no_rawat) askep_ralan_bayi,
+exists(select * from penilaian_awal_keperawatan_ralan_psikiatri where penilaian_awal_keperawatan_ralan_psikiatri.no_rawat = reg_periksa.no_rawat) askep_ralan_psikiatri,
+exists(select * from penilaian_awal_keperawatan_ralan_geriatri where penilaian_awal_keperawatan_ralan_geriatri.no_rawat = reg_periksa.no_rawat) askep_ralan_geriatri,
+exists(select * from penilaian_medis_ralan where penilaian_medis_ralan.no_rawat = reg_periksa.no_rawat) asmed_poli_umum,
+exists(select * from penilaian_medis_ralan_anak where penilaian_medis_ralan_anak.no_rawat = reg_periksa.no_rawat) asmed_poli_anak,
+exists(select * from penilaian_medis_ralan_bedah where penilaian_medis_ralan_bedah.no_rawat = reg_periksa.no_rawat) asmed_poli_bedah,
+exists(select * from penilaian_medis_ralan_bedah_mulut where penilaian_medis_ralan_bedah_mulut.no_rawat = reg_periksa.no_rawat) asmed_poli_bedah_mulut,
+exists(select * from penilaian_medis_ralan_kandungan where penilaian_medis_ralan_kandungan.no_rawat = reg_periksa.no_rawat) asmed_poli_kandungan,
+exists(select * from penilaian_medis_ralan_mata where penilaian_medis_ralan_mata.no_rawat = reg_periksa.no_rawat) asmed_poli_mata,
+exists(select * from penilaian_medis_ralan_neurologi where penilaian_medis_ralan_neurologi.no_rawat = reg_periksa.no_rawat) asmed_poli_neurologi,
+exists(select * from penilaian_medis_ralan_orthopedi where penilaian_medis_ralan_orthopedi.no_rawat = reg_periksa.no_rawat) asmed_poli_orthopedi,
+exists(select * from penilaian_medis_ralan_penyakit_dalam where penilaian_medis_ralan_penyakit_dalam.no_rawat = reg_periksa.no_rawat) asmed_poli_penyakit_dalam,
+exists(select * from penilaian_medis_ralan_psikiatrik where penilaian_medis_ralan_psikiatrik.no_rawat = reg_periksa.no_rawat) asmed_poli_psikiatrik,
+exists(select * from penilaian_medis_ralan_tht where penilaian_medis_ralan_tht.no_rawat = reg_periksa.no_rawat) asmed_poli_tht,
+exists(select * from penilaian_medis_ralan_geriatri where penilaian_medis_ralan_geriatri.no_rawat = reg_periksa.no_rawat) asmed_poli_geriatri,
+exists(select * from penilaian_medis_ralan_kulitdankelamin where penilaian_medis_ralan_kulitdankelamin.no_rawat = reg_periksa.no_rawat) asmed_poli_kulit_kelamin,
+exists(select * from penilaian_awal_keperawatan_ranap where penilaian_awal_keperawatan_ranap.no_rawat = reg_periksa.no_rawat) askep_ranap_umum,
+exists(select * from penilaian_awal_keperawatan_kebidanan_ranap where penilaian_awal_keperawatan_kebidanan_ranap.no_rawat = reg_periksa.no_rawat) askep_ranap_bidan,
+exists(select * from penilaian_medis_ranap where penilaian_medis_ranap.no_rawat = reg_periksa.no_rawat) asmed_ranap_umum,
+exists(select * from penilaian_medis_ranap_kandungan where penilaian_medis_ranap_kandungan.no_rawat = reg_periksa.no_rawat) asmed_ranap_kandungan,
+exists(select * from diagnosa_pasien where diagnosa_pasien.no_rawat = reg_periksa.no_rawat) icd_10,
+exists(select * from prosedur_pasien where prosedur_pasien.no_rawat = reg_periksa.no_rawat) icd_9
+SQL;
 
         $this->addSearchConditions([
             'dokter.nm_dokter',
