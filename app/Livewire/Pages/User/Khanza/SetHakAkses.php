@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\User\Khanza;
 
+use App\Casts\BooleanCast;
 use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\LiveTable;
