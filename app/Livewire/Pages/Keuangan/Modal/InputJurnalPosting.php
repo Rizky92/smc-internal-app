@@ -12,7 +12,6 @@ use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -192,7 +191,7 @@ class InputJurnalPosting extends Component
                 foreach ($this->jurnalSementara as $temp) {
                     $jurnal = Jurnal::catat(
                         $temp['no_bukti'],
-                        str($temp['keterangan'])->upper()->trim()->replaceLast('.', '')->append(', OLEH ' . user()->nik),
+                        str($temp['keterangan'])->upper()->trim()->replaceLast('.', '')->append(', OLEH ' . user()->nik)->value(),
                         carbon($temp['tgl_jurnal'])->setTimeFromTimeString($temp['jam_jurnal']),
                         $temp['detail']
                     );
