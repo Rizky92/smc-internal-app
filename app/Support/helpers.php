@@ -89,7 +89,7 @@ if (! function_exists('rp')) {
      */
     function rp($nominal = 0, int $decimalCount = 0): string
     {
-        return 'Rp. '.number_format($nominal, $decimalCount, ',', '.');
+        return money($nominal, $decimalCount, 'Rp. ');
     }
 }
 
@@ -97,9 +97,16 @@ if (! function_exists('money')) {
     /**
      * @param  \int|float  $nominal
      */
-    function money($nominal = 0, int $decimalCount = 0, string $name = 'Rp. '): string
+    function money($nominal = 0, int $decimalCount = 0, string $denom = ''): string
     {
-        return $name.number_format($nominal, $decimalCount, ',', '.');
+        switch ($nominal <=> 0) {
+            case -1:
+                return '-'.$denom.number_format(abs($nominal), $decimalCount, ',', '.');
+            case 0:
+                return $denom.'0';
+            case 1:
+                return $denom.number_format($nominal, $decimalCount, ',', '.');
+        }
     }
 }
 

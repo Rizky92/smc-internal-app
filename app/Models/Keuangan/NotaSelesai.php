@@ -140,7 +140,7 @@ class NotaSelesai extends Model
                 ->orWhere('keterangan', 'like', 'PIUTANG PASIEN RAWAT JALAN% %DIPOSTING OLEH%')
                 ->orWhere('keterangan', 'like', 'PIUTANG PASIEN RAWAT INAP% %DIPOSTING OLEH%'))
             ->orderBy('no_jurnal')
-            ->chunk(500, function (Collection $chunk) {
+            ->chunk(1000, function (Collection $chunk) {
                 $data = $chunk->map(function (object $value, int $key) {
                     /** @var object{no_jurnal: string, no_bukti: string, tgl_jurnal: string, jam_jurnal: string, jenis: "U"|"P", keterangan: string} $value */
                     
@@ -148,7 +148,6 @@ class NotaSelesai extends Model
 
                     $bentukBayar = $ket->before('PASIEN')->words(1, '')->trim()->value();
                     $statusPasien = $ket->after('PASIEN')->words(2, '')->trim()->value();
-
                     $noRawat = $ket->matchAll('/\d+/')->take(4)->join('/');
                     $petugas = $ket->afterLast('OLEH ')->trim()->value();
 

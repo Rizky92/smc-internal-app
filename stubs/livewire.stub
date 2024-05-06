@@ -14,7 +14,12 @@ use Livewire\Component;
 
 class [class] extends Component
 {
-    use FlashComponent, Filterable, ExcelExportable, LiveTable, MenuTracker, DeferredLoading;
+    use FlashComponent;
+    use Filterable;
+    use ExcelExportable;
+    use LiveTable;
+    use MenuTracker;
+    use DeferredLoading;
 
     /** @var string */
     public $tglAwal;

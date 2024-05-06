@@ -86,7 +86,7 @@
     ->only('class')
     ->merge($styles[$width])
 }}>
-    <select @if($livewire) wire:model.defer="{{ $model }}" @endif id="{{ $id }}" name="{{ $name }}" class="form-control form-control-sm simple-select2-sm input-sm" autocomplete="off">
+    <select @if ($livewire) wire:model.defer="{{ $model }}" @endif id="{{ $id }}" name="{{ $name }}" class="form-control form-control-sm simple-select2-sm input-sm" autocomplete="off">
         @if ($placeholder)
             <option disabled {{ $options->has($this->$model) ? null : 'selected' }}>{{ $placeholder }}</option>
         @endif

@@ -189,12 +189,13 @@ Route::prefix('admin')
                     ->name('laporan-trial-balance')
                     ->middleware('can:keuangan.laporan-trial-balance.read');
 
-                Route::get('posting-jurnal', Keuangan\PostingJurnal::class)
+                Route::get('posting-jurnal', Keuangan\JurnalPosting::class)
                     ->name('posting-jurnal')
                     ->middleware('can:keuangan.posting-jurnal.read');
                 
-                Route::get('cetak-pdf-posting-jurnal', Keuangan\CetakPDFPostingJurnal::class)
-                    ->name('cetak-pdf-posting-jurnal');
+                Route::get('cetak-posting-jurnal/{dataJurnal}', Keuangan\Cetak\HasilPostingJurnal::class)
+                    ->name('cetak-posting-jurnal')
+                    ->middleware('can:keuangan.posting-jurnal.read');
             });
 
         Route::prefix('farmasi')
