@@ -906,8 +906,9 @@ kecamatan.nm_kec,
 reg_periksa.no_rkm_medis,
 reg_periksa.no_rawat,
 pasien.alamat,
-diagnosa_pasien.kd_penyakit,
-penyakit.nm_penyakit,
+pasien.tgl_lahir,
+(select diagnosa_pasien.kd_penyakit from diagnosa_pasien where diagnosa_pasien.no_rawat = reg_periksa.no_rawat order by diagnosa_pasien.prioritas desc, diagnosa_pasien.status desc limit 1) kd_penyakit,
+(select penyakit.nm_penyakit from diagnosa_pasien join penyakit on diagnosa_pasien.kd_penyakit = penyakit.kd_penyakit where diagnosa_pasien.no_rawat = reg_periksa.no_rawat order by diagnosa_pasien.prioritas desc, diagnosa_pasien.status desc limit 1) nm_penyakit,
 pasien.pnd,
 bahasa_pasien.nama_bahasa,
 suku_bangsa.nama_suku_bangsa,
@@ -919,7 +920,7 @@ pasien.jk,
 pasien.agama
 SQL;
 
-        $this->addSortColumns('umur', DB::raw("concat(field(reg_periksa.sttsumur, 'Hr', 'Bl', 'Th'), ' ', reg_periksa.umurdaftar)"));
+        $this->addSortColumns('umur', DB::raw("concat(reg_periksa.umurdaftar, ' ', reg_periksa.sttsumur)"));
 
         $this->addSearchConditions([
             'kecamatan.nm_kec',
@@ -940,15 +941,8 @@ SQL;
             ->leftJoin('kecamatan', 'pasien.kd_kec', '=', 'kecamatan.kd_kec')
             ->leftJoin('bahasa_pasien', 'pasien.bahasa_pasien', '=', 'bahasa_pasien.id')
             ->leftJoin('suku_bangsa', 'pasien.suku_bangsa', '=', 'suku_bangsa.id')
-            ->leftJoin('diagnosa_pasien', 'reg_periksa.no_rawat', '=', 'diagnosa_pasien.no_rawat')
-            ->leftJoin('penyakit', 'diagnosa_pasien.kd_penyakit', 'penyakit.kd_penyakit')
             ->whereNotIn('reg_periksa.stts', ['batal', 'belum'])
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
-            ->groupBy([
-                'kecamatan.kd_kec',
-                'reg_periksa.no_rkm_medis',
-                'reg_periksa.no_rawat',
-            ])
             ->orderBy('reg_periksa.no_rawat');
     }
 
