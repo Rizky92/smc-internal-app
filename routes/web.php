@@ -193,7 +193,7 @@ Route::prefix('admin')
                     ->name('posting-jurnal')
                     ->middleware('can:keuangan.posting-jurnal.read');
                 
-                Route::get('cetak-posting-jurnal/{dataJurnal}', Keuangan\Cetak\HasilPostingJurnal::class)
+                Route::get('cetak-posting-jurnal', Keuangan\Cetak\HasilPostingJurnal::class)
                     ->name('cetak-posting-jurnal')
                     ->middleware('can:keuangan.posting-jurnal.read');
             });
