@@ -36,19 +36,20 @@
                 padding: 0;
                 border-collapse: collapse;
                 margin-bottom: 20px;
-                font-size: 0.70em;
+                font-size: 0.65em;
             }
 
             td {
                 vertical-align: top;
-                padding: 0;
+                white-space: nowrap;
+                padding: 0 0.125rem 0 0.125rem;
                 margin: 0;
             }
             
             thead {
-                color-adjust: exact!important;
-                -webkit-print-color-adjust: exact!important;
-                print-color-adjust: exact!important;
+                color-adjust: exact !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
                 background-color: #F0F0DC;
                 border-top: 1px solid #333;
                 border-bottom: 1px solid #333;
@@ -102,7 +103,7 @@
     @endpush
     <div id="printHeader">
         <div class="container">
-            <img src="data:image/jpeg;base64,{{ base64_encode($this->SIMRSSettings->logo) }}" style="display: block; width: 88px; position: absolute; left: 5%; top: 1%; transform: translate(-5% -1%)">
+            <img src="data:image/jpeg;base64,{{ base64_encode($this->SIMRSSettings->logo) }}" style="display: block; width: 80px; position: absolute; left: 1%; top: 1%; transform: translate(-1% -1%)">
             <div class="row">
                 <div class="col-12">
                     <h2 style="font-size: 12pt; margin: 0;">{{ $this->SIMRSSettings->nama_instansi }}</h2>
@@ -126,15 +127,15 @@
     <table style="min-width: 100%;">
         <thead>
             <tr>
-                <td style="width: 10%;">No. Jurnal</td>
+                <td style="width: 9.5%;">No. Jurnal</td>
                 <td style="width: 10%;">No. Bukti</td>
-                <td style="width: 6%;">Tgl. Jurnal</td>
+                <td style="width: 10%;">Tgl. Jurnal</td>
                 <td style="width: 4%;">Jenis</td>
-                <td style="width: 22%;">Keterangan</td>
+                <td>Keterangan</td>
                 <td style="width: 4%;">Kode</td>
-                <td style="width: 22%;">Rekening</td>
-                <td style="text-align: right; width: 11%;">Debet</td>
-                <td style="text-align: right; width: 11%;">Kredit</td>
+                <td style="width: 28%;">Rekening</td>
+                <td style="text-align: right; width: 10%;">Debet</td>
+                <td style="text-align: right; width: 10%;">Kredit</td>
             </tr>
         </thead>
         <tbody class="no-border-table">
@@ -156,7 +157,10 @@
                     <td>{{ $jurnal->jenis === 'U' ? 'UMUM' : 'PENYESUAIAN' }}</td>
                     <td>{{ $jurnal->keterangan }}</td>
                     <td>{{ $detailPertama->kd_rek }}</td>
-                    <td>{{ $detailPertama->rekening->nm_rek }}</td>
+                    <td>
+                        @if ((int) round($detailPertama->debet, 0) === 0 && (int) round($detailPertama->kredit, 0) >= 0) &emsp; @endif
+                        {{ $detailPertama->rekening->nm_rek }}
+                    </td>
                     <td style="text-align: right">{{ rp($detailPertama->debet) }}</td>
                     <td style="text-align: right">{{ rp($detailPertama->kredit) }}</td>
                 </tr>
@@ -164,22 +168,23 @@
                     <tr>
                         <td colspan="5">&nbsp;</td>
                         <td>{{ $detail->kd_rek }}</td>
-                        <td>{{ $detail->rekening->nm_rek }}</td>
+                        <td>
+                            @if ((int) round($detail->debet, 0) === 0 && (int) round($detail->kredit, 0) >= 0) &emsp; @endif
+                            {{ $detail->rekening->nm_rek }}
+                        </td>
                         <td style="text-align: right">{{ rp($detail->debet) }}</td>
                         <td style="text-align: right">{{ rp($detail->kredit) }}</td>
                     </tr>
                 @endforeach
             @endforeach
-        </tbody>
-        <tfoot>
-            <tr style="border-top: 1px solid #202020; border-bottom: 1px solid #202020;">
+            <tr style="border-top: 1px solid #202020; border-bottom: 1px solid #202020">
                 <td colspan="7">Total:</td>
                 <td style="vertical-align: top; text-align: right; font-weight: bold">{{ $totalDebet != 0 ? 'Rp. ' . number_format($totalDebet, 0, '.', '.') : '' }}</td>
                 <td style="vertical-align: top; text-align: right; font-weight: bold">{{ $totalKredit != 0 ? 'Rp. ' . number_format($totalKredit, 0, '.', '.') : '' }}</td>
             </tr>
-        </tfoot>
+        </tbody>
     </table>
-    <div style="display: grid; grid-template-columns: max-content 1fr max-content; font-size: 0.70em; font-weight: bold; page-break-inside: avoid">
+    <div style="display: grid; grid-template-columns: max-content 1fr max-content; font-size: 0.65em; font-weight: bold; page-break-inside: avoid">
         <div style="text-align: center">
             <div></div>
             <div>Menyetujui</div>
@@ -187,7 +192,7 @@
             <br>
             <br>
             <div>dr. DAISY WIJAYA</div>
-            <div>dr. MANAGER KEUANGAN</div>
+            <div>MANAGER KEUANGAN</div>
         </div>
         <div></div>
         <div style="text-align: center">
