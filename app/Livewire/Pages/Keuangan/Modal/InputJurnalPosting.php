@@ -191,7 +191,7 @@ class InputJurnalPosting extends Component
                 foreach ($this->jurnalSementara as $temp) {
                     $jurnal = Jurnal::catat(
                         $temp['no_bukti'],
-                        str($temp['keterangan'])->upper()->trim()->replaceLast('.', '')->append(', OLEH ' . user()->nik)->value(),
+                        str($temp['keterangan'])->upper()->trim()->replaceLast('.', '')->append(', DIPOSTING OLEH ' . user()->nik)->value(),
                         carbon($temp['tgl_jurnal'])->setTimeFromTimeString($temp['jam_jurnal']),
                         $temp['detail']
                     );
