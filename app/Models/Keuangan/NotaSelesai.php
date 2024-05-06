@@ -138,12 +138,7 @@ class NotaSelesai extends Model
                 ->where('keterangan', 'like', 'PEMBAYARAN PASIEN RAWAT JALAN% %DIPOSTING OLEH%')
                 ->orWhere('keterangan', 'like', 'PEMBAYARAN PASIEN RAWAT INAP% %DIPOSTING OLEH%')
                 ->orWhere('keterangan', 'like', 'PIUTANG PASIEN RAWAT JALAN% %DIPOSTING OLEH%')
-                ->orWhere('keterangan', 'like', 'PIUTANG PASIEN RAWAT INAP% %DIPOSTING OLEH%')
-                ->orWhere('keterangan', 'like', 'PEMBATALAN PEMBAYARAN PASIEN RAWAT JALAN% %DIPOSTING OLEH%')
-                ->orWhere('keterangan', 'like', 'PEMBATALAN PEMBAYARAN PASIEN RAWAT INAP% %DIPOSTING OLEH%')
-                ->orWhere('keterangan', 'like', 'PEMBATALAN PIUTANG PASIEN RAWAT JALAN% %DIPOSTING OLEH%')
-                ->orWhere('keterangan', 'like', 'PEMBATALAN PIUTANG PASIEN RAWAT INAP% %DIPOSTING OLEH%')
-            )
+                ->orWhere('keterangan', 'like', 'PIUTANG PASIEN RAWAT INAP% %DIPOSTING OLEH%'))
             ->orderBy('no_jurnal')
             ->chunk(1000, function (Collection $chunk) {
                 $data = $chunk->map(function (object $value, int $key) {
@@ -153,7 +148,6 @@ class NotaSelesai extends Model
 
                     $statusPasien = $ket->after('PASIEN')->words(2, '')->trim()->value();
                     $bentukBayar = $ket->before('PASIEN')->words(1, '')->trim()->value();
-                    $batalBayar = $ket->words(1, '')->contains('BATAL');
                     $noRawat = $ket->matchAll('/\d+/')->take(4)->join('/');
                     $petugas = $ket->afterLast('OLEH ')->trim()->value();
 
@@ -162,7 +156,6 @@ class NotaSelesai extends Model
                         'tgl_penyelesaian' => "{$value->tgl_jurnal} {$value->jam_jurnal}",
                         'status_pasien'    => $statusPasien,
                         'bentuk_bayar'     => $bentukBayar,
-                        'status_bayar'     => $batalBayar ? 'OPEN' : 'CLOSING',
                         'user_id'          => $petugas,
                     ];
                 });
