@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Aplikasi\HakAkses;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
 
 class KhanzaHakAksesSeeder extends Seeder
 {
@@ -1052,6 +1053,7 @@ class KhanzaHakAksesSeeder extends Seeder
      */
     public function run(): void
     {
+        Schema::connection('mysql_smc')->disableForeignKeyConstraints();
         HakAkses::truncate();
 
         $mapping = collect($this->dataHakAkses);
@@ -1063,5 +1065,6 @@ class KhanzaHakAksesSeeder extends Seeder
         ]);
 
         HakAkses::insert($mapping->toArray());
+        Schema::connection('mysql_smc')->enableForeignKeyConstraints();
     }
 }
