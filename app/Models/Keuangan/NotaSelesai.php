@@ -146,16 +146,16 @@ class NotaSelesai extends Model
                     
                     $ket = str($value->keterangan);
 
-                    $statusPasien = $ket->after('PASIEN')->words(2, '')->trim()->value();
                     $bentukBayar = $ket->before('PASIEN')->words(1, '')->trim()->value();
+                    $statusPasien = $ket->after('PASIEN')->words(2, '')->trim()->value();
                     $noRawat = $ket->matchAll('/\d+/')->take(4)->join('/');
                     $petugas = $ket->afterLast('OLEH ')->trim()->value();
 
                     return [
                         'no_rawat'         => $noRawat,
                         'tgl_penyelesaian' => "{$value->tgl_jurnal} {$value->jam_jurnal}",
-                        'status_pasien'    => $statusPasien,
                         'bentuk_bayar'     => $bentukBayar,
+                        'status_pasien'    => $statusPasien,
                         'user_id'          => $petugas,
                     ];
                 });
