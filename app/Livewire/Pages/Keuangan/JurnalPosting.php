@@ -74,13 +74,13 @@ class JurnalPosting extends Component
 
     public function cetak(): void
     {
-        $hashed = base64_encode(Jurnal::query()
+        $encoded = base64_encode(Jurnal::query()
             ->jurnalPosting($this->tglAwal, $this->tglAkhir)
             ->search($this->cari, ['no_jurnal', 'no_bukti', 'tgl_jurnal', 'keterangan'])
             ->pluck('no_jurnal'));
         
         $this->redirectRoute('admin.keuangan.cetak-posting-jurnal', [
-            'dataJurnal' => $hashed,
+            'data_jurnal' => $encoded,
         ]);
     }
 }

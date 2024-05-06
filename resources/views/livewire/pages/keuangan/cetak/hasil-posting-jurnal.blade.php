@@ -164,7 +164,7 @@
                     <td style="text-align: right">{{ rp($detailPertama->debet) }}</td>
                     <td style="text-align: right">{{ rp($detailPertama->kredit) }}</td>
                 </tr>
-                @foreach ($jurnal->detail as $detail)
+                @foreach ($jurnal->detail->skip(1) as $detail)
                     <tr>
                         <td colspan="5">&nbsp;</td>
                         <td>{{ $detail->kd_rek }}</td>

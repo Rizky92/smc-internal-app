@@ -217,11 +217,9 @@ class InputJurnalPosting extends Component
             return;
         }
 
-        $this->defaultValues();
-        $this->dispatchBrowserEvent('data-saved');
-        $this->emit('flash.success', 'Posting Jurnal berhasil ditambahkan');
-
-        return redirect()->route('admin.keuangan.cetak-posting-jurnal', ['dataJurnal', base64_encode(collect($jurnalTercatat)->pluck('no_jurnal'))]);
+        $this->redirectRoute('admin.keuangan.cetak-posting-jurnal', [
+            'data_jurnal' => base64_encode(collect($jurnalTercatat)->pluck('no_jurnal'))
+        ]);
     }
 
     protected function defaultValues(): void
