@@ -9,7 +9,6 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Keuangan\Jurnal\Jurnal;
 use App\View\Components\BaseLayout;
-use Hash;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -48,7 +47,7 @@ class JurnalPosting extends Component
     {
         return $this->isDeferred ? [] : Jurnal::query()
             ->jurnalPosting($this->tglAwal, $this->tglAkhir)
-            ->search($this->cari, ['no_jurnal', 'tgl_jurnal', 'jam_jurnal', 'keterangan'])
+            ->search($this->cari, ['no_jurnal', 'no_bukti', 'tgl_jurnal', 'keterangan'])
             ->paginate($this->perpage);
     }
 
@@ -56,7 +55,7 @@ class JurnalPosting extends Component
     {
         return $this->isDeferred ? [] : Jurnal::query()
             ->jumlahDebetKreditJurnalPosting($this->tglAwal, $this->tglAkhir)
-            ->search($this->cari)
+            ->search($this->cari, ['no_jurnal', 'no_bukti', 'tgl_jurnal', 'keterangan'])
             ->first();
     }
 
@@ -77,7 +76,7 @@ class JurnalPosting extends Component
     {
         $hashed = base64_encode(Jurnal::query()
             ->jurnalPosting($this->tglAwal, $this->tglAkhir)
-            ->search($this->cari, ['no_jurnal', 'tgl_jurnal', 'jam_jurnal', 'keterangan'])
+            ->search($this->cari, ['no_jurnal', 'no_bukti', 'tgl_jurnal', 'keterangan'])
             ->pluck('no_jurnal'));
         
         $this->redirectRoute('admin.keuangan.cetak-posting-jurnal', [
