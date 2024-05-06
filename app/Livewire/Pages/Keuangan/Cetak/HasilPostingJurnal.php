@@ -15,12 +15,11 @@ class HasilPostingJurnal extends Component
     /** @var \Illuminate\Support\Collection */
     public $dataJurnal;
 
-    /** 
-     * @param  mixed  $dataJurnal
-     */
-    public function mount($dataJurnal): void
+    protected function queryString(): array
     {
-        $this->dataJurnal = collect(json_decode(base64_decode($dataJurnal), true));
+        return [
+            'dataJurnal' => ['as' => 'data_jurnal'],
+        ];
     }
 
     public function getRekeningProperty(): Collection
@@ -37,8 +36,10 @@ class HasilPostingJurnal extends Component
 
     public function render(): View
     {
+        $dataJurnalDicetak = collect(json_decode(base64_decode($this->dataJurnal), true))->all();
+
         $printJurnal = Jurnal::query()
-            ->whereIn('no_jurnal', $this->dataJurnal->all())
+            ->whereIn('no_jurnal', $dataJurnalDicetak)
             ->with('detail.rekening')
             ->get();
 
