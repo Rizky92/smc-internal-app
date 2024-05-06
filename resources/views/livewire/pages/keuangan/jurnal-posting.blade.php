@@ -37,7 +37,7 @@
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-table id="printTable" style="min-width: 100%" zebra hover sticky nowrap borderless>
+            <x-table id="printTable" style="min-width: 100%" sticky nowrap borderless>
                 <x-slot name="columns">
                     <x-table.th title="No. Jurnal" />
                     <x-table.th title="No. Bukti" />
@@ -83,7 +83,7 @@
                     @empty
                         <x-table.tr-empty colspan="11" padding />
                     @endforelse
-                    <x-table.tr>
+                    <x-table.tr style="font-weight: bold">
                         <x-table.td>TOTAL :</x-table.td>
                         <x-table.td colspan="6" />
                         <x-table.td-money :value="optional($this->totalDebetKredit)->debet" />
