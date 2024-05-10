@@ -168,7 +168,7 @@
                                 @php
                                     $odd = $loop->iteration % 2 === 0 ? '255 255 255' : '247 247 247';
                                     $count = count($jurnal['detail']);
-                                    $firstDetail = $this->jurnalSementara[$index]['detail'][0];
+                                    $firstDetail = $jurnal['detail'][0];
                                 @endphp
                                 <x-table.tr style="background-color: rgb({{ $odd }})">
                                     <x-table.td rowspan="{{ $count }}">

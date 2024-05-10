@@ -218,7 +218,7 @@ class InputJurnalPosting extends Component
         }
 
         $this->redirectRoute('admin.keuangan.cetak-posting-jurnal', [
-            'data_jurnal' => base64_encode(collect($jurnalTercatat)->pluck('no_jurnal'))
+            'data_jurnal' => base64_encode(collect($jurnalTercatat)->pluck('no_jurnal')->toJson())
         ]);
     }
 
