@@ -259,6 +259,7 @@ class AccountReceivable extends Component
         return [
             PenagihanPiutang::query()
                 ->accountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan, $this->bedaJaminan)
+                ->search($this->cari)
                 ->cursor()
                 ->map(fn (PenagihanPiutang $model) => [
                     'no_tagihan'         => $model->no_tagihan,
