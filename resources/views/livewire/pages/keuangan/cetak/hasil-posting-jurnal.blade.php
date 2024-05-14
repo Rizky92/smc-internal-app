@@ -41,7 +41,7 @@
 
             td {
                 vertical-align: top;
-                white-space: nowrap;
+                white-space: pre-wrap;
                 padding: 0 0.125rem 0 0.125rem;
                 margin: 0;
             }
@@ -132,8 +132,6 @@
                 <td style="width: 10%;">Tgl. Jurnal</td>
                 <td style="width: 4%;">Jenis</td>
                 <td>Keterangan</td>
-                <td style="width: 4%;">Kode</td>
-                <td style="width: 28%;">Rekening</td>
                 <td style="text-align: right; width: 10%;">Debet</td>
                 <td style="text-align: right; width: 10%;">Kredit</td>
             </tr>
@@ -149,6 +147,7 @@
                     $detailPertama  = $jurnal->detail->first();
                     $totalDebet    += $jurnal->detail->sum('debet');
                     $totalKredit   += $jurnal->detail->sum('kredit');
+                    $index = 1;
                 @endphp
                 <tr>
                     <td>{{ $jurnal->no_jurnal }}</td>
@@ -156,29 +155,33 @@
                     <td>{{ $jurnal->tgl_jurnal }} {{ $jurnal->jam_jurnal }}</td>
                     <td>{{ $jurnal->jenis === 'U' ? 'UMUM' : 'PENYESUAIAN' }}</td>
                     <td>{{ $jurnal->keterangan }}</td>
-                    <td>{{ $detailPertama->kd_rek }}</td>
-                    <td>
-                        @if ((int) round($detailPertama->debet, 0) === 0 && (int) round($detailPertama->kredit, 0) >= 0) &emsp; @endif
-                        {{ $detailPertama->rekening->nm_rek }}
-                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">&nbsp;</td>
+                    <td>{{ $index }}. {{ $detailPertama->kd_rek }}, {{ $detailPertama->rekening->nm_rek }}</td>
                     <td style="text-align: right">{{ rp($detailPertama->debet) }}</td>
                     <td style="text-align: right">{{ rp($detailPertama->kredit) }}</td>
                 </tr>
                 @foreach ($jurnal->detail->skip(1) as $detail)
+                    @php
+                        $index++;
+                    @endphp
                     <tr>
-                        <td colspan="5">&nbsp;</td>
-                        <td>{{ $detail->kd_rek }}</td>
-                        <td>
-                            @if ((int) round($detail->debet, 0) === 0 && (int) round($detail->kredit, 0) >= 0) &emsp; @endif
-                            {{ $detail->rekening->nm_rek }}
-                        </td>
+                        <td colspan="4">&nbsp;</td>
+                        <td>{{ $index }}. {{ $detail->kd_rek }}, {{ $detail->rekening->nm_rek }}</td>
                         <td style="text-align: right">{{ rp($detail->debet) }}</td>
                         <td style="text-align: right">{{ rp($detail->kredit) }}</td>
                     </tr>
                 @endforeach
+                <tr>
+                    <td colspan="4">&nbsp;</td>
+                    <td>Total:</td>
+                    <td style="text-align: right">{{ rp($jurnal->detail->sum('debet')) }}</td>
+                    <td style="text-align: right">{{ rp($jurnal->detail->sum('kredit')) }}</td>
+                </tr>
             @endforeach
             <tr style="border-top: 1px solid #202020; border-bottom: 1px solid #202020">
-                <td colspan="7">Total:</td>
+                <td colspan="5">Total:</td>
                 <td style="vertical-align: top; text-align: right; font-weight: bold">{{ $totalDebet != 0 ? 'Rp. ' . number_format($totalDebet, 0, '.', '.') : '' }}</td>
                 <td style="vertical-align: top; text-align: right; font-weight: bold">{{ $totalKredit != 0 ? 'Rp. ' . number_format($totalKredit, 0, '.', '.') : '' }}</td>
             </tr>
