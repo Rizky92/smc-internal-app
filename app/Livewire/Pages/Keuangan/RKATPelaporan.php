@@ -55,7 +55,7 @@ class RKATPelaporan extends Component
     public function getDataPenggunaanRKATProperty(): Paginator
     {
         return PemakaianAnggaran::query()
-            ->penggunaanRKAT($this->bidang)
+            ->penggunaanRKAT($this->bidang, $this->tahun, $this->cari)
             ->paginate($this->perpage);
     }
 
@@ -100,7 +100,7 @@ class RKATPelaporan extends Component
     {
         return [
             PemakaianAnggaran::query()
-                ->penggunaanRKAT($this->bidang)
+                ->penggunaanRKAT($this->bidang, $this->tahun, $this->cari)
                 ->cursor()
                 ->map(fn (PemakaianAnggaran $model): array => [
                     'bidang'      => $model->anggaranBidang->bidang->nama,
