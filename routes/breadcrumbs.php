@@ -217,6 +217,11 @@ Breadcrumbs::for('admin.farmasi.daftar-riwayat-obat-alkes', function (Trail $tra
     $trail->push('Riwayat Obat Alkes', route('admin.farmasi.daftar-riwayat-obat-alkes'));
 });
 
+Breadcrumbs::for('admin.farmasi.rincian-perbandingan-po', function (Trail $trail): void {
+    $trail->parent('admin.farmasi');
+    $trail->push('Rincian Perbandingan Barang PO', route('admin.farmasi.rincian-perbandingan-po'));
+});
+
 Breadcrumbs::for('admin.rekam-medis', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Rekam Medis');

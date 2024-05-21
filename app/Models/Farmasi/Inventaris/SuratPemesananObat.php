@@ -85,4 +85,38 @@ SQL;
             ->when($hanyaTampilkanYangBerbeda, fn (Builder $query) => $query
                 ->whereRaw('(detail_surat_pemesanan_medis.jumlah2 - ifnull(pemesanan_datang.jumlah, 0)) != 0'));
     }
+
+    public function scopeRincianPerbandinganPemesananObatPO(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder 
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        }
+
+        $sqlSelect = <<<'SQL'
+            databarang.kode_brng,
+            databarang.nama_brng,
+            sum(detail_surat_pemesanan_medis.jumlah) as total_pemesanan,
+            sum(surat_pemesanan_medis.tagihan) as total_tagihan
+        SQL;
+
+        $this->addSearchConditions([
+            'databarang.kode_brng',
+            'databarang.nama_brng',
+        ]);
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->withCasts([
+                'total_pemesanan' => 'float',
+                'total_tagihan'   => 'float',
+            ])
+            ->join('detail_surat_pemesanan_medis', 'surat_pemesanan_medis.no_pemesanan', '=', 'detail_surat_pemesanan_medis.no_pemesanan')
+            ->join('databarang', 'detail_surat_pemesanan_medis.kode_brng', '=', 'databarang.kode_brng')
+            ->whereBetween('surat_pemesanan_medis.tanggal', [$tglAwal, $tglAkhir])
+            ->groupBy('databarang.kode_brng', 'databarang.nama_brng');
+    }
 }

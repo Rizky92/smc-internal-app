@@ -267,7 +267,8 @@ class Menu
                     'farmasi.laporan-pemakaian-obat-morphine.read',
                     'farmasi.laporan-pemakaian-obat-tb.read',
                     'farmasi.defecta-depo.read',
-                    'farmasi.daftar-riwayat-obat-alkes.read'
+                    'farmasi.daftar-riwayat-obat-alkes.read',
+                    'farmasi.farmasi.rincian-perbandingan-po.read'
                 ]),
                 'items' => [
                     [
@@ -347,6 +348,12 @@ class Menu
                         'icon'              => 'fas fa-history',
                         'url'               => route('admin.farmasi.daftar-riwayat-obat-alkes'),
                         'hasAnyPermissions' => $user->can('farmasi.daftar-riwayat-obat-alkes.read'),
+                    ],
+                    [
+                        'name'              => 'Rincian Perbandingan PO',
+                        'icon'              => 'fas fa-balance-scale',
+                        'url'               => route('admin.farmasi.rincian-perbandingan-po'),
+                        'hasAnyPermissions' => $user->can('farmasi.rincian-perbandingan-po.read'),
                     ],
                 ],
             ],
