@@ -81,6 +81,8 @@ class RincianPerbandinganBarangPO extends Component
             'total_harga' => $model->total_harga,
             'total_pemesanan_bulan_lalu' => $model->total_pemesanan_bulan_lalu,
             'total_harga_bulan_lalu' => $model->total_harga_bulan_lalu,
+            'selisih_pemesanan' => $model->selisih_pemesanan,
+            'selisih_harga' => $model->selisih_harga,
         ];
 
         return [
@@ -105,6 +107,8 @@ class RincianPerbandinganBarangPO extends Component
             'Total Harga',
             'Total Pemesanan Bulan Lalu',
             'Total Harga Bulan Lalu',
+            'Selisih Pemesanan',
+            'Selisih Harga',
         ];
     }
 

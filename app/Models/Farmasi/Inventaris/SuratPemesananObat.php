@@ -111,7 +111,9 @@ SQL;
             sum(detail_surat_pemesanan_medis.total) as total_harga,
             ifnull(sum(detail_surat_pemesanan_medis.total) / nullif(sum(detail_surat_pemesanan_medis.jumlah), 0), 0) as harga_satuan, 
             ifnull((select sum(dspm2.jumlah) from detail_surat_pemesanan_medis dspm2 join surat_pemesanan_medis spm2 on dspm2.no_pemesanan = spm2.no_pemesanan where dspm2.kode_brng = databarang.kode_brng and spm2.tanggal between ? and ? and spm2.status = 'Sudah Datang'), 0) as total_pemesanan_bulan_lalu, 
-            ifnull((select sum(dspm2.total) from detail_surat_pemesanan_medis dspm2 join surat_pemesanan_medis spm2 on dspm2.no_pemesanan = spm2.no_pemesanan where dspm2.kode_brng = databarang.kode_brng and spm2.tanggal between ? and ? and spm2.status = 'Sudah Datang'), 0) as total_harga_bulan_lalu
+            ifnull((select sum(dspm2.total) from detail_surat_pemesanan_medis dspm2 join surat_pemesanan_medis spm2 on dspm2.no_pemesanan = spm2.no_pemesanan where dspm2.kode_brng = databarang.kode_brng and spm2.tanggal between ? and ? and spm2.status = 'Sudah Datang'), 0) as total_harga_bulan_lalu,
+            (sum(detail_surat_pemesanan_medis.jumlah) - ifnull((select sum(dspm2.jumlah) from detail_surat_pemesanan_medis dspm2 join surat_pemesanan_medis spm2 on dspm2.no_pemesanan = spm2.no_pemesanan where dspm2.kode_brng = databarang.kode_brng and spm2.tanggal between ? and ? and spm2.status = 'Sudah Datang'), 0)) as selisih_pemesanan,
+            (sum(detail_surat_pemesanan_medis.total) - ifnull((select sum(dspm2.total) from detail_surat_pemesanan_medis dspm2 join surat_pemesanan_medis spm2 on dspm2.no_pemesanan = spm2.no_pemesanan where dspm2.kode_brng = databarang.kode_brng and spm2.tanggal between ? and ? and spm2.status = 'Sudah Datang'), 0)) as selisih_harga
         SQL;
 
         $this->addSearchConditions([
@@ -122,14 +124,18 @@ SQL;
         return $query
             ->selectRaw($sqlSelect, [
                 $tglAwalBulanLalu, $tglAkhirBulanLalu,
-                $tglAwalBulanLalu, $tglAkhirBulanLalu
+                $tglAwalBulanLalu, $tglAkhirBulanLalu,
+                $tglAwalBulanLalu, $tglAkhirBulanLalu,
+                $tglAwalBulanLalu, $tglAkhirBulanLalu,
             ])
             ->withCasts([
-                'harga_satuan'    => 'float',
-                'total_pemesanan' => 'float',
-                'total_tagihan'   => 'float',
-                'total_pemesanan_bulan_lalu' => 'float',
-                'total_harga_bulan_lalu'     => 'float',
+                'harga_satuan'                  => 'float',
+                'total_pemesanan'               => 'float',
+                'total_tagihan'                 => 'float',
+                'total_pemesanan_bulan_lalu'    => 'float',
+                'total_harga_bulan_lalu'        => 'float',
+                'selisih_pemesanan'             => 'float',
+                'selisih_harga'                 => 'float',
             ])
             ->join('detail_surat_pemesanan_medis', 'surat_pemesanan_medis.no_pemesanan', '=', 'detail_surat_pemesanan_medis.no_pemesanan')
             ->join('databarang', 'detail_surat_pemesanan_medis.kode_brng', '=', 'databarang.kode_brng')
