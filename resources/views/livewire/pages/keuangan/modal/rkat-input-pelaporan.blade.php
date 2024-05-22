@@ -44,13 +44,21 @@
                                     <input type="text" class="form-control form-control-sm" wire:model.defer="detail.{{ $index }}.keterangan">
                                     <span class="ml-4 text-sm" style="width: 3rem">Rp.</span>
                                     <input type="text" class="form-control form-control-sm text-right w-25" wire:model.defer="detail.{{ $index }}.nominal">
-                                    <button type="button" wire:click="removeDetail({{ $index }})" class="btn btn-sm btn-danger ml-3">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    @can('keuangan.rkat-pelaporan.update')
+                                        @unless($this->isUpdating())
+                                            <button type="button" wire:click="removeDetail({{ $index }})" class="btn btn-sm btn-danger ml-3">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        @endunless
+                                    @endcan
                                 </li>
                             @endforeach
                         </ul>
-                        <x-button size="sm" variant="secondary" title="Tambah Detail" icon="fas fa-plus" wire:click="addDetail" />
+                        @can('keuangan.rkat-pelaporan.update')
+                            @unless($this->isUpdating())
+                                <x-button size="sm" variant="secondary" title="Tambah Detail" icon="fas fa-plus" wire:click="addDetail" />                            
+                            @endunless
+                        @endcan
                         <div class="mt-1">
                             <x-form.error name="nominalPemakaian" />
                         </div>
@@ -59,8 +67,12 @@
             </x-form>
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
-            <x-button size="sm" class="ml-auto" data-dismiss="modal" id="batalsimpan" title="Batal" />
-            <x-button size="sm" variant="primary" type="submit" class="ml-2" id="simpandata" title="Simpan" icon="fas fa-save" form="form-input-pelaporan-rkat" />
+            @can('keuangan.rkat-pelaporan.update')
+                @unless($this->isUpdating())
+                    <x-button size="sm" class="ml-auto" data-dismiss="modal" id="batalsimpan" title="Batal" />
+                    <x-button size="sm" variant="primary" type="submit" class="ml-2" id="simpandata" title="Simpan" icon="fas fa-save" form="form-input-pelaporan-rkat" />
+                @endunless
+            @endcan
         </x-slot>
     </x-modal>
 </div>

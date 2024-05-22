@@ -55,7 +55,7 @@ class RKATPelaporan extends Component
     public function getDataPenggunaanRKATProperty(): Paginator
     {
         return PemakaianAnggaran::query()
-            ->penggunaanRKAT($this->bidang)
+            ->penggunaanRKAT($this->bidang, $this->tahun, $this->cari)
             ->paginate($this->perpage);
     }
 
@@ -100,19 +100,24 @@ class RKATPelaporan extends Component
     {
         return [
             PemakaianAnggaran::query()
-                ->penggunaanRKAT($this->bidang)
-                ->cursor()
-                ->map(fn (PemakaianAnggaran $model): array => [
-                    'bidang'      => $model->anggaranBidang->bidang->nama,
-                    'judul'       => $model->judul,
-                    'anggaran'    => $model->anggaranBidang->anggaran->nama,
-                    'tahun'       => $model->anggaranBidang->tahun,
-                    'tgl_dipakai' => $model->tgl_dipakai,
-                    'nominal'     => floatval($model->nominal_pemakaian),
-                    'petugas'     => $model->user_id.' '.$model->petugas->nama,
-                    'keterangan'  => $model->deskripsi,
-                ])
-                ->all(),
+            ->with('detail')
+            ->penggunaanRKAT($this->bidang, $this->tahun, $this->cari)
+            ->cursor()
+            ->flatMap(function (PemakaianAnggaran $model) {
+                return $model->detail->map(function ($detail) use ($model) {
+                    return [
+                        'bidang'      => $model->anggaranBidang->bidang->nama,
+                        'judul'       => $model->judul,
+                        'anggaran'    => $model->anggaranBidang->anggaran->nama,
+                        'tahun'       => $model->anggaranBidang->tahun,
+                        'tgl_dipakai' => $model->tgl_dipakai,
+                        'keterangan'  => $detail->keterangan,
+                        'nominal'     => floatval($detail->nominal),
+                        'petugas'     => $model->user_id.' '.$model->petugas->nama,
+                    ];
+                });
+            })
+            ->all()
         ];
     }
 
@@ -124,9 +129,9 @@ class RKATPelaporan extends Component
             'Anggaran',
             'Tahun',
             'Tgl. Dipakai',
+            'Keterangan',
             'Nominal',
             'Petugas',
-            'Keterangan',
         ];
     }
 

@@ -127,6 +127,7 @@ SQL;
 
         $sqlSelect = <<<'SQL'
 resep_obat.no_resep,
+resep_obat.no_rawat,
 resep_obat.tgl_perawatan,
 resep_obat.jam,
 databarang.nama_brng,
@@ -140,6 +141,7 @@ SQL;
 
         $this->addSearchConditions([
             'resep_obat.no_resep',
+            'resep_obat.no_rawat',
             'databarang.nama_brng',
             'kategori_barang.nama',
             'dokter.kd_dokter',
