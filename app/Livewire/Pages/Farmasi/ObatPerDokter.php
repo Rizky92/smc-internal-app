@@ -72,6 +72,7 @@ class ObatPerDokter extends Component
                     'no_resep'      => $model->no_resep,
                     'tgl_perawatan' => $model->tgl_perawatan,
                     'jam'           => $model->jam,
+                    'no_rawat'      => $model->no_rawat,
                     'nama_brng'     => $model->nama_brng,
                     'nama'          => $model->nama,
                     'jml'           => floatval($model->jml),
@@ -86,6 +87,7 @@ class ObatPerDokter extends Component
     protected function columnHeaders(): array
     {
         return [
+            'No. Rawat',
             'No. Resep',
             'Tgl. Validasi',
             'Jam',
