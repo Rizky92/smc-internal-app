@@ -252,6 +252,10 @@ Route::prefix('admin')
                 Route::get('daftar-riwayat-obat-alkes', Farmasi\DaftarRiwayatObatAlkes::class)
                     ->name('daftar-riwayat-obat-alkes')
                     ->middleware('can:farmasi.daftar-riwayat-obat-alkes.read');
+
+                Route::get('rincian-perbandingan-barang-po', Farmasi\RincianPerbandinganBarangPO::class)
+                    ->name('rincian-perbandingan-po')
+                    ->middleware('can:farmasi.rincian-perbandingan-po.read');
             });
 
         Route::prefix('rekam-medis')
