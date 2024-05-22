@@ -44,10 +44,19 @@ class RincianPerbandinganBarangPO extends Component
     public function getRincianPerbandinganBarangPOProperty()
     {
         return $this->isDeferred ? [] : SuratPemesananObat::query()
-            ->rincianPerbandinganPemesananObatPO($this->tglAwal, $this->tglAkhir)
+            ->rincianPerbandinganPemesananPO('obat',$this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
-            ->paginate($this->perpage);
+            ->paginate($this->perpage, ['*'], 'page_obat');
+    }
+
+    public function getRincianPerbandinganAlkesPOProperty()
+    {
+        return $this->isDeferred ? [] : SuratPemesananObat::query()
+            ->rincianPerbandinganPemesananPO('alkes',$this->tglAwal, $this->tglAkhir)
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
+            ->paginate($this->perpage, ['*'], 'page_alkes');
     }
 
     public function render(): View
@@ -64,22 +73,60 @@ class RincianPerbandinganBarangPO extends Component
 
     protected function dataPerSheet(): array
     {
+        $map = fn(SuratPemesananObat $model): array => [
+            'kode_brng' => $model->kode_brng,
+            'nama_brng' => $model->nama_brng,
+            'harga_satuan' => $model->harga_satuan,
+            'total_pemesanan' => $model->total_pemesanan,
+            'total_harga' => $model->total_harga,
+            'total_pemesanan_bulan_lalu' => $model->total_pemesanan_bulan_lalu,
+            'total_harga_bulan_lalu' => $model->total_harga_bulan_lalu,
+        ];
+
         return [
-            //
+            'obat' => SuratPemesananObat::query()
+                ->rincianPerbandinganPemesananPO('obat',$this->tglAwal, $this->tglAkhir)
+                ->cursor() 
+                ->map($map),
+            'alkes' => SuratPemesananObat::query()
+                ->rincianPerbandinganPemesananPO('alkes',$this->tglAwal, $this->tglAkhir)
+                ->cursor()
+                ->map($map),
         ];
     }
 
     protected function columnHeaders(): array
     {
         return [
-            //
+            'Kode Barang',
+            'Nama Barang',
+            'Harga Satuan',
+            'Total Pemesanan',
+            'Total Harga',
+            'Total Pemesanan Bulan Lalu',
+            'Total Harga Bulan Lalu',
         ];
     }
 
     protected function pageHeaders(): array
     {
+        $periodeAwal = carbon($this->tglAwal);
+        $periodeAkhir = carbon($this->tglAkhir);
+
+        $periodeAwalBulanLalu = carbon($this->tglAwal)->subMonth();
+        $periodeAkhirBulanLalu = carbon($this->tglAkhir)->subMonth();
+
+        $periode = 'Perbandingan Periode Antara'.$periodeAwal->translatedFormat('d F Y').' s.d. '.$periodeAkhir->translatedFormat('d F Y').' dengan '.$periodeAwalBulanLalu->translatedFormat('d F Y').' s.d. '.$periodeAkhirBulanLalu->translatedFormat('d F Y');
+
+        if ($periodeAwal->isSameDay($periodeAkhir)) {
+            $periode = $periodeAwal->translatedFormat('d F Y');
+        }
+
         return [
-            //
+           'RS Samarinda Medika Citra',
+           'Rincian Perbandingan Barang PO Per Bulan',
+           now()->translatedFormat('d F Y'),
+           $periode,
         ];
     }
 }
