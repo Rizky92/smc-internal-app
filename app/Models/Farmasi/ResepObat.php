@@ -7,6 +7,7 @@ use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -35,6 +36,11 @@ class ResepObat extends Model
     public function registrasi(): BelongsTo
     {
         return $this->belongsTo(RegistrasiPasien::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function pemberian(): HasMany
+    {
+        return $this->hasMany(PemberianObat::class, 'no_rawat', 'no_rawat');
     }
 
     public function detail(): BelongsToMany
@@ -230,6 +236,53 @@ SQL;
             ->whereBetween('resep_obat.tgl_perawatan', ["{$year}-01-01", "{$year}-12-31"])
             ->jenisKunjungan($jenisPerawatan)
             ->groupByRaw('month(resep_obat.tgl_perawatan)');
+    }
+
+    public function scopeRincianKunjunganRalan(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endofMonth()->format('Y-m-d');
+        }
+
+        $sqlSelect = <<<SQL
+            resep_obat.tgl_perawatan,
+            resep_obat.tgl_peresepan,
+            pasien.nm_pasien,
+            resep_obat.no_resep,
+            resep_obat.no_rawat,
+            dokter.nm_dokter,
+            (select round(sum(detail_pemberian_obat.total)) from detail_pemberian_obat where detail_pemberian_obat.no_rawat = resep_obat.no_rawat and detail_pemberian_obat.tgl_perawatan = resep_obat.tgl_perawatan and detail_pemberian_obat.jam = resep_obat.jam) as total_harga,
+            databarang.kode_brng, 
+            databarang.nama_brng,
+            penjab.png_jawab
+        SQL;
+
+        $this->addSearchConditions([
+            'resep_obat.no_resep',
+            'resep_obat.no_rawat',
+            'dokter.nm_dokter',
+            'databarang.nama_brng',
+            'resep_obat.status',
+        ]);
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->withCasts(['total_harga' => 'float'])
+            ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+            ->join('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
+            ->join('detail_pemberian_obat', 'resep_obat.no_rawat', '=', 'detail_pemberian_obat.no_rawat')
+            ->join('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
+            ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
+            ->where('resep_obat.status', 'ralan')
+            ->where('tgl_peresepan', '>', '0000-00-00')
+            ->where('reg_periksa.kd_poli', '!=', 'IGDK')
+            ->groupBy('resep_obat.no_resep');
     }
 
     public static function kunjunganPasienRalan(string $year = '2022'): array

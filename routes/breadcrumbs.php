@@ -222,6 +222,11 @@ Breadcrumbs::for('admin.farmasi.rincian-perbandingan-po', function (Trail $trail
     $trail->push('Rincian Perbandingan Barang PO', route('admin.farmasi.rincian-perbandingan-po'));
 });
 
+Breadcrumbs::for('admin.farmasi.rincian-kunjungan-ralan', function (Trail $trail): void {
+    $trail->parent('admin.farmasi');
+    $trail->push('Rincian Kunjungan Ralan', route('admin.farmasi.rincian-kunjungan-ralan'));
+});
+
 Breadcrumbs::for('admin.rekam-medis', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Rekam Medis');
