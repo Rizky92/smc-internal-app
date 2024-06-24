@@ -21,7 +21,7 @@
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" style="min-width: 100%" sortable zebra hover sticky nowrap borderless>
+            <x-table :sortColumns="$sortColumns" style="min-width: 100%" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="tgl_perawatan" title="Tanggal Berobat" />
                     <x-table.th name="no_resep" title="No. Resep" />
@@ -36,42 +36,45 @@
                     <x-table.th name="total" title="Total" />
                 </x-slot>
                 <x-slot name="body">
+                    @php
+                        $totalSementara = 0;
+                        $noResepSebelumnya = null;
+                    @endphp
+
                     @forelse ($this->rincianKunjunganRalan as $item)
+                        @if ($noResepSebelumnya != $item->no_resep && $noResepSebelumnya != null)
+                            {{-- Tampilkan total untuk no_resep sebelumnya --}}
+                            <x-table.tr>
+                                <x-table.td colspan="10"><strong>Total</strong></x-table.td>
+                                <x-table.td><strong>{{ rp($totalSementara) }}</strong></x-table.td>
+                            </x-table.tr>
+                            @php
+                                $totalSementara = 0;
+                            @endphp
+                        @endif
+
                         @php
-                            $odd = $loop->iteration % 2 === 0 ? '255 255 255' : '247 247 247';
-                            $count = $item->pemberian->count();
-                            $firstDetail = $item->pemberian->first();
-                            $totalPerResep = $item->pemberian->sum('total');
+                            $totalSementara += $item->total;
+                            $noResepSebelumnya = $item->no_resep;
                         @endphp
-                        <x-table.tr style="background-color: rgb({{ $odd }})">
-                            <x-table.td rowspan="{{ $count }}">{{ $item->tgl_perawatan }}</x-table.td>
-                            <x-table.td rowspan="{{ $count }}">{{ $item->no_resep }}</x-table.td>
-                            <x-table.td rowspan="{{ $count }}">{{ $item->no_rawat }}</x-table.td>
-                            <x-table.td rowspan="{{ $count }}">{{ $item->nm_pasien }}</x-table.td>
-                            <x-table.td rowspan="{{ $count }}">{{ $item->png_jawab }}</x-table.td>
-                            <x-table.td rowspan="{{ $count }}">{{ $item->nm_dokter }}</x-table.td>
-                            <x-table.td>{{ $firstDetail->obat->kode_brng }}</x-table.td>
-                            <x-table.td>{{ $firstDetail->obat->nama_brng }}</x-table.td>
-                            <x-table.td>{{ rp($firstDetail->biaya_obat) }}</x-table.td>
-                            <x-table.td>{{ $firstDetail->jml }}</x-table.td>
-                            <x-table.td>{{ rp($firstDetail->total) }}</x-table.td>
+                        <x-table.tr>
+                            <x-table.td>{{ $item->tgl_perawatan }}</x-table.td>
+                            <x-table.td>{{ $item->no_resep }}</x-table.td>
+                            <x-table.td>{{ $item->no_rawat }}</x-table.td>
+                            <x-table.td>{{ $item->nm_pasien }}</x-table.td>
+                            <x-table.td>{{ $item->png_jawab }}</x-table.td>
+                            <x-table.td>{{ $item->nm_dokter }}</x-table.td>
+                            <x-table.td>{{ $item->kode_brng }}</x-table.td>
+                            <x-table.td>{{ $item->nama_brng }}</x-table.td>
+                            <x-table.td>{{ rp($item->biaya_obat) }}</x-table.td>
+                            <x-table.td>{{ $item->jml }}</x-table.td>
+                            <x-table.td>{{ rp($item->total) }}</x-table.td>
                         </x-table.tr>
-                        @if ($count > 1)
-                            @foreach ($item->pemberian->skip(1) as $detail)
-                                <x-table.tr style="background-color: rgb({{ $odd }})">
-                                    <x-table.td
-                                        class="p-1 border-0">&ensp;&ensp;{{ $detail->obat->kode_brng }}</x-table.td>
-                                    <x-table.td
-                                        class="p-1 border-0">&ensp;&ensp;{{ $detail->obat->nama_brng }}</x-table.td>
-                                    <x-table.td class="p-1 border-0">{{ rp($detail->biaya_obat) }}</x-table.td>
-                                    <x-table.td class="p-1 border-0">{{ $detail->jml }}</x-table.td>
-                                    <x-table.td class="p-1 border-0">{{ rp($detail->total) }}</x-table.td>
-                                </x-table.tr>
-                            @endforeach
-                            <x-table.tr style="background-color: rgb({{ $odd }});">
-                                <x-table.td colspan="9"></x-table.td>
-                                <x-table.td>Total :</x-table.td>
-                                <x-table.td>{{ rp($totalPerResep) }}</x-table.td>
+
+                        @if ($loop->last)
+                            <x-table.tr>
+                                <x-table.td colspan="10"><strong>Total</strong></x-table.td>
+                                <x-table.td><strong>{{ rp($totalSementara) }}</strong></x-table.td>
                             </x-table.tr>
                         @endif
                     @empty

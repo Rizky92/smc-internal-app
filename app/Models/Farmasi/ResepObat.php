@@ -279,13 +279,16 @@ SQL;
         ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
         ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
         ->join('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
-        ->join('detail_pemberian_obat', 'resep_obat.no_rawat', '=','detail_pemberian_obat.no_rawat')
+        ->join('detail_pemberian_obat', function ($join) {
+            $join->on('resep_obat.no_rawat', '=', 'detail_pemberian_obat.no_rawat')
+                 ->on('resep_obat.tgl_perawatan', '=', 'detail_pemberian_obat.tgl_perawatan')
+                 ->on('resep_obat.jam', '=', 'detail_pemberian_obat.jam');
+        })
         ->join('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
         ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
         ->where('resep_obat.status', 'ralan')
         ->where('tgl_peresepan', '>', '0000-00-00')
-        ->where('reg_periksa.kd_poli', '!=', 'IGDK')
-        ->groupBy('resep_obat.no_resep');
+        ->where('reg_periksa.kd_poli', '!=', 'IGDK');
     }
 
     public static function kunjunganPasienRalan(string $year = '2022'): array
