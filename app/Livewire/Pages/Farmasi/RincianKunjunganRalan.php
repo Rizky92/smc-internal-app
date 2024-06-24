@@ -57,7 +57,6 @@ class RincianKunjunganRalan extends Component
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
     }
-    
 
     public function render(): View
     {
@@ -74,22 +73,79 @@ class RincianKunjunganRalan extends Component
 
     protected function dataPerSheet(): array
     {
+        $data = ResepObat::query()
+            ->with(['pemberian.obat'])
+            ->rincianKunjunganRalan($this->tglAwal, $this->tglAkhir, $this->totalHarga)
+            ->when($this->totalHarga === 'below_100k', fn ($q) => $q->having('total_harga', '<', 100000))
+            ->when($this->totalHarga === 'above_100k', fn ($q) => $q->having('total_harga', '>=', 100000))
+            ->search($this->cari)
+            ->get()
+            ->flatMap(function (ResepObat $model) {
+                return $model->pemberian->map(function ($pemberian) use ($model) {
+                    return [
+                        'tgl_perawatan' => $model->tgl_perawatan,
+                        'no_resep' => $model->no_resep,
+                        'no_rawat' => $model->no_rawat,
+                        'nm_pasien' => $model->nm_pasien,
+                        'png_jawab' => $model->png_jawab,
+                        'nm_dokter' => $model->nm_dokter,
+                        'kode_brng' => $pemberian->obat->kode_brng,
+                        'nama_brng' => $pemberian->obat->nama_brng,
+                        'biaya_obat' => $pemberian->biaya_obat,
+                        'jml' => $pemberian->jml,
+                        'total' => $pemberian->total,
+                    ];
+                });
+            });
+
+        // Grup data berdasarkan 'no_resep'
+        $groupedData = $data->groupBy('no_resep');
+
+        // Hitung total dan tambahkan row total untuk setiap grup
+        $groupedData = $groupedData->map(function ($group) {
+            // Hitung total dari 'total' untuk grup ini
+            $totalSum = $group->sum('total');
+
+            // Tambahkan row total ke grup ini
+            $group->push([
+                'tgl_perawatan' => 'Total',
+                'no_resep' => '', // Ambil no_resep dari item pertama di grup
+                'no_rawat' => '',
+                'nm_pasien' => '',
+                'png_jawab' => '',
+                'nm_dokter' => '',
+                'kode_brng' => '',
+                'nama_brng' => '',
+                'biaya_obat' => '',
+                'jml' => '',
+                'total' => $totalSum,
+            ]);
+
+            return $group;
+        });
+
+        // Gabungkan semua grup kembali menjadi satu koleksi
+        $data = $groupedData->collapse();
+
         return [
-            ResepObat::query()
-                ->with(['pemberian', 'pemberian.obat'])
-                ->rincianKunjunganRalan($this->tglAwal, $this->tglAkhir, $this->totalHarga)
-                ->when($this->totalHarga === 'below_100k', fn (Builder $q): Builder => $q->having('total_harga', '<', 100000))
-                ->when($this->totalHarga === 'above_100k', fn (Builder $q): Builder => $q->having('total_harga', '>=', 100000))
-                ->search($this->cari)
-                ->cursor(),
+            $data->all(),
         ];
     }
 
     protected function columnHeaders(): array
     {
         return [
-            'Tanggal',
+            'Tanggal Perawatan',
+            'No. Resep',
             'No. Rawat',
+            'Pasien',
+            'Jenis Bayar',
+            'Dokter',
+            'Kode Obat',
+            'Nama Obat',
+            'Harga Obat',
+            'Jumlah',
+            'Total Harga',
         ];
     }
 

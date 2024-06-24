@@ -250,15 +250,18 @@ SQL;
 
         $sqlSelect = <<<SQL
             resep_obat.tgl_perawatan,
-            resep_obat.tgl_peresepan,
-            pasien.nm_pasien,
             resep_obat.no_resep,
             resep_obat.no_rawat,
+            pasien.nm_pasien,
+            penjab.png_jawab,
+            resep_obat.status,
             dokter.nm_dokter,
-            (select round(sum(detail_pemberian_obat.total)) from detail_pemberian_obat where detail_pemberian_obat.no_rawat = resep_obat.no_rawat and detail_pemberian_obat.tgl_perawatan = resep_obat.tgl_perawatan and detail_pemberian_obat.jam = resep_obat.jam) as total_harga,
             databarang.kode_brng, 
             databarang.nama_brng,
-            penjab.png_jawab
+            detail_pemberian_obat.biaya_obat,
+            detail_pemberian_obat.jml,
+            detail_pemberian_obat.total,
+            (select round(sum(detail_pemberian_obat.total)) from detail_pemberian_obat where detail_pemberian_obat.no_rawat = resep_obat.no_rawat and detail_pemberian_obat.tgl_perawatan = resep_obat.tgl_perawatan and detail_pemberian_obat.jam = resep_obat.jam) as total_harga 
         SQL;
 
         $this->addSearchConditions([
@@ -270,19 +273,19 @@ SQL;
         ]);
 
         return $query
-            ->selectRaw($sqlSelect)
-            ->withCasts(['total_harga' => 'float'])
-            ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
-            ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
-            ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
-            ->join('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
-            ->join('detail_pemberian_obat', 'resep_obat.no_rawat', '=', 'detail_pemberian_obat.no_rawat')
-            ->join('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
-            ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
-            ->where('resep_obat.status', 'ralan')
-            ->where('tgl_peresepan', '>', '0000-00-00')
-            ->where('reg_periksa.kd_poli', '!=', 'IGDK')
-            ->groupBy('resep_obat.no_resep');
+        ->selectRaw($sqlSelect)
+        ->withCasts(['total' => 'float', 'biaya_obat' => 'float', 'total_harga' => 'float'])
+        ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
+        ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+        ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+        ->join('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
+        ->join('detail_pemberian_obat', 'resep_obat.no_rawat', '=','detail_pemberian_obat.no_rawat')
+        ->join('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
+        ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
+        ->where('resep_obat.status', 'ralan')
+        ->where('tgl_peresepan', '>', '0000-00-00')
+        ->where('reg_periksa.kd_poli', '!=', 'IGDK')
+        ->groupBy('resep_obat.no_resep');
     }
 
     public static function kunjunganPasienRalan(string $year = '2022'): array
