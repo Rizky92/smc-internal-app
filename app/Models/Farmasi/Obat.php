@@ -92,8 +92,10 @@ class Obat extends Model
             kodesatuan.satuan satuan_kecil,
             kategori_barang.nama kategori,
             databarang.stokminimal,
+            ifnull(round(stok_gudang_ifa.stok_di_gudang, 2), 0) stok_sekarang_ifa,
             ifnull(round(stok_gudang_ifi.stok_di_gudang, 2), 0) stok_sekarang_ifi,
             ifnull(round(stok_gudang_ap.stok_di_gudang, 2), 0) stok_sekarang_ap,
+            ifnull(round(stok_gudang_ifg.stok_di_gudang, 2), 0) stok_sekarang_ifg,
             (
                 ifnull((select round(sum(detail_pengeluaran_obat_bhp.jumlah), 2) from detail_pengeluaran_obat_bhp join pengeluaran_obat_bhp on detail_pengeluaran_obat_bhp.no_keluar = pengeluaran_obat_bhp.no_keluar where detail_pengeluaran_obat_bhp.kode_brng = databarang.kode_brng and pengeluaran_obat_bhp.tanggal between date_sub(current_date(), interval 2 week) and current_date()), 0)
             )
@@ -112,6 +114,11 @@ class Obat extends Model
             ke_pasien_14_hari
         SQL;
 
+        $stokGudangIFA = GudangObat::query()
+            ->select(['kode_brng', DB::raw('sum(stok) as stok_di_gudang')])
+            ->where('kd_bangsal', 'IFA')
+            ->groupBy('kode_brng');
+
         $stokGudangAP = GudangObat::query()
             ->select(['kode_brng', DB::raw('sum(stok) as stok_di_gudang')])
             ->where('kd_bangsal', 'AP')
@@ -120,6 +127,11 @@ class Obat extends Model
         $stokGudangIFI = GudangObat::query()
             ->select(['kode_brng', DB::raw('sum(stok) as stok_di_gudang')])
             ->where('kd_bangsal', 'IFI')
+            ->groupBy('kode_brng');
+
+        $stokGudangIFG = GudangObat::query()
+            ->select(['kode_brng', DB::raw('sum(stok) as stok_di_gudang')])
+            ->where('kd_bangsal', 'IFG')
             ->groupBy('kode_brng');
 
         $this->addSearchConditions([
@@ -133,8 +145,10 @@ class Obat extends Model
         $this->addSortColumns([
             'satuan_kecil'              => 'kodesatuan.satuan',
             'kategori'                  => 'kategori_barang.nama',
+            'stok_sekarang_ifa'         => DB::raw('ifnull(round(stok_gudang_ifa.stok_di_gudang, 2), 0)'),
             'stok_sekarang_ap'          => DB::raw('ifnull(round(stok_gudang_ap.stok_di_gudang, 2), 0)'),
             'stok_sekarang_ifi'         => DB::raw('ifnull(round(stok_gudang_ifi.stok_di_gudang, 2), 0)'),
+            'stok_sekarang_ifg'         => DB::raw('ifnull(round(stok_gudang_ifg.stok_di_gudang, 2), 0)'),
             'stok_keluar_medis_14_hari' => DB::raw('(ifnull((select round(sum(detail_pengeluaran_obat_bhp.jumlah), 2) from detail_pengeluaran_obat_bhp join pengeluaran_obat_bhp on detail_pengeluaran_obat_bhp.no_keluar = pengeluaran_obat_bhp.no_keluar where detail_pengeluaran_obat_bhp.kode_brng = databarang.kode_brng and pengeluaran_obat_bhp.tanggal between date_sub(current_date(), interval 2 week) and current_date()), 0))'),
             'saran_order'               => DB::raw('(databarang.stokminimal - ifnull(stok_gudang_ap.stok_di_gudang, 0))'),
             'harga_beli'                => DB::raw('round(databarang.h_beli)'),
@@ -149,8 +163,10 @@ class Obat extends Model
             ->selectRaw($sqlSelect)
             ->withCasts([
                 'stokminimal'               => 'float',
+                'stok_sekarang_ifa'         => 'float',
                 'stok_sekarang_ifi'         => 'float',
                 'stok_sekarang_ap'          => 'float',
+                'stok_sekarang_ifg'         => 'float',
                 'stok_keluar_medis_14_hari' => 'float',
                 'saran_order'               => 'float',
                 'harga_beli'                => 'float',
@@ -162,8 +178,10 @@ class Obat extends Model
             ->join('kategori_barang', 'databarang.kode_kategori', '=', 'kategori_barang.kode')
             ->join('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
             ->join('industrifarmasi', 'databarang.kode_industri', '=', 'industrifarmasi.kode_industri')
+            ->leftJoinSub($stokGudangIFA, 'stok_gudang_ifa', fn (JoinClause $join) => $join->on('databarang.kode_brng', '=', 'stok_gudang_ifa.kode_brng'))
             ->leftJoinSub($stokGudangAP, 'stok_gudang_ap', fn (JoinClause $join) => $join->on('databarang.kode_brng', '=', 'stok_gudang_ap.kode_brng'))
             ->leftJoinSub($stokGudangIFI, 'stok_gudang_ifi', fn (JoinClause $join) => $join->on('databarang.kode_brng', '=', 'stok_gudang_ifi.kode_brng'))
+            ->leftJoinSub($stokGudangIFG, 'stok_gudang_ifg', fn (JoinClause $join) => $join->on('databarang.kode_brng', '=', 'stok_gudang_ifg.kode_brng'))
             ->where('databarang.status', '1')
             ->where('databarang.stokminimal', '>', 0)
             ->whereRaw('(databarang.stokminimal - ifnull(stok_gudang_ap.stok_di_gudang, 0)) > 0')
