@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Keuangan\Modal;
 
+use App\Jobs\Keuangan\ImportPemakaianAnggaranDetail;
 use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
@@ -15,12 +16,15 @@ use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Livewire\Component;
+use Livewire\WithFileUploads;
+use Spatie\SimpleExcel\SimpleExcelReader;
 
 class RKATInputPelaporan extends Component
 {
     use DeferredModal;
     use Filterable;
     use FlashComponent;
+    use WithFileUploads;
 
     /** @var int */
     public $pemakaianAnggaranId;
@@ -36,6 +40,8 @@ class RKATInputPelaporan extends Component
 
     /** @var array */
     public $detail;
+
+    public $fileImport;
 
     /** @var mixed */
     protected $listeners = [
@@ -137,23 +143,39 @@ class RKATInputPelaporan extends Component
 
         $this->validate();
 
-        tracker_start();
+        if($this->fileImport) {
 
-        $pemakaianAnggaran = PemakaianAnggaran::create([
-            'judul'              => $this->keterangan,
-            'tgl_dipakai'        => $this->tglPakai,
-            'anggaran_bidang_id' => $this->anggaranBidangId,
-            'user_id'            => user()->nik,
-        ]);
+            ImportPemakaianAnggaranDetail::dispatch([
+                'keterangan'       => $this->keterangan,
+                'tglPakai'         => $this->tglPakai,
+                'anggaranBidangId' => $this->anggaranBidangId,
+                'fileImport'       => $this->fileImport,
+                'detail'           => $this->detail,
+                'userId'          => user()->nik,
+            ]);
 
-        $pemakaianAnggaran
-            ->detail()
-            ->createMany($this->detail);
+            $this->dispatchBrowserEvent('clear-selected');
+            $this->emit('flash.info', 'Data Pemakaian RKAT baru sedang diproses!');
+        } else {
+            tracker_start();
 
-        tracker_end();
+                $pemakaianAnggaran = PemakaianAnggaran::create([
+                    'judul'              => $this->keterangan,
+                    'tgl_dipakai'        => $this->tglPakai,
+                    'anggaran_bidang_id' => $this->anggaranBidangId,
+                    'user_id'            => user()->nik,
+                ]);
 
-        $this->dispatchBrowserEvent('data-saved');
-        $this->emit('flash.success', 'Data Pemakaian RKAT baru berhasil ditambahkan!');
+                $pemakaianAnggaran
+                    ->detail()
+                    ->createMany($this->detail);
+
+            tracker_end();
+
+            $this->fileImport = null;
+            $this->dispatchBrowserEvent('data-saved');
+            $this->emit('flash.success', 'Data Pemakaian RKAT baru berhasil disimpan!');
+        }
     }
 
     public function update(): void
