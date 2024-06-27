@@ -20,8 +20,10 @@
                     <x-table.th name="satuan_kecil" title="Satuan" style="width: 12ch" />
                     <x-table.th name="kategori" title="Kategori" style="width: 25ch" />
                     <x-table.th name="stokminimal" title="Stok minimal" align="right" style="width: 24ch" />
+                    <x-table.th name="stok_sekarang_ifa" title="Stok Farmasi A Sekarang" align="right" style="width: 11ch" />
                     <x-table.th name="stok_sekarang_ap" title="Stok Farmasi B Sekarang" align="right" style="width: 11ch" />
                     <x-table.th name="stok_sekarang_ifi" title="Stok Farmasi RWI Sekarang" align="right" style="width: 11ch" />
+                    <x-table.th name="stok_sekarang_ifg" title="Stok Farmasi IGD Sekarang" align="right" style="width: 11ch" />
                     <x-table.th name="stok_keluar_medis_14_hari" title="Stok Keluar Medis (14 Hari)" align="right" style="width: 11ch" />
                     <x-table.th name="saran_order" title="Saran order" align="right" style="width: 15ch" />
                     <x-table.th name="nama_industri" title="Supplier" style="width: 40ch" />
@@ -40,8 +42,10 @@
                             <x-table.td>{{ $obat->satuan_kecil }}</x-table.td>
                             <x-table.td>{{ $obat->kategori }}</x-table.td>
                             <x-table.td class="text-right">{{ $obat->stokminimal }}</x-table.td>
+                            <x-table.td class="text-right">{{ $obat->stok_sekarang_ifa }}</x-table.td>
                             <x-table.td class="text-right">{{ $obat->stok_sekarang_ap }}</x-table.td>
                             <x-table.td class="text-right">{{ $obat->stok_sekarang_ifi }}</x-table.td>
+                            <x-table.td class="text-right">{{ $obat->stok_sekarang_ifg }}</x-table.td>
                             <x-table.td class="text-right">{{ $obat->stok_keluar_medis_14_hari }}</x-table.td>
                             <x-table.td class="text-right">{{ $obat->saran_order }}</x-table.td>
                             <x-table.td>{{ $obat->nama_industri }}</x-table.td>
@@ -53,7 +57,7 @@
                             <x-table.td class="text-right">{{ $obat->ke_pasien_14_hari }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="23" padding />
+                        <x-table.tr-empty colspan="25" padding />
                     @endforelse
                 </x-slot>
             </x-table>

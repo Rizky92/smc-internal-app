@@ -3,6 +3,7 @@
 namespace App\Models\Farmasi;
 
 use App\Database\Eloquent\Model;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
@@ -159,5 +160,64 @@ class PenerimaanObat extends Model
         $data = static::pembelianFarmasi($year)->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
+    }
+
+    public function scopeRincianPerbandinganPemesananPO(
+        Builder $query,
+        string $kategori = 'obat', 
+        string $tglAwal = '', 
+        string $tglAkhir = ''
+    ): Builder {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        }
+
+        $tglAwalBulanLalu = Carbon::parse($tglAwal)->subMonth()->startOfMonth()->format('Y-m-d');
+        $tglAkhirBulanLalu = Carbon::parse($tglAwal)->subMonth()->endOfMonth()->format('Y-m-d');
+
+        $sqlSelect = <<<'SQL'
+            detailpesan.kode_brng,
+            databarang.nama_brng,
+            databarang.dasar as harga_satuan,
+            ifnull(sum(detailpesan.jumlah2), 0) as total_pemesanan,
+            ifnull(sum(detailpesan.total), 0) as total_harga, 
+            ifnull((select sum(dp2.jumlah2) from detailpesan dp2 join pemesanan p2 on dp2.no_faktur = p2.no_faktur where dp2.kode_brng = databarang.kode_brng and p2.tgl_pesan between ? and ?), 0) as total_pemesanan_bulan_lalu,
+            ifnull((select sum(dp2.total) from detailpesan dp2 join pemesanan p2 on dp2.no_faktur = p2.no_faktur where dp2.kode_brng = databarang.kode_brng and p2.tgl_pesan between ? and ?), 0) as total_harga_bulan_lalu,
+            ifnull(sum(detailpesan.jumlah2), 0) - ifnull((select sum(dp2.jumlah2) from detailpesan dp2 join pemesanan p2 on dp2.no_faktur = p2.no_faktur where dp2.kode_brng = databarang.kode_brng and p2.tgl_pesan between ? and ?), 0) as selisih_pemesanan,
+            ifnull(sum(detailpesan.total), 0) - ifnull((select sum(dp2.total) from detailpesan dp2 join pemesanan p2 on dp2.no_faktur = p2.no_faktur where dp2.kode_brng = databarang.kode_brng and p2.tgl_pesan between ? and ?), 0) as selisih_harga
+        SQL;
+
+        $this->addSearchConditions([
+            'databarang.kode_brng',
+            'databarang.nama_brng',
+        ]);
+
+        return $query
+            ->selectRaw($sqlSelect, [
+                $tglAwalBulanLalu, $tglAkhirBulanLalu,
+                $tglAwalBulanLalu, $tglAkhirBulanLalu,
+                $tglAwalBulanLalu, $tglAkhirBulanLalu,
+                $tglAwalBulanLalu, $tglAkhirBulanLalu,
+            ])
+            ->withCasts([
+                'harga_satuan'                  => 'float',
+                'total_pemesanan'               => 'float',
+                'total_tagihan'                 => 'float',
+                'total_pemesanan_bulan_lalu'    => 'float',
+                'total_harga_bulan_lalu'        => 'float',
+                'selisih_pemesanan'             => 'float',
+                'selisih_harga'                 => 'float',
+            ])
+            ->join('detailpesan', 'pemesanan.no_faktur', '=', 'detailpesan.no_faktur')
+            ->join('databarang','detailpesan.kode_brng','=','databarang.kode_brng')
+            ->whereBetween('pemesanan.tgl_pesan', [$tglAwal, $tglAkhir])
+            ->where(fn (Builder $query): Builder => $query
+                ->when($kategori === 'obat', fn(Builder $q): Builder => $q->where('databarang.kode_kategori', 'like', '2.%'))
+                ->when($kategori === 'alkes', fn(Builder $q): Builder => $q->where('databarang.kode_kategori', 'like', '3.%')))
+            ->groupBy('detailpesan.kode_brng');
     }
 }

@@ -355,6 +355,12 @@ class Menu
                         'url'               => route('admin.farmasi.rincian-perbandingan-po'),
                         'hasAnyPermissions' => $user->can('farmasi.rincian-perbandingan-po.read'),
                     ],
+                    [
+                        'name'              => 'Rincian Kunjungan Ralan',
+                        'icon'              => 'fas fa-balance-scale',
+                        'url'               => route('admin.farmasi.rincian-kunjungan-ralan'),
+                        'hasAnyPermissions' => $user->can('farmasi.rincian-kunjungan-ralan.read'),
+                    ],
                 ],
             ],
             [
