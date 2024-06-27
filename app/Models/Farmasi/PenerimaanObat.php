@@ -187,8 +187,8 @@ class PenerimaanObat extends Model
             ifnull(sum(detailpesan.total), 0) as total_harga, 
             ifnull((select sum(dp2.jumlah2) from detailpesan dp2 join pemesanan p2 on dp2.no_faktur = p2.no_faktur where dp2.kode_brng = databarang.kode_brng and p2.tgl_pesan between ? and ?), 0) as total_pemesanan_bulan_lalu,
             ifnull((select sum(dp2.total) from detailpesan dp2 join pemesanan p2 on dp2.no_faktur = p2.no_faktur where dp2.kode_brng = databarang.kode_brng and p2.tgl_pesan between ? and ?), 0) as total_harga_bulan_lalu,
-            ifnull((select sum(dp2.jumlah2) from detailpesan dp2 join pemesanan p2 on dp2.no_faktur = p2.no_faktur where dp2.kode_brng = databarang.kode_brng and p2.tgl_pesan between ? and ?), 0) - ifnull(sum(detailpesan.jumlah2), 0) as selisih_pemesanan,
-            ifnull((select sum(dp2.total) from detailpesan dp2 join pemesanan p2 on dp2.no_faktur = p2.no_faktur where dp2.kode_brng = databarang.kode_brng and p2.tgl_pesan between ? and ?), 0) - ifnull(sum(detailpesan.total), 0) as selisih_harga
+            ifnull(sum(detailpesan.jumlah2), 0) - ifnull((select sum(dp2.jumlah2) from detailpesan dp2 join pemesanan p2 on dp2.no_faktur = p2.no_faktur where dp2.kode_brng = databarang.kode_brng and p2.tgl_pesan between ? and ?), 0) as selisih_pemesanan,
+            ifnull(sum(detailpesan.total), 0) - ifnull((select sum(dp2.total) from detailpesan dp2 join pemesanan p2 on dp2.no_faktur = p2.no_faktur where dp2.kode_brng = databarang.kode_brng and p2.tgl_pesan between ? and ?), 0) as selisih_harga
         SQL;
 
         $this->addSearchConditions([
