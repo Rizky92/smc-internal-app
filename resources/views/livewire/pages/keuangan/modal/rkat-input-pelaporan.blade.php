@@ -40,8 +40,8 @@
                     @if (!$this->isUpdating())
                         <div class="form-group mt-3">
                             <label for="upload">Upload File</label>
-                            <input type="file" id="upload" wire:model="fileImport" class="form-control-file"
-                                accept=".xlsx, .xls" />
+                            <input type="file" id="upload" wire:model="fileImport" class="form-control-file" accept=".xlsx, .xls" />
+                            <a href="{{ asset('templates/template-import-pelaporan-rkat.xlsx') }}" download class="btn btn-link btn-sm mt-2">Template Import</a>
                         </div>
                     @endif
                     <div class="form-group mt-3">
