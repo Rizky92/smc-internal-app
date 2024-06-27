@@ -1,7 +1,7 @@
 <div wire:init="loadProperties">
     <x-flash />
 
-    <x-card use-default-filter>
+    <x-card use-default-filter use-loading>
         <x-slot name="body">
             <x-navtabs livewire selected="obat">
                 <x-slot name="tabs">
