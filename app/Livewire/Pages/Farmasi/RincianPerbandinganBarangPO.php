@@ -8,7 +8,7 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
-use App\Models\Farmasi\Inventaris\SuratPemesananObat;
+use App\Models\Farmasi\PenerimaanObat;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -43,7 +43,7 @@ class RincianPerbandinganBarangPO extends Component
 
     public function getRincianPerbandinganBarangPOProperty()
     {
-        return $this->isDeferred ? [] : SuratPemesananObat::query()
+        return $this->isDeferred ? [] : PenerimaanObat::query()
             ->rincianPerbandinganPemesananPO('obat',$this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
@@ -52,7 +52,7 @@ class RincianPerbandinganBarangPO extends Component
 
     public function getRincianPerbandinganAlkesPOProperty()
     {
-        return $this->isDeferred ? [] : SuratPemesananObat::query()
+        return $this->isDeferred ? [] : PenerimaanObat::query()
             ->rincianPerbandinganPemesananPO('alkes',$this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
@@ -73,7 +73,7 @@ class RincianPerbandinganBarangPO extends Component
 
     protected function dataPerSheet(): array
     {
-        $map = fn(SuratPemesananObat $model): array => [
+        $map = fn(PenerimaanObat $model): array => [
             'kode_brng' => $model->kode_brng,
             'nama_brng' => $model->nama_brng,
             'harga_satuan' => $model->harga_satuan,
@@ -86,11 +86,11 @@ class RincianPerbandinganBarangPO extends Component
         ];
 
         return [
-            'obat' => SuratPemesananObat::query()
+            'obat' => PenerimaanObat::query()
                 ->rincianPerbandinganPemesananPO('obat',$this->tglAwal, $this->tglAkhir)
                 ->cursor() 
                 ->map($map),
-            'alkes' => SuratPemesananObat::query()
+            'alkes' => PenerimaanObat::query()
                 ->rincianPerbandinganPemesananPO('alkes',$this->tglAwal, $this->tglAkhir)
                 ->cursor()
                 ->map($map),

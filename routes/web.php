@@ -256,6 +256,10 @@ Route::prefix('admin')
                 Route::get('rincian-perbandingan-barang-po', Farmasi\RincianPerbandinganBarangPO::class)
                     ->name('rincian-perbandingan-po')
                     ->middleware('can:farmasi.rincian-perbandingan-po.read');
+
+                Route::get('rincian-kunjungan-ralan', Farmasi\RincianKunjunganRalan::class)
+                    ->name('rincian-kunjungan-ralan')
+                    ->middleware('can:farmasi.rincian-kunjungan-ralan.read');
             });
 
         Route::prefix('rekam-medis')
