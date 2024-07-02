@@ -83,6 +83,7 @@ class PenagihanPiutang extends Model
             detail_penagihan_piutang.no_rawat,
             penagihan_piutang.tanggal tgl_tagihan,
             penagihan_piutang.tanggaltempo tgl_jatuh_tempo,
+            detail_penagihan_piutang.diskon,
             bayar_piutang.tgl_bayar,
             reg_periksa.no_rkm_medis,
             pasien.nm_pasien,
@@ -94,13 +95,13 @@ class PenagihanPiutang extends Model
             piutang_pasien.status,
             akun_piutang.kd_rek,
             akun_piutang.nama_bayar,
-            round(ifnull(detail_piutang_pasien.totalpiutang, detail_penagihan_piutang.sisapiutang), 2) total_piutang,
+            round(ifnull(detail_piutang_pasien.totalpiutang, 0), 2) total_piutang,
             round(ifnull(bayar_piutang.besar_cicilan, 0), 2) besar_cicilan,
-            round(ifnull(detail_piutang_pasien.totalpiutang, detail_penagihan_piutang.sisapiutang) - ifnull(bayar_piutang.besar_cicilan, 0) - ifnull(bayar_piutang.diskon_piutang, 0) - ifnull(bayar_piutang.tidak_terbayar, 0), 2) sisa_piutang,
+            round(ifnull(detail_piutang_pasien.sisapiutang, detail_penagihan_piutang.sisapiutang) - ifnull(bayar_piutang.besar_cicilan, 0) - ifnull(bayar_piutang.diskon_piutang, 0) - ifnull(bayar_piutang.tidak_terbayar, 0), 2) sisa_piutang,
             datediff(?, penagihan_piutang.tanggal) umur_hari,
             akun_penagihan_piutang.kd_rek kd_rek_tagihan,
             akun_penagihan_piutang.nama_bank
-        SQL;
+            SQL;
 
         $this->addSearchConditions([
             'detail_penagihan_piutang.no_rawat',
@@ -145,8 +146,8 @@ class PenagihanPiutang extends Model
                 ->on('akun_piutang.kd_rek', '=', 'bayar_piutang.kd_rek_kontra'))
             ->join('reg_periksa', 'detail_penagihan_piutang.no_rawat', '=', 'reg_periksa.no_rawat')
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
-            ->join(DB::raw('penjab penjab_tagihan'), 'penagihan_piutang.kd_pj', '=', 'penjab_tagihan.kd_pj')
-            ->join(DB::raw('penjab penjab_pasien'), 'reg_periksa.kd_pj', '=', 'penjab_pasien.kd_pj')
+            ->join('penjab as penjab_tagihan', 'penagihan_piutang.kd_pj', '=', 'penjab_tagihan.kd_pj')
+            ->join('penjab as penjab_pasien', 'reg_periksa.kd_pj', '=', 'penjab_pasien.kd_pj')
             ->whereBetween('penagihan_piutang.tanggal', [$tglAwal, $tglAkhir])
             ->whereRaw('detail_piutang_pasien.sisapiutang != 0')
             ->when($jaminanPasien !== '-', fn (Builder $q): Builder => $q->where('reg_periksa.kd_pj', $jaminanPasien))
