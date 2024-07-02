@@ -1,0 +1,13 @@
+{
+    "recommendations": [
+        "will-stone.in-any-case",
+        "junstyle.php-cs-fixer",
+        "bmewburn.vscode-intelephense-client",
+        "phiter.phpstorm-snippets",
+        "esbenp.prettier-vscode",
+        "porifa.laravel-intelephense",
+        "onecentlin.laravel-blade",
+        "chouzz.vscode-better-align",
+        "getpsalm.psalm-vscode-plugin"
+    ]
+}
