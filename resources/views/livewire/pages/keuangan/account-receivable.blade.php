@@ -77,7 +77,14 @@
                             @can('keuangan.account-receivable.validasi-piutang')
                                 <x-table.td>
                                     <div class="form-group m-0">
-                                        <input type="number" class="form-control text-sm m-0" style="width: 9rem; height: 1.4rem; padding: 0 0.5rem; position: relative; z-index: 15" id="{{ 'tagihanDipilih.' . implode('_', [$item->no_tagihan, $item->kd_pj_tagihan, $item->no_rawat]) . '.diskon_piutang' }}" wire:model.defer="{{ 'tagihanDipilih.' . implode('_', [$item->no_tagihan, $item->kd_pj_tagihan, $item->no_rawat]) . '.diskon_piutang' }}">
+                                        <input
+                                            type="number"
+                                            class="form-control text-sm m-0"
+                                            style="width: 9rem; height: 1.4rem; padding: 0 0.5rem; position: relative; z-index: 15"
+                                            id="{{ 'tagihanDipilih.' . implode('_', [$item->no_tagihan, $item->kd_pj_tagihan, $item->no_rawat]) . '.diskon_piutang' }}"
+                                            wire:model.defer="{{ 'tagihanDipilih.' . implode('_', [$item->no_tagihan, $item->kd_pj_tagihan, $item->no_rawat]) . '.diskon_piutang' }}"
+                                            value="{{ $item->diskon }}"
+                                        >
                                     </div>
                                 </x-table.td>
                             @endcan
