@@ -53,10 +53,11 @@ class LaporanPasienRanap extends Component
             ->whereBetween('tgl_masuk', [$this->tanggal, $this->tanggal])
             ->when(
                 $this->semuaPasien,
-                fn (Builder $query) => $query->where('status_ranap', '<=', '3'),
-                fn (Builder $query) => $query->where('status_ranap', '<=', '2')
+                fn (Builder $query) => $query->where('status_ranap', '<=', '4'),
+                fn (Builder $query) => $query->where('status_ranap', '<=', '3')
             )
             ->sortWithColumns($this->sortColumns)
+            ->orderBy('tgl_masuk', 'desc', 'jam_masuk', 'asc')
             ->paginate($this->perpage);
     }
 
