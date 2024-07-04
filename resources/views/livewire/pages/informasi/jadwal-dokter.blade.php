@@ -35,5 +35,8 @@
                 </x-slot>
            </x-table>
         </x-slot>
+        <x-slot name="footer">
+            <x-paginator :data="$this->dataJadwalDokter" />
+        </x-slot>
     </x-card>
 </div>

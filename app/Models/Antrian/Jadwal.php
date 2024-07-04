@@ -8,6 +8,7 @@ use App\Models\Perawatan\Poliklinik;
 use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\DB;
 
 class Jadwal extends Model
 {
@@ -41,105 +42,60 @@ class Jadwal extends Model
 
     public function scopeJadwalDokter(Builder $query, bool $semuaPoli = false): Builder
     {
-        $sqlSelect = <<<SQL
-            dokter.kd_dokter,
-            dokter.nm_dokter,
-            poliklinik.kd_poli, 
-            poliklinik.nm_poli,
-            jadwal.hari_kerja,
-            DATE_FORMAT(jadwal.jam_mulai, '%H:%i') AS jam_mulai, 
-            DATE_FORMAT(jadwal.jam_selesai, '%H:%i') AS jam_selesai,
-            jadwal.kuota
-        SQL;
-                        
-        $this->addSearchConditions([
-            'dokter.nm_dokter',
-            'poliklinik.nm_poli',
-        ]);
+        $currentDate = now()->format('Y-m-d');
 
-        $dayOfWeekMap = [
-            'Sunday'    => 'AHAD',
-            'Monday'    => 'SENIN',
-            'Tuesday'   => 'SELASA',
+        $currentDay = now()->format('l');
+
+        $currentDayDatabase = [
+            'Sunday' => 'MINGGU',
+            'Monday' => 'SENIN',
+            'Tuesday' => 'SELASA',
             'Wednesday' => 'RABU',
-            'Thursday'  => 'KAMIS',
-            'Friday'    => 'JUMAT',
-            'Saturday'  => 'SABTU',
-        ];
+            'Thursday' => 'KAMIS',
+            'Friday' => 'JUMAT',
+            'Saturday' => 'SABTU',
+        ][$currentDay];
+
+        $sqlSelect = <<<SQL
+            d.kd_dokter,
+            d.nm_dokter,
+            p.kd_poli,
+            p.nm_poli,
+            j.hari_kerja,
+            j.jam_mulai,
+            j.jam_selesai,
+            j.kuota,
+            case 
+                when row_num.jadwal_ke = 1 then 1
+            else 2
+            end as jadwal_ke,
+            case
+                when row_num.jadwal_ke = 1 then least((select count(*) from sik.reg_periksa rp where rp.kd_dokter = j.kd_dokter and rp.kd_poli = j.kd_poli and rp.tgl_registrasi = '{$currentDate}'), j.kuota)
+            else 
+                greatest( (select count(*) from sik.reg_periksa rp where rp.kd_dokter = j.kd_dokter and rp.kd_poli = j.kd_poli and rp.tgl_registrasi = '{$currentDate}') - (select j1.kuota from sik.jadwal j1 join (select jadwal_min.kd_dokter, jadwal_min.kd_poli, jadwal_min.hari_kerja, jadwal_min.jam_mulai, row_number() over (partition by jadwal_min.kd_dokter, jadwal_min.kd_poli, jadwal_min.hari_kerja order by jadwal_min.jam_mulai) as jadwal_ke from sik.jadwal jadwal_min where jadwal_min.hari_kerja = '{$currentDayDatabase}' ) row_num1 on j1.kd_dokter = row_num1.kd_dokter and j1.kd_poli = row_num1.kd_poli and j1.hari_kerja = row_num1.hari_kerja and j1.jam_mulai = row_num1.jam_mulai where row_num1.jadwal_ke = 1 and j1.kd_dokter = j.kd_dokter and j1.kd_poli = j.kd_poli and j1.hari_kerja = j.hari_kerja), 0)
+            end as total_registrasi
+        SQL;
 
         return $query
             ->selectRaw($sqlSelect)
-            ->join('dokter', 'jadwal.kd_dokter', '=', 'dokter.kd_dokter')
-            ->join('poliklinik', 'jadwal.kd_poli', '=', 'poliklinik.kd_poli')
-            ->where('jadwal.hari_kerja', '=', strtoupper($dayOfWeekMap[date('l')]))
-            ->orderByRaw("CASE WHEN poliklinik.nm_poli = 'Poli Eksekutif' THEN 1 ELSE 0 END, poliklinik.nm_poli")
-            ->orderBy('poliklinik.nm_poli', 'asc')
-            ->orderBy('dokter.nm_dokter', 'asc')
-            ->orderBy('jadwal.jam_mulai', 'asc');
-    }
-
-    public function isDuplicate()
-    {
-        return Jadwal::where('kd_dokter', $this->kd_dokter)
-            ->where('kd_poli', $this->kd_poli)
-            ->where('hari_kerja', $this->hari_kerja)
-            ->count() > 1;
-    }
-
-    public static function hitungTotalRegistrasi($kd_dokter, $kd_poli, $hari_kerja, $tgl_registrasi)
-    {
-        // Mencari jadwal dengan kondisi yang diinginkan
-        $jadwal = self::where('kd_dokter', $kd_dokter)
-            ->where('kd_poli', $kd_poli)
-            ->where('hari_kerja', $hari_kerja)
-            ->orderBy('jam_mulai', 'asc')
-            ->get();
-    
-        // Jika terdapat lebih dari satu jadwal dengan kondisi tersebut
-        if ($jadwal->count() > 1) {
-            // Ambil jadwal pertama dan kedua
-            $jadwal1 = $jadwal->first();
-            $jadwal2 = $jadwal->last();
-    
-            // Cek apakah total_registrasi pada jadwal yang jam_mulai lebih awal telah mencapai kuota
-            $total_registrasi_jadwal1 = RegistrasiPasien::where('kd_dokter', $kd_dokter)
-                ->where('kd_poli', $kd_poli)
-                ->where('tgl_registrasi', $tgl_registrasi)
-                ->count();
-
-            // Hitung total registrasi seperti biasa untuk jadwal yang jam_mulai lebih awal
-            $total_registrasi_jadwal1 = min($total_registrasi_jadwal1, $jadwal1->kuota);
-
-            // Hitung total registrasi untuk jadwal yang jam_mulai lebih lambat
-            $total_registrasi_jadwal2 = RegistrasiPasien::where('kd_dokter', $kd_dokter)
-                ->where('kd_poli', $kd_poli)
-                ->where('tgl_registrasi', $tgl_registrasi)
-                ->count();
-
-            // Kurangi total registrasi jadwal pertama dengan kuota jadwal pertama
-            $total_registrasi_jadwal2 = max(0, $total_registrasi_jadwal2 - $total_registrasi_jadwal1);
-
-            return [$total_registrasi_jadwal1, $total_registrasi_jadwal2];
-        } elseif ($jadwal->count() == 1) {
-            // Jika hanya ada satu jadwal dengan kondisi tersebut
-            $jadwal1 = $jadwal->first();
-    
-            // Hitung total registrasi seperti biasa untuk jadwal tersebut
-            $total_registrasi_jadwal1 = RegistrasiPasien::where('kd_dokter', $kd_dokter)
-                ->where('kd_poli', $kd_poli)
-                ->where('tgl_registrasi', $tgl_registrasi)
-                ->count();
-    
-            return [$total_registrasi_jadwal1, 0];
-        } else {
-            // Jika tidak ada jadwal yang memenuhi kondisi
-            // Hitung total registrasi untuk semua jadwal tanpa batasan kuota
-            $total_registrasi = RegistrasiPasien::where('kd_dokter', $kd_dokter)
-                ->where('kd_poli', $kd_poli)
-                ->where('tgl_registrasi', $tgl_registrasi)
-                ->sum('total_registrasi');
-    
-            return [$total_registrasi, 0];
-        }
+            ->from('sik.jadwal as j')
+            ->join('sik.dokter as d', 'j.kd_dokter', '=', 'd.kd_dokter')
+            ->join('sik.poliklinik as p', 'j.kd_poli', '=', 'p.kd_poli')
+            ->join(DB::raw("
+                (select 
+                    jadwal_min.kd_dokter, jadwal_min.kd_poli, jadwal_min.hari_kerja, jadwal_min.jam_mulai,
+                    row_number() over (partition by jadwal_min.kd_dokter, jadwal_min.kd_poli, jadwal_min.hari_kerja order by jadwal_min.jam_mulai) as jadwal_ke
+                from sik.jadwal jadwal_min
+                where jadwal_min.hari_kerja = '{$currentDayDatabase}'
+                ) row_num"), function ($join) {
+                $join->on('j.kd_dokter', '=', 'row_num.kd_dokter')
+                    ->on('j.kd_poli', '=', 'row_num.kd_poli')
+                    ->on('j.hari_kerja', '=', 'row_num.hari_kerja')
+                    ->on('j.jam_mulai', '=', 'row_num.jam_mulai');
+            })
+            ->where('j.hari_kerja', '=', $currentDayDatabase)
+            ->orderBy('j.kd_dokter', 'asc')
+            ->orderBy('j.kd_poli', 'asc')
+            ->orderBy('row_num.jadwal_ke', 'asc');
     }
 }
