@@ -181,7 +181,7 @@ class AccountReceivable extends Component
             ->mapWithKeys(fn (PenagihanPiutang $model, $_): array => [
                 implode('_', [$model->no_tagihan, $model->kd_pj_tagihan, $model->no_rawat]) => [
                     'selected'       => true,
-                    'diskon_piutang' => 0,
+                    'diskon_piutang' => $model->diskon ?? 0,
                 ],
             ])
             ->all();
