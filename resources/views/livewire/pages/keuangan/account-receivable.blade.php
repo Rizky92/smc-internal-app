@@ -66,13 +66,14 @@
                     @forelse ($this->dataAccountReceivable as $item)
                         @php
                             $dataTagihan = implode('_', [$item->no_tagihan, $item->kd_pj_tagihan, $item->no_rawat]);
+                            $idDataTagihan = str_replace('/', '', $dataTagihan);
                         @endphp
                         <x-table.tr>
                             @can('keuangan.account-receivable.validasi-piutang')
                                 <x-table.td-checkbox
                                     livewire
-                                    model="tagihanDipilih" :id="str_replace('/', '', $dataTagihan)" :key="$dataTagihan . '.selected'" prefix="ar-id-"
-                                    onchange="updateModel(this.checked, 'tagihanDipilih.{{ $dataTagihan }}.diskon_piutang', $('#tagihanDipilih_{{ str_replace('/', '', $dataTagihan) }}_diskon_piutang').attr('placeholder'))"
+                                    model="tagihanDipilih" :id="$idDataTagihan" :key="$dataTagihan . '.selected'" prefix="ar-id-"
+                                    onchange="updateModel(this.checked, 'tagihanDipilih.{{ $dataTagihan }}.diskon_piutang', $('#tagihanDipilih_{{ $idDataTagihan }}_diskon_piutang').attr('placeholder'))"
                                 />
                             @endcan
                             <x-table.td>{{ $item->no_tagihan }}</x-table.td>
@@ -88,8 +89,8 @@
                                             type="number"
                                             class="form-control text-sm m-0"
                                             style="width: 9rem; height: 1.4rem; padding: 0 0.5rem; position: relative; z-index: 15"
-                                            id="{{ 'tagihanDipilih_' . str_replace('/', '', $dataTagihan) . '_diskon_piutang' }}"
-                                            wire:model.defer="{{ 'tagihanDipilih.' . $dataTagihan . '.diskon_piutang' }}"
+                                            id="tagihanDipilih_{{ $idDataTagihan }}_diskon_piutang"
+                                            wire:model.defer="tagihanDipilih.{{ $dataTagihan }}.diskon_piutang"
                                             placeholder="{{ $item->diskon }}"
                                         >
                                     </div>
@@ -140,14 +141,6 @@
     @once
         @push('js')
             <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    Livewire.on('$refresh', () => {
-                        console.log({
-                            tagihanDipilih: @this.tagihanDipilih
-                        })
-                    })
-                })
-
                 function updateModel(selected, name, value, defaultValue) {
                     if (selected) {
                         if (value == '' || value == null) {
