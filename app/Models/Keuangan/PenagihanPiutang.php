@@ -95,9 +95,9 @@ class PenagihanPiutang extends Model
             piutang_pasien.status,
             akun_piutang.kd_rek,
             akun_piutang.nama_bayar,
-            round(ifnull(detail_piutang_pasien.totalpiutang, 0), 2) total_piutang,
+            round(ifnull(detail_piutang_pasien.totalpiutang, detail_penagihan_piutang.sisapiutang), 2) total_piutang,
             round(ifnull(bayar_piutang.besar_cicilan, 0), 2) besar_cicilan,
-            round(ifnull(detail_piutang_pasien.sisapiutang, detail_penagihan_piutang.sisapiutang) - ifnull(bayar_piutang.besar_cicilan, 0) - ifnull(bayar_piutang.diskon_piutang, 0) - ifnull(bayar_piutang.tidak_terbayar, 0), 2) sisa_piutang,
+            round(ifnull(detail_piutang_pasien.totalpiutang, detail_penagihan_piutang.sisapiutang) - ifnull(bayar_piutang.besar_cicilan, 0) - ifnull(bayar_piutang.diskon_piutang, 0) - ifnull(bayar_piutang.tidak_terbayar, 0), 2) sisa_piutang,
             datediff(?, penagihan_piutang.tanggal) umur_hari,
             akun_penagihan_piutang.kd_rek kd_rek_tagihan,
             akun_penagihan_piutang.nama_bank
