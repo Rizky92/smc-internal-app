@@ -74,6 +74,9 @@ class AccountReceivable extends Component
         $this->defaultValues();
     }
 
+    /**
+     * @return \Illuminate\Contracts\Pagination\Paginator|array<empty, empty>
+     */
     public function getDataAccountReceivableProperty()
     {
         return $this->isDeferred ? [] : PenagihanPiutang::query()
@@ -112,8 +115,8 @@ class AccountReceivable extends Component
         $totalDiskonPiutang = collect($this->tagihanDipilih)
             ->filter(fn (array $value): bool => isset($value['selected']) && $value['selected'])
             ->map(fn (array $value): array => [
-                'selected'          => isset($value['selected']) ? $value['selected'] : false,
-                'diskon_piutang'    => empty($value['diskon_piutang']) ? 0 : $value['diskon_piutang'],
+                'selected'       => isset($value['selected']) ? $value['selected'] : false,
+                'diskon_piutang' => empty($value['diskon_piutang']) ? 0 : $value['diskon_piutang'],
             ])
             ->sum('diskon_piutang');
 
@@ -178,7 +181,7 @@ class AccountReceivable extends Component
             ->mapWithKeys(fn (PenagihanPiutang $model, $_): array => [
                 implode('_', [$model->no_tagihan, $model->kd_pj_tagihan, $model->no_rawat]) => [
                     'selected'       => true,
-                    'diskon_piutang' => 0,
+                    'diskon_piutang' => $model->diskon ?? 0,
                 ],
             ])
             ->all();
