@@ -87,6 +87,7 @@ resep_obat.tgl_perawatan,
 concat(resep_obat.tgl_perawatan, ' ', resep_obat.jam) as waktu_validasi,
 nullif(concat(resep_obat.tgl_penyerahan, ' ', resep_obat.jam_penyerahan), '0000-00-00 00:00:00') as waktu_penyerahan,
 resep_obat.no_resep,
+pasien.no_rkm_medis,
 pasien.nm_pasien,
 penjab.png_jawab,
 resep_obat.status,
@@ -96,6 +97,7 @@ poliklinik.nm_poli,
 SQL;
 
         $this->addSearchConditions([
+            'pasien.no_rkm_medis',
             'pasien.nm_pasien',
             'penjab.png_jawab',
             'dokter.nm_dokter',
