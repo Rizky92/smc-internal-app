@@ -15,9 +15,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Spatie\SimpleExcel\SimpleExcelReader;
 
 class RKATInputPelaporan extends Component
 {
@@ -159,16 +159,25 @@ class RKATInputPelaporan extends Component
         } else {
             tracker_start();
 
-                $pemakaianAnggaran = PemakaianAnggaran::create([
-                    'judul'              => $this->keterangan,
-                    'tgl_dipakai'        => $this->tglPakai,
-                    'anggaran_bidang_id' => $this->anggaranBidangId,
-                    'user_id'            => user()->nik,
-                ]);
+                DB::beginTransaction();
 
-                $pemakaianAnggaran
-                    ->detail()
-                    ->createMany($this->detail);
+                    try {
+                        $pemakaianAnggaran = PemakaianAnggaran::create([
+                            'judul'              => $this->keterangan,
+                            'tgl_dipakai'        => $this->tglPakai,
+                            'anggaran_bidang_id' => $this->anggaranBidangId,
+                            'user_id'            => user()->nik,
+                        ]);
+
+                        $pemakaianAnggaran
+                            ->detail()
+                            ->createMany($this->detail);
+                    } catch(\Exception $e) {
+                        DB::rollBack();
+                        throw $e;
+                    }
+
+                DB::commit();
 
             tracker_end();
 

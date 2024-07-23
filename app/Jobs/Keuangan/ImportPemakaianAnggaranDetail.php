@@ -69,25 +69,34 @@ class ImportPemakaianAnggaranDetail implements ShouldQueue
 
     protected function proceed(): void
     {
-        $pemakaianAnggaran = PemakaianAnggaran::create([
-            'judul' => $this->keterangan,
-            'tgl_dipakai' => $this->tglPakai,
-            'anggaran_bidang_id' => $this->anggaranBidangId,
-            'user_id' => $this->userId,
-        ]);
+        DB::beginTransaction();
+
+            try {
+                $pemakaianAnggaran = PemakaianAnggaran::create([
+                    'judul' => $this->keterangan,
+                    'tgl_dipakai' => $this->tglPakai,
+                    'anggaran_bidang_id' => $this->anggaranBidangId,
+                    'user_id' => $this->userId,
+                ]);
     
-        // Use the stored path to access the file
-        $path = storage_path('app/' . $this->fileImport); // Adjust the path based on where you stored the file
-        $rows = SimpleExcelReader::create($path)->getRows()->take(3000);
-    
-        $details = [];
-        $rows->each(function ($row) use (&$details) {
-            $details[] = [
-                'keterangan' => $row['keterangan'] ?? '',
-                'nominal' => $row['nominal'] ?? 0,
-            ];
-        });
-    
-        $pemakaianAnggaran->detail()->createMany($details);
+                $path = storage_path('app/' . $this->fileImport);
+
+                $rows = SimpleExcelReader::create($path)->getRows()->take(3000);
+            
+                $details = [];
+                $rows->each(function ($row) use (&$details) {
+                    $details[] = [
+                        'keterangan' => $row['keterangan'] ?? '',
+                        'nominal' => $row['nominal'] ?? 0,
+                    ];
+                });
+            
+                $pemakaianAnggaran->detail()->createMany($details);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                throw $e;
+            }
+
+        DB::commit();
     }
 }
