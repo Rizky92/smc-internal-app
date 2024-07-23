@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "prettier": "^3.3.2",
+    "prettier-plugin-blade": "^2.1.16"
+  },
+  "scripts": {
+    "pb": "prettier --write resources/views/**/*.blade.php"
+  }
+}

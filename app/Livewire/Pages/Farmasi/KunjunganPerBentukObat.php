@@ -91,6 +91,7 @@ class KunjunganPerBentukObat extends Component
         $map = fn (ResepObat $model): array => [
             'tgl_perawatan' => $model->tgl_perawatan,
             'no_resep'      => $model->no_resep,
+            'no_rkm_medis'  => $model->no_rkm_medis,
             'nm_pasien'     => $model->nm_pasien,
             'png_jawab'     => $model->png_jawab,
             'status'        => $model->status,
@@ -121,6 +122,7 @@ class KunjunganPerBentukObat extends Component
         return [
             'Tanggal',
             'No. Resep',
+            'No. RM',
             'Pasien',
             'Jenis Bayar',
             'Jenis Perawatan',
