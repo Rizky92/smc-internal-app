@@ -4,7 +4,9 @@
 /public/pages
 /storage/*.key
 /vendor
-/.vscode
+/.vscode/**
+!/.vscode/settings.json
+!/.vscode/extensions.json
 /_packages
 .env
 .env.*

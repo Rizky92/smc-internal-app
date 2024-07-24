@@ -34,6 +34,7 @@
                             <x-slot name="columns">
                                 <x-table.th style="width: 13ch" name="tgl_perawatan" title="Tanggal" />
                                 <x-table.th style="width: 13ch" name="no_resep" title="No. Resep" />
+                                <x-table.th name="no_rkm_medis" title="No. RM" />
                                 <x-table.th name="nm_pasien" title="Pasien" />
                                 <x-table.th style="width: 25ch" name="png_jawab" title="Jenis Bayar" />
                                 <x-table.th style="width: 18ch" name="status" title="Jenis Perawatan" />
@@ -49,6 +50,7 @@
                                     <x-table.tr>
                                         <x-table.td>{{ $resep->tgl_perawatan  }}</x-table.td>
                                         <x-table.td>{{ $resep->no_resep }}</x-table.td>
+                                        <x-table.td>{{ $resep->no_rkm_medis }}</x-table.td>
                                         <x-table.td>{{ $resep->nm_pasien }}</x-table.td>
                                         <x-table.td>{{ $resep->png_jawab }}</x-table.td>
                                         <x-table.td>{{ $resep->status }}</x-table.td>
@@ -64,7 +66,7 @@
                                         <x-table.td>{{ rp($resep->total) }}</x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty colspan="11" padding />
+                                    <x-table.tr-empty colspan="12" padding />
                                 @endforelse
                             </x-slot>
                         </x-table>
@@ -75,6 +77,7 @@
                             <x-slot name="columns">
                                 <x-table.th style="width: 13ch" name="tgl_perawatan" title="Tanggal" />
                                 <x-table.th style="width: 13ch" name="no_resep" title="No. Resep" />
+                                <x-table.th name="no_rkm_medis" title="No. RM" />
                                 <x-table.th name="nm_pasien" title="Pasien" />
                                 <x-table.th style="width: 25ch" name="png_jawab" title="Jenis Bayar" />
                                 <x-table.th style="width: 18ch" name="status" title="Jenis Perawatan" />
@@ -90,6 +93,7 @@
                                     <x-table.tr>
                                         <x-table.td>{{ $resep->tgl_perawatan  }}</x-table.td>
                                         <x-table.td>{{ $resep->no_resep }}</x-table.td>
+                                        <x-table.td>{{ $resep->no_rkm_medis }}</x-table.td>
                                         <x-table.td>{{ $resep->nm_pasien }}</x-table.td>
                                         <x-table.td>{{ $resep->png_jawab }}</x-table.td>
                                         <x-table.td>{{ $resep->status }}</x-table.td>
@@ -105,7 +109,7 @@
                                         <x-table.td>{{ rp($resep->total) }}</x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty colspan="11" padding />
+                                    <x-table.tr-empty colspan="12" padding />
                                 @endforelse
                             </x-slot>
                         </x-table>

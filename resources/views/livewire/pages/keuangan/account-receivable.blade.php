@@ -64,9 +64,17 @@
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->dataAccountReceivable as $item)
+                        @php
+                            $dataTagihan = implode('_', [$item->no_tagihan, $item->kd_pj_tagihan, $item->no_rawat]);
+                            $idDataTagihan = str_replace('/', '', $dataTagihan);
+                        @endphp
                         <x-table.tr>
                             @can('keuangan.account-receivable.validasi-piutang')
-                                <x-table.td-checkbox livewire model="tagihanDipilih" :id="str_replace('/', '-', implode('_', [$item->no_tagihan, $item->kd_pj_tagihan, $item->no_rawat]))" :key="implode('_', [$item->no_tagihan, $item->kd_pj_tagihan, $item->no_rawat]) . '.selected'" prefix="ar-id-" />
+                                <x-table.td-checkbox
+                                    livewire
+                                    model="tagihanDipilih" :id="$idDataTagihan" :key="$dataTagihan . '.selected'" prefix="ar-id-"
+                                    onchange="updateModel(this.checked, 'tagihanDipilih.{{ $dataTagihan }}.diskon_piutang', $('#tagihanDipilih_{{ $idDataTagihan }}_diskon_piutang').attr('placeholder'))"
+                                />
                             @endcan
                             <x-table.td>{{ $item->no_tagihan }}</x-table.td>
                             <x-table.td>{{ $item->no_rawat }}</x-table.td>
@@ -76,8 +84,15 @@
                             <x-table.td>{{ rp($item->sisa_piutang) }}</x-table.td>
                             @can('keuangan.account-receivable.validasi-piutang')
                                 <x-table.td>
-                                    <div class="form-group m-0">
-                                        <input type="number" class="form-control text-sm m-0" style="width: 9rem; height: 1.4rem; padding: 0 0.5rem; position: relative; z-index: 15" id="{{ 'tagihanDipilih.' . implode('_', [$item->no_tagihan, $item->kd_pj_tagihan, $item->no_rawat]) . '.diskon_piutang' }}" wire:model.defer="{{ 'tagihanDipilih.' . implode('_', [$item->no_tagihan, $item->kd_pj_tagihan, $item->no_rawat]) . '.diskon_piutang' }}">
+                                    <div class="form-group m-0 position-relative">
+                                        <input
+                                            type="number"
+                                            class="form-control text-sm m-0"
+                                            style="width: 9rem; height: 1.4rem; padding: 0 0.5rem; position: relative; z-index: 15"
+                                            id="tagihanDipilih_{{ $idDataTagihan }}_diskon_piutang"
+                                            wire:model.defer="tagihanDipilih.{{ $dataTagihan }}.diskon_piutang"
+                                            placeholder="{{ $item->diskon }}"
+                                        >
                                     </div>
                                 </x-table.td>
                             @endcan
@@ -123,4 +138,21 @@
             <x-paginator :data="$this->dataAccountReceivable" />
         </x-slot>
     </x-card>
+    @once
+        @push('js')
+            <script>
+                function updateModel(selected, name, value, defaultValue) {
+                    if (selected) {
+                        if (value == '' || value == null) {
+                            @this.set(name, parseFloat(defaultValue), true)
+                        } else {
+                            @this.set(name, parseFloat(value), true)
+                        }
+                    } else {
+                        @this.set(name, null, true)
+                    }
+                }
+            </script>
+        @endpush
+    @endonce
 </div>
