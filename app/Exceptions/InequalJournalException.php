@@ -12,16 +12,10 @@ class InequalJournalException extends RuntimeException
      */
     public function __construct($debit, $credit, string $journalNo)
     {
-        $message = [
-            'journalNo' => $journalNo,
-            'debit'     => $debit,
-            'credit'    => $credit,
-        ];
-
-        $this->message = str(collect($message)->toJson())
+        $message = str(collect(['journalNo' => $journalNo, 'debit' => $debit, 'credit' => $credit])->toJson())
             ->prepend('Debit and credit must be equal. ')
             ->value();
 
-        parent::__construct($this->message);
+        parent::__construct($message);
     }
 }

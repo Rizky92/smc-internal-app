@@ -220,10 +220,6 @@ SQL;
 
         $noJurnal = static::noJurnalBaru($waktuTransaksi);
 
-        $hasDetail = Arr::has($detail, ['*.kd_rek', '*.debet', '*.kredit']);
-
-        throw_if($hasDetail, 'LogicException', 'Malformed array shape found.');
-
         $detail = collect($detail);
 
         [$debet, $kredit] = [round($detail->sum('debet'), 2), round($detail->sum('kredit'), 2)];
