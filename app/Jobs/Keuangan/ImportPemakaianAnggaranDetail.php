@@ -3,65 +3,68 @@
 namespace App\Jobs\Keuangan;
 
 use App\Models\Keuangan\RKAT\PemakaianAnggaran;
-use App\Models\Keuangan\RKAT\PemakaianAnggaranDetail;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use League\Flysystem\FilesystemNotFoundException;
 use Spatie\SimpleExcel\SimpleExcelReader;
 
 class ImportPemakaianAnggaranDetail implements ShouldQueue
 {
     use Dispatchable;
-    use InteractsWithQueue; 
+    use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
-    private $keterangan;
+    private string $keterangan;
 
-    private $tglPakai;
+    private string $tglPakai;
 
-    private $anggaranBidangId;
+    private int $anggaranBidangId;
 
-    private $fileImport;
+    private string $fileImport;
 
-    private $detail;
+    /** @var array<array-key, array{keterangan: string, nominal: numeric}> */
+    private array $detail;
 
-    private $userId;
+    private string $userId;
 
     /**
-     * Create a new job instance.
-     * 
      * @param array{
      *      keterangan: string,
      *      tglPakai: string,
      *      anggaranBidangId: int,
-     *      fileImport: uploaded file,
-     *      detail: array 
-     *      userId: string
+     *      fileImport: \Livewire\TemporaryUploadedFile,
+     *      detail: array<array-key, array{keterangan: string, nominal: numeric}>,
+     *      userId: string,
      * } $params
      */
     public function __construct(array $params)
     {
+        $path = $params['fileImport']->store('temp');
+
+        if ($path === false) {
+            throw new FilesystemNotFoundException('Temporary file not available');
+        }
+
         $this->keterangan = $params['keterangan'];
         $this->tglPakai = $params['tglPakai'];
         $this->anggaranBidangId = $params['anggaranBidangId'];
-        $this->fileImport = $params['fileImport']->store('temp');
+        $this->fileImport = $path;
         $this->detail = $params['detail'];
         $this->userId = $params['userId'];
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
     public function handle(): void
     {
+        if (! $this->fileImport) {
+            throw new FilesystemNotFoundException('Temporary file not available');
+        }
+
         $this->proceed();
 
         Storage::delete($this->fileImport);
@@ -69,25 +72,24 @@ class ImportPemakaianAnggaranDetail implements ShouldQueue
 
     protected function proceed(): void
     {
-        $pemakaianAnggaran = PemakaianAnggaran::create([
-            'judul' => $this->keterangan,
-            'tgl_dipakai' => $this->tglPakai,
-            'anggaran_bidang_id' => $this->anggaranBidangId,
-            'user_id' => $this->userId,
-        ]);
-    
-        // Use the stored path to access the file
-        $path = storage_path('app/' . $this->fileImport); // Adjust the path based on where you stored the file
-        $rows = SimpleExcelReader::create($path)->getRows()->take(3000);
-    
-        $details = [];
-        $rows->each(function ($row) use (&$details) {
-            $details[] = [
-                'keterangan' => $row['keterangan'] ?? '',
-                'nominal' => $row['nominal'] ?? 0,
-            ];
+        DB::connection('mysql_smc')->transaction(function () {
+            $pemakaianAnggaran = PemakaianAnggaran::create([
+                'judul'              => $this->keterangan,
+                'tgl_dipakai'        => $this->tglPakai,
+                'anggaran_bidang_id' => $this->anggaranBidangId,
+                'user_id'            => $this->userId,
+            ]);
+
+            $details = collect();
+
+            SimpleExcelReader::create(storage_path('app/'.$this->fileImport))
+                ->getRows()
+                ->take(3000)
+                ->each(fn (array $row) => $details->push($row));
+
+            if ($details->isNotEmpty()) {
+                $pemakaianAnggaran->detail()->createMany($details);
+            }
         });
-    
-        $pemakaianAnggaran->detail()->createMany($details);
     }
 }
