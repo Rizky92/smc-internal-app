@@ -83,7 +83,7 @@ class PenagihanPiutang extends Model
             detail_penagihan_piutang.no_rawat,
             penagihan_piutang.tanggal tgl_tagihan,
             penagihan_piutang.tanggaltempo tgl_jatuh_tempo,
-            detail_penagihan_piutang.diskon,
+            0 as diskon,
             bayar_piutang.tgl_bayar,
             reg_periksa.no_rkm_medis,
             pasien.nm_pasien,
