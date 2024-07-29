@@ -49,8 +49,15 @@ class LaporanPemakaianObatTB extends Component
     {
         return $this->isDeferred ? [] : RegistrasiPasien::query()
             ->riwayatPemakaianObatTB($this->tglAwal, $this->tglAkhir)
-            ->when($this->umur === 'anak', fn ($q) => $q->where('umur', '<', 18))
-            ->when($this->umur === 'dewasa', fn ($q) => $q->where('umur', '>=', 18))
+            ->when($this->umur === 'anak', fn ($q) => $q->where(function ($query) {
+                $query->where('umurdaftar', '<', 18)
+                    ->where(function ($q) {
+                        $q->where('sttsumur', 'Th')
+                            ->orWhere('sttsumur', 'Bl')
+                            ->orWhere('sttsumur', 'Hr');
+                    });
+            }))
+            ->when($this->umur === 'dewasa', fn ($q) => $q->where('umurdaftar', '>=', 18)->where('sttsumur', 'Th'))
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
