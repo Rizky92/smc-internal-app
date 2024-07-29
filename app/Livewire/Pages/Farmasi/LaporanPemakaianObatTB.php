@@ -28,11 +28,15 @@ class LaporanPemakaianObatTB extends Component
     /** @var string */
     public $tglAkhir;
 
+    /** @var "anak"|"dewasa" */
+    public $umur;
+
     protected function queryString(): array
     {
         return [
             'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'umur'     => ['except' => '', 'as' => 'umur'],
         ];
     }
 
@@ -45,6 +49,8 @@ class LaporanPemakaianObatTB extends Component
     {
         return $this->isDeferred ? [] : RegistrasiPasien::query()
             ->riwayatPemakaianObatTB($this->tglAwal, $this->tglAkhir)
+            ->when($this->umur === 'anak', fn ($q) => $q->where('umur', '<', 18))
+            ->when($this->umur === 'dewasa', fn ($q) => $q->where('umur', '>=', 18))
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
@@ -60,6 +66,7 @@ class LaporanPemakaianObatTB extends Component
     {
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->umur = 'anak';
     }
 
     protected function dataPerSheet(): array
@@ -85,8 +92,12 @@ class LaporanPemakaianObatTB extends Component
             'Farmasi',
             'Status',
             'Penjamin',
+            'Umur',
+            'Status umur',
             'No. Telp',
             'Alamat',
+            'Plan',
+            'Tanggal Pemberian Obat Pertama',
         ];
     }
 

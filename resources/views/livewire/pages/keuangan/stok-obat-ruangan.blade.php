@@ -20,6 +20,7 @@
                     <x-table.th name="nm_bangsal" title="Ruangan" />
                     <x-table.th name="kode_brng" title="Kode" />
                     <x-table.th name="nama_brng" title="Nama" />
+                    <x-table.th name="kategori" title="Kategori" />
                     <x-table.th name="satuan" title="Satuan" />
                     <x-table.th name="stok" title="Stok saat ini" />
                     <x-table.th name="h_beli" title="Harga" />
@@ -31,13 +32,14 @@
                             <x-table.td>{{ $obat->nm_bangsal }}</x-table.td>
                             <x-table.td>{{ $obat->kode_brng }}</x-table.td>
                             <x-table.td>{{ $obat->nama_brng }}</x-table.td>
+                            <x-table.td>{{ $obat->kategori }}</x-table.td>
                             <x-table.td>{{ $obat->satuan }}</x-table.td>
                             <x-table.td>{{ $obat->stok }}</x-table.td>
                             <x-table.td>{{ rp($obat->h_beli) }}</x-table.td>
                             <x-table.td>{{ rp($obat->projeksi_harga) }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="7" padding />
+                        <x-table.tr-empty colspan="8" padding />
                     @endforelse
                 </x-slot>
             </x-table>

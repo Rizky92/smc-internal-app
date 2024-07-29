@@ -844,8 +844,12 @@ sum(detail_pemberian_obat.jml) as total,
 bangsal.nm_bangsal,
 reg_periksa.status_lanjut,
 penjab.png_jawab,
+reg_periksa.umurdaftar,
+reg_periksa.sttsumur,
 pasien.no_tlp,
-pasien.alamat
+pasien.alamat,
+ifnull(pemeriksaan_ralan.rtl, '-') as rtl,
+(select min(dpo.tgl_perawatan) from reg_periksa rp left join detail_pemberian_obat dpo on rp.no_rawat = dpo.no_rawat left join databarang db on dpo.kode_brng = db.kode_brng where rp.no_rkm_medis = pasien.no_rkm_medis and db.kode_brng = databarang.kode_brng and db.kode_kategori in ('2.14', '2.15')) as tgl_pemberian_pertama
 SQL;
 
         $this->addSearchConditions([
@@ -867,6 +871,7 @@ SQL;
             ->leftJoin('detail_pemberian_obat', 'reg_periksa.no_rawat', '=', 'detail_pemberian_obat.no_rawat')
             ->leftJoin('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
             ->leftJoin('bangsal', 'detail_pemberian_obat.kd_bangsal', '=', 'bangsal.kd_bangsal')
+            ->leftJoin('pemeriksaan_ralan', 'reg_periksa.no_rawat', '=', 'pemeriksaan_ralan.no_rawat')
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
             ->whereIn('databarang.kode_kategori', ['2.14', '2.15'])
             ->groupBy([

@@ -34,8 +34,8 @@
                             <x-slot name="columns">
                                 <x-table.th style="width: 13ch" name="tgl_perawatan" title="Tanggal" />
                                 <x-table.th style="width: 13ch" name="no_resep" title="No. Resep" />
-                                <x-table.th name="no_rkm_medis" title="No. RM" />
-                                <x-table.th name="nm_pasien" title="Pasien" />
+                                <x-table.th style="width: 9ch" name="no_rkm_medis" title="No. RM" />
+                                <x-table.th style="width: 25ch" nama="nm_pasien" title="Pasien" />
                                 <x-table.th style="width: 25ch" name="png_jawab" title="Jenis Bayar" />
                                 <x-table.th style="width: 18ch" name="status" title="Jenis Perawatan" />
                                 <x-table.th style="width: 20ch" name="nm_poli" title="Asal Poli" />
@@ -44,6 +44,7 @@
                                 <x-table.th style="width: 19ch" name="waktu_penyerahan" title="Waktu Penyerahan" />
                                 <x-table.th style="width: 14ch" name="selisih" title="Selisih Waktu" />
                                 <x-table.th style="width: 20ch" name="total" title="Total Pembelian" />
+                                <x-table.th name="jumlah" title="Jumlah" />
                             </x-slot>
                             <x-slot name="body">
                                 @forelse ($this->dataKunjunganResepObatRegular as $resep)
@@ -64,9 +65,10 @@
                                                 : null
                                         }}</x-table.td>
                                         <x-table.td>{{ rp($resep->total) }}</x-table.td>
+                                        <x-table.td>{{ $resep->jumlah }}</x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty colspan="12" padding />
+                                    <x-table.tr-empty colspan="13" padding />
                                 @endforelse
                             </x-slot>
                         </x-table>
@@ -77,8 +79,8 @@
                             <x-slot name="columns">
                                 <x-table.th style="width: 13ch" name="tgl_perawatan" title="Tanggal" />
                                 <x-table.th style="width: 13ch" name="no_resep" title="No. Resep" />
-                                <x-table.th name="no_rkm_medis" title="No. RM" />
-                                <x-table.th name="nm_pasien" title="Pasien" />
+                                <x-table.th style="width: 9ch" name="no_rkm_medis" title="No. RM" />
+                                <x-table.th style="width: 25ch" nama="nm_pasien" title="Pasien" />
                                 <x-table.th style="width: 25ch" name="png_jawab" title="Jenis Bayar" />
                                 <x-table.th style="width: 18ch" name="status" title="Jenis Perawatan" />
                                 <x-table.th style="width: 20ch" name="nm_poli" title="Asal Poli" />
@@ -87,6 +89,7 @@
                                 <x-table.th style="width: 19ch" name="waktu_penyerahan" title="Waktu Penyerahan" />
                                 <x-table.th style="width: 14ch" name="selisih" title="Selisih Waktu" />
                                 <x-table.th style="width: 20ch" name="total" title="Total Pembelian" />
+                                <x-table.th name="jumlah" title="Jumlah" />
                             </x-slot>
                             <x-slot name="body">
                                 @forelse ($this->dataKunjunganResepObatRacikan as $resep)
@@ -107,9 +110,10 @@
                                                 : null
                                         }}</x-table.td>
                                         <x-table.td>{{ rp($resep->total) }}</x-table.td>
+                                        <x-table.td>{{ $resep->jumlah }}</x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty colspan="12" padding />
+                                    <x-table.tr-empty colspan="13" padding />
                                 @endforelse
                             </x-slot>
                         </x-table>
