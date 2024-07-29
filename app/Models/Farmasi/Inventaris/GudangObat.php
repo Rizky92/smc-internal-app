@@ -48,6 +48,7 @@ class GudangObat extends Model
             bangsal.nm_bangsal,
             gudangbarang.kode_brng,
             databarang.nama_brng,
+            kategori_barang.nama as kategori,
             kodesatuan.satuan,
             gudangbarang.stok,
             databarang.h_beli,
@@ -74,6 +75,7 @@ class GudangObat extends Model
                 'projeksi_harga' => 'float',
             ])
             ->leftJoin('databarang', 'gudangbarang.kode_brng', '=', 'databarang.kode_brng')
+            ->leftJoin('kategori_barang', 'databarang.kode_kategori', '=', 'kategori_barang.kode')
             ->leftJoin('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
             ->leftJoin('bangsal', 'gudangbarang.kd_bangsal', '=', 'bangsal.kd_bangsal')
             ->when($kodeBangsal !== '-', fn (Builder $query) => $query->where('gudangbarang.kd_bangsal', $kodeBangsal));
