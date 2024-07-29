@@ -93,7 +93,8 @@ penjab.png_jawab,
 resep_obat.status,
 dokter.nm_dokter,
 poliklinik.nm_poli,
-(select round(sum(detail_pemberian_obat.total)) from detail_pemberian_obat where detail_pemberian_obat.no_rawat = resep_obat.no_rawat and detail_pemberian_obat.tgl_perawatan = resep_obat.tgl_perawatan and detail_pemberian_obat.jam = resep_obat.jam) as total
+(select round(sum(detail_pemberian_obat.total)) from detail_pemberian_obat where detail_pemberian_obat.no_rawat = resep_obat.no_rawat and detail_pemberian_obat.tgl_perawatan = resep_obat.tgl_perawatan and detail_pemberian_obat.jam = resep_obat.jam) as total,
+(select sum(detail_pemberian_obat.jml) from detail_pemberian_obat where detail_pemberian_obat.no_rawat = resep_obat.no_rawat and detail_pemberian_obat.tgl_perawatan = resep_obat.tgl_perawatan and detail_pemberian_obat.jam = resep_obat.jam) as jumlah
 SQL;
 
         $this->addSearchConditions([
