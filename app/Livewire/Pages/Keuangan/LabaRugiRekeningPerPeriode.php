@@ -9,6 +9,7 @@ use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Keuangan\Rekening;
+use App\Models\RekamMedis\Penjamin;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Fluent;
@@ -25,6 +26,9 @@ class LabaRugiRekeningPerPeriode extends Component
     use MenuTracker;
 
     /** @var string */
+    public $kodePenjamin;
+
+    /** @var string */
     public $tglAwal;
 
     /** @var string */
@@ -33,6 +37,7 @@ class LabaRugiRekeningPerPeriode extends Component
     protected function queryString(): array
     {
         return [
+            'kodePenjamin' => ['except' => '', 'as' => 'penjamin'],
             'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
@@ -54,7 +59,7 @@ class LabaRugiRekeningPerPeriode extends Component
             ->get();
 
         $debetKredit = Rekening::query()
-            ->hitungDebetKreditPerPeriode($this->tglAwal, $this->tglAkhir)
+            ->hitungDebetKreditPerPeriode($this->tglAwal, $this->tglAkhir, $this->kodePenjamin)
             ->get();
 
         return $semuaRekening
@@ -112,6 +117,11 @@ class LabaRugiRekeningPerPeriode extends Component
         );
     }
 
+    public function getPenjaminProperty(): array
+    {
+        return Penjamin::pluck('png_jawab', 'kd_pj')->all();
+    }
+
     public function render(): View
     {
         return view('livewire.pages.keuangan.laba-rugi-rekening-per-periode')
@@ -120,6 +130,7 @@ class LabaRugiRekeningPerPeriode extends Component
 
     protected function defaultValues(): void
     {
+        $this->kodePenjamin = '';
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
@@ -175,6 +186,8 @@ class LabaRugiRekeningPerPeriode extends Component
 
     protected function pageHeaders(): array
     {
+        $penjamin = empty($this->kodePenjamin) ? 'SEMUA' : $this->penjamin[$this->kodePenjamin];
+
         $periodeAwal = carbon($this->tglAwal);
         $periodeAkhir = carbon($this->tglAkhir);
 
@@ -186,7 +199,7 @@ class LabaRugiRekeningPerPeriode extends Component
 
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Laba Rugi Keuangan',
+            'Laporan Laba Rugi Keuangan penjamin '.$penjamin,
             now()->translatedFormat('d F Y'),
             $periode,
         ];
