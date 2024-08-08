@@ -119,7 +119,7 @@ class LabaRugiRekeningPerPeriode extends Component
 
     public function getPenjaminProperty(): array
     {
-        return Penjamin::pluck('png_jawab', 'kd_pj')->all();
+        return Penjamin::where('status', '=', '1')->pluck('png_jawab', 'kd_pj')->all();
     }
 
     public function render(): View
