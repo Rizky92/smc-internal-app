@@ -46,14 +46,16 @@ class LaporanPasienRanap extends Component
         $this->defaultValues();
     }
 
+    /**
+     * @return \Illuminate\Contracts\Pagination\Paginator|array<empty, empty>
+     */
     public function getLaporanPasienRanapProperty()
     {
         return $this->isDeferred ? [] : PasienRanap::query()
             ->search($this->cari)
-            ->where(function ($query) {
-                $query->whereBetween('tgl_masuk', [$this->tanggal, $this->tanggal])
-                        ->orWhereBetween('tgl_keluar', [$this->tanggal, $this->tanggal]);
-            })
+            ->where(fn (Builder $q) => $q
+                ->whereBetween('tgl_masuk', [$this->tanggal, $this->tanggal])
+                ->orWhereBetween('tgl_keluar', [$this->tanggal, $this->tanggal]))
             ->when(
                 $this->semuaPasien,
                 fn (Builder $query) => $query->where('status_ranap', '<=', '3'),

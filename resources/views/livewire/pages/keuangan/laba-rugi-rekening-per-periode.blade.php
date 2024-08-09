@@ -6,6 +6,7 @@
             <x-row-col-flex>
                 <x-filter.range-date />
                 <x-filter.button-refresh class="ml-3" />
+                <x-filter.select2 class="ml-3" name="Kode Penjamin" livewire show-key :options="$this->penjamin" placeholder="SEMUA" />
                 <x-filter.button-export-excel class="ml-auto" />
             </x-row-col-flex>
         </x-slot>

@@ -58,7 +58,7 @@ class ResepObat extends Model
         }
 
         return $query
-            ->when($jenisKunjungan !== 'semua', function ($query) use ($jenisKunjungan) {
+            ->when($jenisKunjungan !== 'semua', function (Builder $query) use ($jenisKunjungan) {
                 switch (Str::lower($jenisKunjungan)) {
                     case 'ralan':
                         return $query->where('resep_obat.status', 'Ralan')
@@ -82,7 +82,7 @@ class ResepObat extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
 resep_obat.tgl_perawatan,
 concat(resep_obat.tgl_perawatan, ' ', resep_obat.jam) as waktu_validasi,
 nullif(concat(resep_obat.tgl_penyerahan, ' ', resep_obat.jam_penyerahan), '0000-00-00 00:00:00') as waktu_penyerahan,
@@ -94,7 +94,7 @@ resep_obat.status,
 dokter.nm_dokter,
 poliklinik.nm_poli,
 (select round(sum(detail_pemberian_obat.total)) from detail_pemberian_obat where detail_pemberian_obat.no_rawat = resep_obat.no_rawat and detail_pemberian_obat.tgl_perawatan = resep_obat.tgl_perawatan and detail_pemberian_obat.jam = resep_obat.jam) as total,
-coalesce((select sum(detail_pemberian_obat.jml) from detail_pemberian_obat where detail_pemberian_obat.no_rawat = resep_obat.no_rawat and detail_pemberian_obat.tgl_perawatan = resep_obat.tgl_perawatan and detail_pemberian_obat.jam = resep_obat.jam), 0) as jumlah
+(select count(*) from detail_pemberian_obat where detail_pemberian_obat.no_rawat = resep_obat.no_rawat and detail_pemberian_obat.tgl_perawatan = resep_obat.tgl_perawatan and detail_pemberian_obat.jam = resep_obat.jam) as jumlah
 SQL;
 
         $this->addSearchConditions([
@@ -104,7 +104,7 @@ SQL;
             'dokter.nm_dokter',
             'poliklinik.nm_poli',
         ]);
-        
+
         return $query
             ->selectRaw($sqlSelect)
             ->withCasts(['total' => 'float'])
@@ -115,13 +115,12 @@ SQL;
             ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
             ->where('resep_obat.tgl_perawatan', '>', '0000-00-00')
-            ->when($jenisResep === 'racikan', fn ($q) => $q
-                ->whereExists(fn ($q) => $q
-                    ->select(['*'])
-                    ->from('detail_obat_racikan')
-                    ->whereColumn('detail_obat_racikan.no_rawat', 'resep_obat.no_rawat')
-                    ->whereColumn('detail_obat_racikan.tgl_perawatan', 'resep_obat.tgl_perawatan')
-                    ->whereColumn('detail_obat_racikan.jam', 'resep_obat.jam')));
+            ->when($jenisResep === 'racikan', fn ($q) => $q->whereExists(fn ($q) => $q
+                ->select(['*'])
+                ->from('detail_obat_racikan')
+                ->whereColumn('detail_obat_racikan.no_rawat', 'resep_obat.no_rawat')
+                ->whereColumn('detail_obat_racikan.tgl_perawatan', 'resep_obat.tgl_perawatan')
+                ->whereColumn('detail_obat_racikan.jam', 'resep_obat.jam')));
     }
 
     public function scopePenggunaanObatPerDokter(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
@@ -220,8 +219,8 @@ SQL;
             ->leftJoin('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
             ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
-            ->leftJoin(DB::raw('dokter dokter_poli'), 'reg_periksa.kd_dokter', '=', 'dokter_poli.kd_dokter')
-            ->leftJoin(DB::raw('dokter dokter_peresep'), 'resep_obat.kd_dokter', '=', 'dokter_peresep.kd_dokter')
+            ->leftJoin('dokter as dokter_poli', 'reg_periksa.kd_dokter', '=', 'dokter_poli.kd_dokter')
+            ->leftJoin('dokter as dokter_peresep', 'resep_obat.kd_dokter', '=', 'dokter_peresep.kd_dokter')
             ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir]);
     }
 
@@ -251,7 +250,7 @@ SQL;
             $tglAkhir = now()->endofMonth()->format('Y-m-d');
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             resep_obat.tgl_perawatan,
             resep_obat.no_resep,
             resep_obat.no_rawat,
@@ -276,22 +275,21 @@ SQL;
         ]);
 
         return $query
-        ->selectRaw($sqlSelect)
-        ->withCasts(['total' => 'float', 'biaya_obat' => 'float', 'total_harga' => 'float'])
-        ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
-        ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
-        ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
-        ->join('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
-        ->join('detail_pemberian_obat', function ($join) {
-            $join->on('resep_obat.no_rawat', '=', 'detail_pemberian_obat.no_rawat')
-                 ->on('resep_obat.tgl_perawatan', '=', 'detail_pemberian_obat.tgl_perawatan')
-                 ->on('resep_obat.jam', '=', 'detail_pemberian_obat.jam');
-        })
-        ->join('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
-        ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
-        ->where('resep_obat.status', 'ralan')
-        ->where('tgl_peresepan', '>', '0000-00-00')
-        ->where('reg_periksa.kd_poli', '!=', 'IGDK');
+            ->selectRaw($sqlSelect)
+            ->withCasts(['total' => 'float', 'biaya_obat' => 'float', 'total_harga' => 'float'])
+            ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+            ->join('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
+            ->join('detail_pemberian_obat', fn (JoinClause $join) => $join
+                ->on('resep_obat.no_rawat', '=', 'detail_pemberian_obat.no_rawat')
+                ->on('resep_obat.tgl_perawatan', '=', 'detail_pemberian_obat.tgl_perawatan')
+                ->on('resep_obat.jam', '=', 'detail_pemberian_obat.jam'))
+            ->join('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
+            ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
+            ->where('resep_obat.status', 'ralan')
+            ->where('tgl_peresepan', '>', '0000-00-00')
+            ->where('reg_periksa.kd_poli', '!=', 'IGDK');
     }
 
     public static function kunjunganPasienRalan(string $year = '2022'): array

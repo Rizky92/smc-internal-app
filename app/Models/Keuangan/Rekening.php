@@ -96,7 +96,7 @@ class Rekening extends Model
             ->select(['kd_rek', 'nm_rek', 'balance']);
     }
 
-    public function scopeHitungDebetKreditPerPeriode(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    public function scopeHitungDebetKreditPerPeriode(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePenjamin = ''): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->format('Y-m-d');
@@ -120,6 +120,8 @@ class Rekening extends Model
             ->withCasts(['debet' => 'float', 'kredit' => 'float'])
             ->leftJoin('detailjurnal', 'rekening.kd_rek', '=', 'detailjurnal.kd_rek')
             ->leftJoin('jurnal', 'detailjurnal.no_jurnal', '=', 'jurnal.no_jurnal')
+            ->leftJoin('reg_periksa', 'jurnal.no_bukti', '=', 'reg_periksa.no_rawat')
+            ->when(! empty($kodePenjamin), fn (Builder $q) => $q->where('reg_periksa.kd_pj', $kodePenjamin))
             ->where('rekening.tipe', 'R')
             ->whereBetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir])
             ->groupBy('rekening.kd_rek');
