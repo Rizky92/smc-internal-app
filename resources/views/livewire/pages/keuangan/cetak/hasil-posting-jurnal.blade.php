@@ -194,7 +194,7 @@
             <br>
             <br>
             <br>
-            <div>dr. DAISY WIJAYA</div>
+            <div>SAPTA PRIANGGATAMA</div>
             <div>MANAGER KEUANGAN</div>
         </div>
         <div></div>
