@@ -142,7 +142,7 @@ databarang.nama_brng,
 kategori_barang.nama,
 detail_pemberian_obat.jml,
 dokter.nm_dokter,
-(select nm_dokter from dokter where kd_dokter = reg_periksa.kd_dokter) as dpjp,
+case when reg_periksa.status_lanjut = 'Ranap' then (select group_concat(distinct dokter.nm_dokter separator ', ') from rawat_inap_dr join dokter dokter on rawat_inap_dr.kd_dokter = dokter.kd_dokter where rawat_inap_dr.no_rawat = resep_obat.no_rawat) else (select nm_dokter from dokter where kd_dokter = reg_periksa.kd_dokter) end as dpjp,
 resep_obat.status,
 poliklinik.nm_poli,
 penjab.png_jawab
