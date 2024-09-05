@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
+use App\Jobs\ExportToExcel;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
@@ -11,6 +12,7 @@ use App\Livewire\Concerns\MenuTracker;
 use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\Rekening;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -168,5 +170,16 @@ class BukuBesar extends Component
         $this->kodeRekening = '';
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+    }
+
+    public function exportToExcel(): void
+    {
+        ExportToExcel::dispatch([
+            'kodeRekening' => $this->kodeRekening,
+            'tglAwal'      => $this->tglAwal,
+            'tglAkhir'     => $this->tglAkhir,
+            'cari'         => $this->cari,
+            'userId'       => user()->nik,
+        ]);
     }
 }

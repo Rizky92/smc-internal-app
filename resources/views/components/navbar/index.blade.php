@@ -9,6 +9,7 @@
     </ul>
 
     <ul class="navbar-nav ml-auto">
+        <livewire:database-notifications />
         @impersonating
             <li class="nav-item">
                 <a class="btn btn-outline-secondary btn-sm" href="{{ route('admin.impersonate.leave') }}">
