@@ -25,8 +25,12 @@
             border-bottom: 1px solid #dee2e6;
         }
 
-        .sidebar-content {
-            padding: 10px;
+        .sidebar-item {
+            border-style: solid;
+            border-color: #3d9970;
+            border-top-width: 1px;
+            border-bottom-width: 0px;
+            border-right-width: 0px;
         }
 
         .close-sidebar {
@@ -51,7 +55,7 @@
         </div>
         <div class="sidebar-content">
             @foreach ($this->notifications as $notification)
-                <div class="alert bg-olive">
+                <div class="sidebar-item">
                     <p>{{ $notification->data['message'] }}</p>
                     @php
                         preg_match('/filename="?([^"\s]+)"?/', $notification->data['file'], $matches);
