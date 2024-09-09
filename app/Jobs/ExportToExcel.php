@@ -3,16 +3,13 @@
 namespace App\Jobs;
 
 use App\Models\Aplikasi\User;
-use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Notifications\ExportReadyNotification;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Notification;
 use Rizky92\Xlswriter\ExcelExport;
@@ -22,38 +19,26 @@ class ExportToExcel implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private string $kodeRekening;
+    protected $serializedQuery;
+    
+    protected $columnHeaders;
 
-    private string $tglAwal;
+    protected $pageHeaders;
 
-    private string $tglAkhir;
-
-    private string $userId;
-
-    private string $cari;
-
-    /**
-     * @param array{
-     *      kodeRekening: string,
-     *      tglAwal: string,
-     *      tglAkhir: string,
-     *      cari: string,
-     *      userId: string,
-     * } $params
-     */
+    protected $userId;
 
     /**
      * Create a new job instance.
-     *
-     * @return void
+     * 
+     * @param SerializedQuery $serializedQuery
+     * @param string $userId
      */
-    public function __construct(array $params)
+    public function __construct(SerializedQuery $serializedQuery, array $columnHeaders, array $pageHeaders, string $userId)
     {
-        $this->kodeRekening = $params['kodeRekening'];
-        $this->tglAwal = $params['tglAwal'];
-        $this->tglAkhir = $params['tglAkhir'];
-        $this->cari = $params['cari'];
-        $this->userId = $params['userId'];
+        $this->serializedQuery = $serializedQuery;
+        $this->columnHeaders = $columnHeaders;
+        $this->pageHeaders = $pageHeaders;
+        $this->userId = $userId;
     }
 
     /**
@@ -65,82 +50,27 @@ class ExportToExcel implements ShouldQueue
     {
         $filePath = $this->beginExcelExport();
         $user = User::findByNRP($this->userId);
-        if ($user) {
-            // Use the mysql_smc connection explicitly
-            DB::connection('mysql_smc')->transaction(function () use ($user, $filePath) {
-                Notification::send($user, new ExportReadyNotification($user, $filePath));
-            });
-        } else {
-            \Log::error("User with ID {$this->userId} not found.");
-        }
+
+        Notification::send($user, new ExportReadyNotification($user, $filePath));
     }
 
     protected function dataPerSheet(): array
     {
         return [
-            Jurnal::query()
-                ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
-                ->with(['pengeluaranHarian', 'piutangDilunaskan'])
-                ->search($this->cari)
-                ->cursor()
-                ->map(fn (Jurnal $model): array => [
-                    'tgl_jurnal'             => $model->tgl_jurnal,
-                    'jam_jurnal'             => $model->jam_jurnal,
-                    'no_jurnal'              => $model->no_jurnal,
-                    'no_bukti'               => $model->no_bukti,
-                    'keterangan'             => $model->keterangan,
-                    'keterangan_pengeluaran' => optional($model->pengeluaranHarian)->keterangan ?? '-',
-                    'catatan'                => $this->getCatatanPiutang($model),
-                    'kd_rek'                 => $model->kd_rek,
-                    'nm_rek'                 => $model->nm_rek,
-                    'debet'                  => round($model->debet, 2),
-                    'kredit'                 => round($model->kredit, 2),
-                ])
-                ->all(),
+            $this->serializedQuery->connection => function () {
+                return $this->serializedQuery->execute();
+            },
         ];
-    }
-
-    protected function getCatatanPiutang(Jurnal $model): string
-    {
-        return optional(optional($model->piutangDilunaskan)->tagihan)->catatan ?? '-';
     }
 
     protected function columnHeaders(): array
     {
-        return [
-            'Tgl',
-            'Jam',
-            'No. Jurnal',
-            'No. Bukti',
-            'Keterangan Jurnal',
-            'Keterangan Pengeluaran',
-            'Catatan Penagihan',
-            'Kode',
-            'Rekening',
-            'Debet',
-            'Kredit',
-        ];
+        return $this->columnHeaders;
     }
 
     protected function pageHeaders(): array
     {
-        $rekening = $this->kodeRekening ? $this->kodeRekening : 'Semua Rekening';
-
-        $periodeAwal = carbon($this->tglAwal);
-        $periodeAkhir = carbon($this->tglAkhir);
-
-        $periode = 'Periode '.$periodeAwal->translatedFormat('d F Y').' s.d. '.$periodeAkhir->translatedFormat('d F Y');
-
-        if ($periodeAwal->isSameDay($periodeAkhir)) {
-            $periode = $periodeAwal->translatedFormat('d F Y');
-        }
-
-        return [
-            'RS Samarinda Medika Citra',
-            'Buku Besar rekening '.$rekening,
-            now()->translatedFormat('d F Y'),
-            $periode,
-        ];
+        return $this->pageHeaders;
     }
 
     public function beginExcelExport(): ?StreamedResponse

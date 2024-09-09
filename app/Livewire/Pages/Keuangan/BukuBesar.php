@@ -3,6 +3,7 @@
 namespace App\Livewire\Pages\Keuangan;
 
 use App\Jobs\ExportToExcel;
+use App\Jobs\SerializedQuery;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
@@ -174,12 +175,16 @@ class BukuBesar extends Component
 
     public function exportToExcel(): void
     {
-        ExportToExcel::dispatch([
-            'kodeRekening' => $this->kodeRekening,
-            'tglAwal'      => $this->tglAwal,
-            'tglAkhir'     => $this->tglAkhir,
-            'cari'         => $this->cari,
-            'userId'       => user()->nik,
-        ]);
+        $query = Jurnal::query()
+            ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
+            ->with(['pengeluaranHarian', 'piutangDilunaskan'])
+            ->search($this->cari);
+
+        $serializedQuery = new SerializedQuery($query);
+
+        $columnHeaders = $this->columnHeaders();
+        $pageHeaders = $this->pageHeaders();
+
+        ExportToExcel::dispatch($serializedQuery, $columnHeaders, $pageHeaders, user()->nik);
     }
 }
