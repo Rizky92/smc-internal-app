@@ -186,5 +186,7 @@ class BukuBesar extends Component
         $pageHeaders = $this->pageHeaders();
 
         ExportToExcel::dispatch($serializedQuery, $columnHeaders, $pageHeaders, user()->nik);
+
+        $this->emit('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
     }
 }

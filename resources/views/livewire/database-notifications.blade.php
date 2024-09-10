@@ -1,4 +1,9 @@
 <div wire:poll.30s>
+    @once
+        @push('css')
+            <link href="{{ asset('css/fontawesome5-all.min.css') }}" rel="stylesheet">
+        @endpush
+    @endonce
     <style>
         .notification-sidebar {
             position: fixed;
@@ -44,26 +49,57 @@
     <li class="nav-item">
         <a class="nav-link" href="#" id="notification-icon">
             <i class="far fa-bell"></i>
-            <sp class="badge badge-warning navbar-badge">{{ $this->unreadNotificationsCount }}</sp>
+            @if ($this->unreadNotificationsCount > 0)
+                <sp class="badge badge-warning navbar-badge">{{ $this->unreadNotificationsCount }}</sp>
+            @endif
         </a>
     </li>
 
     <div id="notification-sidebar" class="notification-sidebar">
         <div class="sidebar-header">
-            <h4>Notifications</h4>
+            <h4>Notifikasi</h4>
             <button id="close-sidebar" class="close-sidebar">&times;</button>
         </div>
         <div class="sidebar-content">
-            @foreach ($this->notifications as $notification)
+            @if ($this->unreadNotificationsCount > 0)
+                <button wire:click="markAllAsRead" class="btn btn-link">Tandai semua sudah dibaca</button>
+            @elseif ($this->notifications->count() > 0)
+                <button wire:click="clearAll" class="btn btn-link">Hapus semua</button>
+            @endif
+
+            @forelse ($this->notifications as $notification)
                 <div class="sidebar-item">
-                    <p>{{ $notification->data['message'] }}</p>
-                    @php
-                        preg_match('/filename="?([^"\s]+)"?/', $notification->data['file'], $matches);
-                        $filename = $matches[1] ?? '';
-                    @endphp
-                    <button wire:click="download('{{ $filename }}')" class="btn btn-link">Download File</button>
+                    <div class="d-flex p-2">
+                        <div class="">
+                            <i class="far fa-check-circle fa-lg" style="color: #3d9970"></i>
+                        </div>
+                        <div class="">
+                            <p class="my-0 ml-2">{{ $notification->data['message'] }}</p>
+                            <p class="p-2">{{ $notification->created_at->diffForHumans() }}</p>
+                            @php
+                                preg_match('/filename="?([^"\s]+)"?/', $notification->data['file'], $matches);
+                                $filename = $matches[1] ?? '';
+                            @endphp
+                            <div class="d-flex">
+                                <button wire:click="download('{{ $filename }}')" class="btn btn-link">Download</button>
+                                <button wire:click="markAsRead('{{ $notification->id }}')"  wire:key="{{ $notification->id }}" class="btn btn-link">Tandai sudah dibaca</button>
+                            </div>
+                       </div>
+                    </div>
                 </div>
-            @endforeach
+            @empty
+                <div class="px-4 pt-4 d-flex flex-column">
+                    <div class="mb-2 mt-2 d-flex justify-content-center">
+                        <div class="p-3 bg-secondary rounded-circle">
+                            <i class="far fa-bell-slash fa-lg"></i>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <h4>Tidak ada notifikasi</h4>
+                        <p>Anda tidak memiliki notifikasi baru</p>
+                    </div>
+                </div>
+            @endforelse
         </div>
     </div>
 

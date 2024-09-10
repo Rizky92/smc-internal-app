@@ -12,6 +12,10 @@ use Illuminate\View\View;
 
 class DatabaseNotifications extends Component
 {
+
+    /** @var string */
+    public $notificationId;
+
     public function render(): View
     {
         return view('livewire.database-notifications');
@@ -19,12 +23,32 @@ class DatabaseNotifications extends Component
 
     public function getNotificationsProperty(): DatabaseNotificationCollection
     {
-        return auth()->user()->notifications;
+        return auth()->user()->notifications()->latest()->take(3)->get();
     }
 
     public function getUnreadNotificationsCountProperty(): int
     {
         return auth()->user()->unreadNotifications->count();
+    }
+
+    public function markAllAsRead(): void
+    {
+        auth()->user()->unreadNotifications->markAsRead();
+    }
+
+    public function markAsRead(string $notificationId): void
+    {
+        auth()->user()->notifications()->where('id', $notificationId)->first()->markAsRead();
+    }
+
+    public function clearAll(): void
+    {
+        auth()->user()->notifications()->delete();
+    }
+
+    public function clear(string $notificationId): void
+    {
+        auth()->user()->notifications()->where('id', $notificationId)->first()->delete();
     }
 
     public function download($file)
