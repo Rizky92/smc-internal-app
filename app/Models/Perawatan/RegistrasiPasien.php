@@ -765,7 +765,7 @@ SQL;
             ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
-            ->when(! $semuaRegistrasi, fn (Builder $q): Builder => $q->whereNotIn('reg_periksa.stts', ['Batal', 'Belum']))
+            ->when(! $semuaRegistrasi, fn (Builder $q): Builder => $q->whereNotIn('reg_periksa.stts', ['Batal']))
             ->when($jenisPerawatan !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.status_lanjut', $jenisPerawatan));
     }
 
