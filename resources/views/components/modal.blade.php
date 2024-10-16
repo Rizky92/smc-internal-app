@@ -6,6 +6,7 @@
     'centered' => false,
     'scrollable' => true,
     'dismissable' => true,
+    'static' => false,
 
     'header' => null,
     'body' => null,
@@ -35,7 +36,7 @@
     </script>
 @endpush
 
-<div class="modal fade" id="{{ $id }}" {{ $livewire ? 'wire:ignore.self' : null }}>
+<div class="modal fade" id="{{ $id }}" {{ $livewire ? 'wire:ignore.self' : null }} {{ $static ? 'data-backdrop=static' : null }}>
     <div class="modal-dialog {{ $finalClass }}">
         <div {{ $attributes->merge(['class' => 'modal-content']) }}>
             @if ($header || $title)
