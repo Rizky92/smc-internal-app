@@ -82,11 +82,15 @@ class LaporanPasienRanap extends Component
     {
         return [
             PasienRanap::query()
-                ->whereBetween('tgl_masuk', [$this->tanggal, $this->tanggal])
+                ->search($this->cari)
+                ->where(function ($query) {
+                    $query->whereBetween('tgl_masuk', [$this->tanggal, $this->tanggal])
+                            ->orWhereBetween('tgl_keluar', [$this->tanggal, $this->tanggal]);
+                })
                 ->when(
                     $this->semuaPasien,
-                    fn (Builder $q): Builder => $q->where('status_ranap', '<=', '3'),
-                    fn (Builder $q): Builder => $q->where('status_ranap', '<=', '2')
+                    fn (Builder $query) => $query->where('status_ranap', '<=', '3'),
+                    fn (Builder $query) => $query->where('status_ranap', '<=', '2')
                 )
                 ->get([
                     'no_rawat',

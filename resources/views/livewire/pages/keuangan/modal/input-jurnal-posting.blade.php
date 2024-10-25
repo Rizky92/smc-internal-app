@@ -14,7 +14,7 @@
             })
         </script>
     @endpush
-    <x-modal id="modal-input-posting-jurnal" size="xl" :title="'Posting Jurnal Baru'" livewire centered>
+    <x-modal id="modal-input-posting-jurnal" size="xl" :title="'Posting Jurnal Baru'" livewire centered static>
         <x-slot name="body" style="overflow-x: hidden">
             <x-flash class="mx-3 mt-3" />
             <x-form id="form-input-posting-jurnal" wire:submit.prevent="create">
