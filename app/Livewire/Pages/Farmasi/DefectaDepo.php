@@ -106,6 +106,8 @@ class DefectaDepo extends Component
             'Stok Sekarang',
             'Jumlah Pemakaian per Shift',
             'Jumlah Pemakaian 3 Hari Terakhir',
+            'Jumlah Pemakaian 6 Hari Terakhir',
+            'Sisa 6 Hari',
         ];
     }
 
