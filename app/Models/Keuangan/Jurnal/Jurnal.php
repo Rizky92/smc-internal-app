@@ -224,6 +224,10 @@ SQL;
 
         [$debet, $kredit] = [round($detail->sum('debet'), 2), round($detail->sum('kredit'), 2)];
 
+        if ($debet < 0 || $kredit < 0) {
+            throw new \Exception('Debet dan Kredit tidak sama..!!');
+        }
+
         throw_if($debet !== $kredit, 'App\Exceptions\InequalJournalException', $debet, $kredit, $noJurnal);
 
         $jurnal = static::create([
