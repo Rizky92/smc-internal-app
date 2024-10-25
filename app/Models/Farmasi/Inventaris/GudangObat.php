@@ -111,13 +111,18 @@ class GudangObat extends Model
         $pemberianObat3Hari = $pemberianObat->clone()
             ->whereBetween('tgl_perawatan', [$tanggal->subDays(3)->toDateString(), $tanggal->toDateString()]);
 
+        $pemberianObat6Hari = $pemberianObat->clone()
+            ->whereBetween('tgl_perawatan', [$tanggal->subDays(6)->toDateString(), $tanggal->toDateString()]);
+
         $sqlSelect = <<<'SQL'
             `gudangbarang`.`kode_brng`,
             `databarang`.`nama_brng`,
             `kodesatuan`.`satuan`,
             `gudangbarang`.`stok`,
             ifnull(`pemberian_obat_shift`.`jumlah`, 0) as `jumlah_shift`,
-            ifnull(`pemberian_obat_3hari`.`jumlah`, 0) as `jumlah_3hari`
+            ifnull(`pemberian_obat_3hari`.`jumlah`, 0) as `jumlah_3hari`,
+            ifnull(`pemberian_obat_6hari`.`jumlah`, 0) as `jumlah_6hari`,
+            (ifnull(`pemberian_obat_6hari`.`jumlah`, 0) - `gudangbarang`.`stok`) as `sisa_6hari`
         SQL;
 
         $this->addSearchConditions([
@@ -129,7 +134,7 @@ class GudangObat extends Model
 
         return $query
             ->selectRaw($sqlSelect)
-            ->withCasts(['stok' => 'float', 'jumlah_shift' => 'float', 'jumlah_3hari' => 'float'])
+            ->withCasts(['stok' => 'float', 'jumlah_shift' => 'float', 'jumlah_3hari' => 'float', 'jumlah_6hari' => 'float', 'sisa_6hari' => 'float'])
             ->join('databarang', 'gudangbarang.kode_brng', '=', 'databarang.kode_brng')
             ->leftJoin('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
             ->leftJoinSub($pemberianObatPerShift, 'pemberian_obat_shift', fn (JoinClause $join) => $join
@@ -138,9 +143,13 @@ class GudangObat extends Model
             ->leftJoinSub($pemberianObat3Hari, 'pemberian_obat_3hari', fn (JoinClause $join) => $join
                 ->on('gudangbarang.kode_brng', '=', 'pemberian_obat_3hari.kode_brng')
                 ->on('gudangbarang.kd_bangsal', '=', 'pemberian_obat_3hari.kd_bangsal'))
+            ->leftJoinSub($pemberianObat6Hari, 'pemberian_obat_6hari', fn (JoinClause $join) => $join
+                ->on('gudangbarang.kode_brng', '=', 'pemberian_obat_6hari.kode_brng')
+                ->on('gudangbarang.kd_bangsal', '=', 'pemberian_obat_6hari.kd_bangsal'))
             ->where('gudangbarang.kd_bangsal', $bangsal)
             ->where(fn (Builder $query) => $query
                 ->where('pemberian_obat_shift.jumlah', '>', 0)
-                ->orWhere('pemberian_obat_3hari.jumlah', '>', 0));
+                ->orWhere('pemberian_obat_3hari.jumlah', '>', 0)
+                ->orWhere('pemberian_obat_6hari.jumlah', '>', 0));
     }
 }
