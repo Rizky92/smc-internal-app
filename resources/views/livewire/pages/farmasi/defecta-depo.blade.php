@@ -28,6 +28,8 @@
                     <x-table.th name="stok" title="Stok Gudang" />
                     <x-table.th name="jumlah_shift" :title="'Pemakaian per Shift ' . $this->shift" />
                     <x-table.th name="jumlah_3hari" title="Pemakaian 3 Hari Terakhir" />
+                    <x-table.th name="jumlah_6hari" title="Pemakaian 6 Hari Terakhir" />
+                    <x-table.th name="sisa_6hari" title="Sisa 6 Hari" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->dataDefectaDepo as $item)
@@ -38,9 +40,11 @@
                             <x-table.td>{{ $item->stok }}</x-table.td>
                             <x-table.td>{{ $item->jumlah_shift }}</x-table.td>
                             <x-table.td>{{ $item->jumlah_3hari }}</x-table.td>
+                            <x-table.td>{{ $item->jumlah_6hari }}</x-table.td>
+                            <x-table.td>{{ $item->sisa_6hari }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="6" padding />
+                        <x-table.tr-empty colspan="8" padding />
                     @endforelse
                 </x-slot>
             </x-table>
