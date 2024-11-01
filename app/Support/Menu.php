@@ -503,6 +503,13 @@ class Menu
                 'type'              => 'link',
                 'hasAnyPermissions' => $user->hasRole($develop),
             ],
+            [
+                'name'              => 'Job Cleaner',
+                'url'               => route('admin.job-cleaner'),
+                'icon'              => 'fas fa-broom',
+                'type'              => 'link',
+                'hasAnyPermissions' => $user->hasRole($develop),
+            ],
         ]);
     }
 }

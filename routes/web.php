@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\LogoutOtherSessionsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PrintLayoutController;
+use App\Livewire\Pages\Admin;
 use App\Livewire\Pages\Antrian;
 use App\Livewire\Pages\Aplikasi;
 use App\Livewire\Pages\Farmasi;
@@ -317,5 +318,8 @@ Route::prefix('admin')
 
                 Route::get('route-list', [RoutesExplorer::class, 'showRoutes'])
                     ->name('route-list');
+
+                Route::get('job-cleaner', Admin\JobCleaner::class)
+                    ->name('job-cleaner');
             });
     });
