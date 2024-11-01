@@ -330,3 +330,8 @@ Breadcrumbs::for('admin.manajemen-pintu', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Manajemen Pintu', route('admin.manajemen-pintu'));
 });
+
+Breadcrumbs::for('admin.job-cleaner', function (Trail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Job Cleaner', route('admin.job-cleaner'));
+});
