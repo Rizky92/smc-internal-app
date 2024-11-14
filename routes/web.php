@@ -18,6 +18,7 @@ use App\Livewire\Pages\Logistik;
 use App\Livewire\Pages\Perawatan;
 use App\Livewire\Pages\RekamMedis;
 use App\Livewire\Pages\User;
+use App\Models\Perawatan\Poliklinik;
 use Illuminate\Support\Facades\Route;
 use InfyOm\RoutesExplorer\RoutesExplorer;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
@@ -35,6 +36,8 @@ use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 
 Route::get('/', HomeController::class);
 
+Route::get('/antrean', App\Livewire\Antrean::class);
+Route::get('/antrean/{kd_poli}', App\Livewire\Pages\Antrean\AntreanPoli::class)->name('antrean-poli');
 Route::get('/display-jadwal-dokter', Informasi\DisplayJadwalDokter::class);
 
 Route::get('/print-layout', [PrintLayoutController::class, 'index']);
