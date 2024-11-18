@@ -4,6 +4,7 @@ namespace App\Models\Perawatan;
 
 use App\Database\Eloquent\Model;
 use App\Models\Antrian\Jadwal;
+use App\Models\Kepegawaian\Dokter;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Poliklinik extends Model
@@ -28,5 +29,11 @@ class Poliklinik extends Model
     public function jadwal(): HasMany
     {
         return $this->hasMany(Jadwal::class, 'kd_poli', 'kd_poli');
+    }
+
+    public function dokter()
+    {
+        return $this->belongsToMany(Dokter::class, 'jadwal', 'kd_poli', 'kd_dokter')
+            ->withPivot('hari_kerja', 'jam_mulai', 'jam_selesai');
     }
 }
