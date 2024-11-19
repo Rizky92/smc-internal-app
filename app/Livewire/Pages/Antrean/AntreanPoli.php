@@ -5,48 +5,67 @@ namespace App\Livewire\Pages\Antrean;
 use App\Models\Antrian\AntriPoli;
 use App\Models\Perawatan\Poliklinik;
 use App\Models\Perawatan\RegistrasiPasien;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class AntreanPoli extends Component
 {
     public Poliklinik $poli;
 
+    /** @var string */
     public $kd_poli;
 
-    public function mount($kd_poli)
+    /** @var mixed */
+    protected $listeners = ['updateStatusAfterCall'];
+
+    public function mount(string $kd_poli): void
     {
         $this->kd_poli = $kd_poli;
-        $this->poli = Poliklinik::where('kd_poli', $kd_poli)->first();
     }
 
-    public function getAntreanProperty()
+    public function getAntreanQuery(): Builder
     {
-        return RegistrasiPasien::with(['dokterPoli', 'poliklinik', 'pasien'])
-            ->where('kd_poli', $this->kd_poli)
-            ->where('tgl_registrasi', now()->format('Y-m-d'))
-            ->where('stts', 'Belum')
-            ->orderBy('no_reg')
-            ->get();
+        return RegistrasiPasien::query()
+            ->antrianPoli($this->kd_poli);
     }
 
-    public function getNextAntreanProperty()
+    public function getAntreanProperty(): Collection
     {
-        return AntriPoli::with(['dokter', 'poliklinik', 'registrasi'])->where('kd_poli', $this->kd_poli)->first();
+        return $this->getAntreanQuery()->get();
     }
 
-    public function call()
+    public function getNextAntreanProperty(): ?Model
     {
-        $nextAntrean = $this->getNextAntreanProperty();
+        return $this->getAntreanQuery()
+            ->selectRaw('antripoli.status')
+            ->join('antripoli', 'reg_periksa.no_rawat', '=', 'antripoli.no_rawat')
+            ->where('antripoli.kd_poli', $this->kd_poli)
+            ->where('antripoli.status', '1')
+            ->first();
+    }
 
-        if ($nextAntrean && $nextAntrean->status == '1') {
+    public function call(): void
+    {
+        $antrean = $this->getNextAntreanProperty();
+
+        if ($antrean && $antrean->status == '1') {
             $this->dispatchBrowserEvent('play-voice', [
-                'no_reg' => $nextAntrean->registrasi->no_reg,
-                'nm_poli' => $nextAntrean->registrasi->poliklinik->nm_poli,
+                'no_reg'    => $antrean->no_reg,
+                'nm_pasien' => $antrean->nm_pasien,
+                'nm_poli'   => $antrean->nm_poli
             ]);
         }
     }
 
-    public function render()
+    public function updateStatusAfterCall(): void
+    {
+        AntriPoli::where('kd_poli', $this->kd_poli)->update(['status' => '0']);
+    }
+
+    public function render(): View
     {
         return view('livewire.pages.antrean.antrean-poli');
     }
