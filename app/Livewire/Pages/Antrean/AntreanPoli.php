@@ -13,13 +13,11 @@ use Livewire\Component;
 
 class AntreanPoli extends Component
 {
-    public Poliklinik $poli;
-
     /** @var string */
     public $kd_poli;
 
     /** @var mixed */
-    protected $listeners = ['updateStatusAfterCall'];
+    protected $listeners = ['updateStatusAfterCall', 'updateAntrean', 'call'];
 
     public function mount(string $kd_poli): void
     {
@@ -35,6 +33,11 @@ class AntreanPoli extends Component
     public function getAntreanProperty(): Collection
     {
         return $this->getAntreanQuery()->get();
+    }
+
+    public function updateAntrean(): void
+    {
+        $this->dispatchBrowserEvent('updateMarqueeData');
     }
 
     public function getNextAntreanProperty(): ?Model
