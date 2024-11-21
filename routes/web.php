@@ -35,7 +35,7 @@ use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 
 Route::get('/', HomeController::class);
 
-Route::get('/antrean', App\Livewire\Antrean::class);
+Route::get('/antrean', App\Livewire\Antrean::class)->name('antrean');
 Route::get('/antrean/{kd_poli}', App\Livewire\Pages\Antrean\AntreanPoli::class)->name('antrean-poli');
 Route::get('/display-jadwal-dokter', Informasi\DisplayJadwalDokter::class);
 
