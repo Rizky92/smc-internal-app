@@ -955,4 +955,25 @@ SQL;
             ->whereDate('tgl_registrasi', $tanggal)
             ->count();
     }
+
+    public function scopeAntrianPoli(Builder $query, string $kd_poli = ""): Builder
+    {
+        $sqlSelect = <<<SQL
+            reg_periksa.no_reg,
+            dokter.nm_dokter,
+            poliklinik.nm_poli,
+            pasien.nm_pasien
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
+            ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
+            ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->where('reg_periksa.tgl_registrasi', now()->format('Y-m-d'))
+            ->where('reg_periksa.stts', 'Belum')
+            ->where('reg_periksa.kd_poli', $kd_poli)
+            ->orderBy('dokter.nm_dokter')
+            ->orderBy('reg_periksa.no_reg');
+    }
 }
