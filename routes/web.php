@@ -315,6 +315,9 @@ Route::prefix('admin')
                 Route::get('hak-akses/simrs-khanza', HakAkses\Khanza::class)
                     ->name('hak-akses.khanza');
 
+                Route::get('/manajemen-pintu', Aplikasi\ManajemenPintu::class)
+                    ->name('manajemen-pintu');
+
                 Route::get('logs', [LogViewerController::class, 'index'])
                     ->name('log-viewer');
 
