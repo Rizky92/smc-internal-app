@@ -36,7 +36,9 @@ class Pintu extends Model
 
         $sqlSelect = <<<SQL
             registrasi.no_reg,
+            registrasi.no_rawat,
             dokter.nm_dokter,
+            poliklinik.kd_poli,
             poliklinik.nm_poli,
             pasien.nm_pasien
         SQL;
