@@ -1,29 +1,25 @@
-<div class="row" wire:poll.60s='call'>
+<div class="row" style="height: 60%" @if (!$isCalling) wire:poll.5s="call" @endif>
     @if ($this->antreanDiPanggil && $this->antreanDiPanggil->status == '1')
         <div class="col">
-            <div class="container-toast border shadow">
-                <div class="bg-success">
-                    <h2 class="text-white text-uppercase">antrean dipanggil</h2>
+            <div class="card card-outline card-success d-flex justify-content-center h-100">
+                <div class="card-header">
+                    <h5 class="text-uppercase">antrean dipanggil</h5>
                 </div>
-                <div class="container-toast-content" style="height: 20rem;">
-                    <div class="d-flex justify-content-center">
-                        <div class="d-flex flex-column text-center">
-                            <h5>{{ $this->antreanDiPanggil->nm_poli }}</h5>
-                            <h5 class="text-uppercase">{{ $this->antreanDiPanggil->nm_dokter }}</h5>
-                            <h1 class="text-danger" style="font-size: 9rem">{{ $this->antreanDiPanggil->no_reg }}</h1>
-                            <h4>{{ $this->antreanDiPanggil->nm_pasien }}</h4>
-                        </div>
-                    </div>
+                <div class="card-body">
+                    <h5>{{ $this->antreanDiPanggil->nm_poli }}</h5>
+                    <h5 class="text-uppercase">{{ $this->antreanDiPanggil->nm_dokter }}</h5>
+                    <h1 class="text-danger" style="font-size: 9rem">{{ $this->antreanDiPanggil->no_reg }}</h1>
+                    <h4>{{ $this->antreanDiPanggil->nm_pasien }}</h4>
                 </div>
             </div>
         </div>
     @else
-        <div class="col text-center">
-            <div class="container-toast border shadow">
-                <div class="bg-success">
-                    <h3 class="text-white text-uppercase">antrean dipanggil</h3>
+        <div class="col">
+            <div class="card card-outline card-success d-flex justify-content-center h-100">
+                <div class="card-header">
+                    <h5 class="text-uppercase">antrean dipanggil</h5>
                 </div>
-                <div class="container-toast-content" style="height: 20rem;"></div>
+                <div class="card-body"></div>
             </div>
         </div>
     @endif
@@ -49,6 +45,21 @@
                 }
             }
             speakAndRepeat();
+
+            var card = document.querySelector('.card-outline.card-success');
+            var numberElement = document.querySelector('.text-danger');
+            if (card && numberElement) {
+                var blinkInterval = setInterval(function () {
+                    card.classList.toggle('bg-success');
+                    numberElement.classList.toggle('text-white');
+                }, 1000);
+                
+                setTimeout(function () {
+                    clearInterval(blinkInterval);
+                    card.classList.remove('bg-success');
+                    numberElement.classList.remove('text-white');
+                }, 5000);
+            }
         });
     </script>
 @endpush

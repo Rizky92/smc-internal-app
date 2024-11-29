@@ -59,7 +59,7 @@ class InputPintu extends Component
 
     public function getPoliklinikProperty(): Collection
     {
-        return Poliklinik::pluck('nm_poli', 'kd_poli');
+        return Poliklinik::where('status', '1')->pluck('nm_poli', 'kd_poli');
     }
 
     public function render(): View
@@ -87,6 +87,13 @@ class InputPintu extends Component
 
     public function create(): void
     {
+        if (! user()->hasRole(config('permission.superadmin_name'))) {
+            $this->dispatchBrowserEvent('data-denied');
+            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+
+            return;
+        }
+
         if ($this->isUpdating()) {
             $this->update();
             
@@ -119,6 +126,13 @@ class InputPintu extends Component
 
     public function update(): void
     {
+        if (! user()->hasRole(config('permission.superadmin_name'))) {
+            $this->dispatchBrowserEvent('data-denied');
+            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+
+            return;
+        }
+
         if (! $this->isUpdating()) {
             $this->create();
         }

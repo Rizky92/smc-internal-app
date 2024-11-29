@@ -48,7 +48,7 @@
                 <x-slot name="body">
                     @forelse ($this->pintu as $pintu)
                         <x-table.tr>
-                            <x-table.td :clickable="user()->can('keuangan.rkat-pelaporan.update') || user()->can('keuangan.rkat-pelaporan.read')" data-pintu-id="{{ $pintu->id }}" data-kode-poliklinik="{{ $pintu->poli }}" data-kode-pintu="{{ $pintu->kd_pintu }}" data-nama-pintu="{{ $pintu->nm_pintu }}">{{ $pintu->kd_pintu }}</x-table.td>
+                            <x-table.td clickable data-pintu-id="{{ $pintu->id }}" data-kode-poliklinik="{{ $pintu->poli }}" data-kode-pintu="{{ $pintu->kd_pintu }}" data-nama-pintu="{{ $pintu->nm_pintu }}">{{ $pintu->kd_pintu }}</x-table.td>
                             <x-table.td>{{ $pintu->nm_pintu }}</x-table.td>
                             <x-table.td>
                                 <div class="d-inline-flex flex-wrap" style="gap: 0.25rem">

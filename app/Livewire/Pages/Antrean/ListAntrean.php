@@ -26,7 +26,9 @@ class ListAntrean extends Component
 
     public function updateAntrean(): void
     {
-        $this->dispatchBrowserEvent('updateMarqueeData');
+        $this->dispatchBrowserEvent('updateMarqueeData', [
+            'rowCount' => $this->antreanPerPintu->count(),
+        ]);
     }
 
     public function render(): View

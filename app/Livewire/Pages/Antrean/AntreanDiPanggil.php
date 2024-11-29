@@ -13,6 +13,9 @@ class AntreanDiPanggil extends Component
     /** @var string */
     public $kd_pintu;
 
+    /** @var bool */
+    public $isCalling = false;
+
     /** @var mixed */
     protected $listeners = ['updateStatusAfterCall'];
 
@@ -35,14 +38,20 @@ class AntreanDiPanggil extends Component
                 ->on('poliklinik.kd_poli', '=', 'antripoli.kd_poli')
                 ->where('antripoli.status', '1')
             )
+            ->where('antripoli.status', '1')
             ->first();
     }
 
     public function call(): void
     {
+        if ($this->isCalling) {
+            return;
+        }
+
         $antrean = $this->antreanDiPanggil;
 
         if ($antrean && $antrean->status == '1') {
+            $this->isCalling = true;
             $this->dispatchBrowserEvent('play-voice', [
                 'no_reg'    => $antrean->no_reg,
                 'nm_pasien' => $antrean->nm_pasien,
@@ -53,11 +62,17 @@ class AntreanDiPanggil extends Component
 
     public function updateStatusAfterCall(): void
     {
-        AntriPoli::query()
-            ->where('no_rawat', $this->antreanDiPanggil->no_rawat)
-            ->where('kd_poli', $this->antreanDiPanggil->kd_poli)
-            ->where('status', '1')
-            ->update(['status' => '0']);
+        $antrean = $this->antreanDiPanggil;
+
+        if ($antrean) {
+            AntriPoli::query()
+                ->where('no_rawat', $this->antreanDiPanggil->no_rawat)
+                ->where('kd_poli', $this->antreanDiPanggil->kd_poli)
+                ->where('status', '1')
+                ->update(['status' => '0']);
+        }
+
+        $this->isCalling = false;
     }
 
     public function render(): View
