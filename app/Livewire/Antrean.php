@@ -17,7 +17,6 @@ class Antrean extends Component
             $query->where('jadwal.hari_kerja', $today);
         })->get();
     }
-
     public function render()
     {
         return view('livewire.antrean');
