@@ -325,3 +325,8 @@ Breadcrumbs::for('admin.informasi.jadwal-dokter', function (Trail $trail): void 
 Breadcrumbs::for('jadwal-dokter', function (Trail $trail): void {
     $trail->push('Jadwal Dokter', route('jadwal-dokter'));
 });
+
+Breadcrumbs::for('admin.manajemen-pintu', function (Trail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Manajemen Pintu', route('admin.manajemen-pintu'));
+});
