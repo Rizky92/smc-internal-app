@@ -9,7 +9,7 @@
                     <table width="100%" class="table table-sm text-sm table-bordered table-striped">
                         @forelse ($this->listDokter as $item)
                             <tr>
-                                <td align="left">{{ $item->dokter->nm_dokter }}</td>
+                                <td align="left">{{ $item->nm_dokter }}</td>
                                 <td style="width: 15ch;">{{ \Carbon\Carbon::parse($item->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($item->jam_selesai)->format('H:i') }}</td>
                             </tr>
                         @empty

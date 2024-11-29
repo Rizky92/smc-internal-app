@@ -37,33 +37,52 @@
                     <div class="form-group mt-3">
                         <label for="poli">Poli:</label>
                         <div wire:ignore>
-                            <select id="kodePoliklinik" wire:model="kodePoliklinik" class="form-control select2" multiple>
+                            <select id="kodePoliklinik" wire:model="kodePoliklinik" class="form-control select2-poli" multiple>
                                 @foreach($this->poliklinik as $kd_poli => $nm_poli)
                                     <option value="{{ $kd_poli }}">{{ $nm_poli }}</option>
                                 @endforeach
                             </select>
                             <x-form.error name="kodePoliklinik" />
-                            @push('js')
-                                @once
-                                    <script src="{{ asset('js/select2.full.min.js') }}"></script>
-                                @endonce
-                                <script>
-                                    document.addEventListener('livewire:load', function () {
-                                        $('.select2').select2();
-                        
-                                        $('.select2').on('change', function (e) {
-                                            var data = $(this).val();
-                                            @this.set('kodePoliklinik', data);
-                                        });
-                                    });
-                        
-                                    document.addEventListener('livewire:update', function () {
-                                        $('.select2').select2();
-                                    });
-                                </script>
-                            @endpush
                         </div>
                     </div>
+                    
+                    <div class="form-group mt-3">
+                        <label for="dokter">Dokter:</label>
+                        <div wire:ignore>
+                            <select id="kodeDokter" wire:model="kodeDokter" class="form-control select2-dokter" multiple>
+                                @foreach($this->dokter as $kd_dokter => $nm_dokter)
+                                    <option value="{{ $kd_dokter }}">{{ $nm_dokter }}</option>
+                                @endforeach
+                            </select>
+                            <x-form.error name="kodeDokter" />
+                        </div>
+                    </div>
+                    @push('js')
+                        @once
+                            <script src="{{ asset('js/select2.full.min.js') }}"></script>
+                        @endonce
+                        <script>
+                            document.addEventListener('livewire:load', function () {
+
+                                $('#kodePoliklinik').select2();
+                                $('#kodePoliklinik').on('change', function (e) {
+                                    var data = $(this).val();
+                                    @this.set('kodePoliklinik', data);
+                                });
+
+                                $('#kodeDokter').select2();
+                                $('#kodeDokter').on('change', function (e) {
+                                    var data = $(this).val();
+                                    @this.set('kodeDokter', data);
+                                });
+                            });
+                    
+                            document.addEventListener('livewire:update', function () {
+                                $('#kodePoliklinik').select2();
+                                $('#kodeDokter').select2();
+                            });
+                        </script>
+                    @endpush
                 </x-row-col>
             </x-form>
         </x-slot>

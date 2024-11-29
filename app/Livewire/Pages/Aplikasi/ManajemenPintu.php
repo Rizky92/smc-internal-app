@@ -20,7 +20,7 @@ class ManajemenPintu extends Component
 
     public function getPintuProperty()
     {
-        return $this->isDeferred ? [] : Pintu::with('poliklinik')
+        return $this->isDeferred ? [] : Pintu::with(['poliklinik', 'dokter'])
             ->search($this->cari)
             ->paginate($this->perpage);
     }
