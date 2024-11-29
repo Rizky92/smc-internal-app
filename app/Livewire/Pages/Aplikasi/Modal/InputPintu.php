@@ -4,6 +4,7 @@ namespace App\Livewire\Pages\Aplikasi\Modal;
 
 use App\Livewire\Concerns\DeferredModal;
 use App\Models\Aplikasi\Pintu;
+use App\Models\Kepegawaian\Dokter;
 use App\Models\Perawatan\Poliklinik;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
@@ -25,6 +26,9 @@ class InputPintu extends Component
 
     /** @var array */
     public $kodePoliklinik;
+
+    /** @var array */
+    public $kodeDokter;
 
     /** @var mixed */
     protected $listeners = [
@@ -62,6 +66,11 @@ class InputPintu extends Component
         return Poliklinik::where('status', '1')->pluck('nm_poli', 'kd_poli');
     }
 
+    public function getDokterProperty(): Collection
+    {
+        return Dokter::where('status', '1')->pluck('nm_dokter', 'kd_dokter');
+    }
+
     public function render(): View
     {
         return view('livewire.pages.aplikasi.modal.input-pintu');
@@ -82,6 +91,17 @@ class InputPintu extends Component
             }
         } else {
             $this->kodePoliklinik = [];
+        }
+
+        if ($this->isUpdating()) {
+            $pintu = Pintu::with('dokter')->find($this->pintuId);
+            if ($pintu) {
+                $this->kodeDokter = $pintu->dokter->pluck('kd_dokter')->toArray();
+            } else {
+                $this->kodeDokter = [];
+            }
+        } else {
+            $this->kodeDokter = [];
         }
     }
 
@@ -112,15 +132,18 @@ class InputPintu extends Component
                 ]);
 
                 $pintu->poliklinik()->sync($this->kodePoliklinik);
+                $pintu->dokter()->sync($this->kodeDokter);
             });
 
             tracker_end();
 
             $this->dispatchBrowserEvent('data-saved');
             $this->emit('flash.success', 'Data Pintu baru berhasil disimpan!');
+            $this->defaultValues();
         } catch (\Exception $e) {
             $this->dispatchBrowserEvent('data-failed');
             $this->emit('flash.warning', 'Terjadi kegagalan pada saat menyimpan data Pintu!');
+            $this->defaultValues();
         }
     }
 
@@ -151,16 +174,20 @@ class InputPintu extends Component
             ]);
     
             $pintu->poliklinik()->detach();
+            $pintu->dokter()->detach();
 
             $pintu->poliklinik()->sync($this->kodePoliklinik);
+            $pintu->dokter()->sync($this->kodeDokter);
     
             tracker_end('mysql_smc');
 
             $this->dispatchBrowserEvent('data-saved');
             $this->emit('flash.success', 'Data Pintu berhasil diperbarui!');
+            $this->defaultValues();
         } catch (\Exception $e) {
             $this->dispatchBrowserEvent('data-failed');
             $this->emit('flash.warning', 'Terjadi kegagalan pada saat memperbarui data Pintu!');
+            $this->defaultValues();
         }
     }
 
@@ -182,6 +209,13 @@ class InputPintu extends Component
             return;
         }
 
+        if ($pintu->dokter()->count() > 0) {
+            $this->dispatchBrowserEvent('data-denied');
+            $this->emit('flash.error', 'Pintu terkait masih ada dokter! Tidak boleh dihapus!');
+
+            return;
+        }
+
         tracker_start('mysql_smc');
 
         $pintu->delete();
@@ -190,6 +224,7 @@ class InputPintu extends Component
 
         $this->dispatchBrowserEvent('data-success');
         $this->emit('flash.success', 'Data pintu berhasil dihapus!');
+        $this->defaultValues();
     }
 
     public function isUpdating(): bool
@@ -203,5 +238,6 @@ class InputPintu extends Component
         $this->kodePintu = '';
         $this->namaPintu = '';
         $this->kodePoliklinik = [];
+        $this->kodeDokter = [];
     }
 }

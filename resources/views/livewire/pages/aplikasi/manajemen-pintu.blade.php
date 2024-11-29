@@ -11,14 +11,16 @@
                         pintuId,
                         kodePintu,
                         namaPintu,
-                        kodePoliklinik
+                        kodePoliklinik,
+                        kodeDokter
                     } = e.dataset
 
                     @this.emit('prepare', {
                         pintuId,
                         kodePintu,
                         namaPintu,
-                        kodePoliklinik
+                        kodePoliklinik,
+                        kodeDokter
                     })
 
                     $('#modal-input-pintu').modal('show')
@@ -44,11 +46,12 @@
                     <x-table.th name="kd_pintu" title="Kode Pintu" />
                     <x-table.th name="nm_pintu" title="Nama Pintu" />
                     <x-table.th>Poli</x-table.th>
+                    <x-table.th>Dokter</x-table.th>
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->pintu as $pintu)
                         <x-table.tr>
-                            <x-table.td clickable data-pintu-id="{{ $pintu->id }}" data-kode-poliklinik="{{ $pintu->poli }}" data-kode-pintu="{{ $pintu->kd_pintu }}" data-nama-pintu="{{ $pintu->nm_pintu }}">{{ $pintu->kd_pintu }}</x-table.td>
+                            <x-table.td clickable data-pintu-id="{{ $pintu->id }}" data-kode-poliklinik="{{ $pintu->poli }}" data-kode-dokter="{{ $pintu->dokter }}" data-kode-pintu="{{ $pintu->kd_pintu }}" data-nama-pintu="{{ $pintu->nm_pintu }}">{{ $pintu->kd_pintu }}</x-table.td>
                             <x-table.td>{{ $pintu->nm_pintu }}</x-table.td>
                             <x-table.td>
                                 <div class="d-inline-flex flex-wrap" style="gap: 0.25rem">
@@ -57,9 +60,16 @@
                                     @endforeach
                                 </div>
                             </x-table.td>
+                            <x-table.td>
+                                <div class="d-inline-flex flex-wrap" style="gap: 0.25rem">
+                                    @foreach ($pintu->dokter as $dokter )
+                                        <x-badge variant="secondary">{{ $dokter->nm_dokter }}</x-badge>
+                                    @endforeach
+                                </div>
+                            </x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="3" padding />
+                        <x-table.tr-empty colspan="4" padding />
                     @endforelse
                 </x-slot>
             </x-table>
