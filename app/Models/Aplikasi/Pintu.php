@@ -73,6 +73,7 @@ class Pintu extends Model
             ->join($pasien, 'registrasi.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->where('registrasi.tgl_registrasi', now()->format('Y-m-d'))
             ->where('registrasi.stts', 'Belum')
+            ->where('registrasi.status_lanjut', '!=', 'ranap')
             ->where('manajemen_pintu.kd_pintu', $kd_pintu);
     }
 
