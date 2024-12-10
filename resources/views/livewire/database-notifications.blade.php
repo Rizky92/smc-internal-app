@@ -1,4 +1,4 @@
-<div wire:poll.30s>
+<div>
     @once
         @push('css')
             <link href="{{ asset('css/fontawesome5-all.min.css') }}" rel="stylesheet">
@@ -55,12 +55,12 @@
         </a>
     </li>
 
-    <div id="notification-sidebar" class="notification-sidebar">
+    <div id="notification-sidebar" class="notification-sidebar {{ $isSidebarOpen ? 'open' : '' }}">
         <div class="sidebar-header">
             <h4>Notifikasi</h4>
             <button id="close-sidebar" class="close-sidebar">&times;</button>
         </div>
-        <div class="sidebar-content">
+        <div class="sidebar-content" @if ($isSidebarOpen) wire:poll.5s @endif>
             @if ($this->unreadNotificationsCount > 0)
                 <button wire:click="markAllAsRead" class="btn btn-link">Tandai semua sudah dibaca</button>
             @elseif ($this->notifications->count() > 0)
@@ -76,15 +76,15 @@
                         <div class="">
                             <p class="my-0 ml-2">{{ $notification->data['message'] }}</p>
                             <p class="p-2">{{ $notification->created_at->diffForHumans() }}</p>
-                            @php
-                                preg_match('/filename="?([^"\s]+)"?/', $notification->data['file'], $matches);
-                                $filename = $matches[1] ?? '';
-                            @endphp
                             <div class="d-flex">
-                                <button wire:click="download('{{ $filename }}')" class="btn btn-link">Download</button>
+                                @php
+                                    $filePath = $notification->data['file'];
+                                    $filePath = str_replace('\/', '/', $filePath);
+                                @endphp
+                                <button wire:click="download('{{ $filePath }}')" class="btn btn-link">Download</button>
                                 <button wire:click="markAsRead('{{ $notification->id }}')"  wire:key="{{ $notification->id }}" class="btn btn-link">Tandai sudah dibaca</button>
                             </div>
-                       </div>
+                        </div>
                     </div>
                 </div>
             @empty
@@ -104,12 +104,14 @@
     </div>
 
     <script>
-        document.getElementById('notification-icon').addEventListener('click', function() {
-            document.getElementById('notification-sidebar').classList.toggle('open');
+        document.getElementById('notification-icon').addEventListener('click', function(event) {
+            event.preventDefault();
+            window.livewire.emit('toggleSidebar');
         });
 
-        document.getElementById('close-sidebar').addEventListener('click', function() {
-            document.getElementById('notification-sidebar').classList.remove('open');
+        document.getElementById('close-sidebar').addEventListener('click', function(event) {
+            event.preventDefault();
+            window.livewire.emit('toggleSidebar');
         });
     </script>
 </div>

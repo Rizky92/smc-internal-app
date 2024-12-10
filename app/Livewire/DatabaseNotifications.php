@@ -16,6 +16,19 @@ class DatabaseNotifications extends Component
     /** @var string */
     public $notificationId;
 
+    /** @var bool */
+    public $isSidebarOpen = false;
+
+    /** @var mixed */
+    protected $listeners = [
+        'toggleSidebar' => 'toggleSidebar',
+    ];
+
+    public function toggleSidebar()
+    {
+        $this->isSidebarOpen = !$this->isSidebarOpen;
+    }
+
     public function render(): View
     {
         return view('livewire.database-notifications');
@@ -51,15 +64,8 @@ class DatabaseNotifications extends Component
         auth()->user()->notifications()->where('id', $notificationId)->first()->delete();
     }
 
-    public function download($file)
+    public function download($filePath)
     {
-        $path = Storage::disk('public')->path('excel/' . $file);
-
-        if (!Storage::disk('public')->exists('excel/' . $file)) {
-            session()->flash('error', 'File not found.');
-            return;
-        }
-    
-        return response()->download($path);
+        return Storage::disk('public')->download($filePath);
     }
 }
