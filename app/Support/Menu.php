@@ -490,6 +490,13 @@ class Menu
                 'hasAnyPermissions' => $user->hasRole($develop),
             ],
             [
+                'name'              => 'Manajemen Pintu',
+                'url'               => route('admin.manajemen-pintu'),
+                'icon'              => 'fas fa-door-open',
+                'type'              => 'link',
+                'hasAnyPermissions' => $user->hasRole($develop),
+            ],
+            [
                 'name'              => 'Log Viewer',
                 'url'               => route('admin.log-viewer'),
                 'icon'              => 'fas fa-scroll',
