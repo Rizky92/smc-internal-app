@@ -16,12 +16,20 @@ class AntreanDiPanggil extends Component
     /** @var bool */
     public $isCalling = false;
 
+    public $lastCalledPatient = null;
+
     /** @var mixed */
     protected $listeners = ['updateStatusAfterCall'];
 
     public function mount(string $kd_pintu): void
     {
-       $this->kd_pintu = $kd_pintu;
+        $this->kd_pintu = $kd_pintu;
+        $cachedPatient = cache('lastCalledPatient', null);
+        if (is_string($cachedPatient)) {
+            $this->lastCalledPatient = unserialize($cachedPatient);
+        } else {
+            $this->lastCalledPatient = null;
+        }
     }
 
     public function getAntreanDiPanggilProperty()
@@ -50,13 +58,24 @@ class AntreanDiPanggil extends Component
 
         $antrean = $this->antreanDiPanggil;
 
-        if ($antrean && $antrean->status == '1') {
+        if ($antrean && $antrean->status === '1') {
+            $this->lastCalledPatient = $antrean;
+
+            cache()->put('lastCalledPatient', serialize($antrean), now()->addHours(12));
+    
             $this->isCalling = true;
             $this->dispatchBrowserEvent('play-voice', [
                 'no_reg'    => $antrean->no_reg,
                 'nm_pasien' => $antrean->nm_pasien,
                 'nm_poli'   => $antrean->nm_poli
             ]);
+        } else {
+            $cachedPatient = cache('lastCalledPatient', null);
+            if (is_string($cachedPatient)) {
+                $this->lastCalledPatient = unserialize($cachedPatient);
+            } else {
+                $this->lastCalledPatient = null;
+            }
         }
     }
 
@@ -66,8 +85,8 @@ class AntreanDiPanggil extends Component
 
         if ($antrean) {
             AntriPoli::query()
-                ->where('no_rawat', $this->antreanDiPanggil->no_rawat)
-                ->where('kd_poli', $this->antreanDiPanggil->kd_poli)
+                ->where('no_rawat', $antrean->no_rawat)
+                ->where('kd_poli', $antrean->kd_poli)
                 ->where('status', '1')
                 ->update(['status' => '0']);
         }
@@ -77,6 +96,8 @@ class AntreanDiPanggil extends Component
 
     public function render(): View
     {
-        return view('livewire.pages.antrean.antrean-di-panggil');
+        return view('livewire.pages.antrean.antrean-di-panggil', [
+            'currentPatient' => $this->antreanDiPanggil ?? $this->lastCalledPatient,
+        ]);
     }
 }

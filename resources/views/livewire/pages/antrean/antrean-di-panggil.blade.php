@@ -1,15 +1,15 @@
 <div class="row" style="height: 60%" @if (!$isCalling) wire:poll.5s="call" @endif>
-    @if ($this->antreanDiPanggil && $this->antreanDiPanggil->status == '1')
+    @if ($currentPatient)
         <div class="col">
             <div class="card card-outline card-success d-flex justify-content-center h-100">
                 <div class="card-header">
                     <h5 class="text-uppercase">antrean dipanggil</h5>
                 </div>
                 <div class="card-body">
-                    <h5>{{ $this->antreanDiPanggil->nm_poli }}</h5>
-                    <h5 class="text-uppercase">{{ $this->antreanDiPanggil->nm_dokter }}</h5>
-                    <h1 class="text-danger" style="font-size: 9rem">{{ $this->antreanDiPanggil->no_reg }}</h1>
-                    <h4>{{ $this->antreanDiPanggil->nm_pasien }}</h4>
+                    <h5>{{ $currentPatient->nm_poli ?? '' }}</h5>
+                    <h5 class="text-uppercase">{{ $currentPatient->nm_dokter ?? '' }}</h5>
+                    <h1 class="text-danger" style="font-size: 9rem">{{ $currentPatient->no_reg ?? '' }}</h1>
+                    <h4>{{ $currentPatient->nm_pasien ?? '' }}</h4>              
                 </div>
             </div>
         </div>
