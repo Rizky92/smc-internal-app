@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
+use App\Jobs\ExportToExcel;
+use App\Jobs\Exporter\Keuangan\BukuBesarExporter;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
@@ -11,9 +13,12 @@ use App\Livewire\Concerns\MenuTracker;
 use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\Rekening;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
+use Throwable;
 
 class BukuBesar extends Component
 {
@@ -168,5 +173,28 @@ class BukuBesar extends Component
         $this->kodeRekening = '';
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+    }
+
+    public function exportToExcel()
+    { 
+        $batchId = (string) Str::uuid();
+
+        $filters = [
+            'kodeRekening' => $this->kodeRekening,
+            'tglAwal'      => $this->tglAwal,
+            'tglAkhir'     => $this->tglAkhir,
+            'cari'         => $this->cari,
+        ];
+
+        $userId = user()->nik;
+
+        Bus::chain([
+            BukuBesarExporter::dispatch($batchId, $filters, $userId),
+            ExportToExcel::dispatch($batchId, $userId),
+        ])->catch(function (Throwable $e) {
+            $e->getMessage();
+        });
+
+        $this->emit('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
     }
 }

@@ -4,9 +4,10 @@ namespace App\Models\Aplikasi;
 
 use App\Casts\BooleanCast;
 use App\Database\Eloquent\Authenticatable;
+use App\Models\Override\MultiConnectionDatabaseNotification;
+use App\Traits\Override\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Lab404\Impersonate\Models\Impersonate;
