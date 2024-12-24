@@ -14,8 +14,8 @@ return new class extends Migration
             $table->string('nama_field', 100);
             $table->string('judul_menu', 100)->nullable();
             $table->enum('default_value', ['true', 'false'])->default('false');
-
-            $table->index(['nama_field', 'judul_menu']);
+            $table->primary('nama_field');
+            $table->index('judul_menu');
         });
     }
 };
