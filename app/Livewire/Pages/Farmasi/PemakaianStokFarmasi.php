@@ -67,6 +67,7 @@ class PemakaianStokFarmasi extends Component
                     'pemakaian_1_minggu' => $model->pemakaian_1_minggu,
                     'pemakaian_1_bulan'  => $model->pemakaian_1_bulan,
                     'pemakaian_3_bulan'  => $model->pemakaian_3_bulan,
+                    'pemakaian_6_bulan'  => $model->pemakaian_6_bulan,
                     'pemakaian_10_bulan' => $model->pemakaian_10_bulan,
                     'pemakaian_12_bulan' => $model->pemakaian_12_bulan,
                 ]),
@@ -85,6 +86,7 @@ class PemakaianStokFarmasi extends Component
             'Pemakaian 1 Minggu',
             'Pemakaian 1 Bulan',
             'Pemakaian 3 Bulan',
+            'Pemakaian 6 Bulan',
             'Pemakaian 10 Bulan',
             'Pemakaian 12 Bulan',
         ];
