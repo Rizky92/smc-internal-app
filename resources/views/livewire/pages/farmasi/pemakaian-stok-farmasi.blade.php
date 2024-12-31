@@ -24,6 +24,7 @@
                     <x-table.th name="pemakaian_1_minggu" title="Pemakaian 1 Minggu" align="right" style="width: 40ch" />
                     <x-table.th name="pemakaian_1_bulan" title="Pemakaian 1 Bulan" align="right" style="width: 40ch" />
                     <x-table.th name="pemakaian_3_bulan" title="Pemakaian 3 Bulan" align="right" style="width: 40ch" />
+                    <x-table.th name="pemakaian_6_bulan" title="Pemakaian 6 Bulan" align="right" style="width: 40ch" />
                     <x-table.th name="pemakaian_10_bulan" title="Pemakaian 10 Bulan" align="right" style="width: 40ch" />
                     <x-table.th name="pemakaian_12_bulan" title="Pemakaian 12 Bulan" align="right" style="width: 40ch" />
                 </x-slot>
@@ -39,11 +40,12 @@
                             <x-table.td class="text-right">{{ $obat->pemakaian_1_minggu }}</x-table.td>
                             <x-table.td class="text-right">{{ $obat->pemakaian_1_bulan }}</x-table.td>
                             <x-table.td class="text-right">{{ $obat->pemakaian_3_bulan }}</x-table.td>
+                            <x-table.td class="text-right">{{ $obat->pemakaian_6_bulan }}</x-table.td>
                             <x-table.td class="text-right">{{ $obat->pemakaian_10_bulan }}</x-table.td>
                             <x-table.td class="text-right">{{ $obat->pemakaian_12_bulan }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="24" padding />
+                        <x-table.tr-empty colspan="25" padding />
                     @endforelse
                 </x-slot>
             </x-table>
