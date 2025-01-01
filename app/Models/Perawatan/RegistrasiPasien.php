@@ -976,4 +976,52 @@ SQL;
             ->orderBy('dokter.nm_dokter')
             ->orderBy('reg_periksa.no_reg');
     }
+
+    public function scopeItemBillingPasien(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->format('Y-m-d');
+        }
+        
+        $sqlSelect = <<<'SQL'
+            reg_periksa.no_rawat,
+            reg_periksa.tgl_registrasi,
+            pasien.no_ktp,
+            pasien.nm_pasien,
+            concat_ws(', ', pasien.alamat, kelurahan.nm_kel, kecamatan.nm_kec, kabupaten.nm_kab, propinsi.nm_prop) as alamat,
+            pasien.no_tlp,
+            reg_periksa.status_lanjut,
+            penjab.png_jawab,
+            billing.status,
+            billing.nm_perawatan,
+            billing.biaya,
+            billing.jumlah,
+            billing.totalbiaya
+            SQL;
+
+        $this->addSearchConditions([
+            'pasien.no_ktp',
+            'pasien.nm_pasien',
+            'concat_ws(\', \', pasien.alamat, kelurahan.nm_kel, kecamatan.nm_kec, kabupaten.nm_kab, propinsi.nm_prop)',
+            'pasien.no_tlp',
+            'billing.status',
+            'billing.nm_perawatan',
+        ]);
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+            ->join('billing', 'reg_periksa.no_rawat', '=', 'billing.no_rawat')
+            ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->join('kelurahan', 'pasien.kd_kel', '=', 'kelurahan.kd_kel')
+            ->join('kecamatan', 'pasien.kd_kec', '=', 'kecamatan.kd_kec')
+            ->join('kabupaten', 'pasien.kd_kab', '=', 'kabupaten.kd_kab')
+            ->join('propinsi', 'pasien.kd_prop', '=', 'propinsi.kd_prop')
+            ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
+            ->whereRaw('billing.totalbiaya != 0');
+    }
 }
