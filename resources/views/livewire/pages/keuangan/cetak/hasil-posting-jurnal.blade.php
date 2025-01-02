@@ -194,7 +194,7 @@
             <br>
             <br>
             <br>
-            <div>SAPTA PRIANGGATAMA</div>
+            <div>Ns. YULIANA PABIBAK, S.Kep</div>
             <div>MANAGER KEUANGAN</div>
         </div>
         <div></div>
