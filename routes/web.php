@@ -202,6 +202,10 @@ Route::prefix('admin')
                 Route::get('cetak-posting-jurnal', Keuangan\Cetak\HasilPostingJurnal::class)
                     ->name('cetak-posting-jurnal')
                     ->middleware('can:keuangan.posting-jurnal.read');
+
+                Route::get('laporan-faktur-pajak', Keuangan\LaporanFakturPajak::class)
+                    ->name('laporan-faktur-pajak')
+                    ->middleware('can:keuangan.laporan-faktur-pajak.read');
             });
 
         Route::prefix('farmasi')
