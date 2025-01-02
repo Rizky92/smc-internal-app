@@ -20,7 +20,7 @@
                                 <x-table.th title="Total Pesanan Bulan Lalu" />
                                 <x-table.th title="Total Harga Bulan Lalu" />
                                 <x-table.th title="Selisih Pesanan" />
-                                <x-table.th title="Selisih Harga" />
+                                <x-table.th name="selisih_harga" title="Selisih Harga" />
                             </x-slot>
                             <x-slot name="body">
                                 @forelse ($this->rincianPerbandinganBarangPO as $obat)
@@ -53,7 +53,7 @@
                                 <x-table.th title="Total Pesanan Bulan Lalu" />
                                 <x-table.th title="Total Harga Bulan Lalu" />
                                 <x-table.th title="Selisih Pesanan" />
-                                <x-table.th title="Selisih Harga" />
+                                <x-table.th name="selisih_harga" title="Selisih Harga" />
                             </x-slot>
                             <x-slot name="body">
                                 @forelse ($this->rincianPerbandinganAlkesPO as $alkes)
