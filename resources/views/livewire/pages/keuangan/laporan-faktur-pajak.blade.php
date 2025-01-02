@@ -44,7 +44,7 @@
                             <x-table.td-money :value="round($item->totalbiaya, 0)" />
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="13" padding />
+                        <x-table.tr-empty colspan="14" padding />
                     @endforelse
                 </x-slot>
             </x-table>
