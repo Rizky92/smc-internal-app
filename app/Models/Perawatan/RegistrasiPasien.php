@@ -990,6 +990,7 @@ SQL;
         $sqlSelect = <<<'SQL'
             reg_periksa.no_rawat,
             reg_periksa.tgl_registrasi,
+            billing.tgl_byr,
             pasien.no_ktp,
             pasien.nm_pasien,
             concat_ws(', ', pasien.alamat, kelurahan.nm_kel, kecamatan.nm_kec, kabupaten.nm_kab, propinsi.nm_prop) as alamat,
