@@ -66,6 +66,7 @@ trait ExcelExportable
         $filename .= '.xlsx';
 
         $dataSheets = $this->dataPerSheet();
+        $columnHeaders = $this->columnHeaders();
 
         $firstSheet = array_keys($dataSheets)[0] ?: 'Sheet 1';
 
@@ -79,17 +80,16 @@ trait ExcelExportable
 
         $excel = ExcelExport::make($filename, $firstSheet)
             ->setPageHeaders($this->pageHeaders())
-            ->setColumnHeaders($this->columnHeaders())
+            ->setColumnHeaders($columnHeaders[$firstSheet] ?? [])
             ->setData($firstData);
 
         array_shift($dataSheets);
 
         foreach ($dataSheets as $sheet => $data) {
-            if (is_callable($data)) {
-                $excel->addSheet($sheet)->setData($data());
-            } else {
-                $excel->addSheet($sheet)->setData($data);
-            }
+            $data = is_callable($data) ? $data() : $data;
+            $excel->addSheet($sheet)
+                ->setColumnHeaders($columnHeaders[$sheet] ?? [])
+                ->setData($data);
         }
 
         return $excel->export();

@@ -76,4 +76,53 @@ class PenjualanWalkInObat extends Model
 
         return map_bulan($data);
     }
+
+    public function scopeItemPenjualanWalkIn(Builder $query,string $tglAwal = '', string $tglAkhir = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->format('Y-m-d');
+        }
+
+        $sqlSelect = <<<'SQL'
+            penjualan.nota_jual,
+            penjualan.tgl_jual,
+            pasien.no_ktp,
+            pasien.nm_pasien,
+            concat_ws(', ', pasien.alamat, kelurahan.nm_kel, kecamatan.nm_kec, kabupaten.nm_kab, propinsi.nm_prop) as alamat,
+            pasien.no_tlp,
+            penjualan.status,
+            penjualan.jns_jual,
+            databarang.nama_brng,
+            detailjual.h_jual,
+            detailjual.jumlah,
+            detailjual.total
+            SQL;
+
+        $this->addSearchConditions([
+            'penjualan.nota_jual',
+            'pasien.no_ktp',
+            'pasien.nm_pasien',
+            'concat_ws(\', \', pasien.alamat, kelurahan.nm_kel, kecamatan.nm_kec, kabupaten.nm_kab, propinsi.nm_prop)',
+            'pasien.no_tlp',
+            'penjualan.status',
+            'penjualan.jns_jual',
+            'databarang.nama_brng',
+        ]);
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join('detailjual', 'penjualan.nota_jual', '=', 'detailjual.nota_jual')
+            ->join('databarang', 'detailjual.kode_brng', '=', 'databarang.kode_brng')
+            ->join('pasien', 'penjualan.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->join('kelurahan', 'pasien.kd_kel', '=', 'kelurahan.kd_kel')
+            ->join('kecamatan', 'pasien.kd_kec', '=', 'kecamatan.kd_kec')
+            ->join('kabupaten', 'pasien.kd_kab', '=', 'kabupaten.kd_kab')
+            ->join('propinsi', 'pasien.kd_prop', '=', 'propinsi.kd_prop')
+            ->whereBetween('penjualan.tgl_jual', [$tglAwal, $tglAkhir])
+            ->whereRaw('detailjual.total != 0');
+    }
 }
