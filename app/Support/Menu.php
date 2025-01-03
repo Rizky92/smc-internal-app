@@ -106,6 +106,7 @@ class Menu
                     'keuangan.stok-obat-ruangan.read',
                     'keuangan.laporan-trial-balance.read',
                     'keuangan.posting-jurnal',
+                    'keuangan.laporan-faktur-pajak.read',
                 ]),
                 'items' => [
                     [
@@ -247,6 +248,13 @@ class Menu
                         'icon'              => "fas fa-book",
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.posting-jurnal.read'),
+                    ],
+                    [
+                        'name'              => 'Item Billing Pasien',
+                        'url'               => route('admin.keuangan.laporan-faktur-pajak'),
+                        'icon'              => 'fas fa-book',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.laporan-faktur-pajak.read'),
                     ],
                 ],
             ],
