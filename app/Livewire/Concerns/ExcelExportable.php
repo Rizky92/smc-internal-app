@@ -66,7 +66,7 @@ trait ExcelExportable
         $filename .= '.xlsx';
 
         $dataSheets = $this->dataPerSheet();
-        $columnHeaders = $this->columnHeaders();
+        $columnHeaders = method_exists($this, 'columnHeaders') ? $this->columnHeaders() : [];    
 
         $firstSheet = array_keys($dataSheets)[0] ?: 'Sheet 1';
 
@@ -79,17 +79,27 @@ trait ExcelExportable
         File::ensureDirectoryExists(storage_path('app/public/excel'));
 
         $excel = ExcelExport::make($filename, $firstSheet)
-            ->setPageHeaders($this->pageHeaders())
-            ->setColumnHeaders($columnHeaders[$firstSheet] ?? [])
-            ->setData($firstData);
+            ->setPageHeaders($this->pageHeaders());
+            
+            if (Arr::isAssoc($columnHeaders)) {
+                $excel->setColumnHeaders($columnHeaders[$firstSheet] ?? []);
+            } else {
+                $excel->setColumnHeaders($columnHeaders);
+            }
+
+            $excel->setData($firstData);
 
         array_shift($dataSheets);
 
         foreach ($dataSheets as $sheet => $data) {
             $data = is_callable($data) ? $data() : $data;
-            $excel->addSheet($sheet)
-                ->setColumnHeaders($columnHeaders[$sheet] ?? [])
-                ->setData($data);
+            $excel->addSheet($sheet);
+
+            if (Arr::isAssoc($columnHeaders)) {
+                $excel->setColumnHeaders($columnHeaders[$sheet] ?? []);
+            }
+    
+            $excel->setData($data);
         }
 
         return $excel->export();
