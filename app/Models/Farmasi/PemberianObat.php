@@ -4,6 +4,7 @@ namespace App\Models\Farmasi;
 
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\Farmasi\PenjualanWalkInObat;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
@@ -54,6 +55,8 @@ class PemberianObat extends Model
             'dokter.kd_dokter',
             'dokter.nm_dokter',
         ]);
+    
+        $penjualan = PenjualanWalkInObat::query()->penjualanObatMorfin($tglAwal, $tglAkhir, $bangsal, $kodeObat);
 
         return $query
             ->selectRaw($sqlSelect)
@@ -63,7 +66,8 @@ class PemberianObat extends Model
             ->leftJoin('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
             ->where('kd_bangsal', $bangsal)
             ->where('detail_pemberian_obat.kode_brng', $kodeObat)
-            ->whereBetween('detail_pemberian_obat.tgl_perawatan', [$tglAwal, $tglAkhir]);
+            ->whereBetween('detail_pemberian_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
+            ->union($penjualan);
     }
 
     public function scopePendapatanObat(Builder $query, string $year = '2022', string $jenisPerawatan = ''): Builder
