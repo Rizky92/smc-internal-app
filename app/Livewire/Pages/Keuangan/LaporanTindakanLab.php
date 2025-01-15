@@ -8,7 +8,7 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
-use App\Models\Laboratorium\HasilPeriksaLab;
+use App\Models\Laboratorium\PeriksaLab;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\View\View;
@@ -44,7 +44,7 @@ class LaporanTindakanLab extends Component
 
     public function getDataLaporanTindakanLabProperty(): Paginator
     {
-        return HasilPeriksaLab::query()
+        return PeriksaLab::query()
             ->laporanTindakanLab($this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->sortWithColumns(
@@ -73,10 +73,10 @@ class LaporanTindakanLab extends Component
     protected function dataPerSheet(): array
     {
         return [
-            HasilPeriksaLab::query()
+            PeriksaLab::query()
                 ->laporanTindakanLab($this->tglAwal, $this->tglAkhir)
                 ->get()
-                ->map(fn (HasilPeriksaLab $model): array => [
+                ->map(fn (PeriksaLab $model): array => [
                     'no_rawat'       => $model->no_rawat,
                     'no_rkm_medis'   => $model->no_rkm_medis,
                     'nm_pasien'      => $model->nm_pasien,

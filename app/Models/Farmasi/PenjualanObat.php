@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
-class PenjualanWalkInObat extends Model
+class PenjualanObat extends Model
 {
     protected $connection = 'mysql_sik';
 
@@ -77,7 +77,7 @@ class PenjualanWalkInObat extends Model
         return map_bulan($data);
     }
 
-    public function scopeItemPenjualanWalkIn(Builder $query,string $tglAwal = '', string $tglAkhir = ''): Builder
+    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->format('Y-m-d');
@@ -88,41 +88,39 @@ class PenjualanWalkInObat extends Model
         }
 
         $sqlSelect = <<<'SQL'
-            penjualan.nota_jual,
-            penjualan.tgl_jual,
+            penjualan.nota_jual as no_rawat,
+            penjualan.tgl_jual as tgl_registrasi,
+            date(tagihan_sadewa.tgl_bayar) as tgl_bayar,
+            date_format(tagihan_sadewa.tgl_bayar, '%H:%i:%s') as jam_bayar,
+            'National ID' as jenis_id,
+            'IDN' as negara,
+            '' as npwp,
+            penjualan.no_rkm_medis,
             pasien.no_ktp,
             pasien.nm_pasien,
             concat_ws(', ', pasien.alamat, kelurahan.nm_kel, kecamatan.nm_kec, kabupaten.nm_kab, propinsi.nm_prop) as alamat,
+            pasien.email,
             pasien.no_tlp,
-            penjualan.status,
-            penjualan.jns_jual,
-            databarang.nama_brng,
-            detailjual.h_jual,
-            detailjual.jumlah,
-            detailjual.total
+            'Walk In' as status_lanjut
             SQL;
 
         $this->addSearchConditions([
-            'penjualan.nota_jual',
             'pasien.no_ktp',
             'pasien.nm_pasien',
-            'concat_ws(\', \', pasien.alamat, kelurahan.nm_kel, kecamatan.nm_kec, kabupaten.nm_kab, propinsi.nm_prop)',
+            'pasien.alamat',
+            'pasien.email',
             'pasien.no_tlp',
-            'penjualan.status',
-            'penjualan.jns_jual',
-            'databarang.nama_brng',
         ]);
 
         return $query
             ->selectRaw($sqlSelect)
-            ->join('detailjual', 'penjualan.nota_jual', '=', 'detailjual.nota_jual')
-            ->join('databarang', 'detailjual.kode_brng', '=', 'databarang.kode_brng')
             ->join('pasien', 'penjualan.no_rkm_medis', '=', 'pasien.no_rkm_medis')
-            ->join('kelurahan', 'pasien.kd_kel', '=', 'kelurahan.kd_kel')
-            ->join('kecamatan', 'pasien.kd_kec', '=', 'kecamatan.kd_kec')
-            ->join('kabupaten', 'pasien.kd_kab', '=', 'kabupaten.kd_kab')
-            ->join('propinsi', 'pasien.kd_prop', '=', 'propinsi.kd_prop')
-            ->whereBetween('penjualan.tgl_jual', [$tglAwal, $tglAkhir])
-            ->whereRaw('detailjual.total != 0');
+            ->join('tagihan_sadewa', 'penjualan.nota_jual', '=', 'tagihan_sadewa.no_nota')
+            ->leftJoin('kelurahan', 'pasien.kd_kel', '=', 'kelurahan.kd_kel')
+            ->leftJoin('kecamatan', 'pasien.kd_kec', '=', 'kecamatan.kd_kec')
+            ->leftJoin('kabupaten', 'pasien.kd_kab', '=', 'kabupaten.kd_kab')
+            ->leftJoin('propinsi', 'pasien.kd_prop', '=', 'propinsi.kd_prop')
+            ->whereBetween('tagihan_sadewa.tgl_bayar', [$tglAwal.' 00:00:00.000', $tglAkhir.' 23:59:59.999'])
+            ->whereBetween('penjualan.tgl_jual', ['2025-01-01', $tglAkhir]);
     }
 }

@@ -97,6 +97,32 @@ class PemberianObat extends Model
             ->withCasts(['jumlah' => 'float', 'bulan' => 'int']);
     }
 
+    public function scopeItemFakturPajak(Builder $query, array $noRawat = []): Builder
+    {
+        if ($noRawat === []) {
+            return $query;
+        }
+
+        $sqlSelect = <<<SQL
+            detail_pemberian_obat.no_rawat,
+            detail_pemberian_obat.kode_brng as kd_jenis_prw,
+            databarang.nama_brng as nm_perawatan,
+            detail_pemberian_obat.biaya_obat as biaya_rawat,
+            sum(detail_pemberian_obat.embalase) as embalase,
+            sum(detail_pemberian_obat.tuslah) as tuslah,
+            0 as diskon,
+            0 as tambahan,
+            sum(detail_pemberian_obat.jml) as jml,
+            sum(detail_pemberian_obat.total) as subtotal,
+            'Pemberian Obat' as kategori
+            SQL;
+        
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
+            ->groupBy(['detail_pemberian_obat.no_rawat', 'detail_pemberian_obat.kode_brng', 'databarang.nama_brng', 'detail_pemberian_obat.h_beli']);
+    }
+
     public static function pendapatanObatRalan(string $year = '2022'): array
     {
         $data = static::pendapatanObat($year, 'ralan')->pluck('jumlah', 'bulan');

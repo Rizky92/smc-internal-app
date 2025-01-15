@@ -8,9 +8,9 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Laboratorium\PeriksaLab;
 use App\Models\Perawatan\RegistrasiPasien;
 use App\Models\RekamMedis\Penjamin;
-use App\Models\Laboratorium\HasilPeriksaLab;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,12 +20,12 @@ use Livewire\Component;
 
 class LaporanHasilPemeriksaan extends Component
 {
-    use FlashComponent;
-    use Filterable;
+    use DeferredLoading;
     use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
     use LiveTable;
     use MenuTracker;
-    use DeferredLoading;
 
     /** @var string */
     public $tglAwal;
@@ -89,7 +89,7 @@ class LaporanHasilPemeriksaan extends Component
         $pemeriksaan = [];
 
         foreach ($this->dataPasienPoliMCU as $pasien) {
-            $pemeriksaanPasien = HasilPeriksaLab::laporanTindakanLabDetail($this->tglAwal, $this->tglAkhir)
+            $pemeriksaanPasien = PeriksaLab::laporanTindakanLabDetail($this->tglAwal, $this->tglAkhir)
                 ->where('periksa_lab.no_rawat', $pasien->no_rawat)
                 ->where('reg_periksa.kd_poli', 'U0036')
                 ->search($this->cari)
@@ -125,15 +125,15 @@ class LaporanHasilPemeriksaan extends Component
         $data = [];
 
         $rowSatuan = [
-            'Penjamin' => '',
-            'No. Rawat' => '',
-            'No. RM' => '',
-            'Nama' => '',
-            'Jenis Kelamin' => '',
-            'Agama' => '',
+            'Penjamin'       => '',
+            'No. Rawat'      => '',
+            'No. RM'         => '',
+            'Nama'           => '',
+            'Jenis Kelamin'  => '',
+            'Agama'          => '',
             'tgl_registrasi' => '',
-            'Poli' => '',
-            'Tindakan' => 'Satuan',
+            'Poli'           => '',
+            'Tindakan'       => 'Satuan',
         ];
 
         foreach ($this->uniquePemeriksaan as $pemeriksaan) {
@@ -146,27 +146,27 @@ class LaporanHasilPemeriksaan extends Component
 
         foreach ($rujukanTypes as $type) {
             $rowRujukan = [
-                'Penjamin' => '',
-                'No. Rawat' => '',
-                'No. RM' => '',
-                'Nama' => '',
-                'Jenis Kelamin' => '',
-                'Agama' => '',
+                'Penjamin'       => '',
+                'No. Rawat'      => '',
+                'No. RM'         => '',
+                'Nama'           => '',
+                'Jenis Kelamin'  => '',
+                'Agama'          => '',
                 'tgl_registrasi' => '',
-                'Poli' => '',
-                'Tindakan' => 'Nilai Rujukan (' . strtoupper($type) . ')',
+                'Poli'           => '',
+                'Tindakan'       => 'Nilai Rujukan ('.strtoupper($type).')',
             ];
-        
+
             foreach ($this->uniquePemeriksaan as $pemeriksaan) {
-                $rowRujukan[$pemeriksaan] = $this->pemeriksaan[$this->dataPasienPoliMCU[0]->no_rawat][$pemeriksaan]->{'nilai_rujukan_' . $type} ?? '-';
+                $rowRujukan[$pemeriksaan] = $this->pemeriksaan[$this->dataPasienPoliMCU[0]->no_rawat][$pemeriksaan]->{'nilai_rujukan_'.$type} ?? '-';
             }
-        
+
             $data[] = $rowRujukan;
         }
 
         foreach ($this->dataPasienPoliMCU as $pasien) {
             $row = [];
-            
+
             $row['Penjamin'] = $pasien->penjamin->png_jawab;
             $row['No. Rawat'] = $pasien->no_rawat;
             $row['No. RM'] = $pasien->pasien->no_rkm_medis;
@@ -215,15 +215,15 @@ class LaporanHasilPemeriksaan extends Component
         $periodeAwal = carbon($this->tglAwal);
         $periodeAkhir = carbon($this->tglAkhir);
 
-        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s/d ' . $periodeAkhir->translatedFormat('d F Y');
+        $periode = 'Periode '.$periodeAwal->translatedFormat('d F Y').' s/d '.$periodeAkhir->translatedFormat('d F Y');
 
         if ($periodeAwal->isSameDay($periodeAkhir)) {
-            $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y');
+            $periode = 'Periode '.$periodeAwal->translatedFormat('d F Y');
         }
 
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Hasil Pemeriksaan '. $penjamin,
+            'Laporan Hasil Pemeriksaan '.$penjamin,
             now()->translatedFormat('d F Y'),
             $periode,
         ];

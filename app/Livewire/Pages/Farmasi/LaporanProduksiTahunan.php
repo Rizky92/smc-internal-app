@@ -13,7 +13,7 @@ use App\Models\Farmasi\MutasiObat;
 use App\Models\Farmasi\PemberianObat;
 use App\Models\Farmasi\PenerimaanObat;
 use App\Models\Farmasi\PengeluaranObat;
-use App\Models\Farmasi\PenjualanWalkInObat;
+use App\Models\Farmasi\PenjualanObat;
 use App\Models\Farmasi\ResepObat;
 use App\Models\Farmasi\ReturPenjualanObat;
 use App\View\Components\BaseLayout;
@@ -74,7 +74,7 @@ class LaporanProduksiTahunan extends Component
 
     public function getKunjunganWalkInProperty(): array
     {
-        return $this->isDeferred ? [] : PenjualanWalkInObat::totalKunjunganWalkIn($this->tahun);
+        return $this->isDeferred ? [] : PenjualanObat::totalKunjunganWalkIn($this->tahun);
     }
 
     public function getKunjunganTotalProperty(): array
@@ -113,7 +113,7 @@ class LaporanProduksiTahunan extends Component
 
     public function getPendapatanObatWalkInProperty(): array
     {
-        return $this->isDeferred ? [] : PenjualanWalkInObat::totalPendapatanWalkIn($this->tahun);
+        return $this->isDeferred ? [] : PenjualanObat::totalPendapatanWalkIn($this->tahun);
     }
 
     public function getPendapatanAlkesFarmasiDanUnitProperty(): array
