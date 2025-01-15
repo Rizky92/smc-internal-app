@@ -203,8 +203,20 @@ Route::prefix('admin')
                     ->name('cetak-posting-jurnal')
                     ->middleware('can:keuangan.posting-jurnal.read');
 
-                Route::get('laporan-faktur-pajak', Keuangan\LaporanFakturPajak::class)
-                    ->name('laporan-faktur-pajak')
+                Route::get('laporan-faktur-pajak-bpjs', Keuangan\LaporanFakturPajakBPJS::class)
+                    ->name('laporan-faktur-pajak-bpjs')
+                    ->middleware('can:keuangan.laporan-faktur-pajak.read');
+
+                Route::get('laporan-faktur-pajak-asuransi', Keuangan\LaporanFakturPajakAsuransi::class)
+                    ->name('laporan-faktur-pajak-asuransi')
+                    ->middleware('can:keuangan.laporan-faktur-pajak.read');
+
+                Route::get('laporan-faktur-pajak-perusahaan', Keuangan\LaporanFakturPajakPerusahaan::class)
+                    ->name('laporan-faktur-pajak-perusahaan')
+                    ->middleware('can:keuangan.laporan-faktur-pajak.read');
+                    
+                Route::get('laporan-faktur-pajak-umum', Keuangan\LaporanFakturPajakUmum::class)
+                    ->name('laporan-faktur-pajak-umum')
                     ->middleware('can:keuangan.laporan-faktur-pajak.read');
             });
 

@@ -251,7 +251,7 @@ class Menu
                     ],
                     [
                         'name'              => 'Laporan Faktur Pajak',
-                        'url'               => route('admin.keuangan.laporan-faktur-pajak'),
+                        'url'               => route('admin.keuangan.laporan-faktur-pajak-bpjs'),
                         'icon'              => 'fas fa-book',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.laporan-faktur-pajak.read'),

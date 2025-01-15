@@ -147,9 +147,9 @@ Breadcrumbs::for('admin.keuangan.posting-jurnal', function (Trail $trail): void 
     $trail->push('Posting Jurnal', route('admin.keuangan.posting-jurnal'));
 });
 
-Breadcrumbs::for('admin.keuangan.laporan-faktur-pajak', function (Trail $trail): void {
+Breadcrumbs::for('admin.keuangan.laporan-faktur-pajak-bpjs', function (Trail $trail): void {
     $trail->parent('admin.keuangan');
-    $trail->push('Laporan Faktur Pajak', route('admin.keuangan.laporan-faktur-pajak'));
+    $trail->push('Laporan Faktur Pajak', route('admin.keuangan.laporan-faktur-pajak-bpjs'));
 });
 
 Breadcrumbs::for('admin.farmasi', function (Trail $trail): void {

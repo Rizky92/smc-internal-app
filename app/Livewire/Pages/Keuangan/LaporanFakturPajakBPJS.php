@@ -14,7 +14,7 @@ use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class LaporanFakturPajak extends Component
+class LaporanFakturPajakBPJS extends Component
 {
     use DeferredLoading;
     use ExcelExportable;
@@ -48,8 +48,7 @@ class LaporanFakturPajak extends Component
     public function getDataLaporanFakturPajakProperty()
     {
         return $this->isDeferred ? [] : RegistrasiPasien::query()
-            ->laporanFakturPajak($this->tglAwal, $this->tglAkhir)
-            ->unionAll(PenjualanObat::query()->laporanFakturPajak($this->tglAwal, $this->tglAkhir))
+            ->laporanFakturPajakBPJS($this->tglAwal, $this->tglAkhir)
             ->sortWithColumns($this->sortColumns)
             ->search($this->cari)
             ->paginate($this->perpage);
@@ -57,8 +56,8 @@ class LaporanFakturPajak extends Component
 
     public function render(): View
     {
-        return view('livewire.pages.keuangan.laporan-faktur-pajak')
-            ->layout(BaseLayout::class, ['title' => 'Laporan Faktur Pajak Pasien']);
+        return view('livewire.pages.keuangan.laporan-faktur-pajak-b-p-j-s')
+            ->layout(BaseLayout::class, ['title' => 'Laporan Faktur Pajak Pasien BPJS Kesehatan (BPJ)']);
     }
 
     protected function defaultValues(): void
@@ -71,26 +70,9 @@ class LaporanFakturPajak extends Component
     {
         return [
             'Faktur Pajak' => RegistrasiPasien::query()
-                ->laporanFakturPajak($this->tglAwal, $this->tglAkhir)
-                ->unionAll(PenjualanObat::query()->laporanFakturPajak($this->tglAwal, $this->tglAkhir))
+                ->laporanFakturPajakBPJS($this->tglAwal, $this->tglAkhir)
                 ->search($this->cari)
                 ->cursor()
-                ->map(fn (RegistrasiPasien $model): array => [
-                    'no_rawat'       => $model->no_rawat,
-                    'tgl_registrasi' => $model->tgl_registrasi,
-                    'tgl_bayar'      => $model->tgl_bayar,
-                    'jam_bayar'      => $model->jam_bayar,
-                    'jenis_id'       => $model->jenis_id,
-                    'negara'         => $model->negara,
-                    'npwp'           => $model->npwp,
-                    'no_rkm_medis'   => $model->no_rkm_medis,
-                    'no_ktp'         => $model->no_ktp,
-                    'nm_pasien'      => $model->nm_pasien,
-                    'alamat'         => $model->alamat,
-                    'email'          => $model->email,
-                    'no_tlp'         => $model->no_tlp,
-                    'status_lanjut'  => $model->status_lanjut,
-                ])
                 ->all(),
         ];
     }
@@ -100,19 +82,36 @@ class LaporanFakturPajak extends Component
         return [
             'Faktur Pajak' => [
                 'No. Rawat',
-                'Tgl. Registrasi',
-                'Tgl. Pelunasan',
-                'Jam Pelunasan',
+                'Kode Transaksi',
+                'Tgl. Bayar',
+                'Jam Bayar',
+                'Status Lanjut',
+                'Jenis Faktur',
+                'Keterangan Tambahan',
+                'Dokumen Pendukung',
+                'Cap Fasilitas',
+                'ID TKU Penjual',
                 'Jenis ID',
                 'Negara',
-                'No. NPWP',
+                'ID TKU',
                 'No. RM',
-                'NIK',
-                'Nama Pasien/Perusahaan',
-                'Alamat Pasien/Perusahaan',
-                'Email Pasien/Perusahaan',
-                'No. Telp Pasien/Perusahaan',
-                'Status Registrasi',
+                'NIK Pasien',
+                'Nama Pasien',
+                'Alamat Pasien',
+                'Email Pasien',
+                'No. Telpon Pasien',
+                'Kode Asuransi',
+                'Nama Asuransi',
+                'Alamat Asuransi',
+                'No. Telpon Asuransi',
+                'Email Asuransi',
+                'NPWP Asuransi',
+                'Kode Perusahaan',
+                'Nama Perusahaan',
+                'Alamat Perusahaan',
+                'No. Telpon Perusahaan',
+                'Email Perusahaan',
+                'NPWP Perusahaan',
             ],
         ];
     }
