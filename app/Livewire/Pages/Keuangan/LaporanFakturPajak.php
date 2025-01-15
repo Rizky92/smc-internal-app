@@ -48,8 +48,8 @@ class LaporanFakturPajak extends Component
     public function getDataLaporanFakturPajakProperty()
     {
         return $this->isDeferred ? [] : RegistrasiPasien::query()
-            ->fakturPajakPasien($this->tglAwal, $this->tglAkhir)
-            ->unionAll(PenjualanObat::query()->fakturPajakPasien($this->tglAwal, $this->tglAkhir))
+            ->laporanFakturPajak($this->tglAwal, $this->tglAkhir)
+            ->unionAll(PenjualanObat::query()->laporanFakturPajak($this->tglAwal, $this->tglAkhir))
             ->sortWithColumns($this->sortColumns)
             ->search($this->cari)
             ->paginate($this->perpage);
@@ -71,8 +71,8 @@ class LaporanFakturPajak extends Component
     {
         return [
             'Faktur Pajak' => RegistrasiPasien::query()
-                ->fakturPajakPasien($this->tglAwal, $this->tglAkhir)
-                ->unionAll(PenjualanObat::query()->fakturPajakPasien($this->tglAwal, $this->tglAkhir))
+                ->laporanFakturPajak($this->tglAwal, $this->tglAkhir)
+                ->unionAll(PenjualanObat::query()->laporanFakturPajak($this->tglAwal, $this->tglAkhir))
                 ->search($this->cari)
                 ->cursor()
                 ->map(fn (RegistrasiPasien $model): array => [

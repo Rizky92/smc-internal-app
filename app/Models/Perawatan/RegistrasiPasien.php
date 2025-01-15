@@ -979,7 +979,7 @@ SQL;
             ->orderBy('reg_periksa.no_reg');
     }
 
-    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    public function scopeLaporanFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->format('Y-m-d');
@@ -988,6 +988,8 @@ SQL;
         if (empty($tglAkhir)) {
             $tglAkhir = now()->format('Y-m-d');
         }
+
+        $tahun = substr($tglAwal, 0, 4);
 
         $sqlSelect = <<<'SQL'
             reg_periksa.no_rawat,
@@ -1024,11 +1026,11 @@ SQL;
 
         $notaInap = NotaRanap::query()
             ->selectRaw($sqlSelectNotaInap)
-            ->whereBetween('nota_inap.tanggal', ['2025-01-01', $tglAkhir]);
+            ->whereBetween('nota_inap.tanggal', [$tglAwal, $tglAkhir]);
 
         $notaBayar = NotaRalan::query()
             ->selectRaw($sqlSelectNotaRalan)
-            ->whereBetween('nota_jalan.tanggal', ['2025-01-01', $tglAkhir])
+            ->whereBetween('nota_jalan.tanggal', [$tglAwal, $tglAkhir])
             ->unionAll($notaInap);
 
         return $query
@@ -1042,7 +1044,6 @@ SQL;
             ->leftJoin('kabupaten', 'pasien.kd_kab', '=', 'kabupaten.kd_kab')
             ->leftJoin('propinsi', 'pasien.kd_prop', '=', 'propinsi.kd_prop')
             ->whereRaw('reg_periksa.status_bayar = \'Sudah Bayar\'')
-            ->whereBetween('nota_bayar.tanggal', [$tglAwal, $tglAkhir])
-            ->whereBetween('reg_periksa.tgl_registrasi', ['2025-01-01', $tglAkhir]);
+            ->whereBetween('reg_periksa.tgl_registrasi', [$tahun.'-01-01', $tglAkhir]);
     }
 }

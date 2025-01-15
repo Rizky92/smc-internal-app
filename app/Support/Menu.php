@@ -250,7 +250,7 @@ class Menu
                         'hasAnyPermissions' => $user->can('keuangan.posting-jurnal.read'),
                     ],
                     [
-                        'name'              => 'Item Billing Pasien',
+                        'name'              => 'Laporan Faktur Pajak',
                         'url'               => route('admin.keuangan.laporan-faktur-pajak'),
                         'icon'              => 'fas fa-book',
                         'type'              => 'link',

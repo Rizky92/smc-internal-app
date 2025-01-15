@@ -19,14 +19,10 @@ class TindakanRalanPerawat extends Model
 
     public $timestamps = false;
 
-    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    public function scopeItemFakturPajak(Builder $query, array $noRawat = []): Builder
     {
-        if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
-        }
-
-        if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
+        if ($noRawat === []) {
+            return $query;
         }
 
         $sqlSelect = <<<'SQL'
@@ -46,6 +42,7 @@ class TindakanRalanPerawat extends Model
         return $query
             ->selectRaw($sqlSelect)
             ->join('jns_perawatan', 'rawat_jl_pr.kd_jenis_prw', '=', 'jns_perawatan.kd_jenis_prw')
+            ->whereIn('rawat_jl_pr.no_rawat', $noRawat)
             ->groupBy(['rawat_jl_pr.no_rawat', 'rawat_jl_pr.kd_jenis_prw', 'jns_perawatan.nm_perawatan', 'rawat_jl_pr.biaya_rawat']);
     }
 }

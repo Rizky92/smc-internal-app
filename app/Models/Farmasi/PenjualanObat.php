@@ -77,7 +77,7 @@ class PenjualanObat extends Model
         return map_bulan($data);
     }
 
-    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    public function scopeLaporanFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->format('Y-m-d');
@@ -86,6 +86,8 @@ class PenjualanObat extends Model
         if (empty($tglAkhir)) {
             $tglAkhir = now()->format('Y-m-d');
         }
+
+        $tahun = substr($tglAwal, 0, 4);
 
         $sqlSelect = <<<'SQL'
             penjualan.nota_jual as no_rawat,
@@ -121,6 +123,6 @@ class PenjualanObat extends Model
             ->leftJoin('kabupaten', 'pasien.kd_kab', '=', 'kabupaten.kd_kab')
             ->leftJoin('propinsi', 'pasien.kd_prop', '=', 'propinsi.kd_prop')
             ->whereBetween('tagihan_sadewa.tgl_bayar', [$tglAwal.' 00:00:00.000', $tglAkhir.' 23:59:59.999'])
-            ->whereBetween('penjualan.tgl_jual', ['2025-01-01', $tglAkhir]);
+            ->whereBetween('penjualan.tgl_jual', [$tahun.'-01-01', $tglAkhir]);
     }
 }
