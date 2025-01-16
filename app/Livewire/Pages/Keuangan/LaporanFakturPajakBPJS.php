@@ -43,7 +43,7 @@ class LaporanFakturPajakBPJS extends Component
     }
 
     /**
-     * @return array<empty, empty>|\Illuminate\Database\Eloquent\Collection<\App\Models\Perawatan\RegistrasiPasien>
+     * @return array<empty, empty>|\Illuminate\Contracts\Pagination\Paginator
      */
     public function getDataLaporanFakturPajakProperty()
     {
@@ -73,6 +73,29 @@ class LaporanFakturPajakBPJS extends Component
                 ->laporanFakturPajakBPJS($this->tglAwal, $this->tglAkhir)
                 ->search($this->cari)
                 ->cursor()
+                ->map(fn (RegistrasiPasien $model): array => [
+                    'no_rawat'            => $model->no_rawat,
+                    'kode_transaksi'      => $model->kode_transaksi,
+                    'tgl_bayar'           => $model->tgl_bayar,
+                    'jam_bayar'           => $model->jam_bayar,
+                    'status_lanjut'       => $model->status_lanjut,
+                    'jenis_faktur'        => $model->jenis_faktur,
+                    'keterangan_tambahan' => $model->keterangan_tambahan,
+                    'dokumen_pendukung'   => $model->dokumen_pendukung,
+                    'cap_fasilitas'       => $model->cap_fasilitas,
+                    'id_tku_penjual'      => $model->id_tku_penjual,
+                    'jenis_id'            => $model->jenis_id,
+                    'negara'              => $model->negara,
+                    'id_tku'              => $model->id_tku,
+                    'no_rkm_medis'        => $model->no_rkm_medis,
+                    'nik_pasien'          => $model->nik_pasien,
+                    'nama_pasien'         => $model->nama_pasien,
+                    'alamat_pasien'       => $model->alamat_pasien,
+                    'email_pasien'        => $model->email_pasien,
+                    'no_telp_pasien'      => $model->no_telp_pasien,
+                    'kode_asuransi'       => $model->kode_asuransi,
+                    'nama_asuransi'       => $model->nama_asuransi,
+                ])
                 ->all(),
         ];
     }
@@ -85,7 +108,7 @@ class LaporanFakturPajakBPJS extends Component
                 'Kode Transaksi',
                 'Tgl. Bayar',
                 'Jam Bayar',
-                'Status Lanjut',
+                'Jenis Rawat',
                 'Jenis Faktur',
                 'Keterangan Tambahan',
                 'Dokumen Pendukung',
@@ -99,19 +122,9 @@ class LaporanFakturPajakBPJS extends Component
                 'Nama Pasien',
                 'Alamat Pasien',
                 'Email Pasien',
-                'No. Telpon Pasien',
+                'No. Telp Pasien',
                 'Kode Asuransi',
                 'Nama Asuransi',
-                'Alamat Asuransi',
-                'No. Telpon Asuransi',
-                'Email Asuransi',
-                'NPWP Asuransi',
-                'Kode Perusahaan',
-                'Nama Perusahaan',
-                'Alamat Perusahaan',
-                'No. Telpon Perusahaan',
-                'Email Perusahaan',
-                'NPWP Perusahaan',
             ],
         ];
     }
@@ -129,7 +142,7 @@ class LaporanFakturPajakBPJS extends Component
 
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Faktur Pajak Pasien',
+            'Laporan Faktur Pajak Pasien BPJS KESEHATAN (BPJ)',
             now()->translatedFormat('d F Y'),
             $periode,
         ];
