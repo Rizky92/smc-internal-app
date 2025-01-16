@@ -21,11 +21,11 @@ class Operasi extends Model
 
     public function scopeItemFakturPajak(Builder $query, array $noRawat = []): Builder
     {
-        if ($noRawat === []) {
+        if (empty($noRawat)) {
             return $query;
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             operasi.no_rawat, operasi.kode_paket as kd_jenis_prw, paket_operasi.nm_perawatan, (
                 operasi.biayaoperator1 + operasi.biayaoperator2 + operasi.biayaoperator3 +
                 operasi.biayaasisten_operator1 + operasi.biayaasisten_operator2 + operasi.biayaasisten_operator3 +
@@ -46,7 +46,7 @@ class Operasi extends Model
                 operasi.biayasarpras + operasi.biaya_dokter_pjanak + operasi.biaya_dokter_umum
             ) as subtotal, 'Operasi' as kategori
             SQL;
-        
+
         return $query
             ->selectRaw($sqlSelect)
             ->join('paket_operasi', 'operasi.kode_paket', '=', 'paket_operasi.kode_paket')

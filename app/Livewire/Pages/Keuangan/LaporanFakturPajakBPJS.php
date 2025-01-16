@@ -8,8 +8,13 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
-use App\Models\Farmasi\PenjualanObat;
 use App\Models\Perawatan\RegistrasiPasien;
+use App\Models\Perawatan\TindakanRalanDokter;
+use App\Models\Perawatan\TindakanRalanDokterPerawat;
+use App\Models\Perawatan\TindakanRalanPerawat;
+use App\Models\Perawatan\TindakanRanapDokter;
+use App\Models\Perawatan\TindakanRanapDokterPerawat;
+use App\Models\Perawatan\TindakanRanapPerawat;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -42,16 +47,29 @@ class LaporanFakturPajakBPJS extends Component
         $this->defaultValues();
     }
 
-    /**
-     * @return array<empty, empty>|\Illuminate\Contracts\Pagination\Paginator
-     */
     public function getDataLaporanFakturPajakProperty()
     {
         return $this->isDeferred ? [] : RegistrasiPasien::query()
             ->laporanFakturPajakBPJS($this->tglAwal, $this->tglAkhir)
             ->sortWithColumns($this->sortColumns)
             ->search($this->cari)
-            ->paginate($this->perpage);
+            ->paginate($this->perpage, ['*'], 'page_faktur');
+    }
+
+    public function getDataDetailFakturPajakProperty()
+    {
+        if ($this->isDeferred) return [];
+
+        $noRawat = $this->dataLaporanFakturPajak->pluck('no_rawat')->all();
+
+        return TindakanRalanDokter::query()
+            ->itemFakturPajak($noRawat)
+            ->unionAll(TindakanRalanPerawat::query()->itemFakturPajak($noRawat))
+            ->unionAll(TindakanRalanDokterPerawat::query()->itemFakturPajak($noRawat))
+            ->unionAll(TindakanRanapDokter::query()->itemFakturPajak($noRawat))
+            ->unionAll(TindakanRanapPerawat::query()->itemFakturPajak($noRawat))
+            ->unionAll(TindakanRanapDokterPerawat::query()->itemFakturPajak($noRawat))
+            ->paginate($this->perpage, ['*'], 'page_detailfaktur');
     }
 
     public function render(): View

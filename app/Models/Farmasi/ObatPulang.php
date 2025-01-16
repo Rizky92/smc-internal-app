@@ -21,11 +21,11 @@ class ObatPulang extends Model
 
     public function scopeItemFakturPajak(Builder $query, array $noRawat = []): Builder
     {
-        if ($noRawat === []) {
+        if (empty($noRawat)) {
             return $query;
         }
-        
-        $sqlSelect = <<<SQL
+
+        $sqlSelect = <<<'SQL'
             resep_pulang.no_rawat,
             resep_pulang.kode_brng as kd_jenis_prw,
             databarang.nama_brng as nm_perawatan,
@@ -38,7 +38,7 @@ class ObatPulang extends Model
             sum(resep_pulang.total) as subtotal,
             'Obat Pulang' as kategori
             SQL;
-        
+
         return $query
             ->selectRaw($sqlSelect)
             ->join('databarang', 'resep_pulang.kode_brng', '=', 'databarang.kode_brng')

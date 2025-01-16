@@ -12,7 +12,7 @@ use App\Models\Laboratorium\PeriksaLab;
 use App\Models\Laboratorium\PermintaanLabMB;
 use App\Models\Laboratorium\PermintaanLabPA;
 use App\Models\Laboratorium\PermintaanLabPK;
-use App\Models\Radiologi\HasilPeriksaRadiologi;
+use App\Models\Radiologi\PeriksaRadiologi;
 use App\Models\Radiologi\PermintaanRadiologi;
 use App\Models\RekamMedis\BerkasDigitalKeperawatan;
 use App\Models\RekamMedis\Pasien;
@@ -353,7 +353,7 @@ class RegistrasiPasien extends Model
 
     public function hasilRadiologi(): HasMany
     {
-        return $this->hasMany(HasilPeriksaRadiologi::class, 'no_rawat', 'no_rawat');
+        return $this->hasMany(PeriksaRadiologi::class, 'no_rawat', 'no_rawat');
     }
 
     public function resepObat(): HasMany
@@ -1082,7 +1082,7 @@ SQL;
             ->laporanFakturPajak($tglAwal, $tglAkhir)
             ->where('reg_periksa.kd_pj', 'BPJ');
     }
-    
+
     public function scopeLaporanFakturPajakUmum(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         return $query
@@ -1096,7 +1096,7 @@ SQL;
             ->laporanFakturPajak($tglAwal, $tglAkhir)
             ->where('reg_periksa.kd_pj', $kodePJ);
     }
-    
+
     public function scopeLaporanFakturPajakPerusahaan(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePerusahaan = '-'): Builder
     {
         return $query

@@ -21,10 +21,6 @@ class TindakanRalanPerawat extends Model
 
     public function scopeItemFakturPajak(Builder $query, array $noRawat = []): Builder
     {
-        if ($noRawat === []) {
-            return $query;
-        }
-
         $sqlSelect = <<<'SQL'
             rawat_jl_pr.no_rawat,
             rawat_jl_pr.kd_jenis_prw,
@@ -36,7 +32,7 @@ class TindakanRalanPerawat extends Model
             0 as tambahan,
             count(*) as jml,
             (rawat_jl_pr.biaya_rawat * count(*)) as subtotal,
-            'Tindakan Ralan Dr' as kategori
+            'Tindakan Ralan Pr' as kategori
             SQL;
 
         return $query

@@ -49,7 +49,7 @@
                                         <x-table.td>{{ $item->id_tku_penjual }}</x-table.td>
                                         <x-table.td>{{ $item->jenis_id }}</x-table.td>
                                         <x-table.td>{{ $item->negara }}</x-table.td>
-                                        <x-table.td>{{ $item->id_tku }}</x-table.td>
+                                        <x-table.td>{{ $item->id_tku }}</x-table.td> 
                                         <x-table.td>{{ $item->no_rkm_medis }}</x-table.td>
                                         <x-table.td>{{ $item->nik_pasien }}</x-table.td>
                                         <x-table.td>{{ $item->nama_pasien }}</x-table.td>
@@ -67,6 +67,7 @@
                         <x-paginator class="px-4 py-3 bg-light" :data="$this->dataLaporanFakturPajak" />
                     </x-navtabs.content>
                     <x-navtabs.content id="detailfaktur">
+                        @dump($this->dataDetailFakturPajak)
                         {{-- <x-table :sortColumns="$sortColumns" style="width: 200rem" sortable zebra hover sticky nowrap>
                             <x-slot name="columns">
                                 <x-table.th name="no_rawat" title="No. Rawat" />

@@ -182,14 +182,10 @@ class PeriksaLab extends Model
             ->orderBy('template_laboratorium.urut');
     }
 
-    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    public function scopeItemFakturPajak(Builder $query, array $noRawat = []): Builder
     {
-        if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
-        }
-
-        if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
+        if (empty($noRawat)) {
+            return $query;
         }
 
         $sqlSelect = <<<SQL
@@ -209,6 +205,7 @@ class PeriksaLab extends Model
         return $query
             ->selectRaw($sqlSelect)
             ->join('jns_perawatan_lab', 'periksa_lab.kd_jenis_prw', '=', 'jns_perawatan_lab.kd_jenis_prw')
+            ->whereIn('periksa_lab.no_rawat', $noRawat)
             ->groupBy(['periksa_lab.no_rawat', 'periksa_lab.kd_jenis_prw', 'jns_perawatan_lab.nm_perawatan', 'periksa_lab.biaya']);
     }
 }

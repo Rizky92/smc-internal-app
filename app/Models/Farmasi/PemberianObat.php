@@ -99,7 +99,7 @@ class PemberianObat extends Model
 
     public function scopeItemFakturPajak(Builder $query, array $noRawat = []): Builder
     {
-        if ($noRawat === []) {
+        if (empty($noRawat)) {
             return $query;
         }
 

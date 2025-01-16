@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Reedware\LaravelCompositeRelations\CompositeBelongsTo;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 
-class HasilPeriksaRadiologi extends Model
+class PeriksaRadiologi extends Model
 {
     use HasCompositeRelations;
 
@@ -118,5 +118,32 @@ class HasilPeriksaRadiologi extends Model
                 periksa_radiologi.tgl_periksa,
                 periksa_radiologi.jam
             )');
+    }
+    
+    public function scopeItemFakturPajak(Builder $query, array $noRawat = []): Builder
+    {
+        if (empty($noRawat)) {
+            return $query;
+        }
+
+        $sqlSelect = <<<SQL
+            periksa_radiologi.no_rawat,
+            periksa_radiologi.kd_jenis_prw,
+            jns_perawatan_radiologi.nm_perawatan,
+            periksa_radiologi.biaya as biaya_rawat,
+            0 as embalase,
+            0 as tuslah,
+            0 as diskon,
+            0 as tambahan,
+            count(*) as jml,
+            (periksa_radiologi.biaya * count(*)) as subtotal,
+            'Laborat' as kategori
+            SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join('jns_perawatan_radiologi', 'periksa_radiologi.kd_jenis_prw', '=', 'jns_perawatan_radiologi.kd_jenis_prw')
+            ->whereIn('periksa_radiologi.no_rawat', $noRawat)
+            ->groupBy(['periksa_radiologi.no_rawat', 'periksa_radiologi.kd_jenis_prw', 'jns_perawatan_radiologi.nm_perawatan', 'periksa_radiologi.biaya']);
     }
 }

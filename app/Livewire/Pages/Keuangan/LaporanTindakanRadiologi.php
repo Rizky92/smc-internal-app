@@ -8,7 +8,7 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
-use App\Models\Radiologi\HasilPeriksaRadiologi;
+use App\Models\Radiologi\PeriksaRadiologi;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -43,7 +43,7 @@ class LaporanTindakanRadiologi extends Component
 
     public function getDataLaporanTindakanRadiologiProperty()
     {
-        return $this->isDeferred ? [] : HasilPeriksaRadiologi::query()
+        return $this->isDeferred ? [] : PeriksaRadiologi::query()
             ->laporanTindakanRadiologi($this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns, [
@@ -68,10 +68,10 @@ class LaporanTindakanRadiologi extends Component
     protected function dataPerSheet(): array
     {
         return [
-            HasilPeriksaRadiologi::query()
+            PeriksaRadiologi::query()
                 ->laporanTindakanRadiologi($this->tglAwal, $this->tglAkhir)
                 ->get()
-                ->map(fn (HasilPeriksaRadiologi $model): array => [
+                ->map(fn (PeriksaRadiologi $model): array => [
                     'no_rawat'          => $model->no_rawat,
                     'no_rkm_medis'      => $model->no_rkm_medis,
                     'nm_pasien'         => $model->nm_pasien,
