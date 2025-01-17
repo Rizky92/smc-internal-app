@@ -19,8 +19,20 @@ class Operasi extends Model
 
     public $timestamps = false;
 
-    public function scopeItemFakturPajak(Builder $query, array $noRawat = []): Builder
+    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->format('Y-m-d');
+        }
+
+        $tahun = substr($tglAwal, 0, 4);
+
+        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir);
+
         $sqlSelect = <<<SQL
             operasi.no_rawat,
             'B' as jenis_barang_jasa,

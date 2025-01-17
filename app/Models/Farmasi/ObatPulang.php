@@ -3,6 +3,7 @@
 namespace App\Models\Farmasi;
 
 use App\Database\Eloquent\Model;
+use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Builder;
 
 class ObatPulang extends Model
@@ -19,21 +20,37 @@ class ObatPulang extends Model
 
     public $timestamps = false;
 
-    public function scopeItemFakturPajak(Builder $query, array $noRawat = []): Builder
+    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->format('Y-m-d');
+        }
+
+        $tahun = substr($tglAwal, 0, 4);
+
+        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir);
+
         $sqlSelect = <<<'SQL'
             resep_pulang.no_rawat,
-            resep_pulang.kode_brng as kd_jenis_prw,
-            databarang.nama_brng as nm_perawatan,
-            resep_pulang.harga as biaya_rawat,
-            0 as embalase,
-            0 as tuslah,
-            0 as diskon,
+            'A' as jenis_barang_jasa,
+            '300000' as kode_barang_jasa,
+            databarang.nama_brng as nama_barang_jasa,
+            databarang.kode_sat as nama_satuan_ukur,
+            resep_pulang.harga as harga_satuan,
+            sum(resep_pulang.jml_barang) as jumlah_barang_jasa,
+            0 as diskon_persen,
+            0 as diskon_nominal,
             0 as tambahan,
-            sum(resep_pulang.jml_barang) as jml,
-            sum(resep_pulang.total) as subtotal,
+            sum(resep_pulang.total) as dpp,
+            0 as ppn_persen,
+            0 as ppn_nominal,
+            resep_pulang.kode_brng as kd_jenis_prw,
             'Obat Pulang' as kategori,
-            '300000' as kode_barang_jasa
+            'Ranap' as status_lanjut
             SQL;
 
         return $query

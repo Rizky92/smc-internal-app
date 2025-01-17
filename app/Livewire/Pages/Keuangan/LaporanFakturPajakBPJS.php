@@ -8,6 +8,11 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Farmasi\ObatPulang;
+use App\Models\Farmasi\PemberianObat;
+use App\Models\Laboratorium\PeriksaLab;
+use App\Models\Laboratorium\PeriksaLabDetail;
+use App\Models\Perawatan\Operasi;
 use App\Models\Perawatan\RegistrasiPasien;
 use App\Models\Perawatan\TindakanRalanDokter;
 use App\Models\Perawatan\TindakanRalanDokterPerawat;
@@ -15,6 +20,7 @@ use App\Models\Perawatan\TindakanRalanPerawat;
 use App\Models\Perawatan\TindakanRanapDokter;
 use App\Models\Perawatan\TindakanRanapDokterPerawat;
 use App\Models\Perawatan\TindakanRanapPerawat;
+use App\Models\Radiologi\PeriksaRadiologi;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -63,12 +69,19 @@ class LaporanFakturPajakBPJS extends Component
     {
         if ($this->isDeferred) return [];
 
-        return TindakanRalanDokter::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir)
-            ->unionAll(TindakanRalanPerawat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(TindakanRalanDokterPerawat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(TindakanRanapDokter::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(TindakanRanapPerawat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(TindakanRanapDokterPerawat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
+        // return TindakanRalanDokter::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir)
+        //     // ->unionAll(TindakanRalanPerawat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
+        //     // ->unionAll(TindakanRalanDokterPerawat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
+        //     // ->unionAll(TindakanRanapDokter::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
+        //     // ->unionAll(TindakanRanapPerawat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
+        //     // ->unionAll(TindakanRanapDokterPerawat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
+        //     // ->unionAll(PeriksaLab::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
+        //     // ->unionAll(PeriksaLabDetail::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
+        //     // ->unionAll(PeriksaRadiologi::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
+        //     // ->unionAll(Operasi::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
+        //     ->unionAll(PemberianObat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
+        //     // ->unionAll(ObatPulang::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
+        return PemberianObat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir)
             ->paginate($this->perpage, ['*'], 'page_detailfaktur');
     }
 

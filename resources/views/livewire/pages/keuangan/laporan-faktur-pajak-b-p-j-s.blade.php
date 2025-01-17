@@ -67,7 +67,7 @@
                         <x-paginator class="px-4 py-3 bg-light" :data="$this->dataLaporanFakturPajak" />
                     </x-navtabs.content>
                     <x-navtabs.content id="detailfaktur">
-                        <x-table :sortColumns="$sortColumns" style="width: 100rem" sortable zebra hover sticky nowrap>
+                        <x-table :sortColumns="$sortColumns" style="width: 100rem" zebra hover sticky nowrap>
                             <x-slot name="columns">
                                 <x-table.th name="no_rawat" title="No. Rawat" />
                                 <x-table.th name="jenis_barang_jasa" title="Jenis Barang/Jasa" />

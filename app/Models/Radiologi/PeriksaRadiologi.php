@@ -4,6 +4,7 @@ namespace App\Models\Radiologi;
 
 use App\Casts\CastAsciiChars;
 use App\Database\Eloquent\Model;
+use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
@@ -120,8 +121,20 @@ class PeriksaRadiologi extends Model
             )');
     }
     
-    public function scopeItemFakturPajak(Builder $query, array $noRawat = []): Builder
+    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->format('Y-m-d');
+        }
+
+        $tahun = substr($tglAwal, 0, 4);
+
+        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir);
+
         $sqlSelect = <<<SQL
             periksa_radiologi.no_rawat,
             'B' as jenis_barang_jasa,
@@ -145,6 +158,7 @@ class PeriksaRadiologi extends Model
             ->selectRaw($sqlSelect)
             ->join('jns_perawatan_radiologi', 'periksa_radiologi.kd_jenis_prw', '=', 'jns_perawatan_radiologi.kd_jenis_prw')
             ->whereIn('periksa_radiologi.no_rawat', $noRawat)
-            ->groupBy(['periksa_radiologi.no_rawat', 'periksa_radiologi.kd_jenis_prw', 'jns_perawatan_radiologi.nm_perawatan', 'periksa_radiologi.biaya']);
+            ->groupBy(['periksa_radiologi.no_rawat', 'periksa_radiologi.kd_jenis_prw', 'jns_perawatan_radiologi.nm_perawatan', 'periksa_radiologi.biaya'])
+            ->havingRaw('(periksa_radiologi.biaya * count(*)) > 0');
     }
 }

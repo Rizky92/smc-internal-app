@@ -3,6 +3,7 @@
 namespace App\Models\Laboratorium;
 
 use App\Database\Eloquent\Model;
+use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Builder;
 use Reedware\LaravelCompositeRelations\CompositeBelongsTo;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
@@ -182,8 +183,20 @@ class PeriksaLab extends Model
             ->orderBy('template_laboratorium.urut');
     }
 
-    public function scopeItemFakturPajak(Builder $query, array $noRawat = []): Builder
+    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->format('Y-m-d');
+        }
+
+        $tahun = substr($tglAwal, 0, 4);
+
+        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir);
+
         $sqlSelect = <<<SQL
             periksa_lab.no_rawat,
             'B' as jenis_barang_jasa,
@@ -207,6 +220,7 @@ class PeriksaLab extends Model
             ->selectRaw($sqlSelect)
             ->join('jns_perawatan_lab', 'periksa_lab.kd_jenis_prw', '=', 'jns_perawatan_lab.kd_jenis_prw')
             ->whereIn('periksa_lab.no_rawat', $noRawat)
-            ->groupBy(['periksa_lab.no_rawat', 'periksa_lab.kd_jenis_prw', 'jns_perawatan_lab.nm_perawatan', 'periksa_lab.biaya']);
+            ->groupBy(['periksa_lab.no_rawat', 'periksa_lab.kd_jenis_prw', 'jns_perawatan_lab.nm_perawatan', 'periksa_lab.biaya'])
+            ->havingRaw('(periksa_lab.biaya * count(*)) > 0');
     }
 }

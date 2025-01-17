@@ -3,6 +3,7 @@
 namespace App\Models\Farmasi;
 
 use App\Database\Eloquent\Model;
+use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
@@ -97,8 +98,20 @@ class PemberianObat extends Model
             ->withCasts(['jumlah' => 'float', 'bulan' => 'int']);
     }
 
-    public function scopeItemFakturPajak(Builder $query, array $noRawat = []): Builder
+    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->format('Y-m-d');
+        }
+
+        $tahun = substr($tglAwal, 0, 4);
+
+        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir);
+
         $sqlSelect = <<<SQL
             detail_pemberian_obat.no_rawat,
             'A' as jenis_barang_jasa,
