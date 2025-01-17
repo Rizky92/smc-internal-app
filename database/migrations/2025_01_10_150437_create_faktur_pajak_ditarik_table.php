@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('dokumen_pendukung', 100)->nullable();
             $table->string('cap_fasilitas', 100)->nullable();
             $table->string('id_tku_penjual', 30);
-            $table->string('jenis_id', 10)->default('National ID');
+            $table->string('jenis_id', 20)->default('National ID');
             $table->char('negara', 3)->default('IDN');
             $table->string('id_tku', 30)->nullable();
             $table->string('no_rkm_medis', 15);

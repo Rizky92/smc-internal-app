@@ -122,22 +122,23 @@ class PeriksaRadiologi extends Model
     
     public function scopeItemFakturPajak(Builder $query, array $noRawat = []): Builder
     {
-        if (empty($noRawat)) {
-            return $query;
-        }
-
         $sqlSelect = <<<SQL
             periksa_radiologi.no_rawat,
-            periksa_radiologi.kd_jenis_prw,
-            jns_perawatan_radiologi.nm_perawatan,
-            periksa_radiologi.biaya as biaya_rawat,
-            0 as embalase,
-            0 as tuslah,
-            0 as diskon,
+            'B' as jenis_barang_jasa,
+            '250100' as kode_barang_jasa,
+            jns_perawatan_radiologi.nm_perawatan as nama_barang_jasa,
+            'UM.0033' as nama_satuan_ukur,
+            periksa_radiologi.biaya as harga_satuan,
+            count(*) as jumlah_barang_jasa,
+            0 as diskon_persen,
+            0 as diskon_nominal,
             0 as tambahan,
-            count(*) as jml,
-            (periksa_radiologi.biaya * count(*)) as subtotal,
-            'Laborat' as kategori
+            (periksa_radiologi.biaya * count(*)) as dpp,
+            0 as ppn_persen,
+            0 as ppn_nominal,
+            periksa_radiologi.kd_jenis_prw,
+            'Radiologi' as kategori,
+            periksa_radiologi.status as status_lanjut
             SQL;
 
         return $query

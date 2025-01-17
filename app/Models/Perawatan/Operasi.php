@@ -21,12 +21,13 @@ class Operasi extends Model
 
     public function scopeItemFakturPajak(Builder $query, array $noRawat = []): Builder
     {
-        if (empty($noRawat)) {
-            return $query;
-        }
-
-        $sqlSelect = <<<'SQL'
-            operasi.no_rawat, operasi.kode_paket as kd_jenis_prw, paket_operasi.nm_perawatan, (
+        $sqlSelect = <<<SQL
+            operasi.no_rawat,
+            'B' as jenis_barang_jasa,
+            '250100' as kode_barang_jasa,
+            paket_operasi.nm_perawatan as nama_barang_jasa,
+            'UM.0033' as nama_satuan_ukur,
+            (
                 operasi.biayaoperator1 + operasi.biayaoperator2 + operasi.biayaoperator3 +
                 operasi.biayaasisten_operator1 + operasi.biayaasisten_operator2 + operasi.biayaasisten_operator3 +
                 operasi.biayainstrumen + operasi.biayadokter_anak + operasi.biayaperawaat_resusitas +
@@ -35,7 +36,12 @@ class Operasi extends Model
                 operasi.biayaalat + operasi.biayasewaok + operasi.akomodasi + operasi.bagian_rs +
                 operasi.biaya_omloop + operasi.biaya_omloop2 + operasi.biaya_omloop3 + operasi.biaya_omloop4 + operasi.biaya_omloop5 +
                 operasi.biayasarpras + operasi.biaya_dokter_pjanak + operasi.biaya_dokter_umum
-            ) as biaya_rawat, 0 as embalase, 0 as tuslah, 0 as diskon, 0 as tambahan, 1 as jml, (
+            ) as harga_satuan,
+            1 as jumlah_barang_jasa,
+            0 as diskon_persen,
+            0 as diskon_nominal,
+            0 as tambahan,
+            (
                 operasi.biayaoperator1 + operasi.biayaoperator2 + operasi.biayaoperator3 +
                 operasi.biayaasisten_operator1 + operasi.biayaasisten_operator2 + operasi.biayaasisten_operator3 +
                 operasi.biayainstrumen + operasi.biayadokter_anak + operasi.biayaperawaat_resusitas +
@@ -44,7 +50,12 @@ class Operasi extends Model
                 operasi.biayaalat + operasi.biayasewaok + operasi.akomodasi + operasi.bagian_rs +
                 operasi.biaya_omloop + operasi.biaya_omloop2 + operasi.biaya_omloop3 + operasi.biaya_omloop4 + operasi.biaya_omloop5 +
                 operasi.biayasarpras + operasi.biaya_dokter_pjanak + operasi.biaya_dokter_umum
-            ) as subtotal, 'Operasi' as kategori
+            ) as dpp,
+            0 as ppn_persen,
+            0 as ppn_nominal,
+            operasi.kode_paket as kd_jenis_prw,
+            'Operasi' as kategori,
+            operasi.status as status_lanjut
             SQL;
 
         return $query

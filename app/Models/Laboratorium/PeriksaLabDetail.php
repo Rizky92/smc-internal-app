@@ -4,6 +4,8 @@ namespace App\Models\Laboratorium;
 
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Facades\DB;
 
 class PeriksaLabDetail extends Model
 {
@@ -21,27 +23,34 @@ class PeriksaLabDetail extends Model
 
     public function scopeItemFakturPajak(Builder $query, array $noRawat = []): Builder
     {
-        if (empty($noRawat)) {
-            return $query;
-        }
-
         $sqlSelect = <<<SQL
             detail_periksa_lab.no_rawat,
-            concat_ws('-', detail_periksa_lab.kd_jenis_prw, detail_periksa_lab.id_template) as kd_jenis_prw,
-            template_laboratorium.Pemeriksaan as nm_perawatan,
-            detail_periksa_lab.biaya_item as biaya_rawat,
-            0 as embalase,
-            0 as tuslah,
-            0 as diskon,
+            'B' as jenis_barang_jasa,
+            '250100' as kode_barang_jasa,
+            template_laboratorium.Pemeriksaan as nama_barang_jasa,
+            'UM.0033' as nama_satuan_ukur,
+            detail_periksa_lab.biaya_rawat as harga_satuan,
+            count(*) as jumlah_barang_jasa,
+            0 as diskon_persen,
+            0 as diskon_nominal,
             0 as tambahan,
-            count(*) as jml,
-            (detail_periksa_lab.biaya_item * count(*)) as subtotal,
-            'Laborat Detail' as kategori
+            (detail_periksa_lab.biaya_rawat * count(*)) as dpp,
+            0 as ppn_persen,
+            0 as ppn_nominal,
+            concat_ws('-', detail_periksa_lab.kd_jenis_prw, detail_periksa_lab.id_template) as kd_jenis_prw,
+            'Laborat Detail' as kategori,
+            periksa_lab.status as status_lanjut
             SQL;
 
         return $query
             ->selectRaw($sqlSelect)
             ->join('template_laboratorium', 'detail_periksa_lab.id_template', '=', 'template_laboratorium.id_template')
+            ->join('periksa_lab', fn (JoinClause $join) => $join
+                ->on('detail_periksa_lab.no_rawat', '=', 'periksa_lab.no_rawat')
+                ->on('detail_periksa_lab.kd_jenis_prw', '=', 'periksa_lab.kd_jenis_prw')
+                ->on('detail_periksa_lab.tgl_periksa', '=', 'periksa_lab.tgl_periksa')
+                ->on('detail_periksa_lab.jam', '=', 'periksa_lab.jam')
+                ->on('periksa_lab.kategori', '=', DB::raw('\'PK\''))
             ->whereIn('detail_periksa_lab.no_rawat', $noRawat)
             ->groupBy(['detail_periksa_lab.no_rawat', 'detail_periksa_lab.id_template', 'template_laboratorium.Pemeriksaan', 'detail_periksa_lab.biaya_item']);
     }

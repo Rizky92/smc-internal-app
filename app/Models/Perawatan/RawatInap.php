@@ -127,4 +127,6 @@ class RawatInap extends Model
             ->when(! empty($status), fn (Builder $q): Builder => $q->where('piutang_pasien.status', $status))
             ->where('reg_periksa.kd_pj', $jenisBayar);
     }
+
+    
 }

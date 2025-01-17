@@ -40,4 +40,26 @@ class ReturObat extends Model
 
         return map_bulan($data);
     }
+
+    public function scopeItemFakturPajak(Builder $query, array $noRawat = []): Builder
+    {
+        
+
+        $sqlSelect = <<<SQL
+            left(returjual.no_retur_jual, 17) as no_rawat,
+            detreturjual.kode_brng as kd_jenis_prw,
+            databarang.nama_brng as nm_perawatan,
+            detreturjual.h_retur as biaya_rawat,
+            0 as embalase,
+            0 as tuslah,
+            0 as diskon,
+            0 as tambahan,
+            sum(detreturjual.jml_retur) as jml,
+            (sum(detreturjual.subtotal) * -1) as subtotal,
+            'Retur Obat' as kategori,
+            '300000' as kode_barang_jasa
+            SQL;
+
+        return $query;
+    }
 }

@@ -980,6 +980,36 @@ SQL;
             ->orderBy('reg_periksa.no_reg');
     }
 
+    public function scopeFilterFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->format('Y-m-d');
+        }
+
+        $tahun = substr($tglAwal, 0, 4);
+
+        $notaInap = NotaRanap::query()
+            ->select(['nota_inap.no_rawat', DB::raw("'Ranap' as status_lanjut")])
+            ->whereBetween('nota_inap.tanggal', [$tglAwal, $tglAkhir]);
+
+        $notaBayar = NotaRalan::query()
+            ->select(['nota_jalan.no_rawat', DB::raw("'Ralan' as status_lanjut")])
+            ->whereBetween('nota_jalan.tanggal', [$tglAwal, $tglAkhir])
+            ->unionAll($notaInap);
+
+        return $query
+            ->select('reg_periksa.no_rawat')
+            ->joinSub($notaBayar, 'nota_bayar', fn (JoinClause $join) => $join
+                ->on('reg_periksa.no_rawat', '=', 'nota_bayar.no_rawat')
+                ->on('reg_periksa.status_lanjut', '=', 'nota_bayar.status_lanjut'))
+            ->whereRaw('reg_periksa.status_bayar = \'Sudah Bayar\'')
+            ->whereBetween('reg_periksa.tgl_registrasi', [$tahun.'-01-01', $tglAkhir]);
+    }
+
     public function scopeLaporanFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
@@ -995,8 +1025,8 @@ SQL;
         $sqlSelect = <<<'SQL'
             reg_periksa.no_rawat,
             case
-                when reg_periksa.status_lanjut = 'Ralan' and exists(select * from detail_pemberian_obat where detail_pemberian_obat.no_rawat = reg_periksa.no_rawat) then '020'
-                when reg_periksa.status_lanjut = 'Ralan' and not exists(select * from detail_pemberian_obat where detail_pemberian_obat.no_rawat = reg_periksa.no_rawat) then ''
+                when reg_periksa.status_lanjut = 'Ralan' and reg_periksa.kd_pj = 'BPJ' and exists(select * from detail_pemberian_obat where detail_pemberian_obat.no_rawat = reg_periksa.no_rawat) then '030'
+                when reg_periksa.status_lanjut = 'Ralan' and reg_periksa.kd_pj != 'BPJ' and exists(select * from detail_pemberian_obat where detail_pemberian_obat.no_rawat = reg_periksa.no_rawat) then '040'
                 else '080'
             end as kode_transaksi,
             nota_bayar.tanggal as tgl_bayar,

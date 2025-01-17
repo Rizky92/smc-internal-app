@@ -63,15 +63,12 @@ class LaporanFakturPajakBPJS extends Component
     {
         if ($this->isDeferred) return [];
 
-        $noRawat = $this->dataLaporanFakturPajak->pluck('no_rawat')->all();
-
-        return TindakanRalanDokter::query()
-            ->itemFakturPajak($noRawat)
-            ->unionAll(TindakanRalanPerawat::query()->itemFakturPajak($noRawat))
-            ->unionAll(TindakanRalanDokterPerawat::query()->itemFakturPajak($noRawat))
-            ->unionAll(TindakanRanapDokter::query()->itemFakturPajak($noRawat))
-            ->unionAll(TindakanRanapPerawat::query()->itemFakturPajak($noRawat))
-            ->unionAll(TindakanRanapDokterPerawat::query()->itemFakturPajak($noRawat))
+        return TindakanRalanDokter::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir)
+            ->unionAll(TindakanRalanPerawat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
+            ->unionAll(TindakanRalanDokterPerawat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
+            ->unionAll(TindakanRanapDokter::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
+            ->unionAll(TindakanRanapPerawat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
+            ->unionAll(TindakanRanapDokterPerawat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
             ->paginate($this->perpage, ['*'], 'page_detailfaktur');
     }
 

@@ -99,24 +99,25 @@ class PemberianObat extends Model
 
     public function scopeItemFakturPajak(Builder $query, array $noRawat = []): Builder
     {
-        if (empty($noRawat)) {
-            return $query;
-        }
-
         $sqlSelect = <<<SQL
             detail_pemberian_obat.no_rawat,
+            'A' as jenis_barang_jasa,
+            '300000' as kode_barang_jasa,
+            databarang.nama_brng as nama_barang_jasa,
+            databarang.kode_sat as nama_satuan_ukur,
+            detail_pemberian_obat.biaya_obat as harga_satuan,
+            sum(detail_pemberian_obat.jml) as jumlah_barang_jasa,
+            0 as diskon_persen,
+            0 as diskon_nominal,
+            sum(detail_pemberian_obat.embalase) + sum(detail_pemberian_obat.tuslah) as tambahan,
+            sum(detail_pemberian_obat.total) as dpp,
+            0 as ppn_persen,
+            0 as ppn_nominal,
             detail_pemberian_obat.kode_brng as kd_jenis_prw,
-            databarang.nama_brng as nm_perawatan,
-            detail_pemberian_obat.biaya_obat as biaya_rawat,
-            sum(detail_pemberian_obat.embalase) as embalase,
-            sum(detail_pemberian_obat.tuslah) as tuslah,
-            0 as diskon,
-            0 as tambahan,
-            sum(detail_pemberian_obat.jml) as jml,
-            sum(detail_pemberian_obat.total) as subtotal,
-            'Pemberian Obat' as kategori
+            'Pemberian Obat' as kategori,
+            detail_pemberian_obat.status as status_lanjut
             SQL;
-        
+
         return $query
             ->selectRaw($sqlSelect)
             ->join('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
