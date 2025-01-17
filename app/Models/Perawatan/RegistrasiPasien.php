@@ -4,6 +4,7 @@ namespace App\Models\Perawatan;
 
 use App\Database\Eloquent\Model;
 use App\Models\Farmasi\PemberianObat;
+use App\Models\Farmasi\PenjualanObat;
 use App\Models\Farmasi\ResepObat;
 use App\Models\Kepegawaian\Dokter;
 use App\Models\Keuangan\NotaRalan;
@@ -1087,7 +1088,8 @@ SQL;
     {
         return $query
             ->laporanFakturPajak($tglAwal, $tglAkhir)
-            ->where('reg_periksa.kd_pj', 'A09');
+            ->where('reg_periksa.kd_pj', 'A09')
+            ->unionAll(PenjualanObat::query()->laporanFakturPajak($tglAwal, $tglAkhir));
     }
 
     public function scopeLaporanFakturPajakAsuransi(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = '-'): Builder
@@ -1102,7 +1104,7 @@ SQL;
         return $query
             ->laporanFakturPajak($tglAwal, $tglAkhir)
             ->whereNotIn('reg_periksa.kd_pj', ['BPJ', 'A09'])
-            ->whereNotNull('perusahaan_pasien.kode_perusahaan')
+            ->whereColumn('reg_periksa.kd_pj', 'pasien.perusahaan_pasien')
             ->where('pasien.perusahaan_pasien', $kodePerusahaan);
     }
 }

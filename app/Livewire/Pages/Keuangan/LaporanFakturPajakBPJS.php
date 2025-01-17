@@ -34,6 +34,9 @@ class LaporanFakturPajakBPJS extends Component
     /** @var string */
     public $tglAkhir;
 
+    /** @var bool */
+    public $sudahDitarik;
+
     protected function queryString(): array
     {
         return [
@@ -75,7 +78,7 @@ class LaporanFakturPajakBPJS extends Component
     public function render(): View
     {
         return view('livewire.pages.keuangan.laporan-faktur-pajak-b-p-j-s')
-            ->layout(BaseLayout::class, ['title' => 'Laporan Faktur Pajak Pasien BPJS Kesehatan (BPJ)']);
+            ->layout(BaseLayout::class, ['title' => 'Laporan Faktur Pajak Pasien BPJS KESEHATAN (BPJ)']);
     }
 
     protected function defaultValues(): void
@@ -87,7 +90,7 @@ class LaporanFakturPajakBPJS extends Component
     protected function dataPerSheet(): array
     {
         return [
-            'Faktur Pajak' => RegistrasiPasien::query()
+            'Faktur' => RegistrasiPasien::query()
                 ->laporanFakturPajakBPJS($this->tglAwal, $this->tglAkhir)
                 ->search($this->cari)
                 ->cursor()
@@ -121,7 +124,7 @@ class LaporanFakturPajakBPJS extends Component
     protected function columnHeaders(): array
     {
         return [
-            'Faktur Pajak' => [
+            'Faktur' => [
                 'No. Rawat',
                 'Kode Transaksi',
                 'Tgl. Bayar',

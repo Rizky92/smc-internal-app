@@ -120,7 +120,7 @@ class PemberianObat extends Model
         return $query
             ->selectRaw($sqlSelect)
             ->join('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
-            ->whereIn('detail_pemberian_obat.kode_brng', $noRawat);
+            ->whereIn('detail_pemberian_obat.kode_brng', $noRawat)
             ->groupBy(['detail_pemberian_obat.no_rawat', 'detail_pemberian_obat.kode_brng', 'databarang.nama_brng', 'detail_pemberian_obat.h_beli']);
     }
 

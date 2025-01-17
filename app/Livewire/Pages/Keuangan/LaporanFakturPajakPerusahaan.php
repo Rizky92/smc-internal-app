@@ -8,6 +8,7 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Perawatan\RegistrasiPasien;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -26,6 +27,12 @@ class LaporanFakturPajakPerusahaan extends Component
 
     /** @var string */
     public $tglAkhir;
+
+    /** @var string */
+    public $kodePerusahaan;
+
+    /** @var string */
+    public $namaPerusahaan;
 
     protected function queryString(): array
     {
@@ -67,8 +74,8 @@ class LaporanFakturPajakPerusahaan extends Component
     protected function dataPerSheet(): array
     {
         return [
-            'Faktur Pajak' => RegistrasiPasien::query()
-                ->laporanFakturPajakBPJS($this->tglAwal, $this->tglAkhir)
+            'Faktur' => RegistrasiPasien::query()
+                ->laporanFakturPajakPerusahaan($this->tglAwal, $this->tglAkhir)
                 ->search($this->cari)
                 ->cursor()
                 ->all(),
@@ -78,7 +85,7 @@ class LaporanFakturPajakPerusahaan extends Component
     protected function columnHeaders(): array
     {
         return [
-            'Faktur Pajak' => [
+            'Faktur' => [
                 'No. Rawat',
                 'Kode Transaksi',
                 'Tgl. Bayar',
