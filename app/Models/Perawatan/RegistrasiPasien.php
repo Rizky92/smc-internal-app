@@ -980,6 +980,43 @@ SQL;
             ->orderBy('reg_periksa.no_reg');
     }
 
+    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->format('Y-m-d');
+        }
+
+        $noRawat = self::query()->filterFakturPajak($tglAwal, $tglAkhir);
+
+        $sqlSelect = <<<'SQL'
+            reg_periksa.no_rawat,
+            'B' as jenis_barang_jasa,
+            '250100' as kode_barang_jasa,
+            'Biaya Registrasi' as nama_barang_jasa,
+            'UM.0033' as nama_satuan_ukur,
+            reg_periksa.biaya_reg as harga_satuan,
+            1 as jumlah_barang_jasa,
+            0 as diskon_persen,
+            0 as diskon_nominal,
+            0 as tambahan,
+            reg_periksa.biaya_reg as dpp,
+            0 as ppn_persen,
+            0 as ppn_nominal,
+            '' as kd_jenis_prw,
+            'Biaya Registrasi' as kategori,
+            reg_periksa.status_lanjut,
+            1 as urutan
+            SQL;
+            
+        return $query
+            ->selectRaw($sqlSelect)
+            ->whereIn('reg_periksa.no_rawat', $noRawat);
+    }
+
     public function scopeFilterFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodeTransaksi = 'semua'): Builder
     {
         if (empty($tglAwal)) {

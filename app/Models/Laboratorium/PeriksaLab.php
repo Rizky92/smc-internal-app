@@ -213,7 +213,8 @@ class PeriksaLab extends Model
             0 as ppn_nominal,
             periksa_lab.kd_jenis_prw,
             'Laborat' as kategori,
-            periksa_lab.status as status_lanjut
+            periksa_lab.status as status_lanjut,
+            9 as urutan
             SQL;
 
         return $query

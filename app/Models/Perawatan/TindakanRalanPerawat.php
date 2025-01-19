@@ -49,7 +49,8 @@ class TindakanRalanPerawat extends Model
             0 as ppn_nominal,
             rawat_jl_pr.kd_jenis_prw,
             'Tindakan Ralan Pr' as kategori,
-            'Ralan' as status_lanjut
+            'Ralan' as status_lanjut,
+            4 as urutan
             SQL;
 
         return $query

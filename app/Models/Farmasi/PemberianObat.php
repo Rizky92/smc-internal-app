@@ -128,7 +128,8 @@ class PemberianObat extends Model
             0 as ppn_nominal,
             detail_pemberian_obat.kode_brng as kd_jenis_prw,
             'Pemberian Obat' as kategori,
-            detail_pemberian_obat.status as status_lanjut
+            detail_pemberian_obat.status as status_lanjut,
+            12 as urutan
             SQL;
 
         return $query

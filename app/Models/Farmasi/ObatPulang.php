@@ -50,7 +50,8 @@ class ObatPulang extends Model
             0 as ppn_nominal,
             resep_pulang.kode_brng as kd_jenis_prw,
             'Obat Pulang' as kategori,
-            'Ranap' as status_lanjut
+            'Ranap' as status_lanjut,
+            13 as urutan
             SQL;
 
         return $query

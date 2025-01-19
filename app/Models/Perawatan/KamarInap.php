@@ -138,10 +138,33 @@ class KamarInap extends Model
             $tglAkhir = now()->format('Y-m-d');
         }
 
-        $tahun = substr($tglAwal, 0, 4);
-
         $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir);
 
-        return $query;
+        $sqlSelect = <<<'SQL'
+            kamar_inap.no_rawat,
+            '' as jenis_barang_jasa,
+            '' as kode_barang_jasa,
+            concat(kamar_inap.kd_kamar, ' ', bangsal.nm_bangsal) as nama_barang_jasa,
+            'UM.0026' as nama_satuan_ukur,
+            kamar_inap.trf_kamar as harga_satuan,
+            sum(kamar_inap.lama) as jumlah_barang_jasa,
+            0 as diskon_persen,
+            0 as diskon_nominal,
+            0 as tambahan,
+            sum(kamar_inap.ttl_biaya) as dpp,
+            0 as ppn_persen,
+            0 as ppn_nominal,
+            kamar_inap.kd_kamar as kd_jenis_prw,
+            'Kamar Inap' as kategori,
+            'Ranap' as status_lanjut,
+            2 as urutan
+            SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
+            ->join('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
+            ->whereIn('kamar_inap.no_rawat', $noRawat)
+            ->groupBy('kamar_inap.no_rawat', 'kamar_inap.kd_kamar', 'bangsal.nm_bangsal', 'kamar_inap.trf_kamar');
     }
 }
