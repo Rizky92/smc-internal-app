@@ -7,7 +7,7 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
-use App\Models\Perawatan\RawatInap;
+use App\Models\Perawatan\KamarInap;
 use App\Models\Perawatan\RegistrasiPasien;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -85,7 +85,7 @@ class DaftarPasienRanap extends Component
 
         tracker_start('mysql_sik');
 
-        RawatInap::query()
+        KamarInap::query()
             ->where([
                 ['no_rawat', '=', $noRawat],
                 ['kd_kamar', '=', $kodeKamar],

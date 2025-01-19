@@ -319,7 +319,7 @@ class RegistrasiPasien extends Model
 
     public function rawatInap(): HasMany
     {
-        return $this->hasMany(RawatInap::class, 'no_rawat', 'no_rawat');
+        return $this->hasMany(KamarInap::class, 'no_rawat', 'no_rawat');
     }
 
     public function diagnosa(): HasMany
@@ -479,7 +479,7 @@ SQL;
             'pasien.no_tlp',
         ]);
 
-        $rawatInap = RawatInap::query()
+        $rawatInap = KamarInap::query()
             ->select(['kd_kamar', 'no_rawat', 'diagnosa_awal', 'tgl_keluar', 'jam_keluar', 'lama', 'stts_pulang'])
             ->whereNotIn('kamar_inap.stts_pulang', ['Pindah Kamar'])
             ->orderByRaw(<<<'SQL'
@@ -564,7 +564,7 @@ SQL;
             'dokter_pj.nm_dokter',
         ]);
 
-        $kamarInapPertama = RawatInap::query()
+        $kamarInapPertama = KamarInap::query()
             ->select(['no_rawat', 'stts_pulang', DB::raw('min(concat(kamar_inap.tgl_masuk, kamar_inap.jam_masuk)) as waktu_masuk')])
             ->groupBy('no_rawat');
 
@@ -1026,7 +1026,7 @@ SQL;
             ->selectRaw('reg_periksa.no_rawat, \'080\' as kode_transaksi')
             ->whereRaw('reg_periksa.status_bayar = \'Sudah Bayar\'')
             ->whereBetween('reg_periksa.tgl_registrasi', [$tahun.'-01-01', $tglAkhir]);
-            
+
         $kode040 = self::query()
             ->selectRaw('reg_periksa.no_rawat, \'040\' as kode_transaksi')
             ->whereRaw('reg_periksa.status_bayar = \'Sudah Bayar\'')
@@ -1034,7 +1034,7 @@ SQL;
             ->where('reg_periksa.status_lanjut', 'Ralan')
             ->where('reg_periksa.kd_pj', '!=', 'BPJ')
             ->whereExists(fn ($q) => $q->from('detail_pemberian_obat')->whereColumn('detail_pemberian_obat.no_rawat', 'reg_periksa.no_rawat'));
-            
+
         return $query
             ->selectRaw('reg_periksa.no_rawat, \'030\' as kode_transaksi')
             ->whereRaw('reg_periksa.status_bayar = \'Sudah Bayar\'')

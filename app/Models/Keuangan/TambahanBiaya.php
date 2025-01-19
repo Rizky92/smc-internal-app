@@ -76,4 +76,9 @@ class TambahanBiaya extends Model
             ->leftJoin(DB::raw('dokter dokter_pj'), 'dpjp_ranap.kd_dokter', '=', 'dokter_pj.kd_dokter')
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir]);
     }
+
+    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    {
+        return $query;
+    }
 }

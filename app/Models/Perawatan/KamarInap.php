@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class RawatInap extends Model
+class KamarInap extends Model
 {
     protected $connection = 'mysql_sik';
 
@@ -127,6 +127,21 @@ class RawatInap extends Model
             ->when(! empty($status), fn (Builder $q): Builder => $q->where('piutang_pasien.status', $status))
             ->where('reg_periksa.kd_pj', $jenisBayar);
     }
-
     
+    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->format('Y-m-d');
+        }
+
+        $tahun = substr($tglAwal, 0, 4);
+
+        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir);
+
+        return $query;
+    }
 }
