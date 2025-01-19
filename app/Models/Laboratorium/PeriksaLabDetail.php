@@ -22,7 +22,7 @@ class PeriksaLabDetail extends Model
 
     public $timestamps = false;
 
-    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = 'BPJ'): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->format('Y-m-d');
@@ -34,9 +34,9 @@ class PeriksaLabDetail extends Model
 
         $tahun = substr($tglAwal, 0, 4);
 
-        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir);
+        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir, $kodePJ);
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             detail_periksa_lab.no_rawat,
             'B' as jenis_barang_jasa,
             '250100' as kode_barang_jasa,

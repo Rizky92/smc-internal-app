@@ -19,7 +19,7 @@ class TindakanRalanDokter extends Model
 
     public $timestamps = false;
 
-    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = 'BPJ'): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->format('Y-m-d');
@@ -31,7 +31,7 @@ class TindakanRalanDokter extends Model
 
         $tahun = substr($tglAwal, 0, 4);
 
-        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir);
+        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir, $kodePJ);
 
         $sqlSelect = <<<'SQL'
             rawat_jl_dr.no_rawat,
@@ -52,7 +52,7 @@ class TindakanRalanDokter extends Model
             'Ralan' as status_lanjut,
             3 as urutan
             SQL;
-            
+
         return $query
             ->selectRaw($sqlSelect)
             ->join('jns_perawatan', 'rawat_jl_dr.kd_jenis_prw', '=', 'jns_perawatan.kd_jenis_prw')

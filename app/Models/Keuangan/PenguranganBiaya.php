@@ -77,7 +77,7 @@ SQL;
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir]);
     }
 
-    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = 'BPJ'): Builder
     {
         return $query;
     }

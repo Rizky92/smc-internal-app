@@ -153,7 +153,7 @@ class PeriksaLab extends Model
             'template_laboratorium.urut',
         ]);
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             periksa_lab.no_rawat,
             pasien.nm_pasien,
             pasien.tgl_lahir,
@@ -183,7 +183,7 @@ class PeriksaLab extends Model
             ->orderBy('template_laboratorium.urut');
     }
 
-    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = 'BPJ'): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->format('Y-m-d');
@@ -195,9 +195,9 @@ class PeriksaLab extends Model
 
         $tahun = substr($tglAwal, 0, 4);
 
-        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir);
+        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir, $kodePJ);
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             periksa_lab.no_rawat,
             'B' as jenis_barang_jasa,
             '250100' as kode_barang_jasa,

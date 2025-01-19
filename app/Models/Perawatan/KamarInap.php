@@ -127,8 +127,8 @@ class KamarInap extends Model
             ->when(! empty($status), fn (Builder $q): Builder => $q->where('piutang_pasien.status', $status))
             ->where('reg_periksa.kd_pj', $jenisBayar);
     }
-    
-    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+
+    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = 'BPJ'): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->format('Y-m-d');
@@ -138,7 +138,7 @@ class KamarInap extends Model
             $tglAkhir = now()->format('Y-m-d');
         }
 
-        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir);
+        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir, $kodePJ);
 
         $sqlSelect = <<<'SQL'
             kamar_inap.no_rawat,

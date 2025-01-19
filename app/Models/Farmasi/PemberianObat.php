@@ -98,7 +98,7 @@ class PemberianObat extends Model
             ->withCasts(['jumlah' => 'float', 'bulan' => 'int']);
     }
 
-    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = 'BPJ'): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->format('Y-m-d');
@@ -108,11 +108,9 @@ class PemberianObat extends Model
             $tglAkhir = now()->format('Y-m-d');
         }
 
-        $tahun = substr($tglAwal, 0, 4);
+        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir, $kodePJ);
 
-        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir);
-
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             detail_pemberian_obat.no_rawat,
             'A' as jenis_barang_jasa,
             '300000' as kode_barang_jasa,

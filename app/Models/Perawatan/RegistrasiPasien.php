@@ -980,7 +980,7 @@ SQL;
             ->orderBy('reg_periksa.no_reg');
     }
 
-    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = 'BPJ'): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->format('Y-m-d');
@@ -1011,13 +1011,13 @@ SQL;
             reg_periksa.status_lanjut,
             1 as urutan
             SQL;
-            
+
         return $query
             ->selectRaw($sqlSelect)
             ->whereIn('reg_periksa.no_rawat', $noRawat);
     }
 
-    public function scopeFilterFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodeTransaksi = 'semua'): Builder
+    public function scopeFilterFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = 'BPJ'): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->format('Y-m-d');
@@ -1044,6 +1044,7 @@ SQL;
                 ->on('reg_periksa.no_rawat', '=', 'nota_bayar.no_rawat')
                 ->on('reg_periksa.status_lanjut', '=', 'nota_bayar.status_lanjut'))
             ->whereRaw('reg_periksa.status_bayar = \'Sudah Bayar\'')
+            ->where('reg_periksa.kd_pj', $kodePJ)
             ->whereBetween('reg_periksa.tgl_registrasi', [$tahun.'-01-01', $tglAkhir]);
     }
 
