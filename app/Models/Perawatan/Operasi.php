@@ -19,20 +19,8 @@ class Operasi extends Model
 
     public $timestamps = false;
 
-    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = 'BPJ'): Builder
+    public function scopeItemFakturPajak(Builder $query): Builder
     {
-        if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
-        }
-
-        if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
-        }
-
-        $tahun = substr($tglAwal, 0, 4);
-
-        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir, $kodePJ);
-
         $sqlSelect = <<<'SQL'
             operasi.no_rawat,
             'B' as jenis_barang_jasa,
@@ -52,7 +40,6 @@ class Operasi extends Model
             1 as jumlah_barang_jasa,
             0 as diskon_persen,
             0 as diskon_nominal,
-            0 as tambahan,
             (
                 operasi.biayaoperator1 + operasi.biayaoperator2 + operasi.biayaoperator3 +
                 operasi.biayaasisten_operator1 + operasi.biayaasisten_operator2 + operasi.biayaasisten_operator3 +
@@ -74,6 +61,6 @@ class Operasi extends Model
         return $query
             ->selectRaw($sqlSelect)
             ->join('paket_operasi', 'operasi.kode_paket', '=', 'paket_operasi.kode_paket')
-            ->whereIn('operasi.no_rawat', $noRawat);
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('operasi.no_rawat', 'regist_faktur.no_rawat'));
     }
 }

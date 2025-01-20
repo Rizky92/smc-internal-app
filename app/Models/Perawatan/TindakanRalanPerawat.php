@@ -19,20 +19,8 @@ class TindakanRalanPerawat extends Model
 
     public $timestamps = false;
 
-    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = 'BPJ'): Builder
+    public function scopeItemFakturPajak(Builder $query): Builder
     {
-        if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
-        }
-
-        if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
-        }
-
-        $tahun = substr($tglAwal, 0, 4);
-
-        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir, $kodePJ);
-
         $sqlSelect = <<<'SQL'
             rawat_jl_pr.no_rawat,
             'B' as jenis_barang_jasa,
@@ -43,7 +31,6 @@ class TindakanRalanPerawat extends Model
             count(*) as jumlah_barang_jasa,
             0 as diskon_persen,
             0 as diskon_nominal,
-            0 as tambahan,
             (rawat_jl_pr.biaya_rawat * count(*)) as dpp,
             0 as ppn_persen,
             0 as ppn_nominal,
@@ -56,7 +43,7 @@ class TindakanRalanPerawat extends Model
         return $query
             ->selectRaw($sqlSelect)
             ->join('jns_perawatan', 'rawat_jl_pr.kd_jenis_prw', '=', 'jns_perawatan.kd_jenis_prw')
-            ->whereIn('rawat_jl_pr.no_rawat', $noRawat)
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('rawat_jl_pr.no_rawat', 'regist_faktur.no_rawat'))
             ->groupBy(['rawat_jl_pr.no_rawat', 'rawat_jl_pr.kd_jenis_prw', 'jns_perawatan.nm_perawatan', 'rawat_jl_pr.biaya_rawat']);
     }
 }

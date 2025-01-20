@@ -20,18 +20,8 @@ class ObatPulang extends Model
 
     public $timestamps = false;
 
-    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = 'BPJ'): Builder
+    public function scopeItemFakturPajak(Builder $query): Builder
     {
-        if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
-        }
-
-        if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
-        }
-
-        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir, $kodePJ);
-
         $sqlSelect = <<<'SQL'
             resep_pulang.no_rawat,
             'A' as jenis_barang_jasa,
@@ -42,7 +32,6 @@ class ObatPulang extends Model
             sum(resep_pulang.jml_barang) as jumlah_barang_jasa,
             0 as diskon_persen,
             0 as diskon_nominal,
-            0 as tambahan,
             sum(resep_pulang.total) as dpp,
             0 as ppn_persen,
             0 as ppn_nominal,
@@ -55,7 +44,7 @@ class ObatPulang extends Model
         return $query
             ->selectRaw($sqlSelect)
             ->join('databarang', 'resep_pulang.kode_brng', '=', 'databarang.kode_brng')
-            ->whereIn('resep_pulang.no_rawat', $noRawat)
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('resep_pulang.no_rawat', 'regist_faktur.no_rawat'))
             ->groupBy(['resep_pulang.no_rawat', 'resep_pulang.kode_brng', 'databarang.nama_brng', 'resep_pulang.harga']);
     }
 }

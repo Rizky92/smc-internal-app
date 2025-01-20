@@ -22,20 +22,8 @@ class PeriksaLabDetail extends Model
 
     public $timestamps = false;
 
-    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = 'BPJ'): Builder
+    public function scopeItemFakturPajak(Builder $query): Builder
     {
-        if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
-        }
-
-        if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
-        }
-
-        $tahun = substr($tglAwal, 0, 4);
-
-        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir, $kodePJ);
-
         $sqlSelect = <<<'SQL'
             detail_periksa_lab.no_rawat,
             'B' as jenis_barang_jasa,
@@ -46,7 +34,6 @@ class PeriksaLabDetail extends Model
             count(*) as jumlah_barang_jasa,
             0 as diskon_persen,
             0 as diskon_nominal,
-            0 as tambahan,
             (detail_periksa_lab.biaya_item * count(*)) as dpp,
             0 as ppn_persen,
             0 as ppn_nominal,
@@ -65,8 +52,7 @@ class PeriksaLabDetail extends Model
                 ->on('detail_periksa_lab.tgl_periksa', '=', 'periksa_lab.tgl_periksa')
                 ->on('detail_periksa_lab.jam', '=', 'periksa_lab.jam')
                 ->on('periksa_lab.kategori', '=', DB::raw('\'PK\'')))
-            ->whereIn('detail_periksa_lab.no_rawat', $noRawat)
-            ->groupBy(['detail_periksa_lab.no_rawat', 'detail_periksa_lab.id_template', 'template_laboratorium.Pemeriksaan', 'detail_periksa_lab.biaya_item'])
-            ->havingRaw('(detail_periksa_lab.biaya_item * count(*)) > 0');
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('detail_periksa_lab.no_rawat', 'regist_faktur.no_rawat'))
+            ->groupBy(['detail_periksa_lab.no_rawat', 'detail_periksa_lab.id_template', 'template_laboratorium.Pemeriksaan', 'detail_periksa_lab.biaya_item']);
     }
 }

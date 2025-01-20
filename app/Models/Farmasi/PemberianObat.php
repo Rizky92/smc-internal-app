@@ -98,18 +98,8 @@ class PemberianObat extends Model
             ->withCasts(['jumlah' => 'float', 'bulan' => 'int']);
     }
 
-    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = 'BPJ'): Builder
+    public function scopeItemFakturPajak(Builder $query): Builder
     {
-        if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
-        }
-
-        if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
-        }
-
-        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir, $kodePJ);
-
         $sqlSelect = <<<'SQL'
             detail_pemberian_obat.no_rawat,
             'A' as jenis_barang_jasa,
@@ -120,7 +110,6 @@ class PemberianObat extends Model
             sum(detail_pemberian_obat.jml) as jumlah_barang_jasa,
             0 as diskon_persen,
             0 as diskon_nominal,
-            sum(detail_pemberian_obat.embalase) + sum(detail_pemberian_obat.tuslah) as tambahan,
             sum(detail_pemberian_obat.total) as dpp,
             0 as ppn_persen,
             0 as ppn_nominal,
@@ -133,7 +122,7 @@ class PemberianObat extends Model
         return $query
             ->selectRaw($sqlSelect)
             ->join('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
-            ->whereIn('detail_pemberian_obat.no_rawat', $noRawat)
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('detail_pemberian_obat.no_rawat', 'regist_faktur.no_rawat'))
             ->groupBy(['detail_pemberian_obat.no_rawat', 'detail_pemberian_obat.kode_brng', 'databarang.nama_brng', 'detail_pemberian_obat.biaya_obat']);
     }
 

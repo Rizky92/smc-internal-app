@@ -128,29 +128,18 @@ class KamarInap extends Model
             ->where('reg_periksa.kd_pj', $jenisBayar);
     }
 
-    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = 'BPJ'): Builder
+    public function scopeItemFakturPajak(Builder $query): Builder
     {
-        if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
-        }
-
-        if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
-        }
-
-        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir, $kodePJ);
-
         $sqlSelect = <<<'SQL'
             kamar_inap.no_rawat,
-            '' as jenis_barang_jasa,
-            '' as kode_barang_jasa,
+            'B' as jenis_barang_jasa,
+            '250100' as kode_barang_jasa,
             concat(kamar_inap.kd_kamar, ' ', bangsal.nm_bangsal) as nama_barang_jasa,
             'UM.0026' as nama_satuan_ukur,
             kamar_inap.trf_kamar as harga_satuan,
             sum(kamar_inap.lama) as jumlah_barang_jasa,
             0 as diskon_persen,
             0 as diskon_nominal,
-            0 as tambahan,
             sum(kamar_inap.ttl_biaya) as dpp,
             0 as ppn_persen,
             0 as ppn_nominal,
@@ -164,7 +153,7 @@ class KamarInap extends Model
             ->selectRaw($sqlSelect)
             ->join('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
             ->join('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
-            ->whereIn('kamar_inap.no_rawat', $noRawat)
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('kamar_inap.no_rawat', 'regist_faktur.no_rawat'))
             ->groupBy('kamar_inap.no_rawat', 'kamar_inap.kd_kamar', 'bangsal.nm_bangsal', 'kamar_inap.trf_kamar');
     }
 }

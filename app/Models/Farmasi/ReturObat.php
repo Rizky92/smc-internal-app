@@ -43,9 +43,8 @@ class ReturObat extends Model
 
     public function scopeItemFakturPajak(Builder $query, array $noRawat = []): Builder
     {
-        
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             left(returjual.no_retur_jual, 17) as no_rawat,
             detreturjual.kode_brng as kd_jenis_prw,
             databarang.nama_brng as nm_perawatan,
@@ -53,7 +52,6 @@ class ReturObat extends Model
             0 as embalase,
             0 as tuslah,
             0 as diskon,
-            0 as tambahan,
             sum(detreturjual.jml_retur) as jml,
             (sum(detreturjual.subtotal) * -1) as subtotal,
             'Retur Obat' as kategori,

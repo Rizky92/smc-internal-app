@@ -121,20 +121,8 @@ class PeriksaRadiologi extends Model
             )');
     }
 
-    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = 'BPJ'): Builder
+    public function scopeItemFakturPajak(Builder $query): Builder
     {
-        if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
-        }
-
-        if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
-        }
-
-        $tahun = substr($tglAwal, 0, 4);
-
-        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir, $kodePJ);
-
         $sqlSelect = <<<'SQL'
             periksa_radiologi.no_rawat,
             'B' as jenis_barang_jasa,
@@ -145,7 +133,6 @@ class PeriksaRadiologi extends Model
             count(*) as jumlah_barang_jasa,
             0 as diskon_persen,
             0 as diskon_nominal,
-            0 as tambahan,
             (periksa_radiologi.biaya * count(*)) as dpp,
             0 as ppn_persen,
             0 as ppn_nominal,
@@ -158,8 +145,7 @@ class PeriksaRadiologi extends Model
         return $query
             ->selectRaw($sqlSelect)
             ->join('jns_perawatan_radiologi', 'periksa_radiologi.kd_jenis_prw', '=', 'jns_perawatan_radiologi.kd_jenis_prw')
-            ->whereIn('periksa_radiologi.no_rawat', $noRawat)
-            ->groupBy(['periksa_radiologi.no_rawat', 'periksa_radiologi.kd_jenis_prw', 'jns_perawatan_radiologi.nm_perawatan', 'periksa_radiologi.biaya'])
-            ->havingRaw('(periksa_radiologi.biaya * count(*)) > 0');
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('periksa_radiologi.no_rawat', 'regist_faktur.no_rawat'))
+            ->groupBy(['periksa_radiologi.no_rawat', 'periksa_radiologi.kd_jenis_prw', 'jns_perawatan_radiologi.nm_perawatan', 'periksa_radiologi.biaya']);
     }
 }

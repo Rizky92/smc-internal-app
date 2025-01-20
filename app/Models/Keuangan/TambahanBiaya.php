@@ -78,18 +78,8 @@ class TambahanBiaya extends Model
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir]);
     }
 
-    public function scopeItemFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = 'BPJ'): Builder
+    public function scopeItemFakturPajak(Builder $query): Builder
     {
-        if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
-        }
-
-        if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
-        }
-
-        $noRawat = RegistrasiPasien::query()->filterFakturPajak($tglAwal, $tglAkhir, $kodePJ);
-
         $sqlSelect = <<<'SQL'
             tambahan_biaya.no_rawat,
             'B' as jenis_barang_jasa,
@@ -100,7 +90,6 @@ class TambahanBiaya extends Model
             1 as jumlah_barang_jasa,
             0 as diskon_persen,
             0 as diskon_nominal,
-            0 as tambahan,
             tambahan_biaya.besar_biaya as dpp,
             0 as ppn_persen,
             0 as ppn_nominal,
@@ -112,6 +101,6 @@ class TambahanBiaya extends Model
 
         return $query
             ->selectRaw($sqlSelect)
-            ->whereIn('tambahan_biaya.no_rawat', $noRawat);
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('tambahan_biaya.no_rawat', 'regist_faktur.no_rawat'));
     }
 }
