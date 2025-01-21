@@ -96,7 +96,7 @@ class TambahanBiaya extends Model
             '' as kd_jenis_prw,
             'Tambahan Biaya' as kategori,
             (select reg_periksa.status_lanjut from reg_periksa where reg_periksa.no_rawat = tambahan_biaya.no_rawat) as status_lanjut,
-            15 as urutan
+            13 as urutan
             SQL;
 
         return $query

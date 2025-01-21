@@ -116,7 +116,7 @@ class PemberianObat extends Model
             detail_pemberian_obat.kode_brng as kd_jenis_prw,
             'Pemberian Obat' as kategori,
             detail_pemberian_obat.status as status_lanjut,
-            12 as urutan
+            14 as urutan
             SQL;
 
         return $query

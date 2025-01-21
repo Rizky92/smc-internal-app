@@ -55,7 +55,7 @@ class Operasi extends Model
             operasi.kode_paket as kd_jenis_prw,
             'Operasi' as kategori,
             operasi.status as status_lanjut,
-            14 as urutan
+            12 as urutan
             SQL;
 
         return $query

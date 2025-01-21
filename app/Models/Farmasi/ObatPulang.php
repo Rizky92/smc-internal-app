@@ -38,7 +38,7 @@ class ObatPulang extends Model
             resep_pulang.kode_brng as kd_jenis_prw,
             'Obat Pulang' as kategori,
             'Ranap' as status_lanjut,
-            13 as urutan
+            15 as urutan
             SQL;
 
         return $query

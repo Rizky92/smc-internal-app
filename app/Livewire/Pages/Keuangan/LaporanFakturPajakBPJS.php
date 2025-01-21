@@ -64,6 +64,8 @@ class LaporanFakturPajakBPJS extends Component
         return $this->isDeferred ? [] : RegistrasiPasien::query()
             ->laporanFakturPajakBPJS($this->tglAwal, $this->tglAkhir, 'BPJ')
             ->search($this->cari)
+            ->orderBy('reg_periksa.no_rawat')
+            ->orderByDesc('kode_transaksi_pajak.kode_transaksi')
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage, ['*'], 'page_faktur');
     }
@@ -95,10 +97,10 @@ class LaporanFakturPajakBPJS extends Component
             ->query()
             ->fromSub($subQuery, 'item_faktur_pajak')
             ->withExpression('regist_faktur', $kodeTransaksi)
-            ->where('dpp', '>', 0)
-            ->orderBy('no_rawat')
-            ->orderBy('urutan')
-            ->orderBy('nama_barang_jasa')
+            ->where('item_faktur_pajak..dpp', '>', 0)
+            ->orderBy('item_faktur_pajak.no_rawat')
+            ->orderBy('item_faktur_pajak.urutan')
+            ->orderBy('item_faktur_pajak.nama_barang_jasa')
             ->paginate($this->perpage, ['*'], 'page_detailfaktur');
     }
 
@@ -139,6 +141,8 @@ class LaporanFakturPajakBPJS extends Component
             'Faktur' => RegistrasiPasien::query()
                 ->laporanFakturPajakBPJS($this->tglAwal, $this->tglAkhir, 'BPJ')
                 ->search($this->cari)
+                ->orderBy('reg_periksa.no_rawat')
+                ->orderByDesc('kode_transaksi_pajak.kode_transaksi')
                 ->cursor()
                 ->map(fn (RegistrasiPasien $model): array => [
                     'no_rawat'            => $model->no_rawat,

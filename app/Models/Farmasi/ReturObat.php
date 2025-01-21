@@ -45,17 +45,22 @@ class ReturObat extends Model
     {
 
         $sqlSelect = <<<'SQL'
-            left(returjual.no_retur_jual, 17) as no_rawat,
+            left(returjual.no_nota, 17) as no_rawat,
+            'A' as jenis_barang_jasa,
+            '300000' as kode_barang_jasa,
+            databarang.nama_brng as nama_barang_jasa,
+            databarang.kode_sat as nama_satuan_ukur,
+            detreturjual.h_retur * -1 as harga_satuan,
+            sum(detreturjual.jml_retur) * -1 as jumlah_barang_jasa,
+            0 as diskon_persen,
+            0 as diskon_nominal,
+            sum(detreturjual.subtotal) * -1 as dpp,
+            0 as ppn_persen,
+            0 as ppn_nominal,
             detreturjual.kode_brng as kd_jenis_prw,
-            databarang.nama_brng as nm_perawatan,
-            detreturjual.h_retur as biaya_rawat,
-            0 as embalase,
-            0 as tuslah,
-            0 as diskon,
-            sum(detreturjual.jml_retur) as jml,
-            (sum(detreturjual.subtotal) * -1) as subtotal,
-            'Retur Obat' as kategori,
-            '300000' as kode_barang_jasa
+            'Pemberian Obat' as kategori,
+            'Ranap' as status_lanjut,
+            16 as urutan
             SQL;
 
         return $query;
