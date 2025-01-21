@@ -30,12 +30,12 @@ use Livewire\Component;
 
 class LaporanFakturPajakUmum extends Component
 {
-    use FlashComponent;
-    use Filterable;
+    use DeferredLoading;
     use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
     use LiveTable;
     use MenuTracker;
-    use DeferredLoading;
 
     /** @var string */
     public $tglAwal;
@@ -43,11 +43,15 @@ class LaporanFakturPajakUmum extends Component
     /** @var string */
     public $tglAkhir;
 
+    /** @var string */
+    public $tanggalTarikan;
+
     protected function queryString(): array
     {
         return [
-            'tglAwal'  => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'        => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir'       => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tanggalTarikan' => ['except' => '', 'as' => 'tgl_tarik'],
         ];
     }
 
@@ -61,6 +65,8 @@ class LaporanFakturPajakUmum extends Component
         return $this->isDeferred ? [] : RegistrasiPasien::query()
             ->laporanFakturPajakUmum($this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
+            ->orderBy('reg_periksa.no_rawat')
+            ->orderByDesc('kode_transaksi_pajak.kode_transaksi')
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage, ['*'], 'page_faktur');
     }
@@ -68,28 +74,34 @@ class LaporanFakturPajakUmum extends Component
     public function getDataDetailFakturPajakProperty()
     {
         if ($this->isDeferred) return [];
-        
-        $subQuery = RegistrasiPasien::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir)
-            ->unionAll(KamarInap::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(TindakanRalanDokter::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(TindakanRalanPerawat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(TindakanRalanDokterPerawat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(TindakanRanapDokter::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(TindakanRanapPerawat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(TindakanRanapDokterPerawat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(PeriksaLab::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(PeriksaLabDetail::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(PeriksaRadiologi::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(PemberianObat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(ObatPulang::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(Operasi::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(TambahanBiaya::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir));
+
+        $kodeTransaksi = RegistrasiPasien::query()->filterFakturPajak($this->tglAwal, $this->tglAkhir, 'A09');
+
+        $subQuery = RegistrasiPasien::query()->itemFakturPajakBiayaRegistrasi()
+            ->unionAll(KamarInap::query()->itemFakturPajak())
+            ->unionAll(TindakanRalanDokter::query()->itemFakturPajak())
+            ->unionAll(TindakanRalanPerawat::query()->itemFakturPajak())
+            ->unionAll(TindakanRalanDokterPerawat::query()->itemFakturPajak())
+            ->unionAll(TindakanRanapDokter::query()->itemFakturPajak())
+            ->unionAll(TindakanRanapPerawat::query()->itemFakturPajak())
+            ->unionAll(TindakanRanapDokterPerawat::query()->itemFakturPajak())
+            ->unionAll(PeriksaLab::query()->itemFakturPajak())
+            ->unionAll(PeriksaLabDetail::query()->itemFakturPajak())
+            ->unionAll(PeriksaRadiologi::query()->itemFakturPajak())
+            ->unionAll(PemberianObat::query()->itemFakturPajak())
+            ->unionAll(ObatPulang::query()->itemFakturPajak())
+            ->unionAll(Operasi::query()->itemFakturPajak())
+            ->unionAll(TambahanBiaya::query()->itemFakturPajak())
+            ->unionAll(RegistrasiPasien::query()->itemFakturPajakTambahanEmbalaseTuslah());
 
         return DB::connection('mysql_sik')
             ->query()
             ->fromSub($subQuery, 'item_faktur_pajak')
-            ->orderBy('no_rawat')
-            ->orderBy('urutan')
+            ->withExpression('regist_faktur', $kodeTransaksi)
+            ->where('item_faktur_pajak.dpp', '>', 0)
+            ->orderBy('item_faktur_pajak.no_rawat')
+            ->orderBy('item_faktur_pajak.urutan')
+            ->orderBy('item_faktur_pajak.nama_barang_jasa')
             ->paginate($this->perpage, ['*'], 'page_detailfaktur');
     }
 
@@ -103,30 +115,36 @@ class LaporanFakturPajakUmum extends Component
     {
         $this->tglAwal = now()->format('Y-m-d');
         $this->tglAkhir = now()->format('Y-m-d');
+        $this->tanggalTarikan = '';
     }
 
     protected function dataPerSheet(): array
     {
-        $subQuery = RegistrasiPasien::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir)
-            ->unionAll(KamarInap::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(TindakanRalanDokter::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(TindakanRalanPerawat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(TindakanRalanDokterPerawat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(TindakanRanapDokter::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(TindakanRanapPerawat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(TindakanRanapDokterPerawat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(PeriksaLab::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(PeriksaLabDetail::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(PeriksaRadiologi::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(PemberianObat::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(ObatPulang::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(Operasi::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir))
-            ->unionAll(TambahanBiaya::query()->itemFakturPajak($this->tglAwal, $this->tglAkhir));
+        $kodeTransaksi = RegistrasiPasien::query()->filterFakturPajak($this->tglAwal, $this->tglAkhir, 'A09');
 
+        $subQuery = RegistrasiPasien::query()->itemFakturPajakBiayaRegistrasi()
+            ->unionAll(KamarInap::query()->itemFakturPajak())
+            ->unionAll(TindakanRalanDokter::query()->itemFakturPajak())
+            ->unionAll(TindakanRalanPerawat::query()->itemFakturPajak())
+            ->unionAll(TindakanRalanDokterPerawat::query()->itemFakturPajak())
+            ->unionAll(TindakanRanapDokter::query()->itemFakturPajak())
+            ->unionAll(TindakanRanapPerawat::query()->itemFakturPajak())
+            ->unionAll(TindakanRanapDokterPerawat::query()->itemFakturPajak())
+            ->unionAll(PeriksaLab::query()->itemFakturPajak())
+            ->unionAll(PeriksaLabDetail::query()->itemFakturPajak())
+            ->unionAll(PeriksaRadiologi::query()->itemFakturPajak())
+            ->unionAll(PemberianObat::query()->itemFakturPajak())
+            ->unionAll(ObatPulang::query()->itemFakturPajak())
+            ->unionAll(Operasi::query()->itemFakturPajak())
+            ->unionAll(TambahanBiaya::query()->itemFakturPajak())
+            ->unionAll(RegistrasiPasien::query()->itemFakturPajakTambahanEmbalaseTuslah());
+            
         return [
             'Faktur' => RegistrasiPasien::query()
-                ->laporanFakturPajakBPJS($this->tglAwal, $this->tglAkhir)
+                ->laporanFakturPajakUmum($this->tglAwal, $this->tglAkhir)
                 ->search($this->cari)
+                ->orderBy('reg_periksa.no_rawat')
+                ->orderByDesc('kode_transaksi_pajak.kode_transaksi')
                 ->cursor()
                 ->map(fn (RegistrasiPasien $model): array => [
                     'no_rawat'            => $model->no_rawat,
@@ -147,21 +165,20 @@ class LaporanFakturPajakUmum extends Component
                     'alamat_pasien'       => $model->alamat_pasien,
                     'email_pasien'        => $model->email_pasien,
                     'no_telp_pasien'      => $model->no_telp_pasien,
-                    'kode_asuransi'       => $model->kode_asuransi,
-                    'nama_asuransi'       => $model->nama_asuransi,
                 ])
                 ->all(),
             'Detail Faktur' => DB::connection('mysql_sik')
                 ->query()
                 ->fromSub($subQuery, 'item_faktur_pajak')
-                ->orderBy('no_rawat')
-                ->orderBy('urutan')
-                ->cursor()
+                ->withExpression('regist_faktur', $kodeTransaksi)
+                ->where('item_faktur_pajak.dpp', '>', 0)
+                ->orderBy('item_faktur_pajak.no_rawat')
+                ->orderBy('item_faktur_pajak.urutan')
+                ->orderBy('item_faktur_pajak.nama_barang_jasa')
                 ->map(function (object $model): array {
                     $dppNilaiLain = round(floatval($model->dpp) * (11/12), 2);
-                    $ppn = intval($model->ppn_persen === '0' ? '12' : $model->ppn_persen);
+                    $ppn = intval($model->ppn_persen == '0' ? '12' : $model->ppn_persen);
                     $totalPpn = round($dppNilaiLain * ($ppn / 100), 2);
-                    
                     return [
                         'no_rawat'           => $model->no_rawat,
                         'kd_jenis_prw'       => $model->kd_jenis_prw,
@@ -191,11 +208,10 @@ class LaporanFakturPajakUmum extends Component
         return [
             'Faktur' => [
                 'No. Rawat',
-                'Kode Transaksi',
-                'Tgl. Bayar',
-                'Jam Bayar',
                 'Jenis Rawat',
+                'Tgl. Faktur',
                 'Jenis Faktur',
+                'Kode Transaksi',
                 'Keterangan Tambahan',
                 'Dokumen Pendukung',
                 'Cap Fasilitas',
@@ -209,8 +225,25 @@ class LaporanFakturPajakUmum extends Component
                 'Alamat Pasien',
                 'Email Pasien',
                 'No. Telp Pasien',
-                'Kode Asuransi',
-                'Nama Asuransi',
+            ],
+            'Detail Faktur' => [
+                'No. Rawat',
+                'Kode Item RS',
+                'Kategori',
+                'Status Rawat',
+                'Barang/Jasa',
+                'Kode Barang/Jasa',
+                'Nama Barang/Jasa',
+                'Nama Satuan Ukur',
+                'Harga Satuan',
+                'Jumlah Barang/Jasa',
+                'Total Diskon',
+                'DPP',
+                'DPP Nilai Lain',
+                'Tarif PPN',
+                'PPN',
+                'Tarif PPnBM',
+                'PPnBM',
             ],
         ];
     }

@@ -43,14 +43,15 @@ class LaporanFakturPajakBPJS extends Component
     /** @var string */
     public $tglAkhir;
 
-    /** @var bool */
-    public $sudahDitarik;
+    /** @var string */
+    public $tanggalTarikan;
 
     protected function queryString(): array
     {
         return [
-            'tglAwal'  => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'        => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir'       => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tanggalTarikan' => ['except' => '', 'as' => 'tgl_tarik'],
         ];
     }
 
@@ -62,7 +63,7 @@ class LaporanFakturPajakBPJS extends Component
     public function getDataLaporanFakturPajakProperty()
     {
         return $this->isDeferred ? [] : RegistrasiPasien::query()
-            ->laporanFakturPajakBPJS($this->tglAwal, $this->tglAkhir, 'BPJ')
+            ->laporanFakturPajakBPJS($this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->orderBy('reg_periksa.no_rawat')
             ->orderByDesc('kode_transaksi_pajak.kode_transaksi')
@@ -97,7 +98,7 @@ class LaporanFakturPajakBPJS extends Component
             ->query()
             ->fromSub($subQuery, 'item_faktur_pajak')
             ->withExpression('regist_faktur', $kodeTransaksi)
-            ->where('item_faktur_pajak..dpp', '>', 0)
+            ->where('item_faktur_pajak.dpp', '>', 0)
             ->orderBy('item_faktur_pajak.no_rawat')
             ->orderBy('item_faktur_pajak.urutan')
             ->orderBy('item_faktur_pajak.nama_barang_jasa')
@@ -114,6 +115,7 @@ class LaporanFakturPajakBPJS extends Component
     {
         $this->tglAwal = now()->format('Y-m-d');
         $this->tglAkhir = now()->format('Y-m-d');
+        $this->tanggalTarikan = '';
     }
 
     protected function dataPerSheet(): array
@@ -140,7 +142,6 @@ class LaporanFakturPajakBPJS extends Component
         return [
             'Faktur' => RegistrasiPasien::query()
                 ->laporanFakturPajakBPJS($this->tglAwal, $this->tglAkhir, 'BPJ')
-                ->search($this->cari)
                 ->orderBy('reg_periksa.no_rawat')
                 ->orderByDesc('kode_transaksi_pajak.kode_transaksi')
                 ->cursor()
@@ -171,16 +172,15 @@ class LaporanFakturPajakBPJS extends Component
                 ->query()
                 ->fromSub($subQuery, 'item_faktur_pajak')
                 ->withExpression('regist_faktur', $kodeTransaksi)
-                ->where('dpp', '>', 0)
-                ->orderBy('no_rawat')
-                ->orderBy('urutan')
-                ->orderBy('nama_barang_jasa')
+                ->where('item_faktur_pajak..dpp', '>', 0)
+                ->orderBy('item_faktur_pajak.no_rawat')
+                ->orderBy('item_faktur_pajak.urutan')
+                ->orderBy('item_faktur_pajak.nama_barang_jasa')
                 ->cursor()
                 ->map(function (object $model): array {
                     $dppNilaiLain = round(floatval($model->dpp) * (11/12), 2);
                     $ppn = intval($model->ppn_persen == '0' ? '12' : $model->ppn_persen);
                     $totalPpn = round($dppNilaiLain * ($ppn / 100), 2);
-                    
                     return [
                         'no_rawat'           => $model->no_rawat,
                         'kd_jenis_prw'       => $model->kd_jenis_prw,
