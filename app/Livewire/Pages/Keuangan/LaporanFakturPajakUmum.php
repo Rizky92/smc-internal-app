@@ -10,6 +10,8 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Farmasi\ObatPulang;
 use App\Models\Farmasi\PemberianObat;
+use App\Models\Farmasi\PenjualanObat;
+use App\Models\Farmasi\PenjualanObatDetail;
 use App\Models\Keuangan\TambahanBiaya;
 use App\Models\Laboratorium\PeriksaLab;
 use App\Models\Laboratorium\PeriksaLabDetail;
@@ -24,6 +26,7 @@ use App\Models\Perawatan\TindakanRanapDokterPerawat;
 use App\Models\Perawatan\TindakanRanapPerawat;
 use App\Models\Radiologi\PeriksaRadiologi;
 use App\View\Components\BaseLayout;
+use Closure;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -60,14 +63,27 @@ class LaporanFakturPajakUmum extends Component
         $this->defaultValues();
     }
 
+    /**
+     * @psalm-return (TIsDeferred is true ? array<empty, empty> : \Illuminate\Contracts\Pagination\LengthAwarePaginator)
+     */
     public function getDataLaporanFakturPajakProperty()
     {
-        return $this->isDeferred ? [] : RegistrasiPasien::query()
+        if ($this->isDeferred) return [];
+
+        $walkIn = PenjualanObat::query()
+            ->laporanFakturPajak($this->tglAwal, $this->tglAkhir)
+            ->search($this->cari);
+
+        $registrasi = RegistrasiPasien::query()
             ->laporanFakturPajakUmum($this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
-            ->orderBy('reg_periksa.no_rawat')
-            ->orderByDesc('kode_transaksi_pajak.kode_transaksi')
-            ->sortWithColumns($this->sortColumns)
+            ->unionAll($walkIn);
+
+        return DB::connection('mysql_sik')
+            ->query()
+            ->fromSub($registrasi, 'faktur_pajak')
+            ->orderBy('no_rawat')
+            ->orderByDesc('kode_transaksi')
             ->paginate($this->perpage, ['*'], 'page_faktur');
     }
 
@@ -76,6 +92,8 @@ class LaporanFakturPajakUmum extends Component
         if ($this->isDeferred) return [];
 
         $kodeTransaksi = RegistrasiPasien::query()->filterFakturPajak($this->tglAwal, $this->tglAkhir, 'A09');
+        
+        $kodeTransaksiWalkin = PenjualanObat::query()->filterFakturPajak($this->tglAwal, $this->tglAkhir);
 
         $subQuery = RegistrasiPasien::query()->itemFakturPajakBiayaRegistrasi()
             ->unionAll(KamarInap::query()->itemFakturPajak())
@@ -88,16 +106,18 @@ class LaporanFakturPajakUmum extends Component
             ->unionAll(PeriksaLab::query()->itemFakturPajak())
             ->unionAll(PeriksaLabDetail::query()->itemFakturPajak())
             ->unionAll(PeriksaRadiologi::query()->itemFakturPajak())
-            ->unionAll(PemberianObat::query()->itemFakturPajak())
-            ->unionAll(ObatPulang::query()->itemFakturPajak())
             ->unionAll(Operasi::query()->itemFakturPajak())
             ->unionAll(TambahanBiaya::query()->itemFakturPajak())
-            ->unionAll(RegistrasiPasien::query()->itemFakturPajakTambahanEmbalaseTuslah());
+            ->unionAll(RegistrasiPasien::query()->itemFakturPajakTambahanEmbalaseTuslah())
+            ->unionAll(PemberianObat::query()->itemFakturPajak())
+            ->unionAll(ObatPulang::query()->itemFakturPajak())
+            ->unionAll(PenjualanObatDetail::query()->itemFakturPajak());
 
         return DB::connection('mysql_sik')
             ->query()
             ->fromSub($subQuery, 'item_faktur_pajak')
             ->withExpression('regist_faktur', $kodeTransaksi)
+            ->withExpression('walkin_faktur', $kodeTransaksiWalkin)
             ->where('item_faktur_pajak.dpp', '>', 0)
             ->orderBy('item_faktur_pajak.no_rawat')
             ->orderBy('item_faktur_pajak.urutan')

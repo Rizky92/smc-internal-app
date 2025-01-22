@@ -21,7 +21,7 @@
                 </x-slot>
                 <x-slot name="contents">
                     <x-navtabs.content id="faktur">
-                        <x-table :sortColumns="$sortColumns" style="width: 310rem" sortable zebra hover sticky nowrap>
+                        <x-table :sortColumns="$sortColumns" style="width: 310rem" zebra hover sticky nowrap>
                             <x-slot name="columns">
                                 <x-table.th name="no_rawat" title="No. Rawat" />
                                 <x-table.th name="status_lanjut" title="Jenis Rawat" />

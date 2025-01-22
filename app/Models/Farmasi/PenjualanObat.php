@@ -77,6 +77,25 @@ class PenjualanObat extends Model
         return map_bulan($data);
     }
 
+    public function scopeFilterFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->format('Y-m-d');
+        }
+
+        $tahun = substr($tglAwal, 0, 7);
+
+        return $query
+            ->select('penjualan.nota_jual as no_rawat')
+            ->join('tagihan_sadewa', 'penjualan.nota_jual', '=', 'tagihan_sadewa.no_nota')
+            ->whereBetween('penjualan.tgl_jual', [$tahun.'-01', $tglAkhir])
+            ->whereBetween('tagihan_sadewa.tgl_bayar', [$tglAwal.' 00:00:00.000', $tglAkhir.' 23:59:59.999']);
+    }
+
     public function scopeLaporanFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
@@ -91,7 +110,7 @@ class PenjualanObat extends Model
 
         $sqlSelect = <<<'SQL'
             penjualan.nota_jual as no_rawat,
-            '020' as kode_transaksi,
+            '040' as kode_transaksi,
             date(tagihan_sadewa.tgl_bayar) as tgl_bayar,
             date_format(tagihan_sadewa.tgl_bayar, '%H:%i:%s') as jam_bayar,
             'Walk In' as status_lanjut,

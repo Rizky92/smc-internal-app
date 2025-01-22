@@ -1218,8 +1218,7 @@ SQL;
     {
         return $query
             ->laporanFakturPajak($tglAwal, $tglAkhir)
-            ->where('reg_periksa.kd_pj', 'A09')
-            ->unionAll(PenjualanObat::query()->laporanFakturPajak($tglAwal, $tglAkhir));
+            ->where('reg_periksa.kd_pj', 'A09');
     }
 
     public function scopeLaporanFakturPajakAsuransi(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = '-'): Builder

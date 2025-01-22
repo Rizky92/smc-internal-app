@@ -2,9 +2,12 @@
 
 namespace App\Livewire\Concerns;
 
+/**
+ * @template TIsDeferred of true|false
+ */
 trait DeferredLoading
 {
-    /** @var bool */
+    /** @var TIsDeferred */
     public $isDeferred;
 
     public function mountDeferredLoading(): void

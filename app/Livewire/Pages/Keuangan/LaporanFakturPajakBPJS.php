@@ -88,11 +88,11 @@ class LaporanFakturPajakBPJS extends Component
             ->unionAll(PeriksaLab::query()->itemFakturPajak())
             ->unionAll(PeriksaLabDetail::query()->itemFakturPajak())
             ->unionAll(PeriksaRadiologi::query()->itemFakturPajak())
-            ->unionAll(PemberianObat::query()->itemFakturPajak())
-            ->unionAll(ObatPulang::query()->itemFakturPajak())
             ->unionAll(Operasi::query()->itemFakturPajak())
             ->unionAll(TambahanBiaya::query()->itemFakturPajak())
-            ->unionAll(RegistrasiPasien::query()->itemFakturPajakTambahanEmbalaseTuslah());
+            ->unionAll(RegistrasiPasien::query()->itemFakturPajakTambahanEmbalaseTuslah())
+            ->unionAll(PemberianObat::query()->itemFakturPajak())
+            ->unionAll(ObatPulang::query()->itemFakturPajak());
 
         return DB::connection('mysql_sik')
             ->query()
