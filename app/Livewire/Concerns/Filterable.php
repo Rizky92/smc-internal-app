@@ -36,6 +36,10 @@ trait Filterable
             $this->resetPage();
         }
 
+        if (method_exists($this, 'loadProperties')) {
+            $this->loadProperties();
+        }
+
         $this->emit('$refresh');
     }
 

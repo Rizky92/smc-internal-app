@@ -77,14 +77,6 @@ class DaftarRiwayatObatAlkes extends Component
         $this->barangNol = false;
     }
 
-    public function searchData(): void
-    {
-        $this->resetPage('page_obat');
-        $this->resetPage('page_alkes');
-
-        $this->emit('$refresh');
-    }
-
     protected function dataPerSheet(): array
     {
         $map = fn (Obat $model): array => [
