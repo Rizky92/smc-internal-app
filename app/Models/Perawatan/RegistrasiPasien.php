@@ -1054,6 +1054,7 @@ SQL;
 
         $tahun = substr($tglAwal, 0, 7);
 
+        /** @var \Illuminate\Database\Query\Builder */
         $notaInap = NotaRanap::query()
             ->select(['nota_inap.no_rawat', DB::raw("'Ranap' as status_lanjut"), 'nota_inap.tanggal', 'nota_inap.jam'])
             ->whereBetween('nota_inap.tanggal', [$tglAwal, $tglAkhir]);
@@ -1085,6 +1086,7 @@ SQL;
 
         $tahun = substr($tglAwal, 0, 7);
 
+        /** @var \Illuminate\Database\Query\Builder */
         $kode080 = self::query()
             ->selectRaw('reg_periksa.no_rawat, \'080\' as kode_transaksi')
             ->whereRaw('reg_periksa.status_bayar = \'Sudah Bayar\'')
@@ -1185,6 +1187,7 @@ SQL;
             nota_jalan.no_rawat, nota_jalan.tanggal, nota_jalan.jam, 'Ralan' as status_lanjut
             SQL;
 
+        /** @var \Illuminate\Database\Query\Builder */
         $notaInap = NotaRanap::query()
             ->selectRaw($sqlSelectNotaInap)
             ->whereBetween('nota_inap.tanggal', [$tglAwal, $tglAkhir]);
@@ -1200,7 +1203,7 @@ SQL;
             ->joinSub($notaBayar, 'nota_bayar', fn (JoinClause $join) => $join
                 ->on('reg_periksa.no_rawat', '=', 'nota_bayar.no_rawat')
                 ->on('reg_periksa.status_lanjut', '=', 'nota_bayar.status_lanjut'))
-            ->joinSub(RegistrasiPasien::query()->kodeTransaksiFakturPajak($tglAwal, $tglAkhir), 'kode_transaksi_pajak', 'reg_periksa.no_rawat', '=', 'kode_transaksi_pajak.no_rawat')
+            ->joinSub(self::query()->kodeTransaksiFakturPajak($tglAwal, $tglAkhir), 'kode_transaksi_pajak', 'reg_periksa.no_rawat', '=', 'kode_transaksi_pajak.no_rawat')
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->leftJoin('perusahaan_pasien', 'pasien.perusahaan_pasien', '=', 'perusahaan_pasien.kode_perusahaan')
             ->leftJoin('kelurahan', 'pasien.kd_kel', '=', 'kelurahan.kd_kel')

@@ -4,6 +4,7 @@ namespace App\Models\Farmasi;
 
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class ReturObat extends Model
 {
@@ -39,30 +40,5 @@ class ReturObat extends Model
         $data = static::returObatPasien($year)->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
-    }
-
-    public function scopeItemFakturPajak(Builder $query, array $noRawat = []): Builder
-    {
-
-        $sqlSelect = <<<'SQL'
-            left(returjual.no_nota, 17) as no_rawat,
-            'A' as jenis_barang_jasa,
-            '300000' as kode_barang_jasa,
-            databarang.nama_brng as nama_barang_jasa,
-            databarang.kode_sat as nama_satuan_ukur,
-            detreturjual.h_retur * -1 as harga_satuan,
-            sum(detreturjual.jml_retur) * -1 as jumlah_barang_jasa,
-            0 as diskon_persen,
-            0 as diskon_nominal,
-            sum(detreturjual.subtotal) * -1 as dpp,
-            0 as ppn_persen,
-            0 as ppn_nominal,
-            detreturjual.kode_brng as kd_jenis_prw,
-            'Pemberian Obat' as kategori,
-            'Ranap' as status_lanjut,
-            16 as urutan
-            SQL;
-
-        return $query;
     }
 }

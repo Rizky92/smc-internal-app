@@ -36,6 +36,10 @@ trait Filterable
             $this->resetPage();
         }
 
+        if (property_exists($this, 'isDeferred')) {
+            $this->isDeferred = false;
+        }
+
         $this->emit('$refresh');
     }
 

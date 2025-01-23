@@ -10,6 +10,10 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Farmasi\ObatPulang;
 use App\Models\Farmasi\PemberianObat;
+use App\Models\Farmasi\ReturObat;
+use App\Models\Farmasi\ReturObatDetail;
+use App\Models\Keuangan\Deposit;
+use App\Models\Keuangan\DepositKembali;
 use App\Models\Keuangan\FakturPajakDitarik;
 use App\Models\Keuangan\FakturPajakDitarikDetail;
 use App\Models\Keuangan\Master\SatuanUkuranPajak;
@@ -27,8 +31,7 @@ use App\Models\Perawatan\TindakanRanapDokterPerawat;
 use App\Models\Perawatan\TindakanRanapPerawat;
 use App\Models\Radiologi\PeriksaRadiologi;
 use App\View\Components\BaseLayout;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Collection as SupportCollection;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -68,6 +71,9 @@ class LaporanFakturPajakBPJS extends Component
         $this->defaultValues();
     }
 
+    /**
+     * @return array<empty, empty>|\Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
     public function getDataLaporanFakturPajakProperty()
     {
         return $this->isDeferred ? [] : RegistrasiPasien::query()
@@ -79,33 +85,39 @@ class LaporanFakturPajakBPJS extends Component
             ->paginate($this->perpage, ['*'], 'page_faktur');
     }
 
+    /**
+     * @return array<empty, empty>|\Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
     public function getDataDetailFakturPajakProperty()
     {
         if ($this->isDeferred) return [];
 
         $kodeTransaksi = RegistrasiPasien::query()->filterFakturPajak($this->tglAwal, $this->tglAkhir, 'BPJ');
 
-        $subQuery = RegistrasiPasien::query()->itemFakturPajakBiayaRegistrasi()
-            ->unionAll(KamarInap::query()->itemFakturPajak())
-            ->unionAll(TindakanRalanDokter::query()->itemFakturPajak())
-            ->unionAll(TindakanRalanPerawat::query()->itemFakturPajak())
-            ->unionAll(TindakanRalanDokterPerawat::query()->itemFakturPajak())
-            ->unionAll(TindakanRanapDokter::query()->itemFakturPajak())
-            ->unionAll(TindakanRanapPerawat::query()->itemFakturPajak())
-            ->unionAll(TindakanRanapDokterPerawat::query()->itemFakturPajak())
-            ->unionAll(PeriksaLab::query()->itemFakturPajak())
-            ->unionAll(PeriksaLabDetail::query()->itemFakturPajak())
-            ->unionAll(PeriksaRadiologi::query()->itemFakturPajak())
-            ->unionAll(Operasi::query()->itemFakturPajak())
-            ->unionAll(TambahanBiaya::query()->itemFakturPajak())
-            ->unionAll(RegistrasiPasien::query()->itemFakturPajakTambahanEmbalaseTuslah())
-            ->unionAll(PemberianObat::query()->itemFakturPajak())
-            ->unionAll(ObatPulang::query()->itemFakturPajak());
+        // $subQuery = RegistrasiPasien::query()->itemFakturPajakBiayaRegistrasi()
+            // ->unionAll(KamarInap::query()->itemFakturPajak())
+            // ->unionAll(TindakanRalanDokter::query()->itemFakturPajak())
+            // ->unionAll(TindakanRalanPerawat::query()->itemFakturPajak())
+            // ->unionAll(TindakanRalanDokterPerawat::query()->itemFakturPajak())
+            // ->unionAll(TindakanRanapDokter::query()->itemFakturPajak())
+            // ->unionAll(TindakanRanapPerawat::query()->itemFakturPajak())
+            // ->unionAll(TindakanRanapDokterPerawat::query()->itemFakturPajak())
+            // ->unionAll(PeriksaLab::query()->itemFakturPajak())
+            // ->unionAll(PeriksaLabDetail::query()->itemFakturPajak())
+            // ->unionAll(PeriksaRadiologi::query()->itemFakturPajak())
+            // ->unionAll(Operasi::query()->itemFakturPajak())
+            // ->unionAll(TambahanBiaya::query()->itemFakturPajak())
+            // ->unionAll(RegistrasiPasien::query()->itemFakturPajakTambahanEmbalaseTuslah())
+            // ->unionAll(PemberianObat::query()->itemFakturPajak())
+            // ->unionAll(ObatPulang::query()->itemFakturPajak())
+            // ->unionAll(Deposit::query()->itemFakturPajak())
+            // ->unionAll(DepositKembali::query()->itemFakturPajak())
+            // ->unionAll(ReturObatDetail::query()->itemFakturPajak('BPJ'));
 
         return DB::connection('mysql_sik')
             ->query()
             ->withExpression('regist_faktur', $kodeTransaksi)
-            ->fromSub($subQuery, 'item_faktur_pajak')
+            ->fromSub(ReturObatDetail::query()->itemFakturPajak('BPJ'), 'item_faktur_pajak')
             ->join('regist_faktur', 'item_faktur_pajak.no_rawat', '=', 'regist_faktur.no_rawat')
             ->where('item_faktur_pajak.dpp', '>', 0)
             ->orderBy('item_faktur_pajak.no_rawat')
@@ -114,13 +126,27 @@ class LaporanFakturPajakBPJS extends Component
             ->paginate($this->perpage, ['*'], 'page_detailfaktur');
     }
 
+    public function getTanggalTarikanProperty(): Collection
+    {
+        return FakturPajakDitarik::query()
+            ->selectRaw('distinct(tgl_tarikan) as tgl_tarikan')
+            ->pluck('tgl_tarikan', 'tgl_tarikan');
+    }
+
     public function render(): View
     {
         return view('livewire.pages.keuangan.laporan-faktur-pajak-b-p-j-s')
             ->layout(BaseLayout::class, ['title' => 'Laporan Faktur Pajak Pasien BPJS KESEHATAN (BPJ)']);
     }
 
-    private function simpanTarikan(): void
+    protected function defaultValues(): void
+    {
+        $this->tglAwal = now()->format('Y-m-d');
+        $this->tglAkhir = now()->format('Y-m-d');
+        $this->tanggalTarikan = '';
+    }
+
+    protected function dataPerSheet(): array
     {
         $this->tanggalTarikanSementara = now()->toDateTimeString();
 
@@ -153,21 +179,23 @@ class LaporanFakturPajakBPJS extends Component
             ->unionAll(Operasi::query()->itemFakturPajak())
             ->unionAll(TambahanBiaya::query()->itemFakturPajak())
             ->unionAll(RegistrasiPasien::query()->itemFakturPajakTambahanEmbalaseTuslah())
-            ->unionAll(PemberianObat::query()->itemFakturPajak())
-            ->unionAll(ObatPulang::query()->itemFakturPajak());
+            ->unionAll(PemberianObat::query()->itemFakturPajak('BPJ'))
+            ->unionAll(ObatPulang::query()->itemFakturPajak('BPJ'))
+            ->unionAll(Deposit::query()->itemFakturPajak())
+            ->unionAll(DepositKembali::query()->itemFakturPajak())
+            ->unionAll(ReturObatDetail::query()->itemFakturPajak('BPJ'));
 
         DB::connection('mysql_sik')
             ->query()
             ->withExpression('regist_faktur', $kodeTransaksi)
-            ->select('item_faktur_pajak.*')
-            ->addSelect(['regist_faktur.tgl_bayar', 'regist_faktur.jam_bayar'])
+            ->select(['item_faktur_pajak.*', 'regist_faktur.tgl_bayar', 'regist_faktur.jam_bayar'])
             ->fromSub($subQuery, 'item_faktur_pajak')
             ->join('regist_faktur', 'item_faktur_pajak.no_rawat', '=', 'regist_faktur.no_rawat')
             ->where('item_faktur_pajak.dpp', '>', 0)
             ->orderBy('item_faktur_pajak.no_rawat')
             ->orderBy('item_faktur_pajak.urutan')
             ->orderBy('item_faktur_pajak.nama_barang_jasa')
-            ->chunk(500, function (SupportCollection $items) use ($satuanUkuranPajak) {
+            ->chunk(500, function (Collection $items) use ($satuanUkuranPajak) {
                 $items->transform(function (object $model) use ($satuanUkuranPajak) {
                     $dppNilaiLain = round(floatval($model->dpp) * (11/12), 2);
                     $totalPPN = round(floatval($dppNilaiLain) * ($model->ppn_persen / 100), 2);
@@ -200,18 +228,8 @@ class LaporanFakturPajakBPJS extends Component
 
                 FakturPajakDitarikDetail::insert($items->all());
             });
-    }
-
-    protected function defaultValues(): void
-    {
-        $this->tglAwal = now()->format('Y-m-d');
-        $this->tglAkhir = now()->format('Y-m-d');
-        $this->tanggalTarikan = '';
-    }
-
-    protected function dataPerSheet(): array
-    {
-        $this->simpanTarikan();
+        
+        $this->undefer();
         
         return [
             'Faktur' => FakturPajakDitarik::query()
@@ -242,6 +260,17 @@ class LaporanFakturPajakBPJS extends Component
                 ->all(),
             'Detail Faktur' => FakturPajakDitarikDetail::query()
                 ->whereBetween('tgl_tarikan', [$this->tanggalTarikanSementara, $this->tanggalTarikanSementara])
+                ->withCasts([
+                    'harga_satuan'   => 'float',
+                    'diskon_persen'  => 'float',
+                    'diskon_nominal' => 'float',
+                    'dpp'            => 'float',
+                    'dpp_nilai_lain' => 'float',
+                    'ppn_persen'     => 'float',
+                    'ppn_nominal'    => 'float',
+                    'ppnbm_persen'   => 'float',
+                    'ppnbm_nominal'  => 'float,'
+                ])
                 ->get()
                 ->map(fn (FakturPajakDitarikDetail $model): array => [
                     'no_rawat'           => $model->no_rawat,
