@@ -23,6 +23,7 @@ class TindakanRanapDokterPerawat extends Model
     {
         $sqlSelect = <<<'SQL'
             rawat_inap_drpr.no_rawat,
+            '080' as kode_transaksi,
             'B' as jenis_barang_jasa,
             '250100' as kode_barang_jasa,
             jns_perawatan_inap.nm_perawatan as nama_barang_jasa,
@@ -32,7 +33,7 @@ class TindakanRanapDokterPerawat extends Model
             0 as diskon_persen,
             0 as diskon_nominal,
             (rawat_inap_drpr.biaya_rawat * count(*)) as dpp,
-            0 as ppn_persen,
+            12 as ppn_persen,
             0 as ppn_nominal,
             rawat_inap_drpr.kd_jenis_prw,
             'Tindakan Ranap DrPr' as kategori,
@@ -43,7 +44,7 @@ class TindakanRanapDokterPerawat extends Model
         return $query
             ->selectRaw($sqlSelect)
             ->join('jns_perawatan_inap', 'rawat_inap_drpr.kd_jenis_prw', '=', 'jns_perawatan_inap.kd_jenis_prw')
-            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('rawat_inap_drpr.no_rawat', 'regist_faktur.no_rawat'))
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'rawat_inap_drpr.no_rawat'))
             ->groupBy(['rawat_inap_drpr.no_rawat', 'rawat_inap_drpr.kd_jenis_prw', 'jns_perawatan_inap.nm_perawatan', 'rawat_inap_drpr.biaya_rawat']);
     }
 }

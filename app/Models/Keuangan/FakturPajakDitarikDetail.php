@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FakturPajakDitarikDetail extends Model
 {
-    protected $connection = 'mysql_sik';
+    protected $connection = 'mysql_smc';
 
     protected $table = 'faktur_pajak_ditarik_detail';
 

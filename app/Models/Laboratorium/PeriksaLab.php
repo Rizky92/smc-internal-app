@@ -187,6 +187,7 @@ class PeriksaLab extends Model
     {
         $sqlSelect = <<<'SQL'
             periksa_lab.no_rawat,
+            '080' as kode_transaksi,
             'B' as jenis_barang_jasa,
             '250100' as kode_barang_jasa,
             jns_perawatan_lab.nm_perawatan as nama_barang_jasa,
@@ -196,7 +197,7 @@ class PeriksaLab extends Model
             0 as diskon_persen,
             0 as diskon_nominal,
             (periksa_lab.biaya * count(*)) as dpp,
-            0 as ppn_persen,
+            12 as ppn_persen,
             0 as ppn_nominal,
             periksa_lab.kd_jenis_prw,
             'Laborat' as kategori,
@@ -207,7 +208,7 @@ class PeriksaLab extends Model
         return $query
             ->selectRaw($sqlSelect)
             ->join('jns_perawatan_lab', 'periksa_lab.kd_jenis_prw', '=', 'jns_perawatan_lab.kd_jenis_prw')
-            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('periksa_lab.no_rawat', 'regist_faktur.no_rawat'))
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'periksa_lab.no_rawat'))
             ->groupBy(['periksa_lab.no_rawat', 'periksa_lab.kd_jenis_prw', 'jns_perawatan_lab.nm_perawatan', 'periksa_lab.biaya']);
     }
 }

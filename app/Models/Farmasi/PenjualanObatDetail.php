@@ -23,6 +23,7 @@ class PenjualanObatDetail extends Model
     {
         $sqlSelect = <<<'SQL'
             detailjual.nota_jual as no_rawat,
+            '040' as kode_transaksi,
             'A' as jenis_barang_jasa,
             '300000' as kode_barang_jasa,
             databarang.nama_brng as nama_barang_jasa,
@@ -43,7 +44,6 @@ class PenjualanObatDetail extends Model
         return $query
             ->selectRaw($sqlSelect)
             ->join('databarang', 'detailjual.kode_brng', '=', 'databarang.kode_brng')
-            ->whereExists(fn ($q) => $q->from('walkin_faktur')->whereColumn('walkin_faktur.no_rawat', 'detailjual.nota_jual'))
             ->groupBy(['detailjual.nota_jual', 'detailjual.kode_brng', 'databarang.nama_brng', 'detailjual.h_jual']);
     }
 }

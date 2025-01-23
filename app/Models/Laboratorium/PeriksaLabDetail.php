@@ -26,6 +26,7 @@ class PeriksaLabDetail extends Model
     {
         $sqlSelect = <<<'SQL'
             detail_periksa_lab.no_rawat,
+            '080' as kode_transaksi,
             'B' as jenis_barang_jasa,
             '250100' as kode_barang_jasa,
             template_laboratorium.Pemeriksaan as nama_barang_jasa,
@@ -35,7 +36,7 @@ class PeriksaLabDetail extends Model
             0 as diskon_persen,
             0 as diskon_nominal,
             (detail_periksa_lab.biaya_item * count(*)) as dpp,
-            0 as ppn_persen,
+            12 as ppn_persen,
             0 as ppn_nominal,
             concat_ws('-', detail_periksa_lab.kd_jenis_prw, detail_periksa_lab.id_template) as kd_jenis_prw,
             'Laborat Detail' as kategori,
@@ -52,7 +53,7 @@ class PeriksaLabDetail extends Model
                 ->on('detail_periksa_lab.tgl_periksa', '=', 'periksa_lab.tgl_periksa')
                 ->on('detail_periksa_lab.jam', '=', 'periksa_lab.jam')
                 ->on('periksa_lab.kategori', '=', DB::raw('\'PK\'')))
-            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('detail_periksa_lab.no_rawat', 'regist_faktur.no_rawat'))
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'detail_periksa_lab.no_rawat'))
             ->groupBy(['detail_periksa_lab.no_rawat', 'detail_periksa_lab.id_template', 'template_laboratorium.Pemeriksaan', 'detail_periksa_lab.biaya_item']);
     }
 }

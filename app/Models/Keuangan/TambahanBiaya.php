@@ -82,6 +82,7 @@ class TambahanBiaya extends Model
     {
         $sqlSelect = <<<'SQL'
             tambahan_biaya.no_rawat,
+            '080' as kode_transaksi,
             'B' as jenis_barang_jasa,
             '250100' as kode_barang_jasa,
             tambahan_biaya.nama_biaya as nama_barang_jasa,
@@ -91,7 +92,7 @@ class TambahanBiaya extends Model
             0 as diskon_persen,
             0 as diskon_nominal,
             tambahan_biaya.besar_biaya as dpp,
-            0 as ppn_persen,
+            12 as ppn_persen,
             0 as ppn_nominal,
             '' as kd_jenis_prw,
             'Tambahan Biaya' as kategori,
@@ -101,6 +102,6 @@ class TambahanBiaya extends Model
 
         return $query
             ->selectRaw($sqlSelect)
-            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('tambahan_biaya.no_rawat', 'regist_faktur.no_rawat'));
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'tambahan_biaya.no_rawat'));
     }
 }

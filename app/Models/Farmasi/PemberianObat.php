@@ -98,10 +98,11 @@ class PemberianObat extends Model
             ->withCasts(['jumlah' => 'float', 'bulan' => 'int']);
     }
 
-    public function scopeItemFakturPajak(Builder $query): Builder
+    public function scopeItemFakturPajak(Builder $query, string $kodePJ = 'BPJ'): Builder
     {
         $sqlSelect = <<<'SQL'
             detail_pemberian_obat.no_rawat,
+            ? as kode_transaksi,
             'A' as jenis_barang_jasa,
             '300000' as kode_barang_jasa,
             databarang.nama_brng as nama_barang_jasa,
@@ -111,7 +112,7 @@ class PemberianObat extends Model
             0 as diskon_persen,
             0 as diskon_nominal,
             sum(detail_pemberian_obat.total) as dpp,
-            0 as ppn_persen,
+            12 as ppn_persen,
             0 as ppn_nominal,
             detail_pemberian_obat.kode_brng as kd_jenis_prw,
             'Pemberian Obat' as kategori,
@@ -120,9 +121,9 @@ class PemberianObat extends Model
             SQL;
 
         return $query
-            ->selectRaw($sqlSelect)
+            ->selectRaw($sqlSelect, [($kodePJ === 'BPJ' ? '030' : '040')])
             ->join('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
-            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('detail_pemberian_obat.no_rawat', 'regist_faktur.no_rawat'))
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'detail_pemberian_obat.no_rawat'))
             ->groupBy(['detail_pemberian_obat.no_rawat', 'detail_pemberian_obat.kode_brng', 'databarang.nama_brng', 'detail_pemberian_obat.biaya_obat']);
     }
 

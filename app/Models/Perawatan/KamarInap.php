@@ -132,6 +132,7 @@ class KamarInap extends Model
     {
         $sqlSelect = <<<'SQL'
             kamar_inap.no_rawat,
+            '080' as kode_transaksi,
             'B' as jenis_barang_jasa,
             '250100' as kode_barang_jasa,
             concat(kamar_inap.kd_kamar, ' ', bangsal.nm_bangsal) as nama_barang_jasa,
@@ -141,7 +142,7 @@ class KamarInap extends Model
             0 as diskon_persen,
             0 as diskon_nominal,
             sum(kamar_inap.ttl_biaya) as dpp,
-            0 as ppn_persen,
+            12 as ppn_persen,
             0 as ppn_nominal,
             kamar_inap.kd_kamar as kd_jenis_prw,
             'Kamar Inap' as kategori,
@@ -153,7 +154,7 @@ class KamarInap extends Model
             ->selectRaw($sqlSelect)
             ->join('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
             ->join('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
-            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('kamar_inap.no_rawat', 'regist_faktur.no_rawat'))
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'kamar_inap.no_rawat'))
             ->groupBy('kamar_inap.no_rawat', 'kamar_inap.kd_kamar', 'bangsal.nm_bangsal', 'kamar_inap.trf_kamar');
     }
 }

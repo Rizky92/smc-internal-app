@@ -23,6 +23,7 @@ class Operasi extends Model
     {
         $sqlSelect = <<<'SQL'
             operasi.no_rawat,
+            '080' as kode_transaksi,
             'B' as jenis_barang_jasa,
             '250100' as kode_barang_jasa,
             paket_operasi.nm_perawatan as nama_barang_jasa,
@@ -50,7 +51,7 @@ class Operasi extends Model
                 operasi.biaya_omloop + operasi.biaya_omloop2 + operasi.biaya_omloop3 + operasi.biaya_omloop4 + operasi.biaya_omloop5 +
                 operasi.biayasarpras + operasi.biaya_dokter_pjanak + operasi.biaya_dokter_umum
             ) as dpp,
-            0 as ppn_persen,
+            12 as ppn_persen,
             0 as ppn_nominal,
             operasi.kode_paket as kd_jenis_prw,
             'Operasi' as kategori,
@@ -61,6 +62,6 @@ class Operasi extends Model
         return $query
             ->selectRaw($sqlSelect)
             ->join('paket_operasi', 'operasi.kode_paket', '=', 'paket_operasi.kode_paket')
-            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('operasi.no_rawat', 'regist_faktur.no_rawat'));
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'operasi.no_rawat'));
     }
 }

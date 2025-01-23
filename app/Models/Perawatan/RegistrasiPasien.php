@@ -980,7 +980,7 @@ SQL;
             ->orderBy('reg_periksa.no_reg');
     }
 
-    public function scopeItemFakturPajakBiayaRegistrasi(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = 'BPJ'): Builder
+    public function scopeItemFakturPajakBiayaRegistrasi(Builder $query): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->format('Y-m-d');
@@ -992,6 +992,7 @@ SQL;
 
         $sqlSelect = <<<'SQL'
             reg_periksa.no_rawat,
+            '080' as kode_transaksi,
             'B' as jenis_barang_jasa,
             '250100' as kode_barang_jasa,
             'Biaya Registrasi' as nama_barang_jasa,
@@ -1001,7 +1002,7 @@ SQL;
             0 as diskon_persen,
             0 as diskon_nominal,
             reg_periksa.biaya_reg as dpp,
-            0 as ppn_persen,
+            12 as ppn_persen,
             0 as ppn_nominal,
             '' as kd_jenis_prw,
             'Biaya Registrasi' as kategori,
@@ -1011,13 +1012,14 @@ SQL;
 
         return $query
             ->selectRaw($sqlSelect)
-            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('reg_periksa.no_rawat', 'regist_faktur.no_rawat'));
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'reg_periksa.no_rawat'));
     }
 
     public function scopeItemFakturPajakTambahanEmbalaseTuslah(Builder $query): Builder
     {
         $sqlSelect = <<<'SQL'
             reg_periksa.no_rawat,
+            '080' as kode_transaksi,
             'B' as jenis_barang_jasa,
             '000000' as kode_barang_jasa,
             'Embalase + Tuslah Obat' as nama_barang_jasa,
@@ -1027,7 +1029,7 @@ SQL;
             0 as diskon_persen,
             0 as diskon_nominal,
             (select sum(detail_pemberian_obat.embalase + detail_pemberian_obat.tuslah) from detail_pemberian_obat where detail_pemberian_obat.no_rawat = reg_periksa.no_rawat) as dpp,
-            0 as ppn_persen,
+            12 as ppn_persen,
             0 as ppn_nominal,
             '' as kd_jenis_prw,
             'Tambahan Biaya' as kategori,
@@ -1037,7 +1039,7 @@ SQL;
 
         return $query
             ->selectRaw($sqlSelect)
-            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('reg_periksa.no_rawat', 'regist_faktur.no_rawat'));
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'reg_periksa.no_rawat'));
     }
 
     public function scopeFilterFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = 'BPJ'): Builder
@@ -1053,16 +1055,16 @@ SQL;
         $tahun = substr($tglAwal, 0, 7);
 
         $notaInap = NotaRanap::query()
-            ->select(['nota_inap.no_rawat', DB::raw("'Ranap' as status_lanjut")])
+            ->select(['nota_inap.no_rawat', DB::raw("'Ranap' as status_lanjut"), 'nota_inap.tanggal', 'nota_inap.jam'])
             ->whereBetween('nota_inap.tanggal', [$tglAwal, $tglAkhir]);
 
         $notaBayar = NotaRalan::query()
-            ->select(['nota_jalan.no_rawat', DB::raw("'Ralan' as status_lanjut")])
+            ->select(['nota_jalan.no_rawat', DB::raw("'Ralan' as status_lanjut"), 'nota_jalan.tanggal', 'nota_jalan.jam'])
             ->whereBetween('nota_jalan.tanggal', [$tglAwal, $tglAkhir])
             ->unionAll($notaInap);
 
         return $query
-            ->select('reg_periksa.no_rawat')
+            ->select(['reg_periksa.no_rawat', 'reg_periksa.kd_pj', 'nota_bayar.tanggal as tgl_bayar', 'nota_bayar.jam as jam_bayar'])
             ->joinSub($notaBayar, 'nota_bayar', fn (JoinClause $join) => $join
                 ->on('reg_periksa.no_rawat', '=', 'nota_bayar.no_rawat')
                 ->on('reg_periksa.status_lanjut', '=', 'nota_bayar.status_lanjut'))

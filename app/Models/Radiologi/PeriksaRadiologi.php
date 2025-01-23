@@ -125,6 +125,7 @@ class PeriksaRadiologi extends Model
     {
         $sqlSelect = <<<'SQL'
             periksa_radiologi.no_rawat,
+            '080' as kode_transaksi,
             'B' as jenis_barang_jasa,
             '250100' as kode_barang_jasa,
             jns_perawatan_radiologi.nm_perawatan as nama_barang_jasa,
@@ -134,7 +135,7 @@ class PeriksaRadiologi extends Model
             0 as diskon_persen,
             0 as diskon_nominal,
             (periksa_radiologi.biaya * count(*)) as dpp,
-            0 as ppn_persen,
+            12 as ppn_persen,
             0 as ppn_nominal,
             periksa_radiologi.kd_jenis_prw,
             'Radiologi' as kategori,
@@ -145,7 +146,7 @@ class PeriksaRadiologi extends Model
         return $query
             ->selectRaw($sqlSelect)
             ->join('jns_perawatan_radiologi', 'periksa_radiologi.kd_jenis_prw', '=', 'jns_perawatan_radiologi.kd_jenis_prw')
-            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('periksa_radiologi.no_rawat', 'regist_faktur.no_rawat'))
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'periksa_radiologi.no_rawat'))
             ->groupBy(['periksa_radiologi.no_rawat', 'periksa_radiologi.kd_jenis_prw', 'jns_perawatan_radiologi.nm_perawatan', 'periksa_radiologi.biaya']);
     }
 }

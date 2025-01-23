@@ -138,6 +138,11 @@ class LaporanFakturPajakUmum extends Component
         $this->tanggalTarikan = '';
     }
 
+    protected function simpanTarikan(): void
+    {
+        
+    }
+
     protected function dataPerSheet(): array
     {
         $kodeTransaksi = RegistrasiPasien::query()->filterFakturPajak($this->tglAwal, $this->tglAkhir, 'A09');
@@ -153,11 +158,11 @@ class LaporanFakturPajakUmum extends Component
             ->unionAll(PeriksaLab::query()->itemFakturPajak())
             ->unionAll(PeriksaLabDetail::query()->itemFakturPajak())
             ->unionAll(PeriksaRadiologi::query()->itemFakturPajak())
-            ->unionAll(PemberianObat::query()->itemFakturPajak())
-            ->unionAll(ObatPulang::query()->itemFakturPajak())
             ->unionAll(Operasi::query()->itemFakturPajak())
             ->unionAll(TambahanBiaya::query()->itemFakturPajak())
-            ->unionAll(RegistrasiPasien::query()->itemFakturPajakTambahanEmbalaseTuslah());
+            ->unionAll(RegistrasiPasien::query()->itemFakturPajakTambahanEmbalaseTuslah())
+            ->unionAll(PemberianObat::query()->itemFakturPajak())
+            ->unionAll(ObatPulang::query()->itemFakturPajak());
             
         return [
             'Faktur' => RegistrasiPasien::query()

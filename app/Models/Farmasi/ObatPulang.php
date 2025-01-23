@@ -20,10 +20,11 @@ class ObatPulang extends Model
 
     public $timestamps = false;
 
-    public function scopeItemFakturPajak(Builder $query): Builder
+    public function scopeItemFakturPajak(Builder $query, string $kodePJ = 'BPJ'): Builder
     {
         $sqlSelect = <<<'SQL'
             resep_pulang.no_rawat,
+            ? as kode_transaksi,
             'A' as jenis_barang_jasa,
             '300000' as kode_barang_jasa,
             databarang.nama_brng as nama_barang_jasa,
@@ -42,9 +43,9 @@ class ObatPulang extends Model
             SQL;
 
         return $query
-            ->selectRaw($sqlSelect)
+            ->selectRaw($sqlSelect, [($kodePJ === 'BPJ' ? '030' : '040')])
             ->join('databarang', 'resep_pulang.kode_brng', '=', 'databarang.kode_brng')
-            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('resep_pulang.no_rawat', 'regist_faktur.no_rawat'))
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'resep_pulang.no_rawat'))
             ->groupBy(['resep_pulang.no_rawat', 'resep_pulang.kode_brng', 'databarang.nama_brng', 'resep_pulang.harga']);
     }
 }
