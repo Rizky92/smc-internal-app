@@ -9,6 +9,10 @@
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
+                <x-filter.label class="ml-auto">Tanggal Tarikan:</x-filter.label>
+                <x-filter.select2 livewire name="tanggalTarikan" class="ml-3" :options="$this->dataTanggalTarikan" placeholder="-" placeholder-value="-" width="20rem" />
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
             </x-row-col-flex>

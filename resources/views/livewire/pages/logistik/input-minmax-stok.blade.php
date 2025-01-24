@@ -3,7 +3,7 @@
 
     @once
         @push('js')
-            <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
+            <script src="{{ asset('js/select2.full.min.js') }}"></script>
             <script>
                 const inputKodeBarang = $('input#kode-barang')
                 const inputNamaBarang = $('input#nama-barang')
@@ -98,9 +98,9 @@
                         </div>
                     </div>
                     <div class="col-12 col-md-6 col-lg-6">
-                        <div class="form-group" wire:ignore>
+                        <div class="form-group">
                             <label class="text-sm" for="supplier">Supplier</label>
-                            <x-filter.select2 name="supplier" show-key :options="$this->supplier" placeholder="-" placeholder-value="-" style="width: 100%" />
+                            <x-filter.select2 livewire name="supplier" show-key :options="$this->supplier" placeholder="-" placeholder-value="-" width="100%" />
                         </div>
                     </div>
                 </x-row>

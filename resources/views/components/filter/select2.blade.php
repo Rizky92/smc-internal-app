@@ -8,7 +8,8 @@
     'placeholderValue' => null,
     'resetOn' => 'button#reset-filter',
     'selected' => null,
-    'showKey' => false
+    'showKey' => false,
+    'width' => '20rem',
 ])
 
 @php
@@ -64,13 +65,15 @@
                     })
                 })
 
-                dropdownSelect2.on('select2:select', e => {
-                    @this.set('{{ $model }}', dropdownSelect2.val(), true)
-                })
+                @if ($model)
+                    dropdownSelect2.on('select2:select', e => {
+                        @this.set('{{ $model }}', dropdownSelect2.val(), true)
+                    })
 
-                dropdownSelect2.on('select2:unselect', e => {
-                    @this.set('{{ $model }}', dropdownSelect2.val(), true)
-                })
+                    dropdownSelect2.on('select2:unselect', e => {
+                        @this.set('{{ $model }}', dropdownSelect2.val(), true)
+                    })
+                @endif
             @endif
 
             @notnull($resetOn)
@@ -86,7 +89,7 @@
 
 <div wire:ignore {{ $attributes
     ->only('class')
-    ->merge(['style' => 'width: 20rem; max-width: max-content'])
+    ->merge(['style' => 'min-width: 20rem; max-width: '.$width])
 }}>
     <select id="{{ $id }}" name="{{ $name }}" class="form-control form-control-sm simple-select2-sm input-sm" autocomplete="off">
         @if ($placeholder)
