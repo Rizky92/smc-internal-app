@@ -3,6 +3,7 @@
 namespace App\Livewire\Pages\Aplikasi\Modal;
 
 use App\Livewire\Concerns\DeferredModal;
+use App\Livewire\Concerns\FlashComponent;
 use App\Models\Aplikasi\Pintu;
 use App\Models\Kepegawaian\Dokter;
 use App\Models\Perawatan\Poliklinik;
@@ -14,6 +15,7 @@ use Livewire\Component;
 class InputPintu extends Component
 {
     use DeferredModal;
+    use FlashComponent;
 
     /** @var int */
     public $pintuId;
@@ -107,9 +109,9 @@ class InputPintu extends Component
 
     public function create(): void
     {
-        if (! user()->hasRole(config('permission.superadmin_name'))) {
+        if (user()->cannot('antrean.manajemen-pintu.create')) {
+            $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
-            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
         }
@@ -149,9 +151,9 @@ class InputPintu extends Component
 
     public function update(): void
     {
-        if (! user()->hasRole(config('permission.superadmin_name'))) {
+        if (user()->cannot('antrean.manajemen-pintu.update')) {
+            $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
-            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
         }
@@ -194,6 +196,13 @@ class InputPintu extends Component
     public function delete(): void
     {
         $pintu = Pintu::find($this->pintuId);
+
+        if (user()->cannot('antrean.manajemen-pintu.delete')) {
+            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatchBrowserEvent('data-denied');
+
+            return;
+        }
 
         if (! $pintu) {
             $this->dispatchBrowserEvent('data-not-found');
