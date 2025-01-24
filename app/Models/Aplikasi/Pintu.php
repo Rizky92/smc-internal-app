@@ -56,6 +56,7 @@ class Pintu extends Model
         $dokter = \DB::raw("{$db}.dokter dokter");
         $poliklinik = \DB::raw("{$db}.poliklinik poliklinik");
         $pasien = \DB::raw("{$db}.pasien pasien");
+        $jadwal = \DB::raw("{$db}.jadwal jadwal");
 
         return $query
             ->selectRaw($sqlSelect)
@@ -71,10 +72,16 @@ class Pintu extends Model
                      ->on('dokter_pintu.kd_dokter', '=', 'dokter.kd_dokter');
             })
             ->join($pasien, 'registrasi.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->join($jadwal, function ($join) {
+                $join->on('dokter_pintu.kd_dokter', '=', 'jadwal.kd_dokter')
+                     ->on('pintu_poli.kd_poli', '=', 'jadwal.kd_poli');
+            })
             ->where('registrasi.tgl_registrasi', now()->format('Y-m-d'))
             ->where('registrasi.stts', 'Belum')
             ->where('registrasi.status_lanjut', '!=', 'ranap')
-            ->where('manajemen_pintu.kd_pintu', $kd_pintu);
+            ->where('manajemen_pintu.kd_pintu', $kd_pintu)
+            ->orderBy('jadwal.jam_mulai', 'asc')
+            ->groupBy('registrasi.no_rawat');
     }
 
     public function scopeDokterPerPintu(Builder $query, string $kd_pintu=""): Builder
@@ -101,6 +108,7 @@ class Pintu extends Model
             })
             ->join($dokter, 'dokter_pintu.kd_dokter', '=', 'dokter.kd_dokter')
             ->where('jadwal.hari_kerja', strtoupper(Carbon::now()->translatedFormat('l')))
-            ->where('manajemen_pintu.kd_pintu', $kd_pintu);
+            ->where('manajemen_pintu.kd_pintu', $kd_pintu)
+            ->orderBy('jadwal.jam_mulai', 'asc');
     }
 }
