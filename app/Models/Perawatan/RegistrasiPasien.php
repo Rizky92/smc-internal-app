@@ -7,6 +7,7 @@ use App\Models\Farmasi\PemberianObat;
 use App\Models\Farmasi\PenjualanObat;
 use App\Models\Farmasi\ResepObat;
 use App\Models\Kepegawaian\Dokter;
+use App\Models\Keuangan\Billing;
 use App\Models\Keuangan\NotaRalan;
 use App\Models\Keuangan\NotaRanap;
 use App\Models\Laboratorium\PeriksaLab;
@@ -1024,11 +1025,11 @@ SQL;
             '000000' as kode_barang_jasa,
             'Embalase + Tuslah Obat' as nama_barang_jasa,
             'UM.033' as nama_satuan_ukur,
-            (select sum(detail_pemberian_obat.embalase + detail_pemberian_obat.tuslah) from detail_pemberian_obat where detail_pemberian_obat.no_rawat = reg_periksa.no_rawat) as harga_satuan,
+            ifnull(sum(detail_pemberian_obat.embalase + detail_pemberian_obat.tuslah), 0) as harga_satuan,
             1 as jumlah_barang_jasa,
             0 as diskon_persen,
             0 as diskon_nominal,
-            (select sum(detail_pemberian_obat.embalase + detail_pemberian_obat.tuslah) from detail_pemberian_obat where detail_pemberian_obat.no_rawat = reg_periksa.no_rawat) as dpp,
+            ifnull(sum(detail_pemberian_obat.embalase + detail_pemberian_obat.tuslah), 0) as dpp,
             12 as ppn_persen,
             0 as ppn_nominal,
             '' as kd_jenis_prw,
@@ -1039,6 +1040,7 @@ SQL;
 
         return $query
             ->selectRaw($sqlSelect)
+            ->join('detail_pemberian_obat', 'reg_periksa.no_rawat', '=', 'detail_pemberian_obat.no_rawat')
             ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'reg_periksa.no_rawat'));
     }
 
@@ -1056,19 +1058,53 @@ SQL;
 
         /** @var \Illuminate\Database\Query\Builder */
         $notaInap = NotaRanap::query()
-            ->select(['nota_inap.no_rawat', DB::raw("'Ranap' as status_lanjut"), 'nota_inap.tanggal', 'nota_inap.jam'])
-            ->whereBetween('nota_inap.tanggal', [$tglAwal, $tglAkhir]);
+            ->select(['nota_inap.no_rawat', DB::raw("'Ranap' as status_lanjut"), 'nota_inap.tanggal', 'nota_inap.jam', DB::raw('ifnull(sum(detail_nota_inap.besar_bayar), 0) + ifnull(sum(piutang_pasien.totalpiutang), 0) + nota_inap.Uang_Muka as totalbiaya')])
+            ->leftJoin('detail_nota_inap', 'nota_inap.no_rawat', '=', 'detail_nota_inap.no_rawat')
+            ->leftJoin('piutang_pasien', 'nota_inap.no_rawat', '=', 'piutang_pasien.no_rawat')
+            ->whereBetween('nota_inap.tanggal', [$tglAwal, $tglAkhir])
+            ->groupBy(['nota_inap.no_rawat', 'nota_inap.tanggal', 'nota_inap.jam']);
 
         $notaBayar = NotaRalan::query()
-            ->select(['nota_jalan.no_rawat', DB::raw("'Ralan' as status_lanjut"), 'nota_jalan.tanggal', 'nota_jalan.jam'])
+            ->select(['nota_jalan.no_rawat', DB::raw("'Ralan' as status_lanjut"), 'nota_jalan.tanggal', 'nota_jalan.jam', DB::raw('ifnull(sum(detail_nota_jalan.besar_bayar), 0) + ifnull(sum(piutang_pasien.totalpiutang), 0) as totalbiaya')])
+            ->leftJoin('detail_nota_jalan', 'nota_jalan.no_rawat', '=', 'detail_nota_jalan.no_rawat')
+            ->leftJoin('piutang_pasien', 'nota_jalan.no_rawat', '=', 'piutang_pasien.no_rawat')
             ->whereBetween('nota_jalan.tanggal', [$tglAwal, $tglAkhir])
+            ->groupBy(['nota_jalan.no_rawat', 'nota_jalan.tanggal', 'nota_jalan.jam'])
             ->unionAll($notaInap);
 
+        $this->addSearchConditions([
+            'pasien.no_ktp',
+            'pasien.nm_pasien',
+            'pasien.alamat',
+            'pasien.email',
+            'pasien.no_tlp',
+            'penjab.png_jawab',
+            'penjab.alamat_asuransi',
+            'penjab.no_telp',
+            'penjab.no_npwp',
+            'perusahaan_pasien.nama_perusahaan',
+            'perusahaan_pasien.alamat',
+            'perusahaan_pasien.no_telp',
+            'perusahaan_pasien.no_npwp',
+        ]);
+
+        $sqlSelect = <<<'SQL'
+            reg_periksa.no_rawat,
+            reg_periksa.kd_pj,
+            nota_bayar.tanggal as tgl_bayar,
+            nota_bayar.jam as jam_bayar,
+            nota_bayar.totalbiaya,
+            ifnull((select sum(billing.totalbiaya) from billing where billing.no_rawat = reg_periksa.no_rawat and billing.status = 'Potongan'), 0) as diskon
+            SQL;
+
         return $query
-            ->select(['reg_periksa.no_rawat', 'reg_periksa.kd_pj', 'nota_bayar.tanggal as tgl_bayar', 'nota_bayar.jam as jam_bayar'])
+            ->selectRaw($sqlSelect)
             ->joinSub($notaBayar, 'nota_bayar', fn (JoinClause $join) => $join
                 ->on('reg_periksa.no_rawat', '=', 'nota_bayar.no_rawat')
                 ->on('reg_periksa.status_lanjut', '=', 'nota_bayar.status_lanjut'))
+            ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+            ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->leftJoin('perusahaan_pasien', 'pasien.perusahaan_pasien', '=', 'perusahaan_pasien.kode_perusahaan')
             ->whereRaw('reg_periksa.status_bayar = \'Sudah Bayar\'')
             ->where('reg_periksa.kd_pj', $kodePJ)
             ->whereBetween('reg_periksa.tgl_registrasi', [$tahun.'-01', $tglAkhir]);
@@ -1135,14 +1171,14 @@ SQL;
             penjab.png_jawab as nama_asuransi,
             penjab.alamat_asuransi,
             penjab.no_telp as telp_asuransi,
-            '' as email_asuransi,
-            '' as npwp_asuransi,
+            penjab.email as email_asuransi,
+            penjab.no_npwp as npwp_asuransi,
             pasien.perusahaan_pasien as kode_perusahaan,
             perusahaan_pasien.nama_perusahaan,
             perusahaan_pasien.alamat as alamat_perusahaan,
             perusahaan_pasien.no_telp as telp_perusahaan,
-            '' as email_perusahaan,
-            '' as npwp_perusahaan
+            perusahaan_pasien.email as email_perusahaan,
+            perusahaan_pasien.no_npwp as npwp_perusahaan
             SQL;
 
         $this->addSearchConditions([
@@ -1154,29 +1190,11 @@ SQL;
             'penjab.png_jawab',
             'penjab.alamat_asuransi',
             'penjab.no_telp',
+            'penjab.no_npwp',
             'perusahaan_pasien.nama_perusahaan',
             'perusahaan_pasien.alamat',
             'perusahaan_pasien.no_telp',
-        ]);
-
-        $this->addRawColumns([
-            'tgl_bayar'         => 'nota_bayar.tanggal',
-            'jam_bayar'         => 'nota_bayar.jam',
-            'nik_pasien'        => 'pasien.no_ktp',
-            'nama_pasien'       => 'pasien.nm_pasien',
-            'alamat_pasien'     => "concat_ws(', ', pasien.alamat, kelurahan.nm_kel, kecamatan.nm_kec, kabupaten.nm_kab, propinsi.nm_prop)",
-            'email_pasien'      => 'pasien.email',
-            'no_telp_pasien'    => 'pasien.no_tlp',
-            'kode_asuransi'     => 'penjab.kd_pj',
-            'nama_asuransi'     => 'penjab.png_jawab',
-            'telp_asuransi'     => 'penjab.no_telp',
-            'email_asuransi'    => 'penjab.email',
-            'npwp_asuransi'     => 'penjab.no_npwp',
-            'kode_perusahaan'   => 'pasien.perusahaan_pasien',
-            'alamat_perusahaan' => 'perusahaan_pasien.alamat',
-            'telp_perusahaan'   => 'perusahaan_pasien.no_telp',
-            'email_perusahaan'  => 'perusahaan_pasien.email',
-            'npwp_perusahaan'   => 'perusahaan_pasien.no_npwp',
+            'perusahaan_pasien.no_npwp',
         ]);
 
         $sqlSelectNotaInap = <<<'SQL'

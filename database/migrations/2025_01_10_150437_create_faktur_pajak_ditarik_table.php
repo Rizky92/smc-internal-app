@@ -42,6 +42,7 @@ return new class extends Migration
             $table->string('email_perusahaan', 50)->nullable()->comment('perusahaan_pasien.email');
             $table->string('npwp_perusahaan', 30)->nullable()->comment('perusahaan_pasien.no_npwp');
             $table->dateTime('tgl_tarikan')->index();
+            $table->string('menu', 10)->index();
         });
     }
 };

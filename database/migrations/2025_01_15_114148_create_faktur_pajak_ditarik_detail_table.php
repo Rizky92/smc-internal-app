@@ -15,6 +15,7 @@ return new class extends Migration
             $table->date('tgl_bayar')->index();
             $table->time('jam_bayar')->index();
             $table->dateTime('tgl_tarikan')->index();
+            $table->string('menu', 10)->index();
             $table->enum('jenis_barang_jasa', ['A', 'B']);
             $table->string('kode_barang_jasa', 50);
             $table->string('nama_barang_jasa', 150)->comment('nm_perawatan');

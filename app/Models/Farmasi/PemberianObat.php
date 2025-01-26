@@ -3,7 +3,6 @@
 namespace App\Models\Farmasi;
 
 use App\Database\Eloquent\Model;
-use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;

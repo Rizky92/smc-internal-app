@@ -26,6 +26,9 @@ trait ExcelExportable
         ]);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     abstract protected function dataPerSheet(): array;
 
     abstract protected function columnHeaders(): array;
@@ -38,19 +41,21 @@ trait ExcelExportable
     /**
      * @throws \RuntimeException
      */
-    protected function validateSheetNames(): void
+    protected function validateSheetNames(): array
     {
-        $invalidSheet = collect(array_keys($this->dataPerSheet()))
+        $dataSheets = $this->dataPerSheet();
+        
+        $invalidSheet = collect(array_keys($dataSheets))
             ->contains(fn (string $v): bool => str()->containsAll($v, $this->invalidSheetCharacters));
 
         throw_if($invalidSheet, 'RuntimeException', sprintf("Invalid characters found in sheet: '%s'", (string) $invalidSheet));
+
+        return $dataSheets;
     }
 
     public function exportToExcel(): void
     {
         $this->emit('flash.info', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
-
-        $this->validateSheetNames();
 
         $this->emit('beginExcelExport');
     }
@@ -65,7 +70,7 @@ trait ExcelExportable
 
         $filename .= '.xlsx';
 
-        $dataSheets = $this->dataPerSheet();
+        $dataSheets = $this->validateSheetNames();
         $columnHeaders = method_exists($this, 'columnHeaders') ? $this->columnHeaders() : [];    
 
         $firstSheet = array_keys($dataSheets)[0] ?: 'Sheet 1';

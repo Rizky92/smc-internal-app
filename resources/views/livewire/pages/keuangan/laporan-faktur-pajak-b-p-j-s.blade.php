@@ -25,7 +25,7 @@
                 </x-slot>
                 <x-slot name="contents">
                     <x-navtabs.content id="faktur">
-                        <x-table :sortColumns="$sortColumns" style="width: 310rem" sortable zebra hover sticky nowrap>
+                        <x-table :sortColumns="$sortColumns" style="width: 310rem" zebra hover sticky nowrap>
                             <x-slot name="columns">
                                 <x-table.th name="no_rawat" title="No. Rawat" />
                                 <x-table.th name="status_lanjut" title="Jenis Rawat" />
@@ -102,8 +102,11 @@
                             <x-slot name="body">
                                 @forelse ($this->dataDetailFakturPajak as $item)
                                     @php
-                                        $dppNilaiLain = round(intval($item->dpp) * (11/12));
-                                        $ppn = intval($item->ppn_persen === '0' ? '12' : $item->ppn_persen);
+                                        $diskonPersen = round($item->diskon / ($item->totalbiaya + $item->diskon), 2);
+                                        $diskonNominal = round($diskonPersen * $item->dpp, 2);
+                                        $dppNilaiLain = round(($item->dpp - $diskonNominal) * (11/12), 2);
+                                        $ppnPersen = intval($item->ppn_persen === '0' ? '12' : $item->ppn_persen);
+                                        $ppnNominal = round($dppNilaiLain * ($ppnPersen / 100), 2);
                                     @endphp
                                     <x-table.tr>
                                         <x-table.td>{{ $item->no_rawat }}</x-table.td>
@@ -116,12 +119,12 @@
                                         <x-table.td>{{ $item->nama_satuan_ukur }}</x-table.td>
                                         <x-table.td-money :value="$item->harga_satuan" />
                                         <x-table.td class="text-right">{{ $item->jumlah_barang_jasa }}</x-table.td>
-                                        <x-table.td class="text-right">{{ $item->diskon_persen }}</x-table.td>
-                                        <x-table.td-money :value="$item->diskon_nominal" />
+                                        <x-table.td class="text-right">{{ $diskonPersen }}</x-table.td>
+                                        <x-table.td-money :value="$diskonNominal" />
                                         <x-table.td-money :value="$item->dpp" />
                                         <x-table.td-money :value="$dppNilaiLain" />
-                                        <x-table.td class="text-right">{{ $ppn }}</x-table.td>
-                                        <x-table.td-money :value="round($dppNilaiLain * ($ppn / 100))" />
+                                        <x-table.td class="text-right">{{ $ppnPersen }}</x-table.td>
+                                        <x-table.td-money :value="$ppnNominal" />
                                     </x-table.tr>
                                 @empty
                                     <x-table.tr-empty colspan="21" padding />
