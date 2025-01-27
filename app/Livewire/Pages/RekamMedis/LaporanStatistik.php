@@ -48,12 +48,10 @@ class LaporanStatistik extends Component
      */
     public function getDataLaporanStatistikProperty()
     {
-        return $this->isDeferred
-            ? []
-            : RegistrasiPasien::query()
-                ->laporanStatistik($this->tglAwal, $this->tglAkhir)
-                ->search($this->cari)
-                ->paginate($this->perpage);
+        return $this->isDeferred ? [] : RegistrasiPasien::query()
+            ->laporanStatistik($this->tglAwal, $this->tglAkhir)
+            ->search($this->cari)
+            ->paginate($this->perpage);
     }
 
     public function render(): View
