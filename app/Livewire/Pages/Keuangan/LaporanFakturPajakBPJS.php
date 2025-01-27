@@ -81,7 +81,7 @@ class LaporanFakturPajakBPJS extends Component
 
         $smc = DB::connection('mysql_smc')->getDatabaseName();
 
-        return $this->isDeferred ? [] : RegistrasiPasien::query()
+        return RegistrasiPasien::query()
             ->laporanFakturPajakBPJS($this->tglAwal, $this->tglAkhir)
             ->whereNotExists(fn ($q) => $q->from($smc.'.faktur_pajak_ditarik')
                 ->whereColumn($smc.'.faktur_pajak_ditarik.no_rawat', 'reg_periksa.no_rawat')
@@ -100,14 +100,19 @@ class LaporanFakturPajakBPJS extends Component
         if ($this->isDeferred) return [];
 
         if ($this->tanggalTarikan !== '-') {
-            return FakturPajakDitarik::query()
+            return FakturPajakDitarikDetail::query()
                 ->where('menu', 'fp-bpjs')
                 ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
                 ->paginate($this->perpage, ['*'], 'page_detailfaktur');
         }
 
-        $kodeTransaksi = RegistrasiPasien::query()
+        $smc = DB::connection('mysql_smc')->getDatabaseName();
+        
+        $registFaktur = RegistrasiPasien::query()
             ->filterFakturPajak($this->tglAwal, $this->tglAkhir, 'BPJ')
+            ->whereNotExists(fn ($q) => $q->from($smc.'.faktur_pajak_ditarik_detail')
+                ->whereColumn($smc.'.faktur_pajak_ditarik_detail.no_rawat', 'reg_periksa.no_rawat')
+                ->whereColumn($smc.'.faktur_pajak_ditarik_detail.tgl_bayar', 'nota_bayar.tanggal'))
             ->search($this->cari);
 
         $subQuery = RegistrasiPasien::query()->itemFakturPajakBiayaRegistrasi()
@@ -130,7 +135,7 @@ class LaporanFakturPajakBPJS extends Component
 
         return DB::connection('mysql_sik')
             ->query()
-            ->withExpression('regist_faktur', $kodeTransaksi)
+            ->withExpression('regist_faktur', $registFaktur)
             ->fromSub($subQuery, 'item_faktur_pajak')
             ->join('regist_faktur', 'item_faktur_pajak.no_rawat', '=', 'regist_faktur.no_rawat')
             ->orderBy('item_faktur_pajak.no_rawat')
@@ -169,9 +174,15 @@ class LaporanFakturPajakBPJS extends Component
         
         if ($tanggalTarikanSementara === '-') {
             $tanggalTarikanSementara = now()->toDateTimeString();
+
+            $smc = DB::connection('mysql_smc')->getDatabaseName();
             
             RegistrasiPasien::query()
                 ->laporanFakturPajakBPJS($this->tglAwal, $this->tglAkhir)
+                ->whereNotExists(fn ($q) => $q->from($smc.'.faktur_pajak_ditarik')
+                    ->whereColumn($smc.'.faktur_pajak_ditarik.no_rawat', 'reg_periksa.no_rawat')
+                    ->whereColumn($smc.'.faktur_pajak_ditarik.tgl_bayar', 'nota_bayar.tanggal'))
+                ->search($this->cari)
                 ->orderBy('reg_periksa.no_rawat')
                 ->orderByDesc('kode_transaksi_pajak.kode_transaksi')
                 ->cursor()
@@ -182,8 +193,11 @@ class LaporanFakturPajakBPJS extends Component
                     FakturPajakDitarik::insert($model->toArray());
                 });
     
-            $kodeTransaksi = RegistrasiPasien::query()
+            $registFaktur = RegistrasiPasien::query()
                 ->filterFakturPajak($this->tglAwal, $this->tglAkhir, 'BPJ')
+                ->whereNotExists(fn ($q) => $q->from($smc.'.faktur_pajak_ditarik_detail')
+                    ->whereColumn($smc.'.faktur_pajak_ditarik_detail.no_rawat', 'reg_periksa.no_rawat')
+                    ->whereColumn($smc.'.faktur_pajak_ditarik_detail.tgl_bayar', 'nota_bayar.tanggal'))
                 ->search($this->cari);
     
             $satuanUkuranPajak = SatuanUkuranPajak::pluck('kode_satuan_pajak', 'kode_sat');
@@ -208,7 +222,7 @@ class LaporanFakturPajakBPJS extends Component
 
             DB::connection('mysql_sik')
                 ->query()
-                ->withExpression('regist_faktur', $kodeTransaksi)
+                ->withExpression('regist_faktur', $registFaktur)
                 ->fromSub($subQuery, 'item_faktur_pajak')
                 ->join('regist_faktur', 'item_faktur_pajak.no_rawat', '=', 'regist_faktur.no_rawat')
                 ->orderBy('item_faktur_pajak.no_rawat')
@@ -216,7 +230,7 @@ class LaporanFakturPajakBPJS extends Component
                 ->orderBy('item_faktur_pajak.nama_barang_jasa')
                 ->lazy()
                 ->each(function (object $model) use ($satuanUkuranPajak, $tanggalTarikanSementara) {
-                    $diskonPersen = round($model->diskon / ($model->totalbiaya + $model->diskon), 2);
+                    $diskonPersen = round($model->diskon / (($model->totalbiaya + $model->diskon) === 0 ? 1 : ($model->totalbiaya + $model->diskon)), 2);
                     $diskonNominal = round($diskonPersen * $model->dpp, 2);
                     $dppNilaiLain = round(($model->dpp - $diskonNominal) * (11/12), 2);
                     $ppnPersen = intval($model->ppn_persen === '0' ? '12' : $model->ppn_persen);
@@ -256,7 +270,8 @@ class LaporanFakturPajakBPJS extends Component
         
         return [
             'Faktur' => fn () => FakturPajakDitarik::query()
-                ->whereBetween('tgl_tarikan', [$tanggalTarikanSementara, $tanggalTarikanSementara])
+                ->where('menu', 'fp-bpjs')
+                ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
                 ->cursor()
                 ->map(fn (FakturPajakDitarik $model): array => [
                     'no_rawat'            => $model->no_rawat,
@@ -281,7 +296,8 @@ class LaporanFakturPajakBPJS extends Component
                     'nama_asuransi'       => $model->nama_asuransi,
                 ]),
             'Detail Faktur' => fn () => FakturPajakDitarikDetail::query()
-                ->whereBetween('tgl_tarikan', [$tanggalTarikanSementara, $tanggalTarikanSementara])
+                ->where('menu', 'fp-bpjs')
+                ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
                 ->withCasts([
                     'harga_satuan'       => 'float',
                     'jumlah_barang_jasa' => 'float',

@@ -102,7 +102,7 @@
                             <x-slot name="body">
                                 @forelse ($this->dataDetailFakturPajak as $item)
                                     @php
-                                        $diskonPersen = round($item->diskon / ($item->totalbiaya + $item->diskon), 2);
+                                        $diskonPersen = round($item->diskon / (($item->totalbiaya + $item->diskon) === 0 ? 1 : ($item->totalbiaya + $item->diskon)), 2);
                                         $diskonNominal = round($diskonPersen * $item->dpp, 2);
                                         $dppNilaiLain = round(($item->dpp - $diskonNominal) * (11/12), 2);
                                         $ppnPersen = intval($item->ppn_persen === '0' ? '12' : $item->ppn_persen);

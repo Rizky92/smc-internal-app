@@ -1041,7 +1041,9 @@ SQL;
         return $query
             ->selectRaw($sqlSelect)
             ->join('detail_pemberian_obat', 'reg_periksa.no_rawat', '=', 'detail_pemberian_obat.no_rawat')
-            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'reg_periksa.no_rawat'));
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'reg_periksa.no_rawat'))
+            ->groupBy('reg_periksa.no_rawat')
+            ->havingRaw('sum(detail_pemberian_obat.embalase + detail_pemberian_obat.tuslah) > 0');
     }
 
     public function scopeFilterFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = 'BPJ'): Builder
