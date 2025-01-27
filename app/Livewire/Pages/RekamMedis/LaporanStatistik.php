@@ -71,7 +71,7 @@ class LaporanStatistik extends Component
     protected function dataPerSheet(): array
     {
         return [
-            RegistrasiPasien::query()
+            fn () => RegistrasiPasien::query()
                 ->laporanStatistik($this->tglAwal, $this->tglAkhir)
                 ->search($this->cari)
                 ->cursor()

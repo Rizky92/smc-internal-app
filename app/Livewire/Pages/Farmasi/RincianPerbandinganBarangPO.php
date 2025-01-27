@@ -73,7 +73,7 @@ class RincianPerbandinganBarangPO extends Component
 
     protected function dataPerSheet(): array
     {
-        $map = fn(PenerimaanObat $model): array => [
+        $map = fn (PenerimaanObat $model): array => [
             'kode_brng' => $model->kode_brng,
             'nama_brng' => $model->nama_brng,
             'harga_satuan' => $model->harga_satuan,
@@ -86,11 +86,11 @@ class RincianPerbandinganBarangPO extends Component
         ];
 
         return [
-            'obat' => PenerimaanObat::query()
+            'obat' => fn () => PenerimaanObat::query()
                 ->rincianPerbandinganPemesananPO('obat',$this->tglAwal, $this->tglAkhir)
                 ->cursor() 
                 ->map($map),
-            'alkes' => PenerimaanObat::query()
+            'alkes' => fn () => PenerimaanObat::query()
                 ->rincianPerbandinganPemesananPO('alkes',$this->tglAwal, $this->tglAkhir)
                 ->cursor()
                 ->map($map),

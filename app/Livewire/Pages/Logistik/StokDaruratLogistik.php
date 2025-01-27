@@ -60,9 +60,9 @@ class StokDaruratLogistik extends Component
     protected function dataPerSheet(): array
     {
         return [
-            BarangNonMedis::query()
+            fn () => BarangNonMedis::query()
                 ->daruratStok($this->tampilkanSaranOrderNol)
-                ->get(),
+                ->cursor(),
         ];
     }
 
