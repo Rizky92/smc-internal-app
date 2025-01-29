@@ -12,7 +12,7 @@ use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class LaporanFakturPajakAsuransi extends Component
+class LaporanFakturPajakAsuransiPerusahaan extends Component
 {
     use FlashComponent;
     use Filterable;
@@ -42,7 +42,7 @@ class LaporanFakturPajakAsuransi extends Component
 
     public function render(): View
     {
-        return view('livewire.pages.keuangan.laporan-faktur-pajak-asuransi')
+        return view('livewire.pages.keuangan.laporan-faktur-pajak-asuransi-perusahaan')
             ->layout(BaseLayout::class, ['title' => 'LaporanFakturPajakAsuransi']);
     }
 
