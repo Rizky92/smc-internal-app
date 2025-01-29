@@ -157,14 +157,9 @@ Breadcrumbs::for('admin.keuangan.laporan-faktur-pajak-umum', function (Trail $tr
     $trail->push('Faktur Pajak UMUM', route('admin.keuangan.laporan-faktur-pajak-umum'));
 });
 
-Breadcrumbs::for('admin.keuangan.laporan-faktur-pajak-perusahaan', function (Trail $trail): void {
-    $trail->parent('admin.keuangan');
-    $trail->push('Faktur Pajak PERUSAHAAN', route('admin.keuangan.laporan-faktur-pajak-perusahaan'));
-});
-
 Breadcrumbs::for('admin.keuangan.laporan-faktur-pajak-asuransi', function (Trail $trail): void {
     $trail->parent('admin.keuangan');
-    $trail->push('Faktur Pajak ASURANSI', route('admin.keuangan.laporan-faktur-pajak-asuransi'));
+    $trail->push('Faktur Pajak AS/PER', route('admin.keuangan.laporan-faktur-pajak-asuransi'));
 });
 
 Breadcrumbs::for('admin.farmasi', function (Trail $trail): void {

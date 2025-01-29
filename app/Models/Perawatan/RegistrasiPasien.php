@@ -1096,7 +1096,7 @@ SQL;
             nota_bayar.tanggal as tgl_bayar,
             nota_bayar.jam as jam_bayar,
             nota_bayar.totalbiaya,
-            ifnull((select sum(billing.totalbiaya) from billing where billing.no_rawat = reg_periksa.no_rawat and billing.status = 'Potongan'), 0) as diskon
+            ifnull((select sum(billing.totalbiaya) * -1 from billing where billing.no_rawat = reg_periksa.no_rawat and billing.status = 'Potongan'), 0) as diskon
             SQL;
 
         return $query

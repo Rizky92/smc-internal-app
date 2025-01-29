@@ -9,6 +9,13 @@
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
+                <x-filter.label class="ml-auto">Tanggal Tarikan:</x-filter.label>
+                <x-filter.select2 livewire name="tanggalTarikan" event="data-tarikan:updated" class="ml-3" :options="$this->dataTanggalTarikan" placeholder="-" placeholder-value="-" width="20rem" />
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
+                <p class="m-0 p-0 text-sm">
+                    * Untuk detail faktur pajak khusus kolom diskon, perhitungan akan dilakukan setelah dilakukan penarikan data!
+                </p>
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
             </x-row-col-flex>
@@ -65,6 +72,8 @@
                                         <x-table.td>{{ $item->alamat_pasien }}</x-table.td>
                                         <x-table.td>{{ $item->email_pasien }}</x-table.td>
                                         <x-table.td>{{ $item->no_telp_pasien }}</x-table.td>
+                                        <x-table.td>{{ $item->kode_asuransi }}</x-table.td>
+                                        <x-table.td>{{ $item->nama_asuransi }}</x-table.td>
                                     </x-table.tr>
                                 @empty
                                     <x-table.tr-empty colspan="20" padding />
@@ -96,8 +105,13 @@
                             <x-slot name="body">
                                 @forelse ($this->dataDetailFakturPajak as $item)
                                     @php
-                                        $dppNilaiLain = round(intval($item->dpp) * (11/12));
-                                        $ppn = intval($item->ppn_persen === '0' ? '12' : $item->ppn_persen);
+                                        $dppNilaiLain = $item->dpp * (11 / 12);
+
+                                        if ($this->tanggalTarikan !== '-') {
+                                            $dppNilaiLain = $item->dpp_nilai_lain;
+                                        }
+
+                                        $ppnNominal = $dppNilaiLain * ($item->ppn_persen / 100);
                                     @endphp
                                     <x-table.tr>
                                         <x-table.td>{{ $item->no_rawat }}</x-table.td>
@@ -114,8 +128,8 @@
                                         <x-table.td-money :value="$item->diskon_nominal" />
                                         <x-table.td-money :value="$item->dpp" />
                                         <x-table.td-money :value="$dppNilaiLain" />
-                                        <x-table.td class="text-right">{{ $ppn }}</x-table.td>
-                                        <x-table.td-money :value="round($dppNilaiLain * ($ppn / 100))" />
+                                        <x-table.td class="text-right">{{ $item->ppn_persen }}</x-table.td>
+                                        <x-table.td-money :value="$ppnNominal" />
                                     </x-table.tr>
                                 @empty
                                     <x-table.tr-empty colspan="21" padding />

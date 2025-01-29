@@ -99,7 +99,7 @@ if (! function_exists('money')) {
      */
     function money($nominal = 0, int $decimalCount = 0, string $denom = ''): string
     {
-        switch ($nominal <=> 0) {
+        switch ((int) $nominal <=> 0) {
             case -1:
                 return '-'.$denom.number_format(abs($nominal), $decimalCount, ',', '.');
             case 0:

@@ -3,6 +3,7 @@
 
     'name',
     'model' => null,
+    'event' => null,
     'options' => [],
     'placeholder' => null,
     'placeholderValue' => null,
@@ -73,6 +74,14 @@
                     dropdownSelect2.on('select2:unselect', e => {
                         @this.set('{{ $model }}', dropdownSelect2.val(), true)
                     })
+
+                    @if ($event)
+                        $(document).on('{{ $event }}', e => {
+                            dropdownSelect2.val(e.detail.tanggalTarikan)
+
+                            dropdownSelect2.trigger('change')
+                        })
+                    @endif
                 @endif
             @endif
 

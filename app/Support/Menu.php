@@ -264,14 +264,7 @@ class Menu
                         'hasAnyPermissions' => $user->can('keuangan.laporan-faktur-pajak.read'),
                     ],
                     [
-                        'name'              => 'Faktur Pajak ASURANSI',
-                        'url'               => route('admin.keuangan.laporan-faktur-pajak-asuransi'),
-                        'icon'              => 'fas fa-book',
-                        'type'              => 'link',
-                        'hasAnyPermissions' => $user->can('keuangan.laporan-faktur-pajak.read'),
-                    ],
-                    [
-                        'name'              => 'Faktur Pajak PERUSAHAAN',
+                        'name'              => 'Faktur Pajak AS/PER',
                         'url'               => route('admin.keuangan.laporan-faktur-pajak-asuransi'),
                         'icon'              => 'fas fa-book',
                         'type'              => 'link',

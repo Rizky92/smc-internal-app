@@ -220,6 +220,16 @@ class LaporanFakturPajakBPJS extends Component
                 ->unionAll(ObatPulang::query()->itemFakturPajak('BPJ'))
                 ->unionAll(ReturObatDetail::query()->itemFakturPajak('BPJ'));
 
+            $totalJasa = DB::connection('mysql_sik')
+                ->query()
+                ->withExpression('regist_faktur', $registFaktur)
+                ->fromSub($subQuery, 'item_faktur_pajak')
+                ->join('regist_faktur', 'item_faktur_pajak.no_rawat', '=', 'regist_faktur.no_rawat')
+                ->selectRaw('item_faktur_pajak.no_rawat, sum(item_faktur_pajak.dpp) as subtotal')
+                ->whereNotIn('kategori', ['Pemberian Obat', 'Retur Obat', 'Obat Pulang', 'Walk In', 'Piutang Obat'])
+                ->groupBy('item_faktur_pajak.no_rawat')
+                ->pluck('subtotal', 'no_rawat');
+
             DB::connection('mysql_sik')
                 ->query()
                 ->withExpression('regist_faktur', $registFaktur)
@@ -228,14 +238,23 @@ class LaporanFakturPajakBPJS extends Component
                 ->orderBy('item_faktur_pajak.no_rawat')
                 ->orderBy('item_faktur_pajak.urutan')
                 ->orderBy('item_faktur_pajak.nama_barang_jasa')
-                ->lazy()
-                ->each(function (object $model) use ($satuanUkuranPajak, $tanggalTarikanSementara) {
-                    $diskonPersen = round($model->diskon / (($model->totalbiaya + $model->diskon) === 0 ? 1 : ($model->totalbiaya + $model->diskon)), 2);
-                    $diskonNominal = round($diskonPersen * $model->dpp, 2);
-                    $dppNilaiLain = round(($model->dpp - $diskonNominal) * (11/12), 2);
-                    $ppnPersen = intval($model->ppn_persen === '0' ? '12' : $model->ppn_persen);
-                    $ppnNominal = round($dppNilaiLain * ($ppnPersen / 100), 2);
+                ->cursor()
+                ->each(function (object $model) use ($satuanUkuranPajak, $tanggalTarikanSementara, $totalJasa) {
+                    $diskonPersen = $model->diskon_persen;
+                    $diskonNominal = $model->diskon_nominal;
+                    $dpp = $model->dpp;
                     
+                    if (!in_array($model->kategori, ['Pemberian Obat', 'Retur Obat', 'Obat Pulang', 'Walk In', 'Piutang Obat'])) {
+                        $subtotalJasa = (float) $totalJasa->get($model->no_rawat);
+                        $diskonPersen = ((float) $model->diskon) / $subtotalJasa;
+                        $diskonNominal = $diskonPersen * ((float) $model->dpp);
+                        $dpp = ((float) $model->dpp) - $diskonNominal;
+                    }
+                    
+                    $dppNilaiLain = $dpp * (11 / 12);
+                    $ppnPersen = (int) $model->ppn_persen;
+                    $ppnNominal = $dppNilaiLain * ($ppnPersen / 100);
+
                     FakturPajakDitarikDetail::insert([
                         'no_rawat'           => $model->no_rawat,
                         'kode_transaksi'     => $model->kode_transaksi,
@@ -247,11 +266,11 @@ class LaporanFakturPajakBPJS extends Component
                         'kode_barang_jasa'   => $model->kode_barang_jasa,
                         'nama_barang_jasa'   => $model->nama_barang_jasa,
                         'nama_satuan_ukur'   => $satuanUkuranPajak->get($model->nama_satuan_ukur) ?? '',
-                        'harga_satuan'       => $model->harga_satuan,
-                        'jumlah_barang_jasa' => $model->jumlah_barang_jasa,
+                        'harga_satuan'       => (float) $model->harga_satuan,
+                        'jumlah_barang_jasa' => (float) $model->jumlah_barang_jasa,
                         'diskon_persen'      => $diskonPersen,
                         'diskon_nominal'     => $diskonNominal,
-                        'dpp'                => round(floatval($model->dpp), 2),
+                        'dpp'                => $dpp,
                         'dpp_nilai_lain'     => $dppNilaiLain,
                         'ppn_persen'         => $ppnPersen,
                         'ppn_nominal'        => $ppnNominal,
@@ -262,11 +281,12 @@ class LaporanFakturPajakBPJS extends Component
                         'status_lanjut'      => $model->status_lanjut,
                     ]);
                 });
-                
+
+            $this->isDeferred = true;
+            $this->forgetComputed('dataTanggalTarikan');
             $this->tanggalTarikan = $tanggalTarikanSementara;
+            $this->dispatchBrowserEvent('data-tarikan:updated', ['tanggalTarikan' => $tanggalTarikanSementara]);
         }
-        
-        $this->isDeferred = true;
         
         return [
             'Faktur' => fn () => FakturPajakDitarik::query()
@@ -319,13 +339,13 @@ class LaporanFakturPajakBPJS extends Component
                     'kode_barang_jasa'   => $model->kode_barang_jasa,
                     'nama_barang_jasa'   => $model->nama_barang_jasa,
                     'nama_satuan_ukur'   => $model->nama_satuan_ukur,
-                    'harga_satuan'       => $model->harga_satuan,
-                    'jumlah_barang_jasa' => $model->jumlah_barang_jasa,
-                    'diskon_nominal'     => $model->diskon_nominal,
-                    'dpp'                => $model->dpp,
-                    'dpp_nilai_lain'     => $model->dpp_nilai_lain,
-                    'ppn_persen'         => $model->ppn_persen,
-                    'ppn_nominal'        => $model->ppn_nominal,
+                    'harga_satuan'       => round($model->harga_satuan, 2),
+                    'jumlah_barang_jasa' => round($model->jumlah_barang_jasa, 2),
+                    'diskon_nominal'     => round($model->diskon_nominal, 2),
+                    'dpp'                => round($model->dpp, 2),
+                    'dpp_nilai_lain'     => round($model->dpp_nilai_lain, 2),
+                    'ppn_persen'         => round($model->ppn_persen, 2),
+                    'ppn_nominal'        => round($model->ppn_nominal, 2),
                     'ppnbm_persen'       => 0,
                     'ppnbm_nominal'      => 0,
                     'kd_jenis_prw'       => $model->kd_jenis_prw,

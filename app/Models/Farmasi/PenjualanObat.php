@@ -89,8 +89,26 @@ class PenjualanObat extends Model
 
         $tahun = substr($tglAwal, 0, 7);
 
+        $sqlSelect = <<<'SQL'
+            penjualan.nota_jual as no_rawat,
+            'A09' as kd_pj,
+            date(tagihan_sadewa.tgl_bayar) as tgl_bayar,
+            date_format(tagihan_sadewa.tgl_bayar, '%H:%i:%s') as jam_bayar,
+            tagihan_sadewa.jumlah_tagihan as totalbiaya,
+            0 as diskon
+            SQL;
+
+        $this->addSearchConditions([
+            'pasien.no_ktp',
+            'pasien.nm_pasien',
+            'pasien.alamat',
+            'pasien.email',
+            'pasien.no_tlp',
+        ]);
+
         return $query
-            ->select('penjualan.nota_jual as no_rawat')
+            ->selectRaw($sqlSelect)
+            ->join('pasien', 'penjualan.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join('tagihan_sadewa', 'penjualan.nota_jual', '=', 'tagihan_sadewa.no_nota')
             ->whereBetween('penjualan.tgl_jual', [$tahun.'-01', $tglAkhir])
             ->whereBetween('tagihan_sadewa.tgl_bayar', [$tglAwal.' 00:00:00.000', $tglAkhir.' 23:59:59.999']);

@@ -31,7 +31,13 @@ trait ExcelExportable
      */
     abstract protected function dataPerSheet(): array;
 
-    abstract protected function columnHeaders(): array;
+    /**
+     * @return array<array-key, string[]|string>
+     */
+    protected function columnHeaders(): array
+    {
+        return [];
+    }
 
     protected function pageHeaders(): array
     {
@@ -71,7 +77,7 @@ trait ExcelExportable
         $filename .= '.xlsx';
 
         $dataSheets = $this->validateSheetNames();
-        $columnHeaders = method_exists($this, 'columnHeaders') ? $this->columnHeaders() : [];    
+        $columnHeaders = $this->columnHeaders();
 
         $firstSheet = array_keys($dataSheets)[0] ?: 'Sheet 1';
 

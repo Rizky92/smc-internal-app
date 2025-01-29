@@ -211,10 +211,6 @@ Route::prefix('admin')
                     ->name('laporan-faktur-pajak-asuransi')
                     ->middleware('can:keuangan.laporan-faktur-pajak.read');
 
-                Route::get('laporan-faktur-pajak-perusahaan', Keuangan\LaporanFakturPajakPerusahaan::class)
-                    ->name('laporan-faktur-pajak-perusahaan')
-                    ->middleware('can:keuangan.laporan-faktur-pajak.read');
-                    
                 Route::get('laporan-faktur-pajak-umum', Keuangan\LaporanFakturPajakUmum::class)
                     ->name('laporan-faktur-pajak-umum')
                     ->middleware('can:keuangan.laporan-faktur-pajak.read');
