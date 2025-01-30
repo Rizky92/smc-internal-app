@@ -28,6 +28,7 @@ use App\Models\Perawatan\TindakanRanapDokter;
 use App\Models\Perawatan\TindakanRanapDokterPerawat;
 use App\Models\Perawatan\TindakanRanapPerawat;
 use App\Models\Radiologi\PeriksaRadiologi;
+use App\Settings\NPWPSettings;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -52,6 +53,9 @@ class LaporanFakturPajakUmum extends Component
     /** @var string */
     public $tanggalTarikan;
 
+    /** @var string */
+    public $npwpPenjual;
+
     protected function queryString(): array
     {
         return [
@@ -64,6 +68,7 @@ class LaporanFakturPajakUmum extends Component
     public function mount(): void
     {
         $this->defaultValues();
+        $this->npwpPenjual = app(NPWPSettings::class)->npwp_penjual;
     }
 
     /**
@@ -188,9 +193,6 @@ class LaporanFakturPajakUmum extends Component
         $this->tanggalTarikan = '-';
     }
 
-    /**
-     * @return array<array-key, \Closure(): \Illuminate\Support\LazyCollection>
-     */
     protected function dataPerSheet(): array
     {
         $tanggalTarikanSementara = $this->tanggalTarikan;
@@ -226,6 +228,7 @@ class LaporanFakturPajakUmum extends Component
                         collect((array) $model)
                             ->put('tgl_tarikan', $tanggalTarikanSementara)
                             ->put('menu', 'fp-umum')
+                            ->put('id_tku_penjual', $this->npwpPenjual)
                             ->all()));
 
             $registWalkin = PenjualanObat::query()

@@ -10,9 +10,12 @@
             <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.label class="ml-auto">Tanggal Tarikan:</x-filter.label>
-                <x-filter.select2 livewire name="tanggalTarikan" class="ml-3" :options="$this->dataTanggalTarikan" placeholder="-" placeholder-value="-" width="20rem" />
+                <x-filter.select2 livewire name="tanggalTarikan" event="data-tarikan:updated" class="ml-3" :options="$this->dataTanggalTarikan" placeholder="-" placeholder-value="-" width="20rem" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
+                <p class="m-0 p-0 text-sm">
+                    * Untuk detail faktur pajak khusus kolom diskon, perhitungan akan dilakukan setelah dilakukan penarikan data!
+                </p>
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
             </x-row-col-flex>
@@ -59,7 +62,7 @@
                                         <x-table.td>{{ $item->keterangan_tambahan }}</x-table.td>
                                         <x-table.td>{{ $item->dokumen_pendukung }}</x-table.td>
                                         <x-table.td>{{ $item->cap_fasilitas }}</x-table.td>
-                                        <x-table.td>{{ $item->id_tku_penjual }}</x-table.td>
+                                        <x-table.td>{{ $item->id_tku_penjual ?: $this->npwpPenjual }}</x-table.td>
                                         <x-table.td>{{ $item->jenis_id }}</x-table.td>
                                         <x-table.td>{{ $item->negara }}</x-table.td>
                                         <x-table.td>{{ $item->id_tku }}</x-table.td> 
@@ -102,11 +105,13 @@
                             <x-slot name="body">
                                 @forelse ($this->dataDetailFakturPajak as $item)
                                     @php
-                                        $diskonPersen = round($item->diskon / (($item->totalbiaya + $item->diskon) === 0 ? 1 : ($item->totalbiaya + $item->diskon)), 2);
-                                        $diskonNominal = round($diskonPersen * $item->dpp, 2);
-                                        $dppNilaiLain = round(($item->dpp - $diskonNominal) * (11/12), 2);
-                                        $ppnPersen = intval($item->ppn_persen === '0' ? '12' : $item->ppn_persen);
-                                        $ppnNominal = round($dppNilaiLain * ($ppnPersen / 100), 2);
+                                        $dppNilaiLain = $item->dpp * (11 / 12);
+
+                                        if ($this->tanggalTarikan !== '-') {
+                                            $dppNilaiLain = $item->dpp_nilai_lain;
+                                        }
+
+                                        $ppnNominal = $dppNilaiLain * ($item->ppn_persen / 100);
                                     @endphp
                                     <x-table.tr>
                                         <x-table.td>{{ $item->no_rawat }}</x-table.td>
@@ -119,11 +124,11 @@
                                         <x-table.td>{{ $item->nama_satuan_ukur }}</x-table.td>
                                         <x-table.td-money :value="$item->harga_satuan" />
                                         <x-table.td class="text-right">{{ $item->jumlah_barang_jasa }}</x-table.td>
-                                        <x-table.td class="text-right">{{ $diskonPersen }}</x-table.td>
-                                        <x-table.td-money :value="$diskonNominal" />
+                                        <x-table.td class="text-right">{{ $item->diskon_persen }}</x-table.td>
+                                        <x-table.td-money :value="$item->diskon_nominal" />
                                         <x-table.td-money :value="$item->dpp" />
                                         <x-table.td-money :value="$dppNilaiLain" />
-                                        <x-table.td class="text-right">{{ $ppnPersen }}</x-table.td>
+                                        <x-table.td class="text-right">{{ $item->ppn_persen }}</x-table.td>
                                         <x-table.td-money :value="$ppnNominal" />
                                     </x-table.tr>
                                 @empty

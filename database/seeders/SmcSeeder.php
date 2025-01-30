@@ -16,10 +16,10 @@ class SmcSeeder extends Seeder
      */
     public function run(): void
     {
-        NotaSelesai::refreshModel();
-        JurnalMedis::refreshModel();
-        JurnalNonMedis::refreshModel();
-        PiutangDilunaskan::refreshModel();
+        // NotaSelesai::refreshModel();
+        // JurnalMedis::refreshModel();
+        // JurnalNonMedis::refreshModel();
+        // PiutangDilunaskan::refreshModel();
 
         SatuanUkuranPajak::insert([
             ['kode_sat' => 'KG', 'kode_satuan_pajak' => 'UM.0003', 'nama_satuan_pajak' => 'Kilogram'],

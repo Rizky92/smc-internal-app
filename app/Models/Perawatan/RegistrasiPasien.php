@@ -983,14 +983,6 @@ SQL;
 
     public function scopeItemFakturPajakBiayaRegistrasi(Builder $query): Builder
     {
-        if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
-        }
-
-        if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
-        }
-
         $sqlSelect = <<<'SQL'
             reg_periksa.no_rawat,
             '080' as kode_transaksi,
@@ -1013,7 +1005,8 @@ SQL;
 
         return $query
             ->selectRaw($sqlSelect)
-            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'reg_periksa.no_rawat'));
+            ->whereExists(fn ($q) => $q->from('regist_faktur')
+                ->whereColumn('regist_faktur.no_rawat', 'reg_periksa.no_rawat'));
     }
 
     public function scopeItemFakturPajakTambahanEmbalaseTuslah(Builder $query): Builder
@@ -1041,7 +1034,8 @@ SQL;
         return $query
             ->selectRaw($sqlSelect)
             ->join('detail_pemberian_obat', 'reg_periksa.no_rawat', '=', 'detail_pemberian_obat.no_rawat')
-            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'reg_periksa.no_rawat'))
+            ->whereExists(fn ($q) => $q->from('regist_faktur')
+                ->whereColumn('regist_faktur.no_rawat', 'reg_periksa.no_rawat'))
             ->groupBy('reg_periksa.no_rawat')
             ->havingRaw('sum(detail_pemberian_obat.embalase + detail_pemberian_obat.tuslah) > 0');
     }
@@ -1135,7 +1129,8 @@ SQL;
             ->whereRaw('reg_periksa.status_bayar = \'Sudah Bayar\'')
             ->whereBetween('reg_periksa.tgl_registrasi', [$tahun.'-01', $tglAkhir])
             ->where('reg_periksa.status_lanjut', 'Ralan')
-            ->whereExists(fn ($q) => $q->from('detail_pemberian_obat')->whereColumn('detail_pemberian_obat.no_rawat', 'reg_periksa.no_rawat'))
+            ->whereExists(fn ($q) => $q->from('detail_pemberian_obat')
+                ->whereColumn('detail_pemberian_obat.no_rawat', 'reg_periksa.no_rawat'))
             ->unionAll($kode080);
     }
 
@@ -1246,20 +1241,12 @@ SQL;
             ->where('reg_periksa.kd_pj', 'A09');
     }
 
-    public function scopeLaporanFakturPajakAsuransi(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = '-'): Builder
+    public function scopeLaporanFakturPajakAsuransi(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = '-', bool $perusahaan = false): Builder
     {
         return $query
             ->laporanFakturPajak($tglAwal, $tglAkhir)
             ->whereNotIn('reg_periksa.kd_pj', ['BPJ', 'A09'])
-            ->where('reg_periksa.kd_pj', $kodePJ);
-    }
-
-    public function scopeLaporanFakturPajakPerusahaan(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePerusahaan = '-'): Builder
-    {
-        return $query
-            ->laporanFakturPajak($tglAwal, $tglAkhir)
-            ->whereNotIn('reg_periksa.kd_pj', ['BPJ', 'A09'])
-            ->where('pasien.perusahaan_pasien', $kodePerusahaan)
-            ->whereColumn('reg_periksa.kd_pj', 'pasien.perusahaan_pasien');
+            ->when($kodePJ !== '-', fn ($q) => $q->where('reg_periksa.kd_pj', $kodePJ))
+            ->when($perusahaan, fn ($q) => $q->whereColumn('reg_periksa.kd_pj', 'pasien.perusahaan_pasien'));
     }
 }

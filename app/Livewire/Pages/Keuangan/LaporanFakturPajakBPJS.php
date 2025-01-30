@@ -26,6 +26,7 @@ use App\Models\Perawatan\TindakanRanapDokter;
 use App\Models\Perawatan\TindakanRanapDokterPerawat;
 use App\Models\Perawatan\TindakanRanapPerawat;
 use App\Models\Radiologi\PeriksaRadiologi;
+use App\Settings\NPWPSettings;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -50,6 +51,9 @@ class LaporanFakturPajakBPJS extends Component
     /** @var string */
     public $tanggalTarikan;
 
+    /** @var string */
+    public $npwpPenjual;
+
     protected function queryString(): array
     {
         return [
@@ -62,6 +66,7 @@ class LaporanFakturPajakBPJS extends Component
     public function mount(): void
     {
         $this->defaultValues();
+        $this->npwpPenjual = app(NPWPSettings::class)->npwp_penjual;
     }
 
     /**
@@ -165,9 +170,6 @@ class LaporanFakturPajakBPJS extends Component
         $this->tanggalTarikan = '-';
     }
 
-    /**
-     * @return array<array-key, \Closure(): \Illuminate\Support\LazyCollection>
-     */
     protected function dataPerSheet(): array
     {
         $tanggalTarikanSementara = $this->tanggalTarikan;
@@ -187,6 +189,7 @@ class LaporanFakturPajakBPJS extends Component
                 ->orderByDesc('kode_transaksi_pajak.kode_transaksi')
                 ->cursor()
                 ->each(function (RegistrasiPasien $model) use ($tanggalTarikanSementara) {
+                    $model->setAttribute('id_tku_penjual', $this->npwpPenjual);
                     $model->setAttribute('tgl_tarikan', $tanggalTarikanSementara);
                     $model->setAttribute('menu', 'fp-bpjs');
                     

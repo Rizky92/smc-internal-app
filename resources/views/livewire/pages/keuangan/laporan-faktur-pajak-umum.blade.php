@@ -62,7 +62,7 @@
                                         <x-table.td>{{ $item->keterangan_tambahan }}</x-table.td>
                                         <x-table.td>{{ $item->dokumen_pendukung }}</x-table.td>
                                         <x-table.td>{{ $item->cap_fasilitas }}</x-table.td>
-                                        <x-table.td>{{ $item->id_tku_penjual }}</x-table.td>
+                                        <x-table.td>{{ $item->id_tku_penjual ?: $this->npwpPenjual }}</x-table.td>
                                         <x-table.td>{{ $item->jenis_id }}</x-table.td>
                                         <x-table.td>{{ $item->negara }}</x-table.td>
                                         <x-table.td>{{ $item->id_tku }}</x-table.td> 

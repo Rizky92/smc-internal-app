@@ -62,7 +62,7 @@
                                         <x-table.td>{{ $item->keterangan_tambahan }}</x-table.td>
                                         <x-table.td>{{ $item->dokumen_pendukung }}</x-table.td>
                                         <x-table.td>{{ $item->cap_fasilitas }}</x-table.td>
-                                        <x-table.td>{{ $item->id_tku_penjual }}</x-table.td>
+                                        <x-table.td>{{ $item->id_tku_penjual ?: $this->npwpPenjual }}</x-table.td>
                                         <x-table.td>{{ $item->jenis_id }}</x-table.td>
                                         <x-table.td>{{ $item->negara }}</x-table.td>
                                         <x-table.td>{{ $item->id_tku }}</x-table.td> 
@@ -127,9 +127,9 @@
                                         <x-table.td class="text-right">{{ $item->diskon_persen }}</x-table.td>
                                         <x-table.td-money :value="$item->diskon_nominal" />
                                         <x-table.td-money :value="$item->dpp" />
-                                        <x-table.td-money :value="$dppNilaiLain" />
+                                        <x-table.td-money :value="$item->dpp_nilai_lain ?: $item->dpp * (11 / 12)" />
                                         <x-table.td class="text-right">{{ $item->ppn_persen }}</x-table.td>
-                                        <x-table.td-money :value="$ppnNominal" />
+                                        <x-table.td-money :value="$item->ppn_nominal ?: $ppnNominal" />
                                     </x-table.tr>
                                 @empty
                                     <x-table.tr-empty colspan="21" padding />

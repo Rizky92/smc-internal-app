@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             PermissionSeeder::class,
             KhanzaHakAksesSeeder::class,
-            // SmcSeeder::class,
+            SmcSeeder::class,
         ]);
     }
 }
