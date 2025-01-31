@@ -53,15 +53,15 @@ trait Sortable
     }
 
     /**
-     * @param  array<string, string>  $columns
+     * @param  array<string, string>  $sortColumns
      * @param  array<string, \Illuminate\Database\Query\Expression<string>|string>  $rawColumns
-     * @param  array<string, \Illuminate\Database\Query\Expression<string>|string>  $initialColumnOrder
+     * @param  array<string, \Illuminate\Database\Query\Expression<string>|string>  $initialColumnOrders
      */
     public function scopeSortWithColumns(Builder $query, array $sortColumns = [], array $rawColumns = [], array $initialColumnOrders = []): Builder
     {
         $columns = collect()
-            ->when(property_exists($this, 'sortColumns'), fn (Collection $c) => $c->merge($this->sortColumns))
-            ->when(method_exists($this, 'sortColumns'), fn (Collection $c) => $c->merge($this->sortColumns()));
+            ->merge($this->sortColumns())
+            ->when(property_exists($this, 'sortColumns'), fn (Collection $c) => $c->merge($this->sortColumns));
 
         if (empty($sortColumns) && (empty($initialColumnOrders) || empty($rawColumns))) {
             return $query;

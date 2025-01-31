@@ -4,8 +4,9 @@ namespace App\Models\Farmasi;
 
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
-class ReturPenjualanObat extends Model
+class ReturObat extends Model
 {
     protected $connection = 'mysql_sik';
 

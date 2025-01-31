@@ -8,6 +8,7 @@
         "porifa.laravel-intelephense",
         "onecentlin.laravel-blade",
         "chouzz.vscode-better-align",
-        "getpsalm.psalm-vscode-plugin"
+        "getpsalm.psalm-vscode-plugin",
+        "devsense.composer-php-vscode"
     ]
 }

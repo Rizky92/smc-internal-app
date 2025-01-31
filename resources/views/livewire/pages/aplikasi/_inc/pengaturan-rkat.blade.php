@@ -23,6 +23,6 @@
     </x-slot>
     <x-slot name="footer" class="d-flex justify-content-end">
         <x-button size="sm" type="reset" class="ml-auto" id="reset-form" title="Reset" />
-        <x-button size="sm" variant="primary" type="submit" class="ml-2" id="update-form" title="Update" icon="fas fa-save" form="form-pengaturan-rkat" />
+        <x-button size="sm" variant="primary" type="submit" class="ml-2" id="update-form-pengaturan-rkat" title="Update" icon="fas fa-save" form="form-pengaturan-rkat" />
     </x-slot>
 </x-card>

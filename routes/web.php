@@ -18,7 +18,6 @@ use App\Livewire\Pages\Logistik;
 use App\Livewire\Pages\Perawatan;
 use App\Livewire\Pages\RekamMedis;
 use App\Livewire\Pages\User;
-use App\Models\Perawatan\Poliklinik;
 use Illuminate\Support\Facades\Route;
 use InfyOm\RoutesExplorer\RoutesExplorer;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
@@ -203,8 +202,16 @@ Route::prefix('admin')
                     ->name('cetak-posting-jurnal')
                     ->middleware('can:keuangan.posting-jurnal.read');
 
-                Route::get('laporan-faktur-pajak', Keuangan\LaporanFakturPajak::class)
-                    ->name('laporan-faktur-pajak')
+                Route::get('laporan-faktur-pajak-bpjs', Keuangan\LaporanFakturPajakBPJS::class)
+                    ->name('laporan-faktur-pajak-bpjs')
+                    ->middleware('can:keuangan.laporan-faktur-pajak.read');
+
+                Route::get('laporan-faktur-pajak-asper', Keuangan\LaporanFakturPajakAsuransiPerusahaan::class)
+                    ->name('laporan-faktur-pajak-asper')
+                    ->middleware('can:keuangan.laporan-faktur-pajak.read');
+
+                Route::get('laporan-faktur-pajak-umum', Keuangan\LaporanFakturPajakUmum::class)
+                    ->name('laporan-faktur-pajak-umum')
                     ->middleware('can:keuangan.laporan-faktur-pajak.read');
             });
 

@@ -3,11 +3,12 @@
 namespace App\Models\Laboratorium;
 
 use App\Database\Eloquent\Model;
+use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Builder;
 use Reedware\LaravelCompositeRelations\CompositeBelongsTo;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 
-class HasilPeriksaLab extends Model
+class PeriksaLab extends Model
 {
     use HasCompositeRelations;
 
@@ -152,7 +153,7 @@ class HasilPeriksaLab extends Model
             'template_laboratorium.urut',
         ]);
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             periksa_lab.no_rawat,
             pasien.nm_pasien,
             pasien.tgl_lahir,
@@ -180,6 +181,34 @@ class HasilPeriksaLab extends Model
             ->leftJoin('template_laboratorium', 'detail_periksa_lab.id_template', '=', 'template_laboratorium.id_template')
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
             ->orderBy('template_laboratorium.urut');
+    }
 
+    public function scopeItemFakturPajak(Builder $query): Builder
+    {
+        $sqlSelect = <<<'SQL'
+            periksa_lab.no_rawat,
+            '080' as kode_transaksi,
+            'B' as jenis_barang_jasa,
+            '250100' as kode_barang_jasa,
+            jns_perawatan_lab.nm_perawatan as nama_barang_jasa,
+            'UM.0033' as nama_satuan_ukur,
+            periksa_lab.biaya as harga_satuan,
+            count(*) as jumlah_barang_jasa,
+            0 as diskon_persen,
+            0 as diskon_nominal,
+            (periksa_lab.biaya * count(*)) as dpp,
+            12 as ppn_persen,
+            0 as ppn_nominal,
+            periksa_lab.kd_jenis_prw,
+            'Laborat' as kategori,
+            periksa_lab.status as status_lanjut,
+            9 as urutan
+            SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join('jns_perawatan_lab', 'periksa_lab.kd_jenis_prw', '=', 'jns_perawatan_lab.kd_jenis_prw')
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'periksa_lab.no_rawat'))
+            ->groupBy(['periksa_lab.no_rawat', 'periksa_lab.kd_jenis_prw', 'jns_perawatan_lab.nm_perawatan', 'periksa_lab.biaya']);
     }
 }
