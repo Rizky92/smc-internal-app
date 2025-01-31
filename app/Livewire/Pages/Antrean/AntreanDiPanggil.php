@@ -16,7 +16,8 @@ class AntreanDiPanggil extends Component
     /** @var bool */
     public $isCalling = false;
 
-    public $lastCalledPatient = null;
+    /** @var mixed */
+    protected $lastCalledPatient = null;
 
     /** @var mixed */
     protected $listeners = ['updateStatusAfterCall'];
@@ -24,12 +25,8 @@ class AntreanDiPanggil extends Component
     public function mount(string $kd_pintu): void
     {
         $this->kd_pintu = $kd_pintu;
-        $cachedPatient = cache('lastCalledPatient', null);
-        if (is_string($cachedPatient)) {
-            $this->lastCalledPatient = unserialize($cachedPatient);
-        } else {
-            $this->lastCalledPatient = null;
-        }
+        $cachedPatient = cache("lastCalledPatient_{$kd_pintu}", null);
+        $this->lastCalledPatient = is_string($cachedPatient) ? unserialize($cachedPatient) : null;
     }
 
     public function getAntreanDiPanggilProperty()
@@ -61,7 +58,7 @@ class AntreanDiPanggil extends Component
         if ($antrean && $antrean->status === '1') {
             $this->lastCalledPatient = $antrean;
 
-            cache()->put('lastCalledPatient', serialize($antrean), now()->addHours(12));
+            cache()->put("lastCalledPatient_{$this->kd_pintu}", serialize($antrean), now()->addHours(12));
     
             $this->isCalling = true;
             $this->dispatchBrowserEvent('play-voice', [
@@ -70,7 +67,7 @@ class AntreanDiPanggil extends Component
                 'nm_poli'   => $antrean->nm_poli
             ]);
         } else {
-            $cachedPatient = cache('lastCalledPatient', null);
+            $cachedPatient = cache("lastCalledPatient_{$this->kd_pintu}", null);
             if (is_string($cachedPatient)) {
                 $this->lastCalledPatient = unserialize($cachedPatient);
             } else {

@@ -67,10 +67,10 @@ class StokObatRuangan extends Component
     protected function dataPerSheet(): array
     {
         return [
-            GudangObat::query()
+            fn () => GudangObat::query()
                 ->stokPerRuangan($this->kodeBangsal)
                 ->sortWithColumns($this->sortColumns, ['nama_brng' => 'asc'])
-                ->get()
+                ->cursor()
                 ->map(fn (GudangObat $model): array => [
                     'nm_bangsal'     => $model->nm_bangsal,
                     'kode_brng'      => $model->kode_brng,

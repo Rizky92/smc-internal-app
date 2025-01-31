@@ -295,6 +295,14 @@ Route::prefix('admin')
                     ->middleware('can:rekam-medis.status-data-pasien.read');
             });
 
+        Route::prefix('antrean')
+            ->as('antrean.')
+            ->group(function() {
+                Route::get('manajemen-pintu', Aplikasi\ManajemenPintu::class)
+                    ->name('manajemen-pintu')
+                    ->middleware('can:antrean.manajemen-pintu.read');
+            });
+
         Route::prefix('informasi')
             ->as('informasi.')
             ->group(function () {
@@ -328,9 +336,6 @@ Route::prefix('admin')
 
                 Route::get('hak-akses/simrs-khanza', HakAkses\Khanza::class)
                     ->name('hak-akses.khanza');
-
-                Route::get('/manajemen-pintu', Aplikasi\ManajemenPintu::class)
-                    ->name('manajemen-pintu');
 
                 Route::get('logs', [LogViewerController::class, 'index'])
                     ->name('log-viewer');

@@ -68,9 +68,9 @@ class LaporanPembuatanSOAP extends Component
     protected function dataPerSheet(): array
     {
         return [
-            PemeriksaanRanap::query()
+            fn () => PemeriksaanRanap::query()
                 ->pemeriksaanOlehFarmasi($this->tglAwal, $this->tglAkhir)
-                ->get()
+                ->cursor()
                 ->map(fn (PemeriksaanRanap $model): array => [
                     'tgl_perawatan' => $model->tgl_perawatan,
                     'jam_rawat'     => $model->jam_rawat,

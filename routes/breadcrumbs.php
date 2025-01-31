@@ -341,9 +341,14 @@ Breadcrumbs::for('jadwal-dokter', function (Trail $trail): void {
     $trail->push('Jadwal Dokter', route('jadwal-dokter'));
 });
 
-Breadcrumbs::for('admin.manajemen-pintu', function (Trail $trail): void {
+Breadcrumbs::for('admin.antrean', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
-    $trail->push('Manajemen Pintu', route('admin.manajemen-pintu'));
+    $trail->push('Antrean');
+});
+
+Breadcrumbs::for('admin.antrean.manajemen-pintu', function (Trail $trail): void {
+    $trail->parent('admin.antrean');
+    $trail->push('Manajemen Pintu', route('admin.antrean.manajemen-pintu'));
 });
 
 Breadcrumbs::for('admin.job-cleaner', function (Trail $trail): void {

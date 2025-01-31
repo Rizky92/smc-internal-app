@@ -65,9 +65,9 @@ class LaporanTambahanBiayaPasien extends Component
     protected function dataPerSheet(): array
     {
         return [
-            TambahanBiaya::query()
+            fn () => TambahanBiaya::query()
                 ->biayaTambahanUntukHonorDokter($this->tglAwal, $this->tglAkhir)
-                ->get()
+                ->cursor()
                 ->map(fn (TambahanBiaya $model): array => [
                     'tgl_registrasi' => $model->tgl_registrasi,
                     'jam_reg'        => $model->jam_reg,

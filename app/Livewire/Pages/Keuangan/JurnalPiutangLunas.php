@@ -95,7 +95,7 @@ class JurnalPiutangLunas extends Component
     protected function dataPerSheet(): array
     {
         return [
-            PiutangDilunaskan::query()
+            fn () => PiutangDilunaskan::query()
                 ->dataPiutangDilunaskan($this->tglAwal, $this->tglAkhir, $this->kodeRekening, $this->jenisPeriode)
                 ->cursor()
                 ->map(fn (PiutangDilunaskan $model): array => [
@@ -115,8 +115,7 @@ class JurnalPiutangLunas extends Component
                     'nik_validasi'    => $model->nik_validasi.' '.$model->nama_pemvalidasi,
                     'kd_rek'          => $model->kd_rek.' '.$model->nm_rek,
                     'keterangan'      => $model->keterangan,
-                ])
-                ->all(),
+                ]),
         ];
     }
 

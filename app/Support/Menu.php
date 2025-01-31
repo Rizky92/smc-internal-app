@@ -483,6 +483,23 @@ class Menu
                 ],
             ],
             [
+                'name'              => 'Antrean',
+                'icon'              => 'far fa-circle',
+                'type'              => 'dropdown',
+                'hasAnyPermissions' => $user->canAny([
+                    'antrean.manajemen-pintu.read',
+                ]),
+                'items'             => [
+                    [
+                        'name'              => 'Manajemen Pintu',
+                        'url'               => route('admin.antrean.manajemen-pintu'),
+                        'icon'              => 'fas fa-door-open',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('antrean.manajemen-pintu.read'),
+                    ]
+                ],
+            ],
+            [
                 'name'              => 'Informasi',
                 'icon'              => 'far fa-circle',
                 'type'              => 'dropdown',
@@ -508,13 +525,6 @@ class Menu
                 'name'              => 'Manajemen User',
                 'url'               => route('admin.manajemen-user'),
                 'icon'              => 'fas fa-users',
-                'type'              => 'link',
-                'hasAnyPermissions' => $user->hasRole($develop),
-            ],
-            [
-                'name'              => 'Manajemen Pintu',
-                'url'               => route('admin.manajemen-pintu'),
-                'icon'              => 'fas fa-door-open',
                 'type'              => 'link',
                 'hasAnyPermissions' => $user->hasRole($develop),
             ],

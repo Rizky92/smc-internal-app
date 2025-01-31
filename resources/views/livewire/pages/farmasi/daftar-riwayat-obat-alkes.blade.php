@@ -1,4 +1,4 @@
-<div wire:init="loadProperties">
+<div>
     <x-flash />
 
     <x-card use-loading>
@@ -52,7 +52,7 @@
                                 @endforelse
                             </x-slot>
                         </x-table>
-                        <x-paginator :data="$this->dataRiwayatObat" />
+                        <x-paginator class="px-4 py-3 bg-light border-top" :data="$this->dataRiwayatObat" />
                     </x-navtabs.content>
                     <x-navtabs.content id="alkes">
                         <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
@@ -85,7 +85,7 @@
                                 @endforelse
                             </x-slot>
                         </x-table>
-                        <x-paginator :data="$this->dataRiwayatAlkes" />
+                        <x-paginator class="px-4 py-3 bg-light border-top" :data="$this->dataRiwayatAlkes" />
                     </x-navtabs.content>
                 </x-slot>
             </x-navtabs>

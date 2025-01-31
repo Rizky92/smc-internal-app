@@ -123,9 +123,7 @@ class RincianKunjunganRalan extends Component
         // Gabungkan semua grup kembali menjadi satu koleksi
         $data = $groupedData->collapse();
 
-        return [
-            $data->all(),
-        ];
+        return [$data];
     }
 
     protected function columnHeaders(): array

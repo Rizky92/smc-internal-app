@@ -81,12 +81,11 @@ class LaporanPasienRanap extends Component
     protected function dataPerSheet(): array
     {
         return [
-            PasienRanap::query()
+            fn () => PasienRanap::query()
                 ->search($this->cari)
-                ->where(function ($query) {
-                    $query->whereBetween('tgl_masuk', [$this->tanggal, $this->tanggal])
-                            ->orWhereBetween('tgl_keluar', [$this->tanggal, $this->tanggal]);
-                })
+                ->where(fn ($q) => $q
+                    ->whereBetween('tgl_masuk', [$this->tanggal, $this->tanggal])
+                    ->orWhereBetween('tgl_keluar', [$this->tanggal, $this->tanggal]))
                 ->when(
                     $this->semuaPasien,
                     fn (Builder $query) => $query->where('status_ranap', '<=', '3'),

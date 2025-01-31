@@ -55,6 +55,8 @@ class PemberianObat extends Model
             'dokter.nm_dokter',
         ]);
 
+        $penjualan = PenjualanObat::query()->penjualanObatMorfin($tglAwal, $tglAkhir, $bangsal, $kodeObat);
+
         return $query
             ->selectRaw($sqlSelect)
             ->withCasts(['jml' => 'int'])
@@ -63,7 +65,8 @@ class PemberianObat extends Model
             ->leftJoin('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
             ->where('kd_bangsal', $bangsal)
             ->where('detail_pemberian_obat.kode_brng', $kodeObat)
-            ->whereBetween('detail_pemberian_obat.tgl_perawatan', [$tglAwal, $tglAkhir]);
+            ->whereBetween('detail_pemberian_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
+            ->union($penjualan);
     }
 
     public function scopePendapatanObat(Builder $query, string $year = '2022', string $jenisPerawatan = ''): Builder

@@ -77,6 +77,36 @@ class PenjualanObat extends Model
         return map_bulan($data);
     }
 
+    public function scopePenjualanObatMorfin(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $bangsal = '', string $kodeObat = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->format('Y-m-d');
+        }
+
+        $sqlSelect = <<<'SQL'
+            penjualan.nota_jual as no_rawat,
+            penjualan.no_rkm_medis as no_rkm_medis,
+            pasien.nm_pasien as nm_pasien,
+            pasien.alamat as alamat,
+            penjualan.tgl_jual as tgl_perawatan,
+            detailjual.jumlah as jml,
+            null as nm_dokter,
+            "RS Samarinda Medika Citra" as alamat_dokter
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->leftJoin('pasien', 'penjualan.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->leftJoin('detailjual', 'penjualan.nota_jual', '=', 'detailjual.nota_jual')
+            ->where('penjualan.kd_bangsal', $bangsal)
+            ->where('detailjual.kode_brng', $kodeObat)
+            ->whereBetween('penjualan.tgl_jual', [$tglAwal, $tglAkhir]);
+    }
+
     public function scopeFilterFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {

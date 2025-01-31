@@ -27,7 +27,7 @@ trait ExcelExportable
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<array-key, (\Closure(): \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|\Illuminate\Support\LazyCollection|array)|\Illuminate\Support\Collection|\Illuminate\Support\Collection|array>
      */
     abstract protected function dataPerSheet(): array;
 

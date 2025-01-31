@@ -50,10 +50,10 @@ class RencanaOrder extends Component
     protected function dataPerSheet(): array
     {
         return [
-            Obat::query()
+            fn () => Obat::query()
                 ->daruratStok()
-                ->get()
-                ->map(fn (Obat $model, $_): array => [
+                ->cursor()
+                ->map(fn (Obat $model): array => [
                     'nama_brng'           => $model->nama_brng,
                     'satuan_kecil'        => $model->satuan_kecil,
                     'kategori'            => $model->kategori,

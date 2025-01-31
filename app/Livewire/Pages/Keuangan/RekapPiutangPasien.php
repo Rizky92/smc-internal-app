@@ -109,9 +109,9 @@ class RekapPiutangPasien extends Component
             ->rekapPiutangPasien($this->tglAwal, $this->tglAkhir, $this->caraBayar);
 
         return [
-            $query
+            fn () => $query
                 ->orderBy('penjab.png_jawab')
-                ->get()
+                ->cursor()
                 ->map(fn ($model): array => [
                     'no_rawat'     => $model->no_rawat,
                     'no_rkm_medis' => $model->no_rkm_medis,
@@ -125,7 +125,7 @@ class RekapPiutangPasien extends Component
                     'tgltempo'     => $model->tgltempo,
                     'penjamin'     => $model->penjamin,
                 ])
-                ->push([
+                ->merge([[
                     'no_rawat'     => 'TOTAL',
                     'no_rkm_medis' => '',
                     'nm_pasien'    => '',
@@ -137,7 +137,7 @@ class RekapPiutangPasien extends Component
                     'sisa'         => round(floatval($query->sum(DB::raw('round(piutang_pasien.sisapiutang - ifnull(sisa_piutang.sisa, 0), 2)'))), 2),
                     'tgltempo'     => '',
                     'penjamin'     => '',
-                ]),
+                ]]),
         ];
     }
 

@@ -22,6 +22,7 @@
     @endpush
     <x-modal id="modal-input-pintu" :title="($this->isUpdating() ? 'Edit Data Pintu' : 'Input Data Pintu')" livewire centered>
         <x-slot name="body" style="overflow-x: hidden">
+            <x-flash class="mx-3 mt-3" />
             <x-form id="form-input-pintu" livewire :submit="$this->isUpdating() ? 'update' : 'create'">
                 <x-row-col class="sticky-top bg-white">
                     <div class="form-group">
@@ -87,7 +88,9 @@
             </x-form>
         </x-slot>
         <x-slot name="footer">
-            <x-button size="sm" variant="danger" data-dismiss="modal" id="hapusdata" title="Hapus" icon="fas fa-trash" wire:click="delete" />
+            @if ($this->isUpdating() && user()->can('antrean.manajemen-pintu.delete'))
+                <x-button size="sm" variant="danger" data-dismiss="modal" id="hapusdata" title="Hapus" icon="fas fa-trash" wire:click="delete" />
+            @endif
             <x-button size="sm" class="ml-auto" data-dismiss="modal" id="batalsimpan" title="Batal" />
             <x-button size="sm" variant="primary" class="ml-2" type="submit" id="simpan-data" title="Simpan" icon="fas fa-save" form="form-input-pintu" />
         </x-slot>
