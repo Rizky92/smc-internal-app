@@ -69,7 +69,7 @@ class LaporanDemografi extends Component
     protected function dataPerSheet(): array
     {
         return [
-            RegistrasiPasien::query()
+            fn () => RegistrasiPasien::query()
                 ->demografiPasien($this->tglAwal, $this->tglAkhir)
                 ->cursor()
                 ->map(function (RegistrasiPasien $model): array {

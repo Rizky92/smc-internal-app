@@ -54,9 +54,8 @@ class PemakaianStokFarmasi extends Component
     protected function dataPerSheet(): array
     {
         return [
-            Obat::query()
-                ->pemakaianStok()
-                ->get()
+            fn () => Obat::query()->pemakaianStok()
+                ->cursor()
                 ->map(fn (Obat $model, $_): array => [
                     'kode_brng'          => $model->kode_brng,
                     'nama_brng'          => $model->nama_brng,

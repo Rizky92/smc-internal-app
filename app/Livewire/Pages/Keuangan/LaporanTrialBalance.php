@@ -163,8 +163,7 @@ class LaporanTrialBalance extends Component
     protected function dataPerSheet(): array
     {
         return [
-            $this->dataTrialBalancePerTanggal
-                ->push($this->totalDebetKreditTrialBalance),
+            $this->dataTrialBalancePerTanggal->push($this->totalDebetKreditTrialBalance),
         ];
     }
 

@@ -105,12 +105,12 @@ class KunjunganPerBentukObat extends Component
         ];
 
         return [
-            'Obat Regular' => ResepObat::query()
+            'Obat Regular' => fn () => ResepObat::query()
                 ->kunjunganResep('umum', $this->tglAwal, $this->tglAkhir)
                 ->jenisKunjungan($this->jenisKunjungan)
                 ->cursor()
                 ->map($map),
-            'Obat Racikan' => ResepObat::query()
+            'Obat Racikan' => fn () => ResepObat::query()
                 ->jenisKunjungan($this->jenisKunjungan)
                 ->kunjunganResep('racikan', $this->tglAwal, $this->tglAkhir)
                 ->cursor()

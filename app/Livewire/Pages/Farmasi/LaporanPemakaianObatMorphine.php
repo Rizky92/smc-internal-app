@@ -103,6 +103,7 @@ class LaporanPemakaianObatMorphine extends Component
 
     protected function dataPerSheet(): array
     {
+        // FIXME: jadikan return sesuai dengan yang lain
         return Obat::query()
             ->whereIn('kode_brng', ['02.05.0013', '02.05.0012', '02.05.0014', '02.05.0011'])
             ->pluck('nama_brng', 'kode_brng')

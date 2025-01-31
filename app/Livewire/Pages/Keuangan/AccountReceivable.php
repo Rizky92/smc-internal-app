@@ -260,7 +260,7 @@ class AccountReceivable extends Component
         $totalSisaCicilan = (float) $totalSisaPerPeriode->sum();
 
         return [
-            PenagihanPiutang::query()
+            fn () => PenagihanPiutang::query()
                 ->accountReceivable($this->tglAwal, $this->tglAkhir, $this->jaminanPasien, $this->jenisPerawatan, $this->bedaJaminan)
                 ->search($this->cari)
                 ->cursor()
@@ -309,8 +309,7 @@ class AccountReceivable extends Component
                     'tgl_tagihan'        => '',
                     'tgl_jatuh_tempo'    => '',
                     'tgl_bayar'          => '',
-                ]])
-                ->all(),
+                ]]),
         ];
     }
 

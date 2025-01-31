@@ -79,7 +79,7 @@ class LaporanPemakaianObatTB extends Component
     protected function dataPerSheet(): array
     {
         return [
-            RegistrasiPasien::query()
+            fn () => RegistrasiPasien::query()
                 ->riwayatPemakaianObatTB($this->tglAwal, $this->tglAkhir)
                 ->search($this->cari)
                 ->cursor(),

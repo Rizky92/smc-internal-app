@@ -75,9 +75,9 @@ class LaporanTransaksiGantung extends Component
     protected function dataPerSheet(): array
     {
         return [
-            RegistrasiPasien::query()
+            fn () => RegistrasiPasien::query()
                 ->laporanTransaksiGantung($this->tglAwal, $this->tglAkhir, $this->jenis, $this->status)
-                ->get()
+                ->cursor()
                 ->map(fn (RegistrasiPasien $model, int $_): array => [
                     'nm_dokter'      => $model->nm_dokter,
                     'no_rkm_medis'   => $model->no_rkm_medis,

@@ -79,7 +79,7 @@ class StatusDataPasien extends Component
     protected function dataPerSheet(): array
     {
         return [
-            RegistrasiPasien::query()
+            fn () => RegistrasiPasien::query()
                 ->statusDataRM($this->tglAwal, $this->tglAkhir, $this->jenisPerawatan, $this->semuaRegistrasi)
                 ->cursor()
                 ->map(fn (RegistrasiPasien $model): array => [
@@ -104,8 +104,7 @@ class StatusDataPasien extends Component
                     'asmed_rwi'      => $model->asmed_rwi,
                     'icd_10'         => boolval($model->icd_10) ? 'Ada' : 'Tidak ada',
                     'icd_9'          => boolval($model->icd_9) ? 'Ada' : 'Tidak ada',
-                ])
-                ->all(),
+                ]),
         ];
     }
 

@@ -94,9 +94,9 @@ class JurnalSupplierPO extends Component
     protected function dataPerSheet(): array
     {
         return [
-            'Medis' => JurnalMedis::query()
+            'Medis' => fn () => JurnalMedis::query()
                 ->jurnalPenerimaanBarang($this->tglAwal, $this->tglAkhir)
-                ->get()
+                ->cursor()
                 ->map(fn (JurnalMedis $model) => [
                     'no_jurnal'    => $model->no_jurnal,
                     'waktu_jurnal' => $model->waktu_jurnal,
@@ -111,9 +111,9 @@ class JurnalSupplierPO extends Component
                     'nm_pegawai'   => $model->nm_pegawai,
                 ]),
 
-            'Non Medis' => JurnalNonMedis::query()
+            'Non Medis' => fn () => JurnalNonMedis::query()
                 ->jurnalPenerimaanBarang($this->tglAwal, $this->tglAkhir)
-                ->get()
+                ->cursor()
                 ->map(fn (JurnalNonMedis $model) => [
                     'no_jurnal'    => $model->no_jurnal,
                     'waktu_jurnal' => $model->waktu_jurnal,

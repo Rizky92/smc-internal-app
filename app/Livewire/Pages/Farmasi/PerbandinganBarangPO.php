@@ -70,9 +70,9 @@ class PerbandinganBarangPO extends Component
     protected function dataPerSheet(): array
     {
         return [
-            SuratPemesananObat::query()
+            fn () => SuratPemesananObat::query()
                 ->perbandinganPemesananObatPO($this->tglAwal, $this->tglAkhir, $this->barangSelisih)
-                ->get()
+                ->cursor()
                 ->map(fn (SuratPemesananObat $model): array => [
                     'no_pemesanan'   => $model->no_pemesanan,
                     'nama_brng'      => $model->nama_brng,
