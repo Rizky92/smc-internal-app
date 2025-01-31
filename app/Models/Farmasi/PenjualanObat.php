@@ -147,7 +147,7 @@ class PenjualanObat extends Model
             pasien.email as email_pasien,
             pasien.no_tlp as no_telp_pasien,
             'A09' as kode_asuransi,
-            'UMUM/PERSONAL' as nama_asuransi,
+            'UMUM / PERSONAL' as nama_asuransi,
             '' as alamat_asuransi,
             '' as telp_asuransi,
             '' as email_asuransi,

@@ -25,6 +25,8 @@
         ->when($isList, fn ($c) => $c->mapWithKeys(fn ($v, $k) => [$v => $v]))
         ->when($showKey, fn ($c) => $c->mapWithKeys(fn ($v, $k) => [$k => "{$k} - {$v}"]))
         ->all();
+
+    $varName = '_'.str()->random(10);
 @endphp
 
 @push('css')
@@ -52,34 +54,34 @@
         <script src="{{ asset('js/select2.full.min.js') }}"></script>
     @endonce
     <script>
-        let dropdownSelect2 = $('select#{{ $id }}')
+        let {{ $varName }} = $('select#{{ $id }}')
 
         $(document).on('DOMContentLoaded', e => {
-            dropdownSelect2.select2({
+            {{ $varName }}.select2({
                 dropdownCssClass: 'text-sm px-0',
             })
 
             @if ($livewire)
                 Livewire.hook('element.updated', (el, component) => {
-                    dropdownSelect2.select2({
+                    {{ $varName }}.select2({
                         dropdownCssClass: 'text-sm px-0',
                     })
                 })
 
                 @if ($model)
-                    dropdownSelect2.on('select2:select', e => {
-                        @this.set('{{ $model }}', dropdownSelect2.val(), true)
+                    {{ $varName }}.on('select2:select', e => {
+                        @this.set('{{ $model }}', {{ $varName }}.val(), true)
                     })
 
-                    dropdownSelect2.on('select2:unselect', e => {
-                        @this.set('{{ $model }}', dropdownSelect2.val(), true)
+                    {{ $varName }}.on('select2:unselect', e => {
+                        @this.set('{{ $model }}', {{ $varName }}.val(), true)
                     })
 
                     @if ($event)
                         $(document).on('{{ $event }}', e => {
-                            dropdownSelect2.val(e.detail.tanggalTarikan)
+                            {{ $varName }}.val(e.detail.tanggalTarikan)
 
-                            dropdownSelect2.trigger('change')
+                            {{ $varName }}.trigger('change')
                         })
                     @endif
                 @endif
@@ -87,9 +89,9 @@
 
             @notnull($resetOn)
                 $('{{ $resetOn }}').click(e => {
-                    dropdownSelect2.val('')
+                    {{ $varName }}.val('')
 
-                    dropdownSelect2.trigger('change')
+                    {{ $varName }}.trigger('change')
                 })
             @endnotnull
         })

@@ -290,18 +290,22 @@ if (! function_exists('func_get_named_args')) {
 
 if (! function_exists('str')) {
     /**
-     * @template  T of string|null
+     * @template T of string
      *
      * @param  \T  $value
      * @return \Illuminate\Support\Stringable|string|mixed
      *
      * @psalm-return (T is null ? object : \Illuminate\Support\Stringable)
      */
-    function str($value = null)
+    function str($value = '')
     {
         if (func_num_args() === 0) {
             return new class
             {
+                /**
+                 * @param  string  $method
+                 * @param  mixed  $parameters
+                 */
                 public function __call($method, $parameters)
                 {
                     return Str::$method(...$parameters);

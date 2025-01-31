@@ -10,11 +10,10 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Farmasi\ObatPulang;
 use App\Models\Farmasi\PemberianObat;
-use App\Models\Farmasi\PenjualanObat;
-use App\Models\Farmasi\PenjualanObatDetail;
 use App\Models\Farmasi\ReturObatDetail;
 use App\Models\Keuangan\FakturPajakDitarik;
 use App\Models\Keuangan\FakturPajakDitarikDetail;
+use App\Models\Keuangan\Master\SatuanUkuranPajak;
 use App\Models\Keuangan\TambahanBiaya;
 use App\Models\Laboratorium\PeriksaLab;
 use App\Models\Perawatan\KamarInap;
@@ -27,6 +26,7 @@ use App\Models\Perawatan\TindakanRanapDokter;
 use App\Models\Perawatan\TindakanRanapDokterPerawat;
 use App\Models\Perawatan\TindakanRanapPerawat;
 use App\Models\Radiologi\PeriksaRadiologi;
+use App\Models\RekamMedis\Penjamin;
 use App\Settings\NPWPSettings;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Collection;
@@ -58,16 +58,17 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
     /** @var string */
     public $kodePJ;
 
-    /** @var string */
-    public $namaPJ;
+    /** @var bool */
+    public $isPerusahaan;
 
     protected function queryString(): array
     {
         return [
-            'tglAwal'        => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAwal'        => ['except' => now()->subDays(5)->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir'       => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
             'tanggalTarikan' => ['except' => '-', 'as' => 'tgl_tarik'],
             'kodePJ'         => ['except' => '-', 'as' => 'kode_pj'],
+            'isPerusahaan'   => ['except' => false, 'as' => 'is_perusahaan'],
         ];
     }
 
@@ -86,7 +87,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
 
         if ($this->tanggalTarikan !== '-') {
             return FakturPajakDitarik::query()
-                ->where('menu', 'fp-'.$this->kodePJ)
+                ->where('menu', 'fp-asper')
                 ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
                 ->search($this->cari)
                 ->paginate($this->perpage, ['*'], 'page_faktur');
@@ -95,7 +96,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
         $smc = DB::connection('mysql_smc')->getDatabaseName();
 
         return RegistrasiPasien::query()
-            ->laporanFakturPajakAsuransi($this->tglAwal, $this->tglAkhir, $this->kodePJ)
+            ->laporanFakturPajakAsuransi($this->tglAwal, $this->tglAkhir, $this->kodePJ, $this->isPerusahaan)
             ->whereNotExists(fn ($q) => $q->from($smc.'.faktur_pajak_ditarik')
                 ->whereColumn($smc.'.faktur_pajak_ditarik.no_rawat', 'reg_periksa.no_rawat')
                 ->whereColumn($smc.'.faktur_pajak_ditarik.tgl_bayar', 'nota_bayar.tanggal'))
@@ -114,7 +115,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
 
         if ($this->tanggalTarikan !== '-') {
             return FakturPajakDitarikDetail::query()
-                ->where('menu', 'fp-'.$this->kodePJ)
+                ->where('menu', 'fp-asper')
                 ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
                 ->paginate($this->perpage, ['*'], 'page_detailfaktur');
         }
@@ -122,7 +123,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
         $smc = DB::connection('mysql_smc')->getDatabaseName();
 
         $registFaktur = RegistrasiPasien::query()
-            ->filterFakturPajak($this->tglAwal, $this->tglAkhir, $this->kodePJ)
+            ->filterFakturPajak($this->tglAwal, $this->tglAkhir, $this->kodePJ, $this->isPerusahaan)
             ->whereNotExists(fn ($q) => $q->from($smc.'.faktur_pajak_ditarik_detail')
                 ->whereColumn($smc.'.faktur_pajak_ditarik_detail.no_rawat', 'reg_periksa.no_rawat')
                 ->whereColumn($smc.'.faktur_pajak_ditarik_detail.tgl_bayar', 'nota_bayar.tanggal'))
@@ -161,22 +162,32 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
     {
         return FakturPajakDitarik::query()
             ->selectRaw('distinct(tgl_tarikan) as tgl_tarikan')
-            ->where('menu', 'fp-'.$this->kodePJ)
+            ->where('menu', 'fp-asper')
             ->pluck('tgl_tarikan', 'tgl_tarikan');
+    }
+
+    public function getDataPenjaminProperty(): Collection
+    {
+        return Penjamin::query()
+            ->when($this->isPerusahaan, fn ($q) => $q->whereExists(fn ($q) => $q
+                ->from('perusahaan_pasien')
+                ->whereColumn('perusahaan_pasien.kode_perusahaan', 'penjab.kd_pj')))
+            ->pluck('png_jawab', 'kd_pj');
     }
 
     public function render(): View
     {
-        return view('livewire.pages.keuangan.laporan-faktur-pajak-umum')
-            ->layout(BaseLayout::class, ['title' => 'Laporan Faktur Pajak Pasien UMUM / PERSONAL (A09)']);
+        return view('livewire.pages.keuangan.laporan-faktur-pajak-asuransi-perusahaan')
+            ->layout(BaseLayout::class, ['title' => 'Laporan Faktur Pajak Pasien ASURANSI / PERUSAHAAN']);
     }
 
     protected function defaultValues(): void
     {
-        $this->tglAwal = now()->format('Y-m-d');
+        $this->tglAwal = now()->subDays(5)->format('Y-m-d');
         $this->tglAkhir = now()->format('Y-m-d');
         $this->tanggalTarikan = '-';
         $this->kodePJ = '-';
+        $this->isPerusahaan = false;
     }
 
     protected function dataPerSheet(): array
@@ -187,50 +198,30 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
             $tanggalTarikanSementara = now()->toDateTimeString();
 
             $smc = DB::connection('mysql_smc')->getDatabaseName();
-
-            $walkin = PenjualanObat::query()
-                ->laporanFakturPajak($this->tglAwal, $this->tglAkhir)
-                ->whereNotExists(fn ($q) => $q->from($smc.'.faktur_pajak_ditarik')
-                    ->whereColumn($smc.'.faktur_pajak_ditarik.no_rawat', 'penjualan.nota_jual')
-                    ->whereColumn($smc.'.faktur_pajak_ditarik.tgl_bayar', DB::raw('date(tagihan_sadewa.tgl_bayar)')))
-                ->search($this->cari);
-
-            $regist = RegistrasiPasien::query()
-                ->laporanFakturPajakUmum($this->tglAwal, $this->tglAkhir)
+            
+            RegistrasiPasien::query()
+                ->laporanFakturPajakAsuransi($this->tglAwal, $this->tglAkhir, $this->kodePJ, $this->isPerusahaan)
                 ->whereNotExists(fn ($q) => $q->from($smc.'.faktur_pajak_ditarik')
                     ->whereColumn($smc.'.faktur_pajak_ditarik.no_rawat', 'reg_periksa.no_rawat')
                     ->whereColumn($smc.'.faktur_pajak_ditarik.tgl_bayar', 'nota_bayar.tanggal'))
                 ->search($this->cari)
-                ->unionAll($walkin);
-
-            DB::connection('mysql_sik')
-                ->query()
-                ->fromSub($regist, 'faktur_pajak')
-                ->orderBy('no_rawat')
-                ->orderByDesc('kode_transaksi')
+                ->orderBy('reg_periksa.no_rawat')
+                ->orderByDesc('kode_transaksi_pajak.kode_transaksi')
                 ->cursor()
-                ->each(fn (object $model) => 
-                    FakturPajakDitarik::insert(
-                        collect((array) $model)
-                            ->put('tgl_tarikan', $tanggalTarikanSementara)
-                            ->put('menu', 'fp-umum')
-                            ->put('id_tku_penjual', $this->npwpPenjual)
-                            ->all()));
-
-            $registWalkin = PenjualanObat::query()
-                ->filterFakturPajak($this->tglAwal, $this->tglAkhir)
-                ->whereNotExists(fn ($q) => $q->from($smc.'.faktur_pajak_ditarik_detail')
-                    ->whereColumn($smc.'.faktur_pajak_ditarik_detail.no_rawat', 'penjualan.nota_jual')
-                    ->whereColumn($smc.'.faktur_pajak_ditarik_detail.tgl_bayar', DB::raw('date(tagihan_sadewa.tgl_bayar)')))
-                ->search($this->cari);
+                ->each(function (RegistrasiPasien $model) use ($tanggalTarikanSementara) {
+                    $model->setAttribute('id_tku_penjual', $this->npwpPenjual);
+                    $model->setAttribute('tgl_tarikan', $tanggalTarikanSementara);
+                    $model->setAttribute('menu', 'fp-asper');
+                    
+                    FakturPajakDitarik::insert($model->toArray());
+                });
     
             $registFaktur = RegistrasiPasien::query()
-                ->filterFakturPajak($this->tglAwal, $this->tglAkhir, $this->kodePJ)
+                ->filterFakturPajak($this->tglAwal, $this->tglAkhir, $this->kodePJ, $this->isPerusahaan)
                 ->whereNotExists(fn ($q) => $q->from($smc.'.faktur_pajak_ditarik_detail')
                     ->whereColumn($smc.'.faktur_pajak_ditarik_detail.no_rawat', 'reg_periksa.no_rawat')
                     ->whereColumn($smc.'.faktur_pajak_ditarik_detail.tgl_bayar', 'nota_bayar.tanggal'))
-                ->search($this->cari)
-                ->unionAll($registWalkin);
+                ->search($this->cari);
     
             $satuanUkuranPajak = SatuanUkuranPajak::pluck('kode_satuan_pajak', 'kode_sat');
     
@@ -248,10 +239,9 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                 ->unionAll(Operasi::query()->itemFakturPajak())
                 ->unionAll(TambahanBiaya::query()->itemFakturPajak())
                 ->unionAll(RegistrasiPasien::query()->itemFakturPajakTambahanEmbalaseTuslah())
-                ->unionAll(PemberianObat::query()->itemFakturPajak($this->kodePJ))
-                ->unionAll(ObatPulang::query()->itemFakturPajak($this->kodePJ))
-                ->unionAll(ReturObatDetail::query()->itemFakturPajak($this->kodePJ))
-                ->unionAll(PenjualanObatDetail::query()->itemFakturPajak());
+                ->unionAll(PemberianObat::query()->itemFakturPajak('BPJ'))
+                ->unionAll(ObatPulang::query()->itemFakturPajak('BPJ'))
+                ->unionAll(ReturObatDetail::query()->itemFakturPajak('BPJ'));
 
             $totalJasa = DB::connection('mysql_sik')
                 ->query()
@@ -294,7 +284,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                         'tgl_bayar'          => $model->tgl_bayar,
                         'jam_bayar'          => $model->jam_bayar,
                         'tgl_tarikan'        => $tanggalTarikanSementara,
-                        'menu'               => 'fp-umum',
+                        'menu'               => 'fp-asper',
                         'jenis_barang_jasa'  => $model->jenis_barang_jasa,
                         'kode_barang_jasa'   => $model->kode_barang_jasa,
                         'nama_barang_jasa'   => $model->nama_barang_jasa,
@@ -323,7 +313,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
         
         return [
             'Faktur' => fn () => FakturPajakDitarik::query()
-                ->where('menu', 'fp-umum')
+                ->where('menu', 'fp-asper')
                 ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
                 ->cursor()
                 ->map(fn (FakturPajakDitarik $model): array => [
@@ -349,7 +339,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                     'nama_asuransi'       => $model->nama_asuransi,
                 ]),
             'Detail Faktur' => fn () => FakturPajakDitarikDetail::query()
-                ->where('menu', 'fp-umum')
+                ->where('menu', 'fp-bpjs')
                 ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
                 ->withCasts([
                     'harga_satuan'       => 'float',
@@ -450,7 +440,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
 
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Faktur Pajak ',
+            'Laporan Faktur Pajak ASURANSI / PERUSAHAAN',
             now()->translatedFormat('d F Y'),
             $periode,
         ];

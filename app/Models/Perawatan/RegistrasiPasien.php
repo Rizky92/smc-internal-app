@@ -1040,7 +1040,7 @@ SQL;
             ->havingRaw('sum(detail_pemberian_obat.embalase + detail_pemberian_obat.tuslah) > 0');
     }
 
-    public function scopeFilterFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = 'BPJ'): Builder
+    public function scopeFilterFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = 'BPJ', bool $isPerusahaan = false): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->format('Y-m-d');
@@ -1102,7 +1102,10 @@ SQL;
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->leftJoin('perusahaan_pasien', 'pasien.perusahaan_pasien', '=', 'perusahaan_pasien.kode_perusahaan')
             ->whereRaw('reg_periksa.status_bayar = \'Sudah Bayar\'')
-            ->where('reg_periksa.kd_pj', $kodePJ)
+            ->when($kodePJ === '-',
+                fn ($q) => $q->whereNotIn('reg_periksa.kd_pj', ['BPJ', 'A09']),
+                fn ($q) => $q->where('reg_periksa.kd_pj', $kodePJ))
+            ->when($isPerusahaan, fn ($q) => $q->whereColumn('reg_periksa.kd_pj', 'perusahaan_pasien.kode_perusahaan'))
             ->whereBetween('reg_periksa.tgl_registrasi', [$tahun.'-01', $tglAkhir]);
     }
 
@@ -1241,12 +1244,12 @@ SQL;
             ->where('reg_periksa.kd_pj', 'A09');
     }
 
-    public function scopeLaporanFakturPajakAsuransi(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = '-', bool $perusahaan = false): Builder
+    public function scopeLaporanFakturPajakAsuransi(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = '-', bool $isPerusahaan = false): Builder
     {
         return $query
             ->laporanFakturPajak($tglAwal, $tglAkhir)
             ->whereNotIn('reg_periksa.kd_pj', ['BPJ', 'A09'])
             ->when($kodePJ !== '-', fn ($q) => $q->where('reg_periksa.kd_pj', $kodePJ))
-            ->when($perusahaan, fn ($q) => $q->whereColumn('reg_periksa.kd_pj', 'pasien.perusahaan_pasien'));
+            ->when($isPerusahaan, fn ($q) => $q->whereColumn('reg_periksa.kd_pj', 'pasien.perusahaan_pasien'));
     }
 }
