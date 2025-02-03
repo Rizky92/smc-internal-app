@@ -78,7 +78,7 @@ class JurnalPosting extends Component
             ->jurnalPosting($this->tglAwal, $this->tglAkhir)
             ->search($this->cari, ['no_jurnal', 'no_bukti', 'tgl_jurnal', 'keterangan'])
             ->pluck('no_jurnal'));
-        
+
         $this->redirectRoute('admin.keuangan.cetak-posting-jurnal', [
             'data_jurnal' => $encoded,
         ]);

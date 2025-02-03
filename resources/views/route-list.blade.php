@@ -1,26 +1,37 @@
 <x-base-layout title="Route list">
     @once
         @push('css')
-            <link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap4.min.css') }}">
-            <link rel="stylesheet" href="{{ asset('css/responsive.bootstrap4.min.css') }}">
+            <link
+                rel="stylesheet"
+                href="{{ asset('css/dataTables.bootstrap4.min.css') }}"
+            />
+            <link
+                rel="stylesheet"
+                href="{{ asset('css/responsive.bootstrap4.min.css') }}"
+            />
         @endpush
+
         @push('js')
             <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
             <script src="{{ asset('js/dataTables.bootstrap4.min.js') }}"></script>
             <script src="{{ asset('js/dataTables.responsive.min.js') }}"></script>
             <script src="{{ asset('js/responsive.bootstrap4.min.js') }}"></script>
             <script>
-                $(document).ready(function() {
+                $(document).ready(function () {
                     $('#routes-table').DataTable();
                 });
             </script>
         @endpush
     @endonce
+
     <x-card>
         <x-slot name="header"></x-slot>
         <x-slot name="body">
             <div class="table-responsive p-3">
-                <table class="table table-bordered table-hover" id="routes-table">
+                <table
+                    class="table table-bordered table-hover"
+                    id="routes-table"
+                >
                     <thead>
                         <th>Name</th>
                         <th>URL</th>

@@ -59,12 +59,12 @@ class AntreanDiPanggil extends Component
             $this->lastCalledPatient = $antrean;
 
             cache()->put("lastCalledPatient_{$this->kd_pintu}", serialize($antrean), now()->addHours(12));
-    
+
             $this->isCalling = true;
             $this->dispatchBrowserEvent('play-voice', [
                 'no_reg'    => $antrean->no_reg,
                 'nm_pasien' => $antrean->nm_pasien,
-                'nm_poli'   => $antrean->nm_poli
+                'nm_poli'   => $antrean->nm_poli,
             ]);
         } else {
             $cachedPatient = cache("lastCalledPatient_{$this->kd_pintu}", null);

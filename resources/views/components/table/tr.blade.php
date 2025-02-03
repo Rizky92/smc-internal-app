@@ -2,7 +2,7 @@
     <style>
         @media print {
             tr {
-                font-size: 0.70em;
+                font-size: 0.7em;
             }
         }
     </style>

@@ -4,7 +4,6 @@ namespace App\Models\Farmasi;
 
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use App\Models\Farmasi\PenjualanWalkInObat;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
 
@@ -55,8 +54,8 @@ class PemberianObat extends Model
             'dokter.kd_dokter',
             'dokter.nm_dokter',
         ]);
-    
-        $penjualan = PenjualanWalkInObat::query()->penjualanObatMorfin($tglAwal, $tglAkhir, $bangsal, $kodeObat);
+
+        $penjualan = PenjualanObat::query()->penjualanObatMorfin($tglAwal, $tglAkhir, $bangsal, $kodeObat);
 
         return $query
             ->selectRaw($sqlSelect)
@@ -75,7 +74,7 @@ class PemberianObat extends Model
         $sqlSelect = <<<'SQL'
             round(sum(detail_pemberian_obat.total)) jumlah,
             month(detail_pemberian_obat.tgl_perawatan) bulan
-        SQL;
+            SQL;
 
         return $query
             ->selectRaw($sqlSelect)
@@ -99,6 +98,35 @@ class PemberianObat extends Model
             })
             ->groupByRaw('month(detail_pemberian_obat.tgl_perawatan)')
             ->withCasts(['jumlah' => 'float', 'bulan' => 'int']);
+    }
+
+    public function scopeItemFakturPajak(Builder $query, string $kodePJ = 'BPJ'): Builder
+    {
+        $sqlSelect = <<<'SQL'
+            detail_pemberian_obat.no_rawat,
+            ? as kode_transaksi,
+            'A' as jenis_barang_jasa,
+            '300000' as kode_barang_jasa,
+            databarang.nama_brng as nama_barang_jasa,
+            databarang.kode_sat as nama_satuan_ukur,
+            detail_pemberian_obat.biaya_obat as harga_satuan,
+            sum(detail_pemberian_obat.jml) as jumlah_barang_jasa,
+            0 as diskon_persen,
+            0 as diskon_nominal,
+            sum(detail_pemberian_obat.total) as dpp,
+            12 as ppn_persen,
+            0 as ppn_nominal,
+            detail_pemberian_obat.kode_brng as kd_jenis_prw,
+            'Pemberian Obat' as kategori,
+            detail_pemberian_obat.status as status_lanjut,
+            14 as urutan
+            SQL;
+
+        return $query
+            ->selectRaw($sqlSelect, [($kodePJ === 'BPJ' ? '030' : '040')])
+            ->join('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'detail_pemberian_obat.no_rawat'))
+            ->groupBy(['detail_pemberian_obat.no_rawat', 'detail_pemberian_obat.kode_brng', 'databarang.nama_brng', 'detail_pemberian_obat.biaya_obat']);
     }
 
     public static function pendapatanObatRalan(string $year = '2022'): array

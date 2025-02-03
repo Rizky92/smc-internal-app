@@ -82,6 +82,9 @@ class BukuBesar extends Component
             ->layout(BaseLayout::class, ['title' => 'Jurnal Buku Besar']);
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         return [

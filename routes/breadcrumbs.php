@@ -147,9 +147,19 @@ Breadcrumbs::for('admin.keuangan.posting-jurnal', function (Trail $trail): void 
     $trail->push('Posting Jurnal', route('admin.keuangan.posting-jurnal'));
 });
 
-Breadcrumbs::for('admin.keuangan.laporan-faktur-pajak', function (Trail $trail): void {
+Breadcrumbs::for('admin.keuangan.laporan-faktur-pajak-bpjs', function (Trail $trail): void {
     $trail->parent('admin.keuangan');
-    $trail->push('Item Billing Pasien', route('admin.keuangan.laporan-faktur-pajak'));
+    $trail->push('Faktur Pajak BPJS', route('admin.keuangan.laporan-faktur-pajak-bpjs'));
+});
+
+Breadcrumbs::for('admin.keuangan.laporan-faktur-pajak-umum', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('Faktur Pajak UMUM', route('admin.keuangan.laporan-faktur-pajak-umum'));
+});
+
+Breadcrumbs::for('admin.keuangan.laporan-faktur-pajak-asper', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('Faktur Pajak AS/PER', route('admin.keuangan.laporan-faktur-pajak-asper'));
 });
 
 Breadcrumbs::for('admin.farmasi', function (Trail $trail): void {

@@ -5,8 +5,10 @@ namespace App\Http\Middleware;
 use App\Database\Eloquent\Model;
 use Closure;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class AuthorizeAny
 {
@@ -35,7 +37,7 @@ class AuthorizeAny
      * @param  array|null  $models
      * @return mixed
      *
-     * @throws \Illuminate\Auth\AuthenticationException
+     * @throws AuthenticationException
      * @throws AuthorizationException
      */
     public function handle(Request $request, Closure $next, $abilities, ...$models)
@@ -56,7 +58,7 @@ class AuthorizeAny
      *
      * @param  Request  $request
      * @param  array|null  $models
-     * @return \Illuminate\Support\Collection<array-key, \Illuminate\Database\Eloquent\Model>|array
+     * @return Collection<array-key, \Illuminate\Database\Eloquent\Model>|array
      */
     protected function getGateArguments($request, $models)
     {

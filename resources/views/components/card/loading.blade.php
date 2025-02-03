@@ -14,7 +14,10 @@
     @endpush
 @endonce
 
-<div wire:loading.delay.{{ $delay }}.class="overlay light" {{ $target ? "wire:target=\"{$target}\"" : null }}>
+<div
+    wire:loading.delay.{{ $delay }}.class="overlay light"
+    {{ $target ? "wire:target=\"{$target}\"" : null }}
+>
     <div
         class="d-none justify-content-center align-items-center"
         wire:loading.delay.{{ $delay }}.class="d-flex flex-column"

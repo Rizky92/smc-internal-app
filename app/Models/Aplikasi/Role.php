@@ -3,6 +3,7 @@
 namespace App\Models\Aplikasi;
 
 use App\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\Permission\Contracts\Role as RoleContract;
 use Spatie\Permission\Exceptions\GuardDoesNotMatch;
@@ -39,7 +40,7 @@ class Role extends Model implements RoleContract
     }
 
     /**
-     * @psalm-return static&\Illuminate\Database\Eloquent\Builder<static>
+     * @psalm-return static&Builder<static>
      */
     public static function create(array $attributes = []): self
     {
@@ -94,7 +95,7 @@ class Role extends Model implements RoleContract
      *
      * @throws RoleDoesNotExist
      *
-     * @psalm-return \Illuminate\Database\Eloquent\Builder<static>
+     * @psalm-return Builder<static>
      */
     public static function findByName(string $name, $guardName = null): self
     {
@@ -114,7 +115,7 @@ class Role extends Model implements RoleContract
      *
      * @param  string|null  $guardName
      *
-     * @psalm-return \Illuminate\Database\Eloquent\Builder<static>
+     * @psalm-return Builder<static>
      */
     public static function findById(int $id, $guardName = null): self
     {
@@ -134,7 +135,7 @@ class Role extends Model implements RoleContract
      *
      * @param  string|null  $guardName
      *
-     * @psalm-return \Illuminate\Database\Eloquent\Builder<static>&\Illuminate\Database\Eloquent\Builder<static>|static&\Illuminate\Database\Eloquent\Builder<static>
+     * @psalm-return Builder<static>&Builder<static>|static&Builder<static>
      */
     public static function findOrCreate(string $name, $guardName = null): self
     {
@@ -150,7 +151,7 @@ class Role extends Model implements RoleContract
     }
 
     /**
-     * @psalm-return null|static&\Illuminate\Database\Eloquent\Builder<static>
+     * @psalm-return null|static&Builder<static>
      */
     protected static function findByParam(array $params = []): ?self
     {

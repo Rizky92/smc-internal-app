@@ -34,7 +34,7 @@ class PermintaanLabMB extends Model
     {
         return $this
             ->compositeHasMany(
-                HasilPeriksaLab::class,
+                PeriksaLab::class,
                 ['no_rawat', 'tgl_periksa', 'jam'],
                 ['no_rawat', 'tgl_hasil', 'jam_hasil'],
             )

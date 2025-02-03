@@ -63,20 +63,45 @@
                                 model="checkedPasien"
                                 obscure-checkbox
                             />
-                            <x-table.td>{{ $item->penjamin->png_jawab }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->penjamin->png_jawab }}
+                            </x-table.td>
                             <x-table.td>{{ $item->no_rawat }}</x-table.td>
-                            <x-table.td>{{ $item->no_rkm_medis }}</x-table.td>
-                            <x-table.td>{{ $item->pasien->nm_pasien }}</x-table.td>
-                            <x-table.td>{{ $item->pasien->jk }}</x-table.td>
-                            <x-table.td>{{ $item->pasien->agama }}</x-table.td>
-                            <x-table.td>{{ $item->tgl_registrasi }}</x-table.td>
-                            <x-table.td>{{ $item->poliklinik->nm_poli }}</x-table.td>
-                            <x-table.td>{{ $item->pasien->email }}</x-table.td>
-                            <x-table.td>{{ optional($item->pasien->perusahaan)->nama_perusahaan }}</x-table.td>
-                            <x-table.td>{{ $item->pasien->nip }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->no_rkm_medis }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->pasien->nm_pasien }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->pasien->jk }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->pasien->agama }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->tgl_registrasi }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->poliklinik->nm_poli }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->pasien->email }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ optional($item->pasien->perusahaan)->nama_perusahaan }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->pasien->nip }}
+                            </x-table.td>
                             <x-table.td>
                                 @forelse ($item->berkasDigital as $berkas)
-                                    <a href="{{ asset($berkas->lokasi_file) }}" target="_blank">{{ $berkas->lokasi_file }}</a>
+                                    <a
+                                        href="{{ asset($berkas->lokasi_file) }}"
+                                        target="_blank"
+                                    >
+                                        {{ $berkas->lokasi_file }}
+                                    </a>
                                 @empty
                                     -
                                 @endforelse

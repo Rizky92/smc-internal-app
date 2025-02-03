@@ -208,7 +208,7 @@ class PenagihanPiutang extends Model
             round(sum(ifnull(detail_piutang_pasien.totalpiutang, detail_penagihan_piutang.sisapiutang)), 2) total_piutang,
             round(sum(ifnull(bayar_piutang.besar_cicilan, 0)), 2) total_cicilan,
             round(sum(ifnull(detail_piutang_pasien.totalpiutang, detail_penagihan_piutang.sisapiutang) - ifnull(bayar_piutang.besar_cicilan, 0) - ifnull(bayar_piutang.diskon_piutang, 0) - ifnull(bayar_piutang.tidak_terbayar, 0)), 2) sisa_piutang
-        SQL;
+            SQL;
 
         $sqlGroupBy = <<<'SQL'
             datediff(?, penagihan_piutang.tanggal) <= 30,

@@ -11,7 +11,6 @@
     @endif
 </div>
 
-
 <script>
     function callPasien(noAntrian, poli) {
         let message = `Nomor antrian ${noAntrian}, ${poli}`;

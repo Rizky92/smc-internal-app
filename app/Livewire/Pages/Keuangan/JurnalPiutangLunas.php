@@ -92,6 +92,9 @@ class JurnalPiutangLunas extends Component
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         return [

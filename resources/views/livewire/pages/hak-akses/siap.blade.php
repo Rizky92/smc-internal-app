@@ -9,7 +9,15 @@
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-                <x-button variant="primary" size="sm" title="Role Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-perizinan" class="btn-primary ml-3" />
+                <x-button
+                    variant="primary"
+                    size="sm"
+                    title="Role Baru"
+                    icon="fas fa-plus"
+                    data-toggle="modal"
+                    data-target="#modal-perizinan"
+                    class="btn-primary ml-3"
+                />
             </x-row-col-flex>
         </x-slot>
 
@@ -26,17 +34,39 @@
                         <x-table.tr>
                             <x-table.td>
                                 @unless ($superadmin)
-                                    <x-button size="xs" variant="link" class="m-0 p-0 border-0" title="Edit" icon="fas fa-pencil-alt" data-toggle="modal" data-target="#modal-perizinan" wire:click="$emit('siap.prepare', {{ $role->id }})" />
+                                    <x-button
+                                        size="xs"
+                                        variant="link"
+                                        class="m-0 p-0 border-0"
+                                        title="Edit"
+                                        icon="fas fa-pencil-alt"
+                                        data-toggle="modal"
+                                        data-target="#modal-perizinan"
+                                        wire:click="$emit('siap.prepare', {{ $role->id }})"
+                                    />
                                 @endunless
                             </x-table.td>
-                            <x-table.td class="{{ Arr::toCssClasses(['pt-2' => !$superadmin]) }}">{{ $role->name }}</x-table.td>
+                            <x-table.td
+                                class="{{ Arr::toCssClasses(['pt-2' => !$superadmin]) }}"
+                            >
+                                {{ $role->name }}
+                            </x-table.td>
                             <x-table.td>
-                                <div style="display: inline-flex; flex-wrap: wrap; gap: 0.25rem">
+                                <div
+                                    style="
+                                        display: inline-flex;
+                                        flex-wrap: wrap;
+                                        gap: 0.25rem;
+                                    "
+                                >
                                     @if ($superadmin)
                                         <x-badge variant="dark">*</x-badge>
                                     @endif
+
                                     @foreach ($role->permissions as $permission)
-                                        <x-badge variant="secondary">{{ $permission->name }}</x-badge>
+                                        <x-badge variant="secondary">
+                                            {{ $permission->name }}
+                                        </x-badge>
                                     @endforeach
                                 </div>
                             </x-table.td>

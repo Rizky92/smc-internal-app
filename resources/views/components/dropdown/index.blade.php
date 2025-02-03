@@ -5,31 +5,36 @@
     'menuPosition' => 'left',
 ])
 
-@if ($livewire)    
+@if ($livewire)
     @push('js')
         <script>
-            $(document).on('DOMContentLoaded', e => {
-                let buttonId = "{{ Str::slug($button->attributes->get('title')) }}"
+            $(document).on('DOMContentLoaded', (e) => {
+                let buttonId =
+                    '{{ Str::slug($button->attributes->get('title')) }}';
 
-                let buttonComponent = $(`button#${buttonId}`)
+                let buttonComponent = $(`button#${buttonId}`);
 
-                buttonComponent.data('toggle', 'dropdown')
+                buttonComponent.data('toggle', 'dropdown');
 
                 Livewire.hook('element.updating', (from, to, component) => {
-                    buttonComponent.dropdown('dispose')
-                })
+                    buttonComponent.dropdown('dispose');
+                });
 
                 Livewire.hook('element.updated', (el, component) => {
-                    buttonComponent.dropdown()
-                })
-            })
+                    buttonComponent.dropdown();
+                });
+            });
         </script>
     @endpush
 @endif
 
-
-<div {{ $attributes->merge(['class' => 'dropdown']) }} {{ $livewire ? 'wire:ignore' : null }}>
-    <x-button :attributes="$button->attributes->merge(['size' => 'sm', 'class' => 'dropdown-toggle', 'data-toggle' => 'dropdown'])" />
+<div
+    {{ $attributes->merge(['class' => 'dropdown']) }}
+    {{ $livewire ? 'wire:ignore' : null }}
+>
+    <x-button
+        :attributes="$button->attributes->merge(['size' => 'sm', 'class' => 'dropdown-toggle', 'data-toggle' => 'dropdown'])"
+    />
     <div {{ $menu->attributes->merge(['class' => 'dropdown-menu']) }}>
         {{ $menu }}
     </div>

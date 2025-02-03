@@ -38,8 +38,8 @@ class LabaRugiRekeningPerPeriode extends Component
     {
         return [
             'kodePenjamin' => ['except' => '', 'as' => 'penjamin'],
-            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'      => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir'     => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -165,6 +165,11 @@ class LabaRugiRekeningPerPeriode extends Component
         return new Fluent(func_get_named_args($this, 'insertExcelRow', func_get_args()));
     }
 
+    /**
+     * @return Collection[]
+     *
+     * @psalm-return array{0: Collection}
+     */
     protected function dataPerSheet(): array
     {
         return [

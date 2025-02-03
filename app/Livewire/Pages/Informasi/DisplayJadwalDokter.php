@@ -50,7 +50,6 @@ class DisplayJadwalDokter extends Component
                 return $item;
             });
     }
-    
 
     public function render(): View
     {

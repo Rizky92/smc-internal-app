@@ -24,7 +24,7 @@ class ReturSupplierObat extends Model
         $sqlSelect = <<<'SQL'
             ceil(sum(detreturbeli.total)) jumlah,
             month(returbeli.tgl_retur) bulan
-        SQL;
+            SQL;
 
         return $query
             ->selectRaw($sqlSelect)

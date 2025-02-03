@@ -3,12 +3,16 @@
 namespace App\Livewire;
 
 use App\Models\Aplikasi\Pintu;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class AntreanPintu extends Component
 {
-    public function getPintuProperty()
+    /**
+     * @psalm-return Collection<Pintu>
+     */
+    public function getPintuProperty(): Collection
     {
         return Pintu::all();
     }

@@ -19,7 +19,12 @@
             </script>
         @endpush
     @endonce
-    <x-modal livewire title="Set hak akses user untuk SIMRS Khanza" id="modal-set-hak-akses">
+
+    <x-modal
+        livewire
+        title="Set hak akses user untuk SIMRS Khanza"
+        id="modal-set-hak-akses"
+    >
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-row-col class="px-3 pt-3">
                 <label class="mb-0">User:</label>
@@ -51,8 +56,12 @@
                                     :id="$hakAkses->nama_field"
                                     prefix="sha-"
                                 />
-                                <x-table.td>{{ $hakAkses->nama_field }}</x-table.td>
-                                <x-table.td>{{ $hakAkses->judul_menu }}</x-table.td>
+                                <x-table.td>
+                                    {{ $hakAkses->nama_field }}
+                                </x-table.td>
+                                <x-table.td>
+                                    {{ $hakAkses->judul_menu }}
+                                </x-table.td>
                             </x-table.tr>
                         @empty
                             <x-table.tr-empty colspan="3" padding />
@@ -63,9 +72,27 @@
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
             <x-filter.search method="$refresh" />
-            <x-filter.toggle class="ml-1" id="show-checked-set-hak-akses" title="Tampilkan yang dipilih" model="showChecked" />
-            <x-button size="sm" class="ml-auto" data-dismiss="modal" title="Batal" />
-            <x-button size="sm" variant="primary" class="ml-2" data-dismiss="modal" wire:click="$emit('khanza.set')" title="Simpan" icon="fas fa-save" />
+            <x-filter.toggle
+                class="ml-1"
+                id="show-checked-set-hak-akses"
+                title="Tampilkan yang dipilih"
+                model="showChecked"
+            />
+            <x-button
+                size="sm"
+                class="ml-auto"
+                data-dismiss="modal"
+                title="Batal"
+            />
+            <x-button
+                size="sm"
+                variant="primary"
+                class="ml-2"
+                data-dismiss="modal"
+                wire:click="$emit('khanza.set')"
+                title="Simpan"
+                icon="fas fa-save"
+            />
         </x-slot>
     </x-modal>
 </div>

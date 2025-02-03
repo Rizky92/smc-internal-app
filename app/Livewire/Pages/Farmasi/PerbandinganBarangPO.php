@@ -67,6 +67,9 @@ class PerbandinganBarangPO extends Component
         $this->barangSelisih = false;
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         return [

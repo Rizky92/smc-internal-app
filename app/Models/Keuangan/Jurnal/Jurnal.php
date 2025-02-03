@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -127,16 +126,16 @@ class Jurnal extends Model
         ]);
 
         $sqlSelect = <<<'SQL'
-jurnal.tgl_jurnal,
-jurnal.jam_jurnal,
-jurnal.no_jurnal,
-jurnal.no_bukti,
-jurnal.keterangan,
-detailjurnal.kd_rek,
-rekening.nm_rek,
-detailjurnal.debet,
-detailjurnal.kredit
-SQL;
+            jurnal.tgl_jurnal,
+            jurnal.jam_jurnal,
+            jurnal.no_jurnal,
+            jurnal.no_bukti,
+            jurnal.keterangan,
+            detailjurnal.kd_rek,
+            rekening.nm_rek,
+            detailjurnal.debet,
+            detailjurnal.kredit
+            SQL;
 
         return $query
             ->selectRaw($sqlSelect)
@@ -158,8 +157,8 @@ SQL;
         }
 
         $sqlSelect = <<<'SQL'
-ifnull(round(sum(detailjurnal.debet), 2), 0) debet, ifnull(round(sum(detailjurnal.kredit), 2), 0) kredit
-SQL;
+            ifnull(round(sum(detailjurnal.debet), 2), 0) debet, ifnull(round(sum(detailjurnal.kredit), 2), 0) kredit
+            SQL;
 
         $this->addSearchConditions([
             'jurnal.no_jurnal',

@@ -76,6 +76,9 @@ class LaporanPemakaianObatTB extends Component
         $this->umur = 'anak';
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         return [

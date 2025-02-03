@@ -3,11 +3,17 @@
 namespace App\Livewire;
 
 use App\Models\Perawatan\Poliklinik;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\View\View;
 use Livewire\Component;
 
 class Antrean extends Component
 {
-    public function getPoliProperty()
+    /**
+     * @psalm-return Collection<Model>
+     */
+    public function getPoliProperty(): Collection
     {
         $today = strtoupper(carbon()->now()->translatedFormat('l'));
 
@@ -17,7 +23,8 @@ class Antrean extends Component
             $query->where('jadwal.hari_kerja', $today);
         })->get();
     }
-    public function render()
+
+    public function render(): View
     {
         return view('livewire.antrean');
     }

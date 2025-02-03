@@ -7,15 +7,16 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
 
 if (! function_exists('clamp')) {
     /**
      * Clamp the given number between the given minimum and maximum.
      *
-     * @param  \int|float  $number
-     * @param  \int|float  $min
-     * @param  \int|float  $max
-     * @return \int|float
+     * @param  int|float  $number
+     * @param  int|float  $min
+     * @param  int|float  $max
+     * @return int|float
      */
     function clamp($number, $min, $max)
     {
@@ -26,7 +27,7 @@ if (! function_exists('clamp')) {
 if (! function_exists('hari')) {
     /**
      * @template TDateTime of \DateTime|\DateTimeImmutable
-     * 
+     *
      * @param  TDateTime|string|null  $date
      */
     function hari($date = null): string
@@ -85,7 +86,7 @@ if (! function_exists('time_length')) {
 
 if (! function_exists('rp')) {
     /**
-     * @param  \int|float  $nominal
+     * @param  int|float  $nominal
      */
     function rp($nominal = 0, int $decimalCount = 0): string
     {
@@ -95,11 +96,11 @@ if (! function_exists('rp')) {
 
 if (! function_exists('money')) {
     /**
-     * @param  \int|float  $nominal
+     * @param  int|float  $nominal
      */
     function money($nominal = 0, int $decimalCount = 0, string $denom = ''): string
     {
-        switch ($nominal <=> 0) {
+        switch (round($nominal) <=> 0) {
             case -1:
                 return '-'.$denom.number_format(abs($nominal), $decimalCount, ',', '.');
             case 0:
@@ -113,8 +114,8 @@ if (! function_exists('money')) {
 if (! function_exists('map_bulan')) {
     /**
      * @param  Collection<int, int|float>|array<int, int|float>|null  $data
-     * @param  \mixed  $default
-     * @return \mixed[]
+     * @param  mixed  $default
+     * @return mixed[]
      */
     function map_bulan($data, $default = 0)
     {
@@ -270,14 +271,14 @@ if (! function_exists('tracker_dispose')) {
 
 if (! function_exists('func_get_named_args')) {
     /**
-     * @param  \object  $object
-     * @param  \string  $name
-     * @param  \mixed[]  $args
-     * @return \mixed[]
+     * @param  object  $object
+     * @param  string  $name
+     * @param  mixed[]  $args
+     * @return mixed[]
      */
     function func_get_named_args($object, $name, $args): array
     {
-        $method = new ReflectionMethod($object, $name);
+        $method = new \ReflectionMethod($object, $name);
         $res = [];
 
         foreach ($method->getParameters() as $param) {
@@ -290,18 +291,22 @@ if (! function_exists('func_get_named_args')) {
 
 if (! function_exists('str')) {
     /**
-     * @template  T of string|null
+     * @template T of string
      *
-     * @param  \T  $value
-     * @return \Illuminate\Support\Stringable|string|mixed
+     * @param  T  $value
+     * @return Stringable|string|mixed
      *
-     * @psalm-return (T is null ? object : \Illuminate\Support\Stringable)
+     * @psalm-return (T is null ? object : Stringable)
      */
-    function str($value = null)
+    function str($value = '')
     {
         if (func_num_args() === 0) {
             return new class
             {
+                /**
+                 * @param  string  $method
+                 * @param  mixed  $parameters
+                 */
                 public function __call($method, $parameters)
                 {
                     return Str::$method(...$parameters);
@@ -320,14 +325,14 @@ if (! function_exists('str')) {
 
 if (! function_exists('maybe')) {
     /**
-     * @param  \mixed  $obj
+     * @param  mixed  $obj
      * @param  \Closure|callable  $default
-     * @return \mixed
+     * @return mixed
      */
     function maybe($obj, $default = null)
     {
         if (is_null($obj) && ! is_null($default)) {
-            return Closure::fromCallable($default);
+            return \Closure::fromCallable($default);
         }
 
         if (is_null($obj) && is_null($default)) {
@@ -340,9 +345,9 @@ if (! function_exists('maybe')) {
 
 if (! function_exists('between')) {
     /**
-     * @param  \float|int  $value
-     * @param  \float|int  $start
-     * @param  \float|int  $end
+     * @param  float|int  $value
+     * @param  float|int  $start
+     * @param  float|int  $end
      */
     function between($value, $start = 0, $end = 0, bool $equal = false): bool
     {
