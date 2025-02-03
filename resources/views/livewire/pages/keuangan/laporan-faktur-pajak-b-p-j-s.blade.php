@@ -188,6 +188,12 @@
                                         <x-table.td>
                                             {{ $item->nama_asuransi }}
                                         </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->email_asuransi }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->npwp_asuransi }}
+                                        </x-table.td>
                                     </x-table.tr>
                                 @empty
                                     <x-table.tr-empty colspan="20" padding />
@@ -311,7 +317,7 @@
                                             {{ $item->nama_barang_jasa }}
                                         </x-table.td>
                                         <x-table.td>
-                                            {{ $item->nama_satuan_ukur }}
+                                            {{ $this->satuanUkur->get($item->nama_satuan_ukur, 'UM.0033') }}
                                         </x-table.td>
                                         <x-table.td-money
                                             :value="$item->harga_satuan"

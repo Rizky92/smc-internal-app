@@ -136,7 +136,7 @@ class KamarInap extends Model
             'B' as jenis_barang_jasa,
             '250100' as kode_barang_jasa,
             concat(kamar_inap.kd_kamar, ' ', bangsal.nm_bangsal) as nama_barang_jasa,
-            'UM.0026' as nama_satuan_ukur,
+            'HARI' as nama_satuan_ukur,
             kamar_inap.trf_kamar as harga_satuan,
             sum(kamar_inap.lama) as jumlah_barang_jasa,
             0 as diskon_persen,

@@ -53,10 +53,10 @@ class LaporanFakturPajakBPJS extends Component
     public $tanggalTarikan;
 
     /** @var string */
-    public $statusRawat;
-
-    /** @var string */
     public $npwpPenjual;
+
+    /** @var \Illuminate\Support\Collection */
+    public $satuanUkur;
 
     protected function queryString(): array
     {
@@ -64,7 +64,6 @@ class LaporanFakturPajakBPJS extends Component
             'tglAwal'        => ['except' => now()->subDays(5)->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir'       => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
             'tanggalTarikan' => ['except' => '-', 'as' => 'tgl_tarik'],
-            'statusRawat'    => ['except' => '-', 'as' => 'status_rawat'],
         ];
     }
 
@@ -72,6 +71,7 @@ class LaporanFakturPajakBPJS extends Component
     {
         $this->defaultValues();
         $this->npwpPenjual = app(NPWPSettings::class)->npwp_penjual;
+        $this->satuanUkur = SatuanUkuranPajak::pluck('kode_satuan_pajak', 'kode_sat');
     }
 
     /**
@@ -150,6 +150,25 @@ class LaporanFakturPajakBPJS extends Component
         return DB::connection('mysql_sik')
             ->query()
             ->withExpression('regist_faktur', $registFaktur)
+            ->selectRaw(<<<'SQL'
+                item_faktur_pajak.no_rawat,
+                item_faktur_pajak.kd_jenis_prw,
+                item_faktur_pajak.kategori,
+                item_faktur_pajak.status_lanjut,
+                item_faktur_pajak.kode_transaksi,
+                item_faktur_pajak.jenis_barang_jasa,
+                item_faktur_pajak.kode_barang_jasa,
+                item_faktur_pajak.nama_barang_jasa,
+                item_faktur_pajak.nama_satuan_ukur,
+                item_faktur_pajak.harga_satuan,
+                item_faktur_pajak.jumlah_barang_jasa,
+                item_faktur_pajak.diskon_persen,
+                item_faktur_pajak.diskon_nominal,
+                item_faktur_pajak.dpp,
+                item_faktur_pajak.dpp * (11/12) as dpp_nilai_lain,
+                item_faktur_pajak.ppn_persen,
+                (item_faktur_pajak.dpp * (11/12)) * (item_faktur_pajak.ppn_persen / 100) as ppn_nominal
+                SQL)
             ->fromSub($subQuery, 'item_faktur_pajak')
             ->join('regist_faktur', 'item_faktur_pajak.no_rawat', '=', 'regist_faktur.no_rawat')
             ->orderBy('item_faktur_pajak.no_rawat')
@@ -177,7 +196,6 @@ class LaporanFakturPajakBPJS extends Component
         $this->tglAwal = now()->subDays(5)->format('Y-m-d');
         $this->tglAkhir = now()->format('Y-m-d');
         $this->tanggalTarikan = '-';
-        $this->statusRawat = '-';
     }
 
     /**

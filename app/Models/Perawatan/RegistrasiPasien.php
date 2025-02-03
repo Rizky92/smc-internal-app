@@ -1084,6 +1084,7 @@ class RegistrasiPasien extends Model
 
         $sqlSelect = <<<'SQL'
             reg_periksa.no_rawat,
+            reg_periksa.status_lanjut,
             reg_periksa.kd_pj,
             nota_bayar.tanggal as tgl_bayar,
             nota_bayar.jam as jam_bayar,
@@ -1135,7 +1136,7 @@ class RegistrasiPasien extends Model
             ->unionAll($kode080);
     }
 
-    public function scopeLaporanFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $jenisRawat = '-'): Builder
+    public function scopeLaporanFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->format('Y-m-d');
@@ -1225,28 +1226,27 @@ class RegistrasiPasien extends Model
             ->leftJoin('kelurahan', 'pasien.kd_kel', '=', 'kelurahan.kd_kel')
             ->leftJoin('kecamatan', 'pasien.kd_kec', '=', 'kecamatan.kd_kec')
             ->leftJoin('kabupaten', 'pasien.kd_kab', '=', 'kabupaten.kd_kab')
-            ->leftJoin('propinsi', 'pasien.kd_prop', '=', 'propinsi.kd_prop')
-            ->when($jenisRawat !== '-', fn ($q) => $q->where('reg_periksa.status_lanjut', $jenisRawat));
+            ->leftJoin('propinsi', 'pasien.kd_prop', '=', 'propinsi.kd_prop');
     }
 
-    public function scopeLaporanFakturPajakBPJS(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $jenisRawat = '-'): Builder
+    public function scopeLaporanFakturPajakBPJS(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         return $query
-            ->laporanFakturPajak($tglAwal, $tglAkhir, $jenisRawat)
+            ->laporanFakturPajak($tglAwal, $tglAkhir)
             ->where('reg_periksa.kd_pj', 'BPJ');
     }
 
-    public function scopeLaporanFakturPajakUmum(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $jenisRawat = '-'): Builder
+    public function scopeLaporanFakturPajakUmum(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         return $query
-            ->laporanFakturPajak($tglAwal, $tglAkhir, $jenisRawat)
+            ->laporanFakturPajak($tglAwal, $tglAkhir)
             ->where('reg_periksa.kd_pj', 'A09');
     }
 
-    public function scopeLaporanFakturPajakAsuransi(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $jenisRawat = '-', string $kodePJ = '-', bool $isPerusahaan = false): Builder
+    public function scopeLaporanFakturPajakAsuransi(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = '-', bool $isPerusahaan = false): Builder
     {
         return $query
-            ->laporanFakturPajak($tglAwal, $tglAkhir, $jenisRawat)
+            ->laporanFakturPajak($tglAwal, $tglAkhir)
             ->whereNotIn('reg_periksa.kd_pj', ['BPJ', 'A09'])
             ->when($kodePJ !== '-', fn ($q) => $q->where('reg_periksa.kd_pj', $kodePJ))
             ->when($isPerusahaan, fn ($q) => $q->whereColumn('reg_periksa.kd_pj', 'pasien.perusahaan_pasien'));
