@@ -9,8 +9,10 @@
         </div>
     </div>
 </div>
-<script>
-    setTimeout(function() {
-        location.reload();
-    }, 3600000);
-</script>
+@push('js')
+    <script>
+        setTimeout(function() {
+            location.reload();
+        }, 3600000);
+    </script>
+@endpush

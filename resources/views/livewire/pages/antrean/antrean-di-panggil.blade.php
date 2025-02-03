@@ -30,6 +30,14 @@
         document.addEventListener('play-voice', (event) => {
             var textToSpeech = 'Nomor antrian ' + event.detail.no_reg + ', ' + event.detail.nm_pasien.toLowerCase() + ', silahkan menuju ke ' + event.detail.nm_poli.toLowerCase();
             var repeatCount = 0;
+            let processesCompleted = 0; // Counter untuk tracking proses
+            
+            function checkAndRefresh() {
+                processesCompleted++;
+                if (processesCompleted === 2) { // Tunggu kedua proses selesai
+                    window.location.reload(); // Full page refresh
+                }
+            }
 
             function speakAndRepeat() {
                 if (repeatCount < 3) {
@@ -42,6 +50,7 @@
                     });
                 } else {
                     Livewire.emit('updateStatusAfterCall');
+                    checkAndRefresh(); // Proses 1 selesai (voice)
                 }
             }
             speakAndRepeat();
@@ -58,6 +67,7 @@
                     clearInterval(blinkInterval);
                     card.classList.remove('bg-success');
                     numberElement.classList.remove('text-white');
+                    checkAndRefresh(); // Proses 2 selesai (blink)
                 }, 5000);
             }
         });
