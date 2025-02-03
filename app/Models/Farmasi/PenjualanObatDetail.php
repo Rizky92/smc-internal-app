@@ -4,7 +4,6 @@ namespace App\Models\Farmasi;
 
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
 
 class PenjualanObatDetail extends Model
 {
@@ -41,7 +40,7 @@ class PenjualanObatDetail extends Model
             'Walk In' as status_lanjut,
             16 as urutan
             SQL;
-            
+
         return $query
             ->selectRaw($sqlSelect)
             ->join('databarang', 'detailjual.kode_brng', '=', 'databarang.kode_brng')

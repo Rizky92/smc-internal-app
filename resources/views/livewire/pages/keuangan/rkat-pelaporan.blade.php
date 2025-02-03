@@ -43,14 +43,34 @@
             </x-row-col-flex>
             <x-row-col-flex class="pt-3 border-top">
                 <x-filter.label constant-width>Bidang:</x-filter.label>
-                <x-filter.select model="bidang" :options="$this->dataBidang" placeholder="SEMUA" />
+                <x-filter.select
+                    model="bidang"
+                    :options="$this->dataBidang"
+                    placeholder="SEMUA"
+                />
                 @can('keuangan.rkat-pelaporan.create')
-                    <x-button variant="primary" size="sm" title="Laporan Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-pelaporan-rkat" class="btn-primary ml-auto" />
+                    <x-button
+                        variant="primary"
+                        size="sm"
+                        title="Laporan Baru"
+                        icon="fas fa-plus"
+                        data-toggle="modal"
+                        data-target="#modal-input-pelaporan-rkat"
+                        class="btn-primary ml-auto"
+                    />
                 @endcan
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" style="min-width: 100%" sortable zebra hover sticky nowrap>
+            <x-table
+                :sortColumns="$sortColumns"
+                style="min-width: 100%"
+                sortable
+                zebra
+                hover
+                sticky
+                nowrap
+            >
                 <x-slot name="columns">
                     <x-table.th title="Bidang" />
                     <x-table.th title="Anggaran" />
@@ -64,14 +84,37 @@
                 <x-slot name="body">
                     @forelse ($this->dataPenggunaanRKAT as $penggunaan)
                         <x-table.tr>
-                            <x-table.td :clickable="user()->can('keuangan.rkat-pelaporan.update') || user()->can('keuangan.rkat-pelaporan.read')" data-pemakaian-anggaran-id="{{ $penggunaan->id }}" data-anggaran-bidang-id="{{ $penggunaan->anggaran_bidang_id }}" data-tgl-pakai="{{ $penggunaan->tgl_dipakai }}" data-keterangan="{{ $penggunaan->judul }}">{{ $penggunaan->anggaranBidang->bidang->nama }}</x-table.td>
-                            <x-table.td>{{ $penggunaan->anggaranBidang->anggaran->nama }}</x-table.td>
-                            <x-table.td>{{ $penggunaan->anggaranBidang->tahun }}</x-table.td>
-                            <x-table.td>{{ $penggunaan->tgl_dipakai }}</x-table.td>
-                            <x-table.td>{{ $penggunaan->judul ?? '-' }}</x-table.td>
-                            <x-table.td>{{ rp($penggunaan->nominal_pemakaian) }}</x-table.td>
-                            <x-table.td>{{ $penggunaan->created_at->format('Y-m-d') }}</x-table.td>
-                            <x-table.td>{{ $penggunaan->user_id }} {{ optional($penggunaan->petugas)->nama }}</x-table.td>
+                            <x-table.td
+                                :clickable="user()->can('keuangan.rkat-pelaporan.update') || user()->can('keuangan.rkat-pelaporan.read')"
+                                data-pemakaian-anggaran-id="{{ $penggunaan->id }}"
+                                data-anggaran-bidang-id="{{ $penggunaan->anggaran_bidang_id }}"
+                                data-tgl-pakai="{{ $penggunaan->tgl_dipakai }}"
+                                data-keterangan="{{ $penggunaan->judul }}"
+                            >
+                                {{ $penggunaan->anggaranBidang->bidang->nama }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $penggunaan->anggaranBidang->anggaran->nama }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $penggunaan->anggaranBidang->tahun }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $penggunaan->tgl_dipakai }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $penggunaan->judul ?? '-' }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ rp($penggunaan->nominal_pemakaian) }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $penggunaan->created_at->format('Y-m-d') }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $penggunaan->user_id }}
+                                {{ optional($penggunaan->petugas)->nama }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="9" padding />

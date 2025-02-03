@@ -54,7 +54,7 @@ class UbahTanggalJurnal extends Component
     }
 
     /**
-     * @return Collection<\App\Models\Keuangan\Jurnal\JurnalBackup>|array<empty, empty>
+     * @return Collection<JurnalBackup>|array<empty, empty>
      */
     public function getBackupJurnalProperty()
     {

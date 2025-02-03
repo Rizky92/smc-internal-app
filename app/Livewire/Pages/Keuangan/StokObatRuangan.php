@@ -64,6 +64,9 @@ class StokObatRuangan extends Component
         $this->kodeBangsal = '-';
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         return [

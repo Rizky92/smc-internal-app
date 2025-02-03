@@ -67,7 +67,7 @@ class LaporanHasilPemeriksaan extends Component
             ->paginate($this->perpage);
     }
 
-    public function getUniquePemeriksaanProperty()
+    public function getUniquePemeriksaanProperty(): array
     {
         $uniquePemeriksaan = [];
 
@@ -80,7 +80,7 @@ class LaporanHasilPemeriksaan extends Component
         return $uniquePemeriksaan;
     }
 
-    public function getPemeriksaanProperty()
+    public function getPemeriksaanProperty(): array
     {
         if ($this->isDeferred) {
             return [];
@@ -120,6 +120,11 @@ class LaporanHasilPemeriksaan extends Component
         $this->penjamin = '-';
     }
 
+    /**
+     * @return (mixed|string)[][][]
+     *
+     * @psalm-return array{0: non-empty-list<array<mixed|string>>}
+     */
     protected function dataPerSheet(): array
     {
         $data = [];

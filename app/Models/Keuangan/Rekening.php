@@ -24,16 +24,14 @@ class Rekening extends Model
     {
         parent::booted();
 
-        static::addGlobalScope(function (Builder $query) {
-            return $query
-                ->select([
-                    'rekening.kd_rek',
-                    'rekening.tipe',
-                    'rekening.balance',
-                    'rekening.level',
-                ])
-                ->addSelect(DB::raw('convert(rekening.nm_rek using ascii) as nm_rek'));
-        });
+        static::addGlobalScope(fn (Builder $query) => $query
+            ->select([
+                'rekening.kd_rek',
+                'rekening.tipe',
+                'rekening.balance',
+                'rekening.level',
+            ])
+            ->addSelect(DB::raw('convert(rekening.nm_rek using ascii) as nm_rek')));
     }
 
     public function scopeSaldoAwalBulanSebelumnya(Builder $query, string $tglSaldo = ''): Builder
@@ -51,7 +49,7 @@ class Rekening extends Model
                 when rekening.balance = "D" then round(sum(detailjurnal.debet) - sum(detailjurnal.kredit), 2)
                 when rekening.balance = "K" then round(sum(detailjurnal.kredit) - sum(detailjurnal.debet), 2)
             end total_transaksi
-        SQL;
+            SQL;
 
         return $query
             ->selectRaw($sqlSelect)
@@ -78,7 +76,7 @@ class Rekening extends Model
             detailjurnal.kd_rek,
             round(sum(detailjurnal.debet), 2) total_debet,
             round(sum(detailjurnal.kredit), 2) total_kredit
-        SQL;
+            SQL;
 
         return $query
             ->selectRaw($sqlSelect)
@@ -112,7 +110,7 @@ class Rekening extends Model
             rekening.balance,
             round(sum(detailjurnal.debet), 2) debet,
             round(sum(detailjurnal.kredit), 2) kredit
-        SQL;
+            SQL;
 
         return $query
             ->withoutGlobalScopes()

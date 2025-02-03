@@ -28,6 +28,7 @@ use App\Models\Perawatan\TindakanRanapPerawat;
 use App\Models\Radiologi\PeriksaRadiologi;
 use App\Settings\NPWPSettings;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -70,11 +71,13 @@ class LaporanFakturPajakBPJS extends Component
     }
 
     /**
-     * @return array<empty, empty>|\Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return array<empty, empty>|LengthAwarePaginator
      */
     public function getDataLaporanFakturPajakProperty()
     {
-        if ($this->isDeferred) return [];
+        if ($this->isDeferred) {
+            return [];
+        }
 
         if ($this->tanggalTarikan !== '-') {
             return FakturPajakDitarik::query()
@@ -98,11 +101,13 @@ class LaporanFakturPajakBPJS extends Component
     }
 
     /**
-     * @return array<empty, empty>|\Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return array<empty, empty>|LengthAwarePaginator
      */
     public function getDataDetailFakturPajakProperty()
     {
-        if ($this->isDeferred) return [];
+        if ($this->isDeferred) {
+            return [];
+        }
 
         if ($this->tanggalTarikan !== '-') {
             return FakturPajakDitarikDetail::query()
@@ -112,7 +117,7 @@ class LaporanFakturPajakBPJS extends Component
         }
 
         $smc = DB::connection('mysql_smc')->getDatabaseName();
-        
+
         $registFaktur = RegistrasiPasien::query()
             ->filterFakturPajak($this->tglAwal, $this->tglAkhir, 'BPJ')
             ->whereNotExists(fn ($q) => $q->from($smc.'.faktur_pajak_ditarik_detail')
@@ -173,12 +178,12 @@ class LaporanFakturPajakBPJS extends Component
     protected function dataPerSheet(): array
     {
         $tanggalTarikanSementara = $this->tanggalTarikan;
-        
+
         if ($tanggalTarikanSementara === '-') {
             $tanggalTarikanSementara = now()->toDateTimeString();
 
             $smc = DB::connection('mysql_smc')->getDatabaseName();
-            
+
             RegistrasiPasien::query()
                 ->laporanFakturPajakBPJS($this->tglAwal, $this->tglAkhir)
                 ->whereNotExists(fn ($q) => $q->from($smc.'.faktur_pajak_ditarik')
@@ -192,19 +197,19 @@ class LaporanFakturPajakBPJS extends Component
                     $model->setAttribute('id_tku_penjual', $this->npwpPenjual);
                     $model->setAttribute('tgl_tarikan', $tanggalTarikanSementara);
                     $model->setAttribute('menu', 'fp-bpjs');
-                    
+
                     FakturPajakDitarik::insert($model->toArray());
                 });
-    
+
             $registFaktur = RegistrasiPasien::query()
                 ->filterFakturPajak($this->tglAwal, $this->tglAkhir, 'BPJ')
                 ->whereNotExists(fn ($q) => $q->from($smc.'.faktur_pajak_ditarik_detail')
                     ->whereColumn($smc.'.faktur_pajak_ditarik_detail.no_rawat', 'reg_periksa.no_rawat')
                     ->whereColumn($smc.'.faktur_pajak_ditarik_detail.tgl_bayar', 'nota_bayar.tanggal'))
                 ->search($this->cari);
-    
+
             $satuanUkuranPajak = SatuanUkuranPajak::pluck('kode_satuan_pajak', 'kode_sat');
-    
+
             $subQuery = RegistrasiPasien::query()->itemFakturPajakBiayaRegistrasi()
                 ->unionAll(KamarInap::query()->itemFakturPajak())
                 ->unionAll(TindakanRalanDokter::query()->itemFakturPajak())
@@ -246,14 +251,14 @@ class LaporanFakturPajakBPJS extends Component
                     $diskonPersen = $model->diskon_persen;
                     $diskonNominal = $model->diskon_nominal;
                     $dpp = $model->dpp;
-                    
-                    if (!in_array($model->kategori, ['Pemberian Obat', 'Retur Obat', 'Obat Pulang', 'Walk In', 'Piutang Obat'])) {
+
+                    if (! in_array($model->kategori, ['Pemberian Obat', 'Retur Obat', 'Obat Pulang', 'Walk In', 'Piutang Obat'])) {
                         $subtotalJasa = (float) $totalJasa->get($model->no_rawat);
                         $diskonPersen = ((float) $model->diskon) / $subtotalJasa;
                         $diskonNominal = $diskonPersen * ((float) $model->dpp);
                         $dpp = ((float) $model->dpp) - $diskonNominal;
                     }
-                    
+
                     $dppNilaiLain = $dpp * (11 / 12);
                     $ppnPersen = (int) $model->ppn_persen;
                     $ppnNominal = $dppNilaiLain * ($ppnPersen / 100);
@@ -290,7 +295,7 @@ class LaporanFakturPajakBPJS extends Component
             $this->tanggalTarikan = $tanggalTarikanSementara;
             $this->dispatchBrowserEvent('data-tarikan:updated', ['tanggalTarikan' => $tanggalTarikanSementara]);
         }
-        
+
         return [
             'Faktur' => fn () => FakturPajakDitarik::query()
                 ->where('menu', 'fp-bpjs')
@@ -331,7 +336,7 @@ class LaporanFakturPajakBPJS extends Component
                     'ppn_persen'         => 'float',
                     'ppn_nominal'        => 'float',
                     'ppnbm_persen'       => 'float',
-                    'ppnbm_nominal'      => 'float,'
+                    'ppnbm_nominal'      => 'float,',
                 ])
                 ->cursor()
                 ->map(fn (FakturPajakDitarikDetail $model): array => [

@@ -13,6 +13,7 @@ use App\Models\Keuangan\AkunBayar;
 use App\Models\Keuangan\PenagihanPiutang;
 use App\Models\RekamMedis\Penjamin;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -75,7 +76,7 @@ class AccountReceivable extends Component
     }
 
     /**
-     * @return \Illuminate\Contracts\Pagination\Paginator|array<empty, empty>
+     * @return Paginator|array<empty, empty>
      */
     public function getDataAccountReceivableProperty()
     {
@@ -248,6 +249,9 @@ class AccountReceivable extends Component
         $this->tglBayar = now()->format('Y-m-d');
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         $total = PenagihanPiutang::query()
@@ -282,7 +286,7 @@ class AccountReceivable extends Component
                     'periode_61_90'      => $model->umur_hari > 60 && $model->umur_hari <= 90 ? floatval($model->sisa_piutang) : 0,
                     'periode_90_up'      => $model->umur_hari > 90 ? floatval($model->sisa_piutang) : 0,
                     'umur_hari'          => intval($model->umur_hari),
-                    'rekening_penagihan' => $model->kd_rek_tagihan . ' ' . $model->nama_bank,
+                    'rekening_penagihan' => $model->kd_rek_tagihan.' '.$model->nama_bank,
                     'tgl_tagihan'        => $model->tgl_tagihan,
                     'tgl_jatuh_tempo'    => $model->tgl_jatuh_tempo,
                     'tgl_bayar'          => $model->tgl_bayar ?? '-',

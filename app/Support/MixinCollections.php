@@ -11,7 +11,7 @@ use Illuminate\Support\Stringable;
 class MixinCollections
 {
     /**
-     * @return \Closure(array-key, mixed): \Illuminate\Support\Collection
+     * @return Closure(array-key, mixed): Collection
      */
     public function set(): Closure
     {
@@ -24,7 +24,7 @@ class MixinCollections
     }
 
     /**
-     * @return Closure(bool, mixed): \Illuminate\Support\Collection
+     * @return Closure(bool, mixed): Collection
      */
     public function mergeWhen(): Closure
     {
@@ -33,7 +33,7 @@ class MixinCollections
     }
 
     /**
-     * @return Closure(): \Illuminate\Support\Collection
+     * @return Closure(): Collection
      */
     public function dot(): Closure
     {
@@ -51,7 +51,7 @@ class MixinCollections
     }
 
     /**
-     * @return Closure(string, string): \Illuminate\Support\Stringable
+     * @return Closure(string, string): Stringable
      */
     public function joinStr(): Closure
     {
@@ -86,7 +86,7 @@ class MixinCollections
     }
 
     /**
-     * @return Closure(bool $condition, mixed ...$values): \Illuminate\Support\Collection
+     * @return Closure(bool $condition, mixed ...$values): Collection
      */
     public function pushIf(): Closure
     {
@@ -104,7 +104,7 @@ class MixinCollections
     }
 
     /**
-     * @return Closure(string|null, int): \Illuminate\Support\Collection
+     * @return Closure(string|null, int): Collection
      */
     public function whereLike(): Closure
     {

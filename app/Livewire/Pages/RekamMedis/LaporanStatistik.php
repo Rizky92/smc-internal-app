@@ -66,6 +66,9 @@ class LaporanStatistik extends Component
         $this->tglAkhir = now()->endOfWeek()->format('Y-m-d');
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         return [

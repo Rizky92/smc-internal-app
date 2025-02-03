@@ -3,7 +3,6 @@
 namespace App\Models\Keuangan;
 
 use App\Database\Eloquent\Model;
-use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
@@ -45,7 +44,7 @@ class TambahanBiaya extends Model
             poliklinik.nm_poli,
             reg_periksa.status_lanjut,
             reg_periksa.status_bayar
-        SQL;
+            SQL;
 
         $this->addSearchConditions([
             'pasien.nm_pasien',

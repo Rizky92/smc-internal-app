@@ -11,7 +11,6 @@ use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Settings\RKATSettings;
 use Exception;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -77,7 +76,7 @@ class RKATInputPenetapan extends Component
             ->mapWithKeys(fn (Bidang $model) => [
                 $model->id => str($model->nama)
                     ->padLeft(strlen($model->nama) + (intval($model->depth) * 8), html_entity_decode('&nbsp;'))
-                    ->value()
+                    ->value(),
             ]);
     }
 
@@ -120,7 +119,7 @@ class RKATInputPenetapan extends Component
 
         $settings = app(RKATSettings::class);
 
-        if (!now()->between($settings->tgl_penetapan_awal, $settings->tgl_penetapan_akhir)) {
+        if (! now()->between($settings->tgl_penetapan_awal, $settings->tgl_penetapan_akhir)) {
             $this->flashError('Waktu penetapan RKAT diluar periode yang sudah ditetapkan!');
             $this->dispatchBrowserEvent('data-denied');
 
@@ -143,7 +142,7 @@ class RKATInputPenetapan extends Component
 
             $this->dispatchBrowserEvent('data-saved');
             $this->emit('flash.success', 'Data berhasil disimpan!');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->flashError('Terjadi kesalahan saat menyimpan data!');
             $this->dispatchBrowserEvent('data-denied');
         }
@@ -151,7 +150,7 @@ class RKATInputPenetapan extends Component
 
     public function update(): void
     {
-        if (!$this->isUpdating()) {
+        if (! $this->isUpdating()) {
             $this->create();
 
             return;

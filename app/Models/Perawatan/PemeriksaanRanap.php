@@ -51,7 +51,7 @@ class PemeriksaanRanap extends Model
             pemeriksaan_ranap.nip,
             petugas.nama,
             jabatan.nm_jbtn
-        SQL;
+            SQL;
 
         $this->addSearchConditions([
             'pemeriksaan_ranap.no_rawat',

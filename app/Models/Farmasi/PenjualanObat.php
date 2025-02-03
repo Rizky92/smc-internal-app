@@ -27,7 +27,7 @@ class PenjualanObat extends Model
         $sqlSelect = <<<'SQL'
             count(penjualan.nota_jual) jumlah,
             month(penjualan.tgl_jual) bulan
-        SQL;
+            SQL;
 
         return $query
             ->selectRaw($sqlSelect)
@@ -42,7 +42,7 @@ class PenjualanObat extends Model
         $sqlSelect = <<<'SQL'
             round(sum(detail_jual.total + penjualan.ppn)) jumlah,
             month(penjualan.tgl_jual) bulan
-        SQL;
+            SQL;
 
         $sumDetailJual = DB::connection('mysql_sik')
             ->table('detailjual')

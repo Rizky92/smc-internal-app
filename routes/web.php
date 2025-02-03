@@ -6,7 +6,11 @@ use App\Http\Controllers\Auth\LogoutOtherSessionsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PrintLayoutController;
+use App\Livewire\Antrean;
+use App\Livewire\AntreanPintu;
 use App\Livewire\Pages\Admin;
+use App\Livewire\Pages\Antrean\AntreanPerPintu;
+use App\Livewire\Pages\Antrean\AntreanPoli;
 use App\Livewire\Pages\Antrian;
 use App\Livewire\Pages\Aplikasi;
 use App\Livewire\Pages\Farmasi;
@@ -35,10 +39,10 @@ use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 
 Route::get('/', HomeController::class);
 
-Route::get('/antrean', App\Livewire\Antrean::class)->name('antrean');
-Route::get('/antrean-pintu', App\Livewire\AntreanPintu::class)->name('antrean-pintu');
-Route::get('/antrean/{kd_poli}', App\Livewire\Pages\Antrean\AntreanPoli::class)->name('antrean-poli');
-Route::get('/antrean-per-pintu/{kd_pintu}', App\Livewire\Pages\Antrean\AntreanPerPintu::class)->name('antrean-per-pintu');
+Route::get('/antrean', Antrean::class)->name('antrean');
+Route::get('/antrean-pintu', AntreanPintu::class)->name('antrean-pintu');
+Route::get('/antrean/{kd_poli}', AntreanPoli::class)->name('antrean-poli');
+Route::get('/antrean-per-pintu/{kd_pintu}', AntreanPerPintu::class)->name('antrean-per-pintu');
 Route::get('/display-jadwal-dokter', Informasi\DisplayJadwalDokter::class);
 
 Route::get('/print-layout', [PrintLayoutController::class, 'index']);
@@ -197,7 +201,7 @@ Route::prefix('admin')
                 Route::get('posting-jurnal', Keuangan\JurnalPosting::class)
                     ->name('posting-jurnal')
                     ->middleware('can:keuangan.posting-jurnal.read');
-                
+
                 Route::get('cetak-posting-jurnal', Keuangan\Cetak\HasilPostingJurnal::class)
                     ->name('cetak-posting-jurnal')
                     ->middleware('can:keuangan.posting-jurnal.read');
@@ -297,7 +301,7 @@ Route::prefix('admin')
 
         Route::prefix('antrean')
             ->as('antrean.')
-            ->group(function() {
+            ->group(function () {
                 Route::get('manajemen-pintu', Aplikasi\ManajemenPintu::class)
                     ->name('manajemen-pintu')
                     ->middleware('can:antrean.manajemen-pintu.read');

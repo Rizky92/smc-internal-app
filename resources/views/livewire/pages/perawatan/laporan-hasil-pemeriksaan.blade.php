@@ -37,14 +37,28 @@
                 <x-slot name="body">
                     @forelse ($this->dataPasienPoliMCU as $item)
                         <x-table.tr>
-                            <x-table.td>{{ $item->penjamin->png_jawab }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->penjamin->png_jawab }}
+                            </x-table.td>
                             <x-table.td>{{ $item->no_rawat }}</x-table.td>
-                            <x-table.td>{{ $item->no_rkm_medis }}</x-table.td>
-                            <x-table.td>{{ $item->pasien->nm_pasien }}</x-table.td>
-                            <x-table.td>{{ $item->pasien->jk }}</x-table.td>
-                            <x-table.td>{{ $item->pasien->agama }}</x-table.td>
-                            <x-table.td>{{ $item->tgl_registrasi }}</x-table.td>
-                            <x-table.td>{{ $item->poliklinik->nm_poli }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->no_rkm_medis }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->pasien->nm_pasien }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->pasien->jk }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->pasien->agama }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->tgl_registrasi }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->poliklinik->nm_poli }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="9" padding />

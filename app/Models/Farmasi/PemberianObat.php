@@ -74,7 +74,7 @@ class PemberianObat extends Model
         $sqlSelect = <<<'SQL'
             round(sum(detail_pemberian_obat.total)) jumlah,
             month(detail_pemberian_obat.tgl_perawatan) bulan
-        SQL;
+            SQL;
 
         return $query
             ->selectRaw($sqlSelect)

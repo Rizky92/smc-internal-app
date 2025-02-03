@@ -87,20 +87,46 @@
                 <x-row>
                     <div class="col-12 col-md-6 col-lg-2">
                         <div class="form-group">
-                            <label class="text-sm" for="kode-barang">Kode Barang</label>
-                            <input type="text" class="form-control form-control-sm" id="kode-barang" readonly autocomplete="off">
+                            <label class="text-sm" for="kode-barang">
+                                Kode Barang
+                            </label>
+                            <input
+                                type="text"
+                                class="form-control form-control-sm"
+                                id="kode-barang"
+                                readonly
+                                autocomplete="off"
+                            />
                         </div>
                     </div>
                     <div class="col-12 col-md-6 col-lg-4">
                         <div class="form-group">
-                            <label class="text-sm" for="nama-barang">Nama Barang</label>
-                            <input type="text" class="form-control form-control-sm" id="nama-barang" readonly autocomplete="off">
+                            <label class="text-sm" for="nama-barang">
+                                Nama Barang
+                            </label>
+                            <input
+                                type="text"
+                                class="form-control form-control-sm"
+                                id="nama-barang"
+                                readonly
+                                autocomplete="off"
+                            />
                         </div>
                     </div>
                     <div class="col-12 col-md-6 col-lg-6">
                         <div class="form-group">
-                            <label class="text-sm" for="supplier">Supplier</label>
-                            <x-filter.select2 livewire name="supplier" show-key :options="$this->supplier" placeholder="-" placeholder-value="-" width="100%" />
+                            <label class="text-sm" for="supplier">
+                                Supplier
+                            </label>
+                            <x-filter.select2
+                                livewire
+                                name="supplier"
+                                show-key
+                                :options="$this->supplier"
+                                placeholder="-"
+                                placeholder-value="-"
+                                width="100%"
+                            />
                         </div>
                     </div>
                 </x-row>
@@ -108,41 +134,88 @@
                 <x-row>
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="form-group">
-                            <label class="text-sm" for="stok-min">Stok minimal</label>
-                            <input type="number" class="form-control form-control-sm" id="stok-min" min="0" autocomplete="off">
+                            <label class="text-sm" for="stok-min">
+                                Stok minimal
+                            </label>
+                            <input
+                                type="number"
+                                class="form-control form-control-sm"
+                                id="stok-min"
+                                min="0"
+                                autocomplete="off"
+                            />
                         </div>
                     </div>
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="form-group">
-                            <label class="text-sm" for="stok-max">Stok maksimal</label>
-                            <input type="number" class="form-control form-control-sm" id="stok-max" min="0" autocomplete="off">
+                            <label class="text-sm" for="stok-max">
+                                Stok maksimal
+                            </label>
+                            <input
+                                type="number"
+                                class="form-control form-control-sm"
+                                id="stok-max"
+                                min="0"
+                                autocomplete="off"
+                            />
                         </div>
                     </div>
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="form-group">
-                            <label class="text-sm" for="stok-sekarang">Stok saat ini</label>
-                            <input type="text" class="form-control form-control-sm" id="stok-sekarang" readonly autocomplete="off">
+                            <label class="text-sm" for="stok-sekarang">
+                                Stok saat ini
+                            </label>
+                            <input
+                                type="text"
+                                class="form-control form-control-sm"
+                                id="stok-sekarang"
+                                readonly
+                                autocomplete="off"
+                            />
                         </div>
                     </div>
                     <div class="col-12 col-md-6 col-lg-3">
                         <div class="form-group">
-                            <label class="text-sm" for="saran-order">Saran order</label>
-                            <input type="text" class="form-control form-control-sm" id="saran-order" readonly autocomplete="off">
+                            <label class="text-sm" for="saran-order">
+                                Saran order
+                            </label>
+                            <input
+                                type="text"
+                                class="form-control form-control-sm"
+                                id="saran-order"
+                                readonly
+                                autocomplete="off"
+                            />
                         </div>
                     </div>
                 </x-row>
 
                 <x-row-col class="pb-3 border-bottom">
-                    <x-button disabled size="sm" variant="primary" id="simpan-data" title="Simpan" icon="fas fa-save" />
-                    <x-button disabled size="sm" class="ml-2" id="batal-simpan" title="Batal" />
+                    <x-button
+                        disabled
+                        size="sm"
+                        variant="primary"
+                        id="simpan-data"
+                        title="Simpan"
+                        icon="fas fa-save"
+                    />
+                    <x-button
+                        disabled
+                        size="sm"
+                        class="ml-2"
+                        id="batal-simpan"
+                        title="Batal"
+                    />
                 </x-row-col>
             @endcanany
 
-            <x-row-col-flex :class="Arr::toCssClasses([
-                'mt-3' => auth()
-                    ->user()
-                    ->canAny(['logistik.input-minmax-stok.create', 'logistik.input-minmax-stok.update']),
-            ])">
+            <x-row-col-flex
+                :class="Arr::toCssClasses([
+                    'mt-3' => auth()
+                        ->user()
+                        ->canAny(['logistik.input-minmax-stok.create', 'logistik.input-minmax-stok.update']),
+                ])"
+            >
                 <x-filter.button-export-excel class="ml-auto" />
             </x-row-col-flex>
 
@@ -154,7 +227,14 @@
         </x-slot>
 
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
+            <x-table
+                :sortColumns="$sortColumns"
+                sortable
+                zebra
+                hover
+                sticky
+                nowrap
+            >
                 <x-slot name="columns">
                     <x-table.th name="kode_brng" title="Kode" />
                     <x-table.th name="nama_brng" title="Nama" />
@@ -183,16 +263,26 @@
                             >
                                 {{ $barang->kode_brng }}
                             </x-table.td>
-                            <x-table.td>{{ $barang->nama_brng }}</x-table.td>
+                            <x-table.td>
+                                {{ $barang->nama_brng }}
+                            </x-table.td>
                             <x-table.td>{{ $barang->satuan }}</x-table.td>
                             <x-table.td>{{ $barang->jenis }}</x-table.td>
-                            <x-table.td>{{ $barang->nama_supplier }}</x-table.td>
+                            <x-table.td>
+                                {{ $barang->nama_supplier }}
+                            </x-table.td>
                             <x-table.td>{{ $barang->stokmin }}</x-table.td>
                             <x-table.td>{{ $barang->stokmax }}</x-table.td>
                             <x-table.td>{{ $barang->stok }}</x-table.td>
-                            <x-table.td>{{ $barang->saran_order }}</x-table.td>
-                            <x-table.td>{{ rp($barang->harga) }}</x-table.td>
-                            <x-table.td>{{ rp($barang->total_harga) }}</x-table.td>
+                            <x-table.td>
+                                {{ $barang->saran_order }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ rp($barang->harga) }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ rp($barang->total_harga) }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="11" padding />

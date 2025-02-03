@@ -37,15 +37,15 @@ class SuratPemesananObat extends Model
         }
 
         $sqlSelect = <<<'SQL'
-surat_pemesanan_medis.no_pemesanan,
-databarang.nama_brng,
-datasuplier.nama_suplier suplier_pesan,
-ifnull(pemesanan_datang.nama_suplier, '-') suplier_datang,
-detail_surat_pemesanan_medis.jumlah2 jumlah_pesan,
-ifnull(pemesanan_datang.jumlah, 0) jumlah_datang,
-(detail_surat_pemesanan_medis.jumlah2 - ifnull(pemesanan_datang.jumlah, 0)) selisih,
-if(pemesanan_datang.jumlah is null, 'Barang belum datang', null) keterangan
-SQL;
+            surat_pemesanan_medis.no_pemesanan,
+            databarang.nama_brng,
+            datasuplier.nama_suplier suplier_pesan,
+            ifnull(pemesanan_datang.nama_suplier, '-') suplier_datang,
+            detail_surat_pemesanan_medis.jumlah2 jumlah_pesan,
+            ifnull(pemesanan_datang.jumlah, 0) jumlah_datang,
+            (detail_surat_pemesanan_medis.jumlah2 - ifnull(pemesanan_datang.jumlah, 0)) selisih,
+            if(pemesanan_datang.jumlah is null, 'Barang belum datang', null) keterangan
+            SQL;
 
         $queryPOYangDatang = PenerimaanObat::query()
             ->selectRaw('pemesanan.no_order, pemesanan.tgl_pesan, detailpesan.kode_brng, detailpesan.jumlah2 as jumlah, pemesanan.kode_suplier, datasuplier.nama_suplier')

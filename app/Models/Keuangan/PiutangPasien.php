@@ -59,17 +59,17 @@ class PiutangPasien extends Model
         }
 
         $sqlSelect = <<<'SQL'
-piutang_pasien.no_rawat,
-piutang_pasien.tgl_piutang,
-piutang_pasien.no_rkm_medis,
-pasien.nm_pasien,
-piutang_pasien.status,
-piutang_pasien.totalpiutang,
-piutang_pasien.uangmuka,
-piutang_pasien.sisapiutang,
-piutang_pasien.tgltempo,
-penjab.png_jawab
-SQL;
+            piutang_pasien.no_rawat,
+            piutang_pasien.tgl_piutang,
+            piutang_pasien.no_rkm_medis,
+            pasien.nm_pasien,
+            piutang_pasien.status,
+            piutang_pasien.totalpiutang,
+            piutang_pasien.uangmuka,
+            piutang_pasien.sisapiutang,
+            piutang_pasien.tgltempo,
+            penjab.png_jawab
+            SQL;
 
         return $query
             ->selectRaw($sqlSelect)

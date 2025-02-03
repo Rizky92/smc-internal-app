@@ -245,7 +245,7 @@ class Menu
                     [
                         'name'              => 'Posting Jurnal',
                         'url'               => route('admin.keuangan.posting-jurnal'),
-                        'icon'              => "fas fa-book",
+                        'icon'              => 'fas fa-book',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.posting-jurnal.read'),
                     ],
@@ -290,7 +290,7 @@ class Menu
                     'farmasi.laporan-pemakaian-obat-tb.read',
                     'farmasi.defecta-depo.read',
                     'farmasi.daftar-riwayat-obat-alkes.read',
-                    'farmasi.farmasi.rincian-perbandingan-po.read'
+                    'farmasi.farmasi.rincian-perbandingan-po.read',
                 ]),
                 'items' => [
                     [
@@ -496,7 +496,7 @@ class Menu
                         'icon'              => 'fas fa-door-open',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('antrean.manajemen-pintu.read'),
-                    ]
+                    ],
                 ],
             ],
             [

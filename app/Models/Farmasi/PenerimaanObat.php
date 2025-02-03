@@ -26,7 +26,7 @@ class PenerimaanObat extends Model
         $sqlSelect = <<<'SQL'
             round(sum(detailpesan.total)) jumlah,
             month(pemesanan.tgl_pesan) bulan
-        SQL;
+            SQL;
 
         return $query
             ->selectRaw($sqlSelect)
@@ -62,7 +62,7 @@ class PenerimaanObat extends Model
             round(pemesanan.tagihan - ifnull(bayar_pemesanan.besar_bayar, 0), 2) sisa,
             bayar_pemesanan.keterangan,
             datediff(?, titip_faktur.tanggal) umur_hari
-        SQL;
+            SQL;
 
         $this->addSearchConditions([
             'detail_titip_faktur.no_tagihan',
@@ -124,14 +124,14 @@ class PenerimaanObat extends Model
             round(sum(pemesanan.tagihan), 2) total_tagihan,
             round(sum(bayar_pemesanan.besar_bayar), 2) total_dibayar,
             round(sum(pemesanan.tagihan - ifnull(bayar_pemesanan.besar_bayar, 0)), 2) sisa_tagihan
-        SQL;
+            SQL;
 
         $sqlGroupBy = <<<'SQL'
             datediff(?, titip_faktur.tanggal) <= 30,
             datediff(?, titip_faktur.tanggal) between 31 and 60,
             datediff(?, titip_faktur.tanggal) between 61 and 90,
             datediff(?, titip_faktur.tanggal) > 90
-        SQL;
+            SQL;
 
         $this->addSearchConditions([
             'detail_titip_faktur.no_tagihan',
@@ -164,8 +164,8 @@ class PenerimaanObat extends Model
 
     public function scopeRincianPerbandinganPemesananPO(
         Builder $query,
-        string $kategori = 'obat', 
-        string $tglAwal = '', 
+        string $kategori = 'obat',
+        string $tglAwal = '',
         string $tglAkhir = ''
     ): Builder {
         if (empty($tglAwal)) {
@@ -189,7 +189,7 @@ class PenerimaanObat extends Model
             ifnull((select sum(dp2.total) from detailpesan dp2 join pemesanan p2 on dp2.no_faktur = p2.no_faktur where dp2.kode_brng = databarang.kode_brng and p2.tgl_pesan between ? and ?), 0) as total_harga_bulan_lalu,
             ifnull(sum(detailpesan.jumlah2), 0) - ifnull((select sum(dp2.jumlah2) from detailpesan dp2 join pemesanan p2 on dp2.no_faktur = p2.no_faktur where dp2.kode_brng = databarang.kode_brng and p2.tgl_pesan between ? and ?), 0) as selisih_pemesanan,
             ifnull(sum(detailpesan.total), 0) - ifnull((select sum(dp2.total) from detailpesan dp2 join pemesanan p2 on dp2.no_faktur = p2.no_faktur where dp2.kode_brng = databarang.kode_brng and p2.tgl_pesan between ? and ?), 0) as selisih_harga
-        SQL;
+            SQL;
 
         $this->addSearchConditions([
             'databarang.kode_brng',
@@ -213,11 +213,11 @@ class PenerimaanObat extends Model
                 'selisih_harga'                 => 'float',
             ])
             ->join('detailpesan', 'pemesanan.no_faktur', '=', 'detailpesan.no_faktur')
-            ->join('databarang','detailpesan.kode_brng','=','databarang.kode_brng')
+            ->join('databarang', 'detailpesan.kode_brng', '=', 'databarang.kode_brng')
             ->whereBetween('pemesanan.tgl_pesan', [$tglAwal, $tglAkhir])
             ->where(fn (Builder $query): Builder => $query
-                ->when($kategori === 'obat', fn(Builder $q): Builder => $q->where('databarang.kode_kategori', 'like', '2.%'))
-                ->when($kategori === 'alkes', fn(Builder $q): Builder => $q->where('databarang.kode_kategori', 'like', '3.%')))
+                ->when($kategori === 'obat', fn (Builder $q): Builder => $q->where('databarang.kode_kategori', 'like', '2.%'))
+                ->when($kategori === 'alkes', fn (Builder $q): Builder => $q->where('databarang.kode_kategori', 'like', '3.%')))
             ->groupBy('detailpesan.kode_brng');
     }
 }

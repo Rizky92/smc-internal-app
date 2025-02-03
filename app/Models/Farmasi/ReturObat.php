@@ -4,7 +4,6 @@ namespace App\Models\Farmasi;
 
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
 
 class ReturObat extends Model
 {
@@ -25,7 +24,7 @@ class ReturObat extends Model
         $sqlSelect = <<<'SQL'
             round(sum(detreturjual.subtotal)) jumlah,
             month(returjual.tgl_retur) bulan
-        SQL;
+            SQL;
 
         return $query
             ->selectRaw($sqlSelect)

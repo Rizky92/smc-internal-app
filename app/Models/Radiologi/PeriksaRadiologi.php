@@ -4,7 +4,6 @@ namespace App\Models\Radiologi;
 
 use App\Casts\CastAsciiChars;
 use App\Database\Eloquent\Model;
-use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
@@ -63,7 +62,7 @@ class PeriksaRadiologi extends Model
             periksa_radiologi.kd_dokter,
             dokter.nm_dokter,
             ifnull(LEFT(hasil_radiologi.hasil, 200), '-') hasil_pemeriksaan
-        SQL;
+            SQL;
 
         $this->addSearchConditions([
             'periksa_radiologi.no_rawat',

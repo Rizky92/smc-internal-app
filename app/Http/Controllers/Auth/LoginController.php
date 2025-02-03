@@ -11,11 +11,12 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Support\Timebox;
 use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 
 class LoginController
 {
     /**
-     * @return RedirectResponse|\Illuminate\View\View
+     * @return RedirectResponse|View
      */
     public function create()
     {

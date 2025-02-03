@@ -3,7 +3,6 @@
 namespace App\Models\Laboratorium;
 
 use App\Database\Eloquent\Model;
-use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Builder;
 use Reedware\LaravelCompositeRelations\CompositeBelongsTo;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
@@ -96,7 +95,7 @@ class PeriksaLab extends Model
             periksa_lab.`status`,
             periksa_lab.kd_dokter,
             dokter.nm_dokter
-        SQL;
+            SQL;
 
         $this->addSearchConditions([
             'periksa_lab.no_rawat no_rawat',
@@ -171,7 +170,7 @@ class PeriksaLab extends Model
             template_laboratorium.nilai_rujukan_pa,
             detail_periksa_lab.keterangan,
             template_laboratorium.urut          
-        SQL;
+            SQL;
 
         return $query
             ->selectRaw($sqlSelect)

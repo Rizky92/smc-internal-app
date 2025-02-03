@@ -30,6 +30,7 @@ use App\Models\Perawatan\TindakanRanapPerawat;
 use App\Models\Radiologi\PeriksaRadiologi;
 use App\Settings\NPWPSettings;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -72,11 +73,13 @@ class LaporanFakturPajakUmum extends Component
     }
 
     /**
-     * @return array<empty, empty>|\Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return array<empty, empty>|LengthAwarePaginator
      */
     public function getDataLaporanFakturPajakProperty()
     {
-        if ($this->isDeferred) return [];
+        if ($this->isDeferred) {
+            return [];
+        }
 
         if ($this->tanggalTarikan !== '-') {
             return FakturPajakDitarik::query()
@@ -112,11 +115,13 @@ class LaporanFakturPajakUmum extends Component
     }
 
     /**
-     * @return array<empty, empty>|\Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @return array<empty, empty>|LengthAwarePaginator
      */
     public function getDataDetailFakturPajakProperty()
     {
-        if ($this->isDeferred) return [];
+        if ($this->isDeferred) {
+            return [];
+        }
 
         if ($this->tanggalTarikan !== '-') {
             return FakturPajakDitarikDetail::query()
@@ -133,7 +138,7 @@ class LaporanFakturPajakUmum extends Component
                 ->whereColumn($smc.'.faktur_pajak_ditarik_detail.no_rawat', 'penjualan.nota_jual')
                 ->whereColumn($smc.'.faktur_pajak_ditarik_detail.tgl_bayar', DB::raw('date(tagihan_sadewa.tgl_bayar)')))
             ->search($this->cari);
-        
+
         $registFaktur = RegistrasiPasien::query()
             ->filterFakturPajak($this->tglAwal, $this->tglAkhir, 'A09')
             ->whereNotExists(fn ($q) => $q->from($smc.'.faktur_pajak_ditarik_detail')
@@ -196,7 +201,7 @@ class LaporanFakturPajakUmum extends Component
     protected function dataPerSheet(): array
     {
         $tanggalTarikanSementara = $this->tanggalTarikan;
-        
+
         if ($tanggalTarikanSementara === '-') {
             $tanggalTarikanSementara = now()->toDateTimeString();
 
@@ -223,13 +228,12 @@ class LaporanFakturPajakUmum extends Component
                 ->orderBy('no_rawat')
                 ->orderByDesc('kode_transaksi')
                 ->cursor()
-                ->each(fn (object $model) => 
-                    FakturPajakDitarik::insert(
-                        collect((array) $model)
-                            ->put('tgl_tarikan', $tanggalTarikanSementara)
-                            ->put('menu', 'fp-umum')
-                            ->put('id_tku_penjual', $this->npwpPenjual)
-                            ->all()));
+                ->each(fn (object $model) => FakturPajakDitarik::insert(
+                    collect((array) $model)
+                        ->put('tgl_tarikan', $tanggalTarikanSementara)
+                        ->put('menu', 'fp-umum')
+                        ->put('id_tku_penjual', $this->npwpPenjual)
+                        ->all()));
 
             $registWalkin = PenjualanObat::query()
                 ->filterFakturPajak($this->tglAwal, $this->tglAkhir)
@@ -237,7 +241,7 @@ class LaporanFakturPajakUmum extends Component
                     ->whereColumn($smc.'.faktur_pajak_ditarik_detail.no_rawat', 'penjualan.nota_jual')
                     ->whereColumn($smc.'.faktur_pajak_ditarik_detail.tgl_bayar', DB::raw('date(tagihan_sadewa.tgl_bayar)')))
                 ->search($this->cari);
-    
+
             $registFaktur = RegistrasiPasien::query()
                 ->filterFakturPajak($this->tglAwal, $this->tglAkhir, 'A09')
                 ->whereNotExists(fn ($q) => $q->from($smc.'.faktur_pajak_ditarik_detail')
@@ -245,9 +249,9 @@ class LaporanFakturPajakUmum extends Component
                     ->whereColumn($smc.'.faktur_pajak_ditarik_detail.tgl_bayar', 'nota_bayar.tanggal'))
                 ->search($this->cari)
                 ->unionAll($registWalkin);
-    
+
             $satuanUkuranPajak = SatuanUkuranPajak::pluck('kode_satuan_pajak', 'kode_sat');
-    
+
             $subQuery = RegistrasiPasien::query()->itemFakturPajakBiayaRegistrasi()
                 ->unionAll(KamarInap::query()->itemFakturPajak())
                 ->unionAll(TindakanRalanDokter::query()->itemFakturPajak())
@@ -290,14 +294,14 @@ class LaporanFakturPajakUmum extends Component
                     $diskonPersen = $model->diskon_persen;
                     $diskonNominal = $model->diskon_nominal;
                     $dpp = $model->dpp;
-                    
-                    if (!in_array($model->kategori, ['Pemberian Obat', 'Retur Obat', 'Obat Pulang', 'Walk In', 'Piutang Obat'])) {
+
+                    if (! in_array($model->kategori, ['Pemberian Obat', 'Retur Obat', 'Obat Pulang', 'Walk In', 'Piutang Obat'])) {
                         $subtotalJasa = (float) $totalJasa->get($model->no_rawat);
                         $diskonPersen = ((float) $model->diskon) / $subtotalJasa;
                         $diskonNominal = $diskonPersen * ((float) $model->dpp);
                         $dpp = ((float) $model->dpp) - $diskonNominal;
                     }
-                    
+
                     $dppNilaiLain = $dpp * (11 / 12);
                     $ppnPersen = (int) $model->ppn_persen;
                     $ppnNominal = $dppNilaiLain * ($ppnPersen / 100);
@@ -334,7 +338,7 @@ class LaporanFakturPajakUmum extends Component
             $this->tanggalTarikan = $tanggalTarikanSementara;
             $this->dispatchBrowserEvent('data-tarikan:updated', ['tanggalTarikan' => $tanggalTarikanSementara]);
         }
-        
+
         return [
             'Faktur' => fn () => FakturPajakDitarik::query()
                 ->where('menu', 'fp-umum')
@@ -375,7 +379,7 @@ class LaporanFakturPajakUmum extends Component
                     'ppn_persen'         => 'float',
                     'ppn_nominal'        => 'float',
                     'ppnbm_persen'       => 'float',
-                    'ppnbm_nominal'      => 'float,'
+                    'ppnbm_nominal'      => 'float,',
                 ])
                 ->cursor()
                 ->map(fn (FakturPajakDitarikDetail $model): array => [

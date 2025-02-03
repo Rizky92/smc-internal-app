@@ -179,8 +179,7 @@ class BayarPiutangPasien implements ShouldQueue
                     sprintf('BAYAR PIUTANG TAGIHAN %s, OLEH %s', $this->noTagihan, $this->userId),
                     $this->tglBayar,
                     $detailJurnal
-                        ->reject(fn (array $value): bool =>
-                            isset($value['kd_rek'], $value['debet'], $value['kredit']) &&
+                        ->reject(fn (array $value): bool => isset($value['kd_rek'], $value['debet'], $value['kredit']) &&
                             (round($value['debet'], 2) === 0.00 && round($value['kredit'], 2) === 0.00)
                         )
                         ->all()

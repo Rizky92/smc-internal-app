@@ -98,6 +98,9 @@ class RKATPenetapan extends Component
         $this->tahun = (string) app(RKATSettings::class)->tahun;
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         return [
@@ -106,10 +109,10 @@ class RKATPenetapan extends Component
                 ->whereTahun($this->tahun)
                 ->get()
                 ->map(fn (AnggaranBidang $model): array => [
-                    'tahun'    => $model->tahun,
-                    'bidang'   => $model->bidang->nama,
-                    'anggaran' => $model->anggaran->nama,
-                    'nominal'  => $model->nominal_anggaran,
+                    'tahun'          => $model->tahun,
+                    'bidang'         => $model->bidang->nama,
+                    'anggaran'       => $model->anggaran->nama,
+                    'nominal'        => $model->nominal_anggaran,
                     'tgl_ditetapkan' => $model->created_at->format('Y-m-d'),
                 ]),
         ];
@@ -131,8 +134,8 @@ class RKATPenetapan extends Component
     {
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Penetapan RKAT Tahun ' . $this->tahun,
-            'Per ' . now()->translatedFormat('d F Y'),
+            'Laporan Penetapan RKAT Tahun '.$this->tahun,
+            'Per '.now()->translatedFormat('d F Y'),
         ];
     }
 }

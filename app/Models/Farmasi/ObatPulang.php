@@ -3,7 +3,6 @@
 namespace App\Models\Farmasi;
 
 use App\Database\Eloquent\Model;
-use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Builder;
 
 class ObatPulang extends Model

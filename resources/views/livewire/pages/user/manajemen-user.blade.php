@@ -88,34 +88,99 @@
                 <div class="col-2">
                     <div class="form-group">
                         <label class="text-sm" for="user-nrp">NRP</label>
-                        <input class="form-control form-control-sm" id="user-nrp" type="text" readonly autocomplete="off">
+                        <input
+                            class="form-control form-control-sm"
+                            id="user-nrp"
+                            type="text"
+                            readonly
+                            autocomplete="off"
+                        />
                     </div>
                 </div>
                 <div class="col-4">
                     <div class="form-group">
                         <label class="text-sm" for="user-nama">Nama</label>
-                        <input class="form-control form-control-sm" id="user-nama" type="text" readonly autocomplete="off">
+                        <input
+                            class="form-control form-control-sm"
+                            id="user-nama"
+                            type="text"
+                            readonly
+                            autocomplete="off"
+                        />
                     </div>
                 </div>
                 <div class="col-6">
                     <div class="d-flex align-items-end h-100">
                         <div class="mb-3 d-flex align-items-center w-100">
                             <x-dropdown livewire>
-                                <x-slot name="button" title="Pilihan" icon="fas fa-cogs" disabled></x-slot>
+                                <x-slot
+                                    name="button"
+                                    title="Pilihan"
+                                    icon="fas fa-cogs"
+                                    disabled
+                                ></x-slot>
                                 <x-slot name="menu" class="dropdown-menu-right">
-                                    <x-dropdown.header class="text-left">SIMRS Khanza</x-dropdown.header>
-                                    <x-dropdown.item as="button" id="button-set-hak-akses" icon="fas fa-user-cog fa-fw" title="Set Hak Akses" data-toggle="modal" data-target="#modal-set-hak-akses" />
-                                    <x-dropdown.item as="button" id="button-transfer-hak-akses" icon="fas fa-exchange-alt fa-fw" title="Transfer Hak Akses" data-toggle="modal" data-target="#modal-transfer-hak-akses" />
+                                    <x-dropdown.header class="text-left">
+                                        SIMRS Khanza
+                                    </x-dropdown.header>
+                                    <x-dropdown.item
+                                        as="button"
+                                        id="button-set-hak-akses"
+                                        icon="fas fa-user-cog fa-fw"
+                                        title="Set Hak Akses"
+                                        data-toggle="modal"
+                                        data-target="#modal-set-hak-akses"
+                                    />
+                                    <x-dropdown.item
+                                        as="button"
+                                        id="button-transfer-hak-akses"
+                                        icon="fas fa-exchange-alt fa-fw"
+                                        title="Transfer Hak Akses"
+                                        data-toggle="modal"
+                                        data-target="#modal-transfer-hak-akses"
+                                    />
                                     <x-dropdown.divider />
-                                    <x-dropdown.header class="text-left">SMC Internal App</x-dropdown.header>
-                                    <x-dropdown.item as="button" id="button-set-perizinan" icon="fas fa-user-cog fa-fw" title="Set Perizinan" data-toggle="modal" data-target="#modal-set-perizinan" />
-                                    <x-dropdown.item as="button" id="button-transfer-perizinan" icon="fas fa-exchange-alt fa-fw" title="Transfer Perizinan" data-toggle="modal" data-target="#modal-transfer-perizinan" />
+                                    <x-dropdown.header class="text-left">
+                                        SMC Internal App
+                                    </x-dropdown.header>
+                                    <x-dropdown.item
+                                        as="button"
+                                        id="button-set-perizinan"
+                                        icon="fas fa-user-cog fa-fw"
+                                        title="Set Perizinan"
+                                        data-toggle="modal"
+                                        data-target="#modal-set-perizinan"
+                                    />
+                                    <x-dropdown.item
+                                        as="button"
+                                        id="button-transfer-perizinan"
+                                        icon="fas fa-exchange-alt fa-fw"
+                                        title="Transfer Perizinan"
+                                        data-toggle="modal"
+                                        data-target="#modal-transfer-perizinan"
+                                    />
                                     <x-dropdown.divider />
-                                    <x-dropdown.item as="button" id="button-impersonasi" icon="fas fa-user-secret fa-fw" title="Impersonasi" />
-                                    <x-dropdown.item as="button" id="button-lihat-aktivitas" icon="fas fa-binoculars fa-fw" title="Lihat Aktivitias" data-toggle="modal" data-target="#modal-lihat-aktivitas" />
+                                    <x-dropdown.item
+                                        as="button"
+                                        id="button-impersonasi"
+                                        icon="fas fa-user-secret fa-fw"
+                                        title="Impersonasi"
+                                    />
+                                    <x-dropdown.item
+                                        as="button"
+                                        id="button-lihat-aktivitas"
+                                        icon="fas fa-binoculars fa-fw"
+                                        title="Lihat Aktivitias"
+                                        data-toggle="modal"
+                                        data-target="#modal-lihat-aktivitas"
+                                    />
                                 </x-slot>
                             </x-dropdown>
-                            <x-filter.toggle class="ml-auto" model="tampilkanYangMemilikiHakAkses" title="Tampilkan yang Memiliki Hak Akses" />
+                            <x-filter.toggle
+                                class="ml-auto"
+                                model="tampilkanYangMemilikiHakAkses"
+                                title="Tampilkan yang Memiliki Hak Akses"
+                            />
                         </div>
                     </div>
                 </div>
@@ -127,12 +192,27 @@
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
+            <x-table
+                :sortColumns="$sortColumns"
+                sortable
+                zebra
+                hover
+                sticky
+                nowrap
+            >
                 <x-slot name="columns">
                     <x-table.th name="nik" title="NRP" style="width: 15ch" />
                     <x-table.th name="nama" title="Nama" style="width: 50ch" />
-                    <x-table.th name="jbtn" title="Jabatan" style="width: 30ch" />
-                    <x-table.th name="jenis" title="Jenis" style="width: 10ch" />
+                    <x-table.th
+                        name="jbtn"
+                        title="Jabatan"
+                        style="width: 30ch"
+                    />
+                    <x-table.th
+                        name="jenis"
+                        title="Jenis"
+                        style="width: 10ch"
+                    />
                     <x-table.th>Hak Akses</x-table.th>
                 </x-slot>
                 <x-slot name="body">
@@ -152,12 +232,20 @@
                             <x-table.td>{{ $user->jbtn }}</x-table.td>
                             <x-table.td>{{ $user->jenis }}</x-table.td>
                             <x-table.td>
-                                <div class="d-inline-flex flex-wrap" style="gap: 0.25rem">
+                                <div
+                                    class="d-inline-flex flex-wrap"
+                                    style="gap: 0.25rem"
+                                >
                                     @foreach ($user->roles as $role)
-                                        <x-badge variant="dark">{{ $role->name }}</x-badge>
+                                        <x-badge variant="dark">
+                                            {{ $role->name }}
+                                        </x-badge>
                                     @endforeach
+
                                     @foreach ($user->permissions as $permission)
-                                        <x-badge variant="secondary">{{ $permission->name }}</x-badge>
+                                        <x-badge variant="secondary">
+                                            {{ $permission->name }}
+                                        </x-badge>
                                     @endforeach
                                 </div>
                             </x-table.td>
