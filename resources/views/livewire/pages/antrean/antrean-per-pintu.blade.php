@@ -9,3 +9,8 @@
         </div>
     </div>
 </div>
+<script>
+    setTimeout(function() {
+        location.reload();
+    }, 3600000);
+</script>
