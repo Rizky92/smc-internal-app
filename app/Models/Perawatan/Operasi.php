@@ -27,7 +27,7 @@ class Operasi extends Model
             'B' as jenis_barang_jasa,
             '250100' as kode_barang_jasa,
             paket_operasi.nm_perawatan as nama_barang_jasa,
-            'UM.0033' as nama_satuan_ukur,
+            '' as nama_satuan_ukur,
             (
                 operasi.biayaoperator1 + operasi.biayaoperator2 + operasi.biayaoperator3 +
                 operasi.biayaasisten_operator1 + operasi.biayaasisten_operator2 + operasi.biayaasisten_operator3 +

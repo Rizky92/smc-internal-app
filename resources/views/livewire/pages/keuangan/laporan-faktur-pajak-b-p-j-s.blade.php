@@ -1,4 +1,4 @@
-<div wire:init="loadProperties">
+<div>
     <x-flash />
 
     <x-card use-loading>
@@ -8,7 +8,10 @@
                 <x-filter.button-export-excel class="ml-auto" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
-                <x-filter.select-perpage />
+                <x-filter.label constant-width>
+                    Jenis Rawat:
+                </x-filter.label>
+                <x-filter.select model="jenisRawat" :options="['-' => 'Semua', 'ralan' => 'Rawat Jalan', 'ranap' => 'Rawat Inap']" selected="-" />
                 <x-filter.label class="ml-auto">
                     Tanggal Tarikan:
                 </x-filter.label>
@@ -24,12 +27,15 @@
                 />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
+                <x-filter.select-perpage />
+                <x-filter.button-reset-filters class="ml-auto" />
+                <x-filter.search class="ml-2" />
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
                 <p class="m-0 p-0 text-sm">
                     * Untuk detail faktur pajak khusus kolom diskon, perhitungan
                     akan dilakukan setelah dilakukan penarikan data!
                 </p>
-                <x-filter.button-reset-filters class="ml-auto" />
-                <x-filter.search class="ml-2" />
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">

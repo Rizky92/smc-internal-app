@@ -53,6 +53,9 @@ class LaporanFakturPajakBPJS extends Component
     public $tanggalTarikan;
 
     /** @var string */
+    public $statusRawat;
+
+    /** @var string */
     public $npwpPenjual;
 
     protected function queryString(): array
@@ -61,6 +64,7 @@ class LaporanFakturPajakBPJS extends Component
             'tglAwal'        => ['except' => now()->subDays(5)->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir'       => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
             'tanggalTarikan' => ['except' => '-', 'as' => 'tgl_tarik'],
+            'statusRawat'    => ['except' => '-', 'as' => 'status_rawat'],
         ];
     }
 
@@ -173,8 +177,12 @@ class LaporanFakturPajakBPJS extends Component
         $this->tglAwal = now()->subDays(5)->format('Y-m-d');
         $this->tglAkhir = now()->format('Y-m-d');
         $this->tanggalTarikan = '-';
+        $this->statusRawat = '-';
     }
 
+    /**
+     * @psalm-suppress UndefinedMethod
+     */
     protected function dataPerSheet(): array
     {
         $tanggalTarikanSementara = $this->tanggalTarikan;
@@ -273,7 +281,7 @@ class LaporanFakturPajakBPJS extends Component
                         'jenis_barang_jasa'  => $model->jenis_barang_jasa,
                         'kode_barang_jasa'   => $model->kode_barang_jasa,
                         'nama_barang_jasa'   => $model->nama_barang_jasa,
-                        'nama_satuan_ukur'   => $satuanUkuranPajak->get($model->nama_satuan_ukur) ?? '',
+                        'nama_satuan_ukur'   => $satuanUkuranPajak->get($model->nama_satuan_ukur, 'UM.0033'),
                         'harga_satuan'       => (float) $model->harga_satuan,
                         'jumlah_barang_jasa' => (float) $model->jumlah_barang_jasa,
                         'diskon_persen'      => $diskonPersen,
@@ -296,6 +304,9 @@ class LaporanFakturPajakBPJS extends Component
             $this->dispatchBrowserEvent('data-tarikan:updated', ['tanggalTarikan' => $tanggalTarikanSementara]);
         }
 
+        /**
+         * @psalm-suppress MissingClosureReturnType
+         */
         return [
             'Faktur' => fn () => FakturPajakDitarik::query()
                 ->where('menu', 'fp-bpjs')

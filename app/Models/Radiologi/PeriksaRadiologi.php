@@ -128,7 +128,7 @@ class PeriksaRadiologi extends Model
             'B' as jenis_barang_jasa,
             '250100' as kode_barang_jasa,
             jns_perawatan_radiologi.nm_perawatan as nama_barang_jasa,
-            'UM.0033' as nama_satuan_ukur,
+            '' as nama_satuan_ukur,
             periksa_radiologi.biaya as harga_satuan,
             count(*) as jumlah_barang_jasa,
             0 as diskon_persen,

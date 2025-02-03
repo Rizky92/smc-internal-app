@@ -85,7 +85,7 @@ class TambahanBiaya extends Model
             'B' as jenis_barang_jasa,
             '250100' as kode_barang_jasa,
             tambahan_biaya.nama_biaya as nama_barang_jasa,
-            'UM.0033' as nama_satuan_ukur,
+            '' as nama_satuan_ukur,
             tambahan_biaya.besar_biaya as harga_satuan,
             1 as jumlah_barang_jasa,
             0 as diskon_persen,

@@ -29,7 +29,7 @@ class PeriksaLabDetail extends Model
             'B' as jenis_barang_jasa,
             '250100' as kode_barang_jasa,
             template_laboratorium.Pemeriksaan as nama_barang_jasa,
-            'UM.0033' as nama_satuan_ukur,
+            '' as nama_satuan_ukur,
             detail_periksa_lab.biaya_item as harga_satuan,
             count(*) as jumlah_barang_jasa,
             0 as diskon_persen,
