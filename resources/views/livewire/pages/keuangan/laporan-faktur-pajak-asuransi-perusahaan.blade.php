@@ -129,6 +129,38 @@
                                     name="nama_asuransi"
                                     title="Nama Asuransi"
                                 />
+                                <x-table.th
+                                    name="alamat_asuransi"
+                                    title="Alamat Asuransi"
+                                />
+                                <x-table.th
+                                    name="email_asuransi"
+                                    title="Email Asuransi"
+                                />
+                                <x-table.th
+                                    name="npwp_asuransi"
+                                    title="NPWP Asuransi"
+                                />
+                                <x-table.th
+                                    name="kode_perusahaan"
+                                    title="Kode Perusahaan"
+                                />
+                                <x-table.th
+                                    name="nama_perusahaan"
+                                    title="Nama Perusahaan"
+                                />
+                                <x-table.th
+                                    name="alamat_perusahaan"
+                                    title="Alamat Perusahaan"
+                                />
+                                <x-table.th
+                                    name="email_perusahaan"
+                                    title="Email Perusahaan"
+                                />
+                                <x-table.th
+                                    name="npwp_perusahaan"
+                                    title="NPWP Perusahaan"
+                                />
                             </x-slot>
                             <x-slot name="body">
                                 @forelse ($this->dataLaporanFakturPajak as $item)
@@ -194,9 +226,33 @@
                                         <x-table.td>
                                             {{ $item->nama_asuransi }}
                                         </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->alamat_asuransi }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->email_asuransi }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->npwp_asuransi }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->kode_perusahaan }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->nama_perusahaan }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->alamat_perusahaan }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->email_perusahaan }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->npwp_perusahaan }}
+                                        </x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty colspan="20" padding />
+                                    <x-table.tr-empty colspan="28" padding />
                                 @endforelse
                             </x-slot>
                         </x-table>
@@ -317,7 +373,7 @@
                                             {{ $item->nama_barang_jasa }}
                                         </x-table.td>
                                         <x-table.td>
-                                            {{ $item->nama_satuan_ukur }}
+                                            {{ $this->satuanUkur->get($item->nama_satuan_ukur, 'UM.0033') }}
                                         </x-table.td>
                                         <x-table.td-money
                                             :value="$item->harga_satuan"
@@ -341,7 +397,7 @@
                                             {{ $item->ppn_persen }}
                                         </x-table.td>
                                         <x-table.td-money
-                                            :value="$ppnNominal"
+                                            :value="$item->ppn_nominal ?: $ppnNominal"
                                         />
                                     </x-table.tr>
                                 @empty

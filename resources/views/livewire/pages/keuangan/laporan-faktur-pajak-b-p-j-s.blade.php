@@ -8,10 +8,7 @@
                 <x-filter.button-export-excel class="ml-auto" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
-                <x-filter.label constant-width>
-                    Jenis Rawat:
-                </x-filter.label>
-                <x-filter.select model="jenisRawat" :options="['-' => 'Semua', 'ralan' => 'Rawat Jalan', 'ranap' => 'Rawat Inap']" selected="-" />
+                <x-filter.select-perpage />
                 <x-filter.label class="ml-auto">
                     Tanggal Tarikan:
                 </x-filter.label>
@@ -27,15 +24,12 @@
                 />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
-                <x-filter.select-perpage />
-                <x-filter.button-reset-filters class="ml-auto" />
-                <x-filter.search class="ml-2" />
-            </x-row-col-flex>
-            <x-row-col-flex class="mt-2">
                 <p class="m-0 p-0 text-sm">
                     * Untuk detail faktur pajak khusus kolom diskon, perhitungan
                     akan dilakukan setelah dilakukan penarikan data!
                 </p>
+                <x-filter.button-reset-filters class="ml-auto" />
+                <x-filter.search class="ml-2" />
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
@@ -123,6 +117,18 @@
                                     name="nama_asuransi"
                                     title="Nama Asuransi"
                                 />
+                                <x-table.th
+                                    name="alamat_asuransi"
+                                    title="Alamat Asuransi"
+                                />
+                                <x-table.th
+                                    name="email_asuransi"
+                                    title="Email Asuransi"
+                                />
+                                <x-table.th
+                                    name="npwp_asuransi"
+                                    title="NPWP Asuransi"
+                                />
                             </x-slot>
                             <x-slot name="body">
                                 @forelse ($this->dataLaporanFakturPajak as $item)
@@ -189,6 +195,9 @@
                                             {{ $item->nama_asuransi }}
                                         </x-table.td>
                                         <x-table.td>
+                                            {{ $item->alamat_asuransi }}
+                                        </x-table.td>
+                                        <x-table.td>
                                             {{ $item->email_asuransi }}
                                         </x-table.td>
                                         <x-table.td>
@@ -196,7 +205,7 @@
                                         </x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty colspan="20" padding />
+                                    <x-table.tr-empty colspan="23" padding />
                                 @endforelse
                             </x-slot>
                         </x-table>
