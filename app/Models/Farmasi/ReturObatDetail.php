@@ -20,11 +20,15 @@ class ReturObatDetail extends Model
 
     public $timestamps = false;
 
-    public function scopeItemFakturPajak(Builder $query, string $kodePJ = 'BPJ'): Builder
+    public function scopeItemFakturPajak(Builder $query): Builder
     {
         $sqlSelect = <<<'SQL'
             left(detreturjual.no_retur_jual, 17) as no_rawat,
-            ? as kode_transaksi,
+            case
+                when reg_periksa.status_lanjut = 'Ranap' then '080'
+                when reg_periksa.status_lanjut = 'Ralan' and reg_periksa.kd_pj = 'BPJ' then '030'
+                else '040'
+            end as kode_transaksi,
             'A' as jenis_barang_jasa,
             '300000' as kode_barang_jasa,
             databarang.nama_brng as nama_barang_jasa,
@@ -37,14 +41,14 @@ class ReturObatDetail extends Model
             12 as ppn_persen,
             0 as ppn_nominal,
             detreturjual.kode_brng as kd_jenis_prw,
-            'Retur Obat' as kategori,
-            'Ranap' as status_lanjut,
+            'Pemberian Obat' as kategori,
             19 as urutan
             SQL;
 
         return $query
-            ->selectRaw($sqlSelect, [($kodePJ === 'BPJ' ? '030' : '040')])
+            ->selectRaw($sqlSelect)
             ->join('databarang', 'detreturjual.kode_brng', '=', 'databarang.kode_brng')
+            ->join('reg_periksa', DB::raw('left(detreturjual.no_retur_jual, 17)'), '=', 'reg_periksa.no_rawat')
             ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', DB::raw('left(detreturjual.no_retur_jual, 17)')))
             ->groupBy(['detreturjual.no_retur_jual', 'detreturjual.kode_brng', 'databarang.nama_brng', 'detreturjual.h_retur']);
     }

@@ -138,7 +138,6 @@ class PeriksaRadiologi extends Model
             0 as ppn_nominal,
             periksa_radiologi.kd_jenis_prw,
             'Radiologi' as kategori,
-            periksa_radiologi.status as status_lanjut,
             11 as urutan
             SQL;
 

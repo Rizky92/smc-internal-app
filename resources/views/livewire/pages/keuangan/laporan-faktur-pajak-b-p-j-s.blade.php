@@ -335,7 +335,7 @@
                                             :value="$item->dpp"
                                         />
                                         <x-table.td-money
-                                            :value="$item->dpp_nilai_lain ?: $item->dpp * (11 / 12)"
+                                            :value="$dppNilaiLain"
                                         />
                                         <x-table.td class="text-right">
                                             {{ $item->ppn_persen }}

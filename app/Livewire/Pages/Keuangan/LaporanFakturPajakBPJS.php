@@ -143,32 +143,13 @@ class LaporanFakturPajakBPJS extends Component
             ->unionAll(Operasi::query()->itemFakturPajak())
             ->unionAll(TambahanBiaya::query()->itemFakturPajak())
             ->unionAll(RegistrasiPasien::query()->itemFakturPajakTambahanEmbalaseTuslah())
-            ->unionAll(PemberianObat::query()->itemFakturPajak('BPJ'))
-            ->unionAll(ObatPulang::query()->itemFakturPajak('BPJ'))
-            ->unionAll(ReturObatDetail::query()->itemFakturPajak('BPJ'));
+            ->unionAll(PemberianObat::query()->itemFakturPajak())
+            ->unionAll(ObatPulang::query()->itemFakturPajak())
+            ->unionAll(ReturObatDetail::query()->itemFakturPajak());
 
         return DB::connection('mysql_sik')
             ->query()
             ->withExpression('regist_faktur', $registFaktur)
-            ->selectRaw(<<<'SQL'
-                item_faktur_pajak.no_rawat,
-                item_faktur_pajak.kd_jenis_prw,
-                item_faktur_pajak.kategori,
-                item_faktur_pajak.status_lanjut,
-                item_faktur_pajak.kode_transaksi,
-                item_faktur_pajak.jenis_barang_jasa,
-                item_faktur_pajak.kode_barang_jasa,
-                item_faktur_pajak.nama_barang_jasa,
-                item_faktur_pajak.nama_satuan_ukur,
-                item_faktur_pajak.harga_satuan,
-                item_faktur_pajak.jumlah_barang_jasa,
-                item_faktur_pajak.diskon_persen,
-                item_faktur_pajak.diskon_nominal,
-                item_faktur_pajak.dpp,
-                item_faktur_pajak.dpp * (11/12) as dpp_nilai_lain,
-                item_faktur_pajak.ppn_persen,
-                (item_faktur_pajak.dpp * (11/12)) * (item_faktur_pajak.ppn_persen / 100) as ppn_nominal
-                SQL)
             ->fromSub($subQuery, 'item_faktur_pajak')
             ->join('regist_faktur', 'item_faktur_pajak.no_rawat', '=', 'regist_faktur.no_rawat')
             ->orderBy('item_faktur_pajak.no_rawat')
@@ -250,9 +231,9 @@ class LaporanFakturPajakBPJS extends Component
                 ->unionAll(Operasi::query()->itemFakturPajak())
                 ->unionAll(TambahanBiaya::query()->itemFakturPajak())
                 ->unionAll(RegistrasiPasien::query()->itemFakturPajakTambahanEmbalaseTuslah())
-                ->unionAll(PemberianObat::query()->itemFakturPajak('BPJ'))
-                ->unionAll(ObatPulang::query()->itemFakturPajak('BPJ'))
-                ->unionAll(ReturObatDetail::query()->itemFakturPajak('BPJ'));
+                ->unionAll(PemberianObat::query()->itemFakturPajak())
+                ->unionAll(ObatPulang::query()->itemFakturPajak())
+                ->unionAll(ReturObatDetail::query()->itemFakturPajak());
 
             $totalJasa = DB::connection('mysql_sik')
                 ->query()
@@ -279,7 +260,7 @@ class LaporanFakturPajakBPJS extends Component
                     $dpp = $model->dpp;
 
                     if (! in_array($model->kategori, ['Pemberian Obat', 'Retur Obat', 'Obat Pulang', 'Walk In', 'Piutang Obat'])) {
-                        $subtotalJasa = (float) $totalJasa->get($model->no_rawat);
+                        $subtotalJasa = (float) $totalJasa->get($model->no_rawat, 1);
                         $diskonPersen = ((float) $model->diskon) / $subtotalJasa;
                         $diskonNominal = $diskonPersen * ((float) $model->dpp);
                         $dpp = ((float) $model->dpp) - $diskonNominal;
@@ -313,6 +294,7 @@ class LaporanFakturPajakBPJS extends Component
                         'kd_jenis_prw'       => $model->kd_jenis_prw,
                         'kategori'           => $model->kategori,
                         'status_lanjut'      => $model->status_lanjut,
+                        'kode_asuransi'      => $model->kd_pj,
                     ]);
                 });
 
@@ -365,7 +347,7 @@ class LaporanFakturPajakBPJS extends Component
                     'ppn_persen'         => 'float',
                     'ppn_nominal'        => 'float',
                     'ppnbm_persen'       => 'float',
-                    'ppnbm_nominal'      => 'float,',
+                    'ppnbm_nominal'      => 'float',
                 ])
                 ->cursor()
                 ->map(fn (FakturPajakDitarikDetail $model): array => [

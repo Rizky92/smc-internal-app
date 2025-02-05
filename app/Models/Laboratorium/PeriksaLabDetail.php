@@ -39,7 +39,6 @@ class PeriksaLabDetail extends Model
             0 as ppn_nominal,
             concat_ws('-', detail_periksa_lab.kd_jenis_prw, detail_periksa_lab.id_template) as kd_jenis_prw,
             'Laborat Detail' as kategori,
-            periksa_lab.status as status_lanjut,
             10 as urutan
             SQL;
 

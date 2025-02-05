@@ -55,7 +55,6 @@ class Operasi extends Model
             0 as ppn_nominal,
             operasi.kode_paket as kd_jenis_prw,
             'Operasi' as kategori,
-            operasi.status as status_lanjut,
             12 as urutan
             SQL;
 

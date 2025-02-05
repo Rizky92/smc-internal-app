@@ -146,7 +146,6 @@ class KamarInap extends Model
             0 as ppn_nominal,
             kamar_inap.kd_kamar as kd_jenis_prw,
             'Kamar Inap' as kategori,
-            'Ranap' as status_lanjut,
             2 as urutan
             SQL;
 

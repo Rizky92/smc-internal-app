@@ -997,7 +997,6 @@ class RegistrasiPasien extends Model
             0 as ppn_nominal,
             '' as kd_jenis_prw,
             'Biaya Registrasi' as kategori,
-            reg_periksa.status_lanjut,
             1 as urutan
             SQL;
 
@@ -1025,7 +1024,6 @@ class RegistrasiPasien extends Model
             0 as ppn_nominal,
             '' as kd_jenis_prw,
             'Tambahan Biaya' as kategori,
-            reg_periksa.status_lanjut,
             15 as urutan
             SQL;
 
