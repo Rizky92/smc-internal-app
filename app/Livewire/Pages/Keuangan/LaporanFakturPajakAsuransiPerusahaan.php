@@ -356,6 +356,11 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                     'alamat_asuransi'     => $model->alamat_asuransi,
                     'email_asuransi'      => $model->email_asuransi,
                     'npwp_asuransi'       => $model->npwp_asuransi,
+                    'kode_perusahaan'     => $model->kode_perusahaan,
+                    'nama_perusahaan'     => $model->nama_perusahaan,
+                    'alamat_perusahaan'   => $model->alamat_perusahaan,
+                    'email_perusahaan'    => $model->email_perusahaan,
+                    'npwp_perusahaan'     => $model->npwp_perusahaan,
                 ]),
             'Detail Faktur' => fn () => FakturPajakDitarikDetail::query()
                 ->where('menu', 'fp-asper')
@@ -424,6 +429,11 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                 'Alamat Asuransi',
                 'Email Asuransi',
                 'NPWP Asuransi',
+                'Kode Perusahaan',
+                'Nama Perusahaan',
+                'Alamat Perusahaan',
+                'Email Perusahaan',
+                'NPWP Perusahaan',
             ],
             'Detail Faktur' => [
                 'No. Rawat',
