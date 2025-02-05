@@ -333,6 +333,9 @@ class LaporanFakturPajakBPJS extends Component
                     'no_telp_pasien'      => $model->no_telp_pasien,
                     'kode_asuransi'       => $model->kode_asuransi,
                     'nama_asuransi'       => $model->nama_asuransi,
+                    'alamat_asuransi'     => $model->alamat_asuransi,
+                    'email_asuransi'      => $model->email_asuransi,
+                    'npwp_asuransi'       => $model->npwp_asuransi,
                 ]),
             'Detail Faktur' => fn () => FakturPajakDitarikDetail::query()
                 ->where('menu', 'fp-bpjs')
@@ -398,6 +401,9 @@ class LaporanFakturPajakBPJS extends Component
                 'No. Telp Pasien',
                 'Kode Asuransi',
                 'Nama Asuransi',
+                'Alamat Asuransi',
+                'Email Asuransi',
+                'NPWP Asuransi',
             ],
             'Detail Faktur' => [
                 'No. Rawat',

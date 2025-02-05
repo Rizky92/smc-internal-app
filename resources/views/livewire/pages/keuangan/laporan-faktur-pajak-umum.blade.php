@@ -1,4 +1,4 @@
-<div wire:init="loadProperties">
+<div>
     <x-flash />
 
     <x-card use-loading>
@@ -188,6 +188,12 @@
                                         <x-table.td>
                                             {{ $item->nama_asuransi }}
                                         </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->email_asuransi }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->npwp_asuransi }}
+                                        </x-table.td>
                                     </x-table.tr>
                                 @empty
                                     <x-table.tr-empty colspan="20" padding />
@@ -311,7 +317,7 @@
                                             {{ $item->nama_barang_jasa }}
                                         </x-table.td>
                                         <x-table.td>
-                                            {{ $item->nama_satuan_ukur }}
+                                            {{ $this->satuanUkur->get($item->nama_satuan_ukur, 'UM.0033') }}
                                         </x-table.td>
                                         <x-table.td-money
                                             :value="$item->harga_satuan"
@@ -329,7 +335,7 @@
                                             :value="$item->dpp"
                                         />
                                         <x-table.td-money
-                                            :value="$item->dpp_nilai_lain ?: $item->dpp * (11 / 12)"
+                                            :value="$dppNilaiLain"
                                         />
                                         <x-table.td class="text-right">
                                             {{ $item->ppn_persen }}

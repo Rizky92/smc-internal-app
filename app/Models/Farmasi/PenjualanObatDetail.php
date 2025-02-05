@@ -37,7 +37,6 @@ class PenjualanObatDetail extends Model
             0 as ppn_nominal,
             detailjual.kode_brng as kd_jenis_prw,
             'Jual Bebas' as kategori,
-            'Walk In' as status_lanjut,
             16 as urutan
             SQL;
 

@@ -57,6 +57,9 @@ class LaporanFakturPajakUmum extends Component
     /** @var string */
     public $npwpPenjual;
 
+    /** @var \Illuminate\Support\Collection */
+    public $satuanUkur;
+
     protected function queryString(): array
     {
         return [
@@ -70,6 +73,7 @@ class LaporanFakturPajakUmum extends Component
     {
         $this->defaultValues();
         $this->npwpPenjual = app(NPWPSettings::class)->npwp_penjual;
+        $this->satuanUkur = SatuanUkuranPajak::pluck('kode_satuan_pajak', 'kode_sat');
     }
 
     /**
@@ -161,9 +165,9 @@ class LaporanFakturPajakUmum extends Component
             ->unionAll(Operasi::query()->itemFakturPajak())
             ->unionAll(TambahanBiaya::query()->itemFakturPajak())
             ->unionAll(RegistrasiPasien::query()->itemFakturPajakTambahanEmbalaseTuslah())
-            ->unionAll(PemberianObat::query()->itemFakturPajak('A09'))
-            ->unionAll(ObatPulang::query()->itemFakturPajak('A09'))
-            ->unionAll(ReturObatDetail::query()->itemFakturPajak('A09'))
+            ->unionAll(PemberianObat::query()->itemFakturPajak())
+            ->unionAll(ObatPulang::query()->itemFakturPajak())
+            ->unionAll(ReturObatDetail::query()->itemFakturPajak())
             ->unionAll(PenjualanObatDetail::query()->itemFakturPajak());
 
         return DB::connection('mysql_sik')
@@ -198,6 +202,9 @@ class LaporanFakturPajakUmum extends Component
         $this->tanggalTarikan = '-';
     }
 
+    /**
+     * @psalm-suppress UndefinedMethod
+     */
     protected function dataPerSheet(): array
     {
         $tanggalTarikanSementara = $this->tanggalTarikan;
@@ -228,12 +235,11 @@ class LaporanFakturPajakUmum extends Component
                 ->orderBy('no_rawat')
                 ->orderByDesc('kode_transaksi')
                 ->cursor()
-                ->each(fn (object $model) => FakturPajakDitarik::insert(
-                    collect((array) $model)
-                        ->put('tgl_tarikan', $tanggalTarikanSementara)
-                        ->put('menu', 'fp-umum')
-                        ->put('id_tku_penjual', $this->npwpPenjual)
-                        ->all()));
+                ->each(fn (object $model) => FakturPajakDitarik::insert(collect((array) $model)
+                    ->put('id_tku_penjual', $this->npwpPenjual)
+                    ->put('tgl_tarikan', $tanggalTarikanSementara)
+                    ->put('menu', 'fp-umum')
+                    ->all()));
 
             $registWalkin = PenjualanObat::query()
                 ->filterFakturPajak($this->tglAwal, $this->tglAkhir)
@@ -266,9 +272,9 @@ class LaporanFakturPajakUmum extends Component
                 ->unionAll(Operasi::query()->itemFakturPajak())
                 ->unionAll(TambahanBiaya::query()->itemFakturPajak())
                 ->unionAll(RegistrasiPasien::query()->itemFakturPajakTambahanEmbalaseTuslah())
-                ->unionAll(PemberianObat::query()->itemFakturPajak('A09'))
-                ->unionAll(ObatPulang::query()->itemFakturPajak('A09'))
-                ->unionAll(ReturObatDetail::query()->itemFakturPajak('A09'))
+                ->unionAll(PemberianObat::query()->itemFakturPajak())
+                ->unionAll(ObatPulang::query()->itemFakturPajak())
+                ->unionAll(ReturObatDetail::query()->itemFakturPajak())
                 ->unionAll(PenjualanObatDetail::query()->itemFakturPajak());
 
             $totalJasa = DB::connection('mysql_sik')
@@ -296,7 +302,7 @@ class LaporanFakturPajakUmum extends Component
                     $dpp = $model->dpp;
 
                     if (! in_array($model->kategori, ['Pemberian Obat', 'Retur Obat', 'Obat Pulang', 'Walk In', 'Piutang Obat'])) {
-                        $subtotalJasa = (float) $totalJasa->get($model->no_rawat);
+                        $subtotalJasa = (float) $totalJasa->get($model->no_rawat, 1);
                         $diskonPersen = ((float) $model->diskon) / $subtotalJasa;
                         $diskonNominal = $diskonPersen * ((float) $model->dpp);
                         $dpp = ((float) $model->dpp) - $diskonNominal;
@@ -316,7 +322,7 @@ class LaporanFakturPajakUmum extends Component
                         'jenis_barang_jasa'  => $model->jenis_barang_jasa,
                         'kode_barang_jasa'   => $model->kode_barang_jasa,
                         'nama_barang_jasa'   => $model->nama_barang_jasa,
-                        'nama_satuan_ukur'   => $satuanUkuranPajak->get($model->nama_satuan_ukur) ?? '',
+                        'nama_satuan_ukur'   => $satuanUkuranPajak->get($model->nama_satuan_ukur, 'UM.0033'),
                         'harga_satuan'       => (float) $model->harga_satuan,
                         'jumlah_barang_jasa' => (float) $model->jumlah_barang_jasa,
                         'diskon_persen'      => $diskonPersen,
@@ -330,6 +336,7 @@ class LaporanFakturPajakUmum extends Component
                         'kd_jenis_prw'       => $model->kd_jenis_prw,
                         'kategori'           => $model->kategori,
                         'status_lanjut'      => $model->status_lanjut,
+                        'kode_asuransi'      => $model->kd_pj,
                     ]);
                 });
 
@@ -339,6 +346,9 @@ class LaporanFakturPajakUmum extends Component
             $this->dispatchBrowserEvent('data-tarikan:updated', ['tanggalTarikan' => $tanggalTarikanSementara]);
         }
 
+        /**
+         * @psalm-suppress MissingClosureReturnType
+         */
         return [
             'Faktur' => fn () => FakturPajakDitarik::query()
                 ->where('menu', 'fp-umum')
@@ -379,7 +389,7 @@ class LaporanFakturPajakUmum extends Component
                     'ppn_persen'         => 'float',
                     'ppn_nominal'        => 'float',
                     'ppnbm_persen'       => 'float',
-                    'ppnbm_nominal'      => 'float,',
+                    'ppnbm_nominal'      => 'float',
                 ])
                 ->cursor()
                 ->map(fn (FakturPajakDitarikDetail $model): array => [

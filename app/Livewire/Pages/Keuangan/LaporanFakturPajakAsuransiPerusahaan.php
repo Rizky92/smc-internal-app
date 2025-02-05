@@ -56,6 +56,9 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
     /** @var string */
     public $npwpPenjual;
 
+    /** @var \Illuminate\Support\Collection */
+    public $satuanUkur;
+
     /** @var string */
     public $kodePJ;
 
@@ -77,6 +80,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
     {
         $this->defaultValues();
         $this->npwpPenjual = app(NPWPSettings::class)->npwp_penjual;
+        $this->satuanUkur = SatuanUkuranPajak::pluck('kode_satuan_pajak', 'kode_sat');
     }
 
     /**
@@ -148,9 +152,9 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
             ->unionAll(Operasi::query()->itemFakturPajak())
             ->unionAll(TambahanBiaya::query()->itemFakturPajak())
             ->unionAll(RegistrasiPasien::query()->itemFakturPajakTambahanEmbalaseTuslah())
-            ->unionAll(PemberianObat::query()->itemFakturPajak($this->kodePJ))
-            ->unionAll(ObatPulang::query()->itemFakturPajak($this->kodePJ))
-            ->unionAll(ReturObatDetail::query()->itemFakturPajak($this->kodePJ));
+            ->unionAll(PemberianObat::query()->itemFakturPajak())
+            ->unionAll(ObatPulang::query()->itemFakturPajak())
+            ->unionAll(ReturObatDetail::query()->itemFakturPajak());
 
         return DB::connection('mysql_sik')
             ->query()
@@ -195,6 +199,9 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
         $this->isPerusahaan = false;
     }
 
+    /**
+     * @psalm-suppress UndefinedMethod
+     */
     protected function dataPerSheet(): array
     {
         $tanggalTarikanSementara = $this->tanggalTarikan;
@@ -244,9 +251,9 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                 ->unionAll(Operasi::query()->itemFakturPajak())
                 ->unionAll(TambahanBiaya::query()->itemFakturPajak())
                 ->unionAll(RegistrasiPasien::query()->itemFakturPajakTambahanEmbalaseTuslah())
-                ->unionAll(PemberianObat::query()->itemFakturPajak('BPJ'))
-                ->unionAll(ObatPulang::query()->itemFakturPajak('BPJ'))
-                ->unionAll(ReturObatDetail::query()->itemFakturPajak('BPJ'));
+                ->unionAll(PemberianObat::query()->itemFakturPajak())
+                ->unionAll(ObatPulang::query()->itemFakturPajak())
+                ->unionAll(ReturObatDetail::query()->itemFakturPajak());
 
             $totalJasa = DB::connection('mysql_sik')
                 ->query()
@@ -273,7 +280,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                     $dpp = $model->dpp;
 
                     if (! in_array($model->kategori, ['Pemberian Obat', 'Retur Obat', 'Obat Pulang', 'Walk In', 'Piutang Obat'])) {
-                        $subtotalJasa = (float) $totalJasa->get($model->no_rawat);
+                        $subtotalJasa = (float) $totalJasa->get($model->no_rawat, 1);
                         $diskonPersen = ((float) $model->diskon) / $subtotalJasa;
                         $diskonNominal = $diskonPersen * ((float) $model->dpp);
                         $dpp = ((float) $model->dpp) - $diskonNominal;
@@ -293,7 +300,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                         'jenis_barang_jasa'  => $model->jenis_barang_jasa,
                         'kode_barang_jasa'   => $model->kode_barang_jasa,
                         'nama_barang_jasa'   => $model->nama_barang_jasa,
-                        'nama_satuan_ukur'   => $satuanUkuranPajak->get($model->nama_satuan_ukur) ?? '',
+                        'nama_satuan_ukur'   => $satuanUkuranPajak->get($model->nama_satuan_ukur, 'UM.0033'),
                         'harga_satuan'       => (float) $model->harga_satuan,
                         'jumlah_barang_jasa' => (float) $model->jumlah_barang_jasa,
                         'diskon_persen'      => $diskonPersen,
@@ -307,6 +314,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                         'kd_jenis_prw'       => $model->kd_jenis_prw,
                         'kategori'           => $model->kategori,
                         'status_lanjut'      => $model->status_lanjut,
+                        'kode_asuransi'      => $model->kd_pj,
                     ]);
                 });
 
@@ -316,6 +324,9 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
             $this->dispatchBrowserEvent('data-tarikan:updated', ['tanggalTarikan' => $tanggalTarikanSementara]);
         }
 
+        /**
+         * @psalm-suppress MissingClosureReturnType
+         */
         return [
             'Faktur' => fn () => FakturPajakDitarik::query()
                 ->where('menu', 'fp-asper')
@@ -342,9 +353,12 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                     'no_telp_pasien'      => $model->no_telp_pasien,
                     'kode_asuransi'       => $model->kode_asuransi,
                     'nama_asuransi'       => $model->nama_asuransi,
+                    'alamat_asuransi'     => $model->alamat_asuransi,
+                    'email_asuransi'      => $model->email_asuransi,
+                    'npwp_asuransi'       => $model->npwp_asuransi,
                 ]),
             'Detail Faktur' => fn () => FakturPajakDitarikDetail::query()
-                ->where('menu', 'fp-bpjs')
+                ->where('menu', 'fp-asper')
                 ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
                 ->withCasts([
                     'harga_satuan'       => 'float',
@@ -356,7 +370,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                     'ppn_persen'         => 'float',
                     'ppn_nominal'        => 'float',
                     'ppnbm_persen'       => 'float',
-                    'ppnbm_nominal'      => 'float,',
+                    'ppnbm_nominal'      => 'float',
                 ])
                 ->cursor()
                 ->map(fn (FakturPajakDitarikDetail $model): array => [
@@ -407,6 +421,9 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                 'No. Telp Pasien',
                 'Kode Asuransi',
                 'Nama Asuransi',
+                'Alamat Asuransi',
+                'Email Asuransi',
+                'NPWP Asuransi',
             ],
             'Detail Faktur' => [
                 'No. Rawat',

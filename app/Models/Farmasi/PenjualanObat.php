@@ -121,6 +121,7 @@ class PenjualanObat extends Model
 
         $sqlSelect = <<<'SQL'
             penjualan.nota_jual as no_rawat,
+            'Walk In' as status_lanjut,
             'A09' as kd_pj,
             date(tagihan_sadewa.tgl_bayar) as tgl_bayar,
             date_format(tagihan_sadewa.tgl_bayar, '%H:%i:%s') as jam_bayar,
