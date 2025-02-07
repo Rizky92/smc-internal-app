@@ -115,6 +115,7 @@
                             <x-dropdown livewire>
                                 <x-slot
                                     name="button"
+                                    size="sm"
                                     title="Pilihan"
                                     icon="fas fa-cogs"
                                     disabled

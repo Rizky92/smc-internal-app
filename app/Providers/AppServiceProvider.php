@@ -13,8 +13,9 @@ use App\Support\MixinEloquentBuilder;
 use App\Support\MixinQueryBuilder;
 use App\Support\MixinStr;
 use App\Support\MixinStringable;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
@@ -30,12 +31,12 @@ class AppServiceProvider extends ServiceProvider
      * @var array<class-string, class-string[]|class-string>
      */
     protected $mixins = [
-        Arr::class                                      => MixinArr::class,
-        Collection::class                               => MixinCollections::class,
-        Str::class                                      => MixinStr::class,
-        Stringable::class                               => MixinStringable::class,
-        Builder::class                                  => MixinQueryBuilder::class,
-        \Illuminate\Database\Eloquent\Builder::class    => MixinEloquentBuilder::class,
+        Arr::class             => MixinArr::class,
+        Collection::class      => MixinCollections::class,
+        Str::class             => MixinStr::class,
+        Stringable::class      => MixinStringable::class,
+        QueryBuilder::class    => MixinQueryBuilder::class,
+        EloquentBuilder::class => MixinEloquentBuilder::class,
     ];
 
     /**

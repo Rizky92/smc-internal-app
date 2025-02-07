@@ -3,6 +3,7 @@
     'menu',
     'livewire' => false,
     'menuPosition' => 'left',
+    'split' => false,
 ])
 
 @if ($livewire)
@@ -29,13 +30,24 @@
 @endif
 
 <div
-    {{ $attributes->merge(['class' => 'dropdown']) }}
+    {{ $attributes->merge(['class' => $split ? 'btn-group' : 'dropdown']) }}
     {{ $livewire ? 'wire:ignore' : null }}
 >
-    <x-button
-        :attributes="$button->attributes->merge(['size' => 'sm', 'class' => 'dropdown-toggle', 'data-toggle' => 'dropdown'])"
-    />
-    <div {{ $menu->attributes->merge(['class' => 'dropdown-menu']) }}>
+    @if ($split)
+        <x-button
+            :attributes="$button->attributes"
+        />
+        <x-button
+            :attributes="$button->attributes
+                ->only(['size', 'variant', 'outline'])
+                ->merge(['class' => 'dropdown-toggle dropdown-toggle-split', 'data-toggle' => 'dropdown'])"
+        />
+    @else
+        <x-button
+            :attributes="$button->attributes->merge(['class' => 'dropdown-toggle', 'data-toggle' => 'dropdown'])"
+        />
+    @endif
+    <div {{ $menu->attributes->class(['dropdown-menu', 'dropdown-menu-right' => $menuPosition === 'right']) }}>
         {{ $menu }}
     </div>
 </div>
