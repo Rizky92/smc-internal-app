@@ -338,8 +338,28 @@ class LaporanFakturPajakBPJS extends Component
                     'npwp_asuransi'       => $model->npwp_asuransi,
                 ]),
             'Detail Faktur' => fn () => FakturPajakDitarikDetail::query()
+                ->selectRaw(<<<'SQL'
+                    dense_rank() over (order by kode_asuransi, status_lanjut, kode_transaksi) as baris,
+                    jenis_barang_jasa,
+                    kode_barang_jasa,
+                    nama_barang_jasa,
+                    nama_satuan_ukur,
+                    harga_satuan,
+                    sum(jumlah_barang_jasa) as jumlah_barang_jasa,
+                    sum(diskon_nominal) as diskon_nominal,
+                    sum(dpp) as dpp,
+                    sum(dpp_nilai_lain) as dpp_nilai_lain,
+                    ppn_persen,
+                    sum(ppn_nominal) as ppn_nominal,
+                    ppnbm_persen,
+                    sum(ppnbm_nominal) as ppnbm_nominal
+                    SQL)
                 ->where('menu', 'fp-bpjs')
                 ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
+                ->groupBy(['kode_asuransi', 'kode_transaksi', 'kategori', 'kd_jenis_prw', 'status_lanjut', 'harga_satuan', 'ppn_persen'])
+                ->orderBy('kode_asuransi')
+                ->orderBy('status_lanjut')
+                ->orderBy('kode_transaksi')
                 ->withCasts([
                     'harga_satuan'       => 'float',
                     'jumlah_barang_jasa' => 'float',
@@ -354,25 +374,24 @@ class LaporanFakturPajakBPJS extends Component
                 ])
                 ->cursor()
                 ->map(fn (FakturPajakDitarikDetail $model): array => [
-                    'no_rawat'           => $model->no_rawat,
+                    'kode_asuransi'      => $model->kode_asuransi,
                     'kode_transaksi'     => $model->kode_transaksi,
-                    'tgl_bayar'          => $model->tgl_bayar,
+                    'kategori'           => $model->kategori,
+                    'kd_jenis_prw'       => $model->kd_jenis_prw,
+                    'status_lanjut'      => $model->status_lanjut,
                     'jenis_barang_jasa'  => $model->jenis_barang_jasa,
                     'kode_barang_jasa'   => $model->kode_barang_jasa,
                     'nama_barang_jasa'   => $model->nama_barang_jasa,
                     'nama_satuan_ukur'   => $model->nama_satuan_ukur,
-                    'harga_satuan'       => round($model->harga_satuan, 2),
-                    'jumlah_barang_jasa' => round($model->jumlah_barang_jasa, 2),
-                    'diskon_nominal'     => round($model->diskon_nominal, 2),
-                    'dpp'                => round($model->dpp, 2),
-                    'dpp_nilai_lain'     => round($model->dpp_nilai_lain, 2),
-                    'ppn_persen'         => round($model->ppn_persen, 2),
-                    'ppn_nominal'        => round($model->ppn_nominal, 2),
-                    'ppnbm_persen'       => 0,
-                    'ppnbm_nominal'      => 0,
-                    'kd_jenis_prw'       => $model->kd_jenis_prw,
-                    'kategori'           => $model->kategori,
-                    'status_lanjut'      => $model->status_lanjut,
+                    'harga_satuan'       => $model->harga_satuan,
+                    'jumlah_barang_jasa' => $model->jumlah_barang_jasa,
+                    'diskon_nominal'     => $model->diskon_nominal,
+                    'dpp'                => $model->dpp,
+                    'dpp_nilai_lain'     => $model->dpp_nilai_lain,
+                    'ppn_persen'         => $model->ppn_persen,
+                    'ppn_nominal'        => $model->ppn_nominal,
+                    'ppnbm_persen'       => $model->ppnbm_persen,
+                    'ppnbm_nominal'      => $model->ppnbm_nominal,
                 ]),
         ];
     }
