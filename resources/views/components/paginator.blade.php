@@ -22,8 +22,6 @@
         </p>
         {{ $data->links() }}
     @else
-        <p class="text-muted p-0 m-0">
-            Menampilkan 0 dari total 0 item.
-        </p>
+        <p class="text-muted p-0 m-0">Menampilkan 0 dari total 0 item.</p>
     @endif
 </div>

@@ -57,7 +57,7 @@ class LaporanFakturPajakUmum extends Component
     /** @var string */
     public $npwpPenjual;
 
-    /** @var \Illuminate\Support\Collection */
+    /** @var Collection */
     public $satuanUkur;
 
     protected function queryString(): array
