@@ -43,6 +43,9 @@ class LaporanFakturPajakBPJS extends Component
     use LiveTable;
     use MenuTracker;
 
+    /** @var int */
+    public $option;
+
     /** @var string */
     public $tglAwal;
 
@@ -57,6 +60,12 @@ class LaporanFakturPajakBPJS extends Component
 
     /** @var Collection */
     public $satuanUkur;
+
+    /** @var int */
+    private const FORMAT_RAW = 1;
+
+    /** @var int */
+    private const FORMAT_CORETAX = 2;
 
     protected function queryString(): array
     {
@@ -96,8 +105,8 @@ class LaporanFakturPajakBPJS extends Component
         return RegistrasiPasien::query()
             ->laporanFakturPajakBPJS($this->tglAwal, $this->tglAkhir)
             ->whereNotExists(fn ($q) => $q->from($smc.'.faktur_pajak_ditarik')
-                ->whereColumn($smc.'.faktur_pajak_ditarik.no_rawat', 'reg_periksa.no_rawat')
-                ->whereColumn($smc.'.faktur_pajak_ditarik.tgl_bayar', 'nota_bayar.tanggal'))
+                ->whereColumn($smc.'.faktur_pajak_ditarik.tgl_bayar', 'nota_bayar.tanggal')
+                ->whereColumn($smc.'.faktur_pajak_ditarik.no_rawat', 'reg_periksa.no_rawat'))
             ->search($this->cari)
             ->orderBy('reg_periksa.no_rawat')
             ->orderByDesc('kode_transaksi_pajak.kode_transaksi')
@@ -304,133 +313,282 @@ class LaporanFakturPajakBPJS extends Component
         $this->dispatchBrowserEvent('data-tarikan:updated', ['tanggalTarikan' => $tanggalTarikanSementara]);
     }
 
+    public function exportWithOption(int $option): void
+    {
+        $this->option = $option;
+
+        $this->exportToExcel();
+    }
+
     /**
      * @psalm-suppress UndefinedMethod
      */
     protected function dataPerSheet(): array
     {
         $this->simpanTarikan();
-        
-        return [
-            'Faktur' => fn () => FakturPajakDitarik::query()
-                ->where('menu', 'fp-bpjs')
-                ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
-                ->cursor()
-                ->map(fn (FakturPajakDitarik $model): array => [
-                    'no_rawat'            => $model->no_rawat,
-                    'status_lanjut'       => $model->status_lanjut,
-                    'tgl_bayar'           => carbon($model->tgl_bayar)->format('d-m-Y'),
-                    'jenis_faktur'        => $model->jenis_faktur,
-                    'kode_transaksi'      => $model->kode_transaksi,
-                    'keterangan_tambahan' => $model->keterangan_tambahan,
-                    'dokumen_pendukung'   => $model->dokumen_pendukung,
-                    'cap_fasilitas'       => $model->cap_fasilitas,
-                    'id_tku_penjual'      => $model->id_tku_penjual,
-                    'jenis_id'            => $model->jenis_id,
-                    'negara'              => $model->negara,
-                    'id_tku'              => $model->id_tku,
-                    'no_rkm_medis'        => $model->no_rkm_medis,
-                    'nik_pasien'          => $model->nik_pasien,
-                    'nama_pasien'         => $model->nama_pasien,
-                    'alamat_pasien'       => $model->alamat_pasien,
-                    'email_pasien'        => $model->email_pasien,
-                    'no_telp_pasien'      => $model->no_telp_pasien,
-                    'kode_asuransi'       => $model->kode_asuransi,
-                    'nama_asuransi'       => $model->nama_asuransi,
-                    'alamat_asuransi'     => $model->alamat_asuransi,
-                    'email_asuransi'      => $model->email_asuransi,
-                    'npwp_asuransi'       => $model->npwp_asuransi,
-                ]),
-            'Detail Faktur' => fn () => FakturPajakDitarikDetail::query()
-                ->where('menu', 'fp-bpjs')
-                ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
-                ->withCasts([
-                    'harga_satuan'       => 'float',
-                    'jumlah_barang_jasa' => 'float',
-                    'diskon_persen'      => 'float',
-                    'diskon_nominal'     => 'float',
-                    'dpp'                => 'float',
-                    'dpp_nilai_lain'     => 'float',
-                    'ppn_persen'         => 'float',
-                    'ppn_nominal'        => 'float',
-                    'ppnbm_persen'       => 'float',
-                    'ppnbm_nominal'      => 'float',
-                ])
-                ->cursor()
-                ->map(fn (FakturPajakDitarikDetail $model): array => [
-                    'no_rawat'           => $model->no_rawat,
-                    'kode_transaksi'     => $model->kode_transaksi,
-                    'tgl_bayar'          => $model->tgl_bayar,
-                    'jenis_barang_jasa'  => $model->jenis_barang_jasa,
-                    'kode_barang_jasa'   => $model->kode_barang_jasa,
-                    'nama_barang_jasa'   => $model->nama_barang_jasa,
-                    'nama_satuan_ukur'   => $model->nama_satuan_ukur,
-                    'harga_satuan'       => round($model->harga_satuan, 2),
-                    'jumlah_barang_jasa' => round($model->jumlah_barang_jasa, 2),
-                    'diskon_nominal'     => round($model->diskon_nominal, 2),
-                    'dpp'                => round($model->dpp, 2),
-                    'dpp_nilai_lain'     => round($model->dpp_nilai_lain, 2),
-                    'ppn_persen'         => round($model->ppn_persen, 2),
-                    'ppn_nominal'        => round($model->ppn_nominal, 2),
-                    'ppnbm_persen'       => 0,
-                    'ppnbm_nominal'      => 0,
-                    'kd_jenis_prw'       => $model->kd_jenis_prw,
-                    'kategori'           => $model->kategori,
-                    'status_lanjut'      => $model->status_lanjut,
-                ]),
-        ];
+
+        /**
+         * @psalm-suppress MissingClosureReturnType
+         */
+        switch ($this->option) {
+            case self::FORMAT_CORETAX:
+                return [
+                    'Faktur' => fn () => FakturPajakDitarik::query()
+                        ->selectRaw(<<<'SQL'
+                            dense_rank() over (order by kode_asuransi, kode_transaksi) as baris,
+                            tgl_bayar as tgl_faktur,
+                            jenis_faktur,
+                            kode_transaksi,
+                            if (kode_transaksi = '080', '10 - PPN Dibebaskan berdasarkan PP Nomor 49 Tahun 2022', '') as keterangan_tambahan,
+                            dokumen_pendukung,
+                            no_rawat as referensi,
+                            cap_fasilitas,
+                            id_tku_penjual,
+                            if (kode_asuransi = 'A09', 'National ID', 'TIN') as jenis_id,
+                            negara,
+                            if (kode_asuransi = 'A09', nik_pasien, '') as nomor_dokumen,
+                            if (kode_asuransi = 'A09', nama_pasien, nama_asuransi) as nama,
+                            if (kode_asuransi = 'A09', alamat_pasien, alamat_asuransi) as alamat,
+                            if (kode_asuransi = 'A09', email_pasien, email_asuransi) as email,
+                            if (kode_asuransi = 'A09', '', npwp_asuransi) as id_tku
+                            SQL)
+                        ->where('menu', 'fp-bpjs')
+                        ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
+                        ->cursor()
+                        ->map(fn (FakturPajakDitarik $model): array => [
+                            'baris'               => $model->baris,
+                            'tgl_faktur'          => $model->tgl_faktur,
+                            'jenis_faktur'        => $model->jenis_faktur,
+                            'kode_transaksi'      => $model->kode_transaksi,
+                            'keterangan_tambahan' => $model->keterangan_tambahan,
+                            'dokumen_pendukung'   => $model->dokumen_pendukung,
+                            'referensi'           => $model->referensi,
+                            'cap_fasilitas'       => $model->cap_fasilitas,
+                            'id_tku_penjual'      => $model->id_tku_penjual,
+                            'jenis_id'            => $model->jenis_id,
+                            'negara'              => $model->negara,
+                            'nomor_dokumen'       => $model->nomor_dokumen,
+                            'nama'                => $model->nama,
+                            'alamat'              => $model->alamat,
+                            'email'               => $model->email,
+                            'id_tku'              => $model->id_tku,
+                        ]),
+                    'Detail Faktur' => fn () => FakturPajakDitarikDetail::query()
+                        ->selectRaw(<<<'SQL'
+                            dense_rank() over (order by kode_asuransi, kode_transaksi) as baris,
+                            jenis_barang_jasa,
+                            kode_barang_jasa,
+                            nama_barang_jasa,
+                            nama_satuan_ukur,
+                            harga_satuan,
+                            sum(jumlah_barang_jasa) as jumlah_barang_jasa,
+                            sum(diskon_nominal) as diskon_nominal,
+                            sum(dpp) as dpp,
+                            sum(dpp_nilai_lain) as dpp_nilai_lain,
+                            ppn_persen,
+                            sum(ppn_nominal) as ppn_nominal,
+                            ppnbm_persen,
+                            sum(ppnbm_nominal) as ppnbm_nominal
+                            SQL)
+                        ->where('menu', 'fp-bpjs')
+                        ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
+                        ->groupBy(['kode_asuransi', 'kode_transaksi', 'kategori', 'kd_jenis_prw', 'harga_satuan', 'ppn_persen'])
+                        ->orderBy('kode_asuransi')
+                        ->orderBy('kode_transaksi')
+                        ->withCasts([
+                            'harga_satuan'       => 'float',
+                            'jumlah_barang_jasa' => 'float',
+                            'diskon_persen'      => 'float',
+                            'diskon_nominal'     => 'float',
+                            'dpp'                => 'float',
+                            'dpp_nilai_lain'     => 'float',
+                            'ppn_persen'         => 'float',
+                            'ppn_nominal'        => 'float',
+                            'ppnbm_persen'       => 'float',
+                            'ppnbm_nominal'      => 'float',
+                        ])
+                        ->cursor()
+                        ->map(fn (FakturPajakDitarikDetail $model): array => [
+                            'baris'              => $model->baris,
+                            'jenis_barang_jasa'  => $model->jenis_barang_jasa,
+                            'kode_barang_jasa'   => $model->kode_barang_jasa,
+                            'nama_barang_jasa'   => $model->nama_barang_jasa,
+                            'nama_satuan_ukur'   => $model->nama_satuan_ukur ?: 'UM.0033',
+                            'harga_satuan'       => round($model->harga_satuan, 2),
+                            'jumlah_barang_jasa' => round($model->jumlah_barang_jasa, 2),
+                            'diskon_nominal'     => round($model->diskon_nominal, 2),
+                            'dpp'                => round($model->dpp, 2),
+                            'dpp_nilai_lain'     => round($model->dpp_nilai_lain, 2),
+                            'ppn_persen'         => round($model->ppn_persen, 2),
+                            'ppn_nominal'        => round($model->dpp_nilai_lain + $model->ppn_nominal, 2),
+                            'ppnbm_persen'       => round($model->ppnbm_persen, 2),
+                            'ppnbm_nominal'      => round($model->ppnbm_nominal, 2),
+                        ]),
+                ];
+            default:
+                return [
+                    'Faktur' => fn () => FakturPajakDitarik::query()
+                        ->where('menu', 'fp-bpjs')
+                        ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
+                        ->cursor()
+                        ->map(fn (FakturPajakDitarik $model): array => [
+                            'no_rawat'            => $model->no_rawat,
+                            'status_lanjut'       => $model->status_lanjut,
+                            'tgl_bayar'           => carbon($model->tgl_bayar)->format('d-m-Y'),
+                            'jenis_faktur'        => $model->jenis_faktur,
+                            'kode_transaksi'      => $model->kode_transaksi,
+                            'keterangan_tambahan' => $model->keterangan_tambahan,
+                            'dokumen_pendukung'   => $model->dokumen_pendukung,
+                            'cap_fasilitas'       => $model->cap_fasilitas,
+                            'id_tku_penjual'      => $model->id_tku_penjual,
+                            'jenis_id'            => $model->jenis_id,
+                            'negara'              => $model->negara,
+                            'id_tku'              => $model->id_tku,
+                            'no_rkm_medis'        => $model->no_rkm_medis,
+                            'nik_pasien'          => $model->nik_pasien,
+                            'nama_pasien'         => $model->nama_pasien,
+                            'alamat_pasien'       => $model->alamat_pasien,
+                            'email_pasien'        => $model->email_pasien,
+                            'no_telp_pasien'      => $model->no_telp_pasien,
+                            'kode_asuransi'       => $model->kode_asuransi,
+                            'nama_asuransi'       => $model->nama_asuransi,
+                            'alamat_asuransi'     => $model->alamat_asuransi,
+                            'email_asuransi'      => $model->email_asuransi,
+                            'npwp_asuransi'       => $model->npwp_asuransi,
+                        ]),
+                    'Detail Faktur' => fn () => FakturPajakDitarikDetail::query()
+                        ->where('menu', 'fp-bpjs')
+                        ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
+                        ->withCasts([
+                            'harga_satuan'       => 'float',
+                            'jumlah_barang_jasa' => 'float',
+                            'diskon_persen'      => 'float',
+                            'diskon_nominal'     => 'float',
+                            'dpp'                => 'float',
+                            'dpp_nilai_lain'     => 'float',
+                            'ppn_persen'         => 'float',
+                            'ppn_nominal'        => 'float',
+                            'ppnbm_persen'       => 'float',
+                            'ppnbm_nominal'      => 'float',
+                        ])
+                        ->cursor()
+                        ->map(fn (FakturPajakDitarikDetail $model): array => [
+                            'no_rawat'           => $model->no_rawat,
+                            'kode_transaksi'     => $model->kode_transaksi,
+                            'tgl_bayar'          => $model->tgl_bayar,
+                            'jenis_barang_jasa'  => $model->jenis_barang_jasa,
+                            'kode_barang_jasa'   => $model->kode_barang_jasa,
+                            'nama_barang_jasa'   => $model->nama_barang_jasa,
+                            'nama_satuan_ukur'   => $model->nama_satuan_ukur,
+                            'harga_satuan'       => round($model->harga_satuan, 2),
+                            'jumlah_barang_jasa' => round($model->jumlah_barang_jasa, 2),
+                            'diskon_nominal'     => round($model->diskon_nominal, 2),
+                            'dpp'                => round($model->dpp, 2),
+                            'dpp_nilai_lain'     => round($model->dpp_nilai_lain, 2),
+                            'ppn_persen'         => round($model->ppn_persen, 2),
+                            'ppn_nominal'        => round($model->ppn_nominal, 2),
+                            'ppnbm_persen'       => 0,
+                            'ppnbm_nominal'      => 0,
+                            'kd_jenis_prw'       => $model->kd_jenis_prw,
+                            'kategori'           => $model->kategori,
+                            'status_lanjut'      => $model->status_lanjut,
+                            'kode_asuransi'      => $model->kode_asuransi,
+                        ]),
+                ];
+        }
     }
 
     protected function columnHeaders(): array
     {
-        return [
-            'Faktur' => [
-                'No. Rawat',
-                'Jenis Rawat',
-                'Tgl. Faktur',
-                'Jenis Faktur',
-                'Kode Transaksi',
-                'Keterangan Tambahan',
-                'Dokumen Pendukung',
-                'Cap Fasilitas',
-                'ID TKU Penjual',
-                'Jenis ID',
-                'Negara',
-                'ID TKU',
-                'No. RM',
-                'NIK Pasien',
-                'Nama Pasien',
-                'Alamat Pasien',
-                'Email Pasien',
-                'No. Telp Pasien',
-                'Kode Asuransi',
-                'Nama Asuransi',
-                'Alamat Asuransi',
-                'Email Asuransi',
-                'NPWP Asuransi',
-            ],
-            'Detail Faktur' => [
-                'No. Rawat',
-                'Kode Transaksi',
-                'Tgl. Faktur',
-                'Barang/Jasa',
-                'Kode Barang/Jasa',
-                'Nama Barang/Jasa',
-                'Nama Satuan Ukur',
-                'Harga Satuan',
-                'Jumlah Barang/Jasa',
-                'Total Diskon',
-                'DPP',
-                'DPP Nilai Lain',
-                'Tarif PPN',
-                'PPN',
-                'Tarif PPnBM',
-                'PPnBM',
-                'Kode Item RS',
-                'Kategori',
-                'Jenis Rawat',
-            ],
-        ];
+        switch ($this->option) {
+            case self::FORMAT_CORETAX:
+                return [
+                    'Faktur' => [
+                        'Baris',
+                        'Tgl. Faktur',
+                        'Jenis Faktur',
+                        'Kode Transaksi',
+                        'Keterangan Tambahan',
+                        'Dokumen Pendukung',
+                        'Referensi',
+                        'Cap Fasilitas',
+                        'ID TKU Penjual',
+                        'Jenis ID Pembeli',
+                        'Negara Pembeli',
+                        'Nomor Dokumen Pembeli',
+                        'Nama Pembeli',
+                        'Alamat Pembeli',
+                        'Email Pembeli',
+                        'ID TKU',
+                    ],
+                    'Detail Faktur' => [
+                        'Baris',
+                        'Barang/Jasa',
+                        'Kode Barang/Jasa',
+                        'Nama Barang/Jasa',
+                        'Nama Satuan Ukur',
+                        'Harga Satuan',
+                        'Jumlah Barang/Jasa',
+                        'Total Diskon',
+                        'DPP',
+                        'DPP Nilai Lain',
+                        'Tarif PPN',
+                        'PPN',
+                        'Tarif PPnBM',
+                        'PPnBM',
+                    ],
+                ];
+            default:
+                return [
+                    'Faktur' => [
+                        'No. Rawat',
+                        'Jenis Rawat',
+                        'Tgl. Faktur',
+                        'Jenis Faktur',
+                        'Kode Transaksi',
+                        'Keterangan Tambahan',
+                        'Dokumen Pendukung',
+                        'Cap Fasilitas',
+                        'ID TKU Penjual',
+                        'Jenis ID',
+                        'Negara',
+                        'ID TKU',
+                        'No. RM',
+                        'NIK Pasien',
+                        'Nama Pasien',
+                        'Alamat Pasien',
+                        'Email Pasien',
+                        'No. Telp Pasien',
+                        'Kode Asuransi',
+                        'Nama Asuransi',
+                        'Alamat Asuransi',
+                        'Email Asuransi',
+                        'NPWP Asuransi',
+                    ],
+                    'Detail Faktur' => [
+                        'No. Rawat',
+                        'Kode Transaksi',
+                        'Tgl. Faktur',
+                        'Barang/Jasa',
+                        'Kode Barang/Jasa',
+                        'Nama Barang/Jasa',
+                        'Nama Satuan Ukur',
+                        'Harga Satuan',
+                        'Jumlah Barang/Jasa',
+                        'Total Diskon',
+                        'DPP',
+                        'DPP Nilai Lain',
+                        'Tarif PPN',
+                        'PPN',
+                        'Tarif PPnBM',
+                        'PPnBM',
+                        'Kode Item RS',
+                        'Kategori',
+                        'Jenis Rawat',
+                        'Kode Asuransi',
+                    ],
+                ];
+        }
     }
 
     protected function pageHeaders(): array

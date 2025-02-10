@@ -6,14 +6,19 @@
     'split' => false,
 ])
 
+@php
+    $buttonId = Str::slug($button->attributes->get('title'));
+    
+    if ($split) {
+        $buttonId .= '-dropdown';
+    }
+@endphp
+
 @if ($livewire)
     @push('js')
         <script>
             $(document).on('DOMContentLoaded', (e) => {
-                let buttonId =
-                    '{{ Str::slug($button->attributes->get('title')) }}';
-
-                let buttonComponent = $(`button#${buttonId}`);
+                let buttonComponent = $('button#{{ $buttonId }}');
 
                 buttonComponent.data('toggle', 'dropdown');
 
@@ -40,7 +45,7 @@
         <x-button
             :attributes="$button->attributes
                 ->only(['size', 'variant', 'outline'])
-                ->merge(['class' => 'dropdown-toggle dropdown-toggle-split', 'data-toggle' => 'dropdown'])"
+                ->merge(['id' => $buttonId, 'class' => 'dropdown-toggle dropdown-toggle-split', 'data-toggle' => 'dropdown'])"
         />
     @else
         <x-button

@@ -112,7 +112,7 @@
                 <div class="col-6">
                     <div class="d-flex align-items-end h-100">
                         <div class="mb-3 d-flex align-items-center w-100">
-                            <x-dropdown livewire>
+                            <x-dropdown livewire menu-position="right">
                                 <x-slot
                                     name="button"
                                     size="sm"
@@ -120,7 +120,7 @@
                                     icon="fas fa-cogs"
                                     disabled
                                 ></x-slot>
-                                <x-slot name="menu" class="dropdown-menu-right">
+                                <x-slot name="menu">
                                     <x-dropdown.header class="text-left">
                                         SIMRS Khanza
                                     </x-dropdown.header>
