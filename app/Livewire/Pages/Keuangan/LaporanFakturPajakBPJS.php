@@ -304,6 +304,7 @@ class LaporanFakturPajakBPJS extends Component
                     'kategori'           => $model->kategori,
                     'status_lanjut'      => $model->status_lanjut,
                     'kode_asuransi'      => $model->kd_pj,
+                    'no_rkm_medis'       => $model->no_rkm_medis,
                 ]);
             });
 
