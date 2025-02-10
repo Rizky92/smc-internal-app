@@ -346,6 +346,7 @@ class LaporanFakturPajakUmum extends Component
                     'kategori'           => $model->kategori,
                     'status_lanjut'      => $model->status_lanjut,
                     'kode_asuransi'      => $model->kd_pj,
+                    'no_rkm_medis'       => $model->no_rkm_medis,
                 ]);
             });
 
@@ -377,7 +378,7 @@ class LaporanFakturPajakUmum extends Component
                 return [
                     'Faktur' => fn () => FakturPajakDitarik::query()
                         ->selectRaw(<<<'SQL'
-                            dense_rank() over (order by kode_asuransi, kode_transaksi) as baris,
+                            dense_rank() over (order by if (kode_asuransi = 'A09', no_rkm_medis, kode_asuransi), kode_transaksi) as baris,
                             tgl_bayar as tgl_faktur,
                             jenis_faktur,
                             kode_transaksi,
@@ -417,7 +418,7 @@ class LaporanFakturPajakUmum extends Component
                         ]),
                     'Detail Faktur' => fn () => FakturPajakDitarikDetail::query()
                         ->selectRaw(<<<'SQL'
-                            dense_rank() over (order by kode_asuransi, kode_transaksi) as baris,
+                            dense_rank() over (order by if (kode_asuransi = 'A09', no_rkm_medis, kode_asuransi), kode_transaksi) as baris,
                             jenis_barang_jasa,
                             kode_barang_jasa,
                             nama_barang_jasa,
@@ -434,8 +435,8 @@ class LaporanFakturPajakUmum extends Component
                             SQL)
                         ->where('menu', 'fp-umum')
                         ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
-                        ->groupBy(['kode_asuransi', 'kode_transaksi', 'kategori', 'kd_jenis_prw', 'harga_satuan', 'ppn_persen'])
-                        ->orderBy('kode_asuransi')
+                        ->groupBy([DB::raw('if (kode_asuransi = \'A09\', no_rkm_medis, kode_asuransi)'), 'kode_transaksi', 'kategori', 'kd_jenis_prw', 'harga_satuan', 'ppn_persen'])
+                        ->orderByRaw('if (kode_asuransi = \'A09\', no_rkm_medis, kode_asuransi)')
                         ->orderBy('kode_transaksi')
                         ->withCasts([
                             'harga_satuan'       => 'float',

@@ -34,6 +34,7 @@ return new class extends Migration
             $table->string('kategori', 30)->index();
             $table->string('status_lanjut', 10);
             $table->char('kode_asuransi', 4)->index()->comment('reg_periksa.kd_pj');
+            $table->string('no_rkm_medis', 15)->comment('pasien.no_rkm_medis');
         });
     }
 };

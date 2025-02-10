@@ -123,6 +123,7 @@ class PenjualanObat extends Model
             penjualan.nota_jual as no_rawat,
             'Walk In' as status_lanjut,
             'A09' as kd_pj,
+            penjualan.no_rkm_medis,
             date(tagihan_sadewa.tgl_bayar) as tgl_bayar,
             date_format(tagihan_sadewa.tgl_bayar, '%H:%i:%s') as jam_bayar,
             tagihan_sadewa.jumlah_tagihan as totalbiaya,

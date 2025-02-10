@@ -1084,6 +1084,7 @@ class RegistrasiPasien extends Model
             reg_periksa.no_rawat,
             reg_periksa.status_lanjut,
             reg_periksa.kd_pj,
+            reg_periksa.no_rkm_medis,
             nota_bayar.tanggal as tgl_bayar,
             nota_bayar.jam as jam_bayar,
             nota_bayar.totalbiaya,
