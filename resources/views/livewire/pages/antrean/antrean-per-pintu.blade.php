@@ -15,7 +15,7 @@
 </div>
 @push('js')
     <script>
-        setTimeout(function() {
+        setTimeout(function () {
             location.reload();
         }, 3600000);
     </script>

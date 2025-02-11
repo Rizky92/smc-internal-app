@@ -49,10 +49,11 @@
                 event.detail.nm_poli.toLowerCase();
             var repeatCount = 0;
             let processesCompleted = 0; // Counter untuk tracking proses
-            
+
             function checkAndRefresh() {
                 processesCompleted++;
-                if (processesCompleted === 2) { // Tunggu kedua proses selesai
+                if (processesCompleted === 2) {
+                    // Tunggu kedua proses selesai
                     window.location.reload(); // Full page refresh
                 }
             }

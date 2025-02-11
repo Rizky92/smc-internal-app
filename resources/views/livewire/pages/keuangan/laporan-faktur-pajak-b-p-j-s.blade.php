@@ -5,8 +5,14 @@
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.range-date />
-                <x-dropdown class="ml-auto" livewire split menu-position="right">
-                    <x-slot name="button"
+                <x-dropdown
+                    class="ml-auto"
+                    livewire
+                    split
+                    menu-position="right"
+                >
+                    <x-slot
+                        name="button"
                         size="sm"
                         variant="dark"
                         outline

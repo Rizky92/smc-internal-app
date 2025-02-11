@@ -68,7 +68,7 @@ class LaporanFakturPajakUmum extends Component
 
     /** @var int */
     private const FORMAT_CORETAX = 2;
-    
+
     protected function queryString(): array
     {
         return [
@@ -535,7 +535,7 @@ class LaporanFakturPajakUmum extends Component
                         ]),
                 ];
         }
-        
+
     }
 
     protected function columnHeaders(): array
