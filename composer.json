@@ -89,34 +89,32 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ],
-        "lint": [
+        "ide-helper": [
             "@php artisan ide-helper:generate",
             "@php artisan ide-helper:models --nowrite",
-            "@php artisan ide-helper:meta",
+            "@php artisan ide-helper:meta"
+        ],
+        "psalm:scan": [
+            "@php vendor/bin/psalm"
+        ],
+        "psalm:update-baseline": [
+            "@php vendor/bin/psalm --update-baseline"
+        ],
+        "psalm:clear-cache": [
+            "@php vendor/bin/psalm --clear-cache"
+        ],
+        "psalm:alter": [
+            "@php vendor/bin/psalm --alter --issues=MissingParamType,MissingReturnType,MissingClosureReturnType,InvalidReturnType,InvalidNullableReturnType,InvalidFalsableReturnType,MismatchingDocblockParamType,MismatchingDocblockReturnType,ParamNameMismatch,PossiblyUndefinedVariable,PossiblyUndefinedGlobalVariable,UnnecessaryVarAnnotation --allow-backwards-incompatible-changes=true"
+        ],
+        "cs": [
+            "@php vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php",
+            "npm run pb"
+        ],
+        "lint": [
+            "@ide-helper",
             "@psalm:clear-cache",
             "@psalm:alter",
             "@cs"
-        ],
-        "psalm:update-baseline": [
-            "./vendor/bin/psalm --update-baseline"
-        ],
-        "psalm:init": [
-            "./vendor/bin/psalm --init",
-            "./vendor/bin/psalm-plugin enable psalm/plugin-laravel",
-            "./vendor/bin/psalm --set-baseline=psalm-baseline.xml"
-        ],
-        "psalm:scan": [
-            "./vendor/bin/psalm"
-        ],
-        "psalm:alter": [
-            "./vendor/bin/psalm --alter --issues=MissingParamType,MissingReturnType,MissingClosureReturnType,InvalidReturnType,InvalidNullableReturnType,InvalidFalsableReturnType,MismatchingDocblockParamType,MismatchingDocblockReturnType,ParamNameMismatch,PossiblyUndefinedVariable,PossiblyUndefinedGlobalVariable,UnnecessaryVarAnnotation --allow-backwards-incompatible-changes=true"
-        ],
-        "psalm:clear-cache": [
-            "./vendor/bin/psalm --clear-cache"
-        ],
-        "cs": [
-            "./vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php",
-            "npm run pb"
         ],
         "optimize": [
             "@php artisan optimize -q",
