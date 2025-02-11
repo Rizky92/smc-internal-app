@@ -13,3 +13,10 @@
         </div>
     </div>
 </div>
+@push('js')
+    <script>
+        setTimeout(function() {
+            location.reload();
+        }, 3600000);
+    </script>
+@endpush

@@ -95,19 +95,19 @@
             "@php artisan ide-helper:meta"
         ],
         "psalm:scan": [
-            "./vendor/bin/psalm"
+            "@php vendor/bin/psalm"
         ],
         "psalm:update-baseline": [
-            "./vendor/bin/psalm --update-baseline"
+            "@php vendor/bin/psalm --update-baseline"
         ],
         "psalm:clear-cache": [
-            "./vendor/bin/psalm --clear-cache"
+            "@php vendor/bin/psalm --clear-cache"
         ],
         "psalm:alter": [
-            "./vendor/bin/psalm --alter --issues=MissingParamType,MissingReturnType,MissingClosureReturnType,InvalidReturnType,InvalidNullableReturnType,InvalidFalsableReturnType,MismatchingDocblockParamType,MismatchingDocblockReturnType,ParamNameMismatch,PossiblyUndefinedVariable,PossiblyUndefinedGlobalVariable,UnnecessaryVarAnnotation --allow-backwards-incompatible-changes=true"
+            "@php vendor/bin/psalm --alter --issues=MissingParamType,MissingReturnType,MissingClosureReturnType,InvalidReturnType,InvalidNullableReturnType,InvalidFalsableReturnType,MismatchingDocblockParamType,MismatchingDocblockReturnType,ParamNameMismatch,PossiblyUndefinedVariable,PossiblyUndefinedGlobalVariable,UnnecessaryVarAnnotation --allow-backwards-incompatible-changes=true"
         ],
         "cs": [
-            "./vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php",
+            "@php vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php",
             "npm run pb"
         ],
         "lint": [
