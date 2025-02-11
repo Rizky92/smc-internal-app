@@ -79,7 +79,7 @@ trait PengaturanRKAT
         $settings = app(RKATSettings::class);
 
         $this->tahunRKAT = $settings->tahun;
-        $this->tglAwalPenetapanRKAT = $settings->tgl_penetapan_awal->format('Y-m-d');
-        $this->tglAkhirPenetapanRKAT = $settings->tgl_penetapan_akhir->format('Y-m-d');
+        $this->tglAwalPenetapanRKAT = $settings->tgl_penetapan_awal->toDateString();
+        $this->tglAkhirPenetapanRKAT = $settings->tgl_penetapan_akhir->toDateString();
     }
 }

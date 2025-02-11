@@ -14,7 +14,7 @@
         type="date"
         style="width: 9rem"
         wire:model.defer="{{ $modelStart }}"
-        value="{{ now()->startOfMonth()->format('Y-m-d') }}"
+        value="{{ now()->startOfMonth()->toDateString() }}"
     />
     <span class="text-sm px-3">sampai</span>
     <input
@@ -22,6 +22,6 @@
         type="date"
         style="width: 9rem"
         wire:model.defer="{{ $modelEnd }}"
-        value="{{ now()->endOfMonth()->format('Y-m-d') }}"
+        value="{{ now()->endOfMonth()->toDateString() }}"
     />
 </div>

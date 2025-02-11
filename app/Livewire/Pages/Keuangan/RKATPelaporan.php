@@ -40,8 +40,8 @@ class RKATPelaporan extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'  => ['except' => now()->startOfMonth()->toDateString(), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->toDateString(), 'as' => 'tgl_akhir'],
             'tahun'    => ['except' => now()->format('Y')],
             'bidang'   => ['except' => -1],
         ];
@@ -90,8 +90,8 @@ class RKATPelaporan extends Component
 
     protected function defaultValues(): void
     {
-        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->toDateString();
+        $this->tglAkhir = now()->endOfMonth()->toDateString();
         $this->tahun = now()->format('Y');
         $this->bidang = -1;
     }

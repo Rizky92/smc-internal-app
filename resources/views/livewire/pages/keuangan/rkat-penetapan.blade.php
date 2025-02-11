@@ -85,7 +85,7 @@
                                 {{ rp($item->nominal_anggaran) }}
                             </x-table.td>
                             <x-table.td>
-                                {{ $item->created_at->format('Y-m-d') }}
+                                {{ $item->created_at->toDateString() }}
                             </x-table.td>
                         </x-table.tr>
                     @empty

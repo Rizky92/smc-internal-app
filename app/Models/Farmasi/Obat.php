@@ -352,11 +352,11 @@ class Obat extends Model
         bool $hanyaTampilkanYangNol = false): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->subYear()->format('Y-m-d');
+            $tglAwal = now()->subYear()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
+            $tglAkhir = now()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'

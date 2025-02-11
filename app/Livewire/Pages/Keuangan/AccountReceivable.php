@@ -59,8 +59,8 @@ class AccountReceivable extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal'        => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir'       => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'        => ['except' => now()->startOfMonth()->toDateString(), 'as' => 'tgl_awal'],
+            'tglAkhir'       => ['except' => now()->endOfMonth()->toDateString(), 'as' => 'tgl_akhir'],
             'jaminanPasien'  => ['except' => '-', 'as' => 'jaminan_pasien'],
             'jenisPerawatan' => ['except' => 'semua', 'as' => 'jenis_perawatan'],
             'bedaJaminan'    => ['except' => false, 'as' => 'beda_jaminan'],
@@ -239,14 +239,14 @@ class AccountReceivable extends Component
 
     protected function defaultValues(): void
     {
-        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->toDateString();
+        $this->tglAkhir = now()->endOfMonth()->toDateString();
 
         $this->bedaJaminan = false;
         $this->rekeningAkun = '-';
         $this->jaminanPasien = '-';
         $this->jenisPerawatan = 'semua';
-        $this->tglBayar = now()->format('Y-m-d');
+        $this->tglBayar = now()->toDateString();
     }
 
     /**

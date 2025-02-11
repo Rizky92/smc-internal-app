@@ -5,6 +5,11 @@
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.range-date />
+                <x-filter.toggle
+                    model="isPerusahaan"
+                    title="Tampilkan hanya perusahaan"
+                    class="ml-3"
+                />
                 <x-dropdown
                     class="ml-auto"
                     livewire

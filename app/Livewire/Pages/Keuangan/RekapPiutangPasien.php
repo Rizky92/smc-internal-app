@@ -36,8 +36,8 @@ class RekapPiutangPasien extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal'   => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir'  => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'   => ['except' => now()->startOfMonth()->toDateString(), 'as' => 'tgl_awal'],
+            'tglAkhir'  => ['except' => now()->endOfMonth()->toDateString(), 'as' => 'tgl_akhir'],
             'caraBayar' => ['except' => '', 'as' => 'kdpj'],
         ];
     }
@@ -99,8 +99,8 @@ class RekapPiutangPasien extends Component
         $this->perpage = 25;
         $this->sortColumns = [];
         $this->caraBayar = '';
-        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->toDateString();
+        $this->tglAkhir = now()->endOfMonth()->toDateString();
     }
 
     /**

@@ -36,7 +36,7 @@ class LaporanPasienRanap extends Component
     protected function queryString(): array
     {
         return [
-            'tanggal'         => ['except' => now()->format('Y-m-d')],
+            'tanggal'         => ['except' => now()->toDateString()],
             'statusPerawatan' => ['except' => 'tanggal_masuk', 'as' => 'status_perawatan'],
             'semuaPasien'     => ['except' => false, 'as' => 'tampilkan_semua_pasien'],
         ];
@@ -74,7 +74,7 @@ class LaporanPasienRanap extends Component
 
     protected function defaultValues(): void
     {
-        $this->tanggal = now()->format('Y-m-d');
+        $this->tanggal = now()->toDateString();
         $this->statusPerawatan = 'tanggal_masuk';
         $this->semuaPasien = false;
     }

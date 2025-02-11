@@ -36,11 +36,11 @@ class PostingJurnal extends Model
     public function scopeJumlahDebetDanKreditPostingJurnal(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $jenis = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->startOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->startOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'

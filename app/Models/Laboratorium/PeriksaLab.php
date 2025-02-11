@@ -71,11 +71,11 @@ class PeriksaLab extends Model
     public function scopeLaporanTindakanLab(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -128,11 +128,11 @@ class PeriksaLab extends Model
     public function scopeLaporanTindakanLabDetail(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $this->addSearchConditions([

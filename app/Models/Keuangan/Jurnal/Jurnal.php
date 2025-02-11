@@ -71,11 +71,11 @@ class Jurnal extends Model
     public function scopeJurnalUmum(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
+            $tglAwal = now()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
+            $tglAkhir = now()->toDateString();
         }
 
         $this->addRawColumns('waktu_jurnal', DB::raw("concat(jurnal.tgl_jurnal, ' ', jurnal.jam_jurnal)"));
@@ -110,11 +110,11 @@ class Jurnal extends Model
     public function scopeBukuBesar(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodeRekening = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $this->addSearchConditions([
@@ -149,11 +149,11 @@ class Jurnal extends Model
     public function scopeJumlahDebetKreditBukuBesar(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodeRekening = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -234,7 +234,7 @@ class Jurnal extends Model
             'no_bukti'   => $noBukti,
             'keterangan' => $keterangan,
             'jenis'      => $jenis,
-            'tgl_jurnal' => $waktuTransaksi->format('Y-m-d'),
+            'tgl_jurnal' => $waktuTransaksi->toDateString(),
             'jam_jurnal' => $waktuTransaksi->format('H:i:s'),
         ]);
 

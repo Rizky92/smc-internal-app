@@ -75,11 +75,11 @@ class ResepObat extends Model
     public function scopeKunjunganResep(Builder $query, string $jenisResep = 'umum', string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -125,11 +125,11 @@ class ResepObat extends Model
     public function scopePenggunaanObatPerDokter(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -178,11 +178,11 @@ class ResepObat extends Model
     public function scopeKunjunganPerPoli(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endofMonth()->format('Y-m-d');
+            $tglAkhir = now()->endofMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -243,11 +243,11 @@ class ResepObat extends Model
     public function scopeRincianKunjunganRalan(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endofMonth()->format('Y-m-d');
+            $tglAkhir = now()->endofMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'

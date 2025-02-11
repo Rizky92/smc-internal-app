@@ -91,11 +91,11 @@ class KamarInap extends Model
         string $jenisBayar = ''
     ): Builder {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'

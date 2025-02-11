@@ -80,11 +80,11 @@ class PenjualanObat extends Model
     public function scopePenjualanObatMorfin(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $bangsal = '', string $kodeObat = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
+            $tglAwal = now()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
+            $tglAkhir = now()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -110,11 +110,11 @@ class PenjualanObat extends Model
     public function scopeFilterFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
+            $tglAwal = now()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
+            $tglAkhir = now()->toDateString();
         }
 
         $tahun = substr($tglAwal, 0, 7);
@@ -149,11 +149,11 @@ class PenjualanObat extends Model
     public function scopeLaporanFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
+            $tglAwal = now()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
+            $tglAkhir = now()->toDateString();
         }
 
         $tahun = substr($tglAwal, 0, 4);

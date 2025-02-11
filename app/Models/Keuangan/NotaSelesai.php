@@ -26,11 +26,11 @@ class NotaSelesai extends Model
     public function scopeBillingYangDiselesaikan(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
+            $tglAwal = now()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->addDay()->format('Y-m-d');
+            $tglAkhir = now()->addDay()->toDateString();
         }
 
         $sik = DB::connection('mysql_sik')->getDatabaseName();

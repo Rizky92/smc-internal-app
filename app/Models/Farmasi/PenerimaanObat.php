@@ -39,11 +39,11 @@ class PenerimaanObat extends Model
     public function scopeHutangAging(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -107,11 +107,11 @@ class PenerimaanObat extends Model
     public function scopeTotalHutangAging(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -169,15 +169,15 @@ class PenerimaanObat extends Model
         string $tglAkhir = ''
     ): Builder {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
-        $tglAwalBulanLalu = Carbon::parse($tglAwal)->subMonth()->startOfMonth()->format('Y-m-d');
-        $tglAkhirBulanLalu = Carbon::parse($tglAwal)->subMonth()->endOfMonth()->format('Y-m-d');
+        $tglAwalBulanLalu = Carbon::parse($tglAwal)->subMonth()->startOfMonth()->toDateString();
+        $tglAkhirBulanLalu = Carbon::parse($tglAwal)->subMonth()->endOfMonth()->toDateString();
 
         $sqlSelect = <<<'SQL'
             detailpesan.kode_brng,

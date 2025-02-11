@@ -35,8 +35,8 @@ class DaftarPasienRanap extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal'    => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir'   => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'    => ['except' => now()->toDateString(), 'as' => 'tgl_awal'],
+            'tglAkhir'   => ['except' => now()->toDateString(), 'as' => 'tgl_akhir'],
             'jenisRawat' => ['except' => '-', 'as' => 'status'],
         ];
     }
@@ -89,7 +89,7 @@ class DaftarPasienRanap extends Component
             ->where([
                 ['no_rawat', '=', $noRawat],
                 ['kd_kamar', '=', $kodeKamar],
-                ['tgl_masuk', '=', carbon($tglMasuk)->format('Y-m-d')],
+                ['tgl_masuk', '=', carbon($tglMasuk)->toDateString()],
                 ['jam_masuk', '=', carbon($jamMasuk)->format('H:i:s')],
             ])
             ->update([
@@ -109,8 +109,8 @@ class DaftarPasienRanap extends Component
     protected function defaultValues(): void
     {
         $this->jenisRawat = '-';
-        $this->tglAwal = now()->format('Y-m-d');
-        $this->tglAkhir = now()->format('Y-m-d');
+        $this->tglAwal = now()->toDateString();
+        $this->tglAkhir = now()->toDateString();
     }
 
     /**

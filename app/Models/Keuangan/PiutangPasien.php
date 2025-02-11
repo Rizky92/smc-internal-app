@@ -51,11 +51,11 @@ class PiutangPasien extends Model
     public function scopePiutangBelumLunas(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $penjamin = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -88,11 +88,11 @@ class PiutangPasien extends Model
         string $rekening = '112010'
     ): Builder {
         if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
+            $tglAwal = now()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
+            $tglAkhir = now()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -133,11 +133,11 @@ class PiutangPasien extends Model
         string $penjamin = ''
     ): Builder {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMont()->format('Y-m-d');
+            $tglAkhir = now()->endOfMont()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'

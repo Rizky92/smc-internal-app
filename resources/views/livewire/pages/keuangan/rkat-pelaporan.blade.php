@@ -109,7 +109,7 @@
                                 {{ rp($penggunaan->nominal_pemakaian) }}
                             </x-table.td>
                             <x-table.td>
-                                {{ $penggunaan->created_at->format('Y-m-d') }}
+                                {{ $penggunaan->created_at->toDateString() }}
                             </x-table.td>
                             <x-table.td>
                                 {{ $penggunaan->user_id }}

@@ -40,8 +40,8 @@ class Rekening extends Model
 
         $tglSaldo = carbon_immutable($tglSaldo);
 
-        $tglAwalTahun = $tglSaldo->startOfYear()->format('Y-m-d');
-        $tglAkhirBulanLalu = $tglSaldo->subMonth()->endOfMonth()->format('Y-m-d');
+        $tglAwalTahun = $tglSaldo->startOfYear()->toDateString();
+        $tglAkhirBulanLalu = $tglSaldo->subMonth()->endOfMonth()->toDateString();
 
         $sqlSelect = <<<'SQL'
             rekening.kd_rek,
@@ -65,11 +65,11 @@ class Rekening extends Model
         $query->withoutGlobalScopes();
 
         if (empty($tglAwal)) {
-            $tglAwal = carbon($tglAwal)->startOfMonth()->format('Y-m-d');
+            $tglAwal = carbon($tglAwal)->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = carbon($tglAkhir)->format('Y-m-d');
+            $tglAkhir = carbon($tglAkhir)->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -97,11 +97,11 @@ class Rekening extends Model
     public function scopeHitungDebetKreditPerPeriode(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePenjamin = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
+            $tglAkhir = now()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'

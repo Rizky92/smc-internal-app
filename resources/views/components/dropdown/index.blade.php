@@ -43,7 +43,7 @@
         <x-button
             :attributes="$button->attributes
                 ->only(['size', 'variant', 'outline'])
-            ->merge(['id' => $buttonId, 'class' => 'dropdown-toggle dropdown-toggle-split', 'data-toggle' => 'dropdown'])"
+                ->merge(['id' => $buttonId, 'class' => 'dropdown-toggle dropdown-toggle-split', 'data-toggle' => 'dropdown'])"
         />
     @else
         <x-button

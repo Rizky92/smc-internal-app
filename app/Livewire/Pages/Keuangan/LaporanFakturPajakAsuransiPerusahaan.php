@@ -77,8 +77,8 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal'        => ['except' => now()->subDays(5)->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir'       => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'        => ['except' => now()->subDays(5)->toDateString(), 'as' => 'tgl_awal'],
+            'tglAkhir'       => ['except' => now()->toDateString(), 'as' => 'tgl_akhir'],
             'tanggalTarikan' => ['except' => '-', 'as' => 'tgl_tarik'],
             'kodePJ'         => ['except' => '-', 'as' => 'kode_pj'],
             'isPerusahaan'   => ['except' => false, 'as' => 'is_perusahaan'],
@@ -201,8 +201,8 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
 
     protected function defaultValues(): void
     {
-        $this->tglAwal = now()->subDays(5)->format('Y-m-d');
-        $this->tglAkhir = now()->format('Y-m-d');
+        $this->tglAwal = now()->subDays(5)->toDateString();
+        $this->tglAkhir = now()->toDateString();
         $this->tanggalTarikan = '-';
         $this->kodePJ = '-';
         $this->isPerusahaan = false;

@@ -266,7 +266,7 @@ class RKATInputPelaporan extends Component
     {
         $this->pemakaianAnggaranId = -1;
         $this->anggaranBidangId = -1;
-        $this->tglPakai = now()->format('Y-m-d');
+        $this->tglPakai = now()->toDateString();
         $this->keterangan = '';
         $this->detail = [[
             'keterangan' => '',

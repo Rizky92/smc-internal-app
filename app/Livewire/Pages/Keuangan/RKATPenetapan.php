@@ -113,7 +113,7 @@ class RKATPenetapan extends Component
                     'bidang'         => $model->bidang->nama,
                     'anggaran'       => $model->anggaran->nama,
                     'nominal'        => $model->nominal_anggaran,
-                    'tgl_ditetapkan' => $model->created_at->format('Y-m-d'),
+                    'tgl_ditetapkan' => $model->created_at->toDateString(),
                 ]),
         ];
     }

@@ -7,13 +7,13 @@
 <div {{ $attributes->merge(['class' => 'custom-control custom-switch']) }}>
     <input
         class="custom-control-input"
-        id="{{ $id ?? Str::camel($title) }}"
+        id="{{ $id ?? Str::slug($title) }}"
         type="checkbox"
         wire:model.defer="{{ $model }}"
     />
     <label
         class="custom-control-label text-sm"
-        for="{{ $id ?? Str::camel($title) }}"
+        for="{{ $id ?? Str::slug($title) }}"
     >
         {{ $title }}
     </label>

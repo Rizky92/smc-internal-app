@@ -40,7 +40,7 @@
                         <td>{{ $data->poliklinik->nm_poli }}</td>
                         <td>{{ $data->jam_mulai }}</td>
                         <td>{{ $data->jam_selesai }}</td>
-                        <td>{{ \App\Models\Perawatan\RegistrasiPasien::hitungData($data->kd_poli, $data->kd_dokter, now()->format('Y-m-d')) }}</td>
+                        <td>{{ \App\Models\Perawatan\RegistrasiPasien::hitungData($data->kd_poli, $data->kd_dokter, now()->toDateString()) }}</td>
                     </tr>
                 @endforeach
             </tbody>

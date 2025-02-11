@@ -108,7 +108,7 @@ class UbahTanggalJurnal extends Component
         DB::transaction(function () use ($jurnalDiubah): void {
             tracker_start('mysql_sik');
 
-            $jurnalDiubah->tgl_jurnal = carbon($this->tglJurnalBaru)->format('Y-m-d');
+            $jurnalDiubah->tgl_jurnal = carbon($this->tglJurnalBaru)->toDateString();
 
             $jurnalDiubah->save();
 

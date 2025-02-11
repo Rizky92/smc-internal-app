@@ -160,13 +160,13 @@
                                 {{ rp($item->piutang_dibayar) }}
                             </x-table.td>
                             <x-table.td>
-                                {{ carbon($item->tgl_penagihan)->format('Y-m-d') }}
+                                {{ carbon($item->tgl_penagihan)->toDateString() }}
                             </x-table.td>
                             <x-table.td>
-                                {{ carbon($item->tgl_jatuh_tempo)->format('Y-m-d') }}
+                                {{ carbon($item->tgl_jatuh_tempo)->toDateString() }}
                             </x-table.td>
                             <x-table.td>
-                                {{ carbon($item->tgl_bayar)->format('Y-m-d') }}
+                                {{ carbon($item->tgl_bayar)->toDateString() }}
                             </x-table.td>
                             <x-table.td>{{ $item->status }}</x-table.td>
                             <x-table.td>

@@ -76,7 +76,7 @@ class Pintu extends Model
                 $join->on('dokter_pintu.kd_dokter', '=', 'jadwal.kd_dokter')
                     ->on('pintu_poli.kd_poli', '=', 'jadwal.kd_poli');
             })
-            ->where('registrasi.tgl_registrasi', now()->format('Y-m-d'))
+            ->where('registrasi.tgl_registrasi', now()->toDateString())
             ->where('registrasi.stts', 'Belum')
             ->where('registrasi.status_lanjut', '!=', 'ranap')
             ->where('manajemen_pintu.kd_pintu', $kd_pintu)

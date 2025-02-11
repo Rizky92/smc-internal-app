@@ -234,7 +234,7 @@ class InputJurnalPosting extends Component
     protected function defaultValues(): void
     {
         $this->no_bukti = '';
-        $this->tgl_jurnal = now()->format('Y-m-d');
+        $this->tgl_jurnal = now()->toDateString();
         $this->jam_jurnal = now()->format('H:i:s');
         $this->jenis = 'U';
         $this->keterangan = '';

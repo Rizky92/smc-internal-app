@@ -404,11 +404,11 @@ class RegistrasiPasien extends Model
     public function scopeLaporanStatistik(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfWeek()->format('Y-m-d');
+            $tglAwal = now()->startOfWeek()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfWeek()->format('Y-m-d');
+            $tglAkhir = now()->endOfWeek()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -524,7 +524,7 @@ class RegistrasiPasien extends Model
     public function scopeLaporanPasienRanap(Builder $query, string $tanggal = '', bool $semuaPasien = false): Builder
     {
         if (empty($tanggal)) {
-            $tanggal = now()->format('Y-m-d');
+            $tanggal = now()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -603,11 +603,11 @@ class RegistrasiPasien extends Model
         string $statusPerawatan = '-'
     ): Builder {
         if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
+            $tglAwal = now()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
+            $tglAkhir = now()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -712,11 +712,11 @@ class RegistrasiPasien extends Model
         bool $semuaRegistrasi = false
     ): Builder {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -791,11 +791,11 @@ class RegistrasiPasien extends Model
         string $status = 'sudah'
     ): Builder {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -840,11 +840,11 @@ class RegistrasiPasien extends Model
     public function scopeRiwayatPemakaianObatTB(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -898,11 +898,11 @@ class RegistrasiPasien extends Model
     public function scopeDemografiPasien(Builder $query, string $tglAwal = '', string $tglAkhir = '', bool $export = false): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -972,7 +972,7 @@ class RegistrasiPasien extends Model
             ->join('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
             ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
-            ->where('reg_periksa.tgl_registrasi', now()->format('Y-m-d'))
+            ->where('reg_periksa.tgl_registrasi', now()->toDateString())
             ->where('reg_periksa.stts', 'Belum')
             ->where('reg_periksa.kd_poli', $kd_poli)
             ->orderBy('dokter.nm_dokter')
@@ -1039,11 +1039,11 @@ class RegistrasiPasien extends Model
     public function scopeFilterFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePJ = 'BPJ', bool $isPerusahaan = false): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
+            $tglAwal = now()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
+            $tglAkhir = now()->toDateString();
         }
 
         $tahun = substr($tglAwal, 0, 7);
@@ -1110,11 +1110,11 @@ class RegistrasiPasien extends Model
     public function scopeKodeTransaksiFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
+            $tglAwal = now()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
+            $tglAkhir = now()->toDateString();
         }
 
         $tahun = substr($tglAwal, 0, 7);
@@ -1138,11 +1138,11 @@ class RegistrasiPasien extends Model
     public function scopeLaporanFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
+            $tglAwal = now()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
+            $tglAkhir = now()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
