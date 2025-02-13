@@ -13,9 +13,11 @@ use App\Support\MixinEloquentBuilder;
 use App\Support\MixinQueryBuilder;
 use App\Support\MixinStr;
 use App\Support\MixinStringable;
+use Closure;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
@@ -24,6 +26,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
+use Staudenmeir\LaravelCte\Query\Builder as CTEQueryBuilder;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -71,9 +74,9 @@ class AppServiceProvider extends ServiceProvider
     {
         Blade::if('inarray', fn ($needle, array $haystack, bool $strict = false): bool => in_array($needle, $haystack, $strict));
 
-        Blade::if('null', fn ($expr): bool => is_null($expr));
+        Blade::if('null', fn ($value): bool => $value === null);
 
-        Blade::if('notnull', fn ($expr): bool => ! is_null($expr));
+        Blade::if('notnull', fn ($value): bool => $value !== null);
     }
 
     public function registerModelConfigurations(): void
@@ -94,6 +97,17 @@ class AppServiceProvider extends ServiceProvider
 
     public function registerMacrosAndMixins(): void
     {
+        CTEQueryBuilder::macro('hasExpression', fn (string $string) => in_array($string, ($this->unions ? $this->unionExpressions : $this->expression), true));
+        CTEQueryBuilder::macro('doesntHaveExpression', fn (string $string) => !in_array($string, ($this->unions ? $this->unionExpressions : $this->expression), true));
+        JoinClause::macro('onValue', function ($first, $operator = null, $value = null, $boolean = 'and') {
+            if ($first instanceof Closure) {
+                return $this->whereNested($first, $boolean);
+            }
+            
+            return $this->where($first, $operator, $value, $boolean);
+        });
+        JoinClause::macro('orOnValue', fn ($first, $operator = null, $value = null) => $this->onValue($first, $operator, $value, 'or'));
+
         foreach ($this->mixins as $class => $mixins) {
             if (! in_array('mixin', get_class_methods($class), $strict = true)) {
                 continue;

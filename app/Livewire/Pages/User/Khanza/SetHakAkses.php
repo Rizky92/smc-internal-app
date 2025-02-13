@@ -58,8 +58,7 @@ class SetHakAkses extends Component
         return $this->isDeferred ? [] : HakAkses::query()
             ->search($this->cari, ['nama_field', 'judul_menu'])
             ->when($this->showChecked, fn (Builder $q): Builder => $q
-                ->orWhereIn('nama_field', collect($this->checkedHakAkses)->filter()->keys()->all())
-            )
+                ->orWhereIn('nama_field', collect($this->checkedHakAkses)->filter()->keys()->all()))
             ->sortWithColumns($this->sortColumns)
             ->get();
     }
