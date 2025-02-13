@@ -270,7 +270,7 @@ class LaporanFakturPajakBPJS extends Component
 
                 if (! in_array($model->kategori, ['Pemberian Obat', 'Retur Obat', 'Obat Pulang', 'Walk In', 'Piutang Obat'])) {
                     $subtotalJasa = (float) $totalJasa->get($model->no_rawat, 1);
-                    $diskonPersen = ((float) $model->diskon) / $subtotalJasa;
+                    $diskonPersen = ((float) $model->diskon) / round($subtotalJasa, 0) ?: 1;
                     $diskonNominal = $diskonPersen * ((float) $model->dpp);
                     $dpp = ((float) $model->dpp) - $diskonNominal;
                 }
