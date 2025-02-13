@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Pages\Farmasi;
 
+use App\EloquentSerialize\Facades\EloquentSerializeFacade;
+use App\Jobs\Keuangan\ExportQuery;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
@@ -120,5 +122,38 @@ class ObatPerDokter extends Component
             now()->translatedFormat('d F Y'),
             $periode,
         ];
+    }
+
+    public function exportToExcel(): void
+    {
+        $builder = ResepObat::query()
+            ->penggunaanObatPerDokter($this->tglAwal, $this->tglAkhir)
+            ->orderBy('no_resep')
+            ->search($this->cari);
+
+        $query = EloquentSerializeFacade::serialize($builder);
+
+        $columnHeaders = $this->columnHeaders();
+
+        $userId = user()->nik;
+
+        $mapper = (fn (ResepObat $model): array => [
+            'no_resep'      => $model->no_resep,
+            'tgl_perawatan' => $model->tgl_perawatan,
+            'jam'           => $model->jam,
+            'no_rawat'      => $model->no_rawat,
+            'nama_brng'     => $model->nama_brng,
+            'nama'          => $model->nama,
+            'jml'           => floatval($model->jml),
+            'nm_dokter'     => $model->nm_dokter,
+            'dpjp'          => $model->dpjp,
+            'status'        => str()->title($model->status),
+            'nm_poli'       => $model->nm_poli,
+            'png_jawab'     => $model->png_jawab,
+        ]);
+
+        ExportQuery::dispatch($query, $columnHeaders, $mapper, $userId);
+
+        $this->emit('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
     }
 }

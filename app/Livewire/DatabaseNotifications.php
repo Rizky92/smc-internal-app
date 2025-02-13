@@ -64,8 +64,8 @@ class DatabaseNotifications extends Component
         auth()->user()->notifications()->where('id', $notificationId)->first()->delete();
     }
 
-    public function download($filePath)
+    public function download(string $filePath): \Symfony\Component\HttpFoundation\StreamedResponse
     {
-        return Storage::disk('public')->download($filePath);
+        return Storage::download("public/excel/{$filePath}");
     }
 }

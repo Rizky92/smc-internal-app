@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
+use App\EloquentSerialize\Facades\EloquentSerializeFacade;
 use App\Jobs\ExportToExcel;
 use App\Jobs\Exporter\Keuangan\BukuBesarExporter;
+use App\Jobs\Keuangan\ExportQuery;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
@@ -177,23 +179,52 @@ class BukuBesar extends Component
 
     public function exportToExcel()
     { 
-        $batchId = (string) Str::uuid();
+        // $batchId = (string) Str::uuid();
 
-        $filters = [
-            'kodeRekening' => $this->kodeRekening,
-            'tglAwal'      => $this->tglAwal,
-            'tglAkhir'     => $this->tglAkhir,
-            'cari'         => $this->cari,
-        ];
+        // $filters = [
+        //     'kodeRekening' => $this->kodeRekening,
+        //     'tglAwal'      => $this->tglAwal,
+        //     'tglAkhir'     => $this->tglAkhir,
+        //     'cari'         => $this->cari,
+        // ];
+
+        // $userId = user()->nik;
+
+        // Bus::chain([
+        //     BukuBesarExporter::dispatch($batchId, $filters, $userId),
+        //     ExportToExcel::dispatch($batchId, $userId),
+        // ])->catch(function (Throwable $e) {
+        //     $e->getMessage();
+        // });
+
+        // $this->emit('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
+
+        $builder = Jurnal::query()
+            ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
+            ->with(['pengeluaranHarian', 'piutangDilunaskan'])
+            ->search($this->cari);
+
+        $query = EloquentSerializeFacade::serialize($builder);
+
+        $columnHeaders = $this->columnHeaders();
 
         $userId = user()->nik;
 
-        Bus::chain([
-            BukuBesarExporter::dispatch($batchId, $filters, $userId),
-            ExportToExcel::dispatch($batchId, $userId),
-        ])->catch(function (Throwable $e) {
-            $e->getMessage();
-        });
+        $mapper = (fn (Jurnal $model): array => [
+            'tgl_jurnal'             => $model->tgl_jurnal,
+            'jam_jurnal'             => $model->jam_jurnal,
+            'no_jurnal'              => $model->no_jurnal,
+            'no_bukti'               => $model->no_bukti,
+            'keterangan'             => $model->keterangan,
+            'keterangan_pengeluaran' => optional($model->pengeluaranHarian)->keterangan ?? '-',
+            'catatan'                => $this->getCatatanPiutang($model),
+            'kd_rek'                 => $model->kd_rek,
+            'nm_rek'                 => $model->nm_rek,
+            'debet'                  => round($model->debet, 2),
+            'kredit'                 => round($model->kredit, 2),
+        ]);
+
+        ExportQuery::dispatch($query, $columnHeaders, $mapper, $userId);
 
         $this->emit('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
     }

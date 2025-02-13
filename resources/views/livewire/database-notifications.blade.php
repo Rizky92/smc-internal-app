@@ -79,7 +79,6 @@
                             <div class="d-flex">
                                 @php
                                     $filePath = $notification->data['file'];
-                                    $filePath = str_replace('\/', '/', $filePath);
                                 @endphp
                                 <button wire:click="download('{{ $filePath }}')" class="btn btn-link">Download</button>
                                 <button wire:click="markAsRead('{{ $notification->id }}')"  wire:key="{{ $notification->id }}" class="btn btn-link">Tandai sudah dibaca</button>
