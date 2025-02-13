@@ -20,7 +20,7 @@ class MixinArr
     }
 
     /**
-     * @return \Closure(array): \Illuminate\Support\Fluent
+     * @return Closure(array): Fluent
      */
     public function fluent(): Closure
     {

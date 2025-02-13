@@ -10,7 +10,7 @@ class MixinStringable
     /**
      * replace all strings with provided value
      *
-     * @return Closure(string|string[], string): \Illuminate\Support\Stringable
+     * @return Closure(string|string[], string): Stringable
      */
     public function replaceWith(): Closure
     {
@@ -34,7 +34,7 @@ class MixinStringable
     /**
      * Wrap the underlying string with given values
      *
-     * @return Closure(string, ?string): \Illuminate\Support\Stringable
+     * @return Closure(string, ?string): Stringable
      */
     public function wrap(): Closure
     {

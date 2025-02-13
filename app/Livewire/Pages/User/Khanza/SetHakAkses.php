@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Pages\User\Khanza;
 
-use App\Casts\BooleanCast;
 use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\LiveTable;
@@ -78,7 +77,7 @@ class SetHakAkses extends Component
 
     public function save(): void
     {
-        if (!user()->hasRole(config('permission.superadmin_name'))) {
+        if (! user()->hasRole(config('permission.superadmin_name'))) {
             $this->dispatchBrowserEvent('data-denied');
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
@@ -108,7 +107,7 @@ class SetHakAkses extends Component
 
         $user = User::rawFindByNRP($this->nrp);
 
-        if (!$this->isDeferred) {
+        if (! $this->isDeferred) {
             $this->checkedHakAkses = collect($user->getAttributes())->except(['id_user', 'password'])
                 ->filter(fn (?string $v, $_): bool => $v === 'true')
                 ->keys()

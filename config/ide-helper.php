@@ -180,13 +180,14 @@ return [
     */
 
     'extra' => [
-        \Illuminate\Support\Facades\Session::class => \Illuminate\Session\Store::class,
-        \Illuminate\Contracts\View\View::class => \Livewire\Macros\ViewMacros::class,
-        \Illuminate\View\View::class => \Livewire\Macros\ViewMacros::class,
-        \Illuminate\Support\Arr::class => \App\Support\CustomArr::class,
-        \Illuminate\Support\Collection::class => \App\Support\CustomCollections::class,
-        \Illuminate\Support\Str::class => \App\Support\CustomStr::class,
-        \Illuminate\Support\Stringable::class => \App\Support\CustomStringable::class,
+        \Illuminate\Contracts\View\View::class       => \Livewire\Macros\ViewMacros::class,
+        \Illuminate\Database\Eloquent\Builder::class => \App\Support\MixinEloquentBuilder::class,
+        \Illuminate\Database\Query\Builder::class    => \App\Support\MixinQueryBuilder::class,
+        \Illuminate\Support\Arr::class               => \App\Support\MixinArr::class,
+        \Illuminate\Support\Collection::class        => \App\Support\MixinCollections::class,
+        \Illuminate\Support\Str::class               => \App\Support\MixinStr::class,
+        \Illuminate\Support\Stringable::class        => \App\Support\MixinStringable::class,
+        \Illuminate\View\View::class                 => \Livewire\Macros\ViewMacros::class,
     ],
 
     'magic' => [

@@ -40,8 +40,8 @@ class RKATPelaporan extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'  => ['except' => now()->startOfMonth()->toDateString(), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->toDateString(), 'as' => 'tgl_akhir'],
             'tahun'    => ['except' => now()->format('Y')],
             'bidang'   => ['except' => -1],
         ];
@@ -78,7 +78,7 @@ class RKATPelaporan extends Component
             ->mapWithKeys(fn (Bidang $model) => [
                 $model->id => str($model->nama)
                     ->padLeft(strlen($model->nama) + (intval($model->depth) * 8), html_entity_decode('&nbsp;'))
-                    ->value()
+                    ->value(),
             ]);
     }
 
@@ -90,34 +90,33 @@ class RKATPelaporan extends Component
 
     protected function defaultValues(): void
     {
-        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->toDateString();
+        $this->tglAkhir = now()->endOfMonth()->toDateString();
         $this->tahun = now()->format('Y');
         $this->bidang = -1;
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         return [
             PemakaianAnggaran::query()
-            ->with('detail')
-            ->penggunaanRKAT($this->bidang, $this->tahun, $this->cari)
-            ->cursor()
-            ->flatMap(function (PemakaianAnggaran $model) {
-                return $model->detail->map(function ($detail) use ($model) {
-                    return [
-                        'bidang'      => $model->anggaranBidang->bidang->nama,
-                        'judul'       => $model->judul,
-                        'anggaran'    => $model->anggaranBidang->anggaran->nama,
-                        'tahun'       => $model->anggaranBidang->tahun,
-                        'tgl_dipakai' => $model->tgl_dipakai,
-                        'keterangan'  => $detail->keterangan,
-                        'nominal'     => floatval($detail->nominal),
-                        'petugas'     => $model->user_id.' '.$model->petugas->nama,
-                    ];
-                });
-            })
-            ->all()
+                ->with('detail')
+                ->penggunaanRKAT($this->bidang, $this->tahun, $this->cari)
+                ->cursor()
+                ->flatMap(fn (PemakaianAnggaran $model) => $model->detail->map(fn ($detail) => [
+                    'bidang'      => $model->anggaranBidang->bidang->nama,
+                    'judul'       => $model->judul,
+                    'anggaran'    => $model->anggaranBidang->anggaran->nama,
+                    'tahun'       => $model->anggaranBidang->tahun,
+                    'tgl_dipakai' => $model->tgl_dipakai,
+                    'keterangan'  => $detail->keterangan,
+                    'nominal'     => floatval($detail->nominal),
+                    'petugas'     => $model->user_id.' '.$model->petugas->nama,
+                ]))
+                ->all(),
         ];
     }
 

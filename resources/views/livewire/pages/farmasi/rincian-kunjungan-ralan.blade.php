@@ -14,14 +14,25 @@
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.label constant-width>Total Harga:</x-filter.label>
-                <x-filter.select model="totalHarga" :options="[
-                    'below_100k' => 'Di bawah 100.000',
-                    'above_100k' => '100.000 atau lebih',
-                ]" />
+                <x-filter.select
+                    model="totalHarga"
+                    :options="[
+                        'below_100k' => 'Di bawah 100.000',
+                        'above_100k' => '100.000 atau lebih',
+                    ]"
+                />
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" style="min-width: 100%" sortable zebra hover sticky nowrap>
+            <x-table
+                :sortColumns="$sortColumns"
+                style="min-width: 100%"
+                sortable
+                zebra
+                hover
+                sticky
+                nowrap
+            >
                 <x-slot name="columns">
                     <x-table.th name="tgl_perawatan" title="Tanggal Berobat" />
                     <x-table.th name="no_resep" title="No. Resep" />
@@ -45,8 +56,12 @@
                         @if ($noResepSebelumnya != $item->no_resep && $noResepSebelumnya != null)
                             {{-- Tampilkan total untuk no_resep sebelumnya --}}
                             <x-table.tr>
-                                <x-table.td colspan="10"><strong>Total</strong></x-table.td>
-                                <x-table.td><strong>{{ rp($totalSementara) }}</strong></x-table.td>
+                                <x-table.td colspan="10">
+                                    <strong>Total</strong>
+                                </x-table.td>
+                                <x-table.td>
+                                    <strong>{{ rp($totalSementara) }}</strong>
+                                </x-table.td>
                             </x-table.tr>
                             @php
                                 $totalSementara = 0;
@@ -57,8 +72,11 @@
                             $totalSementara += $item->total;
                             $noResepSebelumnya = $item->no_resep;
                         @endphp
+
                         <x-table.tr>
-                            <x-table.td>{{ $item->tgl_perawatan }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->tgl_perawatan }}
+                            </x-table.td>
                             <x-table.td>{{ $item->no_resep }}</x-table.td>
                             <x-table.td>{{ $item->no_rawat }}</x-table.td>
                             <x-table.td>{{ $item->nm_pasien }}</x-table.td>
@@ -66,15 +84,21 @@
                             <x-table.td>{{ $item->nm_dokter }}</x-table.td>
                             <x-table.td>{{ $item->kode_brng }}</x-table.td>
                             <x-table.td>{{ $item->nama_brng }}</x-table.td>
-                            <x-table.td>{{ rp($item->biaya_obat) }}</x-table.td>
+                            <x-table.td>
+                                {{ rp($item->biaya_obat) }}
+                            </x-table.td>
                             <x-table.td>{{ $item->jml }}</x-table.td>
                             <x-table.td>{{ rp($item->total) }}</x-table.td>
                         </x-table.tr>
 
                         @if ($loop->last)
                             <x-table.tr>
-                                <x-table.td colspan="10"><strong>Total</strong></x-table.td>
-                                <x-table.td><strong>{{ rp($totalSementara) }}</strong></x-table.td>
+                                <x-table.td colspan="10">
+                                    <strong>Total</strong>
+                                </x-table.td>
+                                <x-table.td>
+                                    <strong>{{ rp($totalSementara) }}</strong>
+                                </x-table.td>
                             </x-table.tr>
                         @endif
                     @empty

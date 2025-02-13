@@ -19,12 +19,22 @@
             </script>
         @endpush
     @endonce
-    <x-modal livewire title="Transfer hak akses SIMRS Khanza ke user lainnya" id="modal-transfer-hak-akses">
+
+    <x-modal
+        livewire
+        title="Transfer hak akses SIMRS Khanza ke user lainnya"
+        id="modal-transfer-hak-akses"
+    >
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-row-col class="px-3 pt-3">
                 <label class="mb-0">User:</label>
                 <p>{{ "{$nrp} {$nama}" }}</p>
-                <x-filter.toggle class="mt-2" id="toggle-khanza-soft-transfer" title="Hanya transfer hak akses yang dimiliki user" model="softTransfer" />
+                <x-filter.toggle
+                    class="mt-2"
+                    id="toggle-khanza-soft-transfer"
+                    title="Hanya transfer hak akses yang dimiliki user"
+                    model="softTransfer"
+                />
             </x-row-col>
             <x-row-col class="pt-2">
                 <x-table zebra hover>
@@ -66,9 +76,27 @@
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
             <x-filter.search method="$refresh" />
-            <x-filter.toggle class="ml-1" id="show-checked-khanza-transfer" title="Tampilkan yang dipilih" model="showChecked" />
-            <x-button size="sm" class="ml-auto" data-dismiss="modal" title="Batal" />
-            <x-button size="sm" variant="primary" class="ml-2" data-dismiss="modal" wire:click="$emit('khanza.transfer')" title="Transfer" icon="fas fa-share-square" />
+            <x-filter.toggle
+                class="ml-1"
+                id="show-checked-khanza-transfer"
+                title="Tampilkan yang dipilih"
+                model="showChecked"
+            />
+            <x-button
+                size="sm"
+                class="ml-auto"
+                data-dismiss="modal"
+                title="Batal"
+            />
+            <x-button
+                size="sm"
+                variant="primary"
+                class="ml-2"
+                data-dismiss="modal"
+                wire:click="$emit('khanza.transfer')"
+                title="Transfer"
+                icon="fas fa-share-square"
+            />
         </x-slot>
     </x-modal>
 </div>

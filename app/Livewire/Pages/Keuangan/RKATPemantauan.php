@@ -11,16 +11,13 @@ use App\Livewire\Concerns\MenuTracker;
 use App\Models\Bidang;
 use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Models\Keuangan\RKAT\PemakaianAnggaran;
-use App\Settings\RKATSettings;
 use App\View\Components\BaseLayout;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\Relations\Descendants;
-use Staudenmeir\LaravelAdjacencyList\Eloquent\Relations\HasManyOfDescendants;
 
 class RKATPemantauan extends Component
 {
@@ -64,7 +61,7 @@ class RKATPemantauan extends Component
                     ->with([
                         'anggaranBidang' => fn (HasMany $q) => $q->withSum('detailPemakaian as total_pemakaian', 'nominal'),
                         'anggaranBidang.anggaran',
-                    ])
+                    ]),
             ])
             ->isRoot()
             ->get();
@@ -81,6 +78,9 @@ class RKATPemantauan extends Component
         $this->tahun = now()->format('Y');
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         $pemakaianAnggaran = PemakaianAnggaran::query()
@@ -152,8 +152,8 @@ class RKATPemantauan extends Component
     {
         return [
             'RS Samarinda Medika Citra',
-            'Pemantauan Pemakaian RKAT Tahun ' . $this->tahun,
-            'Per ' . now()->translatedFormat('d F Y'),
+            'Pemantauan Pemakaian RKAT Tahun '.$this->tahun,
+            'Per '.now()->translatedFormat('d F Y'),
         ];
     }
 }

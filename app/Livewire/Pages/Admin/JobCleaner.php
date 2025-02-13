@@ -14,12 +14,12 @@ class JobCleaner extends Component
     use FlashComponent;
     use MenuTracker;
 
-    public function getJobsProperty()
+    public function getJobsProperty(): int
     {
         return DB::table('jobs')->count();
     }
 
-    public function cleanJobs()
+    public function cleanJobs(): void
     {
         \Artisan::call('queue:clear');
 
@@ -31,5 +31,4 @@ class JobCleaner extends Component
         return view('livewire.pages.admin.job-cleaner')
             ->layout(BaseLayout::class, ['title' => 'Job Cleaner']);
     }
-
 }

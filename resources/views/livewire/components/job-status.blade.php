@@ -3,18 +3,27 @@
 
     <x-card use-default-filter>
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
+            <x-table
+                :sortColumns="$sortColumns"
+                sortable
+                zebra
+                hover
+                sticky
+                nowrap
+            >
                 <x-slot name="columns">
                     {{-- <x-table.th name="id" title="#" /> --}}
                 </x-slot>
                 <x-slot name="body">
-                    {{-- @forelse ($this->collectionProperty as $item)
+                    {{--
+                        @forelse ($this->collectionProperty as $item)
                         <x-table.tr>
-                            <x-table.td>{{ $item->id }}</x-table.td>
+                        <x-table.td>{{ $item->id }}</x-table.td>
                         </x-table.tr>
-                    @empty
+                        @empty
                         <x-table.tr-empty colspan="1" padding />
-                    @endforelse --}}
+                        @endforelse
+                    --}}
                 </x-slot>
             </x-table>
         </x-slot>

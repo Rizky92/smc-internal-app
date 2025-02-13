@@ -76,6 +76,9 @@ class StatusDataPasien extends Component
         $this->jenisPerawatan = 'semua';
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         return [

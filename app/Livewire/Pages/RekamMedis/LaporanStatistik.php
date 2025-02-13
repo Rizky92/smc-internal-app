@@ -33,8 +33,8 @@ class LaporanStatistik extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal'  => ['except' => now()->startOfWeek()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfWeek()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'  => ['except' => now()->startOfWeek()->toDateString(), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfWeek()->toDateString(), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -62,10 +62,13 @@ class LaporanStatistik extends Component
 
     protected function defaultValues(): void
     {
-        $this->tglAwal = now()->startOfWeek()->format('Y-m-d');
-        $this->tglAkhir = now()->endOfWeek()->format('Y-m-d');
+        $this->tglAwal = now()->startOfWeek()->toDateString();
+        $this->tglAkhir = now()->endOfWeek()->toDateString();
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         return [

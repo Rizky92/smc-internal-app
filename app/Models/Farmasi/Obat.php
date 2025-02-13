@@ -112,7 +112,7 @@ class Obat extends Model
                 ifnull((select round(sum(detailjual.jumlah), 2) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.tgl_jual between date_sub(current_date(), interval 2 week) and current_date()), 0) 
             )
             ke_pasien_14_hari
-        SQL;
+            SQL;
 
         $stokGudangIFA = GudangObat::query()
             ->select(['kode_brng', DB::raw('sum(stok) as stok_di_gudang')])
@@ -231,7 +231,7 @@ class Obat extends Model
                 ifnull((select round(sum(detailjual.jumlah), 2) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.tgl_jual between date_sub(current_date(), interval 1 year) and current_date()), 0) +
                 ifnull((select round(sum(detail_pengeluaran_obat_bhp.jumlah), 2) from detail_pengeluaran_obat_bhp join pengeluaran_obat_bhp on detail_pengeluaran_obat_bhp.no_keluar = pengeluaran_obat_bhp.no_keluar where detail_pengeluaran_obat_bhp.kode_brng = databarang.kode_brng and pengeluaran_obat_bhp.tanggal between date_sub(current_date(), interval 1 year) and current_date()), 0) 
             ) pemakaian_12_bulan
-        SQL;
+            SQL;
 
         $this->addSearchConditions([
             'databarang.kode_brng',
@@ -301,7 +301,7 @@ class Obat extends Model
             (select sum(riwayat_barang_medis.keluar) from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and riwayat_barang_medis.kd_bangsal = 'AP' and riwayat_barang_medis.posisi = 'Piutang' and riwayat_barang_medis.tanggal between ? and ?) piutang_keluar,
             (select sum(mutasibarang.jml) from mutasibarang where mutasibarang.kode_brng = databarang.kode_brng and mutasibarang.kd_bangsaldari = 'AP' and date(mutasibarang.tanggal) between ? and ?) tf_keluar,
             (select sum(detreturbeli.jml_retur2) from detreturbeli join returbeli on detreturbeli.no_retur_beli = returbeli.no_retur_beli where detreturbeli.kode_brng = databarang.kode_brng and returbeli.kd_bangsal = 'AP' and returbeli.tgl_retur between ? and ?) retur_supplier
-        SQL;
+            SQL;
 
         $this->addSearchConditions([
             'golongan_barang.nama',
@@ -346,20 +346,20 @@ class Obat extends Model
 
     public function scopeDaftarRiwayat(
         Builder $query,
-        string $kategori = 'obat', 
-        string $tglAwal = '', 
-        string $tglAkhir = '', 
+        string $kategori = 'obat',
+        string $tglAwal = '',
+        string $tglAkhir = '',
         bool $hanyaTampilkanYangNol = false): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->subYear()->format('Y-m-d');
+            $tglAwal = now()->subYear()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
+            $tglAkhir = now()->toDateString();
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             databarang.kode_brng,
             databarang.nama_brng,
             ifnull((select stok_akhir from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and riwayat_barang_medis.tanggal between ? and ? order by tanggal desc, jam desc limit 1), "-") stok_akhir,
@@ -369,8 +369,8 @@ class Obat extends Model
             ifnull((select keluar from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and keluar != 0 and riwayat_barang_medis.tanggal between ? and ? order by tanggal desc, jam desc limit 1), "-") penggunaan_terakhir,
             ifnull((select concat (riwayat_barang_medis.tanggal, ' ', riwayat_barang_medis.jam) from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and keluar != 0 and riwayat_barang_medis.tanggal between ? and ? order by tanggal desc, jam desc limit 1), "-") tanggal_penggunaan_terakhir,
             ifnull((select posisi from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and keluar != 0 and riwayat_barang_medis.tanggal between ? and ? order by tanggal desc, jam desc limit 1), "-") posisi_penggunaan_terakhir
-        SQL;
-    
+            SQL;
+
         $this->addSearchConditions([
             'databarang.kode_brng',
             'nama_brng',

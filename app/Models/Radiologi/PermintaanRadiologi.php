@@ -28,7 +28,7 @@ class PermintaanRadiologi extends Model
     {
         return $this
             ->compositeHasMany(
-                HasilPeriksaRadiologi::class,
+                PeriksaRadiologi::class,
                 ['no_rawat', 'tgl_periksa', 'jam'],
                 ['no_rawat', 'tgl_hasil', 'jam_hasil']
             );

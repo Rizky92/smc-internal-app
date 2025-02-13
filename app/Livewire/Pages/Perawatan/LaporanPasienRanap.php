@@ -10,6 +10,7 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Perawatan\PasienRanap;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -35,7 +36,7 @@ class LaporanPasienRanap extends Component
     protected function queryString(): array
     {
         return [
-            'tanggal'         => ['except' => now()->format('Y-m-d')],
+            'tanggal'         => ['except' => now()->toDateString()],
             'statusPerawatan' => ['except' => 'tanggal_masuk', 'as' => 'status_perawatan'],
             'semuaPasien'     => ['except' => false, 'as' => 'tampilkan_semua_pasien'],
         ];
@@ -47,7 +48,7 @@ class LaporanPasienRanap extends Component
     }
 
     /**
-     * @return \Illuminate\Contracts\Pagination\Paginator|array<empty, empty>
+     * @return Paginator|array<empty, empty>
      */
     public function getLaporanPasienRanapProperty()
     {
@@ -73,11 +74,14 @@ class LaporanPasienRanap extends Component
 
     protected function defaultValues(): void
     {
-        $this->tanggal = now()->format('Y-m-d');
+        $this->tanggal = now()->toDateString();
         $this->statusPerawatan = 'tanggal_masuk';
         $this->semuaPasien = false;
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         return [
