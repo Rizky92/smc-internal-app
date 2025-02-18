@@ -1156,7 +1156,7 @@ class RegistrasiPasien extends Model
             '' as dokumen_pendukung,
             '' as cap_fasilitas,
             '' as id_tku_penjual,
-            'National ID' as jenis_id,
+            '' as jenis_id,
             'IDN' as negara,
             '' as id_tku,
             reg_periksa.no_rkm_medis,
@@ -1170,13 +1170,13 @@ class RegistrasiPasien extends Model
             penjab.alamat_asuransi,
             penjab.no_telp as telp_asuransi,
             penjab.email as email_asuransi,
-            rpad(trim(penjab.no_npwp), 22, '0') as npwp_asuransi,
+            trim(penjab.no_npwp) as npwp_asuransi,
             pasien.perusahaan_pasien as kode_perusahaan,
             perusahaan_pasien.nama_perusahaan,
             perusahaan_pasien.alamat as alamat_perusahaan,
             perusahaan_pasien.no_telp as telp_perusahaan,
             perusahaan_pasien.email as email_perusahaan,
-            rpad(trim(perusahaan_pasien.no_npwp), 22, '0') as npwp_perusahaan
+            trim(perusahaan_pasien.no_npwp) as npwp_perusahaan
             SQL;
 
         $this->addSearchConditions([

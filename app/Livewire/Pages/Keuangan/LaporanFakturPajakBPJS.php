@@ -210,8 +210,15 @@ class LaporanFakturPajakBPJS extends Component
             ->orderByDesc('kode_transaksi_pajak.kode_transaksi')
             ->cursor()
             ->each(function (RegistrasiPasien $model) use ($tanggalTarikanSementara) {
+                if ($model->kode_transaksi_pajak === '080') {
+                    $model->setAttribute('keterangan_tambahan', 'TD.00510');
+                    $model->setAttribute('cap_fasilitas', 'TD.01110');
+                }
+                
+                $model->setAttribute('jenis_id', 'TIN');
                 $model->setAttribute('id_tku_penjual', $this->npwpPenjual);
                 $model->setAttribute('tgl_tarikan', $tanggalTarikanSementara);
+                $model->setAttribute('tgl_faktur', $this->tglAkhir);
                 $model->setAttribute('menu', 'fp-bpjs');
 
                 FakturPajakDitarik::insert($model->toArray());
@@ -270,7 +277,7 @@ class LaporanFakturPajakBPJS extends Component
 
                 if (! in_array($model->kategori, ['Pemberian Obat', 'Retur Obat', 'Obat Pulang', 'Walk In', 'Piutang Obat'])) {
                     $subtotalJasa = (float) $totalJasa->get($model->no_rawat, 1);
-                    $diskonPersen = ((float) $model->diskon) / round($subtotalJasa, 0) ?: 1;
+                    $diskonPersen = ((float) $model->diskon) / (round($subtotalJasa, 0) ?: 1);
                     $diskonNominal = $diskonPersen * ((float) $model->dpp);
                     $dpp = ((float) $model->dpp) - $diskonNominal;
                 }
@@ -337,21 +344,22 @@ class LaporanFakturPajakBPJS extends Component
                     'Faktur' => fn () => FakturPajakDitarik::query()
                         ->selectRaw(<<<'SQL'
                             dense_rank() over (order by if (kode_asuransi = 'A09', no_rkm_medis, kode_asuransi), kode_transaksi) as baris,
-                            tgl_bayar as tgl_faktur,
+                            tgl_faktur,
                             jenis_faktur,
                             kode_transaksi,
-                            if (kode_transaksi = '080', '10 - PPN Dibebaskan berdasarkan PP Nomor 49 Tahun 2022', '') as keterangan_tambahan,
-                            dokumen_pendukung,
+                            keterangan_tambahan,
+                            no_rawat as dokumen_pendukung,
                             no_rawat as referensi,
                             cap_fasilitas,
                             id_tku_penjual,
-                            if (kode_asuransi = 'A09', 'National ID', 'TIN') as jenis_id,
+                            if (kode_asuransi = 'A09', '', npwp_asuransi) as npwp_nik,
+                            jenis_id,
                             negara,
                             if (kode_asuransi = 'A09', nik_pasien, '') as nomor_dokumen,
                             if (kode_asuransi = 'A09', nama_pasien, nama_asuransi) as nama,
                             if (kode_asuransi = 'A09', alamat_pasien, alamat_asuransi) as alamat,
                             if (kode_asuransi = 'A09', email_pasien, email_asuransi) as email,
-                            if (kode_asuransi = 'A09', '', npwp_asuransi) as id_tku
+                            if (kode_asuransi = 'A09', '', rpad(trim(npwp_asuransi), 22, '0')) as id_tku
                             SQL)
                         ->where('menu', 'fp-bpjs')
                         ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
@@ -366,6 +374,7 @@ class LaporanFakturPajakBPJS extends Component
                             'referensi'           => $model->referensi,
                             'cap_fasilitas'       => $model->cap_fasilitas,
                             'id_tku_penjual'      => $model->id_tku_penjual,
+                            'npwp_nik'            => $model->npwp_nik,
                             'jenis_id'            => $model->jenis_id,
                             'negara'              => $model->negara,
                             'nomor_dokumen'       => $model->nomor_dokumen,
@@ -421,7 +430,7 @@ class LaporanFakturPajakBPJS extends Component
                             'dpp'                => round($model->dpp, 2),
                             'dpp_nilai_lain'     => round($model->dpp_nilai_lain, 2),
                             'ppn_persen'         => round($model->ppn_persen, 2),
-                            'ppn_nominal'        => round($model->dpp_nilai_lain + $model->ppn_nominal, 2),
+                            'ppn_nominal'        => round($model->ppn_nominal, 2),
                             'ppnbm_persen'       => round($model->ppnbm_persen, 2),
                             'ppnbm_nominal'      => round($model->ppnbm_nominal, 2),
                         ]),
