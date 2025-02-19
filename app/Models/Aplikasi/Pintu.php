@@ -77,10 +77,10 @@ class Pintu extends Model
                      ->on('pintu_poli.kd_poli', '=', 'jadwal.kd_poli');
             })
             ->where('registrasi.tgl_registrasi', now()->format('Y-m-d'))
-            ->where('registrasi.stts', 'Belum')
             ->where('registrasi.status_lanjut', '!=', 'ranap')
             ->where('manajemen_pintu.kd_pintu', $kd_pintu)
             ->orderBy('jadwal.jam_mulai', 'asc')
+            ->orderBy('registrasi.no_reg', 'asc')
             ->groupBy('registrasi.no_rawat');
     }
 
