@@ -1,4 +1,4 @@
-<div class="row" style="height: 60%" @if (!$isCalling) wire:poll.5s="call" @endif>
+<div class="row" style="height: 60%" @if (!$isCalling) wire:poll.keep-alive="call" @endif>
     @if ($currentPatient)
         <div class="col">
             <div class="card card-outline card-success d-flex justify-content-center h-100">

@@ -25,6 +25,7 @@ class AntreanPerPintu extends Component
     {
         return Pintu::query()
         ->antrianPerPintu($this->kd_pintu)
+        ->where('registrasi.stts', 'Belum')
         ->get();
     }
 }
