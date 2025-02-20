@@ -88,7 +88,7 @@
                 console.warn("Polling berhenti total! Melakukan refresh halaman...");
                 window.location.reload();
             }
-        }, 300000);
+        }, 180000);
 
         document.addEventListener('livewire:poll', () => {
             lastCallTime = Date.now();
