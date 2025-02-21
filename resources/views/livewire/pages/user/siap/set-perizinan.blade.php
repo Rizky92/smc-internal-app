@@ -90,31 +90,14 @@
         @endpush
     @endonce
 
-    <x-modal
-        livewire
-        title="Set perizinan user untuk SIAP"
-        id="modal-set-perizinan"
-    >
+    <x-modal livewire title="Set perizinan user untuk SIAP" id="modal-set-perizinan">
         <x-slot name="body">
             <x-row-col>
-                <ul
-                    class="form-group"
-                    id="role_permissions"
-                    style="list-style: none"
-                >
+                <ul class="form-group" id="role_permissions" style="list-style: none">
                     @foreach ($this->roles as $role)
                         <li class="custom-control custom-checkbox">
-                            <input
-                                class="custom-control-input"
-                                id="role-{{ $role->id }}"
-                                name="roles"
-                                type="checkbox"
-                                value="{{ $role->id }}"
-                            />
-                            <label
-                                class="custom-control-label"
-                                for="role-{{ $role->id }}"
-                            >
+                            <input class="custom-control-input" id="role-{{ $role->id }}" name="roles" type="checkbox" value="{{ $role->id }}" />
+                            <label class="custom-control-label" for="role-{{ $role->id }}">
                                 {{ str($role->name)->upper() }}
                             </label>
                             <ul class="form-group" style="list-style: none">
@@ -126,12 +109,8 @@
                                             name="permissions"
                                             data-role-id="{{ $role->id }}"
                                             type="checkbox"
-                                            value="{{ $permission->id }}"
-                                        />
-                                        <label
-                                            class="custom-control-label font-weight-normal"
-                                            for="permission-{{ $permission->id }}-{{ $role->id }}"
-                                        >
+                                            value="{{ $permission->id }}" />
+                                        <label class="custom-control-label font-weight-normal" for="permission-{{ $permission->id }}-{{ $role->id }}">
                                             {{ $permission->name }}
                                         </label>
                                     </li>
@@ -145,17 +124,8 @@
                         <ul class="form-group px-0" style="list-style: none">
                             @foreach ($this->otherPermissions as $op)
                                 <li class="custom-control custom-checkbox">
-                                    <input
-                                        class="custom-control-input custom-control-input-secondary"
-                                        id="permission-{{ $op->id }}"
-                                        name="permissions"
-                                        type="checkbox"
-                                        value="{{ $op->id }}"
-                                    />
-                                    <label
-                                        class="custom-control-label font-weight-normal"
-                                        for="permission-{{ $op->id }}"
-                                    >
+                                    <input class="custom-control-input custom-control-input-secondary" id="permission-{{ $op->id }}" name="permissions" type="checkbox" value="{{ $op->id }}" />
+                                    <label class="custom-control-label font-weight-normal" for="permission-{{ $op->id }}">
                                         {{ $op->name }}
                                     </label>
                                 </li>
@@ -166,21 +136,8 @@
             </x-row-col>
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
-            <x-button
-                size="sm"
-                class="ml-auto"
-                data-dismiss="modal"
-                title="Batal"
-            />
-            <x-button
-                size="sm"
-                variant="primary"
-                class="ml-2"
-                data-dismiss="modal"
-                id="set-role-permissions"
-                title="Simpan"
-                icon="fas fa-save"
-            />
+            <x-button size="sm" class="ml-auto" data-dismiss="modal" title="Batal" />
+            <x-button size="sm" variant="primary" class="ml-2" data-dismiss="modal" id="set-role-permissions" title="Simpan" icon="fas fa-save" />
         </x-slot>
     </x-modal>
 </div>

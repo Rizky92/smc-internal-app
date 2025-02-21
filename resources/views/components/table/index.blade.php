@@ -44,8 +44,7 @@
                 'table-head-fixed table-foot-fixed' => $sticky,
                 'table-borderless' => $borderless,
             ])
-        }}
-    >
+        }}>
         <thead>
             <tr {{ $columns->attributes }}>
                 {{ $columns }}

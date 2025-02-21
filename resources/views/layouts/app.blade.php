@@ -6,14 +6,8 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge" />
         <title>{{ $title ?? config('app.name') }}</title>
 
-        <link
-            rel="stylesheet"
-            href="{{ asset('css/dataTables.bootstrap4.min.css') }}"
-        />
-        <link
-            rel="stylesheet"
-            href="{{ asset('css/responsive.bootstrap4.min.css') }}"
-        />
+        <link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap4.min.css') }}" />
+        <link rel="stylesheet" href="{{ asset('css/responsive.bootstrap4.min.css') }}" />
         <link href="{{ asset('css/adminlte.min.css') }}" rel="stylesheet" />
         <link rel="icon" type="image/x-icon" href="{{ asset('logo.ico') }}" />
 

@@ -14,76 +14,24 @@
             <x-table style="width: 150rem" zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th width="250" title="Laporan" />
-                    <x-table.th
-                        class="text-center px-0"
-                        width="150"
-                        title="Januari"
-                    />
-                    <x-table.th
-                        class="text-center px-0"
-                        width="150"
-                        title="Februari"
-                    />
-                    <x-table.th
-                        class="text-center px-0"
-                        width="150"
-                        title="Maret"
-                    />
-                    <x-table.th
-                        class="text-center px-0"
-                        width="150"
-                        title="April"
-                    />
-                    <x-table.th
-                        class="text-center px-0"
-                        width="150"
-                        title="Mei"
-                    />
-                    <x-table.th
-                        class="text-center px-0"
-                        width="150"
-                        title="Juni"
-                    />
-                    <x-table.th
-                        class="text-center px-0"
-                        width="150"
-                        title="Juli"
-                    />
-                    <x-table.th
-                        class="text-center px-0"
-                        width="150"
-                        title="Agustus"
-                    />
-                    <x-table.th
-                        class="text-center px-0"
-                        width="150"
-                        title="September"
-                    />
-                    <x-table.th
-                        class="text-center px-0"
-                        width="150"
-                        title="Oktober"
-                    />
-                    <x-table.th
-                        class="text-center px-0"
-                        width="150"
-                        title="November"
-                    />
-                    <x-table.th
-                        class="text-center px-0"
-                        width="150"
-                        title="Desember"
-                    />
+                    <x-table.th class="text-center px-0" width="150" title="Januari" />
+                    <x-table.th class="text-center px-0" width="150" title="Februari" />
+                    <x-table.th class="text-center px-0" width="150" title="Maret" />
+                    <x-table.th class="text-center px-0" width="150" title="April" />
+                    <x-table.th class="text-center px-0" width="150" title="Mei" />
+                    <x-table.th class="text-center px-0" width="150" title="Juni" />
+                    <x-table.th class="text-center px-0" width="150" title="Juli" />
+                    <x-table.th class="text-center px-0" width="150" title="Agustus" />
+                    <x-table.th class="text-center px-0" width="150" title="September" />
+                    <x-table.th class="text-center px-0" width="150" title="Oktober" />
+                    <x-table.th class="text-center px-0" width="150" title="November" />
+                    <x-table.th class="text-center px-0" width="150" title="Desember" />
                 </x-slot>
                 <x-slot name="body">
                     <x-table.tr>
                         <th scope="row">TOTAL KUNJUNGAN</th>
                         @forelse ($this->kunjunganTotal as $item)
-                            <th
-                                class="text-center px-0"
-                                scope="col"
-                                width="150"
-                            >
+                            <th class="text-center px-0" scope="col" width="150">
                                 {{ $item }}
                             </th>
                         @empty

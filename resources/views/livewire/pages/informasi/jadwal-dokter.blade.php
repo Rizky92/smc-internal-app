@@ -2,23 +2,13 @@
     <x-card use-loading>
         <x-slot name="header">
             <x-row-col-flex>
-                <x-filter.toggle
-                    class="ml-3"
-                    model="semuaPoli"
-                    title="Tampilkan Semua Poli"
-                />
+                <x-filter.toggle class="ml-3" model="semuaPoli" title="Tampilkan Semua Poli" />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search />
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-table
-                :sortColumns="$sortColumns"
-                style="min-width: 100%"
-                hover
-                sticky
-                nowrap
-            >
+            <x-table :sortColumns="$sortColumns" style="min-width: 100%" hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="nm_dokter" title="Nama Dokter" />
                     <x-table.th name="nm_poli" title="Poliklinik" />
@@ -31,11 +21,7 @@
                     @forelse ($this->dataJadwalDokter as $item)
                         <x-table.tr>
                             <x-table.td>
-                                <a
-                                    href="{{ route('admin.antrian-poli', ['kd_poli' => $item->kd_poli, 'kd_dokter' => $item->kd_dokter]) }}"
-                                    target="_blank"
-                                    class="text-decoration-none text-black"
-                                >
+                                <a href="{{ route('admin.antrian-poli', ['kd_poli' => $item->kd_poli, 'kd_dokter' => $item->kd_dokter]) }}" target="_blank" class="text-decoration-none text-black">
                                     {{ $item->nm_dokter }}
                                 </a>
                             </x-table.td>

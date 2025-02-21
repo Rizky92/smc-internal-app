@@ -6,10 +6,7 @@
             </div>
             <div class="card-body">
                 <div class="d-flex flex-column">
-                    <table
-                        width="100%"
-                        class="table table-sm text-sm table-bordered table-striped"
-                    >
+                    <table width="100%" class="table table-sm text-sm table-bordered table-striped">
                         @forelse ($this->listDokter as $item)
                             <tr>
                                 <td align="left">{{ $item->nm_dokter }}</td>
@@ -21,12 +18,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td
-                                    colspan="2"
-                                    class="text-center text-muted p-4"
-                                >
-                                    Tidak ada yang dapat ditampilkan saat ini
-                                </td>
+                                <td colspan="2" class="text-center text-muted p-4">Tidak ada yang dapat ditampilkan saat ini</td>
                             </tr>
                         @endforelse
                     </table>

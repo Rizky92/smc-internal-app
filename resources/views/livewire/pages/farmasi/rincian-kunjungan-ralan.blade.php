@@ -19,20 +19,11 @@
                     :options="[
                         'below_100k' => 'Di bawah 100.000',
                         'above_100k' => '100.000 atau lebih',
-                    ]"
-                />
+                    ]" />
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-table
-                :sortColumns="$sortColumns"
-                style="min-width: 100%"
-                sortable
-                zebra
-                hover
-                sticky
-                nowrap
-            >
+            <x-table :sortColumns="$sortColumns" style="min-width: 100%" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="tgl_perawatan" title="Tanggal Berobat" />
                     <x-table.th name="no_resep" title="No. Resep" />

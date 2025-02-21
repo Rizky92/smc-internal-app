@@ -107,15 +107,7 @@
         <div class="container">
             <img
                 src="data:image/jpeg;base64,{{ base64_encode($this->SIMRSSettings->logo) }}"
-                style="
-                    display: block;
-                    width: 80px;
-                    position: absolute;
-                    left: 1%;
-                    top: 1%;
-                    transform: translate(-1% -1%);
-                "
-            />
+                style="display: block; width: 80px; position: absolute; left: 1%; top: 1%; transform: translate(-1% -1%)" />
             <div class="row">
                 <div class="col-12">
                     <h2 style="font-size: 12pt; margin: 0">
@@ -131,20 +123,8 @@
                 </div>
             </div>
         </div>
-        <hr
-            style="
-                border-top: 1px solid #000;
-                margin-top: 10px;
-                margin-bottom: 0px;
-            "
-        />
-        <hr
-            style="
-                border-top: 1px solid #000;
-                margin-top: 4px;
-                margin-bottom: 10px;
-            "
-        />
+        <hr style="border-top: 1px solid #000; margin-top: 10px; margin-bottom: 0px" />
+        <hr style="border-top: 1px solid #000; margin-top: 4px; margin-bottom: 10px" />
     </div>
 
     <div class="row">
@@ -182,9 +162,7 @@
                 <tr>
                     <td>{{ $jurnal->no_jurnal }}</td>
                     <td>{{ $jurnal->no_bukti }}</td>
-                    <td>
-                        {{ $jurnal->tgl_jurnal }} {{ $jurnal->jam_jurnal }}
-                    </td>
+                    <td>{{ $jurnal->tgl_jurnal }} {{ $jurnal->jam_jurnal }}</td>
                     <td>
                         {{ $jurnal->jenis === 'U' ? 'UMUM' : 'PENYESUAIAN' }}
                     </td>
@@ -235,43 +213,18 @@
                 </tr>
             @endforeach
 
-            <tr
-                style="
-                    border-top: 1px solid #202020;
-                    border-bottom: 1px solid #202020;
-                "
-            >
+            <tr style="border-top: 1px solid #202020; border-bottom: 1px solid #202020">
                 <td colspan="5">Total:</td>
-                <td
-                    style="
-                        vertical-align: top;
-                        text-align: right;
-                        font-weight: bold;
-                    "
-                >
+                <td style="vertical-align: top; text-align: right; font-weight: bold">
                     {{ $totalDebet != 0 ? 'Rp. ' . number_format($totalDebet, 0, '.', '.') : '' }}
                 </td>
-                <td
-                    style="
-                        vertical-align: top;
-                        text-align: right;
-                        font-weight: bold;
-                    "
-                >
+                <td style="vertical-align: top; text-align: right; font-weight: bold">
                     {{ $totalKredit != 0 ? 'Rp. ' . number_format($totalKredit, 0, '.', '.') : '' }}
                 </td>
             </tr>
         </tbody>
     </table>
-    <div
-        style="
-            display: grid;
-            grid-template-columns: max-content 1fr max-content;
-            font-size: 0.65em;
-            font-weight: bold;
-            page-break-inside: avoid;
-        "
-    >
+    <div style="display: grid; grid-template-columns: max-content 1fr max-content; font-size: 0.65em; font-weight: bold; page-break-inside: avoid">
         <div style="text-align: center">
             <div></div>
             <div>Menyetujui</div>

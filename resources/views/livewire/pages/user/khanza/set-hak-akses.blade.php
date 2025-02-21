@@ -20,11 +20,7 @@
         @endpush
     @endonce
 
-    <x-modal
-        livewire
-        title="Set hak akses user untuk SIMRS Khanza"
-        id="modal-set-hak-akses"
-    >
+    <x-modal livewire title="Set hak akses user untuk SIMRS Khanza" id="modal-set-hak-akses">
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-row-col class="px-3 pt-3">
                 <label class="mb-0">User:</label>
@@ -33,29 +29,14 @@
             <x-row-col class="pt-2">
                 <x-table zebra hover sortable :sortColumns="$sortColumns">
                     <x-slot name="columns">
-                        <x-table.th-checkbox-all
-                            livewire
-                            class="pl-3"
-                            style="width: max-content"
-                            id="checkbox-set-hak-akses"
-                            name="__checkbox_sha_utama"
-                            model="checkedHakAkses"
-                            lookup="sha-"
-                        />
+                        <x-table.th-checkbox-all livewire class="pl-3" style="width: max-content" id="checkbox-set-hak-akses" name="__checkbox_sha_utama" model="checkedHakAkses" lookup="sha-" />
                         <x-table.th name="nama_field" title="Nama Field" />
                         <x-table.th name="judul_menu" title="Judul Menu" />
                     </x-slot>
                     <x-slot name="body">
                         @forelse ($this->hakAksesKhanza as $hakAkses)
                             <x-table.tr>
-                                <x-table.td-checkbox
-                                    livewire
-                                    class="pl-3"
-                                    model="checkedHakAkses"
-                                    :key="$hakAkses->nama_field"
-                                    :id="$hakAkses->nama_field"
-                                    prefix="sha-"
-                                />
+                                <x-table.td-checkbox livewire class="pl-3" model="checkedHakAkses" :key="$hakAkses->nama_field" :id="$hakAkses->nama_field" prefix="sha-" />
                                 <x-table.td>
                                     {{ $hakAkses->nama_field }}
                                 </x-table.td>
@@ -72,27 +53,9 @@
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
             <x-filter.search method="$refresh" />
-            <x-filter.toggle
-                class="ml-1"
-                id="show-checked-set-hak-akses"
-                title="Tampilkan yang dipilih"
-                model="showChecked"
-            />
-            <x-button
-                size="sm"
-                class="ml-auto"
-                data-dismiss="modal"
-                title="Batal"
-            />
-            <x-button
-                size="sm"
-                variant="primary"
-                class="ml-2"
-                data-dismiss="modal"
-                wire:click="$emit('khanza.set')"
-                title="Simpan"
-                icon="fas fa-save"
-            />
+            <x-filter.toggle class="ml-1" id="show-checked-set-hak-akses" title="Tampilkan yang dipilih" model="showChecked" />
+            <x-button size="sm" class="ml-auto" data-dismiss="modal" title="Batal" />
+            <x-button size="sm" variant="primary" class="ml-2" data-dismiss="modal" wire:click="$emit('khanza.set')" title="Simpan" icon="fas fa-save" />
         </x-slot>
     </x-modal>
 </div>

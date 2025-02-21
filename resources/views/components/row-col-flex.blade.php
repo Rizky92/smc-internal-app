@@ -31,10 +31,7 @@
 @endphp
 
 <x-row-col :attributes="$attributes">
-    <div
-        class="{{ $class }}"
-        @if ($gap->isNotEmpty()) style="{{ $gap->join('; ') }}" @endif
-    >
+    <div class="{{ $class }}" @if ($gap->isNotEmpty()) style="{{ $gap->join('; ') }}" @endif>
         {{ $slot }}
     </div>
 </x-row-col>

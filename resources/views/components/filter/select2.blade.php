@@ -31,24 +31,17 @@
 @push('css')
     @once
         <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet" />
-        <link
-            href="{{ asset('css/select2-bootstrap4.min.css') }}"
-            rel="stylesheet"
-        />
+        <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet" />
         <style>
             .select2-selection__arrow {
                 top: 0 !important;
             }
 
-            .select2-container--default
-                .select2-selection--single
-                .select2-selection__arrow {
+            .select2-container--default .select2-selection--single .select2-selection__arrow {
                 height: 2rem !important;
             }
 
-            .select2-container
-                .select2-selection--single
-                .select2-selection__rendered {
+            .select2-container .select2-selection--single .select2-selection__rendered {
                 padding-left: 0 !important;
                 margin-left: -0.125rem !important;
             }
@@ -106,20 +99,12 @@
     </script>
 @endpush
 
-<div
-    wire:ignore
-    {{
-        $attributes
-            ->only('class')
-            ->merge(['style' => 'min-width: 20rem; max-width: ' . $width])
-    }}
->
-    <select
-        id="{{ $id }}"
-        name="{{ $name }}"
-        class="form-control form-control-sm simple-select2-sm input-sm"
-        autocomplete="off"
-    >
+<div wire:ignore {{
+    $attributes
+        ->only('class')
+        ->merge(['style' => 'min-width: 20rem; max-width: ' . $width])
+}}>
+    <select id="{{ $id }}" name="{{ $name }}" class="form-control form-control-sm simple-select2-sm input-sm" autocomplete="off">
         @if ($placeholder)
             <option value="{{ $placeholderValue ?? '' }}">
                 {{ $placeholder }}
@@ -127,10 +112,7 @@
         @endif
 
         @foreach ($options as $key => $value)
-            <option
-                value="{{ $key }}"
-                {{ $selected === $key ? 'selected' : null }}
-            >
+            <option value="{{ $key }}" {{ $selected === $key ? 'selected' : null }}>
                 {{ $value }}
             </option>
         @endforeach

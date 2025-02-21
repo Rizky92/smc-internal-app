@@ -43,34 +43,14 @@
             </x-row-col-flex>
             <x-row-col-flex class="pt-3 border-top">
                 <x-filter.label constant-width>Bidang:</x-filter.label>
-                <x-filter.select
-                    model="bidang"
-                    :options="$this->dataBidang"
-                    placeholder="SEMUA"
-                />
+                <x-filter.select model="bidang" :options="$this->dataBidang" placeholder="SEMUA" />
                 @can('keuangan.rkat-pelaporan.create')
-                    <x-button
-                        variant="primary"
-                        size="sm"
-                        title="Laporan Baru"
-                        icon="fas fa-plus"
-                        data-toggle="modal"
-                        data-target="#modal-input-pelaporan-rkat"
-                        class="btn-primary ml-auto"
-                    />
+                    <x-button variant="primary" size="sm" title="Laporan Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-pelaporan-rkat" class="btn-primary ml-auto" />
                 @endcan
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-table
-                :sortColumns="$sortColumns"
-                style="min-width: 100%"
-                sortable
-                zebra
-                hover
-                sticky
-                nowrap
-            >
+            <x-table :sortColumns="$sortColumns" style="min-width: 100%" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th title="Bidang" />
                     <x-table.th title="Anggaran" />
@@ -89,8 +69,7 @@
                                 data-pemakaian-anggaran-id="{{ $penggunaan->id }}"
                                 data-anggaran-bidang-id="{{ $penggunaan->anggaran_bidang_id }}"
                                 data-tgl-pakai="{{ $penggunaan->tgl_dipakai }}"
-                                data-keterangan="{{ $penggunaan->judul }}"
-                            >
+                                data-keterangan="{{ $penggunaan->judul }}">
                                 {{ $penggunaan->anggaranBidang->bidang->nama }}
                             </x-table.td>
                             <x-table.td>

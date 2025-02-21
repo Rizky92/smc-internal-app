@@ -40,41 +40,19 @@
         @endonce
     @endpush
 
-    <x-modal
-        id="modal-input-penetapan-rkat"
-        :title="($this->isUpdating() ? 'Edit' : 'Input') . ' Data Anggaran Tahun ' . $this->tahun"
-        livewire
-        centered
-    >
+    <x-modal id="modal-input-penetapan-rkat" :title="($this->isUpdating() ? 'Edit' : 'Input') . ' Data Anggaran Tahun ' . $this->tahun" livewire centered>
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-flash class="mx-3 mt-3" />
-            <x-form
-                id="form-input-penetapan-rkat"
-                livewire
-                submit="create"
-                class="py-1 px-3"
-            >
+            <x-form id="form-input-penetapan-rkat" livewire submit="create" class="py-1 px-3">
                 <x-row-col-flex col-gap="1rem">
                     <div class="form-group w-100">
                         <label for="bidang-id">Bidang:</label>
-                        <x-form.select
-                            id="bidang-id"
-                            model="bidangId"
-                            :options="$this->bidangUnit"
-                            placeholder="-"
-                            width="full-width"
-                        />
+                        <x-form.select id="bidang-id" model="bidangId" :options="$this->bidangUnit" placeholder="-" width="full-width" />
                         <x-form.error name="bidangId" />
                     </div>
                     <div class="form-group w-100">
                         <label for="anggaran-id">Kategori Anggaran:</label>
-                        <x-form.select
-                            id="anggaran-id"
-                            model="anggaranId"
-                            :options="$this->kategoriAnggaran"
-                            placeholder="-"
-                            width="full-width"
-                        />
+                        <x-form.select id="anggaran-id" model="anggaranId" :options="$this->kategoriAnggaran" placeholder="-" width="full-width" />
                         <x-form.error name="anggaranId" />
                     </div>
                 </x-row-col-flex>
@@ -83,13 +61,7 @@
                         <label for="nominal-anggaran">Nominal Anggaran</label>
                         <div class="d-flex">
                             <span class="mt-1">Rp.</span>
-                            <input
-                                type="text"
-                                id="nominal-anggaran"
-                                wire:model.defer="nominalAnggaran"
-                                class="form-control form-control-sm ml-3 text-right"
-                                placeholder="0"
-                            />
+                            <input type="text" id="nominal-anggaran" wire:model.defer="nominalAnggaran" class="form-control form-control-sm ml-3 text-right" placeholder="0" />
                         </div>
                         <x-form.error name="nominalAnggaran" />
                     </div>
@@ -98,34 +70,11 @@
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
             @if ($this->isUpdating() && user()->can('keuangan.rkat-penetapan.delete'))
-                <x-button
-                    size="sm"
-                    variant="danger"
-                    data-dismiss="modal"
-                    id="hapus"
-                    title="Hapus"
-                    icon="fas fa-trash"
-                    wire:click="delete"
-                />
+                <x-button size="sm" variant="danger" data-dismiss="modal" id="hapus" title="Hapus" icon="fas fa-trash" wire:click="delete" />
             @endif
 
-            <x-button
-                size="sm"
-                class="ml-auto"
-                data-dismiss="modal"
-                id="batalsimpan"
-                title="Batal"
-            />
-            <x-button
-                size="sm"
-                variant="primary"
-                type="submit"
-                class="ml-2"
-                id="simpandata"
-                title="Simpan"
-                icon="fas fa-save"
-                form="form-input-penetapan-rkat"
-            />
+            <x-button size="sm" class="ml-auto" data-dismiss="modal" id="batalsimpan" title="Batal" />
+            <x-button size="sm" variant="primary" type="submit" class="ml-2" id="simpandata" title="Simpan" icon="fas fa-save" form="form-input-penetapan-rkat" />
         </x-slot>
     </x-modal>
 </div>

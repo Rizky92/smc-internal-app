@@ -15,33 +15,15 @@
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-table
-                :sortColumns="$sortColumns"
-                style="width: 110rem"
-                sortable
-                sticky
-                nowrap
-            >
+            <x-table :sortColumns="$sortColumns" style="width: 110rem" sortable sticky nowrap>
                 <x-slot name="columns">
                     @can('keuangan.jurnal-perbaikan.ubah-tanggal')
                         <x-table.th style="width: 8ch" title="#" />
                     @endcan
 
-                    <x-table.th
-                        name="no_jurnal"
-                        style="width: 15ch"
-                        title="No. Jurnal"
-                    />
-                    <x-table.th
-                        name="no_bukti"
-                        style="width: 18ch"
-                        title="No. Bukti"
-                    />
-                    <x-table.th
-                        name="waktu_jurnal"
-                        style="width: 17ch"
-                        title="Waktu Jurnal"
-                    />
+                    <x-table.th name="no_jurnal" style="width: 15ch" title="No. Jurnal" />
+                    <x-table.th name="no_bukti" style="width: 18ch" title="No. Bukti" />
+                    <x-table.th name="waktu_jurnal" style="width: 17ch" title="Waktu Jurnal" />
                     <x-table.th name="keterangan" title="Keterangan" />
                     <x-table.th style="width: 11ch" title="Kode Akun" />
                     <x-table.th title="Nama Akun" />
@@ -58,10 +40,7 @@
 
                         <x-table.tr style="background-color: rgb({{ $odd }})">
                             @can('keuangan.jurnal-perbaikan.ubah-tanggal')
-                                <x-table.td
-                                    rowspan="{{ $count }}"
-                                    class="pl-3 py-1"
-                                >
+                                <x-table.td rowspan="{{ $count }}" class="pl-3 py-1">
                                     <x-button
                                         size="xs"
                                         variant="link"
@@ -77,8 +56,7 @@
                                         keterangan: '{{ $jurnal->keterangan }}',
                                         tglJurnal: '{{ $jurnal->tgl_jurnal }}',
                                         jamJurnal: '{{ $jurnal->jam_jurnal }}'
-                                    })"
-                                    />
+                                    })" />
                                 </x-table.td>
                             @endcan
 
@@ -114,9 +92,7 @@
                         </x-table.tr>
                         @if ($jurnal->detail->skip(1)->count() > 0)
                             @foreach ($jurnal->detail->skip(1) as $detail)
-                                <x-table.tr
-                                    style="background-color: rgb({{ $odd }})"
-                                >
+                                <x-table.tr style="background-color: rgb({{ $odd }})">
                                     <x-table.td class="p-1 border-0">
                                         {{ $detail->kd_rek }}
                                     </x-table.td>
@@ -137,10 +113,7 @@
                             @endforeach
                         @endif
                     @empty
-                        <x-table.tr-empty
-                            :colspan="auth()->user() ->can('keuangan.jurnal-perbaikan.ubah-tanggal') ? 8 : 7"
-                            padding
-                        />
+                        <x-table.tr-empty :colspan="auth()->user() ->can('keuangan.jurnal-perbaikan.ubah-tanggal') ? 8 : 7" padding />
                     @endforelse
                 </x-slot>
             </x-table>

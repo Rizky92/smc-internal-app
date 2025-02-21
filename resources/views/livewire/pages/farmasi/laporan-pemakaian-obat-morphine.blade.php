@@ -14,17 +14,11 @@
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.label class="ml-auto pr-3">Gudang:</x-filter.label>
-                <x-filter.select
-                    model="bangsal"
-                    :options="['IFA' => 'Farmasi A', 'AP' => 'Farmasi B', 'IFG' => 'Farmasi IGD', 'IFI' => 'Farmasi Rawat Inap']"
-                />
+                <x-filter.select model="bangsal" :options="['IFA' => 'Farmasi A', 'AP' => 'Farmasi B', 'IFG' => 'Farmasi IGD', 'IFI' => 'Farmasi Rawat Inap']" />
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-navtabs
-                livewire
-                :selected="Str::replace('.', '', '02.05.0011')"
-            >
+            <x-navtabs livewire :selected="Str::replace('.', '', '02.05.0011')">
                 <x-slot name="tabs">
                     @foreach ($this->dataObat as $key => $title)
                         <x-navtabs.tab :id="$key" :title="$title" />
@@ -36,35 +30,14 @@
                         <x-navtabs.content :id="$key">
                             <x-table zebra hover sticky nowrap>
                                 <x-slot name="columns">
-                                    <x-table.th
-                                        name="no_rawat"
-                                        title="No. Rawat"
-                                    />
-                                    <x-table.th
-                                        name="no_rkm_medis"
-                                        title="No. RM"
-                                    />
-                                    <x-table.th
-                                        name="nm_pasien"
-                                        title="Nama Pasien"
-                                    />
-                                    <x-table.th
-                                        name="alamat"
-                                        title="Alamat Pasien"
-                                    />
-                                    <x-table.th
-                                        name="tgl_perawatan"
-                                        title="Tgl. Diberikan"
-                                    />
+                                    <x-table.th name="no_rawat" title="No. Rawat" />
+                                    <x-table.th name="no_rkm_medis" title="No. RM" />
+                                    <x-table.th name="nm_pasien" title="Nama Pasien" />
+                                    <x-table.th name="alamat" title="Alamat Pasien" />
+                                    <x-table.th name="tgl_perawatan" title="Tgl. Diberikan" />
                                     <x-table.th name="jml" title="Jumlah" />
-                                    <x-table.th
-                                        name="nm_dokter"
-                                        title="Nama Dokter"
-                                    />
-                                    <x-table.th
-                                        name="alamat_dokter"
-                                        title="Alamat Dokter"
-                                    />
+                                    <x-table.th name="nm_dokter" title="Nama Dokter" />
+                                    <x-table.th name="alamat_dokter" title="Alamat Dokter" />
                                 </x-slot>
                                 <x-slot name="body">
                                     @forelse ($this->{$property} as $item)
@@ -99,10 +72,7 @@
                                     @endforelse
                                 </x-slot>
                             </x-table>
-                            <x-paginator
-                                class="px-4 py-3 bg-light"
-                                :data="$this->{$property}"
-                            />
+                            <x-paginator class="px-4 py-3 bg-light" :data="$this->{$property}" />
                         </x-navtabs.content>
                     @endforeach
                 </x-slot>

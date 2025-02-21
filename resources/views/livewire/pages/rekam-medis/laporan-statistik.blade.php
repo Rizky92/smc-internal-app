@@ -16,10 +16,7 @@
                     <x-table.th style="width: 11ch" title="Suku" />
                     <x-table.th style="width: 17ch" title="Jenis Rawat" />
                     <x-table.th style="width: 17ch" title="Kamar" />
-                    <x-table.th
-                        style="width: 19ch"
-                        title="Pasien Lama / Baru"
-                    />
+                    <x-table.th style="width: 19ch" title="Pasien Lama / Baru" />
                     <x-table.th style="width: 15ch" title="Asal Poli" />
                     <x-table.th style="width: 30ch" title="Dokter Poli" />
                     <x-table.th style="width: 15ch" title="Status Ralan" />

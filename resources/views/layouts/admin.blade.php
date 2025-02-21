@@ -5,15 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{{ $title }} - {{ config('app.name') }}</title>
 
-        <link
-            href="{{ asset('css/fontawesome5-all.min.css') }}"
-            rel="stylesheet"
-        />
+        <link href="{{ asset('css/fontawesome5-all.min.css') }}" rel="stylesheet" />
         <link href="{{ asset('css/adminlte.min.css') }}" rel="stylesheet" />
-        <link
-            href="{{ asset('css/OverlayScrollbars.min.css') }}"
-            rel="stylesheet"
-        />
+        <link href="{{ asset('css/OverlayScrollbars.min.css') }}" rel="stylesheet" />
         <link rel="icon" type="image/x-icon" href="{{ asset('logo.ico') }}" />
         <style>
             .custom-control-label {
@@ -35,16 +29,8 @@
                 background-color: #e5e7eb !important;
             }
 
-            .nav-flat.nav-sidebar
-                > .nav-item
-                .nav-treeview
-                .nav-item
-                > .nav-link,
-            .nav-flat.nav-sidebar
-                > .nav-item
-                > .nav-treeview
-                .nav-item
-                > .nav-link {
+            .nav-flat.nav-sidebar > .nav-item .nav-treeview .nav-item > .nav-link,
+            .nav-flat.nav-sidebar > .nav-item > .nav-treeview .nav-item > .nav-link {
                 border-left: 0 !important;
             }
         </style>
@@ -53,9 +39,7 @@
         @livewireStyles
     </head>
 
-    <body
-        class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed bg-light"
-    >
+    <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed bg-light">
         <div class="wrapper">
             <x-navbar />
             <x-sidebar>
@@ -66,40 +50,22 @@
                                 :hasPermissions="$menu['hasAnyPermissions']"
                                 :isActive="in_array($current, Arr::flatten($menu['items']), true)"
                                 :icon="$menu['icon']"
-                                :name="$menu['name']"
-                            >
+                                :name="$menu['name']">
                                 @foreach ($menu['items'] as $submenu)
-                                    <x-sidebar.link
-                                        :hasPermissions="$submenu['hasAnyPermissions']"
-                                        :current="$current"
-                                        :url="$submenu['url']"
-                                        :icon="$submenu['icon']"
-                                        :name="$submenu['name']"
-                                    />
+                                    <x-sidebar.link :hasPermissions="$submenu['hasAnyPermissions']" :current="$current" :url="$submenu['url']" :icon="$submenu['icon']" :name="$submenu['name']" />
                                 @endforeach
                             </x-sidebar.dropdown>
 
                             @break
                         @case('link')
-                            <x-sidebar.link
-                                :hasPermissions="$menu['hasAnyPermissions']"
-                                :current="$current"
-                                :url="$menu['url']"
-                                :icon="$menu['icon']"
-                                :name="$menu['name']"
-                            />
+                            <x-sidebar.link :hasPermissions="$menu['hasAnyPermissions']" :current="$current" :url="$menu['url']" :icon="$menu['icon']" :name="$menu['name']" />
 
                             @break
                     @endswitch
                 @endforeach
 
-                <x-slot
-                    name="footer"
-                    class="justify-content-center align-items-center"
-                >
-                    <span
-                        class="text-sm font-weight-bold text-muted hide-on-collapse"
-                    >
+                <x-slot name="footer" class="justify-content-center align-items-center">
+                    <span class="text-sm font-weight-bold text-muted hide-on-collapse">
                         {{ request()->ip() }}
                     </span>
                 </x-slot>

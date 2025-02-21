@@ -5,11 +5,7 @@
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.range-date />
-                <x-filter.toggle
-                    class="ml-3"
-                    model="barangNol"
-                    title="Tampilkan Barang Nol"
-                />
+                <x-filter.toggle class="ml-3" model="barangNol" title="Tampilkan Barang Nol" />
                 <x-filter.button-export-excel class="ml-auto" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
@@ -26,32 +22,17 @@
                 </x-slot>
                 <x-slot name="contents">
                     <x-navtabs.content id="obat">
-                        <x-table
-                            :sortColumns="$sortColumns"
-                            sortable
-                            zebra
-                            hover
-                            sticky
-                            nowrap
-                        >
+                        <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                             <x-slot name="columns">
                                 <x-table.th title="Kode Item" />
                                 <x-table.th title="Nama Item" />
                                 <x-table.th title="Stok Saat Ini" />
                                 <x-table.th title="Order Terakhir" />
                                 <x-table.th title="Penggunaan Terakhir" />
-                                <x-table.th
-                                    name="tanggal_order_terakhir"
-                                    title="Tanggal Order Terakhir"
-                                />
-                                <x-table.th
-                                    name="tanggal_penggunaan_terakhir"
-                                    title="Tanggal Penggunaan Terakhir"
-                                />
+                                <x-table.th name="tanggal_order_terakhir" title="Tanggal Order Terakhir" />
+                                <x-table.th name="tanggal_penggunaan_terakhir" title="Tanggal Penggunaan Terakhir" />
                                 <x-table.th title="Posisi Order Terakhir" />
-                                <x-table.th
-                                    title="Posisi Penggunaan Terakhir"
-                                />
+                                <x-table.th title="Posisi Penggunaan Terakhir" />
                             </x-slot>
                             <x-slot name="body">
                                 @forelse ($this->dataRiwayatObat as $item)
@@ -89,38 +70,20 @@
                                 @endforelse
                             </x-slot>
                         </x-table>
-                        <x-paginator
-                            class="px-4 py-3 bg-light border-top"
-                            :data="$this->dataRiwayatObat"
-                        />
+                        <x-paginator class="px-4 py-3 bg-light border-top" :data="$this->dataRiwayatObat" />
                     </x-navtabs.content>
                     <x-navtabs.content id="alkes">
-                        <x-table
-                            :sortColumns="$sortColumns"
-                            sortable
-                            zebra
-                            hover
-                            sticky
-                            nowrap
-                        >
+                        <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                             <x-slot name="columns">
                                 <x-table.th title="Kode Item" />
                                 <x-table.th title="Nama Item" />
                                 <x-table.th title="Stok Saat Ini" />
                                 <x-table.th title="Order Terakhir" />
                                 <x-table.th title="Penggunaan Terakhir" />
-                                <x-table.th
-                                    name="tanggal_order_terakhir"
-                                    title="Tanggal Order Terakhir"
-                                />
-                                <x-table.th
-                                    name="tanggal_penggunaan_terakhir"
-                                    title="Tanggal Penggunaan Terakhir"
-                                />
+                                <x-table.th name="tanggal_order_terakhir" title="Tanggal Order Terakhir" />
+                                <x-table.th name="tanggal_penggunaan_terakhir" title="Tanggal Penggunaan Terakhir" />
                                 <x-table.th title="Posisi Order Terakhir" />
-                                <x-table.th
-                                    title="Posisi Penggunaan Terakhir"
-                                />
+                                <x-table.th title="Posisi Penggunaan Terakhir" />
                             </x-slot>
                             <x-slot name="body">
                                 @forelse ($this->dataRiwayatAlkes as $item)
@@ -158,10 +121,7 @@
                                 @endforelse
                             </x-slot>
                         </x-table>
-                        <x-paginator
-                            class="px-4 py-3 bg-light border-top"
-                            :data="$this->dataRiwayatAlkes"
-                        />
+                        <x-paginator class="px-4 py-3 bg-light border-top" :data="$this->dataRiwayatAlkes" />
                     </x-navtabs.content>
                 </x-slot>
             </x-navtabs>

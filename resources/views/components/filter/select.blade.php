@@ -36,10 +36,7 @@
         @endif
 
         @foreach ($options as $key => $value)
-            <option
-                value="{{ $key }}"
-                {{ $selected === $key ? 'selected' : null }}
-            >
+            <option value="{{ $key }}" {{ $selected === $key ? 'selected' : null }}>
                 {{ $value }}
             </option>
         @endforeach

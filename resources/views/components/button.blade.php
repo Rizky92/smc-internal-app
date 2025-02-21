@@ -35,7 +35,7 @@
         ->when(
             $outline,
             fn ($cols) => $cols->map(fn ($v, $k) => str($v)->prepend('btn-outline-'))->replace(['link' => 'btn-link']),
-            fn ($cols) => $cols->map(fn ($v, $k) => str($v)->prepend('btn-')),
+            fn ($cols) => $cols->map(fn ($v, $k) => str($v)->prepend('btn-'))
         )
         ->all();
 
@@ -76,16 +76,13 @@
                     'title' => $title,
                     'disabled' => $disabled,
                 ])
-            }}
-        >
+            }}>
             @if ($icon)
                 <i class="{{ $icon }}"></i>
             @endif
 
             @if ($title)
-                <span
-                    class="{{ Arr::toCssClasses(['ml-1' => $icon, 'sr-only' => $hideTitle]) }}"
-                >
+                <span class="{{ Arr::toCssClasses(['ml-1' => $icon, 'sr-only' => $hideTitle]) }}">
                     {{ $title ?? $slot }}
                 </span>
             @endif
@@ -98,16 +95,13 @@
                 $attributes
                     ->merge(['class' => $finalClass, 'role' => 'button', 'id' => $id, 'title' => $title])
                     ->when($disabled, fn ($attrs) => $attrs->except('href'))
-            }}
-        >
+            }}>
             @if ($icon)
                 <i class="{{ $icon }}"></i>
             @endif
 
             @if ($title)
-                <span
-                    class="{{ Arr::toCssClasses(['ml-1' => $icon, 'sr-only' => $hideTitle]) }}"
-                >
+                <span class="{{ Arr::toCssClasses(['ml-1' => $icon, 'sr-only' => $hideTitle]) }}">
                     {{ $title ?? $slot }}
                 </span>
             @endif

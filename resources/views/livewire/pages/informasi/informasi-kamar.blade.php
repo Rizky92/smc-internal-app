@@ -3,16 +3,9 @@
 @endpush
 
 @section('informasi-kamar')
-    <header
-        class="d-flex flex-wrap justify-content-center mb-4 border-bottom shadow"
-    >
+    <header class="d-flex flex-wrap justify-content-center mb-4 border-bottom shadow">
         <div class="container-fluid d-flex justify-content-center">
-            <img
-                src="{{ asset('img/logo.png') }}"
-                alt="logo"
-                width="100vh"
-                height="auto"
-            />
+            <img src="{{ asset('img/logo.png') }}" alt="logo" width="100vh" height="auto" />
             <span class="header">KETERSEDIAAN KAMAR</span>
         </div>
     </header>

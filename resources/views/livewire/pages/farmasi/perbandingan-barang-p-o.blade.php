@@ -5,11 +5,7 @@
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.range-date title="Tgl. SPM" />
-                <x-filter.toggle
-                    class="ml-4"
-                    model="barangSelisih"
-                    title="Tampilkan Barang Selisih"
-                />
+                <x-filter.toggle class="ml-4" model="barangSelisih" title="Tampilkan Barang Selisih" />
                 <x-filter.button-export-excel class="ml-auto" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
@@ -19,27 +15,14 @@
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-table
-                :sortColumns="$sortColumns"
-                sortable
-                zebra
-                hover
-                sticky
-                nowrap
-            >
+            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="no_pemesanan" title="No. Pemesanan" />
                     <x-table.th name="nama_brng" title="Nama" />
                     <x-table.th name="suplier_pesan" title="Supplier Tujuan" />
-                    <x-table.th
-                        name="suplier_datang"
-                        title="Supplier yang Mendatangkan"
-                    />
+                    <x-table.th name="suplier_datang" title="Supplier yang Mendatangkan" />
                     <x-table.th name="jumlah_pesan" title="Jumlah Dipesan" />
-                    <x-table.th
-                        name="jumlah_datang"
-                        title="Jumlah yang Datang"
-                    />
+                    <x-table.th name="jumlah_datang" title="Jumlah yang Datang" />
                     <x-table.th name="selisih" title="Selisih" />
                 </x-slot>
                 <x-slot name="body">

@@ -9,17 +9,8 @@
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
-                <x-filter.label class="ml-auto" constant-width>
-                    Penjamin:
-                </x-filter.label>
-                <x-filter.select2
-                    name="caraBayar"
-                    :options="$this->penjamin"
-                    selected="-"
-                    style="width: 16rem"
-                    livewire
-                    show-key
-                />
+                <x-filter.label class="ml-auto" constant-width>Penjamin:</x-filter.label>
+                <x-filter.select2 name="caraBayar" :options="$this->penjamin" selected="-" style="width: 16rem" livewire show-key />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <span class="text-sm" style="width: 5rem">TOTAL:</span>
@@ -31,15 +22,7 @@
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-table
-                :sortColumns="$sortColumns"
-                style="width: 100rem"
-                sortable
-                zebra
-                hover
-                sticky
-                nowrap
-            >
+            <x-table :sortColumns="$sortColumns" style="width: 100rem" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="no_rawat" title="No. Rawat" />
                     <x-table.th name="no_rkm_medis" title="No. RM" />

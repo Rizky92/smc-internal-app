@@ -1,8 +1,5 @@
 @push('styles')
-    <link
-        href="{{ asset('css/fontawesome5-all.min.css') }}"
-        rel="stylesheet"
-    />
+    <link href="{{ asset('css/fontawesome5-all.min.css') }}" rel="stylesheet" />
     <style>
         .marquee {
             width: 100%;
@@ -14,9 +11,7 @@
 @endpush
 
 <div>
-    <header
-        class="d-flex flex-wrap justify-content-center py-2 pb-2 mb-4 border-bottom shadow header"
-    >
+    <header class="d-flex flex-wrap justify-content-center py-2 pb-2 mb-4 border-bottom shadow header">
         <div class="container-fluid d-flex justify-content-center">
             <h1 class="text-uppercase text-success">
                 {{ \App\Models\Perawatan\Poliklinik::where('kd_poli', $this->kd_poli)->first()->nm_poli }}
@@ -31,25 +26,15 @@
                         <div class="col">
                             <div class="container-toast border shadow">
                                 <div class="bg-success">
-                                    <h1 class="display-5 text-white">
-                                        ANTREAN DIPANGGIL
-                                    </h1>
+                                    <h1 class="display-5 text-white">ANTREAN DIPANGGIL</h1>
                                 </div>
-                                <div
-                                    class="container-toast-content"
-                                    style="height: 12rem"
-                                >
+                                <div class="container-toast-content" style="height: 12rem">
                                     <div class="d-flex justify-content-center">
-                                        <div
-                                            class="d-flex flex-column text-center"
-                                        >
+                                        <div class="d-flex flex-column text-center">
                                             <h3 class="text-uppercase">
                                                 {{ $this->nextAntrean->nm_dokter }}
                                             </h3>
-                                            <h1
-                                                class="text-danger"
-                                                style="font-size: 9rem"
-                                            >
+                                            <h1 class="text-danger" style="font-size: 9rem">
                                                 {{ $this->nextAntrean->no_reg }}
                                             </h1>
                                             <h4>
@@ -64,14 +49,9 @@
                         <div class="col text-center">
                             <div class="container-toast border shadow">
                                 <div class="bg-success">
-                                    <h1 class="text-white text-uppercase">
-                                        antrean dipanggil
-                                    </h1>
+                                    <h1 class="text-white text-uppercase">antrean dipanggil</h1>
                                 </div>
-                                <div
-                                    class="container-toast-content"
-                                    style="height: 12rem"
-                                ></div>
+                                <div class="container-toast-content" style="height: 12rem"></div>
                             </div>
                         </div>
                     @endif
@@ -80,9 +60,7 @@
                     <div class="col">
                         <div class="container-toast border shadow">
                             <div class="bg-success">
-                                <h1 class="text-white text-uppercase">
-                                    jadwal dokter
-                                </h1>
+                                <h1 class="text-white text-uppercase">jadwal dokter</h1>
                             </div>
                             <div class="container-toast-content">
                                 <div class="d-flex justify-content-center">
@@ -96,18 +74,11 @@
                                                 ->get();
                                         @endphp
 
-                                        <table
-                                            width="100%"
-                                            class="table table-bordered table-striped"
-                                        >
+                                        <table width="100%" class="table table-bordered table-striped">
                                             <thead>
                                                 <tr>
-                                                    <th style="width: 44ch">
-                                                        Nama Dokter
-                                                    </th>
-                                                    <th style="width: 44ch">
-                                                        Jam Praktek
-                                                    </th>
+                                                    <th style="width: 44ch">Nama Dokter</th>
+                                                    <th style="width: 44ch">Jam Praktek</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -124,13 +95,7 @@
                                                     </tr>
                                                 @empty
                                                     <tr>
-                                                        <td
-                                                            colspan="3"
-                                                            class="text-center text-muted p-4"
-                                                        >
-                                                            Tidak ada yang dapat
-                                                            ditampilkan saat ini
-                                                        </td>
+                                                        <td colspan="3" class="text-center text-muted p-4">Tidak ada yang dapat ditampilkan saat ini</td>
                                                     </tr>
                                                 @endforelse
                                             </tbody>
@@ -152,14 +117,7 @@
                         </tr>
                     </thead>
                 </table>
-                <div
-                    class="marquee bg-white"
-                    data-direction="up"
-                    data-duration="20000"
-                    startVisible="true"
-                    data-gap="10"
-                    data-duplicated="false"
-                >
+                <div class="marquee bg-white" data-direction="up" data-duration="20000" startVisible="true" data-gap="10" data-duplicated="false">
                     <table class="table table-bordered table-striped">
                         <tbody>
                             @forelse ($this->antrean as $item)
@@ -176,13 +134,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td
-                                        colspan="3"
-                                        class="text-center text-muted p-4"
-                                    >
-                                        Tidak ada yang dapat ditampilkan saat
-                                        ini
-                                    </td>
+                                    <td colspan="3" class="text-center text-muted p-4">Tidak ada yang dapat ditampilkan saat ini</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -197,13 +149,7 @@
     <script src="{{ asset('js/jquery.marquee.min.js') }}"></script>
     <script>
         document.addEventListener('play-voice', (event) => {
-            var textToSpeech =
-                'Nomor antrian ' +
-                event.detail.no_reg +
-                ', ' +
-                event.detail.nm_pasien.toLowerCase() +
-                ', silahkan menuju ke ' +
-                event.detail.nm_poli.toLowerCase();
+            var textToSpeech = 'Nomor antrian ' + event.detail.no_reg + ', ' + event.detail.nm_pasien.toLowerCase() + ', silahkan menuju ke ' + event.detail.nm_poli.toLowerCase();
             var callCount = 0;
 
             function callVoice() {

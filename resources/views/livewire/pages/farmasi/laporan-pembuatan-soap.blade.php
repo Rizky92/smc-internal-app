@@ -3,15 +3,7 @@
 
     <x-card use-default-filter use-loading>
         <x-slot name="body">
-            <x-table
-                :sortColumns="$sortColumns"
-                style="min-width: 100%"
-                sortable
-                zebra
-                hover
-                sticky
-                nowrap
-            >
+            <x-table :sortColumns="$sortColumns" style="min-width: 100%" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="tgl_perawatan" title="Tgl. SOAP" />
                     <x-table.th name="jam_rawat" title="Jam" />
@@ -21,10 +13,7 @@
                     <x-table.th name="dpjp" title="DPJP" />
                     <x-table.th name="alergi" title="Alergi" />
                     <x-table.th name="keluhan" title="Keluhan (Subjek)" />
-                    <x-table.th
-                        name="pemeriksaan"
-                        title="Pemeriksaan (Objek)"
-                    />
+                    <x-table.th name="pemeriksaan" title="Pemeriksaan (Objek)" />
                     <x-table.th name="penilaian" title="Penilaian (Asesmen)" />
                     <x-table.th name="rtl" title="RTL (Plan)" />
                     <x-table.th name="nip" title="Petugas" />
@@ -50,9 +39,7 @@
                             </x-table.td>
                             <x-table.td>{{ $item->penilaian }}</x-table.td>
                             <x-table.td>{{ $item->rtl }}</x-table.td>
-                            <x-table.td>
-                                {{ $item->nip }} {{ $item->nama }}
-                            </x-table.td>
+                            <x-table.td>{{ $item->nip }} {{ $item->nama }}</x-table.td>
                             <x-table.td>{{ $item->nm_jbtn }}</x-table.td>
                         </x-table.tr>
                     @empty

@@ -15,11 +15,8 @@
                         'semua' => 'SEMUA',
                         'ralan' => 'Rawat Jalan',
                         'ranap' => 'Rawat Inap',
-                    ]"
-                />
-                <x-filter.label class="ml-auto pr-3">
-                    Status Registrasi
-                </x-filter.label>
+                    ]" />
+                <x-filter.label class="ml-auto pr-3">Status Registrasi</x-filter.label>
                 <x-filter.select
                     model="status"
                     :options="[
@@ -32,8 +29,7 @@
                         'meninggal'    => 'Meninggal',
                         'dirawat'      => 'Dirawat',
                         'pulang-paksa' => 'Pulang Paksa',
-                    ]"
-                />
+                    ]" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
@@ -42,15 +38,7 @@
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-table
-                :sortColumns="$sortColumns"
-                style="min-width: 100%"
-                sortable
-                zebra
-                hover
-                sticky
-                nowrap
-            >
+            <x-table :sortColumns="$sortColumns" style="min-width: 100%" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="nm_dokter" title="Dr. Dituju" />
                     <x-table.th name="no_rkm_medis" title="No. RM" />

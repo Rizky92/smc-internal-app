@@ -13,121 +13,26 @@
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-table
-                :sortColumns="$sortColumns"
-                sortable
-                zebra
-                hover
-                sticky
-                nowrap
-                style="width: 140rem"
-            >
+            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap style="width: 140rem">
                 <x-slot name="columns">
-                    <x-table.th
-                        name="kode_brng"
-                        title="Kode"
-                        style="width: 13ch"
-                    />
-                    <x-table.th
-                        name="nama_brng"
-                        title="Nama"
-                        style="width: 50ch"
-                    />
-                    <x-table.th
-                        name="satuan_kecil"
-                        title="Satuan"
-                        style="width: 12ch"
-                    />
-                    <x-table.th
-                        name="kategori"
-                        title="Kategori"
-                        style="width: 25ch"
-                    />
-                    <x-table.th
-                        name="stokminimal"
-                        title="Stok minimal"
-                        align="right"
-                        style="width: 24ch"
-                    />
-                    <x-table.th
-                        name="stok_sekarang_ifa"
-                        title="Stok Farmasi A Sekarang"
-                        align="right"
-                        style="width: 11ch"
-                    />
-                    <x-table.th
-                        name="stok_sekarang_ap"
-                        title="Stok Farmasi B Sekarang"
-                        align="right"
-                        style="width: 11ch"
-                    />
-                    <x-table.th
-                        name="stok_sekarang_ifi"
-                        title="Stok Farmasi RWI Sekarang"
-                        align="right"
-                        style="width: 11ch"
-                    />
-                    <x-table.th
-                        name="stok_sekarang_ifg"
-                        title="Stok Farmasi IGD Sekarang"
-                        align="right"
-                        style="width: 11ch"
-                    />
-                    <x-table.th
-                        name="stok_keluar_medis_14_hari"
-                        title="Stok Keluar Medis (14 Hari)"
-                        align="right"
-                        style="width: 11ch"
-                    />
-                    <x-table.th
-                        name="saran_order"
-                        title="Saran order"
-                        align="right"
-                        style="width: 15ch"
-                    />
-                    <x-table.th
-                        name="nama_industri"
-                        title="Supplier"
-                        style="width: 40ch"
-                    />
-                    <x-table.th
-                        name="harga_beli"
-                        colspan="2"
-                        title="Harga Per Unit"
-                        align="right"
-                        style="width: 18ch"
-                    />
-                    <x-table.th
-                        name="harga_beli_total"
-                        colspan="2"
-                        title="Total Harga"
-                        align="right"
-                        style="width: 15ch"
-                    />
-                    <x-table.th
-                        name="harga_beli_terakhir"
-                        colspan="2"
-                        title="Harga Beli Terakhir"
-                        align="right"
-                        style="width: 25ch"
-                    />
-                    <x-table.th
-                        name="diskon_terakhir"
-                        title="Diskon Terakhir (%)"
-                        align="right"
-                        style="width: 24ch"
-                    />
-                    <x-table.th
-                        name="supplier_terakhir"
-                        title="Supplier Terakhir"
-                        style="width: 40ch"
-                    />
-                    <x-table.th
-                        name="ke_pasien_14_hari"
-                        title="Jumlah Ke Pasien (14 Hari)"
-                        align="right"
-                        style="width: 40ch"
-                    />
+                    <x-table.th name="kode_brng" title="Kode" style="width: 13ch" />
+                    <x-table.th name="nama_brng" title="Nama" style="width: 50ch" />
+                    <x-table.th name="satuan_kecil" title="Satuan" style="width: 12ch" />
+                    <x-table.th name="kategori" title="Kategori" style="width: 25ch" />
+                    <x-table.th name="stokminimal" title="Stok minimal" align="right" style="width: 24ch" />
+                    <x-table.th name="stok_sekarang_ifa" title="Stok Farmasi A Sekarang" align="right" style="width: 11ch" />
+                    <x-table.th name="stok_sekarang_ap" title="Stok Farmasi B Sekarang" align="right" style="width: 11ch" />
+                    <x-table.th name="stok_sekarang_ifi" title="Stok Farmasi RWI Sekarang" align="right" style="width: 11ch" />
+                    <x-table.th name="stok_sekarang_ifg" title="Stok Farmasi IGD Sekarang" align="right" style="width: 11ch" />
+                    <x-table.th name="stok_keluar_medis_14_hari" title="Stok Keluar Medis (14 Hari)" align="right" style="width: 11ch" />
+                    <x-table.th name="saran_order" title="Saran order" align="right" style="width: 15ch" />
+                    <x-table.th name="nama_industri" title="Supplier" style="width: 40ch" />
+                    <x-table.th name="harga_beli" colspan="2" title="Harga Per Unit" align="right" style="width: 18ch" />
+                    <x-table.th name="harga_beli_total" colspan="2" title="Total Harga" align="right" style="width: 15ch" />
+                    <x-table.th name="harga_beli_terakhir" colspan="2" title="Harga Beli Terakhir" align="right" style="width: 25ch" />
+                    <x-table.th name="diskon_terakhir" title="Diskon Terakhir (%)" align="right" style="width: 24ch" />
+                    <x-table.th name="supplier_terakhir" title="Supplier Terakhir" style="width: 40ch" />
+                    <x-table.th name="ke_pasien_14_hari" title="Jumlah Ke Pasien (14 Hari)" align="right" style="width: 40ch" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->stokDaruratObat as $obat)
@@ -163,12 +68,8 @@
                                 {{ $obat->nama_industri }}
                             </x-table.td>
                             <x-table.td-money :value="$obat->harga_beli" />
-                            <x-table.td-money
-                                :value="$obat->harga_beli_total"
-                            />
-                            <x-table.td-money
-                                :value="$obat->harga_beli_terakhir"
-                            />
+                            <x-table.td-money :value="$obat->harga_beli_total" />
+                            <x-table.td-money :value="$obat->harga_beli_terakhir" />
                             <x-table.td class="text-right">
                                 {{ $obat->diskon_terakhir }}
                             </x-table.td>

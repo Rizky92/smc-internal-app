@@ -3,22 +3,14 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link
-            rel="stylesheet"
-            href="{{ asset('css/dataTables.bootstrap4.min.css') }}"
-        />
-        <link
-            rel="stylesheet"
-            href="{{ asset('css/responsive.bootstrap4.min.css') }}"
-        />
+        <link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap4.min.css') }}" />
+        <link rel="stylesheet" href="{{ asset('css/responsive.bootstrap4.min.css') }}" />
         <link rel="stylesheet" href="{{ asset('css/adminlte.min.css') }}" />
         <link rel="stylesheet" href="{{ asset('css/bed.css') }}" />
         <title>{{ config('app.name') }}</title>
     </head>
     <body>
-        <header
-            class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom shadow"
-        >
+        <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom shadow">
             <div class="container-fluid d-flex justify-content-center">
                 <img src="img/logo.png" alt="logo" width="120" />
                 <span>BED MANAGEMENT</span>

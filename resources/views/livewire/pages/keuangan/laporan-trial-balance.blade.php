@@ -5,27 +5,12 @@
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.range-date />
-                <x-button
-                    class="ml-auto"
-                    size="sm"
-                    variant="danger"
-                    title="Rekalkulasi ulang"
-                    icon="fas fa-sync-alt"
-                    wire:click.prevent="resetCache"
-                    outline
-                />
+                <x-button class="ml-auto" size="sm" variant="danger" title="Rekalkulasi ulang" icon="fas fa-sync-alt" wire:click.prevent="resetCache" outline />
                 <x-filter.button-export-excel class="ml-2" />
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-table
-                :sortColumns="$sortColumns"
-                sortable
-                zebra
-                hover
-                sticky
-                nowrap
-            >
+            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="kd_rek" title="Kode Akun" />
                     <x-table.th name="nm_rek" title="Nama" />
@@ -60,9 +45,7 @@
                     @if ($this->dataTrialBalancePerTanggal)
                         <x-table.tr>
                             <x-table.td></x-table.td>
-                            <x-table.td class="font-weight-bold" colspan="3">
-                                TOTAL :
-                            </x-table.td>
+                            <x-table.td class="font-weight-bold" colspan="3">TOTAL :</x-table.td>
                             <x-table.td class="font-weight-bold">
                                 {{ rp($this->totalDebetKreditTrialBalance->total_debet) }}
                             </x-table.td>

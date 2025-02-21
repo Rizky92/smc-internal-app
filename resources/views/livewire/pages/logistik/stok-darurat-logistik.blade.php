@@ -4,10 +4,7 @@
     <x-card use-loading>
         <x-slot name="header">
             <x-row-col-flex>
-                <x-filter.toggle
-                    model="tampilkanSaranOrderNol"
-                    title="Tampilkan Saran Order Nol"
-                />
+                <x-filter.toggle model="tampilkanSaranOrderNol" title="Tampilkan Saran Order Nol" />
                 <x-filter.button-export-excel class="ml-auto" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
@@ -17,14 +14,7 @@
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-table
-                :sortColumns="$sortColumns"
-                sortable
-                zebra
-                hover
-                sticky
-                nowrap
-            >
+            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="kode_brng" title="Kode" />
                     <x-table.th name="nama_brng" title="Nama" />

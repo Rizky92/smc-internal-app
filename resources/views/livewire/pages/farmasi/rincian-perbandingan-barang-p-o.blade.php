@@ -10,14 +10,7 @@
                 </x-slot>
                 <x-slot name="contents">
                     <x-navtabs.content id="obat">
-                        <x-table
-                            :sortColumns="$sortColumns"
-                            sortable
-                            zebra
-                            hover
-                            sticky
-                            nowrap
-                        >
+                        <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                             <x-slot name="columns">
                                 <x-table.th title="Kode Barang" />
                                 <x-table.th title="Nama Barang" />
@@ -27,10 +20,7 @@
                                 <x-table.th title="Total Pesanan Bulan Lalu" />
                                 <x-table.th title="Total Harga Bulan Lalu" />
                                 <x-table.th title="Selisih Pesanan" />
-                                <x-table.th
-                                    name="selisih_harga"
-                                    title="Selisih Harga"
-                                />
+                                <x-table.th name="selisih_harga" title="Selisih Harga" />
                             </x-slot>
                             <x-slot name="body">
                                 @forelse ($this->rincianPerbandinganBarangPO as $obat)
@@ -68,19 +58,10 @@
                                 @endforelse
                             </x-slot>
                         </x-table>
-                        <x-paginator
-                            :data="$this->rincianPerbandinganBarangPO"
-                        />
+                        <x-paginator :data="$this->rincianPerbandinganBarangPO" />
                     </x-navtabs.content>
                     <x-navtabs.content id="alkes">
-                        <x-table
-                            :sortColumns="$sortColumns"
-                            sortable
-                            zebra
-                            hover
-                            sticky
-                            nowrap
-                        >
+                        <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                             <x-slot name="columns">
                                 <x-table.th title="Kode Barang" />
                                 <x-table.th title="Nama Barang" />
@@ -90,10 +71,7 @@
                                 <x-table.th title="Total Pesanan Bulan Lalu" />
                                 <x-table.th title="Total Harga Bulan Lalu" />
                                 <x-table.th title="Selisih Pesanan" />
-                                <x-table.th
-                                    name="selisih_harga"
-                                    title="Selisih Harga"
-                                />
+                                <x-table.th name="selisih_harga" title="Selisih Harga" />
                             </x-slot>
                             <x-slot name="body">
                                 @forelse ($this->rincianPerbandinganAlkesPO as $alkes)
@@ -131,9 +109,7 @@
                                 @endforelse
                             </x-slot>
                         </x-table>
-                        <x-paginator
-                            :data="$this->rincianPerbandinganAlkesPO"
-                        />
+                        <x-paginator :data="$this->rincianPerbandinganAlkesPO" />
                     </x-navtabs.content>
                 </x-slot>
             </x-navtabs>

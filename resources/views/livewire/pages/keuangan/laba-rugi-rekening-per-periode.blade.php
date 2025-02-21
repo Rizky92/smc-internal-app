@@ -6,14 +6,7 @@
             <x-row-col-flex>
                 <x-filter.range-date />
                 <x-filter.button-refresh class="ml-3" />
-                <x-filter.select2
-                    class="ml-3"
-                    name="Kode Penjamin"
-                    livewire
-                    show-key
-                    :options="$this->penjamin"
-                    placeholder="SEMUA"
-                />
+                <x-filter.select2 class="ml-3" name="Kode Penjamin" livewire show-key :options="$this->penjamin" placeholder="SEMUA" />
                 <x-filter.button-export-excel class="ml-auto" />
             </x-row-col-flex>
         </x-slot>
@@ -29,9 +22,7 @@
                 <x-slot name="body">
                     <x-table.tr>
                         <x-table.td></x-table.td>
-                        <x-table.td class="font-weight-bold">
-                            PENDAPATAN
-                        </x-table.td>
+                        <x-table.td class="font-weight-bold">PENDAPATAN</x-table.td>
                         <x-table.td colspan="3"></x-table.td>
                     </x-table.tr>
                     @forelse ($this->labaRugiPerRekening->get('K') as $rekening)
@@ -57,9 +48,7 @@
                     @endforelse
                     <x-table.tr>
                         <x-table.td></x-table.td>
-                        <x-table.td class="font-weight-bold">
-                            TOTAL PENDAPATAN
-                        </x-table.td>
+                        <x-table.td class="font-weight-bold">TOTAL PENDAPATAN</x-table.td>
                         <x-table.td class="font-weight-bold">
                             {{ rp($this->totalLabaRugiPerRekening['totalDebetPendapatan']) }}
                         </x-table.td>
@@ -76,9 +65,7 @@
 
                     <x-table.tr>
                         <x-table.td></x-table.td>
-                        <x-table.td class="font-weight-bold">
-                            BEBAN & BIAYA
-                        </x-table.td>
+                        <x-table.td class="font-weight-bold">BEBAN & BIAYA</x-table.td>
                         <x-table.td colspan="3"></x-table.td>
                     </x-table.tr>
                     @forelse ($this->labaRugiPerRekening->get('D') as $rekening)
@@ -104,9 +91,7 @@
                     @endforelse
                     <x-table.tr>
                         <x-table.td></x-table.td>
-                        <x-table.td class="font-weight-bold">
-                            TOTAL BEBAN & BIAYA
-                        </x-table.td>
+                        <x-table.td class="font-weight-bold">TOTAL BEBAN & BIAYA</x-table.td>
                         <x-table.td class="font-weight-bold">
                             {{ rp($this->totalLabaRugiPerRekening['totalDebetBeban']) }}
                         </x-table.td>
@@ -123,9 +108,7 @@
 
                     <x-table.tr>
                         <x-table.td></x-table.td>
-                        <x-table.td class="font-weight-bold">
-                            PENDAPATAN BERSIH
-                        </x-table.td>
+                        <x-table.td class="font-weight-bold">PENDAPATAN BERSIH</x-table.td>
                         <x-table.td class="font-weight-bold">
                             {{ rp($this->totalLabaRugiPerRekening['totalPendapatan']) }}
                         </x-table.td>

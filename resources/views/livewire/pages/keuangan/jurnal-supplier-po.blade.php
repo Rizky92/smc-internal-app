@@ -5,13 +5,7 @@
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.range-date />
-                <x-button
-                    size="sm"
-                    title="Tarik Data Terbaru"
-                    icon="fas fa-sync-alt"
-                    class="ml-auto"
-                    wire:click.prevent="tarikDataTerbaru"
-                />
+                <x-button size="sm" title="Tarik Data Terbaru" icon="fas fa-sync-alt" class="ml-auto" wire:click.prevent="tarikDataTerbaru" />
                 <x-filter.button-export-excel class="ml-2" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
@@ -28,41 +22,16 @@
                 </x-slot>
                 <x-slot name="contents">
                     <x-navtabs.content id="medis">
-                        <x-table
-                            :sortColumns="$sortColumns"
-                            sortable
-                            zebra
-                            hover
-                            sticky
-                            nowrap
-                        >
+                        <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                             <x-slot name="columns">
-                                <x-table.th
-                                    name="no_jurnal"
-                                    title="No. Jurnal"
-                                />
+                                <x-table.th name="no_jurnal" title="No. Jurnal" />
                                 <x-table.th name="waktu_jurnal" title="Waktu" />
-                                <x-table.th
-                                    name="no_faktur"
-                                    title="No. Faktur"
-                                />
+                                <x-table.th name="no_faktur" title="No. Faktur" />
                                 <x-table.th name="status" title="Status" />
-                                <x-table.th
-                                    name="besar_bayar"
-                                    title="Nominal"
-                                />
-                                <x-table.th
-                                    name="nama_bayar"
-                                    title="Akun Bayar"
-                                />
-                                <x-table.th
-                                    name="kd_rek"
-                                    title="Kode Rekening"
-                                />
-                                <x-table.th
-                                    name="nama_suplier"
-                                    title="Supplier"
-                                />
+                                <x-table.th name="besar_bayar" title="Nominal" />
+                                <x-table.th name="nama_bayar" title="Akun Bayar" />
+                                <x-table.th name="kd_rek" title="Kode Rekening" />
+                                <x-table.th name="nama_suplier" title="Supplier" />
                                 <x-table.th name="nm_pegawai" title="Petugas" />
                             </x-slot>
                             <x-slot name="body">
@@ -101,47 +70,19 @@
                                 @endforelse
                             </x-slot>
                         </x-table>
-                        <x-paginator
-                            class="px-4 py-3 bg-light"
-                            :data="$this->jurnalBarangMedis"
-                        />
+                        <x-paginator class="px-4 py-3 bg-light" :data="$this->jurnalBarangMedis" />
                     </x-navtabs.content>
                     <x-navtabs.content id="nonmedis">
-                        <x-table
-                            :sortColumns="$sortColumns"
-                            sortable
-                            zebra
-                            hover
-                            sticky
-                            nowrap
-                        >
+                        <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                             <x-slot name="columns">
-                                <x-table.th
-                                    name="no_jurnal"
-                                    title="No. Jurnal"
-                                />
+                                <x-table.th name="no_jurnal" title="No. Jurnal" />
                                 <x-table.th name="waktu_jurnal" title="Waktu" />
-                                <x-table.th
-                                    name="no_faktur"
-                                    title="No. Faktur"
-                                />
+                                <x-table.th name="no_faktur" title="No. Faktur" />
                                 <x-table.th name="status" title="Status" />
-                                <x-table.th
-                                    name="besar_bayar"
-                                    title="Nominal"
-                                />
-                                <x-table.th
-                                    name="nama_bayar"
-                                    title="Akun Bayar"
-                                />
-                                <x-table.th
-                                    name="kd_rek"
-                                    title="Kode Rekening"
-                                />
-                                <x-table.th
-                                    name="nama_suplier"
-                                    title="Supplier"
-                                />
+                                <x-table.th name="besar_bayar" title="Nominal" />
+                                <x-table.th name="nama_bayar" title="Akun Bayar" />
+                                <x-table.th name="kd_rek" title="Kode Rekening" />
+                                <x-table.th name="nama_suplier" title="Supplier" />
                                 <x-table.th name="nm_pegawai" title="Petugas" />
                             </x-slot>
                             <x-slot name="body">
@@ -180,10 +121,7 @@
                                 @endforelse
                             </x-slot>
                         </x-table>
-                        <x-paginator
-                            class="px-4 py-3 bg-light"
-                            :data="$this->jurnalBarangNonMedis"
-                        />
+                        <x-paginator class="px-4 py-3 bg-light" :data="$this->jurnalBarangNonMedis" />
                     </x-navtabs.content>
                 </x-slot>
             </x-navtabs>

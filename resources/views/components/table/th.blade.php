@@ -25,26 +25,16 @@
     @endphp
 
     <th {{ $attributes->class(['py-2']) }}>
-        <button
-            type="button"
-            class="btn btn-link text-decoration-none font-weight-bold w-100 p-0 m-0 {{ $alignButtonClass }}"
-            wire:click="sortBy(@js($name), @js($direction))"
-        >
+        <button type="button" class="btn btn-link text-decoration-none font-weight-bold w-100 p-0 m-0 {{ $alignButtonClass }}" wire:click="sortBy(@js($name), @js($direction))">
             <span class="text-dark {{ $alignTitleClass }}">{{ $title }}</span>
 
             @switch($direction)
                 @case('asc')
-                    <i
-                        class="fas fa-arrow-up"
-                        style="margin-top: 0.0625rem"
-                    ></i>
+                    <i class="fas fa-arrow-up" style="margin-top: 0.0625rem"></i>
 
                     @break
                 @case('desc')
-                    <i
-                        class="fas fa-arrow-down"
-                        style="margin-top: 0.0625rem"
-                    ></i>
+                    <i class="fas fa-arrow-down" style="margin-top: 0.0625rem"></i>
 
                     @break
             @endswitch

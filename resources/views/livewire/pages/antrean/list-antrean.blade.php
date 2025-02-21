@@ -18,10 +18,7 @@
             </h5>
         </div>
         <div class="card-body">
-            <table
-                width="100%"
-                class="table table-sm text-sm table-bordered table-striped"
-            >
+            <table width="100%" class="table table-sm text-sm table-bordered table-striped">
                 <thead class="bg-success">
                     <tr>
                         <th style="width: 12ch">No Reg</th>
@@ -30,17 +27,8 @@
                     </tr>
                 </thead>
             </table>
-            <div
-                class="marquee bg-white"
-                data-direction="up"
-                data-duration="20000"
-                startVisible="true"
-                data-gap="10"
-                data-duplicated="false"
-            >
-                <table
-                    class="table table-sm text-sm table-bordered table-striped"
-                >
+            <div class="marquee bg-white" data-direction="up" data-duration="20000" startVisible="true" data-gap="10" data-duplicated="false">
+                <table class="table table-sm text-sm table-bordered table-striped">
                     <tbody>
                         @forelse ($this->antreanPerPintu as $item)
                             <tr>
@@ -56,12 +44,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td
-                                    colspan="3"
-                                    class="text-center text-muted p-4"
-                                >
-                                    Tidak ada yang dapat ditampilkan saat ini
-                                </td>
+                                <td colspan="3" class="text-center text-muted p-4">Tidak ada yang dapat ditampilkan saat ini</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -83,9 +66,7 @@
                     marquee.marquee();
                     marquee.off('finished').on('finished', function () {
                         Livewire.emit('updateAntrean');
-                        console.log(
-                            'marquee finished, refreshing data after scrolling ends',
-                        );
+                        console.log('marquee finished, refreshing data after scrolling ends');
                     });
 
                     if (refreshInterval) {
@@ -99,9 +80,7 @@
                     if (!refreshInterval) {
                         refreshInterval = setInterval(function () {
                             Livewire.emit('updateAntrean');
-                            console.log(
-                                'rowCount <= 20, refreshing data via interval',
-                            );
+                            console.log('rowCount <= 20, refreshing data via interval');
                         }, 5000);
                     }
                 }

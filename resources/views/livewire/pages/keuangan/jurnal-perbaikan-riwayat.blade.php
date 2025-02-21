@@ -9,18 +9,8 @@
                     <x-table.th name="tgl_jurnal_asli" title="Tgl. Asli" />
                     <x-table.th name="tgl_jurnal_diubah" title="Tgl. Diubah" />
                     <x-table.th name="keterangan" title="Keterangan" />
-                    <x-table.th
-                        align="right"
-                        name="total_debet"
-                        title="Total Debet"
-                        colspan="2"
-                    />
-                    <x-table.th
-                        align="right"
-                        name="total_kredit"
-                        title="Total Kredit"
-                        colspan="2"
-                    />
+                    <x-table.th align="right" name="total_debet" title="Total Debet" colspan="2" />
+                    <x-table.th align="right" name="total_kredit" title="Total Kredit" colspan="2" />
                     <x-table.th name="nip" title="NIP" />
                     <x-table.th name="nama" title="Pegawai" />
                 </x-slot>
@@ -37,12 +27,8 @@
                             <x-table.td>
                                 {{ $item->jurnal->keterangan }}
                             </x-table.td>
-                            <x-table.td-money
-                                :value="$item->jurnal->total_debet"
-                            />
-                            <x-table.td-money
-                                :value="$item->jurnal->total_kredit"
-                            />
+                            <x-table.td-money :value="$item->jurnal->total_debet" />
+                            <x-table.td-money :value="$item->jurnal->total_kredit" />
                             <x-table.td>{{ $item->nip }}</x-table.td>
                             <x-table.td>
                                 {{ $item->pegawai->nama }}

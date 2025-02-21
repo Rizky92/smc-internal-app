@@ -19,8 +19,7 @@
                 'aria-selected' => $selected === $id ? 'true' : 'false',
                 'wire:ignore.self' => $livewire,
             ])
-        }}
-    >
+        }}>
         <span>{{ $title }}</span>
     </a>
 </li>

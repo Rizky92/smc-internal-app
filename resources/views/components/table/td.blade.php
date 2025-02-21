@@ -5,9 +5,7 @@
 
 @php($rowspan = $attributes->get('rowspan'))
 
-<td
-    {{ $attributes->whereDoesntStartWith('data-')->when($rowspan == '0', fn ($attr) => $attr->except('rowspan')) }}
->
+<td {{ $attributes->whereDoesntStartWith('data-')->when($rowspan == '0', fn ($attr) => $attr->except('rowspan')) }}>
     {{ $slot }}
     @if ($clickable)
         <button
@@ -17,7 +15,6 @@
                     'type' => 'button',
                 ])
             }}
-            onclick="{{ $funcName }}(this); document.documentElement.scrollTop = 0;"
-        ></button>
+            onclick="{{ $funcName }}(this); document.documentElement.scrollTop = 0;"></button>
     @endif
 </td>

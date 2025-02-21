@@ -3,14 +3,7 @@
 
     <x-card use-default-filter use-loading>
         <x-slot name="body">
-            <x-table
-                :sortColumns="$sortColumns"
-                sortable
-                zebra
-                hover
-                sticky
-                nowrap
-            >
+            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="no_rawat" title="No. Rawat" />
                     <x-table.th name="no_resep" title="No. Resep" />
@@ -18,10 +11,7 @@
                     <x-table.th name="umur" title="Umur" />
                     <x-table.th name="tgl_perawatan" title="Tgl. Validasi" />
                     <x-table.th name="jam" title="Jam" />
-                    <x-table.th
-                        name="nm_dokter_peresep"
-                        title="Dokter Peresep"
-                    />
+                    <x-table.th name="nm_dokter_peresep" title="Dokter Peresep" />
                     <x-table.th name="nm_dokter_poli" title="Dokter Poli" />
                     <x-table.th name="status_lanjut" title="Jenis Perawatan" />
                     <x-table.th name="nm_poli" title="Asal Poli" />

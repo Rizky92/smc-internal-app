@@ -5,11 +5,7 @@
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.range-date />
-                <x-filter.button-refresh
-                    method="tarikDataTerbaru"
-                    title="Tarik Data Terbaru"
-                    class="ml-auto"
-                />
+                <x-filter.button-refresh method="tarikDataTerbaru" title="Tarik Data Terbaru" class="ml-auto" />
                 <x-filter.button-export-excel class="ml-2" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
@@ -19,62 +15,18 @@
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-table
-                :sortColumns="$sortColumns"
-                style="width: 120rem"
-                sortable
-                zebra
-                hover
-                sticky
-                nowrap
-            >
+            <x-table :sortColumns="$sortColumns" style="width: 120rem" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
-                    <x-table.th
-                        name="no_rawat"
-                        title="No. Rawat"
-                        style="width: 17ch"
-                    />
-                    <x-table.th
-                        name="no_rkm_medis"
-                        title="No. RM"
-                        style="width: 10ch"
-                    />
+                    <x-table.th name="no_rawat" title="No. Rawat" style="width: 17ch" />
+                    <x-table.th name="no_rkm_medis" title="No. RM" style="width: 10ch" />
                     <x-table.th name="nm_pasien" title="Pasien" />
-                    <x-table.th
-                        name="ruangan"
-                        title="Ruang Inap"
-                        style="width: 30ch"
-                    />
-                    <x-table.th
-                        name="status_pasien"
-                        title="Jenis Perawatan"
-                        style="width: 18ch"
-                    />
-                    <x-table.th
-                        name="bentuk_bayar"
-                        title="Bentuk Pembayaran"
-                        style="width: 20ch"
-                    />
-                    <x-table.th
-                        name="besar_bayar"
-                        title="Total"
-                        style="width: 20ch"
-                    />
-                    <x-table.th
-                        name="png_jawab"
-                        title="Asuransi"
-                        style="width: 25ch"
-                    />
-                    <x-table.th
-                        name="tgl_penyelesaian"
-                        title="Dilunaskan Pada"
-                        style="width: 20ch"
-                    />
-                    <x-table.th
-                        name="nama_pegawai"
-                        title="Oleh Petugas"
-                        style="width: 40ch"
-                    />
+                    <x-table.th name="ruangan" title="Ruang Inap" style="width: 30ch" />
+                    <x-table.th name="status_pasien" title="Jenis Perawatan" style="width: 18ch" />
+                    <x-table.th name="bentuk_bayar" title="Bentuk Pembayaran" style="width: 20ch" />
+                    <x-table.th name="besar_bayar" title="Total" style="width: 20ch" />
+                    <x-table.th name="png_jawab" title="Asuransi" style="width: 25ch" />
+                    <x-table.th name="tgl_penyelesaian" title="Dilunaskan Pada" style="width: 20ch" />
+                    <x-table.th name="nama_pegawai" title="Oleh Petugas" style="width: 40ch" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->billingYangDiselesaikan as $billing)

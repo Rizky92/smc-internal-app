@@ -13,84 +13,20 @@
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-table
-                :sortColumns="$sortColumns"
-                sortable
-                zebra
-                hover
-                sticky
-                nowrap
-                style="width: 140rem"
-            >
+            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap style="width: 140rem">
                 <x-slot name="columns">
-                    <x-table.th
-                        name="kode_brng"
-                        title="Kode"
-                        style="width: 13ch"
-                    />
-                    <x-table.th
-                        name="nama_brng"
-                        title="Nama"
-                        style="width: 50ch"
-                    />
-                    <x-table.th
-                        name="satuan_kecil"
-                        title="Satuan"
-                        style="width: 12ch"
-                    />
-                    <x-table.th
-                        name="kategori"
-                        title="Kategori"
-                        style="width: 25ch"
-                    />
-                    <x-table.th
-                        name="stok_saat_ini"
-                        title="Stok Seluruh Depo Farmasi Saat Ini"
-                        align="right"
-                        style="width: 40ch"
-                    />
-                    <x-table.th
-                        name="ke_pasien_14_hari"
-                        title="Jumlah Ke Pasien (14 Hari)"
-                        align="right"
-                        style="width: 40ch"
-                    />
-                    <x-table.th
-                        name="pemakaian_1_minggu"
-                        title="Pemakaian 1 Minggu"
-                        align="right"
-                        style="width: 40ch"
-                    />
-                    <x-table.th
-                        name="pemakaian_1_bulan"
-                        title="Pemakaian 1 Bulan"
-                        align="right"
-                        style="width: 40ch"
-                    />
-                    <x-table.th
-                        name="pemakaian_3_bulan"
-                        title="Pemakaian 3 Bulan"
-                        align="right"
-                        style="width: 40ch"
-                    />
-                    <x-table.th
-                        name="pemakaian_6_bulan"
-                        title="Pemakaian 6 Bulan"
-                        align="right"
-                        style="width: 40ch"
-                    />
-                    <x-table.th
-                        name="pemakaian_10_bulan"
-                        title="Pemakaian 10 Bulan"
-                        align="right"
-                        style="width: 40ch"
-                    />
-                    <x-table.th
-                        name="pemakaian_12_bulan"
-                        title="Pemakaian 12 Bulan"
-                        align="right"
-                        style="width: 40ch"
-                    />
+                    <x-table.th name="kode_brng" title="Kode" style="width: 13ch" />
+                    <x-table.th name="nama_brng" title="Nama" style="width: 50ch" />
+                    <x-table.th name="satuan_kecil" title="Satuan" style="width: 12ch" />
+                    <x-table.th name="kategori" title="Kategori" style="width: 25ch" />
+                    <x-table.th name="stok_saat_ini" title="Stok Seluruh Depo Farmasi Saat Ini" align="right" style="width: 40ch" />
+                    <x-table.th name="ke_pasien_14_hari" title="Jumlah Ke Pasien (14 Hari)" align="right" style="width: 40ch" />
+                    <x-table.th name="pemakaian_1_minggu" title="Pemakaian 1 Minggu" align="right" style="width: 40ch" />
+                    <x-table.th name="pemakaian_1_bulan" title="Pemakaian 1 Bulan" align="right" style="width: 40ch" />
+                    <x-table.th name="pemakaian_3_bulan" title="Pemakaian 3 Bulan" align="right" style="width: 40ch" />
+                    <x-table.th name="pemakaian_6_bulan" title="Pemakaian 6 Bulan" align="right" style="width: 40ch" />
+                    <x-table.th name="pemakaian_10_bulan" title="Pemakaian 10 Bulan" align="right" style="width: 40ch" />
+                    <x-table.th name="pemakaian_12_bulan" title="Pemakaian 12 Bulan" align="right" style="width: 40ch" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->pemakaianStokObat as $obat)

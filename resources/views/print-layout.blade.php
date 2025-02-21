@@ -99,19 +99,11 @@
 
 <div id="printHeader">
     <div style="text-align: center">
-        <img
-            src="{{ asset('img/logo.png') }}"
-            margin="0"
-            style="display: inline-block; vertical-align: middle"
-            width="80px"
-        />
+        <img src="{{ asset('img/logo.png') }}" margin="0" style="display: inline-block; vertical-align: middle" width="80px" />
         <div style="display: inline-block; vertical-align: middle">
-            <h2 style="font-family: 'Arial', serif; font-size: 20px; margin: 0">
-                RS SAMARINDA MEDIKA CITRA
-            </h2>
+            <h2 style="font-family: 'Arial', serif; font-size: 20px; margin: 0">RS SAMARINDA MEDIKA CITRA</h2>
             <p style="font-size: 14px; margin: 1px">
-                Jl. Kadrie Oening no.85, RT.35, Kel. Air Putih, Kec. Samarinda
-                Ulu, Samarinda, Kalimantan Timur
+                Jl. Kadrie Oening no.85, RT.35, Kel. Air Putih, Kec. Samarinda Ulu, Samarinda, Kalimantan Timur
                 <br />
                 TEL:0541-7273000
                 <br />
@@ -119,17 +111,8 @@
             </p>
         </div>
     </div>
-    <hr
-        style="border-top: 2px solid #333; margin-top: 10px; margin-bottom: 1px"
-    />
-    <hr
-        style="
-            border-top: 2px solid #333;
-            margin-top: 1px;
-            margin-bottom: 10px;
-            padding-top: 2px;
-        "
-    />
+    <hr style="border-top: 2px solid #333; margin-top: 10px; margin-bottom: 1px" />
+    <hr style="border-top: 2px solid #333; margin-top: 1px; margin-bottom: 10px; padding-top: 2px" />
 </div>
 
 <h2>POSTING JURNAL</h2>

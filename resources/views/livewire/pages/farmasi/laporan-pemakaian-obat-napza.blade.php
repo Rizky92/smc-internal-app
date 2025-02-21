@@ -10,52 +10,23 @@
                 </x-slot>
                 <x-slot name="contents">
                     <x-navtabs.content id="narkotika">
-                        <x-table
-                            :sortColumns="$sortColumns"
-                            style="min-width: 100%"
-                            sortable
-                            zebra
-                            hover
-                            sticky
-                            nowrap
-                        >
+                        <x-table :sortColumns="$sortColumns" style="min-width: 100%" sortable zebra hover sticky nowrap>
                             <x-slot name="columns">
                                 <x-table.th name="kode_brng" title="Kode" />
                                 <x-table.th name="nama_brng" title="Nama" />
                                 <x-table.th name="nama" title="Golongan" />
                                 <x-table.th name="satuan" title="Satuan" />
                                 <x-table.th align="right" title="Stok Awal" />
-                                <x-table.th
-                                    align="right"
-                                    title="Transfer Obat Masuk"
-                                />
-                                <x-table.th
-                                    align="right"
-                                    title="Penerimaan Obat"
-                                />
+                                <x-table.th align="right" title="Transfer Obat Masuk" />
+                                <x-table.th align="right" title="Penerimaan Obat" />
                                 <x-table.th align="right" title="Hibah Obat" />
                                 <x-table.th align="right" title="Obat Retur" />
                                 <x-table.th align="right" title="Total Masuk" />
-                                <x-table.th
-                                    align="right"
-                                    title="Pemberian Obat"
-                                />
-                                <x-table.th
-                                    align="right"
-                                    title="Penjualan Obat"
-                                />
-                                <x-table.th
-                                    align="right"
-                                    title="Transfer Obat Keluar"
-                                />
-                                <x-table.th
-                                    align="right"
-                                    title="Retur ke Supplier"
-                                />
-                                <x-table.th
-                                    align="right"
-                                    title="Total Keluar"
-                                />
+                                <x-table.th align="right" title="Pemberian Obat" />
+                                <x-table.th align="right" title="Penjualan Obat" />
+                                <x-table.th align="right" title="Transfer Obat Keluar" />
+                                <x-table.th align="right" title="Retur ke Supplier" />
+                                <x-table.th align="right" title="Total Keluar" />
                                 <x-table.th align="right" title="Stok Akhir" />
                             </x-slot>
                             <x-slot name="body">
@@ -115,58 +86,26 @@
                                 @endforelse
                             </x-slot>
                         </x-table>
-                        <x-paginator
-                            class="px-4 py-3 bg-light border-top"
-                            :data="$this->dataPemakaianObatNarkotika"
-                        />
+                        <x-paginator class="px-4 py-3 bg-light border-top" :data="$this->dataPemakaianObatNarkotika" />
                     </x-navtabs.content>
                     <x-navtabs.content id="psikotropika">
-                        <x-table
-                            :sortColumns="$sortColumns"
-                            style="min-width: 100%"
-                            sortable
-                            zebra
-                            hover
-                            sticky
-                            nowrap
-                        >
+                        <x-table :sortColumns="$sortColumns" style="min-width: 100%" sortable zebra hover sticky nowrap>
                             <x-slot name="columns">
                                 <x-table.th name="kode_brng" title="Kode" />
                                 <x-table.th name="nama_brng" title="Nama" />
                                 <x-table.th name="nama" title="Golongan" />
                                 <x-table.th name="satuan" title="Satuan" />
                                 <x-table.th align="right" title="Stok Awal" />
-                                <x-table.th
-                                    align="right"
-                                    title="Transfer Obat Masuk"
-                                />
-                                <x-table.th
-                                    align="right"
-                                    title="Penerimaan Obat"
-                                />
+                                <x-table.th align="right" title="Transfer Obat Masuk" />
+                                <x-table.th align="right" title="Penerimaan Obat" />
                                 <x-table.th align="right" title="Hibah Obat" />
                                 <x-table.th align="right" title="Obat Retur" />
                                 <x-table.th align="right" title="Total Masuk" />
-                                <x-table.th
-                                    align="right"
-                                    title="Pemberian Obat"
-                                />
-                                <x-table.th
-                                    align="right"
-                                    title="Penjualan Obat"
-                                />
-                                <x-table.th
-                                    align="right"
-                                    title="Transfer Obat Keluar"
-                                />
-                                <x-table.th
-                                    align="right"
-                                    title="Retur ke Supplier"
-                                />
-                                <x-table.th
-                                    align="right"
-                                    title="Total Keluar"
-                                />
+                                <x-table.th align="right" title="Pemberian Obat" />
+                                <x-table.th align="right" title="Penjualan Obat" />
+                                <x-table.th align="right" title="Transfer Obat Keluar" />
+                                <x-table.th align="right" title="Retur ke Supplier" />
+                                <x-table.th align="right" title="Total Keluar" />
                                 <x-table.th align="right" title="Stok Akhir" />
                             </x-slot>
                             <x-slot name="body">
@@ -226,10 +165,7 @@
                                 @endforelse
                             </x-slot>
                         </x-table>
-                        <x-paginator
-                            class="px-4 py-3 bg-light border-top"
-                            :data="$this->dataPemakaianObatPsikotropika"
-                        />
+                        <x-paginator class="px-4 py-3 bg-light border-top" :data="$this->dataPemakaianObatPsikotropika" />
                     </x-navtabs.content>
                 </x-slot>
             </x-navtabs>

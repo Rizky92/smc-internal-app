@@ -6,9 +6,7 @@
 
 @switch($as)
     @case('button')
-        <button
-            {{ $attributes->merge(['class' => 'dropdown-item', 'type' => 'button', 'id' => Str::slug($title)]) }}
-        >
+        <button {{ $attributes->merge(['class' => 'dropdown-item', 'type' => 'button', 'id' => Str::slug($title)]) }}>
             @if ($icon)
                 <i class="{{ $icon }}"></i>
                 <span class="ml-1">{{ $title ?? $slot }}</span>
@@ -19,9 +17,7 @@
 
         @break
     @case('link')
-        <a
-            {{ $attributes->merge(['class' => 'dropdown-item', 'role' => 'button', 'id' => Str::slug($title)]) }}
-        >
+        <a {{ $attributes->merge(['class' => 'dropdown-item', 'role' => 'button', 'id' => Str::slug($title)]) }}>
             @if ($icon)
                 <i class="{{ $icon }}"></i>
                 <span class="ml-1">{{ $title ?? $slot }}</span>

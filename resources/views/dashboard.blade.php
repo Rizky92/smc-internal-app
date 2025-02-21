@@ -6,9 +6,7 @@
             <div class="col-12">
                 <h5 class="font-weight-normal">
                     Selamat Datang,
-                    <span class="font-weight-bold">
-                        {{ str(user()->nama)->title() }}!
-                    </span>
+                    <span class="font-weight-bold">{{ str(user()->nama)->title() }}!</span>
                 </h5>
             </div>
         </div>

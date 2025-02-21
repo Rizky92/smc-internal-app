@@ -1,11 +1,7 @@
 <div>
     <x-card use-default-filter>
         <x-slot name="body" class="table-responsive">
-            <x-table
-                sortable
-                :sortColumns="$sortColumns"
-                style="min-width: 100%"
-            >
+            <x-table sortable :sortColumns="$sortColumns" style="min-width: 100%">
                 <x-slot name="columns">
                     {{-- <x-table.th name="id" title="#" /> --}}
                 </x-slot>

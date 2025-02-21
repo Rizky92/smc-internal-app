@@ -4,13 +4,11 @@
     'icon' => 'fas fa-file-excel',
 ])
 
-<x-button
-    :attributes="$attributes->merge([
-        'size' => 'sm',
-        'variant' => 'dark',
-        'outline' => true,
-        'title' => $title,
-        'icon' => $icon,
-        'wire:click.prevent' => $method,
-    ])"
-/>
+<x-button :attributes="$attributes->merge([
+    'size' => 'sm',
+    'variant' => 'dark',
+    'outline' => true,
+    'title' => $title,
+    'icon' => $icon,
+    'wire:click.prevent' => $method,
+])" />

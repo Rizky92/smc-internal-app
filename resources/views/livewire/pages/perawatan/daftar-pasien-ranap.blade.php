@@ -147,16 +147,8 @@
                 <x-row>
                     <div class="col-4">
                         <div class="form-group">
-                            <label class="text-sm" for="no_rawat">
-                                No. Rawat
-                            </label>
-                            <input
-                                type="text"
-                                class="form-control form-control-sm"
-                                id="no_rawat"
-                                readonly
-                                autocomplete="off"
-                            />
+                            <label class="text-sm" for="no_rawat">No. Rawat</label>
+                            <input type="text" class="form-control form-control-sm" id="no_rawat" readonly autocomplete="off" />
                             <input type="hidden" id="kd_kamar" />
                             <input type="hidden" id="trf_kamar" />
                             <input type="hidden" id="tgl_masuk" />
@@ -166,25 +158,13 @@
                     <div class="col-3">
                         <div class="form-group">
                             <label class="text-sm" for="kamar">Kamar</label>
-                            <input
-                                type="text"
-                                class="form-control form-control-sm"
-                                id="kamar"
-                                readonly
-                                autocomplete="off"
-                            />
+                            <input type="text" class="form-control form-control-sm" id="kamar" readonly autocomplete="off" />
                         </div>
                     </div>
                     <div class="col-5">
                         <div class="form-group">
                             <label class="text-sm" for="pasien">Pasien</label>
-                            <input
-                                type="text"
-                                class="form-control form-control-sm"
-                                id="pasien"
-                                readonly
-                                autocomplete="off"
-                            />
+                            <input type="text" class="form-control form-control-sm" id="pasien" readonly autocomplete="off" />
                         </div>
                     </div>
                 </x-row>
@@ -192,78 +172,31 @@
                 <x-row>
                     <div class="col-6">
                         <div class="form-group">
-                            <label class="text-sm" for="harga_kamar">
-                                Harga Kamar
-                            </label>
+                            <label class="text-sm" for="harga_kamar">Harga Kamar</label>
                             <div class="d-flex align-items-center">
-                                <input
-                                    type="number"
-                                    class="form-control form-control-sm"
-                                    id="harga_kamar"
-                                    autocomplete="off"
-                                    min="0"
-                                />
+                                <input type="number" class="form-control form-control-sm" id="harga_kamar" autocomplete="off" min="0" />
                                 <span class="font-weight-medium pl-3">x</span>
                             </div>
                         </div>
                     </div>
                     <div class="col-1">
                         <div class="form-group">
-                            <label class="text-sm" for="lama_inap">
-                                Lama Inap
-                            </label>
-                            <input
-                                type="number"
-                                class="form-control form-control-sm"
-                                id="lama_inap"
-                                autocomplete="off"
-                                min="0"
-                            />
+                            <label class="text-sm" for="lama_inap">Lama Inap</label>
+                            <input type="number" class="form-control form-control-sm" id="lama_inap" autocomplete="off" min="0" />
                         </div>
                     </div>
                     <div class="col-5">
                         <div class="form-group">
-                            <label class="text-sm" for="total_harga">
-                                Total Harga
-                            </label>
-                            <input
-                                type="text"
-                                class="form-control form-control-sm"
-                                id="total_harga"
-                                readonly
-                                autocomplete="off"
-                            />
+                            <label class="text-sm" for="total_harga">Total Harga</label>
+                            <input type="text" class="form-control form-control-sm" id="total_harga" readonly autocomplete="off" />
                         </div>
                     </div>
                 </x-row>
 
                 <x-row-col-flex class="pb-3 border-bottom">
-                    <x-button
-                        size="sm"
-                        variant="primary"
-                        disabled
-                        id="simpan-data"
-                        title="Simpan"
-                        icon="fas fa-save"
-                    />
-                    <x-button
-                        size="sm"
-                        disabled
-                        class="ml-2"
-                        id="batal-simpan"
-                        title="Batal"
-                    />
-                    <div
-                        id="copy-to-clipboard"
-                        class="text-xs border-0 ml-2"
-                        style="
-                            flex-grow: 1;
-                            user-select: all;
-                            font-family: monospace;
-                            white-space: pre-wrap;
-                            line-height: 1.25;
-                        "
-                    ></div>
+                    <x-button size="sm" variant="primary" disabled id="simpan-data" title="Simpan" icon="fas fa-save" />
+                    <x-button size="sm" disabled class="ml-2" id="batal-simpan" title="Batal" />
+                    <div id="copy-to-clipboard" class="text-xs border-0 ml-2" style="flex-grow: 1; user-select: all; font-family: monospace; white-space: pre-wrap; line-height: 1.25"></div>
                 </x-row-col-flex>
             @endcan
 
@@ -272,20 +205,16 @@
                     'mt-3' => auth()
                         ->user()
                         ->can('perawatan.daftar-pasien-ranap.update-harga-kamar'),
-                ])"
-            >
+                ])">
                 <x-filter.range-date />
-                <x-filter.label class="ml-auto pr-3">
-                    Berdasarkan:
-                </x-filter.label>
+                <x-filter.label class="ml-auto pr-3">Berdasarkan:</x-filter.label>
                 <x-filter.select
                     model="jenisRawat"
                     :options="[
                         '-' => 'Sedang Dirawat',
                         'tanggal_masuk' => 'Tgl. Masuk',
                         'tanggal_keluar' => 'Tgl. Keluar',
-                    ]"
-                />
+                    ]" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
@@ -296,109 +225,29 @@
         </x-slot>
 
         <x-slot name="body">
-            <x-table
-                :sortColumns="$sortColumns"
-                style="width: 250rem"
-                sortable
-                zebra
-                hover
-                sticky
-                nowrap
-            >
+            <x-table :sortColumns="$sortColumns" style="width: 250rem" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
-                    <x-table.th
-                        name="no_rawat"
-                        title="No. Rawat"
-                        style="width: 20ch"
-                    />
-                    <x-table.th
-                        name="ruangan"
-                        title="Kamar"
-                        style="width: 35ch"
-                    />
-                    <x-table.th
-                        name="kelas"
-                        title="Kelas"
-                        style="width: 10ch"
-                    />
-                    <x-table.th
-                        name="no_rkm_medis"
-                        title="No. RM"
-                        style="width: 10ch"
-                    />
-                    <x-table.th
-                        name="data_pasien"
-                        title="Pasien"
-                        style="width: 50ch"
-                    />
+                    <x-table.th name="no_rawat" title="No. Rawat" style="width: 20ch" />
+                    <x-table.th name="ruangan" title="Kamar" style="width: 35ch" />
+                    <x-table.th name="kelas" title="Kelas" style="width: 10ch" />
+                    <x-table.th name="no_rkm_medis" title="No. RM" style="width: 10ch" />
+                    <x-table.th name="data_pasien" title="Pasien" style="width: 50ch" />
                     <x-table.th name="alamat_pasien" title="Alamat" />
-                    <x-table.th
-                        name="agama"
-                        title="Agama"
-                        style="width: 10ch"
-                    />
+                    <x-table.th name="agama" title="Agama" style="width: 10ch" />
                     <x-table.th name="pj" title="P.J." style="width: 30ch" />
-                    <x-table.th
-                        name="png_jawab"
-                        title="Jenis Bayar"
-                        style="width: 25ch"
-                    />
-                    <x-table.th
-                        name="nm_poli"
-                        title="Asal Poli"
-                        style="width: 20ch"
-                    />
-                    <x-table.th
-                        name="dokter_poli"
-                        title="Dokter Poli"
-                        style="width: 40ch"
-                    />
-                    <x-table.th
-                        name="stts_pulang"
-                        title="Status"
-                        style="width: 15ch"
-                    />
-                    <x-table.th
-                        name="tgl_masuk"
-                        title="Tgl. Masuk"
-                        style="width: 12ch"
-                    />
-                    <x-table.th
-                        name="jam_masuk"
-                        title="Jam Masuk"
-                        style="width: 12ch"
-                    />
-                    <x-table.th
-                        name="tgl_keluar"
-                        title="Tgl. Keluar"
-                        style="width: 12ch"
-                    />
-                    <x-table.th
-                        name="jam_keluar"
-                        title="Jam Keluar"
-                        style="width: 12ch"
-                    />
-                    <x-table.th
-                        name="trf_kamar"
-                        title="Tarif Kamar"
-                        style="width: 15ch"
-                    />
+                    <x-table.th name="png_jawab" title="Jenis Bayar" style="width: 25ch" />
+                    <x-table.th name="nm_poli" title="Asal Poli" style="width: 20ch" />
+                    <x-table.th name="dokter_poli" title="Dokter Poli" style="width: 40ch" />
+                    <x-table.th name="stts_pulang" title="Status" style="width: 15ch" />
+                    <x-table.th name="tgl_masuk" title="Tgl. Masuk" style="width: 12ch" />
+                    <x-table.th name="jam_masuk" title="Jam Masuk" style="width: 12ch" />
+                    <x-table.th name="tgl_keluar" title="Tgl. Keluar" style="width: 12ch" />
+                    <x-table.th name="jam_keluar" title="Jam Keluar" style="width: 12ch" />
+                    <x-table.th name="trf_kamar" title="Tarif Kamar" style="width: 15ch" />
                     <x-table.th name="lama" title="Lama" style="width: 10ch" />
-                    <x-table.th
-                        name="ttl_biaya"
-                        title="Total"
-                        style="width: 20ch"
-                    />
-                    <x-table.th
-                        name="dokter_ranap"
-                        title="DPJP"
-                        style="width: 35ch"
-                    />
-                    <x-table.th
-                        name="no_tlp"
-                        title="No. HP"
-                        style="width: 15ch"
-                    />
+                    <x-table.th name="ttl_biaya" title="Total" style="width: 20ch" />
+                    <x-table.th name="dokter_ranap" title="DPJP" style="width: 35ch" />
+                    <x-table.th name="no_tlp" title="No. HP" style="width: 15ch" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->daftarPasienRanap as $pasien)
@@ -414,8 +263,7 @@
                                 data-kd-kamar="{{ $pasien->kd_kamar }}"
                                 data-tgl-masuk="{{ $pasien->tgl_masuk }}"
                                 data-jam-masuk="{{ $pasien->jam_masuk }}"
-                                data-clipboard="{{ collect($pasien->getAttributes())->join('   ') }}"
-                            >
+                                data-clipboard="{{ collect($pasien->getAttributes())->join('   ') }}">
                                 {{ $pasien->no_rawat }}
                             </x-table.td>
                             <x-table.td>
@@ -426,9 +274,7 @@
                             <x-table.td>
                                 {{ $pasien->no_rkm_medis }}
                             </x-table.td>
-                            <x-table.td>
-                                {{ $pasien->nm_pasien }} {{ $pasien->umur }}
-                            </x-table.td>
+                            <x-table.td>{{ $pasien->nm_pasien }} {{ $pasien->umur }}</x-table.td>
                             <x-table.td>
                                 {{ $pasien->alamat_lengkap }}
                             </x-table.td>

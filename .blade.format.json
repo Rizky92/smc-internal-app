@@ -1,0 +1,14 @@
+{
+    "customIfs": [
+        "null",
+        "notnull",
+        "inarray"
+    ],
+    "spacesAfterDirective": 0,
+    "spacesAfterControlDirective": 1,
+    "echoStyle": "block",
+    "phpOptions": {
+        "singleQuote": true,
+        "phpVersion": "7.0"
+    }
+}

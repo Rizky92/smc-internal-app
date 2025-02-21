@@ -6,14 +6,8 @@
             <ul class="pagination m-0">
                 {{-- Previous Page Link --}}
                 @if ($paginator->onFirstPage())
-                    <li
-                        class="page-item disabled"
-                        aria-disabled="true"
-                        aria-label="@lang('pagination.previous')"
-                    >
-                        <span class="page-link" aria-hidden="true">
-                            &lsaquo;
-                        </span>
+                    <li class="page-item disabled" aria-disabled="true" aria-label="@lang('pagination.previous')">
+                        <span class="page-link" aria-hidden="true">&lsaquo;</span>
                     </li>
                 @else
                     <li class="page-item">
@@ -24,8 +18,7 @@
                             wire:click="previousPage('{{ $paginator->getPageName() }}')"
                             wire:loading.attr="disabled"
                             rel="prev"
-                            aria-label="@lang('pagination.previous')"
-                        >
+                            aria-label="@lang('pagination.previous')">
                             &lsaquo;
                         </button>
                     </li>
@@ -47,20 +40,12 @@
                                 <li
                                     class="page-item active"
                                     wire:key="paginator-{{ $paginator->getPageName() }}-{{ $this->numberOfPaginatorsRendered[$paginator->getPageName()] }}-page-{{ $page }}"
-                                    aria-current="page"
-                                >
+                                    aria-current="page">
                                     <span class="page-link">{{ $page }}</span>
                                 </li>
                             @else
-                                <li
-                                    class="page-item"
-                                    wire:key="paginator-{{ $paginator->getPageName() }}-{{ $this->numberOfPaginatorsRendered[$paginator->getPageName()] }}-page-{{ $page }}"
-                                >
-                                    <button
-                                        type="button"
-                                        class="page-link"
-                                        wire:click="gotoPage({{ $page }}, '{{ $paginator->getPageName() }}')"
-                                    >
+                                <li class="page-item" wire:key="paginator-{{ $paginator->getPageName() }}-{{ $this->numberOfPaginatorsRendered[$paginator->getPageName()] }}-page-{{ $page }}">
+                                    <button type="button" class="page-link" wire:click="gotoPage({{ $page }}, '{{ $paginator->getPageName() }}')">
                                         {{ $page }}
                                     </button>
                                 </li>
@@ -79,20 +64,13 @@
                             wire:click="nextPage('{{ $paginator->getPageName() }}')"
                             wire:loading.attr="disabled"
                             rel="next"
-                            aria-label="@lang('pagination.next')"
-                        >
+                            aria-label="@lang('pagination.next')">
                             &rsaquo;
                         </button>
                     </li>
                 @else
-                    <li
-                        class="page-item disabled"
-                        aria-disabled="true"
-                        aria-label="@lang('pagination.next')"
-                    >
-                        <span class="page-link" aria-hidden="true">
-                            &rsaquo;
-                        </span>
+                    <li class="page-item disabled" aria-disabled="true" aria-label="@lang('pagination.next')">
+                        <span class="page-link" aria-hidden="true">&rsaquo;</span>
                     </li>
                 @endif
             </ul>

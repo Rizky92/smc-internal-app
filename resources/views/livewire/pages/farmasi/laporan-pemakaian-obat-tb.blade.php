@@ -14,24 +14,14 @@
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.label constant-width>Umur:</x-filter.label>
-                <x-filter.select
-                    model="umur"
-                    :options="[
-                        'anak' => 'Anak-anak',
-                        'dewasa' => 'Dewasa',
-                    ]"
-                />
+                <x-filter.select model="umur" :options="[
+                    'anak' => 'Anak-anak',
+                    'dewasa' => 'Dewasa',
+                ]" />
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-table
-                :sortColumns="$sortColumns"
-                sortable
-                zebra
-                hover
-                sticky
-                nowrap
-            >
+            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="no_rawat" title="No. Rawat" />
                     <x-table.th name="tgl_registrasi" title="Tgl. Registrasi" />
@@ -46,10 +36,7 @@
                     <x-table.th name="no_tlp" title="No. Telp" />
                     <x-table.th name="alamat" title="Alamat" />
                     <x-table.th name="rtl" title="Plan" />
-                    <x-table.th
-                        name="tgl_pemberian_pertama"
-                        title="Tanggal Pemberian Obat Pertama"
-                    />
+                    <x-table.th name="tgl_pemberian_pertama" title="Tanggal Pemberian Obat Pertama" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->dataLaporanPemakaianObatTB as $item)
@@ -61,9 +48,7 @@
                             <x-table.td>
                                 {{ $item->no_rkm_medis }}
                             </x-table.td>
-                            <x-table.td>
-                                {{ $item->nm_pasien }} {{ $item->umur }}
-                            </x-table.td>
+                            <x-table.td>{{ $item->nm_pasien }} {{ $item->umur }}</x-table.td>
                             <x-table.td>{{ $item->no_ktp }}</x-table.td>
                             <x-table.td>{{ $item->nama_brng }}</x-table.td>
                             <x-table.td class="text-right">

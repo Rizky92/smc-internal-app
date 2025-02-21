@@ -33,28 +33,12 @@
             </x-row-col-flex>
             <x-row-col-flex class="pt-3 border-top">
                 @if ($this->bisaTetapkanRKAT())
-                    <x-button
-                        variant="primary"
-                        size="sm"
-                        title="Anggaran Baru"
-                        icon="fas fa-plus"
-                        data-toggle="modal"
-                        data-target="#modal-input-penetapan-rkat"
-                        class="btn-primary ml-auto"
-                    />
+                    <x-button variant="primary" size="sm" title="Anggaran Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-penetapan-rkat" class="btn-primary ml-auto" />
                 @endif
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-table
-                :sortColumns="$sortColumns"
-                style="min-width: 100%"
-                sortable
-                zebra
-                hover
-                sticky
-                nowrap
-            >
+            <x-table :sortColumns="$sortColumns" style="min-width: 100%" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="tahun" title="Tahun" />
                     <x-table.th title="Bidang" />
@@ -66,10 +50,7 @@
                 <x-slot name="body">
                     @forelse ($this->dataAnggaranBidang as $item)
                         <x-table.tr>
-                            <x-table.td
-                                :clickable="$this->bisaTetapkanRKAT()"
-                                data-id="{{ $item->id }}"
-                            >
+                            <x-table.td :clickable="$this->bisaTetapkanRKAT()" data-id="{{ $item->id }}">
                                 {{ $item->tahun }}
                             </x-table.td>
                             <x-table.td>

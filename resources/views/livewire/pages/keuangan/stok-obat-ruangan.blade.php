@@ -5,12 +5,7 @@
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.label constant-width>Ruangan :</x-filter.label>
-                <x-filter.select2
-                    livewire
-                    name="kodeBangsal"
-                    placeholder="-"
-                    :options="$this->bangsal"
-                />
+                <x-filter.select2 livewire name="kodeBangsal" placeholder="-" :options="$this->bangsal" />
                 <x-filter.button-export-excel class="ml-auto" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
@@ -20,14 +15,7 @@
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-table
-                :sortColumns="$sortColumns"
-                sortable
-                zebra
-                hover
-                sticky
-                nowrap
-            >
+            <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="nm_bangsal" title="Ruangan" />
                     <x-table.th name="kode_brng" title="Kode" />

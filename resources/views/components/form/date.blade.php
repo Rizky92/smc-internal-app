@@ -11,5 +11,4 @@
                 'style' => 'width: 9rem',
             ])
             ->when($model, fn ($attr) => $attr->merge(['wire:model.defer' => $model]))
-    }}
-/>
+    }} />

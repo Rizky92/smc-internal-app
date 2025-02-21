@@ -14,12 +14,7 @@
             </x-row-col-flex>
             <x-row-col-flex class="pt-3 border-top">
                 <x-filter.label constant-width>Instansi:</x-filter.label>
-                <x-filter.select2
-                    livewire
-                    name="penjamin"
-                    :options="$this->dataPenjamin"
-                    placeholder="SEMUA"
-                />
+                <x-filter.select2 livewire name="penjamin" :options="$this->dataPenjamin" placeholder="SEMUA" />
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
