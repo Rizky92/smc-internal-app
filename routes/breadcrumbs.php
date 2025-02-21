@@ -192,6 +192,11 @@ Breadcrumbs::for('admin.farmasi.perbandingan-po-obat', function (Trail $trail): 
     $trail->push('Perbandingan PO Obat', route('admin.farmasi.perbandingan-po-obat'));
 });
 
+Breadcrumbs::for('admin.farmasi.total-inventory-depo', function (Trail $trail): void {
+    $trail->parent('admin.farmasi');
+    $trail->push('Total Inventory Depo', route('admin.farmasi.total-inventory-depo'));
+});
+
 Breadcrumbs::for('admin.farmasi.laporan-pembuatan-soap', function (Trail $trail): void {
     $trail->parent('admin.farmasi');
     $trail->push('Pembuatan SOAP', route('admin.farmasi.laporan-pembuatan-soap'));

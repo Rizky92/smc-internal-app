@@ -152,4 +152,36 @@ class GudangObat extends Model
                 ->orWhere('pemberian_obat_3hari.jumlah', '>', 0)
                 ->orWhere('pemberian_obat_6hari.jumlah', '>', 0));
     }
+
+    public function scopeTotalInventoryDepo(Builder $query, string $kodeBangsal = '-'): Builder
+    {
+        $sqlSelect = <<<'SQL'
+            bangsal.nm_bangsal,
+            kategori_barang.nama as kategori,
+            count(distinct databarang.kode_brng) as jumlah_kategori,
+            sum(gudangbarang.stok * databarang.h_beli) as total_harga
+        SQL;
+
+        $this->addSearchConditions([
+            'bangsal.nm_bangsal',
+            'kategori_barang.nama'
+        ]);
+
+        $this->addRawColumns([
+            'total_harga' => DB::raw('sum(gudangbarang.stok * databarang.h_beli) as total_harga')
+        ]);
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->withCasts([
+                'total_harga'    => 'float'
+            ])
+            ->leftJoin('databarang', 'gudangbarang.kode_brng', '=', 'databarang.kode_brng')
+            ->leftJoin('kategori_barang', 'databarang.kode_kategori', '=', 'kategori_barang.kode')
+            ->leftJoin('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
+            ->leftJoin('bangsal', 'gudangbarang.kd_bangsal', '=', 'bangsal.kd_bangsal')
+            ->when($kodeBangsal !== '-', fn (Builder $query) => $query->where('gudangbarang.kd_bangsal', $kodeBangsal))
+            ->groupBy('bangsal.kd_bangsal', 'kategori_barang.kode')
+            ->orderBy('bangsal.nm_bangsal', 'asc');
+    }
 }

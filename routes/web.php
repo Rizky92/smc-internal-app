@@ -223,6 +223,10 @@ Route::prefix('admin')
                     ->name('pemakaian-stok')
                     ->middleware('can:farmasi.pemakaian-stok.read');
 
+                Route::get('total-inventory-depo', Farmasi\TotalInventoryDepo::class)
+                    ->name('total-inventory-depo')
+                    ->middleware('can:farmasi.total-inventory-depo.read');
+
                 Route::get('penggunaan-obat-per-dokter', Farmasi\ObatPerDokter::class)
                     ->name('obat-per-dokter')
                     ->middleware('can:farmasi.obat-per-dokter.read');

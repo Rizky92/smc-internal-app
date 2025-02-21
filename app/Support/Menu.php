@@ -265,6 +265,7 @@ class Menu
                 'hasAnyPermissions' => $user->canAny([
                     'farmasi.stok-darurat.read',
                     'farmasi.pemakaian-stok.read',
+                    'farmasi.total-inventory-depo.read',
                     'farmasi.obat-per-dokter.read',
                     'farmasi.laporan-produksi.read',
                     'farmasi.kunjungan-per-bentuk-obat.read',
@@ -290,6 +291,12 @@ class Menu
                         'icon'              => 'far fa-newspaper',
                         'url'               => route('admin.farmasi.pemakaian-stok'),
                         'hasAnyPermissions' => $user->can('farmasi.pemakaian-stok.read'),
+                    ],
+                    [
+                        'name'              => 'Total Inventory Depo',
+                        'icon'              => 'far fa-newspaper',
+                        'url'               => route('admin.farmasi.total-inventory-depo'),
+                        'hasAnyPermissions' => $user->can('farmasi.total-inventory-depo.read'),
                     ],
                     [
                         'name'              => 'Laporan Produksi',
