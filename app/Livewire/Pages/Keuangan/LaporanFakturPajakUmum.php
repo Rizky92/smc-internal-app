@@ -247,6 +247,7 @@ class LaporanFakturPajakUmum extends Component
             ->each(fn (object $model) => FakturPajakDitarik::insert(collect((array) $model)
                 ->put('id_tku_penjual', $this->npwpPenjual)
                 ->put('tgl_tarikan', $tanggalTarikanSementara)
+                ->put('tgl_faktur', $this->tglAkhir)
                 ->put('menu', 'fp-umum')
                 ->all()));
 
@@ -312,7 +313,7 @@ class LaporanFakturPajakUmum extends Component
 
                 if (! in_array($model->kategori, ['Pemberian Obat', 'Retur Obat', 'Obat Pulang', 'Walk In', 'Piutang Obat'])) {
                     $subtotalJasa = (float) $totalJasa->get($model->no_rawat, 1);
-                    $diskonPersen = ((float) $model->diskon) / round($subtotalJasa, 0) ?: 1;
+                    $diskonPersen = ((float) $model->diskon) / (round($subtotalJasa, 0) ?: 1);
                     $diskonNominal = $diskonPersen * ((float) $model->dpp);
                     $dpp = ((float) $model->dpp) - $diskonNominal;
                 }
@@ -372,31 +373,34 @@ class LaporanFakturPajakUmum extends Component
 
         /**
          * @psalm-suppress MissingClosureReturnType
+         * @psalm-suppress InvalidReturnType
          */
         switch ($this->option) {
             case self::FORMAT_CORETAX:
                 return [
                     'Faktur' => fn () => FakturPajakDitarik::query()
                         ->selectRaw(<<<'SQL'
-                            dense_rank() over (order by if (kode_asuransi = 'A09', no_rkm_medis, kode_asuransi), kode_transaksi) as baris,
-                            tgl_bayar as tgl_faktur,
+                            dense_rank() over (order by no_rkm_medis, kode_transaksi) as baris,
+                            tgl_faktur,
                             jenis_faktur,
                             kode_transaksi,
-                            if (kode_transaksi = '080', '10 - PPN Dibebaskan berdasarkan PP Nomor 49 Tahun 2022', '') as keterangan_tambahan,
-                            dokumen_pendukung,
-                            no_rawat as referensi,
+                            keterangan_tambahan,
+                            '' as dokumen_pendukung,
+                            '' as referensi,
                             cap_fasilitas,
                             id_tku_penjual,
-                            if (kode_asuransi = 'A09', 'National ID', 'TIN') as jenis_id,
+                            if (kode_asuransi = 'A09', '', npwp_asuransi) as npwp_nik,
+                            jenis_id,
                             negara,
                             if (kode_asuransi = 'A09', nik_pasien, '') as nomor_dokumen,
                             if (kode_asuransi = 'A09', nama_pasien, nama_asuransi) as nama,
                             if (kode_asuransi = 'A09', alamat_pasien, alamat_asuransi) as alamat,
                             if (kode_asuransi = 'A09', email_pasien, email_asuransi) as email,
-                            if (kode_asuransi = 'A09', '', npwp_asuransi) as id_tku
+                            if (kode_asuransi = 'A09', '', rpad(trim(npwp_asuransi), 22, '0')) as id_tku
                             SQL)
                         ->where('menu', 'fp-umum')
                         ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
+                        ->groupBy(['tgl_faktur', 'no_rkm_medis', 'kode_transaksi'])
                         ->cursor()
                         ->map(fn (FakturPajakDitarik $model): array => [
                             'baris'               => $model->baris,
@@ -408,6 +412,7 @@ class LaporanFakturPajakUmum extends Component
                             'referensi'           => $model->referensi,
                             'cap_fasilitas'       => $model->cap_fasilitas,
                             'id_tku_penjual'      => $model->id_tku_penjual,
+                            'npwp_nik'            => $model->npwp_nik,
                             'jenis_id'            => $model->jenis_id,
                             'negara'              => $model->negara,
                             'nomor_dokumen'       => $model->nomor_dokumen,
@@ -418,7 +423,7 @@ class LaporanFakturPajakUmum extends Component
                         ]),
                     'Detail Faktur' => fn () => FakturPajakDitarikDetail::query()
                         ->selectRaw(<<<'SQL'
-                            dense_rank() over (order by if (kode_asuransi = 'A09', no_rkm_medis, kode_asuransi), kode_transaksi) as baris,
+                            dense_rank() over (order by no_rkm_medis, kode_transaksi) as baris,
                             jenis_barang_jasa,
                             kode_barang_jasa,
                             nama_barang_jasa,
@@ -435,8 +440,8 @@ class LaporanFakturPajakUmum extends Component
                             SQL)
                         ->where('menu', 'fp-umum')
                         ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
-                        ->groupBy([DB::raw('if (kode_asuransi = \'A09\', no_rkm_medis, kode_asuransi)'), 'kode_transaksi', 'kategori', 'kd_jenis_prw', 'harga_satuan', 'ppn_persen'])
-                        ->orderByRaw('if (kode_asuransi = \'A09\', no_rkm_medis, kode_asuransi)')
+                        ->groupBy(['no_rkm_medis', 'kode_transaksi', 'kategori', 'kd_jenis_prw', 'harga_satuan', 'ppn_persen'])
+                        ->orderBy('no_rkm_medis')
                         ->orderBy('kode_transaksi')
                         ->withCasts([
                             'harga_satuan'       => 'float',
@@ -463,7 +468,7 @@ class LaporanFakturPajakUmum extends Component
                             'dpp'                => round($model->dpp, 2),
                             'dpp_nilai_lain'     => round($model->dpp_nilai_lain, 2),
                             'ppn_persen'         => round($model->ppn_persen, 2),
-                            'ppn_nominal'        => round($model->dpp_nilai_lain + $model->ppn_nominal, 2),
+                            'ppn_nominal'        => round($model->ppn_nominal, 2),
                             'ppnbm_persen'       => round($model->ppnbm_persen, 2),
                             'ppnbm_nominal'      => round($model->ppnbm_nominal, 2),
                         ]),
@@ -532,10 +537,10 @@ class LaporanFakturPajakUmum extends Component
                             'kd_jenis_prw'       => $model->kd_jenis_prw,
                             'kategori'           => $model->kategori,
                             'status_lanjut'      => $model->status_lanjut,
+                            'no_rkm_medis'       => $model->no_rkm_medis,
                         ]),
                 ];
         }
-
     }
 
     protected function columnHeaders(): array
@@ -553,13 +558,14 @@ class LaporanFakturPajakUmum extends Component
                         'Referensi',
                         'Cap Fasilitas',
                         'ID TKU Penjual',
+                        'NPWP/NIK Pembeli',
                         'Jenis ID Pembeli',
                         'Negara Pembeli',
                         'Nomor Dokumen Pembeli',
                         'Nama Pembeli',
                         'Alamat Pembeli',
                         'Email Pembeli',
-                        'ID TKU',
+                        'ID TKU Pembeli',
                     ],
                     'Detail Faktur' => [
                         'Baris',

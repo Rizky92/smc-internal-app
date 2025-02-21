@@ -102,7 +102,7 @@
                                 />
                                 <x-table.th
                                     name="tgl_bayar"
-                                    title="Tgl. Faktur"
+                                    title="Tgl. Billing"
                                 />
                                 <x-table.th
                                     name="jenis_faktur"

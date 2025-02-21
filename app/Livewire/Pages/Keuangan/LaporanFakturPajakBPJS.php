@@ -210,11 +210,6 @@ class LaporanFakturPajakBPJS extends Component
             ->orderByDesc('kode_transaksi_pajak.kode_transaksi')
             ->cursor()
             ->each(function (RegistrasiPasien $model) use ($tanggalTarikanSementara) {
-                if ($model->kode_transaksi_pajak === '080') {
-                    $model->setAttribute('keterangan_tambahan', 'TD.00510');
-                    $model->setAttribute('cap_fasilitas', 'TD.01110');
-                }
-                
                 $model->setAttribute('jenis_id', 'TIN');
                 $model->setAttribute('id_tku_penjual', $this->npwpPenjual);
                 $model->setAttribute('tgl_tarikan', $tanggalTarikanSementara);
@@ -337,6 +332,7 @@ class LaporanFakturPajakBPJS extends Component
 
         /**
          * @psalm-suppress MissingClosureReturnType
+         * @psalm-suppress InvalidReturnType
          */
         switch ($this->option) {
             case self::FORMAT_CORETAX:
@@ -348,8 +344,8 @@ class LaporanFakturPajakBPJS extends Component
                             jenis_faktur,
                             kode_transaksi,
                             keterangan_tambahan,
-                            no_rawat as dokumen_pendukung,
-                            no_rawat as referensi,
+                            '' as dokumen_pendukung,
+                            '' as referensi,
                             cap_fasilitas,
                             id_tku_penjual,
                             if (kode_asuransi = 'A09', '', npwp_asuransi) as npwp_nik,
@@ -363,6 +359,7 @@ class LaporanFakturPajakBPJS extends Component
                             SQL)
                         ->where('menu', 'fp-bpjs')
                         ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
+                        ->groupBy(['tgl_faktur', 'kode_transaksi'])
                         ->cursor()
                         ->map(fn (FakturPajakDitarik $model): array => [
                             'baris'               => $model->baris,
@@ -524,13 +521,14 @@ class LaporanFakturPajakBPJS extends Component
                         'Referensi',
                         'Cap Fasilitas',
                         'ID TKU Penjual',
+                        'NPWP/NIK Pembeli',
                         'Jenis ID Pembeli',
                         'Negara Pembeli',
                         'Nomor Dokumen Pembeli',
                         'Nama Pembeli',
                         'Alamat Pembeli',
                         'Email Pembeli',
-                        'ID TKU',
+                        'ID TKU Pembeli',
                     ],
                     'Detail Faktur' => [
                         'Baris',
