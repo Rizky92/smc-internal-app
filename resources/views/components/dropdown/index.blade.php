@@ -40,11 +40,13 @@
 >
     @if ($split)
         <x-button :attributes="$button->attributes" />
-        <x-button
-            :attributes="$button->attributes
-                ->only(['size', 'variant', 'outline'])
-                ->merge(['id' => $buttonId, 'class' => 'dropdown-toggle dropdown-toggle-split', 'data-toggle' => 'dropdown'])"
+        {{-- format-ignore-start --}}
+        <x-button :attributes="$button->attributes
+            ->only(['size', 'variant', 'outline'])
+            ->merge(['id' => $buttonId, 'class' => 'dropdown-toggle dropdown-toggle-split', 'data-toggle' => 'dropdown'])"
+        {{-- format-ignore-end --}}
         />
+    
     @else
         <x-button
             :attributes="$button->attributes->merge(['class' => 'dropdown-toggle', 'data-toggle' => 'dropdown'])"
