@@ -41,7 +41,7 @@
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
-            <x-table :sortColumns="$sortColumns" style="width: 100%;" sortable zebra hover sticky nowrap>
+            <x-table :sortColumns="$sortColumns" style="width: 100%" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="kd_pintu" title="Kode Pintu" />
                     <x-table.th name="nm_pintu" title="Nama Pintu" />
@@ -51,19 +51,31 @@
                 <x-slot name="body">
                     @forelse ($this->pintu as $pintu)
                         <x-table.tr>
-                            <x-table.td clickable data-pintu-id="{{ $pintu->id }}" data-kode-poliklinik="{{ $pintu->poli }}" data-kode-dokter="{{ $pintu->dokter }}" data-kode-pintu="{{ $pintu->kd_pintu }}" data-nama-pintu="{{ $pintu->nm_pintu }}">{{ $pintu->kd_pintu }}</x-table.td>
+                            <x-table.td
+                                clickable
+                                data-pintu-id="{{ $pintu->id }}"
+                                data-kode-poliklinik="{{ $pintu->poli }}"
+                                data-kode-dokter="{{ $pintu->dokter }}"
+                                data-kode-pintu="{{ $pintu->kd_pintu }}"
+                                data-nama-pintu="{{ $pintu->nm_pintu }}">
+                                {{ $pintu->kd_pintu }}
+                            </x-table.td>
                             <x-table.td>{{ $pintu->nm_pintu }}</x-table.td>
                             <x-table.td>
                                 <div class="d-inline-flex flex-wrap" style="gap: 0.25rem">
-                                    @foreach ($pintu->poliklinik as $poli )
-                                        <x-badge variant="secondary">{{ $poli->nm_poli }}</x-badge>
+                                    @foreach ($pintu->poliklinik as $poli)
+                                        <x-badge variant="secondary">
+                                            {{ $poli->nm_poli }}
+                                        </x-badge>
                                     @endforeach
                                 </div>
                             </x-table.td>
                             <x-table.td>
                                 <div class="d-inline-flex flex-wrap" style="gap: 0.25rem">
-                                    @foreach ($pintu->dokter as $dokter )
-                                        <x-badge variant="secondary">{{ $dokter->nm_dokter }}</x-badge>
+                                    @foreach ($pintu->dokter as $dokter)
+                                        <x-badge variant="secondary">
+                                            {{ $dokter->nm_dokter }}
+                                        </x-badge>
                                     @endforeach
                                 </div>
                             </x-table.td>

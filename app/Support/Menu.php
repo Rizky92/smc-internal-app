@@ -245,13 +245,27 @@ class Menu
                     [
                         'name'              => 'Posting Jurnal',
                         'url'               => route('admin.keuangan.posting-jurnal'),
-                        'icon'              => "fas fa-book",
+                        'icon'              => 'fas fa-book',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.posting-jurnal.read'),
                     ],
                     [
-                        'name'              => 'Item Billing Pasien',
-                        'url'               => route('admin.keuangan.laporan-faktur-pajak'),
+                        'name'              => 'Faktur Pajak BPJS',
+                        'url'               => route('admin.keuangan.laporan-faktur-pajak-bpjs'),
+                        'icon'              => 'fas fa-book',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.laporan-faktur-pajak.read'),
+                    ],
+                    [
+                        'name'              => 'Faktur Pajak UMUM',
+                        'url'               => route('admin.keuangan.laporan-faktur-pajak-umum'),
+                        'icon'              => 'fas fa-book',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.laporan-faktur-pajak.read'),
+                    ],
+                    [
+                        'name'              => 'Faktur Pajak AS/PER',
+                        'url'               => route('admin.keuangan.laporan-faktur-pajak-asper'),
                         'icon'              => 'fas fa-book',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.laporan-faktur-pajak.read'),
@@ -276,7 +290,7 @@ class Menu
                     'farmasi.laporan-pemakaian-obat-tb.read',
                     'farmasi.defecta-depo.read',
                     'farmasi.daftar-riwayat-obat-alkes.read',
-                    'farmasi.farmasi.rincian-perbandingan-po.read'
+                    'farmasi.farmasi.rincian-perbandingan-po.read',
                 ]),
                 'items' => [
                     [
@@ -482,7 +496,7 @@ class Menu
                         'icon'              => 'fas fa-door-open',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('antrean.manajemen-pintu.read'),
-                    ]
+                    ],
                 ],
             ],
             [

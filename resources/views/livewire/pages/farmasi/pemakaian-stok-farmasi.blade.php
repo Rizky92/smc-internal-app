@@ -1,6 +1,6 @@
 <div wire:init="loadProperties">
     <x-flash />
-    
+
     <x-card use-loading>
         <x-slot name="header">
             <x-row-col-flex>
@@ -33,16 +33,34 @@
                         <x-table.tr>
                             <x-table.td>{{ $obat->kode_brng }}</x-table.td>
                             <x-table.td>{{ $obat->nama_brng }}</x-table.td>
-                            <x-table.td>{{ $obat->satuan_kecil }}</x-table.td>
+                            <x-table.td>
+                                {{ $obat->satuan_kecil }}
+                            </x-table.td>
                             <x-table.td>{{ $obat->kategori }}</x-table.td>
-                            <x-table.td class="text-right">{{ $obat->stok_saat_ini }}</x-table.td>
-                            <x-table.td class="text-right">{{ $obat->ke_pasien_14_hari }}</x-table.td>
-                            <x-table.td class="text-right">{{ $obat->pemakaian_1_minggu }}</x-table.td>
-                            <x-table.td class="text-right">{{ $obat->pemakaian_1_bulan }}</x-table.td>
-                            <x-table.td class="text-right">{{ $obat->pemakaian_3_bulan }}</x-table.td>
-                            <x-table.td class="text-right">{{ $obat->pemakaian_6_bulan }}</x-table.td>
-                            <x-table.td class="text-right">{{ $obat->pemakaian_10_bulan }}</x-table.td>
-                            <x-table.td class="text-right">{{ $obat->pemakaian_12_bulan }}</x-table.td>
+                            <x-table.td class="text-right">
+                                {{ $obat->stok_saat_ini }}
+                            </x-table.td>
+                            <x-table.td class="text-right">
+                                {{ $obat->ke_pasien_14_hari }}
+                            </x-table.td>
+                            <x-table.td class="text-right">
+                                {{ $obat->pemakaian_1_minggu }}
+                            </x-table.td>
+                            <x-table.td class="text-right">
+                                {{ $obat->pemakaian_1_bulan }}
+                            </x-table.td>
+                            <x-table.td class="text-right">
+                                {{ $obat->pemakaian_3_bulan }}
+                            </x-table.td>
+                            <x-table.td class="text-right">
+                                {{ $obat->pemakaian_6_bulan }}
+                            </x-table.td>
+                            <x-table.td class="text-right">
+                                {{ $obat->pemakaian_10_bulan }}
+                            </x-table.td>
+                            <x-table.td class="text-right">
+                                {{ $obat->pemakaian_12_bulan }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="25" padding />

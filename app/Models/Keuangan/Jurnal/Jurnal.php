@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -72,11 +71,11 @@ class Jurnal extends Model
     public function scopeJurnalUmum(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
+            $tglAwal = now()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
+            $tglAkhir = now()->toDateString();
         }
 
         $this->addRawColumns('waktu_jurnal', DB::raw("concat(jurnal.tgl_jurnal, ' ', jurnal.jam_jurnal)"));
@@ -111,11 +110,11 @@ class Jurnal extends Model
     public function scopeBukuBesar(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodeRekening = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $this->addSearchConditions([
@@ -127,16 +126,16 @@ class Jurnal extends Model
         ]);
 
         $sqlSelect = <<<'SQL'
-jurnal.tgl_jurnal,
-jurnal.jam_jurnal,
-jurnal.no_jurnal,
-jurnal.no_bukti,
-jurnal.keterangan,
-detailjurnal.kd_rek,
-rekening.nm_rek,
-detailjurnal.debet,
-detailjurnal.kredit
-SQL;
+            jurnal.tgl_jurnal,
+            jurnal.jam_jurnal,
+            jurnal.no_jurnal,
+            jurnal.no_bukti,
+            jurnal.keterangan,
+            detailjurnal.kd_rek,
+            rekening.nm_rek,
+            detailjurnal.debet,
+            detailjurnal.kredit
+            SQL;
 
         return $query
             ->selectRaw($sqlSelect)
@@ -150,16 +149,16 @@ SQL;
     public function scopeJumlahDebetKreditBukuBesar(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodeRekening = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
-ifnull(round(sum(detailjurnal.debet), 2), 0) debet, ifnull(round(sum(detailjurnal.kredit), 2), 0) kredit
-SQL;
+            ifnull(round(sum(detailjurnal.debet), 2), 0) debet, ifnull(round(sum(detailjurnal.kredit), 2), 0) kredit
+            SQL;
 
         $this->addSearchConditions([
             'jurnal.no_jurnal',
@@ -235,7 +234,7 @@ SQL;
             'no_bukti'   => $noBukti,
             'keterangan' => $keterangan,
             'jenis'      => $jenis,
-            'tgl_jurnal' => $waktuTransaksi->format('Y-m-d'),
+            'tgl_jurnal' => $waktuTransaksi->toDateString(),
             'jam_jurnal' => $waktuTransaksi->format('H:i:s'),
         ]);
 

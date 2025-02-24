@@ -1,7 +1,9 @@
 @aware(['types'])
 
 @props([
-    'type' => null
+    'type' => null,
 ])
 
-<span class="badge" {{ $attributes->merge(['class' => 'badge']) }}>{{ $types[$type] }}</span>
+<span class="badge" {{ $attributes->merge(['class' => 'badge']) }}>
+    {{ $types[$type] }}
+</span>

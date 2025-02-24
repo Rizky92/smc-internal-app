@@ -39,22 +39,46 @@
                 <x-slot name="body">
                     @forelse ($this->laporanPasienRanap as $pasien)
                         <x-table.tr>
-                            <x-table.td>{{ $pasien->no_rawat }}</x-table.td>
-                            <x-table.td>{{ $pasien->tgl_registrasi }}</x-table.td>
+                            <x-table.td>
+                                {{ $pasien->no_rawat }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->tgl_registrasi }}
+                            </x-table.td>
                             <x-table.td>{{ $pasien->jam_reg }}</x-table.td>
                             <x-table.td>{{ $pasien->kelas }}</x-table.td>
                             <x-table.td>{{ $pasien->ruangan }}</x-table.td>
-                            <x-table.td>{{ rp($pasien->trf_kamar) }}</x-table.td>
-                            <x-table.td>{{ $pasien->no_rkm_medis }}</x-table.td>
-                            <x-table.td>{{ $pasien->data_pasien }}</x-table.td>
-                            <x-table.td>{{ $pasien->png_jawab }}</x-table.td>
+                            <x-table.td>
+                                {{ rp($pasien->trf_kamar) }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->no_rkm_medis }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->data_pasien }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->png_jawab }}
+                            </x-table.td>
                             <x-table.td>{{ $pasien->nm_poli }}</x-table.td>
-                            <x-table.td>{{ $pasien->nm_dokter }}</x-table.td>
-                            <x-table.td>{{ $pasien->stts_pulang }}</x-table.td>
-                            <x-table.td>{{ $pasien->tgl_masuk }}</x-table.td>
-                            <x-table.td>{{ $pasien->jam_masuk }}</x-table.td>
-                            <x-table.td>{{ $pasien->tgl_keluar }}</x-table.td>
-                            <x-table.td>{{ $pasien->jam_keluar }}</x-table.td>
+                            <x-table.td>
+                                {{ $pasien->nm_dokter }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->stts_pulang }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->tgl_masuk }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->jam_masuk }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->tgl_keluar }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->jam_keluar }}
+                            </x-table.td>
                             <x-table.td>{{ $pasien->dpjp }}</x-table.td>
                         </x-table.tr>
                     @empty

@@ -31,16 +31,36 @@
                 <x-slot name="body">
                     @forelse ($this->billingYangDiselesaikan as $billing)
                         <x-table.tr>
-                            <x-table.td :title="$billing->no_rawat">{{ $billing->no_rawat }}</x-table.td>
-                            <x-table.td :title="$billing->no_rkm_medis">{{ $billing->no_rkm_medis }}</x-table.td>
-                            <x-table.td :title="$billing->nm_pasien">{{ $billing->nm_pasien }}</x-table.td>
-                            <x-table.td :title="$billing->ruangan">{{ $billing->ruangan }}</x-table.td>
-                            <x-table.td :title="$billing->status_pasien">{{ $billing->status_pasien }}</x-table.td>
-                            <x-table.td :title="$billing->bentuk_bayar">{{ $billing->bentuk_bayar }}</x-table.td>
-                            <x-table.td :title="rp($billing->besar_bayar)">{{ rp($billing->besar_bayar) }}</x-table.td>
-                            <x-table.td :title="$billing->png_jawab">{{ $billing->png_jawab }}</x-table.td>
-                            <x-table.td :title="$billing->tgl_penyelesaian">{{ $billing->tgl_penyelesaian }}</x-table.td>
-                            <x-table.td :title="$billing->nama_pegawai">{{ $billing->nama_pegawai }}</x-table.td>
+                            <x-table.td :title="$billing->no_rawat">
+                                {{ $billing->no_rawat }}
+                            </x-table.td>
+                            <x-table.td :title="$billing->no_rkm_medis">
+                                {{ $billing->no_rkm_medis }}
+                            </x-table.td>
+                            <x-table.td :title="$billing->nm_pasien">
+                                {{ $billing->nm_pasien }}
+                            </x-table.td>
+                            <x-table.td :title="$billing->ruangan">
+                                {{ $billing->ruangan }}
+                            </x-table.td>
+                            <x-table.td :title="$billing->status_pasien">
+                                {{ $billing->status_pasien }}
+                            </x-table.td>
+                            <x-table.td :title="$billing->bentuk_bayar">
+                                {{ $billing->bentuk_bayar }}
+                            </x-table.td>
+                            <x-table.td :title="rp($billing->besar_bayar)">
+                                {{ rp($billing->besar_bayar) }}
+                            </x-table.td>
+                            <x-table.td :title="$billing->png_jawab">
+                                {{ $billing->png_jawab }}
+                            </x-table.td>
+                            <x-table.td :title="$billing->tgl_penyelesaian">
+                                {{ $billing->tgl_penyelesaian }}
+                            </x-table.td>
+                            <x-table.td :title="$billing->nama_pegawai">
+                                {{ $billing->nama_pegawai }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="10" padding />

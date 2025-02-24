@@ -38,10 +38,18 @@
                             <x-table.td>{{ $item->nama_brng }}</x-table.td>
                             <x-table.td>{{ $item->satuan }}</x-table.td>
                             <x-table.td>{{ $item->stok }}</x-table.td>
-                            <x-table.td>{{ $item->jumlah_shift }}</x-table.td>
-                            <x-table.td>{{ $item->jumlah_3hari }}</x-table.td>
-                            <x-table.td>{{ $item->jumlah_6hari }}</x-table.td>
-                            <x-table.td>{{ $item->sisa_6hari }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->jumlah_shift }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->jumlah_3hari }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->jumlah_6hari }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->sisa_6hari }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="8" padding />

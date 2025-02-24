@@ -13,6 +13,7 @@ use App\Models\Keuangan\AkunBayar;
 use App\Models\Keuangan\PenagihanPiutang;
 use App\Models\RekamMedis\Penjamin;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -58,8 +59,8 @@ class AccountReceivable extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal'        => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir'       => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'        => ['except' => now()->startOfMonth()->toDateString(), 'as' => 'tgl_awal'],
+            'tglAkhir'       => ['except' => now()->endOfMonth()->toDateString(), 'as' => 'tgl_akhir'],
             'jaminanPasien'  => ['except' => '-', 'as' => 'jaminan_pasien'],
             'jenisPerawatan' => ['except' => 'semua', 'as' => 'jenis_perawatan'],
             'bedaJaminan'    => ['except' => false, 'as' => 'beda_jaminan'],
@@ -75,7 +76,7 @@ class AccountReceivable extends Component
     }
 
     /**
-     * @return \Illuminate\Contracts\Pagination\Paginator|array<empty, empty>
+     * @return Paginator|array<empty, empty>
      */
     public function getDataAccountReceivableProperty()
     {
@@ -238,16 +239,19 @@ class AccountReceivable extends Component
 
     protected function defaultValues(): void
     {
-        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->toDateString();
+        $this->tglAkhir = now()->endOfMonth()->toDateString();
 
         $this->bedaJaminan = false;
         $this->rekeningAkun = '-';
         $this->jaminanPasien = '-';
         $this->jenisPerawatan = 'semua';
-        $this->tglBayar = now()->format('Y-m-d');
+        $this->tglBayar = now()->toDateString();
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         $total = PenagihanPiutang::query()
@@ -282,7 +286,7 @@ class AccountReceivable extends Component
                     'periode_61_90'      => $model->umur_hari > 60 && $model->umur_hari <= 90 ? floatval($model->sisa_piutang) : 0,
                     'periode_90_up'      => $model->umur_hari > 90 ? floatval($model->sisa_piutang) : 0,
                     'umur_hari'          => intval($model->umur_hari),
-                    'rekening_penagihan' => $model->kd_rek_tagihan . ' ' . $model->nama_bank,
+                    'rekening_penagihan' => $model->kd_rek_tagihan.' '.$model->nama_bank,
                     'tgl_tagihan'        => $model->tgl_tagihan,
                     'tgl_jatuh_tempo'    => $model->tgl_jatuh_tempo,
                     'tgl_bayar'          => $model->tgl_bayar ?? '-',

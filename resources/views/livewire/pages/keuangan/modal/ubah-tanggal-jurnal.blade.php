@@ -18,15 +18,14 @@
             </script>
         @endpush
     @endonce
+
     <x-modal livewire id="modal-ubah-tgl-jurnal" title="Ubah Tanggal Jurnal" size="lg">
         <x-slot name="body" class="p-0 pt-3" style="overflow-x: hidden">
             <x-flash class="mx-3 mt-3" />
             <x-row-col class="px-3">
                 <x-callout variant="warning">
                     <x-slot name="title">Perhatian!</x-slot>
-                    <x-slot name="content">
-                        Mengubah tanggal jurnal dapat mempengaruhi kegiatan penjurnalan yang sedang berjalan.
-                    </x-slot>
+                    <x-slot name="content">Mengubah tanggal jurnal dapat mempengaruhi kegiatan penjurnalan yang sedang berjalan.</x-slot>
                 </x-callout>
             </x-row-col>
             <x-navtabs livewire class="pt-3" selected="ubah-tgl-jurnal">
@@ -41,13 +40,13 @@
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label class="text-sm" for="no-jurnal">No. Jurnal</label>
-                                        <input type="text" class="form-control form-control-sm" id="no-jurnal" wire:model.defer="noJurnal" readonly autocomplete="off">
+                                        <input type="text" class="form-control form-control-sm" id="no-jurnal" wire:model.defer="noJurnal" readonly autocomplete="off" />
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label class="text-sm" for="no-bukti">No. Bukti</label>
-                                        <input type="text" class="form-control form-control-sm" id="no-bukti" wire:model.defer="noBukti" readonly autocomplete="off">
+                                        <input type="text" class="form-control form-control-sm" id="no-bukti" wire:model.defer="noBukti" readonly autocomplete="off" />
                                     </div>
                                 </div>
                             </x-row>
@@ -63,13 +62,13 @@
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label class="text-sm" for="tgl-jurnal-lama">Tgl. Jurnal lama</label>
-                                        <input type="date" class="form-control form-control-sm" id="tgl-jurnal-lama" wire:model.defer="tglJurnalLama" readonly autocomplete="off">
+                                        <input type="date" class="form-control form-control-sm" id="tgl-jurnal-lama" wire:model.defer="tglJurnalLama" readonly autocomplete="off" />
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label class="text-sm" for="tgl-jurnal-baru">Tgl. Jurnal BARU</label>
-                                        <input type="date" class="form-control form-control-sm" id="tgl-jurnal-baru" autocomplete="off" wire:model.defer="tglJurnalBaru">
+                                        <input type="date" class="form-control form-control-sm" id="tgl-jurnal-baru" autocomplete="off" wire:model.defer="tglJurnalBaru" />
                                     </div>
                                 </div>
                             </x-row>
@@ -87,9 +86,15 @@
                                 <x-slot name="body">
                                     @forelse ($this->backupJurnal as $item)
                                         <x-table.tr>
-                                            <x-table.td class="pl-3">{{ $item->tgl_jurnal_diubah }}</x-table.td>
-                                            <x-table.td>{{ $item->tgl_jurnal_asli }}</x-table.td>
-                                            <x-table.td>{{ $item->nip . ' ' . optional($item->pegawai)->nama }}</x-table.td>
+                                            <x-table.td class="pl-3">
+                                                {{ $item->tgl_jurnal_diubah }}
+                                            </x-table.td>
+                                            <x-table.td>
+                                                {{ $item->tgl_jurnal_asli }}
+                                            </x-table.td>
+                                            <x-table.td>
+                                                {{ $item->nip . ' ' . optional($item->pegawai)->nama }}
+                                            </x-table.td>
                                             <x-table.td>
                                                 <x-button size="xs" variant="dark" outline title="Restore" icon="fas fa-sync-alt" wire:click.prevent="restoreTglJurnal({{ $item->id }})" />
                                             </x-table.td>

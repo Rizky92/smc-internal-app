@@ -14,12 +14,7 @@
             </x-row-col-flex>
             <x-row-col-flex class="pt-3 border-top">
                 <x-filter.label constant-width>Instansi:</x-filter.label>
-                <x-filter.select2
-                    livewire
-                    name="penjamin"
-                    :options="$this->dataPenjamin"
-                    placeholder="SEMUA"
-                />
+                <x-filter.select2 livewire name="penjamin" :options="$this->dataPenjamin" placeholder="SEMUA" />
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
@@ -37,14 +32,28 @@
                 <x-slot name="body">
                     @forelse ($this->dataPasienPoliMCU as $item)
                         <x-table.tr>
-                            <x-table.td>{{ $item->penjamin->png_jawab }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->penjamin->png_jawab }}
+                            </x-table.td>
                             <x-table.td>{{ $item->no_rawat }}</x-table.td>
-                            <x-table.td>{{ $item->no_rkm_medis }}</x-table.td>
-                            <x-table.td>{{ $item->pasien->nm_pasien }}</x-table.td>
-                            <x-table.td>{{ $item->pasien->jk }}</x-table.td>
-                            <x-table.td>{{ $item->pasien->agama }}</x-table.td>
-                            <x-table.td>{{ $item->tgl_registrasi }}</x-table.td>
-                            <x-table.td>{{ $item->poliklinik->nm_poli }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->no_rkm_medis }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->pasien->nm_pasien }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->pasien->jk }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->pasien->agama }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->tgl_registrasi }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->poliklinik->nm_poli }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="9" padding />

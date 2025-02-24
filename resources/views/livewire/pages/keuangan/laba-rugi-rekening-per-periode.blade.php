@@ -27,11 +27,21 @@
                     </x-table.tr>
                     @forelse ($this->labaRugiPerRekening->get('K') as $rekening)
                         <x-table.tr>
-                            <x-table.td>{{ $rekening->kd_rek }}</x-table.td>
-                            <x-table.td>{{ $rekening->nm_rek }}</x-table.td>
-                            <x-table.td>{{ rp($rekening->debet) }}</x-table.td>
-                            <x-table.td>{{ rp($rekening->kredit) }}</x-table.td>
-                            <x-table.td>{{ rp($rekening->total) }}</x-table.td>
+                            <x-table.td>
+                                {{ $rekening->kd_rek }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $rekening->nm_rek }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ rp($rekening->debet) }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ rp($rekening->kredit) }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ rp($rekening->total) }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="5" padding />
@@ -39,9 +49,15 @@
                     <x-table.tr>
                         <x-table.td></x-table.td>
                         <x-table.td class="font-weight-bold">TOTAL PENDAPATAN</x-table.td>
-                        <x-table.td class="font-weight-bold">{{ rp($this->totalLabaRugiPerRekening['totalDebetPendapatan']) }}</x-table.td>
-                        <x-table.td class="font-weight-bold">{{ rp($this->totalLabaRugiPerRekening['totalKreditPendapatan']) }}</x-table.td>
-                        <x-table.td class="font-weight-bold">{{ rp($this->totalLabaRugiPerRekening['totalPendapatan']) }}</x-table.td>
+                        <x-table.td class="font-weight-bold">
+                            {{ rp($this->totalLabaRugiPerRekening['totalDebetPendapatan']) }}
+                        </x-table.td>
+                        <x-table.td class="font-weight-bold">
+                            {{ rp($this->totalLabaRugiPerRekening['totalKreditPendapatan']) }}
+                        </x-table.td>
+                        <x-table.td class="font-weight-bold">
+                            {{ rp($this->totalLabaRugiPerRekening['totalPendapatan']) }}
+                        </x-table.td>
                     </x-table.tr>
                     <x-table.tr>
                         <x-table.td colspan="5">&nbsp;</x-table.td>
@@ -54,11 +70,21 @@
                     </x-table.tr>
                     @forelse ($this->labaRugiPerRekening->get('D') as $rekening)
                         <x-table.tr>
-                            <x-table.td>{{ $rekening->kd_rek }}</x-table.td>
-                            <x-table.td>{{ $rekening->nm_rek }}</x-table.td>
-                            <x-table.td>{{ rp($rekening->debet) }}</x-table.td>
-                            <x-table.td>{{ rp($rekening->kredit) }}</x-table.td>
-                            <x-table.td>{{ rp($rekening->total) }}</x-table.td>
+                            <x-table.td>
+                                {{ $rekening->kd_rek }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $rekening->nm_rek }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ rp($rekening->debet) }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ rp($rekening->kredit) }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ rp($rekening->total) }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="5" padding />
@@ -66,9 +92,15 @@
                     <x-table.tr>
                         <x-table.td></x-table.td>
                         <x-table.td class="font-weight-bold">TOTAL BEBAN & BIAYA</x-table.td>
-                        <x-table.td class="font-weight-bold">{{ rp($this->totalLabaRugiPerRekening['totalDebetBeban']) }}</x-table.td>
-                        <x-table.td class="font-weight-bold">{{ rp($this->totalLabaRugiPerRekening['totalKreditBeban']) }}</x-table.td>
-                        <x-table.td class="font-weight-bold">{{ rp($this->totalLabaRugiPerRekening['totalBebanDanBiaya']) }}</x-table.td>
+                        <x-table.td class="font-weight-bold">
+                            {{ rp($this->totalLabaRugiPerRekening['totalDebetBeban']) }}
+                        </x-table.td>
+                        <x-table.td class="font-weight-bold">
+                            {{ rp($this->totalLabaRugiPerRekening['totalKreditBeban']) }}
+                        </x-table.td>
+                        <x-table.td class="font-weight-bold">
+                            {{ rp($this->totalLabaRugiPerRekening['totalBebanDanBiaya']) }}
+                        </x-table.td>
                     </x-table.tr>
                     <x-table.tr>
                         <x-table.td colspan="5">&nbsp;</x-table.td>
@@ -77,9 +109,15 @@
                     <x-table.tr>
                         <x-table.td></x-table.td>
                         <x-table.td class="font-weight-bold">PENDAPATAN BERSIH</x-table.td>
-                        <x-table.td class="font-weight-bold">{{ rp($this->totalLabaRugiPerRekening['totalPendapatan']) }}</x-table.td>
-                        <x-table.td class="font-weight-bold">{{ rp($this->totalLabaRugiPerRekening['totalBebanDanBiaya']) }}</x-table.td>
-                        <x-table.td class="font-weight-bold">{{ rp($this->totalLabaRugiPerRekening['labaRugi']) }}</x-table.td>
+                        <x-table.td class="font-weight-bold">
+                            {{ rp($this->totalLabaRugiPerRekening['totalPendapatan']) }}
+                        </x-table.td>
+                        <x-table.td class="font-weight-bold">
+                            {{ rp($this->totalLabaRugiPerRekening['totalBebanDanBiaya']) }}
+                        </x-table.td>
+                        <x-table.td class="font-weight-bold">
+                            {{ rp($this->totalLabaRugiPerRekening['labaRugi']) }}
+                        </x-table.td>
                     </x-table.tr>
                 </x-slot>
             </x-table>

@@ -148,23 +148,23 @@
                     <div class="col-4">
                         <div class="form-group">
                             <label class="text-sm" for="no_rawat">No. Rawat</label>
-                            <input type="text" class="form-control form-control-sm" id="no_rawat" readonly autocomplete="off">
-                            <input type="hidden" id="kd_kamar">
-                            <input type="hidden" id="trf_kamar">
-                            <input type="hidden" id="tgl_masuk">
-                            <input type="hidden" id="jam_masuk">
+                            <input type="text" class="form-control form-control-sm" id="no_rawat" readonly autocomplete="off" />
+                            <input type="hidden" id="kd_kamar" />
+                            <input type="hidden" id="trf_kamar" />
+                            <input type="hidden" id="tgl_masuk" />
+                            <input type="hidden" id="jam_masuk" />
                         </div>
                     </div>
                     <div class="col-3">
                         <div class="form-group">
                             <label class="text-sm" for="kamar">Kamar</label>
-                            <input type="text" class="form-control form-control-sm" id="kamar" readonly autocomplete="off">
+                            <input type="text" class="form-control form-control-sm" id="kamar" readonly autocomplete="off" />
                         </div>
                     </div>
                     <div class="col-5">
                         <div class="form-group">
                             <label class="text-sm" for="pasien">Pasien</label>
-                            <input type="text" class="form-control form-control-sm" id="pasien" readonly autocomplete="off">
+                            <input type="text" class="form-control form-control-sm" id="pasien" readonly autocomplete="off" />
                         </div>
                     </div>
                 </x-row>
@@ -174,7 +174,7 @@
                         <div class="form-group">
                             <label class="text-sm" for="harga_kamar">Harga Kamar</label>
                             <div class="d-flex align-items-center">
-                                <input type="number" class="form-control form-control-sm" id="harga_kamar" autocomplete="off" min="0">
+                                <input type="number" class="form-control form-control-sm" id="harga_kamar" autocomplete="off" min="0" />
                                 <span class="font-weight-medium pl-3">x</span>
                             </div>
                         </div>
@@ -182,13 +182,13 @@
                     <div class="col-1">
                         <div class="form-group">
                             <label class="text-sm" for="lama_inap">Lama Inap</label>
-                            <input type="number" class="form-control form-control-sm" id="lama_inap" autocomplete="off" min="0">
+                            <input type="number" class="form-control form-control-sm" id="lama_inap" autocomplete="off" min="0" />
                         </div>
                     </div>
                     <div class="col-5">
                         <div class="form-group">
                             <label class="text-sm" for="total_harga">Total Harga</label>
-                            <input type="text" class="form-control form-control-sm" id="total_harga" readonly autocomplete="off">
+                            <input type="text" class="form-control form-control-sm" id="total_harga" readonly autocomplete="off" />
                         </div>
                     </div>
                 </x-row>
@@ -200,18 +200,21 @@
                 </x-row-col-flex>
             @endcan
 
-            <x-row-col-flex :class="Arr::toCssClasses([
-                'mt-3' => auth()
-                    ->user()
-                    ->can('perawatan.daftar-pasien-ranap.update-harga-kamar'),
-            ])">
+            <x-row-col-flex
+                :class="Arr::toCssClasses([
+                    'mt-3' => auth()
+                        ->user()
+                        ->can('perawatan.daftar-pasien-ranap.update-harga-kamar'),
+                ])">
                 <x-filter.range-date />
                 <x-filter.label class="ml-auto pr-3">Berdasarkan:</x-filter.label>
-                <x-filter.select model="jenisRawat" :options="[
-                    '-' => 'Sedang Dirawat',
-                    'tanggal_masuk' => 'Tgl. Masuk',
-                    'tanggal_keluar' => 'Tgl. Keluar',
-                ]" />
+                <x-filter.select
+                    model="jenisRawat"
+                    :options="[
+                        '-' => 'Sedang Dirawat',
+                        'tanggal_masuk' => 'Tgl. Masuk',
+                        'tanggal_keluar' => 'Tgl. Keluar',
+                    ]" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
@@ -260,29 +263,55 @@
                                 data-kd-kamar="{{ $pasien->kd_kamar }}"
                                 data-tgl-masuk="{{ $pasien->tgl_masuk }}"
                                 data-jam-masuk="{{ $pasien->jam_masuk }}"
-                                data-clipboard="{{ collect($pasien->getAttributes())->join('   ') }}"
-                            >
+                                data-clipboard="{{ collect($pasien->getAttributes())->join('   ') }}">
                                 {{ $pasien->no_rawat }}
                             </x-table.td>
-                            <x-table.td>{{ $pasien->kd_kamar }} {{ $pasien->nm_bangsal }}</x-table.td>
+                            <x-table.td>
+                                {{ $pasien->kd_kamar }}
+                                {{ $pasien->nm_bangsal }}
+                            </x-table.td>
                             <x-table.td>{{ $pasien->kelas }}</x-table.td>
-                            <x-table.td>{{ $pasien->no_rkm_medis }}</x-table.td>
+                            <x-table.td>
+                                {{ $pasien->no_rkm_medis }}
+                            </x-table.td>
                             <x-table.td>{{ $pasien->nm_pasien }} {{ $pasien->umur }}</x-table.td>
-                            <x-table.td>{{ $pasien->alamat_lengkap }}</x-table.td>
+                            <x-table.td>
+                                {{ $pasien->alamat_lengkap }}
+                            </x-table.td>
                             <x-table.td>{{ $pasien->agama }}</x-table.td>
                             <x-table.td>{{ $pasien->pj }}</x-table.td>
-                            <x-table.td>{{ $pasien->png_jawab }}</x-table.td>
+                            <x-table.td>
+                                {{ $pasien->png_jawab }}
+                            </x-table.td>
                             <x-table.td>{{ $pasien->nm_poli }}</x-table.td>
-                            <x-table.td>{{ $pasien->dokter_poli }}</x-table.td>
-                            <x-table.td>{{ $pasien->stts_pulang }}</x-table.td>
-                            <x-table.td>{{ $pasien->tgl_masuk }}</x-table.td>
-                            <x-table.td>{{ $pasien->jam_masuk }}</x-table.td>
-                            <x-table.td>{{ $pasien->tgl_keluar }}</x-table.td>
-                            <x-table.td>{{ $pasien->jam_keluar }}</x-table.td>
-                            <x-table.td>{{ rp($pasien->trf_kamar) }}</x-table.td>
+                            <x-table.td>
+                                {{ $pasien->dokter_poli }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->stts_pulang }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->tgl_masuk }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->jam_masuk }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->tgl_keluar }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->jam_keluar }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ rp($pasien->trf_kamar) }}
+                            </x-table.td>
                             <x-table.td>{{ $pasien->lama }}</x-table.td>
-                            <x-table.td>{{ rp($pasien->ttl_biaya) }}</x-table.td>
-                            <x-table.td>{{ $pasien->dokter_ranap }}</x-table.td>
+                            <x-table.td>
+                                {{ rp($pasien->ttl_biaya) }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->dokter_ranap }}
+                            </x-table.td>
                             <x-table.td>{{ $pasien->no_tlp }}</x-table.td>
                         </x-table.tr>
                     @empty

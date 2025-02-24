@@ -24,19 +24,37 @@
                     @forelse ($this->demografiPasien as $pasien)
                         <x-table.tr>
                             <x-table.td>{{ $pasien->nm_kec }}</x-table.td>
-                            <x-table.td>{{ $pasien->no_rkm_medis }}</x-table.td>
-                            <x-table.td>{{ $pasien->no_rawat }}</x-table.td>
-                            <x-table.td>{{ $pasien->nm_pasien }}</x-table.td>
-                            <x-table.td>{{ $pasien->tgl_lahir }}</x-table.td>
+                            <x-table.td>
+                                {{ $pasien->no_rkm_medis }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->no_rawat }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->nm_pasien }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->tgl_lahir }}
+                            </x-table.td>
                             <x-table.td>{{ $pasien->alamat }}</x-table.td>
-                            <x-table.td>{{ sprintf('%s %s', $pasien->umurdaftar, $pasien->sttsumur) }}</x-table.td>
+                            <x-table.td>
+                                {{ sprintf('%s %s', $pasien->umurdaftar, $pasien->sttsumur) }}
+                            </x-table.td>
                             <x-table.td>{{ $pasien->jk }}</x-table.td>
-                            <x-table.td>{{ $pasien->kd_penyakit }}</x-table.td>
-                            <x-table.td>{{ $pasien->nm_penyakit }}</x-table.td>
+                            <x-table.td>
+                                {{ $pasien->kd_penyakit }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->nm_penyakit }}
+                            </x-table.td>
                             <x-table.td>{{ $pasien->agama }}</x-table.td>
                             <x-table.td>{{ $pasien->pnd }}</x-table.td>
-                            <x-table.td>{{ $pasien->nama_bahasa }}</x-table.td>
-                            <x-table.td>{{ $pasien->nama_suku_bangsa }}</x-table.td>
+                            <x-table.td>
+                                {{ $pasien->nama_bahasa }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->nama_suku_bangsa }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="12" padding />

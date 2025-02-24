@@ -5,13 +5,7 @@
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.range-date />
-                <x-button
-                    size="sm"
-                    title="Tarik Data Terbaru"
-                    icon="fas fa-sync-alt"
-                    class="ml-auto"
-                    wire:click.prevent="tarikDataTerbaru"
-                />
+                <x-button size="sm" title="Tarik Data Terbaru" icon="fas fa-sync-alt" class="ml-auto" wire:click.prevent="tarikDataTerbaru" />
                 <x-filter.button-export-excel class="ml-2" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
@@ -43,15 +37,33 @@
                             <x-slot name="body">
                                 @forelse ($this->jurnalBarangMedis as $jurnal)
                                     <x-table.tr>
-                                        <x-table.td>{{ $jurnal->no_jurnal }}</x-table.td>
-                                        <x-table.td>{{ $jurnal->waktu_jurnal }}</x-table.td>
-                                        <x-table.td>{{ $jurnal->no_faktur }}</x-table.td>
-                                        <x-table.td>{{ $jurnal->status }}</x-table.td>
-                                        <x-table.td>{{ rp($jurnal->besar_bayar) }}</x-table.td>
-                                        <x-table.td>{{ $jurnal->nama_bayar }}</x-table.td>
-                                        <x-table.td>{{ $jurnal->kd_rek }}</x-table.td>
-                                        <x-table.td>{{ $jurnal->nama_suplier }}</x-table.td>
-                                        <x-table.td>{{ $jurnal->nm_pegawai }}</x-table.td>
+                                        <x-table.td>
+                                            {{ $jurnal->no_jurnal }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $jurnal->waktu_jurnal }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $jurnal->no_faktur }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $jurnal->status }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ rp($jurnal->besar_bayar) }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $jurnal->nama_bayar }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $jurnal->kd_rek }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $jurnal->nama_suplier }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $jurnal->nm_pegawai }}
+                                        </x-table.td>
                                     </x-table.tr>
                                 @empty
                                     <x-table.tr-empty colspan="10" padding />
@@ -76,15 +88,33 @@
                             <x-slot name="body">
                                 @forelse ($this->jurnalBarangNonMedis as $jurnal)
                                     <x-table.tr>
-                                        <x-table.td>{{ $jurnal->no_jurnal }}</x-table.td>
-                                        <x-table.td>{{ $jurnal->waktu_jurnal }}</x-table.td>
-                                        <x-table.td>{{ $jurnal->no_faktur }}</x-table.td>
-                                        <x-table.td>{{ $jurnal->status }}</x-table.td>
-                                        <x-table.td>{{ rp($jurnal->besar_bayar) }}</x-table.td>
-                                        <x-table.td>{{ $jurnal->nama_bayar }}</x-table.td>
-                                        <x-table.td>{{ $jurnal->kd_rek }}</x-table.td>
-                                        <x-table.td>{{ $jurnal->nama_suplier }}</x-table.td>
-                                        <x-table.td>{{ $jurnal->nm_pegawai }}</x-table.td>
+                                        <x-table.td>
+                                            {{ $jurnal->no_jurnal }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $jurnal->waktu_jurnal }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $jurnal->no_faktur }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $jurnal->status }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ rp($jurnal->besar_bayar) }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $jurnal->nama_bayar }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $jurnal->kd_rek }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $jurnal->nama_suplier }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $jurnal->nm_pegawai }}
+                                        </x-table.td>
                                     </x-table.tr>
                                 @empty
                                     <x-table.tr-empty colspan="10" padding />

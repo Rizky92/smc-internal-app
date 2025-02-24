@@ -30,11 +30,11 @@ class PemeriksaanRanap extends Model
     public function scopePemeriksaanOlehFarmasi(Builder $query, string $tglAwal, string $tglAkhir): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -51,7 +51,7 @@ class PemeriksaanRanap extends Model
             pemeriksaan_ranap.nip,
             petugas.nama,
             jabatan.nm_jbtn
-        SQL;
+            SQL;
 
         $this->addSearchConditions([
             'pemeriksaan_ranap.no_rawat',

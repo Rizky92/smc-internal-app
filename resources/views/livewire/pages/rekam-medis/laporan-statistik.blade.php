@@ -51,72 +51,136 @@
                             $tindakanRanap = str($registrasi->nm_tindakan_ranap)->split('/(; )/');
                             $dokterPj = str($registrasi->dokter_pj)->split('/(; )/');
                         @endphp
+
                         <x-table.tr>
-                            <x-table.td>{{ $registrasi->no_rawat }}</x-table.td>
-                            <x-table.td>{{ $registrasi->no_rm }}</x-table.td>
-                            <x-table.td>{{ $registrasi->nm_pasien }}</x-table.td>
-                            <x-table.td>{{ $registrasi->no_ktp }}</x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->no_rawat }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->no_rm }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->nm_pasien }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->no_ktp }}
+                            </x-table.td>
                             <x-table.td>{{ $registrasi->jk }}</x-table.td>
-                            <x-table.td>{{ $registrasi->tgl_lahir }}</x-table.td>
-                            <x-table.td>{{ $registrasi->umur }}</x-table.td>
-                            <x-table.td>{{ $registrasi->agama }}</x-table.td>
-                            <x-table.td>{{ $registrasi->suku }}</x-table.td>
-                            <x-table.td>{{ $registrasi->status_lanjut }}</x-table.td>
-                            <x-table.td>{{ $registrasi->ruangan }}</x-table.td>
-                            <x-table.td>{{ $registrasi->status_poli }}</x-table.td>
-                            <x-table.td>{{ $registrasi->nm_poli }}</x-table.td>
-                            <x-table.td>{{ $registrasi->nm_dokter }}</x-table.td>
-                            <x-table.td>{{ $registrasi->status }}</x-table.td>
-                            <x-table.td>{{ $registrasi->tgl_registrasi }}</x-table.td>
-                            <x-table.td>{{ $registrasi->jam_registrasi }}</x-table.td>
-                            <x-table.td>{{ $registrasi->tgl_keluar }}</x-table.td>
-                            <x-table.td>{{ $registrasi->jam_keluar }}</x-table.td>
-                            <x-table.td>{{ $registrasi->diagnosa_awal }}</x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->tgl_lahir }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->umur }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->agama }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->suku }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->status_lanjut }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->ruangan }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->status_poli }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->nm_poli }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->nm_dokter }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->status }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->tgl_registrasi }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->jam_registrasi }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->tgl_keluar }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->jam_keluar }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->diagnosa_awal }}
+                            </x-table.td>
                             <x-table.td>
                                 @foreach ($icdDiagnosa as $item)
-                                    {{ $item }} @if (!$loop->last)
-                                        <br>
+                                    {{ $item }}
+                                    @if (! $loop->last)
+                                        <br />
                                     @endif
                                 @endforeach
                             </x-table.td>
                             <x-table.td>
                                 @foreach ($diagnosa as $item)
-                                    {{ $item }} @if (!$loop->last)
-                                        <br>
+                                    {{ $item }}
+                                    @if (! $loop->last)
+                                        <br />
                                     @endif
                                 @endforeach
                             </x-table.td>
                             <x-table.td>
                                 @foreach ($tindakanRalan as $item)
-                                    {{ $item }} @if (!$loop->last)
-                                        <br>
+                                    {{ $item }}
+                                    @if (! $loop->last)
+                                        <br />
                                     @endif
                                 @endforeach
                             </x-table.td>
                             <x-table.td>
                                 @foreach ($tindakanRanap as $item)
-                                    {{ $item }} @if (!$loop->last)
-                                        <br>
+                                    {{ $item }}
+                                    @if (! $loop->last)
+                                        <br />
                                     @endif
                                 @endforeach
                             </x-table.td>
-                            <x-table.td>{{ $registrasi->lama_operasi }}</x-table.td>
-                            <x-table.td>{{ $registrasi->rujukan_masuk }}</x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->lama_operasi }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->rujukan_masuk }}
+                            </x-table.td>
                             <x-table.td>
                                 @foreach ($dokterPj as $item)
-                                    {{ $item }} @if (!$loop->last)
-                                        <br>
+                                    {{ $item }}
+                                    @if (! $loop->last)
+                                        <br />
                                     @endif
                                 @endforeach
                             </x-table.td>
-                            <x-table.td>{{ $registrasi->kelas }}</x-table.td>
-                            <x-table.td>{{ $registrasi->penjamin }}</x-table.td>
-                            <x-table.td>{{ $registrasi->status_bayar }}</x-table.td>
-                            <x-table.td>{{ $registrasi->status_pulang_ranap }}</x-table.td>
-                            <x-table.td>{{ $registrasi->rujuk_keluar_rs }}</x-table.td>
-                            <x-table.td>{{ $registrasi->alamat }}</x-table.td>
-                            <x-table.td>{{ $registrasi->no_hp }}</x-table.td>
-                            <x-table.td>{{ $registrasi->kunjungan_ke }}</x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->kelas }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->penjamin }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->status_bayar }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->status_pulang_ranap }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->rujuk_keluar_rs }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->alamat }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->no_hp }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $registrasi->kunjungan_ke }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="33" padding />

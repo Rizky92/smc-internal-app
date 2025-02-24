@@ -41,7 +41,7 @@ class Jadwal extends Model
 
     public function scopeJadwalDokter(Builder $query, bool $semuaPoli = false): Builder
     {
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             dokter.kd_dokter,
             dokter.nm_dokter,
             poliklinik.kd_poli, 
@@ -50,8 +50,8 @@ class Jadwal extends Model
             DATE_FORMAT(jadwal.jam_mulai, '%H:%i') AS jam_mulai, 
             DATE_FORMAT(jadwal.jam_selesai, '%H:%i') AS jam_selesai,
             jadwal.kuota
-        SQL;
-                        
+            SQL;
+
         $this->addSearchConditions([
             'dokter.nm_dokter',
             'poliklinik.nm_poli',
@@ -94,13 +94,13 @@ class Jadwal extends Model
             ->where('hari_kerja', $hari_kerja)
             ->orderBy('jam_mulai', 'asc')
             ->get();
-    
+
         // Jika terdapat lebih dari satu jadwal dengan kondisi tersebut
         if ($jadwal->count() > 1) {
             // Ambil jadwal pertama dan kedua
             $jadwal1 = $jadwal->first();
             $jadwal2 = $jadwal->last();
-    
+
             // Cek apakah total_registrasi pada jadwal yang jam_mulai lebih awal telah mencapai kuota
             $total_registrasi_jadwal1 = RegistrasiPasien::where('kd_dokter', $kd_dokter)
                 ->where('kd_poli', $kd_poli)
@@ -123,13 +123,13 @@ class Jadwal extends Model
         } elseif ($jadwal->count() == 1) {
             // Jika hanya ada satu jadwal dengan kondisi tersebut
             $jadwal1 = $jadwal->first();
-    
+
             // Hitung total registrasi seperti biasa untuk jadwal tersebut
             $total_registrasi_jadwal1 = RegistrasiPasien::where('kd_dokter', $kd_dokter)
                 ->where('kd_poli', $kd_poli)
                 ->where('tgl_registrasi', $tgl_registrasi)
                 ->count();
-    
+
             return [$total_registrasi_jadwal1, 0];
         } else {
             // Jika tidak ada jadwal yang memenuhi kondisi
@@ -138,7 +138,7 @@ class Jadwal extends Model
                 ->where('kd_poli', $kd_poli)
                 ->where('tgl_registrasi', $tgl_registrasi)
                 ->sum('total_registrasi');
-    
+
             return [$total_registrasi, 0];
         }
     }

@@ -14,6 +14,7 @@
             })
         </script>
     @endpush
+
     <x-modal id="modal-input-kategori-rkat" :title="$this->isUpdating() ? 'Edit Kategori Anggaran' : 'Tambah Kategori Anggaran Baru'" livewire centered>
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <form id="form-input-kategori-rkat" wire:submit.prevent="{{ $this->isUpdating() ? 'update' : 'create' }}">

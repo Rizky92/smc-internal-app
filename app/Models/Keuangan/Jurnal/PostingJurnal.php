@@ -4,8 +4,8 @@ namespace App\Models\Keuangan\Jurnal;
 
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class PostingJurnal extends Model
 {
@@ -30,23 +30,23 @@ class PostingJurnal extends Model
 
     public function detail(): HasMany
     {
-        return $this->hasMany(JurnalDetail::class, 'no_jurnal','no_jurnal');
+        return $this->hasMany(JurnalDetail::class, 'no_jurnal', 'no_jurnal');
     }
 
     public function scopeJumlahDebetDanKreditPostingJurnal(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $jenis = ''): Builder
     {
-        if(empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
-        if(empty($tglAkhir)) {
-            $tglAkhir = now()->startOfMonth()->format('Y-m-d');
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->startOfMonth()->toDateString();
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             ifnull(round(sum(detailjurnal.debet), 2), 0) debet,
             ifnull(round(sum(detailjurnal.kredit), 2), 0) kredit
-        SQL;
+            SQL;
 
         $this->addSearchConditions([
             'posting_jurnal.no_jurnal',

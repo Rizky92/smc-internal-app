@@ -26,21 +26,37 @@
                     @forelse ($this->dataLaporanTindakanRadiologi as $item)
                         <x-table.tr>
                             <x-table.td>{{ $item->no_rawat }}</x-table.td>
-                            <x-table.td>{{ $item->no_rkm_medis }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->no_rkm_medis }}
+                            </x-table.td>
                             <x-table.td>{{ $item->nm_pasien }}</x-table.td>
                             <x-table.td>{{ $item->png_jawab }}</x-table.td>
-                            <x-table.td>{{ $item->nama_petugas }}</x-table.td>
-                            <x-table.td>{{ $item->tgl_periksa }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->nama_petugas }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->tgl_periksa }}
+                            </x-table.td>
                             <x-table.td>{{ $item->jam }}</x-table.td>
-                            <x-table.td>{{ $item->dokter_perujuk }}</x-table.td>
-                            <x-table.td>{{ $item->kd_jenis_prw }}</x-table.td>
-                            <x-table.td>{{ $item->nm_perawatan }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->dokter_perujuk }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->kd_jenis_prw }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->nm_perawatan }}
+                            </x-table.td>
                             <x-table.td>{{ rp($item->biaya) }}</x-table.td>
-                            <x-table.td>{{ $item->status_bayar }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->status_bayar }}
+                            </x-table.td>
                             <x-table.td>{{ $item->status }}</x-table.td>
                             <x-table.td>{{ $item->kd_dokter }}</x-table.td>
                             <x-table.td>{{ $item->nm_dokter }}</x-table.td>
-                            <x-table.td>{{ $item->hasil_pemeriksaan }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->hasil_pemeriksaan }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="16" padding />

@@ -28,10 +28,12 @@
             {{ $header }}
         </div>
     @endif
-    <div {{ $body->attributes->class([
-        'card-body',
-        'p-0' => $table,
-    ]) }}>
+    <div {{
+        $body->attributes->class([
+            'card-body',
+            'p-0' => $table,
+        ])
+    }}>
         {{ $body }}
     </div>
     @if ($footer)
@@ -39,6 +41,7 @@
             {{ $footer }}
         </div>
     @endif
+
     @if ($useLoading)
         <x-card.loading :target="$loadingTarget" />
     @endif

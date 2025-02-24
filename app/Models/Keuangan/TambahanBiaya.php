@@ -23,11 +23,11 @@ class TambahanBiaya extends Model
     public function scopeBiayaTambahanUntukHonorDokter(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -44,7 +44,7 @@ class TambahanBiaya extends Model
             poliklinik.nm_poli,
             reg_periksa.status_lanjut,
             reg_periksa.status_bayar
-        SQL;
+            SQL;
 
         $this->addSearchConditions([
             'pasien.nm_pasien',
@@ -75,5 +75,31 @@ class TambahanBiaya extends Model
             ->leftJoin('dpjp_ranap', 'reg_periksa.no_rawat', '=', 'dpjp_ranap.no_rawat')
             ->leftJoin(DB::raw('dokter dokter_pj'), 'dpjp_ranap.kd_dokter', '=', 'dokter_pj.kd_dokter')
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir]);
+    }
+
+    public function scopeItemFakturPajak(Builder $query): Builder
+    {
+        $sqlSelect = <<<'SQL'
+            tambahan_biaya.no_rawat,
+            '080' as kode_transaksi,
+            'B' as jenis_barang_jasa,
+            '250100' as kode_barang_jasa,
+            tambahan_biaya.nama_biaya as nama_barang_jasa,
+            '' as nama_satuan_ukur,
+            tambahan_biaya.besar_biaya as harga_satuan,
+            1 as jumlah_barang_jasa,
+            0 as diskon_persen,
+            0 as diskon_nominal,
+            tambahan_biaya.besar_biaya as dpp,
+            12 as ppn_persen,
+            0 as ppn_nominal,
+            '' as kd_jenis_prw,
+            'Tambahan Biaya' as kategori,
+            13 as urutan
+            SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'tambahan_biaya.no_rawat'));
     }
 }

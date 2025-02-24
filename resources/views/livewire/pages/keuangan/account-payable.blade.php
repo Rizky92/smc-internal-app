@@ -34,24 +34,60 @@
                             <x-slot name="body">
                                 @forelse ($this->dataAccountPayableMedis as $item)
                                     <x-table.tr>
-                                        <x-table.td>{{ $item->no_tagihan }}</x-table.td>
-                                        <x-table.td>{{ $item->no_order }}</x-table.td>
-                                        <x-table.td>{{ $item->no_faktur }}</x-table.td>
-                                        <x-table.td>{{ $item->nama_suplier }}</x-table.td>
-                                        <x-table.td>{{ $item->tgl_tagihan }}</x-table.td>
-                                        <x-table.td>{{ $item->tgl_tempo }}</x-table.td>
-                                        <x-table.td>{{ $item->tgl_terima }}</x-table.td>
-                                        <x-table.td>{{ $item->tgl_bayar }}</x-table.td>
-                                        <x-table.td>{{ $item->status }}</x-table.td>
-                                        <x-table.td>{{ $item->nama_bayar }}</x-table.td>
-                                        <x-table.td>{{ rp($item->tagihan) }}</x-table.td>
-                                        <x-table.td>{{ rp($item->dibayar) }}</x-table.td>
-                                        <x-table.td>{{ rp($item->sisa) }}</x-table.td>
-                                        <x-table.td>{{ between($item->umur_hari, 0, 30) ? rp($item->sisa) : rp() }}</x-table.td>
-                                        <x-table.td>{{ between($item->umur_hari, 31, 60) ? rp($item->sisa) : rp() }}</x-table.td>
-                                        <x-table.td>{{ between($item->umur_hari, 61, 90) ? rp($item->sisa) : rp() }}</x-table.td>
-                                        <x-table.td>{{ $item->umur_hari > 90 ? rp($item->sisa) : rp() }}</x-table.td>
-                                        <x-table.td>{{ $item->keterangan }}</x-table.td>
+                                        <x-table.td>
+                                            {{ $item->no_tagihan }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->no_order }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->no_faktur }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->nama_suplier }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->tgl_tagihan }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->tgl_tempo }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->tgl_terima }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->tgl_bayar }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->status }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->nama_bayar }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ rp($item->tagihan) }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ rp($item->dibayar) }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ rp($item->sisa) }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ between($item->umur_hari, 0, 30) ? rp($item->sisa) : rp() }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ between($item->umur_hari, 31, 60) ? rp($item->sisa) : rp() }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ between($item->umur_hari, 61, 90) ? rp($item->sisa) : rp() }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->umur_hari > 90 ? rp($item->sisa) : rp() }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->keterangan }}
+                                        </x-table.td>
                                     </x-table.tr>
                                 @empty
                                     <x-table.tr-empty colspan="18" padding />
@@ -99,24 +135,60 @@
                             <x-slot name="body">
                                 @forelse ($this->dataAccountPayableNonMedis as $item)
                                     <x-table.tr>
-                                        <x-table.td>{{ $item->no_tagihan }}</x-table.td>
-                                        <x-table.td>{{ $item->no_order }}</x-table.td>
-                                        <x-table.td>{{ $item->no_faktur }}</x-table.td>
-                                        <x-table.td>{{ $item->nama_suplier }}</x-table.td>
-                                        <x-table.td>{{ $item->tgl_tagihan }}</x-table.td>
-                                        <x-table.td>{{ $item->tgl_tempo }}</x-table.td>
-                                        <x-table.td>{{ $item->tgl_terima }}</x-table.td>
-                                        <x-table.td>{{ $item->tgl_bayar }}</x-table.td>
-                                        <x-table.td>{{ $item->status }}</x-table.td>
-                                        <x-table.td>{{ $item->nama_bayar }}</x-table.td>
-                                        <x-table.td>{{ rp($item->tagihan) }}</x-table.td>
-                                        <x-table.td>{{ rp($item->dibayar) }}</x-table.td>
-                                        <x-table.td>{{ rp($item->sisa) }}</x-table.td>
-                                        <x-table.td>{{ between($item->umur_hari, 0, 30) ? rp($item->sisa) : rp() }}</x-table.td>
-                                        <x-table.td>{{ between($item->umur_hari, 31, 60) ? rp($item->sisa) : rp() }}</x-table.td>
-                                        <x-table.td>{{ between($item->umur_hari, 61, 90) ? rp($item->sisa) : rp() }}</x-table.td>
-                                        <x-table.td>{{ $item->umur_hari > 90 ? rp($item->sisa) : rp() }}</x-table.td>
-                                        <x-table.td>{{ $item->keterangan }}</x-table.td>
+                                        <x-table.td>
+                                            {{ $item->no_tagihan }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->no_order }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->no_faktur }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->nama_suplier }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->tgl_tagihan }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->tgl_tempo }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->tgl_terima }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->tgl_bayar }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->status }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->nama_bayar }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ rp($item->tagihan) }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ rp($item->dibayar) }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ rp($item->sisa) }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ between($item->umur_hari, 0, 30) ? rp($item->sisa) : rp() }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ between($item->umur_hari, 31, 60) ? rp($item->sisa) : rp() }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ between($item->umur_hari, 61, 90) ? rp($item->sisa) : rp() }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->umur_hari > 90 ? rp($item->sisa) : rp() }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->keterangan }}
+                                        </x-table.td>
                                     </x-table.tr>
                                 @empty
                                     <x-table.tr-empty colspan="18" padding />

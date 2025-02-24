@@ -33,9 +33,9 @@ class AnggaranBidang extends Model
 
     public function scopeAnggaranPerBidangUnit(Builder $query, string $tahun): Builder
     {
-        $sqlSelect = <<<SQL
-anggaran_bidang.id, anggaran_bidang.anggaran_id, anggaran_bidang.bidang_id, 
-SQL;
+        $sqlSelect = <<<'SQL'
+            anggaran_bidang.id, anggaran_bidang.anggaran_id, anggaran_bidang.bidang_id, 
+            SQL;
 
         return $query;
     }

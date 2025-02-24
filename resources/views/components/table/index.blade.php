@@ -1,14 +1,14 @@
 @props([
-    'columns'     => null,
-    'body'        => null,
-    'footer'      => null,
-    'sortable'    => false,
+    'columns' => null,
+    'body' => null,
+    'footer' => null,
+    'sortable' => false,
     'sortColumns' => [],
-    'zebra'       => false,
-    'hover'       => false,
-    'sticky'      => false,
-    'borderless'  => false,
-    'nowrap'      => false,
+    'zebra' => false,
+    'hover' => false,
+    'sticky' => false,
+    'borderless' => false,
+    'nowrap' => false,
 ])
 
 @once
@@ -34,14 +34,17 @@
 @endonce
 
 <div class="table-responsive">
-    <table {{ $attributes->class([
-        'table table-sm text-sm' => true,
-        'text-nowrap' => $nowrap,
-        'table-hover' => $hover,
-        'table-striped' => $zebra,
-        'table-head-fixed table-foot-fixed' => $sticky,
-        'table-borderless' => $borderless,
-    ]) }}>
+    <table
+        {{
+            $attributes->class([
+                'table table-sm text-sm' => true,
+                'text-nowrap' => $nowrap,
+                'table-hover' => $hover,
+                'table-striped' => $zebra,
+                'table-head-fixed table-foot-fixed' => $sticky,
+                'table-borderless' => $borderless,
+            ])
+        }}>
         <thead>
             <tr {{ $columns->attributes }}>
                 {{ $columns }}

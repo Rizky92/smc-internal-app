@@ -14,10 +14,10 @@
         $options = collect($options);
     }
 
-    $livewire = !is_null($model);
+    $livewire = ! is_null($model);
 
     $isList = $options->isList();
-    
+
     $options = $options
         ->when($isList, fn ($c) => $c->mapWithKeys(fn ($v, $k) => [$v => $v]))
         ->when($showKey, fn ($c) => $c->mapWithKeys(fn ($v, $k) => [$k => "{$k} - {$v}"]));
@@ -30,8 +30,8 @@
 
 @push('css')
     @once
-        <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet">
-        <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet" />
+        <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet" />
         <style>
             .select2-selection__arrow {
                 top: 0 !important;
@@ -48,10 +48,12 @@
         </style>
     @endonce
 @endpush
+
 @push('js')
     @once
         <script src="{{ asset('js/select2.full.min.js') }}"></script>
     @endonce
+
     <script>
         window.select2 = () => {
             $('select#{{ $id }}').select2({
@@ -82,16 +84,22 @@
     </script>
 @endpush
 
-<div wire:ignore {{ $attributes
-    ->only('class')
-    ->merge($styles[$width])
+<div wire:ignore {{
+    $attributes
+        ->only('class')
+        ->merge($styles[$width])
 }}>
     <select @if ($livewire) wire:model.defer="{{ $model }}" @endif id="{{ $id }}" name="{{ $name }}" class="form-control form-control-sm simple-select2-sm input-sm" autocomplete="off">
         @if ($placeholder)
-            <option disabled {{ $options->has($this->$model) ? null : 'selected' }}>{{ $placeholder }}</option>
+            <option disabled {{ $options->has($this->$model) ? null : 'selected' }}>
+                {{ $placeholder }}
+            </option>
         @endif
+
         @foreach ($options->all() as $key => $value)
-            <option value="{{ $key }}" {{ $this->$model === $key ? 'selected' : null }}>{{ $value }}</option>
+            <option value="{{ $key }}" {{ $this->$model === $key ? 'selected' : null }}>
+                {{ $value }}
+            </option>
         @endforeach
     </select>
 </div>

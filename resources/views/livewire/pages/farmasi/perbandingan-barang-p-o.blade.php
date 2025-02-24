@@ -28,13 +28,25 @@
                 <x-slot name="body">
                     @forelse ($this->perbandinganOrderObatPO as $obat)
                         <x-table.tr>
-                            <x-table.td>{{ $obat->no_pemesanan }}</x-table.td>
+                            <x-table.td>
+                                {{ $obat->no_pemesanan }}
+                            </x-table.td>
                             <x-table.td>{{ $obat->nama_brng }}</x-table.td>
-                            <x-table.td>{{ $obat->suplier_pesan }}</x-table.td>
-                            <x-table.td>{{ $obat->suplier_datang }}</x-table.td>
-                            <x-table.td>{{ $obat->jumlah_pesan }}</x-table.td>
-                            <x-table.td>{{ $obat->jumlah_datang }}</x-table.td>
-                            <x-table.td>{{ $obat->keterangan ?? $obat->selisih }}</x-table.td>
+                            <x-table.td>
+                                {{ $obat->suplier_pesan }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $obat->suplier_datang }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $obat->jumlah_pesan }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $obat->jumlah_datang }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $obat->keterangan ?? $obat->selisih }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="7" padding />

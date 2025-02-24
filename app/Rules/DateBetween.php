@@ -52,8 +52,8 @@ class DateBetween implements Rule
     public function message()
     {
         return str(':Attribute harus sesuai periode antara :start hingga :end')
-            ->replace(':start', $this->startDate->format('Y-m-d'))
-            ->replace(':end', $this->endDate->format('Y-m-d'))
+            ->replace(':start', $this->startDate->toDateString())
+            ->replace(':end', $this->endDate->toDateString())
             ->value();
     }
 }

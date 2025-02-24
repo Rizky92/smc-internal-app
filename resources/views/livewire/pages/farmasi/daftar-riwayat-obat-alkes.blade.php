@@ -13,7 +13,7 @@
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
             </x-row-col-flex>
-        </x-slot>          
+        </x-slot>
         <x-slot name="body">
             <x-navtabs livewire selected="obat">
                 <x-slot name="tabs">
@@ -37,15 +37,33 @@
                             <x-slot name="body">
                                 @forelse ($this->dataRiwayatObat as $item)
                                     <x-table.tr>
-                                        <x-table.td>{{ $item->kode_brng }}</x-table.td>
-                                        <x-table.td>{{ $item->nama_brng }}</x-table.td>
-                                        <x-table.td>{{ $item->stok_akhir }}</x-table.td>
-                                        <x-table.td>{{ $item->order_terakhir}}</x-table.td>
-                                        <x-table.td>{{ $item->penggunaan_terakhir}}</x-table.td>
-                                        <x-table.td>{{ $item->tanggal_order_terakhir}}</x-table.td>
-                                        <x-table.td>{{ $item->tanggal_penggunaan_terakhir}}</x-table.td>
-                                        <x-table.td>{{ $item->posisi_order_terakhir}}</x-table.td>
-                                        <x-table.td>{{ $item->posisi_penggunaan_terakhir}}</x-table.td>
+                                        <x-table.td>
+                                            {{ $item->kode_brng }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->nama_brng }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->stok_akhir }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->order_terakhir }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->penggunaan_terakhir }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->tanggal_order_terakhir }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->tanggal_penggunaan_terakhir }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->posisi_order_terakhir }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->posisi_penggunaan_terakhir }}
+                                        </x-table.td>
                                     </x-table.tr>
                                 @empty
                                     <x-table.tr-empty colspan="9" padding />
@@ -70,15 +88,33 @@
                             <x-slot name="body">
                                 @forelse ($this->dataRiwayatAlkes as $item)
                                     <x-table.tr>
-                                        <x-table.td>{{ $item->kode_brng }}</x-table.td>
-                                        <x-table.td>{{ $item->nama_brng }}</x-table.td>
-                                        <x-table.td>{{ $item->stok_akhir }}</x-table.td>
-                                        <x-table.td>{{ $item->order_terakhir}}</x-table.td>
-                                        <x-table.td>{{ $item->penggunaan_terakhir}}</x-table.td>
-                                        <x-table.td>{{ $item->tanggal_order_terakhir}}</x-table.td>
-                                        <x-table.td>{{ $item->tanggal_penggunaan_terakhir}}</x-table.td>
-                                        <x-table.td>{{ $item->posisi_order_terakhir}}</x-table.td>
-                                        <x-table.td>{{ $item->posisi_penggunaan_terakhir}}</x-table.td>
+                                        <x-table.td>
+                                            {{ $item->kode_brng }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->nama_brng }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->stok_akhir }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->order_terakhir }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->penggunaan_terakhir }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->tanggal_order_terakhir }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->tanggal_penggunaan_terakhir }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->posisi_order_terakhir }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $item->posisi_penggunaan_terakhir }}
+                                        </x-table.td>
                                     </x-table.tr>
                                 @empty
                                     <x-table.tr-empty colspan="9" padding />

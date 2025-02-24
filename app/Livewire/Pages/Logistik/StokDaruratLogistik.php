@@ -57,6 +57,9 @@ class StokDaruratLogistik extends Component
         $this->tampilkanSaranOrderNol = true;
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         return [

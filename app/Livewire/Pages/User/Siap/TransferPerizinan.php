@@ -59,7 +59,7 @@ class TransferPerizinan extends Component
     }
 
     /**
-     * @return Collection<\App\Models\Aplikasi\User>|array<empty, empty>
+     * @return Collection<User>|array<empty, empty>
      */
     public function getAvailableUsersProperty()
     {

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Reedware\LaravelCompositeRelations\CompositeBelongsTo;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 
-class HasilPeriksaRadiologi extends Model
+class PeriksaRadiologi extends Model
 {
     use HasCompositeRelations;
 
@@ -38,11 +38,11 @@ class HasilPeriksaRadiologi extends Model
     public function scopeLaporanTindakanRadiologi(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -62,7 +62,7 @@ class HasilPeriksaRadiologi extends Model
             periksa_radiologi.kd_dokter,
             dokter.nm_dokter,
             ifnull(LEFT(hasil_radiologi.hasil, 200), '-') hasil_pemeriksaan
-        SQL;
+            SQL;
 
         $this->addSearchConditions([
             'periksa_radiologi.no_rawat',
@@ -118,5 +118,33 @@ class HasilPeriksaRadiologi extends Model
                 periksa_radiologi.tgl_periksa,
                 periksa_radiologi.jam
             )');
+    }
+
+    public function scopeItemFakturPajak(Builder $query): Builder
+    {
+        $sqlSelect = <<<'SQL'
+            periksa_radiologi.no_rawat,
+            '080' as kode_transaksi,
+            'B' as jenis_barang_jasa,
+            '250100' as kode_barang_jasa,
+            jns_perawatan_radiologi.nm_perawatan as nama_barang_jasa,
+            '' as nama_satuan_ukur,
+            periksa_radiologi.biaya as harga_satuan,
+            count(*) as jumlah_barang_jasa,
+            0 as diskon_persen,
+            0 as diskon_nominal,
+            (periksa_radiologi.biaya * count(*)) as dpp,
+            12 as ppn_persen,
+            0 as ppn_nominal,
+            periksa_radiologi.kd_jenis_prw,
+            'Radiologi' as kategori,
+            11 as urutan
+            SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join('jns_perawatan_radiologi', 'periksa_radiologi.kd_jenis_prw', '=', 'jns_perawatan_radiologi.kd_jenis_prw')
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'periksa_radiologi.no_rawat'))
+            ->groupBy(['periksa_radiologi.no_rawat', 'periksa_radiologi.kd_jenis_prw', 'jns_perawatan_radiologi.nm_perawatan', 'periksa_radiologi.biaya']);
     }
 }

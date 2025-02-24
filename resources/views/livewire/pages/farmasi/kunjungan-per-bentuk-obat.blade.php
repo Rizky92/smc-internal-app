@@ -10,12 +10,14 @@
             <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.label class="ml-auto pr-3">Jenis Kunjungan:</x-filter.label>
-                <x-filter.select model="jenisKunjungan" :options="[
-                    'semua' => 'Semua',
-                    'ralan' => 'Rawat Jalan',
-                    'ranap' => 'Rawat Inap',
-                    'igd' => 'Rawat IGD',
-                ]" />
+                <x-filter.select
+                    model="jenisKunjungan"
+                    :options="[
+                        'semua' => 'Semua',
+                        'ralan' => 'Rawat Jalan',
+                        'ranap' => 'Rawat Inap',
+                        'igd' => 'Rawat IGD',
+                    ]" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.button-reset-filters class="ml-auto" />
@@ -49,23 +51,51 @@
                             <x-slot name="body">
                                 @forelse ($this->dataKunjunganResepObatRegular as $resep)
                                     <x-table.tr>
-                                        <x-table.td>{{ $resep->tgl_perawatan  }}</x-table.td>
-                                        <x-table.td>{{ $resep->no_resep }}</x-table.td>
-                                        <x-table.td>{{ $resep->no_rkm_medis }}</x-table.td>
-                                        <x-table.td>{{ $resep->nm_pasien }}</x-table.td>
-                                        <x-table.td>{{ $resep->png_jawab }}</x-table.td>
-                                        <x-table.td>{{ $resep->status }}</x-table.td>
-                                        <x-table.td>{{ $resep->nm_poli }}</x-table.td>
-                                        <x-table.td>{{ $resep->nm_dokter }}</x-table.td>
-                                        <x-table.td>{{ $resep->waktu_validasi }}</x-table.td>
-                                        <x-table.td>{{ $resep->waktu_penyerahan }}</x-table.td>
-                                        <x-table.td>{{
-                                            ($resep->waktu_penyerahan && $resep->waktu_validasi)
-                                                ? carbon_immutable($resep->waktu_validasi)->diff(carbon($resep->waktu_penyerahan))->format('%R %H:%I:%S')
-                                                : null
-                                        }}</x-table.td>
-                                        <x-table.td>{{ rp($resep->total) }}</x-table.td>
-                                        <x-table.td>{{ $resep->jumlah }}</x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->tgl_perawatan }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->no_resep }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->no_rkm_medis }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->nm_pasien }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->png_jawab }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->status }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->nm_poli }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->nm_dokter }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->waktu_validasi }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->waktu_penyerahan }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{
+                                                $resep->waktu_penyerahan && $resep->waktu_validasi
+                                                    ? carbon_immutable($resep->waktu_validasi)
+                                                        ->diff(carbon($resep->waktu_penyerahan))
+                                                        ->format('%R %H:%I:%S')
+                                                    : null
+                                            }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ rp($resep->total) }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->jumlah }}
+                                        </x-table.td>
                                     </x-table.tr>
                                 @empty
                                     <x-table.tr-empty colspan="13" padding />
@@ -94,23 +124,51 @@
                             <x-slot name="body">
                                 @forelse ($this->dataKunjunganResepObatRacikan as $resep)
                                     <x-table.tr>
-                                        <x-table.td>{{ $resep->tgl_perawatan  }}</x-table.td>
-                                        <x-table.td>{{ $resep->no_resep }}</x-table.td>
-                                        <x-table.td>{{ $resep->no_rkm_medis }}</x-table.td>
-                                        <x-table.td>{{ $resep->nm_pasien }}</x-table.td>
-                                        <x-table.td>{{ $resep->png_jawab }}</x-table.td>
-                                        <x-table.td>{{ $resep->status }}</x-table.td>
-                                        <x-table.td>{{ $resep->nm_poli }}</x-table.td>
-                                        <x-table.td>{{ $resep->nm_dokter }}</x-table.td>
-                                        <x-table.td>{{ $resep->waktu_validasi }}</x-table.td>
-                                        <x-table.td>{{ $resep->waktu_penyerahan }}</x-table.td>
-                                        <x-table.td>{{
-                                            ($resep->waktu_penyerahan && $resep->waktu_validasi)
-                                                ? carbon_immutable($resep->waktu_validasi)->diff(carbon($resep->waktu_penyerahan))->format('%R %H:%I:%S')
-                                                : null
-                                        }}</x-table.td>
-                                        <x-table.td>{{ rp($resep->total) }}</x-table.td>
-                                        <x-table.td>{{ $resep->jumlah }}</x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->tgl_perawatan }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->no_resep }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->no_rkm_medis }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->nm_pasien }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->png_jawab }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->status }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->nm_poli }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->nm_dokter }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->waktu_validasi }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->waktu_penyerahan }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{
+                                                $resep->waktu_penyerahan && $resep->waktu_validasi
+                                                    ? carbon_immutable($resep->waktu_validasi)
+                                                        ->diff(carbon($resep->waktu_penyerahan))
+                                                        ->format('%R %H:%I:%S')
+                                                    : null
+                                            }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ rp($resep->total) }}
+                                        </x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->jumlah }}
+                                        </x-table.td>
                                     </x-table.tr>
                                 @empty
                                     <x-table.tr-empty colspan="13" padding />

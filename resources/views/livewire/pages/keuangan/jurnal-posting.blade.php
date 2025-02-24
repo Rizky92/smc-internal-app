@@ -3,7 +3,7 @@
 
     @can('keuangan.posting-jurnal.create')
         <livewire:pages.keuangan.modal.input-jurnal-posting />
-        
+
         @once
             @push('js')
                 <script>
@@ -56,15 +56,32 @@
                             $count = $item->detail->count();
                             $firstDetail = $item->detail->first();
                         @endphp
+
                         <x-table.tr style="background-color: rgb({{ $odd }})">
-                            <x-table.td rowspan="{{ $count }}">{{ $item->no_jurnal }}</x-table.td>
-                            <x-table.td rowspan="{{ $count }}">{{ $item->no_bukti }}</x-table.td>
-                            <x-table.td rowspan="{{ $count }}">{{ $item->tgl_jurnal }} {{ $item->jam_jurnal }}</x-table.td>
-                            <x-table.td rowspan="{{ $count }}">{{ $item->jenis === 'U' ? 'Umum' : 'Penyesuaian' }}</x-table.td>
-                            <x-table.td rowspan="{{ $count }}">{{ $item->keterangan }}</x-table.td>
-                            <x-table.td>{{ $firstDetail->kd_rek }}</x-table.td>
+                            <x-table.td rowspan="{{ $count }}">
+                                {{ $item->no_jurnal }}
+                            </x-table.td>
+                            <x-table.td rowspan="{{ $count }}">
+                                {{ $item->no_bukti }}
+                            </x-table.td>
+                            <x-table.td rowspan="{{ $count }}">
+                                {{ $item->tgl_jurnal }}
+                                {{ $item->jam_jurnal }}
+                            </x-table.td>
+                            <x-table.td rowspan="{{ $count }}">
+                                {{ $item->jenis === 'U' ? 'Umum' : 'Penyesuaian' }}
+                            </x-table.td>
+                            <x-table.td rowspan="{{ $count }}">
+                                {{ $item->keterangan }}
+                            </x-table.td>
                             <x-table.td>
-                                @if ($firstDetail->kredit > 0) &emsp;&emsp; @endif
+                                {{ $firstDetail->kd_rek }}
+                            </x-table.td>
+                            <x-table.td>
+                                @if ($firstDetail->kredit > 0)
+                                    &emsp;&emsp;
+                                @endif
+
                                 {{ $firstDetail->rekening->nm_rek }}
                             </x-table.td>
                             <x-table.td-money :value="$firstDetail->debet" />
@@ -73,8 +90,13 @@
                         @if ($count > 1)
                             @foreach ($item->detail->skip(1) as $detail)
                                 <x-table.tr style="background-color: rgb({{ $odd }})">
-                                    <x-table.td class="p-1 border-0">{{ $detail->kd_rek }}</x-table.td>
-                                    <x-table.td class="border-0">&emsp;&emsp; {{ $detail->rekening->nm_rek }}</x-table.td>
+                                    <x-table.td class="p-1 border-0">
+                                        {{ $detail->kd_rek }}
+                                    </x-table.td>
+                                    <x-table.td class="border-0">
+                                        &emsp;&emsp;
+                                        {{ $detail->rekening->nm_rek }}
+                                    </x-table.td>
                                     <x-table.td-money :value="$detail->debet" />
                                     <x-table.td-money :value="$detail->kredit" />
                                 </x-table.tr>
