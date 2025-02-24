@@ -18,7 +18,10 @@ composer install && cp .env.example .env
 
 Lakukan konfigurasi koneksi database, nama superadmin, userkey dan passkey login di file .env yang baru dicopy tadi pada bagian `# WAJIB`.
 
-Buka file `database/seeders/PermissionSeeder.php` kemudian cari `User::findByNRP('221203')`, ganti dengan ID user yang akan ditunjuk menjadi role superadmin.
+Buka file `database/seeders/PermissionSeeder.php` kemudian cari `User::findByNRP('221203')`, ganti dengan ID user yang akan ditunjuk menjadi role superadmin.  
+
+> [!NOTE]
+> User yang ditunjuk menjadi role superadmin disini adalah user ***BIASA***, bukan user Admin Utama!
 
 Apabila sudah, jalankan perintah berikut secara berurutan.
 ```bash
