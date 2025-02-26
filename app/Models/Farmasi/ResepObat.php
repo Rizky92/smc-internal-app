@@ -145,7 +145,9 @@ dokter.nm_dokter,
 case when reg_periksa.status_lanjut = 'Ranap' then (select group_concat(distinct dokter.nm_dokter separator ', ') from dpjp_ranap join dokter on dpjp_ranap.kd_dokter = dokter.kd_dokter where dpjp_ranap.no_rawat = resep_obat.no_rawat) else (select nm_dokter from dokter where kd_dokter = reg_periksa.kd_dokter) end as dpjp,
 resep_obat.status,
 poliklinik.nm_poli,
-penjab.png_jawab
+penjab.png_jawab,
+detail_pemberian_obat.biaya_obat,
+detail_pemberian_obat.total
 SQL;
 
         $this->addSearchConditions([

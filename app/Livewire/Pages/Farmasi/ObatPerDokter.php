@@ -81,6 +81,8 @@ class ObatPerDokter extends Component
                     'status'        => str()->title($model->status),
                     'nm_poli'       => $model->nm_poli,
                     'png_jawab'     => $model->png_jawab,
+                    'biaya_obat'    => floatval($model->biaya_obat),
+                    'total'	    => floatval($model->total)
                 ]),
         ];
     }
@@ -100,6 +102,8 @@ class ObatPerDokter extends Component
             'Jenis Perawatan',
             'Asal Poli',
             'Jenis Bayar',
+            'Harga Obat',
+            'Total'
         ];
     }
 
