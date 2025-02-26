@@ -19,8 +19,8 @@
                     <x-table.th name="nama_brng" title="Nama" style="width: 50ch" />
                     <x-table.th name="satuan_kecil" title="Satuan" style="width: 12ch" />
                     <x-table.th name="kategori" title="Kategori" style="width: 25ch" />
-                    <x-table.th name="h_beli" title="Harga Beli" style="width: 25ch" />
-                    <x-table.th name="ralan" title="Harga Jual" style="width: 25ch" />
+                    <x-table.th-money name="h_beli" title="Harga Beli" />
+                    <x-table.th-money name="ralan" title="Harga Jual" />
                     <x-table.th name="stok_saat_ini" title="Stok Seluruh Depo Farmasi Saat Ini" align="right" style="width: 40ch" />
                     <x-table.th name="ke_pasien_14_hari" title="Jumlah Ke Pasien (14 Hari)" align="right" style="width: 40ch" />
                     <x-table.th name="pemakaian_1_minggu" title="Pemakaian 1 Minggu" align="right" style="width: 40ch" />
@@ -37,8 +37,8 @@
                             <x-table.td>{{ $obat->nama_brng }}</x-table.td>
                             <x-table.td>{{ $obat->satuan_kecil }}</x-table.td>
                             <x-table.td>{{ $obat->kategori }}</x-table.td>
-                            <x-table.td class="text-right">{{ rp($obat->h_beli) }}</x-table.td>
-                            <x-table.td class="text-right">{{ rp($obat->ralan) }}</x-table.td>
+                            <x-table.td-money :value="$obat->h_beli" />
+                            <x-table.td-money :value="$obat->ralan" />
                             <x-table.td class="text-right">{{ $obat->stok_saat_ini }}</x-table.td>
                             <x-table.td class="text-right">{{ $obat->ke_pasien_14_hari }}</x-table.td>
                             <x-table.td class="text-right">{{ $obat->pemakaian_1_minggu }}</x-table.td>
@@ -49,7 +49,7 @@
                             <x-table.td class="text-right">{{ $obat->pemakaian_12_bulan }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="27" padding />
+                        <x-table.tr-empty colspan="29" padding />
                     @endforelse
                 </x-slot>
             </x-table>
