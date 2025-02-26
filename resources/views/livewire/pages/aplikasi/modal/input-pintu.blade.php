@@ -51,7 +51,7 @@
                     <div class="form-group mt-3">
                         <label for="poli">Poli:</label>
                         <div wire:ignore>
-                            <select id="kodePoliklinik" wire:model="kodePoliklinik" class="form-control select2-poliklinik" multiple>
+                            <select id="kodePoliklinik" wire:model="kodePoliklinik" class="form-control select2-poli" multiple>
                                 @foreach($this->poliklinik as $kd_poli => $nm_poli)
                                     <option value="{{ $kd_poli }}">{{ $nm_poli }}</option>
                                 @endforeach
