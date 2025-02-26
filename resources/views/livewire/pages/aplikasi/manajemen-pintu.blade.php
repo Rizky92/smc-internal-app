@@ -31,13 +31,9 @@
 
     <x-card use-loading>
         <x-slot name="header">
-            <x-row-col-flex class="mt-2 mb-3">
-                <x-button variant="primary" size="sm" title="Buat" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-pintu" class="btn-primary ml-auto" />
-            </x-row-col-flex>
             <x-row-col-flex>
                 <x-filter.select-perpage />
-                <x-filter.button-reset-filters class="ml-auto" />
-                <x-filter.search class="ml-2" />
+                <x-button variant="primary" size="sm" title="Buat" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-pintu" class="btn-primary ml-auto" />
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">

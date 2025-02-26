@@ -2,6 +2,19 @@
     @once
         <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet">
         <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet">
+
+        <style>
+            .select2-container--default .select2-selection--multiple .select2-selection__choice {
+                background-color:rgb(245, 245, 245);
+                color: #1f2d3d;
+                font-weight: 700;
+            }
+
+            .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+                color: rgb(173, 173, 173);
+                float: right;
+            }
+        </style>
     @endonce
 @endpush
 <div>
@@ -38,7 +51,7 @@
                     <div class="form-group mt-3">
                         <label for="poli">Poli:</label>
                         <div wire:ignore>
-                            <select id="kodePoliklinik" wire:model="kodePoliklinik" class="form-control select2-poli" multiple>
+                            <select id="kodePoliklinik" wire:model="kodePoliklinik" class="form-control select2-poliklinik" multiple>
                                 @foreach($this->poliklinik as $kd_poli => $nm_poli)
                                     <option value="{{ $kd_poli }}">{{ $nm_poli }}</option>
                                 @endforeach
