@@ -67,6 +67,11 @@ class ObatPerDokter extends Component
         return [
             fn () => ResepObat::query()
                 ->penggunaanObatPerDokter($this->tglAwal, $this->tglAkhir)
+                ->withCasts([
+                    'biaya_obat' => 'float',
+                    'jml'        => 'float',
+                    'total'      => 'float',
+                ])
                 ->cursor()
                 ->map(fn (ResepObat $model): array => [
                     'no_resep'      => $model->no_resep,
@@ -75,14 +80,14 @@ class ObatPerDokter extends Component
                     'no_rawat'      => $model->no_rawat,
                     'nama_brng'     => $model->nama_brng,
                     'nama'          => $model->nama,
-                    'jml'           => floatval($model->jml),
+                    'biaya_obat'    => $model->biaya_obat,
+                    'jml'           => $model->jml,
+                    'total'         => $model->total,
                     'nm_dokter'     => $model->nm_dokter,
                     'dpjp'          => $model->dpjp,
                     'status'        => str()->title($model->status),
                     'nm_poli'       => $model->nm_poli,
                     'png_jawab'     => $model->png_jawab,
-                    'biaya_obat'    => floatval($model->biaya_obat),
-                    'total'	    => floatval($model->total)
                 ]),
         ];
     }
@@ -96,14 +101,14 @@ class ObatPerDokter extends Component
             'Jam',
             'Nama Obat',
             'Kategori',
+            'Harga Obat',
             'Jumlah',
+            'Total',
             'Dokter Peresep',
             'DPJP',
             'Jenis Perawatan',
             'Asal Poli',
             'Jenis Bayar',
-            'Harga Obat',
-            'Total'
         ];
     }
 
