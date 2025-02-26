@@ -11,14 +11,14 @@
                     <x-table.th style="width: 10ch" name="jam" title="Jam" />
                     <x-table.th style="width: 30ch" name="nama_brng" title="Nama Obat" />
                     <x-table.th style="width: 20ch" name="nama" title="Kategori" />
+                    <x-table.th-money name="biaya_obat" title="Harga Obat" />
                     <x-table.th style="width: 7ch" name="jml" title="Jumlah" />
+                    <x-table.th-money name="total" title="Total" />
                     <x-table.th style="width: 40ch" name="nm_dokter" title="Dokter Peresep" />
                     <x-table.th style="width: 40ch" name="dpjp" title="DPJP" />
                     <x-table.th style="width: 12ch" name="status" title="Jenis Rawat" />
                     <x-table.th style="width: 30ch" name="nm_poli" title="Asal Poli" />
                     <x-table.th style="width: 30ch" name="png_jawab" title="Jenis Bayar" />
-                    <x-table.th-money name="biaya_obat" title="Harga Obat" />
-                    <x-table.th-money name="total" title="Total" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->obatPerDokter as $obat)
@@ -29,14 +29,14 @@
                             <x-table.td>{{ $obat->jam }}</x-table.td>
                             <x-table.td>{{ $obat->nama_brng }}</x-table.td>
                             <x-table.td>{{ $obat->nama }}</x-table.td>
+                            <x-table.td-money :value="$obat->biaya_obat" />
                             <x-table.td>{{ $obat->jml }}</x-table.td>
+                            <x-table.td-money :value="$obat->total" />
                             <x-table.td>{{ $obat->nm_dokter }}</x-table.td>
                             <x-table.td>{{ $obat->dpjp }}</x-table.td>
                             <x-table.td>{{ str($obat->status)->title() }}</x-table.td>
                             <x-table.td>{{ $obat->nm_poli }}</x-table.td>
                             <x-table.td>{{ $obat->png_jawab }}</x-table.td>
-                            <x-table.td-money :value="$obat->biaya_obat" />
-                            <x-table.td-money :value="$obat->total " />
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="16" padding />
