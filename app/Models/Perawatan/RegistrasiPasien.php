@@ -1025,4 +1025,40 @@ SQL;
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])
             ->whereRaw('billing.totalbiaya != 0');
     }
+
+    public function scopeIgdKeRawatInap(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->format('Y-m-d');
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->format('Y-m-d');
+        }
+        
+        $sqlSelect = <<<'SQL'
+            reg_periksa.no_rawat,
+            reg_periksa.tgl_registrasi,
+            reg_periksa.jam_reg,
+            reg_periksa.no_rkm_medis,
+            pasien.nm_pasien,
+            dokter.nm_dokter as dpjp_igd,
+            (select group_concat(dokter.nm_dokter separator '; ') from dpjp_ranap join dokter on dpjp_ranap.kd_dokter = dokter.kd_dokter where dpjp_ranap.no_rawat = reg_periksa.no_rawat) as dpjp_ranap
+        SQL;
+
+        $this->addSearchConditions([
+            'reg_periksa.no_rawat',
+            'reg_periksa.no_rkm_medis',
+            'pasien.nm_pasien',
+            'dokter.nm_dokter',
+        ]);
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->join('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
+            ->where('status_lanjut', 'Ranap')
+            ->where('kd_poli', 'IGDK')
+            ->whereBetween('tgl_registrasi', [$tglAwal, $tglAkhir]);
+    }
 }

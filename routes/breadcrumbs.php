@@ -152,6 +152,11 @@ Breadcrumbs::for('admin.keuangan.laporan-faktur-pajak', function (Trail $trail):
     $trail->push('Item Billing Pasien', route('admin.keuangan.laporan-faktur-pajak'));
 });
 
+Breadcrumbs::for('admin.keuangan.igd-ke-rawat-inap', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('IGD Ke Rawat Inap', route('admin.keuangan.igd-ke-rawat-inap'));
+});
+
 Breadcrumbs::for('admin.farmasi', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Farmasi');
