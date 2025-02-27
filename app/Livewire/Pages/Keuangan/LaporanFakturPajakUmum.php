@@ -31,10 +31,12 @@ use App\Models\Radiologi\PeriksaRadiologi;
 use App\Settings\NPWPSettings;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
+use Str;
 
 class LaporanFakturPajakUmum extends Component
 {
@@ -351,10 +353,56 @@ class LaporanFakturPajakUmum extends Component
                 ]);
             });
 
+        $this->updateHargaObat();
+
         $this->isDeferred = true;
         $this->forgetComputed('dataTanggalTarikan');
         $this->tanggalTarikan = $tanggalTarikanSementara;
         $this->dispatchBrowserEvent('data-tarikan:updated', ['tanggalTarikan' => $tanggalTarikanSementara]);
+    }
+
+    protected function updateHargaObat(): void
+    {
+        $hargaPemberian = FakturPajakDitarikDetail::query()
+            ->selectRaw(<<<'SQL'
+                faktur_pajak_ditarik_detail.no_rawat,
+                faktur_pajak_ditarik_detail.kode_transaksi,
+                faktur_pajak_ditarik_detail.nama_barang_jasa,
+                faktur_pajak_ditarik_detail.kd_jenis_prw,
+                faktur_pajak_ditarik_detail.kategori,
+                faktur_pajak_ditarik_detail.kode_asuransi,
+                max(faktur_pajak_ditarik_detail.harga_satuan) as harga_tertinggi
+                SQL)
+            ->where('faktur_pajak_ditarik_detail.menu', 'fp-umum')
+            ->where('faktur_pajak_ditarik_detail.status_lanjut', 'Ranap')
+            ->where('faktur_pajak_ditarik_detail.kategori', 'Pemberian Obat')
+            ->where('faktur_pajak_ditarik_detail.jumlah_barang_jasa', '>=', 0)
+            ->groupBy([
+                'faktur_pajak_ditarik_detail.no_rawat',
+                'faktur_pajak_ditarik_detail.kode_transaksi',
+                'faktur_pajak_ditarik_detail.nama_barang_jasa',
+                'faktur_pajak_ditarik_detail.kd_jenis_prw',
+                'faktur_pajak_ditarik_detail.kategori',
+                'faktur_pajak_ditarik_detail.kode_asuransi'
+            ]);
+
+        FakturPajakDitarikDetail::query()
+            ->joinSub($hargaPemberian, 't', fn (JoinClause $join) => $join
+                ->on('faktur_pajak_ditarik_detail.no_rawat', 't.no_rawat')
+                ->on('faktur_pajak_ditarik_detail.kode_transaksi', 't.kode_transaksi')
+                ->on('faktur_pajak_ditarik_detail.kategori', 't.kategori')
+                ->on('faktur_pajak_ditarik_detail.kd_jenis_prw', 't.kd_jenis_prw')
+                ->on('faktur_pajak_ditarik_detail.kode_asuransi', 't.kode_asuransi')
+                ->on('faktur_pajak_ditarik_detail.harga_satuan', '!=', 't.harga_tertinggi'))
+            ->where('faktur_pajak_ditarik_detail.menu', 'fp-umum')
+            ->where('faktur_pajak_ditarik_detail.status_lanjut', 'Ranap')
+            ->where('faktur_pajak_ditarik_detail.kategori', 'Pemberian Obat')
+            ->update([
+                'faktur_pajak_ditarik_detail.harga_satuan'   => DB::raw('t.harga_tertinggi'),
+                'faktur_pajak_ditarik_detail.dpp'            => DB::raw('t.harga_tertinggi * faktur_pajak_ditarik_detail.jumlah_barang_jasa'),
+                'faktur_pajak_ditarik_detail.dpp_nilai_lain' => DB::raw('(t.harga_tertinggi * faktur_pajak_ditarik_detail.jumlah_barang_jasa) * (11 / 12)'),
+                'faktur_pajak_ditarik_detail.ppn_nominal'    => DB::raw('((t.harga_tertinggi * faktur_pajak_ditarik_detail.jumlah_barang_jasa) * (11 / 12)) * (faktur_pajak_ditarik_detail.ppn_persen / 100)'),
+            ]);
     }
 
     public function exportWithOption(int $option): void
@@ -365,16 +413,14 @@ class LaporanFakturPajakUmum extends Component
     }
 
     /**
-     * @psalm-suppress UndefinedMethod
+     * @psalm-suppress MissingClosureReturnType
+     * @psalm-suppress InvalidReturnType
+     * @psalm-suppress InvalidReturnStatement
      */
     protected function dataPerSheet(): array
     {
         $this->simpanTarikan();
 
-        /**
-         * @psalm-suppress MissingClosureReturnType
-         * @psalm-suppress InvalidReturnType
-         */
         switch ($this->option) {
             case self::FORMAT_CORETAX:
                 return [
@@ -389,14 +435,14 @@ class LaporanFakturPajakUmum extends Component
                             '' as referensi,
                             cap_fasilitas,
                             id_tku_penjual,
-                            if (kode_asuransi = 'A09', '', npwp_asuransi) as npwp_nik,
+                            '' as npwp_nik,
                             jenis_id,
                             negara,
-                            if (kode_asuransi = 'A09', nik_pasien, '') as nomor_dokumen,
-                            if (kode_asuransi = 'A09', nama_pasien, nama_asuransi) as nama,
-                            if (kode_asuransi = 'A09', alamat_pasien, alamat_asuransi) as alamat,
-                            if (kode_asuransi = 'A09', email_pasien, email_asuransi) as email,
-                            if (kode_asuransi = 'A09', '', rpad(trim(npwp_asuransi), 22, '0')) as id_tku
+                            nik_pasien as nomor_dokumen,
+                            nama_pasien as nama,
+                            alamat_pasien as alamat,
+                            email_pasien as email,
+                            '' as id_tku
                             SQL)
                         ->where('menu', 'fp-umum')
                         ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
@@ -415,11 +461,11 @@ class LaporanFakturPajakUmum extends Component
                             'npwp_nik'            => $model->npwp_nik,
                             'jenis_id'            => $model->jenis_id,
                             'negara'              => $model->negara,
-                            'nomor_dokumen'       => $model->nomor_dokumen,
-                            'nama'                => $model->nama,
-                            'alamat'              => $model->alamat,
-                            'email'               => $model->email,
-                            'id_tku'              => $model->id_tku,
+                            'nomor_dokumen'       => Str::transliterate($model->nomor_dokumen ?: ''),
+                            'nama'                => Str::transliterate($model->nama ?: ''),
+                            'alamat'              => Str::transliterate($model->alamat ?: ''),
+                            'email'               => Str::transliterate($model->email ?: ''),
+                            'id_tku'              => Str::transliterate($model->id_tku ?: ''),
                         ]),
                     'Detail Faktur' => fn () => FakturPajakDitarikDetail::query()
                         ->selectRaw(<<<'SQL'
@@ -459,8 +505,8 @@ class LaporanFakturPajakUmum extends Component
                         ->map(fn (FakturPajakDitarikDetail $model): array => [
                             'baris'              => $model->baris,
                             'jenis_barang_jasa'  => $model->jenis_barang_jasa,
-                            'kode_barang_jasa'   => $model->kode_barang_jasa,
-                            'nama_barang_jasa'   => $model->nama_barang_jasa,
+                            'kode_barang_jasa'   => Str::transliterate($model->kode_barang_jasa ?: ''),
+                            'nama_barang_jasa'   => Str::transliterate($model->nama_barang_jasa ?: ''),
                             'nama_satuan_ukur'   => $model->nama_satuan_ukur ?: 'UM.0033',
                             'harga_satuan'       => round($model->harga_satuan, 2),
                             'jumlah_barang_jasa' => round($model->jumlah_barang_jasa, 2),
