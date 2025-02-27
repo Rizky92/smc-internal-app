@@ -258,7 +258,7 @@ class Menu
                         'hasAnyPermissions' => $user->can('keuangan.laporan-faktur-pajak.read'),
                     ],
                     [
-                        'name'              => 'IGD Ke Rawat Inap',
+                        'name'              => 'Pasien IGD Ranap',
                         'url'               => route('admin.keuangan.igd-ke-rawat-inap'),
                         'icon'              => 'fas fa-book',
                         'type'              => 'link',

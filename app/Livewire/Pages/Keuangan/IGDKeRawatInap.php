@@ -57,7 +57,7 @@ class IGDKeRawatInap extends Component
     public function render(): View
     {
         return view('livewire.pages.keuangan.i-g-d-ke-rawat-inap')
-            ->layout(BaseLayout::class, ['title' => 'IGD Ke Rawat Inap']);
+            ->layout(BaseLayout::class, ['title' => 'Laporan Pasien IGD Masuk Rawat Inap']);
     }
 
     protected function defaultValues(): void
@@ -111,7 +111,7 @@ class IGDKeRawatInap extends Component
 
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Pasien Masuk IGD Melalui Rawat Inap',
+            'Laporan Pasien IGD Masuk Rawat Inap',
             now()->translatedFormat('d F Y'),
             $periode,
         ];
