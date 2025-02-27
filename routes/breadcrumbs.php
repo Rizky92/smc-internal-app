@@ -162,6 +162,11 @@ Breadcrumbs::for('admin.keuangan.laporan-faktur-pajak-asper', function (Trail $t
     $trail->push('Faktur Pajak AS/PER', route('admin.keuangan.laporan-faktur-pajak-asper'));
 });
 
+Breadcrumbs::for('admin.keuangan.igd-ke-rawat-inap', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('Pasien IGD Ranap', route('admin.keuangan.igd-ke-rawat-inap'));
+});
+
 Breadcrumbs::for('admin.farmasi', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Farmasi');

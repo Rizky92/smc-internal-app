@@ -196,6 +196,8 @@ class Obat extends Model
             databarang.nama_brng,
             kodesatuan.satuan satuan_kecil,
             kategori_barang.nama kategori,
+            databarang.h_beli,
+            databarang.ralan,
             (ifnull((select round(sum(gudangbarang.stok), 2) from gudangbarang where gudangbarang.kode_brng = databarang.kode_brng), 0)) stok_saat_ini,
             (
                 ifnull((select round(sum(detail_pemberian_obat.jml), 2) from detail_pemberian_obat where detail_pemberian_obat.kode_brng = databarang.kode_brng and detail_pemberian_obat.tgl_perawatan between date_sub(current_date(), interval 2 week) and current_date()), 0) + 

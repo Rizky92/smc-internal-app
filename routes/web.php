@@ -217,6 +217,10 @@ Route::prefix('admin')
                 Route::get('laporan-faktur-pajak-umum', Keuangan\LaporanFakturPajakUmum::class)
                     ->name('laporan-faktur-pajak-umum')
                     ->middleware('can:keuangan.laporan-faktur-pajak.read');
+
+                Route::get('igd-ke-rawat-inap', Keuangan\IGDKeRawatInap::class)
+                    ->name('igd-ke-rawat-inap')
+                    ->middleware('can:keuangan.igd-ke-rawat-inap.read');
             });
 
         Route::prefix('farmasi')
