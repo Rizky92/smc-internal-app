@@ -64,6 +64,8 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'keuangan.laporan-trial-balance.read']);
         Permission::create(['name' => 'keuangan.posting-jurnal.create']);
         Permission::create(['name' => 'keuangan.posting-jurnal.read']);
+        Permission::create(['name' => 'keuangan.laporan-faktur-pajak.read']);
+        Permission::create(['name' => 'keuangan.igd-ke-rawat-inap.read']);
 
         Permission::create(['name' => 'farmasi.stok-darurat.read']);
         Permission::create(['name' => 'farmasi.pemakaian-stok.read']);
@@ -98,6 +100,11 @@ class PermissionSeeder extends Seeder
 
         Permission::create(['name' => 'aplikasi.pengaturan-rkat.read']);
         Permission::create(['name' => 'aplikasi.pengaturan-rkat.update']);
+
+        Permission::create(['name' => 'antrean.manajemen-pintu.create']);
+        Permission::create(['name' => 'antrean.manajemen-pintu.read']);
+        Permission::create(['name' => 'antrean.manajemen-pintu.update']);
+        Permission::create(['name' => 'antrean.manajemen-pintu.delete']);
 
         // Superadmin role name, bypasses all permissions
         $superadminRole = Role::create(['name' => config('permission.superadmin_name')]);

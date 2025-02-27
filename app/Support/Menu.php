@@ -107,6 +107,7 @@ class Menu
                     'keuangan.laporan-trial-balance.read',
                     'keuangan.posting-jurnal',
                     'keuangan.laporan-faktur-pajak.read',
+                    'keuangan.igd-ke-rawat-inap.read',
                 ]),
                 'items' => [
                     [
@@ -255,6 +256,13 @@ class Menu
                         'icon'              => 'fas fa-book',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.laporan-faktur-pajak.read'),
+                    ],
+                    [
+                        'name'              => 'Pasien IGD Ranap',
+                        'url'               => route('admin.keuangan.igd-ke-rawat-inap'),
+                        'icon'              => 'fas fa-book',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.igd-ke-rawat-inap.read'),
                     ],
                 ],
             ],
