@@ -1260,7 +1260,7 @@ class RegistrasiPasien extends Model
         if (empty($tglAkhir)) {
             $tglAkhir = now()->format('Y-m-d');
         }
-        
+
         $sqlSelect = <<<'SQL'
             reg_periksa.no_rawat,
             reg_periksa.tgl_registrasi,

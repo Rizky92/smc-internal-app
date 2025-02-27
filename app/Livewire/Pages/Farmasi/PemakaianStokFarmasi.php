@@ -65,7 +65,7 @@ class PemakaianStokFarmasi extends Component
                     'satuan_kecil'       => $model->satuan_kecil,
                     'kategori'           => $model->kategori,
                     'h_beli'             => $model->h_beli,
-                    'ralan'             => $model->ralan,
+                    'ralan'              => $model->ralan,
                     'stok_saat_ini'      => $model->stok_saat_ini,
                     'ke_pasien_14_hari'  => $model->ke_pasien_14_hari,
                     'pemakaian_1_minggu' => $model->pemakaian_1_minggu,

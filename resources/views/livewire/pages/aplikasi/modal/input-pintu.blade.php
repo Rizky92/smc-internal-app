@@ -5,7 +5,7 @@
 
         <style>
             .select2-container--default .select2-selection--multiple .select2-selection__choice {
-                background-color:rgb(245, 245, 245);
+                background-color: rgb(245, 245, 245);
                 color: #1f2d3d;
                 font-weight: 700;
             }

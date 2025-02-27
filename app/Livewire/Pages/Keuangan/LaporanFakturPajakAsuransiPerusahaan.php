@@ -362,7 +362,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                 'faktur_pajak_ditarik_detail.nama_barang_jasa',
                 'faktur_pajak_ditarik_detail.kd_jenis_prw',
                 'faktur_pajak_ditarik_detail.kategori',
-                'faktur_pajak_ditarik_detail.kode_asuransi'
+                'faktur_pajak_ditarik_detail.kode_asuransi',
             ]);
 
         FakturPajakDitarikDetail::query()
