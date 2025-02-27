@@ -80,9 +80,9 @@ class LaporanSelesaiBillingPasien extends Component
     protected function dataPerSheet(): array
     {
         return [
-            NotaSelesai::query()
+            fn () => NotaSelesai::query()
                 ->billingYangDiselesaikan($this->tglAwal, $this->tglAkhir)
-                ->get()
+                ->cursor()
                 ->map(fn (NotaSelesai $model) => [
                     'no_rawat'         => $model->no_rawat,
                     'no_rkm_medis'     => $model->no_rkm_medis,

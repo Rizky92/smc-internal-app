@@ -107,14 +107,14 @@ class LaporanPemakaianObatNAPZA extends Component
         };
 
         return [
-            'Narkotika' => Obat::query()
+            'Narkotika' => fn () => Obat::query()
                 ->pemakaianObatNAPZA($this->tglAwal, $this->tglAkhir, 'narkotika')
-                ->get()
+                ->cursor()
                 ->map($map),
 
-            'Psikotropika' => Obat::query()
+            'Psikotropika' => fn () => Obat::query()
                 ->pemakaianObatNAPZA($this->tglAwal, $this->tglAkhir, 'psikotropika')
-                ->get()
+                ->cursor()
                 ->map($map),
         ];
     }

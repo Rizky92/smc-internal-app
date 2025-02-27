@@ -68,9 +68,9 @@ class LaporanTindakanRadiologi extends Component
     protected function dataPerSheet(): array
     {
         return [
-            HasilPeriksaRadiologi::query()
+            fn () => HasilPeriksaRadiologi::query()
                 ->laporanTindakanRadiologi($this->tglAwal, $this->tglAkhir)
-                ->get()
+                ->cursor()
                 ->map(fn (HasilPeriksaRadiologi $model): array => [
                     'no_rawat'          => $model->no_rawat,
                     'no_rkm_medis'      => $model->no_rkm_medis,

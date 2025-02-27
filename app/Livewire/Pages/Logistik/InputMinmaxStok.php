@@ -85,9 +85,9 @@ class InputMinmaxStok extends Component
     protected function dataPerSheet(): array
     {
         return [
-            BarangNonMedis::query()
+            fn () => BarangNonMedis::query()
                 ->denganMinmax()
-                ->get(),
+                ->cursor(),
         ];
     }
 

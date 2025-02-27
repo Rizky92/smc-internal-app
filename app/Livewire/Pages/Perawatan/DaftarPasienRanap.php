@@ -116,10 +116,10 @@ class DaftarPasienRanap extends Component
     protected function dataPerSheet(): array
     {
         return [
-            RegistrasiPasien::query()
+            fn () => RegistrasiPasien::query()
                 ->daftarPasienRanap($this->tglAwal, $this->tglAkhir, $this->jenisRawat)
                 ->orderBy('no_rawat')
-                ->get()
+                ->cursor()
                 ->map(fn (RegistrasiPasien $model): array => [
                     'no_rawat'     => $model->no_rawat,
                     'no_rkm_medis' => $model->no_rkm_medis,

@@ -73,9 +73,9 @@ class LaporanTindakanLab extends Component
     protected function dataPerSheet(): array
     {
         return [
-            HasilPeriksaLab::query()
+            fn () => HasilPeriksaLab::query()
                 ->laporanTindakanLab($this->tglAwal, $this->tglAkhir)
-                ->get()
+                ->cursor()
                 ->map(fn (HasilPeriksaLab $model): array => [
                     'no_rawat'       => $model->no_rawat,
                     'no_rkm_medis'   => $model->no_rkm_medis,

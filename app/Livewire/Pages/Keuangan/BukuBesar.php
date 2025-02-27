@@ -85,7 +85,7 @@ class BukuBesar extends Component
     protected function dataPerSheet(): array
     {
         return [
-            Jurnal::query()
+            fn () => Jurnal::query()
                 ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
                 ->with(['pengeluaranHarian', 'piutangDilunaskan'])
                 ->search($this->cari)
@@ -115,8 +115,7 @@ class BukuBesar extends Component
                     'nm_rek'                 => 'TOTAL :',
                     'debet'                  => round(optional($this->totalDebetDanKredit)->debet, 2),
                     'kredit'                 => round(optional($this->totalDebetDanKredit)->kredit, 2),
-                ]])
-                ->all(),
+                ]]),
         ];
     }
 

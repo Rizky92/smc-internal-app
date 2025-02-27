@@ -91,9 +91,9 @@ class DefectaDepo extends Component
     protected function dataPerSheet(): array
     {
         return [
-            GudangObat::query()
+            fn () => GudangObat::query()
                 ->defectaDepo($this->tanggal, $this->shift, $this->bangsal)
-                ->get(),
+                ->cursor(),
         ];
     }
 

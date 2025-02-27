@@ -136,7 +136,7 @@ class AccountPayable extends Component
             $totalSisaPerPeriodeMedis = $totalMedis->pluck('sisa_tagihan', 'periode');
             $totalSisaDibayarMedis = (float) $totalSisaPerPeriodeMedis->sum();
 
-            $export['Medis'] = PenerimaanObat::query()
+            $export['Medis'] = fn () => PenerimaanObat::query()
                 ->hutangAging($this->tglAwal, $this->tglAkhir)
                 ->cursor()
                 ->map(fn (PenerimaanObat $model): array => [
@@ -180,8 +180,7 @@ class AccountPayable extends Component
                     'periode_90_up' => (float) $totalSisaPerPeriodeMedis->get('periode_90_up'),
                     'umur_hari'     => '',
                     'keterangan'    => '',
-                ]])
-                ->all();
+                ]]);
         }
 
         if (user()->can('keuangan.account-payable.read-nonmedis')) {
@@ -194,7 +193,7 @@ class AccountPayable extends Component
             $totalSisaPerPeriodeNonMedis = $totalNonMedis->pluck('sisa_tagihan', 'periode');
             $totalSisaDibayarNonMedis = (float) $totalSisaPerPeriodeNonMedis->sum();
 
-            $export['Non Medis'] = PemesananBarangNonMedis::query()
+            $export['Non Medis'] = fn () => PemesananBarangNonMedis::query()
                 ->hutangAging($this->tglAwal, $this->tglAkhir)
                 ->cursor()
                 ->map(fn (PemesananBarangNonMedis $model): array => [
@@ -238,8 +237,7 @@ class AccountPayable extends Component
                     'periode_90_up' => (float) $totalSisaPerPeriodeNonMedis->get('periode_90_up'),
                     'umur_hari'     => '',
                     'keterangan'    => '',
-                ]])
-                ->all();
+                ]]);
         }
 
         return $export;

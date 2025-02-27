@@ -65,7 +65,7 @@ class KunjunganPerPoli extends Component
     protected function dataPerSheet(): array
     {
         return [
-            ResepObat::query()
+            fn () => ResepObat::query()
                 ->kunjunganPerPoli($this->tglAwal, $this->tglAkhir)
                 ->cursor()
                 ->map(fn (ResepObat $model): array => [

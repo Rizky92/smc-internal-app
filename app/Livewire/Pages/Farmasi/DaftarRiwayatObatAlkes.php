@@ -80,23 +80,23 @@ class DaftarRiwayatObatAlkes extends Component
     protected function dataPerSheet(): array
     {
         $map = fn (Obat $model): array => [
-            'kode_brng'                         => $model->kode_brng,
-            'nama_brng'                         => $model->nama_brng,
-            'stok_akhir'                        => $model->stok_akhir,
-            'order_terakhir'                    => $model->order_terakhir,
-            'penggunaan_terakhir'               => $model->penggunaan_terakhir,
-            'tanggal_order_terakhir'            => $model->tanggal_order_terakhir,
-            'tanggal_penggunaan_terakhir'       => $model->tanggal_penggunaan_terakhir,
-            'posisi_order_terakhir'             => $model->posisi_order_terakhir,
-            'posisi_penggunaan_terakhir'        => $model->posisi_penggunaan_terakhir,
+            'kode_brng'                   => $model->kode_brng,
+            'nama_brng'                   => $model->nama_brng,
+            'stok_akhir'                  => $model->stok_akhir,
+            'order_terakhir'              => $model->order_terakhir,
+            'penggunaan_terakhir'         => $model->penggunaan_terakhir,
+            'tanggal_order_terakhir'      => $model->tanggal_order_terakhir,
+            'tanggal_penggunaan_terakhir' => $model->tanggal_penggunaan_terakhir,
+            'posisi_order_terakhir'       => $model->posisi_order_terakhir,
+            'posisi_penggunaan_terakhir'  => $model->posisi_penggunaan_terakhir,
         ];
 
         return [
-            'obat' => Obat::query()
+            'obat' => fn () => Obat::query()
                 ->daftarRiwayat('obat', $this->tglAwal, $this->tglAkhir, $this->barangNol)
                 ->cursor()
                 ->map($map),
-            'alkes' => Obat::query()
+            'alkes' => fn () => Obat::query()
                 ->daftarRiwayat('alkes', $this->tglAwal, $this->tglAkhir, $this->barangNol)
                 ->cursor()
                 ->map($map),
