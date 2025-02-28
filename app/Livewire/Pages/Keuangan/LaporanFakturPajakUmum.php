@@ -197,6 +197,7 @@ class LaporanFakturPajakUmum extends Component
         return FakturPajakDitarik::query()
             ->selectRaw('distinct(tgl_tarikan) as tgl_tarikan')
             ->where('menu', 'fp-umum')
+            ->orderByDesc('tgl_tarikan')
             ->pluck('tgl_tarikan', 'tgl_tarikan');
     }
 

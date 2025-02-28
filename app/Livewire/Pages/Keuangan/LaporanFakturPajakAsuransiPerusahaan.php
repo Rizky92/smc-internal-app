@@ -183,6 +183,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
         return FakturPajakDitarik::query()
             ->selectRaw('distinct(tgl_tarikan) as tgl_tarikan')
             ->where('menu', 'fp-asper')
+            ->orderByDesc('tgl_tarikan')
             ->pluck('tgl_tarikan', 'tgl_tarikan');
     }
 
