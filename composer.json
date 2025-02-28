@@ -3,7 +3,7 @@
     "type": "project",
     "description": "SMC Internal App",
     "require": {
-        "php": "^8.1.0|^8.2.0",
+        "php": "^8.1",
         "ext-xlswriter": "*",
         "brick/money": "^0.5.3",
         "diglactic/laravel-breadcrumbs": "^8.1.1",
@@ -47,7 +47,7 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "platform": {
-            "php": "8.2.27"
+            "php": "8.1.31"
         }
     },
     "extra": {
