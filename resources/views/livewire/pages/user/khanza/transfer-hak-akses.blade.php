@@ -19,6 +19,7 @@
             </script>
         @endpush
     @endonce
+
     <x-modal livewire title="Transfer hak akses SIMRS Khanza ke user lainnya" id="modal-transfer-hak-akses">
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-row-col class="px-3 pt-3">
@@ -29,15 +30,7 @@
             <x-row-col class="pt-2">
                 <x-table zebra hover>
                     <x-slot name="columns">
-                        <x-table.th-checkbox-all
-                            livewire
-                            class="pl-3"
-                            style="width: max-content"
-                            id="checkbox-transfer-hak-akses"
-                            name="__checkbox_tha_utama"
-                            model="checkedUsers"
-                            lookup="tha-"
-                        />
+                        <x-table.th-checkbox-all livewire class="pl-3" style="width: max-content" id="checkbox-transfer-hak-akses" name="__checkbox_tha_utama" model="checkedUsers" lookup="tha-" />
                         <x-table.th style="width: 5ch" title="NRP" />
                         <x-table.th title="Nama" />
                         <x-table.th title="Jabatan" />
@@ -45,14 +38,7 @@
                     <x-slot name="body">
                         @forelse ($this->availableUsers as $user)
                             <x-table.tr>
-                                <x-table.td-checkbox
-                                    livewire
-                                    class="pl-3"
-                                    model="checkedUsers"
-                                    :key="$user->nik"
-                                    :id="$user->nik"
-                                    prefix="tha-"
-                                />
+                                <x-table.td-checkbox livewire class="pl-3" model="checkedUsers" :key="$user->nik" :id="$user->nik" prefix="tha-" />
                                 <x-table.td>{{ $user->nik }}</x-table.td>
                                 <x-table.td>{{ $user->nama }}</x-table.td>
                                 <x-table.td>{{ $user->jbtn }}</x-table.td>

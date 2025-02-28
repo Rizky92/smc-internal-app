@@ -15,8 +15,8 @@ trait WithDateRange
     protected function queryStringWithDateRange(): array
     {
         return [
-            'tglAwal'  => ['except' => $this->firstDateValue()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => $this->lastDateValue()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'  => ['except' => $this->firstDateValue()->toDateString(), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => $this->lastDateValue()->toDateString(), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -27,8 +27,8 @@ trait WithDateRange
 
     protected function defaultValuesWithDateRange(): void
     {
-        $this->tglAwal = $this->firstDateValue()->format('Y-m-d');
-        $this->tglAkhir = $this->lastDateValue()->format('Y-m-d');
+        $this->tglAwal = $this->firstDateValue()->toDateString();
+        $this->tglAkhir = $this->lastDateValue()->toDateString();
     }
 
     protected function firstDateValue(): Carbon

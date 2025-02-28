@@ -9,23 +9,27 @@
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.label constant-width>Jenis</x-filter.label>
-                <x-filter.select model="jenis" :options="[
-                    'semua' => 'SEMUA',
-                    'ralan' => 'Rawat Jalan',
-                    'ranap' => 'Rawat Inap',
-                ]" />
+                <x-filter.select
+                    model="jenis"
+                    :options="[
+                        'semua' => 'SEMUA',
+                        'ralan' => 'Rawat Jalan',
+                        'ranap' => 'Rawat Inap',
+                    ]" />
                 <x-filter.label class="ml-auto pr-3">Status Registrasi</x-filter.label>
-                <x-filter.select model="status" :options="[
-                    'semua'        => 'SEMUA',
-                    'belum'        => 'Belum',
-                    'sudah'        => 'Sudah',
-                    'batal'        => 'Batal',
-                    'diterima'     => 'Berkas Diterima',
-                    'dirujuk'      => 'Dirujuk',
-                    'meninggal'    => 'Meninggal',
-                    'dirawat'      => 'Dirawat',
-                    'pulang-paksa' => 'Pulang Paksa',
-                ]" />
+                <x-filter.select
+                    model="status"
+                    :options="[
+                        'semua'        => 'SEMUA',
+                        'belum'        => 'Belum',
+                        'sudah'        => 'Sudah',
+                        'batal'        => 'Batal',
+                        'diterima'     => 'Berkas Diterima',
+                        'dirujuk'      => 'Dirujuk',
+                        'meninggal'    => 'Meninggal',
+                        'dirawat'      => 'Dirawat',
+                        'pulang-paksa' => 'Pulang Paksa',
+                    ]" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
@@ -58,22 +62,38 @@
                     @forelse ($this->dataLaporanTransaksiGantung as $item)
                         <x-table.tr>
                             <x-table.td>{{ $item->nm_dokter }}</x-table.td>
-                            <x-table.td>{{ $item->no_rkm_medis }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->no_rkm_medis }}
+                            </x-table.td>
                             <x-table.td>{{ $item->nm_pasien }}</x-table.td>
                             <x-table.td>{{ $item->nm_poli }}</x-table.td>
                             <x-table.td>{{ $item->p_jawab }}</x-table.td>
                             <x-table.td>{{ $item->almt_pj }}</x-table.td>
-                            <x-table.td>{{ $item->hubunganpj }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->hubunganpj }}
+                            </x-table.td>
                             <x-table.td>{{ $item->penjamin }}</x-table.td>
                             <x-table.td>{{ $item->stts }}</x-table.td>
                             <x-table.td>{{ $item->no_rawat }}</x-table.td>
-                            <x-table.td>{{ $item->tgl_registrasi }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->tgl_registrasi }}
+                            </x-table.td>
                             <x-table.td>{{ $item->jam_reg }}</x-table.td>
-                            <x-table.td>{{ $item->diagnosa ? 'Ada' : 'Tidak ada' }}</x-table.td>
-                            <x-table.td>{{ $item->ralan_perawat ? 'Ada' : 'Tidak ada' }}</x-table.td>
-                            <x-table.td>{{ $item->status_resep }}</x-table.td>
-                            <x-table.td>{{ $item->status_order_lab }}</x-table.td>
-                            <x-table.td>{{ $item->status_order_rad }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->diagnosa ? 'Ada' : 'Tidak ada' }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->ralan_perawat ? 'Ada' : 'Tidak ada' }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->status_resep }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->status_order_lab }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->status_order_rad }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="17" padding />

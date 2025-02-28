@@ -19,8 +19,7 @@
         class="d-none justify-content-center align-items-center"
         wire:loading.delay.{{ $delay }}.class="d-flex flex-column"
         wire:loading.delay.{{ $delay }}.class.remove="d-none"
-        {{ $target ? "wire:target=\"{$target}\"" : null }}
-    >
+        {{ $target ? "wire:target=\"{$target}\"" : null }}>
         <i class="fas fa-spinner fa-3x fa-spin"></i>
         <p class="mt-3 text-lg">Mohon tunggu...</p>
     </div>

@@ -10,18 +10,17 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Perawatan\RegistrasiPasien;
 use App\View\Components\BaseLayout;
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class IGDKeRawatInap extends Component
 {
-    use FlashComponent;
-    use Filterable;
+    use DeferredLoading;
     use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
     use LiveTable;
     use MenuTracker;
-    use DeferredLoading;
 
     /** @var string */
     public $tglAwal;
@@ -70,18 +69,18 @@ class IGDKeRawatInap extends Component
     {
         return [
             fn () => RegistrasiPasien::query()
-            ->igdKeRawatInap($this->tglAwal, $this->tglAkhir)
-            ->search($this->cari)
-            ->cursor()
-            ->map(fn(RegistrasiPasien $model): array => [
-                'no_rawat'          => $model->no_rawat,
-                'tgl_registrasi'    => $model->tgl_registrasi,
-                'jam_reg'           => $model->jam_reg,
-                'no_rkm_medis'      => $model->no_rkm_medis,
-                'nm_pasien'         => $model->nm_pasien,
-                'dpjp_igd'          => $model->dpjp_igd,
-                'dpjp_ranap'        => $model->dpjp_ranap,
-            ]),
+                ->igdKeRawatInap($this->tglAwal, $this->tglAkhir)
+                ->search($this->cari)
+                ->cursor()
+                ->map(fn (RegistrasiPasien $model): array => [
+                    'no_rawat'          => $model->no_rawat,
+                    'tgl_registrasi'    => $model->tgl_registrasi,
+                    'jam_reg'           => $model->jam_reg,
+                    'no_rkm_medis'      => $model->no_rkm_medis,
+                    'nm_pasien'         => $model->nm_pasien,
+                    'dpjp_igd'          => $model->dpjp_igd,
+                    'dpjp_ranap'        => $model->dpjp_ranap,
+                ]),
         ];
     }
 
@@ -94,7 +93,7 @@ class IGDKeRawatInap extends Component
             'No. RM',
             'Nama Pasien',
             'DPJP IGD',
-            'DPJP Ranap'
+            'DPJP Ranap',
         ];
     }
 

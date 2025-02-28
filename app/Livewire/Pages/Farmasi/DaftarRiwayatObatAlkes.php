@@ -10,7 +10,6 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Farmasi\Obat;
 use App\View\Components\BaseLayout;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -35,8 +34,8 @@ class DaftarRiwayatObatAlkes extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal'  => ['except' => now()->subYear()->toDateString(), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->toDateString(), 'as' => 'tgl_akhir'],
+            'tglAwal'   => ['except' => now()->subYear()->toDateString(), 'as' => 'tgl_awal'],
+            'tglAkhir'  => ['except' => now()->toDateString(), 'as' => 'tgl_akhir'],
             'barangNol' => ['except' => false, 'as' => 'barang_nol'],
         ];
     }
@@ -45,7 +44,7 @@ class DaftarRiwayatObatAlkes extends Component
     {
         $this->defaultValues();
     }
-  
+
     public function render(): View
     {
         return view('livewire.pages.farmasi.daftar-riwayat-obat-alkes')
@@ -55,7 +54,7 @@ class DaftarRiwayatObatAlkes extends Component
     public function getDataRiwayatObatProperty()
     {
         return $this->isDeferred ? [] : Obat::query()
-            ->daftarRiwayat('obat',$this->tglAwal, $this->tglAkhir, $this->barangNol)
+            ->daftarRiwayat('obat', $this->tglAwal, $this->tglAkhir, $this->barangNol)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage, ['*'], 'page_obat');
@@ -64,7 +63,7 @@ class DaftarRiwayatObatAlkes extends Component
     public function getDataRiwayatAlkesProperty()
     {
         return $this->isDeferred ? [] : Obat::query()
-            ->daftarRiwayat('alkes',$this->tglAwal, $this->tglAkhir, $this->barangNol)
+            ->daftarRiwayat('alkes', $this->tglAwal, $this->tglAkhir, $this->barangNol)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage, ['*'], 'page_alkes');

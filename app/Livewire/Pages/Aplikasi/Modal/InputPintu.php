@@ -7,8 +7,8 @@ use App\Livewire\Concerns\FlashComponent;
 use App\Models\Aplikasi\Pintu;
 use App\Models\Kepegawaian\Dokter;
 use App\Models\Perawatan\Poliklinik;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -118,7 +118,7 @@ class InputPintu extends Component
 
         if ($this->isUpdating()) {
             $this->update();
-            
+
             return;
         }
 
@@ -174,13 +174,13 @@ class InputPintu extends Component
                 'kd_pintu' => $this->kodePintu,
                 'nm_pintu' => $this->namaPintu,
             ]);
-    
+
             $pintu->poliklinik()->detach();
             $pintu->dokter()->detach();
 
             $pintu->poliklinik()->sync($this->kodePoliklinik);
             $pintu->dokter()->sync($this->kodeDokter);
-    
+
             tracker_end('mysql_smc');
 
             $this->dispatchBrowserEvent('data-saved');

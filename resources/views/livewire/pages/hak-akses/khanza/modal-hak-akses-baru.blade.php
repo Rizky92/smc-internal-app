@@ -8,9 +8,9 @@
                 <x-slot name="body">
                     {{--
                         @foreach ($this->collectionProperty as $item)
-                            <x-table.tr>
-                                <x-table.td>{{ $item->id }}</x-table.td>
-                            </x-table.tr>
+                        <x-table.tr>
+                        <x-table.td>{{ $item->id }}</x-table.td>
+                        </x-table.tr>
                         @endforeach
                     --}}
                 </x-slot>

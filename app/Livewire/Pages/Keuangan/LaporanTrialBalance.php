@@ -8,6 +8,7 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\Rekening;
 use App\Models\Keuangan\RekeningTahun;
 use App\View\Components\BaseLayout;
@@ -37,8 +38,8 @@ class LaporanTrialBalance extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'  => ['except' => now()->startOfMonth()->toDateString(), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->toDateString(), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -48,7 +49,7 @@ class LaporanTrialBalance extends Component
     }
 
     /**
-     * @return array<never, never>|\Illuminate\Database\Eloquent\Collection<\App\Models\Keuangan\Jurnal\Jurnal>
+     * @return array<never, never>|EloquentCollection<Jurnal>
      */
     public function getDataTrialBalancePerTanggalProperty()
     {
@@ -156,10 +157,13 @@ class LaporanTrialBalance extends Component
 
     protected function defaultValues(): void
     {
-        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->toDateString();
+        $this->tglAkhir = now()->endOfMonth()->toDateString();
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         return [

@@ -14,6 +14,7 @@
             })
         </script>
     @endpush
+
     @push('css')
         @once
             <style>
@@ -32,12 +33,13 @@
                 }
 
                 /* Firefox */
-                input[type=number] {
+                input[type='number'] {
                     -moz-appearance: textfield;
                 }
             </style>
         @endonce
     @endpush
+
     <x-modal id="modal-input-penetapan-rkat" :title="($this->isUpdating() ? 'Edit' : 'Input') . ' Data Anggaran Tahun ' . $this->tahun" livewire centered>
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
             <x-flash class="mx-3 mt-3" />
@@ -70,6 +72,7 @@
             @if ($this->isUpdating() && user()->can('keuangan.rkat-penetapan.delete'))
                 <x-button size="sm" variant="danger" data-dismiss="modal" id="hapus" title="Hapus" icon="fas fa-trash" wire:click="delete" />
             @endif
+
             <x-button size="sm" class="ml-auto" data-dismiss="modal" id="batalsimpan" title="Batal" />
             <x-button size="sm" variant="primary" type="submit" class="ml-2" id="simpandata" title="Simpan" icon="fas fa-save" form="form-input-penetapan-rkat" />
         </x-slot>

@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
-class RawatInap extends Model
+class KamarInap extends Model
 {
     protected $connection = 'mysql_sik';
 
@@ -91,11 +91,11 @@ class RawatInap extends Model
         string $jenisBayar = ''
     ): Builder {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -126,5 +126,34 @@ class RawatInap extends Model
             ->whereBetween('kamar_inap.tgl_keluar', [$tglAwal, $tglAkhir])
             ->when(! empty($status), fn (Builder $q): Builder => $q->where('piutang_pasien.status', $status))
             ->where('reg_periksa.kd_pj', $jenisBayar);
+    }
+
+    public function scopeItemFakturPajak(Builder $query): Builder
+    {
+        $sqlSelect = <<<'SQL'
+            kamar_inap.no_rawat,
+            '080' as kode_transaksi,
+            'B' as jenis_barang_jasa,
+            '250100' as kode_barang_jasa,
+            concat(kamar_inap.kd_kamar, ' ', bangsal.nm_bangsal) as nama_barang_jasa,
+            'HARI' as nama_satuan_ukur,
+            kamar_inap.trf_kamar as harga_satuan,
+            sum(kamar_inap.lama) as jumlah_barang_jasa,
+            0 as diskon_persen,
+            0 as diskon_nominal,
+            sum(kamar_inap.ttl_biaya) as dpp,
+            12 as ppn_persen,
+            0 as ppn_nominal,
+            kamar_inap.kd_kamar as kd_jenis_prw,
+            'Kamar Inap' as kategori,
+            2 as urutan
+            SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
+            ->join('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'kamar_inap.no_rawat'))
+            ->groupBy('kamar_inap.no_rawat', 'kamar_inap.kd_kamar', 'bangsal.nm_bangsal', 'kamar_inap.trf_kamar');
     }
 }

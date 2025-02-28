@@ -15,6 +15,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
+use Livewire\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
 class RKATInputPelaporan extends Component
@@ -39,7 +40,7 @@ class RKATInputPelaporan extends Component
     /** @var array<array-key, array{keterangan: string, nominal: numeric}> */
     public $detail;
 
-    /** @var \Livewire\TemporaryUploadedFile|null */
+    /** @var TemporaryUploadedFile|null */
     public $fileImport;
 
     /** @var mixed */
@@ -169,9 +170,9 @@ class RKATInputPelaporan extends Component
 
                     $pemakaianAnggaran->detail()->createMany($this->detail);
                 });
-                
+
                 tracker_end();
-                
+
                 $this->dispatchBrowserEvent('data-saved');
                 $this->emit('flash.success', 'Data Pemakaian RKAT baru berhasil disimpan!');
             } catch (\Exception $e) {
@@ -265,7 +266,7 @@ class RKATInputPelaporan extends Component
     {
         $this->pemakaianAnggaranId = -1;
         $this->anggaranBidangId = -1;
-        $this->tglPakai = now()->format('Y-m-d');
+        $this->tglPakai = now()->toDateString();
         $this->keterangan = '';
         $this->detail = [[
             'keterangan' => '',

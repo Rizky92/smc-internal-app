@@ -9,7 +9,11 @@
             ],
             "options": {
                 "parser": "blade",
-                "singleQuote": true
+                "singleQuote": true,
+                "printWidth": 200,
+                "trailingComma": "all",
+                "singleAttributePerLine": false,
+                "bracketSameLine": true
             }
         }
     ]

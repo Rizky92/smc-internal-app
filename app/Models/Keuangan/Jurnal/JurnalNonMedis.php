@@ -28,11 +28,11 @@ class JurnalNonMedis extends Model
     public function scopeJurnalPenerimaanBarang(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $db = DB::connection('mysql_sik')->getDatabaseName();
@@ -50,7 +50,7 @@ class JurnalNonMedis extends Model
             rekening.nm_rek,
             ipsrssuplier.nama_suplier,
             trim(concat(jurnal_non_medis.nik, ' ', coalesce(pegawai.nama, ''))) nm_pegawai
-        SQL;
+            SQL;
 
         $this->addSearchConditions([
             'jurnal_non_medis.id',
@@ -101,7 +101,6 @@ class JurnalNonMedis extends Model
             ->chunk(500, function (Collection $jurnal) {
                 $data = $jurnal->map(function (object $value) {
                     /** @var object{no_jurnal: string, no_bukti: string, tgl_jurnal: string, jam_jurnal: string, jenis: "U"|"P", keterangan: string} $value */
-
                     $ket = str($value->keterangan);
 
                     $status = $ket->startsWith('BATAL');

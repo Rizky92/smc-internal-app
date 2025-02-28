@@ -42,19 +42,31 @@
                     @forelse ($this->dataLaporanPemakaianObatTB as $item)
                         <x-table.tr>
                             <x-table.td>{{ $item->no_rawat }}</x-table.td>
-                            <x-table.td>{{ $item->tgl_registrasi }}</x-table.td>
-                            <x-table.td>{{ $item->no_rkm_medis }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->tgl_registrasi }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->no_rkm_medis }}
+                            </x-table.td>
                             <x-table.td>{{ $item->nm_pasien }} {{ $item->umur }}</x-table.td>
                             <x-table.td>{{ $item->no_ktp }}</x-table.td>
                             <x-table.td>{{ $item->nama_brng }}</x-table.td>
-                            <x-table.td class="text-right">{{ round($item->total, 2) }}</x-table.td>
-                            <x-table.td>{{ $item->nm_bangsal }}</x-table.td>
-                            <x-table.td>{{ $item->status_lanjut }}</x-table.td>
+                            <x-table.td class="text-right">
+                                {{ round($item->total, 2) }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->nm_bangsal }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->status_lanjut }}
+                            </x-table.td>
                             <x-table.td>{{ $item->png_jawab }}</x-table.td>
                             <x-table.td>{{ $item->no_tlp }}</x-table.td>
                             <x-table.td>{{ $item->alamat }}</x-table.td>
                             <x-table.td>{{ $item->rtl }}</x-table.td>
-                            <x-table.td>{{ $item->tgl_pemberian_pertama }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->tgl_pemberian_pertama }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="14" padding />

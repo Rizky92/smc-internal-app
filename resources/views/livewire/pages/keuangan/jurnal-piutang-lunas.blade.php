@@ -14,13 +14,7 @@
                     ]" />
                 <x-filter.label class="px-3">dari</x-filter.label>
                 <x-filter.range-date title="" />
-                <x-button
-                    size="sm"
-                    title="Tarik Data Terbaru"
-                    icon="fas fa-sync-alt"
-                    class="ml-auto"
-                    wire:click.prevent="tarikDataTerbaru"
-                />
+                <x-button size="sm" title="Tarik Data Terbaru" icon="fas fa-sync-alt" class="ml-auto" wire:click.prevent="tarikDataTerbaru" />
                 <x-filter.button-export-excel class="ml-3" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
@@ -57,21 +51,47 @@
                     @forelse ($this->dataPiutangDilunaskan as $item)
                         <x-table.tr>
                             <x-table.td>{{ $item->no_jurnal }}</x-table.td>
-                            <x-table.td>{{ $item->waktu_jurnal }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->waktu_jurnal }}
+                            </x-table.td>
                             <x-table.td>{{ $item->no_rawat }}</x-table.td>
-                            <x-table.td>{{ $item->no_rkm_medis }} {{ $item->nm_pasien }} ({{ $item->umur }})</x-table.td>
+                            <x-table.td>
+                                {{ $item->no_rkm_medis }}
+                                {{ $item->nm_pasien }} ({{ $item->umur }})
+                            </x-table.td>
                             <x-table.td>{{ $item->kd_pj }} {{ $item->nama_penjamin }}</x-table.td>
-                            <x-table.td>{{ $item->no_tagihan }}</x-table.td>
-                            <x-table.td>{{ $item->nik_penagih }} {{ $item->nama_penagih }}</x-table.td>
-                            <x-table.td>{{ $item->nik_menyetujui }} {{ $item->nama_penyetuju }}</x-table.td>
-                            <x-table.td>{{ rp($item->piutang_dibayar) }}</x-table.td>
-                            <x-table.td>{{ carbon($item->tgl_penagihan)->format('Y-m-d') }}</x-table.td>
-                            <x-table.td>{{ carbon($item->tgl_jatuh_tempo)->format('Y-m-d') }}</x-table.td>
-                            <x-table.td>{{ carbon($item->tgl_bayar)->format('Y-m-d') }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->no_tagihan }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->nik_penagih }}
+                                {{ $item->nama_penagih }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->nik_menyetujui }}
+                                {{ $item->nama_penyetuju }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ rp($item->piutang_dibayar) }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ carbon($item->tgl_penagihan)->toDateString() }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ carbon($item->tgl_jatuh_tempo)->toDateString() }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ carbon($item->tgl_bayar)->toDateString() }}
+                            </x-table.td>
                             <x-table.td>{{ $item->status }}</x-table.td>
-                            <x-table.td>{{ $item->nik_validasi }} {{ $item->nama_pemvalidasi }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->nik_validasi }}
+                                {{ $item->nama_pemvalidasi }}
+                            </x-table.td>
                             <x-table.td>{{ $item->kd_rek }} {{ $item->nm_rek }}</x-table.td>
-                            <x-table.td>{{ $item->keterangan }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->keterangan }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="16" padding />

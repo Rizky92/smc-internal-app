@@ -19,15 +19,29 @@
                 <x-slot name="body">
                     @forelse ($this->dataKunjunganPerPoli as $pasien)
                         <x-table.tr>
-                            <x-table.td>{{ $pasien->no_rawat }}</x-table.td>
-                            <x-table.td>{{ $pasien->no_resep }}</x-table.td>
-                            <x-table.td>{{ $pasien->nm_pasien }}</x-table.td>
+                            <x-table.td>
+                                {{ $pasien->no_rawat }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->no_resep }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->nm_pasien }}
+                            </x-table.td>
                             <x-table.td>{{ $pasien->umur }}</x-table.td>
-                            <x-table.td>{{ $pasien->tgl_perawatan }}</x-table.td>
+                            <x-table.td>
+                                {{ $pasien->tgl_perawatan }}
+                            </x-table.td>
                             <x-table.td>{{ $pasien->jam }}</x-table.td>
-                            <x-table.td>{{ $pasien->nm_dokter_peresep }}</x-table.td>
-                            <x-table.td>{{ $pasien->nm_dokter_poli }}</x-table.td>
-                            <x-table.td>{{ $pasien->status_lanjut }}</x-table.td>
+                            <x-table.td>
+                                {{ $pasien->nm_dokter_peresep }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->nm_dokter_poli }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->status_lanjut }}
+                            </x-table.td>
                             <x-table.td>{{ $pasien->nm_poli }}</x-table.td>
                         </x-table.tr>
                     @empty

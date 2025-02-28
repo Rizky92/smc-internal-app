@@ -1,11 +1,11 @@
 @push('css')
     @once
-        <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet">
-        <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet" />
+        <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet" />
 
         <style>
             .select2-container--default .select2-selection--multiple .select2-selection__choice {
-                background-color:rgb(245, 245, 245);
+                background-color: rgb(245, 245, 245);
                 color: #1f2d3d;
                 font-weight: 700;
             }
@@ -17,6 +17,7 @@
         </style>
     @endonce
 @endpush
+
 <div>
     @push('js')
         <script>
@@ -33,6 +34,7 @@
             })
         </script>
     @endpush
+
     <x-modal id="modal-input-pintu" :title="($this->isUpdating() ? 'Edit Data Pintu' : 'Input Data Pintu')" livewire centered>
         <x-slot name="body" style="overflow-x: hidden">
             <x-flash class="mx-3 mt-3" />
@@ -52,20 +54,24 @@
                         <label for="poli">Poli:</label>
                         <div wire:ignore>
                             <select id="kodePoliklinik" wire:model="kodePoliklinik" class="form-control select2-poli" multiple>
-                                @foreach($this->poliklinik as $kd_poli => $nm_poli)
-                                    <option value="{{ $kd_poli }}">{{ $nm_poli }}</option>
+                                @foreach ($this->poliklinik as $kd_poli => $nm_poli)
+                                    <option value="{{ $kd_poli }}">
+                                        {{ $nm_poli }}
+                                    </option>
                                 @endforeach
                             </select>
                             <x-form.error name="kodePoliklinik" />
                         </div>
                     </div>
-                    
+
                     <div class="form-group mt-3">
                         <label for="dokter">Dokter:</label>
                         <div wire:ignore>
                             <select id="kodeDokter" wire:model="kodeDokter" class="form-control select2-dokter" multiple>
-                                @foreach($this->dokter as $kd_dokter => $nm_dokter)
-                                    <option value="{{ $kd_dokter }}">{{ $nm_dokter }}</option>
+                                @foreach ($this->dokter as $kd_dokter => $nm_dokter)
+                                    <option value="{{ $kd_dokter }}">
+                                        {{ $nm_dokter }}
+                                    </option>
                                 @endforeach
                             </select>
                             <x-form.error name="kodeDokter" />
@@ -75,6 +81,7 @@
                         @once
                             <script src="{{ asset('js/select2.full.min.js') }}"></script>
                         @endonce
+
                         <script>
                             document.addEventListener('livewire:load', function () {
 
@@ -90,7 +97,7 @@
                                     @this.set('kodeDokter', data);
                                 });
                             });
-                    
+
                             document.addEventListener('livewire:update', function () {
                                 $('#kodePoliklinik').select2();
                                 $('#kodeDokter').select2();
@@ -104,6 +111,7 @@
             @if ($this->isUpdating() && user()->can('antrean.manajemen-pintu.delete'))
                 <x-button size="sm" variant="danger" data-dismiss="modal" id="hapusdata" title="Hapus" icon="fas fa-trash" wire:click="delete" />
             @endif
+
             <x-button size="sm" class="ml-auto" data-dismiss="modal" id="batalsimpan" title="Batal" />
             <x-button size="sm" variant="primary" class="ml-2" type="submit" id="simpan-data" title="Simpan" icon="fas fa-save" form="form-input-pintu" />
         </x-slot>

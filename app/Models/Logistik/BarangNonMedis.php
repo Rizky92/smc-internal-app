@@ -52,7 +52,7 @@ class BarangNonMedis extends Model
                 ipsrsbarang.harga * (ifnull({$db}.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok),
                 0
             ) total_harga
-        SQL;
+            SQL;
 
         $this->addSearchConditions([
             'ipsrsbarang.kode_brng',

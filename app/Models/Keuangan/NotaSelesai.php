@@ -26,11 +26,11 @@ class NotaSelesai extends Model
     public function scopeBillingYangDiselesaikan(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
+            $tglAwal = now()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->addDay()->format('Y-m-d');
+            $tglAkhir = now()->addDay()->toDateString();
         }
 
         $sik = DB::connection('mysql_sik')->getDatabaseName();
@@ -79,7 +79,7 @@ class NotaSelesai extends Model
                     timestamp(nota_inap.tanggal, nota_inap.jam),
                     detail_nota_inap.nama_bayar
             ) nota_pasien
-        SQL;
+            SQL;
 
         $this->addSearchConditions([
             'nota_selesai.no_rawat',
@@ -143,7 +143,6 @@ class NotaSelesai extends Model
             ->chunk(1000, function (Collection $chunk) {
                 $data = $chunk->map(function (object $value, int $key) {
                     /** @var object{no_jurnal: string, no_bukti: string, tgl_jurnal: string, jam_jurnal: string, jenis: "U"|"P", keterangan: string} $value */
-                    
                     $ket = str($value->keterangan);
 
                     $bentukBayar = $ket->before('PASIEN')->words(1, '')->trim()->value();

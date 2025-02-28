@@ -44,9 +44,13 @@
                 <x-slot name="body">
                     @forelse ($this->dataAnggaran as $item)
                         <x-table.tr>
-                            <x-table.td :clickable="auth()
-                                ->user()
-                                ->can('keuangan.rkat-kategori.update')" data-id="{{ $item->id }}" data-nama="{{ $item->nama }}" data-deskripsi="{{ $item->deskripsi }}">
+                            <x-table.td
+                                :clickable="auth()
+                                    ->user()
+                                ->can('keuangan.rkat-kategori.update')"
+                                data-id="{{ $item->id }}"
+                                data-nama="{{ $item->nama }}"
+                                data-deskripsi="{{ $item->deskripsi }}">
                                 {{ $item->id }}
                             </x-table.td>
                             <x-table.td>{{ $item->nama }}</x-table.td>

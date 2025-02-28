@@ -14,7 +14,9 @@
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <span class="text-sm" style="width: 5rem">TOTAL:</span>
-                <span class="text-sm font-weight-bold">{{ rp($this->totalTagihanPiutangPasien) }}</span>
+                <span class="text-sm font-weight-bold">
+                    {{ rp($this->totalTagihanPiutangPasien) }}
+                </span>
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
             </x-row-col-flex>
@@ -38,13 +40,21 @@
                     @forelse ($this->piutangPasien as $data)
                         <x-table.tr>
                             <x-table.td>{{ $data->no_rawat }}</x-table.td>
-                            <x-table.td>{{ $data->no_rkm_medis }}</x-table.td>
+                            <x-table.td>
+                                {{ $data->no_rkm_medis }}
+                            </x-table.td>
                             <x-table.td>{{ $data->nm_pasien }}</x-table.td>
-                            <x-table.td>{{ $data->tgl_piutang }}</x-table.td>
+                            <x-table.td>
+                                {{ $data->tgl_piutang }}
+                            </x-table.td>
                             <x-table.td>{{ $data->status }}</x-table.td>
                             <x-table.td>{{ rp($data->total) }}</x-table.td>
-                            <x-table.td>{{ rp($data->uang_muka) }}</x-table.td>
-                            <x-table.td>{{ rp($data->terbayar) }}</x-table.td>
+                            <x-table.td>
+                                {{ rp($data->uang_muka) }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ rp($data->terbayar) }}
+                            </x-table.td>
                             <x-table.td>{{ rp($data->sisa) }}</x-table.td>
                             <x-table.td>{{ $data->tgltempo }}</x-table.td>
                             <x-table.td>{{ $data->penjamin }}</x-table.td>

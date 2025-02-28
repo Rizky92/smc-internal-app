@@ -2,12 +2,12 @@
 
 namespace App\Livewire\Pages\Keuangan\Modal;
 
-use App\Models\Keuangan\Rekening;
-use App\Models\Keuangan\Jurnal\Jurnal;
-use App\Models\Keuangan\Jurnal\PostingJurnal;
 use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
+use App\Models\Keuangan\Jurnal\Jurnal;
+use App\Models\Keuangan\Jurnal\PostingJurnal;
+use App\Models\Keuangan\Rekening;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +18,9 @@ use Livewire\Component;
 
 class InputJurnalPosting extends Component
 {
-    use FlashComponent, Filterable, DeferredModal;
+    use DeferredModal;
+    use Filterable;
+    use FlashComponent;
 
     /** @var string */
     public $no_bukti;
@@ -119,6 +121,7 @@ class InputJurnalPosting extends Component
         if (user()->cannot('keuangan.posting-jurnal.create')) {
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
+
             return;
         }
 
@@ -139,7 +142,7 @@ class InputJurnalPosting extends Component
         $this->keterangan = '';
         $this->detail = [[
             'kd_rek' => '',
-            'debet' => 0,
+            'debet'  => 0,
             'kredit' => 0,
         ]];
         $this->totalDebet = 0;
@@ -155,11 +158,15 @@ class InputJurnalPosting extends Component
         }
     }
 
+    /**
+     * @return void
+     */
     public function create()
     {
         if (user()->cannot('keuangan.posting-jurnal.create')) {
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
+
             return;
         }
 
@@ -179,6 +186,7 @@ class InputJurnalPosting extends Component
         if ($validator->fails()) {
             $this->emit('flash.error', 'Tidak dapat melakukan proses posting jurnal!');
             $this->dispatchBrowserEvent('data-denied');
+
             return;
         }
 
@@ -191,13 +199,13 @@ class InputJurnalPosting extends Component
                 foreach ($this->jurnalSementara as $temp) {
                     $jurnal = Jurnal::catat(
                         $temp['no_bukti'],
-                        str($temp['keterangan'])->upper()->trim()->replaceLast('.', '')->append(', DIPOSTING OLEH ' . user()->nik)->value(),
+                        str($temp['keterangan'])->upper()->trim()->replaceLast('.', '')->append(', DIPOSTING OLEH '.user()->nik)->value(),
                         carbon($temp['tgl_jurnal'])->setTimeFromTimeString($temp['jam_jurnal']),
                         $temp['detail']
                     );
 
                     $jurnalTercatat[] = [
-                        'no_jurnal' => $jurnal->no_jurnal,
+                        'no_jurnal'  => $jurnal->no_jurnal,
                         'tgl_jurnal' => $temp['tgl_jurnal'],
                     ];
                 }
@@ -214,18 +222,19 @@ class InputJurnalPosting extends Component
             $this->flashError('Terjadi kesalahan saat menyimpan data');
             $this->dispatchBrowserEvent('data-denied');
             $this->defaultValues();
+
             return;
         }
 
         $this->redirectRoute('admin.keuangan.cetak-posting-jurnal', [
-            'data_jurnal' => base64_encode(collect($jurnalTercatat)->pluck('no_jurnal')->toJson())
+            'data_jurnal' => base64_encode(collect($jurnalTercatat)->pluck('no_jurnal')->toJson()),
         ]);
     }
 
     protected function defaultValues(): void
     {
         $this->no_bukti = '';
-        $this->tgl_jurnal = now()->format('Y-m-d');
+        $this->tgl_jurnal = now()->toDateString();
         $this->jam_jurnal = now()->format('H:i:s');
         $this->jenis = 'U';
         $this->keterangan = '';

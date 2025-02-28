@@ -1106,6 +1106,7 @@ class KhanzaHakAksesSeeder extends Seeder
         'ringkasan_hutang_vendor_dapur'                   => '[K] Ringkasan Hutang Vendor Dapur',
         'penilaian_psikologi_klinis'                      => '[M] Penilaian Psikologi Klinis',
     ];
+
     /**
      * Run the database seeds.
      */

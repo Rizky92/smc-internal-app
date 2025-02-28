@@ -24,8 +24,8 @@ class AntreanPerPintu extends Component
     public function getAntreanProperty()
     {
         return Pintu::query()
-        ->antrianPerPintu($this->kd_pintu)
-        ->where('registrasi.stts', 'Belum')
-        ->get();
+            ->antrianPerPintu($this->kd_pintu)
+            ->where('registrasi.stts', 'Belum')
+            ->get();
     }
 }

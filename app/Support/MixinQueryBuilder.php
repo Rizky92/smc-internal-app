@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
@@ -9,7 +10,7 @@ use InvalidArgumentException;
 class MixinQueryBuilder
 {
     /**
-     * @return \Closure(\Illuminate\Database\Query\Expression|string, mixed, "asc"|"desc"): \Illuminate\Database\Query\Builder
+     * @return \Closure(Expression|string, mixed, "asc"|"desc"): Builder
      */
     public function orderByField()
     {
@@ -18,7 +19,7 @@ class MixinQueryBuilder
             if (! in_array($direction, ['asc', 'desc'], true)) {
                 throw new InvalidArgumentException('Order direction must be "asc" or "desc".');
             }
-            
+
             $binds = [];
 
             for ($i = 0; $i < count($values); $i++) {
@@ -41,7 +42,7 @@ class MixinQueryBuilder
     }
 
     /**
-     * @return \Closure(\Illuminate\Database\Query\Expression|string, mixed, "asc"|"desc"): \Illuminate\Database\Query\Builder
+     * @return \Closure(Expression|string, mixed, "asc"|"desc"): Builder
      */
     public function orderByFieldFirst()
     {

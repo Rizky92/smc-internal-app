@@ -26,10 +26,18 @@
                             <x-table.td>{{ $item->kd_rek }}</x-table.td>
                             <x-table.td>{{ $item->nm_rek }}</x-table.td>
                             <x-table.td>{{ $item->balance }}</x-table.td>
-                            <x-table.td>{{ rp($item->saldo_awal) }}</x-table.td>
-                            <x-table.td>{{ rp($item->total_debet) }}</x-table.td>
-                            <x-table.td>{{ rp($item->total_kredit) }}</x-table.td>
-                            <x-table.td>{{ rp($item->saldo_akhir) }}</x-table.td>
+                            <x-table.td>
+                                {{ rp($item->saldo_awal) }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ rp($item->total_debet) }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ rp($item->total_kredit) }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ rp($item->saldo_akhir) }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="7" padding />
@@ -38,16 +46,22 @@
                         <x-table.tr>
                             <x-table.td></x-table.td>
                             <x-table.td class="font-weight-bold" colspan="3">TOTAL :</x-table.td>
-                            <x-table.td class="font-weight-bold">{{ rp($this->totalDebetKreditTrialBalance->total_debet) }}</x-table.td>
-                            <x-table.td class="font-weight-bold">{{ rp($this->totalDebetKreditTrialBalance->total_kredit) }}</x-table.td>
+                            <x-table.td class="font-weight-bold">
+                                {{ rp($this->totalDebetKreditTrialBalance->total_debet) }}
+                            </x-table.td>
+                            <x-table.td class="font-weight-bold">
+                                {{ rp($this->totalDebetKreditTrialBalance->total_kredit) }}
+                            </x-table.td>
                             <x-table.td></x-table.td>
                         </x-table.tr>
                     @endif
                 </x-slot>
             </x-table>
         </x-slot>
-        {{-- <x-slot name="footer">
+        {{--
+            <x-slot name="footer">
             <x-paginator :data="$this->collectionProperty" />
-        </x-slot> --}}
+            </x-slot>
+        --}}
     </x-card>
 </div>

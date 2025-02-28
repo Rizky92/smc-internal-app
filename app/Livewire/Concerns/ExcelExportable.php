@@ -3,7 +3,9 @@
 namespace App\Livewire\Concerns;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\LazyCollection;
 use Rizky92\Xlswriter\ExcelExport;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -27,11 +29,17 @@ trait ExcelExportable
     }
 
     /**
-     * @return array<array-key, (\Closure(): \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection|\Illuminate\Support\LazyCollection|array)|\Illuminate\Support\Collection|\Illuminate\Support\Collection|array>
+     * @return array<array-key, (\Closure(): \Illuminate\Database\Eloquent\Collection|Collection|LazyCollection|array)|Collection|Collection|array>
      */
     abstract protected function dataPerSheet(): array;
 
-    abstract protected function columnHeaders(): array;
+    /**
+     * @return array<array-key, string[]|string>
+     */
+    protected function columnHeaders(): array
+    {
+        return [];
+    }
 
     protected function pageHeaders(): array
     {
@@ -44,7 +52,7 @@ trait ExcelExportable
     protected function validateSheetNames(): array
     {
         $dataSheets = $this->dataPerSheet();
-        
+
         $invalidSheet = collect(array_keys($dataSheets))
             ->contains(fn (string $v): bool => str()->containsAll($v, $this->invalidSheetCharacters));
 
@@ -71,7 +79,7 @@ trait ExcelExportable
         $filename .= '.xlsx';
 
         $dataSheets = $this->validateSheetNames();
-        $columnHeaders = method_exists($this, 'columnHeaders') ? $this->columnHeaders() : [];    
+        $columnHeaders = $this->columnHeaders();
 
         $firstSheet = array_keys($dataSheets)[0] ?: 'Sheet 1';
 
@@ -85,14 +93,14 @@ trait ExcelExportable
 
         $excel = ExcelExport::make($filename, $firstSheet)
             ->setPageHeaders($this->pageHeaders());
-            
-            if (Arr::isAssoc($columnHeaders)) {
-                $excel->setColumnHeaders($columnHeaders[$firstSheet] ?? []);
-            } else {
-                $excel->setColumnHeaders($columnHeaders);
-            }
 
-            $excel->setData($firstData);
+        if (Arr::isAssoc($columnHeaders)) {
+            $excel->setColumnHeaders($columnHeaders[$firstSheet] ?? []);
+        } else {
+            $excel->setColumnHeaders($columnHeaders);
+        }
+
+        $excel->setData($firstData);
 
         array_shift($dataSheets);
 
@@ -103,7 +111,7 @@ trait ExcelExportable
             if (Arr::isAssoc($columnHeaders)) {
                 $excel->setColumnHeaders($columnHeaders[$sheet] ?? []);
             }
-    
+
             $excel->setData($data);
         }
 

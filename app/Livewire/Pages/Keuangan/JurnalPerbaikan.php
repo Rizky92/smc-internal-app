@@ -29,8 +29,8 @@ class JurnalPerbaikan extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal'  => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'  => ['except' => now()->toDateString(), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->toDateString(), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -56,7 +56,7 @@ class JurnalPerbaikan extends Component
 
     protected function defaultValues(): void
     {
-        $this->tglAwal = now()->format('Y-m-d');
-        $this->tglAkhir = now()->format('Y-m-d');
+        $this->tglAwal = now()->toDateString();
+        $this->tglAkhir = now()->toDateString();
     }
 }

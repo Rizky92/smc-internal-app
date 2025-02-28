@@ -8,7 +8,7 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
-use App\Models\Radiologi\HasilPeriksaRadiologi;
+use App\Models\Radiologi\PeriksaRadiologi;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -31,8 +31,8 @@ class LaporanTindakanRadiologi extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'  => ['except' => now()->startOfMonth()->toDateString(), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->toDateString(), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -43,7 +43,7 @@ class LaporanTindakanRadiologi extends Component
 
     public function getDataLaporanTindakanRadiologiProperty()
     {
-        return $this->isDeferred ? [] : HasilPeriksaRadiologi::query()
+        return $this->isDeferred ? [] : PeriksaRadiologi::query()
             ->laporanTindakanRadiologi($this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns, [
@@ -61,17 +61,20 @@ class LaporanTindakanRadiologi extends Component
 
     protected function defaultValues(): void
     {
-        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->toDateString();
+        $this->tglAkhir = now()->endOfMonth()->toDateString();
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         return [
-            fn () => HasilPeriksaRadiologi::query()
+            fn () => PeriksaRadiologi::query()
                 ->laporanTindakanRadiologi($this->tglAwal, $this->tglAkhir)
                 ->cursor()
-                ->map(fn (HasilPeriksaRadiologi $model): array => [
+                ->map(fn (PeriksaRadiologi $model): array => [
                     'no_rawat'          => $model->no_rawat,
                     'no_rkm_medis'      => $model->no_rkm_medis,
                     'nm_pasien'         => $model->nm_pasien,

@@ -74,13 +74,13 @@
                 <div class="col-5">
                     <div class="form-group">
                         <label class="text-sm" for="field">Nama Field</label>
-                        <input class="form-control form-control-sm" id="field" type="text" autocomplete="off">
+                        <input class="form-control form-control-sm" id="field" type="text" autocomplete="off" />
                     </div>
                 </div>
                 <div class="col-5">
                     <div class="form-group">
                         <label class="text-sm" for="judul">Judul Menu</label>
-                        <input class="form-control form-control-sm" id="judul" type="text" autocomplete="off">
+                        <input class="form-control form-control-sm" id="judul" type="text" autocomplete="off" />
                     </div>
                 </div>
                 <div class="col-2">
@@ -107,14 +107,12 @@
                 <x-slot name="body">
                     @forelse ($this->hakAksesKhanza as $hakAkses)
                         <x-table.tr>
-                            <x-table.td
-                                clickable
-                                data-nama-field="{{ $hakAkses->nama_field }}"
-                                data-judul-menu="{{ $hakAkses->judul_menu }}"
-                            >
+                            <x-table.td clickable data-nama-field="{{ $hakAkses->nama_field }}" data-judul-menu="{{ $hakAkses->judul_menu }}">
                                 {{ $hakAkses->nama_field }}
                             </x-table.td>
-                            <x-table.td>{{ $hakAkses->judul_menu }}</x-table.td>
+                            <x-table.td>
+                                {{ $hakAkses->judul_menu }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="2" padding />

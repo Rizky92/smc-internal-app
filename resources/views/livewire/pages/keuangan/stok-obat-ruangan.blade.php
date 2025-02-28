@@ -29,14 +29,20 @@
                 <x-slot name="body">
                     @forelse ($this->collection as $obat)
                         <x-table.tr>
-                            <x-table.td>{{ $obat->nm_bangsal }}</x-table.td>
+                            <x-table.td>
+                                {{ $obat->nm_bangsal }}
+                            </x-table.td>
                             <x-table.td>{{ $obat->kode_brng }}</x-table.td>
                             <x-table.td>{{ $obat->nama_brng }}</x-table.td>
                             <x-table.td>{{ $obat->kategori }}</x-table.td>
                             <x-table.td>{{ $obat->satuan }}</x-table.td>
                             <x-table.td>{{ $obat->stok }}</x-table.td>
-                            <x-table.td>{{ rp($obat->h_beli) }}</x-table.td>
-                            <x-table.td>{{ rp($obat->projeksi_harga) }}</x-table.td>
+                            <x-table.td>
+                                {{ rp($obat->h_beli) }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ rp($obat->projeksi_harga) }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="8" padding />

@@ -39,7 +39,7 @@ class AntrianPoli extends Component
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->where('kd_poli', $kd_poli)
             ->where('kd_dokter', $kd_dokter)
-            ->where('tgl_registrasi', now()->format('Y-m-d'))
+            ->where('tgl_registrasi', now()->toDateString())
             ->where('stts', 'Belum')
             ->orderBy('no_reg')
             ->get();
@@ -53,7 +53,7 @@ class AntrianPoli extends Component
 
     public function checkDataChanges(Request $request, $kd_poli, $kd_dokter): JsonResponse
     {
-        $tanggal = now()->format('Y-m-d');
+        $tanggal = now()->toDateString();
 
         $nextAntrian = AntriPoli::select('antripoli.*', 'reg_periksa.no_reg')
             ->join('reg_periksa', 'antripoli.no_rawat', '=', 'reg_periksa.no_rawat')

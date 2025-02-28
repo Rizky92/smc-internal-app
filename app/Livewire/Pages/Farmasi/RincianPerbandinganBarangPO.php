@@ -15,12 +15,12 @@ use Livewire\Component;
 
 class RincianPerbandinganBarangPO extends Component
 {
-    use FlashComponent;
-    use Filterable;
+    use DeferredLoading;
     use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
     use LiveTable;
     use MenuTracker;
-    use DeferredLoading;
 
     /** @var string */
     public $tglAwal;
@@ -31,8 +31,8 @@ class RincianPerbandinganBarangPO extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'  => ['except' => now()->startOfMonth()->toDateString(), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->toDateString(), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -44,7 +44,7 @@ class RincianPerbandinganBarangPO extends Component
     public function getRincianPerbandinganBarangPOProperty()
     {
         return $this->isDeferred ? [] : PenerimaanObat::query()
-            ->rincianPerbandinganPemesananPO('obat',$this->tglAwal, $this->tglAkhir)
+            ->rincianPerbandinganPemesananPO('obat', $this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage, ['*'], 'page_obat');
@@ -53,7 +53,7 @@ class RincianPerbandinganBarangPO extends Component
     public function getRincianPerbandinganAlkesPOProperty()
     {
         return $this->isDeferred ? [] : PenerimaanObat::query()
-            ->rincianPerbandinganPemesananPO('alkes',$this->tglAwal, $this->tglAkhir)
+            ->rincianPerbandinganPemesananPO('alkes', $this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage, ['*'], 'page_alkes');
@@ -67,31 +67,31 @@ class RincianPerbandinganBarangPO extends Component
 
     protected function defaultValues(): void
     {
-        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->toDateString();
+        $this->tglAkhir = now()->endOfMonth()->toDateString();
     }
 
     protected function dataPerSheet(): array
     {
         $map = fn (PenerimaanObat $model): array => [
-            'kode_brng' => $model->kode_brng,
-            'nama_brng' => $model->nama_brng,
-            'harga_satuan' => $model->harga_satuan,
-            'total_pemesanan' => $model->total_pemesanan,
-            'total_harga' => $model->total_harga,
+            'kode_brng'                  => $model->kode_brng,
+            'nama_brng'                  => $model->nama_brng,
+            'harga_satuan'               => $model->harga_satuan,
+            'total_pemesanan'            => $model->total_pemesanan,
+            'total_harga'                => $model->total_harga,
             'total_pemesanan_bulan_lalu' => $model->total_pemesanan_bulan_lalu,
-            'total_harga_bulan_lalu' => $model->total_harga_bulan_lalu,
-            'selisih_pemesanan' => $model->selisih_pemesanan,
-            'selisih_harga' => $model->selisih_harga,
+            'total_harga_bulan_lalu'     => $model->total_harga_bulan_lalu,
+            'selisih_pemesanan'          => $model->selisih_pemesanan,
+            'selisih_harga'              => $model->selisih_harga,
         ];
 
         return [
             'obat' => fn () => PenerimaanObat::query()
-                ->rincianPerbandinganPemesananPO('obat',$this->tglAwal, $this->tglAkhir)
-                ->cursor() 
+                ->rincianPerbandinganPemesananPO('obat', $this->tglAwal, $this->tglAkhir)
+                ->cursor()
                 ->map($map),
             'alkes' => fn () => PenerimaanObat::query()
-                ->rincianPerbandinganPemesananPO('alkes',$this->tglAwal, $this->tglAkhir)
+                ->rincianPerbandinganPemesananPO('alkes', $this->tglAwal, $this->tglAkhir)
                 ->cursor()
                 ->map($map),
         ];
@@ -127,10 +127,10 @@ class RincianPerbandinganBarangPO extends Component
         }
 
         return [
-           'RS Samarinda Medika Citra',
-           'Rincian Perbandingan Barang PO Per Bulan',
-           now()->translatedFormat('d F Y'),
-           $periode,
+            'RS Samarinda Medika Citra',
+            'Rincian Perbandingan Barang PO Per Bulan',
+            now()->translatedFormat('d F Y'),
+            $periode,
         ];
     }
 }
