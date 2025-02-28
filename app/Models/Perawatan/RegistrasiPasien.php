@@ -1046,7 +1046,7 @@ class RegistrasiPasien extends Model
             $tglAkhir = now()->toDateString();
         }
 
-        $tahun = substr($tglAwal, 0, 7);
+        $tahun = substr($tglAwal, 0, 4);
 
         /** @var \Illuminate\Database\Query\Builder */
         $notaInap = NotaRanap::query()
@@ -1104,7 +1104,7 @@ class RegistrasiPasien extends Model
                 fn ($q) => $q->whereNotIn('reg_periksa.kd_pj', ['BPJ', 'A09']),
                 fn ($q) => $q->where('reg_periksa.kd_pj', $kodePJ))
             ->when($isPerusahaan, fn ($q) => $q->whereColumn('reg_periksa.kd_pj', 'perusahaan_pasien.kode_perusahaan'))
-            ->whereBetween('reg_periksa.tgl_registrasi', [$tahun.'-01', $tglAkhir]);
+            ->whereBetween('reg_periksa.tgl_registrasi', [$tahun.'-01-01', $tglAkhir]);
     }
 
     public function scopeKodeTransaksiFakturPajak(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
@@ -1117,18 +1117,18 @@ class RegistrasiPasien extends Model
             $tglAkhir = now()->toDateString();
         }
 
-        $tahun = substr($tglAwal, 0, 7);
+        $tahun = substr($tglAwal, 0, 4);
 
         /** @var \Illuminate\Database\Query\Builder */
         $kode080 = self::query()
             ->selectRaw('reg_periksa.no_rawat, \'080\' as kode_transaksi')
             ->whereRaw('reg_periksa.status_bayar = \'Sudah Bayar\'')
-            ->whereBetween('reg_periksa.tgl_registrasi', [$tahun.'-01', $tglAkhir]);
+            ->whereBetween('reg_periksa.tgl_registrasi', [$tahun.'-01-01', $tglAkhir]);
 
         return $query
             ->selectRaw('reg_periksa.no_rawat, if(reg_periksa.kd_pj = \'BPJ\', \'030\', \'040\') as kode_transaksi')
             ->whereRaw('reg_periksa.status_bayar = \'Sudah Bayar\'')
-            ->whereBetween('reg_periksa.tgl_registrasi', [$tahun.'-01', $tglAkhir])
+            ->whereBetween('reg_periksa.tgl_registrasi', [$tahun.'-01-01', $tglAkhir])
             ->where('reg_periksa.status_lanjut', 'Ralan')
             ->whereExists(fn ($q) => $q->from('detail_pemberian_obat')
                 ->whereColumn('detail_pemberian_obat.no_rawat', 'reg_periksa.no_rawat'))

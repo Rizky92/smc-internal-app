@@ -117,7 +117,7 @@ class PenjualanObat extends Model
             $tglAkhir = now()->toDateString();
         }
 
-        $tahun = substr($tglAwal, 0, 7);
+        $tahun = substr($tglAwal, 0, 4);
 
         $sqlSelect = <<<'SQL'
             penjualan.nota_jual as no_rawat,
@@ -142,7 +142,7 @@ class PenjualanObat extends Model
             ->selectRaw($sqlSelect)
             ->join('pasien', 'penjualan.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join('tagihan_sadewa', 'penjualan.nota_jual', '=', 'tagihan_sadewa.no_nota')
-            ->whereBetween('penjualan.tgl_jual', [$tahun.'-01', $tglAkhir])
+            ->whereBetween('penjualan.tgl_jual', [$tahun.'-01-01', $tglAkhir])
             ->whereBetween('tagihan_sadewa.tgl_bayar', [$tglAwal.' 00:00:00.000', $tglAkhir.' 23:59:59.999']);
     }
 
