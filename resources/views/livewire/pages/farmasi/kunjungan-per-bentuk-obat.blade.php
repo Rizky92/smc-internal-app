@@ -18,6 +18,8 @@
                 ]" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
+                <x-filter.label constant-width>Shift Kerja:</x-filter.label>
+                <x-filter.select model="shift" :options="['Pagi' => 'Pagi', 'Siang' => 'Siang', 'Malam' => 'Malam']" />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search />
             </x-row-col-flex>
