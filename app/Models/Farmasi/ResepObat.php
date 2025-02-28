@@ -72,7 +72,7 @@ class ResepObat extends Model
             });
     }
 
-    public function scopeKunjunganResep(Builder $query, string $jenisResep = 'umum', string $tglAwal = '', string $tglAkhir = ''): Builder
+    public function scopeKunjunganResep(Builder $query, string $jenisResep = 'umum', string $tglAwal = '', string $tglAkhir = '', string $shift = 'Pagi'): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->format('Y-m-d');
@@ -115,6 +115,21 @@ SQL;
             ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
             ->where('resep_obat.tgl_perawatan', '>', '0000-00-00')
+            ->when($shift === 'Pagi', function ($q) {
+                $q->whereBetween('resep_obat.jam', ['07:00:01', '14:00:00']);
+            })
+            ->when($shift === 'Siang', function ($q) {
+                $q->whereBetween('resep_obat.jam', ['14:00:01', '21:00:00']);
+            })
+            ->when($shift === 'Malam', function ($q) {
+                $q->where(function ($query) {
+                    $query->whereBetween('resep_obat.jam', ['21:00:01', '23:59:59'])
+                        ->orWhere(function ($subQuery) {
+                            $subQuery->whereRaw("CONCAT(resep_obat.tgl_perawatan, ' ', resep_obat.jam) BETWEEN CONCAT(resep_obat.tgl_perawatan, ' 00:00:00') AND CONCAT(resep_obat.tgl_perawatan, ' 07:00:00')")
+                                ->where('resep_obat.jam', '<=', '07:00:00');
+                        });
+                });
+            }) 
             ->when($jenisResep === 'racikan', fn ($q) => $q->whereExists(fn ($q) => $q
                 ->select(['*'])
                 ->from('detail_obat_racikan')
