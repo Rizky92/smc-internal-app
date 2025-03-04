@@ -32,7 +32,7 @@
                 </x-slot>
                 <x-slot name="contents">
                     <x-navtabs.content id="obat-regular">
-                        <x-table class="mb-0" :sortColumns="$sortColumns" sortable zebra hover sticky style="width: 120rem">
+                        <x-table class="mb-0" :sortColumns="$sortColumns" sortable zebra hover sticky nowrap style="width: 120rem">
                             <x-slot name="columns">
                                 <x-table.th style="width: 13ch" name="tgl_perawatan" title="Tanggal" />
                                 <x-table.th style="width: 13ch" name="no_resep" title="No. Resep" />
