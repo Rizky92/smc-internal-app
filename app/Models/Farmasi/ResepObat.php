@@ -82,6 +82,15 @@ class ResepObat extends Model
             $tglAkhir = now()->endOfMonth()->format('Y-m-d');
         }
 
+        $tglAwal = carbon_immutable($tglAwal);
+        $tglAkhir = carbon_immutable($tglAkhir);
+
+        $waktuShift = DB::connection('mysql_sik')
+            ->table('closing_kasir')
+            ->where('shift', $shift)
+            ->first(['jam_masuk', 'jam_pulang']);
+
+
         $sqlSelect = <<<'SQL'
 resep_obat.tgl_perawatan,
 concat(resep_obat.tgl_perawatan, ' ', resep_obat.jam) as waktu_validasi,
@@ -113,23 +122,20 @@ SQL;
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->join('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
             ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
-            ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
+            ->where(function ($q) use ($tglAwal, $tglAkhir, $waktuShift, $shift) {
+                while ($tglAwal->lessThanOrEqualTo($tglAkhir)) {
+                    $jamMasuk = $tglAwal->setTimeFromTimeString($waktuShift->jam_masuk);
+                    $jamPulang = $tglAwal->setTimeFromTimeString($waktuShift->jam_pulang);
+                    
+                    if ($shift === 'Malam') {
+                        $jamPulang = $tglAwal->addDay()->setTimeFromTimeString($waktuShift->jam_pulang);
+                    }
+    
+                    $q->orWhereBetween(DB::raw("concat(resep_obat.tgl_perawatan, ' ', resep_obat.jam)"), [$jamMasuk, $jamPulang]);
+                    $tglAwal = $tglAwal->addDay();
+                }  
+            })
             ->where('resep_obat.tgl_perawatan', '>', '0000-00-00')
-            ->when($shift === 'Pagi', function ($q) {
-                $q->whereBetween('resep_obat.jam', ['07:00:01', '14:00:00']);
-            })
-            ->when($shift === 'Siang', function ($q) {
-                $q->whereBetween('resep_obat.jam', ['14:00:01', '21:00:00']);
-            })
-            ->when($shift === 'Malam', function ($q) {
-                $q->where(function ($query) {
-                    $query->whereBetween('resep_obat.jam', ['21:00:01', '23:59:59'])
-                        ->orWhere(function ($subQuery) {
-                            $subQuery->whereRaw("CONCAT(resep_obat.tgl_perawatan, ' ', resep_obat.jam) BETWEEN CONCAT(resep_obat.tgl_perawatan, ' 00:00:00') AND CONCAT(resep_obat.tgl_perawatan, ' 07:00:00')")
-                                ->where('resep_obat.jam', '<=', '07:00:00');
-                        });
-                });
-            }) 
             ->when($jenisResep === 'racikan', fn ($q) => $q->whereExists(fn ($q) => $q
                 ->select(['*'])
                 ->from('detail_obat_racikan')
