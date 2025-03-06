@@ -132,7 +132,7 @@ SQL;
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->join('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
             ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
-            ->where(function ($q) use ($waktuAwal, $waktuAkhir, $waktuAwalAkhir, $waktuAkhirAkhir) {
+            ->where(function ($q) use ($tglAwal, $tglAkhir, $waktuShift, $shift) {
                 while ($tglAwal->lessThanOrEqualTo($tglAkhir)) {
                     $jamMasuk = $tglAwal->setTimeFromTimeString($waktuShift->jam_masuk);
                     $jamPulang = $tglAwal->setTimeFromTimeString($waktuShift->jam_pulang);
