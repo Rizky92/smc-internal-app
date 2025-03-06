@@ -465,6 +465,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                             sum(ppnbm_nominal) as ppnbm_nominal
                             SQL)
                         ->where('menu', 'fp-asper')
+                        ->where('dpp', '>', 0)
                         ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
                         ->groupBy(['kode_asuransi', 'kode_transaksi', 'kategori', 'kd_jenis_prw', 'harga_satuan', 'ppn_persen'])
                         ->orderBy('kode_asuransi')

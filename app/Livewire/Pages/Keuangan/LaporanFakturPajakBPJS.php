@@ -446,6 +446,7 @@ class LaporanFakturPajakBPJS extends Component
                             SQL)
                         ->where('menu', 'fp-bpjs')
                         ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
+                        ->where('dpp', '>', 0)
                         ->groupBy(['kode_asuransi', 'kode_transaksi', 'kategori', 'kd_jenis_prw', 'harga_satuan', 'ppn_persen'])
                         ->orderBy('kode_asuransi')
                         ->orderBy('kode_transaksi')

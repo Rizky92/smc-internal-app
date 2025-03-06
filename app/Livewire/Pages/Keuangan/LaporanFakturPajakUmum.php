@@ -486,6 +486,7 @@ class LaporanFakturPajakUmum extends Component
                             sum(ppnbm_nominal) as ppnbm_nominal
                             SQL)
                         ->where('menu', 'fp-umum')
+                        ->where('dpp', '>', 0)
                         ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
                         ->groupBy(['no_rkm_medis', 'kode_transaksi', 'kategori', 'kd_jenis_prw', 'harga_satuan', 'ppn_persen'])
                         ->orderBy('no_rkm_medis')
