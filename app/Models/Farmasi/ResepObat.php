@@ -133,8 +133,17 @@ SQL;
             ->join('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
             ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->where(function ($q) use ($waktuAwal, $waktuAkhir, $waktuAwalAkhir, $waktuAkhirAkhir) {
-                $q->whereBetween(DB::raw("concat(resep_obat.tgl_perawatan, ' ', resep_obat.jam)"), [$waktuAwal, $waktuAkhir])
-                ->orWhereBetween(DB::raw("concat(resep_obat.tgl_perawatan, ' ', resep_obat.jam)"), [$waktuAwalAkhir, $waktuAkhirAkhir]);
+                while ($tglAwal->lessThanOrEqualTo($tglAkhir)) {
+                    $jamMasuk = $tglAwal->setTimeFromTimeString($waktuShift->jam_masuk);
+                    $jamPulang = $tglAwal->setTimeFromTimeString($waktuShift->jam_pulang);
+                    
+                    if ($shift === 'Malam') {
+                        $jamPulang = $tglAwal->addDay()->setTimeFromTimeString($waktuShift->jam_pulang);
+                    }
+    
+                    $q->orWhereBetween(DB::raw("concat(resep_obat.tgl_perawatan, ' ', resep_obat.jam)"), [$jamMasuk, $jamPulang]);
+                    $tglAwal = $tglAwal->addDay();
+                }  
             })
             ->where('resep_obat.tgl_perawatan', '>', '0000-00-00')
             ->when($jenisResep === 'racikan', fn ($q) => $q->whereExists(fn ($q) => $q
