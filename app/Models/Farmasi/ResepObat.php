@@ -90,16 +90,6 @@ class ResepObat extends Model
             ->where('shift', $shift)
             ->first(['jam_masuk', 'jam_pulang']);
 
-        $waktuAwal = $tglAwal->setTimeFromTimeString($waktuShift->jam_masuk);
-        $waktuAkhir = $tglAwal->setTimeFromTimeString($waktuShift->jam_pulang);
-
-        $waktuAwalAkhir = $tglAkhir->setTimeFromTimeString($waktuShift->jam_masuk);
-        $waktuAkhirAkhir = $tglAkhir->setTimeFromTimeString($waktuShift->jam_pulang);
-
-        if ($shift === 'Malam') {
-            $waktuAkhir = $waktuAkhir->addDay();
-            $waktuAkhirAkhir = $waktuAkhirAkhir->addDay();
-        }
 
         $sqlSelect = <<<'SQL'
 resep_obat.tgl_perawatan,
