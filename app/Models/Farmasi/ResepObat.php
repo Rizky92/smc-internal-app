@@ -72,7 +72,7 @@ class ResepObat extends Model
             });
     }
 
-    public function scopeKunjunganResep(Builder $query, string $jenisResep = 'umum', string $tglAwal = '', string $tglAkhir = ''): Builder
+    public function scopeKunjunganResep(Builder $query, string $jenisResep = 'umum', string $tglAwal = '', string $tglAkhir = '', string $shift = 'Pagi'): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->toDateString();
@@ -81,6 +81,15 @@ class ResepObat extends Model
         if (empty($tglAkhir)) {
             $tglAkhir = now()->endOfMonth()->toDateString();
         }
+
+        $tglAwal = carbon_immutable($tglAwal);
+        $tglAkhir = carbon_immutable($tglAkhir);
+
+        $waktuShift = DB::connection('mysql_sik')
+            ->table('closing_kasir')
+            ->where('shift', $shift)
+            ->first(['jam_masuk', 'jam_pulang']);
+
 
         $sqlSelect = <<<'SQL'
             resep_obat.tgl_perawatan,
@@ -113,7 +122,19 @@ class ResepObat extends Model
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->join('dokter', 'resep_obat.kd_dokter', '=', 'dokter.kd_dokter')
             ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
-            ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
+            ->where(function ($q) use ($tglAwal, $tglAkhir, $waktuShift, $shift) {
+                while ($tglAwal->lessThanOrEqualTo($tglAkhir)) {
+                    $jamMasuk = $tglAwal->setTimeFromTimeString($waktuShift->jam_masuk);
+                    $jamPulang = $tglAwal->setTimeFromTimeString($waktuShift->jam_pulang);
+                    
+                    if ($shift === 'Malam') {
+                        $jamPulang = $tglAwal->addDay()->setTimeFromTimeString($waktuShift->jam_pulang);
+                    }
+    
+                    $q->orWhereBetween(DB::raw("concat(resep_obat.tgl_perawatan, ' ', resep_obat.jam)"), [$jamMasuk, $jamPulang]);
+                    $tglAwal = $tglAwal->addDay();
+                }  
+            })
             ->where('resep_obat.tgl_perawatan', '>', '0000-00-00')
             ->when($jenisResep === 'racikan', fn ($q) => $q->whereExists(fn ($q) => $q
                 ->from('detail_obat_racikan')

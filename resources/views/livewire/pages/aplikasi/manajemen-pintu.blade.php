@@ -33,7 +33,9 @@
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.select-perpage />
-                <x-button variant="primary" size="sm" title="Buat" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-pintu" class="btn-primary ml-auto" />
+                @can('antrean.manajemen-pintu.create')
+                    <x-button variant="primary" size="sm" title="Buat" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-pintu" class="btn-primary ml-auto" />
+                @endcan
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
@@ -48,7 +50,7 @@
                     @forelse ($this->pintu as $pintu)
                         <x-table.tr>
                             <x-table.td
-                                clickable
+                                :clickable="user()->can('antrean.manajemen-pintu.update')"
                                 data-pintu-id="{{ $pintu->id }}"
                                 data-kode-poliklinik="{{ $pintu->poli }}"
                                 data-kode-dokter="{{ $pintu->dokter }}"
