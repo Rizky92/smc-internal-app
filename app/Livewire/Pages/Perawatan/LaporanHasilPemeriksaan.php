@@ -8,9 +8,9 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Laboratorium\HasilPeriksaLab;
 use App\Models\Perawatan\RegistrasiPasien;
 use App\Models\RekamMedis\Penjamin;
-use App\Models\Laboratorium\HasilPeriksaLab;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -57,6 +57,7 @@ class LaporanHasilPemeriksaan extends Component
                 'pasien',
                 'poliklinik',
                 'penjamin',
+                'penilaianHasilMcu',
             ])
             ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
             ->where('kd_poli', 'U0036')
@@ -125,15 +126,33 @@ class LaporanHasilPemeriksaan extends Component
         $data = [];
 
         $rowSatuan = [
-            'Penjamin' => '',
-            'No. Rawat' => '',
-            'No. RM' => '',
-            'Nama' => '',
+            'Penjamin'      => '',
+            'No. Rawat'     => '',
+            'No. RM'        => '',
+            'Nama'          => '',
+            'Tgl. Lahir'    => '',
+            'Usia'          => '',
             'Jenis Kelamin' => '',
-            'Agama' => '',
-            'tgl_registrasi' => '',
-            'Poli' => '',
-            'Tindakan' => 'Satuan',
+            'Agama'         => '',
+            'Tgl. MCU'      => '',
+            'Poli'          => '',
+            'Radiologi'     => '',
+            'EKG'           => '',
+            'Spirometri'    => '',
+            'Audiometri'    => '',
+            'Treadmill'     => '',
+            'TB'            => '',
+            'BB'            => '',
+            'TD'            => '',
+            'Nadi'          => '',
+            'Respirasi'     => '',
+            'Merokok'       => '',
+            'Alkohol'       => '',
+            'Buta Warna'    => '',
+            'Lain-lain'     => '',
+            'Kesimpulan'    => '',
+            'Anjuran'       => '',
+            'Tindakan'      => 'Satuan',
         ];
 
         foreach ($this->uniquePemeriksaan as $pemeriksaan) {
@@ -142,19 +161,35 @@ class LaporanHasilPemeriksaan extends Component
 
         $data[] = $rowSatuan;
 
-        $rujukanTypes = ['ld', 'la', 'pd', 'pa'];
-
-        foreach ($rujukanTypes as $type) {
+        foreach (['ld', 'la', 'pd', 'pa'] as $type) {
             $rowRujukan = [
-                'Penjamin' => '',
-                'No. Rawat' => '',
-                'No. RM' => '',
-                'Nama' => '',
+                'Penjamin'      => '',
+                'No. Rawat'     => '',
+                'No. RM'        => '',
+                'Nama'          => '',
+                'Tgl. Lahir'    => '',
+                'Usia'          => '',
                 'Jenis Kelamin' => '',
-                'Agama' => '',
-                'tgl_registrasi' => '',
-                'Poli' => '',
-                'Tindakan' => 'Nilai Rujukan (' . strtoupper($type) . ')',
+                'Agama'         => '',
+                'Tgl. MCU'      => '',
+                'Poli'          => '',
+                'Radiologi'     => '',
+                'EKG'           => '',
+                'Spirometri'    => '',
+                'Audiometri'    => '',
+                'Treadmill'     => '',
+                'TB'            => '',
+                'BB'            => '',
+                'TD'            => '',
+                'Nadi'          => '',
+                'Respirasi'     => '',
+                'Merokok'       => '',
+                'Alkohol'       => '',
+                'Buta Warna'    => '',
+                'Lain-lain'     => '',
+                'Kesimpulan'    => '',
+                'Anjuran'       => '',
+                'Tindakan'      => 'Nilai Rujukan (' . strtoupper($type) . ')',
             ];
         
             foreach ($this->uniquePemeriksaan as $pemeriksaan) {
@@ -167,15 +202,33 @@ class LaporanHasilPemeriksaan extends Component
         foreach ($this->dataPasienPoliMCU as $pasien) {
             $row = [];
             
-            $row['Penjamin'] = $pasien->penjamin->png_jawab;
-            $row['No. Rawat'] = $pasien->no_rawat;
-            $row['No. RM'] = $pasien->pasien->no_rkm_medis;
-            $row['Nama'] = $pasien->pasien->nm_pasien;
+            $row['Penjamin']      = $pasien->penjamin->png_jawab;
+            $row['No. Rawat']     = $pasien->no_rawat;
+            $row['No. RM']        = $pasien->pasien->no_rkm_medis;
+            $row['Nama']          = $pasien->pasien->nm_pasien;
+            $row['Tgl. Lahir']    = $pasien->pasien->tgl_lahir;
+            $row['Usia']          = $pasien->umurdaftar.' '.$pasien->sttsumur;
             $row['Jenis Kelamin'] = $pasien->pasien->jk;
-            $row['Agama'] = $pasien->pasien->agama;
-            $row['tgl_registrasi'] = $pasien->tgl_registrasi;
-            $row['Poli'] = $pasien->poliklinik->nm_poli;
-            $row['Tindakan'] = '';
+            $row['Agama']         = $pasien->pasien->agama;
+            $row['Tgl. MCU']      = $pasien->tgl_registrasi;
+            $row['Poli']          = $pasien->poliklinik->nm_poli;
+            $row['Radiologi']     = optional($pasien->penilaianHasilMcu)->radiologi;
+            $row['EKG']           = optional($pasien->penilaianHasilMcu)->ekg;
+            $row['Spirometri']    = optional($pasien->penilaianHasilMcu)->spirometri;
+            $row['Audiometri']    = optional($pasien->penilaianHasilMcu)->audiometri;
+            $row['Treadmill']     = optional($pasien->penilaianHasilMcu)->treadmill;
+            $row['TB']            = optional($pasien->penilaianHasilMcu)->tb;
+            $row['BB']            = optional($pasien->penilaianHasilMcu)->bb;
+            $row['TD']            = optional($pasien->penilaianHasilMcu)->td;
+            $row['Nadi']          = optional($pasien->penilaianHasilMcu)->nadi;
+            $row['Respirasi']     = optional($pasien->penilaianHasilMcu)->rr;
+            $row['Merokok']       = optional($pasien->penilaianHasilMcu)->merokok;
+            $row['Alkohol']       = optional($pasien->penilaianHasilMcu)->alkohol;
+            $row['Buta Warna']    = optional($pasien->penilaianHasilMcu)->buta_warna;
+            $row['Lain-lain']     = optional($pasien->penilaianHasilMcu)->lainlain;
+            $row['Kesimpulan']    = optional($pasien->penilaianHasilMcu)->kesimpulan;
+            $row['Anjuran']       = optional($pasien->penilaianHasilMcu)->anjuran;
+            $row['Tindakan']      = '';
 
             foreach ($this->uniquePemeriksaan as $pemeriksaan) {
                 $row[$pemeriksaan] = $this->pemeriksaan[$pasien->no_rawat][$pemeriksaan]->nilai ?? '-';
@@ -194,10 +247,28 @@ class LaporanHasilPemeriksaan extends Component
             'No. Rawat',
             'No. RM',
             'Nama',
+            'Tgl. Lahir',
+            'Usia',
             'Jenis Kelamin',
             'Agama',
-            'tgl_registrasi',
+            'Tgl. MCU',
             'Poli',
+            'Radiologi',
+            'EKG',
+            'Spirometri',
+            'Audiometri',
+            'Treadmill',
+            'TB',
+            'BB',
+            'TD',
+            'Nadi',
+            'Respirasi',
+            'Merokok',
+            'Alkohol',
+            'Buta Warna',
+            'Lain-lain',
+            'Kesimpulan',
+            'Anjuran',
             'Tindakan',
         ];
 
@@ -210,8 +281,6 @@ class LaporanHasilPemeriksaan extends Component
 
     protected function pageHeaders(): array
     {
-        $penjamin = $this->penjamin === '-' ? 'Semua penjamin' : Penjamin::find($this->penjamin)->png_jawab;
-
         $periodeAwal = carbon($this->tglAwal);
         $periodeAkhir = carbon($this->tglAkhir);
 
@@ -223,7 +292,7 @@ class LaporanHasilPemeriksaan extends Component
 
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Hasil Pemeriksaan '. $penjamin,
+            'Laporan Hasil Pemeriksaan '. $this->dataPenjamin->get($this->penjamin),
             now()->translatedFormat('d F Y'),
             $periode,
         ];
