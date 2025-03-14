@@ -726,6 +726,7 @@ SQL;
         pasien.nm_pasien,
         poliklinik.nm_poli,
         reg_periksa.status_lanjut,
+        penjab.png_jawab,
         exists(select * from pemeriksaan_ralan where pemeriksaan_ralan.no_rawat = reg_periksa.no_rawat) soapie_ralan,
         exists(select * from pemeriksaan_ranap where pemeriksaan_ranap.no_rawat = reg_periksa.no_rawat) soapie_ranap,
         exists(select * from resume_pasien where resume_pasien.no_rawat = reg_periksa.no_rawat) resume_ralan,
