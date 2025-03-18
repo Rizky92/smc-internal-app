@@ -105,7 +105,9 @@ class LaporanHasilPemeriksaan extends Component
 
     public function getDataPenjaminProperty(): Collection
     {
-        return Penjamin::pluck('png_jawab', 'kd_pj');
+        return Penjamin::query()
+            ->pluck('png_jawab', 'kd_pj')
+            ->put('-', 'Semua Jaminan');
     }
 
     public function render(): View
