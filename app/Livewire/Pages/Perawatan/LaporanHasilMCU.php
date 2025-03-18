@@ -18,7 +18,7 @@ use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class LaporanHasilPemeriksaan extends Component
+class LaporanHasilMCU extends Component
 {
     use FlashComponent;
     use Filterable;
@@ -112,8 +112,8 @@ class LaporanHasilPemeriksaan extends Component
 
     public function render(): View
     {
-        return view('livewire.pages.perawatan.laporan-hasil-pemeriksaan')
-            ->layout(BaseLayout::class, ['title' => 'Laporan Hasil Pemeriksaan']);
+        return view('livewire.pages.perawatan.laporan-hasil-m-c-u')
+            ->layout(BaseLayout::class, ['title' => 'Laporan Hasil MCU']);
     }
 
     protected function defaultValues(): void
@@ -174,7 +174,7 @@ class LaporanHasilPemeriksaan extends Component
                 'Usia'          => '',
                 'Jenis Kelamin' => '',
                 'Agama'         => '',
-                'NIK'         => '',
+                'NIK'           => '',
                 'Tgl. MCU'      => '',
                 'Poli'          => '',
                 'Radiologi'     => '',

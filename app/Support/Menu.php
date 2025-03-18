@@ -55,7 +55,7 @@ class Menu
                         'hasAnyPermissions' => $user->can('perawatan.laporan-transaksi-gantung.read'),
                     ],
                     [
-                        'name'              => 'Laporan Hasil Pemeriksaan',
+                        'name'              => 'Laporan Hasil MCU',
                         'url'               => route('admin.perawatan.laporan-hasil-pemeriksaan'),
                         'icon'              => 'fas fa-file-alt',
                         'type'              => 'link',
@@ -63,7 +63,7 @@ class Menu
                     ],
                 ],
             ],
-            [
+            /* // Tutup akses Hasil MCU Karyawan karena tidak digunakan [
                 'name'              => 'Laboratorium',
                 'icon'              => 'far fa-circle',
                 'type'              => 'dropdown',
@@ -79,7 +79,7 @@ class Menu
                         'hasAnyPermissions' => $user->can('lab.hasil-mcu-karyawan.read'),
                     ],
                 ],
-            ],
+            ], */
             [
                 'name'              => 'Keuangan',
                 'icon'              => 'far fa-circle',
