@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
@@ -401,6 +402,11 @@ class RegistrasiPasien extends Model
         return $this->hasMany(TindakanRanapDokterPerawat::class, 'no_rawat', 'no_rawat');
     }
 
+    public function penilaianHasilMcu(): HasOne
+    {
+        return $this->hasOne(PenilaianHasilMCU::class, 'no_rawat', 'no_rawat');
+    }
+
     public function scopeLaporanStatistik(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
@@ -728,6 +734,7 @@ class RegistrasiPasien extends Model
             pasien.nm_pasien,
             poliklinik.nm_poli,
             reg_periksa.status_lanjut,
+            penjab.png_jawab,
             exists(select * from pemeriksaan_ralan where pemeriksaan_ralan.no_rawat = reg_periksa.no_rawat) soapie_ralan,
             exists(select * from pemeriksaan_ranap where pemeriksaan_ranap.no_rawat = reg_periksa.no_rawat) soapie_ranap,
             exists(select * from resume_pasien where resume_pasien.no_rawat = reg_periksa.no_rawat) resume_ralan,

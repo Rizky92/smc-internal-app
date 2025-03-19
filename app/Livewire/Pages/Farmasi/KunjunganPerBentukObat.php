@@ -116,8 +116,8 @@ class KunjunganPerBentukObat extends Component
                 ->cursor()
                 ->map($map),
             'Obat Racikan' => fn () => ResepObat::query()
-                ->jenisKunjungan($this->jenisKunjungan)
                 ->kunjunganResep('racikan', $this->tglAwal, $this->tglAkhir, $this->shift)
+                ->jenisKunjungan($this->jenisKunjungan)
                 ->cursor()
                 ->map($map),
         ];
