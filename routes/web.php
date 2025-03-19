@@ -18,7 +18,6 @@ use App\Livewire\Pages\Logistik;
 use App\Livewire\Pages\Perawatan;
 use App\Livewire\Pages\RekamMedis;
 use App\Livewire\Pages\User;
-use App\Models\Perawatan\Poliklinik;
 use Illuminate\Support\Facades\Route;
 use InfyOm\RoutesExplorer\RoutesExplorer;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
@@ -103,7 +102,7 @@ Route::prefix('admin')
                     ->name('laporan-transaksi-gantung')
                     ->middleware('can:perawatan.laporan-transaksi-gantung.read');
 
-                Route::get('laporan-hasil-pemeriksaan', Perawatan\LaporanHasilPemeriksaan::class)
+                Route::get('laporan-hasil-pemeriksaan', Perawatan\LaporanHasilMCU::class)
                     ->name('laporan-hasil-pemeriksaan')
                     ->middleware('can:perawatan.laporan-hasil-pemeriksaan.read');
             });

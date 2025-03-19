@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
@@ -397,6 +398,11 @@ class RegistrasiPasien extends Model
     public function tindakanRanapDokterPerawat(): HasMany
     {
         return $this->hasMany(TindakanRanapDokterPerawat::class, 'no_rawat', 'no_rawat');
+    }
+
+    public function penilaianHasilMcu(): HasOne
+    {
+        return $this->hasOne(PenilaianHasilMCU::class, 'no_rawat', 'no_rawat');
     }
 
     public function scopeLaporanStatistik(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder

@@ -2,15 +2,12 @@
 
 namespace App\Support;
 
-use Illuminate\Contracts\Auth\Authenticatable;
+use App\Models\Aplikasi\User;
 use Illuminate\Support\Collection;
 
 class Menu
 {
-    /**
-     * @param  Authenticatable&\App\Database\Eloquent\Authenticatable  $user
-     */
-    public static function all($user): Collection
+    public static function all(User $user): Collection
     {
         $develop = config('permission.superadmin_name');
 
@@ -55,7 +52,7 @@ class Menu
                         'hasAnyPermissions' => $user->can('perawatan.laporan-transaksi-gantung.read'),
                     ],
                     [
-                        'name'              => 'Laporan Hasil Pemeriksaan',
+                        'name'              => 'Laporan Hasil MCU',
                         'url'               => route('admin.perawatan.laporan-hasil-pemeriksaan'),
                         'icon'              => 'fas fa-file-alt',
                         'type'              => 'link',
@@ -63,7 +60,7 @@ class Menu
                     ],
                 ],
             ],
-            [
+            /* // Tutup akses Hasil MCU Karyawan karena tidak digunakan [
                 'name'              => 'Laboratorium',
                 'icon'              => 'far fa-circle',
                 'type'              => 'dropdown',
@@ -79,7 +76,7 @@ class Menu
                         'hasAnyPermissions' => $user->can('lab.hasil-mcu-karyawan.read'),
                     ],
                 ],
-            ],
+            ], */
             [
                 'name'              => 'Keuangan',
                 'icon'              => 'far fa-circle',
