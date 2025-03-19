@@ -2,15 +2,12 @@
 
 namespace App\Support;
 
-use Illuminate\Contracts\Auth\Authenticatable;
+use App\Models\Aplikasi\User;
 use Illuminate\Support\Collection;
 
 class Menu
 {
-    /**
-     * @param  Authenticatable&\App\Database\Eloquent\Authenticatable  $user
-     */
-    public static function all($user): Collection
+    public static function all(User $user): Collection
     {
         $develop = config('permission.superadmin_name');
 
