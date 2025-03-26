@@ -448,6 +448,7 @@ class LaporanFakturPajakUmum extends Component
                         ->where('menu', 'fp-umum')
                         ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
                         ->groupBy(['tgl_faktur', 'no_rkm_medis', 'kode_transaksi'])
+                        ->withCasts(['baris' => 'int'])
                         ->cursor()
                         ->map(fn (FakturPajakDitarik $model): array => [
                             'baris'               => $model->baris,
@@ -468,57 +469,47 @@ class LaporanFakturPajakUmum extends Component
                             'email'               => Str::transliterate($model->email ?: ''),
                             'id_tku'              => Str::transliterate($model->id_tku ?: ''),
                         ]),
-                    'Detail Faktur' => fn () => FakturPajakDitarikDetail::query()
-                        ->selectRaw(<<<'SQL'
-                            dense_rank() over (order by no_rkm_medis, kode_transaksi) as baris,
-                            jenis_barang_jasa,
-                            kode_barang_jasa,
-                            nama_barang_jasa,
-                            nama_satuan_ukur,
-                            harga_satuan,
-                            sum(jumlah_barang_jasa) as jumlah_barang_jasa,
-                            sum(diskon_nominal) as diskon_nominal,
-                            sum(dpp) as dpp,
-                            sum(dpp_nilai_lain) as dpp_nilai_lain,
-                            ppn_persen,
-                            sum(ppn_nominal) as ppn_nominal,
-                            ppnbm_persen,
-                            sum(ppnbm_nominal) as ppnbm_nominal
-                            SQL)
-                        ->where('menu', 'fp-umum')
-                        ->where('dpp', '>', 0)
-                        ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
-                        ->groupBy(['no_rkm_medis', 'kode_transaksi', 'kategori', 'kd_jenis_prw', 'harga_satuan', 'ppn_persen'])
-                        ->orderBy('no_rkm_medis')
-                        ->orderBy('kode_transaksi')
-                        ->withCasts([
-                            'harga_satuan'       => 'float',
-                            'jumlah_barang_jasa' => 'float',
-                            'diskon_persen'      => 'float',
-                            'diskon_nominal'     => 'float',
-                            'dpp'                => 'float',
-                            'dpp_nilai_lain'     => 'float',
-                            'ppn_persen'         => 'float',
-                            'ppn_nominal'        => 'float',
-                            'ppnbm_persen'       => 'float',
-                            'ppnbm_nominal'      => 'float',
-                        ])
+                    'Detail Faktur' => fn () => DB::connection('mysql_smc')
+                        ->query()
+                        ->fromSub(FakturPajakDitarikDetail::query()
+                            ->selectRaw(<<<'SQL'
+                                dense_rank() over (order by no_rkm_medis, kode_transaksi) as baris,
+                                jenis_barang_jasa,
+                                kode_barang_jasa,
+                                nama_barang_jasa,
+                                nama_satuan_ukur,
+                                harga_satuan,
+                                sum(jumlah_barang_jasa) as jumlah_barang_jasa,
+                                sum(diskon_nominal) as diskon_nominal,
+                                sum(dpp) as dpp,
+                                sum(dpp_nilai_lain) as dpp_nilai_lain,
+                                ppn_persen,
+                                sum(ppn_nominal) as ppn_nominal,
+                                ppnbm_persen,
+                                sum(ppnbm_nominal) as ppnbm_nominal
+                                SQL)
+                            ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
+                            ->where('menu', 'fp-umum')
+                            ->groupBy(['no_rkm_medis', 'kode_transaksi', 'kategori', 'kd_jenis_prw', 'harga_satuan', 'ppn_persen'])
+                            ->orderBy('no_rkm_medis')
+                            ->orderBy('kode_transaksi'), 't')
+                        ->where('t.dpp', '>', 0)
                         ->cursor()
-                        ->map(fn (FakturPajakDitarikDetail $model): array => [
-                            'baris'              => $model->baris,
+                        ->map(fn (object $model): array => [
+                            'baris'              => (int) $model->baris,
                             'jenis_barang_jasa'  => $model->jenis_barang_jasa,
                             'kode_barang_jasa'   => Str::transliterate($model->kode_barang_jasa ?: ''),
                             'nama_barang_jasa'   => Str::transliterate($model->nama_barang_jasa ?: ''),
                             'nama_satuan_ukur'   => $model->nama_satuan_ukur ?: 'UM.0033',
-                            'harga_satuan'       => round($model->harga_satuan, 2),
-                            'jumlah_barang_jasa' => round($model->jumlah_barang_jasa, 2),
-                            'diskon_nominal'     => round($model->diskon_nominal, 2),
-                            'dpp'                => round($model->dpp, 2),
-                            'dpp_nilai_lain'     => round($model->dpp_nilai_lain, 2),
-                            'ppn_persen'         => round($model->ppn_persen, 2),
-                            'ppn_nominal'        => round($model->ppn_nominal, 2),
-                            'ppnbm_persen'       => round($model->ppnbm_persen, 2),
-                            'ppnbm_nominal'      => round($model->ppnbm_nominal, 2),
+                            'harga_satuan'       => round((float) $model->harga_satuan, 2),
+                            'jumlah_barang_jasa' => round((float) $model->jumlah_barang_jasa, 2),
+                            'diskon_nominal'     => round((float) $model->diskon_nominal, 2),
+                            'dpp'                => round((float) $model->dpp, 2),
+                            'dpp_nilai_lain'     => round((float) $model->dpp_nilai_lain, 2),
+                            'ppn_persen'         => round((float) $model->ppn_persen, 2),
+                            'ppn_nominal'        => round((float) $model->ppn_nominal, 2),
+                            'ppnbm_persen'       => round((float) $model->ppnbm_persen, 2),
+                            'ppnbm_nominal'      => round((float) $model->ppnbm_nominal, 2),
                         ]),
                 ];
             default:
