@@ -198,7 +198,7 @@ class LaporanHasilMCU extends Component
                 'Lain-lain'     => '',
                 'Kesimpulan'    => '',
                 'Anjuran'       => '',
-                'Tindakan'      => 'Nilai Rujukan (' . strtoupper($type) . ')',
+                'Tindakan'      => 'Nilai Rujukan ('.strtoupper($type).')',
             ];
 
             foreach ($this->uniquePemeriksaan as $pemeriksaan) {
@@ -210,35 +210,35 @@ class LaporanHasilMCU extends Component
 
         foreach ($this->dataPasienPoliMCU as $registrasi) {
             $row = [];
-            
-            $row['Penjamin']      = $registrasi->penjamin->png_jawab;
-            $row['No. Rawat']     = $registrasi->no_rawat;
-            $row['No. RM']        = $registrasi->pasien->no_rkm_medis;
-            $row['Nama']          = $registrasi->pasien->nm_pasien;
-            $row['Tgl. Lahir']    = $registrasi->pasien->tgl_lahir;
-            $row['Usia']          = $registrasi->umurdaftar.' '.$registrasi->sttsumur;
+
+            $row['Penjamin'] = $registrasi->penjamin->png_jawab;
+            $row['No. Rawat'] = $registrasi->no_rawat;
+            $row['No. RM'] = $registrasi->pasien->no_rkm_medis;
+            $row['Nama'] = $registrasi->pasien->nm_pasien;
+            $row['Tgl. Lahir'] = $registrasi->pasien->tgl_lahir;
+            $row['Usia'] = $registrasi->umurdaftar.' '.$registrasi->sttsumur;
             $row['Jenis Kelamin'] = $registrasi->pasien->jk;
-            $row['Agama']         = $registrasi->pasien->agama;
-            $row['NIK']           = $registrasi->pasien->no_ktp;
-            $row['Tgl. MCU']      = $registrasi->tgl_registrasi;
-            $row['Poli']          = $registrasi->poliklinik->nm_poli;
-            $row['Radiologi']     = optional($registrasi->penilaianHasilMcu)->radiologi;
-            $row['EKG']           = optional($registrasi->penilaianHasilMcu)->ekg;
-            $row['Spirometri']    = optional($registrasi->penilaianHasilMcu)->spirometri;
-            $row['Audiometri']    = optional($registrasi->penilaianHasilMcu)->audiometri;
-            $row['Treadmill']     = optional($registrasi->penilaianHasilMcu)->treadmill;
-            $row['TB']            = optional($registrasi->penilaianHasilMcu)->tb;
-            $row['BB']            = optional($registrasi->penilaianHasilMcu)->bb;
-            $row['TD']            = optional($registrasi->penilaianHasilMcu)->td;
-            $row['Nadi']          = optional($registrasi->penilaianHasilMcu)->nadi;
-            $row['Respirasi']     = optional($registrasi->penilaianHasilMcu)->rr;
-            $row['Merokok']       = optional($registrasi->penilaianHasilMcu)->merokok;
-            $row['Alkohol']       = optional($registrasi->penilaianHasilMcu)->alkohol;
-            $row['Buta Warna']    = optional($registrasi->penilaianHasilMcu)->buta_warna;
-            $row['Lain-lain']     = optional($registrasi->penilaianHasilMcu)->lainlain;
-            $row['Kesimpulan']    = optional($registrasi->penilaianHasilMcu)->kesimpulan;
-            $row['Anjuran']       = optional($registrasi->penilaianHasilMcu)->anjuran;
-            $row['Tindakan']      = '';
+            $row['Agama'] = $registrasi->pasien->agama;
+            $row['NIK'] = $registrasi->pasien->no_ktp;
+            $row['Tgl. MCU'] = $registrasi->tgl_registrasi;
+            $row['Poli'] = $registrasi->poliklinik->nm_poli;
+            $row['Radiologi'] = optional($registrasi->penilaianHasilMcu)->radiologi;
+            $row['EKG'] = optional($registrasi->penilaianHasilMcu)->ekg;
+            $row['Spirometri'] = optional($registrasi->penilaianHasilMcu)->spirometri;
+            $row['Audiometri'] = optional($registrasi->penilaianHasilMcu)->audiometri;
+            $row['Treadmill'] = optional($registrasi->penilaianHasilMcu)->treadmill;
+            $row['TB'] = optional($registrasi->penilaianHasilMcu)->tb;
+            $row['BB'] = optional($registrasi->penilaianHasilMcu)->bb;
+            $row['TD'] = optional($registrasi->penilaianHasilMcu)->td;
+            $row['Nadi'] = optional($registrasi->penilaianHasilMcu)->nadi;
+            $row['Respirasi'] = optional($registrasi->penilaianHasilMcu)->rr;
+            $row['Merokok'] = optional($registrasi->penilaianHasilMcu)->merokok;
+            $row['Alkohol'] = optional($registrasi->penilaianHasilMcu)->alkohol;
+            $row['Buta Warna'] = optional($registrasi->penilaianHasilMcu)->buta_warna;
+            $row['Lain-lain'] = optional($registrasi->penilaianHasilMcu)->lainlain;
+            $row['Kesimpulan'] = optional($registrasi->penilaianHasilMcu)->kesimpulan;
+            $row['Anjuran'] = optional($registrasi->penilaianHasilMcu)->anjuran;
+            $row['Tindakan'] = '';
 
             foreach ($this->uniquePemeriksaan as $pemeriksaan) {
                 $row[$pemeriksaan] = $this->pemeriksaan[$registrasi->no_rawat][$pemeriksaan]->nilai ?? '-';
@@ -303,7 +303,7 @@ class LaporanHasilMCU extends Component
 
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Hasil Pemeriksaan '. $this->dataPenjamin->get($this->penjamin),
+            'Laporan Hasil Pemeriksaan '.$this->dataPenjamin->get($this->penjamin),
             now()->translatedFormat('d F Y'),
             $periode,
         ];

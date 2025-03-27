@@ -17,8 +17,8 @@ use Livewire\Component;
 class InputPintu extends Component
 {
     use DeferredModal;
-    use FlashComponent;
     use Filterable;
+    use FlashComponent;
 
     /** @var int */
     public $pintuId;
@@ -145,7 +145,7 @@ class InputPintu extends Component
             $this->dispatchBrowserEvent('data-saved');
             $this->emit('flash.success', 'Data Pintu baru berhasil disimpan!');
             $this->defaultValues();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->dispatchBrowserEvent('data-failed');
             $this->emit('flash.warning', 'Terjadi kegagalan pada saat menyimpan data Pintu!');
             $this->defaultValues();
@@ -189,7 +189,7 @@ class InputPintu extends Component
             $this->dispatchBrowserEvent('data-saved');
             $this->emit('flash.success', 'Data Pintu berhasil diperbarui!');
             $this->defaultValues();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             tracker_dispose('mysql_smc');
             $this->dispatchBrowserEvent('data-failed');
             $this->emit('flash.warning', 'Terjadi kegagalan pada saat memperbarui data Pintu!');
