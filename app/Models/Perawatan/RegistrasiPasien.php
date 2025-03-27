@@ -1057,14 +1057,27 @@ class RegistrasiPasien extends Model
 
         /** @var \Illuminate\Database\Query\Builder */
         $notaInap = NotaRanap::query()
-            ->select(['nota_inap.no_rawat', DB::raw("'Ranap' as status_lanjut"), 'nota_inap.tanggal', 'nota_inap.jam', DB::raw('ifnull(sum(detail_nota_inap.besar_bayar), 0) + ifnull(sum(piutang_pasien.totalpiutang), 0) + nota_inap.Uang_Muka as totalbiaya')])
+            ->selectRaw(<<<'SQL'
+                nota_inap.no_rawat,
+                'Ranap' as status_lanjut,
+                nota_inap.tanggal,
+                nota_inap.jam,
+                ifnull(sum(detail_nota_inap.besar_bayar), 0) + ifnull(sum(piutang_pasien.totalpiutang), 0) + nota_inap.Uang_Muka as totalbiaya
+                SQL)
             ->leftJoin('detail_nota_inap', 'nota_inap.no_rawat', '=', 'detail_nota_inap.no_rawat')
             ->leftJoin('piutang_pasien', 'nota_inap.no_rawat', '=', 'piutang_pasien.no_rawat')
             ->whereBetween('nota_inap.tanggal', [$tglAwal, $tglAkhir])
             ->groupBy(['nota_inap.no_rawat', 'nota_inap.tanggal', 'nota_inap.jam']);
 
+        /** @var \Illuminate\Database\Query\Builder */
         $notaBayar = NotaRalan::query()
-            ->select(['nota_jalan.no_rawat', DB::raw("'Ralan' as status_lanjut"), 'nota_jalan.tanggal', 'nota_jalan.jam', DB::raw('ifnull(sum(detail_nota_jalan.besar_bayar), 0) + ifnull(sum(piutang_pasien.totalpiutang), 0) as totalbiaya')])
+            ->selectRaw(<<<'SQL'
+                nota_jalan.no_rawat,
+                'Ralan' as status_lanjut,
+                nota_jalan.tanggal,
+                nota_jalan.jam,
+                ifnull(sum(detail_nota_jalan.besar_bayar), 0) + ifnull(sum(piutang_pasien.totalpiutang), 0) as totalbiaya
+                SQL)
             ->leftJoin('detail_nota_jalan', 'nota_jalan.no_rawat', '=', 'detail_nota_jalan.no_rawat')
             ->leftJoin('piutang_pasien', 'nota_jalan.no_rawat', '=', 'piutang_pasien.no_rawat')
             ->whereBetween('nota_jalan.tanggal', [$tglAwal, $tglAkhir])
@@ -1102,7 +1115,8 @@ class RegistrasiPasien extends Model
             ->selectRaw($sqlSelect)
             ->joinSub($notaBayar, 'nota_bayar', fn (JoinClause $join) => $join
                 ->on('reg_periksa.no_rawat', '=', 'nota_bayar.no_rawat')
-                ->on('reg_periksa.status_lanjut', '=', 'nota_bayar.status_lanjut'))
+                ->on('reg_periksa.status_lanjut', '=', 'nota_bayar.status_lanjut')
+                ->where('nota_bayar.totalbiaya', '>', 0))
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->leftJoin('perusahaan_pasien', 'pasien.perusahaan_pasien', '=', 'perusahaan_pasien.kode_perusahaan')
@@ -1202,22 +1216,33 @@ class RegistrasiPasien extends Model
             'perusahaan_pasien.no_npwp',
         ]);
 
-        $sqlSelectNotaInap = <<<'SQL'
-            nota_inap.no_rawat, nota_inap.tanggal, nota_inap.jam, 'Ranap' as status_lanjut
-            SQL;
-
-        $sqlSelectNotaRalan = <<<'SQL'
-            nota_jalan.no_rawat, nota_jalan.tanggal, nota_jalan.jam, 'Ralan' as status_lanjut
-            SQL;
-
         /** @var \Illuminate\Database\Query\Builder */
         $notaInap = NotaRanap::query()
-            ->selectRaw($sqlSelectNotaInap)
-            ->whereBetween('nota_inap.tanggal', [$tglAwal, $tglAkhir]);
+            ->selectRaw(<<<'SQL'
+                nota_inap.no_rawat,
+                'Ranap' as status_lanjut,
+                nota_inap.tanggal,
+                nota_inap.jam,
+                ifnull(sum(detail_nota_inap.besar_bayar), 0) + ifnull(sum(piutang_pasien.totalpiutang), 0) + nota_inap.Uang_Muka as totalbiaya
+                SQL)
+            ->leftJoin('detail_nota_inap', 'nota_inap.no_rawat', '=', 'detail_nota_inap.no_rawat')
+            ->leftJoin('piutang_pasien', 'nota_inap.no_rawat', '=', 'piutang_pasien.no_rawat')
+            ->whereBetween('nota_inap.tanggal', [$tglAwal, $tglAkhir])
+            ->groupBy(['nota_inap.no_rawat', 'nota_inap.tanggal', 'nota_inap.jam']);
 
+        /** @var \Illuminate\Database\Query\Builder */
         $notaBayar = NotaRalan::query()
-            ->selectRaw($sqlSelectNotaRalan)
+            ->selectRaw(<<<'SQL'
+                nota_jalan.no_rawat,
+                'Ralan' as status_lanjut,
+                nota_jalan.tanggal,
+                nota_jalan.jam,
+                ifnull(sum(detail_nota_jalan.besar_bayar), 0) + ifnull(sum(piutang_pasien.totalpiutang), 0) as totalbiaya
+                SQL)
+            ->leftJoin('detail_nota_jalan', 'nota_jalan.no_rawat', '=', 'detail_nota_jalan.no_rawat')
+            ->leftJoin('piutang_pasien', 'nota_jalan.no_rawat', '=', 'piutang_pasien.no_rawat')
             ->whereBetween('nota_jalan.tanggal', [$tglAwal, $tglAkhir])
+            ->groupBy(['nota_jalan.no_rawat', 'nota_jalan.tanggal', 'nota_jalan.jam'])
             ->unionAll($notaInap);
 
         return $query
@@ -1225,7 +1250,8 @@ class RegistrasiPasien extends Model
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->joinSub($notaBayar, 'nota_bayar', fn (JoinClause $join) => $join
                 ->on('reg_periksa.no_rawat', '=', 'nota_bayar.no_rawat')
-                ->on('reg_periksa.status_lanjut', '=', 'nota_bayar.status_lanjut'))
+                ->on('reg_periksa.status_lanjut', '=', 'nota_bayar.status_lanjut')
+                ->where('nota_bayar.totalbiaya', '>', 0))
             ->joinSub(self::query()->kodeTransaksiFakturPajak($tglAwal, $tglAkhir), 'kode_transaksi_pajak', 'reg_periksa.no_rawat', '=', 'kode_transaksi_pajak.no_rawat')
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->leftJoin('perusahaan_pasien', 'pasien.perusahaan_pasien', '=', 'perusahaan_pasien.kode_perusahaan')
