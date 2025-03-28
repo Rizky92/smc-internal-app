@@ -40,6 +40,7 @@ Route::get('/antrean-pintu', App\Livewire\AntreanPintu::class)->name('antrean-pi
 Route::get('/antrean/{kd_poli}', App\Livewire\Pages\Antrean\AntreanPoli::class)->name('antrean-poli');
 Route::get('/antrean-per-pintu/{kd_pintu}', App\Livewire\Pages\Antrean\AntreanPerPintu::class)->name('antrean-per-pintu');
 Route::get('/display-jadwal-dokter', Informasi\DisplayJadwalDokter::class);
+Route::get('/dashboard-dokter', Informasi\DashboardDokter::class)->name('dashboard-dokter');
 
 Route::get('/print-layout', [PrintLayoutController::class, 'index']);
 
