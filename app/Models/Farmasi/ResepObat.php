@@ -65,11 +65,8 @@ class ResepObat extends Model
                             ->where('reg_periksa.kd_poli', '!=', 'IGDK');
                     case 'ranap':
                         return $query->where('resep_obat.status', 'Ranap');
-                    case 'igd_ralan':
-                        return $query->where('resep_obat.status', 'Ralan')
-                            ->where('reg_periksa.kd_poli', '=', 'IGDK');
-                    case 'igd_ranap':
-                        return $query->where('resep_obat.status', 'Ranap')
+                    case 'igd':
+                        return $query->whereIn('resep_obat.status', ['Ralan', 'Ranap'])
                             ->where('reg_periksa.kd_poli', '=', 'IGDK');
                 }
             });

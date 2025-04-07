@@ -14,8 +14,7 @@
                     'semua' => 'Semua',
                     'ralan' => 'Rawat Jalan',
                     'ranap' => 'Rawat Inap',
-                    'igd_ralan' => 'IGD Rawat Jalan',
-                    'igd_ranap' => 'IGD Rawat Inap',
+                    'igd' => 'Rawat IGD',
                 ]" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
