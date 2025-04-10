@@ -310,7 +310,22 @@ return [
     | name of the Relationship, e.g. `'relationName' => RelationShipClass::class`.
     |
     */
-    'additional_relation_types' => [],
+    'additional_relation_types' => [
+        'compositeBelongsTo'         => \Reedware\LaravelCompositeRelations\CompositeBelongsTo::class,
+        'compositeHasMany'           => \Reedware\LaravelCompositeRelations\CompositeHasMany::class,
+        'compositeHasOne'            => \Reedware\LaravelCompositeRelations\CompositeHasOne::class,
+        'compositeHasOneOrMany'      => \Reedware\LaravelCompositeRelations\CompositeHasOneOrMany::class,
+        'hasOneDeep'                 => \Staudenmeir\EloquentHasManyDeep\HasOneDeep::class,
+        'hasManyDeep'                => \Staudenmeir\EloquentHasManyDeep\HasManyDeep::class,
+        'belongsToThrough'           => \Znck\Eloquent\Relations\BelongsToThrough::class,
+        'ancestors'                  => \Staudenmeir\LaravelAdjacencyList\Eloquent\Relations\Ancestors::class,
+        'belongsToManyOfDescendants' => \Staudenmeir\LaravelAdjacencyList\Eloquent\Relations\BelongsToManyOfDescendants::class,
+        'bloodline'                  => \Staudenmeir\LaravelAdjacencyList\Eloquent\Relations\Bloodline::class,
+        'descendants'                => \Staudenmeir\LaravelAdjacencyList\Eloquent\Relations\Descendants::class,
+        'hasManyOfDescendants'       => \Staudenmeir\LaravelAdjacencyList\Eloquent\Relations\HasManyOfDescendants::class,
+        'rootAncestor'               => \Staudenmeir\LaravelAdjacencyList\Eloquent\Relations\RootAncestor::class,
+        'siblings'                   => \Staudenmeir\LaravelAdjacencyList\Eloquent\Relations\Siblings::class,
+    ],
 
     /*
     |--------------------------------------------------------------------------

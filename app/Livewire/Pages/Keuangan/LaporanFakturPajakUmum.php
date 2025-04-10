@@ -357,9 +357,6 @@ class LaporanFakturPajakUmum extends Component
         $this->updateHargaObat();
 
         $this->isDeferred = true;
-        $this->forgetComputed('dataTanggalTarikan');
-        $this->tanggalTarikan = $tanggalTarikanSementara;
-        $this->dispatchBrowserEvent('data-tarikan:updated', ['tanggalTarikan' => $tanggalTarikanSementara]);
     }
 
     protected function updateHargaObat(): void

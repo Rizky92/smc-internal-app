@@ -61,76 +61,29 @@
                             <x-slot name="body">
                                 @forelse ($this->dataLaporanFakturPajak as $item)
                                     <x-table.tr>
-                                        <x-table.td>
-                                            {{ $item->no_rawat }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->status_lanjut }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->tgl_bayar }}
-                                            {{ $item->jam_bayar }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->jenis_faktur }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->kode_transaksi }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->keterangan_tambahan }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->dokumen_pendukung }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->cap_fasilitas }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->id_tku_penjual ?: $this->npwpPenjual }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->jenis_id }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->negara }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->id_tku }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->no_rkm_medis }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->nik_pasien }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->nama_pasien }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->alamat_pasien }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->email_pasien }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->no_telp_pasien }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->kode_asuransi }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->nama_asuransi }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->alamat_asuransi }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->email_asuransi }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->npwp_asuransi }}
-                                        </x-table.td>
+                                        <x-table.td>{{ $item->no_rawat }}</x-table.td>
+                                        <x-table.td>{{ $item->status_lanjut }}</x-table.td>
+                                        <x-table.td>{{ $item->tgl_bayar }} {{ $item->jam_bayar }}</x-table.td>
+                                        <x-table.td>{{ $item->jenis_faktur }}</x-table.td>
+                                        <x-table.td>{{ $item->kode_transaksi }}</x-table.td>
+                                        <x-table.td>{{ $item->keterangan_tambahan }}</x-table.td>
+                                        <x-table.td>{{ $item->dokumen_pendukung }}</x-table.td>
+                                        <x-table.td>{{ $item->cap_fasilitas }}</x-table.td>
+                                        <x-table.td>{{ $item->id_tku_penjual ?: $this->npwpPenjual }}</x-table.td>
+                                        <x-table.td>{{ $item->jenis_id }}</x-table.td>
+                                        <x-table.td>{{ $item->negara }}</x-table.td>
+                                        <x-table.td>{{ $item->id_tku }}</x-table.td>
+                                        <x-table.td>{{ $item->no_rkm_medis }}</x-table.td>
+                                        <x-table.td>{{ $item->nik_pasien }}</x-table.td>
+                                        <x-table.td>{{ $item->nama_pasien }}</x-table.td>
+                                        <x-table.td>{{ $item->alamat_pasien }}</x-table.td>
+                                        <x-table.td>{{ $item->email_pasien }}</x-table.td>
+                                        <x-table.td>{{ $item->no_telp_pasien }}</x-table.td>
+                                        <x-table.td>{{ $item->kode_asuransi }}</x-table.td>
+                                        <x-table.td>{{ $item->nama_asuransi }}</x-table.td>
+                                        <x-table.td>{{ $item->alamat_asuransi }}</x-table.td>
+                                        <x-table.td>{{ $item->email_asuransi }}</x-table.td>
+                                        <x-table.td>{{ $item->npwp_asuransi }}</x-table.td>
                                     </x-table.tr>
                                 @empty
                                     <x-table.tr-empty colspan="23" padding />
@@ -172,43 +125,21 @@
                                     @endphp
 
                                     <x-table.tr>
-                                        <x-table.td>
-                                            {{ $item->no_rawat }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->kd_jenis_prw }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->kategori }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->status_lanjut }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->jenis_barang_jasa }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->kode_barang_jasa }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $item->nama_barang_jasa }}
-                                        </x-table.td>
-                                        <x-table.td>
-                                            {{ $this->satuanUkur->get($item->nama_satuan_ukur, 'UM.0033') }}
-                                        </x-table.td>
+                                        <x-table.td>{{ $item->no_rawat }}</x-table.td>
+                                        <x-table.td>{{ $item->kd_jenis_prw }}</x-table.td>
+                                        <x-table.td>{{ $item->kategori }}</x-table.td>
+                                        <x-table.td>{{ $item->status_lanjut }}</x-table.td>
+                                        <x-table.td>{{ $item->jenis_barang_jasa }}</x-table.td>
+                                        <x-table.td>{{ $item->kode_barang_jasa }}</x-table.td>
+                                        <x-table.td>{{ $item->nama_barang_jasa }}</x-table.td>
+                                        <x-table.td>{{ $this->satuanUkur->get($item->nama_satuan_ukur, 'UM.0033') }}</x-table.td>
                                         <x-table.td-money :value="$item->harga_satuan" />
-                                        <x-table.td class="text-right">
-                                            {{ $item->jumlah_barang_jasa }}
-                                        </x-table.td>
-                                        <x-table.td class="text-right">
-                                            {{ $item->diskon_persen }}
-                                        </x-table.td>
+                                        <x-table.td class="text-right">{{ $item->jumlah_barang_jasa }}</x-table.td>
+                                        <x-table.td class="text-right">{{ $item->diskon_persen }}</x-table.td>
                                         <x-table.td-money :value="$item->diskon_nominal" />
                                         <x-table.td-money :value="$item->dpp" />
                                         <x-table.td-money :value="$dppNilaiLain" />
-                                        <x-table.td class="text-right">
-                                            {{ $item->ppn_persen }}
-                                        </x-table.td>
+                                        <x-table.td class="text-right">{{ $item->ppn_persen }}</x-table.td>
                                         <x-table.td-money :value="$item->ppn_nominal ?: $ppnNominal" />
                                     </x-table.tr>
                                 @empty
