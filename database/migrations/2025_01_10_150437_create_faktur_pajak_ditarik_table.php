@@ -33,7 +33,7 @@ return new class extends Migration
             $table->string('nama_asuransi', 50)->index()->comment('penjab.png_jawab');
             $table->string('alamat_asuransi', 150)->comment('penjab.alamat_asuransi');
             $table->string('telp_asuransi', 50)->nullable()->comment('penjab.no_telp');
-            $table->string('email_asuransi', 40)->nullable()->comment('penjab.email');
+            $table->string('email_asuransi', 50)->nullable()->comment('penjab.email');
             $table->string('npwp_asuransi', 30)->nullable()->comment('penjab.no_npwp');
             $table->string('kode_perusahaan', 8)->nullable()->index()->comment('pasien.perusahaan_pasien');
             $table->string('nama_perusahaan', 70)->nullable()->index()->comment('perusahaan_pasien.nama_perusahaan');

@@ -115,6 +115,8 @@ trait ExcelExportable
             $excel->setData($data);
         }
 
+        $dataSheets = null;
+
         return $excel->export();
     }
 }

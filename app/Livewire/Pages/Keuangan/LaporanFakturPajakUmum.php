@@ -34,9 +34,9 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
-use Str;
 
 class LaporanFakturPajakUmum extends Component
 {
@@ -64,6 +64,9 @@ class LaporanFakturPajakUmum extends Component
 
     /** @var Collection */
     public $satuanUkur;
+
+    /** @var string */
+    private $tanggalTarikanSementara;
 
     /** @var int */
     private const FORMAT_RAW = 1;
@@ -216,13 +219,11 @@ class LaporanFakturPajakUmum extends Component
 
     protected function simpanTarikan(): void
     {
-        $tanggalTarikanSementara = $this->tanggalTarikan;
-
-        if ($tanggalTarikanSementara !== '-') {
+        if ($this->tanggalTarikan !== '-') {
             return;
         }
 
-        $tanggalTarikanSementara = now()->toDateTimeString();
+        $this->tanggalTarikanSementara = now()->toDateTimeString();
 
         $smc = DB::connection('mysql_smc')->getDatabaseName();
 
@@ -249,7 +250,7 @@ class LaporanFakturPajakUmum extends Component
             ->cursor()
             ->each(fn (object $model) => FakturPajakDitarik::insert(collect((array) $model)
                 ->put('id_tku_penjual', $this->npwpPenjual)
-                ->put('tgl_tarikan', $tanggalTarikanSementara)
+                ->put('tgl_tarikan', $this->tanggalTarikanSementara)
                 ->put('tgl_faktur', $this->tglAkhir)
                 ->put('menu', 'fp-umum')
                 ->all()));
@@ -309,7 +310,7 @@ class LaporanFakturPajakUmum extends Component
             ->orderBy('item_faktur_pajak.urutan')
             ->orderBy('item_faktur_pajak.nama_barang_jasa')
             ->cursor()
-            ->each(function (object $model) use ($satuanUkuranPajak, $tanggalTarikanSementara, $totalJasa) {
+            ->each(function (object $model) use ($satuanUkuranPajak, $totalJasa) {
                 $diskonPersen = $model->diskon_persen;
                 $diskonNominal = $model->diskon_nominal;
                 $dpp = $model->dpp;
@@ -330,7 +331,7 @@ class LaporanFakturPajakUmum extends Component
                     'kode_transaksi'     => $model->kode_transaksi,
                     'tgl_bayar'          => $model->tgl_bayar,
                     'jam_bayar'          => $model->jam_bayar,
-                    'tgl_tarikan'        => $tanggalTarikanSementara,
+                    'tgl_tarikan'        => $this->tanggalTarikanSementara,
                     'menu'               => 'fp-umum',
                     'jenis_barang_jasa'  => $model->jenis_barang_jasa,
                     'kode_barang_jasa'   => $model->kode_barang_jasa,
@@ -357,6 +358,7 @@ class LaporanFakturPajakUmum extends Component
         $this->updateHargaObat();
 
         $this->isDeferred = true;
+        $this->forgetComputed(['dataLaporanFakturPajak', 'dataDetailFakturPajak']);
     }
 
     protected function updateHargaObat(): void
@@ -419,6 +421,10 @@ class LaporanFakturPajakUmum extends Component
     {
         $this->simpanTarikan();
 
+        if ($this->tanggalTarikan !== '-') {
+            $this->tanggalTarikanSementara = $this->tanggalTarikan;
+        }
+
         switch ($this->option) {
             case self::FORMAT_CORETAX:
                 return [
@@ -443,7 +449,7 @@ class LaporanFakturPajakUmum extends Component
                             '' as id_tku
                             SQL)
                         ->where('menu', 'fp-umum')
-                        ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
+                        ->whereBetween('tgl_tarikan', [$this->tanggalTarikanSementara, $this->tanggalTarikanSementara])
                         ->groupBy(['tgl_faktur', 'no_rkm_medis', 'kode_transaksi'])
                         ->withCasts(['baris' => 'int'])
                         ->cursor()
@@ -452,19 +458,19 @@ class LaporanFakturPajakUmum extends Component
                             'tgl_faktur'          => $model->tgl_faktur,
                             'jenis_faktur'        => $model->jenis_faktur,
                             'kode_transaksi'      => $model->kode_transaksi,
-                            'keterangan_tambahan' => $model->keterangan_tambahan,
-                            'dokumen_pendukung'   => $model->dokumen_pendukung,
-                            'referensi'           => $model->referensi,
-                            'cap_fasilitas'       => $model->cap_fasilitas,
-                            'id_tku_penjual'      => $model->id_tku_penjual,
-                            'npwp_nik'            => $model->npwp_nik,
+                            'keterangan_tambahan' => Str::transliterate($model->keterangan_tambahan),
+                            'dokumen_pendukung'   => Str::transliterate($model->dokumen_pendukung),
+                            'referensi'           => Str::transliterate($model->referensi),
+                            'cap_fasilitas'       => Str::transliterate($model->cap_fasilitas),
+                            'id_tku_penjual'      => Str::transliterate($model->id_tku_penjual),
+                            'npwp_nik'            => Str::transliterate($model->npwp_nik),
                             'jenis_id'            => $model->jenis_id,
                             'negara'              => $model->negara,
-                            'nomor_dokumen'       => Str::transliterate($model->nomor_dokumen ?: ''),
-                            'nama'                => Str::transliterate($model->nama ?: ''),
-                            'alamat'              => Str::transliterate($model->alamat ?: ''),
-                            'email'               => Str::transliterate($model->email ?: ''),
-                            'id_tku'              => Str::transliterate($model->id_tku ?: ''),
+                            'nomor_dokumen'       => Str::transliterate($model->nomor_dokumen),
+                            'nama'                => Str::transliterate($model->nama),
+                            'alamat'              => Str::transliterate($model->alamat),
+                            'email'               => Str::transliterate($model->email),
+                            'id_tku'              => Str::transliterate($model->id_tku),
                         ]),
                     'Detail Faktur' => fn () => DB::connection('mysql_smc')
                         ->query()
@@ -485,7 +491,7 @@ class LaporanFakturPajakUmum extends Component
                                 ppnbm_persen,
                                 sum(ppnbm_nominal) as ppnbm_nominal
                                 SQL)
-                            ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
+                            ->whereBetween('tgl_tarikan', [$this->tanggalTarikanSementara, $this->tanggalTarikanSementara])
                             ->where('menu', 'fp-umum')
                             ->groupBy(['no_rkm_medis', 'kode_transaksi', 'kategori', 'kd_jenis_prw', 'harga_satuan', 'ppn_persen'])
                             ->orderBy('no_rkm_medis')
@@ -495,8 +501,8 @@ class LaporanFakturPajakUmum extends Component
                         ->map(fn (object $model): array => [
                             'baris'              => (int) $model->baris,
                             'jenis_barang_jasa'  => $model->jenis_barang_jasa,
-                            'kode_barang_jasa'   => Str::transliterate($model->kode_barang_jasa ?: ''),
-                            'nama_barang_jasa'   => Str::transliterate($model->nama_barang_jasa ?: ''),
+                            'kode_barang_jasa'   => Str::transliterate($model->kode_barang_jasa),
+                            'nama_barang_jasa'   => Str::transliterate($model->nama_barang_jasa),
                             'nama_satuan_ukur'   => $model->nama_satuan_ukur ?: 'UM.0033',
                             'harga_satuan'       => round((float) $model->harga_satuan, 2),
                             'jumlah_barang_jasa' => round((float) $model->jumlah_barang_jasa, 2),
@@ -513,7 +519,7 @@ class LaporanFakturPajakUmum extends Component
                 return [
                     'Faktur' => fn () => FakturPajakDitarik::query()
                         ->where('menu', 'fp-umum')
-                        ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
+                        ->whereBetween('tgl_tarikan', [$this->tanggalTarikanSementara, $this->tanggalTarikanSementara])
                         ->cursor()
                         ->map(fn (FakturPajakDitarik $model): array => [
                             'no_rawat'            => $model->no_rawat,
@@ -521,25 +527,25 @@ class LaporanFakturPajakUmum extends Component
                             'tgl_bayar'           => carbon($model->tgl_bayar)->format('d-m-Y'),
                             'jenis_faktur'        => $model->jenis_faktur,
                             'kode_transaksi'      => $model->kode_transaksi,
-                            'keterangan_tambahan' => $model->keterangan_tambahan,
-                            'dokumen_pendukung'   => $model->dokumen_pendukung,
-                            'cap_fasilitas'       => $model->cap_fasilitas,
-                            'id_tku_penjual'      => $model->id_tku_penjual,
+                            'keterangan_tambahan' => Str::transliterate($model->keterangan_tambahan),
+                            'dokumen_pendukung'   => Str::transliterate($model->dokumen_pendukung),
+                            'cap_fasilitas'       => Str::transliterate($model->cap_fasilitas),
+                            'id_tku_penjual'      => Str::transliterate($model->id_tku_penjual),
                             'jenis_id'            => $model->jenis_id,
                             'negara'              => $model->negara,
-                            'id_tku'              => $model->id_tku,
-                            'no_rkm_medis'        => $model->no_rkm_medis,
-                            'nik_pasien'          => $model->nik_pasien,
-                            'nama_pasien'         => $model->nama_pasien,
-                            'alamat_pasien'       => $model->alamat_pasien,
-                            'email_pasien'        => $model->email_pasien,
-                            'no_telp_pasien'      => $model->no_telp_pasien,
-                            'kode_asuransi'       => $model->kode_asuransi,
-                            'nama_asuransi'       => $model->nama_asuransi,
+                            'id_tku'              => Str::transliterate($model->id_tku),
+                            'no_rkm_medis'        => Str::transliterate($model->no_rkm_medis),
+                            'nik_pasien'          => Str::transliterate($model->nik_pasien),
+                            'nama_pasien'         => Str::transliterate($model->nama_pasien),
+                            'alamat_pasien'       => Str::transliterate($model->alamat_pasien),
+                            'email_pasien'        => Str::transliterate($model->email_pasien),
+                            'no_telp_pasien'      => Str::transliterate($model->no_telp_pasien),
+                            'kode_asuransi'       => Str::transliterate($model->kode_asuransi),
+                            'nama_asuransi'       => Str::transliterate($model->nama_asuransi),
                         ]),
                     'Detail Faktur' => fn () => FakturPajakDitarikDetail::query()
                         ->where('menu', 'fp-umum')
-                        ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
+                        ->whereBetween('tgl_tarikan', [$this->tanggalTarikanSementara, $this->tanggalTarikanSementara])
                         ->withCasts([
                             'harga_satuan'       => 'float',
                             'jumlah_barang_jasa' => 'float',
@@ -557,10 +563,10 @@ class LaporanFakturPajakUmum extends Component
                             'no_rawat'           => $model->no_rawat,
                             'kode_transaksi'     => $model->kode_transaksi,
                             'tgl_bayar'          => $model->tgl_bayar,
-                            'jenis_barang_jasa'  => $model->jenis_barang_jasa,
-                            'kode_barang_jasa'   => $model->kode_barang_jasa,
-                            'nama_barang_jasa'   => $model->nama_barang_jasa,
-                            'nama_satuan_ukur'   => $model->nama_satuan_ukur,
+                            'jenis_barang_jasa'  => Str::transliterate($model->jenis_barang_jasa),
+                            'kode_barang_jasa'   => Str::transliterate($model->kode_barang_jasa),
+                            'nama_barang_jasa'   => Str::transliterate($model->nama_barang_jasa),
+                            'nama_satuan_ukur'   => Str::transliterate($model->nama_satuan_ukur),
                             'harga_satuan'       => round($model->harga_satuan, 2),
                             'jumlah_barang_jasa' => round($model->jumlah_barang_jasa, 2),
                             'diskon_nominal'     => round($model->diskon_nominal, 2),
@@ -570,10 +576,10 @@ class LaporanFakturPajakUmum extends Component
                             'ppn_nominal'        => round($model->ppn_nominal, 2),
                             'ppnbm_persen'       => 0,
                             'ppnbm_nominal'      => 0,
-                            'kd_jenis_prw'       => $model->kd_jenis_prw,
-                            'kategori'           => $model->kategori,
-                            'status_lanjut'      => $model->status_lanjut,
-                            'no_rkm_medis'       => $model->no_rkm_medis,
+                            'kd_jenis_prw'       => Str::transliterate($model->kd_jenis_prw),
+                            'kategori'           => Str::transliterate($model->kategori),
+                            'status_lanjut'      => Str::transliterate($model->status_lanjut),
+                            'no_rkm_medis'       => Str::transliterate($model->no_rkm_medis),
                         ]),
                 ];
         }
@@ -664,6 +670,7 @@ class LaporanFakturPajakUmum extends Component
                         'Kode Item RS',
                         'Kategori',
                         'Jenis Rawat',
+                        'No. RM',
                     ],
                 ];
         }

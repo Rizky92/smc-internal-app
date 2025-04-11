@@ -70,6 +70,9 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
     /** @var bool */
     public $isPerusahaan;
 
+    /** @var string */
+    private $tanggalTarikanSementara;
+
     /** @var int */
     private const FORMAT_RAW = 1;
 
@@ -213,13 +216,11 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
 
     protected function simpanTarikan(): void
     {
-        $tanggalTarikanSementara = $this->tanggalTarikan;
-
-        if ($tanggalTarikanSementara !== '-') {
+        if ($this->tanggalTarikan !== '-') {
             return;
         }
 
-        $tanggalTarikanSementara = now()->toDateTimeString();
+        $this->tanggalTarikanSementara = now()->toDateTimeString();
 
         $smc = DB::connection('mysql_smc')->getDatabaseName();
 
@@ -232,10 +233,10 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
             ->orderBy('reg_periksa.no_rawat')
             ->orderByDesc('kode_transaksi_pajak.kode_transaksi')
             ->cursor()
-            ->each(function (RegistrasiPasien $model) use ($tanggalTarikanSementara) {
+            ->each(function (RegistrasiPasien $model) {
                 $model->setAttribute('jenis_id', 'TIN');
                 $model->setAttribute('id_tku_penjual', $this->npwpPenjual);
-                $model->setAttribute('tgl_tarikan', $tanggalTarikanSementara);
+                $model->setAttribute('tgl_tarikan', $this->tanggalTarikanSementara);
                 $model->setAttribute('tgl_faktur', $this->tglAkhir);
                 $model->setAttribute('menu', 'fp-asper');
 
@@ -288,7 +289,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
             ->orderBy('item_faktur_pajak.urutan')
             ->orderBy('item_faktur_pajak.nama_barang_jasa')
             ->cursor()
-            ->each(function (object $model) use ($satuanUkuranPajak, $tanggalTarikanSementara, $totalJasa) {
+            ->each(function (object $model) use ($satuanUkuranPajak, $totalJasa) {
                 $diskonPersen = $model->diskon_persen;
                 $diskonNominal = $model->diskon_nominal;
                 $dpp = $model->dpp;
@@ -309,7 +310,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                     'kode_transaksi'     => $model->kode_transaksi,
                     'tgl_bayar'          => $model->tgl_bayar,
                     'jam_bayar'          => $model->jam_bayar,
-                    'tgl_tarikan'        => $tanggalTarikanSementara,
+                    'tgl_tarikan'        => $this->tanggalTarikanSementara,
                     'menu'               => 'fp-asper',
                     'jenis_barang_jasa'  => $model->jenis_barang_jasa,
                     'kode_barang_jasa'   => $model->kode_barang_jasa,
@@ -336,6 +337,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
         $this->updateHargaObat();
 
         $this->isDeferred = true;
+        $this->forgetComputed(['dataLaporanFakturPajak', 'dataDetailFakturPajak']);
     }
 
     protected function updateHargaObat(): void
@@ -398,6 +400,10 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
     {
         $this->simpanTarikan();
 
+        if ($this->tanggalTarikan !== '-') {
+            $this->tanggalTarikanSementara = $this->tanggalTarikan;
+        }
+
         switch ($this->option) {
             case self::FORMAT_CORETAX:
                 return [
@@ -422,7 +428,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                             rpad(trim(npwp_asuransi), 22, '0') as id_tku
                             SQL)
                         ->where('menu', 'fp-asper')
-                        ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
+                        ->whereBetween('tgl_tarikan', [$this->tanggalTarikanSementara, $this->tanggalTarikanSementara])
                         ->groupBy(['tgl_faktur', 'kode_asuransi', 'kode_transaksi'])
                         ->withCasts(['baris' => 'int'])
                         ->cursor()
@@ -431,19 +437,19 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                             'tgl_faktur'          => $model->tgl_faktur,
                             'jenis_faktur'        => $model->jenis_faktur,
                             'kode_transaksi'      => $model->kode_transaksi,
-                            'keterangan_tambahan' => $model->keterangan_tambahan,
-                            'dokumen_pendukung'   => $model->dokumen_pendukung,
-                            'referensi'           => $model->referensi,
-                            'cap_fasilitas'       => $model->cap_fasilitas,
-                            'id_tku_penjual'      => $model->id_tku_penjual,
-                            'npwp_nik'            => $model->npwp_nik,
+                            'keterangan_tambahan' => Str::transliterate($model->keterangan_tambahan),
+                            'dokumen_pendukung'   => Str::transliterate($model->dokumen_pendukung),
+                            'referensi'           => Str::transliterate($model->referensi),
+                            'cap_fasilitas'       => Str::transliterate($model->cap_fasilitas),
+                            'id_tku_penjual'      => Str::transliterate($model->id_tku_penjual),
+                            'npwp_nik'            => Str::transliterate($model->npwp_nik),
                             'jenis_id'            => $model->jenis_id,
                             'negara'              => $model->negara,
-                            'nomor_dokumen'       => Str::transliterate($model->nomor_dokumen ?? ''),
-                            'nama'                => Str::transliterate($model->nama ?? ''),
-                            'alamat'              => Str::transliterate($model->alamat ?? ''),
-                            'email'               => Str::transliterate($model->email ?? ''),
-                            'id_tku'              => Str::transliterate($model->id_tku ?? ''),
+                            'nomor_dokumen'       => Str::transliterate($model->nomor_dokumen),
+                            'nama'                => Str::transliterate($model->nama),
+                            'alamat'              => Str::transliterate($model->alamat),
+                            'email'               => Str::transliterate($model->email),
+                            'id_tku'              => Str::transliterate($model->id_tku),
                         ]),
                     'Detail Faktur' => fn () => DB::connection('mysql_smc')
                         ->query()
@@ -464,7 +470,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                                 ppnbm_persen,
                                 sum(ppnbm_nominal) as ppnbm_nominal
                                 SQL)
-                            ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
+                            ->whereBetween('tgl_tarikan', [$this->tanggalTarikanSementara, $this->tanggalTarikanSementara])
                             ->where('menu', 'fp-asper')
                             ->groupBy(['kode_asuransi', 'kode_transaksi', 'kategori', 'kd_jenis_prw', 'harga_satuan', 'ppn_persen'])
                             ->orderBy('kode_asuransi')
@@ -474,8 +480,8 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                         ->map(fn (object $model): array => [
                             'baris'              => (int) $model->baris,
                             'jenis_barang_jasa'  => $model->jenis_barang_jasa,
-                            'kode_barang_jasa'   => Str::transliterate($model->kode_barang_jasa ?? ''),
-                            'nama_barang_jasa'   => Str::transliterate($model->nama_barang_jasa ?? ''),
+                            'kode_barang_jasa'   => Str::transliterate($model->kode_barang_jasa),
+                            'nama_barang_jasa'   => Str::transliterate($model->nama_barang_jasa),
                             'nama_satuan_ukur'   => $model->nama_satuan_ukur ?: 'UM.0033',
                             'harga_satuan'       => round((float) $model->harga_satuan, 2),
                             'jumlah_barang_jasa' => round((float) $model->jumlah_barang_jasa, 2),
@@ -492,7 +498,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                 return [
                     'Faktur' => fn () => FakturPajakDitarik::query()
                         ->where('menu', 'fp-asper')
-                        ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
+                        ->whereBetween('tgl_tarikan', [$this->tanggalTarikanSementara, $this->tanggalTarikanSementara])
                         ->cursor()
                         ->map(fn (FakturPajakDitarik $model): array => [
                             'no_rawat'            => $model->no_rawat,
@@ -500,33 +506,33 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                             'tgl_bayar'           => carbon($model->tgl_bayar)->format('d-m-Y'),
                             'jenis_faktur'        => $model->jenis_faktur,
                             'kode_transaksi'      => $model->kode_transaksi,
-                            'keterangan_tambahan' => $model->keterangan_tambahan,
-                            'dokumen_pendukung'   => $model->dokumen_pendukung,
-                            'cap_fasilitas'       => $model->cap_fasilitas,
-                            'id_tku_penjual'      => $model->id_tku_penjual,
+                            'keterangan_tambahan' => Str::transliterate($model->keterangan_tambahan),
+                            'dokumen_pendukung'   => Str::transliterate($model->dokumen_pendukung),
+                            'cap_fasilitas'       => Str::transliterate($model->cap_fasilitas),
+                            'id_tku_penjual'      => Str::transliterate($model->id_tku_penjual),
                             'jenis_id'            => $model->jenis_id,
                             'negara'              => $model->negara,
-                            'id_tku'              => $model->id_tku,
-                            'no_rkm_medis'        => $model->no_rkm_medis,
-                            'nik_pasien'          => $model->nik_pasien,
-                            'nama_pasien'         => $model->nama_pasien,
-                            'alamat_pasien'       => $model->alamat_pasien,
-                            'email_pasien'        => $model->email_pasien,
-                            'no_telp_pasien'      => $model->no_telp_pasien,
-                            'kode_asuransi'       => $model->kode_asuransi,
-                            'nama_asuransi'       => $model->nama_asuransi,
-                            'alamat_asuransi'     => $model->alamat_asuransi,
-                            'email_asuransi'      => $model->email_asuransi,
-                            'npwp_asuransi'       => $model->npwp_asuransi,
-                            'kode_perusahaan'     => $model->kode_perusahaan,
-                            'nama_perusahaan'     => $model->nama_perusahaan,
-                            'alamat_perusahaan'   => $model->alamat_perusahaan,
-                            'email_perusahaan'    => $model->email_perusahaan,
-                            'npwp_perusahaan'     => $model->npwp_perusahaan,
+                            'id_tku'              => Str::transliterate($model->id_tku),
+                            'no_rkm_medis'        => Str::transliterate($model->no_rkm_medis),
+                            'nik_pasien'          => Str::transliterate($model->nik_pasien),
+                            'nama_pasien'         => Str::transliterate($model->nama_pasien),
+                            'alamat_pasien'       => Str::transliterate($model->alamat_pasien),
+                            'email_pasien'        => Str::transliterate($model->email_pasien),
+                            'no_telp_pasien'      => Str::transliterate($model->no_telp_pasien),
+                            'kode_asuransi'       => Str::transliterate($model->kode_asuransi),
+                            'nama_asuransi'       => Str::transliterate($model->nama_asuransi),
+                            'alamat_asuransi'     => Str::transliterate($model->alamat_asuransi),
+                            'email_asuransi'      => Str::transliterate($model->email_asuransi),
+                            'npwp_asuransi'       => Str::transliterate($model->npwp_asuransi),
+                            'kode_perusahaan'     => Str::transliterate($model->kode_perusahaan),
+                            'nama_perusahaan'     => Str::transliterate($model->nama_perusahaan),
+                            'alamat_perusahaan'   => Str::transliterate($model->alamat_perusahaan),
+                            'email_perusahaan'    => Str::transliterate($model->email_perusahaan),
+                            'npwp_perusahaan'     => Str::transliterate($model->npwp_perusahaan),
                         ]),
                     'Detail Faktur' => fn () => FakturPajakDitarikDetail::query()
                         ->where('menu', 'fp-asper')
-                        ->whereBetween('tgl_tarikan', [$this->tanggalTarikan, $this->tanggalTarikan])
+                        ->whereBetween('tgl_tarikan', [$this->tanggalTarikanSementara, $this->tanggalTarikanSementara])
                         ->withCasts([
                             'harga_satuan'       => 'float',
                             'jumlah_barang_jasa' => 'float',
@@ -544,10 +550,10 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                             'no_rawat'           => $model->no_rawat,
                             'kode_transaksi'     => $model->kode_transaksi,
                             'tgl_bayar'          => $model->tgl_bayar,
-                            'jenis_barang_jasa'  => $model->jenis_barang_jasa,
-                            'kode_barang_jasa'   => $model->kode_barang_jasa,
-                            'nama_barang_jasa'   => $model->nama_barang_jasa,
-                            'nama_satuan_ukur'   => $model->nama_satuan_ukur,
+                            'jenis_barang_jasa'  => Str::transliterate($model->jenis_barang_jasa),
+                            'kode_barang_jasa'   => Str::transliterate($model->kode_barang_jasa),
+                            'nama_barang_jasa'   => Str::transliterate($model->nama_barang_jasa),
+                            'nama_satuan_ukur'   => Str::transliterate($model->nama_satuan_ukur),
                             'harga_satuan'       => round($model->harga_satuan, 2),
                             'jumlah_barang_jasa' => round($model->jumlah_barang_jasa, 2),
                             'diskon_nominal'     => round($model->diskon_nominal, 2),
@@ -557,11 +563,11 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                             'ppn_nominal'        => round($model->ppn_nominal, 2),
                             'ppnbm_persen'       => 0,
                             'ppnbm_nominal'      => 0,
-                            'kd_jenis_prw'       => $model->kd_jenis_prw,
-                            'kategori'           => $model->kategori,
-                            'status_lanjut'      => $model->status_lanjut,
-                            'kode_asuransi'      => $model->kode_asuransi,
-                            'no_rkm_medis'       => $model->no_rkm_medis,
+                            'kd_jenis_prw'       => Str::transliterate($model->kd_jenis_prw),
+                            'kategori'           => Str::transliterate($model->kategori),
+                            'status_lanjut'      => Str::transliterate($model->status_lanjut),
+                            'kode_asuransi'      => Str::transliterate($model->kode_asuransi),
+                            'no_rkm_medis'       => Str::transliterate($model->no_rkm_medis),
                         ]),
                 ];
         }
@@ -661,6 +667,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
                         'Kategori',
                         'Jenis Rawat',
                         'Kode Asuransi',
+                        'No. RM',
                     ],
                 ];
         }
