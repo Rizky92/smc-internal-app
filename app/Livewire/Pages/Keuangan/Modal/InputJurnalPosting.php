@@ -217,6 +217,8 @@ class InputJurnalPosting extends Component
             return;
         }
 
+        $this->jurnalSementara = [];
+
         $this->redirectRoute('admin.keuangan.cetak-posting-jurnal', [
             'data_jurnal' => base64_encode(collect($jurnalTercatat)->pluck('no_jurnal')->toJson())
         ]);
