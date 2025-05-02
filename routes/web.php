@@ -44,6 +44,7 @@ Route::get('/antrean-pintu', AntreanPintu::class)->name('antrean-pintu');
 Route::get('/antrean/{kd_poli}', AntreanPoli::class)->name('antrean-poli');
 Route::get('/antrean-per-pintu/{kd_pintu}', AntreanPerPintu::class)->name('antrean-per-pintu');
 Route::get('/display-jadwal-dokter', Informasi\DisplayJadwalDokter::class);
+Route::get('/dashboard-dokter', Informasi\DashboardDokter::class)->name('dashboard-dokter');
 
 Route::get('/print-layout', [PrintLayoutController::class, 'index']);
 
