@@ -99,6 +99,34 @@ return [
             ],
         ],
 
+        'mysql_epasien' => [
+            'driver'         => 'mysql',
+            'url'            => env('EPASIEN_URL'),
+            'host'           => env('EPASIEN_HOST', '127.0.0.1'),
+            'port'           => env('EPASIEN_PORT', '3306'),
+            'database'       => env('EPASIEN_DATABASE'),
+            'username'       => env('EPASIEN_USERNAME'),
+            'password'       => env('EPASIEN_PASSWORD'),
+            'unix_socket'    => env('EPASIEN_SOCKET'),
+            'charset'        => env('EPASIEN_CHARSET', 'latin1'),
+            'collation'      => env('EPASIEN_COLLATION', 'latin1_swedish_ci'),
+            'prefix'         => '',
+            'prefix_indexes' => true,
+            'strict'         => true,
+            'engine'         => null,
+            'options'        => extension_loaded('pdo_mysql')
+                ? array_filter([
+                    PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                    PDO::ATTR_EMULATE_PREPARES => true,
+                ])
+                : [],
+            'modes'          => [
+                'STRICT_TRANS_TABLES',
+                'ERROR_FOR_DIVISION_BY_ZERO',
+                'NO_ENGINE_SUBSTITUTION',
+            ],
+        ],
+
         'mysql_sisro' => [
             'driver'         => 'mysql',
             'url'            => env('SISRO_URL'),

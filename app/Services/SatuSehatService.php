@@ -27,10 +27,40 @@ class SatuSehatService
     protected function authenticate(): void
     {
         $response = Http::asForm()
-            ->post('https://api-satusehat-dev.dto.kemkes.go.id/oauth2/v1/accesstoken?grant_type=client_credentials', [
+            ->withOptions(['verify' => false])
+            ->post(config('satusehat.auth_url'), [
+                'grant_type'    => 'client_credentials', // penting! biasanya perlu grant_type ini
                 'client_id'     => $this->client,
                 'client_secret' => $this->secret,
             ])
-            ->collect();
+            ->throw()
+            ->json();
+    
+        $this->token = $response['access_token'] ?? null;
+        $this->issuedAt = now();
+    }
+
+    public function cekPasienByNikNameBirthDate(string $name, string $birthDate, string $nik): array
+    {
+        if (empty($this->token)) {
+            $this->authenticate();
+        }
+    
+        $url = config('satusehat.fhir_url') . '/Patient';
+        $response = Http::withToken($this->token)
+            ->withOptions([
+                'verify' => false,
+            ])
+            ->get($url, [
+                'name' => $name,
+                'birthdate' => $birthDate,
+                'identifier' => 'https://fhir.kemkes.go.id/id/nik|' . $nik,
+            ]);
+    
+        if (! $response->ok()) {
+            throw new \Exception('Gagal mendapatkan data pasien: ' . $response->body());
+        }
+    
+        return $response->json();
     }
 }

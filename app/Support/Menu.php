@@ -384,6 +384,8 @@ class Menu
                     'rekam-medis.laporan-statistik.read',
                     'rekam-medis.laporan-demografi.read',
                     'rekam-medis.status-data-pasien.read',
+                    'rekam-medis.verifikasi-user-epasien.read',
+                    'rekam-medis.verifikasi-user-epasien.update',
                 ]),
                 'items' => [
                     [
@@ -403,6 +405,12 @@ class Menu
                         'icon'              => 'fas fa-file-alt',
                         'url'               => route('admin.rekam-medis.status-data-pasien'),
                         'hasAnyPermissions' => $user->can('rekam-medis.status-data-pasien.read'),
+                    ],
+                    [
+                        'name'              => 'Verifikasi User Epasien',
+                        'icon'              => 'fas fa-user-check',
+                        'url'               => route('admin.rekam-medis.verifikasi-user-epasien'),
+                        'hasAnyPermissions' => $user->can('rekam-medis.verifikasi-user-epasien.read'),
                     ],
                 ],
             ],

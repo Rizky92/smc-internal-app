@@ -59,6 +59,7 @@
                         @endforelse
                     </x-slot>
                 </x-table>
+                <x-paginator class="px-4 py-3 bg-light border-top" :data="$this->hakAksesKhanza" />
             </x-row-col>
         </x-slot>
         <x-slot name="footer" class="justify-content-start">

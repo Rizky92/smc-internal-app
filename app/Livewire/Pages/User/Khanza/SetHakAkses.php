@@ -62,7 +62,7 @@ class SetHakAkses extends Component
                 ->orWhereIn('nama_field', collect($this->checkedHakAkses)->filter()->keys()->all())
             )
             ->sortWithColumns($this->sortColumns)
-            ->get();
+            ->paginate($this->perpage);
     }
 
     public function render(): View
