@@ -23,6 +23,9 @@
     </x-slot>
     <x-slot name="footer" class="d-flex justify-content-end">
         <x-button size="sm" type="reset" class="ml-auto" id="reset-form" title="Reset" />
-        <x-button size="sm" variant="primary" type="submit" class="ml-2" id="update-form" title="Update" icon="fas fa-save" form="form-pengaturan-rkat" />
+        <x-button size="sm" variant="primary" type="submit" class="ml-2" id="update-form" title="Update" icon="fas fa-save" form="form-pengaturan-rkat" wire:target="updatePengaturanRKAT" wire:loading.class="d-none" wire:loading.class.remove="btn" />
+        <div wire:loading wire:target="updatePengaturanRKAT" wire:loading.attr="disabled">
+            <x-button size="sm" variant="primary" class="ml-2" title="Menyimpan..." icon="spinner-border spinner-border-sm" disabled />
+        </div>
     </x-slot>
 </x-card>

@@ -114,5 +114,6 @@ class RKATInputKategori extends Component
     {
         $this->anggaranId = -1;
         $this->nama = '';
+        $this->deskripsi = '';
     }
 }

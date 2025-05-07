@@ -36,7 +36,7 @@
     <x-modal id="modal-input-pintu" :title="($this->isUpdating() ? 'Edit Data Pintu' : 'Input Data Pintu')" livewire centered>
         <x-slot name="body" style="overflow-x: hidden">
             <x-flash class="mx-3 mt-3" />
-            <x-form id="form-input-pintu" livewire :submit="$this->isUpdating() ? 'update' : 'create'">
+            <x-form id="form-input-pintu" livewire wire:submit.prevent="create">
                 <x-row-col class="sticky-top bg-white">
                     <div class="form-group">
                         <label for="kd-pintu">Kode Pintu:</label>
@@ -105,7 +105,10 @@
                 <x-button size="sm" variant="danger" data-dismiss="modal" id="hapusdata" title="Hapus" icon="fas fa-trash" wire:click="delete" />
             @endif
             <x-button size="sm" class="ml-auto" data-dismiss="modal" id="batalsimpan" title="Batal" />
-            <x-button size="sm" variant="primary" class="ml-2" type="submit" id="simpan-data" title="Simpan" icon="fas fa-save" form="form-input-pintu" />
+            <x-button size="sm" variant="primary" class="ml-2" type="submit" id="simpan-data" title="Simpan" icon="fas fa-save" form="form-input-pintu" wire:target="create" wire:loading.class="d-none" wire:loading.class.remove="btn" />
+            <div wire:loading wire:target="create" wire:loading.attr="disabled">
+                <x-button size="sm" variant="primary" class="ml-2" title="Menyimpan..." icon="spinner-border spinner-border-sm" disabled />
+            </div>
         </x-slot>
     </x-modal>
 </div>
