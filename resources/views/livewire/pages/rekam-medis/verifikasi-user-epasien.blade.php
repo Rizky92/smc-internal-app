@@ -5,55 +5,87 @@
         @once
             @push('js')
                 <script>
+                    const inputUserId = $('input#user-id')
                     const inputNoKtp = $('input#user-ktp')
                     const inputName = $('input#user-name')
                     const inputTglLahir = $('input#user-tgl-lahir')
                     const inputNoRkmMedis = $('input#user-no-rkm-medis')
+                    const inputVerifiedBy = $('input#user-no-rkm-medis-verified-by')
 
-                    const buttonDropdownPilihan = $('button#pilihan')
-                    const buttonResetFilter = $('button#reset-filter')
+                    const buttonSimpan = $('button#simpan-data')
+                    const buttonBatalSimpan = $('button#batal-simpan')
+                    const buttonResetFilters = $('button#reset-filter')
 
-                    $(document).on('DOMContentLoaded', e => {
-                        $('button#reset-filter').click(e => clearData())
+                    $(document).ready(() => {
+                        inputVerifiedBy.val(@json($this->verifiedByName));
+
+                        buttonSimpan.click(e => @this.simpan(
+                            inputUserId.val(),
+                            inputNoRkmMedis.val(),
+                            inputVerifiedBy.val()
+                        ))
+
+                        buttonResetFilters.click(clearData)
+                        buttonBatalSimpan.click(clearData)
+
+                        $(this).on('data-tersimpan', clearData)
                     })
 
-                    $(document).on('data-saved', e => clearData())
-                    $(document).on('data-denied', e => clearData())
-                    $(document).on('hidden.bs.modal', e => clearData())
-
                     function loadData(e) {
-                        let { userId, name, noKtp, tglLahir, noRkmMedis } = e.dataset
-
-                        buttonDropdownPilihan.prop('disabled', false)
-
+                        let { userId, name, noKtp, tglLahir, noRkmMedis,  verifiedBy } = e.dataset
+                        inputUserId.val(userId)
                         inputName.val(name)
                         inputNoKtp.val(noKtp)
                         inputTglLahir.val(tglLahir)
                         inputNoRkmMedis.val(noRkmMedis)
+                        inputVerifiedBy.val(@json($this->verifiedByName))
 
-                        @this.emit('user.prepare', noKtp, name, tglLahir, noRkmMedis)
+                        inputUserId.trigger('change')
+                        inputName.trigger('change')
+                        inputNoKtp.trigger('change')
+                        inputTglLahir.trigger('change')
+                        inputNoRkmMedis.trigger('change')
+                        inputVerifiedBy.trigger('change')
 
+                        buttonSimpan.prop('disabled', false)
+                        buttonBatalSimpan.prop('disabled', false)
                     }
 
                     function clearData() {
-                        buttonDropdownPilihan.prop('disabled', true)
-                        
+                        inputUserId.val('')
                         inputName.val('')
                         inputNoKtp.val('')
                         inputTglLahir.val('')
                         inputNoRkmMedis.val('')
+
+                        inputName.trigger('change')
+                        inputNoKtp.trigger('change')
+                        inputTglLahir.trigger('change')
+                        inputNoRkmMedis.trigger('change')
+
+                        buttonSimpan.prop('disabled', true)
+                        buttonBatalSimpan.prop('disabled', true)
                     }
+
+                    document.addEventListener('data-updated', event => {
+                        const { noRkmMedis } = event.detail;
+                        $('input#user-no-rkm-medis').val(noRkmMedis);
+                    });
                 </script>
             @endpush
         @endonce
-        <livewire:pages.rekam-medis.modal.verifikasi-pasien />
-        <livewire:pages.rekam-medis.modal.map-pasien-khanza />
         <livewire:pages.rekam-medis.modal.pilih-pasien />
     @endcan
 
     <x-card use-loading>
         <x-slot name="header">
             <x-row>
+                <div class="col-3">
+                    <div class="form-group">
+                        <label for="user-id" class="text-sm">User ID</label>
+                        <input type="text" class="form-control form-control-sm" id="user-id" readonly autocomplete="off">
+                    </div>
+                </div>
                 <div class="col-3">
                     <div class="form-group">
                         <label for="user-name" class="text-sm">Nama</label>
@@ -78,42 +110,25 @@
                     <div class="form-group">
                         <label for="user-no-rkm-medis" class="text-sm">No. RM</label>
                         <div class="input-group input-group-sm">
-                            <input type="text" class="form-control form-control-sm" id="user-no-rkm-medis" readonly autocomplete="off">
-                            <x-button icon="fas fa-paperclip" size="sm" data-toggle="modal" data-target="#modal-pilih-pasien" />
+                            <input type="text" class="form-control form-control-sm" id="user-no-rkm-medis" autocomplete="off">
+                            <x-button icon="fas fa-paperclip" size="sm" id="pilih-pasien" data-toggle="modal" data-target="#modal-pilih-pasien" />
                         </div>
                     </div>
                 </div>
-                <div class="col-3">
+                <div class="col-4">
                     <div class="form-group">
                         <label for="user-no-rkm-medis-verified-by" class="text-sm">Diverifikasi Oleh</label>
-                        <input type="text" class="form-control form-control-sm" id="user-no-rkm-medis-verified-by" readonly autocomplete="off">
-                    </div>
-                </div>
-                <div class="col-3">
-                    <div class="form-group">
-                        <label for="user-no-rkm-medis-verified-at" class="text-sm">Tanggal Diverifikasi</label>
-                        <input type="text" class="form-control form-control-sm" id="user-no-rkm-medis-verified-at" readonly autocomplete="off">
-                    </div>
-                </div>
-                <div class="col-3">
-                    <div class="d-flex align-items-end h-100">
-                        <div class="mb-3 d-flex align-items-center w-100">
-                            <x-dropdown livewire>
-                                <x-slot name="button" title="Pilihan" icon="fas fa-cogs" disabled></x-slot>
-                                <x-slot name="menu" class="dropdown-menu-left">
-                                    <x-dropdown.header class="text-left">Satu Sehat</x-dropdown.header>
-                                    <x-dropdown.item as="button" id="button-verifikasi-pasien" title="Verifikasi Pasien" icon="fas fa-check" data-toggle="modal" data-target="#modal-verifikasi-pasien" />
-                                    <x-dropdown.divider />
-                                    <x-dropdown.header class="text-left">SIMRS Khanza</x-dropdown.header>
-                                    <x-dropdown.item as="button" id="button-map-pasien-khanza" icon="fas fa-user-cog fa-fw" title="Map Pasien Khanza" data-toggle="modal" data-target="#modal-map-pasien-khanza" />
-                                </x-slot>
-                            </x-dropdown>
-                        </div>
+                        <input type="text" class="form-control form-control-sm p" id="user-no-rkm-medis-verified-by" readonly autocomplete="off">
                     </div>
                 </div>
             </x-row>
+            <x-row-col class="pb-3 border-bottom">
+                <x-button size="sm" variant="primary" id="simpan-data" title="Simpan" icon="fas fa-save" />
+                <x-button size="sm" class="ml-2" id="batal-simpan" title="Batal" />
+            </x-row-col>
             <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
+                <x-filter.toggle class="ml-2" title="Tampilkan Semua User" model="semuaUser" />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
             </x-row-col-flex>
@@ -127,21 +142,19 @@
                     <x-table.th name="tgl_lahir" title="Tanggal Lahir" />
                     <x-table.th name="no_rkm_medis" title="No RM" />
                     <x-table.th name="no_rkm_medis_verified_by" title="Diverifikasi Oleh" />
-                    <x-table.th name="no_rkm_medis_verified_at" title="Tanggal Diverifikasi" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->collection as $item)
                         <x-table.tr>
-                            <x-table.td :clickable="user()->can('rekam-medis.verifikasi-user-epasien.update')" data-user-id="{{$item->id}}" data-name="{{$item->name}}" data-no-ktp="{{$item->no_ktp}}" data-tgl-lahir="{{$item->tgl_lahir}}" data-no-rkm-medis="{{$item->no_rkm_medis}}" >{{ $item->name }}</x-table.td>
+                            <x-table.td :clickable="user()->can('rekam-medis.verifikasi-user-epasien.update')" data-user-id="{{$item->id}}" data-name="{{$item->name}}" data-no-ktp="{{$item->no_ktp}}" data-tgl-lahir="{{$item->tgl_lahir}}" data-no-rkm-medis="{{$item->no_rkm_medis}}" data-verified-by="{{$item->no_rkm_medis_verified_by}}" >{{ $item->name }}</x-table.td>
                             <x-table.td>{{ $item->email }}</x-table.td>
                             <x-table.td>{{ $item->no_ktp }}</x-table.td>
                             <x-table.td>{{ $item->tgl_lahir }}</x-table.td>
                             <x-table.td>{{ $item->no_rkm_medis }}</x-table.td>
                             <x-table.td>{{ $item->no_rkm_medis_verified_by }}</x-table.td>
-                            <x-table.td>{{ $item->no_rkm_medis_verified_at }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="7" padding />
+                        <x-table.tr-empty colspan="6" padding />
                     @endforelse
                 </x-slot>
             </x-table>
