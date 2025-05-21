@@ -9,6 +9,7 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Aplikasi\User;
 use App\Models\RekamMedis\EpasienUser;
+use App\Services\SatuSehatService;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -99,6 +100,24 @@ class VerifikasiUserEpasien extends Component
         $this->resetFilters();
         $this->dispatchBrowserEvent('data-tersimpan');
         $this->flashSuccess('Data berhasil disimpan!');
+    }
+
+    public function verifikasiSatuSehat()
+    {
+        $agentName = auth()->user()->nama;
+        $agentNik = auth()->user()->pegawai->no_ktp;
+
+        $json = app(SatuSehatService::class)->generateKycUrl($agentName, $agentNik);
+
+        $result = json_decode($json, true);
+
+        if (isset($result['data']['url'])) {
+            $this->dispatchBrowserEvent('open-kyc-url', [
+                'url' => $result['data']['url'],
+            ]);
+        } else {
+            $this->flashError('Gagal mendapatkan URL KYC Satu Sehat.');
+        }
     }
 
     protected function defaultValues(): void

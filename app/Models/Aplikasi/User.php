@@ -4,6 +4,7 @@ namespace App\Models\Aplikasi;
 
 use App\Casts\BooleanCast;
 use App\Database\Eloquent\Authenticatable;
+use App\Models\Kepegawaian\Pegawai;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
@@ -128,5 +129,12 @@ SQL;
             ->withHakAkses()
             ->whereRaw('AES_DECRYPT(user.id_user, ?) = ?', [config('khanza.app.userkey'), $nrp])
             ->first($columns);
+    }
+
+    public function getPegawaiAttribute()
+    {
+        $nik = DB::selectOne('SELECT AES_DECRYPT(?, ?) as nik', [$this->id_user, 'nur'])->nik ?? null;
+        if (!$nik) return null;
+        return Pegawai::where('nik', $nik)->first();
     }
 }

@@ -71,6 +71,10 @@
                         const { noRkmMedis } = event.detail;
                         $('input#user-no-rkm-medis').val(noRkmMedis);
                     });
+
+                    window.addEventListener('open-kyc-url', event => {
+                        window.open(event.detail.url, '_blank');
+                    });
                 </script>
             @endpush
         @endonce
@@ -122,10 +126,11 @@
                     </div>
                 </div>
             </x-row>
-            <x-row-col class="pb-3 border-bottom">
+            <x-row-col-flex class="pb-3 border-bottom">
                 <x-button size="sm" variant="primary" id="simpan-data" title="Simpan" icon="fas fa-save" />
                 <x-button size="sm" class="ml-2" id="batal-simpan" title="Batal" />
-            </x-row-col>
+                <x-button class="ml-auto" variant="success" wire:click="verifikasiSatuSehat()" title="Verifikasi Satu Sehat" />
+            </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.toggle class="ml-2" title="Tampilkan Semua User" model="semuaUser" />
