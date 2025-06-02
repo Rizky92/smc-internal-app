@@ -188,8 +188,8 @@ class RKATInputPenetapan extends Component
             tracker_end('mysql_smc');
 
             $this->defaultValues();
-            $this->dispatchBrowserEvent('data-updated');
-            $this->emitUp('Data berhasil diubah!');
+            $this->dispatchBrowserEvent('data-saved');
+            $this->emit('flash.success','Data berhasil diubah!');
         } catch (Exception $e) {
             tracker_dispose('mysql_smc');
 
