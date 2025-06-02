@@ -8,6 +8,7 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Perawatan\Poliklinik;
 use App\Models\Perawatan\RegistrasiPasien;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
@@ -23,6 +24,9 @@ class IGDKeRawatInap extends Component
     use MenuTracker;
 
     /** @var string */
+    public $kodePoliklinik;
+
+    /** @var string */
     public $tglAwal;
 
     /** @var string */
@@ -31,6 +35,7 @@ class IGDKeRawatInap extends Component
     protected function queryString(): array
     {
         return [
+            'kodePoliklinik' => ['except' => '', 'as' => 'poliklinik'],
             'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
@@ -41,10 +46,17 @@ class IGDKeRawatInap extends Component
         $this->defaultValues();
     }
 
+    public function getPoliklinikProperty()
+    {
+        return Poliklinik::where('status', '1')
+            ->get()
+            ->pluck('nm_poli', 'kd_poli');
+    }
+
     public function getCollectionProperty()
     {
         return $this->isDeferred ? [] : RegistrasiPasien::query()
-            ->igdKeRawatInap($this->tglAwal, $this->tglAkhir)
+            ->igdKeRawatInap($this->tglAwal, $this->tglAkhir, $this->kodePoliklinik)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns, [
                 'tgl_registrasi' => 'asc',
@@ -61,6 +73,7 @@ class IGDKeRawatInap extends Component
 
     protected function defaultValues(): void
     {
+        $this->kodePoliklinik = 'IGDK';
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
