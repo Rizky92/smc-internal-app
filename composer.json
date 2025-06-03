@@ -3,7 +3,7 @@
     "type": "project",
     "description": "SMC Internal App",
     "require": {
-        "php": "^7.4",
+        "php": "^7.4|^8.0",
         "ext-xlswriter": "*",
         "brick/money": "^0.5.3",
         "diglactic/laravel-breadcrumbs": "^8.1.1",
