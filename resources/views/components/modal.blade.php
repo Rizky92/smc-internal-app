@@ -7,7 +7,6 @@
     'scrollable' => true,
     'dismissable' => true,
     'static' => false,
-
     'header' => null,
     'body' => null,
     'footer' => null,
@@ -20,7 +19,7 @@
         'lg' => 'modal-lg',
         'xl' => 'modal-xl',
     ];
-    
+
     $finalClass = collect()
         ->merge($sizes[$size])
         ->when($centered, fn ($c) => $c->merge('modal-dialog-centered'))
@@ -30,9 +29,9 @@
 
 @push('js')
     <script>
-        $('.modal#{{ $id }}').on('show.bs.modal', e => {
-            $('.modal#{{ $id }}').modal('handleUpdate')
-        })
+        $('.modal#{{ $id }}').on('show.bs.modal', (e) => {
+            $('.modal#{{ $id }}').modal('handleUpdate');
+        });
     </script>
 @endpush
 

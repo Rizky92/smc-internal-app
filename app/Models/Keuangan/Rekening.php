@@ -24,16 +24,14 @@ class Rekening extends Model
     {
         parent::booted();
 
-        static::addGlobalScope(function (Builder $query) {
-            return $query
-                ->select([
-                    'rekening.kd_rek',
-                    'rekening.tipe',
-                    'rekening.balance',
-                    'rekening.level',
-                ])
-                ->addSelect(DB::raw('convert(rekening.nm_rek using ascii) as nm_rek'));
-        });
+        static::addGlobalScope(fn (Builder $query) => $query
+            ->select([
+                'rekening.kd_rek',
+                'rekening.tipe',
+                'rekening.balance',
+                'rekening.level',
+            ])
+            ->addSelect(DB::raw('convert(rekening.nm_rek using ascii) as nm_rek')));
     }
 
     public function scopeSaldoAwalBulanSebelumnya(Builder $query, string $tglSaldo = ''): Builder
@@ -42,8 +40,8 @@ class Rekening extends Model
 
         $tglSaldo = carbon_immutable($tglSaldo);
 
-        $tglAwalTahun = $tglSaldo->startOfYear()->format('Y-m-d');
-        $tglAkhirBulanLalu = $tglSaldo->subMonth()->endOfMonth()->format('Y-m-d');
+        $tglAwalTahun = $tglSaldo->startOfYear()->toDateString();
+        $tglAkhirBulanLalu = $tglSaldo->subMonth()->endOfMonth()->toDateString();
 
         $sqlSelect = <<<'SQL'
             rekening.kd_rek,
@@ -51,7 +49,7 @@ class Rekening extends Model
                 when rekening.balance = "D" then round(sum(detailjurnal.debet) - sum(detailjurnal.kredit), 2)
                 when rekening.balance = "K" then round(sum(detailjurnal.kredit) - sum(detailjurnal.debet), 2)
             end total_transaksi
-        SQL;
+            SQL;
 
         return $query
             ->selectRaw($sqlSelect)
@@ -67,18 +65,18 @@ class Rekening extends Model
         $query->withoutGlobalScopes();
 
         if (empty($tglAwal)) {
-            $tglAwal = carbon($tglAwal)->startOfMonth()->format('Y-m-d');
+            $tglAwal = carbon($tglAwal)->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = carbon($tglAkhir)->format('Y-m-d');
+            $tglAkhir = carbon($tglAkhir)->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
             detailjurnal.kd_rek,
             round(sum(detailjurnal.debet), 2) total_debet,
             round(sum(detailjurnal.kredit), 2) total_kredit
-        SQL;
+            SQL;
 
         return $query
             ->selectRaw($sqlSelect)
@@ -99,11 +97,11 @@ class Rekening extends Model
     public function scopeHitungDebetKreditPerPeriode(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePenjamin = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
+            $tglAkhir = now()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -112,7 +110,7 @@ class Rekening extends Model
             rekening.balance,
             round(sum(detailjurnal.debet), 2) debet,
             round(sum(detailjurnal.kredit), 2) kredit
-        SQL;
+            SQL;
 
         return $query
             ->withoutGlobalScopes()

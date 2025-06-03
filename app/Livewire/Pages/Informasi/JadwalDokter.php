@@ -42,7 +42,7 @@ class JadwalDokter extends Component
                 ->jadwalDokter()
                 ->with(['dokter', 'poliklinik'])
                 ->when(
-                    !$this->semuaPoli,
+                    ! $this->semuaPoli,
                     fn (Builder $query) => $query->where('poliklinik.nm_poli', '<>', 'Poli Eksekutif'),
                 )
                 ->search($this->cari)
@@ -56,9 +56,9 @@ class JadwalDokter extends Component
                         $item->kd_dokter,
                         $item->kd_poli,
                         $item->hari_kerja,
-                        now()->format('Y-m-d') // Ubah sesuai kebutuhan format tanggal
+                        now()->toDateString() // Ubah sesuai kebutuhan format tanggal
                     );
-    
+
                     // Periksa apakah $item memiliki duplikat
                     if ($item->isDuplicate()) {
                         // Ambil jadwal pertama dari hasil sortasi
@@ -67,7 +67,7 @@ class JadwalDokter extends Component
                             ->where('hari_kerja', $item->hari_kerja)
                             ->orderBy('jam_mulai', 'asc')
                             ->first();
-    
+
                         // Periksa apakah $item merupakan jadwal pertama atau kedua
                         if ($item->jam_mulai === $firstJadwal->jam_mulai) {
                             // Jadwal pertama, tampilkan sesuai kuota
@@ -80,7 +80,7 @@ class JadwalDokter extends Component
                         // Jika tidak ada duplikat, hitung total registrasi tanpa batasan kuota
                         $item->total_registrasi = $total_registrasi_jadwal1;
                     }
-    
+
                     return $item;
                 });
     }

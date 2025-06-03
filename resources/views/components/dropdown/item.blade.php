@@ -14,7 +14,8 @@
                 {{ $title ?? $slot }}
             @endif
         </button>
-    @break
+
+        @break
     @case('link')
         <a {{ $attributes->merge(['class' => 'dropdown-item', 'role' => 'button', 'id' => Str::slug($title)]) }}>
             @if ($icon)
@@ -24,5 +25,6 @@
                 {{ $title ?? $slot }}
             @endif
         </a>
-    @break
+
+        @break
 @endswitch

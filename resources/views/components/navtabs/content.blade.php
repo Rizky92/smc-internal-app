@@ -1,9 +1,12 @@
 @aware(['livewire', 'selected', 'withPermissions'])
 
-@props(['id', 'hasPermission' => false])
+@props([
+    'id',
+    'hasPermission' => false,
+])
 
 <div @class(['tab-pane', 'show active' => $selected === $id]) id="content-{{ $id }}" role="tabpanel" {{ $livewire ? 'wire:ignore.self' : null }}>
-    @if ((!$withPermissions && !$hasPermission) xor ($withPermissions && $hasPermission))
+    @if (! $withPermissions && ! $hasPermission xor $withPermissions && $hasPermission)
         <div {{ $attributes->except(['selected', 'id', 'title', 'livewire']) }}>
             {{ $slot }}
         </div>

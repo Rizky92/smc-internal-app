@@ -9,16 +9,16 @@ use App\Models\Aplikasi\Pintu;
 use App\Models\Kepegawaian\Dokter;
 use App\Models\Perawatan\Poliklinik;
 use Exception;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class InputPintu extends Component
 {
     use DeferredModal;
-    use FlashComponent;
     use Filterable;
+    use FlashComponent;
 
     /** @var int */
     public $pintuId;
@@ -121,7 +121,7 @@ class InputPintu extends Component
 
         if ($this->isUpdating()) {
             $this->update();
-            
+
             return;
         }
 
@@ -145,7 +145,7 @@ class InputPintu extends Component
             $this->dispatchBrowserEvent('data-saved');
             $this->emit('flash.success', 'Data Pintu baru berhasil disimpan!');
             $this->defaultValues();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->dispatchBrowserEvent('data-failed');
             $this->emit('flash.warning', 'Terjadi kegagalan pada saat menyimpan data Pintu!');
             $this->defaultValues();
@@ -177,19 +177,19 @@ class InputPintu extends Component
                 'kd_pintu' => $this->kodePintu,
                 'nm_pintu' => $this->namaPintu,
             ]);
-    
+
             $pintu->poliklinik()->detach();
             $pintu->dokter()->detach();
 
             $pintu->poliklinik()->sync($this->kodePoliklinik);
             $pintu->dokter()->sync($this->kodeDokter);
-    
+
             tracker_end('mysql_smc');
 
             $this->dispatchBrowserEvent('data-saved');
             $this->emit('flash.success', 'Data Pintu berhasil diperbarui!');
             $this->defaultValues();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             tracker_dispose('mysql_smc');
             $this->dispatchBrowserEvent('data-failed');
             $this->emit('flash.warning', 'Terjadi kegagalan pada saat memperbarui data Pintu!');

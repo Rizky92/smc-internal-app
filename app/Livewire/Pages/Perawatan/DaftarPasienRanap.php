@@ -7,7 +7,7 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
-use App\Models\Perawatan\RawatInap;
+use App\Models\Perawatan\KamarInap;
 use App\Models\Perawatan\RegistrasiPasien;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -35,8 +35,8 @@ class DaftarPasienRanap extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal'    => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir'   => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'    => ['except' => now()->toDateString(), 'as' => 'tgl_awal'],
+            'tglAkhir'   => ['except' => now()->toDateString(), 'as' => 'tgl_akhir'],
             'jenisRawat' => ['except' => '-', 'as' => 'status'],
         ];
     }
@@ -85,11 +85,11 @@ class DaftarPasienRanap extends Component
 
         tracker_start('mysql_sik');
 
-        RawatInap::query()
+        KamarInap::query()
             ->where([
                 ['no_rawat', '=', $noRawat],
                 ['kd_kamar', '=', $kodeKamar],
-                ['tgl_masuk', '=', carbon($tglMasuk)->format('Y-m-d')],
+                ['tgl_masuk', '=', carbon($tglMasuk)->toDateString()],
                 ['jam_masuk', '=', carbon($jamMasuk)->format('H:i:s')],
             ])
             ->update([
@@ -109,10 +109,13 @@ class DaftarPasienRanap extends Component
     protected function defaultValues(): void
     {
         $this->jenisRawat = '-';
-        $this->tglAwal = now()->format('Y-m-d');
-        $this->tglAkhir = now()->format('Y-m-d');
+        $this->tglAwal = now()->toDateString();
+        $this->tglAkhir = now()->toDateString();
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         return [

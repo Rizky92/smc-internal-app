@@ -35,23 +35,39 @@
                 <x-slot name="body">
                     @forelse ($this->bukuBesar as $jurnal)
                         <x-table.tr>
-                            <x-table.td>{{ $jurnal->tgl_jurnal }}</x-table.td>
-                            <x-table.td>{{ $jurnal->jam_jurnal }}</x-table.td>
-                            <x-table.td>{{ $jurnal->no_jurnal }}</x-table.td>
-                            <x-table.td>{{ $jurnal->no_bukti }}</x-table.td>
-                            <x-table.td>{{ $jurnal->keterangan }}</x-table.td>
-                            <x-table.td>{{ optional($jurnal->pengeluaranHarian)->keterangan ?? "-" }}</x-table.td>
                             <x-table.td>
-                                @if($jurnal->piutangDilunaskan && $jurnal->piutangDilunaskan->tagihan)
+                                {{ $jurnal->tgl_jurnal }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $jurnal->jam_jurnal }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $jurnal->no_jurnal }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $jurnal->no_bukti }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $jurnal->keterangan }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ optional($jurnal->pengeluaranHarian)->keterangan ?? '-' }}
+                            </x-table.td>
+                            <x-table.td>
+                                @if ($jurnal->piutangDilunaskan && $jurnal->piutangDilunaskan->tagihan)
                                     {{ $jurnal->piutangDilunaskan->tagihan->catatan }}
                                 @else
                                     -
                                 @endif
-                            </x-table.td>                            
+                            </x-table.td>
                             <x-table.td>{{ $jurnal->kd_rek }}</x-table.td>
                             <x-table.td>{{ $jurnal->nm_rek }}</x-table.td>
-                            <x-table.td>{{ rp($jurnal->debet) }}</x-table.td>
-                            <x-table.td>{{ rp($jurnal->kredit) }}</x-table.td>
+                            <x-table.td>
+                                {{ rp($jurnal->debet) }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ rp($jurnal->kredit) }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="12" padding />

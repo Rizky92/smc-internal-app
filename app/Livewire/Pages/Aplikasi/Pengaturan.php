@@ -12,6 +12,7 @@ use Livewire\Component;
 class Pengaturan extends Component
 {
     use Concerns\PengaturanRKAT;
+    use Concerns\SetNPWPPenjual;
     use FlashComponent;
     use MenuTracker;
 

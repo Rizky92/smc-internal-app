@@ -36,7 +36,7 @@ class DefectaDepo extends Component
     protected function queryString(): array
     {
         return [
-            'tanggal' => ['except' => now()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tanggal' => ['except' => now()->toDateString(), 'as' => 'tgl_awal'],
             'shift'   => ['except' => $this->dataShiftKerja()->shift, 'as' => 'shift_kerja'],
             'bangsal' => ['as' => 'depo'],
         ];
@@ -83,11 +83,14 @@ class DefectaDepo extends Component
 
     protected function defaultValues(): void
     {
-        $this->tanggal = now()->format('Y-m-d');
+        $this->tanggal = now()->toDateString();
         $this->shift = $this->dataShiftKerja()->shift;
         $this->bangsal = 'IFA';
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         return [

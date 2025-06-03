@@ -16,7 +16,7 @@ class AntrianPoliController extends Component
 {
     public function show($kd_poli, $kd_dokter): View
     {
-        $tanggal = now()->format('Y-m-d');
+        $tanggal = now()->toDateString();
 
         $antrianPasien = RegistrasiPasien::with(['poliklinik', 'dokterPoli'])
             ->select('no_reg', 'no_rawat', 'nm_pasien')
@@ -42,7 +42,7 @@ class AntrianPoliController extends Component
 
     public function checkDataChanges(Request $request, $kd_poli, $kd_dokter): JsonResponse
     {
-        $tanggal = now()->format('Y-m-d');
+        $tanggal = now()->toDateString();
 
         $nextAntrian = AntriPoli::select('antripoli.*', 'reg_periksa.no_reg')
             ->join('reg_periksa', 'antripoli.no_rawat', '=', 'reg_periksa.no_rawat')
