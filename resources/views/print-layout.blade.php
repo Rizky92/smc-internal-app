@@ -1,101 +1,105 @@
-<style>
-    body {
-        font-family: Arial, Helvetica, sans-serif;
-    }
+@once
+    @push('css')
+        <style>
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+            }
 
-    #printHeader {
-        text-align: center;
-        margin-bottom: 20px;
-    }
+            #printHeader {
+                text-align: center;
+                margin-bottom: 20px;
+            }
 
-    #printHeader img {
-        display: inline-block;
-        vertical-align: middle;
-        width: 80px;
-    }
+            #printHeader img {
+                display: inline-block;
+                vertical-align: middle;
+                width: 80px;
+            }
 
-    #printHeader h2 {
-        font-size: 20px;
-        margin: 0;
-        display: inline-block;
-        vertical-align: middle;
-    }
+            #printHeader h2 {
+                font-size: 20px;
+                margin: 0;
+                display: inline-block;
+                vertical-align: middle;
+            }
 
-    #printHeader p {
-        font-size: 14px;
-        margin: 1px;
-    }
+            #printHeader p {
+                font-size: 14px;
+                margin: 1px;
+            }
 
-    hr {
-        border-top: 2px solid #333;
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
+            hr {
+                border-top: 2px solid #333;
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
 
-    h2 {
-        display: flex;
-        justify-content: center;
-        font-weight: 400;
-    }
+            h2 {
+                display: flex;
+                justify-content: center;
+                font-weight: 400;
+            }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-    }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+            }
 
-    thead {
-        background: #f0f0dc;
-        border-top: 1px solid #333;
-        border-bottom: 1px solid #333;
-    }
+            thead {
+                background: #f0f0dc;
+                border-top: 1px solid #333;
+                border-bottom: 1px solid #333;
+            }
 
-    th,
-    td {
-        padding: 8px;
-        text-align: left;
-    }
+            th,
+            td {
+                padding: 8px;
+                text-align: left;
+            }
 
-    ul.list-group {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-    }
+            ul.list-group {
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+            }
 
-    .list-group-item {
-        border: 1px solid #333;
-        margin-bottom: 10px;
-        padding: 10px;
-    }
+            .list-group-item {
+                border: 1px solid #333;
+                margin-bottom: 10px;
+                padding: 10px;
+            }
 
-    .list-group-item strong {
-        display: inline-block;
-        width: 150px; /* Adjust as needed */
-        font-weight: bold;
-    }
+            .list-group-item strong {
+                display: inline-block;
+                width: 150px; /* Adjust as needed */
+                font-weight: bold;
+            }
 
-    .time {
-        display: flex;
-        justify-content: end;
-    }
+            .time {
+                display: flex;
+                justify-content: end;
+            }
 
-    .signature {
-        display: flex;
-        justify-content: space-between;
-    }
+            .signature {
+                display: flex;
+                justify-content: space-between;
+            }
 
-    .no-border-table,
-    .no-border-table th,
-    .no-border-table td {
-        border: none !important;
-    }
+            .no-border-table,
+            .no-border-table th,
+            .no-border-table td {
+                border: none !important;
+            }
 
-    @media print {
-        @page {
-            size: portrait;
-        }
-    }
-</style>
+            @media print {
+                @page {
+                    size: portrait;
+                }
+            }
+        </style>
+    @endpush
+@endonce
 
 <div id="printHeader">
     <div style="text-align: center">
