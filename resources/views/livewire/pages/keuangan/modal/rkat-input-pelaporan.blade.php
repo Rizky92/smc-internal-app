@@ -23,7 +23,7 @@
         livewire
         centered>
         <x-slot name="body" style="overflow-x: hidden">
-            <x-form id="form-input-pelaporan-rkat" livewire :submit="$this->isUpdating() ? 'update' : 'create'">
+            <x-form id="form-input-pelaporan-rkat" livewire wire:submit.prevent="create">
                 <x-row-col class="sticky-top bg-white">
                     <div class="form-group">
                         <label for="anggaran-bidang-id">Anggaran bidang digunakan:</label>
@@ -81,7 +81,11 @@
         <x-slot name="footer" class="justify-content-start">
             @can('keuangan.rkat-pelaporan.update')
                 <x-button size="sm" class="ml-auto" data-dismiss="modal" id="batalsimpan" title="Batal" />
-                <x-button size="sm" variant="primary" type="submit" class="ml-2" id="simpandata" title="Simpan" icon="fas fa-save" form="form-input-pelaporan-rkat" />
+                <x-button size="sm" variant="primary" type="submit" class="ml-2" id="simpandata" title="Simpan"
+                    icon="fas fa-save" form="form-input-pelaporan-rkat" wire:target="create" wire:loading.class="d-none" wire:loading.class.remove="btn" />
+                <div wire:loading wire:target="create" wire:loading.attr="disabled">
+                    <x-button size="sm" variant="primary" class="ml-2" title="Menyimpan..." icon="spinner-border spinner-border-sm" disabled />
+                </div>
             @endcan
         </x-slot>
     </x-modal>

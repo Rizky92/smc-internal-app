@@ -111,7 +111,10 @@
         </x-slot>
         <x-slot name="footer" class="justify-content-end">
             <x-button size="sm" title="Batal" data-dismiss="modal" />
-            <x-button type="submit" size="sm" variant="danger" class="ml-2" title="Simpan" icon="fas fa-save" form="form-ubah-tgl-jurnal" />
+            <x-button type="submit" size="sm" variant="danger" class="ml-2" title="Simpan" icon="fas fa-save" form="form-ubah-tgl-jurnal" wire:target="updateTglJurnal" wire:loading.class="d-none" wire:loading.class.remove="btn" />
+            <div wire:loading wire:target="updateTglJurnal" wire:loading.attr="disabled">
+                <x-button size="sm" variant="danger" class="ml-2" title="Menyimpan..." icon="spinner-border spinner-border-sm" disabled />
+            </div>
         </x-slot>
     </x-modal>
 </div>
