@@ -9,6 +9,8 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Aplikasi\User;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -42,7 +44,7 @@ class ManajemenUser extends Component
     }
 
     /**
-     * @return array|\Illuminate\Contracts\Pagination\Paginator
+     * @return array|Paginator
      */
     public function getUsersProperty()
     {
@@ -74,7 +76,7 @@ class ManajemenUser extends Component
     }
 
     /**
-     * @return void|\Illuminate\Http\RedirectResponse
+     * @return void|RedirectResponse
      */
     public function impersonateAsUser(string $nrp = '')
     {

@@ -8,7 +8,11 @@
                 <x-filter.button-export-excel class="ml-auto" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
-                <x-filter.select-perpage :constantWidth="true" />
+                <x-filter.select-perpage />
+                <x-filter.label class="ml-auto" constant-width>Poliklinik :</x-filter.label>
+                <x-filter.select2 name="Kode Poliklinik" livewire :options="['SEMUA' => 'SEMUA'] + $this->poliklinik->toArray()" :selected="$kodePoliklinik" />
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
             </x-row-col-flex>

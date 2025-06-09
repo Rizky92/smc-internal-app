@@ -14,6 +14,7 @@
             })
         </script>
     @endpush
+
     @php($isUpdating = $bidangId !== -1)
     <x-modal id="modal-input-bidang-unit" :title="$isUpdating ? 'Edit Bidang' : 'Tambah Bidang Baru'" livewire centered>
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
@@ -25,13 +26,7 @@
                     </div>
                     <div class="form-group mt-3">
                         <label for="parent-bidang">Sub-bidang dari:</label>
-                        <x-form.select
-                            model="parentId"
-                            :options="$this->parentBidang"
-                            placeholder="-"
-                            placeholderValue="-1"
-                            width="full-width"
-                        />
+                        <x-form.select model="parentId" :options="$this->parentBidang" placeholder="-" placeholderValue="-1" width="full-width" />
                     </div>
                 </x-row-col>
             </form>

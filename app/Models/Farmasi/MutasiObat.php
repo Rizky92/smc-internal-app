@@ -24,7 +24,7 @@ class MutasiObat extends Model
         $sqlSelect = <<<'SQL'
             round(sum(mutasibarang.jml * mutasibarang.harga)) jumlah,
             month(mutasibarang.tanggal) bulan
-        SQL;
+            SQL;
 
         return $query
             ->selectRaw($sqlSelect)

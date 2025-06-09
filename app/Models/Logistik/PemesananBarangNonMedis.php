@@ -23,11 +23,11 @@ class PemesananBarangNonMedis extends Model
     public function scopeHutangAging(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<SQL
@@ -46,7 +46,7 @@ class PemesananBarangNonMedis extends Model
             bayar_pemesanan_non_medis.nama_bayar,
             bayar_pemesanan_non_medis.keterangan,
             datediff('{$tglAkhir}', ipsrs_titip_faktur.tanggal) umur_hari
-        SQL;
+            SQL;
 
         $this->addSearchConditions([
             'ipsrs_detail_titip_faktur.no_tagihan',
@@ -84,11 +84,11 @@ class PemesananBarangNonMedis extends Model
     public function scopeTotalHutangAging(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -101,14 +101,14 @@ class PemesananBarangNonMedis extends Model
             round(sum(ipsrspemesanan.tagihan), 2) total_tagihan,
             round(sum(bayar_pemesanan_non_medis.besar_bayar), 2) total_dibayar,
             round(sum(ipsrspemesanan.tagihan - ifnull(bayar_pemesanan_non_medis.besar_bayar, 0)), 2) sisa_tagihan
-        SQL;
+            SQL;
 
         $sqlGroupBy = <<<'SQL'
             datediff(?, ipsrs_titip_faktur.tanggal) <= 30,
             datediff(?, ipsrs_titip_faktur.tanggal) between 31 and 60,
             datediff(?, ipsrs_titip_faktur.tanggal) between 61 and 90,
             datediff(?, ipsrs_titip_faktur.tanggal) > 90
-        SQL;
+            SQL;
 
         $this->addSearchConditions([
             'ipsrs_detail_titip_faktur.no_tagihan',

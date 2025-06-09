@@ -8,13 +8,15 @@
                     {{-- <x-table.th name="id" title="#" /> --}}
                 </x-slot>
                 <x-slot name="body">
-                    {{-- @forelse ($this->collectionProperty as $item)
+                    {{--
+                        @forelse ($this->collectionProperty as $item)
                         <x-table.tr>
-                            <x-table.td>{{ $item->id }}</x-table.td>
+                        <x-table.td>{{ $item->id }}</x-table.td>
                         </x-table.tr>
-                    @empty
+                        @empty
                         <x-table.tr-empty colspan="1" />
-                    @endforelse --}}
+                        @endforelse
+                    --}}
                 </x-slot>
             </x-table>
         </x-slot>

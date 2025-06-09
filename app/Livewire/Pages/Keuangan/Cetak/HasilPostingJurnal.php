@@ -5,14 +5,14 @@ namespace App\Livewire\Pages\Keuangan\Cetak;
 use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\Rekening;
 use App\View\Components\CustomerLayout;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class HasilPostingJurnal extends Component
 {
-    /** @var \Illuminate\Support\Collection */
+    /** @var Collection */
     public $dataJurnal;
 
     protected function queryString(): array
@@ -30,7 +30,7 @@ class HasilPostingJurnal extends Component
     public function getSIMRSSettingsProperty(): ?object
     {
         return DB::connection('mysql_sik')->table('setting')->first([
-            'nama_instansi', 'alamat_instansi', 'kontak', 'email', 'logo'
+            'nama_instansi', 'alamat_instansi', 'kontak', 'email', 'logo',
         ]);
     }
 

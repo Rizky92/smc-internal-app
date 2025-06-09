@@ -22,7 +22,7 @@ class DisplayJadwalDokter extends Component
                     $item->kd_dokter,
                     $item->kd_poli,
                     $item->hari_kerja,
-                    now()->format('Y-m-d') // Ubah sesuai kebutuhan format tanggal
+                    now()->toDateString() // Ubah sesuai kebutuhan format tanggal
                 );
 
                 // Periksa apakah $item memiliki duplikat
@@ -50,7 +50,6 @@ class DisplayJadwalDokter extends Component
                 return $item;
             });
     }
-    
 
     public function render(): View
     {

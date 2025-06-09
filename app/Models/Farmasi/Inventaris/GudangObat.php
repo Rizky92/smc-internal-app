@@ -53,7 +53,7 @@ class GudangObat extends Model
             gudangbarang.stok,
             databarang.h_beli,
             round(databarang.h_beli * if(gudangbarang.stok < 0, 0, gudangbarang.stok)) projeksi_harga
-        SQL;
+            SQL;
 
         $this->addSearchConditions([
             'bangsal.nm_bangsal',
@@ -123,7 +123,7 @@ class GudangObat extends Model
             ifnull(`pemberian_obat_3hari`.`jumlah`, 0) as `jumlah_3hari`,
             ifnull(`pemberian_obat_6hari`.`jumlah`, 0) as `jumlah_6hari`,
             (ifnull(`pemberian_obat_6hari`.`jumlah`, 0) - `gudangbarang`.`stok`) as `sisa_6hari`
-        SQL;
+            SQL;
 
         $this->addSearchConditions([
             'gudangbarang.kode_brng',

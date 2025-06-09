@@ -4,6 +4,7 @@ namespace App\Database\Eloquent\Concerns;
 
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
 
 /**
@@ -34,7 +35,7 @@ trait Sortable
 
     /**
      * @param  Collection<TKey, TValue>|array<TValue>|string  $columns
-     * @param  \Illuminate\Database\Query\Expression|string|null  $condition
+     * @param  Expression|string|null  $condition
      * @return $this
      */
     public function addSortColumns($columns, $condition = null)
@@ -53,15 +54,15 @@ trait Sortable
     }
 
     /**
-     * @param  array<string, string>  $columns
-     * @param  array<string, \Illuminate\Database\Query\Expression<string>|string>  $rawColumns
-     * @param  array<string, \Illuminate\Database\Query\Expression<string>|string>  $initialColumnOrder
+     * @param  array<string, string>  $sortColumns
+     * @param  array<string, Expression<string>|string>  $rawColumns
+     * @param  array<string, Expression<string>|string>  $initialColumnOrders
      */
     public function scopeSortWithColumns(Builder $query, array $sortColumns = [], array $rawColumns = [], array $initialColumnOrders = []): Builder
     {
         $columns = collect()
-            ->when(property_exists($this, 'sortColumns'), fn (Collection $c) => $c->merge($this->sortColumns))
-            ->when(method_exists($this, 'sortColumns'), fn (Collection $c) => $c->merge($this->sortColumns()));
+            ->merge($this->sortColumns())
+            ->when(property_exists($this, 'sortColumns'), fn (Collection $c) => $c->merge($this->sortColumns));
 
         if (empty($sortColumns) && (empty($initialColumnOrders) || empty($rawColumns))) {
             return $query;

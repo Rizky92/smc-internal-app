@@ -3,6 +3,7 @@
 namespace App\Models\Aplikasi;
 
 use App\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\Permission\Contracts\Permission as PermissionContract;
@@ -39,7 +40,7 @@ class Permission extends Model implements PermissionContract
     }
 
     /**
-     * @psalm-return static&\Illuminate\Database\Eloquent\Builder<static>
+     * @psalm-return static&Builder<static>
      */
     public static function create(array $attributes = []): self
     {
@@ -123,7 +124,7 @@ class Permission extends Model implements PermissionContract
      *
      * @param  string|null  $guardName
      *
-     * @psalm-return TModel|static&\Illuminate\Database\Eloquent\Builder<static>
+     * @psalm-return TModel|static&Builder<static>
      */
     public static function findOrCreate(string $name, $guardName = null): self
     {
