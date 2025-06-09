@@ -36,7 +36,7 @@ class IGDKeRawatInap extends Component
     protected function queryString(): array
     {
         return [
-            'kodePoliklinik' => ['except' => '', 'as' => 'poliklinik'],
+            'kodePoliklinik' => ['except' => 'IGDK', 'as' => 'poliklinik'],
             'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
@@ -57,7 +57,7 @@ class IGDKeRawatInap extends Component
     public function getCollectionProperty()
     {
         return $this->isDeferred ? [] : RegistrasiPasien::query()
-            ->igdKeRawatInap($this->tglAwal, $this->tglAkhir, $this->kodePoliklinik)
+            ->igdKeRawatInap($this->tglAwal, $this->tglAkhir, $this->kodePoliklinik === 'SEMUA' ? '' : $this->kodePoliklinik)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns, [
                 'tgl_registrasi' => 'asc',
