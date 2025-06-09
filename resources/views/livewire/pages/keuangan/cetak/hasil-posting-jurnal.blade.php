@@ -41,7 +41,6 @@
 
             td {
                 vertical-align: top;
-                white-space: pre-wrap;
                 padding: 0 0.125rem 0 0.125rem;
                 margin: 0;
             }
