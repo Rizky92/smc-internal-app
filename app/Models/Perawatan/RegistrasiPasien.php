@@ -96,6 +96,10 @@ class RegistrasiPasien extends Model
                 $asmed->push('RWI Kandungan');
             }
 
+            if ($attributes['asmed_ranap_neonatus'] === '1') {
+                $asmed->push('RWI Neonatus');
+            }
+
             if ($asmed->isEmpty()) {
                 return 'Tidak ada';
             }
@@ -161,6 +165,14 @@ class RegistrasiPasien extends Model
                 $asmed->push('Poli Kulit & Kelamin');
             }
 
+            if ($attributes['asmed_poli_paru'] === '1') {
+                $asmed->push('Poli Gigi');
+            }
+
+            if ($attributes['asmed_poli_rehab_medik'] === '1') {
+                $asmed->push('Poli Rehab Medik');
+            }
+
             if ($asmed->isEmpty()) {
                 return 'Tidak ada';
             }
@@ -196,6 +208,10 @@ class RegistrasiPasien extends Model
 
             if ($attributes['askep_ralan_geriatri'] === '1') {
                 $askep->push('Geriatri');
+            }
+
+            if ($attributes['askep_ralan_mata'] === '1') {
+                $askep->push('Mata');
             }
 
             if ($askep->isEmpty()) {
