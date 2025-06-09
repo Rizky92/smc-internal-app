@@ -10,7 +10,7 @@
             <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
                 <x-filter.label class="ml-auto" constant-width>Poliklinik :</x-filter.label>
-                <x-filter.select2 name="Kode Poliklinik" livewire show-key :options="$this->poliklinik" placeholder="SEMUA" />
+                <x-filter.select2 name="Kode Poliklinik" livewire :options="['SEMUA' => 'SEMUA'] + $this->poliklinik->toArray()" :selected="$kodePoliklinik" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.button-reset-filters class="ml-auto" />
