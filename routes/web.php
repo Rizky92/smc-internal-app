@@ -286,6 +286,10 @@ Route::prefix('admin')
                 Route::get('rincian-kunjungan-ralan', Farmasi\RincianKunjunganRalan::class)
                     ->name('rincian-kunjungan-ralan')
                     ->middleware('can:farmasi.rincian-kunjungan-ralan.read');
+
+                Route::get('obat-ralan-ke-ranap', Farmasi\ObatRalanKeRanap::class)
+                    ->name('obat-ralan-ke-ranap')
+                    ->middleware('can:farmasi.obat-ralan-ke-ranap.read');
             });
 
         Route::prefix('rekam-medis')

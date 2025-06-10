@@ -296,6 +296,7 @@ class Menu
                     'farmasi.defecta-depo.read',
                     'farmasi.daftar-riwayat-obat-alkes.read',
                     'farmasi.farmasi.rincian-perbandingan-po.read',
+                    'farmasi.obat-ralan-ke-ranap.read'
                 ]),
                 'items' => [
                     [
@@ -387,6 +388,12 @@ class Menu
                         'icon'              => 'fas fa-balance-scale',
                         'url'               => route('admin.farmasi.rincian-kunjungan-ralan'),
                         'hasAnyPermissions' => $user->can('farmasi.rincian-kunjungan-ralan.read'),
+                    ],
+                    [
+                        'name'              => 'Obat Rawat Jalan ke Rawat Inap',
+                        'icon'              => 'fas fa-exchange-alt',
+                        'url'               => route('admin.farmasi.obat-ralan-ke-ranap'),
+                        'hasAnyPermissions' => $user->can('farmasi.obat-ralan-ke-ranap.read'),
                     ],
                 ],
             ],

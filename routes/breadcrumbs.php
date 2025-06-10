@@ -247,6 +247,11 @@ Breadcrumbs::for('admin.farmasi.rincian-kunjungan-ralan', function (Trail $trail
     $trail->push('Rincian Kunjungan Ralan', route('admin.farmasi.rincian-kunjungan-ralan'));
 });
 
+Breadcrumbs::for('admin.farmasi.obat-ralan-ke-ranap', function (Trail $trail): void {
+    $trail->parent('admin.farmasi');
+    $trail->push('Obat Rawat Jalan Ke Rawat Inap', route('admin.farmasi.obat-ralan-ke-ranap'));
+});
+
 Breadcrumbs::for('admin.rekam-medis', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Rekam Medis');
