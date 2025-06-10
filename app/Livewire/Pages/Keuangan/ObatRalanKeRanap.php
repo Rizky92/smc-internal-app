@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Pages\Farmasi;
+namespace App\Livewire\Pages\Keuangan;
 
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
@@ -44,7 +44,7 @@ class ObatRalanKeRanap extends Component
     public function getCollectionProperty()
     {
         return $this->isDeferred ? [] : PemberianObat::query()
-            ->ObatRalanKeRanap($this->tglAwal, $this->tglAkhir)
+            ->obatRalanKeRanap($this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
@@ -52,7 +52,7 @@ class ObatRalanKeRanap extends Component
 
     public function render(): View
     {
-        return view('livewire.pages.farmasi.obat-ralan-ke-ranap')
+        return view('livewire.pages.keuangan.obat-ralan-ke-ranap')
             ->layout(BaseLayout::class, ['title' => 'Obat Rawat Jalan ke Rawat Inap']);
     }
 
@@ -66,7 +66,7 @@ class ObatRalanKeRanap extends Component
     {
         return [
             fn() => PemberianObat::query()
-                ->ObatRalanKeRanap($this->tglAwal, $this->tglAkhir)
+                ->obatRalanKeRanap($this->tglAwal, $this->tglAkhir)
                 ->search($this->cari)
                 ->cursor()
                 ->map(fn (PemberianObat $model): array => [

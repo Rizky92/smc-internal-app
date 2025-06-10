@@ -222,6 +222,10 @@ Route::prefix('admin')
                 Route::get('igd-ke-rawat-inap', Keuangan\IGDKeRawatInap::class)
                     ->name('igd-ke-rawat-inap')
                     ->middleware('can:keuangan.igd-ke-rawat-inap.read');
+
+                Route::get('obat-ralan-ke-ranap', Keuangan\ObatRalanKeRanap::class)
+                    ->name('obat-ralan-ke-ranap')
+                    ->middleware('can:keuangan.obat-ralan-ke-ranap.read');
             });
 
         Route::prefix('farmasi')
@@ -286,10 +290,6 @@ Route::prefix('admin')
                 Route::get('rincian-kunjungan-ralan', Farmasi\RincianKunjunganRalan::class)
                     ->name('rincian-kunjungan-ralan')
                     ->middleware('can:farmasi.rincian-kunjungan-ralan.read');
-
-                Route::get('obat-ralan-ke-ranap', Farmasi\ObatRalanKeRanap::class)
-                    ->name('obat-ralan-ke-ranap')
-                    ->middleware('can:farmasi.obat-ralan-ke-ranap.read');
             });
 
         Route::prefix('rekam-medis')

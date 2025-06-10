@@ -167,6 +167,11 @@ Breadcrumbs::for('admin.keuangan.igd-ke-rawat-inap', function (Trail $trail): vo
     $trail->push('Pasien IGD Ranap', route('admin.keuangan.igd-ke-rawat-inap'));
 });
 
+Breadcrumbs::for('admin.keuangan.obat-ralan-ke-ranap', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('Obat Rawat Jalan Ke Rawat Inap', route('admin.keuangan.obat-ralan-ke-ranap'));
+});
+
 Breadcrumbs::for('admin.farmasi', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Farmasi');
@@ -245,11 +250,6 @@ Breadcrumbs::for('admin.farmasi.rincian-perbandingan-po', function (Trail $trail
 Breadcrumbs::for('admin.farmasi.rincian-kunjungan-ralan', function (Trail $trail): void {
     $trail->parent('admin.farmasi');
     $trail->push('Rincian Kunjungan Ralan', route('admin.farmasi.rincian-kunjungan-ralan'));
-});
-
-Breadcrumbs::for('admin.farmasi.obat-ralan-ke-ranap', function (Trail $trail): void {
-    $trail->parent('admin.farmasi');
-    $trail->push('Obat Rawat Jalan Ke Rawat Inap', route('admin.farmasi.obat-ralan-ke-ranap'));
 });
 
 Breadcrumbs::for('admin.rekam-medis', function (Trail $trail): void {
