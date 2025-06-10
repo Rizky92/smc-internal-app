@@ -69,6 +69,46 @@ class PemberianObat extends Model
             ->union($penjualan);
     }
 
+    public function scopeObatRalanKeRanap(Builder $query, string $tglAwal, string $tglAkhir): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->toDateString();
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->toDateString();
+        }
+
+        $sqlSelect = <<<'SQL'
+            detail_pemberian_obat.no_rawat, 
+            reg_periksa.no_rkm_medis, 
+            pasien.nm_pasien, 
+            penjab.png_jawab, 
+            detail_pemberian_obat.tgl_perawatan, 
+            detail_pemberian_obat.jam, 
+            detail_pemberian_obat.kode_brng, 
+            databarang.nama_brng, 
+            detail_pemberian_obat.biaya_obat, 
+            detail_pemberian_obat.jml, 
+            detail_pemberian_obat.total
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->withCasts([
+                'biaya_obat' => 'float',
+                'jml'        => 'float',
+                'total'      => 'float',
+            ])
+            ->join('reg_periksa', 'detail_pemberian_obat.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
+            ->join('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
+            ->where('detail_pemberian_obat.status', '=', 'Ralan')
+            ->where('reg_periksa.status_lanjut', '=', 'Ranap')
+            ->whereBetween('detail_pemberian_obat.tgl_perawatan', [$tglAwal, $tglAkhir]);
+    }
+
     public function scopePendapatanObat(Builder $query, string $year = '2022', string $jenisPerawatan = ''): Builder
     {
         $sqlSelect = <<<'SQL'

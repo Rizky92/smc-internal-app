@@ -222,6 +222,10 @@ Route::prefix('admin')
                 Route::get('igd-ke-rawat-inap', Keuangan\IGDKeRawatInap::class)
                     ->name('igd-ke-rawat-inap')
                     ->middleware('can:keuangan.igd-ke-rawat-inap.read');
+
+                Route::get('obat-ralan-ke-ranap', Keuangan\ObatRalanKeRanap::class)
+                    ->name('obat-ralan-ke-ranap')
+                    ->middleware('can:keuangan.obat-ralan-ke-ranap.read');
             });
 
         Route::prefix('farmasi')

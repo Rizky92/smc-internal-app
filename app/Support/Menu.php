@@ -105,6 +105,7 @@ class Menu
                     'keuangan.posting-jurnal',
                     'keuangan.laporan-faktur-pajak.read',
                     'keuangan.igd-ke-rawat-inap.read',
+                    'keuangan.obat-ralan-ke-ranap.read'
                 ]),
                 'items' => [
                     [
@@ -274,6 +275,12 @@ class Menu
                         'icon'              => 'fas fa-book',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.igd-ke-rawat-inap.read'),
+                    ],
+                    [
+                        'name'              => 'Obat Ralan ke Ranap',
+                        'icon'              => 'fas fa-exchange-alt',
+                        'url'               => route('admin.keuangan.obat-ralan-ke-ranap'),
+                        'hasAnyPermissions' => $user->can('keuangan.obat-ralan-ke-ranap.read'),
                     ],
                 ],
             ],
