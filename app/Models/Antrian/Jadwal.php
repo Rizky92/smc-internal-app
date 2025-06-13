@@ -28,7 +28,7 @@ class Jadwal extends Model
      */
     public function dokter(): BelongsTo
     {
-        return $this->belongsTo(Dokter::class, 'kd_dokter', 'kd_dokter');
+        return $this->belongsTo(Dokter::class, 'kd_dokter', 'kd_dokter')->with('cutiAktif');
     }
 
     /**

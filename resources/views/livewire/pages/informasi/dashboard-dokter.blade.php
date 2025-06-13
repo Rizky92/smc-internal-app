@@ -40,9 +40,33 @@
                                 @foreach (['SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT', 'SABTU', 'MINGGU'] as $day)
                                     <td style="width: 10%">
                                         @php
+                                            // Mapping hari ke angka (Carbon: Monday = 1, Sunday = 7)
+                                            $dayMap = [
+                                                'SENIN' => 1,
+                                                'SELASA' => 2,
+                                                'RABU' => 3,
+                                                'KAMIS' => 4,
+                                                'JUMAT' => 5,
+                                                'SABTU' => 6,
+                                                'MINGGU' => 7,
+                                            ];
+
+                                            // Dapatkan tanggal sebenarnya dari hari ini ke hari target dalam minggu ini
+                                            $targetDate = \Carbon\Carbon::now()->startOfWeek()->addDays($dayMap[$day] - 1)->toDateString();
+
+                                            // Ambil data cuti aktif dari dokter
+                                            $dokter = $dokterJadwal[0]['dokter'];
+                                            $cuti = $dokter['cuti_aktif'] ?? null;
+
+                                            $isCuti = $cuti &&
+                                                $cuti['tanggal_awal'] <= $targetDate &&
+                                                $cuti['tanggal_akhir'] >= $targetDate;
+
                                             $hariJadwal = array_filter($dokterJadwal, fn($j) => strtoupper($j['hari_kerja']) === $day);
                                         @endphp
-                                        @if (!empty($hariJadwal))
+                                        @if ($isCuti)
+                                            <h5><span class="badge bg-danger">CUTI</span></h5>
+                                        @elseif (!empty($hariJadwal))
                                             {!! implode('<br>', array_map(fn($j) => date('H:i', strtotime($j['jam_mulai'])) . ' - ' . date('H:i', strtotime($j['jam_selesai'])), $hariJadwal)) !!}
                                         @else
                                             -

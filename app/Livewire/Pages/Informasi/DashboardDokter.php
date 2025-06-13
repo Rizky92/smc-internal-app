@@ -12,7 +12,7 @@ class DashboardDokter extends Component
 
     public function mount()
     {
-        $this->collection = Jadwal::with(['dokter', 'poliklinik'])->whereHas('dokter', function ($query) {
+        $this->collection = Jadwal::with(['dokter.cutiAktif', 'poliklinik'])->whereHas('dokter', function ($query) {
             $query->where('status', '1');
         })
         ->orderBy('hari_kerja')
