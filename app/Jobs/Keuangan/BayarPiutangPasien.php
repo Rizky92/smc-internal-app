@@ -176,8 +176,6 @@ class BayarPiutangPasien implements ShouldQueue
 
                 tracker_start('mysql_sik');
 
-                $this->noJurnal = Jurnal::noJurnalBaru($this->tglBayar);
-
                 $this->jurnal = Jurnal::catat(
                     $this->noRawat,
                     sprintf('BAYAR PIUTANG TAGIHAN %s, OLEH %s', $this->noTagihan, $this->userId),
@@ -186,24 +184,22 @@ class BayarPiutangPasien implements ShouldQueue
                         ->reject(fn (array $value): bool => isset($value['kd_rek'], $value['debet'], $value['kredit']) &&
                             (round($value['debet'], 2) === 0.00 && round($value['kredit'], 2) === 0.00)
                         )
-                        ->all(),
-                    'U',
-                    $this->noJurnal
+                        ->all()
                 );
 
                 tracker_end('mysql_sik', $this->userId);
-
-                $tagihan = PenagihanPiutang::find($this->noTagihan);
-
-                $this->masukkanKeJurnalPiutangLunas(
-                    $model->no_rkm_medis,
-                    $model->sisa_piutang,
-                    $model->tgl_tagihan,
-                    $model->tgl_jatuh_tempo,
-                    $tagihan->nip,
-                    $tagihan->nip_menyetujui
-                );
             });
+
+        $tagihan = PenagihanPiutang::find($this->noTagihan);
+
+        $this->masukkanKeJurnalPiutangLunas(
+            $model->no_rkm_medis,
+            $model->sisa_piutang,
+            $model->tgl_tagihan,
+            $model->tgl_jatuh_tempo,
+            $tagihan->nip,
+            $tagihan->nip_menyetujui
+        );
     }
 
     protected function setLunasPiutang(string $noRM, string $namaBayar, string $kodePenjamin): void
@@ -282,7 +278,7 @@ class BayarPiutangPasien implements ShouldQueue
         tracker_start('mysql_smc');
 
         PiutangDilunaskan::create([
-            'no_jurnal'       => $this->noJurnal,
+            'no_jurnal'       => $this->jurnal->no_jurnal,
             'waktu_jurnal'    => carbon($this->jurnal->tgl_jurnal)->setTimeFromTimeString($this->jurnal->jam_jurnal),
             'no_rawat'        => $this->noRawat,
             'no_rkm_medis'    => $noRM,
