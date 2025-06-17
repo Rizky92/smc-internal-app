@@ -44,7 +44,7 @@ Route::get('/dashboard-dokter', Informasi\DashboardDokter::class)->name('dashboa
 
 Route::get('/print-layout', [PrintLayoutController::class, 'index']);
 
-Route::get('/informasi-kamar', Informasi\InformasiKamar::class);
+Route::get('/informasi-kamar', Informasi\InformasiKamar::class)->name('informasi-kamar');
 
 Route::get('/jadwal-dokter', Informasi\JadwalDokter::class);
 
