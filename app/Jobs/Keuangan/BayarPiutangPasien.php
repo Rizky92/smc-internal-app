@@ -25,8 +25,6 @@ class BayarPiutangPasien implements ShouldQueue
 
     private $jurnal = null;
 
-    private string $noJurnal;
-
     private string $noTagihan;
 
     private string $jaminanPiutang;
