@@ -109,84 +109,92 @@ class BayarPiutangPasien implements ShouldQueue
             ])
             ->first();
 
+        $this->jurnal = Jurnal::buatKosong(
+            $this->noRawat,
+            sprintf('BAYAR PIUTANG TAGIHAN %s, OLEH %s', $this->noTagihan, $this->userId),
+            $this->tglBayar,
+        );
+
         if (is_null($model)) {
             return;
         }
 
-        DB::connection('mysql_sik')
-            ->transaction(function () use ($model) {
-                $totalCicilan = $model->sisa_piutang;
+        try{
+            DB::connection('mysql_sik')
+                ->transaction(function () use ($model) {
+                    $totalCicilan = $model->sisa_piutang;
 
-                $detailJurnal = collect();
+                    $detailJurnal = collect();
 
-                if ($this->diskonPiutang > 0) {
-                    $this->diskonPiutang = clamp($this->diskonPiutang, 0, $totalCicilan);
-                    $totalCicilan -= $this->diskonPiutang;
+                    if ($this->diskonPiutang > 0) {
+                        $this->diskonPiutang = clamp($this->diskonPiutang, 0, $totalCicilan);
+                        $totalCicilan -= $this->diskonPiutang;
 
-                    $detailJurnal->push(['kd_rek' => $this->akunDiskonPiutang, 'debet' => $this->diskonPiutang, 'kredit' => 0]);
-                }
+                        $detailJurnal->push(['kd_rek' => $this->akunDiskonPiutang, 'debet' => $this->diskonPiutang, 'kredit' => 0]);
+                    }
 
-                if ($this->tidakTerbayar > 0) {
-                    $this->tidakTerbayar = clamp($this->tidakTerbayar, 0, $totalCicilan);
-                    $totalCicilan -= $this->tidakTerbayar;
+                    if ($this->tidakTerbayar > 0) {
+                        $this->tidakTerbayar = clamp($this->tidakTerbayar, 0, $totalCicilan);
+                        $totalCicilan -= $this->tidakTerbayar;
 
-                    $detailJurnal->push(['kd_rek' => $this->akunTidakTerbayar, 'debet' => $this->tidakTerbayar, 'kredit' => 0]);
-                }
+                        $detailJurnal->push(['kd_rek' => $this->akunTidakTerbayar, 'debet' => $this->tidakTerbayar, 'kredit' => 0]);
+                    }
 
-                $detailJurnal->push(
-                    ['kd_rek' => $this->akun, 'debet' => $totalCicilan, 'kredit' => 0],
-                    ['kd_rek' => $model->kd_rek, 'debet' => 0, 'kredit' => ($totalCicilan + $this->diskonPiutang + $this->tidakTerbayar)],
-                );
+                    $detailJurnal->push(
+                        ['kd_rek' => $this->akun, 'debet' => $totalCicilan, 'kredit' => 0],
+                        ['kd_rek' => $model->kd_rek, 'debet' => 0, 'kredit' => ($totalCicilan + $this->diskonPiutang + $this->tidakTerbayar)],
+                    );
 
-                tracker_start('mysql_sik');
+                    tracker_start('mysql_sik');
 
-                BayarPiutang::insert([
-                    'tgl_bayar'             => $this->tglBayar,
-                    'no_rkm_medis'          => $model->no_rkm_medis,
-                    'catatan'               => sprintf('diverifikasi oleh %s', $this->userId),
-                    'no_rawat'              => $this->noRawat,
-                    'kd_rek'                => $this->akun,
-                    'kd_rek_kontra'         => $model->kd_rek,
-                    'besar_cicilan'         => $totalCicilan,
-                    'diskon_piutang'        => $this->diskonPiutang,
-                    'kd_rek_diskon_piutang' => $this->akunDiskonPiutang,
-                    'tidak_terbayar'        => $this->tidakTerbayar,
-                    'kd_rek_tidak_terbayar' => $this->akunTidakTerbayar,
-                ]);
-
-                PiutangPasienDetail::query()
-                    ->where('no_rawat', $this->noRawat)
-                    ->where('nama_bayar', $model->nama_bayar)
-                    ->where('kd_pj', $model->kd_pj_tagihan)
-                    ->update([
-                        'sisapiutang' => $model->sisa_piutang - (
-                            $totalCicilan +
-                            $this->diskonPiutang +
-                            $this->tidakTerbayar
-                        ),
+                    BayarPiutang::insert([
+                        'tgl_bayar'             => $this->tglBayar,
+                        'no_rkm_medis'          => $model->no_rkm_medis,
+                        'catatan'               => sprintf('diverifikasi oleh %s', $this->userId),
+                        'no_rawat'              => $this->noRawat,
+                        'kd_rek'                => $this->akun,
+                        'kd_rek_kontra'         => $model->kd_rek,
+                        'besar_cicilan'         => $totalCicilan,
+                        'diskon_piutang'        => $this->diskonPiutang,
+                        'kd_rek_diskon_piutang' => $this->akunDiskonPiutang,
+                        'tidak_terbayar'        => $this->tidakTerbayar,
+                        'kd_rek_tidak_terbayar' => $this->akunTidakTerbayar,
                     ]);
 
-                tracker_end('mysql_sik', $this->userId);
+                    PiutangPasienDetail::query()
+                        ->where('no_rawat', $this->noRawat)
+                        ->where('nama_bayar', $model->nama_bayar)
+                        ->where('kd_pj', $model->kd_pj_tagihan)
+                        ->update([
+                            'sisapiutang' => $model->sisa_piutang - (
+                                $totalCicilan +
+                                $this->diskonPiutang +
+                                $this->tidakTerbayar
+                            ),
+                        ]);
 
-                $this->setLunasPiutang($model->no_rkm_medis, $model->nama_bayar, $model->kd_pj_tagihan);
+                    tracker_end('mysql_sik', $this->userId);
 
-                $this->setSelesaiPenagihanPiutang($model->kd_rek);
+                    $this->setLunasPiutang($model->no_rkm_medis, $model->nama_bayar, $model->kd_pj_tagihan);
 
-                tracker_start('mysql_sik');
+                    $this->setSelesaiPenagihanPiutang($model->kd_rek);
 
-                $this->jurnal = Jurnal::catat(
-                    $this->noRawat,
-                    sprintf('BAYAR PIUTANG TAGIHAN %s, OLEH %s', $this->noTagihan, $this->userId),
-                    $this->tglBayar,
-                    $detailJurnal
-                        ->reject(fn (array $value): bool => isset($value['kd_rek'], $value['debet'], $value['kredit']) &&
-                            (round($value['debet'], 2) === 0.00 && round($value['kredit'], 2) === 0.00)
-                        )
-                        ->all()
-                );
+                    tracker_start('mysql_sik');
 
-                tracker_end('mysql_sik', $this->userId);
-            });
+                    $this->jurnal->isiDetail(
+                        $detailJurnal
+                            ->reject(fn (array $value): bool => isset($value['kd_rek'], $value['debet'], $value['kredit']) &&
+                                (round($value['debet'], 2) === 0.00 && round($value['kredit'], 2) === 0.00)
+                            )
+                            ->all()
+                    );
+
+                    tracker_end('mysql_sik', $this->userId);
+                });
+        } catch (\Throwable $e) {
+            optional($this->jurnal)->delete();
+            throw $e;
+        }
 
         $tagihan = PenagihanPiutang::find($this->noTagihan);
 

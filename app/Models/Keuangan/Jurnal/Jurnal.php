@@ -246,4 +246,45 @@ class Jurnal extends Model
             return $jurnal->load('detail');
         });
     }
+
+    public static function buatKosong(string $noBukti, string $keterangan, $waktuTransaksi, string $jenis = 'U'): self
+    {
+        return DB::connection('mysql_sik')->transaction(function () use ($noBukti, $keterangan, $waktuTransaksi, $jenis) {
+            if (! $waktuTransaksi instanceof Carbon) {
+                $waktuTransaksi = carbon($waktuTransaksi);
+            }
+
+            if ($waktuTransaksi->isToday()) {
+                $waktuTransaksi = now();
+            }
+
+            $noJurnal = static::noJurnalBaru($waktuTransaksi);
+
+            return static::create([
+                'no_jurnal'  => $noJurnal,
+                'no_bukti'   => $noBukti,
+                'keterangan' => $keterangan,
+                'jenis'      => $jenis,
+                'tgl_jurnal' => $waktuTransaksi->toDateString(),
+                'jam_jurnal' => $waktuTransaksi->format('H:i:s'),
+            ]);
+        });
+    }
+
+    public function isiDetail(array $detail): self
+    {
+        $collection = collect($detail);
+        $debet = round($collection->sum('debet'), 2);
+        $kredit = round($collection->sum('kredit'), 2);
+
+        if ($debet < 0 || $kredit < 0) {
+            throw new \Exception('Debet dan Kredit tidak boleh negatif');
+        }
+
+        throw_if($debet !== $kredit, \App\Exceptions\InequalJournalException::class, $debet, $kredit, $this->no_jurnal);
+
+        $this->detail()->createMany($collection);
+
+        return $this->load('detail');
+    }
 }
