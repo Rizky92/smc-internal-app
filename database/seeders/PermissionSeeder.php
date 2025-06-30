@@ -25,6 +25,8 @@ class PermissionSeeder extends Seeder
         DB::connection('mysql_smc')->table('model_has_permissions')->truncate();
         DB::connection('mysql_smc')->table('role_has_permissions')->truncate();
 
+        Permission::create(['name' => 'admission.antrean-onsite.read']);
+
         Permission::create(['name' => 'perawatan.daftar-pasien-ranap.read']);
         Permission::create(['name' => 'perawatan.daftar-pasien-ranap.update-harga-kamar']);
         Permission::create(['name' => 'perawatan.laporan-pasien-ranap.read']);

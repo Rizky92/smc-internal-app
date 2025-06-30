@@ -542,6 +542,23 @@ class Menu
                 ],
             ],
             [
+                'name'              => 'Admission',
+                'icon'              => 'far fa-circle',
+                'type'              => 'dropdown',
+                'hasAnyPermissions' => $user->canAny([
+                    'admission.antrean-onsite.read',
+                ]),
+                'items'             => [
+                    [
+                        'name'              => 'Antrean Onsite',
+                        'url'               => route('admin.admission.antrean-onsite'),
+                        'icon'              => 'fas fa-user-md',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('admission.antrean-onsite.read'),
+                    ],
+                ],
+            ],
+            [
                 'name'              => 'Manajemen User',
                 'url'               => route('admin.manajemen-user'),
                 'icon'              => 'fas fa-users',

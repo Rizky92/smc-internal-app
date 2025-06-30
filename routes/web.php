@@ -9,6 +9,7 @@ use App\Http\Controllers\PrintLayoutController;
 use App\Livewire\Antrean;
 use App\Livewire\AntreanPintu;
 use App\Livewire\Pages\Admin;
+use App\Livewire\Pages\Admission;
 use App\Livewire\Pages\Antrean\AntreanPerPintu;
 use App\Livewire\Pages\Antrean\AntreanPoli;
 use App\Livewire\Pages\Antrian;
@@ -337,6 +338,14 @@ Route::prefix('admin')
                 Route::get('stok-darurat', Logistik\StokDaruratLogistik::class)
                     ->name('stok-darurat')
                     ->middleware('can:logistik.stok-darurat.read');
+            });
+
+        Route::prefix('admission')
+            ->as('admission.')
+            ->group(function () {
+                Route::get('antrean-onsite', Admission\AntreanOnsite::class)
+                    ->name('antrean-onsite')
+                    ->middleware('can:admission.antrean-onsite.read');
             });
 
         Route::middleware('role:'.config('permission.superadmin_name'))

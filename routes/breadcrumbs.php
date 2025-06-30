@@ -277,6 +277,11 @@ Breadcrumbs::for('admin.logistik', function (Trail $trail): void {
     $trail->push('Logistik');
 });
 
+Breadcrumbs::for('admin.admission', function (Trail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Admission');
+});
+
 Breadcrumbs::for('admin.logistik.input-minmax-stok', function (Trail $trail): void {
     $trail->parent('admin.logistik');
     $trail->push('Input Minmax Stok', route('admin.logistik.input-minmax-stok'));
@@ -285,6 +290,11 @@ Breadcrumbs::for('admin.logistik.input-minmax-stok', function (Trail $trail): vo
 Breadcrumbs::for('admin.logistik.stok-darurat', function (Trail $trail): void {
     $trail->parent('admin.logistik');
     $trail->push('Stok Darurat', route('admin.logistik.stok-darurat'));
+});
+
+Breadcrumbs::for('admin.admission.antrean-onsite', function (Trail $trail): void {
+    $trail->parent('admin.admission');
+    $trail->push('Antrean Onsite', route('admin.admission.antrean-onsite'));
 });
 
 Breadcrumbs::for('admin.manajemen-user', function (Trail $trail): void {
