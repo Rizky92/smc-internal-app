@@ -500,6 +500,7 @@ class Menu
                 'type'              => 'dropdown',
                 'hasAnyPermissions' => $user->canAny([
                     'antrean.manajemen-pintu.read',
+                    'antrean.antrean-onsite.read',
                 ]),
                 'items'             => [
                     [
@@ -508,6 +509,13 @@ class Menu
                         'icon'              => 'fas fa-door-open',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('antrean.manajemen-pintu.read'),
+                    ],
+                    [
+                        'name'              => 'Antrean Onsite',
+                        'url'               => route('admin.antrean.antrean-onsite'),
+                        'icon'              => 'fas fa-list-ol',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('antrean.antrean-onsite.read'),
                     ],
                 ],
             ],
@@ -538,23 +546,6 @@ class Menu
                         'icon'              => 'fas fa-user-md',
                         'type'              => 'link',
                         'hasAnyPermissions' => true,
-                    ],
-                ],
-            ],
-            [
-                'name'              => 'Admission',
-                'icon'              => 'far fa-circle',
-                'type'              => 'dropdown',
-                'hasAnyPermissions' => $user->canAny([
-                    'admission.antrean-onsite.read',
-                ]),
-                'items'             => [
-                    [
-                        'name'              => 'Antrean Onsite',
-                        'url'               => route('admin.admission.antrean-onsite'),
-                        'icon'              => 'fas fa-user-md',
-                        'type'              => 'link',
-                        'hasAnyPermissions' => $user->can('admission.antrean-onsite.read'),
                     ],
                 ],
             ],

@@ -25,8 +25,6 @@ class PermissionSeeder extends Seeder
         DB::connection('mysql_smc')->table('model_has_permissions')->truncate();
         DB::connection('mysql_smc')->table('role_has_permissions')->truncate();
 
-        Permission::create(['name' => 'admission.antrean-onsite.read']);
-
         Permission::create(['name' => 'perawatan.daftar-pasien-ranap.read']);
         Permission::create(['name' => 'perawatan.daftar-pasien-ranap.update-harga-kamar']);
         Permission::create(['name' => 'perawatan.laporan-pasien-ranap.read']);
@@ -108,6 +106,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'antrean.manajemen-pintu.read']);
         Permission::create(['name' => 'antrean.manajemen-pintu.update']);
         Permission::create(['name' => 'antrean.manajemen-pintu.delete']);
+        Permission::create(['name' => 'antrean.antrean-onsite.read']);
 
         // Superadmin role name, bypasses all permissions
         $superadminRole = Role::create(['name' => config('permission.superadmin_name')]);

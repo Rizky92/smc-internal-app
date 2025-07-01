@@ -315,6 +315,10 @@ Route::prefix('admin')
                 Route::get('manajemen-pintu', Aplikasi\ManajemenPintu::class)
                     ->name('manajemen-pintu')
                     ->middleware('can:antrean.manajemen-pintu.read');
+
+                Route::get('antrean-onsite', Admission\AntreanOnsite::class)
+                    ->name('antrean-onsite')
+                    ->middleware('can:antrean.antrean-onsite.read');
             });
 
         Route::prefix('informasi')
@@ -338,14 +342,6 @@ Route::prefix('admin')
                 Route::get('stok-darurat', Logistik\StokDaruratLogistik::class)
                     ->name('stok-darurat')
                     ->middleware('can:logistik.stok-darurat.read');
-            });
-
-        Route::prefix('admission')
-            ->as('admission.')
-            ->group(function () {
-                Route::get('antrean-onsite', Admission\AntreanOnsite::class)
-                    ->name('antrean-onsite')
-                    ->middleware('can:admission.antrean-onsite.read');
             });
 
         Route::middleware('role:'.config('permission.superadmin_name'))
