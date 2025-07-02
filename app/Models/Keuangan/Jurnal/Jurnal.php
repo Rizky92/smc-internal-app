@@ -183,22 +183,22 @@ class Jurnal extends Model
     public static function noJurnalBaru($date): string
     {
         $date = carbon($date)->format('Ymd');
-        $prefix = 'JR' . $date;
 
-        return DB::connection('mysql_sik')->transaction(function () use ($prefix) {
-            $noJurnalTerakhir = static::query()
-                ->where('no_jurnal', 'like', $prefix . '%')
-                ->lockForUpdate()
-                ->orderBy('no_jurnal', 'desc')
-                ->value('no_jurnal');
+        $index = 1;
 
-            $index = 1;
-            if ($noJurnalTerakhir) {
-                $index += (int) substr($noJurnalTerakhir, -6);
-            }
+        $noJurnalTerakhir = static::query()
+            ->whereRaw('no_jurnal like ?', [str($date)->wrap('JR', '%')->value()])
+            ->orderBy('no_jurnal', 'desc')
+            ->value('no_jurnal');
 
-            return $prefix . str_pad($index, 6, '0', STR_PAD_LEFT);
-        });
+        if ($noJurnalTerakhir) {
+            $index += str($noJurnalTerakhir)->substr(-6)->toInt();
+        }
+
+        return str('JR')
+            ->append($date)
+            ->append(Str::padLeft((string) $index, 6, '0'))
+            ->value();
     }
 
     /**
@@ -209,82 +209,39 @@ class Jurnal extends Model
      */
     public static function catat(string $noBukti, string $keterangan, $waktuTransaksi, array $detail, string $jenis = 'U'): ?self
     {
-        return DB::connection('mysql_sik')->transaction(function () use ($noBukti, $keterangan, $waktuTransaksi, $detail, $jenis) {
-            if (! $waktuTransaksi instanceof Carbon) {
-                $waktuTransaksi = carbon($waktuTransaksi);
-            }
+        if (! $waktuTransaksi instanceof Carbon) {
+            $waktuTransaksi = carbon($waktuTransaksi);
+        }
 
-            if ($waktuTransaksi->isToday()) {
-                $waktuTransaksi = now();
-            }
+        if ($waktuTransaksi->isToday()) {
+            $waktuTransaksi = now();
+        }
 
-            $noJurnal = static::noJurnalBaru($waktuTransaksi);
+        $noJurnal = static::noJurnalBaru($waktuTransaksi);
 
-            $detail = collect($detail);
+        $detail = collect($detail);
 
-            [$debet, $kredit] = [round($detail->sum('debet'), 2), round($detail->sum('kredit'), 2)];
+        [$debet, $kredit] = [round($detail->sum('debet'), 2), round($detail->sum('kredit'), 2)];
 
-            if ($debet < 0 || $kredit < 0) {
-                throw new \Exception('Debet dan Kredit tidak sama..!!');
-            }
+        if ($debet < 0 || $kredit < 0) {
+            throw new \Exception('Debet dan Kredit tidak sama..!!');
+        }
 
-            throw_if($debet !== $kredit, 'App\Exceptions\InequalJournalException', $debet, $kredit, $noJurnal);
+        throw_if($debet !== $kredit, 'App\Exceptions\InequalJournalException', $debet, $kredit, $noJurnal);
 
-            $jurnal = static::create([
-                'no_jurnal'  => $noJurnal,
-                'no_bukti'   => $noBukti,
-                'keterangan' => $keterangan,
-                'jenis'      => $jenis,
-                'tgl_jurnal' => $waktuTransaksi->toDateString(),
-                'jam_jurnal' => $waktuTransaksi->format('H:i:s'),
-            ]);
+        $jurnal = static::create([
+            'no_jurnal'  => $noJurnal,
+            'no_bukti'   => $noBukti,
+            'keterangan' => $keterangan,
+            'jenis'      => $jenis,
+            'tgl_jurnal' => $waktuTransaksi->toDateString(),
+            'jam_jurnal' => $waktuTransaksi->format('H:i:s'),
+        ]);
 
         $detail = $jurnal
             ->detail()
             ->createMany($detail);
 
-            return $jurnal->load('detail');
-        });
-    }
-
-    public static function buatKosong(string $noBukti, string $keterangan, $waktuTransaksi, string $jenis = 'U'): self
-    {
-        return DB::connection('mysql_sik')->transaction(function () use ($noBukti, $keterangan, $waktuTransaksi, $jenis) {
-            if (! $waktuTransaksi instanceof Carbon) {
-                $waktuTransaksi = carbon($waktuTransaksi);
-            }
-
-            if ($waktuTransaksi->isToday()) {
-                $waktuTransaksi = now();
-            }
-
-            $noJurnal = static::noJurnalBaru($waktuTransaksi);
-
-            return static::create([
-                'no_jurnal'  => $noJurnal,
-                'no_bukti'   => $noBukti,
-                'keterangan' => $keterangan,
-                'jenis'      => $jenis,
-                'tgl_jurnal' => $waktuTransaksi->toDateString(),
-                'jam_jurnal' => $waktuTransaksi->format('H:i:s'),
-            ]);
-        });
-    }
-
-    public function isiDetail(array $detail): self
-    {
-        $collection = collect($detail);
-        $debet = round($collection->sum('debet'), 2);
-        $kredit = round($collection->sum('kredit'), 2);
-
-        if ($debet < 0 || $kredit < 0) {
-            throw new \Exception('Debet dan Kredit tidak boleh negatif');
-        }
-
-        throw_if($debet !== $kredit, \App\Exceptions\InequalJournalException::class, $debet, $kredit, $this->no_jurnal);
-
-        $this->detail()->createMany($collection);
-
-        return $this->load('detail');
+        return $jurnal->load('detail');
     }
 }
