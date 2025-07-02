@@ -23,6 +23,10 @@ class BayarPiutangPasien implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    public $tries = 10;
+
+    public $backoff = 2;
+
     private $jurnal = null;
 
     private string $noTagihan;
