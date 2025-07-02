@@ -361,6 +361,11 @@ Breadcrumbs::for('admin.antrean.manajemen-pintu', function (Trail $trail): void 
     $trail->push('Manajemen Pintu', route('admin.antrean.manajemen-pintu'));
 });
 
+Breadcrumbs::for('admin.antrean.antrean-onsite', function (Trail $trail): void {
+    $trail->parent('admin.antrean');
+    $trail->push('Antrean Onsite', route('admin.antrean.antrean-onsite'));
+});
+
 Breadcrumbs::for('admin.job-cleaner', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Job Cleaner', route('admin.job-cleaner'));

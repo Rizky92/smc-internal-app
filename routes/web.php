@@ -9,6 +9,7 @@ use App\Http\Controllers\PrintLayoutController;
 use App\Livewire\Antrean;
 use App\Livewire\AntreanPintu;
 use App\Livewire\Pages\Admin;
+use App\Livewire\Pages\Admission;
 use App\Livewire\Pages\Antrean\AntreanPerPintu;
 use App\Livewire\Pages\Antrean\AntreanPoli;
 use App\Livewire\Pages\Antrian;
@@ -314,6 +315,10 @@ Route::prefix('admin')
                 Route::get('manajemen-pintu', Aplikasi\ManajemenPintu::class)
                     ->name('manajemen-pintu')
                     ->middleware('can:antrean.manajemen-pintu.read');
+
+                Route::get('antrean-onsite', Admission\AntreanOnsite::class)
+                    ->name('antrean-onsite')
+                    ->middleware('can:antrean.antrean-onsite.read');
             });
 
         Route::prefix('informasi')

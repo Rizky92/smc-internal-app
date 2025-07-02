@@ -500,6 +500,7 @@ class Menu
                 'type'              => 'dropdown',
                 'hasAnyPermissions' => $user->canAny([
                     'antrean.manajemen-pintu.read',
+                    'antrean.antrean-onsite.read',
                 ]),
                 'items'             => [
                     [
@@ -508,6 +509,13 @@ class Menu
                         'icon'              => 'fas fa-door-open',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('antrean.manajemen-pintu.read'),
+                    ],
+                    [
+                        'name'              => 'Antrean Onsite',
+                        'url'               => route('admin.antrean.antrean-onsite'),
+                        'icon'              => 'fas fa-list-ol',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('antrean.antrean-onsite.read'),
                     ],
                 ],
             ],
