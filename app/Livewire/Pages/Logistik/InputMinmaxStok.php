@@ -82,6 +82,9 @@ class InputMinmaxStok extends Component
         //
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         return [

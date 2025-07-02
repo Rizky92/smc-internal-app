@@ -50,12 +50,24 @@
                 <x-slot name="body">
                     @forelse ($this->dataAnggaranBidang as $item)
                         <x-table.tr>
-                            <x-table.td :clickable="$this->bisaTetapkanRKAT()" data-id="{{ $item->id }}">{{ $item->tahun }}</x-table.td>
-                            <x-table.td>{{ optional($item->bidang->parent)->nama ?? $item->bidang->nama }}</x-table.td>
-                            <x-table.td>{{ $item->bidang->nama }}</x-table.td>
-                            <x-table.td>{{ $item->anggaran->nama }}</x-table.td>
-                            <x-table.td>{{ rp($item->nominal_anggaran) }}</x-table.td>
-                            <x-table.td>{{ $item->created_at->format('Y-m-d') }}</x-table.td>
+                            <x-table.td :clickable="$this->bisaTetapkanRKAT()" data-id="{{ $item->id }}">
+                                {{ $item->tahun }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ optional($item->bidang->parent)->nama ?? $item->bidang->nama }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->bidang->nama }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->anggaran->nama }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ rp($item->nominal_anggaran) }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->created_at->toDateString() }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="6" padding />

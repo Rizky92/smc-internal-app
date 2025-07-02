@@ -29,7 +29,7 @@ Breadcrumbs::for('admin.perawatan.laporan-transaksi-gantung', function (Trail $t
 
 Breadcrumbs::for('admin.perawatan.laporan-hasil-pemeriksaan', function (Trail $trail): void {
     $trail->parent('admin.perawatan');
-    $trail->push('Laporan Hasil Pemeriksaan', route('admin.perawatan.laporan-hasil-pemeriksaan'));
+    $trail->push('Laporan Hasil MCU', route('admin.perawatan.laporan-hasil-pemeriksaan'));
 });
 
 Breadcrumbs::for('admin.lab', function (Trail $trail): void {
@@ -147,9 +147,29 @@ Breadcrumbs::for('admin.keuangan.posting-jurnal', function (Trail $trail): void 
     $trail->push('Posting Jurnal', route('admin.keuangan.posting-jurnal'));
 });
 
-Breadcrumbs::for('admin.keuangan.laporan-faktur-pajak', function (Trail $trail): void {
+Breadcrumbs::for('admin.keuangan.laporan-faktur-pajak-bpjs', function (Trail $trail): void {
     $trail->parent('admin.keuangan');
-    $trail->push('Item Billing Pasien', route('admin.keuangan.laporan-faktur-pajak'));
+    $trail->push('Faktur Pajak BPJS', route('admin.keuangan.laporan-faktur-pajak-bpjs'));
+});
+
+Breadcrumbs::for('admin.keuangan.laporan-faktur-pajak-umum', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('Faktur Pajak UMUM', route('admin.keuangan.laporan-faktur-pajak-umum'));
+});
+
+Breadcrumbs::for('admin.keuangan.laporan-faktur-pajak-asper', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('Faktur Pajak AS/PER', route('admin.keuangan.laporan-faktur-pajak-asper'));
+});
+
+Breadcrumbs::for('admin.keuangan.igd-ke-rawat-inap', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('Pasien IGD Ranap', route('admin.keuangan.igd-ke-rawat-inap'));
+});
+
+Breadcrumbs::for('admin.keuangan.obat-ralan-ke-ranap', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('Obat Rawat Jalan Ke Rawat Inap', route('admin.keuangan.obat-ralan-ke-ranap'));
 });
 
 Breadcrumbs::for('admin.farmasi', function (Trail $trail): void {
@@ -339,6 +359,11 @@ Breadcrumbs::for('admin.antrean', function (Trail $trail): void {
 Breadcrumbs::for('admin.antrean.manajemen-pintu', function (Trail $trail): void {
     $trail->parent('admin.antrean');
     $trail->push('Manajemen Pintu', route('admin.antrean.manajemen-pintu'));
+});
+
+Breadcrumbs::for('admin.antrean.antrean-onsite', function (Trail $trail): void {
+    $trail->parent('admin.antrean');
+    $trail->push('Antrean Onsite', route('admin.antrean.antrean-onsite'));
 });
 
 Breadcrumbs::for('admin.job-cleaner', function (Trail $trail): void {

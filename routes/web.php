@@ -6,7 +6,12 @@ use App\Http\Controllers\Auth\LogoutOtherSessionsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PrintLayoutController;
+use App\Livewire\Antrean;
+use App\Livewire\AntreanPintu;
 use App\Livewire\Pages\Admin;
+use App\Livewire\Pages\Admission;
+use App\Livewire\Pages\Antrean\AntreanPerPintu;
+use App\Livewire\Pages\Antrean\AntreanPoli;
 use App\Livewire\Pages\Antrian;
 use App\Livewire\Pages\Aplikasi;
 use App\Livewire\Pages\Farmasi;
@@ -18,7 +23,6 @@ use App\Livewire\Pages\Logistik;
 use App\Livewire\Pages\Perawatan;
 use App\Livewire\Pages\RekamMedis;
 use App\Livewire\Pages\User;
-use App\Models\Perawatan\Poliklinik;
 use Illuminate\Support\Facades\Route;
 use InfyOm\RoutesExplorer\RoutesExplorer;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
@@ -36,15 +40,16 @@ use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 
 Route::get('/', HomeController::class);
 
-Route::get('/antrean', App\Livewire\Antrean::class)->name('antrean');
-Route::get('/antrean-pintu', App\Livewire\AntreanPintu::class)->name('antrean-pintu');
-Route::get('/antrean/{kd_poli}', App\Livewire\Pages\Antrean\AntreanPoli::class)->name('antrean-poli');
-Route::get('/antrean-per-pintu/{kd_pintu}', App\Livewire\Pages\Antrean\AntreanPerPintu::class)->name('antrean-per-pintu');
+Route::get('/antrean', Antrean::class)->name('antrean');
+Route::get('/antrean-pintu', AntreanPintu::class)->name('antrean-pintu');
+Route::get('/antrean/{kd_poli}', AntreanPoli::class)->name('antrean-poli');
+Route::get('/antrean-per-pintu/{kd_pintu}', AntreanPerPintu::class)->name('antrean-per-pintu');
 Route::get('/display-jadwal-dokter', Informasi\DisplayJadwalDokter::class);
+Route::get('/dashboard-dokter', Informasi\DashboardDokter::class)->name('dashboard-dokter');
 
 Route::get('/print-layout', [PrintLayoutController::class, 'index']);
 
-Route::get('/informasi-kamar', Informasi\InformasiKamar::class);
+Route::get('/informasi-kamar', Informasi\InformasiKamar::class)->name('informasi-kamar');
 
 Route::get('/jadwal-dokter', Informasi\JadwalDokter::class);
 
@@ -103,7 +108,7 @@ Route::prefix('admin')
                     ->name('laporan-transaksi-gantung')
                     ->middleware('can:perawatan.laporan-transaksi-gantung.read');
 
-                Route::get('laporan-hasil-pemeriksaan', Perawatan\LaporanHasilPemeriksaan::class)
+                Route::get('laporan-hasil-pemeriksaan', Perawatan\LaporanHasilMCU::class)
                     ->name('laporan-hasil-pemeriksaan')
                     ->middleware('can:perawatan.laporan-hasil-pemeriksaan.read');
             });
@@ -198,14 +203,30 @@ Route::prefix('admin')
                 Route::get('posting-jurnal', Keuangan\JurnalPosting::class)
                     ->name('posting-jurnal')
                     ->middleware('can:keuangan.posting-jurnal.read');
-                
+
                 Route::get('cetak-posting-jurnal', Keuangan\Cetak\HasilPostingJurnal::class)
                     ->name('cetak-posting-jurnal')
                     ->middleware('can:keuangan.posting-jurnal.read');
 
-                Route::get('laporan-faktur-pajak', Keuangan\LaporanFakturPajak::class)
-                    ->name('laporan-faktur-pajak')
+                Route::get('laporan-faktur-pajak-bpjs', Keuangan\LaporanFakturPajakBPJS::class)
+                    ->name('laporan-faktur-pajak-bpjs')
                     ->middleware('can:keuangan.laporan-faktur-pajak.read');
+
+                Route::get('laporan-faktur-pajak-asper', Keuangan\LaporanFakturPajakAsuransiPerusahaan::class)
+                    ->name('laporan-faktur-pajak-asper')
+                    ->middleware('can:keuangan.laporan-faktur-pajak.read');
+
+                Route::get('laporan-faktur-pajak-umum', Keuangan\LaporanFakturPajakUmum::class)
+                    ->name('laporan-faktur-pajak-umum')
+                    ->middleware('can:keuangan.laporan-faktur-pajak.read');
+
+                Route::get('igd-ke-rawat-inap', Keuangan\IGDKeRawatInap::class)
+                    ->name('igd-ke-rawat-inap')
+                    ->middleware('can:keuangan.igd-ke-rawat-inap.read');
+
+                Route::get('obat-ralan-ke-ranap', Keuangan\ObatRalanKeRanap::class)
+                    ->name('obat-ralan-ke-ranap')
+                    ->middleware('can:keuangan.obat-ralan-ke-ranap.read');
             });
 
         Route::prefix('farmasi')
@@ -290,10 +311,14 @@ Route::prefix('admin')
 
         Route::prefix('antrean')
             ->as('antrean.')
-            ->group(function() {
+            ->group(function () {
                 Route::get('manajemen-pintu', Aplikasi\ManajemenPintu::class)
                     ->name('manajemen-pintu')
                     ->middleware('can:antrean.manajemen-pintu.read');
+
+                Route::get('antrean-onsite', Admission\AntreanOnsite::class)
+                    ->name('antrean-onsite')
+                    ->middleware('can:antrean.antrean-onsite.read');
             });
 
         Route::prefix('informasi')

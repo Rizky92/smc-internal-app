@@ -180,13 +180,14 @@ return [
     */
 
     'extra' => [
-        \Illuminate\Support\Facades\Session::class => \Illuminate\Session\Store::class,
-        \Illuminate\Contracts\View\View::class => \Livewire\Macros\ViewMacros::class,
-        \Illuminate\View\View::class => \Livewire\Macros\ViewMacros::class,
-        \Illuminate\Support\Arr::class => \App\Support\CustomArr::class,
-        \Illuminate\Support\Collection::class => \App\Support\CustomCollections::class,
-        \Illuminate\Support\Str::class => \App\Support\CustomStr::class,
-        \Illuminate\Support\Stringable::class => \App\Support\CustomStringable::class,
+        \Illuminate\Contracts\View\View::class       => \Livewire\Macros\ViewMacros::class,
+        \Illuminate\Database\Eloquent\Builder::class => \App\Support\MixinEloquentBuilder::class,
+        \Illuminate\Database\Query\Builder::class    => \App\Support\MixinQueryBuilder::class,
+        \Illuminate\Support\Arr::class               => \App\Support\MixinArr::class,
+        \Illuminate\Support\Collection::class        => \App\Support\MixinCollections::class,
+        \Illuminate\Support\Str::class               => \App\Support\MixinStr::class,
+        \Illuminate\Support\Stringable::class        => \App\Support\MixinStringable::class,
+        \Illuminate\View\View::class                 => \Livewire\Macros\ViewMacros::class,
     ],
 
     'magic' => [
@@ -309,7 +310,22 @@ return [
     | name of the Relationship, e.g. `'relationName' => RelationShipClass::class`.
     |
     */
-    'additional_relation_types' => [],
+    'additional_relation_types' => [
+        'compositeBelongsTo'         => \Reedware\LaravelCompositeRelations\CompositeBelongsTo::class,
+        'compositeHasMany'           => \Reedware\LaravelCompositeRelations\CompositeHasMany::class,
+        'compositeHasOne'            => \Reedware\LaravelCompositeRelations\CompositeHasOne::class,
+        'compositeHasOneOrMany'      => \Reedware\LaravelCompositeRelations\CompositeHasOneOrMany::class,
+        'hasOneDeep'                 => \Staudenmeir\EloquentHasManyDeep\HasOneDeep::class,
+        'hasManyDeep'                => \Staudenmeir\EloquentHasManyDeep\HasManyDeep::class,
+        'belongsToThrough'           => \Znck\Eloquent\Relations\BelongsToThrough::class,
+        'ancestors'                  => \Staudenmeir\LaravelAdjacencyList\Eloquent\Relations\Ancestors::class,
+        'belongsToManyOfDescendants' => \Staudenmeir\LaravelAdjacencyList\Eloquent\Relations\BelongsToManyOfDescendants::class,
+        'bloodline'                  => \Staudenmeir\LaravelAdjacencyList\Eloquent\Relations\Bloodline::class,
+        'descendants'                => \Staudenmeir\LaravelAdjacencyList\Eloquent\Relations\Descendants::class,
+        'hasManyOfDescendants'       => \Staudenmeir\LaravelAdjacencyList\Eloquent\Relations\HasManyOfDescendants::class,
+        'rootAncestor'               => \Staudenmeir\LaravelAdjacencyList\Eloquent\Relations\RootAncestor::class,
+        'siblings'                   => \Staudenmeir\LaravelAdjacencyList\Eloquent\Relations\Siblings::class,
+    ],
 
     /*
     |--------------------------------------------------------------------------

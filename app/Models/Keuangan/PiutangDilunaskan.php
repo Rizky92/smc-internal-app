@@ -88,26 +88,26 @@ class PiutangDilunaskan extends Model
         $latest = static::query()->latest('waktu_jurnal')->value('waktu_jurnal') ?? '2022-10-30 23:59:59.999';
 
         $sqlSelect = <<<'SQL'
-jurnal.no_jurnal,
-concat(jurnal.tgl_jurnal, ' ', jurnal.jam_jurnal) as waktu_jurnal,
-detail_penagihan_piutang.no_rawat,
-bayar_piutang.no_rkm_medis,
-penagihan_piutang.no_tagihan,
-penagihan_piutang.kd_pj as kd_pj_tagihan,
-detail_piutang_pasien.kd_pj,
-penagihan_piutang.catatan,
-detail_piutang_pasien.totalpiutang,
-bayar_piutang.besar_cicilan,
-penagihan_piutang.tanggal as tgl_tagihan,
-penagihan_piutang.tanggaltempo as tgl_jatuhtempo,
-bayar_piutang.tgl_bayar,
-bayar_piutang.kd_rek,
-rekening.nm_rek,
-bayar_piutang.kd_rek_kontra,
-penagihan_piutang.nip,
-penagihan_piutang.nip_menyetujui,
-jurnal.keterangan
-SQL;
+            jurnal.no_jurnal,
+            concat(jurnal.tgl_jurnal, ' ', jurnal.jam_jurnal) as waktu_jurnal,
+            detail_penagihan_piutang.no_rawat,
+            bayar_piutang.no_rkm_medis,
+            penagihan_piutang.no_tagihan,
+            penagihan_piutang.kd_pj as kd_pj_tagihan,
+            detail_piutang_pasien.kd_pj,
+            penagihan_piutang.catatan,
+            detail_piutang_pasien.totalpiutang,
+            bayar_piutang.besar_cicilan,
+            penagihan_piutang.tanggal as tgl_tagihan,
+            penagihan_piutang.tanggaltempo as tgl_jatuhtempo,
+            bayar_piutang.tgl_bayar,
+            bayar_piutang.kd_rek,
+            rekening.nm_rek,
+            bayar_piutang.kd_rek_kontra,
+            penagihan_piutang.nip,
+            penagihan_piutang.nip_menyetujui,
+            jurnal.keterangan
+            SQL;
 
         Jurnal::query()
             ->selectRaw($sqlSelect)
@@ -176,11 +176,11 @@ SQL;
         string $berdasarkanTgl = 'jurnal'
     ): Builder {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $filterTgl = [
@@ -200,7 +200,7 @@ SQL;
             penagih.nama nama_penagih,
             penyetuju.nama nama_penyetuju,
             pemvalidasi.nama nama_pemvalidasi
-        SQL;
+            SQL;
 
         $this->addSearchConditions([
             'piutang_dilunaskan.no_jurnal',

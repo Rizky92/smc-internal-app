@@ -87,5 +87,6 @@
     },
     "prettier.documentSelectors": [
         "**/*.blade.php"
-    ]
+    ],
+    "composer.diagnosticsEnabled": false
 }

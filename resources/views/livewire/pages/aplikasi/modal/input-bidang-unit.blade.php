@@ -14,6 +14,7 @@
             })
         </script>
     @endpush
+
     @php($isUpdating = $bidangId !== -1)
     <x-modal id="modal-input-bidang-unit" :title="$isUpdating ? 'Edit Bidang' : 'Tambah Bidang Baru'" livewire centered>
         <x-slot name="body" class="p-0" style="overflow-x: hidden">
@@ -25,13 +26,7 @@
                     </div>
                     <div class="form-group mt-3">
                         <label for="parent-bidang">Sub-bidang dari:</label>
-                        <x-form.select
-                            model="parentId"
-                            :options="$this->parentBidang"
-                            placeholder="-"
-                            placeholderValue="-1"
-                            width="full-width"
-                        />
+                        <x-form.select model="parentId" :options="$this->parentBidang" placeholder="-" placeholderValue="-1" width="full-width" />
                     </div>
                 </x-row-col>
             </form>
@@ -39,7 +34,12 @@
         <x-slot name="footer" class="justify-content-start">
             <x-button size="sm" variant="danger" data-dismiss="modal" id="hapusdata" title="Hapus" icon="fas fa-trash" wire:click="delete" />
             <x-button size="sm" class="ml-auto" data-dismiss="modal" id="batalsimpan" title="Batal" />
-            <x-button size="sm" variant="primary" type="submit" class="ml-2" id="simpandata" title="Simpan" icon="fas fa-save" form="form-input-bidang-unit" />
+            <div wire:target="create, update" wire:loading.remove>
+                <x-button size="sm" variant="primary" type="submit" class="ml-2" id="simpandata" title="Simpan" icon="fas fa-save" form="form-input-bidang-unit" />
+            </div>
+            <div wire:loading wire:target="create, update" wire:loading.attr="disabled">
+                <x-button size="sm" variant="primary" class="ml-2" title="Menyimpan..." icon="spinner-border spinner-border-sm" disabled />
+            </div>
         </x-slot>
     </x-modal>
 </div>

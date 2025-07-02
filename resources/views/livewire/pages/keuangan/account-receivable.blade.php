@@ -10,7 +10,8 @@
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.label constant-width>Status:</x-filter.label>
-                <x-filter.select model="jenisPerawatan" :options="['semua' => 'Semua', 'ralan' => 'Rawat Jalan', 'ranap' => 'Rawat Inap']" selected="semua" />'
+                <x-filter.select model="jenisPerawatan" :options="['semua' => 'Semua', 'ralan' => 'Rawat Jalan', 'ranap' => 'Rawat Inap']" selected="semua" />
+                '
                 <x-filter.label class="ml-auto">Asuransi Pasien:</x-filter.label>
                 <x-filter.select2 livewire name="jaminanPasien" show-key class="ml-3" :options="$this->penjamin" selected="-" />
             </x-row-col-flex>
@@ -27,7 +28,9 @@
                 </x-row-col-flex>
                 <x-row-col-flex class="mt-2">
                     <x-filter.label constant-width class="font-weight-bold">Dibayar:</x-filter.label>
-                    <x-filter.label class="font-weight-bold">{{ rp($this->totalDibayar) }}</x-filter.label>
+                    <x-filter.label class="font-weight-bold">
+                        {{ rp($this->totalDibayar) }}
+                    </x-filter.label>
                     <x-button variant="primary" size="sm" title="Validasi" icon="fas fa-check" wire:click="validasiPiutang" class="ml-auto" />
                 </x-row-col-flex>
             @endcan
@@ -38,6 +41,7 @@
                     @can('keuangan.account-receivable.validasi-piutang')
                         <x-table.th-checkbox-all livewire id="ar-cb-all" name="validateCheckbox" lookup="ar-id-" method="pilihSemua" />
                     @endcan
+
                     <x-table.th style="width: 15ch" name="no_tagihan" title="No. Tagihan" />
                     <x-table.th style="width: 15ch" name="no_rawat" title="No. Rawat" />
                     <x-table.th name="nm_pasien" title="Pasien" />
@@ -47,6 +51,7 @@
                     @can('keuangan.account-receivable.validasi-piutang')
                         <x-table.th name="diskon_piutang" title="Diskon (Rp)" />
                     @endcan
+
                     <x-table.th name="penjab_pasien" title="Jaminan Pasien" />
                     <x-table.th name="penjab_piutang" title="Jaminan Akun Piutang" />
                     <x-table.th name="catatan" title="Catatan" />
@@ -68,20 +73,32 @@
                             $dataTagihan = implode('_', [$item->no_tagihan, $item->kd_pj_tagihan, $item->no_rawat]);
                             $idDataTagihan = str_replace('/', '', $dataTagihan);
                         @endphp
+
                         <x-table.tr>
                             @can('keuangan.account-receivable.validasi-piutang')
                                 <x-table.td-checkbox
                                     livewire
-                                    model="tagihanDipilih" :id="$idDataTagihan" :key="$dataTagihan . '.selected'" prefix="ar-id-"
-                                    onchange="updateModel(this.checked, 'tagihanDipilih.{{ $dataTagihan }}.diskon_piutang', $('#tagihanDipilih_{{ $idDataTagihan }}_diskon_piutang').attr('placeholder'))"
-                                />
+                                    model="tagihanDipilih"
+                                    :id="$idDataTagihan"
+                                    :key="$dataTagihan . '.selected'"
+                                    prefix="ar-id-"
+                                    onchange="updateModel(this.checked, 'tagihanDipilih.{{ $dataTagihan }}.diskon_piutang', $('#tagihanDipilih_{{ $idDataTagihan }}_diskon_piutang').attr('placeholder'))" />
                             @endcan
-                            <x-table.td>{{ $item->no_tagihan }}</x-table.td>
+
+                            <x-table.td>
+                                {{ $item->no_tagihan }}
+                            </x-table.td>
                             <x-table.td>{{ $item->no_rawat }}</x-table.td>
                             <x-table.td>{{ $item->nm_pasien }}</x-table.td>
-                            <x-table.td>{{ rp($item->total_piutang) }}</x-table.td>
-                            <x-table.td>{{ rp($item->besar_cicilan) }}</x-table.td>
-                            <x-table.td>{{ rp($item->sisa_piutang) }}</x-table.td>
+                            <x-table.td>
+                                {{ rp($item->total_piutang) }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ rp($item->besar_cicilan) }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ rp($item->sisa_piutang) }}
+                            </x-table.td>
                             @can('keuangan.account-receivable.validasi-piutang')
                                 <x-table.td>
                                     <div class="form-group m-0 position-relative">
@@ -91,25 +108,49 @@
                                             style="width: 9rem; height: 1.4rem; padding: 0 0.5rem; position: relative; z-index: 15"
                                             id="tagihanDipilih_{{ $idDataTagihan }}_diskon_piutang"
                                             wire:model.defer="tagihanDipilih.{{ $dataTagihan }}.diskon_piutang"
-                                            placeholder="{{ $item->diskon }}"
-                                        >
+                                            placeholder="{{ $item->diskon }}" />
                                     </div>
                                 </x-table.td>
                             @endcan
-                            <x-table.td>{{ $item->penjab_pasien }}</x-table.td>
-                            <x-table.td>{{ $item->penjab_tagihan }}</x-table.td>
+
+                            <x-table.td>
+                                {{ $item->penjab_pasien }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->penjab_tagihan }}
+                            </x-table.td>
                             <x-table.td>{{ $item->catatan }}</x-table.td>
                             <x-table.td>{{ $item->status }}</x-table.td>
-                            <x-table.td>{{ $item->nama_bayar }}</x-table.td>
-                            <x-table.td>{{ $item->no_rkm_medis }}</x-table.td>
-                            <x-table.td>{{ $item->umur_hari <= 30 ? rp($item->sisa_piutang) : '-' }}</x-table.td>
-                            <x-table.td>{{ between($item->umur_hari, 31, 60, true) ? rp($item->sisa_piutang) : '-' }}</x-table.td>
-                            <x-table.td>{{ between($item->umur_hari, 61, 90, true) ? rp($item->sisa_piutang) : '-' }}</x-table.td>
-                            <x-table.td>{{ $item->umur_hari > 90 ? rp($item->sisa_piutang) : '-' }}</x-table.td>
-                            <x-table.td>{{ $item->kd_rek_tagihan . ' ' . $item->nama_bank }}</x-table.td>
-                            <x-table.td>{{ $item->tgl_tagihan }}</x-table.td>
-                            <x-table.td>{{ $item->tgl_jatuh_tempo }}</x-table.td>
-                            <x-table.td>{{ $item->tgl_bayar ?? '-' }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->nama_bayar }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->no_rkm_medis }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->umur_hari <= 30 ? rp($item->sisa_piutang) : '-' }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ between($item->umur_hari, 31, 60, true) ? rp($item->sisa_piutang) : '-' }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ between($item->umur_hari, 61, 90, true) ? rp($item->sisa_piutang) : '-' }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->umur_hari > 90 ? rp($item->sisa_piutang) : '-' }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->kd_rek_tagihan . ' ' . $item->nama_bank }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->tgl_tagihan }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->tgl_jatuh_tempo }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $item->tgl_bayar ?? '-' }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty :colspan="user()->can('keuangan.account-receivable.validasi-piutang') ? 22 : 20" padding />
@@ -125,6 +166,7 @@
                         @if (user()->can('keuangan.account-receivable.validasi-piutang'))
                             <x-table.th :title="rp(optional($this->dataTotalAccountReceivable)['totalDiskonPiutang'])" />
                         @endif
+
                         <x-table.th colspan="6" />
                         <x-table.th :title="rp(optional(optional($this->dataTotalAccountReceivable)['totalSisaPerPeriode'])->get('periode_0_30'))" />
                         <x-table.th :title="rp(optional(optional($this->dataTotalAccountReceivable)['totalSisaPerPeriode'])->get('periode_31_60'))" />

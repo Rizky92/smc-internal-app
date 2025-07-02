@@ -22,15 +22,21 @@
                 <x-slot name="body">
                     @forelse ($this->dataLaporanPembuatanSOAP as $item)
                         <x-table.tr>
-                            <x-table.td>{{ $item->tgl_perawatan }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->tgl_perawatan }}
+                            </x-table.td>
                             <x-table.td>{{ $item->jam_rawat }}</x-table.td>
                             <x-table.td>{{ $item->no_rawat }}</x-table.td>
                             <x-table.td>{{ $item->nm_pasien }}</x-table.td>
                             <x-table.td>{{ $item->png_jawab }}</x-table.td>
-                            <x-table.td>{{ optional($item->dpjp)->pluck('nm_dokter')->join('; ') }}</x-table.td>
+                            <x-table.td>
+                                {{ optional($item->dpjp)->pluck('nm_dokter')->join('; ') }}
+                            </x-table.td>
                             <x-table.td>{{ $item->alergi }}</x-table.td>
                             <x-table.td>{{ $item->keluhan }}</x-table.td>
-                            <x-table.td>{{ $item->pemeriksaan }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->pemeriksaan }}
+                            </x-table.td>
                             <x-table.td>{{ $item->penilaian }}</x-table.td>
                             <x-table.td>{{ $item->rtl }}</x-table.td>
                             <x-table.td>{{ $item->nip }} {{ $item->nama }}</x-table.td>

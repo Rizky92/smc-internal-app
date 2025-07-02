@@ -3,18 +3,21 @@
 namespace App\Livewire\Pages\Aplikasi\Modal;
 
 use App\Livewire\Concerns\DeferredModal;
+use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Models\Aplikasi\Pintu;
 use App\Models\Kepegawaian\Dokter;
 use App\Models\Perawatan\Poliklinik;
-use Illuminate\Support\Facades\DB;
+use Exception;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class InputPintu extends Component
 {
     use DeferredModal;
+    use Filterable;
     use FlashComponent;
 
     /** @var int */
@@ -118,14 +121,14 @@ class InputPintu extends Component
 
         if ($this->isUpdating()) {
             $this->update();
-            
+
             return;
         }
 
         $this->validate();
 
         try {
-            tracker_start();
+            tracker_start('mysql_smc');
 
             DB::connection('mysql_smc')->transaction(function () {
                 $pintu = Pintu::create([
@@ -137,12 +140,12 @@ class InputPintu extends Component
                 $pintu->dokter()->sync($this->kodeDokter);
             });
 
-            tracker_end();
+            tracker_end('mysql_smc');
 
             $this->dispatchBrowserEvent('data-saved');
             $this->emit('flash.success', 'Data Pintu baru berhasil disimpan!');
             $this->defaultValues();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->dispatchBrowserEvent('data-failed');
             $this->emit('flash.warning', 'Terjadi kegagalan pada saat menyimpan data Pintu!');
             $this->defaultValues();
@@ -174,19 +177,20 @@ class InputPintu extends Component
                 'kd_pintu' => $this->kodePintu,
                 'nm_pintu' => $this->namaPintu,
             ]);
-    
+
             $pintu->poliklinik()->detach();
             $pintu->dokter()->detach();
 
             $pintu->poliklinik()->sync($this->kodePoliklinik);
             $pintu->dokter()->sync($this->kodeDokter);
-    
+
             tracker_end('mysql_smc');
 
             $this->dispatchBrowserEvent('data-saved');
             $this->emit('flash.success', 'Data Pintu berhasil diperbarui!');
             $this->defaultValues();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            tracker_dispose('mysql_smc');
             $this->dispatchBrowserEvent('data-failed');
             $this->emit('flash.warning', 'Terjadi kegagalan pada saat memperbarui data Pintu!');
             $this->defaultValues();
@@ -241,7 +245,7 @@ class InputPintu extends Component
         return $this->pintuId !== -1;
     }
 
-    public function defaultValues(): void
+    protected function defaultValues(): void
     {
         $this->pintuId = -1;
         $this->kodePintu = '';

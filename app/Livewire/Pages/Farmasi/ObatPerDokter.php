@@ -31,8 +31,8 @@ class ObatPerDokter extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'  => ['except' => now()->startOfMonth()->toDateString(), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->endOfMonth()->toDateString(), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -58,15 +58,23 @@ class ObatPerDokter extends Component
 
     protected function defaultValues(): void
     {
-        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->toDateString();
+        $this->tglAkhir = now()->endOfMonth()->toDateString();
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         return [
             fn () => ResepObat::query()
                 ->penggunaanObatPerDokter($this->tglAwal, $this->tglAkhir)
+                ->withCasts([
+                    'biaya_obat' => 'float',
+                    'jml'        => 'float',
+                    'total'      => 'float',
+                ])
                 ->cursor()
                 ->map(fn (ResepObat $model): array => [
                     'no_resep'      => $model->no_resep,
@@ -75,7 +83,9 @@ class ObatPerDokter extends Component
                     'no_rawat'      => $model->no_rawat,
                     'nama_brng'     => $model->nama_brng,
                     'nama'          => $model->nama,
-                    'jml'           => floatval($model->jml),
+                    'biaya_obat'    => $model->biaya_obat,
+                    'jml'           => $model->jml,
+                    'total'         => $model->total,
                     'nm_dokter'     => $model->nm_dokter,
                     'dpjp'          => $model->dpjp,
                     'status'        => str()->title($model->status),
@@ -94,7 +104,9 @@ class ObatPerDokter extends Component
             'Jam',
             'Nama Obat',
             'Kategori',
+            'Harga Obat',
             'Jumlah',
+            'Total',
             'Dokter Peresep',
             'DPJP',
             'Jenis Perawatan',

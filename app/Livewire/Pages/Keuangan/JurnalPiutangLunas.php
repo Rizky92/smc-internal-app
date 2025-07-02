@@ -41,8 +41,8 @@ class JurnalPiutangLunas extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal'      => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir'     => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'      => ['except' => now()->startOfMonth()->toDateString(), 'as' => 'tgl_awal'],
+            'tglAkhir'     => ['except' => now()->endOfMonth()->toDateString(), 'as' => 'tgl_akhir'],
             'kodeRekening' => ['except' => '-', 'as' => 'rekening'],
         ];
     }
@@ -88,10 +88,13 @@ class JurnalPiutangLunas extends Component
     {
         $this->kodeRekening = '-';
         $this->jenisPeriode = 'jurnal';
-        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->toDateString();
+        $this->tglAkhir = now()->endOfMonth()->toDateString();
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         return [
@@ -100,7 +103,7 @@ class JurnalPiutangLunas extends Component
                 ->cursor()
                 ->map(fn (PiutangDilunaskan $model): array => [
                     'no_jurnal'       => $model->no_jurnal,
-                    'waktu_jurnal'    => carbon($model->waktu_jurnal)->format('Y-m-d'),
+                    'waktu_jurnal'    => carbon($model->waktu_jurnal)->toDateString(),
                     'no_rawat'        => $model->no_rawat,
                     'no_rkm_medis'    => $model->no_rkm_medis.' '.$model->nm_pasien.' '."({$model->umur})",
                     'nama_penjamin'   => $model->nama_penjamin,
@@ -108,9 +111,9 @@ class JurnalPiutangLunas extends Component
                     'nik_penagih'     => $model->nik_penagih.' '.$model->nama_penagih,
                     'nik_penyetuju'   => $model->nik_penyetuju.' '.$model->nama_penyetuju,
                     'piutang_dibayar' => floatval($model->piutang_dibayar),
-                    'tgl_penagihan'   => carbon($model->tgl_penagihan)->format('Y-m-d'),
-                    'tgl_jatuh_tempo' => carbon($model->tgl_jatuh_tempo)->format('Y-m-d'),
-                    'tgl_bayar'       => carbon($model->tgl_bayar)->format('Y-m-d'),
+                    'tgl_penagihan'   => carbon($model->tgl_penagihan)->toDateString(),
+                    'tgl_jatuh_tempo' => carbon($model->tgl_jatuh_tempo)->toDateString(),
+                    'tgl_bayar'       => carbon($model->tgl_bayar)->toDateString(),
                     'status'          => $model->status,
                     'nik_validasi'    => $model->nik_validasi.' '.$model->nama_pemvalidasi,
                     'kd_rek'          => $model->kd_rek.' '.$model->nm_rek,

@@ -51,25 +51,25 @@ class PiutangPasien extends Model
     public function scopePiutangBelumLunas(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $penjamin = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
-piutang_pasien.no_rawat,
-piutang_pasien.tgl_piutang,
-piutang_pasien.no_rkm_medis,
-pasien.nm_pasien,
-piutang_pasien.status,
-piutang_pasien.totalpiutang,
-piutang_pasien.uangmuka,
-piutang_pasien.sisapiutang,
-piutang_pasien.tgltempo,
-penjab.png_jawab
-SQL;
+            piutang_pasien.no_rawat,
+            piutang_pasien.tgl_piutang,
+            piutang_pasien.no_rkm_medis,
+            pasien.nm_pasien,
+            piutang_pasien.status,
+            piutang_pasien.totalpiutang,
+            piutang_pasien.uangmuka,
+            piutang_pasien.sisapiutang,
+            piutang_pasien.tgltempo,
+            penjab.png_jawab
+            SQL;
 
         return $query
             ->selectRaw($sqlSelect)
@@ -88,11 +88,11 @@ SQL;
         string $rekening = '112010'
     ): Builder {
         if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
+            $tglAwal = now()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
+            $tglAkhir = now()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -133,11 +133,11 @@ SQL;
         string $penjamin = ''
     ): Builder {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMont()->format('Y-m-d');
+            $tglAkhir = now()->endOfMont()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'

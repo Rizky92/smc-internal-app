@@ -39,22 +39,46 @@
                         <x-table.tr>
                             <x-table.td>{{ $obat->kode_brng }}</x-table.td>
                             <x-table.td>{{ $obat->nama_brng }}</x-table.td>
-                            <x-table.td>{{ $obat->satuan_kecil }}</x-table.td>
+                            <x-table.td>
+                                {{ $obat->satuan_kecil }}
+                            </x-table.td>
                             <x-table.td>{{ $obat->kategori }}</x-table.td>
-                            <x-table.td class="text-right">{{ $obat->stokminimal }}</x-table.td>
-                            <x-table.td class="text-right">{{ $obat->stok_sekarang_ifa }}</x-table.td>
-                            <x-table.td class="text-right">{{ $obat->stok_sekarang_ap }}</x-table.td>
-                            <x-table.td class="text-right">{{ $obat->stok_sekarang_ifi }}</x-table.td>
-                            <x-table.td class="text-right">{{ $obat->stok_sekarang_ifg }}</x-table.td>
-                            <x-table.td class="text-right">{{ $obat->stok_keluar_medis_14_hari }}</x-table.td>
-                            <x-table.td class="text-right">{{ $obat->saran_order }}</x-table.td>
-                            <x-table.td>{{ $obat->nama_industri }}</x-table.td>
+                            <x-table.td class="text-right">
+                                {{ $obat->stokminimal }}
+                            </x-table.td>
+                            <x-table.td class="text-right">
+                                {{ $obat->stok_sekarang_ifa }}
+                            </x-table.td>
+                            <x-table.td class="text-right">
+                                {{ $obat->stok_sekarang_ap }}
+                            </x-table.td>
+                            <x-table.td class="text-right">
+                                {{ $obat->stok_sekarang_ifi }}
+                            </x-table.td>
+                            <x-table.td class="text-right">
+                                {{ $obat->stok_sekarang_ifg }}
+                            </x-table.td>
+                            <x-table.td class="text-right">
+                                {{ $obat->stok_keluar_medis_14_hari }}
+                            </x-table.td>
+                            <x-table.td class="text-right">
+                                {{ $obat->saran_order }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $obat->nama_industri }}
+                            </x-table.td>
                             <x-table.td-money :value="$obat->harga_beli" />
                             <x-table.td-money :value="$obat->harga_beli_total" />
                             <x-table.td-money :value="$obat->harga_beli_terakhir" />
-                            <x-table.td class="text-right">{{ $obat->diskon_terakhir }}</x-table.td>
-                            <x-table.td>{{ $obat->supplier_terakhir }}</x-table.td>
-                            <x-table.td class="text-right">{{ $obat->ke_pasien_14_hari }}</x-table.td>
+                            <x-table.td class="text-right">
+                                {{ $obat->diskon_terakhir }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $obat->supplier_terakhir }}
+                            </x-table.td>
+                            <x-table.td class="text-right">
+                                {{ $obat->ke_pasien_14_hari }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="25" padding />

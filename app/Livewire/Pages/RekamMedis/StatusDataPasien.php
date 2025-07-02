@@ -76,6 +76,9 @@ class StatusDataPasien extends Component
         $this->jenisPerawatan = 'semua';
     }
 
+    /**
+     * @psalm-return array{0: mixed}
+     */
     protected function dataPerSheet(): array
     {
         return [
@@ -91,6 +94,7 @@ class StatusDataPasien extends Component
                     'nm_pasien'      => $model->nm_pasien,
                     'nm_poli'        => $model->nm_poli,
                     'status_lanjut'  => $model->status_lanjut,
+                    'png_jawab'      => $model->png_jawab,
                     'soapie_ralan'   => boolval($model->soapie_ralan) ? 'Ada' : 'Tidak ada',
                     'soapie_ranap'   => boolval($model->soapie_ranap) ? 'Ada' : 'Tidak ada',
                     'resume_ralan'   => boolval($model->resume_ralan) ? 'Ada' : 'Tidak ada',
@@ -119,6 +123,7 @@ class StatusDataPasien extends Component
             'Pasien',
             'Poliklinik',
             'Jenis Perawatan',
+            'Jenis Bayar',
             'S.O.A.P.I.E. Ralan',
             'S.O.A.P.I.E. Ranap',
             'Resume Ralan',

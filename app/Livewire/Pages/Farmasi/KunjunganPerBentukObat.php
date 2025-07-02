@@ -31,12 +31,16 @@ class KunjunganPerBentukObat extends Component
     /** @var string */
     public $jenisKunjungan;
 
+    /** @var "Pagi"|"Siang"|"Malam" */
+    public $shift;
+
     protected function queryString(): array
     {
         return [
             'jenisKunjungan' => ['except' => '', 'as' => 'jenis_kunjungan'],
-            'tglAwal'        => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir'       => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'        => ['except' => now()->startOfMonth()->toDateString(), 'as' => 'tgl_awal'],
+            'tglAkhir'       => ['except' => now()->endOfMonth()->toDateString(), 'as' => 'tgl_akhir'],
+            'shift'          => ['as' => 'shift_kerja'],
         ];
     }
 
@@ -54,7 +58,7 @@ class KunjunganPerBentukObat extends Component
     public function getDataKunjunganResepObatRegularProperty()
     {
         return $this->isDeferred ? [] : ResepObat::query()
-            ->kunjunganResep('umum', $this->tglAwal, $this->tglAkhir)
+            ->kunjunganResep('umum', $this->tglAwal, $this->tglAkhir, $this->shift)
             ->jenisKunjungan($this->jenisKunjungan)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
@@ -64,7 +68,7 @@ class KunjunganPerBentukObat extends Component
     public function getDataKunjunganResepObatRacikanProperty()
     {
         return $this->isDeferred ? [] : ResepObat::query()
-            ->kunjunganResep('racikan', $this->tglAwal, $this->tglAkhir)
+            ->kunjunganResep('racikan', $this->tglAwal, $this->tglAkhir, $this->shift)
             ->jenisKunjungan($this->jenisKunjungan)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
@@ -73,9 +77,10 @@ class KunjunganPerBentukObat extends Component
 
     protected function defaultValues(): void
     {
-        $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
-        $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
+        $this->tglAwal = now()->startOfMonth()->toDateString();
+        $this->tglAkhir = now()->endOfMonth()->toDateString();
         $this->jenisKunjungan = 'semua';
+        $this->shift = 'Pagi';
     }
 
     public function searchData(): void
@@ -106,13 +111,13 @@ class KunjunganPerBentukObat extends Component
 
         return [
             'Obat Regular' => fn () => ResepObat::query()
-                ->kunjunganResep('umum', $this->tglAwal, $this->tglAkhir)
+                ->kunjunganResep('umum', $this->tglAwal, $this->tglAkhir, $this->shift)
                 ->jenisKunjungan($this->jenisKunjungan)
                 ->cursor()
                 ->map($map),
             'Obat Racikan' => fn () => ResepObat::query()
+                ->kunjunganResep('racikan', $this->tglAwal, $this->tglAkhir, $this->shift)
                 ->jenisKunjungan($this->jenisKunjungan)
-                ->kunjunganResep('racikan', $this->tglAwal, $this->tglAkhir)
                 ->cursor()
                 ->map($map),
         ];
