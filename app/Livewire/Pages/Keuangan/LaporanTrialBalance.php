@@ -12,9 +12,6 @@ use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\Rekening;
 use App\Models\Keuangan\RekeningTahun;
 use App\View\Components\BaseLayout;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Fluent;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -57,31 +54,17 @@ class LaporanTrialBalance extends Component
             return [];
         }
 
-        $bulan = carbon($this->tglAwal)->subMonth()->format('Y_m');
+        $semuaRekening = Rekening::query()
+            ->semuaRekening()
+            ->get();
 
-        $semuaRekening = Cache::remember(
-            'semua_rekening',
-            now()->addMonth(),
-            fn (): EloquentCollection => Rekening::query()
-                ->semuaRekening()
-                ->get()
-        );
+        $rekeningPerTahun = RekeningTahun::query()
+            ->where('thn', carbon($this->tglAwal)->year)
+            ->pluck('saldo_awal', 'kd_rek');
 
-        $rekeningPerTahun = Cache::remember(
-            'rekening_tahun',
-            now()->addMonth(),
-            fn (): Collection => RekeningTahun::query()
-                ->where('thn', carbon($this->tglAwal)->year)
-                ->pluck('saldo_awal', 'kd_rek')
-        );
-
-        $saldoBulanSebelumnya = Cache::remember(
-            'saldo_'.$bulan,
-            now()->addWeek(),
-            fn (): Collection => Rekening::query()
-                ->saldoAwalBulanSebelumnya($this->tglAwal)
-                ->pluck('total_transaksi', 'kd_rek')
-        );
+        $saldoBulanSebelumnya = Rekening::query()
+            ->saldoAwalBulanSebelumnya($this->tglAwal)
+            ->pluck('total_transaksi', 'kd_rek');
 
         $trialBalance = Rekening::query()
             ->trialBalancePerTanggal($this->tglAwal, $this->tglAkhir)
@@ -144,15 +127,9 @@ class LaporanTrialBalance extends Component
 
     public function resetCache(): void
     {
-        $bulan = carbon($this->tglAwal)->subMonth()->format('Y_m');
-
-        Cache::forget('saldo_'.$bulan);
-
-        Cache::forget('rekening_tahun');
+        $this->isDeferred = false;
 
         $this->searchData();
-
-        $this->flashSuccess('Rekening berhasil direkalkulasi ulang!');
     }
 
     protected function defaultValues(): void
