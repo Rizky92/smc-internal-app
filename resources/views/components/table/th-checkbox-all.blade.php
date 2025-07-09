@@ -6,6 +6,7 @@
     'lookup' => null,
     'model' => null,
     'method' => null,
+    'uncheckWhen' => null,
 ])
 
 @push('js')
@@ -37,7 +38,7 @@
                 @endif
             })
 
-            $(document).on('clear-selected', e => {
+            $(document).on('{{ $uncheckWhen }}', e => {
                 $('#{{ $id }}').prop('checked', false)
             })
         })

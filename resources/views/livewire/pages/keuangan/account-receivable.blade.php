@@ -39,7 +39,7 @@
             <x-table :sortColumns="$sortColumns" style="width: 200rem" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     @can('keuangan.account-receivable.validasi-piutang')
-                        <x-table.th-checkbox-all livewire id="ar-cb-all" name="validateCheckbox" lookup="ar-id-" method="pilihSemua" />
+                        <x-table.th-checkbox-all livewire id="ar-cb-all" name="validateCheckbox" lookup="ar-id-" method="pilihSemua" uncheck-when="clear-selected" />
                     @endcan
 
                     <x-table.th style="width: 15ch" name="no_tagihan" title="No. Tagihan" />
