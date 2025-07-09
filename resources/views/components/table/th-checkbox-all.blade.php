@@ -37,8 +37,8 @@
                 @endif
             })
 
-            $('#{{ $id }}').on('clear-selected', e => {
-
+            $(document).on('clear-selected', e => {
+                $('#{{ $id }}').prop('checked', false)
             })
         })
     </script>
