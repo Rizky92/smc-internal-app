@@ -82,23 +82,19 @@
                                     :id="$idDataTagihan"
                                     :key="$dataTagihan . '.selected'"
                                     prefix="ar-id-"
-                                    onchange="updateModel(this.checked, 'tagihanDipilih.{{ $dataTagihan }}.diskon_piutang', $('#tagihanDipilih_{{ $idDataTagihan }}_diskon_piutang').attr('placeholder'))" />
+                                    onchange="updateModel(
+                                        this.checked,
+                                        'tagihanDipilih.{{ $dataTagihan }}.diskon_piutang',
+                                        $('#tagihanDipilih_{{ $idDataTagihan }}_diskon_piutang').attr('placeholder')
+                                    )" />
                             @endcan
 
-                            <x-table.td>
-                                {{ $item->no_tagihan }}
-                            </x-table.td>
+                            <x-table.td>{{ $item->no_tagihan }}</x-table.td>
                             <x-table.td>{{ $item->no_rawat }}</x-table.td>
                             <x-table.td>{{ $item->nm_pasien }}</x-table.td>
-                            <x-table.td>
-                                {{ rp($item->total_piutang) }}
-                            </x-table.td>
-                            <x-table.td>
-                                {{ rp($item->besar_cicilan) }}
-                            </x-table.td>
-                            <x-table.td>
-                                {{ rp($item->sisa_piutang) }}
-                            </x-table.td>
+                            <x-table.td>{{ rp($item->total_piutang) }}</x-table.td>
+                            <x-table.td>{{ rp($item->besar_cicilan) }}</x-table.td>
+                            <x-table.td>{{ rp($item->sisa_piutang) }}</x-table.td>
                             @can('keuangan.account-receivable.validasi-piutang')
                                 <x-table.td>
                                     <div class="form-group m-0 position-relative">
@@ -113,44 +109,20 @@
                                 </x-table.td>
                             @endcan
 
-                            <x-table.td>
-                                {{ $item->penjab_pasien }}
-                            </x-table.td>
-                            <x-table.td>
-                                {{ $item->penjab_tagihan }}
-                            </x-table.td>
+                            <x-table.td>{{ $item->penjab_pasien }}</x-table.td>
+                            <x-table.td>{{ $item->penjab_tagihan }}</x-table.td>
                             <x-table.td>{{ $item->catatan }}</x-table.td>
                             <x-table.td>{{ $item->status }}</x-table.td>
-                            <x-table.td>
-                                {{ $item->nama_bayar }}
-                            </x-table.td>
-                            <x-table.td>
-                                {{ $item->no_rkm_medis }}
-                            </x-table.td>
-                            <x-table.td>
-                                {{ $item->umur_hari <= 30 ? rp($item->sisa_piutang) : '-' }}
-                            </x-table.td>
-                            <x-table.td>
-                                {{ between($item->umur_hari, 31, 60, true) ? rp($item->sisa_piutang) : '-' }}
-                            </x-table.td>
-                            <x-table.td>
-                                {{ between($item->umur_hari, 61, 90, true) ? rp($item->sisa_piutang) : '-' }}
-                            </x-table.td>
-                            <x-table.td>
-                                {{ $item->umur_hari > 90 ? rp($item->sisa_piutang) : '-' }}
-                            </x-table.td>
-                            <x-table.td>
-                                {{ $item->kd_rek_tagihan . ' ' . $item->nama_bank }}
-                            </x-table.td>
-                            <x-table.td>
-                                {{ $item->tgl_tagihan }}
-                            </x-table.td>
-                            <x-table.td>
-                                {{ $item->tgl_jatuh_tempo }}
-                            </x-table.td>
-                            <x-table.td>
-                                {{ $item->tgl_bayar ?? '-' }}
-                            </x-table.td>
+                            <x-table.td>{{ $item->nama_bayar }}</x-table.td>
+                            <x-table.td>{{ $item->no_rkm_medis }}</x-table.td>
+                            <x-table.td>{{ $item->umur_hari <= 30 ? rp($item->sisa_piutang) : '-' }}</x-table.td>
+                            <x-table.td>{{ between($item->umur_hari, 31, 60, true) ? rp($item->sisa_piutang) : '-' }}</x-table.td>
+                            <x-table.td>{{ between($item->umur_hari, 61, 90, true) ? rp($item->sisa_piutang) : '-' }}</x-table.td>
+                            <x-table.td>{{ $item->umur_hari > 90 ? rp($item->sisa_piutang) : '-' }}</x-table.td>
+                            <x-table.td>{{ $item->kd_rek_tagihan . ' ' . $item->nama_bank }}</x-table.td>
+                            <x-table.td>{{ $item->tgl_tagihan }}</x-table.td>
+                            <x-table.td>{{ $item->tgl_jatuh_tempo }}</x-table.td>
+                            <x-table.td>{{ $item->tgl_bayar ?? '-' }}</x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty :colspan="user()->can('keuangan.account-receivable.validasi-piutang') ? 22 : 20" padding />

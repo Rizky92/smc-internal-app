@@ -2,9 +2,9 @@
 
 namespace App\Exceptions;
 
-use RuntimeException;
+use Exception;
 
-class InequalJournalException extends RuntimeException
+class EmptyTransactionException extends Exception
 {
     /**
      * @psalm-param numeric $debit
@@ -13,7 +13,7 @@ class InequalJournalException extends RuntimeException
     public function __construct($debit, $credit)
     {
         $message = str(collect(['debit' => $debit, 'credit' => $credit])->toJson())
-            ->prepend('Debit and credit must be equal. ')
+            ->prepend('Empty journal transaction occured during processing. ')
             ->value();
 
         parent::__construct($message);
