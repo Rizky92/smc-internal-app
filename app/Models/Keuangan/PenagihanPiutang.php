@@ -194,7 +194,8 @@ class PenagihanPiutang extends Model
             ->join('akun_piutang', 'detail_piutang_pasien.nama_bayar', 'akun_piutang.nama_bayar')
             ->where('penagihan_piutang.no_tagihan', $noTagihan)
             ->where('penagihan_piutang.kd_pj', $kodePJ)
-            ->where('detail_penagihan_piutang.no_rawat', $noRawat);
+            ->where('detail_penagihan_piutang.no_rawat', $noRawat)
+            ->where('detail_piutang_pasien.sisapiutang', '>', 0);
     }
 
     public function scopeAccountReceivableDipilih(Builder $query, array $tagihanDipilih = []): Builder
