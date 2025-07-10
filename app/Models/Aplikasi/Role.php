@@ -93,9 +93,9 @@ class Role extends Model implements RoleContract
      *
      * @param  string|null  $guardName
      *
-     * @throws RoleDoesNotExist
-     *
      * @psalm-return Builder<static>
+     *
+     * @throws RoleDoesNotExist
      */
     public static function findByName(string $name, $guardName = null): self
     {

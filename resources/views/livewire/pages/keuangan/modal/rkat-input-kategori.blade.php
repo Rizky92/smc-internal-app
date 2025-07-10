@@ -32,7 +32,18 @@
         </x-slot>
         <x-slot name="footer" class="justify-content-start">
             <x-button size="sm" class="ml-auto" data-dismiss="modal" id="batalsimpan" title="Batal" />
-            <x-button size="sm" variant="primary" type="submit" class="ml-2" id="simpandata" title="Simpan" icon="fas fa-save" form="form-input-kategori-rkat" wire:target="create" wire:loading.class="d-none" wire:loading.class.remove="btn" />
+            <x-button
+                size="sm"
+                variant="primary"
+                type="submit"
+                class="ml-2"
+                id="simpandata"
+                title="Simpan"
+                icon="fas fa-save"
+                form="form-input-kategori-rkat"
+                wire:target="create"
+                wire:loading.class="d-none"
+                wire:loading.class.remove="btn" />
             <div wire:loading wire:target="create" wire:loading.attr="disabled">
                 <x-button size="sm" variant="primary" class="ml-2" title="Menyimpan..." icon="spinner-border spinner-border-sm" disabled />
             </div>

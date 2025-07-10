@@ -11,6 +11,7 @@ use App\Livewire\Concerns\MenuTracker;
 use App\Models\Perawatan\Poliklinik;
 use App\Models\Perawatan\RegistrasiPasien;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -36,8 +37,8 @@ class IGDKeRawatInap extends Component
     {
         return [
             'kodePoliklinik' => ['except' => 'IGDK', 'as' => 'poliklinik'],
-            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'tglAwal'        => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir'       => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -46,7 +47,7 @@ class IGDKeRawatInap extends Component
         $this->defaultValues();
     }
 
-    public function getPoliklinikProperty()
+    public function getPoliklinikProperty(): Collection
     {
         return Poliklinik::where('status', '1')
             ->get()

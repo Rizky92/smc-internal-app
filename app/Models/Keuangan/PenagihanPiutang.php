@@ -166,7 +166,7 @@ class PenagihanPiutang extends Model
         if (empty($noTagihan) || empty($kodePJ) || empty($noRawat)) {
             return $query;
         }
-        
+
         $sqlSelect = <<<'SQL'
             penagihan_piutang.no_tagihan,
             detail_penagihan_piutang.no_rawat,

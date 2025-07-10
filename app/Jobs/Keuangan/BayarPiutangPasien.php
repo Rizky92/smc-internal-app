@@ -23,7 +23,7 @@ class BayarPiutangPasien implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    private ?Jurnal $jurnal = null;
+    private Jurnal $jurnal;
 
     private string $noTagihan;
 
@@ -108,7 +108,7 @@ class BayarPiutangPasien implements ShouldQueue
         );
 
         DB::connection('mysql_sik')
-            ->transaction(function () use ($model, $sisaCicilan) {
+            ->transaction(function () use ($model, $totalCicilan, $sisaCicilan) {
                 tracker_start('mysql_sik');
 
                 BayarPiutang::insert([
@@ -125,11 +125,10 @@ class BayarPiutangPasien implements ShouldQueue
                     'kd_rek_tidak_terbayar' => $this->akunTidakTerbayar,
                 ]);
 
-                PiutangPasienDetail::query()
-                    ->where('no_rawat', $this->noRawat)
-                    ->where('nama_bayar', $model->nama_bayar)
-                    ->where('kd_pj', $model->kd_pj)
-                    ->update(['sisapiutang' => 0]);
+                DB::connection('mysql_sik')
+                    ->statement('update `detail_piutang_pasien` set `sisapiutang` = `sisapiutang` - ? where `no_rawat` = ? and `nama_bayar` = ? and `kd_pj` = ?', [
+                        $totalCicilan, $this->noRawat, $model->nama_bayar, $model->kd_pj,
+                    ]);
 
                 tracker_end('mysql_sik', $this->userId);
 
@@ -148,15 +147,13 @@ class BayarPiutangPasien implements ShouldQueue
                 tracker_end('mysql_sik', $this->userId);
             });
 
-        if ($this->jurnal !== null) {
-            tracker_start('mysql_sik');
+        tracker_start('mysql_sik');
 
-            $this->jurnal->isiDetail($detailJurnal);
+        $this->jurnal->isiDetail($detailJurnal);
 
-            tracker_end('mysql_sik', $this->userId);
+        tracker_end('mysql_sik', $this->userId);
 
-            $this->jurnal->load('detail');
-        }
+        $this->jurnal->load('detail');
 
         $this->masukkanKeJurnalPiutangLunas(
             $model->no_rkm_medis,
@@ -170,9 +167,9 @@ class BayarPiutangPasien implements ShouldQueue
 
     protected function setLunasPiutang(): void
     {
-        $sisaPiutang = PiutangPasienDetail::query()
+        $sisaPiutang = round(PiutangPasienDetail::query()
             ->where('no_rawat', $this->noRawat)
-            ->sum(DB::raw('round(sisapiutang)'));
+            ->sum('sisapiutang'));
 
         if ((int) $sisaPiutang <= 0) {
             tracker_start('mysql_sik');
@@ -196,8 +193,7 @@ class BayarPiutangPasien implements ShouldQueue
             return;
         }
 
-        $totalTagihanPiutang = $tagihanPiutang->detail->sum('sisapiutang');
-        $totalTagihanPiutang = intval(round(floatval($totalTagihanPiutang)));
+        $totalTagihanPiutang = round($tagihanPiutang->detail->sum('sisapiutang'));
 
         $piutangDibayar = BayarPiutang::query()
             ->whereIn('no_rawat', $tagihanPiutang->detail->pluck('no_rawat')->all())

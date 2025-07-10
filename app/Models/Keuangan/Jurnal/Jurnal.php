@@ -14,11 +14,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\QueryException;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+/**
+ * @psalm-template TDetail of \Illuminate\Support\Collection<array-key, array{kd_rek: string, debet: numeric, kredit: numeric}>|array<array-key, array{kd_rek: string, debet: numeric, kredit: numeric}>
+ */
 class Jurnal extends Model
 {
     protected $connection = 'mysql_sik';
@@ -206,7 +207,7 @@ class Jurnal extends Model
 
     /**
      * @param  Carbon|\DateTime|string  $waktuTransaksi
-     * @param  \Illuminate\Support\Collection<array-key, array{kd_rek: string, debet: numeric, kredit: numeric}>|array<array-key, array{kd_rek: string, debet: numeric, kredit: numeric}>  $detail
+     * @param  TDetail  $detail
      * @param  "U"|"P"  $jenis
      */
     public static function catat(string $noBukti, string $keterangan, $waktuTransaksi, $detail = [], string $jenis = 'U'): self
@@ -230,7 +231,7 @@ class Jurnal extends Model
     }
 
     /**
-     * @param  \Illuminate\Support\Collection<array-key, array{kd_rek: string, debet: numeric, kredit: numeric}>|array<array-key, array{kd_rek: string, debet: numeric, kredit: numeric}>  $detail
+     * @param  TDetail  $detail
      */
     public function isiDetail($detail = []): self
     {
@@ -245,7 +246,7 @@ class Jurnal extends Model
         if ($debet !== $kredit) {
             throw new InequalJournalException($debet, $kredit);
         }
-        
+
         if ($debet < 0 || $kredit < 0) {
             throw new TransactionLessThanZeroException($debet, $kredit);
         }
@@ -254,8 +255,8 @@ class Jurnal extends Model
             throw new EmptyTransactionException($debet, $kredit);
         }
 
-        $this->detail()->createMany($detail);
-        
+        $this->detail()->createMany($detail->all());
+
         return $this->load('detail');
     }
 }

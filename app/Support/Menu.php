@@ -105,7 +105,7 @@ class Menu
                     'keuangan.posting-jurnal',
                     'keuangan.laporan-faktur-pajak.read',
                     'keuangan.igd-ke-rawat-inap.read',
-                    'keuangan.obat-ralan-ke-ranap.read'
+                    'keuangan.obat-ralan-ke-ranap.read',
                 ]),
                 'items' => [
                     [
@@ -531,7 +531,7 @@ class Menu
                         'icon'              => 'fas fa-info',
                         'type'              => 'link',
                         'hasAnyPermissions' => true,
-    
+
                     ],
                     [
                         'name'              => 'Antrean Pintu',
