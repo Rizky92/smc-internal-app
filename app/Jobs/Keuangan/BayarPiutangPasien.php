@@ -23,7 +23,7 @@ class BayarPiutangPasien implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    private Jurnal $jurnal;
+    private ?Jurnal $jurnal = null;
 
     private string $noTagihan;
 
@@ -125,7 +125,7 @@ class BayarPiutangPasien implements ShouldQueue
                     'kd_rek_tidak_terbayar' => $this->akunTidakTerbayar,
                 ]);
 
-                DB::connection('mysql_sik')
+                $sukses = DB::connection('mysql_sik')
                     ->statement('update `detail_piutang_pasien` set `sisapiutang` = `sisapiutang` - ? where `no_rawat` = ? and `nama_bayar` = ? and `kd_pj` = ?', [
                         $totalCicilan, $this->noRawat, $model->nama_bayar, $model->kd_pj,
                     ]);
@@ -135,7 +135,7 @@ class BayarPiutangPasien implements ShouldQueue
                 $this->setLunasPiutang();
 
                 $this->setSelesaiPenagihanPiutang($model->kd_rek);
-
+                
                 tracker_start('mysql_sik');
 
                 $this->jurnal = Jurnal::catat(
@@ -147,22 +147,25 @@ class BayarPiutangPasien implements ShouldQueue
                 tracker_end('mysql_sik', $this->userId);
             });
 
-        tracker_start('mysql_sik');
+            
+        if ($this->jurnal) {
+            tracker_start('mysql_sik');
+            
+            $this->jurnal->isiDetail($detailJurnal);
 
-        $this->jurnal->isiDetail($detailJurnal);
-
-        tracker_end('mysql_sik', $this->userId);
-
-        $this->jurnal->load('detail');
-
-        $this->masukkanKeJurnalPiutangLunas(
-            $model->no_rkm_medis,
-            $model->sisapiutang,
-            $model->tanggal,
-            $model->tanggaltempo,
-            $model->nip,
-            $model->nip_menyetujui
-        );
+            tracker_end('mysql_sik', $this->userId);
+            
+            $this->jurnal->load('detail');
+    
+            $this->masukkanKeJurnalPiutangLunas(
+                $model->no_rkm_medis,
+                $model->sisapiutang,
+                $model->tanggal,
+                $model->tanggaltempo,
+                $model->nip,
+                $model->nip_menyetujui
+            );
+        }
     }
 
     protected function setLunasPiutang(): void
