@@ -210,7 +210,7 @@ class Jurnal extends Model
      * @param  TDetail  $detail
      * @param  "U"|"P"  $jenis
      */
-    public static function catat(string $noBukti, string $keterangan, $waktuTransaksi, $detail = [], string $jenis = 'U'): ?self
+    public static function catat(string $noBukti, string $keterangan, $waktuTransaksi, $detail = [], string $jenis = 'U'): self
     {
         if (! $waktuTransaksi instanceof Carbon) {
             $waktuTransaksi = carbon($waktuTransaksi);

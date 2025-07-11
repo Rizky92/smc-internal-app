@@ -23,7 +23,7 @@ class BayarPiutangPasien implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    private ?Jurnal $jurnal = null;
+    private Jurnal $jurnal;
 
     private string $noTagihan;
 
@@ -148,24 +148,22 @@ class BayarPiutangPasien implements ShouldQueue
             });
 
             
-        if ($this->jurnal) {
-            tracker_start('mysql_sik');
-            
-            $this->jurnal->isiDetail($detailJurnal);
+        tracker_start('mysql_sik');
+        
+        $this->jurnal->isiDetail($detailJurnal);
 
-            tracker_end('mysql_sik', $this->userId);
-            
-            $this->jurnal->load('detail');
-    
-            $this->masukkanKeJurnalPiutangLunas(
-                $model->no_rkm_medis,
-                $model->sisapiutang,
-                $model->tanggal,
-                $model->tanggaltempo,
-                $model->nip,
-                $model->nip_menyetujui
-            );
-        }
+        tracker_end('mysql_sik', $this->userId);
+        
+        $this->jurnal->load('detail');
+
+        $this->masukkanKeJurnalPiutangLunas(
+            $model->no_rkm_medis,
+            $model->sisapiutang,
+            $model->tanggal,
+            $model->tanggaltempo,
+            $model->nip,
+            $model->nip_menyetujui
+        );
     }
 
     protected function setLunasPiutang(): void
