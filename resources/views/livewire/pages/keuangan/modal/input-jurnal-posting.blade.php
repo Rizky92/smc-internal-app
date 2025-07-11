@@ -245,7 +245,19 @@
             <x-button size="sm" variant="success" title="Tambah Jurnal" icon="fas fa-plus" wire:click="push" />
             <x-button size="sm" class="ml-auto" data-dismiss="modal" id="batalsimpan" title="Batal" />
             <span class="text-sm font-weight-bold" wire:loading wire:target="create">Tunggu...</span>
-            <x-button size="sm" variant="primary" type="submit" class="ml-2" id="simpandata" title="Simpan" icon="fas fa-save" form="form-input-posting-jurnal" wire:target="create" wire:loading.class="d-none" wire:loading.class.remove="btn" :disabled="empty($this->jurnalSementara)" />
+            <x-button
+                size="sm"
+                variant="primary"
+                type="submit"
+                class="ml-2"
+                id="simpandata"
+                title="Simpan"
+                icon="fas fa-save"
+                form="form-input-posting-jurnal"
+                wire:target="create"
+                wire:loading.class="d-none"
+                wire:loading.class.remove="btn"
+                :disabled="empty($this->jurnalSementara)" />
         </x-slot>
     </x-modal>
 </div>

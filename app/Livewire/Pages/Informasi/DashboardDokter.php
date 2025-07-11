@@ -10,16 +10,16 @@ class DashboardDokter extends Component
 {
     public $collection;
 
-    public function mount()
+    public function mount(): void
     {
-        $this->collection = Jadwal::with(['dokter', 'poliklinik'])->whereHas('dokter', function ($query) {
-            $query->where('status', '1');
-        })
-        ->orderBy('hari_kerja')
-        ->get()
-        ->groupBy(fn ($jadwal) => $jadwal->poliklinik->nm_poli) // Menggunakan callback untuk menghindari error
-        ->map(fn ($jadwals) => $jadwals->groupBy('dokter.kd_dokter')->toArray()) // Konversi menjadi array
-        ->toArray();
+        $this->collection = Jadwal::query()
+            ->with(['dokter', 'poliklinik'])
+            ->whereHas('dokter', fn ($query) => $query->where('status', '1'))
+            ->orderBy('hari_kerja')
+            ->get()
+            ->groupBy(fn ($jadwal) => $jadwal->poliklinik->nm_poli) // Menggunakan callback untuk menghindari error
+            ->map(fn ($jadwals) => $jadwals->groupBy('dokter.kd_dokter')->toArray()) // Konversi menjadi array
+            ->toArray();
     }
 
     public function render(): View

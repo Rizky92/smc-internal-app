@@ -211,23 +211,17 @@ class AccountReceivable extends Component
 
         collect($this->tagihanDipilih)
             ->filter(fn (array $value): bool => $value['selected'])
-            ->map(fn (array $value): array => [
-                'diskon_piutang' => $value['diskon_piutang'] ?? 0,
-            ])
+            ->map(fn (array $value): array => ['diskon_piutang' => $value['diskon_piutang'] ?? 0])
             ->each(function (array $value, string $key) use ($akunDiskonPiutang, $akunTidakTerbayar) {
                 BayarPiutangPasien::dispatch([
                     'key'                 => $key,
                     'diskon_piutang'      => $value['diskon_piutang'],
-                    'tgl_awal'            => $this->tglAwal,
-                    'tgl_akhir'           => $this->tglAkhir,
-                    'jaminan_pasien'      => $this->jaminanPasien,
-                    'jenis_perawatan'     => $this->jenisPerawatan,
                     'tgl_bayar'           => $this->tglBayar,
                     'user_id'             => user()->nik,
                     'akun'                => $this->akunBayar->get($this->rekeningAkun),
                     'akun_diskon_piutang' => $akunDiskonPiutang,
                     'akun_tidak_terbayar' => $akunTidakTerbayar,
-                ]);
+                ])->onQueue('keuangan');
             });
 
         $this->tagihanDipilih = [];

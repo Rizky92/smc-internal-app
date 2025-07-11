@@ -15,12 +15,12 @@ use Livewire\Component;
 
 class ObatRalanKeRanap extends Component
 {
-    use FlashComponent;
-    use Filterable;
+    use DeferredLoading;
     use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
     use LiveTable;
     use MenuTracker;
-    use DeferredLoading;
 
     /** @var string */
     public $tglAwal;
@@ -65,7 +65,7 @@ class ObatRalanKeRanap extends Component
     protected function dataPerSheet(): array
     {
         return [
-            fn() => PemberianObat::query()
+            fn () => PemberianObat::query()
                 ->obatRalanKeRanap($this->tglAwal, $this->tglAkhir)
                 ->search($this->cari)
                 ->cursor()
@@ -81,7 +81,7 @@ class ObatRalanKeRanap extends Component
                     'biaya_obat'    => $model->biaya_obat,
                     'jml'           => $model->jml,
                     'total'         => $model->total,
-                ])
+                ]),
         ];
     }
 
@@ -98,7 +98,7 @@ class ObatRalanKeRanap extends Component
             'Nama Barang',
             'Harga',
             'Jumlah',
-            'Total'
+            'Total',
         ];
     }
 
