@@ -221,7 +221,7 @@ class AccountReceivable extends Component
                     'akun'                => $this->akunBayar->get($this->rekeningAkun),
                     'akun_diskon_piutang' => $akunDiskonPiutang,
                     'akun_tidak_terbayar' => $akunTidakTerbayar,
-                ])->onQueue('keuangan');
+                ]);
             });
 
         $this->tagihanDipilih = [];
