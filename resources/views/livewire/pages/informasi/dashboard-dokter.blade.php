@@ -11,37 +11,36 @@
 
 <div class="card">
     <div class="card-header text-center">
-        <h1>Jadwal Dokter</h1>
+        <h1 style="font-size: 5vh">Jadwal Dokter</h1>
     </div>
     <div class="card-body p-0">
-        <table class="table table-sm text-sm text-nowrap">
+        <table class="table text-nowrap mb-0" style="font-size: 2.5vh">
             <thead>
                 <tr>
-                    <th style="width: 30%">Nama Dokter</th>
-                    <th style="width: 10%">SENIN</th>
-                    <th style="width: 10%">SELASA</th>
-                    <th style="width: 10%">RABU</th>
-                    <th style="width: 10%">KAMIS</th>
-                    <th style="width: 10%">JUMAT</th>
-                    <th style="width: 10%">SABTU</th>
-                    <th style="width: 10%">MINGGU</th>
+                    <th style="width: 34%">Nama Dokter</th>
+                    <th class="text-center" style="width: 11%">SENIN</th>
+                    <th class="text-center" style="width: 11%">SELASA</th>
+                    <th class="text-center" style="width: 11%">RABU</th>
+                    <th class="text-center" style="width: 11%">KAMIS</th>
+                    <th class="text-center" style="width: 11%">JUMAT</th>
+                    <th class="text-center" style="width: 11%">SABTU</th>
                 </tr>
             </thead>
         </table>
-        <div class="table-responsive marquee" data-direction="up" data-duration="20000" startVisible="true" data-gap="10" data-duplicated="false">
-            <table class="table table-sm text-sm text-nowrap">
+        <div class="table-responsive marquee" data-direction="up" data-duration="20000" startVisible="true" data-gap="10" data-duplicated="false"  style="height: calc(100vh - 100px);">
+            <table class="table text-nowrap" style="font-size: 2.5vh">
                 <tbody>
                     @foreach ($collection as $poli => $jadwals)
                         <tr>
-                            <td colspan="8" class="bg-green"><strong>{{ $poli }}</strong></td>
+                            <td colspan="8" class="bg-green"><strong>{{ strtoupper($poli) }}</strong></td>
                         </tr>
                         @foreach ($jadwals as $dokterId => $dokterJadwal)
                             {{-- Sudah berbentuk array --}}
                             <tr>
-                                <td style="width: 30%">{{ $dokterJadwal[0]['dokter']['nm_dokter'] }}</td>
+                                <td style="width: 34%">{{ $dokterJadwal[0]['dokter']['nm_dokter'] }}</td>
                                 {{-- Ambil nama dokter dari array --}}
-                                @foreach (['SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT', 'SABTU', 'MINGGU'] as $day)
-                                    <td style="width: 10%">
+                                @foreach (['SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT', 'SABTU'] as $day)
+                                    <td class="text-center" style="width: 11%">
                                         @php
                                             $hariJadwal = array_filter($dokterJadwal, fn ($j) => strtoupper($j['hari_kerja']) === $day);
                                         @endphp
