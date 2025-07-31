@@ -1,19 +1,19 @@
-<div class="row" style="height: 60%" @if (!$isCalling) wire:poll.keep-alive="call" @endif>
-    @if ($currentPatient)
+<div class="row" style="height: 60%" wire:poll.3s.keep-alive="call">
+    @if ($this->antreanDiPanggil)
         <div class="col">
-            <div class="card card-outline card-success d-flex justify-content-center h-100">
+            <div class="card card-outline card-success d-flex justify-content-center h-100" id="calling-card">
                 <div class="card-header">
                     <h5 class="text-uppercase">antrean dipanggil</h5>
                 </div>
                 <div class="card-body">
-                    <h5>{{ $currentPatient->nm_poli ?? '' }}</h5>
+                    <h5>{{ $this->antreanDiPanggil->nm_poli ?? '' }}</h5>
                     <h5 class="text-uppercase">
-                        {{ $currentPatient->nm_dokter ?? '' }}
+                        {{ $this->antreanDiPanggil->nm_dokter ?? '' }}
                     </h5>
-                    <h1 class="text-danger" style="font-size: 9rem">
-                        {{ $currentPatient->no_reg ?? '' }}
+                    <h1 class="text-danger" style="font-size: 9rem" id="calling-number">
+                        {{ $this->antreanDiPanggil->no_reg ?? '' }}
                     </h1>
-                    <h4>{{ $currentPatient->nm_pasien ?? '' }}</h4>
+                    <h4>{{ $this->antreanDiPanggil->nm_pasien ?? '' }}</h4>
                 </div>
             </div>
         </div>
@@ -23,82 +23,120 @@
                 <div class="card-header">
                     <h5 class="text-uppercase">antrean dipanggil</h5>
                 </div>
-                <div class="card-body"></div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <h5 class="text-muted">Menunggu antrean...</h5>
+                    </div>
+                </div>
             </div>
         </div>
     @endif
 </div>
+
 @push('js')
     <script src="https://code.responsivevoice.org/responsivevoice.js?key=OGPOBj1g"></script>
     <script>
+        let isPlaying = false;
+        let lastPollTime = Date.now();
+        let pollCheckInterval;
+
+        // Update waktu polling saat ada aktivitas
+        document.addEventListener('livewire:update', function() {
+            lastPollTime = Date.now();
+        });
+
         document.addEventListener('play-voice', (event) => {
-            var textToSpeech = 'Nomor antrian ' + event.detail.no_reg + ', ' + event.detail.nm_pasien.toLowerCase() + ', silahkan menuju ke ' + event.detail.nm_poli.toLowerCase();
-            var repeatCount = 0;
-            let processesCompleted = 0; // Counter untuk tracking proses
-
-            function checkAndRefresh() {
-                processesCompleted++;
-                if (processesCompleted === 2) {
-                    // Tunggu kedua proses selesai
-                    window.location.reload(); // Full page refresh
+            if (isPlaying) return; // Prevent multiple calls
+            
+            isPlaying = true;
+            var textToSpeech = 'Nomor antrian ' + event.detail.no_reg + ', ' + 
+                             event.detail.nm_pasien.toLowerCase() + ', silahkan menuju ke ' + 
+                             event.detail.nm_pintu.toLowerCase();
+            var cacheKey = event.detail.cacheKey;
+            var patientData = event.detail.patient_data;
+            
+            // Start blinking animation
+            startBlinkingAnimation();
+            
+            responsiveVoice.speak(textToSpeech, 'Indonesian Female', {
+                rate: 0.7,
+                onend: function() {
+                    stopBlinkingAnimation();
+                    isPlaying = false;
+                    
+                    // Update status tanpa reload
+                    @this.call('updateStatusAfterCall', cacheKey, patientData);
+                },
+                onerror: function() {
+                    stopBlinkingAnimation();
+                    isPlaying = false;
+                    console.error('Error in speech synthesis');
                 }
-            }
+            });
+        });
 
-            function speakAndRepeat() {
-                try {
-                    if (repeatCount < 3) {
-                        responsiveVoice.speak(textToSpeech, 'Indonesian Female', {
-                            rate: 0.7,
-                            onend: () => {
-                                repeatCount++;
-                                speakAndRepeat();
-                            },
-                        });
-                    } else {
-                        Livewire.emit('updateStatusAfterCall');
-                        checkAndRefresh(); // Proses 1 selesai (voice)
-                    }
-                } catch (error) {
-                    console.error('Error pada text-to-speech:', error);
-                    Livewire.emit('updateStatusAfterCall');
-                    checkAndRefresh(); // Skip voice dan langsung lanjut refresh
-                }
-            }
-
-            speakAndRepeat();
-
-            var card = document.querySelector('.card-outline.card-success');
-            var numberElement = document.querySelector('.text-danger');
+        function startBlinkingAnimation() {
+            var card = document.getElementById('calling-card');
+            var numberElement = document.getElementById('calling-number');
+            
             if (card && numberElement) {
-                var blinkInterval = setInterval(function () {
+                window.blinkInterval = setInterval(function() {
                     card.classList.toggle('bg-success');
                     numberElement.classList.toggle('text-white');
                 }, 1000);
-
-                setTimeout(function () {
-                    clearInterval(blinkInterval);
-                    card.classList.remove('bg-success');
-                    numberElement.classList.remove('text-white');
-                    checkAndRefresh(); // Proses 2 selesai (blink)
-                }, 5000);
+                
+                // Stop after 10 seconds max
+                setTimeout(stopBlinkingAnimation, 10000);
             }
+        }
+
+        function stopBlinkingAnimation() {
+            if (window.blinkInterval) {
+                clearInterval(window.blinkInterval);
+                window.blinkInterval = null;
+            }
+            
+            var card = document.getElementById('calling-card');
+            var numberElement = document.getElementById('calling-number');
+            
+            if (card && numberElement) {
+                card.classList.remove('bg-success');
+                numberElement.classList.remove('text-white');
+            }
+        }
+
+        // Monitor polling health - lebih conservative
+        function startPollMonitoring() {
+            if (pollCheckInterval) {
+                clearInterval(pollCheckInterval);
+            }
+            
+            pollCheckInterval = setInterval(() => {
+                let currentTime = Date.now();
+                let timeSinceLastPoll = (currentTime - lastPollTime) / 1000;
+                
+                // Jika lebih dari 15 detik tidak ada update
+                if (timeSinceLastPoll > 15) {
+                    console.warn('Polling issue detected. Forcing refresh...');
+                    @this.call('forceRefresh');
+                    lastPollTime = Date.now();
+                }
+            }, 10000); // Check setiap 10 detik
+        }
+
+        // Initialize monitoring when document ready
+        document.addEventListener('DOMContentLoaded', function() {
+            startPollMonitoring();
         });
 
-        let lastCallTime = Date.now();
-        setInterval(() => {
-            let currentTime = Date.now();
-            let timeElapsed = (currentTime - lastCallTime) / 1000;
-
-            if (timeElapsed > 30) {
-                // Jika tidak ada polling dalam 30 detik, lakukan refresh
-                console.warn('Polling berhenti total! Melakukan refresh halaman...');
-                window.location.reload();
+        // Cleanup when page unloads
+        window.addEventListener('beforeunload', function() {
+            if (pollCheckInterval) {
+                clearInterval(pollCheckInterval);
             }
-        }, 180000);
-
-        document.addEventListener('livewire:poll', () => {
-            lastCallTime = Date.now();
-            console.log('Polling berjalan normal, terakhir diperbarui:', new Date(lastCallTime).toLocaleTimeString());
+            if (window.blinkInterval) {
+                clearInterval(window.blinkInterval);
+            }
         });
     </script>
 @endpush

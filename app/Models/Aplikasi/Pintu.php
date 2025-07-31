@@ -46,10 +46,12 @@ class Pintu extends Model
         $sqlSelect = <<<'SQL'
             registrasi.no_reg,
             registrasi.no_rawat,
+            dokter.kd_dokter,
             dokter.nm_dokter,
             poliklinik.kd_poli,
             poliklinik.nm_poli,
-            pasien.nm_pasien
+            pasien.nm_pasien,
+            manajemen_pintu.nm_pintu
             SQL;
 
         $registrasi = \DB::raw("{$db}.reg_periksa registrasi");
