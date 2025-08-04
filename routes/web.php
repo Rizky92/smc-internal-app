@@ -354,7 +354,7 @@ Route::prefix('admin')
                 Route::get('laporan-pasien-cob', Casemix\LaporanPasienCob::class)
                     ->name('laporan-pasien-cob')
                     ->middleware('can:casemix.laporan-pasien-cob.read');
-                Route::get('laporan-triase-igd-zona-hijau', Casemix\LaporanTriaseIGDZonaHijau::class)
+                Route::get('laporan-triase-igd-zona-hijau', Casemix\LaporanTriaseIgdZonaHijau::class)
                     ->name('laporan-triase-igd-zona-hijau')
                     ->middleware('can:casemix.laporan-triase-igd-zona-hijau.read');
             });
