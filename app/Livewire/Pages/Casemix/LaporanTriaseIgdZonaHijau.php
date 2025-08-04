@@ -8,7 +8,7 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
-use App\Models\Casemix\BridgingSep;
+use App\Models\Casemix\DataTriaseIgd;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -43,7 +43,7 @@ class LaporanTriaseIgdZonaHijau extends Component
 
     public function getCollectionProperty()
     {
-        return $this->isDeferred ? [] : BridgingSep::query()
+        return $this->isDeferred ? [] : DataTriaseIgd::query()
             ->triaseIgdZonaHijau($this->tglAwal, $this->tglAkhir)
             ->sortWithColumns($this->sortColumns)
             ->search($this->cari)
