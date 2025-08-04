@@ -550,6 +550,39 @@ class Menu
                 ],
             ],
             [
+                'name'              => 'Casemix',
+                'icon'              => 'far fa-circle',
+                'type'              => 'dropdown',
+                'hasAnyPermissions' => $user->canAny([
+                    'casemix.laporan-pasien-batal.read',
+                    'casemix.laporan-pasien-cob.read',
+                    'casemix.laporan-triase-igd-zona-hijau.read',
+                ]),
+                'items'             => [
+                    [
+                        'name'              => 'Laporan Pasien Batal',
+                        'url'               => route('admin.casemix.laporan-pasien-batal'),
+                        'icon'              => 'fas fa-file-alt',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('casemix.laporan-pasien-batal.read'),
+                    ],
+                    [
+                        'name'              => 'Laporan Pasien COB',
+                        'url'               => route('admin.casemix.laporan-pasien-cob'),
+                        'icon'              => 'fas fa-file-alt',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('casemix.laporan-pasien-cob.read'),
+                    ],
+                    [
+                        'name'              => 'Laporan Triase IGD',
+                        'url'               => route('admin.casemix.laporan-triase-igd-zona-hijau'),
+                        'icon'              => 'fas fa-file-alt',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('casemix.laporan-triase-igd-zona-hijau.read'),
+                    ],
+                ],
+            ],
+            [
                 'name'              => 'Manajemen User',
                 'url'               => route('admin.manajemen-user'),
                 'icon'              => 'fas fa-users',

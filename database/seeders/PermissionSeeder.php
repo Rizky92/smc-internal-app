@@ -108,6 +108,10 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'antrean.manajemen-pintu.delete']);
         Permission::create(['name' => 'antrean.antrean-onsite.read']);
 
+        Permission::create(['name' => 'casemix.laporan-pasien-batal.read']);
+        Permission::create(['name' => 'casemix.laporan-pasien-cob.read']);
+        Permission::create(['name' => 'casemix.laporan-triase-igd-zona-hijau.read']);
+
         // Superadmin role name, bypasses all permissions
         $superadminRole = Role::create(['name' => config('permission.superadmin_name')]);
 
