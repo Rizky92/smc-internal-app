@@ -53,7 +53,7 @@ class LaporanTriaseIgdZonaHijau extends Component
     public function render(): View
     {
         return view('livewire.pages.casemix.laporan-triase-igd-zona-hijau')
-            ->layout(BaseLayout::class, ['title' => 'Laporan Triase IGD Zona Hijau']);
+            ->layout(BaseLayout::class, ['title' => 'Laporan Triase IGD Zona Hijau All Jaminan']);
     }
 
     protected function defaultValues(): void

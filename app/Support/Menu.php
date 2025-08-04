@@ -560,21 +560,21 @@ class Menu
                 ]),
                 'items'             => [
                     [
-                        'name'              => 'Laporan Pasien Batal',
+                        'name'              => 'SEP Pasien Batal',
                         'url'               => route('admin.casemix.laporan-pasien-batal'),
                         'icon'              => 'fas fa-file-alt',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('casemix.laporan-pasien-batal.read'),
                     ],
                     [
-                        'name'              => 'Laporan Pasien COB',
+                        'name'              => 'SEP Pasien COB',
                         'url'               => route('admin.casemix.laporan-pasien-cob'),
                         'icon'              => 'fas fa-file-alt',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('casemix.laporan-pasien-cob.read'),
                     ],
                     [
-                        'name'              => 'Laporan Triase IGD',
+                        'name'              => 'Triase IGD Zona Hijau',
                         'url'               => route('admin.casemix.laporan-triase-igd-zona-hijau'),
                         'icon'              => 'fas fa-file-alt',
                         'type'              => 'link',

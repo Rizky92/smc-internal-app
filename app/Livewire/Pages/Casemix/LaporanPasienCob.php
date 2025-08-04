@@ -53,7 +53,7 @@ class LaporanPasienCob extends Component
     public function render(): View
     {
         return view('livewire.pages.casemix.laporan-pasien-cob')
-            ->layout(BaseLayout::class, ['title' => 'Laporan Pasien Cob']);
+            ->layout(BaseLayout::class, ['title' => 'Laporan Data SEP BPJS Untuk Registrasi Non BPJS atau COB']);
     }
 
     protected function defaultValues(): void
