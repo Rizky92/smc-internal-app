@@ -53,7 +53,7 @@ class LaporanPasienBatal extends Component
     public function render(): View
     {
         return view('livewire.pages.casemix.laporan-pasien-batal')
-            ->layout(BaseLayout::class, ['title' => 'Laporan Pasien Batal']);
+            ->layout(BaseLayout::class, ['title' => 'Laporan Data SEP BPJS Untuk Pasien Batal']);
     }
 
     protected function defaultValues(): void
