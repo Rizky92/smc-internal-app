@@ -21,6 +21,26 @@ class DataTriaseIgd extends Model
 
     public function scopeTriaseIgdZonaHijau(Builder $query, string $tglAwal, string $tglAkhir)
     {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->toDateString();
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->toDateString();
+        }
+
+        $this->addSearchConditions([
+            'data_triase_igd.no_rawat',
+            'reg_periksa.no_rkm_medis',
+            'pasien.nm_pasien',
+            'penjab.png_jawab',
+            'data_triase_igd.tgl_kunjungan',
+            'data_triase_igd.cara_masuk',
+            'data_triase_igd.alasan_kedatangan',
+            'master_triase_macam_kasus.macam_kasus',
+            'data_triase_igdsekunder.plan',
+        ]);
+
         $sqlSelect = <<<SQL
             data_triase_igd.no_rawat no_rawat,
             reg_periksa.no_rkm_medis no_rkm_medis,
@@ -32,6 +52,7 @@ class DataTriaseIgd extends Model
             master_triase_macam_kasus.macam_kasus macam_kasus,
             data_triase_igdsekunder.plan plan
         SQL;
+
         return $query
             ->selectRaw($sqlSelect)
             ->join('master_triase_macam_kasus', 'data_triase_igd.kode_kasus', '=', 'master_triase_macam_kasus.kode_kasus')
