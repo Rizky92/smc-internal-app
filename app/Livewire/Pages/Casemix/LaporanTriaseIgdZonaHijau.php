@@ -65,12 +65,12 @@ class LaporanTriaseIgdZonaHijau extends Component
     protected function dataPerSheet(): array
     {
         return [
-            fn() => BridgingSep::query()
+            fn() => DataTriaseIgd::query()
                 ->triaseIgdZonaHijau($this->tglAwal, $this->tglAkhir)
                 ->sortWithColumns($this->sortColumns)
                 ->search($this->cari)
                 ->cursor()
-                ->map(fn(BridgingSep $model) : array => [
+                ->map(fn (DataTriaseIgd $model) : array => [
                     'No. Rawat'         => $model->no_rawat,
                     'No. RM'            => $model->no_rkm_medis,
                     'Nama Pasien'       => $model->nm_pasien,
