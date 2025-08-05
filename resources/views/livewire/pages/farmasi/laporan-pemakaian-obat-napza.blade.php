@@ -24,6 +24,7 @@
                                 <x-table.th align="right" title="Total Masuk" />
                                 <x-table.th align="right" title="Pemberian Obat" />
                                 <x-table.th align="right" title="Penjualan Obat" />
+                                <x-table.th align="right" title="Piutang Keluar" />
                                 <x-table.th align="right" title="Transfer Obat Keluar" />
                                 <x-table.th align="right" title="Retur ke Supplier" />
                                 <x-table.th align="right" title="Total Keluar" />
@@ -69,6 +70,9 @@
                                             {{ number_format($item->penjualan_obat, 0, ',', '.') }}
                                         </x-table.td>
                                         <x-table.td class="text-right">
+                                            {{ number_format($item->piutang_keluar, 0, ',', '.') }}
+                                        </x-table.td>
+                                        <x-table.td class="text-right">
                                             {{ number_format($item->tf_keluar, 0, ',', '.') }}
                                         </x-table.td>
                                         <x-table.td class="text-right">
@@ -82,7 +86,7 @@
                                         </x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty colspan="18" padding />
+                                    <x-table.tr-empty colspan="19" padding />
                                 @endforelse
                             </x-slot>
                         </x-table>
@@ -103,6 +107,7 @@
                                 <x-table.th align="right" title="Total Masuk" />
                                 <x-table.th align="right" title="Pemberian Obat" />
                                 <x-table.th align="right" title="Penjualan Obat" />
+                                <x-table.th align="right" title="Piutang Keluar" />
                                 <x-table.th align="right" title="Transfer Obat Keluar" />
                                 <x-table.th align="right" title="Retur ke Supplier" />
                                 <x-table.th align="right" title="Total Keluar" />
@@ -148,6 +153,9 @@
                                             {{ number_format($item->penjualan_obat, 0, ',', '.') }}
                                         </x-table.td>
                                         <x-table.td class="text-right">
+                                            {{ number_format($item->piutang_keluar, 0, ',', '.') }}
+                                        </x-table.td>
+                                        <x-table.td class="text-right">
                                             {{ number_format($item->tf_keluar, 0, ',', '.') }}
                                         </x-table.td>
                                         <x-table.td class="text-right">
@@ -161,7 +169,7 @@
                                         </x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty colspan="18" padding />
+                                    <x-table.tr-empty colspan="19" padding />
                                 @endforelse
                             </x-slot>
                         </x-table>
