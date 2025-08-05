@@ -21,6 +21,26 @@ class BridgingSep extends Model
 
     public function scopePasienBatal(Builder $query, string $tglAwal, string $tglAkhir)
     {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->toDateString();
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->toDateString();
+        }
+
+        $this->addSearchConditions([
+            'bridging_sep.no_sep',
+            'bridging_sep.no_rawat',
+            'bridging_sep.tglsep',
+            'reg_periksa.status_lanjut',
+            'reg_periksa.no_rkm_medis',
+            'pasien.nm_pasien',
+            'reg_periksa.status_bayar',
+            'reg_periksa.stts',
+            'penjab.png_jawab',
+        ]);
+
         $sqlSelect = <<<SQL
             bridging_sep.no_sep no_sep,
             bridging_sep.no_rawat no_rawat,
@@ -49,6 +69,23 @@ class BridgingSep extends Model
 
     public function scopeRegistrasiCob(Builder $query, string $tglAwal, string $tglAkhir)
     {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->toDateString();
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->toDateString();
+        }
+
+        $this->addSearchConditions([
+            'bridging_sep.no_sep',
+            'bridging_sep.tglsep',
+            'reg_periksa.no_rawat',
+            'reg_periksa.no_rkm_medis',
+            'pasien.nm_pasien',
+            'penjab.png_jawab',
+        ]);
+
         $sqlSelect = <<<SQL
             bridging_sep.no_sep no_sep,
             bridging_sep.tglsep tglsep,
