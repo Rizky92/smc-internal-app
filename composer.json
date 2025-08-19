@@ -35,6 +35,7 @@
         "fakerphp/faker": "^1.24.1",
         "friendsofphp/php-cs-fixer": "^3.76.0",
         "laravel/dusk": "^8.3.3",
+        "mockery/mockery": "^1.6.12",
         "nunomaduro/collision": "^7.12.0",
         "phpunit/phpunit": "^10.5.47",
         "psalm/plugin-laravel": "^2.12.1",

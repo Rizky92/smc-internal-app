@@ -370,3 +370,23 @@ Breadcrumbs::for('admin.job-cleaner', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Job Cleaner', route('admin.job-cleaner'));
 });
+
+Breadcrumbs::for('admin.casemix', function (Trail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Casemix');
+});
+
+Breadcrumbs::for('admin.casemix.laporan-pasien-batal', function (Trail $trail): void {
+    $trail->parent('admin.casemix');
+    $trail->push('Laporan Pasien Batal', route('admin.casemix.laporan-pasien-batal'));
+});
+
+Breadcrumbs::for('admin.casemix.laporan-pasien-cob', function (Trail $trail): void {
+    $trail->parent('admin.casemix');
+    $trail->push('Laporan Pasien COB', route('admin.casemix.laporan-pasien-cob'));
+});
+
+Breadcrumbs::for('admin.casemix.laporan-triase-igd-zona-hijau', function (Trail $trail): void {
+    $trail->parent('admin.casemix');
+    $trail->push('Laporan Triase IGD Zona Hijau', route('admin.casemix.laporan-triase-igd-zona-hijau'));
+});

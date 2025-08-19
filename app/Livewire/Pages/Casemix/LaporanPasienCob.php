@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Pages\Keuangan;
+namespace App\Livewire\Pages\Casemix;
 
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
@@ -8,19 +8,19 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
-use App\Models\Farmasi\PemberianObat;
+use App\Models\Casemix\BridgingSep;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class ObatRalanKeRanap extends Component
+class LaporanPasienCob extends Component
 {
-    use DeferredLoading;
-    use ExcelExportable;
-    use Filterable;
     use FlashComponent;
+    use Filterable;
+    use ExcelExportable;
     use LiveTable;
     use MenuTracker;
+    use DeferredLoading;
 
     /** @var string */
     public $tglAwal;
@@ -43,17 +43,17 @@ class ObatRalanKeRanap extends Component
 
     public function getCollectionProperty()
     {
-        return $this->isDeferred ? [] : PemberianObat::query()
-            ->obatRalanKeRanap($this->tglAwal, $this->tglAkhir)
-            ->search($this->cari)
+        return $this->isDeferred ? [] : BridgingSep::query()
+            ->registrasiCob($this->tglAwal, $this->tglAkhir)
             ->sortWithColumns($this->sortColumns)
+            ->search($this->cari)
             ->paginate($this->perpage);
     }
 
     public function render(): View
     {
-        return view('livewire.pages.keuangan.obat-ralan-ke-ranap')
-            ->layout(BaseLayout::class, ['title' => 'Obat Rawat Jalan ke Rawat Inap']);
+        return view('livewire.pages.casemix.laporan-pasien-cob')
+            ->layout(BaseLayout::class, ['title' => 'Laporan Data SEP BPJS Untuk Registrasi Non BPJS atau COB']);
     }
 
     protected function defaultValues(): void
@@ -65,22 +65,19 @@ class ObatRalanKeRanap extends Component
     protected function dataPerSheet(): array
     {
         return [
-            fn () => PemberianObat::query()
-                ->obatRalanKeRanap($this->tglAwal, $this->tglAkhir)
+            fn() => BridgingSep::query()
+                ->registrasiCob($this->tglAwal, $this->tglAkhir)
+                ->sortWithColumns($this->sortColumns)
                 ->search($this->cari)
                 ->cursor()
-                ->map(fn (PemberianObat $model): array => [
-                    'no_rawat'      => $model->no_rawat,
-                    'no_rkm_medis'  => $model->no_rkm_medis,
-                    'nm_pasien'     => $model->nm_pasien,
-                    'png_jawab'     => $model->png_jawab,
-                    'tgl_perawatan' => $model->tgl_perawatan,
-                    'jam'           => $model->jam,
-                    'kode_brng'     => $model->kode_brng,
-                    'nama_brng'     => $model->nama_brng,
-                    'biaya_obat'    => $model->biaya_obat,
-                    'jml'           => $model->jml,
-                    'total'         => $model->total,
+                ->map(fn (BridgingSep $model) : array => [
+                    'No. SEP'           => $model->no_sep,
+                    'Tgl. SEP'          => $model->tglsep,
+                    'No. Rawat'         => $model->no_rawat,
+                    'Jenis Pelayanan'   => $model->jenis_pelayanan,
+                    'No. RM'            => $model->no_rm,
+                    'Nama Pasien'       => $model->nama_pasien,
+                    'Jenis Bayar'       => $model->jaminan_registrasi,
                 ]),
         ];
     }
@@ -88,17 +85,13 @@ class ObatRalanKeRanap extends Component
     protected function columnHeaders(): array
     {
         return [
+            'No. SEP',
+            'Tgl. SEP',
             'No. Rawat',
+            'Jenis Pelayanan',
             'No. RM',
             'Nama Pasien',
             'Jenis Bayar',
-            'Tgl. Pemberian Obat',
-            'Jam',
-            'Kode Barang',
-            'Nama Barang',
-            'Harga',
-            'Jumlah',
-            'Total',
         ];
     }
 
@@ -115,9 +108,9 @@ class ObatRalanKeRanap extends Component
 
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Obat Rawat Jalan ke Rawat Inap',
+            'Laporan Data SEP BPJS Untuk Registrasi Non BPJS atau COB',
             now()->translatedFormat('d F Y'),
-            $periode,
+            $periode
         ];
     }
 }

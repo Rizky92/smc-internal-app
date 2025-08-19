@@ -3,13 +3,13 @@
 @endpush
 
 @section('informasi-kamar')
-    <header class="d-flex flex-wrap justify-content-center mb-4 border-bottom shadow">
+    <header class="d-flex flex-wrap justify-content-center mb-0 border-bottom">
         <div class="container-fluid d-flex justify-content-center">
             <img src="{{ asset('img/logo.png') }}" alt="logo" width="100vh" height="auto" />
             <span class="header">KETERSEDIAAN KAMAR</span>
         </div>
     </header>
-    <table class="table table-bordered table-striped text-white">
+    <table class="table table-bordered table-striped text-white mb-0">
         <thead>
             <tr>
                 <th width="40%">Bangsal</th>

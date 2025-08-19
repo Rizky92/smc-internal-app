@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Pages\Keuangan;
+namespace App\Livewire\Pages\Casemix;
 
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
@@ -8,19 +8,19 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
-use App\Models\Farmasi\PemberianObat;
+use App\Models\Casemix\DataTriaseIgd;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class ObatRalanKeRanap extends Component
+class LaporanTriaseIgdZonaHijau extends Component
 {
-    use DeferredLoading;
-    use ExcelExportable;
-    use Filterable;
     use FlashComponent;
+    use Filterable;
+    use ExcelExportable;
     use LiveTable;
     use MenuTracker;
+    use DeferredLoading;
 
     /** @var string */
     public $tglAwal;
@@ -43,17 +43,17 @@ class ObatRalanKeRanap extends Component
 
     public function getCollectionProperty()
     {
-        return $this->isDeferred ? [] : PemberianObat::query()
-            ->obatRalanKeRanap($this->tglAwal, $this->tglAkhir)
-            ->search($this->cari)
+        return $this->isDeferred ? [] : DataTriaseIgd::query()
+            ->triaseIgdZonaHijau($this->tglAwal, $this->tglAkhir)
             ->sortWithColumns($this->sortColumns)
+            ->search($this->cari)
             ->paginate($this->perpage);
     }
 
     public function render(): View
     {
-        return view('livewire.pages.keuangan.obat-ralan-ke-ranap')
-            ->layout(BaseLayout::class, ['title' => 'Obat Rawat Jalan ke Rawat Inap']);
+        return view('livewire.pages.casemix.laporan-triase-igd-zona-hijau')
+            ->layout(BaseLayout::class, ['title' => 'Laporan Triase IGD Zona Hijau All Jaminan']);
     }
 
     protected function defaultValues(): void
@@ -65,22 +65,21 @@ class ObatRalanKeRanap extends Component
     protected function dataPerSheet(): array
     {
         return [
-            fn () => PemberianObat::query()
-                ->obatRalanKeRanap($this->tglAwal, $this->tglAkhir)
+            fn() => DataTriaseIgd::query()
+                ->triaseIgdZonaHijau($this->tglAwal, $this->tglAkhir)
+                ->sortWithColumns($this->sortColumns)
                 ->search($this->cari)
                 ->cursor()
-                ->map(fn (PemberianObat $model): array => [
-                    'no_rawat'      => $model->no_rawat,
-                    'no_rkm_medis'  => $model->no_rkm_medis,
-                    'nm_pasien'     => $model->nm_pasien,
-                    'png_jawab'     => $model->png_jawab,
-                    'tgl_perawatan' => $model->tgl_perawatan,
-                    'jam'           => $model->jam,
-                    'kode_brng'     => $model->kode_brng,
-                    'nama_brng'     => $model->nama_brng,
-                    'biaya_obat'    => $model->biaya_obat,
-                    'jml'           => $model->jml,
-                    'total'         => $model->total,
+                ->map(fn (DataTriaseIgd $model) : array => [
+                    'No. Rawat'         => $model->no_rawat,
+                    'No. RM'            => $model->no_rkm_medis,
+                    'Nama Pasien'       => $model->nm_pasien,
+                    'Jenis Bayar'       => $model->png_jawab,
+                    'Tgl. Kunjungan'    => $model->tgl_kunjungan,
+                    'Cara Masuk'        => $model->cara_masuk,
+                    'Alasan Kedatangan' => $model->alasan_kedatangan,
+                    'Macam Kasus'       => $model->macam_kasus,
+                    'Zona'              => $model->plan,
                 ]),
         ];
     }
@@ -92,13 +91,11 @@ class ObatRalanKeRanap extends Component
             'No. RM',
             'Nama Pasien',
             'Jenis Bayar',
-            'Tgl. Pemberian Obat',
-            'Jam',
-            'Kode Barang',
-            'Nama Barang',
-            'Harga',
-            'Jumlah',
-            'Total',
+            'Tgl. Kunjungan',
+            'Cara Masuk',
+            'Alasan Kedatangan',
+            'Macam Kasus',
+            'Zona',
         ];
     }
 
@@ -115,9 +112,9 @@ class ObatRalanKeRanap extends Component
 
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Obat Rawat Jalan ke Rawat Inap',
+            'Laporan Triase IGD Zona Hijau',
             now()->translatedFormat('d F Y'),
-            $periode,
+            $periode
         ];
     }
 }
