@@ -122,6 +122,7 @@
                                 <x-table.th style="width: 14ch" name="selisih" title="Selisih Waktu" />
                                 <x-table.th style="width: 20ch" name="total" title="Total Pembelian" />
                                 <x-table.th name="jumlah" title="Jumlah" />
+                                <x-table.th name="jml_dr" title="Jumlah Diracik" />
                             </x-slot>
                             <x-slot name="body">
                                 @forelse ($this->dataKunjunganResepObatRacikan as $resep)
@@ -171,9 +172,12 @@
                                         <x-table.td>
                                             {{ $resep->jumlah }}
                                         </x-table.td>
+                                        <x-table.td>
+                                            {{ $resep->jml_dr }}
+                                        </x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty colspan="13" padding />
+                                    <x-table.tr-empty colspan="14" padding />
                                 @endforelse
                             </x-slot>
                         </x-table>

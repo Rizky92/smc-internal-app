@@ -102,7 +102,8 @@ class ResepObat extends Model
             dokter.nm_dokter,
             poliklinik.nm_poli,
             (select round(sum(detail_pemberian_obat.total)) from detail_pemberian_obat where detail_pemberian_obat.no_rawat = resep_obat.no_rawat and detail_pemberian_obat.tgl_perawatan = resep_obat.tgl_perawatan and detail_pemberian_obat.jam = resep_obat.jam) as total,
-            (select count(*) from detail_pemberian_obat where detail_pemberian_obat.no_rawat = resep_obat.no_rawat and detail_pemberian_obat.tgl_perawatan = resep_obat.tgl_perawatan and detail_pemberian_obat.jam = resep_obat.jam) as jumlah
+            (select count(*) from detail_pemberian_obat where detail_pemberian_obat.no_rawat = resep_obat.no_rawat and detail_pemberian_obat.tgl_perawatan = resep_obat.tgl_perawatan and detail_pemberian_obat.jam = resep_obat.jam) as jumlah,
+            (select round(sum(obat_racikan.jml_dr)) from obat_racikan where obat_racikan.no_rawat = resep_obat.no_rawat and obat_racikan.tgl_perawatan = resep_obat.tgl_perawatan and obat_racikan.jam = resep_obat.jam) as jml_dr
             SQL;
 
         $this->addSearchConditions([
