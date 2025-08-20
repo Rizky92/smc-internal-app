@@ -42,6 +42,7 @@ use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 Route::get('/', HomeController::class);
 
 Route::get('/antrean', Antrean::class)->name('antrean');
+Route::get('/antrean-farmasi', Informasi\AntreanFarmasi::class)->name('antrean-farmasi');
 Route::get('/antrean-pintu', AntreanPintu::class)->name('antrean-pintu');
 Route::get('/antrean/{kd_poli}', AntreanPoli::class)->name('antrean-poli');
 Route::get('/antrean-per-pintu/{kd_pintu}', AntreanPerPintu::class)->name('antrean-per-pintu');

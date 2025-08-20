@@ -547,6 +547,13 @@ class Menu
                         'type'              => 'link',
                         'hasAnyPermissions' => true,
                     ],
+                    [
+                        'name'              => 'Antrean Farmasi',
+                        'url'               => route('antrean-farmasi'),
+                        'icon'              => 'fas fa-pills',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => true,
+                    ],
                 ],
             ],
             [

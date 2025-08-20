@@ -247,6 +247,38 @@ class ResepObat extends Model
             ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir]);
     }
 
+    public function scopeAntreanFarmasiRawatJalan(Builder $query, string $kategori=''): Builder
+    {
+        $sqlSelect = <<<SQL
+            poliklinik.nm_poli,
+            pasien.nm_pasien, 
+            resep_obat.jam as jam_validasi,
+            dokter.nm_dokter
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->addSelect( DB::raw("EXISTS(SELECT 1 FROM resep_dokter_racikan WHERE resep_dokter_racikan.no_resep = resep_obat.no_resep) as is_racikan"))
+            ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->join('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
+            ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
+            ->where('resep_obat.tgl_peresepan', '=', DB::raw('current_date()'))
+            ->where('resep_obat.jam', '!=', '00:00:00')
+            ->where('resep_obat.jam_peresepan', '!=', '00:00:00')
+            ->where(fn(Builder $query): Builder => $query
+                ->when($kategori == 'pengerjaan', fn(Builder $q): Builder => $q->where('resep_obat.jam_penyerahan', '=', '00:00:00'))
+                ->when($kategori == 'penyerahan', fn(Builder $q): Builder => $q->where('resep_obat.jam_penyerahan', '!=', '00:00:00'))
+            )
+            ->whereBetween('resep_obat.jam', [
+                DB::raw('current_time - interval 120 minute'),
+                DB::raw('current_time')
+            ])
+            ->where('resep_obat.status', '=', 'ralan')
+            ->where('reg_periksa.kd_poli', '!=', 'IGDK')
+            ->orderByDesc('resep_obat.jam');
+    }
+
     public function scopeKunjunganPasien(Builder $query, string $jenisPerawatan = 'semua', string $year = '2022'): Builder
     {
         $sqlSelect = <<<'SQL'
