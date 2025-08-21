@@ -7,7 +7,12 @@ use Livewire\Component;
 
 class ListPengerjaan extends Component
 {
-    protected $listeners = ['marqueePengerjaanFinished' => '$refresh'];
+    protected $listeners = ['marqueePengerjaanFinished' => 'refreshData'];
+
+    public function refreshData()
+    {
+        $this->emitSelf('$refresh');
+    }
 
     public function getDataPengerjaanProperty()
     {

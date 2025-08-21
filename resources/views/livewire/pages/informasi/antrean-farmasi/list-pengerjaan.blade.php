@@ -24,10 +24,10 @@
                 id="marquee-pengerjaan"
                 wire:key="marquee-pengerjaan-{{ $this->dataPengerjaan->count() }}"
                 class="marquee bg-white"
-                @if ($this->dataPengerjaan->count() < 20) wire:poll.300s @endif
+                @if ($this->dataPengerjaan->count() < 10) wire:poll.300s @endif
                 data-row-count="{{ $this->dataPengerjaan->count() }}"
                 data-direction="up"
-                data-duration="20000"
+                data-duration="30000"
                 startVisible="true"
                 data-gap="10"
                 data-duplicated="false"
@@ -67,28 +67,23 @@
             let marqueePengerjaan = $('#marquee-pengerjaan');
             let rowCount = parseInt(marqueePengerjaan.data('row-count'));
 
-            if (rowCount > 20) {
-                if (marqueePengerjaan.hasClass('js-marquee')) {
-                    marqueePengerjaan.marquee('destroy');
-                }
-
+            if (rowCount > 10) {
+                marqueePengerjaan.marquee('destroy');
+                marqueePengerjaan.find('.js-marquee-wrapper').remove();
                 marqueePengerjaan.marquee();
-
                 marqueePengerjaan.off('finished').on('finished', function() {
                     $(this).marquee('destroy');
-                    Livewire.emit('marqueePengerjaanFinished');
+                    Livewire.emitTo('pages.informasi.antrean-farmasi.list-pengerjaan', 'marqueePengerjaanFinished');
                 });
-            } else {
-                if (marqueePengerjaan.hasClass('js-marquee')) {
-                    marqueePengerjaan.marquee('destroy');
-                }
             }
         }
 
         document.addEventListener("DOMContentLoaded", initMarqueePengerjaan);
 
         Livewire.hook('message.processed', (message, component) => {
-            initMarqueePengerjaan();
+            if (component.fingerprint.name === 'pages.informasi.antrean-farmasi.list-pengerjaan') {
+                initMarqueePengerjaan();
+            }
         });
     </script>
 @endpush
