@@ -7,8 +7,13 @@ use Livewire\Component;
 
 class ListPenyerahan extends Component
 {
-    protected $listeners = ['marqueePenyerahanFinished' => '$refresh'];
+    protected $listeners = ['marqueePenyerahanFinished' => 'refreshData'];
 
+    public function refreshData()
+    {
+        $this->emitSelf('$refresh');
+    }
+    
     public function getDataPenyerahanProperty()
     {
         return ResepObat::query()->antreanFarmasiRawatJalan('penyerahan')->get();
