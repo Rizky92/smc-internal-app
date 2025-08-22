@@ -2,7 +2,7 @@
     <div class="col">
         <div class="card card-outline card-success h-100">
             <div class="card-header">
-                <h5 class="text-uppercase">List Dokter</h5>
+                <h5 class="text-uppercase">Jadwal Dokter Hari Ini</h5>
             </div>
             <div class="card-body">
                 <div class="d-flex flex-column">
