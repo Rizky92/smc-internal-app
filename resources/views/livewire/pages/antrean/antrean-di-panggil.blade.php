@@ -1,4 +1,4 @@
-<div class="row" style="height: 60%" wire:poll.keep-alive="call">
+<div class="row" style="height: 60%" wire:poll.2000ms.keep-alive="call">
     @if ($this->antreanDiPanggil)
         <div class="col">
             <div class="card card-outline card-success d-flex justify-content-center h-100" id="calling-card">
@@ -32,6 +32,7 @@
 </div>
 
 @push('js')
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=LHqTOngl"></script>
     <script>
         document.addEventListener('play-voice', (event) => {
             let text = `Nomor antrian ${event.detail.no_reg}, ${event.detail.nm_pasien.toLowerCase()}, silahkan menuju ke ${event.detail.nm_pintu.toLowerCase()}`;
@@ -49,34 +50,29 @@
                 }, 1000);
             }
 
-            let utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'id-ID';
-            utterance.rate = 0.7;
+            responsiveVoice.speak(text, 'Indonesian Female', {
+                rate: 0.7,
+                onend: () => {
+                    if (window.blinkInterval) {
+                        clearInterval(window.blinkInterval);
+                        window.blinkInterval = null;
+                        card.classList.remove('bg-success');
+                        numberElement.classList.remove('text-white');
+                    }
 
-            utterance.onend = function() {
-                if (window.blinkInterval) {
-                    clearInterval(window.blinkInterval);
-                    window.blinkInterval = null;
-                    card.classList.remove('bg-success');
-                    numberElement.classList.remove('text-white');
+                    Livewire.emit('updateStatus');
+                },
+                onerror: (e) => {
+                    console.error("Speech error", e);
+
+                    if (window.blinkInterval) {
+                        clearInterval(window.blinkInterval);
+                        window.blinkInterval = null;
+                    }
+
+                    Livewire.emit('call');
                 }
-
-                Livewire.emit('updateStatus');
-            };
-
-            utterance.onerror = function(e) {
-                console.error("Speech error", e);
-
-                if (window.blinkInterval) {
-                    clearInterval(window.blinkInterval);
-                    window.blinkInterval = null;
-                }
-
-                Livewire.emit('call');
-            };
-
-            window.speechSynthesis.cancel();
-            window.speechSynthesis.speak(utterance);
+            });
         });
     </script>
 @endpush
