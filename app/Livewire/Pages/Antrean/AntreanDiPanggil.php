@@ -33,6 +33,23 @@ class AntreanDiPanggil extends Component
             ->first();
     }
 
+    public function getAntreanSedangPeriksaProperty()
+    {
+        $db = \DB::connection('mysql_sik')->getDatabaseName();
+        $antripoli = \DB::raw("{$db}.antripoli antripoli");
+
+        return Pintu::query()
+            ->antrianPerPintu($this->kd_pintu)
+            ->selectRaw('antripoli.status')
+            ->leftJoin($antripoli, fn (JoinClause $join) => $join
+                ->on('registrasi.no_rawat', '=', 'antripoli.no_rawat')
+                ->on('poliklinik.kd_poli', '=', 'antripoli.kd_poli')
+                ->on('dokter.kd_dokter', '=', 'antripoli.kd_dokter')
+            )
+            ->where('antripoli.status', '0')
+            ->first();
+    }
+
     public function call(): void
     {
         if ($this->isCalling) {
