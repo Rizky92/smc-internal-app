@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
+use App\Jobs\ExportToExcel;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
@@ -12,6 +13,7 @@ use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\Rekening;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -47,26 +49,24 @@ class BukuBesar extends Component
         $this->defaultValues();
     }
 
-    public function getBukuBesarProperty()
-    {
-        return $this->isDeferred ? [] : Jurnal::query()
-            ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
-            ->with(['pengeluaranHarian', 'piutangDilunaskan.tagihan'])
-            ->search($this->cari)
-            ->sortWithColumns($this->sortColumns, [
-                'tgl_jurnal' => 'asc',
-                'jam_jurnal' => 'asc',
-            ])
-            ->paginate($this->perpage);
-    }
+    // public function getBukuBesarProperty()
+    // {
+    //     return $this->isDeferred ? [] : Jurnal::query()
+    //         ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening, $this->cari)
+    //         ->with(['pengeluaranHarian', 'piutangDilunaskan.tagihan'])
+    //         ->sortWithColumns($this->sortColumns, [
+    //             'tgl_jurnal' => 'asc',
+    //             'jam_jurnal' => 'asc',
+    //         ])
+    //         ->paginate($this->perpage);
+    // }
 
-    public function getTotalDebetDanKreditProperty()
-    {
-        return $this->isDeferred ? [] : Jurnal::query()
-            ->jumlahDebetKreditBukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
-            ->search($this->cari)
-            ->first();
-    }
+    // public function getTotalDebetDanKreditProperty()
+    // {
+    //     return $this->isDeferred ? [] : Jurnal::query()
+    //         ->jumlahDebetKreditBukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening, $this->cari)
+    //         ->first();
+    // }
 
     public function getRekeningProperty(): array
     {
@@ -135,8 +135,6 @@ class BukuBesar extends Component
             'No. Jurnal',
             'No. Bukti',
             'Keterangan Jurnal',
-            'Keterangan Pengeluaran',
-            'Catatan Penagihan',
             'Kode',
             'Rekening',
             'Debet',
@@ -170,5 +168,23 @@ class BukuBesar extends Component
         $this->kodeRekening = '';
         $this->tglAwal = now()->startOfMonth()->toDateString();
         $this->tglAkhir = now()->endOfMonth()->toDateString();
+    }
+
+    public function exportToExcel()
+    {
+        $userId = user()->nik;
+
+        $exportSessionId = Str::uuid()->toString();
+
+        ExportToExcel::dispatch(
+            userId: $userId, 
+            exportSessionId: $exportSessionId, 
+            tglAwal: $this->tglAwal, 
+            tglAkhir: $this->tglAkhir, 
+            kodeRekening: $this->kodeRekening, 
+            columnHeaders: $this->columnHeaders(),
+        );
+
+        $this->emit('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
     }
 }

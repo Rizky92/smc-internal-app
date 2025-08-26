@@ -33,7 +33,6 @@ class InsertToTemporary implements ShouldQueue
         $query = Jurnal::on('mysql_sik')
             ->select(DB::raw("'$this->exportSessionId' as export_session_id"),
                 DB::raw("'$this->userId' as id_user"),
-                DB::raw('CAST(@rownum := @rownum + 1 AS UNSIGNED) as row_index'),
                 'jurnal.tgl_jurnal',
                 'jurnal.jam_jurnal',
                 'jurnal.no_jurnal',
@@ -55,7 +54,6 @@ class InsertToTemporary implements ShouldQueue
         DB::connection('mysql_smc')->table('exports')->insertUsing([
             'export_session_id',
             'id_user',
-            'row_index',
             'column1',
             'column2',
             'column3',

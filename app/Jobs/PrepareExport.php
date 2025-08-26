@@ -69,10 +69,13 @@ class PrepareExport implements ShouldQueue
             ->where('export_session_id', $this->exportSessionId)
             ->where('id_user', $this->userId);
 
-        $baseQuery->select(['row_index'])
-            ->chunkById($chunkKeySize, fn( Collection $records) => $dispatchRecords(
-                Arr::pluck($records->all(), 'row_index')
-            ), 'row_index');
+        $baseQuery
+            ->select(['id'])
+            ->chunkById(
+                $chunkKeySize,
+                fn( Collection $records) => $dispatchRecords(
+                Arr::pluck($records->all(), 'id')
+            ), 'id');
     }
 
     public function getExportCsvJob()

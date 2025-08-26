@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Export;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -32,24 +33,22 @@ class ExportCsv
         $csv = Writer::createFromFileObject(new SplTempFileObject);
         $csv->setDelimiter(',');
 
-        $query = DB::connection('mysql_smc')
-            ->table('exports')
-            ->select([
-                'column1',
-                'column2',
-                'column3',
-                'column4',
-                'column5',
-                'column6',
-                'column7',
-                'column8',
-                'column9',
-            ])
-            ->where('export_session_id', $this->exportSessionId)
-            ->where('id_user', $this->userId);
+        $query = Export::select([
+            'column1',
+            'column2',
+            'column3',
+            'column4',
+            'column5',
+            'column6',
+            'column7',
+            'column8',
+            'column9',
+        ])
+        ->where('export_session_id', $this->exportSessionId)
+        ->where('id_user', $this->userId);
 
-        foreach ($query->whereIn('row_index', $this->records)->get() as $record) {
-            $csv->insertOne((array) $record);
+        foreach ($query->find($this->records) as $record) {
+            $csv->insertOne($record->toArray());
         }
 
         $filePath = "exports/{$this->userId}/{$this->exportSessionId}/" . str_pad(strval($this->page), 16, '0', STR_PAD_LEFT) . '.csv';
