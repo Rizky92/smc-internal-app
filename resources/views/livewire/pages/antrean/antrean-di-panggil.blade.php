@@ -17,6 +17,22 @@
                 </div>
             </div>
         </div>
+    @elseif ($this->antreanSedangPeriksa)
+        <div class="col">
+            <div class="card card-outline card-info d-flex justify-content-center h-100">
+                <div class="card-header">
+                    <h5 class="text-uppercase">antrean dipanggil</h5>
+                </div>
+                <div class="card-body">
+                    <h5>{{ $this->antreanSedangPeriksa->nm_poli ?? '' }}</h5>
+                    <h5 class="text-uppercase">{{ $this->antreanSedangPeriksa->nm_dokter ?? '' }}</h5>
+                    <h1 class="text-danger" style="font-size: 9rem">
+                        {{ $this->antreanSedangPeriksa->no_reg ?? '' }}
+                    </h1>
+                    <h4>{{ $this->antreanSedangPeriksa->nm_pasien ?? '' }}</h4>
+                </div>
+            </div>
+        </div>
     @else
         <div class="col">
             <div class="card card-outline card-success d-flex justify-content-center h-100">
