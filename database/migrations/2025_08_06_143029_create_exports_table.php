@@ -12,7 +12,6 @@ return new class extends Migration
             $table->bigIncrements('id');
             $table->char('export_session_id', 36);
             $table->string('id_user');
-            $table->unsignedBigInteger('row_index');
             $table->string('column1')->nullable();
             $table->string('column2')->nullable();
             $table->string('column3')->nullable();
