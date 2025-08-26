@@ -8,19 +8,14 @@
     </style>
 @endpush
 
-<div class="col-6 pt-2" style="font-size: 1.5vh">
+<div class="col-6 pt-2">
     <div class="card card-outline card-success">
         <div class="card-body">
-            <table class="table table-bordered table-striped">
-                <thead class="bg-success">
-                    <tr>
-                        <th style="width: 60%">Pasien</th>
-                        <th style="width: 20%">Jenis Resep</th>
-                        <th style="width: 20%">Selesai</th>
-                    </tr>
-                </thead>
-            </table>
-
+            <div class="bg-success p-2 text-center">
+                <h4 class="text-white font-weight-bold text-uppercase" style="font-size: 4.0vh">
+                    {{__('Selesai')}}
+                </h4>
+            </div>
             <div
                 id="marquee-penyerahan"
                 wire:key="marquee-penyerahan-{{ $this->dataPenyerahan->count() }}"
@@ -33,7 +28,7 @@
                 data-gap="10"
                 data-duplicated="false"
             >
-                <table class="table table-bordered table-striped">
+                <table class="table table-bordered table-striped" style="font-size: 1.5vh">
                     <tbody>
                         @forelse ($this->dataPenyerahan as $item)
                             <tr>
