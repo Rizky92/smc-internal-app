@@ -2,6 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Models\Aplikasi\User;
+use App\Notifications\ExportReadyNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -10,6 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\File;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use League\Csv\Reader as CsvReader;
 use League\Csv\Statement;
@@ -72,6 +75,10 @@ class WriteExcel implements ShouldQueue
         );
 
         unlink($temporaryFile);
+
+        $user = User::findByNRP($this->userId);
+
+        Notification::send($user, new ExportReadyNotification($user, $this->getFileDirectory() . '/' . $fileName));
     }
 
     public function getFileDirectory(): string
