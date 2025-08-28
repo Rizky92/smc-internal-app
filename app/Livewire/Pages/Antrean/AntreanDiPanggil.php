@@ -79,9 +79,9 @@ class AntreanDiPanggil extends Component
                 ->where('kd_dokter', $antrean->kd_dokter)
                 ->where('status', '1')
                 ->update(['status' => '0']);
-
-            $this->isCalling = false;
         }
+
+        $this->isCalling = false;
     }
 
     public function render(): View

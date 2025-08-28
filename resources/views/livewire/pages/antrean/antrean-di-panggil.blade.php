@@ -48,7 +48,6 @@
 </div>
 
 @push('js')
-    <script src="https://code.responsivevoice.org/responsivevoice.js?key=LHqTOngl"></script>
     <script>
         document.addEventListener('play-voice', (event) => {
             let text = `Nomor antrian ${event.detail.no_reg}, ${event.detail.nm_pasien.toLowerCase()}, silahkan menuju ke ${event.detail.nm_pintu.toLowerCase()}`;
@@ -66,9 +65,12 @@
                 }, 1000);
             }
 
-            responsiveVoice.speak(text, 'Indonesian Female', {
-                rate: 0.7,
-                onend: () => {
+            try {
+                let utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'id-ID';
+                utterance.rate = 0.7;
+
+                utterance.onend = () => {
                     if (window.blinkInterval) {
                         clearInterval(window.blinkInterval);
                         window.blinkInterval = null;
@@ -77,18 +79,26 @@
                     }
 
                     Livewire.emit('updateStatus');
-                },
-                onerror: (e) => {
+                };
+                utterance.onerror = (e) => {
                     console.error("Speech error", e);
-
                     if (window.blinkInterval) {
                         clearInterval(window.blinkInterval);
                         window.blinkInterval = null;
                     }
 
-                    Livewire.emit('call');
+                    Livewire.emit('updateStatus');
+                };
+                window.speechSynthesis.cancel();
+                window.speechSynthesis.speak(utterance);
+            } catch (e) {
+                console.error("SpeechSynthesisUtterance error", e);
+                if (window.blinkInterval) {
+                    clearInterval(window.blinkInterval);
+                    window.blinkInterval = null;
                 }
-            });
+                Livewire.emit('updateStatus');
+            }
         });
     </script>
 @endpush
