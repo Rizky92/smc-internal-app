@@ -35,6 +35,12 @@ class BukuBesar extends Component
     /** @var string */
     public $tglAkhir;
 
+    /** @var int */
+    private const EXCEL_EXPORT = 1;
+
+    /** @var int */
+    private const BACKGROUND_EXPORT = 2;
+
     protected function queryString(): array
     {
         return [
@@ -61,12 +67,12 @@ class BukuBesar extends Component
     //         ->paginate($this->perpage);
     // }
 
-    // public function getTotalDebetDanKreditProperty()
-    // {
-    //     return $this->isDeferred ? [] : Jurnal::query()
-    //         ->jumlahDebetKreditBukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening, $this->cari)
-    //         ->first();
-    // }
+    public function getTotalDebetDanKreditProperty()
+    {
+        return $this->isDeferred ? [] : Jurnal::query()
+            ->jumlahDebetKreditBukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening, $this->cari)
+            ->first();
+    }
 
     public function getRekeningProperty(): array
     {
@@ -82,6 +88,17 @@ class BukuBesar extends Component
             ->layout(BaseLayout::class, ['title' => 'Jurnal Buku Besar']);
     }
 
+    public function exportWithOption(int $option): void
+    {
+        $this->option = $option;
+
+        if ($this->option === self::EXCEL_EXPORT) {
+            $this->exportToExcel();
+        } elseif ($this->option === self::BACKGROUND_EXPORT) {
+            $this->exportToBackground();
+        }
+    }
+
     /**
      * @psalm-return array{0: mixed}
      */
@@ -90,7 +107,6 @@ class BukuBesar extends Component
         return [
             fn () => Jurnal::query()
                 ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
-                ->with(['pengeluaranHarian', 'piutangDilunaskan'])
                 ->search($this->cari)
                 ->cursor()
                 ->map(fn (Jurnal $model): array => [
@@ -99,8 +115,6 @@ class BukuBesar extends Component
                     'no_jurnal'              => $model->no_jurnal,
                     'no_bukti'               => $model->no_bukti,
                     'keterangan'             => $model->keterangan,
-                    'keterangan_pengeluaran' => optional($model->pengeluaranHarian)->keterangan ?? '-',
-                    'catatan'                => $this->getCatatanPiutang($model),
                     'kd_rek'                 => $model->kd_rek,
                     'nm_rek'                 => $model->nm_rek,
                     'debet'                  => round($model->debet, 2),
@@ -112,8 +126,6 @@ class BukuBesar extends Component
                     'no_jurnal'              => '',
                     'no_bukti'               => '',
                     'keterangan'             => '',
-                    'keterangan_pengeluaran' => '',
-                    'catatan'                => '',
                     'kd_rek'                 => '',
                     'nm_rek'                 => 'TOTAL :',
                     'debet'                  => round(optional($this->totalDebetDanKredit)->debet, 2),
@@ -170,7 +182,7 @@ class BukuBesar extends Component
         $this->tglAkhir = now()->endOfMonth()->toDateString();
     }
 
-    public function exportToExcel()
+    public function exportToBackground()
     {
         $userId = user()->nik;
 
