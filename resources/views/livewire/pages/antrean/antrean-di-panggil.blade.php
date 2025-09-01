@@ -1,4 +1,4 @@
-<div class="row" style="height: 60%" wire:poll.2000ms.keep-alive="call">
+<div class="row" style="height: 60%" @if(!$isCalling) wire:poll.2000ms.keep-alive="call" @endif>
     @if ($this->antreanDiPanggil)
         <div class="col">
             <div class="card card-outline card-success d-flex justify-content-center h-100" id="calling-card">
@@ -19,7 +19,7 @@
         </div>
     @elseif ($this->antreanSedangPeriksa)
         <div class="col">
-            <div class="card card-outline card-info d-flex justify-content-center h-100">
+            <div class="card card-outline card-success d-flex justify-content-center h-100">
                 <div class="card-header">
                     <h5 class="text-uppercase">antrean dipanggil</h5>
                 </div>

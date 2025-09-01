@@ -5,6 +5,7 @@ namespace App\Livewire\Pages\Antrean;
 use App\Models\Antrian\AntriPoli;
 use App\Models\Aplikasi\Pintu;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -13,6 +14,8 @@ class AntreanDiPanggil extends Component
     public string $kd_pintu;
 
     public bool $isCalling = false;
+
+    public $antreanDipanggilSekarang = null;
 
     protected $listeners = ['updateStatus'];
 
@@ -60,6 +63,14 @@ class AntreanDiPanggil extends Component
 
         if ($antrean) {
             $this->isCalling = true;
+            $this->antreanDipanggilSekarang = [
+                'no_rawat' => $antrean->no_rawat,
+                'kd_poli' => $antrean->kd_poli,
+                'kd_dokter' => $antrean->kd_dokter,
+                'no_reg' => $antrean->no_reg,
+                'nm_pasien' => $antrean->nm_pasien,
+                'nm_pintu' => $antrean->nm_pintu,
+            ];
             $this->dispatchBrowserEvent('play-voice', [
                 'no_reg'    => $antrean->no_reg,
                 'nm_pasien' => $antrean->nm_pasien,
@@ -70,18 +81,25 @@ class AntreanDiPanggil extends Component
 
     public function updateStatus()
     {
-        $antrean = $this->getAntreanDiPanggilProperty();
+        $antrean = $this->antreanDipanggilSekarang;
 
         if ($antrean) {
-            AntriPoli::query()
-                ->where('no_rawat', $antrean->no_rawat)
-                ->where('kd_poli', $antrean->kd_poli)
-                ->where('kd_dokter', $antrean->kd_dokter)
-                ->where('status', '1')
-                ->update(['status' => '0']);
+            try {
+                DB::connection('mysql_sik')->transaction(function () use (&$antrean) {
+                    AntriPoli::query()
+                        ->where('no_rawat', $antrean['no_rawat'])
+                        ->where('kd_poli', $antrean['kd_poli'])
+                        ->where('kd_dokter', $antrean['kd_dokter'])
+                        ->where('status', '1')
+                        ->update(['status' => '0']);
+                });
+            } catch (\Exception $e) {
+                \Log::error($e);
+            }
         }
 
         $this->isCalling = false;
+        $this->antreanDipanggilSekarang = null;
     }
 
     public function render(): View
