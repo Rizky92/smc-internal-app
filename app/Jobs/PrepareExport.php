@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use League\Csv\Bom;
 use League\Csv\Writer;
 use SplTempFileObject;
 
@@ -35,6 +36,7 @@ class PrepareExport implements ShouldQueue
     public function handle()
     {
         $csv = Writer::createFromFileObject(new SplTempFileObject);
+        $csv->setOutputBOM(Bom::Utf8);
         $csv->setDelimiter(',');
         $csv->insertOne($this->columnHeaders);
 

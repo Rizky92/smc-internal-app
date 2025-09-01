@@ -13,7 +13,7 @@
         "lab404/laravel-impersonate": "^1.7.7",
         "laravel/framework": "^8.83.29",
         "laravel/tinker": "^2.10.1",
-        "league/csv": "^9.8",
+        "league/csv": "9.16",
         "livewire/livewire": "^2.12.8",
         "noprotocol/php-mysql-aes-crypt": "^2.0.2",
         "nullpunkt/lz-string-php": "^1.3",

@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Aplikasi\User;
+use App\Models\Export;
 use App\Notifications\ExportReadyNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Filesystem\Filesystem;
@@ -75,6 +76,8 @@ class WriteExcel implements ShouldQueue
         );
 
         unlink($temporaryFile);
+
+        Export::where('id_user', $this->userId)->where('export_session_id', $this->exportSessionId)->delete();
 
         $user = User::findByNRP($this->userId);
 
