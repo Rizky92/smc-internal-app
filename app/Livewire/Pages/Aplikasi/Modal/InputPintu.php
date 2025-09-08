@@ -38,8 +38,8 @@ class InputPintu extends Component
     /** @var mixed */
     protected $listeners = [
         'prepare',
-        'aplikasi.pintu.hide-modal' => 'hideModal',
-        'aplikasi.pintu.show-modal' => 'showModal',
+        'pintu.hide-modal' => 'hideModal',
+        'pintu.show-modal' => 'showModal',
     ];
 
     protected function rules(): array
