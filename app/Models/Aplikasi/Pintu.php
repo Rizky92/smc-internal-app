@@ -83,6 +83,7 @@ class Pintu extends Model
             ->where('registrasi.status_lanjut', '!=', 'ranap')
             ->where('manajemen_pintu.kd_pintu', $kd_pintu)
             ->orderBy('jadwal.jam_mulai', 'asc')
+            ->orderBy('dokter.nm_dokter', 'asc')
             ->orderBy('registrasi.no_reg', 'asc')
             ->groupBy('registrasi.no_rawat');
     }
