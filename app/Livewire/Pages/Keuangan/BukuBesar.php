@@ -55,17 +55,18 @@ class BukuBesar extends Component
         $this->defaultValues();
     }
 
-    // public function getBukuBesarProperty()
-    // {
-    //     return $this->isDeferred ? [] : Jurnal::query()
-    //         ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening, $this->cari)
-    //         ->with(['pengeluaranHarian', 'piutangDilunaskan.tagihan'])
-    //         ->sortWithColumns($this->sortColumns, [
-    //             'tgl_jurnal' => 'asc',
-    //             'jam_jurnal' => 'asc',
-    //         ])
-    //         ->paginate($this->perpage);
-    // }
+    public function getBukuBesarProperty()
+    {
+        return $this->isDeferred ? [] : Jurnal::query()
+            ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
+            ->with(['pengeluaranHarian', 'piutangDilunaskan.tagihan'])
+            ->sortWithColumns($this->sortColumns, [
+                'tgl_jurnal' => 'asc',
+                'jam_jurnal' => 'asc',
+            ])
+            ->search($this->cari)
+            ->paginate($this->perpage);
+    }
 
     public function getTotalDebetDanKreditProperty()
     {
@@ -196,7 +197,7 @@ class BukuBesar extends Component
             tglAkhir: $this->tglAkhir, 
             kodeRekening: $this->kodeRekening, 
             columnHeaders: $this->columnHeaders(),
-        );
+        )->onQueue('exports');
 
         $this->emit('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
     }

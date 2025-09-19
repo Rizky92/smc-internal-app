@@ -26,9 +26,7 @@ class ExportToExcel implements ShouldQueue
         protected string $kodeRekening,
         protected array $columnHeaders,
         protected int $chunkSize = 250,
-    ) {
-        $this->onQueue('exports');
-    }
+    ) {}
 
     public function handle()
     {
