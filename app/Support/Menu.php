@@ -547,6 +547,46 @@ class Menu
                         'type'              => 'link',
                         'hasAnyPermissions' => true,
                     ],
+                    [
+                        'name'              => 'Antrean Farmasi',
+                        'url'               => route('antrean-farmasi'),
+                        'icon'              => 'fas fa-pills',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => true,
+                    ],
+                ],
+            ],
+            [
+                'name'              => 'Casemix',
+                'icon'              => 'far fa-circle',
+                'type'              => 'dropdown',
+                'hasAnyPermissions' => $user->canAny([
+                    'casemix.laporan-pasien-batal.read',
+                    'casemix.laporan-pasien-cob.read',
+                    'casemix.laporan-triase-igd-zona-hijau.read',
+                ]),
+                'items'             => [
+                    [
+                        'name'              => 'SEP Pasien Batal',
+                        'url'               => route('admin.casemix.laporan-pasien-batal'),
+                        'icon'              => 'fas fa-file-alt',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('casemix.laporan-pasien-batal.read'),
+                    ],
+                    [
+                        'name'              => 'SEP Pasien COB',
+                        'url'               => route('admin.casemix.laporan-pasien-cob'),
+                        'icon'              => 'fas fa-file-alt',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('casemix.laporan-pasien-cob.read'),
+                    ],
+                    [
+                        'name'              => 'Triase IGD Zona Hijau',
+                        'url'               => route('admin.casemix.laporan-triase-igd-zona-hijau'),
+                        'icon'              => 'fas fa-file-alt',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('casemix.laporan-triase-igd-zona-hijau.read'),
+                    ],
                 ],
             ],
             [

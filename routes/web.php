@@ -14,6 +14,7 @@ use App\Livewire\Pages\Antrean\AntreanPerPintu;
 use App\Livewire\Pages\Antrean\AntreanPoli;
 use App\Livewire\Pages\Antrian;
 use App\Livewire\Pages\Aplikasi;
+use App\Livewire\Pages\Casemix;
 use App\Livewire\Pages\Farmasi;
 use App\Livewire\Pages\HakAkses;
 use App\Livewire\Pages\Informasi;
@@ -41,6 +42,7 @@ use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 Route::get('/', HomeController::class);
 
 Route::get('/antrean', Antrean::class)->name('antrean');
+Route::get('/antrean-farmasi', Informasi\AntreanFarmasi::class)->name('antrean-farmasi');
 Route::get('/antrean-pintu', AntreanPintu::class)->name('antrean-pintu');
 Route::get('/antrean/{kd_poli}', AntreanPoli::class)->name('antrean-poli');
 Route::get('/antrean-per-pintu/{kd_pintu}', AntreanPerPintu::class)->name('antrean-per-pintu');
@@ -342,6 +344,20 @@ Route::prefix('admin')
                 Route::get('stok-darurat', Logistik\StokDaruratLogistik::class)
                     ->name('stok-darurat')
                     ->middleware('can:logistik.stok-darurat.read');
+            });
+
+        Route::prefix('casemix')
+            ->as('casemix.')
+            ->group(function () {
+                Route::get('laporan-pasien-batal', Casemix\LaporanPasienBatal::class)
+                    ->name('laporan-pasien-batal')
+                    ->middleware('can:casemix.laporan-pasien-batal.read');
+                Route::get('laporan-pasien-cob', Casemix\LaporanPasienCob::class)
+                    ->name('laporan-pasien-cob')
+                    ->middleware('can:casemix.laporan-pasien-cob.read');
+                Route::get('laporan-triase-igd-zona-hijau', Casemix\LaporanTriaseIgdZonaHijau::class)
+                    ->name('laporan-triase-igd-zona-hijau')
+                    ->middleware('can:casemix.laporan-triase-igd-zona-hijau.read');
             });
 
         Route::middleware('role:'.config('permission.superadmin_name'))

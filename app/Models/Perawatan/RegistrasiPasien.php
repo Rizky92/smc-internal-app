@@ -471,7 +471,8 @@ class RegistrasiPasien extends Model
             rujuk.rujuk_ke as rujuk_keluar_rs,
             convert(pasien.alamat using ascii) as alamat,
             pasien.no_tlp as no_hp,
-            (select count(rp2.no_rawat) from reg_periksa rp2 where rp2.no_rkm_medis = reg_periksa.no_rkm_medis and rp2.tgl_registrasi <= reg_periksa.tgl_registrasi) as kunjungan_ke
+            (select count(rp2.no_rawat) from reg_periksa rp2 where rp2.no_rkm_medis = reg_periksa.no_rkm_medis and rp2.tgl_registrasi <= reg_periksa.tgl_registrasi) as kunjungan_ke,
+            reg_periksa.kd_pj
             SQL;
 
         $this->addSearchConditions([

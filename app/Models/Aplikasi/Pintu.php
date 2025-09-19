@@ -46,10 +46,12 @@ class Pintu extends Model
         $sqlSelect = <<<'SQL'
             registrasi.no_reg,
             registrasi.no_rawat,
+            dokter.kd_dokter,
             dokter.nm_dokter,
             poliklinik.kd_poli,
             poliklinik.nm_poli,
-            pasien.nm_pasien
+            pasien.nm_pasien,
+            manajemen_pintu.nm_pintu
             SQL;
 
         $registrasi = \DB::raw("{$db}.reg_periksa registrasi");
@@ -77,10 +79,11 @@ class Pintu extends Model
                     ->on('pintu_poli.kd_poli', '=', 'jadwal.kd_poli');
             })
             ->where('registrasi.tgl_registrasi', now()->toDateString())
-            ->where('registrasi.stts', 'Belum')
+            ->whereIn('registrasi.stts', ['Belum', 'TTV'])
             ->where('registrasi.status_lanjut', '!=', 'ranap')
             ->where('manajemen_pintu.kd_pintu', $kd_pintu)
             ->orderBy('jadwal.jam_mulai', 'asc')
+            ->orderBy('dokter.nm_dokter', 'asc')
             ->orderBy('registrasi.no_reg', 'asc')
             ->groupBy('registrasi.no_rawat');
     }
