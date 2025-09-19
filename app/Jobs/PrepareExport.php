@@ -29,7 +29,7 @@ class PrepareExport implements ShouldQueue
         protected string $userId,
         protected string $exportSessionId,
         protected array $columnHeaders,
-        protected int $chunkSize = 100,
+        protected int $chunkSize = 2500,
         protected ?array $records = null,
     ) {}
 
@@ -61,7 +61,7 @@ class PrepareExport implements ShouldQueue
                 $page++;
             }
 
-            Bus::batch($jobs)->dispatch();
+            Bus::batch($jobs)->onQueue('exports')->dispatch();
         };
 
         $chunkKeySize = $this->chunkSize * 10;

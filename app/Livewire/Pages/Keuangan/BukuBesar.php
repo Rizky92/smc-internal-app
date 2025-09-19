@@ -70,7 +70,8 @@ class BukuBesar extends Component
     public function getTotalDebetDanKreditProperty()
     {
         return $this->isDeferred ? [] : Jurnal::query()
-            ->jumlahDebetKreditBukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening, $this->cari)
+            ->jumlahDebetKreditBukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
+            ->search($this->cari)
             ->first();
     }
 
