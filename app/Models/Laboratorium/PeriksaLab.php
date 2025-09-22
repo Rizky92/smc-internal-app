@@ -136,19 +136,20 @@ class PeriksaLab extends Model
         }
 
         $this->addSearchConditions([
-            'periksa_lab.no_rawat',
-            'pasien.nm_pasien',
-            'pasien.tgl_lahir',
-            'pasien.umur',
-            'pasien.jk',
-            'reg_periksa.tgl_registrasi',
             'detail_periksa_lab.kd_jenis_prw',
+            'detail_periksa_lab.keterangan',
+            'detail_periksa_lab.nilai_rujukan',
+            'detail_periksa_lab.nilai',
+            'pasien.nm_pasien',
+            'pasien.no_ktp',
+            'pasien.tgl_lahir',
+            'penjab.png_jawab',
+            'periksa_lab.no_rawat',
+            'reg_periksa.tgl_registrasi',
+            'reg_periksa.p_jawab',
             'template_laboratorium.id_template',
             'template_laboratorium.Pemeriksaan',
-            'detail_periksa_lab.nilai',
             'template_laboratorium.satuan',
-            'detail_periksa_lab.nilai_rujukan',
-            'detail_periksa_lab.keterangan',
             'template_laboratorium.urut',
         ]);
 
@@ -176,6 +177,7 @@ class PeriksaLab extends Model
             ->selectRaw($sqlSelect)
             ->leftJoin('reg_periksa', 'periksa_lab.no_rawat', '=', 'reg_periksa.no_rawat')
             ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->leftJoin('penjab', 'reg_periksa.kd_pj', 'penjab.kd_pj')
             ->leftJoin('detail_periksa_lab', 'periksa_lab.no_rawat', '=', 'detail_periksa_lab.no_rawat')
             ->leftJoin('template_laboratorium', 'detail_periksa_lab.id_template', '=', 'template_laboratorium.id_template')
             ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir])

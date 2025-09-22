@@ -62,9 +62,9 @@ class LaporanHasilMCU extends Component
             ->whereBetween('reg_periksa.tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
             ->when($this->penjamin !== '-', fn (Builder $query) => $query->where('reg_periksa.kd_pj', $this->penjamin))
             ->search($this->cari, [
-                'pasien.tgl_lahir',
-                'pasien.no_ktp',
                 'pasien.nm_pasien',
+                'pasien.no_ktp',
+                'pasien.tgl_lahir',
                 'penjab.png_jawab',
             ])
             ->sortWithColumns($this->sortColumns)
