@@ -21,7 +21,7 @@ class ListAntrean extends Component
 
     public function getAntreanPerPintuProperty()
     {
-        return Pintu::query()->antrianPerPintu($this->kd_pintu)->get();
+        return Pintu::query()->antrianPerPintu($this->kd_pintu, 'list')->get();
     }
 
     public function updateAntrean(): void
