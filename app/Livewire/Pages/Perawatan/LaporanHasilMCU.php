@@ -53,18 +53,22 @@ class LaporanHasilMCU extends Component
     public function getDataPasienPoliMCUProperty(): Paginator
     {
         return RegistrasiPasien::query()
-            ->with([
-                'pasien',
-                'poliklinik',
-                'penjamin',
-                'penilaianHasilMcu',
+            ->selectRaw('reg_periksa.*, penjab.png_jawab, pasien.nm_pasien, pasien.tgl_lahir, pasien.no_ktp, pasien.jk, pasien.agama, poliklinik.nm_poli')
+            ->join('pasien', 'reg_periksa.no_rkm_medis', 'pasien.no_rkm_medis')
+            ->join('poliklinik', 'reg_periksa.kd_poli', 'poliklinik.kd_poli')
+            ->join('penjab', 'reg_periksa.kd_pj', 'penjab.kd_pj')
+            ->with('penilaianHasilMcu')
+            ->where('poliklinik.kd_poli', 'U0036')
+            ->whereBetween('reg_periksa.tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
+            ->when($this->penjamin !== '-', fn (Builder $query) => $query->where('reg_periksa.kd_pj', $this->penjamin))
+            ->search($this->cari, [
+                'pasien.tgl_lahir',
+                'pasien.no_ktp',
+                'pasien.nm_pasien',
+                'penjab.png_jawab',
             ])
-            ->whereBetween('tgl_registrasi', [$this->tglAwal, $this->tglAkhir])
-            ->where('kd_poli', 'U0036')
-            ->when($this->penjamin !== '-', fn (Builder $query) => $query->where('kd_pj', $this->penjamin))
-            ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
-            ->orderByRaw("case when kd_pj = 'UMUM / PERSONAL' then 0 else 1 end, kd_pj")
+            ->orderByRaw("case when reg_periksa.kd_pj = 'A09' then 0 else 1 end, reg_periksa.kd_pj")
             ->paginate($this->perpage);
     }
 
@@ -349,17 +353,17 @@ class LaporanHasilMCU extends Component
         foreach ($this->dataPasienPoliMCU as $registrasi) {
             $row = [];
 
-            $row['Penjamin']                           = $registrasi->penjamin->png_jawab;
+            $row['Penjamin']                           = $registrasi->png_jawab;
             $row['No. Rawat']                          = $registrasi->no_rawat;
-            $row['No. RM']                             = $registrasi->pasien->no_rkm_medis;
-            $row['Nama']                               = $registrasi->pasien->nm_pasien;
-            $row['Tgl. Lahir']                         = $registrasi->pasien->tgl_lahir;
+            $row['No. RM']                             = $registrasi->no_rkm_medis;
+            $row['Nama']                               = $registrasi->nm_pasien;
+            $row['Tgl. Lahir']                         = $registrasi->tgl_lahir;
             $row['Usia']                               = $registrasi->umurdaftar.' '.$registrasi->sttsumur;
-            $row['Jenis Kelamin']                      = $registrasi->pasien->jk;
-            $row['Agama']                              = $registrasi->pasien->agama;
-            $row['NIK']                                = $registrasi->pasien->no_ktp;
+            $row['Jenis Kelamin']                      = $registrasi->jk;
+            $row['Agama']                              = $registrasi->agama;
+            $row['NIK']                                = $registrasi->no_ktp;
             $row['Tgl. MCU']                           = $registrasi->tgl_registrasi;
-            $row['Poli']                               = $registrasi->poliklinik->nm_poli;
+            $row['Poli']                               = $registrasi->nm_poli;
             $row['Riwayat Penyakit Sekarang']          = optional($registrasi->penilaianHasilMcu)->rps;
             $row['Riwayat Penyakit Keluarga']          = optional($registrasi->penilaianHasilMcu)->rpk;
             $row['Riwayat Penyakit Dahulu']            = optional($registrasi->penilaianHasilMcu)->rpd;
