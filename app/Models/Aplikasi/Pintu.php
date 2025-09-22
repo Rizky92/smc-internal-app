@@ -39,7 +39,7 @@ class Pintu extends Model
         return $this->belongsToMany(Dokter::class, "{$db}.dokter_pintu", 'kd_pintu', 'kd_dokter', 'kd_pintu', 'kd_dokter');
     }
 
-    public function scopeAntrianPerPintu(Builder $query, string $kd_pintu = ''): Builder
+    public function scopeAntrianPerPintu(Builder $query, string $kd_pintu = '', string $condition = ''): Builder
     {
         $db = \DB::connection('mysql_sik')->getDatabaseName();
 
@@ -79,9 +79,9 @@ class Pintu extends Model
                     ->on('pintu_poli.kd_poli', '=', 'jadwal.kd_poli');
             })
             ->where('registrasi.tgl_registrasi', now()->toDateString())
-            ->whereIn('registrasi.stts', ['Belum', 'TTV'])
             ->where('registrasi.status_lanjut', '!=', 'ranap')
             ->where('manajemen_pintu.kd_pintu', $kd_pintu)
+            ->when($condition === 'list', fn (Builder $q) => $q->whereIn('registrasi.stts', ['Belum', 'TTV']))
             ->orderBy('jadwal.jam_mulai', 'asc')
             ->orderBy('dokter.nm_dokter', 'asc')
             ->orderBy('registrasi.no_reg', 'asc')
