@@ -72,11 +72,13 @@ class LaporanTriaseIgdZonaHijau extends Component
                 ->cursor()
                 ->map(fn (DataTriaseIgd $model) : array => [
                     'No. Rawat'         => $model->no_rawat,
+                    'No. SEP'           => $model->no_sep,
                     'No. RM'            => $model->no_rkm_medis,
                     'Nama Pasien'       => $model->nm_pasien,
                     'Jenis Bayar'       => $model->png_jawab,
                     'Tgl. Kunjungan'    => $model->tgl_kunjungan,
                     'Cara Masuk'        => $model->cara_masuk,
+                    'Status'            => $model->status_lanjut,
                     'Alasan Kedatangan' => $model->alasan_kedatangan,
                     'Macam Kasus'       => $model->macam_kasus,
                     'Zona'              => $model->plan,
@@ -88,11 +90,13 @@ class LaporanTriaseIgdZonaHijau extends Component
     {
         return [
             'No. Rawat',
+            'No. SEP',
             'No. RM',
             'Nama Pasien',
             'Jenis Bayar',
             'Tgl. Kunjungan',
             'Cara Masuk',
+            'Status',
             'Alasan Kedatangan',
             'Macam Kasus',
             'Zona',
