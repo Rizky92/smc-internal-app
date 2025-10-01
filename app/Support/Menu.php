@@ -106,6 +106,7 @@ class Menu
                     'keuangan.laporan-faktur-pajak.read',
                     'keuangan.igd-ke-rawat-inap.read',
                     'keuangan.obat-ralan-ke-ranap.read',
+                    'keuangan.sirkulasi-non-medis.read',
                 ]),
                 'items' => [
                     [
@@ -281,6 +282,12 @@ class Menu
                         'icon'              => 'fas fa-exchange-alt',
                         'url'               => route('admin.keuangan.obat-ralan-ke-ranap'),
                         'hasAnyPermissions' => $user->can('keuangan.obat-ralan-ke-ranap.read'),
+                    ],
+                    [
+                        'name'              => 'Sirkulasi Non Medis',
+                        'icon'              => 'fas fa-sync-alt',
+                        'url'               => route('admin.keuangan.sirkulasi-non-medis'),
+                        'hasAnyPermissions' => $user->can('keuangan.sirkulasi-non-medis.read'),
                     ],
                 ],
             ],

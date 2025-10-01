@@ -172,6 +172,11 @@ Breadcrumbs::for('admin.keuangan.obat-ralan-ke-ranap', function (Trail $trail): 
     $trail->push('Obat Rawat Jalan Ke Rawat Inap', route('admin.keuangan.obat-ralan-ke-ranap'));
 });
 
+Breadcrumbs::for('admin.keuangan.sirkulasi-non-medis', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('Sirkulasi Non Medis', route('admin.keuangan.sirkulasi-non-medis'));
+});
+
 Breadcrumbs::for('admin.farmasi', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Farmasi');
