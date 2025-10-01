@@ -221,6 +221,7 @@ class LaporanHasilMCU extends Component
             'Anggota Gerak - Ekstremitas Bawah'  => '',
             'Genitalia'                          => '',
             'Anus & Perianal'                    => '',
+            'Laboratorium'                       => '',
             'Radiologi'                          => '',
             'EKG'                                => '',
             'Spirometri'                         => '',
@@ -328,6 +329,7 @@ class LaporanHasilMCU extends Component
                 'Anggota Gerak - Ekstremitas Bawah'  => '',
                 'Genitalia'                          => '',
                 'Anus & Perianal'                    => '',
+                'Laboratorium'                       => '',
                 'Radiologi'                          => '',
                 'EKG'                                => '',
                 'Spirometri'                         => '',
@@ -437,6 +439,7 @@ class LaporanHasilMCU extends Component
             $row['Anggota Gerak - Ekstremitas Bawah']  = optional($registrasi->penilaianHasilMcu)->ekstrimitas_bawah.(empty(optional($registrasi->penilaianHasilMcu)->ekstrimitas_bawah_ket) ? '' : ', '.optional($registrasi->penilaianHasilMcu)->ekstrimitas_bawah_ket);
             $row['Genitalia']                          = optional($registrasi->penilaianHasilMcu)->area_genitalia.(empty(optional($registrasi->penilaianHasilMcu)->keterangan_area_genitalia) ? '' : ', '.optional($registrasi->penilaianHasilMcu)->keterangan_area_genitalia);
             $row['Anus & Perianal']                    = optional($registrasi->penilaianHasilMcu)->anus_perianal.(empty(optional($registrasi->penilaianHasilMcu)->keterangan_anus_perianal) ? '' : ', '.optional($registrasi->penilaianHasilMcu)->keterangan_anus_perianal);
+            $row['Laboratorium']                       = optional($registrasi->penilaianHasilMcu)->laborat;
             $row['Radiologi']                          = optional($registrasi->penilaianHasilMcu)->radiologi;
             $row['EKG']                                = optional($registrasi->penilaianHasilMcu)->ekg;
             $row['Spirometri']                         = optional($registrasi->penilaianHasilMcu)->spirometri;
@@ -548,6 +551,7 @@ class LaporanHasilMCU extends Component
             'Anggota Gerak - Ekstremitas Bawah',
             'Genitalia',
             'Anus & Perianal',
+            'Laboratorium',
             'Radiologi',
             'EKG',
             'Spirometri',
