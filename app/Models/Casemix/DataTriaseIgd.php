@@ -47,6 +47,7 @@ class DataTriaseIgd extends Model
             data_triase_igd.no_rawat no_rawat,
             bridging_sep.no_sep no_sep,
             reg_periksa.no_rkm_medis no_rkm_medis,
+            reg_periksa.stts stts,
             pasien.nm_pasien nm_pasien,
             penjab.png_jawab png_jawab,
             data_triase_igd.tgl_kunjungan tgl_kunjungan,

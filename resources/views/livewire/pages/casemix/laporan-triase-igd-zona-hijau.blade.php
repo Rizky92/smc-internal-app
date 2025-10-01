@@ -12,7 +12,8 @@
                     <x-table.th name="png_jawab" title="Jenis Bayar" />
                     <x-table.th name="tgl_kunjungan" title="Tgl. Kunjungan" />
                     <x-table.th name="cara_masuk" title="Cara Masuk" />
-                    <x-table.th name="status_lanjut" title="Status" />
+                    <x-table.th name="stts" title="Status" />
+                    <x-table.th name="status_lanjut" title="Jenis Rawat" />
                     <x-table.th name="alasan_kedatangan" title="Alasan Kedatangan" />
                     <x-table.th name="macam_kasus" title="Macam Kasus" />
                     <x-table.th name="plan" title="Zona" />
@@ -27,13 +28,14 @@
                             <x-table.td>{{ $item->png_jawab }}</x-table.td>
                             <x-table.td>{{ $item->tgl_kunjungan }}</x-table.td>
                             <x-table.td>{{ $item->cara_masuk }}</x-table.td>
+                            <x-table.td>{{ $item->stts }}</x-table.td>
                             <x-table.td>{{ $item->status_lanjut }}</x-table.td>
                             <x-table.td>{{ $item->alasan_kedatangan }}</x-table.td>
                             <x-table.td>{{ $item->macam_kasus }}</x-table.td>
                             <x-table.td>{{ $item->plan }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="11" padding />
+                        <x-table.tr-empty colspan="12" padding />
                     @endforelse
                 </x-slot>
             </x-table>
