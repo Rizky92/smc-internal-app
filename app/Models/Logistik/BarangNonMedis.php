@@ -142,8 +142,8 @@ class BarangNonMedis extends Model
             ipsrsbarang.kode_brng,
             ipsrsbarang.nama_brng,
             kodesatuan.kode_sat,
-            ifnull((select ipsrs_riwayat_barang.stok_awal from ipsrs_riwayat_barang where ipsrs_riwayat_barang.kode_brng = ipsrsbarang.kode_brng and ipsrs_riwayat_barang.tanggal between ? and ? order by ipsrs_riwayat_barang.tanggal asc, ipsrs_riwayat_barang.jam asc limit 1), 0) stok_awal,
-            ifnull((select ipsrs_riwayat_barang.stok_awal from ipsrs_riwayat_barang where ipsrs_riwayat_barang.kode_brng = ipsrsbarang.kode_brng and ipsrs_riwayat_barang.tanggal between ? and ? order by ipsrs_riwayat_barang.tanggal asc, ipsrs_riwayat_barang.jam asc limit 1), 0) * ifnull((select ipsrsdetailpesan.harga from ipsrsdetailpesan join ipsrspemesanan on ipsrsdetailpesan.no_faktur = ipsrspemesanan.no_faktur where ipsrsdetailpesan.kode_brng = ipsrsbarang.kode_brng and ipsrspemesanan.tgl_pesan between ? and ? order by ipsrspemesanan.tgl_pesan asc limit 1), 0) as nilai_stok_awal,
+            ifnull((select dp.harga from ipsrsdetailpesan dp join ipsrspemesanan p on dp.no_faktur=p.no_faktur where dp.kode_brng=ipsrsbarang.kode_brng and p.tgl_pesan between ? and ? order by p.tgl_pesan asc limit 1),0) as harga,
+            ifnull((select rb.stok_awal from ipsrs_riwayat_barang rb where rb.kode_brng = ipsrsbarang.kode_brng and rb.tanggal between ? and ? order by rb.tanggal asc, rb.jam asc limit 1), (select rb2.stok_awal from ipsrs_riwayat_barang rb2 where rb2.kode_brng = ipsrsbarang.kode_brng and rb2.tanggal < ? order by rb2.tanggal desc, rb2.jam desc limit 1)) as stok_awal,
             ifnull((select ipsrsdetailbeli.jumlah from ipsrsdetailbeli join ipsrspembelian on ipsrsdetailbeli.no_faktur = ipsrspembelian.no_faktur where ipsrsdetailbeli.kode_brng = ipsrsbarang.kode_brng and ipsrspembelian.tgl_beli between ? and ?), 0) pengadaan,
             ifnull((select sum(ipsrsdetailbeli.subtotal) from ipsrsdetailbeli join ipsrspembelian on ipsrsdetailbeli.no_faktur = ipsrspembelian.no_faktur where ipsrsdetailbeli.kode_brng = ipsrsbarang.kode_brng and ipsrspembelian.tgl_beli between ? and ?), 0) sub_total_pengadaan,
             ifnull((select sum(ipsrsdetailpesan.jumlah) from ipsrsdetailpesan join ipsrspemesanan on ipsrsdetailpesan.no_faktur = ipsrspemesanan.no_faktur where ipsrsdetailpesan.kode_brng = ipsrsbarang.kode_brng and ipsrspemesanan.tgl_pesan between ? and ?), 0) penerimaan,
@@ -153,19 +153,13 @@ class BarangNonMedis extends Model
             ifnull((select sum(utd_pengambilan_penunjang.jml) from utd_pengambilan_penunjang where utd_pengambilan_penunjang.kode_brng = ipsrsbarang.kode_brng and utd_pengambilan_penunjang.tanggal between ? and ?), 0) pengambilan_utd,
             ifnull((select sum(utd_pengambilan_penunjang.total) from utd_pengambilan_penunjang where utd_pengambilan_penunjang.kode_brng = ipsrsbarang.kode_brng and utd_pengambilan_penunjang.tanggal between ? and ?), 0) sub_total_pengambilan_utd,
             ifnull((select sum(ipsrs_detail_hibah.jumlah) from ipsrs_detail_hibah join ipsrs_hibah on ipsrs_detail_hibah.no_hibah = ipsrs_hibah.no_hibah where ipsrs_detail_hibah.kode_brng = ipsrsbarang.kode_brng and ipsrs_hibah.tgl_hibah between ? and ?), 0) hibah,
-            ifnull((select sum(ipsrs_detail_hibah.subtotalhibah) from ipsrs_detail_hibah join ipsrs_hibah on ipsrs_detail_hibah.no_hibah = ipsrs_hibah.no_hibah where ipsrs_detail_hibah.kode_brng = ipsrsbarang.kode_brng and ipsrs_hibah.tgl_hibah between ? and ?), 0) sub_total_hibah,
-            ifnull((select ipsrs_riwayat_barang.stok_akhir from ipsrs_riwayat_barang where ipsrs_riwayat_barang.kode_brng = ipsrsbarang.kode_brng and ipsrs_riwayat_barang.tanggal between ? and ? order by ipsrs_riwayat_barang.tanggal desc, ipsrs_riwayat_barang.jam desc limit 1), 0) stok_akhir,
-            ifnull((select ipsrs_riwayat_barang.stok_akhir from ipsrs_riwayat_barang where ipsrs_riwayat_barang.kode_brng = ipsrsbarang.kode_brng and ipsrs_riwayat_barang.tanggal between ? and ? order by ipsrs_riwayat_barang.tanggal desc, ipsrs_riwayat_barang.jam desc limit 1), 0) * ifnull((select ipsrsdetailpesan.harga from ipsrsdetailpesan join ipsrspemesanan on ipsrsdetailpesan.no_faktur = ipsrspemesanan.no_faktur where ipsrsdetailpesan.kode_brng = ipsrsbarang.kode_brng and ipsrspemesanan.tgl_pesan between ? and ? order by ipsrspemesanan.tgl_pesan desc limit 1), 0) as nilai_stok_akhir
+            ifnull((select sum(ipsrs_detail_hibah.subtotalhibah) from ipsrs_detail_hibah join ipsrs_hibah on ipsrs_detail_hibah.no_hibah = ipsrs_hibah.no_hibah where ipsrs_detail_hibah.kode_brng = ipsrsbarang.kode_brng and ipsrs_hibah.tgl_hibah between ? and ?), 0) sub_total_hibah
         SQL;
 
         return $query
             ->selectRaw($sqlSelect, [
                 $tglAwal, $tglAkhir,
-                $tglAwal, $tglAkhir,
-                $tglAwal, $tglAkhir,
-                $tglAwal, $tglAkhir,
-                $tglAwal, $tglAkhir,
-                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir, $tglAwal,
                 $tglAwal, $tglAkhir,
                 $tglAwal, $tglAkhir,
                 $tglAwal, $tglAkhir,

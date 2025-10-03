@@ -8,6 +8,7 @@
                     <x-table.th name="kode_brng" title="Kode Barang" />
                     <x-table.th name="nama_brng" title="Nama Barang" />
                     <x-table.th name="kode_sat" title="Satuan" />
+                    <x-table.th-money name="harga" title="Harga(Rp)" />
                     <x-table.th name="stok_awal" title="Stok Awal" />
                     <x-table.th-money name="nilai_stok_awal" title="Stok Awal(Rp)" />
                     <x-table.th name="pengadaan" title="Pengadaan" />
@@ -29,8 +30,9 @@
                             <x-table.td>{{ $item->kode_brng }}</x-table.td>
                             <x-table.td>{{ $item->nama_brng }}</x-table.td>
                             <x-table.td>{{ $item->kode_sat }}</x-table.td>
+                            <x-table.td-money :value="$item->harga" />
                             <x-table.td class="text-right">{{ $item->stok_awal }}</x-table.td>
-                            <x-table.td-money :value="$item->nilai_stok_awal" />
+                            <x-table.td-money :value="($item->stok_awal * $item->harga)" />
                             <x-table.td class="text-right">{{ $item->pengadaan }}</x-table.td>
                             <x-table.td-money :value="$item->sub_total_pengadaan" />
                             <x-table.td class="text-right">{{ $item->penerimaan }}</x-table.td>
@@ -41,11 +43,13 @@
                             <x-table.td-money :value="$item->sub_total_pengambilan_utd" />
                             <x-table.td class="text-right">{{ $item->hibah }}</x-table.td>
                             <x-table.td-money :value="$item->sub_total_hibah" />
-                            <x-table.td class="text-right">{{ $item->stok_akhir }}</x-table.td>
-                            <x-table.td-money :value="$item->nilai_stok_akhir" />
+                            <x-table.td class="text-right">
+                                {{ $item->stok_awal + $item->pengadaan + $item->penerimaan + $item->hibah - $item->stok_keluar - $item->pengambilan_utd }}
+                            </x-table.td>
+                            <x-table.td-money :value="($item->stok_awal + $item->pengadaan + $item->penerimaan + $item->hibah - $item->stok_keluar - $item->pengambilan_utd) * $item->harga" />
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="23" padding />
+                        <x-table.tr-empty colspan="25" padding />
                     @endforelse
                 </x-slot>
             </x-table>
