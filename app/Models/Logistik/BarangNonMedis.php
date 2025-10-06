@@ -171,6 +171,20 @@ class BarangNonMedis extends Model
                 $tglAwal, $tglAkhir,
                 $tglAwal, $tglAkhir,
             ])
+            ->withCasts([
+                'harga'                     => 'float',
+                'stok_awal'                 => 'float',
+                'pengadaan'                 => 'float',
+                'sub_total_pengadaan'       => 'float',
+                'penerimaan'                => 'float',
+                'sub_total_penerimaan'      => 'float',
+                'stok_keluar'               => 'float',
+                'sub_total_keluar'          => 'float',
+                'pengambilan_utd'           => 'float',
+                'sub_total_pengambilan_utd' => 'float',
+                'hibah'                     => 'float',
+                'sub_total_hibah'           => 'float',
+            ])
             ->join('kodesatuan', 'ipsrsbarang.kode_sat', '=', 'kodesatuan.kode_sat')
             ->orderBy('ipsrsbarang.kode_brng', 'asc');
     }

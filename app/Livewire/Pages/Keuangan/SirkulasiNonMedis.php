@@ -70,11 +70,11 @@ class SirkulasiNonMedis extends Component
                 ->cursor()
                 ->map(fn (BarangNonMedis $model): array => [
                     'kode_brng'                 => $model->kode_brng,
-                    'nama_brng'                 => $model->nama_brng,
+                    'nama_brng'                 => preg_replace('/[\x00-\x1F\x7F]/u', '', $model->nama_brng),
                     'kode_sat'                  => $model->kode_sat,
                     'harga'                     => $model->harga,
                     'stok_awal'                 => $model->stok_awal,
-                    'nilai_stok_awal'           => $model->stok_awal + $model->harga,
+                    'nilai_stok_awal'           => round(floatval($model->stok_awal * $model->harga), 2),
                     'pengadaan'                 => $model->pengadaan,
                     'sub_total_pengadaan'       => $model->sub_total_pengadaan,
                     'penerimaan'                => $model->penerimaan,
@@ -85,8 +85,8 @@ class SirkulasiNonMedis extends Component
                     'sub_total_pengambilan_utd' => $model->sub_total_pengambilan_utd,
                     'hibah'                     => $model->hibah,
                     'sub_total_hibah'           => $model->sub_total_hibah,
-                    'stok_akhir'                => $model->stok_awal + $model->pengadaan + $model->penerimaan + $model->hibah - $model->stok_keluar - $model->pengambilan_utd,
-                    'nilai_stok_akhir'          => ($model->stok_awal + $model->pengadaan + $model->penerimaan + $model->hibah - $model->stok_keluar - $model->pengambilan_utd) * $model->harga,
+                    'stok_akhir'                => round(floatval(($model->stok_awal + $model->pengadaan + $model->penerimaan) + ($model->hibah - $model->stok_keluar - $model->pengambilan_utd)), 2),
+                    'nilai_stok_akhir'          => round(floatval(($model->stok_awal + $model->pengadaan + $model->penerimaan) + ($model->hibah - $model->stok_keluar - $model->pengambilan_utd)) * $model->harga, 2),
                 ]),
         ];
     }
