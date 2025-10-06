@@ -142,8 +142,8 @@ class BarangNonMedis extends Model
             ipsrsbarang.kode_brng,
             ipsrsbarang.nama_brng,
             kodesatuan.kode_sat,
-            ifnull((select dp.harga from ipsrsdetailpesan dp join ipsrspemesanan p on dp.no_faktur=p.no_faktur where dp.kode_brng=ipsrsbarang.kode_brng and p.tgl_pesan between ? and ? order by p.tgl_pesan asc limit 1),0) as harga,
-            ifnull((select rb.stok_awal from ipsrs_riwayat_barang rb where rb.kode_brng = ipsrsbarang.kode_brng and rb.tanggal between ? and ? order by rb.tanggal asc, rb.jam asc limit 1), (select rb2.stok_awal from ipsrs_riwayat_barang rb2 where rb2.kode_brng = ipsrsbarang.kode_brng and rb2.tanggal < ? order by rb2.tanggal desc, rb2.jam desc limit 1)) as stok_awal,
+            ifnull((select dp.harga from ipsrsdetailpesan dp join ipsrspemesanan p on dp.no_faktur=p.no_faktur where dp.kode_brng=ipsrsbarang.kode_brng and p.tgl_pesan between ? and ? order by p.tgl_pesan asc limit 1), (select dp2.harga from ipsrsdetailpesan dp2 join ipsrspemesanan p2 on dp2.no_faktur=p2.no_faktur where dp2.kode_brng=ipsrsbarang.kode_brng and p2.tgl_pesan < ? order by p2.tgl_pesan desc limit 1)) harga,
+            ifnull((select rb.stok_awal from ipsrs_riwayat_barang rb where rb.kode_brng = ipsrsbarang.kode_brng and rb.tanggal between ? and ? order by rb.tanggal asc, rb.jam asc limit 1), (select rb2.stok_awal from ipsrs_riwayat_barang rb2 where rb2.kode_brng = ipsrsbarang.kode_brng and rb2.tanggal < ? order by rb2.tanggal desc, rb2.jam desc limit 1)) stok_awal,
             ifnull((select ipsrsdetailbeli.jumlah from ipsrsdetailbeli join ipsrspembelian on ipsrsdetailbeli.no_faktur = ipsrspembelian.no_faktur where ipsrsdetailbeli.kode_brng = ipsrsbarang.kode_brng and ipsrspembelian.tgl_beli between ? and ?), 0) pengadaan,
             ifnull((select sum(ipsrsdetailbeli.subtotal) from ipsrsdetailbeli join ipsrspembelian on ipsrsdetailbeli.no_faktur = ipsrspembelian.no_faktur where ipsrsdetailbeli.kode_brng = ipsrsbarang.kode_brng and ipsrspembelian.tgl_beli between ? and ?), 0) sub_total_pengadaan,
             ifnull((select sum(ipsrsdetailpesan.jumlah) from ipsrsdetailpesan join ipsrspemesanan on ipsrsdetailpesan.no_faktur = ipsrspemesanan.no_faktur where ipsrsdetailpesan.kode_brng = ipsrsbarang.kode_brng and ipsrspemesanan.tgl_pesan between ? and ?), 0) penerimaan,
@@ -158,7 +158,7 @@ class BarangNonMedis extends Model
 
         return $query
             ->selectRaw($sqlSelect, [
-                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir, $tglAwal,
                 $tglAwal, $tglAkhir, $tglAwal,
                 $tglAwal, $tglAkhir,
                 $tglAwal, $tglAkhir,
