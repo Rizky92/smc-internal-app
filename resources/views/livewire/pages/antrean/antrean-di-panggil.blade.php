@@ -24,12 +24,12 @@
                     <h5 class="text-uppercase">antrean dipanggil</h5>
                 </div>
                 <div class="card-body">
-                    <h5>{{ $this->antreanSedangPeriksa->nm_poli ?? '' }}</h5>
-                    <h5 class="text-uppercase">{{ $this->antreanSedangPeriksa->nm_dokter ?? '' }}</h5>
+                    <h5>{{ $this->antreanSedangPeriksa->poliklinik->nm_poli ?? '' }}</h5>
+                    <h5 class="text-uppercase">{{ $this->antreanSedangPeriksa->dokter->nm_dokter ?? '' }}</h5>
                     <h1 class="text-danger" style="font-size: 9rem">
-                        {{ $this->antreanSedangPeriksa->no_reg ?? '' }}
+                        {{ $this->antreanSedangPeriksa->registrasi->no_reg ?? '' }}
                     </h1>
-                    <h4>{{ $this->antreanSedangPeriksa->nm_pasien ?? '' }}</h4>
+                    <h4>{{ $this->antreanSedangPeriksa->registrasi->pasien->nm_pasien ?? '' }}</h4>
                 </div>
             </div>
         </div>
