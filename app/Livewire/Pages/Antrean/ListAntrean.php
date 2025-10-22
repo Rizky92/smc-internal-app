@@ -21,7 +21,13 @@ class ListAntrean extends Component
 
     public function getAntreanPerPintuProperty()
     {
-        return Pintu::query()->antrianPerPintu($this->kd_pintu, 'list')->get();
+        return Pintu::query()
+            ->antreanPerPintu($this->kd_pintu, 'list')
+            ->where('reg_periksa.tgl_registrasi', now()->toDateString())
+            ->orderBy('jadwal.jam_mulai', 'asc')
+            ->orderBy('dokter.nm_dokter', 'asc')
+            ->orderBy('reg_periksa.no_reg', 'asc')
+            ->get();
     }
 
     public function updateAntrean(): void

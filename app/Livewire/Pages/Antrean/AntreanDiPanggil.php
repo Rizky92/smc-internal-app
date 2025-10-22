@@ -2,10 +2,10 @@
 
 namespace App\Livewire\Pages\Antrean;
 
-use App\Models\Antrian\AntriPoli;
 use App\Models\Aplikasi\Pintu;
-use Illuminate\Database\Query\JoinClause;
+use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -21,35 +21,19 @@ class AntreanDiPanggil extends Component
 
     public function getAntreanDiPanggilProperty()
     {
-        $db = \DB::connection('mysql_sik')->getDatabaseName();
-        $antripoli = \DB::raw("{$db}.antripoli antripoli");
-
         return Pintu::query()
-            ->antrianPerPintu($this->kd_pintu)
-            ->selectRaw('antripoli.status')
-            ->leftJoin($antripoli, fn (JoinClause $join) => $join
-                ->on('registrasi.no_rawat', '=', 'antripoli.no_rawat')
-                ->on('poliklinik.kd_poli', '=', 'antripoli.kd_poli')
-                ->on('dokter.kd_dokter', '=', 'antripoli.kd_dokter')
-            )
-            ->where('antripoli.status', '1')
+            ->antreanPerPintu($this->kd_pintu)
+            ->where('antripintu_smc.status', '1')
+            ->latest('antripintu_smc.waktu_panggil')
             ->first();
     }
 
     public function getAntreanSedangPeriksaProperty()
     {
-        $db = \DB::connection('mysql_sik')->getDatabaseName();
-        $antripoli = \DB::raw("{$db}.antripoli antripoli");
-
         return Pintu::query()
-            ->antrianPerPintu($this->kd_pintu)
-            ->selectRaw('antripoli.status')
-            ->leftJoin($antripoli, fn (JoinClause $join) => $join
-                ->on('registrasi.no_rawat', '=', 'antripoli.no_rawat')
-                ->on('poliklinik.kd_poli', '=', 'antripoli.kd_poli')
-                ->on('dokter.kd_dokter', '=', 'antripoli.kd_dokter')
-            )
-            ->where('antripoli.status', '0')
+            ->antreanPerPintu($this->kd_pintu)
+            ->where('antripintu_smc.status', '0')
+            ->latest('antripintu_smc.waktu_panggil')
             ->first();
     }
 
@@ -64,17 +48,18 @@ class AntreanDiPanggil extends Component
         if ($antrean) {
             $this->isCalling = true;
             $this->antreanDipanggilSekarang = [
-                'no_rawat' => $antrean->no_rawat,
-                'kd_poli' => $antrean->kd_poli,
+                'no_rawat'  => $antrean->no_rawat,
+                'kd_poli'   => $antrean->kd_poli,
                 'kd_dokter' => $antrean->kd_dokter,
-                'no_reg' => $antrean->no_reg,
+                'no_reg'    => $antrean->no_reg,
                 'nm_pasien' => $antrean->nm_pasien,
-                'nm_pintu' => $antrean->nm_pintu,
+                'kd_pintu'  => $antrean->kd_pintu,
+                'nm_pintu'  => $antrean->nm_pintu,
             ];
             $this->dispatchBrowserEvent('play-voice', [
                 'no_reg'    => $antrean->no_reg,
                 'nm_pasien' => $antrean->nm_pasien,
-                'nm_pintu' => $antrean->nm_pintu,
+                'nm_pintu'  => $antrean->nm_pintu,
             ]);
         }
     }
@@ -86,15 +71,15 @@ class AntreanDiPanggil extends Component
         if ($antrean) {
             try {
                 DB::connection('mysql_sik')->transaction(function () use (&$antrean) {
-                    AntriPoli::query()
+                    DB::connection('mysql_sik')
+                        ->table('antripintu_smc')
                         ->where('no_rawat', $antrean['no_rawat'])
-                        ->where('kd_poli', $antrean['kd_poli'])
-                        ->where('kd_dokter', $antrean['kd_dokter'])
+                        ->where('kd_pintu', $antrean['kd_pintu'])
                         ->where('status', '1')
                         ->update(['status' => '0']);
                 });
-            } catch (\Exception $e) {
-                \Log::error($e);
+            } catch (Exception $e) {
+                Log::error($e);
             }
         }
 
