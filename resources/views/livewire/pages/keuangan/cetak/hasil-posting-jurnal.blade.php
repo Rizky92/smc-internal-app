@@ -240,7 +240,7 @@
             <br />
             <br />
             <br />
-            <div>dr. TEGUH NURWANTO, MARS</div>
+            <div>Ns. YULIANA PABIBAK, S.Kep</div>
             <div>DIREKTUR</div>
         </div>
     </div>
