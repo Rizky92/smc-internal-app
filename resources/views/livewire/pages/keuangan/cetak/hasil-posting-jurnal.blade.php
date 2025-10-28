@@ -241,7 +241,7 @@
             <br />
             <br />
             <div>Ns. YULIANA PABIBAK, S.Kep</div>
-            <div>DIREKTUR</div>
+            <div>Plt. DIREKTUR</div>
         </div>
     </div>
     @push('js')
