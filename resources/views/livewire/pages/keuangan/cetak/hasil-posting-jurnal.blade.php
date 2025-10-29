@@ -230,8 +230,8 @@
             <br />
             <br />
             <br />
-            <div>Ns. YULIANA PABIBAK, S.Kep</div>
-            <div>MANAGER KEUANGAN</div>
+            <div>SAPTA PRIANGGATAMA, S.E</div>
+            <div>KABAG KEUANGAN</div>
         </div>
         <div></div>
         <div style="text-align: center">
@@ -241,7 +241,7 @@
             <br />
             <br />
             <div>Ns. YULIANA PABIBAK, S.Kep</div>
-            <div>Plt. DIREKTUR</div>
+            <div>PLT DIREKTUR</div>
         </div>
     </div>
     @push('js')
