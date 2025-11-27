@@ -46,8 +46,7 @@ class Pintu extends Model
             pasien.nm_pasien,
             pintu_smc.kd_pintu,
             pintu_smc.nm_pintu,
-            antripintu_smc.status,
-            antripintu_smc.waktu_panggil
+            antripintu_smc.status
         SQL;
 
         return $query

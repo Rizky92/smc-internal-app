@@ -24,7 +24,6 @@ class AntreanDiPanggil extends Component
         return Pintu::query()
             ->antreanPerPintu($this->kd_pintu)
             ->where('antripintu_smc.status', '1')
-            ->latest('antripintu_smc.waktu_panggil')
             ->first();
     }
 
@@ -32,8 +31,7 @@ class AntreanDiPanggil extends Component
     {
         return Pintu::query()
             ->antreanPerPintu($this->kd_pintu)
-            ->where('antripintu_smc.status', '0')
-            ->latest('antripintu_smc.waktu_panggil')
+            ->where('antripintu_smc.status', '2')
             ->first();
     }
 
@@ -69,18 +67,29 @@ class AntreanDiPanggil extends Component
         $antrean = $this->antreanDipanggilSekarang;
 
         if ($antrean) {
+
+            tracker_start('mysql_sik');
+
             try {
                 DB::connection('mysql_sik')->transaction(function () use (&$antrean) {
-                    DB::connection('mysql_sik')
-                        ->table('antripintu_smc')
+                    $conn = DB::connection('mysql_sik');
+
+                    $conn->table('antripintu_smc')
+                        ->where('kd_pintu', $antrean['kd_pintu'])
+                        ->where('status', '2')
+                        ->update(['status' => '0']);
+
+                    $conn->table('antripintu_smc')
                         ->where('no_rawat', $antrean['no_rawat'])
                         ->where('kd_pintu', $antrean['kd_pintu'])
                         ->where('status', '1')
-                        ->update(['status' => '0']);
+                        ->update(['status' => '2']);
                 });
             } catch (Exception $e) {
                 Log::error($e);
             }
+
+            tracker_end('mysql_sik');
         }
 
         $this->isCalling = false;
