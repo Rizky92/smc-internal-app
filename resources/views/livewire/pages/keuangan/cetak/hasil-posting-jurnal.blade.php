@@ -240,8 +240,8 @@
             <br />
             <br />
             <br />
-            <div>Ns. YULIANA PABIBAK, S.Kep</div>
-            <div>PLT DIREKTUR</div>
+            <div>dr. ISMET ALIMIN, MM, MARS</div>
+            <div>DIREKTUR</div>
         </div>
     </div>
     @push('js')
