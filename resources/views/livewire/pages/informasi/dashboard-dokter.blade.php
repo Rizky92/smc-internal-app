@@ -8,6 +8,7 @@
         }
     </style>
 @endpush
+
 <div class="card">
     <div class="card-header text-center">
         <h1>Jadwal Dokter</h1>
@@ -34,24 +35,27 @@
                         <tr>
                             <td colspan="8" class="bg-green"><strong>{{ $poli }}</strong></td>
                         </tr>
-                        @foreach ($jadwals as $dokterId => $dokterJadwal) {{-- Sudah berbentuk array --}}
+                        @foreach ($jadwals as $dokterId => $dokterJadwal)
+                            {{-- Sudah berbentuk array --}}
                             <tr>
-                                <td style="width: 30%">{{ $dokterJadwal[0]['dokter']['nm_dokter'] }}</td> {{-- Ambil nama dokter dari array --}}
+                                <td style="width: 30%">{{ $dokterJadwal[0]['dokter']['nm_dokter'] }}</td>
+                                {{-- Ambil nama dokter dari array --}}
                                 @foreach (['SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT', 'SABTU', 'MINGGU'] as $day)
                                     <td style="width: 10%">
                                         @php
-                                            $hariJadwal = array_filter($dokterJadwal, fn($j) => strtoupper($j['hari_kerja']) === $day);
+                                            $hariJadwal = array_filter($dokterJadwal, fn ($j) => strtoupper($j['hari_kerja']) === $day);
                                         @endphp
-                                        @if (!empty($hariJadwal))
-                                            {!! implode('<br>', array_map(fn($j) => date('H:i', strtotime($j['jam_mulai'])) . ' - ' . date('H:i', strtotime($j['jam_selesai'])), $hariJadwal)) !!}
+
+                                        @if (! empty($hariJadwal))
+                                            {!! implode('<br>', array_map(fn ($j) => date('H:i', strtotime($j['jam_mulai'])) . ' - ' . date('H:i', strtotime($j['jam_selesai'])), $hariJadwal)) !!}
                                         @else
                                             -
                                         @endif
-                                    </td>                         
+                                    </td>
                                 @endforeach
                             </tr>
                         @endforeach
-                    @endforeach                    
+                    @endforeach
                 </tbody>
             </table>
         </div>

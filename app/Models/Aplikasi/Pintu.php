@@ -24,6 +24,16 @@ class Pintu extends Model
 
     public $timestamps = false;
 
+    protected $fillable = [
+        'kd_pintu',
+        'nm_pintu',
+    ];
+
+    protected $searchColumns = [
+        'kd_pintu',
+        'nm_pintu',
+    ];
+
     public function poliklinik(): BelongsToMany
     {
         return $this->belongsToMany(Poliklinik::class, 'set_pintu_smc', 'kd_pintu', 'kd_poli');
@@ -36,7 +46,7 @@ class Pintu extends Model
 
     public function scopeAntreanPerPintu(Builder $query, string $kd_pintu = '', string $condition = ''): Builder
     {
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             reg_periksa.no_reg,
             reg_periksa.no_rawat,
             dokter.kd_dokter,
@@ -76,7 +86,7 @@ class Pintu extends Model
 
     public function scopeDokterPerPintu(Builder $query, string $kd_pintu = ''): Builder
     {
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             dokter.kd_dokter,
             dokter.nm_dokter,
             jadwal.jam_mulai,

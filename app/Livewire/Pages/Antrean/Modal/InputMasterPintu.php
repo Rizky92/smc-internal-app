@@ -1,80 +1,47 @@
 <?php
 
-namespace App\Livewire\Pages\Aplikasi\Modal;
+namespace App\Livewire\Pages\Antrean\Modal;
 
 use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Models\Aplikasi\Pintu;
 use App\Models\Aplikasi\SetPintuSmc;
-use App\Models\Kepegawaian\Dokter;
-use App\Models\Perawatan\Poliklinik;
 use Exception;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class InputPintu extends Component
+class InputMasterPintu extends Component
 {
     use DeferredModal;
     use Filterable;
     use FlashComponent;
 
-    public $pintuPlaceholder = '-1';
-
-    public $pintuPlaceholderText = '-';
-
     /** @var string */
     public $kodePintu;
 
     /** @var string */
-    public $kodePoliklinik;
-
-    /** @var string */
-    public $kodeDokter;
+    public $namaPintu;
 
     /** @var string|null Hold original values for lookup when updating/deleting */
     public $originalKodePintu;
 
-    /** @var string|null */
-    public $originalKodePoliklinik;
-
-    /** @var string|null */
-    public $originalKodeDokter;
+    /** @var string|null Hold original values for lookup when updating/deleting */
+    public $originalNamaPintu;
 
     /** @var mixed */
     protected $listeners = [
         'prepare',
         'pintu.hide-modal' => 'hideModal',
         'pintu.show-modal' => 'showModal',
-        // listeners for JS emitted events from select2
-        'inputPintu.setKodePintu'      => 'setKodePintu',
-        'inputPintu.setKodePoliklinik' => 'setKodePoliklinik',
-        'inputPintu.setKodeDokter'     => 'setKodeDokter',
     ];
-
-    public function setKodePintu($value): void
-    {
-        $this->kodePintu = $value;
-    }
-
-    public function setKodePoliklinik($value): void
-    {
-        $this->kodePoliklinik = $value;
-    }
-
-    public function setKodeDokter($value): void
-    {
-        $this->kodeDokter = $value;
-    }
 
     protected function rules(): array
     {
         $rules = collect([
             'kodePintu'      => ['required', 'string'],
-            'kodePoliklinik' => ['required', 'string'],
-            'kodeDokter'     => ['required', 'string'],
+            'namaPintu'      => ['required', 'string'],
         ]);
 
         return $rules->all();
@@ -90,37 +57,20 @@ class InputPintu extends Component
         $this->emit('select2.hydrate');
     }
 
-    public function getPintuProperty(): Collection
-    {
-        return Pintu::pluck('nm_pintu', 'kd_pintu');
-    }
-
-    public function getPoliklinikProperty(): Collection
-    {
-        return Poliklinik::where('status', '1')->pluck('nm_poli', 'kd_poli');
-    }
-
-    public function getDokterProperty(): Collection
-    {
-        return Dokter::where('status', '1')->pluck('nm_dokter', 'kd_dokter');
-    }
-
     public function render(): View
     {
-        return view('livewire.pages.aplikasi.modal.input-pintu');
+        return view('livewire.pages.antrean.modal.input-master-pintu');
     }
 
     public function prepare(array $options): void
     {
         $this->kodePintu = $options['kodePintu'];
-        $this->kodePoliklinik = $options['kodePoliklinik'];
-        $this->kodeDokter = $options['kodeDokter'];
+        $this->namaPintu = $options['namaPintu'];
 
         // Save original composite key values so subsequent edits to the form
         // won't break lookup when updating or deleting the record.
         $this->originalKodePintu = $options['kodePintu'] ?? null;
-        $this->originalKodePoliklinik = $options['kodePoliklinik'] ?? null;
-        $this->originalKodeDokter = $options['kodeDokter'] ?? null;
+        $this->originalNamaPintu = $options['namaPintu'] ?? null;
     }
 
     public function create(): void
@@ -144,10 +94,9 @@ class InputPintu extends Component
             tracker_start('mysql_sik');
 
             DB::connection('mysql_sik')->transaction(function () {
-                SetPintuSmc::create([
-                    'kd_pintu'  => $this->kodePintu,
-                    'kd_poli'   => $this->kodePoliklinik,
-                    'kd_dokter' => $this->kodeDokter,
+                Pintu::create([
+                    'kd_pintu' => $this->kodePintu,
+                    'nm_pintu' => $this->namaPintu,
                 ]);
             });
 
@@ -181,23 +130,27 @@ class InputPintu extends Component
         // Use query builder update because this model does not define a single primary key.
         // Calling $model->update() would cause Eloquent to attempt an update using an empty
         // primary key column which produces SQL like "where `` is null".
+        // Determine lookup key (original if present) and prevent editing when
+        // there are existing mappings. This avoids accidental inconsistency.
+        $lookupKodePintu = $this->originalKodePintu ?? $this->kodePintu;
+
+        // If mappings exist for this pintu, disallow editing here and instruct
+        // the user to remove mappings first (safer than implicit cascade).
+        if (SetPintuSmc::where('kd_pintu', $lookupKodePintu)->exists()) {
+            $this->dispatchBrowserEvent('data-denied');
+            $this->emit('flash.error', 'Pintu ini sudah digunakan pada mapping. Hapus mapping di Manajemen Pintu terlebih dahulu untuk bisa mengubah data Pintu.');
+
+            return;
+        }
+
         try {
             tracker_start('mysql_sik');
 
-            // Use original values to find the existing record. If originals are
-            // not set fall back to current values (defensive).
-            $lookupPintu = $this->originalKodePintu ?? $this->kodePintu;
-            $lookupPoli = $this->originalKodePoliklinik ?? $this->kodePoliklinik;
-            $lookupDokter = $this->originalKodeDokter ?? $this->kodeDokter;
-
-            $updated = SetPintuSmc::query()
-                ->where('kd_pintu', $lookupPintu)
-                ->where('kd_dokter', $lookupDokter)
-                ->where('kd_poli', $lookupPoli)
+            $updated = Pintu::query()
+                ->where('kd_pintu', $lookupKodePintu)
                 ->update([
-                    'kd_pintu'  => $this->kodePintu,
-                    'kd_poli'   => $this->kodePoliklinik,
-                    'kd_dokter' => $this->kodeDokter,
+                    'kd_pintu' => $this->kodePintu,
+                    'nm_pintu' => $this->namaPintu,
                 ]);
 
             tracker_end('mysql_sik');
@@ -221,11 +174,7 @@ class InputPintu extends Component
 
     public function delete(): void
     {
-        $pintu = SetPintuSmc::query()
-            ->where('kd_pintu', $this->kodePintu)
-            ->where('kd_dokter', $this->kodeDokter)
-            ->where('kd_poli', $this->kodePoliklinik)
-            ->first();
+        $pintu = Pintu::query()->where('kd_pintu', $this->kodePintu)->first();
 
         if (user()->cannot('antrean.manajemen-pintu.delete')) {
             $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
@@ -241,16 +190,19 @@ class InputPintu extends Component
             return;
         }
 
+        if (SetPintuSmc::where('kd_pintu', $this->kodePintu)->exists()) {
+            $this->dispatchBrowserEvent('data-denied');
+            $this->emit('flash.error', 'Pintu ini sudah digunakan pada mapping. Hapus mapping di Manajemen Pintu terlebih dahulu untuk bisa menghapus data Pintu.');
+
+            return;
+        }
+
         tracker_start('mysql_sik');
 
         $lookupPintu = $this->originalKodePintu ?? $this->kodePintu;
-        $lookupPoli = $this->originalKodePoliklinik ?? $this->kodePoliklinik;
-        $lookupDokter = $this->originalKodeDokter ?? $this->kodeDokter;
 
-        $deleted = SetPintuSmc::query()
+        $deleted = Pintu::query()
             ->where('kd_pintu', $lookupPintu)
-            ->where('kd_dokter', $lookupDokter)
-            ->where('kd_poli', $lookupPoli)
             ->delete();
 
         tracker_end('mysql_sik');
@@ -278,10 +230,8 @@ class InputPintu extends Component
     protected function defaultValues(): void
     {
         $this->kodePintu = '';
-        $this->kodePoliklinik = '';
-        $this->kodeDokter = '';
+        $this->namaPintu = '';
         $this->originalKodePintu = null;
-        $this->originalKodePoliklinik = null;
-        $this->originalKodeDokter = null;
+        $this->originalNamaPintu = null;
     }
 }

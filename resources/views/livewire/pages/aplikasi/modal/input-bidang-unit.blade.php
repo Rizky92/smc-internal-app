@@ -2,11 +2,11 @@
     @push('js')
         <script>
             $('#modal-input-bidang-unit').on('shown.bs.modal', e => {
-                @this.emit('bidang.show-modal')
+                Livewire.emit('bidang.show-modal')
             })
 
             $('#modal-input-bidang-unit').on('hide.bs.modal', e => {
-                @this.emit('bidang.hide-modal')
+                Livewire.emit('bidang.hide-modal')
             })
 
             $(document).on('data-saved', () => {

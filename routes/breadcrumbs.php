@@ -351,6 +351,11 @@ Breadcrumbs::for('admin.antrean', function (Trail $trail): void {
     $trail->push('Antrean');
 });
 
+Breadcrumbs::for('admin.antrean.master-pintu', function (Trail $trail): void {
+    $trail->parent('admin.antrean');
+    $trail->push('Master Pintu', route('admin.antrean.master-pintu'));
+});
+
 Breadcrumbs::for('admin.antrean.manajemen-pintu', function (Trail $trail): void {
     $trail->parent('admin.antrean');
     $trail->push('Manajemen Pintu', route('admin.antrean.manajemen-pintu'));

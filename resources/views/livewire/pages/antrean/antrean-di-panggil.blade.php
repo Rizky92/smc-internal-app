@@ -79,7 +79,7 @@
                     Livewire.emit('updateStatus');
                 },
                 onerror: (e) => {
-                    console.error("Speech error", e);
+                    console.error('Speech error', e);
 
                     if (window.blinkInterval) {
                         clearInterval(window.blinkInterval);
@@ -88,7 +88,7 @@
 
                     // apapun errornya, kita tetap panggil updateStatus untuk menghindari antrean stuck
                     Livewire.emit('updateStatus');
-                }
+                },
             });
         });
     </script>

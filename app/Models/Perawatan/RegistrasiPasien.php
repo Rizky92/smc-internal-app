@@ -1336,7 +1336,7 @@ class RegistrasiPasien extends Model
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
             ->where('status_lanjut', 'Ranap')
-            ->when(! empty($kodePoliklinik), fn (Builder $q) => $q->where('reg_periksa.kd_poli', $kodePoliklinik) )
+            ->when(! empty($kodePoliklinik), fn (Builder $q) => $q->where('reg_periksa.kd_poli', $kodePoliklinik))
             ->whereBetween('tgl_registrasi', [$tglAwal, $tglAkhir]);
     }
 }

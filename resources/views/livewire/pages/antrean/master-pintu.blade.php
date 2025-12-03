@@ -1,7 +1,7 @@
 <div wire:init="loadProperties">
     <x-flash />
 
-    <livewire:pages.aplikasi.modal.input-pintu />
+    <livewire:pages.antrean.modal.input-master-pintu />
 
     @once
         @push('js')
@@ -9,15 +9,13 @@
                 function loadData(e) {
                     let {
                         kodePintu,
-                        kodePoliklinik,
-                        kodeDokter
+                        namaPintu
                     } = e.dataset
 
                     Livewire.emit('prepare', {
                         kodePintu,
-                        kodePoliklinik,
-                        kodeDokter
-                    })
+                        namaPintu
+                    });
 
                     $('#modal-input-pintu').modal('show')
                 }
@@ -43,25 +41,17 @@
                 <x-slot name="columns">
                     <x-table.th name="kd_pintu" title="Kode Pintu" />
                     <x-table.th name="nm_pintu" title="Nama Pintu" />
-                    <x-table.th>Poli</x-table.th>
-                    <x-table.th>Dokter</x-table.th>
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->pintu as $pintu)
                         <x-table.tr>
-                            <x-table.td
-                                :clickable="user()->can('antrean.manajemen-pintu.update')"
-                                data-kode-poliklinik="{{ $pintu->kd_poli }}"
-                                data-kode-dokter="{{ $pintu->kd_dokter }}"
-                                data-kode-pintu="{{ $pintu->kd_pintu }}">
+                            <x-table.td :clickable="user()->can('antrean.manajemen-pintu.update')" data-kode-pintu="{{ $pintu->kd_pintu }}" data-nama-pintu="{{ $pintu->nm_pintu }}">
                                 {{ $pintu->kd_pintu }}
                             </x-table.td>
                             <x-table.td>{{ $pintu->nm_pintu }}</x-table.td>
-                            <x-table.td>{{ $pintu->nm_poli }}</x-table.td>
-                            <x-table.td>{{ $pintu->nm_dokter }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="4" padding />
+                        <x-table.tr-empty colspan="2" padding />
                     @endforelse
                 </x-slot>
             </x-table>

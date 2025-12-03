@@ -62,7 +62,7 @@ class AntreanDiPanggil extends Component
         }
     }
 
-    public function updateStatus()
+    public function updateStatus(): void
     {
         $antrean = $this->antreanDipanggilSekarang;
 
