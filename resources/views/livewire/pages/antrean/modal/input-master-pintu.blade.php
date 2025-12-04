@@ -1,17 +1,17 @@
 <div>
     @push('js')
         <script>
-            $('#modal-input-pintu').on('shown.bs.modal', e => {
-                Livewire.emit('pintu.show-modal')
-            })
+            $('#modal-input-pintu').on('shown.bs.modal', (e) => {
+                Livewire.emit('pintu.show-modal');
+            });
 
-            $('#modal-input-pintu').on('hide.bs.modal', e => {
-                Livewire.emit('pintu.hide-modal')
-            })
+            $('#modal-input-pintu').on('hide.bs.modal', (e) => {
+                Livewire.emit('pintu.hide-modal');
+            });
 
             $(document).on('data-saved', () => {
-                $('#modal-input-pintu').modal('hide')
-            })
+                $('#modal-input-pintu').modal('hide');
+            });
         </script>
     @endpush
 

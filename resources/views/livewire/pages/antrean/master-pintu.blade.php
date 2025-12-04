@@ -7,17 +7,14 @@
         @push('js')
             <script>
                 function loadData(e) {
-                    let {
-                        kodePintu,
-                        namaPintu
-                    } = e.dataset
+                    let { kodePintu, namaPintu } = e.dataset;
 
                     Livewire.emit('prepare', {
                         kodePintu,
-                        namaPintu
+                        namaPintu,
                     });
 
-                    $('#modal-input-pintu').modal('show')
+                    $('#modal-input-pintu').modal('show');
                 }
             </script>
         @endpush

@@ -17,6 +17,7 @@ class AntreanDiPanggil extends Component
 
     public $antreanDipanggilSekarang = null;
 
+    // Untuk Livewire v3
     protected $listeners = ['updateStatus'];
 
     public function getAntreanDiPanggilProperty()
@@ -54,46 +55,67 @@ class AntreanDiPanggil extends Component
                 'kd_pintu'  => $antrean->kd_pintu,
                 'nm_pintu'  => $antrean->nm_pintu,
             ];
-            $this->dispatchBrowserEvent('play-voice', [
-                'no_reg'    => $antrean->no_reg,
-                'nm_pasien' => $antrean->nm_pasien,
-                'nm_pintu'  => $antrean->nm_pintu,
-            ]);
+
+            // Gunakan dispatch untuk Livewire v3, atau dispatchBrowserEvent untuk v2
+            if (method_exists($this, 'dispatch')) {
+                // Livewire v3
+                $this->dispatch('play-voice',
+                    no_reg: $antrean->no_reg,
+                    nm_pasien: $antrean->nm_pasien,
+                    nm_pintu: $antrean->nm_pintu
+                );
+            } else {
+                // Livewire v2
+                $this->dispatchBrowserEvent('play-voice', [
+                    'no_reg'    => $antrean->no_reg,
+                    'nm_pasien' => $antrean->nm_pasien,
+                    'nm_pintu'  => $antrean->nm_pintu,
+                ]);
+            }
         }
     }
 
     public function updateStatus(): void
     {
-        $antrean = $this->antreanDipanggilSekarang;
+        try {
+            $antrean = $this->antreanDipanggilSekarang;
 
-        if ($antrean) {
+            if ($antrean) {
 
-            tracker_start('mysql_sik');
+                tracker_start('mysql_sik');
 
-            try {
-                DB::connection('mysql_sik')->transaction(function () use (&$antrean) {
-                    $conn = DB::connection('mysql_sik');
+                try {
+                    DB::connection('mysql_sik')->transaction(function () use (&$antrean) {
+                        $conn = DB::connection('mysql_sik');
 
-                    $conn->table('antripintu_smc')
-                        ->where('kd_pintu', $antrean['kd_pintu'])
-                        ->where('status', '2')
-                        ->update(['status' => '0']);
+                        $conn->table('antripintu_smc')
+                            ->where('kd_pintu', $antrean['kd_pintu'])
+                            ->where('status', '2')
+                            ->update(['status' => '0']);
 
-                    $conn->table('antripintu_smc')
-                        ->where('no_rawat', $antrean['no_rawat'])
-                        ->where('kd_pintu', $antrean['kd_pintu'])
-                        ->where('status', '1')
-                        ->update(['status' => '2']);
-                });
-            } catch (Exception $e) {
-                Log::error($e);
+                        $conn->table('antripintu_smc')
+                            ->where('no_rawat', $antrean['no_rawat'])
+                            ->where('kd_pintu', $antrean['kd_pintu'])
+                            ->where('status', '1')
+                            ->update(['status' => '2']);
+                    });
+                } catch (Exception $e) {
+                    Log::error('Error updating antrean status: '.$e->getMessage());
+                }
+
+                tracker_end('mysql_sik');
             }
 
-            tracker_end('mysql_sik');
-        }
+            $this->isCalling = false;
+            $this->antreanDipanggilSekarang = null;
 
-        $this->isCalling = false;
-        $this->antreanDipanggilSekarang = null;
+            // Tidak ada return atau redirect di sini
+
+        } catch (Exception $e) {
+            Log::error('Error in updateStatus: '.$e->getMessage());
+            $this->isCalling = false;
+            $this->antreanDipanggilSekarang = null;
+        }
     }
 
     public function render(): View

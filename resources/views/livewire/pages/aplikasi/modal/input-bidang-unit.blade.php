@@ -1,17 +1,17 @@
 <div>
     @push('js')
         <script>
-            $('#modal-input-bidang-unit').on('shown.bs.modal', e => {
-                Livewire.emit('bidang.show-modal')
-            })
+            $('#modal-input-bidang-unit').on('shown.bs.modal', (e) => {
+                Livewire.emit('bidang.show-modal');
+            });
 
-            $('#modal-input-bidang-unit').on('hide.bs.modal', e => {
-                Livewire.emit('bidang.hide-modal')
-            })
+            $('#modal-input-bidang-unit').on('hide.bs.modal', (e) => {
+                Livewire.emit('bidang.hide-modal');
+            });
 
             $(document).on('data-saved', () => {
-                $('#modal-input-bidang-unit').modal('hide')
-            })
+                $('#modal-input-bidang-unit').modal('hide');
+            });
         </script>
     @endpush
 

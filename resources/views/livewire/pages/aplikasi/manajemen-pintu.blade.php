@@ -7,19 +7,15 @@
         @push('js')
             <script>
                 function loadData(e) {
-                    let {
-                        kodePintu,
-                        kodePoliklinik,
-                        kodeDokter
-                    } = e.dataset
+                    let { kodePintu, kodePoliklinik, kodeDokter } = e.dataset;
 
                     Livewire.emit('prepare', {
                         kodePintu,
                         kodePoliklinik,
-                        kodeDokter
-                    })
+                        kodeDokter,
+                    });
 
-                    $('#modal-input-pintu').modal('show')
+                    $('#modal-input-pintu').modal('show');
                 }
             </script>
         @endpush
