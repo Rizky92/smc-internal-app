@@ -79,7 +79,7 @@
                     Livewire.emit('updateStatus');
                 },
                 onerror: (e) => {
-                    console.error("Speech error", e);
+                    console.error('Speech error', e);
 
                     if (window.blinkInterval) {
                         clearInterval(window.blinkInterval);
@@ -87,7 +87,7 @@
                     }
 
                     Livewire.emit('call');
-                }
+                },
             });
         });
     </script>

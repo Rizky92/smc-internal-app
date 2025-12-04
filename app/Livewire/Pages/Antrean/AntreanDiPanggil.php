@@ -63,12 +63,12 @@ class AntreanDiPanggil extends Component
             $this->dispatchBrowserEvent('play-voice', [
                 'no_reg'    => $antrean->no_reg,
                 'nm_pasien' => $antrean->nm_pasien,
-                'nm_pintu' => $antrean->nm_pintu,
+                'nm_pintu'  => $antrean->nm_pintu,
             ]);
         }
     }
 
-    public function updateStatus()
+    public function updateStatus(): void
     {
         $antrean = $this->getAntreanDiPanggilProperty();
 

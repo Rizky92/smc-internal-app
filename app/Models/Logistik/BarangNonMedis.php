@@ -138,7 +138,7 @@ class BarangNonMedis extends Model
             $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             ipsrsbarang.kode_brng,
             ipsrsbarang.nama_brng,
             kodesatuan.kode_sat,

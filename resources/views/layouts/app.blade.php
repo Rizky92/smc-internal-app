@@ -36,7 +36,7 @@
         <script src="{{ asset('js/adminlte.min.js') }}"></script>
 
         @livewireScripts
-        
+
         @stack('js')
     </body>
 </html>

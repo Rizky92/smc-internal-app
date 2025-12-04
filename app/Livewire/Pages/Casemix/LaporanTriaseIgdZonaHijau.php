@@ -15,12 +15,12 @@ use Livewire\Component;
 
 class LaporanTriaseIgdZonaHijau extends Component
 {
-    use FlashComponent;
-    use Filterable;
+    use DeferredLoading;
     use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
     use LiveTable;
     use MenuTracker;
-    use DeferredLoading;
 
     /** @var string */
     public $tglAwal;
@@ -65,12 +65,12 @@ class LaporanTriaseIgdZonaHijau extends Component
     protected function dataPerSheet(): array
     {
         return [
-            fn() => DataTriaseIgd::query()
+            fn () => DataTriaseIgd::query()
                 ->triaseIgdZonaHijau($this->tglAwal, $this->tglAkhir)
                 ->sortWithColumns($this->sortColumns)
                 ->search($this->cari)
                 ->cursor()
-                ->map(fn (DataTriaseIgd $model) : array => [
+                ->map(fn (DataTriaseIgd $model): array => [
                     'No. Rawat'         => $model->no_rawat,
                     'No. SEP'           => $model->no_sep,
                     'No. RM'            => $model->no_rkm_medis,
@@ -120,7 +120,7 @@ class LaporanTriaseIgdZonaHijau extends Component
             'RS Samarinda Medika Citra',
             'Laporan Triase IGD Zona Hijau',
             now()->translatedFormat('d F Y'),
-            $periode
+            $periode,
         ];
     }
 }

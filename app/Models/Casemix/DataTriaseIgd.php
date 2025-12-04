@@ -19,7 +19,10 @@ class DataTriaseIgd extends Model
 
     public $timestamps = false;
 
-    public function scopeTriaseIgdZonaHijau(Builder $query, string $tglAwal, string $tglAkhir)
+    /**
+     * @psalm-return Builder<\Illuminate\Database\Eloquent\Model>
+     */
+    public function scopeTriaseIgdZonaHijau(Builder $query, string $tglAwal, string $tglAkhir): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->toDateString();
@@ -43,7 +46,7 @@ class DataTriaseIgd extends Model
             'data_triase_igdsekunder.plan',
         ]);
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             data_triase_igd.no_rawat no_rawat,
             bridging_sep.no_sep no_sep,
             reg_periksa.no_rkm_medis no_rkm_medis,

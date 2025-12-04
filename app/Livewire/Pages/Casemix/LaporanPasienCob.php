@@ -15,12 +15,12 @@ use Livewire\Component;
 
 class LaporanPasienCob extends Component
 {
-    use FlashComponent;
-    use Filterable;
+    use DeferredLoading;
     use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
     use LiveTable;
     use MenuTracker;
-    use DeferredLoading;
 
     /** @var string */
     public $tglAwal;
@@ -65,12 +65,12 @@ class LaporanPasienCob extends Component
     protected function dataPerSheet(): array
     {
         return [
-            fn() => BridgingSep::query()
+            fn () => BridgingSep::query()
                 ->registrasiCob($this->tglAwal, $this->tglAkhir)
                 ->sortWithColumns($this->sortColumns)
                 ->search($this->cari)
                 ->cursor()
-                ->map(fn (BridgingSep $model) : array => [
+                ->map(fn (BridgingSep $model): array => [
                     'No. SEP'           => $model->no_sep,
                     'Tgl. SEP'          => $model->tglsep,
                     'No. Rawat'         => $model->no_rawat,
@@ -110,7 +110,7 @@ class LaporanPasienCob extends Component
             'RS Samarinda Medika Citra',
             'Laporan Data SEP BPJS Untuk Registrasi Non BPJS atau COB',
             now()->translatedFormat('d F Y'),
-            $periode
+            $periode,
         ];
     }
 }

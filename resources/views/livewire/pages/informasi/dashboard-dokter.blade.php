@@ -16,8 +16,8 @@
         }
 
         .padding {
-            height: 80vh; 
-            z-index: 1; 
+            height: 80vh;
+            z-index: 1;
             position: relative;
         }
 
@@ -44,7 +44,7 @@
 <div class="card">
     <div class="container-fluid d-flex justify-content-center">
         <img src="img/logo.png" alt="logo" width="120" />
-        <h1 style="font-size: 8vh; padding-top: 20px;">Jadwal Dokter</h1>
+        <h1 style="font-size: 8vh; padding-top: 20px">Jadwal Dokter</h1>
     </div>
     <div class="card-body p-0">
         <table class="table text-nowrap mb-0" style="font-size: 2.5vh">
@@ -95,28 +95,28 @@
     </div>
 </div>
 @push('js')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const scrollTable = document.getElementById('scrollTable');
-        const scrollingContent = document.getElementById('scrollingContent');
-        setTimeout(() => {
-            calculateAndStartScroll();
-        }, 100);
-        
-        function calculateAndStartScroll() {
-            const tableHeight = scrollTable.offsetHeight;
-            const containerHeight = scrollingContent.offsetHeight;
-            const paddingHeight = document.querySelector('.padding').offsetHeight;
-            const scrollDistance = tableHeight - containerHeight + paddingHeight;
-            const scrollSpeed = 50;
-            const scrollDuration = Math.max(scrollDistance / scrollSpeed, 10); // minimal 10 detik
-            scrollTable.style.animationDuration = scrollDuration + 's';
-            scrollTable.classList.add('animate-scroll');
-            const reloadDelay = (scrollDuration + 1) * 1000;
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const scrollTable = document.getElementById('scrollTable');
+            const scrollingContent = document.getElementById('scrollingContent');
             setTimeout(() => {
-                location.reload(true);
-            }, reloadDelay);
-        }
-    });
-</script>
+                calculateAndStartScroll();
+            }, 100);
+
+            function calculateAndStartScroll() {
+                const tableHeight = scrollTable.offsetHeight;
+                const containerHeight = scrollingContent.offsetHeight;
+                const paddingHeight = document.querySelector('.padding').offsetHeight;
+                const scrollDistance = tableHeight - containerHeight + paddingHeight;
+                const scrollSpeed = 50;
+                const scrollDuration = Math.max(scrollDistance / scrollSpeed, 10); // minimal 10 detik
+                scrollTable.style.animationDuration = scrollDuration + 's';
+                scrollTable.classList.add('animate-scroll');
+                const reloadDelay = (scrollDuration + 1) * 1000;
+                setTimeout(() => {
+                    location.reload(true);
+                }, reloadDelay);
+            }
+        });
+    </script>
 @endpush

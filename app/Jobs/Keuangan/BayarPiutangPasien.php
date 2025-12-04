@@ -135,7 +135,7 @@ class BayarPiutangPasien implements ShouldQueue
                 $this->setLunasPiutang();
 
                 $this->setSelesaiPenagihanPiutang($model->kd_rek);
-                
+
                 tracker_start('mysql_sik');
 
                 $this->jurnal = Jurnal::catat(
@@ -147,13 +147,12 @@ class BayarPiutangPasien implements ShouldQueue
                 tracker_end('mysql_sik', $this->userId);
             });
 
-            
         tracker_start('mysql_sik');
-        
+
         $this->jurnal->isiDetail($detailJurnal);
 
         tracker_end('mysql_sik', $this->userId);
-        
+
         $this->jurnal->load('detail');
 
         $this->masukkanKeJurnalPiutangLunas(
