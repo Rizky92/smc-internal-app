@@ -47,6 +47,7 @@ class PeriksaRadiologi extends Model
 
         $sqlSelect = <<<'SQL'
             periksa_radiologi.no_rawat,
+            bridging_sep.no_sep,
             reg_periksa.no_rkm_medis,
             pasien.nm_pasien,
             penjab.png_jawab,
@@ -66,6 +67,7 @@ class PeriksaRadiologi extends Model
 
         $this->addSearchConditions([
             'periksa_radiologi.no_rawat',
+            'bridging_sep.no_sep',
             'reg_periksa.no_rkm_medis',
             'pasien.nm_pasien',
             'penjab.png_jawab',
@@ -82,6 +84,7 @@ class PeriksaRadiologi extends Model
 
         $this->addRawColumns([
             'no_rawat'          => 'periksa_radiologi.no_rawat',
+            'no_sep'            => 'bridging_sep.no_sep',
             'no_rkm_medis'      => 'reg_periksa.no_rkm_medis',
             'nm_pasien'         => 'pasien.nm_pasien',
             'png_jawab'         => 'penjab.png_jawab',
@@ -103,6 +106,7 @@ class PeriksaRadiologi extends Model
             ->selectRaw($sqlSelect)
             ->withCasts(['biaya' => 'float'])
             ->leftJoin('reg_periksa', 'periksa_radiologi.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->leftJoin('bridging_sep', 'periksa_radiologi.no_rawat', '=', 'bridging_sep.no_rawat')
             ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->leftJoin('petugas', 'periksa_radiologi.nip', '=', 'petugas.nip')
             ->leftJoin('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')

@@ -81,6 +81,7 @@ class LaporanTindakanLab extends Component
                 ->cursor()
                 ->map(fn (PeriksaLab $model): array => [
                     'no_rawat'       => $model->no_rawat,
+                    'no_sep'         => $model->no_sep,
                     'no_rkm_medis'   => $model->no_rkm_medis,
                     'nm_pasien'      => $model->nm_pasien,
                     'png_jawab'      => $model->png_jawab,
@@ -104,6 +105,7 @@ class LaporanTindakanLab extends Component
     {
         return [
             'No. Rawat',
+            'No. SEP',
             'No. RM',
             'Pasien',
             'Jenis Bayar',
