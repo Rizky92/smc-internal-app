@@ -79,7 +79,8 @@ class PeriksaLab extends Model
         }
 
         $sqlSelect = <<<'SQL'
-            periksa_lab.no_rawat no_rawat,
+            periksa_lab.no_rawat,
+            bridging_sep.no_sep,
             reg_periksa.no_rkm_medis,
             pasien.nm_pasien,
             penjab.png_jawab,
@@ -98,7 +99,7 @@ class PeriksaLab extends Model
             SQL;
 
         $this->addSearchConditions([
-            'periksa_lab.no_rawat no_rawat',
+            'periksa_lab.no_rawat',
             'reg_periksa.no_rkm_medis',
             'pasien.nm_pasien',
             'penjab.png_jawab',
@@ -122,6 +123,7 @@ class PeriksaLab extends Model
             ->leftJoin('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->leftJoin('dokter', 'periksa_lab.kd_dokter', '=', 'dokter.kd_dokter')
             ->leftJoin('jns_perawatan_lab', 'periksa_lab.kd_jenis_prw', '=', 'jns_perawatan_lab.kd_jenis_prw')
+            ->leftJoin('bridging_sep', 'periksa_lab.no_rawat', '=', 'bridging_sep.no_rawat')
             ->whereBetween('periksa_lab.tgl_periksa', [$tglAwal, $tglAkhir]);
     }
 
