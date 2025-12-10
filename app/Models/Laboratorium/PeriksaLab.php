@@ -4,6 +4,8 @@ namespace App\Models\Laboratorium;
 
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Facades\DB;
 use Reedware\LaravelCompositeRelations\CompositeBelongsTo;
 use Reedware\LaravelCompositeRelations\HasCompositeRelations;
 
@@ -100,6 +102,7 @@ class PeriksaLab extends Model
 
         $this->addSearchConditions([
             'periksa_lab.no_rawat',
+            'bridging_sep.no_sep',
             'reg_periksa.no_rkm_medis',
             'pasien.nm_pasien',
             'penjab.png_jawab',
@@ -118,12 +121,15 @@ class PeriksaLab extends Model
             ->selectRaw($sqlSelect)
             ->withCasts(['biaya' => 'float'])
             ->leftJoin('reg_periksa', 'periksa_lab.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->leftJoin('bridging_sep', fn (JoinClause $join) => $join
+                ->on('reg_periksa.no_rawat', '=', 'bridging_sep.no_rawat')
+                ->on('reg_periksa.status_lanjut', '=', DB::raw('(if(bridging_sep.jnspelayanan = "1", "Ranap", "Ralan"))'))
+            )
             ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->leftJoin('petugas', 'periksa_lab.nip', '=', 'petugas.nip')
             ->leftJoin('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->leftJoin('dokter', 'periksa_lab.kd_dokter', '=', 'dokter.kd_dokter')
             ->leftJoin('jns_perawatan_lab', 'periksa_lab.kd_jenis_prw', '=', 'jns_perawatan_lab.kd_jenis_prw')
-            ->leftJoin('bridging_sep', 'periksa_lab.no_rawat', '=', 'bridging_sep.no_rawat')
             ->whereBetween('periksa_lab.tgl_periksa', [$tglAwal, $tglAkhir]);
     }
 
