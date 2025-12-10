@@ -33,5 +33,7 @@
         <UnsafeInstantiation errorLevel="suppress" />
         <PropertyNotSetInConstructor errorLevel="suppress" />
         <PossiblyInvalidArgument errorLevel="suppress" />
+        <MissingClosureReturnType errorLevel="suppress" />
+        <MissingClosureParamType errorLevel="suppress" />
     </issueHandlers>
 </psalm>

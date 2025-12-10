@@ -159,8 +159,8 @@ class LaporanFakturPajakBPJS extends Component
             ->unionAll(PeriksaRadiologi::query()->itemFakturPajak())
             ->unionAll(Operasi::query()->itemFakturPajak())
             ->unionAll(TambahanBiaya::query()->itemFakturPajak())
-            ->unionAll(RegistrasiPasien::query()->itemFakturPajakTambahanEmbalaseTuslah())
             ->unionAll(PemberianObat::query()->itemFakturPajak())
+            ->unionAll(PemberianObat::query()->itemFakturPajakTambahanEmbalaseTuslah())
             ->unionAll(ObatPulang::query()->itemFakturPajak())
             ->unionAll(ReturObatDetail::query()->itemFakturPajak());
 
@@ -248,8 +248,8 @@ class LaporanFakturPajakBPJS extends Component
             ->unionAll(PeriksaRadiologi::query()->itemFakturPajak())
             ->unionAll(Operasi::query()->itemFakturPajak())
             ->unionAll(TambahanBiaya::query()->itemFakturPajak())
-            ->unionAll(RegistrasiPasien::query()->itemFakturPajakTambahanEmbalaseTuslah())
             ->unionAll(PemberianObat::query()->itemFakturPajak())
+            ->unionAll(PemberianObat::query()->itemFakturPajakTambahanEmbalaseTuslah())
             ->unionAll(ObatPulang::query()->itemFakturPajak())
             ->unionAll(ReturObatDetail::query()->itemFakturPajak());
 
