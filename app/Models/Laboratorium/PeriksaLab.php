@@ -80,7 +80,7 @@ class PeriksaLab extends Model
 
         $sqlSelect = <<<'SQL'
             periksa_lab.no_rawat,
-            bridging_sep.no_sep,
+            coalesce(case when periksa_lab.status = 'Ranap' then (select bridging_sep.no_sep from bridging_sep where bridging_sep.no_rawat = periksa_lab.no_rawat and bridging_sep.jnspelayanan = '1' order by bridging_sep.tglsep desc limit 1) else (select bridging_sep.no_sep from bridging_sep where bridging_sep.no_rawat = periksa_lab.no_rawat and bridging_sep.jnspelayanan = '2' order by bridging_sep.tglsep desc limit 1) end, (select bridging_sep.no_sep from bridging_sep where bridging_sep.no_rawat = periksa_lab.no_rawat order by bridging_sep.tglsep desc limit 1)) as no_sep,
             reg_periksa.no_rkm_medis,
             pasien.nm_pasien,
             penjab.png_jawab,
@@ -100,6 +100,7 @@ class PeriksaLab extends Model
 
         $this->addSearchConditions([
             'periksa_lab.no_rawat',
+            'coalesce(case when periksa_lab.status = \'Ranap\' then (select bridging_sep.no_sep from bridging_sep where bridging_sep.no_rawat = periksa_lab.no_rawat and bridging_sep.jnspelayanan = \'1\' order by bridging_sep.tglsep desc limit 1) else (select bridging_sep.no_sep from bridging_sep where bridging_sep.no_rawat = periksa_lab.no_rawat and bridging_sep.jnspelayanan = \'2\' order by bridging_sep.tglsep desc limit 1) end, (select bridging_sep.no_sep from bridging_sep where bridging_sep.no_rawat = periksa_lab.no_rawat order by bridging_sep.tglsep desc limit 1))',
             'reg_periksa.no_rkm_medis',
             'pasien.nm_pasien',
             'penjab.png_jawab',
