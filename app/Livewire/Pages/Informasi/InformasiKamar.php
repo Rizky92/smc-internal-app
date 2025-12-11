@@ -13,7 +13,6 @@ class InformasiKamar extends Component
     {
         return Bangsal::query()
             ->informasiKamar()
-            ->with('kamar')
             ->get();
     }
 

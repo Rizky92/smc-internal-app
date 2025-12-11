@@ -34,8 +34,8 @@
         <script src="{{ asset('js/jquery.overlayScrollbars.min.js') }}"></script>
         <script src="{{ asset('js/adminlte.min.js') }}"></script>
 
-        @stack('js')
-
         @livewireScripts
+
+        @stack('js')
     </body>
 </html>

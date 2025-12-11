@@ -3,6 +3,9 @@
 namespace App\Models\Keuangan\Jurnal;
 
 use App\Database\Eloquent\Model;
+use App\Exceptions\EmptyTransactionException;
+use App\Exceptions\InequalJournalException;
+use App\Exceptions\TransactionLessThanZeroException;
 use App\Models\Keuangan\PenagihanPiutangDetail;
 use App\Models\Keuangan\PengeluaranHarian;
 use App\Models\Keuangan\PiutangDilunaskan;
@@ -14,6 +17,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+/**
+ * @psalm-template TDetail of \Illuminate\Support\Collection<array-key, array{kd_rek: string, debet: numeric, kredit: numeric}>|array<array-key, array{kd_rek: string, debet: numeric, kredit: numeric}>
+ */
 class Jurnal extends Model
 {
     protected $connection = 'mysql_sik';
@@ -180,14 +186,12 @@ class Jurnal extends Model
     /**
      * @param  \DateTimeInterface|string  $date
      */
-    public static function noJurnalBaru($date): string
+    public static function noJurnalBaru($date, int $index = 1): string
     {
         $date = carbon($date)->format('Ymd');
 
-        $index = 1;
-
         $noJurnalTerakhir = static::query()
-            ->whereRaw('no_jurnal like ?', [str($date)->wrap('JR', '%')->value()])
+            ->where('no_jurnal', 'like', [str($date)->wrap('JR', '%')->value()])
             ->orderBy('no_jurnal', 'desc')
             ->value('no_jurnal');
 
@@ -202,12 +206,11 @@ class Jurnal extends Model
     }
 
     /**
-     * @param  "U"|"P"  $jenis
      * @param  Carbon|\DateTime|string  $waktuTransaksi
-     * @param  array<array{kd_rek: string, debet: int|float, kredit: int|float}>  $detail
-     * @return static
+     * @param  TDetail  $detail
+     * @param  "U"|"P"  $jenis
      */
-    public static function catat(string $noBukti, string $keterangan, $waktuTransaksi, array $detail, string $jenis = 'U'): ?self
+    public static function catat(string $noBukti, string $keterangan, $waktuTransaksi, $detail = [], string $jenis = 'U'): self
     {
         if (! $waktuTransaksi instanceof Carbon) {
             $waktuTransaksi = carbon($waktuTransaksi);
@@ -217,31 +220,43 @@ class Jurnal extends Model
             $waktuTransaksi = now();
         }
 
-        $noJurnal = static::noJurnalBaru($waktuTransaksi);
-
-        $detail = collect($detail);
-
-        [$debet, $kredit] = [round($detail->sum('debet'), 2), round($detail->sum('kredit'), 2)];
-
-        if ($debet < 0 || $kredit < 0) {
-            throw new \Exception('Debet dan Kredit tidak sama..!!');
-        }
-
-        throw_if($debet !== $kredit, 'App\Exceptions\InequalJournalException', $debet, $kredit, $noJurnal);
-
-        $jurnal = static::create([
-            'no_jurnal'  => $noJurnal,
+        return static::create([
+            'no_jurnal'  => static::noJurnalBaru($waktuTransaksi),
             'no_bukti'   => $noBukti,
             'keterangan' => $keterangan,
             'jenis'      => $jenis,
             'tgl_jurnal' => $waktuTransaksi->toDateString(),
             'jam_jurnal' => $waktuTransaksi->format('H:i:s'),
-        ]);
+        ])->isiDetail($detail);
+    }
 
-        $detail = $jurnal
-            ->detail()
-            ->createMany($detail);
+    /**
+     * @param  TDetail  $detail
+     */
+    public function isiDetail($detail = []): self
+    {
+        $detail = collect($detail);
 
-        return $jurnal->load('detail');
+        if ($detail->isEmpty()) {
+            return $this;
+        }
+
+        [$debet, $kredit] = [round($detail->sum('debet')), round($detail->sum('kredit'))];
+
+        if ($debet !== $kredit) {
+            throw new InequalJournalException($debet, $kredit);
+        }
+
+        if ($debet < 0 || $kredit < 0) {
+            throw new TransactionLessThanZeroException($debet, $kredit);
+        }
+
+        if ($detail->isEmpty() || ($debet === $kredit && $debet === 0.0)) {
+            throw new EmptyTransactionException($debet, $kredit);
+        }
+
+        $this->detail()->createMany($detail->all());
+
+        return $this->load('detail');
     }
 }

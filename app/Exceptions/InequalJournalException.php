@@ -10,9 +10,9 @@ class InequalJournalException extends RuntimeException
      * @psalm-param numeric $debit
      * @psalm-param numeric $credit
      */
-    public function __construct($debit, $credit, string $journalNo)
+    public function __construct($debit, $credit)
     {
-        $message = str(collect(['journalNo' => $journalNo, 'debit' => $debit, 'credit' => $credit])->toJson())
+        $message = str(collect(['debit' => $debit, 'credit' => $credit])->toJson())
             ->prepend('Debit and credit must be equal. ')
             ->value();
 

@@ -85,14 +85,14 @@ class RegistrasiPasien extends Model
 
     public function asmedRWI(): Attribute
     {
-        return Attribute::get(function ($_, array $attributes) {
+        return Attribute::get(function ($_, array $attributes): string {
             $asmed = collect();
 
-            if ($attributes['asmed_ranap_umum'] === '1') {
+            if ((string) $attributes['asmed_ranap_umum'] === '1') {
                 $asmed->push('RWI Umum');
             }
 
-            if ($attributes['asmed_ranap_kandungan'] === '1') {
+            if ((string) $attributes['asmed_ranap_kandungan'] === '1') {
                 $asmed->push('RWI Kandungan');
             }
 
@@ -110,58 +110,58 @@ class RegistrasiPasien extends Model
 
     public function asmedPoli(): Attribute
     {
-        return Attribute::get(function ($_, array $attributes) {
+        return Attribute::get(function ($_, array $attributes): string {
             $asmed = collect();
 
-            if ($attributes['asmed_poli_umum'] === '1') {
+            if ((string) $attributes['asmed_poli_umum'] === '1') {
                 $asmed->push('Poli Umum');
             }
 
-            if ($attributes['asmed_poli_anak'] === '1') {
+            if ((string) $attributes['asmed_poli_anak'] === '1') {
                 $asmed->push('Poli Anak');
             }
 
-            if ($attributes['asmed_poli_bedah'] === '1') {
+            if ((string) $attributes['asmed_poli_bedah'] === '1') {
                 $asmed->push('Poli Bedah');
             }
 
-            if ($attributes['asmed_poli_bedah_mulut'] === '1') {
+            if ((string) $attributes['asmed_poli_bedah_mulut'] === '1') {
                 $asmed->push('Poli Bedah Mulut');
             }
 
-            if ($attributes['asmed_poli_kandungan'] === '1') {
+            if ((string) $attributes['asmed_poli_kandungan'] === '1') {
                 $asmed->push('Poli Kandungan');
             }
 
-            if ($attributes['asmed_poli_mata'] === '1') {
+            if ((string) $attributes['asmed_poli_mata'] === '1') {
                 $asmed->push('Poli Mata');
             }
 
-            if ($attributes['asmed_poli_neurologi'] === '1') {
+            if ((string) $attributes['asmed_poli_neurologi'] === '1') {
                 $asmed->push('Poli Neurologi');
             }
 
-            if ($attributes['asmed_poli_orthopedi'] === '1') {
+            if ((string) $attributes['asmed_poli_orthopedi'] === '1') {
                 $asmed->push('Poli Orthopedi');
             }
 
-            if ($attributes['asmed_poli_penyakit_dalam'] === '1') {
+            if ((string) $attributes['asmed_poli_penyakit_dalam'] === '1') {
                 $asmed->push('Poli Penyakit Dalam');
             }
 
-            if ($attributes['asmed_poli_psikiatrik'] === '1') {
+            if ((string) $attributes['asmed_poli_psikiatrik'] === '1') {
                 $asmed->push('Poli Psikiatrik');
             }
 
-            if ($attributes['asmed_poli_tht'] === '1') {
+            if ((string) $attributes['asmed_poli_tht'] === '1') {
                 $asmed->push('Poli THT');
             }
 
-            if ($attributes['asmed_poli_geriatri'] === '1') {
+            if ((string) $attributes['asmed_poli_geriatri'] === '1') {
                 $asmed->push('Poli Geriatri');
             }
 
-            if ($attributes['asmed_poli_kulit_kelamin'] === '1') {
+            if ((string) $attributes['asmed_poli_kulit_kelamin'] === '1') {
                 $asmed->push('Poli Kulit & Kelamin');
             }
 
@@ -183,34 +183,34 @@ class RegistrasiPasien extends Model
 
     public function askepRalan(): Attribute
     {
-        return Attribute::get(function ($_, array $attributes): ?string {
+        return Attribute::get(function ($_, array $attributes): string {
             $askep = collect();
 
-            if ($attributes['askep_ralan_umum'] === '1') {
+            if ((string) $attributes['askep_ralan_umum'] === '1') {
                 $askep->push('Umum');
             }
 
-            if ($attributes['askep_ralan_bidan'] === '1') {
+            if ((string) $attributes['askep_ralan_bidan'] === '1') {
                 $askep->push('Kebidanan');
             }
 
-            if ($attributes['askep_ralan_gigi'] === '1') {
+            if ((string) $attributes['askep_ralan_gigi'] === '1') {
                 $askep->push('Gigi');
             }
 
-            if ($attributes['askep_ralan_bayi'] === '1') {
+            if ((string) $attributes['askep_ralan_bayi'] === '1') {
                 $askep->push('Bayi/Anak');
             }
 
-            if ($attributes['askep_ralan_psikiatri'] === '1') {
+            if ((string) $attributes['askep_ralan_psikiatri'] === '1') {
                 $askep->push('Psikiatri');
             }
 
-            if ($attributes['askep_ralan_geriatri'] === '1') {
+            if ((string) $attributes['askep_ralan_geriatri'] === '1') {
                 $askep->push('Geriatri');
             }
 
-            if ($attributes['askep_ralan_mata'] === '1') {
+            if ((string) $attributes['askep_ralan_mata'] === '1') {
                 $askep->push('Mata');
             }
 
@@ -224,22 +224,22 @@ class RegistrasiPasien extends Model
 
     public function askepRanap(): Attribute
     {
-        return Attribute::get(function ($_, array $attributes): ?string {
+        return Attribute::get(function ($_, array $attributes): string {
             $askep = collect();
 
-            if ($attributes['askep_ranap_umum'] === '1') {
+            if ((string) $attributes['askep_ranap_umum'] === '1') {
                 $askep->push('Umum');
             }
 
-            if ($attributes['askep_ranap_bidan'] === '1') {
+            if ((string) $attributes['askep_ranap_bidan'] === '1') {
                 $askep->push('Kebidanan');
             }
 
-            if ($attributes['askep_ranap_bayi_anak'] === '1') {
+            if ((string) $attributes['askep_ranap_bayi_anak'] === '1') {
                 $askep->push('Bayi/Anak');
             }
 
-            if ($attributes['askep_ranap_neonatus'] === '1') {
+            if ((string) $attributes['askep_ranap_neonatus'] === '1') {
                 $askep->push('Neonatus');
             }
 
@@ -471,7 +471,8 @@ class RegistrasiPasien extends Model
             rujuk.rujuk_ke as rujuk_keluar_rs,
             convert(pasien.alamat using ascii) as alamat,
             pasien.no_tlp as no_hp,
-            (select count(rp2.no_rawat) from reg_periksa rp2 where rp2.no_rkm_medis = reg_periksa.no_rkm_medis and rp2.tgl_registrasi <= reg_periksa.tgl_registrasi) as kunjungan_ke
+            (select count(rp2.no_rawat) from reg_periksa rp2 where rp2.no_rkm_medis = reg_periksa.no_rkm_medis and rp2.tgl_registrasi <= reg_periksa.tgl_registrasi) as kunjungan_ke,
+            reg_periksa.kd_pj
             SQL;
 
         $this->addSearchConditions([

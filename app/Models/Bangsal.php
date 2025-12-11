@@ -40,8 +40,8 @@ class Bangsal extends Model
         $sqlSelect = <<<'SQL'
             bangsal.nm_bangsal,
             kamar.kelas,
-            SUM(kamar.status = 'ISI') as total_terisi,
-            SUM(kamar.status = 'KOSONG') as total_tersedia
+            sum(kamar.status = 'ISI') as total_terisi,
+            sum(kamar.status = 'KOSONG') as total_tersedia
         SQL;
 
         $this->addSearchConditions([
@@ -51,7 +51,10 @@ class Bangsal extends Model
         return $query
             ->selectRaw($sqlSelect)
             ->join('kamar', 'bangsal.kd_bangsal', '=', 'kamar.kd_bangsal')
-            ->groupBy('bangsal.nm_bangsal', 'kamar.kelas')
-            ->where('bangsal.status', '=', '1');
+            ->where('bangsal.status', '1')
+            ->where('kamar.statusdata', '1')
+            ->groupBy('bangsal.kd_bangsal', 'kamar.kelas')
+            ->orderBy('bangsal.nm_bangsal')
+            ->orderBy('kamar.kelas');
     }
 }

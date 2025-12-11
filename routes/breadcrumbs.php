@@ -167,6 +167,16 @@ Breadcrumbs::for('admin.keuangan.igd-ke-rawat-inap', function (Trail $trail): vo
     $trail->push('Pasien IGD Ranap', route('admin.keuangan.igd-ke-rawat-inap'));
 });
 
+Breadcrumbs::for('admin.keuangan.obat-ralan-ke-ranap', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('Obat Rawat Jalan Ke Rawat Inap', route('admin.keuangan.obat-ralan-ke-ranap'));
+});
+
+Breadcrumbs::for('admin.keuangan.sirkulasi-non-medis', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('Sirkulasi Non Medis', route('admin.keuangan.sirkulasi-non-medis'));
+});
+
 Breadcrumbs::for('admin.farmasi', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Farmasi');
@@ -361,7 +371,32 @@ Breadcrumbs::for('admin.antrean.manajemen-pintu', function (Trail $trail): void 
     $trail->push('Manajemen Pintu', route('admin.antrean.manajemen-pintu'));
 });
 
+Breadcrumbs::for('admin.antrean.antrean-onsite', function (Trail $trail): void {
+    $trail->parent('admin.antrean');
+    $trail->push('Antrean Onsite', route('admin.antrean.antrean-onsite'));
+});
+
 Breadcrumbs::for('admin.job-cleaner', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Job Cleaner', route('admin.job-cleaner'));
+});
+
+Breadcrumbs::for('admin.casemix', function (Trail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Casemix');
+});
+
+Breadcrumbs::for('admin.casemix.laporan-pasien-batal', function (Trail $trail): void {
+    $trail->parent('admin.casemix');
+    $trail->push('Laporan Pasien Batal', route('admin.casemix.laporan-pasien-batal'));
+});
+
+Breadcrumbs::for('admin.casemix.laporan-pasien-cob', function (Trail $trail): void {
+    $trail->parent('admin.casemix');
+    $trail->push('Laporan Pasien COB', route('admin.casemix.laporan-pasien-cob'));
+});
+
+Breadcrumbs::for('admin.casemix.laporan-triase-igd-zona-hijau', function (Trail $trail): void {
+    $trail->parent('admin.casemix');
+    $trail->push('Laporan Triase IGD Zona Hijau', route('admin.casemix.laporan-triase-igd-zona-hijau'));
 });

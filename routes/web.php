@@ -9,11 +9,13 @@ use App\Http\Controllers\PrintLayoutController;
 use App\Livewire\Antrean;
 use App\Livewire\AntreanPintu;
 use App\Livewire\Pages\Admin;
+use App\Livewire\Pages\Admission;
 use App\Livewire\Pages\Antrean\AntreanPerPintu;
 use App\Livewire\Pages\Antrean\AntreanPoli;
 use App\Livewire\Pages\Antrean\MasterPintu;
 use App\Livewire\Pages\Antrian;
 use App\Livewire\Pages\Aplikasi;
+use App\Livewire\Pages\Casemix;
 use App\Livewire\Pages\Farmasi;
 use App\Livewire\Pages\HakAkses;
 use App\Livewire\Pages\Informasi;
@@ -41,6 +43,7 @@ use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 Route::get('/', HomeController::class);
 
 Route::get('/antrean', Antrean::class)->name('antrean');
+Route::get('/antrean-farmasi', Informasi\AntreanFarmasi::class)->name('antrean-farmasi');
 Route::get('/antrean-pintu', AntreanPintu::class)->name('antrean-pintu');
 Route::get('/antrean/{kd_poli}', AntreanPoli::class)->name('antrean-poli');
 Route::get('/antrean-per-pintu/{kd_pintu}', AntreanPerPintu::class)->name('antrean-per-pintu');
@@ -49,7 +52,7 @@ Route::get('/dashboard-dokter', Informasi\DashboardDokter::class)->name('dashboa
 
 Route::get('/print-layout', [PrintLayoutController::class, 'index']);
 
-Route::get('/informasi-kamar', Informasi\InformasiKamar::class);
+Route::get('/informasi-kamar', Informasi\InformasiKamar::class)->name('informasi-kamar');
 
 Route::get('/jadwal-dokter', Informasi\JadwalDokter::class);
 
@@ -223,6 +226,14 @@ Route::prefix('admin')
                 Route::get('igd-ke-rawat-inap', Keuangan\IGDKeRawatInap::class)
                     ->name('igd-ke-rawat-inap')
                     ->middleware('can:keuangan.igd-ke-rawat-inap.read');
+
+                Route::get('obat-ralan-ke-ranap', Keuangan\ObatRalanKeRanap::class)
+                    ->name('obat-ralan-ke-ranap')
+                    ->middleware('can:keuangan.obat-ralan-ke-ranap.read');
+
+                Route::get('sirkulasi-non-medis', Keuangan\SirkulasiNonMedis::class)
+                    ->name('sirkulasi-non-medis')
+                    ->middleware('can:keuangan.sirkulasi-non-medis.read');
             });
 
         Route::prefix('farmasi')
@@ -314,6 +325,10 @@ Route::prefix('admin')
                 Route::get('manajemen-pintu', Aplikasi\ManajemenPintu::class)
                     ->name('manajemen-pintu')
                     ->middleware('can:antrean.manajemen-pintu.read');
+
+                Route::get('antrean-onsite', Admission\AntreanOnsite::class)
+                    ->name('antrean-onsite')
+                    ->middleware('can:antrean.antrean-onsite.read');
             });
 
         Route::prefix('informasi')
@@ -337,6 +352,20 @@ Route::prefix('admin')
                 Route::get('stok-darurat', Logistik\StokDaruratLogistik::class)
                     ->name('stok-darurat')
                     ->middleware('can:logistik.stok-darurat.read');
+            });
+
+        Route::prefix('casemix')
+            ->as('casemix.')
+            ->group(function () {
+                Route::get('laporan-pasien-batal', Casemix\LaporanPasienBatal::class)
+                    ->name('laporan-pasien-batal')
+                    ->middleware('can:casemix.laporan-pasien-batal.read');
+                Route::get('laporan-pasien-cob', Casemix\LaporanPasienCob::class)
+                    ->name('laporan-pasien-cob')
+                    ->middleware('can:casemix.laporan-pasien-cob.read');
+                Route::get('laporan-triase-igd-zona-hijau', Casemix\LaporanTriaseIgdZonaHijau::class)
+                    ->name('laporan-triase-igd-zona-hijau')
+                    ->middleware('can:casemix.laporan-triase-igd-zona-hijau.read');
             });
 
         Route::middleware('role:'.config('permission.superadmin_name'))

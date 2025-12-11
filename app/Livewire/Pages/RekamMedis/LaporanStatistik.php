@@ -114,6 +114,7 @@ class LaporanStatistik extends Component
                     Str::transliterate($model->alamat ?? ''),
                     Str::transliterate($model->no_hp ?? ''),
                     $model->kunjungan_ke,
+                    Str::transliterate($model->kd_pj ?? ''),
                 ]),
         ];
     }
@@ -158,6 +159,7 @@ class LaporanStatistik extends Component
             'Alamat',
             'No. HP',
             'Kunjungan ke',
+            'Kode Penjamin',
         ];
     }
 

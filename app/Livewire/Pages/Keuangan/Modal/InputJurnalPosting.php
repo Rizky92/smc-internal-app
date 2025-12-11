@@ -184,7 +184,7 @@ class InputJurnalPosting extends Component
         ]);
 
         if ($validator->fails()) {
-            $this->emit('flash.error', 'Tidak dapat melakukan proses posting jurnal!');
+            $this->emit('flash.error', 'Tidak dapat melakukan proses posting jurnal! Cek kembali data jurnal yang diinput.');
             $this->dispatchBrowserEvent('data-denied');
 
             return;

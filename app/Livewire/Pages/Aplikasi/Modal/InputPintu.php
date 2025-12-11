@@ -125,15 +125,15 @@ class InputPintu extends Component
 
     public function create(): void
     {
-        if (user()->cannot('antrean.manajemen-pintu.create')) {
-            $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->dispatchBrowserEvent('data-denied');
+        if ($this->isUpdating()) {
+            $this->update();
 
             return;
         }
 
-        if ($this->isUpdating()) {
-            $this->update();
+        if (user()->cannot('antrean.manajemen-pintu.create')) {
+            $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatchBrowserEvent('data-denied');
 
             return;
         }
