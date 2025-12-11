@@ -41,6 +41,7 @@
     </style>
 @endpush
 
+
 <div class="card">
     <div class="container-fluid d-flex justify-content-center">
         <img src="img/logo.png" alt="logo" width="120" />
@@ -70,11 +71,13 @@
                         </tr>
                         @foreach ($jadwals as $dokterId => $dokterJadwal)
                             {{-- Sudah berbentuk array --}}
+                        @foreach ($jadwals as $dokterId => $dokterJadwal)
+                            {{-- Sudah berbentuk array --}}
                             <tr>
-                                <td style="width: 40%">{{ $dokterJadwal[0]['dokter']['nm_dokter'] }}</td>
+                                <td style="width: 30%">{{ $dokterJadwal[0]['dokter']['nm_dokter'] }}</td>
                                 {{-- Ambil nama dokter dari array --}}
-                                @foreach (['SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT', 'SABTU'] as $day)
-                                    <td class="text-center" style="width: 10%">
+                                @foreach (['SENIN', 'SELASA', 'RABU', 'KAMIS', 'JUMAT', 'SABTU', 'MINGGU'] as $day)
+                                    <td style="width: 10%">
                                         @php
                                             $hariJadwal = array_filter($dokterJadwal, fn ($j) => strtoupper($j['hari_kerja']) === $day);
                                         @endphp
