@@ -60,9 +60,9 @@ class AntreanDiPanggil extends Component
             if (method_exists($this, 'dispatch')) {
                 // Livewire v3
                 $this->dispatch('play-voice',
-                    no_reg: $antrean->no_reg,
-                    nm_pasien: $antrean->nm_pasien,
-                    nm_pintu: $antrean->nm_pintu
+                    $antrean->no_reg,
+                    $antrean->nm_pasien,
+                    $antrean->nm_pintu
                 );
             } else {
                 // Livewire v2
