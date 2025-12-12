@@ -511,13 +511,6 @@ class Menu
                 ]),
                 'items'             => [
                     [
-                        'name'              => 'Master Pintu',
-                        'url'               => route('admin.antrean.master-pintu'),
-                        'icon'              => 'fas fa-list-ol',
-                        'type'              => 'link',
-                        'hasAnyPermissions' => $user->can('antrean.manajemen-pintu.read'),
-                    ],
-                    [
                         'name'              => 'Manajemen Pintu',
                         'url'               => route('admin.antrean.manajemen-pintu'),
                         'icon'              => 'fas fa-door-open',

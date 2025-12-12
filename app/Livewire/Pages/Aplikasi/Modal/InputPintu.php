@@ -5,10 +5,9 @@ namespace App\Livewire\Pages\Aplikasi\Modal;
 use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
+use App\Models\Antrian\Jadwal;
 use App\Models\Aplikasi\Pintu;
 use App\Models\Aplikasi\SetPintuSmc;
-use App\Models\Kepegawaian\Dokter;
-use App\Models\Perawatan\Poliklinik;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -21,12 +20,15 @@ class InputPintu extends Component
     use Filterable;
     use FlashComponent;
 
-    public $pintuPlaceholder = '-1';
-
-    public $pintuPlaceholderText = '-';
 
     /** @var string */
     public $kodePintu;
+
+    /** @var array<string> */
+    public $selectedJadwal;
+
+    /** @var string */
+    public $namaPintu;
 
     /** @var string */
     public $kodePoliklinik;
@@ -34,14 +36,8 @@ class InputPintu extends Component
     /** @var string */
     public $kodeDokter;
 
-    /** @var string|null Hold original values for lookup when updating/deleting */
+    /** @var string|null */
     public $originalKodePintu;
-
-    /** @var string|null */
-    public $originalKodePoliklinik;
-
-    /** @var string|null */
-    public $originalKodeDokter;
 
     /** @var mixed */
     protected $listeners = [
@@ -49,35 +45,49 @@ class InputPintu extends Component
         'pintu.hide-modal' => 'hideModal',
         'pintu.show-modal' => 'showModal',
         // listeners for JS emitted events from select2
-        'inputPintu.setKodePintu'      => 'setKodePintu',
-        'inputPintu.setKodePoliklinik' => 'setKodePoliklinik',
-        'inputPintu.setKodeDokter'     => 'setKodeDokter',
+        'inputPintu.setKodePintu'          => 'setKodePintu',
+        'inputPintu.setKodePoliklinik'     => 'setKodePoliklinik',
+        'inputPintu.setKodeDokter'         => 'setKodeDokter',
+        // emitted from select2 change (multiple select)
+        'inputPintu.setSelectedJadwal'     => 'setSelectedJadwal',
     ];
-
-    public function setKodePintu($value): void
-    {
-        $this->kodePintu = $value;
-    }
-
-    public function setKodePoliklinik($value): void
-    {
-        $this->kodePoliklinik = $value;
-    }
-
-    public function setKodeDokter($value): void
-    {
-        $this->kodeDokter = $value;
-    }
 
     protected function rules(): array
     {
         $rules = collect([
-            'kodePintu'      => ['required', 'string'],
+            'kodePintu' => ['required', 'string'],
             'kodePoliklinik' => ['required', 'string'],
-            'kodeDokter'     => ['required', 'string'],
+            'kodeDokter' => ['required', 'string'],
+            'selectedJadwal' => ['required', 'array'],
         ]);
 
         return $rules->all();
+    }
+
+    /**
+     * Handler for JS-emitted selected jadwal values (from select2).
+     * Accepts an array of strings like ["KD_DOKTER|KD_POLI", ...] or a JSON string.
+     */
+    public function setSelectedJadwal($data): void
+    {
+        if (is_string($data)) {
+            $decoded = json_decode($data, true);
+            if (is_array($decoded)) {
+                $data = $decoded;
+            } else {
+                // when select2 sends a comma separated string, normalize to array
+                $data = $data === '' ? [] : explode(',', $data);
+            }
+        }
+
+        $this->selectedJadwal = is_array($data) ? $data : [];
+
+        // Optionally parse and populate kodeDokter/kodePoliklinik when single select
+        if (count($this->selectedJadwal) === 1) {
+            [$kd_dokter, $kd_poli] = array_pad(explode('|', $this->selectedJadwal[0]), 2, null);
+            $this->kodeDokter = $kd_dokter;
+            $this->kodePoliklinik = $kd_poli;
+        }
     }
 
     public function mount(): void
@@ -90,20 +100,15 @@ class InputPintu extends Component
         $this->emit('select2.hydrate');
     }
 
-    public function getPintuProperty(): Collection
+    public function getJadwalPraktikProperty(): Collection
     {
-        return Pintu::pluck('nm_pintu', 'kd_pintu');
+        $pairs =  Jadwal::query()->distinct()->get(['kd_dokter', 'kd_poli']);
+        
+        $pairs->loadMissing(['dokter', 'poliklinik']);
+        
+        return $pairs;
     }
 
-    public function getPoliklinikProperty(): Collection
-    {
-        return Poliklinik::where('status', '1')->pluck('nm_poli', 'kd_poli');
-    }
-
-    public function getDokterProperty(): Collection
-    {
-        return Dokter::where('status', '1')->pluck('nm_dokter', 'kd_dokter');
-    }
 
     public function render(): View
     {
@@ -112,26 +117,42 @@ class InputPintu extends Component
 
     public function prepare(array $options): void
     {
-        $this->kodePintu = $options['kodePintu'];
-        $this->kodePoliklinik = $options['kodePoliklinik'];
-        $this->kodeDokter = $options['kodeDokter'];
+        // Normalize incoming keys (JS may send kodePintu or kd_pintu)
+        $kd = $options['kd_pintu'] ?? $options['kodePintu'] ?? null;
 
-        // Save original composite key values so subsequent edits to the form
-        // won't break lookup when updating or deleting the record.
-        $this->originalKodePintu = $options['kodePintu'] ?? null;
-        $this->originalKodePoliklinik = $options['kodePoliklinik'] ?? null;
-        $this->originalKodeDokter = $options['kodeDokter'] ?? null;
-    }
-
-    public function create(): void
-    {
-        if ($this->isUpdating()) {
-            $this->update();
-
+        // If no kd provided, treat as create
+        if (empty($kd)) {
+            $this->defaultValues();
             return;
         }
 
-        if (user()->cannot('antrean.manajemen-pintu.create')) {
+        $this->originalKodePintu = $kd;
+
+        // Load pintu record to fill fields
+        $pintu = Pintu::query()->where('kd_pintu', $kd)->first();
+
+        $this->kodePintu = $pintu->kd_pintu ?? $kd;
+        $this->namaPintu = $pintu->nm_pintu ?? ($options['nm_pintu'] ?? '');
+
+        // Load existing mappings and populate selectedJadwal as array of "kd_dokter|kd_poli"
+        $mappings = SetPintuSmc::query()->where('kd_pintu', $kd)->get(['kd_dokter', 'kd_poli']);
+
+        $this->selectedJadwal = $mappings->map(fn($m) => $m->kd_dokter . '|' . $m->kd_poli)->toArray();
+
+        // If there is at least one mapping, prefill kodeDokter/kodePoliklinik with the first
+        if (!empty($this->selectedJadwal)) {
+            [$firstDokter, $firstPoli] = array_pad(explode('|', $this->selectedJadwal[0]), 2, null);
+            $this->kodeDokter = $firstDokter;
+            $this->kodePoliklinik = $firstPoli;
+        }
+
+        // Notify front-end to sync select2 value for selectedJadwal
+        $this->emit('inputPintu.syncSelectedJadwal', $this->selectedJadwal);
+    }
+
+    public function update(): void
+    {
+        if (user()->cannot('antrean.manajemen-pintu.update')) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 
@@ -144,144 +165,178 @@ class InputPintu extends Component
             tracker_start('mysql_sik');
 
             DB::connection('mysql_sik')->transaction(function () {
-                SetPintuSmc::create([
-                    'kd_pintu'  => $this->kodePintu,
-                    'kd_poli'   => $this->kodePoliklinik,
-                    'kd_dokter' => $this->kodeDokter,
-                ]);
+                // Update or rename pintu
+                if ($this->originalKodePintu !== $this->kodePintu) {
+                    // If kode changed, update the primary key value
+                    Pintu::where('kd_pintu', $this->originalKodePintu)
+                        ->update(['kd_pintu' => $this->kodePintu, 'nm_pintu' => $this->namaPintu]);
+                } else {
+                    Pintu::where('kd_pintu', $this->kodePintu)
+                        ->update(['nm_pintu' => $this->namaPintu]);
+                }
+
+                // Replace mappings: delete old then create new
+                SetPintuSmc::where('kd_pintu', $this->originalKodePintu)->delete();
+
+                foreach ($this->selectedJadwal as $jadwal) {
+                    [$kd_dokter, $kd_poli] = array_pad(explode('|', $jadwal), 2, null);
+
+                    if (empty($kd_dokter) || empty($kd_poli)) {
+                        throw new Exception("Nilai jadwal tidak valid: {$jadwal}");
+                    }
+
+                    SetPintuSmc::create([
+                        'kd_pintu'  => $this->kodePintu,
+                        'kd_dokter' => $kd_dokter,
+                        'kd_poli'   => $kd_poli,
+                    ]);
+                }
             });
 
             tracker_end('mysql_sik');
 
             $this->dispatchBrowserEvent('data-saved');
-            $this->emit('flash.success', 'Data Pintu baru berhasil disimpan!');
+            $this->emit('flash.success', 'Data pintu berhasil diperbarui.');
             $this->defaultValues();
         } catch (Exception $e) {
+            logger()->error('Gagal mengupdate Pintu: '.$e->getMessage(), ['exception' => $e, 'payload' => [
+                'original' => $this->originalKodePintu,
+                'kodePintu' => $this->kodePintu,
+                'selectedJadwal' => $this->selectedJadwal,
+            ]]);
+
             $this->dispatchBrowserEvent('data-failed');
-            $this->emit('flash.warning', 'Terjadi kegagalan pada saat menyimpan data Pintu!');
+            $this->emit('flash.error', "Terjadi kegagalan saat memperbarui data pintu: {$e->getMessage()}");
             $this->defaultValues();
         }
     }
 
-    public function update(): void
+    public function create(): void
     {
-        if (user()->cannot('antrean.manajemen-pintu.update')) {
+        if (user()->cannot('antrean.manajemen-pintu.create')) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 
             return;
         }
 
-        if (! $this->isUpdating()) {
-            $this->create();
+        if ($this->isUpdating()) {
+            $this->update();
+
+            return;
         }
 
         $this->validate();
 
-        // Use query builder update because this model does not define a single primary key.
-        // Calling $model->update() would cause Eloquent to attempt an update using an empty
-        // primary key column which produces SQL like "where `` is null".
         try {
             tracker_start('mysql_sik');
 
-            // Use original values to find the existing record. If originals are
-            // not set fall back to current values (defensive).
-            $lookupPintu = $this->originalKodePintu ?? $this->kodePintu;
-            $lookupPoli = $this->originalKodePoliklinik ?? $this->kodePoliklinik;
-            $lookupDokter = $this->originalKodeDokter ?? $this->kodeDokter;
+            DB::connection('mysql_sik')->transaction(function () {
+                // Prevent duplicate primary key insertion
+                if (Pintu::where('kd_pintu', $this->kodePintu)->exists()) {
+                    throw new Exception("Kode pintu '{$this->kodePintu}' sudah ada.");
+                }
 
-            $updated = SetPintuSmc::query()
-                ->where('kd_pintu', $lookupPintu)
-                ->where('kd_dokter', $lookupDokter)
-                ->where('kd_poli', $lookupPoli)
-                ->update([
-                    'kd_pintu'  => $this->kodePintu,
-                    'kd_poli'   => $this->kodePoliklinik,
-                    'kd_dokter' => $this->kodeDokter,
+                Pintu::create([
+                    'kd_pintu' => $this->kodePintu,
+                    'nm_pintu' => $this->namaPintu,
                 ]);
+
+                // ambil kd_pintu dan kd_dokter dari selectedJadwal
+                foreach ($this->selectedJadwal as $jadwal) {
+                    [$kd_dokter, $kd_poli] = array_pad(explode('|', $jadwal), 2, null);
+
+                    if (empty($kd_dokter) || empty($kd_poli)) {
+                        throw new Exception("Nilai jadwal tidak valid: {$jadwal}");
+                    }
+
+                    SetPintuSmc::create([
+                        'kd_pintu'  => $this->kodePintu,
+                        'kd_dokter' => $kd_dokter,
+                        'kd_poli'   => $kd_poli,
+                    ]);
+                }
+            });
 
             tracker_end('mysql_sik');
 
-            if ($updated === 0) {
-                $this->dispatchBrowserEvent('data-not-found');
-                $this->emit('flash.error', 'Tidak dapat menemukan data untuk diperbarui.');
-            } else {
-                $this->dispatchBrowserEvent('data-saved');
-                $this->emit('flash.success', 'Data Pintu berhasil diperbarui!');
-            }
-
+            $this->dispatchBrowserEvent('data-saved');
+            $this->emit('flash.success', 'Data pintu berhasil disimpan.');
             $this->defaultValues();
         } catch (Exception $e) {
-            tracker_dispose('mysql_sik');
+            // Log full exception to storage/logs/laravel.log so we can inspect root cause
+            logger()->error('Gagal menyimpan Pintu: '.$e->getMessage(), [
+                'exception' => $e,
+                'payload' => [
+                    'kodePintu' => $this->kodePintu,
+                    'selectedJadwal' => $this->selectedJadwal,
+                    'namaPintu' => $this->namaPintu,
+                ],
+            ]);
+
             $this->dispatchBrowserEvent('data-failed');
-            $this->emit('flash.warning', 'Terjadi kegagalan pada saat memperbarui data Pintu!');
+
+            // Surface the specific error message to the user (useful in dev). In production you may keep a generic message.
+            $this->emit('flash.error', "Terjadi kegagalan saat menyimpan data pintu: {$e->getMessage()}");
             $this->defaultValues();
         }
-    }
+    }    
 
     public function delete(): void
     {
-        $pintu = SetPintuSmc::query()
-            ->where('kd_pintu', $this->kodePintu)
-            ->where('kd_dokter', $this->kodeDokter)
-            ->where('kd_poli', $this->kodePoliklinik)
-            ->first();
-
         if (user()->cannot('antrean.manajemen-pintu.delete')) {
-            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
             $this->dispatchBrowserEvent('data-denied');
 
             return;
         }
 
-        if (! $pintu) {
-            $this->dispatchBrowserEvent('data-not-found');
-            $this->emit('flash.error', 'Tidak dapat menemukan data yang bisa dihapus. Silahkan coba kembali.');
-
+        // Ensure we have a target to delete
+        if (empty($this->originalKodePintu)) {
+            $this->emit('flash.error', 'Tidak ada data yang dipilih untuk dihapus.');
             return;
         }
 
-        tracker_start('mysql_sik');
+        try {
+            tracker_start('mysql_sik');
 
-        $lookupPintu = $this->originalKodePintu ?? $this->kodePintu;
-        $lookupPoli = $this->originalKodePoliklinik ?? $this->kodePoliklinik;
-        $lookupDokter = $this->originalKodeDokter ?? $this->kodeDokter;
+            DB::connection('mysql_sik')->transaction(function () {
+                // Delete mappings first
+                SetPintuSmc::where('kd_pintu', $this->originalKodePintu)->delete();
 
-        $deleted = SetPintuSmc::query()
-            ->where('kd_pintu', $lookupPintu)
-            ->where('kd_dokter', $lookupDokter)
-            ->where('kd_poli', $lookupPoli)
-            ->delete();
+                // Delete the pintu record
+                Pintu::where('kd_pintu', $this->originalKodePintu)->delete();
+            });
 
-        tracker_end('mysql_sik');
+            tracker_end('mysql_sik');
 
-        if ($deleted === 0) {
-            $this->dispatchBrowserEvent('data-not-found');
-            $this->emit('flash.error', 'Tidak dapat menemukan data yang bisa dihapus. Silahkan coba kembali.');
-        } else {
-            $this->dispatchBrowserEvent('data-success');
-            $this->emit('flash.success', 'Data pintu berhasil dihapus!');
+            $this->dispatchBrowserEvent('data-saved');
+            $this->emit('flash.success', 'Data pintu berhasil dihapus.');
+            $this->defaultValues();
+        } catch (Exception $e) {
+            logger()->error('Gagal menghapus Pintu: '.$e->getMessage(), [
+                'exception' => $e,
+                'payload' => ['original' => $this->originalKodePintu],
+            ]);
+
+            $this->dispatchBrowserEvent('data-failed');
+            $this->emit('flash.error', "Terjadi kegagalan saat menghapus data pintu: {$e->getMessage()}");
+            $this->defaultValues();
         }
-
-        $this->defaultValues();
     }
 
     public function isUpdating(): bool
     {
-        // Previously this returned true whenever kodePintu was set. That caused the
-        // modal to switch to edit mode as soon as the user selected a Pintu from
-        // the select box while creating a new mapping. Use the presence of the
-        // original composite key (set by prepare()) to indicate edit mode.
         return $this->originalKodePintu !== null;
     }
 
     protected function defaultValues(): void
     {
         $this->kodePintu = '';
+        $this->namaPintu = '';
         $this->kodePoliklinik = '';
         $this->kodeDokter = '';
+        $this->selectedJadwal = [];
         $this->originalKodePintu = null;
-        $this->originalKodePoliklinik = null;
-        $this->originalKodeDokter = null;
     }
 }
