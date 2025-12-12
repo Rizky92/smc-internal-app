@@ -12,7 +12,6 @@ use App\Livewire\Pages\Admin;
 use App\Livewire\Pages\Admission;
 use App\Livewire\Pages\Antrean\AntreanPerPintu;
 use App\Livewire\Pages\Antrean\AntreanPoli;
-use App\Livewire\Pages\Antrean\MasterPintu;
 use App\Livewire\Pages\Antrian;
 use App\Livewire\Pages\Aplikasi;
 use App\Livewire\Pages\Casemix;
@@ -319,9 +318,6 @@ Route::prefix('admin')
         Route::prefix('antrean')
             ->as('antrean.')
             ->group(function () {
-                Route::get('master-pintu', MasterPintu::class)
-                    ->name('master-pintu')
-                    ->middleware('can:antrean.manajemen-pintu.read');
                 Route::get('manajemen-pintu', Aplikasi\ManajemenPintu::class)
                     ->name('manajemen-pintu')
                     ->middleware('can:antrean.manajemen-pintu.read');

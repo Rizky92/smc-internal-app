@@ -26,7 +26,8 @@
             <x-row-col-flex>
                 <x-filter.select-perpage />
                 @can('antrean.manajemen-pintu.create')
-                    <x-button variant="primary" size="sm" title="Buat" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-pintu" class="btn-primary ml-auto" />
+                    {{-- Mark this trigger as a create action so the modal can decide whether to clear client-side widgets --}}
+                    <x-button variant="primary" size="sm" title="Buat" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-pintu" data-action="create" class="btn-primary ml-auto" />
                 @endcan
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
@@ -39,8 +40,7 @@
                 <x-slot name="columns">
                     <x-table.th name="kd_pintu" title="Kode Pintu" />
                     <x-table.th name="nm_pintu" title="Nama Pintu" />
-                    <x-table.th>Poli</x-table.th>
-                    <x-table.th>Dokter</x-table.th>
+                    <x-table.th title="Jadwal" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->pintu as $pintu)
@@ -53,11 +53,20 @@
                                 {{ $pintu->kd_pintu }}
                             </x-table.td>
                             <x-table.td>{{ $pintu->nm_pintu }}</x-table.td>
-                            <x-table.td>{{ $pintu->nm_poli }}</x-table.td>
-                            <x-table.td>{{ $pintu->nm_dokter }}</x-table.td>
+                            <x-table.td>
+                                @if (!empty($pintu->jadwal) && $pintu->jadwal->isNotEmpty())
+                                    <ul class="mb-0 pl-3">
+                                        @foreach ($pintu->jadwal as $j)
+                                            <li>{{ $j->nm_dokter }} - {{ $j->nm_poli }}</li>
+                                        @endforeach
+                                    </ul>
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
+                            </x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="4" padding />
+                        <x-table.tr-empty colspan="3" padding />
                     @endforelse
                 </x-slot>
             </x-table>

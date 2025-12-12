@@ -11,7 +11,6 @@ class DashboardDokter extends Component
     public $collection;
 
     public function mount(): void
-    public function mount(): void
     {
         $this->collection = Jadwal::with(['dokter', 'poliklinik'])->whereHas('dokter', function ($query) {
             $query->where('status', '1');

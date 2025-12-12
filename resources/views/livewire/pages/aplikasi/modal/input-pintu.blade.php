@@ -4,17 +4,15 @@
         <link href="{{ asset('css/select2-bootstrap4.min.css') }}" rel="stylesheet" />
 
         <style>
-            .select2-selection__arrow {
-                top: 0 !important;
+            .select2-container--default .select2-selection--multiple .select2-selection__choice {
+                background-color: rgb(245, 245, 245);
+                color: #1f2d3d;
+                font-weight: 700;
             }
 
-            .select2-container--default .select2-selection--single .select2-selection__arrow {
-                height: 2rem !important;
-            }
-
-            .select2-container .select2-selection--single .select2-selection__rendered {
-                padding-left: 0 !important;
-                margin-left: -0.125rem !important;
+            .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+                color: rgb(173, 173, 173);
+                float: right;
             }
         </style>
     @endonce
@@ -22,10 +20,37 @@
 
 <div>
     @push('js')
-        <script>
-            $('#modal-input-pintu').on('shown.bs.modal', (e) => {
-                Livewire.emit('pintu.show-modal');
-            });
+            <script>
+                // Use show.bs.modal to inspect the triggering element (relatedTarget).
+                // Only clear the select2 when the modal is opened via the Create button
+                // (which has data-action="create"). When opening for edit, the
+                // application calls Livewire.prepare() and then shows the modal; the
+                // server will emit 'inputPintu.syncSelectedJadwal' to populate select2.
+                $('#modal-input-pintu').on('show.bs.modal', function (e) {
+                    // relatedTarget is the element that triggered the modal (if any)
+                    var trigger = e.relatedTarget || null;
+
+                    // If the trigger indicates a create action, clear the select2
+                    var shouldClear = false;
+                    try {
+                        if (trigger && trigger.dataset && trigger.dataset.action === 'create') {
+                            shouldClear = true;
+                        }
+                    } catch (err) {
+                        // ignore
+                    }
+
+                    if (shouldClear) {
+                        try {
+                            $('#selectedJadwal').val(null).trigger('change');
+                        } catch (err) {
+                            // ignore if select2 isn't ready
+                        }
+                    }
+
+                    // Notify Livewire that modal was shown (modal lifecycle hook)
+                    Livewire.emit('pintu.show-modal');
+                });
 
             $('#modal-input-pintu').on('hide.bs.modal', (e) => {
                 Livewire.emit('pintu.hide-modal');
@@ -43,50 +68,34 @@
             <x-form id="form-input-pintu" livewire wire:submit.prevent="create">
                 <x-row-col class="sticky-top bg-white">
                     <div class="form-group">
-                        <label for="pintu">Pintu:</label>
-                        <div wire:ignore>
-                            <select id="kodePintu" wire:model="kodePintu" class="form-control form-control-sm select2 input-sm">
-                                @if ($this->pintuPlaceholder)
-                                    <option hidden selected value="{{ $this->pintuPlaceholder }}">
-                                        {{ $this->pintuPlaceholderText }}
-                                    </option>
-                                    <option disabled>{{ $this->pintuPlaceholderText }}</option>
-                                @endif
-
-                                @foreach ($this->pintu as $kd_pintu => $nm_pintu)
-                                    <option value="{{ $kd_pintu }}">
-                                        {{ $nm_pintu }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
+                        <label for="kodePintu">Kode Pintu:</label>
+                        <input type="text" wire:model="kodePintu" class="form-control form-control-sm" />
                         <x-form.error name="kodePintu" />
                     </div>
-                    <div class="form-group mt-3">
-                        <label for="poli">Poli:</label>
-                        <div wire:ignore>
-                            <select id="kodePoliklinik" wire:model="kodePoliklinik" class="form-control form-control-sm select2 input-sm">
-                                @foreach ($this->poliklinik as $kd_poli => $nm_poli)
-                                    <option value="{{ $kd_poli }}">
-                                        {{ $nm_poli }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <x-form.error name="kodePoliklinik" />
+                    <div class="form-group">
+                        <label for="namaPintu">Nama Pintu:</label>
+                        <input type="text" wire:model="namaPintu" class="form-control form-control-sm" />
+                        <x-form.error name="namaPintu" />
                     </div>
                     <div class="form-group mt-3">
-                        <label for="dokter">Dokter:</label>
-                        <div wire:ignore width="100%">
-                            <select id="kodeDokter" wire:model="kodeDokter" class="form-control form-control-sm select2 input-sm">
-                                @foreach ($this->dokter as $kd_dokter => $nm_dokter)
-                                    <option value="{{ $kd_dokter }}">
-                                        {{ $nm_dokter }}
+                        <label for="poli">Jadwal Praktik Dokter</label>
+                        <div wire:ignore>
+                            <select id="selectedJadwal" wire:model="selectedJadwal" class="form-control form-control-sm select2 input-sm" multiple>
+                                @foreach($this->jadwalPraktik as $jadwal)
+                                    @php
+                                        $kdDokter = $jadwal->kd_dokter;
+                                        $kdPoli = $jadwal->kd_poli;
+                                        $labelDokter = $jadwal->dokter->nm_dokter ?? $kdDokter;
+                                        $labelPoli = $jadwal->poliklinik->nm_poli ?? $kdPoli;
+                                        $value = $kdDokter . '|' . $kdPoli;
+                                    @endphp
+                                    <option value="{{ $value }}">
+                                        {{ $labelDokter }} — {{ $labelPoli }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
-                        <x-form.error name="kodeDokter" />
+                        <x-form.error name="selectedJadwal" />
                     </div>
                     @push('js')
                         @once
@@ -95,6 +104,18 @@
 
                         <script>
                             document.addEventListener('livewire:load', function () {
+                                $('#selectedJadwal').select2();
+                                $('#selectedJadwal').on('change', function (e) {
+                                    var data = $(this).val();
+                                    Livewire.emit('inputPintu.setSelectedJadwal', data);
+                                });
+
+                                // Listen for server-side event to sync select2 selection
+                                Livewire.on('inputPintu.syncSelectedJadwal', function (data) {
+                                    // set value (array) and trigger change so Livewire receives it if needed
+                                    $('#selectedJadwal').val(data).trigger('change');
+                                });
+
                                 $('#kodePintu').select2();
                                 $('#kodePintu').on('change', function (e) {
                                     var data = $(this).val();
