@@ -4,7 +4,6 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Illuminate\Support\Facades\DB;
 
 class Kernel extends ConsoleKernel
 {
@@ -22,9 +21,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->call(function () {
-            DB::connection('mysql_sik')->table('antripintu_smc')->where('status', '0')->delete();
-        })->timezone('Asia/Singapore')->daily();
+        $schedule->command('antrean:clean-pintu')->timezone('Asia/Singapore')->daily();
     }
 
     /**
