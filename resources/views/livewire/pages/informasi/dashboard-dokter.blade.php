@@ -71,8 +71,6 @@
                         </tr>
                         @foreach ($jadwals as $dokterId => $dokterJadwal)
                             {{-- Sudah berbentuk array --}}
-                        @foreach ($jadwals as $dokterId => $dokterJadwal)
-                            {{-- Sudah berbentuk array --}}
                             <tr>
                                 <td style="width: 30%">{{ $dokterJadwal[0]['dokter']['nm_dokter'] }}</td>
                                 {{-- Ambil nama dokter dari array --}}
