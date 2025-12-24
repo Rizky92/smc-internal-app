@@ -20,37 +20,37 @@
 
 <div>
     @push('js')
-            <script>
-                // Use show.bs.modal to inspect the triggering element (relatedTarget).
-                // Only clear the select2 when the modal is opened via the Create button
-                // (which has data-action="create"). When opening for edit, the
-                // application calls Livewire.prepare() and then shows the modal; the
-                // server will emit 'inputPintu.syncSelectedJadwal' to populate select2.
-                $('#modal-input-pintu').on('show.bs.modal', function (e) {
-                    // relatedTarget is the element that triggered the modal (if any)
-                    var trigger = e.relatedTarget || null;
+        <script>
+            // Use show.bs.modal to inspect the triggering element (relatedTarget).
+            // Only clear the select2 when the modal is opened via the Create button
+            // (which has data-action="create"). When opening for edit, the
+            // application calls Livewire.prepare() and then shows the modal; the
+            // server will emit 'inputPintu.syncSelectedJadwal' to populate select2.
+            $('#modal-input-pintu').on('show.bs.modal', function (e) {
+                // relatedTarget is the element that triggered the modal (if any)
+                var trigger = e.relatedTarget || null;
 
-                    // If the trigger indicates a create action, clear the select2
-                    var shouldClear = false;
+                // If the trigger indicates a create action, clear the select2
+                var shouldClear = false;
+                try {
+                    if (trigger && trigger.dataset && trigger.dataset.action === 'create') {
+                        shouldClear = true;
+                    }
+                } catch (err) {
+                    // ignore
+                }
+
+                if (shouldClear) {
                     try {
-                        if (trigger && trigger.dataset && trigger.dataset.action === 'create') {
-                            shouldClear = true;
-                        }
+                        $('#selectedJadwal').val(null).trigger('change');
                     } catch (err) {
-                        // ignore
+                        // ignore if select2 isn't ready
                     }
+                }
 
-                    if (shouldClear) {
-                        try {
-                            $('#selectedJadwal').val(null).trigger('change');
-                        } catch (err) {
-                            // ignore if select2 isn't ready
-                        }
-                    }
-
-                    // Notify Livewire that modal was shown (modal lifecycle hook)
-                    Livewire.emit('pintu.show-modal');
-                });
+                // Notify Livewire that modal was shown (modal lifecycle hook)
+                Livewire.emit('pintu.show-modal');
+            });
 
             $('#modal-input-pintu').on('hide.bs.modal', (e) => {
                 Livewire.emit('pintu.hide-modal');
@@ -81,7 +81,7 @@
                         <label for="poli">Jadwal Praktik Dokter</label>
                         <div wire:ignore>
                             <select id="selectedJadwal" wire:model="selectedJadwal" class="form-control form-control-sm select2 input-sm" multiple>
-                                @foreach($this->jadwalPraktik as $jadwal)
+                                @foreach ($this->jadwalPraktik as $jadwal)
                                     @php
                                         $kdDokter = $jadwal->kd_dokter;
                                         $kdPoli = $jadwal->kd_poli;
@@ -89,9 +89,8 @@
                                         $labelPoli = $jadwal->poliklinik->nm_poli ?? $kdPoli;
                                         $value = $kdDokter . '|' . $kdPoli;
                                     @endphp
-                                    <option value="{{ $value }}">
-                                        {{ $labelDokter }} — {{ $labelPoli }}
-                                    </option>
+
+                                    <option value="{{ $value }}">{{ $labelDokter }} — {{ $labelPoli }}</option>
                                 @endforeach
                             </select>
                         </div>

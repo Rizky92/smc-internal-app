@@ -84,7 +84,7 @@ class PeriksaRadiologi extends Model
 
         $this->addRawColumns([
             'no_rawat'          => 'periksa_radiologi.no_rawat',
-            'no_sep'            =>  'bridging_sep.no_sep',
+            'no_sep'            => 'bridging_sep.no_sep',
             'no_rkm_medis'      => 'reg_periksa.no_rkm_medis',
             'nm_pasien'         => 'pasien.nm_pasien',
             'png_jawab'         => 'penjab.png_jawab',

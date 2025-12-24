@@ -41,7 +41,6 @@
     </style>
 @endpush
 
-
 <div class="card">
     <div class="container-fluid d-flex justify-content-center">
         <img src="img/logo.png" alt="logo" width="120" />
