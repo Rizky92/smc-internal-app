@@ -54,7 +54,7 @@
                             </x-table.td>
                             <x-table.td>{{ $pintu->nm_pintu }}</x-table.td>
                             <x-table.td>
-                                @if (!empty($pintu->jadwal) && $pintu->jadwal->isNotEmpty())
+                                @if (! empty($pintu->jadwal) && $pintu->jadwal->isNotEmpty())
                                     <ul class="mb-0 pl-3">
                                         @foreach ($pintu->jadwal as $j)
                                             <li>{{ $j->nm_dokter }} - {{ $j->nm_poli }}</li>

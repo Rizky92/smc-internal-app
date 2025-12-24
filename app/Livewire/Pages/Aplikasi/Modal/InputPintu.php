@@ -20,7 +20,6 @@ class InputPintu extends Component
     use Filterable;
     use FlashComponent;
 
-
     /** @var string */
     public $kodePintu;
 
@@ -55,9 +54,9 @@ class InputPintu extends Component
     protected function rules(): array
     {
         $rules = collect([
-            'kodePintu' => ['required', 'string'],
+            'kodePintu'      => ['required', 'string'],
             'kodePoliklinik' => ['required', 'string'],
-            'kodeDokter' => ['required', 'string'],
+            'kodeDokter'     => ['required', 'string'],
             'selectedJadwal' => ['required', 'array'],
         ]);
 
@@ -102,13 +101,12 @@ class InputPintu extends Component
 
     public function getJadwalPraktikProperty(): Collection
     {
-        $pairs =  Jadwal::query()->distinct()->get(['kd_dokter', 'kd_poli']);
-        
+        $pairs = Jadwal::query()->distinct()->get(['kd_dokter', 'kd_poli']);
+
         $pairs->loadMissing(['dokter', 'poliklinik']);
-        
+
         return $pairs;
     }
-
 
     public function render(): View
     {
@@ -123,6 +121,7 @@ class InputPintu extends Component
         // If no kd provided, treat as create
         if (empty($kd)) {
             $this->defaultValues();
+
             return;
         }
 
@@ -137,10 +136,10 @@ class InputPintu extends Component
         // Load existing mappings and populate selectedJadwal as array of "kd_dokter|kd_poli"
         $mappings = SetPintuSmc::query()->where('kd_pintu', $kd)->get(['kd_dokter', 'kd_poli']);
 
-        $this->selectedJadwal = $mappings->map(fn($m) => $m->kd_dokter . '|' . $m->kd_poli)->toArray();
+        $this->selectedJadwal = $mappings->map(fn ($m) => $m->kd_dokter.'|'.$m->kd_poli)->toArray();
 
         // If there is at least one mapping, prefill kodeDokter/kodePoliklinik with the first
-        if (!empty($this->selectedJadwal)) {
+        if (! empty($this->selectedJadwal)) {
             [$firstDokter, $firstPoli] = array_pad(explode('|', $this->selectedJadwal[0]), 2, null);
             $this->kodeDokter = $firstDokter;
             $this->kodePoliklinik = $firstPoli;
@@ -200,8 +199,8 @@ class InputPintu extends Component
             $this->defaultValues();
         } catch (Exception $e) {
             logger()->error('Gagal mengupdate Pintu: '.$e->getMessage(), ['exception' => $e, 'payload' => [
-                'original' => $this->originalKodePintu,
-                'kodePintu' => $this->kodePintu,
+                'original'       => $this->originalKodePintu,
+                'kodePintu'      => $this->kodePintu,
                 'selectedJadwal' => $this->selectedJadwal,
             ]]);
 
@@ -267,10 +266,10 @@ class InputPintu extends Component
             // Log full exception to storage/logs/laravel.log so we can inspect root cause
             logger()->error('Gagal menyimpan Pintu: '.$e->getMessage(), [
                 'exception' => $e,
-                'payload' => [
-                    'kodePintu' => $this->kodePintu,
+                'payload'   => [
+                    'kodePintu'      => $this->kodePintu,
                     'selectedJadwal' => $this->selectedJadwal,
-                    'namaPintu' => $this->namaPintu,
+                    'namaPintu'      => $this->namaPintu,
                 ],
             ]);
 
@@ -280,7 +279,7 @@ class InputPintu extends Component
             $this->emit('flash.error', "Terjadi kegagalan saat menyimpan data pintu: {$e->getMessage()}");
             $this->defaultValues();
         }
-    }    
+    }
 
     public function delete(): void
     {
@@ -294,6 +293,7 @@ class InputPintu extends Component
         // Ensure we have a target to delete
         if (empty($this->originalKodePintu)) {
             $this->emit('flash.error', 'Tidak ada data yang dipilih untuk dihapus.');
+
             return;
         }
 
@@ -316,7 +316,7 @@ class InputPintu extends Component
         } catch (Exception $e) {
             logger()->error('Gagal menghapus Pintu: '.$e->getMessage(), [
                 'exception' => $e,
-                'payload' => ['original' => $this->originalKodePintu],
+                'payload'   => ['original' => $this->originalKodePintu],
             ]);
 
             $this->dispatchBrowserEvent('data-failed');

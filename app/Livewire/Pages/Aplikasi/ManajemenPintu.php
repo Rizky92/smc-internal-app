@@ -9,6 +9,7 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Aplikasi\Pintu;
 use App\View\Components\BaseLayout;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -22,9 +23,9 @@ class ManajemenPintu extends Component
     use MenuTracker;
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection|array
+     * @return Collection|array
      *
-     * @psalm-return \Illuminate\Database\Eloquent\Collection<Pintu>|array<empty, empty>
+     * @psalm-return Collection<Pintu>|array<empty, empty>
      */
     public function getPintuProperty()
     {
@@ -53,14 +54,12 @@ class ManajemenPintu extends Component
         $jadwalMap = $jadwalRows->groupBy('kd_pintu');
 
         $pintus->each(function ($pintu) use ($jadwalMap) {
-            $collection = $jadwalMap->get($pintu->kd_pintu, collect())->map(function ($r) {
-                return (object) [
-                    'kd_dokter' => $r->kd_dokter,
-                    'kd_poli' => $r->kd_poli,
-                    'nm_dokter' => $r->nm_dokter,
-                    'nm_poli' => $r->nm_poli,
-                ];
-            });
+            $collection = $jadwalMap->get($pintu->kd_pintu, collect())->map(fn ($r) => (object) [
+                'kd_dokter' => $r->kd_dokter,
+                'kd_poli'   => $r->kd_poli,
+                'nm_dokter' => $r->nm_dokter,
+                'nm_poli'   => $r->nm_poli,
+            ]);
 
             $pintu->jadwal = $collection;
         });
