@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Admission;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -14,6 +15,11 @@ class AntreanLoket extends Component
     public $antrian;
 
     protected $listeners = ['queueCalled', 'queueStopped'];
+
+    public function getIklanProperty(): ?object
+    {
+        return DB::connection('mysql_sik')->table('runtext')->first();
+    }
 
     public function queueCalled($loket, $antrian): void
     {
