@@ -134,6 +134,50 @@
                         }
                     };
 
+                    // queue for holding incoming events until current playback finishes
+                    window._announceQueue = window._announceQueue || [];
+                    window._announceProcessing = window._announceProcessing || false;
+
+                    const enqueueAnnouncement = (loket, antrian) => {
+                        window._announceQueue.push({ loket, antrian });
+                        processAnnounceQueue();
+                    };
+
+                    const processAnnounceQueue = async () => {
+                        if (window._announceProcessing) return;
+                        window._announceProcessing = true;
+                        // interval between repeats (ms)
+                        const repeatInterval = window._announceRepeatInterval || 3000;
+
+                        while (window._announceQueue.length) {
+                            const { loket, antrian } = window._announceQueue.shift();
+                            try {
+                                const urls = await buildAudioUrls(loket, antrian);
+                                if (urls && urls.length) {
+                                    const token = Symbol();
+                                    window._announceCurrentToken = token;
+
+                                    // keep repeating this announcement until a new event arrives
+                                    while (true) {
+                                        // stop if cancelled
+                                        if (window._announceCurrentToken !== token) break;
+                                        // play once
+                                        await playAudioSequence(urls, token);
+                                        // after playing, if cancelled or queue has items, break to process next
+                                        if (window._announceCurrentToken !== token) break;
+                                        if (window._announceQueue.length > 0) break;
+                                        // wait before repeating
+                                        await new Promise((res) => setTimeout(res, repeatInterval));
+                                        // loop continues to play again
+                                    }
+                                }
+                            } catch (e) {
+                                console.warn('processing queued announce failed', e);
+                            }
+                        }
+                        window._announceProcessing = false;
+                    };
+
                     const buildAudioUrls = async (loket, antrian) => {
                         const base = '/suarasmc';
                         const s = String(antrian || '');
@@ -192,20 +236,20 @@
                     };
 
                     Livewire.on('queueCalled', (loket, antrian) => {
-                        announce(loket, antrian);
+                        // enqueue incoming calls so they wait until current playback finishes
+                        enqueueAnnouncement(loket, antrian);
                     });
 
                     Livewire.on('queueStopped', () => {
-                        if (window._announceInterval) {
-                            clearInterval(window._announceInterval);
-                            window._announceInterval = null;
+                        try {
+                            // stop playback and clear any pending announcements
+                            stopCurrentPlayback();
+                        } catch (e) {
+                            console.warn('stopCurrentPlayback failed', e);
                         }
-                        if (window._announceAudio) {
-                            try {
-                                window._announceAudio.pause();
-                                window._announceAudio = null;
-                            } catch (e) {}
-                        }
+                        try {
+                            window._announceQueue = [];
+                        } catch (e) {}
                     });
                 }
         </script>
