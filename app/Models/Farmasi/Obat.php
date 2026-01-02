@@ -84,9 +84,11 @@ class Obat extends Model
         return $this->hasMany(PemberianObat::class, 'kode_brng', 'kode_brng');
     }
 
-    public function scopeDaruratStok(Builder $query): Builder
+    public function scopeDaruratStok(Builder $query, int $days = 14): Builder
     {
-        $sqlSelect = <<<'SQL'
+        $interval = "{$days} day";
+
+        $sqlSelect = "
             databarang.kode_brng,
             databarang.nama_brng,
             kodesatuan.satuan satuan_kecil,
@@ -96,18 +98,18 @@ class Obat extends Model
             ifnull(round(stok_gudang_ap.stok_di_gudang, 2), 0) stok_sekarang_ap,
             ifnull(round(stok_gudang_ifg.stok_di_gudang, 2), 0) stok_sekarang_ifg,
             (
-                ifnull((select round(sum(detail_pengeluaran_obat_bhp.jumlah), 2) from detail_pengeluaran_obat_bhp join pengeluaran_obat_bhp on detail_pengeluaran_obat_bhp.no_keluar = pengeluaran_obat_bhp.no_keluar where detail_pengeluaran_obat_bhp.kode_brng = databarang.kode_brng and pengeluaran_obat_bhp.tanggal between date_sub(current_date(), interval 2 week) and current_date()), 0)
+                ifnull((select round(sum(detail_pengeluaran_obat_bhp.jumlah), 2) from detail_pengeluaran_obat_bhp join pengeluaran_obat_bhp on detail_pengeluaran_obat_bhp.no_keluar = pengeluaran_obat_bhp.no_keluar where detail_pengeluaran_obat_bhp.kode_brng = databarang.kode_brng and pengeluaran_obat_bhp.tanggal between date_sub(current_date(), interval {$interval}) and current_date()), 0)
             )
-            stok_keluar_medis_14_hari,
+            stok_keluar_medis_{$days}_hari,
             (
-                ifnull((select round(sum(detail_pemberian_obat.jml), 2) from detail_pemberian_obat where detail_pemberian_obat.kode_brng = databarang.kode_brng and detail_pemberian_obat.tgl_perawatan between date_sub(current_date(), interval 2 week) and current_date()), 0) + 
-                ifnull((select round(sum(detailjual.jumlah), 2) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.tgl_jual between date_sub(current_date(), interval 2 week) and current_date()), 0) 
+                ifnull((select round(sum(detail_pemberian_obat.jml), 2) from detail_pemberian_obat where detail_pemberian_obat.kode_brng = databarang.kode_brng and detail_pemberian_obat.tgl_perawatan between date_sub(current_date(), interval {$interval}) and current_date()), 0) +
+                ifnull((select round(sum(detailjual.jumlah), 2) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.tgl_jual between date_sub(current_date(), interval {$interval}) and current_date()), 0)
             )
-            ke_pasien_14_hari,
+            ke_pasien_{$days}_hari,
             (
-                ifnull((select round(sum(dp.jumlah), 2) from piutang p join detailpiutang dp on p.nota_piutang = dp.nota_piutang where dp.kode_brng = databarang.kode_brng and p.tgl_piutang between date_sub(current_date(), interval 2 week) and current_date()), 0)
+                ifnull((select round(sum(dp.jumlah), 2) from piutang p join detailpiutang dp on p.nota_piutang = dp.nota_piutang where dp.kode_brng = databarang.kode_brng and p.tgl_piutang between date_sub(current_date(), interval {$interval}) and current_date()), 0)
             )
-            piutang_14_hari,
+            piutang_{$days}_hari,
             round(databarang.stokminimal - ifnull(stok_gudang_ap.stok_di_gudang, 0), 2) saran_order,
             industrifarmasi.nama_industri,
             round(databarang.h_beli, 2) harga_beli,
@@ -115,7 +117,7 @@ class Obat extends Model
             ifnull((select ifnull(round(dp.h_pesan/databarang.isi, 2), 0) from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1), 0) harga_beli_terakhir,
             ifnull((select ifnull(dp.dis, 0) from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1), 0) diskon_terakhir,
             ifnull((select ds.nama_suplier from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur left join datasuplier ds on p.kode_suplier = ds.kode_suplier where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1), '-') supplier_terakhir
-            SQL;
+        ";
 
         $stokGudangAP = GudangObat::query()
             ->select(['kode_brng', DB::raw('sum(stok) as stok_di_gudang')])
@@ -140,42 +142,48 @@ class Obat extends Model
             'industrifarmasi.nama_industri',
         ]);
 
-        $this->addSortColumns([
+        $sortColumns = [
             'satuan_kecil'              => 'kodesatuan.satuan',
             'kategori'                  => 'kategori_barang.nama',
             'stok_sekarang_ifa'         => DB::raw('ifnull(round(stok_gudang_ifa.stok_di_gudang, 2), 0)'),
             'stok_sekarang_ap'          => DB::raw('ifnull(round(stok_gudang_ap.stok_di_gudang, 2), 0)'),
             'stok_sekarang_ifi'         => DB::raw('ifnull(round(stok_gudang_ifi.stok_di_gudang, 2), 0)'),
             'stok_sekarang_ifg'         => DB::raw('ifnull(round(stok_gudang_ifg.stok_di_gudang, 2), 0)'),
-            'stok_keluar_medis_14_hari' => DB::raw('(ifnull((select round(sum(detail_pengeluaran_obat_bhp.jumlah), 2) from detail_pengeluaran_obat_bhp join pengeluaran_obat_bhp on detail_pengeluaran_obat_bhp.no_keluar = pengeluaran_obat_bhp.no_keluar where detail_pengeluaran_obat_bhp.kode_brng = databarang.kode_brng and pengeluaran_obat_bhp.tanggal between date_sub(current_date(), interval 2 week) and current_date()), 0))'),
-            'ke_pasien_14_hari'         => DB::raw('(ifnull((select round(sum(detail_pemberian_obat.jml), 2) from detail_pemberian_obat where detail_pemberian_obat.kode_brng = databarang.kode_brng and detail_pemberian_obat.tgl_perawatan between date_sub(current_date(), interval 2 week) and current_date()), 0) + ifnull((select round(sum(detailjual.jumlah), 2) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.tgl_jual between date_sub(current_date(), interval 2 week) and current_date()), 0))'),
-            'piutang_14_hari'           => DB::raw('(ifnull((select round(sum(dp.jumlah), 2) from piutang p join detailpiutang dp on p.nota_piutang = dp.nota_piutang where dp.kode_brng = databarang.kode_brng and p.tgl_piutang between date_sub(current_date(), interval 2 week) and current_date()), 0))'),
             'saran_order'               => DB::raw('(databarang.stokminimal - ifnull(stok_gudang_ap.stok_di_gudang, 0))'),
             'harga_beli'                => DB::raw('round(databarang.h_beli)'),
             'harga_beli_total'          => DB::raw('round((databarang.stokminimal - ifnull(stok_gudang_ap.stok_di_gudang, 0)) * databarang.h_beli)'),
             'harga_beli_terakhir'       => DB::raw('(select ifnull(round(dp.h_pesan / databarang.isi, 2), 0) from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1)'),
             'diskon_terakhir'           => DB::raw("(select ifnull(dp.dis, '0') from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1)"),
             'supplier_terakhir'         => DB::raw("(select ifnull(ds.nama_suplier, '-') from detailpesan dp left join pemesanan p on p.no_faktur = dp.no_faktur left join datasuplier ds on p.kode_suplier = ds.kode_suplier where dp.kode_brng = databarang.kode_brng order by p.tgl_pesan desc limit 1)"),
-        ]);
+        ];
+
+        $sortColumns["stok_keluar_medis_{$days}_hari"] = DB::raw("(ifnull((select round(sum(detail_pengeluaran_obat_bhp.jumlah), 2) from detail_pengeluaran_obat_bhp join pengeluaran_obat_bhp on detail_pengeluaran_obat_bhp.no_keluar = pengeluaran_obat_bhp.no_keluar where detail_pengeluaran_obat_bhp.kode_brng = databarang.kode_brng and pengeluaran_obat_bhp.tanggal between date_sub(current_date(), interval {$interval}) and current_date()), 0))");
+        $sortColumns["ke_pasien_{$days}_hari"] = DB::raw("(ifnull((select round(sum(detail_pemberian_obat.jml), 2) from detail_pemberian_obat where detail_pemberian_obat.kode_brng = databarang.kode_brng and detail_pemberian_obat.tgl_perawatan between date_sub(current_date(), interval {$interval}) and current_date()), 0) + ifnull((select round(sum(detailjual.jumlah), 2) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.tgl_jual between date_sub(current_date(), interval {$interval}) and current_date()), 0))");
+        $sortColumns["piutang_{$days}_hari"] = DB::raw("(ifnull((select round(sum(dp.jumlah), 2) from piutang p join detailpiutang dp on p.nota_piutang = dp.nota_piutang where dp.kode_brng = databarang.kode_brng and p.tgl_piutang between date_sub(current_date(), interval {$interval}) and current_date()), 0))");
+
+        $this->addSortColumns($sortColumns);
+
+        $casts = [
+            'stokminimal'               => 'float',
+            'stok_sekarang_ifi'         => 'float',
+            'stok_sekarang_ap'          => 'float',
+            'stok_sekarang_ifg'         => 'float',
+            'total_stok_sekarang'       => 'float',
+            'saran_order'               => 'float',
+            'harga_beli'                => 'float',
+            'harga_beli_total'          => 'float',
+            'harga_beli_terakhir'       => 'float',
+            'diskon_terakhir'           => 'float',
+        ];
+
+        $casts["stok_keluar_medis_{$days}_hari"] = 'float';
+        $casts["ke_pasien_{$days}_hari"] = 'float';
+        $casts["piutang_{$days}_hari"] = 'float';
+        $casts["total_keluar_{$days}_hari"] = 'float'; // Jika ada
 
         return $query
             ->selectRaw($sqlSelect)
-            ->withCasts([
-                'stokminimal'               => 'float',
-                'stok_sekarang_ifi'         => 'float',
-                'stok_sekarang_ap'          => 'float',
-                'stok_sekarang_ifg'         => 'float',
-                'stok_keluar_medis_14_hari' => 'float',
-                'ke_pasien_14_hari'         => 'float',
-                'piutang_14_hari'           => 'float',
-                'total_stok_sekarang'       => 'float',
-                'total_keluar_14_hari'      => 'float',
-                'saran_order'               => 'float',
-                'harga_beli'                => 'float',
-                'harga_beli_total'          => 'float',
-                'harga_beli_terakhir'       => 'float',
-                'diskon_terakhir'           => 'float',
-            ])
+            ->withCasts($casts)
             ->join('kategori_barang', 'databarang.kode_kategori', '=', 'kategori_barang.kode')
             ->join('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
             ->join('industrifarmasi', 'databarang.kode_industri', '=', 'industrifarmasi.kode_industri')
