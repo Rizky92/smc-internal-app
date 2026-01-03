@@ -22,16 +22,6 @@ class RencanaOrder extends Component
     use LiveTable;
     use MenuTracker;
 
-    /** @var int 12|14 */
-    public $periode;
-
-    protected function queryString(): array
-    {
-        return [
-            'periode' => ['as' => 'hari'],
-        ];
-    }
-
     public function mount(): void
     {
         $this->defaultValues();
@@ -40,7 +30,7 @@ class RencanaOrder extends Component
     public function getStokDaruratObatProperty()
     {
         return $this->isDeferred ? [] : Obat::query()
-            ->daruratStok($this->periode)
+            ->daruratStok()
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
@@ -54,7 +44,7 @@ class RencanaOrder extends Component
 
     protected function defaultValues(): void
     {
-        $this->periode = 14;
+        //
     }
 
     /**
@@ -64,7 +54,7 @@ class RencanaOrder extends Component
     {
         return [
             fn () => Obat::query()
-                ->daruratStok($this->periode)
+                ->daruratStok()
                 ->cursor()
                 ->map(fn (Obat $model): array => [
                     'nama_brng'             => $model->nama_brng,
@@ -74,11 +64,11 @@ class RencanaOrder extends Component
                     'stok_sekarang_ifi'     => $model->stok_sekarang_ifi,
                     'stok_sekarang_ap'      => $model->stok_sekarang_ap,
                     'stok_sekarang_ifg'     => $model->stok_sekarang_ifg,
-                    'stok_keluar_medis_' . $this->periode . '_hari' => $model->{'stok_keluar_medis_' . $this->periode . '_hari'},
-                    'ke_pasien_' . $this->periode . '_hari' => $model->{'ke_pasien_' . $this->periode . '_hari'},
-                    'piutang_' . $this->periode . '_hari' => $model->{'piutang_' . $this->periode . '_hari'},
+                    'stok_keluar_14_hari'   => $model->stok_keluar_medis_14_hari,
+                    'ke_pasien_14_hari'     => $model->ke_pasien_14_hari,
+                    'piutang_14_hari'       => $model->piutang_14_hari,
                     'total_stok_sekarang'   => $model->stok_sekarang_ifi + $model->stok_sekarang_ap + $model->stok_sekarang_ifg,
-                    'total_keluar_' . $this->periode . '_hari' => $model->{'stok_keluar_medis_' . $this->periode . '_hari'} + $model->{'ke_pasien_' . $this->periode . '_hari'} + $model->{'piutang_' . $this->periode . '_hari'},
+                    'total_keluar_14_hari'  => $model->stok_keluar_medis_14_hari + $model->ke_pasien_14_hari + $model->piutang_14_hari,
                     'saran_order'           => $model->saran_order,
                     'nama_industri'         => $model->nama_industri,
                     'harga_beli'            => $model->harga_beli,
@@ -100,11 +90,11 @@ class RencanaOrder extends Component
             'Stok Farmasi RWI',
             'Stok Farmasi B',
             'Stok Farmasi IGD',
-            "Stok Keluar Medis ({$this->periode} Hari)",
-            "Ke Pasien ({$this->periode} Hari)",
-            "Piutang ({$this->periode} Hari)",
+            'Stok Keluar Medis (14 Hari)',
+            'Ke Pasien (14 Hari)',
+            'Piutang (14 Hari)',
             'Total Stok Sekarang',
-            "Total Keluar ({$this->periode} Hari)",
+            'Total Keluar (14 Hari)',
             'Saran Order',
             'Supplier',
             'Harga per Unit (Rp)',

@@ -4,8 +4,6 @@
     <x-card use-loading>
         <x-slot name="header">
             <x-row-col-flex>
-                <x-filter.label constant-width>Periode (Hari):</x-filter.label>
-                <x-filter.select model="periode" :options="[12 => '12 Hari', 14 => '14 Hari']" />
                 <x-filter.button-export-excel class="ml-auto" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
@@ -25,11 +23,11 @@
                     <x-table.th name="stok_sekarang_ap" title="Stok Farmasi B Sekarang" align="right" style="width: 11ch" />
                     <x-table.th name="stok_sekarang_ifi" title="Stok Farmasi RWI Sekarang" align="right" style="width: 11ch" />
                     <x-table.th name="stok_sekarang_ifg" title="Stok Farmasi IGD Sekarang" align="right" style="width: 11ch" />
-                    <x-table.th :name="'stok_keluar_medis_' . $this->periode . '_hari'" :title="'Stok Keluar Medis (' . $this->periode . ' Hari)'" align="right" style="width: 11ch" />
-                    <x-table.th :name="'ke_pasien_' . $this->periode . '_hari'" :title="'Jumlah Ke Pasien (' . $this->periode . ' Hari)'" align="right" style="width: 40ch" />
-                    <x-table.th :name="'piutang_' . $this->periode . '_hari'" :title="'Piutang (' . $this->periode . ' Hari)'" align="right" style="width: 40ch" />
+                    <x-table.th name="stok_keluar_medis_14_hari" title="Stok Keluar Medis (14 Hari)" align="right" style="width: 11ch" />
+                    <x-table.th name="ke_pasien_14_hari" title="Jumlah Ke Pasien (14 Hari)" align="right" style="width: 40ch" />
+                    <x-table.th name="piutang_14_hari" title="Piutang (14 Hari)" align="right" style="width: 40ch" />
                     <x-table.th name="total_stok_sekarang" title="Total Stok Sekarang" align="right" style="width: 40ch" />
-                    <x-table.th :name="'total_keluar_' . $this->periode . '_hari'" :title="'Total Keluar (' . $this->periode . ' Hari)'" align="right" style="width: 40ch" />
+                    <x-table.th name="total_keluar_14_hari" title="Total Keluar (14 Hari)" align="right" style="width: 40ch" />
                     <x-table.th name="saran_order" title="Saran order" align="right" style="width: 15ch" />
                     <x-table.th name="nama_industri" title="Supplier" style="width: 40ch" />
                     <x-table.th name="harga_beli" colspan="2" title="Harga Per Unit" align="right" style="width: 18ch" />
@@ -60,19 +58,19 @@
                                 {{ $obat->stok_sekarang_ifg }}
                             </x-table.td>
                             <x-table.td class="text-right">
-                                {{ $obat->{'stok_keluar_medis_' . $this->periode . '_hari'} }}
+                                {{ $obat->stok_keluar_medis_14_hari }}
                             </x-table.td>
                             <x-table.td class="text-right">
-                                {{ $obat->{'ke_pasien_' . $this->periode . '_hari'} }}
+                                {{ $obat->ke_pasien_14_hari }}
                             </x-table.td>
                             <x-table.td class="text-right">
-                                {{ $obat->{'piutang_' . $this->periode . '_hari'} }}
+                                {{ $obat->piutang_14_hari }}
                             </x-table.td>
                             <x-table.td class="text-right">
                                 {{ $obat->stok_sekarang_ifi + $obat->stok_sekarang_ap + $obat->stok_sekarang_ifg }}
                             </x-table.td>
                             <x-table.td class="text-right">
-                                {{ $obat->{'stok_keluar_medis_' . $this->periode . '_hari'} + $obat->{'ke_pasien_' . $this->periode . '_hari'} + $obat->{'piutang_' . $this->periode . '_hari'} }}
+                                {{ $obat->stok_keluar_medis_14_hari + $obat->ke_pasien_14_hari + $obat->piutang_14_hari }}
                             </x-table.td>
                             <x-table.td class="text-right">
                                 {{ $obat->saran_order }}
