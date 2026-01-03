@@ -4,6 +4,7 @@
     <x-card use-loading>
         <x-slot name="header">
             <x-row-col-flex>
+                <x-filter.range-date />
                 <x-filter.button-export-excel class="ml-auto" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">

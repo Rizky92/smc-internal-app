@@ -22,6 +22,20 @@ class RencanaOrder extends Component
     use LiveTable;
     use MenuTracker;
 
+    /** @var string */
+    public $tglAwal;
+
+    /** @var string */
+    public $tglAkhir;
+
+    protected function queryString(): array
+    {
+        return [
+            'tglAwal'  => ['except' => now()->subWeeks(2)->toDateString(), 'as' => 'tgl_awal'],
+            'tglAkhir' => ['except' => now()->toDateString(), 'as' => 'tgl_akhir'],
+        ];
+    }
+
     public function mount(): void
     {
         $this->defaultValues();
@@ -30,7 +44,7 @@ class RencanaOrder extends Component
     public function getStokDaruratObatProperty()
     {
         return $this->isDeferred ? [] : Obat::query()
-            ->daruratStok()
+            ->daruratStok($this->tglAwal, $this->tglAkhir)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
@@ -44,7 +58,8 @@ class RencanaOrder extends Component
 
     protected function defaultValues(): void
     {
-        //
+        $this->tglAwal = now()->subWeeks(2)->toDateString();
+        $this->tglAkhir = now()->toDateString();
     }
 
     /**
@@ -54,7 +69,7 @@ class RencanaOrder extends Component
     {
         return [
             fn () => Obat::query()
-                ->daruratStok()
+                ->daruratStok($this->tglAwal, $this->tglAkhir)
                 ->cursor()
                 ->map(fn (Obat $model): array => [
                     'nama_brng'             => $model->nama_brng,
