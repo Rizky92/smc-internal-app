@@ -10,6 +10,7 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Farmasi\Obat;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Carbon;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -23,16 +24,12 @@ class RencanaOrder extends Component
     use MenuTracker;
 
     /** @var string */
-    public $tglAwal;
-
-    /** @var string */
-    public $tglAkhir;
+    public $tanggal;
 
     protected function queryString(): array
     {
         return [
-            'tglAwal'  => ['except' => now()->subWeeks(2)->toDateString(), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->toDateString(), 'as' => 'tgl_akhir'],
+            'tanggal'  => ['except' => now()->subWeeks(2)->toDateString(), 'as' => 'tanggal'],
         ];
     }
 
@@ -44,10 +41,15 @@ class RencanaOrder extends Component
     public function getStokDaruratObatProperty()
     {
         return $this->isDeferred ? [] : Obat::query()
-            ->daruratStok($this->tglAwal, $this->tglAkhir)
+            ->daruratStok($this->tanggal)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
+    }
+
+    public function getJumlahHariProperty(): int
+    {
+        return Carbon::parse($this->tanggal)->diffInDays(now());
     }
 
     public function render(): View
@@ -58,8 +60,7 @@ class RencanaOrder extends Component
 
     protected function defaultValues(): void
     {
-        $this->tglAwal = now()->subWeeks(2)->toDateString();
-        $this->tglAkhir = now()->toDateString();
+        $this->tanggal = now()->subWeeks(2)->toDateString();
     }
 
     /**
@@ -69,7 +70,7 @@ class RencanaOrder extends Component
     {
         return [
             fn () => Obat::query()
-                ->daruratStok($this->tglAwal, $this->tglAkhir)
+                ->daruratStok($this->tanggal)
                 ->cursor()
                 ->map(fn (Obat $model): array => [
                     'nama_brng'             => $model->nama_brng,
@@ -105,11 +106,11 @@ class RencanaOrder extends Component
             'Stok Farmasi RWI',
             'Stok Farmasi B',
             'Stok Farmasi IGD',
-            'Stok Keluar Medis (14 Hari)',
-            'Ke Pasien (14 Hari)',
-            'Piutang (14 Hari)',
+            'Stok Keluar Medis ('.$this->jumlahHari.' Hari)',
+            'Ke Pasien ('.$this->jumlahHari.' Hari)',
+            'Piutang ('.$this->jumlahHari.' Hari)',
             'Total Stok Sekarang',
-            'Total Keluar (14 Hari)',
+            'Total Keluar ('.$this->jumlahHari.' Hari)',
             'Saran Order',
             'Supplier',
             'Harga per Unit (Rp)',
