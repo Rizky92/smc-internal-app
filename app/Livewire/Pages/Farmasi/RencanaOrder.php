@@ -10,6 +10,7 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Farmasi\Obat;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Carbon;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -22,6 +23,16 @@ class RencanaOrder extends Component
     use LiveTable;
     use MenuTracker;
 
+    /** @var string */
+    public $tanggal;
+
+    protected function queryString(): array
+    {
+        return [
+            'tanggal'  => ['except' => now()->subWeeks(2)->toDateString(), 'as' => 'tanggal'],
+        ];
+    }
+
     public function mount(): void
     {
         $this->defaultValues();
@@ -30,10 +41,15 @@ class RencanaOrder extends Component
     public function getStokDaruratObatProperty()
     {
         return $this->isDeferred ? [] : Obat::query()
-            ->daruratStok()
+            ->daruratStok($this->tanggal)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
+    }
+
+    public function getJumlahHariProperty(): int
+    {
+        return Carbon::parse($this->tanggal)->diffInDays(now());
     }
 
     public function render(): View
@@ -44,7 +60,7 @@ class RencanaOrder extends Component
 
     protected function defaultValues(): void
     {
-        //
+        $this->tanggal = now()->subWeeks(2)->toDateString();
     }
 
     /**
@@ -54,7 +70,7 @@ class RencanaOrder extends Component
     {
         return [
             fn () => Obat::query()
-                ->daruratStok()
+                ->daruratStok($this->tanggal)
                 ->cursor()
                 ->map(fn (Obat $model): array => [
                     'nama_brng'             => $model->nama_brng,
@@ -90,11 +106,11 @@ class RencanaOrder extends Component
             'Stok Farmasi RWI',
             'Stok Farmasi B',
             'Stok Farmasi IGD',
-            'Stok Keluar Medis (14 Hari)',
-            'Ke Pasien (14 Hari)',
-            'Piutang (14 Hari)',
+            'Stok Keluar Medis',
+            'Ke Pasien',
+            'Piutang',
             'Total Stok Sekarang',
-            'Total Keluar (14 Hari)',
+            'Total Keluar',
             'Saran Order',
             'Supplier',
             'Harga per Unit (Rp)',
@@ -109,8 +125,9 @@ class RencanaOrder extends Component
     {
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Rencana Order Farmasi',
-            'Per '.now()->translatedFormat('d F Y'),
+            'Laporan Rencana Order Farmasi '.$this->jumlahHari.' Hari',
+            'Dari tanggal '.Carbon.parse($this->tanggal)->translatedFormat('d F Y'),
+            now()->translatedForamt('d F Y'),
         ];
     }
 }
