@@ -11,6 +11,7 @@ use Livewire\Component;
 
 class Pengaturan extends Component
 {
+    use Concerns\PengaturanAntreanLoket;
     use Concerns\PengaturanRKAT;
     use Concerns\SetNPWPPenjual;
     use FlashComponent;

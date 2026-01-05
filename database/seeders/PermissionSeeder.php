@@ -102,6 +102,8 @@ class PermissionSeeder extends Seeder
 
         Permission::create(['name' => 'aplikasi.pengaturan-rkat.read']);
         Permission::create(['name' => 'aplikasi.pengaturan-rkat.update']);
+        Permission::create(['name' => 'aplikasi.pengaturan-antrean-loket.read']);
+        Permission::create(['name' => 'aplikasi.pengaturan-antrean-loket.update']);
 
         Permission::create(['name' => 'antrean.manajemen-pintu.create']);
         Permission::create(['name' => 'antrean.manajemen-pintu.read']);

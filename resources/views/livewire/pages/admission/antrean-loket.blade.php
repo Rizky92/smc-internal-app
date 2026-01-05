@@ -68,190 +68,209 @@
                     Livewire.emit('queueStopped');
                 });
 
-                if (window.Livewire) {
-                    const tryExt = '.mp3';
+            if (window.Livewire) {
+                const tryExt = '.mp3';
 
-                    const audioExists = async (url) => {
-                        try {
-                            const res = await fetch(url, { method: 'HEAD' });
-                            return res.ok;
-                        } catch (e) {
-                            return false;
-                        }
-                    };
+                const audioExists = async (url) => {
+                    try {
+                        const res = await fetch(url, { method: 'HEAD' });
+                        return res.ok;
+                    } catch (e) {
+                        return false;
+                    }
+                };
 
-                    // playback control: allow cancelling current playback when a new call arrives
-                    const playAudioSequence = async (urls, token) => {
-                        window._announceAudioList = [];
-                        for (const url of urls) {
-                            // if token changed, stop early
-                            if (window._announceCurrentToken !== token) return;
-                            await new Promise((res) => {
-                                const audio = new Audio(url);
-                                window._announceAudioList.push(audio);
+                // playback control: allow cancelling current playback when a new call arrives
+                const playAudioSequence = async (urls, token) => {
+                    window._announceAudioList = [];
+                    for (const url of urls) {
+                        // if token changed, stop early
+                        if (window._announceCurrentToken !== token) return;
+                        await new Promise((res) => {
+                            const audio = new Audio(url);
+                            window._announceAudioList.push(audio);
 
-                                const onEnd = () => { cleanup(); res(); };
-                                const onError = (e) => { console.warn('audio error', url, e); cleanup(); res(); };
-                                const onPause = () => {
-                                    if (window._announceCurrentToken !== token) { cleanup(); res(); }
-                                };
-
-                                function cleanup() {
-                                    audio.removeEventListener('ended', onEnd);
-                                    audio.removeEventListener('error', onError);
-                                    audio.removeEventListener('pause', onPause);
-                                }
-
-                                audio.addEventListener('ended', onEnd);
-                                audio.addEventListener('error', onError);
-                                audio.addEventListener('pause', onPause);
-
-                                audio.play().catch((e) => {
-                                    console.warn('play failed', url, e);
+                            const onEnd = () => {
+                                cleanup();
+                                res();
+                            };
+                            const onError = (e) => {
+                                console.warn('audio error', url, e);
+                                cleanup();
+                                res();
+                            };
+                            const onPause = () => {
+                                if (window._announceCurrentToken !== token) {
                                     cleanup();
                                     res();
-                                });
-                            });
-                        }
-                    };
-
-                    const stopCurrentPlayback = () => {
-                        // change token so in-flight playAudioSequence exits
-                        window._announceCurrentToken = Symbol();
-                        if (window._announceAudioList && window._announceAudioList.length) {
-                            for (const a of window._announceAudioList) {
-                                try { a.pause(); a.currentTime = 0; } catch (e) {}
-                            }
-                        }
-                        window._announceAudioList = [];
-                        if (window._announceAudio) {
-                            try { window._announceAudio.pause(); } catch (e) {}
-                            window._announceAudio = null;
-                        }
-                        if (window._announceInterval) {
-                            clearInterval(window._announceInterval);
-                            window._announceInterval = null;
-                        }
-                    };
-
-                    // queue for holding incoming events until current playback finishes
-                    window._announceQueue = window._announceQueue || [];
-                    window._announceProcessing = window._announceProcessing || false;
-
-                    const enqueueAnnouncement = (loket, antrian) => {
-                        window._announceQueue.push({ loket, antrian });
-                        processAnnounceQueue();
-                    };
-
-                    const processAnnounceQueue = async () => {
-                        if (window._announceProcessing) return;
-                        window._announceProcessing = true;
-                        // interval between repeats (ms)
-                        const repeatInterval = window._announceRepeatInterval || 3000;
-
-                        while (window._announceQueue.length) {
-                            const { loket, antrian } = window._announceQueue.shift();
-                            try {
-                                const urls = await buildAudioUrls(loket, antrian);
-                                if (urls && urls.length) {
-                                    const token = Symbol();
-                                    window._announceCurrentToken = token;
-
-                                    // keep repeating this announcement until a new event arrives
-                                    while (true) {
-                                        // stop if cancelled
-                                        if (window._announceCurrentToken !== token) break;
-                                        // play once
-                                        await playAudioSequence(urls, token);
-                                        // after playing, if cancelled or queue has items, break to process next
-                                        if (window._announceCurrentToken !== token) break;
-                                        if (window._announceQueue.length > 0) break;
-                                        // wait before repeating
-                                        await new Promise((res) => setTimeout(res, repeatInterval));
-                                        // loop continues to play again
-                                    }
                                 }
-                            } catch (e) {
-                                console.warn('processing queued announce failed', e);
+                            };
+
+                            function cleanup() {
+                                audio.removeEventListener('ended', onEnd);
+                                audio.removeEventListener('error', onError);
+                                audio.removeEventListener('pause', onPause);
                             }
+
+                            audio.addEventListener('ended', onEnd);
+                            audio.addEventListener('error', onError);
+                            audio.addEventListener('pause', onPause);
+
+                            audio.play().catch((e) => {
+                                console.warn('play failed', url, e);
+                                cleanup();
+                                res();
+                            });
+                        });
+                    }
+                };
+
+                const stopCurrentPlayback = () => {
+                    // change token so in-flight playAudioSequence exits
+                    window._announceCurrentToken = Symbol();
+                    if (window._announceAudioList && window._announceAudioList.length) {
+                        for (const a of window._announceAudioList) {
+                            try {
+                                a.pause();
+                                a.currentTime = 0;
+                            } catch (e) {}
                         }
-                        window._announceProcessing = false;
-                    };
+                    }
+                    window._announceAudioList = [];
+                    if (window._announceAudio) {
+                        try {
+                            window._announceAudio.pause();
+                        } catch (e) {}
+                        window._announceAudio = null;
+                    }
+                    if (window._announceInterval) {
+                        clearInterval(window._announceInterval);
+                        window._announceInterval = null;
+                    }
+                };
 
-                    const buildAudioUrls = async (loket, antrian) => {
-                        const base = '/suarasmc';
-                        const s = String(antrian || '');
-                        const prefix = s.charAt(0) || '';
-                        const numberPart = s.slice(1) || '0';
+                // queue for holding incoming events until current playback finishes
+                window._announceQueue = window._announceQueue || [];
+                window._announceProcessing = window._announceProcessing || false;
 
-                        const files = [];
+                const enqueueAnnouncement = (loket, antrian) => {
+                    window._announceQueue.push({ loket, antrian });
+                    processAnnounceQueue();
+                };
 
-                        // nomor-urut.mp3
-                        const nomor = `${base}/nomor-urut${tryExt}`;
-                        if (await audioExists(nomor)) files.push(nomor);
+                const processAnnounceQueue = async () => {
+                    if (window._announceProcessing) return;
+                    window._announceProcessing = true;
+                    // interval between repeats (ms)
+                    const repeatInterval = window._announceRepeatInterval || 3000;
 
-                        // PREFIX (A-F) — uppercase
-                        if (prefix) {
-                            const pref = `${base}/${prefix.toUpperCase()}${tryExt}`;
-                            if (await audioExists(pref)) files.push(pref);
-                        }
-
-                        // digits of numberPart (each digit file exists: 0-9.mp3)
-                        for (const ch of numberPart.split('')) {
-                            const digitFile = `${base}/${ch}${tryExt}`;
-                            if (await audioExists(digitFile)) files.push(digitFile);
-                        }
-
-                        // 'loket' word then loket number digits (e.g., loket.mp3 then 1.mp3)
-                        const loketWord = `${base}/loket${tryExt}`;
-                        if (await audioExists(loketWord)) files.push(loketWord);
-                        const loketStr = String(loket || '');
-                        for (const ch of loketStr.split('')) {
-                            const lf = `${base}/${ch}${tryExt}`;
-                            if (await audioExists(lf)) files.push(lf);
-                        }
-
-                        return files.length ? files : null;
-                    };
-
-                    const announce = async (loket, antrian) => {
-                        // stop any previous playback immediately
-                        try { stopCurrentPlayback(); } catch (e) { console.warn(e); }
-
+                    while (window._announceQueue.length) {
+                        const { loket, antrian } = window._announceQueue.shift();
                         try {
                             const urls = await buildAudioUrls(loket, antrian);
                             if (urls && urls.length) {
-                                // create a token for this announcement so in-flight sequences can check
                                 const token = Symbol();
                                 window._announceCurrentToken = token;
 
-                                const playOnce = () => playAudioSequence(urls, token).catch((e) => console.warn(e));
-                                setTimeout(playOnce, 220);
-                                // store interval so it can be cleared by stopCurrentPlayback
-                                window._announceInterval = setInterval(playOnce, 12000);
+                                // keep repeating this announcement until a new event arrives
+                                while (true) {
+                                    // stop if cancelled
+                                    if (window._announceCurrentToken !== token) break;
+                                    // play once
+                                    await playAudioSequence(urls, token);
+                                    // after playing, if cancelled or queue has items, break to process next
+                                    if (window._announceCurrentToken !== token) break;
+                                    if (window._announceQueue.length > 0) break;
+                                    // wait before repeating
+                                    await new Promise((res) => setTimeout(res, repeatInterval));
+                                    // loop continues to play again
+                                }
                             }
                         } catch (e) {
-                            console.warn('audio announce failed', e);
+                            console.warn('processing queued announce failed', e);
                         }
-                    };
+                    }
+                    window._announceProcessing = false;
+                };
 
-                    Livewire.on('queueCalled', (loket, antrian) => {
-                        // enqueue incoming calls so they wait until current playback finishes
-                        enqueueAnnouncement(loket, antrian);
-                    });
+                const buildAudioUrls = async (loket, antrian) => {
+                    const base = '/suarasmc';
+                    const s = String(antrian || '');
+                    const prefix = s.charAt(0) || '';
+                    const numberPart = s.slice(1) || '0';
 
-                    Livewire.on('queueStopped', () => {
-                        try {
-                            // stop playback and clear any pending announcements
-                            stopCurrentPlayback();
-                        } catch (e) {
-                            console.warn('stopCurrentPlayback failed', e);
+                    const files = [];
+
+                    // nomor-urut.mp3
+                    const nomor = `${base}/nomor-urut${tryExt}`;
+                    if (await audioExists(nomor)) files.push(nomor);
+
+                    // PREFIX (A-F) — uppercase
+                    if (prefix) {
+                        const pref = `${base}/${prefix.toUpperCase()}${tryExt}`;
+                        if (await audioExists(pref)) files.push(pref);
+                    }
+
+                    // digits of numberPart (each digit file exists: 0-9.mp3)
+                    for (const ch of numberPart.split('')) {
+                        const digitFile = `${base}/${ch}${tryExt}`;
+                        if (await audioExists(digitFile)) files.push(digitFile);
+                    }
+
+                    // 'loket' word then loket number digits (e.g., loket.mp3 then 1.mp3)
+                    const loketWord = `${base}/loket${tryExt}`;
+                    if (await audioExists(loketWord)) files.push(loketWord);
+                    const loketStr = String(loket || '');
+                    for (const ch of loketStr.split('')) {
+                        const lf = `${base}/${ch}${tryExt}`;
+                        if (await audioExists(lf)) files.push(lf);
+                    }
+
+                    return files.length ? files : null;
+                };
+
+                const announce = async (loket, antrian) => {
+                    // stop any previous playback immediately
+                    try {
+                        stopCurrentPlayback();
+                    } catch (e) {
+                        console.warn(e);
+                    }
+
+                    try {
+                        const urls = await buildAudioUrls(loket, antrian);
+                        if (urls && urls.length) {
+                            // create a token for this announcement so in-flight sequences can check
+                            const token = Symbol();
+                            window._announceCurrentToken = token;
+
+                            const playOnce = () => playAudioSequence(urls, token).catch((e) => console.warn(e));
+                            setTimeout(playOnce, 220);
+                            // store interval so it can be cleared by stopCurrentPlayback
+                            window._announceInterval = setInterval(playOnce, 12000);
                         }
-                        try {
-                            window._announceQueue = [];
-                        } catch (e) {}
-                    });
-                }
+                    } catch (e) {
+                        console.warn('audio announce failed', e);
+                    }
+                };
+
+                Livewire.on('queueCalled', (loket, antrian) => {
+                    // enqueue incoming calls so they wait until current playback finishes
+                    enqueueAnnouncement(loket, antrian);
+                });
+
+                Livewire.on('queueStopped', () => {
+                    try {
+                        // stop playback and clear any pending announcements
+                        stopCurrentPlayback();
+                    } catch (e) {
+                        console.warn('stopCurrentPlayback failed', e);
+                    }
+                    try {
+                        window._announceQueue = [];
+                    } catch (e) {}
+                });
+            }
         </script>
     @endpush
 </div>
