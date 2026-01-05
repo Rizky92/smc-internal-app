@@ -106,11 +106,11 @@ class RencanaOrder extends Component
             'Stok Farmasi RWI',
             'Stok Farmasi B',
             'Stok Farmasi IGD',
-            'Stok Keluar Medis ('.$this->jumlahHari.' Hari)',
-            'Ke Pasien ('.$this->jumlahHari.' Hari)',
-            'Piutang ('.$this->jumlahHari.' Hari)',
+            'Stok Keluar Medis',
+            'Ke Pasien',
+            'Piutang',
             'Total Stok Sekarang',
-            'Total Keluar ('.$this->jumlahHari.' Hari)',
+            'Total Keluar',
             'Saran Order',
             'Supplier',
             'Harga per Unit (Rp)',
@@ -125,7 +125,7 @@ class RencanaOrder extends Component
     {
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Rencana Order Farmasi',
+            'Laporan Rencana Order Farmasi '.$this->jumlahHari.' Hari',
             'Per '.now()->translatedFormat('d F Y'),
         ];
     }

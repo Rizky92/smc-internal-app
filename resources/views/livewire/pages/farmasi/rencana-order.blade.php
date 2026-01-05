@@ -4,7 +4,10 @@
     <x-card use-loading>
         <x-slot name="header">
             <x-row-col-flex>
-                <x-filter.date title="Mulai tanggal" />
+                <x-label>{{ $this->jumlahHari }} Hari</x-label>
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
+                <x-filter.date title="Per tanggal" />
                 <x-filter.button-export-excel class="ml-auto" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
@@ -24,11 +27,11 @@
                     <x-table.th name="stok_sekarang_ap" title="Stok Farmasi B Sekarang" align="right" style="width: 11ch" />
                     <x-table.th name="stok_sekarang_ifi" title="Stok Farmasi RWI Sekarang" align="right" style="width: 11ch" />
                     <x-table.th name="stok_sekarang_ifg" title="Stok Farmasi IGD Sekarang" align="right" style="width: 11ch" />
-                    <x-table.th name="stok_keluar_medis_14_hari" title="Stok Keluar Medis ({{ $this->jumlahHari }} Hari)" align="right" style="width: 11ch" />
-                    <x-table.th name="ke_pasien_14_hari" title="Jumlah Ke Pasien ({{ $this->jumlahHari }} Hari)" align="right" style="width: 40ch" />
-                    <x-table.th name="piutang_14_hari" title="Piutang ({{ $this->jumlahHari }} Hari)" align="right" style="width: 40ch" />
+                    <x-table.th name="stok_keluar_medis_14_hari" title="Stok Keluar Medis" align="right" style="width: 11ch" />
+                    <x-table.th name="ke_pasien_14_hari" title="Jumlah Ke Pasien" align="right" style="width: 40ch" />
+                    <x-table.th name="piutang_14_hari" title="Piutang" align="right" style="width: 40ch" />
                     <x-table.th name="total_stok_sekarang" title="Total Stok Sekarang" align="right" style="width: 40ch" />
-                    <x-table.th name="total_keluar_14_hari" title="Total Keluar ({{ $this->jumlahHari }} Hari)" align="right" style="width: 40ch" />
+                    <x-table.th name="total_keluar_14_hari" title="Total Keluar" align="right" style="width: 40ch" />
                     <x-table.th name="saran_order" title="Saran order" align="right" style="width: 15ch" />
                     <x-table.th name="nama_industri" title="Supplier" style="width: 40ch" />
                     <x-table.th name="harga_beli" colspan="2" title="Harga Per Unit" align="right" style="width: 18ch" />
