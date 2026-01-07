@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\AntreanLoketController;
 use App\Http\Controllers\API\CreateSPOController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,3 +16,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', CreateSPOController::class)->name('create-spo');
+
+Route::post('/panggil-antrean-loket-smc', [AntreanLoketController::class, 'call'])
+    ->name('panggil-antrean-loket-smc');
+
+Route::post('/stop-antrean-loket-smc', [AntreanLoketController::class, 'stop'])
+    ->name('stop-antrean-loket-smc');
