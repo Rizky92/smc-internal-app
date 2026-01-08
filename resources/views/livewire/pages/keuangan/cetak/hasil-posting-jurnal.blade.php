@@ -230,8 +230,8 @@
             <br />
             <br />
             <br />
-            <div>SAPTA PRIANGGATAMA, S.E</div>
-            <div>KABAG KEUANGAN</div>
+            <div>ADE ARYANI, S.E.</div>
+            <div>MANAJER KEUANGAN</div>
         </div>
         <div></div>
         <div style="text-align: center">
