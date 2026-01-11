@@ -126,7 +126,7 @@ class RencanaOrder extends Component
         return [
             'RS Samarinda Medika Citra',
             'Laporan Rencana Order Farmasi '.$this->jumlahHari.' Hari',
-            'Dari tanggal '.Carbon.parse($this->tanggal)->translatedFormat('d F Y'),
+            'Dari tanggal '.carbon($this->tanggal)->translatedFormat('d F Y'),
             now()->translatedForamt('d F Y'),
         ];
     }
