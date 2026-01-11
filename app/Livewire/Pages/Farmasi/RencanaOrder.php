@@ -127,7 +127,7 @@ class RencanaOrder extends Component
             'RS Samarinda Medika Citra',
             'Laporan Rencana Order Farmasi '.$this->jumlahHari.' Hari',
             'Dari tanggal '.carbon($this->tanggal)->translatedFormat('d F Y'),
-            now()->translatedForamt('d F Y'),
+            now()->translatedFormat('d F Y'),
         ];
     }
 }
