@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\AuthorizeAny;
+use App\Http\Middleware\CheckApiKey;
 use App\Http\Middleware\CheckForMaintenanceMode;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\RedirectIfAuthenticated;
@@ -82,6 +83,7 @@ class Kernel extends HttpKernel
         'cache.headers'    => SetCacheHeaders::class,
         'can'              => Authorize::class,
         'canany'           => AuthorizeAny::class,
+        'check.api.key'    => CheckApiKey::class,
         'guest'            => RedirectIfAuthenticated::class,
         'password.confirm' => RequirePassword::class,
         'signed'           => ValidateSignature::class,

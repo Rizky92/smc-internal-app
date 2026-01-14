@@ -22,7 +22,11 @@ class AntreanLoketController
 
         $this->antreanLoketService->call($data);
 
-        return response()->json($data, 200);
+        return response()->json([
+            'status'  => 200,
+            'message' => 'Antrean berhasil dipanggil',
+            'payload' => $data,
+        ], 200);
     }
 
     public function stop(AntreanLoketRequest $request): JsonResponse
@@ -31,6 +35,10 @@ class AntreanLoketController
 
         $this->antreanLoketService->stop();
 
-        return response()->json(['message' => 'Antrean loket stopped successfully.'], 200);
+        return response()->json([
+            'status'  => 200,
+            'message' => 'Antrean loket berhasil dihentikan',
+            'payload' => null,
+        ], 200);
     }
 }
