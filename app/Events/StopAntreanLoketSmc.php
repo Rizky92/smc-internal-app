@@ -7,6 +7,8 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
 class StopAntreanLoketSmc implements ShouldBroadcast
 {
+    public string $queue = 'antrean-loket';
+
     public function broadcastOn()
     {
         return new Channel('antrean-loket-smc');

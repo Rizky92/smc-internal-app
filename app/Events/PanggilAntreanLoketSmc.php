@@ -7,6 +7,8 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
 class PanggilAntreanLoketSmc implements ShouldBroadcast
 {
+    public string $queue = 'antrean-loket';
+
     public string $loket;
 
     public string $antrian;
