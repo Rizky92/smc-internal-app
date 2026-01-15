@@ -61,6 +61,7 @@ class JurnalMedis extends Model
             'jurnal_medis.status',
             'bayar_pemesanan.besar_bayar',
             'bayar_pemesanan.nama_bayar',
+            'bayar_pemesanan.tgl_bayar',
             'rekening.kd_rek',
             'rekening.nm_rek',
             'datasuplier.nama_suplier',
