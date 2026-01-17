@@ -1,7 +1,9 @@
 {
   "devDependencies": {
+    "laravel-echo": "^2.2.6",
     "prettier": "^3.5.0",
-    "prettier-plugin-blade": "^2.1.19"
+    "prettier-plugin-blade": "^2.1.19",
+    "pusher-js": "^8.4.0"
   },
   "scripts": {
     "pb": "prettier --write resources/views/**/*.blade.php"
