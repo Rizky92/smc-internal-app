@@ -177,6 +177,11 @@ Breadcrumbs::for('admin.keuangan.sirkulasi-non-medis', function (Trail $trail): 
     $trail->push('Sirkulasi Non Medis', route('admin.keuangan.sirkulasi-non-medis'));
 });
 
+Breadcrumbs::for('admin.keuangan.tarif-ralan', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('Tarif Ralan', route('admin.keuangan.tarif-ralan'));
+});
+
 Breadcrumbs::for('admin.farmasi', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Farmasi');
