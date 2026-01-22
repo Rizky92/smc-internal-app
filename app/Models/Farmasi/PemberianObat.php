@@ -157,7 +157,7 @@ class PemberianObat extends Model
             sum(detail_pemberian_obat.jml) as jumlah_barang_jasa,
             0 as diskon_persen,
             0 as diskon_nominal,
-            sum(detail_pemberian_obat.total) as dpp,
+            (detail_pemberian_obat.biaya_obat * sum(detail_pemberian_obat.jml)) as dpp,
             12 as ppn_persen,
             0 as ppn_nominal,
             detail_pemberian_obat.kode_brng as kd_jenis_prw,
@@ -171,6 +171,39 @@ class PemberianObat extends Model
             ->join('reg_periksa', 'detail_pemberian_obat.no_rawat', '=', 'reg_periksa.no_rawat')
             ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'detail_pemberian_obat.no_rawat'))
             ->groupBy(['detail_pemberian_obat.no_rawat', 'detail_pemberian_obat.kode_brng', 'databarang.nama_brng', 'detail_pemberian_obat.biaya_obat']);
+    }
+
+    public function scopeItemFakturPajakTambahanEmbalaseTuslah(Builder $query): Builder
+    {
+        $sqlSelect = <<<'SQL'
+            reg_periksa.no_rawat,
+            case
+                when reg_periksa.status_lanjut = 'Ranap' then '080'
+                when reg_periksa.status_lanjut = 'Ralan' and reg_periksa.kd_pj = 'BPJ' then '030'
+                else '040'
+            end as kode_transaksi,
+            'A' as jenis_barang_jasa,
+            '300000' as kode_barang_jasa,
+            'Embalase + Tuslah Obat' as nama_barang_jasa,
+            '' as nama_satuan_ukur,
+            ifnull(sum(detail_pemberian_obat.embalase + detail_pemberian_obat.tuslah), 0) as harga_satuan,
+            1 as jumlah_barang_jasa,
+            0 as diskon_persen,
+            0 as diskon_nominal,
+            ifnull(sum(detail_pemberian_obat.embalase + detail_pemberian_obat.tuslah), 0) as dpp,
+            12 as ppn_persen,
+            0 as ppn_nominal,
+            '' as kd_jenis_prw,
+            'Pemberian Obat' as kategori,
+            15 as urutan
+            SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join('reg_periksa', 'detail_pemberian_obat.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'detail_pemberian_obat.no_rawat'))
+            ->groupBy('detail_pemberian_obat.no_rawat')
+            ->havingRaw('sum(detail_pemberian_obat.embalase + detail_pemberian_obat.tuslah) > 0');
     }
 
     public static function pendapatanObatRalan(string $year = '2022'): array

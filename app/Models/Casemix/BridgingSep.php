@@ -19,7 +19,10 @@ class BridgingSep extends Model
 
     public $timestamps = false;
 
-    public function scopePasienBatal(Builder $query, string $tglAwal, string $tglAkhir)
+    /**
+     * @psalm-return Builder<\Illuminate\Database\Eloquent\Model>
+     */
+    public function scopePasienBatal(Builder $query, string $tglAwal, string $tglAkhir): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->toDateString();
@@ -41,7 +44,7 @@ class BridgingSep extends Model
             'penjab.png_jawab',
         ]);
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             bridging_sep.no_sep no_sep,
             bridging_sep.no_rawat no_rawat,
             bridging_sep.tglsep tglsep,
@@ -58,7 +61,7 @@ class BridgingSep extends Model
             ->selectRaw($sqlSelect)
             ->join('reg_periksa', function ($join) {
                 $join->on('bridging_sep.no_rawat', '=', 'reg_periksa.no_rawat')
-                     ->whereRaw("IF(bridging_sep.jnspelayanan = '1', 'Ranap', 'Ralan') = reg_periksa.status_lanjut");
+                    ->whereRaw("IF(bridging_sep.jnspelayanan = '1', 'Ranap', 'Ralan') = reg_periksa.status_lanjut");
             })
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
@@ -67,7 +70,10 @@ class BridgingSep extends Model
             ->orderBy('bridging_sep.no_sep');
     }
 
-    public function scopeRegistrasiCob(Builder $query, string $tglAwal, string $tglAkhir)
+    /**
+     * @psalm-return Builder<\Illuminate\Database\Eloquent\Model>
+     */
+    public function scopeRegistrasiCob(Builder $query, string $tglAwal, string $tglAkhir): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->toDateString();
@@ -86,7 +92,7 @@ class BridgingSep extends Model
             'penjab.png_jawab',
         ]);
 
-        $sqlSelect = <<<SQL
+        $sqlSelect = <<<'SQL'
             bridging_sep.no_sep no_sep,
             bridging_sep.tglsep tglsep,
             reg_periksa.no_rawat no_rawat,
@@ -98,9 +104,9 @@ class BridgingSep extends Model
 
         return $query
             ->selectRaw($sqlSelect)
-            ->join('reg_periksa', function($join) {
+            ->join('reg_periksa', function ($join) {
                 $join->on('bridging_sep.no_rawat', '=', 'reg_periksa.no_rawat')
-                     ->whereRaw("bridging_sep.jnspelayanan = IF(reg_periksa.status_lanjut = 'Ranap', '1', '2')");
+                    ->whereRaw("bridging_sep.jnspelayanan = IF(reg_periksa.status_lanjut = 'Ranap', '1', '2')");
             })
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->join('penjab', 'reg_periksa.kd_pj', '=', 'penjab.kd_pj')

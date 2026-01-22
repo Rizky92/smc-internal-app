@@ -15,12 +15,12 @@ use Livewire\Component;
 
 class LaporanTriaseIgdZonaHijau extends Component
 {
-    use FlashComponent;
-    use Filterable;
+    use DeferredLoading;
     use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
     use LiveTable;
     use MenuTracker;
-    use DeferredLoading;
 
     /** @var string */
     public $tglAwal;
@@ -65,18 +65,21 @@ class LaporanTriaseIgdZonaHijau extends Component
     protected function dataPerSheet(): array
     {
         return [
-            fn() => DataTriaseIgd::query()
+            fn () => DataTriaseIgd::query()
                 ->triaseIgdZonaHijau($this->tglAwal, $this->tglAkhir)
                 ->sortWithColumns($this->sortColumns)
                 ->search($this->cari)
                 ->cursor()
-                ->map(fn (DataTriaseIgd $model) : array => [
+                ->map(fn (DataTriaseIgd $model): array => [
                     'No. Rawat'         => $model->no_rawat,
+                    'No. SEP'           => $model->no_sep,
                     'No. RM'            => $model->no_rkm_medis,
                     'Nama Pasien'       => $model->nm_pasien,
                     'Jenis Bayar'       => $model->png_jawab,
                     'Tgl. Kunjungan'    => $model->tgl_kunjungan,
                     'Cara Masuk'        => $model->cara_masuk,
+                    'Status'            => $model->stts,
+                    'Jenis Rawat'       => $model->status_lanjut,
                     'Alasan Kedatangan' => $model->alasan_kedatangan,
                     'Macam Kasus'       => $model->macam_kasus,
                     'Zona'              => $model->plan,
@@ -88,11 +91,14 @@ class LaporanTriaseIgdZonaHijau extends Component
     {
         return [
             'No. Rawat',
+            'No. SEP',
             'No. RM',
             'Nama Pasien',
             'Jenis Bayar',
             'Tgl. Kunjungan',
             'Cara Masuk',
+            'Status',
+            'Jenis Rawat',
             'Alasan Kedatangan',
             'Macam Kasus',
             'Zona',
@@ -114,7 +120,7 @@ class LaporanTriaseIgdZonaHijau extends Component
             'RS Samarinda Medika Citra',
             'Laporan Triase IGD Zona Hijau',
             now()->translatedFormat('d F Y'),
-            $periode
+            $periode,
         ];
     }
 }

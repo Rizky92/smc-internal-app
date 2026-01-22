@@ -107,7 +107,7 @@ class KunjunganPerBentukObat extends Component
             'selisih'       => time_length($model->waktu_validasi, $model->waktu_penyerahan),
             'total'         => $model->total,
             'jumlah'        => $model->jumlah,
-            'jml_dr'        => $model->jml_dr
+            'jml_dr'        => $model->jml_dr,
         ];
 
         return [
@@ -140,7 +140,7 @@ class KunjunganPerBentukObat extends Component
             'Lama Penyelesaian',
             'Total Pembelian (RP)',
             'Jumlah Obat',
-            'Jumlah Diracik'
+            'Jumlah Diracik',
         ];
     }
 

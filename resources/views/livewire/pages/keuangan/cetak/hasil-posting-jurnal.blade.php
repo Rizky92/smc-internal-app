@@ -230,8 +230,8 @@
             <br />
             <br />
             <br />
-            <div>Ns. YULIANA PABIBAK, S.Kep</div>
-            <div>MANAGER KEUANGAN</div>
+            <div>ADE ARYANI, S.E.</div>
+            <div>MANAJER KEUANGAN</div>
         </div>
         <div></div>
         <div style="text-align: center">
@@ -240,7 +240,7 @@
             <br />
             <br />
             <br />
-            <div>dr. TEGUH NURWANTO, MARS</div>
+            <div>dr. ISMET ALIMIN, MM, MARS</div>
             <div>DIREKTUR</div>
         </div>
     </div>

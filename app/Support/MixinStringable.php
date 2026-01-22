@@ -16,7 +16,6 @@ class MixinStringable
     {
         /** @psalm-scope-this Illuminate\Support\Stringable */
         return function ($replace, string $with): Stringable {
-            /** @var Stringable $this */
             $value = $this->value();
 
             if (is_string($replace)) {

@@ -229,6 +229,10 @@ Route::prefix('admin')
                 Route::get('obat-ralan-ke-ranap', Keuangan\ObatRalanKeRanap::class)
                     ->name('obat-ralan-ke-ranap')
                     ->middleware('can:keuangan.obat-ralan-ke-ranap.read');
+
+                Route::get('sirkulasi-non-medis', Keuangan\SirkulasiNonMedis::class)
+                    ->name('sirkulasi-non-medis')
+                    ->middleware('can:keuangan.sirkulasi-non-medis.read');
             });
 
         Route::prefix('farmasi')

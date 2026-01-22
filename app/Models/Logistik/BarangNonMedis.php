@@ -127,4 +127,65 @@ class BarangNonMedis extends Model
             ->where('ipsrsbarang.stok', '<=', DB::raw("ifnull({$db}.ipsrs_minmax_stok_barang.stok_min, 0)"))
             ->when(! $saranOrderNol, fn (Builder $query) => $query->whereRaw("ifnull(ifnull({$db}.ipsrs_minmax_stok_barang.stok_max, 0) - ipsrsbarang.stok, '0') > 0"));
     }
+
+    public function scopeSirkulasiNonMedis(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->toDateString();
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->toDateString();
+        }
+
+        $sqlSelect = <<<'SQL'
+            ipsrsbarang.kode_brng,
+            ipsrsbarang.nama_brng,
+            kodesatuan.kode_sat,
+            ifnull((select dp.harga from ipsrsdetailpesan dp join ipsrspemesanan p on dp.no_faktur=p.no_faktur where dp.kode_brng=ipsrsbarang.kode_brng and p.tgl_pesan between ? and ? order by p.tgl_pesan asc limit 1), (select dp2.harga from ipsrsdetailpesan dp2 join ipsrspemesanan p2 on dp2.no_faktur=p2.no_faktur where dp2.kode_brng=ipsrsbarang.kode_brng and p2.tgl_pesan < ? order by p2.tgl_pesan desc limit 1)) harga,
+            ifnull((select rb.stok_awal from ipsrs_riwayat_barang rb where rb.kode_brng = ipsrsbarang.kode_brng and rb.tanggal between ? and ? order by rb.tanggal asc, rb.jam asc limit 1), (select rb2.stok_akhir from ipsrs_riwayat_barang rb2 where rb2.kode_brng = ipsrsbarang.kode_brng and rb2.tanggal < ? order by rb2.tanggal desc, rb2.jam desc limit 1)) stok_awal,
+            ifnull((select ipsrsdetailbeli.jumlah from ipsrsdetailbeli join ipsrspembelian on ipsrsdetailbeli.no_faktur = ipsrspembelian.no_faktur where ipsrsdetailbeli.kode_brng = ipsrsbarang.kode_brng and ipsrspembelian.tgl_beli between ? and ?), 0) pengadaan,
+            ifnull((select sum(ipsrsdetailbeli.subtotal) from ipsrsdetailbeli join ipsrspembelian on ipsrsdetailbeli.no_faktur = ipsrspembelian.no_faktur where ipsrsdetailbeli.kode_brng = ipsrsbarang.kode_brng and ipsrspembelian.tgl_beli between ? and ?), 0) sub_total_pengadaan,
+            ifnull((select sum(ipsrsdetailpesan.jumlah) from ipsrsdetailpesan join ipsrspemesanan on ipsrsdetailpesan.no_faktur = ipsrspemesanan.no_faktur where ipsrsdetailpesan.kode_brng = ipsrsbarang.kode_brng and ipsrspemesanan.tgl_pesan between ? and ?), 0) penerimaan,
+            ifnull((select sum(ipsrsdetailpesan.subtotal) from ipsrsdetailpesan join ipsrspemesanan on ipsrsdetailpesan.no_faktur = ipsrspemesanan.no_faktur where ipsrsdetailpesan.kode_brng = ipsrsbarang.kode_brng and ipsrspemesanan.tgl_pesan between ? and ?), 0) sub_total_penerimaan,
+            ifnull((select sum(ipsrsdetailpengeluaran.jumlah) from ipsrsdetailpengeluaran join ipsrspengeluaran on ipsrsdetailpengeluaran.no_keluar = ipsrspengeluaran.no_keluar where ipsrsdetailpengeluaran.kode_brng = ipsrsbarang.kode_brng and ipsrspengeluaran.tanggal between ? and ?), 0) stok_keluar,
+            ifnull((select sum(ipsrsdetailpengeluaran.total) from ipsrsdetailpengeluaran join ipsrspengeluaran on ipsrsdetailpengeluaran.no_keluar = ipsrspengeluaran.no_keluar where ipsrsdetailpengeluaran.kode_brng = ipsrsbarang.kode_brng and ipsrspengeluaran.tanggal between ? and ?), 0) sub_total_keluar,
+            ifnull((select sum(utd_pengambilan_penunjang.jml) from utd_pengambilan_penunjang where utd_pengambilan_penunjang.kode_brng = ipsrsbarang.kode_brng and utd_pengambilan_penunjang.tanggal between ? and ?), 0) pengambilan_utd,
+            ifnull((select sum(utd_pengambilan_penunjang.total) from utd_pengambilan_penunjang where utd_pengambilan_penunjang.kode_brng = ipsrsbarang.kode_brng and utd_pengambilan_penunjang.tanggal between ? and ?), 0) sub_total_pengambilan_utd,
+            ifnull((select sum(ipsrs_detail_hibah.jumlah) from ipsrs_detail_hibah join ipsrs_hibah on ipsrs_detail_hibah.no_hibah = ipsrs_hibah.no_hibah where ipsrs_detail_hibah.kode_brng = ipsrsbarang.kode_brng and ipsrs_hibah.tgl_hibah between ? and ?), 0) hibah,
+            ifnull((select sum(ipsrs_detail_hibah.subtotalhibah) from ipsrs_detail_hibah join ipsrs_hibah on ipsrs_detail_hibah.no_hibah = ipsrs_hibah.no_hibah where ipsrs_detail_hibah.kode_brng = ipsrsbarang.kode_brng and ipsrs_hibah.tgl_hibah between ? and ?), 0) sub_total_hibah
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect, [
+                $tglAwal, $tglAkhir, $tglAwal,
+                $tglAwal, $tglAkhir, $tglAwal,
+                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir,
+                $tglAwal, $tglAkhir,
+            ])
+            ->withCasts([
+                'harga'                     => 'float',
+                'stok_awal'                 => 'float',
+                'pengadaan'                 => 'float',
+                'sub_total_pengadaan'       => 'float',
+                'penerimaan'                => 'float',
+                'sub_total_penerimaan'      => 'float',
+                'stok_keluar'               => 'float',
+                'sub_total_keluar'          => 'float',
+                'pengambilan_utd'           => 'float',
+                'sub_total_pengambilan_utd' => 'float',
+                'hibah'                     => 'float',
+                'sub_total_hibah'           => 'float',
+            ])
+            ->join('kodesatuan', 'ipsrsbarang.kode_sat', '=', 'kodesatuan.kode_sat')
+            ->orderBy('ipsrsbarang.kode_brng', 'asc');
+    }
 }

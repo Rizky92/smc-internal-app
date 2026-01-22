@@ -6,7 +6,6 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge" />
         <meta name="google" content="notranslate" />
         <title>{{ $title ?? config('app.name') }}</title>
-
         <link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap4.min.css') }}" />
         <link rel="stylesheet" href="{{ asset('css/responsive.bootstrap4.min.css') }}" />
         <link href="{{ asset('css/adminlte.min.css') }}" rel="stylesheet" />
@@ -36,7 +35,7 @@
         <script src="{{ asset('js/adminlte.min.js') }}"></script>
 
         @livewireScripts
-        
+
         @stack('js')
     </body>
 </html>

@@ -46,6 +46,7 @@ class JurnalNonMedis extends Model
             jurnal_non_medis.status,
             bayar_pemesanan_non_medis.besar_bayar,
             bayar_pemesanan_non_medis.nama_bayar,
+            bayar_pemesanan_non_medis.tgl_bayar,
             rekening.kd_rek,
             rekening.nm_rek,
             ipsrssuplier.nama_suplier,

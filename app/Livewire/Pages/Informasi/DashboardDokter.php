@@ -12,9 +12,9 @@ class DashboardDokter extends Component
 
     public function mount(): void
     {
-        $this->collection = Jadwal::query()
-            ->with(['dokter', 'poliklinik'])
-            ->whereHas('dokter', fn ($query) => $query->where('status', '1'))
+        $this->collection = Jadwal::with(['dokter', 'poliklinik'])->whereHas('dokter', function ($query) {
+            $query->where('status', '1');
+        })
             ->orderBy('hari_kerja')
             ->get()
             ->groupBy(fn ($jadwal) => $jadwal->poliklinik->nm_poli) // Menggunakan callback untuk menghindari error

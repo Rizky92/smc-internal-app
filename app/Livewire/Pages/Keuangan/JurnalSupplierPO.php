@@ -100,6 +100,7 @@ class JurnalSupplierPO extends Component
                 ->map(fn (JurnalMedis $model) => [
                     'no_jurnal'    => $model->no_jurnal,
                     'waktu_jurnal' => $model->waktu_jurnal,
+                    'tgl_bayar'    => $model->tgl_bayar,
                     'no_faktur'    => $model->no_faktur,
                     'ket'          => $model->ket,
                     'status'       => $model->status,
@@ -117,6 +118,7 @@ class JurnalSupplierPO extends Component
                 ->map(fn (JurnalNonMedis $model) => [
                     'no_jurnal'    => $model->no_jurnal,
                     'waktu_jurnal' => $model->waktu_jurnal,
+                    'tgl_bayar'    => $model->tgl_bayar,
                     'no_faktur'    => $model->no_faktur,
                     'ket'          => $model->ket,
                     'status'       => $model->status,
@@ -135,7 +137,8 @@ class JurnalSupplierPO extends Component
         return [
             '#',
             'No. Jurnal',
-            'Waktu',
+            'Waktu Jurnal',
+            'Tgl. Bayar',
             'No. Faktur',
             'Keterangan',
             'Status',
