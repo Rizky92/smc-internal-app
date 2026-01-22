@@ -11,8 +11,11 @@
                 @can('keuangan.tarif-ralan.create')
                     <x-button variant="primary" size="sm" title="Import" icon="fas fa-plus" data-toggle="modal" data-target="#modal-import-tarif-ralan" class="btn-primary ml-auto" />
                 @endcan
+
+                <x-filter.button-export-excel class="ml-2" />
             </x-row-col-flex>
-            <x-row-col-flex class="mt-2">
+            <x-row-col-flex class="mt-2 mb-3">
+                <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
             </x-row-col-flex>

@@ -22,6 +22,24 @@ class JenisPerawatan extends Model
 
     public $timestamps = false;
 
+    protected $fillable = [
+        'kd_jenis_prw',
+        'nm_perawatan',
+        'kd_kategori',
+        'kd_pj',
+        'kd_poli',
+        'material',
+        'bhp',
+        'tarif_tindakandr',
+        'tarif_tindakanpr',
+        'kso',
+        'menejemen',
+        'total_byrdr',
+        'total_byrpr',
+        'total_byrdrpr',
+        'status',
+    ];
+
     public function kategori(): BelongsTo
     {
         return $this->belongsTo(KategoriPerawatan::class, 'kd_kategori', 'kd_kategori');
@@ -39,6 +57,14 @@ class JenisPerawatan extends Model
 
     public function scopeTarifRalan(Builder $query): Builder
     {
+        $this->addSearchConditions([
+            'jns_perawatan.kd_jenis_prw',
+            'jns_perawatan.nm_perawatan',
+            'kategori_perawatan.nm_kategori',
+            'penjab.png_jawab',
+            'poliklinik.nm_poli',
+        ]);
+
         $sqlSelect = <<<'SQL'
             jns_perawatan.kd_jenis_prw,
             jns_perawatan.nm_perawatan,
