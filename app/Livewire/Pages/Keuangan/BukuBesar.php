@@ -184,18 +184,18 @@ class BukuBesar extends Component
         $this->tglAkhir = now()->endOfMonth()->toDateString();
     }
 
-    public function exportToBackground()
+    public function exportToBackground(): void
     {
         $userId = user()->nik;
 
         $exportSessionId = Str::uuid()->toString();
 
         ExportToExcel::dispatch(
-            userId: $userId, 
-            exportSessionId: $exportSessionId, 
-            tglAwal: $this->tglAwal, 
-            tglAkhir: $this->tglAkhir, 
-            kodeRekening: $this->kodeRekening, 
+            userId: $userId,
+            exportSessionId: $exportSessionId,
+            tglAwal: $this->tglAwal,
+            tglAkhir: $this->tglAkhir,
+            kodeRekening: $this->kodeRekening,
             columnHeaders: $this->columnHeaders(),
         )->onQueue('exports');
 

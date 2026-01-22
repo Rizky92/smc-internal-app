@@ -33,7 +33,7 @@ class PrepareExport implements ShouldQueue
         protected ?array $records = null,
     ) {}
 
-    public function handle()
+    public function handle(): void
     {
         $csv = Writer::createFromFileObject(new SplTempFileObject);
         $csv->setOutputBOM(Bom::Utf8);
@@ -47,15 +47,15 @@ class PrepareExport implements ShouldQueue
 
         $page = 1;
 
-        $dispatchRecords = function (array $records) use ($exportCsvJob, &$page) {
+        $dispatchRecords = function (array $records) use ($exportCsvJob, &$page): void {
             $jobs = [];
 
             foreach (array_chunk($records, $this->chunkSize) as $recordChunk) {
                 $jobs[] = app($exportCsvJob, [
-                    'userId' => $this->userId,
+                    'userId'          => $this->userId,
                     'exportSessionId' => $this->exportSessionId,
-                    'records' => $recordChunk,
-                    'page' => $page
+                    'records'         => $recordChunk,
+                    'page'            => $page,
                 ]);
 
                 $page++;
@@ -75,12 +75,15 @@ class PrepareExport implements ShouldQueue
             ->select(['id'])
             ->chunkById(
                 $chunkKeySize,
-                fn( Collection $records) => $dispatchRecords(
-                Arr::pluck($records->all(), 'id')
-            ), 'id');
+                fn (Collection $records) => $dispatchRecords(
+                    Arr::pluck($records->all(), 'id')
+                ), 'id');
     }
 
-    public function getExportCsvJob()
+    /**
+     * @psalm-return ExportCsv::class
+     */
+    public function getExportCsvJob(): string
     {
         return ExportCsv::class;
     }

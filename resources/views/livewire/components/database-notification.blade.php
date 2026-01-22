@@ -75,8 +75,9 @@
                                 @php
                                     $filePath = $notification->data['file'];
                                 @endphp
+
                                 <button wire:click="download('{{ $filePath }}')" class="btn btn-link">Download</button>
-                                <button wire:click="markAsRead('{{ $notification->id }}')"  wire:key="{{ $notification->id }}" class="btn btn-link">Tandai sudah dibaca</button>
+                                <button wire:click="markAsRead('{{ $notification->id }}')" wire:key="{{ $notification->id }}" class="btn btn-link">Tandai sudah dibaca</button>
                             </div>
                         </div>
                     </div>
@@ -98,12 +99,12 @@
     </div>
 
     <script>
-        document.getElementById('notification-icon').addEventListener('click', function(event) {
+        document.getElementById('notification-icon').addEventListener('click', function (event) {
             event.preventDefault();
             window.livewire.emit('toggleSidebar');
         });
 
-        document.getElementById('close-sidebar').addEventListener('click', function(event) {
+        document.getElementById('close-sidebar').addEventListener('click', function (event) {
             event.preventDefault();
             window.livewire.emit('toggleSidebar');
         });

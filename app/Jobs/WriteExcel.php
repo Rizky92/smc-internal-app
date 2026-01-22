@@ -32,18 +32,18 @@ class WriteExcel implements ShouldQueue
         protected string $exportSessionId,
     ) {}
 
-    public function handle()
+    public function handle(): void
     {
         $disk = $this->getFileDisk();
 
-        $fileName = now()->format('Y-m-d_H-i-s') . "_{$this->userId}_{$this->exportSessionId}.xlsx";
+        $fileName = now()->format('Y-m-d_H-i-s')."_{$this->userId}_{$this->exportSessionId}.xlsx";
 
         $writer = app(Writer::class);
         $writer->openToFile($temporaryFile = tempnam(sys_get_temp_dir(), $fileName));
 
         $csvDelimiter = ',';
 
-        $writeRowsFromFile = function (string $file) use ($csvDelimiter, $disk, $writer) {
+        $writeRowsFromFile = function (string $file) use ($csvDelimiter, $disk, $writer): void {
             $csvReader = CsvReader::createFromStream($disk->readStream($file));
             $csvReader->setDelimiter($csvDelimiter);
             $csvResults = (new Statement)->process($csvReader);
@@ -53,7 +53,7 @@ class WriteExcel implements ShouldQueue
             }
         };
 
-        $writeRowsFromFile($this->getFileDirectory() . '/headers.csv');
+        $writeRowsFromFile($this->getFileDirectory().'/headers.csv');
 
         foreach ($disk->files($this->getFileDirectory()) as $file) {
             if (str($file)->endsWith('headers.csv')) {
@@ -81,7 +81,7 @@ class WriteExcel implements ShouldQueue
 
         $user = User::findByNRP($this->userId);
 
-        Notification::send($user, new ExportReadyNotification($user, $this->getFileDirectory() . '/' . $fileName));
+        Notification::send($user, new ExportReadyNotification($user, $this->getFileDirectory().'/'.$fileName));
     }
 
     public function getFileDirectory(): string

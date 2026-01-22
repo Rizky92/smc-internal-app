@@ -28,14 +28,14 @@ class ExportToExcel implements ShouldQueue
         protected int $chunkSize = 250,
     ) {}
 
-    public function handle()
+    public function handle(): void
     {
         Bus::chain([
             new InsertToTemporary(
-                userId: $this->userId, 
-                exportSessionId: $this->exportSessionId, 
-                tglAwal: $this->tglAwal, 
-                tglAkhir: $this->tglAkhir, 
+                userId: $this->userId,
+                exportSessionId: $this->exportSessionId,
+                tglAwal: $this->tglAwal,
+                tglAkhir: $this->tglAkhir,
                 kodeRekening: $this->kodeRekening
             ),
             new PrepareExport(
@@ -47,7 +47,7 @@ class ExportToExcel implements ShouldQueue
             new WriteExcel(
                 userId: $this->userId,
                 exportSessionId: $this->exportSessionId,
-            )
+            ),
         ])->onQueue('exports')->dispatch();
     }
 }

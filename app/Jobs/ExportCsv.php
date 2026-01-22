@@ -27,7 +27,7 @@ class ExportCsv
         protected int $page
     ) {}
 
-    public function handle()
+    public function handle(): void
     {
         $csv = Writer::createFromFileObject(new SplTempFileObject);
         $csv->setDelimiter(',');
@@ -43,14 +43,14 @@ class ExportCsv
             'column8',
             'column9',
         ])
-        ->where('export_session_id', $this->exportSessionId)
-        ->where('id_user', $this->userId);
+            ->where('export_session_id', $this->exportSessionId)
+            ->where('id_user', $this->userId);
 
         foreach ($query->find($this->records) as $record) {
             $csv->insertOne($record->toArray());
         }
 
-        $filePath = "exports/{$this->userId}/{$this->exportSessionId}/" . str_pad(strval($this->page), 16, '0', STR_PAD_LEFT) . '.csv';
+        $filePath = "exports/{$this->userId}/{$this->exportSessionId}/".str_pad(strval($this->page), 16, '0', STR_PAD_LEFT).'.csv';
         Storage::disk('local')->put($filePath, $csv->toString());
     }
 }

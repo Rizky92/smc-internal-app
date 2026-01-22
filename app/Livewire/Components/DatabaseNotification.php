@@ -3,7 +3,9 @@
 namespace App\Livewire\Components;
 
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 use Livewire\Component;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DatabaseNotification extends Component
 {
@@ -15,12 +17,12 @@ class DatabaseNotification extends Component
         'toggleSidebar' => 'toggleSidebar',
     ];
 
-    public function toggleSidebar()
+    public function toggleSidebar(): void
     {
-        $this->isSidebarOpen = !$this->isSidebarOpen;
+        $this->isSidebarOpen = ! $this->isSidebarOpen;
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.components.database-notification');
     }
@@ -55,7 +57,7 @@ class DatabaseNotification extends Component
         auth()->user()->notifications()->where('id', $notificationId)->first()->delete();
     }
 
-    public function download(string $filePath): \Symfony\Component\HttpFoundation\StreamedResponse
+    public function download(string $filePath): StreamedResponse
     {
         return Storage::download("$filePath");
     }

@@ -26,7 +26,7 @@ class InsertToTemporary implements ShouldQueue
         protected string $kodeRekening,
     ) {}
 
-    public function handle()
+    public function handle(): void
     {
         DB::statement(DB::raw('SET @rownum = 0'));
 
@@ -62,7 +62,7 @@ class InsertToTemporary implements ShouldQueue
             'column6',
             'column7',
             'column8',
-            'column9'
+            'column9',
         ], $query->toBase());
     }
 }
