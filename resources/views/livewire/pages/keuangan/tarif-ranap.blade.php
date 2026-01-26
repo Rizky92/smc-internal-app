@@ -1,15 +1,15 @@
 <div>
     <x-flash />
 
-    @can('keuangan.tarif-ralan.create')
-        <livewire:pages.keuangan.modal.import-tarif-ralan />
+    @can('keuangan.tarif-ranap.create')
+        <livewire:pages.keuangan.modal.import-tarif-ranap />
     @endcan
 
     <x-card use-loading>
         <x-slot name="header">
             <x-row-col-flex class="mt-2">
-                @can('keuangan.tarif-ralan.create')
-                    <x-button variant="primary" size="sm" title="Import" icon="fas fa-plus" data-toggle="modal" data-target="#modal-import-tarif-ralan" class="btn-primary ml-auto" />
+                @can('keuangan.tarif-ranap.create')
+                    <x-button variant="primary" size="sm" title="Import" icon="fas fa-plus" data-toggle="modal" data-target="#modal-import-tarif-ranap" class="btn-primary ml-auto" />
                 @endcan
 
                 <x-filter.button-export-excel class="ml-2" />
@@ -27,16 +27,17 @@
                     <x-table.th name="nm_perawatan" title="Nama Tindakan" />
                     <x-table.th name="nm_kategori" title="Kategori" />
                     <x-table.th name="material" title="Jasa Sarana" />
-                    <x-table.th name="bhp" title="BHP/ Paket Obat" />
-                    <x-table.th name="tarif_tindakandr" title="Jasa Medis DR" />
+                    <x-table.th name="bhp" title="BHP/Paket Obat" />
+                    <x-table.th name="tarif_tindakandr" title="Jasa Medis Dr" />
                     <x-table.th name="tarif_tindakanpr" title="Jasa Medis PR" />
                     <x-table.th name="kso" title="KSO" />
                     <x-table.th name="menejemen" title="Menejemen" />
                     <x-table.th name="total_byrdr" title="Total Bayar DR" />
                     <x-table.th name="total_byrpr" title="Total Bayar PR" />
                     <x-table.th name="total_byrdrpr" title="Total Bayar DR & PR" />
-                    <x-table.th name="png_jawab" title="Jenis Bayar" />
-                    <x-table.th name="nm_poli" title="Nama Poli" />
+                    <x-table.th name="kelas" title="Jenis Bayar" />
+                    <x-table.th name="png_jawab" title="Nama Bangsal" />
+                    <x-table.th name="nm_bangsal" title="Kelas" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->collection as $item)
@@ -53,11 +54,12 @@
                             <x-table.td>{{ $item->total_byrdr }}</x-table.td>
                             <x-table.td>{{ $item->total_byrpr }}</x-table.td>
                             <x-table.td>{{ $item->total_byrdrpr }}</x-table.td>
+                            <x-table.td>{{ $item->kelas }}</x-table.td>
                             <x-table.td>{{ $item->png_jawab }}</x-table.td>
-                            <x-table.td>{{ $item->nm_poli }}</x-table.td>
+                            <x-table.td>{{ $item->nm_bangsal }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="14" padding />
+                        <x-table.tr-empty colspan="15" padding />
                     @endforelse
                 </x-slot>
             </x-table>

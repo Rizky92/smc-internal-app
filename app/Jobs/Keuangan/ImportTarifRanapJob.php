@@ -3,11 +3,11 @@
 namespace App\Jobs\Keuangan;
 
 use App\Models\Aplikasi\User;
-use App\Models\Keuangan\JenisPerawatan;
+use App\Models\Bangsal;
+use App\Models\Keuangan\JenisPerawatanRanap;
 use App\Models\Keuangan\KategoriPerawatan;
-use App\Models\Perawatan\Poliklinik;
 use App\Models\RekamMedis\Penjamin;
-use App\Notifications\ImportTarifRalanSuccessNotification;
+use App\Notifications\ImportTarifRanapNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -21,7 +21,7 @@ use RuntimeException;
 use Spatie\SimpleExcel\SimpleExcelReader;
 use Throwable;
 
-class ImportTarifRalanJob implements ShouldQueue
+class ImportTarifRanapJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -54,8 +54,10 @@ class ImportTarifRalanJob implements ShouldQueue
 
     /**
      * Execute the job.
+     *
+     * @return void
      */
-    public function handle(): void
+    public function handle()
     {
         if (! $this->fileImport) {
             throw new FilesystemNotFoundException('File import not found');
@@ -72,12 +74,11 @@ class ImportTarifRalanJob implements ShouldQueue
 
         try {
             DB::connection('mysql_sik')->transaction(function () {
-
                 tracker_start('mysql_sik');
 
                 $requiredHeaders = [
                     'kd_jenis_prw',
-                    'nama_tarif',
+                    'nm_perawatan',
                     'kd_kategori',
                     'material',
                     'bhp',
@@ -89,7 +90,8 @@ class ImportTarifRalanJob implements ShouldQueue
                     'total_byrpr',
                     'total_byrdrpr',
                     'kd_pj',
-                    'kd_poli',
+                    'kd_bangsal',
+                    'kelas',
                 ];
 
                 $reader = SimpleExcelReader::create(storage_path('app/'.$this->fileImport));
@@ -104,7 +106,7 @@ class ImportTarifRalanJob implements ShouldQueue
 
                 $kategoriMap = KategoriPerawatan::query()->pluck('kd_kategori')->flip();
                 $penjaminMap = Penjamin::query()->pluck('kd_pj')->flip();
-                $poliMap = Poliklinik::query()->pluck('kd_poli')->flip();
+                $bangsalMap = Bangsal::query()->pluck('kd_bangsal')->flip();
 
                 $rows = $reader->getRows();
 
@@ -113,15 +115,15 @@ class ImportTarifRalanJob implements ShouldQueue
                     $line = $index + 2;
 
                     if (! $kategoriMap->has($row['kd_kategori'])) {
-                        throw new RuntimeException("Baris {$line}: kd_kategori tidak ditemukan");
+                        throw new RuntimeException("Kategori dengan kode {$row['kd_kategori']} tidak ditemukan.");
                     }
 
                     if (! $penjaminMap->has($row['kd_pj'])) {
-                        throw new RuntimeException("Baris {$line}: kd_pj tidak ditemukan");
+                        throw new RuntimeException("Penjamin dengan kode {$row['kd_pj']} tidak ditemukan.");
                     }
 
-                    if (! $poliMap->has($row['kd_poli'])) {
-                        throw new RuntimeException("Baris {$line}: kd_poli tidak ditemukan");
+                    if (! $bangsalMap->has($row['kd_bangsal'])) {
+                        throw new RuntimeException("Bangsal dengan kode {$row['kd_bangsal']} tidak ditemukan.");
                     }
 
                     $subtotal = (
@@ -138,13 +140,14 @@ class ImportTarifRalanJob implements ShouldQueue
                         $subtotal < (float) $row['total_byrpr'] ||
                         $subtotal < (float) $row['total_byrdrpr']
                     ) {
-                        throw new RuntimeException("Baris {$line}: Total biaya tidak sesuai dengan rincian tarif.");
+                        throw new RuntimeException("Baris {$line}: Total bayar tidak sesuai dengan rincian tarif.");
                     }
 
-                    JenisPerawatan::query()->updateOrCreate(
+                    JenisPerawatanRanap::updateOrCreate(
                         ['kd_jenis_prw' => $row['kd_jenis_prw']],
                         [
-                            'nm_perawatan'      => $row['nama_tarif'],
+                            'nm_perawatan'      => $row['nm_perawatan'],
+                            'kd_kategori'       => $row['kd_kategori'],
                             'material'          => $row['material'],
                             'bhp'               => $row['bhp'],
                             'tarif_tindakandr'  => $row['tarif_tindakandr'],
@@ -154,29 +157,31 @@ class ImportTarifRalanJob implements ShouldQueue
                             'total_byrdr'       => $row['total_byrdr'],
                             'total_byrpr'       => $row['total_byrpr'],
                             'total_byrdrpr'     => $row['total_byrdrpr'],
-                            'kd_kategori'       => $row['kd_kategori'],
                             'kd_pj'             => $row['kd_pj'],
-                            'kd_poli'           => $row['kd_poli'],
+                            'kd_bangsal'        => $row['kd_bangsal'],
                             'status'            => '1',
-                        ]);
+                            'kelas'             => $row['kelas'],
+                        ]
+                    );
+
                 }
 
                 tracker_end('mysql_sik', $this->userId);
             });
 
-            Notification::send($user, new ImportTarifRalanSuccessNotification($user, 'Import tarif rawat jalan berhasil', 'success'));
-
+            Notification::send($user,
+                new ImportTarifRanapNotification($user, 'Import tarif rawat inap berhasil', 'success')
+            );
         } catch (RuntimeException $e) {
             Notification::send($user,
-                new ImportTarifRalanSuccessNotification($user, $e->getMessage(), 'error')
+                new ImportTarifRanapNotification($user, $e->getMessage(), 'error')
             );
 
             report($e);
             throw $e;
         } catch (Throwable $e) {
-
             Notification::send($user,
-                new ImportTarifRalanSuccessNotification($user, 'Terjadi kesalahan saat mengimpor tarif rawat jalan.', 'error')
+                new ImportTarifRanapNotification($user, 'Terjadi kesalahan saat mengimpor tarif rawat inap.', 'error')
             );
 
             report($e);

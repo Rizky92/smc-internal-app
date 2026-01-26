@@ -108,6 +108,7 @@ class Menu
                     'keuangan.obat-ralan-ke-ranap.read',
                     'keuangan.sirkulasi-non-medis.read',
                     'keuangan.tarif-ralan.read',
+                    'keuangan.tarif-ranap.read',
                 ]),
                 'items' => [
                     [
@@ -295,6 +296,12 @@ class Menu
                         'icon'              => 'fas fa-file-invoice-dollar',
                         'url'               => route('admin.keuangan.tarif-ralan'),
                         'hasAnyPermissions' => $user->can('keuangan.tarif-ralan.read'),
+                    ],
+                    [
+                        'name'              => 'Tarif Ranap',
+                        'icon'              => 'fas fa-file-invoice-dollar',
+                        'url'               => route('admin.keuangan.tarif-ranap'),
+                        'hasAnyPermissions' => $user->can('keuangan.tarif-ranap.read'),
                     ],
                 ],
             ],

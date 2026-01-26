@@ -8,12 +8,12 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
-use App\Models\Keuangan\JenisPerawatan;
+use App\Models\Keuangan\JenisPerawatanRanap;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class TarifRalan extends Component
+class TarifRanap extends Component
 {
     use DeferredLoading;
     use ExcelExportable;
@@ -36,8 +36,8 @@ class TarifRalan extends Component
 
     public function getCollectionProperty()
     {
-        return $this->isDeferred ? [] : JenisPerawatan::query()
-            ->tarifRalan()
+        return $this->isDeferred ? [] : JenisPerawatanRanap::query()
+            ->tarifRanap()
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
@@ -45,18 +45,18 @@ class TarifRalan extends Component
 
     public function render(): View
     {
-        return view('livewire.pages.keuangan.tarif-ralan')
-            ->layout(BaseLayout::class, ['title' => 'Tarif Ralan']);
+        return view('livewire.pages.keuangan.tarif-ranap')
+            ->layout(BaseLayout::class, ['title' => 'Tarif Ranap']);
     }
 
     protected function dataPerSheet(): array
     {
         return [
-            fn () => JenisPerawatan::query()
-                ->tarifRalan()
+            fn () => JenisPerawatanRanap::query()
+                ->tarifRanap()
                 ->search($this->cari)
                 ->cursor()
-                ->map(fn (JenisPerawatan $model): array => [
+                ->map(fn (JenisPerawatanRanap $model): array => [
                     $model->kd_jenis_prw,
                     $model->nm_perawatan,
                     $model->nm_kategori,
@@ -70,7 +70,8 @@ class TarifRalan extends Component
                     $model->total_byrpr,
                     $model->total_byrdrpr,
                     $model->png_jawab,
-                    $model->nm_poli,
+                    $model->nm_bangsal,
+                    $model->kelas,
                 ]),
         ];
     }
@@ -83,7 +84,7 @@ class TarifRalan extends Component
             'Kategori',
             'Jasa Sarana',
             'BHP/Paket Obat',
-            'Jasa Medis DR',
+            'Jasa Medis Dr',
             'Jasa Medis PR',
             'KSO',
             'Menejemen',
@@ -91,7 +92,8 @@ class TarifRalan extends Component
             'Total Bayar PR',
             'Total Bayar DR & PR',
             'Jenis Bayar',
-            'Poli',
+            'Nama Bangsal',
+            'Kelas',
         ];
     }
 
@@ -99,7 +101,7 @@ class TarifRalan extends Component
     {
         return [
             'RS Samarinda Medika Citra',
-            'Tarif Rawat Jalan',
+            'Tarif Rawat Inap',
         ];
     }
 
