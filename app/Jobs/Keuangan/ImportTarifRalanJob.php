@@ -7,7 +7,7 @@ use App\Models\Keuangan\JenisPerawatan;
 use App\Models\Keuangan\KategoriPerawatan;
 use App\Models\Perawatan\Poliklinik;
 use App\Models\RekamMedis\Penjamin;
-use App\Notifications\ImportTarifRalanSuccessNotification;
+use App\Notifications\ImportTarifRalanNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -164,11 +164,11 @@ class ImportTarifRalanJob implements ShouldQueue
                 tracker_end('mysql_sik', $this->userId);
             });
 
-            Notification::send($user, new ImportTarifRalanSuccessNotification($user, 'Import tarif rawat jalan berhasil', 'success'));
+            Notification::send($user, new ImportTarifRalanNotification($user, 'Import tarif rawat jalan berhasil', 'success'));
 
         } catch (RuntimeException $e) {
             Notification::send($user,
-                new ImportTarifRalanSuccessNotification($user, $e->getMessage(), 'error')
+                new ImportTarifRalanNotification($user, $e->getMessage(), 'error')
             );
 
             report($e);
@@ -176,7 +176,7 @@ class ImportTarifRalanJob implements ShouldQueue
         } catch (Throwable $e) {
 
             Notification::send($user,
-                new ImportTarifRalanSuccessNotification($user, 'Terjadi kesalahan saat mengimpor tarif rawat jalan.', 'error')
+                new ImportTarifRalanNotification($user, 'Terjadi kesalahan saat mengimpor tarif rawat jalan.', 'error')
             );
 
             report($e);

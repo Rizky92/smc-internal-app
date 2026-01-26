@@ -6,7 +6,7 @@ use App\Models\Override\MultiConnectionDatabaseNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
-class ImportTarifRalanSuccessNotification extends Notification
+class ImportTarifRalanNotification extends Notification
 {
     use Queueable;
 
