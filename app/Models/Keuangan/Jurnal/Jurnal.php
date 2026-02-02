@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -181,6 +182,56 @@ class Jurnal extends Model
             ->join('rekening', 'detailjurnal.kd_rek', '=', 'rekening.kd_rek')
             ->when(! empty($kodeRekening), fn (Builder $q) => $q->where('detailjurnal.kd_rek', $kodeRekening))
             ->wherebetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir]);
+    }
+
+    public function scopeJurnalPiutangDilunaskan(Builder $query, ?string $latest = null): Builder
+    {
+        $latest ??= '2022-10-30 23:59:59.999';
+
+        $sqlSelect = <<<'SQL'
+            jurnal.no_jurnal,
+            concat(jurnal.tgl_jurnal, ' ', jurnal.jam_jurnal) as waktu_jurnal,
+            detail_penagihan_piutang.no_rawat,
+            bayar_piutang.no_rkm_medis,
+            penagihan_piutang.no_tagihan,
+            penagihan_piutang.kd_pj as kd_pj_tagihan,
+            detail_piutang_pasien.kd_pj,
+            penagihan_piutang.catatan,
+            detail_piutang_pasien.totalpiutang,
+            bayar_piutang.besar_cicilan,
+            penagihan_piutang.tanggal as tgl_tagihan,
+            penagihan_piutang.tanggaltempo as tgl_jatuhtempo,
+            bayar_piutang.tgl_bayar,
+            bayar_piutang.kd_rek,
+            rekening.nm_rek,
+            bayar_piutang.kd_rek_kontra,
+            penagihan_piutang.nip,
+            penagihan_piutang.nip_menyetujui,
+            jurnal.keterangan
+            SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join('detailjurnal', 'jurnal.no_jurnal', '=', 'detailjurnal.no_jurnal')
+            ->join('detail_penagihan_piutang', 'jurnal.no_bukti', '=', 'detail_penagihan_piutang.no_rawat')
+            ->join('penagihan_piutang', 'detail_penagihan_piutang.no_tagihan', '=', 'penagihan_piutang.no_tagihan')
+            ->join('detail_piutang_pasien', 'detail_penagihan_piutang.no_rawat', '=', 'detail_piutang_pasien.no_rawat')
+            ->join('akun_piutang', 'detail_piutang_pasien.nama_bayar', '=', 'akun_piutang.nama_bayar')
+            ->leftJoin('bayar_piutang', fn (JoinClause $join) => $join
+                ->on('detail_penagihan_piutang.no_rawat', '=', 'bayar_piutang.no_rawat')
+                ->on('akun_piutang.kd_rek', '=', 'bayar_piutang.kd_rek_kontra'))
+            ->join('rekening', 'bayar_piutang.kd_rek', '=', 'rekening.kd_rek')
+            ->where(fn (Builder $query) => $query
+                ->where('jurnal.keterangan', 'like', 'bayar piutang% %oleh%')
+                ->orWhere('jurnal.keterangan', 'like', 'bayar piutang tagihan% %oleh%')
+                ->orWhere('jurnal.keterangan', 'like', 'pembatalan bayar piutang% %oleh%'))
+            ->where('detailjurnal.kredit', '>', 0)
+            ->whereColumn('detailjurnal.kd_rek', '=', 'akun_piutang.kd_rek')
+            ->whereBetween('jurnal.tgl_jurnal', [$latest, now()])
+            ->whereColumn('penagihan_piutang.kd_pj', '=', 'detail_piutang_pasien.kd_pj')
+            ->whereNotIn('detail_penagihan_piutang.no_rawat', PenagihanPiutangDetail::query()->select('no_rawat')->groupBy('no_rawat')->havingRaw('count(*) > 1'))
+            ->orderBy('jurnal.tgl_jurnal')
+            ->orderBy('jurnal.jam_jurnal');
     }
 
     /**
