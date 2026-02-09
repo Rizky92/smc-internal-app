@@ -1,11 +1,13 @@
 <div>
     <style>
         .notification-sidebar {
+            display: flex;
+            flex-direction: column;
             position: fixed;
             right: -300px;
             top: 0;
             width: 300px;
-            height: 100%;
+            height: 100vh;
             background-color: white;
             border: 1px solid #dee2e6;
             transition: right 0.3s;
@@ -14,6 +16,11 @@
 
         .notification-sidebar.open {
             right: 0;
+        }
+
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
         }
 
         .sidebar-header {
@@ -63,21 +70,37 @@
             @endif
 
             @forelse ($this->notifications as $notification)
-                <div class="sidebar-item">
-                    <div class="d-flex p-2">
-                        <div class="">
-                            <i class="far fa-check-circle fa-lg" style="color: #3d9970"></i>
-                        </div>
-                        <div class="">
-                            <p class="my-0 ml-2">{{ $notification->data['message'] }}</p>
-                            <p class="p-2">{{ $notification->created_at->diffForHumans() }}</p>
-                            <div class="d-flex">
-                                @php
-                                    $filePath = $notification->data['file'];
-                                @endphp
+                @php
+                    $filePath = $notification->data['file'] ?? null;
+                    $status = $notification->data['status'] ?? 'info';
+                    if ($status === 'success') {
+                        $icon = 'fa-check-circle';
+                        $color = '#3d9970';
+                    } elseif ($status === 'error') {
+                        $icon = 'fa-times-circle';
+                        $color = '#dc3545';
+                    } else {
+                        $icon = 'fa-info-circle';
+                        $color = '#17a2b8';
+                    }
+                @endphp
 
-                                <button wire:click="download('{{ $filePath }}')" class="btn btn-link">Download</button>
-                                <button wire:click="markAsRead('{{ $notification->id }}')" wire:key="{{ $notification->id }}" class="btn btn-link">Tandai sudah dibaca</button>
+                <div class="sidebar-item" style="border-color: {{ $color }}">
+                    <div class="d-flex p-2">
+                        <div class="d-flex">
+                            <div style="width: 28px">
+                                <i class="far {{ $icon }} fa-lg" style="color: {{ $color }}"></i>
+                            </div>
+                            <div style="flex: 1">
+                                <p class="my-0 ml-2">{{ $notification->data['message'] }}</p>
+                                <p class="p-2">{{ $notification->created_at->diffForHumans() }}</p>
+                                <div class="d-flex">
+                                    @if (! empty($filePath))
+                                        <button wire:click="download('{{ $filePath }}')" class="btn btn-link">Download</button>
+                                    @endif
+
+                                    <button wire:click="markAsRead('{{ $notification->id }}')" wire:key="{{ $notification->id }}" class="btn btn-link">Tandai sudah dibaca</button>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -233,6 +233,14 @@ Route::prefix('admin')
                 Route::get('sirkulasi-non-medis', Keuangan\SirkulasiNonMedis::class)
                     ->name('sirkulasi-non-medis')
                     ->middleware('can:keuangan.sirkulasi-non-medis.read');
+
+                Route::get('tarif-ralan', Keuangan\TarifRalan::class)
+                    ->name('tarif-ralan')
+                    ->middleware('can:keuangan.tarif-ralan.read');
+
+                Route::get('tarif-ranap', Keuangan\TarifRanap::class)
+                    ->name('tarif-ranap')
+                    ->middleware('can:keuangan.tarif-ranap.read');
             });
 
         Route::prefix('farmasi')
