@@ -135,7 +135,6 @@ class JurnalSupplierPO extends Component
     protected function columnHeaders(): array
     {
         return [
-            '#',
             'No. Jurnal',
             'Waktu Jurnal',
             'Tgl. Bayar',
