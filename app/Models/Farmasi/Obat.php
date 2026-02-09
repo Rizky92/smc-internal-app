@@ -86,8 +86,6 @@ class Obat extends Model
 
     public function scopeDaruratStok(Builder $query, string $tanggal = ''): Builder
     {
-        $tanggal = carbon($tanggal)->subWeeks(2)->toDateString();
-
         $sqlSelect = <<<'SQL'
             databarang.kode_brng,
             databarang.nama_brng,
