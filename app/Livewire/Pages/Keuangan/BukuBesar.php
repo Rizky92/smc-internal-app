@@ -117,6 +117,8 @@ class BukuBesar extends Component
                     'no_jurnal'              => $model->no_jurnal,
                     'no_bukti'               => $model->no_bukti,
                     'keterangan'             => $model->keterangan,
+                    'keterangan_pengeluaran' => optional($model->pengeluaranHarian)->keterangan ?? '-',
+                    'catatan_piutang'        => $this->getCatatanPiutang($model),
                     'kd_rek'                 => $model->kd_rek,
                     'nm_rek'                 => $model->nm_rek,
                     'debet'                  => round($model->debet, 2),
@@ -128,6 +130,8 @@ class BukuBesar extends Component
                     'no_jurnal'              => '',
                     'no_bukti'               => '',
                     'keterangan'             => '',
+                    'keterangan_pengeluaran' => '',
+                    'catatan_piutang'        => '',
                     'kd_rek'                 => '',
                     'nm_rek'                 => 'TOTAL :',
                     'debet'                  => round(optional($this->totalDebetDanKredit)->debet, 2),
@@ -142,6 +146,23 @@ class BukuBesar extends Component
     }
 
     protected function columnHeaders(): array
+    {
+        return [
+            'Tgl',
+            'Jam',
+            'No. Jurnal',
+            'No. Bukti',
+            'Keterangan Jurnal',
+            'Keterangan Pengeluaran',
+            'Catatan Piutang',
+            'Kode',
+            'Rekening',
+            'Debet',
+            'Kredit',
+        ];
+    }
+
+    protected function backgroundExportColumnHeaders(): array
     {
         return [
             'Tgl',
@@ -196,7 +217,7 @@ class BukuBesar extends Component
             tglAwal: $this->tglAwal,
             tglAkhir: $this->tglAkhir,
             kodeRekening: $this->kodeRekening,
-            columnHeaders: $this->columnHeaders(),
+            columnHeaders: $this->backgroundExportColumnHeaders(),
         )->onQueue('exports');
 
         $this->emit('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
