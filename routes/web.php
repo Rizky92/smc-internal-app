@@ -305,6 +305,10 @@ Route::prefix('admin')
                 Route::get('rincian-kunjungan-ralan', Farmasi\RincianKunjunganRalan::class)
                     ->name('rincian-kunjungan-ralan')
                     ->middleware('can:farmasi.rincian-kunjungan-ralan.read');
+
+                Route::get('kunjungan-walk-in', Farmasi\KunjunganWalkIn::class)
+                    ->name('kunjungan-walk-in')
+                    ->middleware('can:farmasi.kunjungan-walk-in.read');
             });
 
         Route::prefix('rekam-medis')

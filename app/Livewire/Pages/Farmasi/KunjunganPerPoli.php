@@ -22,6 +22,9 @@ class KunjunganPerPoli extends Component
     use LiveTable;
     use MenuTracker;
 
+    /* @var string */
+    public $statusLanjut;
+
     /** @var string */
     public $tglAwal;
 
@@ -31,8 +34,9 @@ class KunjunganPerPoli extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal'  => ['except' => now()->startOfMonth()->toDateString(), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->toDateString(), 'as' => 'tgl_akhir'],
+            'statusLanjut' => ['except' => 'semua', 'as' => 'status_lanjut'],
+            'tglAwal'      => ['except' => now()->startOfMonth()->toDateString(), 'as' => 'tgl_awal'],
+            'tglAkhir'     => ['except' => now()->endOfMonth()->toDateString(), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -44,7 +48,7 @@ class KunjunganPerPoli extends Component
     public function getDataKunjunganPerPoliProperty()
     {
         return $this->isDeferred ? [] : ResepObat::query()
-            ->kunjunganPerPoli($this->tglAwal, $this->tglAkhir)
+            ->kunjunganPerPoli($this->tglAwal, $this->tglAkhir, $this->statusLanjut)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
@@ -58,6 +62,7 @@ class KunjunganPerPoli extends Component
 
     protected function defaultValues(): void
     {
+        $this->statusLanjut = 'semua';
         $this->tglAwal = now()->startOfMonth()->toDateString();
         $this->tglAkhir = now()->endOfMonth()->toDateString();
     }
@@ -69,7 +74,7 @@ class KunjunganPerPoli extends Component
     {
         return [
             fn () => ResepObat::query()
-                ->kunjunganPerPoli($this->tglAwal, $this->tglAkhir)
+                ->kunjunganPerPoli($this->tglAwal, $this->tglAkhir, $this->statusLanjut)
                 ->cursor()
                 ->map(fn (ResepObat $model): array => [
                     'no_rawat'          => $model->no_rawat,
