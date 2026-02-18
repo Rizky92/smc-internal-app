@@ -211,4 +211,37 @@ class PenjualanObat extends Model
             ->whereBetween('tagihan_sadewa.tgl_bayar', [$tglAwal.' 00:00:00.000', $tglAkhir.' 23:59:59.999'])
             ->whereBetween('penjualan.tgl_jual', [$tahun.'-01-01', $tglAkhir]);
     }
+
+    public function scopeKunjunganWalkinHariIni(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->toDateString();
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->toDateString();
+        }
+
+        $this->addSearchConditions([
+            'penjualan.nota_jual',
+            'penjualan.no_rkm_medis',
+            'pasien.nm_pasien',
+            'pasien.alamat',
+        ]);
+
+        $sqlSelect = <<<'SQL'
+            penjualan.nota_jual,
+            penjualan.no_rkm_medis,
+            pasien.nm_pasien,
+            pasien.alamat,
+            penjualan.tgl_jual,
+            detailjual.jumlah
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->leftJoin('pasien', 'penjualan.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->leftJoin('detailjual', 'penjualan.nota_jual', '=', 'detailjual.nota_jual')
+            ->whereBetween('penjualan.tgl_jual', [$tglAwal, $tglAkhir]);
+    }
 }

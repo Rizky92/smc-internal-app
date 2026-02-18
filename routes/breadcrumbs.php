@@ -267,6 +267,11 @@ Breadcrumbs::for('admin.farmasi.rincian-kunjungan-ralan', function (Trail $trail
     $trail->push('Rincian Kunjungan Ralan', route('admin.farmasi.rincian-kunjungan-ralan'));
 });
 
+Breadcrumbs::for('admin.farmasi.kunjungan-walk-in', function (Trail $trail): void {
+    $trail->parent('admin.farmasi');
+    $trail->push('Kunjungan Walk In', route('admin.farmasi.kunjungan-walk-in'));
+});
+
 Breadcrumbs::for('admin.rekam-medis', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Rekam Medis');

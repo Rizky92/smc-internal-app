@@ -88,6 +88,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'farmasi.daftar-riwayat-obat-alkes.read']);
         Permission::create(['name' => 'farmasi.rincian-perbandingan-po.read']);
         Permission::create(['name' => 'farmasi.rincian-kunjungan-ralan.read']);
+        Permission::create(['name' => 'farmasi.kunjungan-walk-in.read']);
 
         Permission::create(['name' => 'rekam-medis.laporan-statistik.read']);
         Permission::create(['name' => 'rekam-medis.laporan-demografi.read']);

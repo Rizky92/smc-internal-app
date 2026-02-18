@@ -324,6 +324,7 @@ class Menu
                     'farmasi.defecta-depo.read',
                     'farmasi.daftar-riwayat-obat-alkes.read',
                     'farmasi.farmasi.rincian-perbandingan-po.read',
+                    'farmasi.kunjungan-walk-in.read',
                 ]),
                 'items' => [
                     [
@@ -415,6 +416,12 @@ class Menu
                         'icon'              => 'fas fa-balance-scale',
                         'url'               => route('admin.farmasi.rincian-kunjungan-ralan'),
                         'hasAnyPermissions' => $user->can('farmasi.rincian-kunjungan-ralan.read'),
+                    ],
+                    [
+                        'name'              => 'Kunjungan Walk In',
+                        'icon'              => 'fas fa-walking',
+                        'url'               => route('admin.farmasi.kunjungan-walk-in'),
+                        'hasAnyPermissions' => $user->can('farmasi.kunjungan-walk-in.read'),
                     ],
                 ],
             ],
