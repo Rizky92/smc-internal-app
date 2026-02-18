@@ -198,7 +198,7 @@ class ResepObat extends Model
             ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir]);
     }
 
-    public function scopeKunjunganPerPoli(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    public function scopeKunjunganPerPoli(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $statusLanjut = 'semua'): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->toDateString();
@@ -244,7 +244,8 @@ class ResepObat extends Model
             ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->leftJoin('dokter as dokter_poli', 'reg_periksa.kd_dokter', '=', 'dokter_poli.kd_dokter')
             ->leftJoin('dokter as dokter_peresep', 'resep_obat.kd_dokter', '=', 'dokter_peresep.kd_dokter')
-            ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir]);
+            ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
+            ->when($statusLanjut !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.status_lanjut', $statusLanjut));
     }
 
     public function scopeAntreanFarmasiRawatJalan(Builder $query, string $kategori = ''): Builder
