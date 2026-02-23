@@ -3,7 +3,6 @@
 namespace App\Livewire\Pages\Antrean;
 
 use App\Models\Antrian\AntriPoli;
-use App\Models\Perawatan\Poliklinik;
 use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -58,7 +57,7 @@ class AntreanPoli extends Component
             $this->dispatchBrowserEvent('play-voice', [
                 'no_reg'    => $antrean->no_reg,
                 'nm_pasien' => $antrean->nm_pasien,
-                'nm_poli'   => $antrean->nm_poli
+                'nm_poli'   => $antrean->nm_poli,
             ]);
         }
     }

@@ -25,7 +25,7 @@
                     @endforeach
                 </x-slot>
                 <x-slot name="contents">
-                    @foreach ($this->dataObat as $key => $_)    
+                    @foreach ($this->dataObat as $key => $_)
                         @php($property = 'dataLaporanPemakaianObatMorphine' . $key)
                         <x-navtabs.content :id="$key">
                             <x-table zebra hover sticky nowrap>
@@ -42,14 +42,30 @@
                                 <x-slot name="body">
                                     @forelse ($this->{$property} as $item)
                                         <x-table.tr>
-                                            <x-table.td>{{ $item->no_rawat }}</x-table.td>
-                                            <x-table.td>{{ $item->no_rkm_medis }}</x-table.td>
-                                            <x-table.td>{{ $item->nm_pasien }}</x-table.td>
-                                            <x-table.td>{{ $item->alamat }}</x-table.td>
-                                            <x-table.td>{{ $item->tgl_perawatan }}</x-table.td>
-                                            <x-table.td>{{ number_format($item->jml, 0, ',', '.') }}</x-table.td>
-                                            <x-table.td>{{ $item->nm_dokter }}</x-table.td>
-                                            <x-table.td>{{ $item->alamat_dokter }}</x-table.td>
+                                            <x-table.td>
+                                                {{ $item->no_rawat }}
+                                            </x-table.td>
+                                            <x-table.td>
+                                                {{ $item->no_rkm_medis }}
+                                            </x-table.td>
+                                            <x-table.td>
+                                                {{ $item->nm_pasien }}
+                                            </x-table.td>
+                                            <x-table.td>
+                                                {{ $item->alamat }}
+                                            </x-table.td>
+                                            <x-table.td>
+                                                {{ $item->tgl_perawatan }}
+                                            </x-table.td>
+                                            <x-table.td>
+                                                {{ number_format($item->jml, 0, ',', '.') }}
+                                            </x-table.td>
+                                            <x-table.td>
+                                                {{ $item->nm_dokter }}
+                                            </x-table.td>
+                                            <x-table.td>
+                                                {{ $item->alamat_dokter }}
+                                            </x-table.td>
                                         </x-table.tr>
                                     @empty
                                         <x-table.tr-empty colspan="8" padding />

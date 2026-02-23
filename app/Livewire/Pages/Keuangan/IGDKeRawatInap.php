@@ -8,20 +8,24 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Perawatan\Poliklinik;
 use App\Models\Perawatan\RegistrasiPasien;
 use App\View\Components\BaseLayout;
-use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class IGDKeRawatInap extends Component
 {
-    use FlashComponent;
-    use Filterable;
+    use DeferredLoading;
     use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
     use LiveTable;
     use MenuTracker;
-    use DeferredLoading;
+
+    /** @var string */
+    public $kodePoliklinik;
 
     /** @var string */
     public $tglAwal;
@@ -32,8 +36,9 @@ class IGDKeRawatInap extends Component
     protected function queryString(): array
     {
         return [
-            'tglAwal'  => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
-            'tglAkhir' => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
+            'kodePoliklinik' => ['except' => 'IGDK', 'as' => 'poliklinik'],
+            'tglAwal'        => ['except' => now()->startOfMonth()->format('Y-m-d'), 'as' => 'tgl_awal'],
+            'tglAkhir'       => ['except' => now()->endOfMonth()->format('Y-m-d'), 'as' => 'tgl_akhir'],
         ];
     }
 
@@ -42,10 +47,17 @@ class IGDKeRawatInap extends Component
         $this->defaultValues();
     }
 
+    public function getPoliklinikProperty(): Collection
+    {
+        return Poliklinik::where('status', '1')
+            ->get()
+            ->pluck('nm_poli', 'kd_poli');
+    }
+
     public function getCollectionProperty()
     {
         return $this->isDeferred ? [] : RegistrasiPasien::query()
-            ->igdKeRawatInap($this->tglAwal, $this->tglAkhir)
+            ->igdKeRawatInap($this->tglAwal, $this->tglAkhir, $this->kodePoliklinik === 'SEMUA' ? '' : $this->kodePoliklinik)
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns, [
                 'tgl_registrasi' => 'asc',
@@ -62,6 +74,7 @@ class IGDKeRawatInap extends Component
 
     protected function defaultValues(): void
     {
+        $this->kodePoliklinik = 'IGDK';
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
@@ -70,18 +83,18 @@ class IGDKeRawatInap extends Component
     {
         return [
             fn () => RegistrasiPasien::query()
-            ->igdKeRawatInap($this->tglAwal, $this->tglAkhir)
-            ->search($this->cari)
-            ->cursor()
-            ->map(fn(RegistrasiPasien $model): array => [
-                'no_rawat'          => $model->no_rawat,
-                'tgl_registrasi'    => $model->tgl_registrasi,
-                'jam_reg'           => $model->jam_reg,
-                'no_rkm_medis'      => $model->no_rkm_medis,
-                'nm_pasien'         => $model->nm_pasien,
-                'dpjp_igd'          => $model->dpjp_igd,
-                'dpjp_ranap'        => $model->dpjp_ranap,
-            ]),
+                ->igdKeRawatInap($this->tglAwal, $this->tglAkhir)
+                ->search($this->cari)
+                ->cursor()
+                ->map(fn (RegistrasiPasien $model): array => [
+                    'no_rawat'          => $model->no_rawat,
+                    'tgl_registrasi'    => $model->tgl_registrasi,
+                    'jam_reg'           => $model->jam_reg,
+                    'no_rkm_medis'      => $model->no_rkm_medis,
+                    'nm_pasien'         => $model->nm_pasien,
+                    'dpjp_igd'          => $model->dpjp_igd,
+                    'dpjp_ranap'        => $model->dpjp_ranap,
+                ]),
         ];
     }
 
@@ -94,7 +107,7 @@ class IGDKeRawatInap extends Component
             'No. RM',
             'Nama Pasien',
             'DPJP IGD',
-            'DPJP Ranap'
+            'DPJP Ranap',
         ];
     }
 

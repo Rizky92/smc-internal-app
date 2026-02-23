@@ -7,11 +7,23 @@ use App\Database\Query\Grammars\MysqlGrammar;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
+use App\Support\MixinArr;
+use App\Support\MixinCollections;
+use App\Support\MixinEloquentBuilder;
+use App\Support\MixinQueryBuilder;
+use App\Support\MixinStr;
+use App\Support\MixinStringable;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,12 +31,12 @@ class AppServiceProvider extends ServiceProvider
      * @var array<class-string, class-string[]|class-string>
      */
     protected $mixins = [
-        \Illuminate\Support\Arr::class                  => \App\Support\MixinArr::class,
-        \Illuminate\Support\Collection::class           => \App\Support\MixinCollections::class,
-        \Illuminate\Support\Str::class                  => \App\Support\MixinStr::class,
-        \Illuminate\Support\Stringable::class           => \App\Support\MixinStringable::class,
-        \Illuminate\Database\Query\Builder::class       => \App\Support\MixinQueryBuilder::class,
-        \Illuminate\Database\Eloquent\Builder::class    => \App\Support\MixinEloquentBuilder::class,
+        Arr::class             => MixinArr::class,
+        Collection::class      => MixinCollections::class,
+        Str::class             => MixinStr::class,
+        Stringable::class      => MixinStringable::class,
+        QueryBuilder::class    => MixinQueryBuilder::class,
+        EloquentBuilder::class => MixinEloquentBuilder::class,
     ];
 
     /**

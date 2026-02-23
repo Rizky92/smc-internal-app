@@ -10,6 +10,7 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Farmasi\Obat;
 use App\View\Components\BaseLayout;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -42,7 +43,7 @@ class LaporanPemakaianObatNAPZA extends Component
     }
 
     /**
-     * @return array<empty, empty>|\Illuminate\Contracts\Pagination\Paginator
+     * @return array<empty, empty>|Paginator
      */
     public function getDataPemakaianObatNarkotikaProperty()
     {
@@ -54,7 +55,7 @@ class LaporanPemakaianObatNAPZA extends Component
     }
 
     /**
-     * @return array<empty, empty>|\Illuminate\Contracts\Pagination\Paginator
+     * @return array<empty, empty>|Paginator
      */
     public function getDataPemakaianObatPsikotropikaProperty()
     {

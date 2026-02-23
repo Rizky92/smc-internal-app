@@ -9,7 +9,7 @@
     'align' => 'left',
 ])
 
-@if ($sortable && !empty($name))
+@if ($sortable && ! empty($name))
     @php
         $direction = (string) optional($sortColumns)[$name];
 
@@ -23,21 +23,20 @@
             'mr-1' => $align === 'left',
         ]);
     @endphp
+
     <th {{ $attributes->class(['py-2']) }}>
-        <button
-            type="button"
-            class="btn btn-link text-decoration-none font-weight-bold w-100 p-0 m-0 {{ $alignButtonClass }}"
-            wire:click="sortBy(@js($name), @js($direction))"
-        >
+        <button type="button" class="btn btn-link text-decoration-none font-weight-bold w-100 p-0 m-0 {{ $alignButtonClass }}" wire:click="sortBy(@js($name), @js($direction))">
             <span class="text-dark {{ $alignTitleClass }}">{{ $title }}</span>
+
             @switch($direction)
                 @case('asc')
                     <i class="fas fa-arrow-up" style="margin-top: 0.0625rem"></i>
-                @break
 
+                    @break
                 @case('desc')
                     <i class="fas fa-arrow-down" style="margin-top: 0.0625rem"></i>
-                @break
+
+                    @break
             @endswitch
         </button>
     </th>

@@ -3,6 +3,9 @@
 namespace App\Models\Keuangan\Jurnal;
 
 use App\Database\Eloquent\Model;
+use App\Exceptions\EmptyTransactionException;
+use App\Exceptions\InequalJournalException;
+use App\Exceptions\TransactionLessThanZeroException;
 use App\Models\Keuangan\PenagihanPiutangDetail;
 use App\Models\Keuangan\PengeluaranHarian;
 use App\Models\Keuangan\PiutangDilunaskan;
@@ -11,10 +14,13 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Arr;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+/**
+ * @psalm-template TDetail of \Illuminate\Support\Collection<array-key, array{kd_rek: string, debet: numeric, kredit: numeric}>|array<array-key, array{kd_rek: string, debet: numeric, kredit: numeric}>
+ */
 class Jurnal extends Model
 {
     protected $connection = 'mysql_sik';
@@ -72,11 +78,11 @@ class Jurnal extends Model
     public function scopeJurnalUmum(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->format('Y-m-d');
+            $tglAwal = now()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->format('Y-m-d');
+            $tglAkhir = now()->toDateString();
         }
 
         $this->addRawColumns('waktu_jurnal', DB::raw("concat(jurnal.tgl_jurnal, ' ', jurnal.jam_jurnal)"));
@@ -111,11 +117,11 @@ class Jurnal extends Model
     public function scopeBukuBesar(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodeRekening = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $this->addSearchConditions([
@@ -127,16 +133,16 @@ class Jurnal extends Model
         ]);
 
         $sqlSelect = <<<'SQL'
-jurnal.tgl_jurnal,
-jurnal.jam_jurnal,
-jurnal.no_jurnal,
-jurnal.no_bukti,
-jurnal.keterangan,
-detailjurnal.kd_rek,
-rekening.nm_rek,
-detailjurnal.debet,
-detailjurnal.kredit
-SQL;
+            jurnal.tgl_jurnal,
+            jurnal.jam_jurnal,
+            jurnal.no_jurnal,
+            jurnal.no_bukti,
+            jurnal.keterangan,
+            detailjurnal.kd_rek,
+            rekening.nm_rek,
+            detailjurnal.debet,
+            detailjurnal.kredit
+            SQL;
 
         return $query
             ->selectRaw($sqlSelect)
@@ -150,16 +156,16 @@ SQL;
     public function scopeJumlahDebetKreditBukuBesar(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodeRekening = ''): Builder
     {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
-ifnull(round(sum(detailjurnal.debet), 2), 0) debet, ifnull(round(sum(detailjurnal.kredit), 2), 0) kredit
-SQL;
+            ifnull(round(sum(detailjurnal.debet), 2), 0) debet, ifnull(round(sum(detailjurnal.kredit), 2), 0) kredit
+            SQL;
 
         $this->addSearchConditions([
             'jurnal.no_jurnal',
@@ -178,17 +184,65 @@ SQL;
             ->wherebetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir]);
     }
 
+    public function scopeJurnalPiutangDilunaskan(Builder $query, ?string $latest = null): Builder
+    {
+        $latest ??= '2022-10-30 23:59:59.999';
+
+        $sqlSelect = <<<'SQL'
+            jurnal.no_jurnal,
+            concat(jurnal.tgl_jurnal, ' ', jurnal.jam_jurnal) as waktu_jurnal,
+            detail_penagihan_piutang.no_rawat,
+            bayar_piutang.no_rkm_medis,
+            penagihan_piutang.no_tagihan,
+            penagihan_piutang.kd_pj as kd_pj_tagihan,
+            detail_piutang_pasien.kd_pj,
+            penagihan_piutang.catatan,
+            detail_piutang_pasien.totalpiutang,
+            bayar_piutang.besar_cicilan,
+            penagihan_piutang.tanggal as tgl_tagihan,
+            penagihan_piutang.tanggaltempo as tgl_jatuhtempo,
+            bayar_piutang.tgl_bayar,
+            bayar_piutang.kd_rek,
+            rekening.nm_rek,
+            bayar_piutang.kd_rek_kontra,
+            penagihan_piutang.nip,
+            penagihan_piutang.nip_menyetujui,
+            jurnal.keterangan
+            SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join('detailjurnal', 'jurnal.no_jurnal', '=', 'detailjurnal.no_jurnal')
+            ->join('detail_penagihan_piutang', 'jurnal.no_bukti', '=', 'detail_penagihan_piutang.no_rawat')
+            ->join('penagihan_piutang', 'detail_penagihan_piutang.no_tagihan', '=', 'penagihan_piutang.no_tagihan')
+            ->join('detail_piutang_pasien', 'detail_penagihan_piutang.no_rawat', '=', 'detail_piutang_pasien.no_rawat')
+            ->join('akun_piutang', 'detail_piutang_pasien.nama_bayar', '=', 'akun_piutang.nama_bayar')
+            ->leftJoin('bayar_piutang', fn (JoinClause $join) => $join
+                ->on('detail_penagihan_piutang.no_rawat', '=', 'bayar_piutang.no_rawat')
+                ->on('akun_piutang.kd_rek', '=', 'bayar_piutang.kd_rek_kontra'))
+            ->join('rekening', 'bayar_piutang.kd_rek', '=', 'rekening.kd_rek')
+            ->where(fn (Builder $query) => $query
+                ->where('jurnal.keterangan', 'like', 'bayar piutang% %oleh%')
+                ->orWhere('jurnal.keterangan', 'like', 'bayar piutang tagihan% %oleh%')
+                ->orWhere('jurnal.keterangan', 'like', 'pembatalan bayar piutang% %oleh%'))
+            ->where('detailjurnal.kredit', '>', 0)
+            ->whereColumn('detailjurnal.kd_rek', '=', 'akun_piutang.kd_rek')
+            ->whereBetween('jurnal.tgl_jurnal', [$latest, now()])
+            ->whereColumn('penagihan_piutang.kd_pj', '=', 'detail_piutang_pasien.kd_pj')
+            ->whereNotIn('detail_penagihan_piutang.no_rawat', PenagihanPiutangDetail::query()->select('no_rawat')->groupBy('no_rawat')->havingRaw('count(*) > 1'))
+            ->orderBy('jurnal.tgl_jurnal')
+            ->orderBy('jurnal.jam_jurnal');
+    }
+
     /**
      * @param  \DateTimeInterface|string  $date
      */
-    public static function noJurnalBaru($date): string
+    public static function noJurnalBaru($date, int $index = 1): string
     {
         $date = carbon($date)->format('Ymd');
 
-        $index = 1;
-
         $noJurnalTerakhir = static::query()
-            ->whereRaw('no_jurnal like ?', [str($date)->wrap('JR', '%')->value()])
+            ->where('no_jurnal', 'like', [str($date)->wrap('JR', '%')->value()])
             ->orderBy('no_jurnal', 'desc')
             ->value('no_jurnal');
 
@@ -203,12 +257,11 @@ SQL;
     }
 
     /**
-     * @param  "U"|"P"  $jenis
      * @param  Carbon|\DateTime|string  $waktuTransaksi
-     * @param  array<array{kd_rek: string, debet: int|float, kredit: int|float}>  $detail
-     * @return static
+     * @param  TDetail  $detail
+     * @param  "U"|"P"  $jenis
      */
-    public static function catat(string $noBukti, string $keterangan, $waktuTransaksi, array $detail, string $jenis = 'U'): ?self
+    public static function catat(string $noBukti, string $keterangan, $waktuTransaksi, $detail = [], string $jenis = 'U'): self
     {
         if (! $waktuTransaksi instanceof Carbon) {
             $waktuTransaksi = carbon($waktuTransaksi);
@@ -218,31 +271,43 @@ SQL;
             $waktuTransaksi = now();
         }
 
-        $noJurnal = static::noJurnalBaru($waktuTransaksi);
-
-        $detail = collect($detail);
-
-        [$debet, $kredit] = [round($detail->sum('debet'), 2), round($detail->sum('kredit'), 2)];
-
-        if ($debet < 0 || $kredit < 0) {
-            throw new \Exception('Debet dan Kredit tidak sama..!!');
-        }
-
-        throw_if($debet !== $kredit, 'App\Exceptions\InequalJournalException', $debet, $kredit, $noJurnal);
-
-        $jurnal = static::create([
-            'no_jurnal'  => $noJurnal,
+        return static::create([
+            'no_jurnal'  => static::noJurnalBaru($waktuTransaksi),
             'no_bukti'   => $noBukti,
             'keterangan' => $keterangan,
             'jenis'      => $jenis,
-            'tgl_jurnal' => $waktuTransaksi->format('Y-m-d'),
+            'tgl_jurnal' => $waktuTransaksi->toDateString(),
             'jam_jurnal' => $waktuTransaksi->format('H:i:s'),
-        ]);
+        ])->isiDetail($detail);
+    }
 
-        $detail = $jurnal
-            ->detail()
-            ->createMany($detail);
+    /**
+     * @param  TDetail  $detail
+     */
+    public function isiDetail($detail = []): self
+    {
+        $detail = collect($detail);
 
-        return $jurnal->load('detail');
+        if ($detail->isEmpty()) {
+            return $this;
+        }
+
+        [$debet, $kredit] = [round($detail->sum('debet')), round($detail->sum('kredit'))];
+
+        if ($debet !== $kredit) {
+            throw new InequalJournalException($debet, $kredit);
+        }
+
+        if ($debet < 0 || $kredit < 0) {
+            throw new TransactionLessThanZeroException($debet, $kredit);
+        }
+
+        if ($detail->isEmpty() || ($debet === $kredit && $debet === 0.0)) {
+            throw new EmptyTransactionException($debet, $kredit);
+        }
+
+        $this->detail()->createMany($detail->all());
+
+        return $this->load('detail');
     }
 }

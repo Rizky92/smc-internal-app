@@ -105,6 +105,10 @@ class Menu
                     'keuangan.posting-jurnal',
                     'keuangan.laporan-faktur-pajak.read',
                     'keuangan.igd-ke-rawat-inap.read',
+                    'keuangan.obat-ralan-ke-ranap.read',
+                    'keuangan.sirkulasi-non-medis.read',
+                    'keuangan.tarif-ralan.read',
+                    'keuangan.tarif-ranap.read',
                 ]),
                 'items' => [
                     [
@@ -243,13 +247,27 @@ class Menu
                     [
                         'name'              => 'Posting Jurnal',
                         'url'               => route('admin.keuangan.posting-jurnal'),
-                        'icon'              => "fas fa-book",
+                        'icon'              => 'fas fa-book',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.posting-jurnal.read'),
                     ],
                     [
-                        'name'              => 'Item Billing Pasien',
-                        'url'               => route('admin.keuangan.laporan-faktur-pajak'),
+                        'name'              => 'Faktur Pajak BPJS',
+                        'url'               => route('admin.keuangan.laporan-faktur-pajak-bpjs'),
+                        'icon'              => 'fas fa-book',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.laporan-faktur-pajak.read'),
+                    ],
+                    [
+                        'name'              => 'Faktur Pajak UMUM',
+                        'url'               => route('admin.keuangan.laporan-faktur-pajak-umum'),
+                        'icon'              => 'fas fa-book',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('keuangan.laporan-faktur-pajak.read'),
+                    ],
+                    [
+                        'name'              => 'Faktur Pajak AS/PER',
+                        'url'               => route('admin.keuangan.laporan-faktur-pajak-asper'),
                         'icon'              => 'fas fa-book',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.laporan-faktur-pajak.read'),
@@ -260,6 +278,30 @@ class Menu
                         'icon'              => 'fas fa-book',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('keuangan.igd-ke-rawat-inap.read'),
+                    ],
+                    [
+                        'name'              => 'Obat Ralan ke Ranap',
+                        'icon'              => 'fas fa-exchange-alt',
+                        'url'               => route('admin.keuangan.obat-ralan-ke-ranap'),
+                        'hasAnyPermissions' => $user->can('keuangan.obat-ralan-ke-ranap.read'),
+                    ],
+                    [
+                        'name'              => 'Sirkulasi Non Medis',
+                        'icon'              => 'fas fa-sync-alt',
+                        'url'               => route('admin.keuangan.sirkulasi-non-medis'),
+                        'hasAnyPermissions' => $user->can('keuangan.sirkulasi-non-medis.read'),
+                    ],
+                    [
+                        'name'              => 'Tarif Ralan',
+                        'icon'              => 'fas fa-file-invoice-dollar',
+                        'url'               => route('admin.keuangan.tarif-ralan'),
+                        'hasAnyPermissions' => $user->can('keuangan.tarif-ralan.read'),
+                    ],
+                    [
+                        'name'              => 'Tarif Ranap',
+                        'icon'              => 'fas fa-file-invoice-dollar',
+                        'url'               => route('admin.keuangan.tarif-ranap'),
+                        'hasAnyPermissions' => $user->can('keuangan.tarif-ranap.read'),
                     ],
                 ],
             ],
@@ -281,7 +323,8 @@ class Menu
                     'farmasi.laporan-pemakaian-obat-tb.read',
                     'farmasi.defecta-depo.read',
                     'farmasi.daftar-riwayat-obat-alkes.read',
-                    'farmasi.farmasi.rincian-perbandingan-po.read'
+                    'farmasi.farmasi.rincian-perbandingan-po.read',
+                    'farmasi.kunjungan-walk-in.read',
                 ]),
                 'items' => [
                     [
@@ -373,6 +416,12 @@ class Menu
                         'icon'              => 'fas fa-balance-scale',
                         'url'               => route('admin.farmasi.rincian-kunjungan-ralan'),
                         'hasAnyPermissions' => $user->can('farmasi.rincian-kunjungan-ralan.read'),
+                    ],
+                    [
+                        'name'              => 'Kunjungan Walk In',
+                        'icon'              => 'fas fa-walking',
+                        'url'               => route('admin.farmasi.kunjungan-walk-in'),
+                        'hasAnyPermissions' => $user->can('farmasi.kunjungan-walk-in.read'),
                     ],
                 ],
             ],
@@ -487,6 +536,7 @@ class Menu
                 'type'              => 'dropdown',
                 'hasAnyPermissions' => $user->canAny([
                     'antrean.manajemen-pintu.read',
+                    'antrean.antrean-onsite.read',
                 ]),
                 'items'             => [
                     [
@@ -495,28 +545,83 @@ class Menu
                         'icon'              => 'fas fa-door-open',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('antrean.manajemen-pintu.read'),
-                    ]
+                    ],
+                    [
+                        'name'              => 'Antrean Onsite',
+                        'url'               => route('admin.antrean.antrean-onsite'),
+                        'icon'              => 'fas fa-list-ol',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('antrean.antrean-onsite.read'),
+                    ],
                 ],
             ],
             [
                 'name'              => 'Informasi',
                 'icon'              => 'far fa-circle',
                 'type'              => 'dropdown',
-                'hasAnyPermissions' => $user->hasRole($develop),
+                'hasAnyPermissions' => true,
                 'items'             => [
                     [
                         'name'              => 'Informasi Kamar',
-                        'url'               => route('admin.informasi.informasi-kamar'),
+                        'url'               => route('informasi-kamar'),
                         'icon'              => 'fas fa-info',
                         'type'              => 'link',
-                        'hasAnyPermissions' => $user->hasRole($develop),
+                        'hasAnyPermissions' => true,
+
                     ],
                     [
-                        'name'              => 'Jadwal Dokter',
-                        'url'               => route('admin.informasi.jadwal-dokter'),
-                        'icon'              => 'fas fa-calendar',
+                        'name'              => 'Antrean Pintu',
+                        'url'               => route('antrean-pintu'),
+                        'icon'              => 'fas fa-door-open',
                         'type'              => 'link',
-                        'hasAnyPermissions' => $user->hasRole($develop),
+                        'hasAnyPermissions' => true,
+                    ],
+                    [
+                        'name'              => 'Dashboard Dokter',
+                        'url'               => route('dashboard-dokter'),
+                        'icon'              => 'fas fa-user-md',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => true,
+                    ],
+                    [
+                        'name'              => 'Antrean Farmasi',
+                        'url'               => route('antrean-farmasi'),
+                        'icon'              => 'fas fa-pills',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => true,
+                    ],
+                ],
+            ],
+            [
+                'name'              => 'Casemix',
+                'icon'              => 'far fa-circle',
+                'type'              => 'dropdown',
+                'hasAnyPermissions' => $user->canAny([
+                    'casemix.laporan-pasien-batal.read',
+                    'casemix.laporan-pasien-cob.read',
+                    'casemix.laporan-triase-igd-zona-hijau.read',
+                ]),
+                'items'             => [
+                    [
+                        'name'              => 'SEP Pasien Batal',
+                        'url'               => route('admin.casemix.laporan-pasien-batal'),
+                        'icon'              => 'fas fa-file-alt',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('casemix.laporan-pasien-batal.read'),
+                    ],
+                    [
+                        'name'              => 'SEP Pasien COB',
+                        'url'               => route('admin.casemix.laporan-pasien-cob'),
+                        'icon'              => 'fas fa-file-alt',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('casemix.laporan-pasien-cob.read'),
+                    ],
+                    [
+                        'name'              => 'Triase IGD Zona Hijau',
+                        'url'               => route('admin.casemix.laporan-triase-igd-zona-hijau'),
+                        'icon'              => 'fas fa-file-alt',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('casemix.laporan-triase-igd-zona-hijau.read'),
                     ],
                 ],
             ],

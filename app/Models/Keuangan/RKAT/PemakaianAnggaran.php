@@ -57,11 +57,11 @@ class PemakaianAnggaran extends Model
         $userIds = Petugas::on('mysql_sik')
             ->where(function ($query) use ($search) {
                 $query->where('nip', 'LIKE', "%{$search}%")
-                      ->orWhere('nama', 'LIKE', "%{$search}%");
+                    ->orWhere('nama', 'LIKE', "%{$search}%");
             })
             ->pluck('nip')
             ->toArray();
-    
+
         return $query
             ->with(['petugas', 'anggaranBidang', 'anggaranBidang.anggaran', 'anggaranBidang.bidang'])
             ->withSum('detail as nominal_pemakaian', 'nominal')
@@ -69,20 +69,18 @@ class PemakaianAnggaran extends Model
                 $bidangId !== -1,
                 fn (Builder $q): Builder => $q->whereHas(
                     'anggaranBidang.bidang',
-                    function (Builder $q) use ($bidangId) {
-                        return $q->where('id', $bidangId)->orWhere('parent_id', $bidangId);
-                    }
+                    fn (Builder $q) => $q->where('id', $bidangId)->orWhere('parent_id', $bidangId)
                 )
             )
             ->when(
-                !empty($tahun),
+                ! empty($tahun),
                 fn (Builder $q): Builder => $q->whereHas(
                     'anggaranBidang',
                     fn (Builder $q): Builder => $q->where('tahun', $tahun)
                 )
             )
             ->when(
-                !empty($search),
+                ! empty($search),
                 function (Builder $q) use ($search, $userIds) {
                     return $q
                         ->where('judul', 'LIKE', "%{$search}%")

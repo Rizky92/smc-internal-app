@@ -5,13 +5,7 @@
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.range-date />
-                <x-button
-                    size="sm"
-                    title="Tarik Data Terbaru"
-                    icon="fas fa-sync-alt"
-                    class="ml-auto"
-                    wire:click.prevent="tarikDataTerbaru"
-                />
+                <x-button size="sm" title="Tarik Data Terbaru" icon="fas fa-sync-alt" class="ml-auto" wire:click.prevent="tarikDataTerbaru" />
                 <x-filter.button-export-excel class="ml-2" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
@@ -31,7 +25,8 @@
                         <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                             <x-slot name="columns">
                                 <x-table.th name="no_jurnal" title="No. Jurnal" />
-                                <x-table.th name="waktu_jurnal" title="Waktu" />
+                                <x-table.th name="waktu_jurnal" title="Waktu Jurnal" />
+                                <x-table.th name="tgl_bayar" title="Tgl. Bayar" />
                                 <x-table.th name="no_faktur" title="No. Faktur" />
                                 <x-table.th name="status" title="Status" />
                                 <x-table.th name="besar_bayar" title="Nominal" />
@@ -45,6 +40,7 @@
                                     <x-table.tr>
                                         <x-table.td>{{ $jurnal->no_jurnal }}</x-table.td>
                                         <x-table.td>{{ $jurnal->waktu_jurnal }}</x-table.td>
+                                        <x-table.td>{{ $jurnal->tgl_bayar }}</x-table.td>
                                         <x-table.td>{{ $jurnal->no_faktur }}</x-table.td>
                                         <x-table.td>{{ $jurnal->status }}</x-table.td>
                                         <x-table.td>{{ rp($jurnal->besar_bayar) }}</x-table.td>
@@ -64,7 +60,8 @@
                         <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                             <x-slot name="columns">
                                 <x-table.th name="no_jurnal" title="No. Jurnal" />
-                                <x-table.th name="waktu_jurnal" title="Waktu" />
+                                <x-table.th name="waktu_jurnal" title="Waktu Jurnal" />
+                                <x-table.th name="tgl_bayar" title="Tgl. Bayar" />
                                 <x-table.th name="no_faktur" title="No. Faktur" />
                                 <x-table.th name="status" title="Status" />
                                 <x-table.th name="besar_bayar" title="Nominal" />
@@ -78,6 +75,7 @@
                                     <x-table.tr>
                                         <x-table.td>{{ $jurnal->no_jurnal }}</x-table.td>
                                         <x-table.td>{{ $jurnal->waktu_jurnal }}</x-table.td>
+                                        <x-table.td>{{ $jurnal->tgl_bayar }}</x-table.td>
                                         <x-table.td>{{ $jurnal->no_faktur }}</x-table.td>
                                         <x-table.td>{{ $jurnal->status }}</x-table.td>
                                         <x-table.td>{{ rp($jurnal->besar_bayar) }}</x-table.td>
@@ -87,7 +85,7 @@
                                         <x-table.td>{{ $jurnal->nm_pegawai }}</x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty colspan="10" padding />
+                                    <x-table.tr-empty colspan="11" padding />
                                 @endforelse
                             </x-slot>
                         </x-table>

@@ -1,7 +1,22 @@
 <div wire:init="loadProperties">
     <x-flash />
 
-    <x-card use-default-filter use-loading>
+    <x-card use-loading>
+        <x-slot name="header">
+            <x-row-col-flex>
+                <x-filter.label constant-width>Status Lanjut:</x-filter.label>
+                <x-filter.select model="statusLanjut" :options="['semua' => 'Semua', 'Ranap' => 'Rawat Inap', 'Ralan' => 'Rawat Jalan']" />
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
+                <x-filter.range-date />
+                <x-filter.button-export-excel class="ml-auto" />
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
+                <x-filter.select-perpage />
+                <x-filter.button-reset-filters class="ml-auto" />
+                <x-filter.search class="ml-2" />
+            </x-row-col-flex>
+        </x-slot>
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
@@ -19,15 +34,29 @@
                 <x-slot name="body">
                     @forelse ($this->dataKunjunganPerPoli as $pasien)
                         <x-table.tr>
-                            <x-table.td>{{ $pasien->no_rawat }}</x-table.td>
-                            <x-table.td>{{ $pasien->no_resep }}</x-table.td>
-                            <x-table.td>{{ $pasien->nm_pasien }}</x-table.td>
+                            <x-table.td>
+                                {{ $pasien->no_rawat }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->no_resep }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->nm_pasien }}
+                            </x-table.td>
                             <x-table.td>{{ $pasien->umur }}</x-table.td>
-                            <x-table.td>{{ $pasien->tgl_perawatan }}</x-table.td>
+                            <x-table.td>
+                                {{ $pasien->tgl_perawatan }}
+                            </x-table.td>
                             <x-table.td>{{ $pasien->jam }}</x-table.td>
-                            <x-table.td>{{ $pasien->nm_dokter_peresep }}</x-table.td>
-                            <x-table.td>{{ $pasien->nm_dokter_poli }}</x-table.td>
-                            <x-table.td>{{ $pasien->status_lanjut }}</x-table.td>
+                            <x-table.td>
+                                {{ $pasien->nm_dokter_peresep }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->nm_dokter_poli }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $pasien->status_lanjut }}
+                            </x-table.td>
                             <x-table.td>{{ $pasien->nm_poli }}</x-table.td>
                         </x-table.tr>
                     @empty

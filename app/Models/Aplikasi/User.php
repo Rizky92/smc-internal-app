@@ -5,9 +5,9 @@ namespace App\Models\Aplikasi;
 use App\Casts\BooleanCast;
 use App\Database\Eloquent\Authenticatable;
 use App\Models\Kepegawaian\Pegawai;
+use App\Traits\Override\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Lab404\Impersonate\Models\Impersonate;
@@ -51,10 +51,10 @@ class User extends Authenticatable
 
         static::addGlobalScope(function (Builder $query) {
             $sqlSelect = <<<'SQL'
-trim(pegawai.nik) nik, pegawai.nama nama, coalesce(jabatan.nm_jbtn, spesialis.nm_sps, pegawai.jbtn) jbtn,
-(case when petugas.nip is not null then 'Petugas' when dokter.kd_dokter is not null then 'Dokter' else '-' end) jenis,
-user.id_user id_user, user.password `password`
-SQL;
+                trim(pegawai.nik) nik, pegawai.nama nama, coalesce(jabatan.nm_jbtn, spesialis.nm_sps, pegawai.jbtn) jbtn,
+                (case when petugas.nip is not null then 'Petugas' when dokter.kd_dokter is not null then 'Dokter' else '-' end) jenis,
+                user.id_user id_user, user.password `password`
+                SQL;
 
             return $query
                 ->selectRaw($sqlSelect)

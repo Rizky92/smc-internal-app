@@ -71,11 +71,11 @@ class PenagihanPiutang extends Model
         bool $tampilkanBedaJaminanPembayaran = false
     ): Builder {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -161,6 +161,43 @@ class PenagihanPiutang extends Model
             ->orderBy('detail_penagihan_piutang.no_tagihan', 'asc');
     }
 
+    public function scopeAccountReceivableByNoRawat(Builder $query, string $noTagihan, string $kodePJ, string $noRawat): Builder
+    {
+        if (empty($noTagihan) || empty($kodePJ) || empty($noRawat)) {
+            return $query;
+        }
+
+        $sqlSelect = <<<'SQL'
+            penagihan_piutang.no_tagihan,
+            detail_penagihan_piutang.no_rawat,
+            piutang_pasien.no_rkm_medis,
+            penagihan_piutang.tanggal,
+            penagihan_piutang.tanggaltempo,
+            penagihan_piutang.kd_pj,
+            penagihan_piutang.nip,
+            penagihan_piutang.nip_menyetujui,
+            detail_piutang_pasien.nama_bayar,
+            akun_piutang.kd_rek,
+            round(detail_piutang_pasien.totalpiutang, 2) as total_piutang,
+            (select round(ifnull(sum(bayar_piutang.besar_cicilan + bayar_piutang.diskon_piutang + bayar_piutang.tidak_terbayar), 0), 2) from bayar_piutang where bayar_piutang.no_rawat = detail_penagihan_piutang.no_rawat and bayar_piutang.kd_rek_kontra = akun_piutang.kd_rek) as besar_cicilan,
+            detail_piutang_pasien.sisapiutang,
+            round(ifnull(detail_penagihan_piutang.diskon, 0), 2) as diskon_piutang,
+            0 as tidak_terbayar
+            SQL;
+
+        return $query
+            ->join('detail_penagihan_piutang', 'penagihan_piutang.no_tagihan', 'detail_penagihan_piutang.no_tagihan')
+            ->join('piutang_pasien', 'detail_penagihan_piutang.no_rawat', 'piutang_pasien.no_rawat')
+            ->join('detail_piutang_pasien', fn (JoinClause $join) => $join
+                ->on('detail_penagihan_piutang.no_rawat', 'detail_piutang_pasien.no_rawat')
+                ->on('penagihan_piutang.kd_pj', 'detail_piutang_pasien.kd_pj'))
+            ->join('akun_piutang', 'detail_piutang_pasien.nama_bayar', 'akun_piutang.nama_bayar')
+            ->where('penagihan_piutang.no_tagihan', $noTagihan)
+            ->where('penagihan_piutang.kd_pj', $kodePJ)
+            ->where('detail_penagihan_piutang.no_rawat', $noRawat)
+            ->where('detail_piutang_pasien.sisapiutang', '>', 0);
+    }
+
     public function scopeAccountReceivableDipilih(Builder $query, array $tagihanDipilih = []): Builder
     {
         if (empty($tagihanDipilih)) {
@@ -191,11 +228,11 @@ class PenagihanPiutang extends Model
         string $jenisPerawatan = 'semua'
     ): Builder {
         if (empty($tglAwal)) {
-            $tglAwal = now()->startOfMonth()->format('Y-m-d');
+            $tglAwal = now()->startOfMonth()->toDateString();
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMonth()->format('Y-m-d');
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'
@@ -208,7 +245,7 @@ class PenagihanPiutang extends Model
             round(sum(ifnull(detail_piutang_pasien.totalpiutang, detail_penagihan_piutang.sisapiutang)), 2) total_piutang,
             round(sum(ifnull(bayar_piutang.besar_cicilan, 0)), 2) total_cicilan,
             round(sum(ifnull(detail_piutang_pasien.totalpiutang, detail_penagihan_piutang.sisapiutang) - ifnull(bayar_piutang.besar_cicilan, 0) - ifnull(bayar_piutang.diskon_piutang, 0) - ifnull(bayar_piutang.tidak_terbayar, 0)), 2) sisa_piutang
-        SQL;
+            SQL;
 
         $sqlGroupBy = <<<'SQL'
             datediff(?, penagihan_piutang.tanggal) <= 30,

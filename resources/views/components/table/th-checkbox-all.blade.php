@@ -6,6 +6,7 @@
     'lookup' => null,
     'model' => null,
     'method' => null,
+    'uncheckWhen' => null,
 ])
 
 @push('js')
@@ -37,14 +38,14 @@
                 @endif
             })
 
-            $('#{{ $id }}').on('clear-selected', e => {
-
+            $(document).on('{{ $uncheckWhen }}', e => {
+                $('#{{ $id }}').prop('checked', false)
             })
         })
     </script>
 @endpush
 
 <x-table.th :attributes="$attributes">
-    <input id="{{ $id }}" type="checkbox" name="{{ $name }}">
+    <input id="{{ $id }}" type="checkbox" name="{{ $name }}" />
     <label for="{{ $id }}"></label>
 </x-table.th>

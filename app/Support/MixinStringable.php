@@ -10,13 +10,12 @@ class MixinStringable
     /**
      * replace all strings with provided value
      *
-     * @return Closure(string|string[], string): \Illuminate\Support\Stringable
+     * @return Closure(string|string[], string): Stringable
      */
     public function replaceWith(): Closure
     {
         /** @psalm-scope-this Illuminate\Support\Stringable */
         return function ($replace, string $with): Stringable {
-            /** @var Stringable $this */
             $value = $this->value();
 
             if (is_string($replace)) {
@@ -34,7 +33,7 @@ class MixinStringable
     /**
      * Wrap the underlying string with given values
      *
-     * @return Closure(string, ?string): \Illuminate\Support\Stringable
+     * @return Closure(string, ?string): Stringable
      */
     public function wrap(): Closure
     {

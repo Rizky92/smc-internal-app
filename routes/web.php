@@ -6,9 +6,15 @@ use App\Http\Controllers\Auth\LogoutOtherSessionsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PrintLayoutController;
+use App\Livewire\Antrean;
+use App\Livewire\AntreanPintu;
 use App\Livewire\Pages\Admin;
+use App\Livewire\Pages\Admission;
+use App\Livewire\Pages\Antrean\AntreanPerPintu;
+use App\Livewire\Pages\Antrean\AntreanPoli;
 use App\Livewire\Pages\Antrian;
 use App\Livewire\Pages\Aplikasi;
+use App\Livewire\Pages\Casemix;
 use App\Livewire\Pages\Farmasi;
 use App\Livewire\Pages\HakAkses;
 use App\Livewire\Pages\Informasi;
@@ -35,15 +41,17 @@ use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 
 Route::get('/', HomeController::class);
 
-Route::get('/antrean', App\Livewire\Antrean::class)->name('antrean');
-Route::get('/antrean-pintu', App\Livewire\AntreanPintu::class)->name('antrean-pintu');
-Route::get('/antrean/{kd_poli}', App\Livewire\Pages\Antrean\AntreanPoli::class)->name('antrean-poli');
-Route::get('/antrean-per-pintu/{kd_pintu}', App\Livewire\Pages\Antrean\AntreanPerPintu::class)->name('antrean-per-pintu');
+Route::get('/antrean', Antrean::class)->name('antrean');
+Route::get('/antrean-farmasi', Informasi\AntreanFarmasi::class)->name('antrean-farmasi');
+Route::get('/antrean-pintu', AntreanPintu::class)->name('antrean-pintu');
+Route::get('/antrean/{kd_poli}', AntreanPoli::class)->name('antrean-poli');
+Route::get('/antrean-per-pintu/{kd_pintu}', AntreanPerPintu::class)->name('antrean-per-pintu');
 Route::get('/display-jadwal-dokter', Informasi\DisplayJadwalDokter::class);
+Route::get('/dashboard-dokter', Informasi\DashboardDokter::class)->name('dashboard-dokter');
 
 Route::get('/print-layout', [PrintLayoutController::class, 'index']);
 
-Route::get('/informasi-kamar', Informasi\InformasiKamar::class);
+Route::get('/informasi-kamar', Informasi\InformasiKamar::class)->name('informasi-kamar');
 
 Route::get('/jadwal-dokter', Informasi\JadwalDokter::class);
 
@@ -197,18 +205,42 @@ Route::prefix('admin')
                 Route::get('posting-jurnal', Keuangan\JurnalPosting::class)
                     ->name('posting-jurnal')
                     ->middleware('can:keuangan.posting-jurnal.read');
-                
+
                 Route::get('cetak-posting-jurnal', Keuangan\Cetak\HasilPostingJurnal::class)
                     ->name('cetak-posting-jurnal')
                     ->middleware('can:keuangan.posting-jurnal.read');
 
-                Route::get('laporan-faktur-pajak', Keuangan\LaporanFakturPajak::class)
-                    ->name('laporan-faktur-pajak')
+                Route::get('laporan-faktur-pajak-bpjs', Keuangan\LaporanFakturPajakBPJS::class)
+                    ->name('laporan-faktur-pajak-bpjs')
+                    ->middleware('can:keuangan.laporan-faktur-pajak.read');
+
+                Route::get('laporan-faktur-pajak-asper', Keuangan\LaporanFakturPajakAsuransiPerusahaan::class)
+                    ->name('laporan-faktur-pajak-asper')
+                    ->middleware('can:keuangan.laporan-faktur-pajak.read');
+
+                Route::get('laporan-faktur-pajak-umum', Keuangan\LaporanFakturPajakUmum::class)
+                    ->name('laporan-faktur-pajak-umum')
                     ->middleware('can:keuangan.laporan-faktur-pajak.read');
 
                 Route::get('igd-ke-rawat-inap', Keuangan\IGDKeRawatInap::class)
                     ->name('igd-ke-rawat-inap')
                     ->middleware('can:keuangan.igd-ke-rawat-inap.read');
+
+                Route::get('obat-ralan-ke-ranap', Keuangan\ObatRalanKeRanap::class)
+                    ->name('obat-ralan-ke-ranap')
+                    ->middleware('can:keuangan.obat-ralan-ke-ranap.read');
+
+                Route::get('sirkulasi-non-medis', Keuangan\SirkulasiNonMedis::class)
+                    ->name('sirkulasi-non-medis')
+                    ->middleware('can:keuangan.sirkulasi-non-medis.read');
+
+                Route::get('tarif-ralan', Keuangan\TarifRalan::class)
+                    ->name('tarif-ralan')
+                    ->middleware('can:keuangan.tarif-ralan.read');
+
+                Route::get('tarif-ranap', Keuangan\TarifRanap::class)
+                    ->name('tarif-ranap')
+                    ->middleware('can:keuangan.tarif-ranap.read');
             });
 
         Route::prefix('farmasi')
@@ -273,6 +305,10 @@ Route::prefix('admin')
                 Route::get('rincian-kunjungan-ralan', Farmasi\RincianKunjunganRalan::class)
                     ->name('rincian-kunjungan-ralan')
                     ->middleware('can:farmasi.rincian-kunjungan-ralan.read');
+
+                Route::get('kunjungan-walk-in', Farmasi\KunjunganWalkIn::class)
+                    ->name('kunjungan-walk-in')
+                    ->middleware('can:farmasi.kunjungan-walk-in.read');
             });
 
         Route::prefix('rekam-medis')
@@ -297,10 +333,14 @@ Route::prefix('admin')
 
         Route::prefix('antrean')
             ->as('antrean.')
-            ->group(function() {
+            ->group(function () {
                 Route::get('manajemen-pintu', Aplikasi\ManajemenPintu::class)
                     ->name('manajemen-pintu')
                     ->middleware('can:antrean.manajemen-pintu.read');
+
+                Route::get('antrean-onsite', Admission\AntreanOnsite::class)
+                    ->name('antrean-onsite')
+                    ->middleware('can:antrean.antrean-onsite.read');
             });
 
         Route::prefix('informasi')
@@ -324,6 +364,20 @@ Route::prefix('admin')
                 Route::get('stok-darurat', Logistik\StokDaruratLogistik::class)
                     ->name('stok-darurat')
                     ->middleware('can:logistik.stok-darurat.read');
+            });
+
+        Route::prefix('casemix')
+            ->as('casemix.')
+            ->group(function () {
+                Route::get('laporan-pasien-batal', Casemix\LaporanPasienBatal::class)
+                    ->name('laporan-pasien-batal')
+                    ->middleware('can:casemix.laporan-pasien-batal.read');
+                Route::get('laporan-pasien-cob', Casemix\LaporanPasienCob::class)
+                    ->name('laporan-pasien-cob')
+                    ->middleware('can:casemix.laporan-pasien-cob.read');
+                Route::get('laporan-triase-igd-zona-hijau', Casemix\LaporanTriaseIgdZonaHijau::class)
+                    ->name('laporan-triase-igd-zona-hijau')
+                    ->middleware('can:casemix.laporan-triase-igd-zona-hijau.read');
             });
 
         Route::middleware('role:'.config('permission.superadmin_name'))

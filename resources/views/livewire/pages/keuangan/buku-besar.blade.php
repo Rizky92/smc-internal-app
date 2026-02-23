@@ -5,7 +5,13 @@
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.range-date />
-                <x-filter.button-export-excel class="ml-auto" />
+                <x-dropdown class="ml-auto" livewire split menu-position="right">
+                    <x-slot name="button" size="sm" variant="dark" outline title="Export Ke Excel" icon="fas fa-file-excel" wire:click.prevent="exportToExcel"></x-slot>
+                    <x-slot name="menu">
+                        <x-dropdown.item as="button" id="button-export-excel" title="Export Excel" wire:click.prevent="exportWithOption(1)" />
+                        <x-dropdown.item as="button" id="button-export-background" title="Export Background" wire:click.prevent="exportWithOption(2)" />
+                    </x-slot>
+                </x-dropdown>
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
@@ -35,23 +41,39 @@
                 <x-slot name="body">
                     @forelse ($this->bukuBesar as $jurnal)
                         <x-table.tr>
-                            <x-table.td>{{ $jurnal->tgl_jurnal }}</x-table.td>
-                            <x-table.td>{{ $jurnal->jam_jurnal }}</x-table.td>
-                            <x-table.td>{{ $jurnal->no_jurnal }}</x-table.td>
-                            <x-table.td>{{ $jurnal->no_bukti }}</x-table.td>
-                            <x-table.td>{{ $jurnal->keterangan }}</x-table.td>
-                            <x-table.td>{{ optional($jurnal->pengeluaranHarian)->keterangan ?? "-" }}</x-table.td>
                             <x-table.td>
-                                @if($jurnal->piutangDilunaskan && $jurnal->piutangDilunaskan->tagihan)
+                                {{ $jurnal->tgl_jurnal }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $jurnal->jam_jurnal }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $jurnal->no_jurnal }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $jurnal->no_bukti }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ $jurnal->keterangan }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ optional($jurnal->pengeluaranHarian)->keterangan ?? '-' }}
+                            </x-table.td>
+                            <x-table.td>
+                                @if ($jurnal->piutangDilunaskan && $jurnal->piutangDilunaskan->tagihan)
                                     {{ $jurnal->piutangDilunaskan->tagihan->catatan }}
                                 @else
                                     -
                                 @endif
-                            </x-table.td>                            
+                            </x-table.td>
                             <x-table.td>{{ $jurnal->kd_rek }}</x-table.td>
                             <x-table.td>{{ $jurnal->nm_rek }}</x-table.td>
-                            <x-table.td>{{ rp($jurnal->debet) }}</x-table.td>
-                            <x-table.td>{{ rp($jurnal->kredit) }}</x-table.td>
+                            <x-table.td>
+                                {{ rp($jurnal->debet) }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ rp($jurnal->kredit) }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="12" padding />

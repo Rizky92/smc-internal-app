@@ -25,7 +25,9 @@
                         <x-table.tr>
                             <x-table.td>{{ $obat->no_resep }}</x-table.td>
                             <x-table.td>{{ $obat->no_rawat }}</x-table.td>
-                            <x-table.td>{{ $obat->tgl_perawatan }}</x-table.td>
+                            <x-table.td>
+                                {{ $obat->tgl_perawatan }}
+                            </x-table.td>
                             <x-table.td>{{ $obat->jam }}</x-table.td>
                             <x-table.td>{{ $obat->nama_brng }}</x-table.td>
                             <x-table.td>{{ $obat->nama }}</x-table.td>
@@ -34,7 +36,9 @@
                             <x-table.td-money :value="$obat->total" />
                             <x-table.td>{{ $obat->nm_dokter }}</x-table.td>
                             <x-table.td>{{ $obat->dpjp }}</x-table.td>
-                            <x-table.td>{{ str($obat->status)->title() }}</x-table.td>
+                            <x-table.td>
+                                {{ str($obat->status)->title() }}
+                            </x-table.td>
                             <x-table.td>{{ $obat->nm_poli }}</x-table.td>
                             <x-table.td>{{ $obat->png_jawab }}</x-table.td>
                         </x-table.tr>

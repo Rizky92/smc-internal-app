@@ -37,7 +37,9 @@
                 <x-slot name="body">
                     @forelse ($this->bidangUnit as $item)
                         <x-table.tr>
-                            <x-table.td clickable data-bidang-id="{{ $item->id }}" data-parent-id="{{ $item->parent_id ?? -1 }}" data-name="{{ $item->nama }}">{{ $item->nama }}</x-table.td>
+                            <x-table.td clickable data-bidang-id="{{ $item->id }}" data-parent-id="{{ $item->parent_id ?? -1 }}" data-name="{{ $item->nama }}">
+                                {{ $item->nama }}
+                            </x-table.td>
                         </x-table.tr>
                         @foreach ($item->descendants ?? [] as $descendant)
                             <x-table.tr>
@@ -45,6 +47,7 @@
                                     @for ($i = 0; $i < $descendant->depth; $i++)
                                         &nbsp;&nbsp;&nbsp;&nbsp;
                                     @endfor
+
                                     {{ $descendant->nama }}
                                 </x-table.td>
                             </x-table.tr>

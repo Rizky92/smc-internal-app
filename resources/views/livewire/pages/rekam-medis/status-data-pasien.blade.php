@@ -48,10 +48,14 @@
                     @forelse ($this->dataStatusRekamMedisPasien as $item)
                         <x-table.tr>
                             <x-table.td>{{ $item->no_rawat }}</x-table.td>
-                            <x-table.td>{{ $item->tgl_registrasi }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->tgl_registrasi }}
+                            </x-table.td>
                             <x-table.td>{{ $item->stts }}</x-table.td>
                             <x-table.td>{{ $item->nm_dokter }}</x-table.td>
-                            <x-table.td>{{ $item->no_rkm_medis }}</x-table.td>
+                            <x-table.td>
+                                {{ $item->no_rkm_medis }}
+                            </x-table.td>
                             <x-table.td>{{ $item->nm_pasien }}</x-table.td>
                             <x-table.td>{{ $item->nm_poli }}</x-table.td>
                             <x-table.td>{{ $item->status_lanjut }}</x-table.td>
@@ -67,8 +71,12 @@
                             <x-table.td>{{ (bool) $item->asmed_igd ? 'Ada' : 'Tidak Ada' }}</x-table.td>
                             <x-table.td>{{ $item->asmed_poli }}</x-table.td>
                             <x-table.td>{{ $item->asmed_rwi }}</x-table.td>
-                            <x-table.td>{{ (bool) $item->icd_10 ? 'Ada' : 'Tidak Ada' }}</x-table.td>
-                            <x-table.td>{{ (bool) $item->icd_9 ? 'Ada' : 'Tidak Ada' }}</x-table.td>
+                            <x-table.td>
+                                {{ (bool) $item->icd_10 ? 'Ada' : 'Tidak Ada' }}
+                            </x-table.td>
+                            <x-table.td>
+                                {{ (bool) $item->icd_9 ? 'Ada' : 'Tidak Ada' }}
+                            </x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="22" padding />
