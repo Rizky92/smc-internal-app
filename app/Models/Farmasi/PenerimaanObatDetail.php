@@ -26,6 +26,7 @@ class PenerimaanObatDetail extends Model
         $hpp = "round(($setelahDiskon * 1.11), 2)";
 
         $this->addSearchConditions([
+            'x.no_faktur',
             'x.kode_brng',
             'x.nama_brng',
             'x.nm_bangsal',
@@ -34,6 +35,8 @@ class PenerimaanObatDetail extends Model
         return $query->fromSub(function ($sub) use ($hargaKecil, $hpp, $kodeBangsal) {
 
             $sub->selectRaw("
+                    detailpesan.no_faktur,
+                    pemesanan.tgl_pesan,
                     bangsal.nm_bangsal,
                     detailpesan.kode_brng,
                     databarang.nama_brng,

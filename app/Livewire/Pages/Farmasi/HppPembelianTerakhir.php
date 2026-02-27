@@ -75,6 +75,8 @@ class HppPembelianTerakhir extends Component
                 ->sortWithColumns($this->sortColumns)
                 ->cursor()
                 ->map(fn (PenerimaanObatDetail $model): array => [
+                    'no_faktur'         => $model->no_faktur,
+                    'tgl_pesan'         => $model->tgl_pesan,
                     'nm_bangsal'        => $model->nm_bangsal,
                     'kode_brng'         => $model->kode_brng,
                     'nama_brng'         => $model->nama_brng,
@@ -95,6 +97,8 @@ class HppPembelianTerakhir extends Component
     protected function columnHeaders(): array
     {
         return [
+            'No Faktur',
+            'Tanggal',
             'Ruangan',
             'Kode',
             'Nama',

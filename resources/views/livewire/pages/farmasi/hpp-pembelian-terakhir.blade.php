@@ -17,6 +17,8 @@
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
+                    <x-table.th name="no_faktur" title="No Faktur" />
+                    <x-table.th name="tgl_pesan" title="Tanggal" />
                     <x-table.th name="nm_bangsal" title="Ruangan" />
                     <x-table.th name="kode_brng" title="Kode" />
                     <x-table.th name="nama_brng" title="Nama" />
@@ -34,6 +36,8 @@
                 <x-slot name="body">
                     @forelse ($this->collection as $item)
                         <x-table.tr>
+                            <x-table.td>{{ $item->no_faktur }}</x-table.td>
+                            <x-table.td>{{ $item->tgl_pesan }}</x-table.td>
                             <x-table.td>{{ $item->nm_bangsal }}</x-table.td>
                             <x-table.td>{{ $item->kode_brng }}</x-table.td>
                             <x-table.td>{{ $item->nama_brng }}</x-table.td>
@@ -49,7 +53,7 @@
                             <x-table.td>{{ rp($item->total_nilai_stok) }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="13" padding />
+                        <x-table.tr-empty colspan="15" padding />
                     @endforelse
                 </x-slot>
             </x-table>
