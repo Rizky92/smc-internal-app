@@ -49,9 +49,6 @@ class LabaRugiRekeningPerPeriode extends Component
         $this->defaultValues();
     }
 
-    /**
-     * Rekap per rekening – dipakai untuk tampilan tabel (sama seperti sebelumnya).
-     */
     public function getLabaRugiPerRekeningProperty(): Collection
     {
         if ($this->isDeferred) {

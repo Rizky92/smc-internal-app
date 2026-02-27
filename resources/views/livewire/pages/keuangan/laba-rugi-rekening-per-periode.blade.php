@@ -1,11 +1,11 @@
-<div wire:init="loadProperties">
+<div>
     <x-flash />
 
     <x-card use-loading>
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.range-date />
-                <x-filter.button-refresh class="ml-3" />
+                <x-filter.button-refresh class="ml-3" method="loadProperties" />
                 <x-filter.select2 class="ml-3" name="Kode Penjamin" livewire show-key :options="$this->penjamin" placeholder="SEMUA" />
                 <x-filter.button-export-excel class="ml-auto" />
             </x-row-col-flex>
