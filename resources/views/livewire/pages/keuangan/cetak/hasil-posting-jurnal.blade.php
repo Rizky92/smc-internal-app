@@ -240,8 +240,8 @@
             <br />
             <br />
             <br />
-            <div>dr. ISMET ALIMIN, MM, MARS</div>
-            <div>DIREKTUR</div>
+            <div>dr. ELSA INDAH SURYANI</div>
+            <div>PLT DIREKTUR</div>
         </div>
     </div>
     @push('js')
