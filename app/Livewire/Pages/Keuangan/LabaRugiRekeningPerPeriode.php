@@ -9,6 +9,7 @@ use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Keuangan\Jurnal\Jurnal;
+use App\Models\Keuangan\Rekening;
 use App\Models\RekamMedis\Penjamin;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Collection;
@@ -48,7 +49,52 @@ class LabaRugiRekeningPerPeriode extends Component
         $this->defaultValues();
     }
 
+    /**
+     * Rekap per rekening – dipakai untuk tampilan tabel (sama seperti sebelumnya).
+     */
     public function getLabaRugiPerRekeningProperty(): Collection
+    {
+        if ($this->isDeferred) {
+            return collect(['D' => [], 'K' => []]);
+        }
+
+        $semuaRekening = Rekening::semuaRekening()
+            ->whereTipe('R')
+            ->get();
+
+        $debetKredit = Rekening::query()
+            ->hitungDebetKreditPerPeriode($this->tglAwal, $this->tglAkhir, $this->kodePenjamin)
+            ->get();
+
+        return $semuaRekening
+            ->merge($debetKredit)
+            ->map(function (Rekening $rekening): Fluent {
+                $total = 0;
+
+                $debet = $rekening->debet ?? 0;
+                $kredit = $rekening->kredit ?? 0;
+
+                if ($rekening->balance === 'K') {
+                    $total = $kredit - $debet;
+                }
+
+                if ($rekening->balance === 'D') {
+                    $total = $debet - $kredit;
+                }
+
+                return new Fluent(array_merge(
+                    $rekening->only('kd_rek', 'nm_rek', 'balance'),
+                    [
+                        'debet'  => floatval($debet),
+                        'kredit' => floatval($kredit),
+                        'total'  => floatval($total),
+                    ],
+                ));
+            })
+            ->mapToGroups(fn ($item): array => [$item->balance => $item]);
+    }
+
+    public function getDetailPerRekeningProperty(): Collection
     {
         if ($this->isDeferred) {
             return collect(['D' => collect(), 'K' => collect()]);
@@ -77,11 +123,34 @@ class LabaRugiRekeningPerPeriode extends Component
 
     public function getTotalLabaRugiPerRekeningProperty(): array
     {
-        $semua = $this->labaRugiPerRekening;
+        $pendapatan = collect($this->labaRugiPerRekening->get('K'));
+        $bebanDanBiaya = collect($this->labaRugiPerRekening->get('D'));
 
-        $pendapatan = $semua->get('K', collect());
+        $totalDebetPendapatan = $pendapatan->sum('debet');
+        $totalKreditPendapatan = $pendapatan->sum('kredit');
+        $totalPendapatan = $totalKreditPendapatan - $totalDebetPendapatan;
 
-        $bebanDanBiaya = $semua->get('D', collect());
+        $totalDebetBeban = $bebanDanBiaya->sum('debet');
+        $totalKreditBeban = $bebanDanBiaya->sum('kredit');
+        $totalBebanDanBiaya = $totalDebetBeban - $totalKreditBeban;
+
+        $labaRugi = $totalPendapatan - $totalBebanDanBiaya;
+
+        return compact(
+            'totalPendapatan',
+            'totalDebetPendapatan',
+            'totalKreditPendapatan',
+            'totalBebanDanBiaya',
+            'totalDebetBeban',
+            'totalKreditBeban',
+            'labaRugi'
+        );
+    }
+
+    public function getTotalLabaRugiPerDetailProperty(): array
+    {
+        $pendapatan = collect($this->detailPerRekening->get('K'));
+        $bebanDanBiaya = collect($this->detailPerRekening->get('D'));
 
         $totalDebetPendapatan = $pendapatan->sum('debet');
         $totalKreditPendapatan = $pendapatan->sum('kredit');
@@ -128,10 +197,10 @@ class LabaRugiRekeningPerPeriode extends Component
         $bebanRowHeader = $this->insertExcelRow('', 'BEBAN & BIAYA');
         $empty = $this->insertExcelRow();
 
-        $pendapatan = $this->labaRugiPerRekening->get('K', collect());
-        $beban = $this->labaRugiPerRekening->get('D', collect());
+        $pendapatan = $this->detailPerRekening->get('K', collect());
+        $beban = $this->detailPerRekening->get('D', collect());
 
-        $total = $this->totalLabaRugiPerRekening;
+        $total = $this->totalLabaRugiPerDetail;
 
         $totalPendapatanRow = $this->insertExcelRow('', 'TOTAL', '', '', '', $total['totalDebetPendapatan'], $total['totalKreditPendapatan'], $total['totalPendapatan']);
         $totalBebanRow = $this->insertExcelRow('', 'TOTAL', '', '', '', $total['totalDebetBeban'], $total['totalKreditBeban'], $total['totalBebanDanBiaya']);
