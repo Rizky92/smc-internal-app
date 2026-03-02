@@ -272,6 +272,11 @@ Breadcrumbs::for('admin.farmasi.kunjungan-walk-in', function (Trail $trail): voi
     $trail->push('Kunjungan Walk In', route('admin.farmasi.kunjungan-walk-in'));
 });
 
+Breadcrumbs::for('admin.farmasi.hpp-pembelian-terakhir', function (Trail $trail): void {
+    $trail->parent('admin.farmasi');
+    $trail->push('HPP Pembelian Terakhir', route('admin.farmasi.hpp-pembelian-terakhir'));
+});
+
 Breadcrumbs::for('admin.rekam-medis', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Rekam Medis');

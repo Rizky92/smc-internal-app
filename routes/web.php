@@ -309,6 +309,10 @@ Route::prefix('admin')
                 Route::get('kunjungan-walk-in', Farmasi\KunjunganWalkIn::class)
                     ->name('kunjungan-walk-in')
                     ->middleware('can:farmasi.kunjungan-walk-in.read');
+
+                Route::get('hpp-pembelian-terakhir', Farmasi\HppPembelianTerakhir::class)
+                    ->name('hpp-pembelian-terakhir')
+                    ->middleware('can:farmasi.hpp-pembelian-terakhir.read');
             });
 
         Route::prefix('rekam-medis')
