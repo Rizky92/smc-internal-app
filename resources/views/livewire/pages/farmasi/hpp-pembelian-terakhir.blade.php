@@ -36,8 +36,8 @@
                 <x-slot name="body">
                     @forelse ($this->collection as $item)
                         <x-table.tr>
-                            <x-table.td>{{ $item->no_faktur }}</x-table.td>
-                            <x-table.td>{{ $item->tgl_pesan }}</x-table.td>
+                            <x-table.td>{{ $item->no_faktur ?? '-' }}</x-table.td>
+                            <x-table.td>{{ $item->tgl_pesan ?? '-' }}</x-table.td>
                             <x-table.td>{{ $item->nm_bangsal }}</x-table.td>
                             <x-table.td>{{ $item->kode_brng }}</x-table.td>
                             <x-table.td>{{ $item->nama_brng }}</x-table.td>
