@@ -9,7 +9,6 @@ use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Farmasi\Inventaris\GudangObat;
-use App\Models\Farmasi\PenerimaanObatDetail;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
@@ -41,7 +40,7 @@ class HppPembelianTerakhir extends Component
 
     public function getCollectionProperty()
     {
-        return $this->isDeferred ? [] : PenerimaanObatDetail::query()
+        return $this->isDeferred ? [] : GudangObat::query()
             ->hppPembelianTerakhir($this->kodeBangsal)
             ->sortWithColumns($this->sortColumns)
             ->search($this->cari)
@@ -69,14 +68,14 @@ class HppPembelianTerakhir extends Component
     protected function dataPerSheet(): array
     {
         return [
-            fn () => PenerimaanObatDetail::query()
+            fn () => GudangObat::query()
                 ->hppPembelianTerakhir($this->kodeBangsal)
                 ->search($this->cari)
                 ->sortWithColumns($this->sortColumns)
                 ->cursor()
-                ->map(fn (PenerimaanObatDetail $model): array => [
-                    'no_faktur'         => $model->no_faktur,
-                    'tgl_pesan'         => $model->tgl_pesan,
+                ->map(fn (GudangObat $model): array => [
+                    'no_faktur'         => $model->no_faktur ?? '-',
+                    'tgl_pesan'         => $model->tgl_pesan ?? '-',
                     'nm_bangsal'        => $model->nm_bangsal,
                     'kode_brng'         => $model->kode_brng,
                     'nama_brng'         => $model->nama_brng,
@@ -84,7 +83,7 @@ class HppPembelianTerakhir extends Component
                     'isi'               => $model->isi,
                     'kode_sat'          => $model->kode_sat,
                     'kapasitas'         => $model->kapasitas,
-                    'stok'              => round(floatval($model->stok), 2),
+                    'stok'              => $model->stok,
                     'h_pesan'           => $model->h_pesan,
                     'dis'               => $model->dis,
                     'harga_satuan'      => $model->harga_satuan,
