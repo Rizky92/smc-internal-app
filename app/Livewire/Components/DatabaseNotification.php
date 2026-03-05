@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Components;
 
+use App\Models\ExportSession;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -24,7 +25,12 @@ class DatabaseNotification extends Component
 
     public function render(): View
     {
-        return view('livewire.components.database-notification');
+        return view('livewire.components.database-notification', [
+            'activeExportSessions' => ExportSession::where('user_id', auth()->user()->nik)
+                ->whereNotIn('status', ['done', 'failed'])
+                ->latest()
+                ->get(),
+        ]);
     }
 
     public function getNotificationsProperty()

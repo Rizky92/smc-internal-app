@@ -211,14 +211,14 @@ class BukuBesar extends Component
 
         $exportSessionId = Str::uuid()->toString();
 
-        ExportToExcel::dispatch(
-            userId: $userId,
-            exportSessionId: $exportSessionId,
-            tglAwal: $this->tglAwal,
-            tglAkhir: $this->tglAkhir,
-            kodeRekening: $this->kodeRekening,
-            columnHeaders: $this->backgroundExportColumnHeaders(),
-        )->onQueue('exports');
+        ExportToExcel::dispatch([
+            'userId'          => $userId,
+            'exportSessionId' => $exportSessionId,
+            'tglAwal'         => $this->tglAwal,
+            'tglAkhir'        => $this->tglAkhir,
+            'kodeRekening'    => $this->kodeRekening,
+            'columnHeaders'   => $this->backgroundExportColumnHeaders(),
+        ])->onQueue('exports');
 
         $this->emit('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
     }

@@ -2,18 +2,16 @@
 
 namespace App\Jobs;
 
-use App\Models\Aplikasi\User;
-use App\Models\Export;
-use App\Notifications\ExportReadyNotification;
+use App\Services\Export\ExportCleanupService;
+use App\Services\Export\ExportNotificationService;
+use App\Services\Export\ExportSessionService;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\File;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use League\Csv\Reader as CsvReader;
 use League\Csv\Statement;
@@ -27,10 +25,24 @@ class WriteExcel implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
+    public $timeout = 3600;
+
+    private string $userId;
+
+    private string $exportSessionId;
+
+    /**
+     * @param  array{
+     *      userId: string,
+     *      exportSessionId: string,
+     * }  $params
+     */
     public function __construct(
-        protected string $userId,
-        protected string $exportSessionId,
-    ) {}
+        array $params
+    ) {
+        $this->userId = $params['userId'];
+        $this->exportSessionId = $params['exportSessionId'];
+    }
 
     public function handle(): void
     {
@@ -77,11 +89,11 @@ class WriteExcel implements ShouldQueue
 
         unlink($temporaryFile);
 
-        Export::where('id_user', $this->userId)->where('export_session_id', $this->exportSessionId)->delete();
+        $this->resolveCleanupService()->cleanDatabase();
 
-        $user = User::findByNRP($this->userId);
+        $this->resolveSessionService()->markDone($this->getFileDirectory().'/'.$fileName);
 
-        Notification::send($user, new ExportReadyNotification($user, $this->getFileDirectory().'/'.$fileName));
+        $this->resolveNotificationService()->notifyReady($this->getFileDirectory().'/'.$fileName);
     }
 
     public function getFileDirectory(): string
@@ -89,8 +101,29 @@ class WriteExcel implements ShouldQueue
         return "exports/{$this->userId}/{$this->exportSessionId}";
     }
 
-    public function getFileDisk(): Filesystem|FilesystemAdapter
+    public function getFileDisk(): FilesystemAdapter
     {
         return Storage::disk('local');
+    }
+
+    public function failed(\Throwable $exception): void
+    {
+        $this->resolveCleanupService()->cleanDatabase();
+        $this->resolveNotificationService()->notifyFailed();
+    }
+
+    protected function resolveCleanupService(): ExportCleanupService
+    {
+        return new ExportCleanupService($this->userId, $this->exportSessionId);
+    }
+
+    protected function resolveNotificationService(): ExportNotificationService
+    {
+        return new ExportNotificationService($this->userId);
+    }
+
+    protected function resolveSessionService(): ExportSessionService
+    {
+        return new ExportSessionService($this->userId, $this->exportSessionId);
     }
 }

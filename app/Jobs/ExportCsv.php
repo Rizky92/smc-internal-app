@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Export;
+use App\Services\Export\ExportSessionService;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -20,12 +21,29 @@ class ExportCsv
     use Queueable;
     use SerializesModels;
 
-    public function __construct(
-        protected string $userId,
-        protected string $exportSessionId,
-        protected array $records,
-        protected int $page
-    ) {}
+    private string $userId;
+
+    private string $exportSessionId;
+
+    private array $records;
+
+    private int $page;
+
+    /**
+     * @param  array{
+     *      userId: string,
+     *      exportSessionId: string,
+     *      records: array,
+     *      page: int,
+     * }  $params
+     */
+    public function __construct(array $params)
+    {
+        $this->userId = $params['userId'];
+        $this->exportSessionId = $params['exportSessionId'];
+        $this->records = $params['records'];
+        $this->page = $params['page'];
+    }
 
     public function handle(): void
     {
@@ -52,5 +70,12 @@ class ExportCsv
 
         $filePath = "exports/{$this->userId}/{$this->exportSessionId}/".str_pad(strval($this->page), 16, '0', STR_PAD_LEFT).'.csv';
         Storage::disk('local')->put($filePath, $csv->toString());
+
+        $this->resolveSessionService()->incrementCompletedJobs();
+    }
+
+    protected function resolveSessionService(): ExportSessionService
+    {
+        return new ExportSessionService($this->userId, $this->exportSessionId);
     }
 }
