@@ -109,6 +109,7 @@ class Menu
                     'keuangan.sirkulasi-non-medis.read',
                     'keuangan.tarif-ralan.read',
                     'keuangan.tarif-ranap.read',
+                    'keuangan.tarif-radiologi.read',
                 ]),
                 'items' => [
                     [
@@ -302,6 +303,12 @@ class Menu
                         'icon'              => 'fas fa-file-invoice-dollar',
                         'url'               => route('admin.keuangan.tarif-ranap'),
                         'hasAnyPermissions' => $user->can('keuangan.tarif-ranap.read'),
+                    ],
+                    [
+                        'name'              => 'Tarif Radiologi',
+                        'icon'              => 'fas fa-file-invoice-dollar',
+                        'url'               => route('admin.keuangan.tarif-radiologi'),
+                        'hasAnyPermissions' => $user->can('keuangan.tarif-radiologi.read'),
                     ],
                 ],
             ],

@@ -241,6 +241,10 @@ Route::prefix('admin')
                 Route::get('tarif-ranap', Keuangan\TarifRanap::class)
                     ->name('tarif-ranap')
                     ->middleware('can:keuangan.tarif-ranap.read');
+
+                Route::get('tarif-radiologi', Keuangan\TarifRadiologi::class)
+                    ->name('tarif-radiologi')
+                    ->middleware('can:keuangan.tarif-radiologi.read');
             });
 
         Route::prefix('farmasi')
