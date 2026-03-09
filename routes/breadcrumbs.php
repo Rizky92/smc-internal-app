@@ -192,6 +192,11 @@ Breadcrumbs::for('admin.keuangan.tarif-radiologi', function (Trail $trail): void
     $trail->push('Tarif Radiologi', route('admin.keuangan.tarif-radiologi'));
 });
 
+Breadcrumbs::for('admin.keuangan.tarif-operasi', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('Tarif Operasi', route('admin.keuangan.tarif-operasi'));
+});
+
 Breadcrumbs::for('admin.farmasi', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Farmasi');
