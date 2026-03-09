@@ -64,35 +64,35 @@
                             <x-table.td>{{ $item->kode_paket }}</x-table.td>
                             <x-table.td>{{ $item->nm_perawatan }}</x-table.td>
                             <x-table.td>{{ $item->kategori }}</x-table.td>
-                            <x-table.td>{{ $item->operator1 }}</x-table.td>
-                            <x-table.td>{{ $item->operator2 }}</x-table.td>
-                            <x-table.td>{{ $item->operator3 }}</x-table.td>
-                            <x-table.td>{{ $item->asisten_operator1 }}</x-table.td>
-                            <x-table.td>{{ $item->asisten_operator2 }}</x-table.td>
-                            <x-table.td>{{ $item->asisten_operator3 }}</x-table.td>
-                            <x-table.td>{{ $item->instrumen }}</x-table.td>
-                            <x-table.td>{{ $item->dokter_anestesi }}</x-table.td>
-                            <x-table.td>{{ $item->asisten_anestesi }}</x-table.td>
-                            <x-table.td>{{ $item->asisten_anestesi2 }}</x-table.td>
-                            <x-table.td>{{ $item->dokter_anak }}</x-table.td>
-                            <x-table.td>{{ $item->perawaat_resusitas }}</x-table.td>
-                            <x-table.td>{{ $item->bidan }}</x-table.td>
-                            <x-table.td>{{ $item->bidan2 }}</x-table.td>
-                            <x-table.td>{{ $item->bidan3 }}</x-table.td>
-                            <x-table.td>{{ $item->perawat_luar }}</x-table.td>
-                            <x-table.td>{{ $item->alat }}</x-table.td>
-                            <x-table.td>{{ $item->sewa_ok }}</x-table.td>
-                            <x-table.td>{{ $item->akomodasi }}</x-table.td>
-                            <x-table.td>{{ $item->bagian_rs }}</x-table.td>
-                            <x-table.td>{{ $item->omloop }}</x-table.td>
-                            <x-table.td>{{ $item->omloop2 }}</x-table.td>
-                            <x-table.td>{{ $item->omloop3 }}</x-table.td>
-                            <x-table.td>{{ $item->omloop4 }}</x-table.td>
-                            <x-table.td>{{ $item->omloop5 }}</x-table.td>
-                            <x-table.td>{{ $item->sarpras }}</x-table.td>
-                            <x-table.td>{{ $item->dokter_pjanak }}</x-table.td>
-                            <x-table.td>{{ $item->dokter_umum }}</x-table.td>
-                            <x-table.td>{{ $item->jumlah }}</x-table.td>
+                            <x-table.td>{{ rp($item->operator1) }}</x-table.td>
+                            <x-table.td>{{ rp($item->operator2) }}</x-table.td>
+                            <x-table.td>{{ rp($item->operator3) }}</x-table.td>
+                            <x-table.td>{{ rp($item->asisten_operator1) }}</x-table.td>
+                            <x-table.td>{{ rp($item->asisten_operator2) }}</x-table.td>
+                            <x-table.td>{{ rp($item->asisten_operator3) }}</x-table.td>
+                            <x-table.td>{{ rp($item->instrumen) }}</x-table.td>
+                            <x-table.td>{{ rp($item->dokter_anestesi) }}</x-table.td>
+                            <x-table.td>{{ rp($item->asisten_anestesi) }}</x-table.td>
+                            <x-table.td>{{ rp($item->asisten_anestesi2) }}</x-table.td>
+                            <x-table.td>{{ rp($item->dokter_anak) }}</x-table.td>
+                            <x-table.td>{{ rp($item->perawaat_resusitas) }}</x-table.td>
+                            <x-table.td>{{ rp($item->bidan) }}</x-table.td>
+                            <x-table.td>{{ rp($item->bidan2) }}</x-table.td>
+                            <x-table.td>{{ rp($item->bidan3) }}</x-table.td>
+                            <x-table.td>{{ rp($item->perawat_luar) }}</x-table.td>
+                            <x-table.td>{{ rp($item->alat) }}</x-table.td>
+                            <x-table.td>{{ rp($item->sewa_ok) }}</x-table.td>
+                            <x-table.td>{{ rp($item->akomodasi) }}</x-table.td>
+                            <x-table.td>{{ rp($item->bagian_rs) }}</x-table.td>
+                            <x-table.td>{{ rp($item->omloop) }}</x-table.td>
+                            <x-table.td>{{ rp($item->omloop2) }}</x-table.td>
+                            <x-table.td>{{ rp($item->omloop3) }}</x-table.td>
+                            <x-table.td>{{ rp($item->omloop4) }}</x-table.td>
+                            <x-table.td>{{ rp($item->omloop5) }}</x-table.td>
+                            <x-table.td>{{ rp($item->sarpras) }}</x-table.td>
+                            <x-table.td>{{ rp($item->dokter_pjanak) }}</x-table.td>
+                            <x-table.td>{{ rp($item->dokter_umum) }}</x-table.td>
+                            <x-table.td>{{ rp($item->jumlah) }}</x-table.td>
                             <x-table.td>{{ $item->png_jawab }}</x-table.td>
                             <x-table.td>{{ $item->kelas }}</x-table.td>
                         </x-table.tr>
