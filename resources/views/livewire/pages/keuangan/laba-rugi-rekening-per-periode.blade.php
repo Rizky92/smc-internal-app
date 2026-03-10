@@ -7,7 +7,13 @@
                 <x-filter.range-date />
                 <x-filter.button-refresh class="ml-3" method="loadProperties" />
                 <x-filter.select2 class="ml-3" name="Kode Penjamin" livewire show-key :options="$this->penjamin" placeholder="SEMUA" />
-                <x-filter.button-export-excel class="ml-auto" />
+                <x-dropdown class="ml-auto" livewire split menu-position="right">
+                    <x-slot name="button" size="sm" variant="dark" outline title="Export Ke Excel" icon="fas fa-file-excel" wire:click.prevent="exportToExcel"></x-slot>
+                    <x-slot name="menu">
+                        <x-dropdown.item as="button" id="button-export-excel" title="Export Excel" wire:click.prevent="exportWithOption(1)" />
+                        <x-dropdown.item as="button" id="button-export-background" title="Export Background" wire:click.prevent="exportWithOption(2)" />
+                    </x-slot>
+                </x-dropdown>
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
