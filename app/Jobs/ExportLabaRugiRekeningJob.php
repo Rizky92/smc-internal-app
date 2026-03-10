@@ -29,7 +29,7 @@ class ExportLabaRugiRekeningJob extends ExcelExportJob
         $periodeAwal = carbon($tglAwal);
         $periodeAkhir = carbon($tglAkhir);
 
-        $periode = 'Periode ' . $periodeAwal->translatedFormat('d F Y') . ' s.d. ' . $periodeAkhir->translatedFormat('d F Y');
+        $periode = 'Periode '.$periodeAwal->translatedFormat('d F Y').' s.d. '.$periodeAkhir->translatedFormat('d F Y');
 
         if ($periodeAwal->isSameDay($periodeAkhir)) {
             $periode = $periodeAwal->translatedFormat('d F Y');
@@ -37,7 +37,7 @@ class ExportLabaRugiRekeningJob extends ExcelExportJob
 
         return [
             'RS Samarinda Medika Citra',
-            'Laporan Laba Rugi Keuangan penjamin ' . $penjamin,
+            'Laporan Laba Rugi Keuangan penjamin '.$penjamin,
             now()->translatedFormat('d F Y'),
             $periode,
         ];
@@ -71,19 +71,19 @@ class ExportLabaRugiRekeningJob extends ExcelExportJob
         $pendapatan = $detailPerRekening->get('K', collect());
         $beban = $detailPerRekening->get('D', collect());
 
-        $totalDebetPendapatan   = $pendapatan->sum('debet');
-        $totalKreditPendapatan  = $pendapatan->sum('kredit');
-        $totalPendapatan        = $totalKreditPendapatan - $totalDebetPendapatan;
-        $totalDebetBeban        = $beban->sum('debet');
-        $totalKreditBeban       = $beban->sum('kredit');
-        $totalBebanDanBiaya     = $totalDebetBeban - $totalKreditBeban;
-        $labaRugi               = $totalPendapatan - $totalBebanDanBiaya;
+        $totalDebetPendapatan = $pendapatan->sum('debet');
+        $totalKreditPendapatan = $pendapatan->sum('kredit');
+        $totalPendapatan = $totalKreditPendapatan - $totalDebetPendapatan;
+        $totalDebetBeban = $beban->sum('debet');
+        $totalKreditBeban = $beban->sum('kredit');
+        $totalBebanDanBiaya = $totalDebetBeban - $totalKreditBeban;
+        $labaRugi = $totalPendapatan - $totalBebanDanBiaya;
 
-        $insertRow = fn (...$args) => new Fluent([
-            'unit' => $args[0] ?? '', 'nm_dokter' => $args[1] ?? '',
-            'kd_rek' => $args[2] ?? '', 'nm_rek' => $args[3] ?? '',
+        $insertRow = fn (...$args): Fluent => new Fluent([
+            'unit'    => $args[0] ?? '', 'nm_dokter' => $args[1] ?? '',
+            'kd_rek'  => $args[2] ?? '', 'nm_rek' => $args[3] ?? '',
             'balance' => $args[4] ?? '', 'debet' => $args[5] ?? '',
-            'kredit' => $args[6] ?? '', 'total' => $args[7] ?? '',
+            'kredit'  => $args[6] ?? '', 'total' => $args[7] ?? '',
         ]);
 
         $empty = $insertRow();
@@ -94,7 +94,7 @@ class ExportLabaRugiRekeningJob extends ExcelExportJob
             ->merge([$insertRow('', 'BEBAN & BIAYA')])
             ->merge($beban)
             ->merge([$insertRow('', 'TOTAL BEBAN & BIAYA', '', '', '', $totalDebetBeban, $totalKreditBeban, $totalBebanDanBiaya), $empty])
-            ->merge([$insertRow('', 'PENDAPATAN BERSIH', '', '', '', $totalPendapatan, $totalBebanDanBiaya, $labaRugi)])
+            ->merge([$insertRow('', 'PENDAPATAN BERSIH', '', '', '', $totalPendapatan, $totalBebanDanBiaya, $labaRugi)]),
         ];
     }
 }

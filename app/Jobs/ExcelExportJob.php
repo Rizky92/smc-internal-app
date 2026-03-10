@@ -11,34 +11,41 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Storage;
 use Rizky92\Xlswriter\ExcelExport;
 
 abstract class ExcelExportJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     public int $timeout = 3600;
-    
+
     public int $tries = 1;
 
     protected int $userId;
-    
+
     protected array $payload;
 
-    public function __construct(int $userId, array $payload) {
+    public function __construct(int $userId, array $payload)
+    {
         $this->userId = $userId;
         $this->payload = $payload;
+        $this->onQueue('exports');
     }
 
     abstract protected function dataPerSheet(): array;
+
     abstract protected function columnHeaders(): array;
+
     abstract protected function pageHeaders(): array;
+
     abstract protected function filename(): string;
 
     public function handle(): void
     {
-        $filename = now()->format('Ymd_His') . '_' . str($this->filename())->snake() . '.xlsx';
+        $filename = now()->format('Ymd_His').'_'.str($this->filename())->snake().'.xlsx';
 
         $dataSheets = $this->dataPerSheet();
         $columnHeaders = $this->columnHeaders();
@@ -82,6 +89,6 @@ abstract class ExcelExportJob implements ShouldQueue
     public function failed(\Throwable $exception): void
     {
         $user = User::findByNRP($this->userId);
-        $user->notify(new ExportFailedNotification($user, null));
+        $user->notify(new ExportFailedNotification($user, null, 'error'));
     }
 }

@@ -6,20 +6,17 @@ use App\Models\Override\MultiConnectionDatabaseNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
-class ExportFailedNotification extends Notification
+class ExportStartedNotification extends Notification
 {
     use Queueable;
 
     private $user;
 
-    private $filePath;
-
     private $status;
 
-    public function __construct($user, $filePath, $status)
+    public function __construct($user, $status)
     {
         $this->user = $user;
-        $this->filePath = $filePath;
         $this->status = $status;
     }
 
@@ -43,15 +40,15 @@ class ExportFailedNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'message' => $this->ensureUtf8('Export failed'),
+            'message' => $this->ensureUtf8('Export started'),
             'user'    => $this->ensureUtf8($this->user->nama),
-            'file'    => $this->ensureUtf8($this->filePath) ?? null,
-            'status'  => $this->ensureUtf8($this->status) ?? 'error',
+            'file'    => null,
+            'status'  => $this->ensureUtf8($this->status),
         ];
     }
 
     /**
-     * @psalm-param 'Export failed' $value
+     * @psalm-param 'Export started' $value
      *
      * @return (mixed|string)[]|false|string
      *

@@ -59,6 +59,7 @@ class ExportReadyNotification extends Notification
             'message' => $this->ensureUtf8('Export data is ready for download'),
             'user'    => $this->ensureUtf8($this->user->nama),
             'file'    => $this->ensureUtf8($this->filePath),
+            'status'  => 'success',
         ];
     }
 

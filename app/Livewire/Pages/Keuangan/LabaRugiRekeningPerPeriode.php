@@ -9,9 +9,9 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
-use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\Rekening;
 use App\Models\RekamMedis\Penjamin;
+use App\Notifications\ExportStartedNotification;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Fluent;
@@ -98,63 +98,10 @@ class LabaRugiRekeningPerPeriode extends Component
             ->mapToGroups(fn ($item): array => [$item->balance => $item]);
     }
 
-    public function getDetailPerRekeningProperty(): Collection
-    {
-        if ($this->isDeferred) {
-            return collect(['D' => collect(), 'K' => collect()]);
-        }
-
-        $groups = Jurnal::query()->labaRugiRalan($this->tglAwal, $this->tglAkhir, $this->kodePenjamin)
-            ->unionAll(Jurnal::query()->labaRugiRanap($this->tglAwal, $this->tglAkhir, $this->kodePenjamin))
-            ->unionAll(Jurnal::query()->labaRugi($this->tglAwal, $this->tglAkhir, $this->kodePenjamin))
-            ->get()
-            ->map(fn ($item): Fluent => new Fluent([
-                'unit'         => $item->unit,
-                'nm_dokter'    => $item->nm_dokter ?: '-',
-                'kd_rek'       => $item->kd_rek,
-                'nm_rek'       => $item->nm_rek,
-                'balance'      => $item->balance,
-                'debet'        => floatval($item->debet),
-                'kredit'       => floatval($item->kredit),
-                'total'        => $item->balance === 'K'
-                    ? floatval($item->kredit - $item->debet)
-                    : floatval($item->debet - $item->kredit),
-            ]))
-            ->mapToGroups(fn ($item): array => [$item->balance => $item]);
-
-        return collect(['D' => collect(), 'K' => collect()])->merge($groups);
-    }
-
     public function getTotalLabaRugiPerRekeningProperty(): array
     {
         $pendapatan = collect($this->labaRugiPerRekening->get('K'));
         $bebanDanBiaya = collect($this->labaRugiPerRekening->get('D'));
-
-        $totalDebetPendapatan = $pendapatan->sum('debet');
-        $totalKreditPendapatan = $pendapatan->sum('kredit');
-        $totalPendapatan = $totalKreditPendapatan - $totalDebetPendapatan;
-
-        $totalDebetBeban = $bebanDanBiaya->sum('debet');
-        $totalKreditBeban = $bebanDanBiaya->sum('kredit');
-        $totalBebanDanBiaya = $totalDebetBeban - $totalKreditBeban;
-
-        $labaRugi = $totalPendapatan - $totalBebanDanBiaya;
-
-        return compact(
-            'totalPendapatan',
-            'totalDebetPendapatan',
-            'totalKreditPendapatan',
-            'totalBebanDanBiaya',
-            'totalDebetBeban',
-            'totalKreditBeban',
-            'labaRugi'
-        );
-    }
-
-    public function getTotalLabaRugiPerDetailProperty(): array
-    {
-        $pendapatan = collect($this->detailPerRekening->get('K'));
-        $bebanDanBiaya = collect($this->detailPerRekening->get('D'));
 
         $totalDebetPendapatan = $pendapatan->sum('debet');
         $totalKreditPendapatan = $pendapatan->sum('kredit');
@@ -212,15 +159,15 @@ class LabaRugiRekeningPerPeriode extends Component
         $bebanRowHeader = $this->insertExcelRow('', 'BEBAN & BIAYA');
         $empty = $this->insertExcelRow();
 
-        $pendapatan = $this->detailPerRekening->get('K', collect());
-        $beban = $this->detailPerRekening->get('D', collect());
+        $pendapatan = $this->labaRugiPerRekening->get('K');
+        $beban = $this->labaRugiPerRekening->get('D');
 
-        $total = $this->totalLabaRugiPerDetail;
+        $total = $this->totalLabaRugiPerRekening;
 
-        $totalPendapatanRow = $this->insertExcelRow('', 'TOTAL', '', '', '', $total['totalDebetPendapatan'], $total['totalKreditPendapatan'], $total['totalPendapatan']);
-        $totalBebanRow = $this->insertExcelRow('', 'TOTAL', '', '', '', $total['totalDebetBeban'], $total['totalKreditBeban'], $total['totalBebanDanBiaya']);
+        $totalPendapatanRow = $this->insertExcelRow('', 'TOTAL PENDAPATAN', '', $total['totalDebetPendapatan'], $total['totalKreditPendapatan'], $total['totalPendapatan']);
+        $totalBebanRow = $this->insertExcelRow('', 'TOTAL BEBAN & BIAYA', '', $total['totalDebetBeban'], $total['totalKreditBeban'], $total['totalBebanDanBiaya']);
 
-        $pendapatanBersih = $this->insertExcelRow('', 'PENDAPATAN BERSIH', '', '', '', $total['totalPendapatan'], $total['totalBebanDanBiaya'], $total['labaRugi']);
+        $pendapatanBersih = $this->insertExcelRow('', 'PENDAPATAN BERSIH', '', $total['totalPendapatan'], $total['totalBebanDanBiaya'], $total['labaRugi']);
 
         return collect([$pendapatanRowHeader])
             ->merge($pendapatan)
@@ -231,7 +178,7 @@ class LabaRugiRekeningPerPeriode extends Component
             ->merge([$pendapatanBersih]);
     }
 
-    private function insertExcelRow(string $unit = '', string $nm_dokter = '', string $kd_rek = '', string $nm_rek = '', string $balance = '', string $debet = '', string $kredit = '', string $total = ''): Fluent
+    private function insertExcelRow(string $kd_rek = '', string $nm_rek = '', string $balance = '', string $debet = '', string $kredit = '', string $total = ''): Fluent
     {
         return new Fluent(func_get_named_args($this, 'insertExcelRow', func_get_args()));
     }
@@ -288,8 +235,10 @@ class LabaRugiRekeningPerPeriode extends Component
         $userId = user()->nik;
 
         [$jobClass, $payload] = $this->exportJob();
-        
+
         $jobClass::dispatch($userId, $payload);
+
+        user()->notify(new ExportStartedNotification(user(), 'info'));
 
         $this->emit('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
     }
@@ -297,8 +246,8 @@ class LabaRugiRekeningPerPeriode extends Component
     protected function exportJob(): array
     {
         return [ExportLabaRugiRekeningJob::class, [
-            'tglAwal' => $this->tglAwal,
-            'tglAkhir' => $this->tglAkhir,
+            'tglAwal'      => $this->tglAwal,
+            'tglAkhir'     => $this->tglAkhir,
             'kodePenjamin' => $this->kodePenjamin,
         ]];
     }

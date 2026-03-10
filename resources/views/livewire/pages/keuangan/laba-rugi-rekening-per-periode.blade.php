@@ -11,7 +11,7 @@
                     <x-slot name="button" size="sm" variant="dark" outline title="Export Ke Excel" icon="fas fa-file-excel" wire:click.prevent="exportToExcel"></x-slot>
                     <x-slot name="menu">
                         <x-dropdown.item as="button" id="button-export-excel" title="Export Excel" wire:click.prevent="exportWithOption(1)" />
-                        <x-dropdown.item as="button" id="button-export-background" title="Export Background" wire:click.prevent="exportWithOption(2)" />
+                        <x-dropdown.item as="button" id="button-export-background" title="Export Detail (Background)" wire:click.prevent="exportWithOption(2)" />
                     </x-slot>
                 </x-dropdown>
             </x-row-col-flex>
