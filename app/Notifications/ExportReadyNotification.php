@@ -4,21 +4,30 @@ namespace App\Notifications;
 
 use App\Models\Override\MultiConnectionDatabaseNotification;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class ExportReadyNotification extends Notification
 {
     use Queueable;
 
-    private $user;
+    private ?string $filePath;
 
-    private $filePath;
+    private string $message;
 
-    public function __construct($user, $filePath)
+    private string $status;
+
+    /**
+     * @param  array{
+     *      filePath: string|null,
+     *      message: string,
+     *      status: string
+     *  }  $params
+     */
+    public function __construct(array $params)
     {
-        $this->user = $user;
-        $this->filePath = $filePath;
+        $this->filePath = $params['filePath'];
+        $this->message = $params['message'];
+        $this->status = $params['status'];
     }
 
     /**
@@ -29,22 +38,7 @@ class ExportReadyNotification extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail', 'database'];
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return MailMessage
-     */
-    public function toMail($notifiable)
-    {
-        return (new MailMessage)
-            ->subject('Export Completed')
-            ->line('Your export is complete. You can download the file using the link below.')
-            ->action('Download File', url($this->filePath))
-            ->line('Thank you for using our application!');
+        return ['database'];
     }
 
     /**
@@ -56,21 +50,25 @@ class ExportReadyNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'message' => $this->ensureUtf8('Export data is ready for download'),
-            'user'    => $this->ensureUtf8($this->user->nama),
+            'message' => $this->ensureUtf8($this->message),
             'file'    => $this->ensureUtf8($this->filePath),
+            'status'  => $this->ensureUtf8($this->status),
         ];
     }
 
     /**
      * @psalm-param 'Export data is ready for download' $value
      *
-     * @return (mixed|string)[]|false|string
+     * @return false|null|string
      *
      * @psalm-return array<mixed|string>|false|string
      */
-    private function ensureUtf8(string $value)
+    private function ensureUtf8(?string $value)
     {
+        if ($value === null) {
+            return null;
+        }
+
         return mb_convert_encoding($value, 'UTF-8', 'UTF-8');
     }
 

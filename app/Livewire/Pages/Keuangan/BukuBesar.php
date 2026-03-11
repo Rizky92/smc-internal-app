@@ -2,7 +2,8 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
-use App\Jobs\ExportToExcel;
+use App\Jobs\PrepareExport;
+use App\Jobs\WriteExcel;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
@@ -11,8 +12,11 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\Rekening;
+use App\Notifications\ExportReadyNotification;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -34,6 +38,8 @@ class BukuBesar extends Component
 
     /** @var string */
     public $tglAkhir;
+
+    public int $option;
 
     /** @var int */
     private const EXCEL_EXPORT = 1;
@@ -211,14 +217,38 @@ class BukuBesar extends Component
 
         $exportSessionId = Str::uuid()->toString();
 
-        ExportToExcel::dispatch(
-            userId: $userId,
-            exportSessionId: $exportSessionId,
-            tglAwal: $this->tglAwal,
-            tglAkhir: $this->tglAkhir,
-            kodeRekening: $this->kodeRekening,
-            columnHeaders: $this->backgroundExportColumnHeaders(),
-        )->onQueue('exports');
+        $exportName = 'buku-besar';
+
+        $chunkSize = 1000;
+
+        Bus::batch([
+            new PrepareExport([
+                'exportSessionId' => $exportSessionId,
+                'exportName'      => $exportName,
+                'userId'          => $userId,
+                'tglAwal'         => $this->tglAwal,
+                'tglAkhir'        => $this->tglAkhir,
+                'kodeRekening'    => $this->kodeRekening,
+                'columnHeaders'   => $this->backgroundExportColumnHeaders(),
+                'chunkSize'       => $chunkSize,
+            ]),
+        ])
+            ->then(function () use ($exportSessionId, $exportName, $userId) {
+                WriteExcel::dispatch([
+                    'exportSessionId' => $exportSessionId,
+                    'exportName'      => $exportName,
+                    'userId'          => $userId,
+                ])->onQueue('exports');
+            })
+            ->allowFailures()
+            ->onQueue('exports')
+            ->dispatch();
+
+        Notification::send(user(), new ExportReadyNotification([
+            'filePath' => null,
+            'message'  => 'Export sedang diproses',
+            'status'   => 'info',
+        ]));
 
         $this->emit('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
     }

@@ -6,7 +6,6 @@ use App\Models\Aplikasi\User;
 use App\Models\Export;
 use App\Notifications\ExportReadyNotification;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -27,16 +26,33 @@ class WriteExcel implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public function __construct(
-        protected string $userId,
-        protected string $exportSessionId,
-    ) {}
+    public $timeout = 3600;
+
+    private string $userId;
+
+    private string $exportSessionId;
+
+    private string $exportName;
+
+    /**
+     * @param  array{
+     *     userId: string,
+     *     exportSessionId: string,
+     *     exportName: string,
+     * }  $params
+     */
+    public function __construct(array $params)
+    {
+        $this->userId = $params['userId'];
+        $this->exportSessionId = $params['exportSessionId'];
+        $this->exportName = $params['exportName'];
+    }
 
     public function handle(): void
     {
         $disk = $this->getFileDisk();
 
-        $fileName = now()->format('Y-m-d_H-i-s')."_{$this->userId}_{$this->exportSessionId}.xlsx";
+        $fileName = now()->format('Y-m-d_H-i-s')."_{$this->userId}_{$this->exportSessionId}_{$this->exportName}.xlsx";
 
         $writer = app(Writer::class);
         $writer->openToFile($temporaryFile = tempnam(sys_get_temp_dir(), $fileName));
@@ -77,11 +93,17 @@ class WriteExcel implements ShouldQueue
 
         unlink($temporaryFile);
 
-        Export::where('id_user', $this->userId)->where('export_session_id', $this->exportSessionId)->delete();
+        Export::where('id_user', $this->userId)
+            ->where('export_session_id', $this->exportSessionId)
+            ->where('export_name', $this->exportName)->delete();
 
         $user = User::findByNRP($this->userId);
 
-        Notification::send($user, new ExportReadyNotification($user, $this->getFileDirectory().'/'.$fileName));
+        Notification::send($user, new ExportReadyNotification([
+            'filePath' => $this->getFileDirectory().'/'.$fileName,
+            'message'  => 'Export data is ready for download',
+            'status'   => 'success',
+        ]));
     }
 
     public function getFileDirectory(): string
@@ -89,8 +111,8 @@ class WriteExcel implements ShouldQueue
         return "exports/{$this->userId}/{$this->exportSessionId}";
     }
 
-    public function getFileDisk(): Filesystem|FilesystemAdapter
+    public function getFileDisk(): FilesystemAdapter
     {
-        return Storage::disk('local');
+        return Storage::disk('public');
     }
 }
