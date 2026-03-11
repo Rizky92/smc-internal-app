@@ -3,9 +3,6 @@
 namespace App\Jobs;
 
 use App\Models\Keuangan\Jurnal\Jurnal;
-use App\Services\Export\ExportCleanupService;
-use App\Services\Export\ExportNotificationService;
-use App\Services\Export\ExportSessionService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,40 +18,17 @@ class InsertToTemporary implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public $timeout = 3600;
-
-    private string $userId;
-
-    private string $exportSessionId;
-
-    private string $tglAwal;
-
-    private string $tglAkhir;
-
-    private string $kodeRekening;
-
-    /**
-     * @param  array{
-     *      userId: string,
-     *      exportSessionId: string,
-     *      tglAwal: string,
-     *      tglAkhir: string,
-     *      kodeRekening: string,
-     * }  $params
-     */
     public function __construct(
-        array $params
-    ) {
-        $this->userId = $params['userId'];
-        $this->exportSessionId = $params['exportSessionId'];
-        $this->tglAwal = $params['tglAwal'];
-        $this->tglAkhir = $params['tglAkhir'];
-        $this->kodeRekening = $params['kodeRekening'] ?? '';
-    }
+        protected string $userId,
+        protected string $exportSessionId,
+        protected string $tglAwal,
+        protected string $tglAkhir,
+        protected string $kodeRekening,
+    ) {}
 
     public function handle(): void
     {
-        $this->resolveSessionService()->markInserting();
+        DB::statement(DB::raw('SET @rownum = 0'));
 
         $query = Jurnal::on('mysql_sik')
             ->select(DB::raw("'$this->exportSessionId' as export_session_id"),
@@ -90,27 +64,5 @@ class InsertToTemporary implements ShouldQueue
             'column8',
             'column9',
         ], $query->toBase());
-    }
-
-    public function failed(\Throwable $exception): void
-    {
-        $this->resolveSessionService()->markFailed($exception->getMessage());
-        $this->resolveCleanupService()->cleanDatabase();
-        $this->resolveNotificationService()->notifyFailed();
-    }
-
-    protected function resolveCleanupService(): ExportCleanupService
-    {
-        return new ExportCleanupService($this->userId, $this->exportSessionId);
-    }
-
-    protected function resolveNotificationService(): ExportNotificationService
-    {
-        return new ExportNotificationService($this->userId);
-    }
-
-    protected function resolveSessionService(): ExportSessionService
-    {
-        return new ExportSessionService($this->userId, $this->exportSessionId);
     }
 }
