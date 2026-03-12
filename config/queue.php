@@ -39,7 +39,7 @@ return [
             'connection' => 'mysql_smc',
             'table' => 'jobs',
             'queue' => 'default',
-            'retry_after' => 3600,
+            'retry_after' => 4200,
         ],
 
         'beanstalkd' => [

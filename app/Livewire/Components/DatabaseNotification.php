@@ -59,6 +59,6 @@ class DatabaseNotification extends Component
 
     public function download(string $filePath): StreamedResponse
     {
-        return Storage::download("$filePath");
+        return Storage::disk('public')->download($filePath);
     }
 }

@@ -20,6 +20,10 @@ class ExportCsv
     use Queueable;
     use SerializesModels;
 
+    public $tries = 1;
+
+    public $timeout = 3600;
+
     private string $userId;
 
     private string $exportSessionId;
