@@ -3,8 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Aplikasi\User;
-use App\Notifications\ExportFailedNotification;
-use App\Notifications\ExportReadyNotification;
+use App\Notifications\Notification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -83,12 +82,21 @@ abstract class ExcelExportJob implements ShouldQueue
         $filePath = $excel->save();
 
         $user = User::findByNRP($this->userId);
-        $user->notify(new ExportReadyNotification($user, $filePath));
+
+        Notification::make()
+            ->message('Export Laba Rugi ready for download')
+            ->filePath($filePath)
+            ->success()
+            ->send($user);
     }
 
     public function failed(\Throwable $exception): void
     {
         $user = User::findByNRP($this->userId);
-        $user->notify(new ExportFailedNotification($user, null, 'error'));
+
+        Notification::make()
+            ->message('Export Laba Rugi Failed')
+            ->danger()
+            ->send($user);
     }
 }

@@ -11,7 +11,7 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Keuangan\Rekening;
 use App\Models\RekamMedis\Penjamin;
-use App\Notifications\ExportStartedNotification;
+use App\Notifications\Notification;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Fluent;
@@ -26,6 +26,9 @@ class LabaRugiRekeningPerPeriode extends Component
     use FlashComponent;
     use LiveTable;
     use MenuTracker;
+
+    /** @var int */
+    public $option;
 
     /** @var string */
     public $kodePenjamin;
@@ -238,7 +241,10 @@ class LabaRugiRekeningPerPeriode extends Component
 
         $jobClass::dispatch($userId, $payload);
 
-        user()->notify(new ExportStartedNotification(user(), 'info'));
+        Notification::make()
+            ->message('Export Laba Rugi sedang berjalan')
+            ->info()
+            ->send(user());
 
         $this->emit('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
     }
