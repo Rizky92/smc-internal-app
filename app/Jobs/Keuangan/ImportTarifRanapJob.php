@@ -7,14 +7,13 @@ use App\Models\Bangsal;
 use App\Models\Keuangan\JenisPerawatanRanap;
 use App\Models\Keuangan\KategoriPerawatan;
 use App\Models\RekamMedis\Penjamin;
-use App\Notifications\ImportTarifRanapNotification;
+use App\Notifications\Notification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\FilesystemNotFoundException;
 use RuntimeException;
@@ -169,20 +168,20 @@ class ImportTarifRanapJob implements ShouldQueue
                 tracker_end('mysql_sik', $this->userId);
             });
 
-            Notification::send($user,
-                new ImportTarifRanapNotification($user, 'Import tarif rawat inap berhasil', 'success')
-            );
+            Notification::make()
+                ->message('Import tarif rawat inap berhasil')
+                ->success()
+                ->send($user);
         } catch (RuntimeException $e) {
-            Notification::send($user,
-                new ImportTarifRanapNotification($user, $e->getMessage(), 'error')
-            );
+            Notification::make()->message($e->getMessage())->danger()->send($user);
 
             report($e);
             throw $e;
         } catch (Throwable $e) {
-            Notification::send($user,
-                new ImportTarifRanapNotification($user, 'Terjadi kesalahan saat mengimpor tarif rawat inap.', 'error')
-            );
+            Notification::make()
+                ->message('Terjadi kesalahan saat mengimpor tarif rawat inap.')
+                ->danger()
+                ->send($user);
 
             report($e);
             throw $e;

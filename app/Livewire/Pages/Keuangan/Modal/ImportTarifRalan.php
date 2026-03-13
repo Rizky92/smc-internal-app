@@ -5,6 +5,7 @@ namespace App\Livewire\Pages\Keuangan\Modal;
 use App\Jobs\Keuangan\ImportTarifRalanJob;
 use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\FlashComponent;
+use App\Notifications\Notification;
 use Illuminate\View\View;
 use Livewire\Component;
 use Livewire\TemporaryUploadedFile;
@@ -54,6 +55,11 @@ class ImportTarifRalan extends Component
             'fileImport' => $this->fileImport,
             'userId'     => user()->nik,
         ]);
+
+        Notification::make()
+            ->message('Import tarif rawat jalan sedang berjalan')
+            ->info()
+            ->send(user());
 
         $this->fileImport = null;
         $this->dispatchBrowserEvent('data-saved');

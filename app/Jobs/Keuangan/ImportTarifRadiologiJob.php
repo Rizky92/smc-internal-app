@@ -5,17 +5,15 @@ namespace App\Jobs\Keuangan;
 use App\Models\Aplikasi\User;
 use App\Models\Keuangan\JenisPerawatanRadiologi;
 use App\Models\RekamMedis\Penjamin;
-use App\Notifications\ImportTarifRadiologiNotification;
+use App\Notifications\Notification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\FilesystemNotFoundException;
-use Livewire\TemporaryUploadedFile;
 use RuntimeException;
 use Spatie\SimpleExcel\SimpleExcelReader;
 use Throwable;
@@ -146,20 +144,24 @@ class ImportTarifRadiologiJob implements ShouldQueue
                 tracker_end('mysql_sik', $this->userId);
             });
 
-            Notification::send($user, new ImportTarifRadiologiNotification($user, 'Import tarif radiologi berhasil', 'success'));
+            Notification::make()
+                ->message('Import tarif radiologi berhasil')
+                ->success()
+                ->send($user);
 
         } catch (RuntimeException $e) {
-            Notification::send($user,
-                new ImportTarifRadiologiNotification($user, $e->getMessage(), 'error')
-            );
+            Notification::make()
+                ->message($e->getMessage())
+                ->danger()
+                ->send($user);
 
             report($e);
             throw $e;
         } catch (Throwable $e) {
-
-            Notification::send($user,
-                new ImportTarifRadiologiNotification($user, 'Terjadi kesalahan saat mengimpor tarif radiologi.', 'error')
-            );
+            Notification::make()
+                ->message('Terjadi kesalahan saat mengimpor tarif radiologi.')
+                ->danger()
+                ->send($user);
 
             report($e);
             throw $e;
