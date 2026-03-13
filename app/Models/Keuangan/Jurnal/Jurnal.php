@@ -310,4 +310,148 @@ class Jurnal extends Model
 
         return $this->load('detail');
     }
+
+    public function scopeLabaRugiRalan(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePenjamin = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = carbon($tglAwal)->startOfMonth()->toDateString();
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = carbon($tglAkhir)->toDateString();
+        }
+
+        $sqlSelect = <<<'SQL'
+            poliklinik.nm_poli as unit,
+            dokter.nm_dokter,
+            detailjurnal.kd_rek,
+            rekening.nm_rek,
+            rekening.balance,
+            round(sum(detailjurnal.debet), 2) as debet,
+            round(sum(detailjurnal.kredit), 2) as kredit
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->withCasts(['debet' => 'float', 'kredit' => 'float'])
+            ->join('detailjurnal', 'jurnal.no_jurnal', '=', 'detailjurnal.no_jurnal')
+            ->join('rekening', 'detailjurnal.kd_rek', '=', 'rekening.kd_rek')
+            ->join('reg_periksa', 'jurnal.no_bukti', '=', 'reg_periksa.no_rawat')
+            ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
+            ->join('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
+            ->whereBetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir])
+            ->where('rekening.tipe', 'R')
+            ->where('reg_periksa.status_lanjut', 'Ralan')
+            ->when(! empty($kodePenjamin), fn ($q) => $q->where('reg_periksa.kd_pj', $kodePenjamin))
+            ->groupBy('reg_periksa.kd_poli', 'reg_periksa.kd_dokter', 'detailjurnal.kd_rek')
+            ->orderBy('poliklinik.nm_poli')
+            ->orderBy('rekening.balance')
+            ->orderBy('detailjurnal.kd_rek');
+    }
+
+    public function scopeLabaRugiRanap(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePenjamin = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->toDateString();
+        }
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->toDateString();
+        }
+
+        // Correlated subquery untuk unit (kelas kamar)
+        $unitSub = DB::connection('mysql_sik')
+            ->table('kamar_inap')
+            ->select('kamar.kelas')
+            ->join('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
+            ->whereColumn('kamar_inap.no_rawat', 'jurnal.no_bukti')
+            ->whereNotIn('kamar_inap.stts_pulang', ['-', 'Pindah Kamar'])
+            ->orderByDesc('kamar_inap.tgl_keluar')
+            ->orderByDesc('kamar_inap.jam_keluar')
+            ->limit(1);
+
+        // Correlated subquery untuk nm_dokter (dpjp pertama)
+        $dokterSub = DB::connection('mysql_sik')
+            ->table('dpjp_ranap')
+            ->select('dokter.nm_dokter')
+            ->join('dokter', 'dpjp_ranap.kd_dokter', '=', 'dokter.kd_dokter')
+            ->whereColumn('dpjp_ranap.no_rawat', 'jurnal.no_bukti')
+            ->limit(1);
+
+        // Inner subquery (alias t)
+        $innerSub = DB::connection('mysql_sik')
+            ->table('jurnal')
+            ->selectRaw("
+                ifnull(({$unitSub->toSql()}), '') as unit,
+                ifnull(({$dokterSub->toSql()}), '') as nm_dokter,
+                detailjurnal.kd_rek,
+                rekening.nm_rek,
+                rekening.balance,
+                detailjurnal.debet,
+                detailjurnal.kredit
+            ")
+            ->addBinding($unitSub->getBindings())
+            ->addBinding($dokterSub->getBindings())
+            ->join('detailjurnal', 'jurnal.no_jurnal', '=', 'detailjurnal.no_jurnal')
+            ->join('rekening', 'detailjurnal.kd_rek', '=', 'rekening.kd_rek')
+            ->join('reg_periksa', 'jurnal.no_bukti', '=', 'reg_periksa.no_rawat')
+            ->whereBetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir])
+            ->where('reg_periksa.status_lanjut', 'Ranap')
+            ->where('rekening.tipe', 'R')
+            ->when(! empty($kodePenjamin), fn ($q) => $q->where('reg_periksa.kd_pj', $kodePenjamin));
+
+        return $query
+            ->fromSub($innerSub, 't')
+            ->selectRaw('t.unit, t.nm_dokter, t.kd_rek, t.nm_rek, t.balance, round(sum(t.debet), 2) as debet, round(sum(t.kredit), 2) as kredit')
+            ->withCasts(['debet' => 'float', 'kredit' => 'float'])
+            ->groupBy('t.unit', 't.nm_dokter', 't.kd_rek')
+            ->orderBy('t.unit')
+            ->orderBy('t.nm_dokter')
+            ->orderBy('t.balance')
+            ->orderBy('t.kd_rek');
+    }
+
+    public function scopeLabaRugi(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $kodePenjamin = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->toDateString();
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->toDateString();
+        }
+
+        $sqlSelect = <<<'SQL'
+            '' as unit,
+            '' as nm_dokter,
+            detailjurnal.kd_rek,
+            rekening.nm_rek,
+            rekening.balance,
+            round(sum(detailjurnal.debet), 2) as debet,
+            round(sum(detailjurnal.kredit), 2) as kredit
+        SQL;
+
+        if (! empty($kodePenjamin)) {
+            return $query
+                ->selectRaw($sqlSelect)
+                ->join('detailjurnal', 'jurnal.no_jurnal', '=', 'detailjurnal.no_jurnal')
+                ->join('rekening', 'detailjurnal.kd_rek', '=', 'rekening.kd_rek')
+                ->whereRaw('1 = 0');
+        }
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->withCasts(['debet' => 'float', 'kredit' => 'float'])
+            ->join('detailjurnal', 'jurnal.no_jurnal', '=', 'detailjurnal.no_jurnal')
+            ->join('rekening', 'detailjurnal.kd_rek', '=', 'rekening.kd_rek')
+            ->whereBetween('jurnal.tgl_jurnal', [$tglAwal, $tglAkhir])
+            ->where('rekening.tipe', 'R')
+            ->whereNotExists(function ($sub) {
+                $sub->select(DB::raw(1))
+                    ->from('reg_periksa')
+                    ->whereColumn('reg_periksa.no_rawat', 'jurnal.no_bukti');
+            })
+            ->groupBy('detailjurnal.kd_rek')
+            ->orderBy('rekening.balance')
+            ->orderBy('detailjurnal.kd_rek');
+    }
 }
