@@ -12,11 +12,10 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\Rekening;
-use App\Notifications\ExportReadyNotification;
+use App\Notifications\Notification;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -244,11 +243,10 @@ class BukuBesar extends Component
             ->onQueue('exports')
             ->dispatch();
 
-        Notification::send(user(), new ExportReadyNotification([
-            'filePath' => null,
-            'message'  => 'Export sedang diproses',
-            'status'   => 'info',
-        ]));
+        Notification::make()
+            ->message('Export Buku Besar sedang berjalan')
+            ->info()
+            ->send(user());
 
         $this->emit('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
     }

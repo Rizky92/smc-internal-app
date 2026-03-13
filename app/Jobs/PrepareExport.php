@@ -2,8 +2,10 @@
 
 namespace App\Jobs;
 
+use App\Models\Aplikasi\User;
 use App\Models\Export;
 use App\Models\Keuangan\Jurnal\Jurnal;
+use App\Notifications\Notification;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -172,5 +174,15 @@ class PrepareExport implements ShouldQueue
     public function getExportCsvJob(): string
     {
         return ExportCsv::class;
+    }
+
+    public function failed(\Throwable $exception): void
+    {
+        $user = User::findByNRP($this->userId);
+
+        Notification::make()
+            ->message('Export data failed')
+            ->danger()
+            ->send($user);
     }
 }

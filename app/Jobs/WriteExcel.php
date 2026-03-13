@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use App\Models\Aplikasi\User;
 use App\Models\Export;
-use App\Notifications\ExportReadyNotification;
+use App\Notifications\Notification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Filesystem\FilesystemAdapter;
@@ -12,7 +12,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Http\File;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use League\Csv\Reader as CsvReader;
 use League\Csv\Statement;
@@ -99,11 +98,11 @@ class WriteExcel implements ShouldQueue
 
         $user = User::findByNRP($this->userId);
 
-        Notification::send($user, new ExportReadyNotification([
-            'filePath' => $this->getFileDirectory().'/'.$fileName,
-            'message'  => 'Export data is ready for download',
-            'status'   => 'success',
-        ]));
+        Notification::make()
+            ->message('Export data is ready for download')
+            ->filePath($this->getFileDirectory().'/'.$fileName)
+            ->success()
+            ->send($user);
     }
 
     public function getFileDirectory(): string
@@ -114,5 +113,15 @@ class WriteExcel implements ShouldQueue
     public function getFileDisk(): FilesystemAdapter
     {
         return Storage::disk('public');
+    }
+
+    public function failed(\Throwable $exception): void
+    {
+        $user = User::findByNRP($this->userId);
+
+        Notification::make()
+            ->message('Export data failed')
+            ->danger()
+            ->send($user);
     }
 }
