@@ -19,7 +19,12 @@ class DatabaseNotification extends Component
 
     public function toggleSidebar(): void
     {
-        $this->isSidebarOpen = ! $this->isSidebarOpen;
+        $opening = ! $this->isSidebarOpen;
+        $this->isSidebarOpen = $opening;
+
+        if ($opening) {
+            $this->markAllAsRead();
+        }
     }
 
     public function render(): View
@@ -40,11 +45,6 @@ class DatabaseNotification extends Component
     public function markAllAsRead(): void
     {
         auth()->user()->unreadNotifications->markAsRead();
-    }
-
-    public function markAsRead(string $notificationId): void
-    {
-        auth()->user()->notifications()->where('id', $notificationId)->first()->markAsRead();
     }
 
     public function clearAll(): void

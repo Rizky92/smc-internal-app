@@ -52,7 +52,7 @@ class ExportReadyNotification extends Notification
         return [
             'message' => $this->ensureUtf8($this->message),
             'file'    => $this->ensureUtf8($this->filePath),
-            'status'  => $this->ensureUtf8($this->status),
+            'status'  => 'success',
         ];
     }
 
