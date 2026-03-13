@@ -1,4 +1,4 @@
-<div>
+<div @if ($isSidebarOpen) wire:poll.5s @else wire:poll.180s @endif>
     <style>
         .notification-sidebar {
             display: flex;
@@ -62,10 +62,8 @@
             <h4>Notifikasi</h4>
             <button id="close-sidebar" class="close-sidebar">&times;</button>
         </div>
-        <div class="sidebar-content" @if ($isSidebarOpen) wire:poll.5s @endif>
-            @if ($this->unreadNotificationsCount > 0)
-                <button wire:click="markAllAsRead" class="btn btn-link">Tandai semua sudah dibaca</button>
-            @elseif ($this->notifications->count() > 0)
+        <div class="sidebar-content">
+            @if ($this->unreadNotificationsCount === 0 && $this->notifications->count() > 0)
                 <button wire:click="clearAll" class="btn btn-link">Hapus semua</button>
             @endif
 
@@ -74,22 +72,22 @@
                     $filePath = $notification->data['file'] ?? null;
                     $status = $notification->data['status'] ?? 'info';
                     if ($status === 'success') {
-                        $icon = 'fa-check-circle';
+                        $icon = 'fas fa-check-circle fa-lg';
                         $color = '#3d9970';
                     } elseif ($status === 'error') {
-                        $icon = 'fa-times-circle';
+                        $icon = 'fas fa-times-circle fa-lg';
                         $color = '#dc3545';
                     } else {
-                        $icon = 'fa-info-circle';
+                        $icon = 'fas fa-info-circle fa-lg';
                         $color = '#17a2b8';
                     }
                 @endphp
 
                 <div class="sidebar-item" style="border-color: {{ $color }}">
-                    <div class="d-flex p-2">
+                    <div class="d-flex p-2 justify-content-between align-items-start">
                         <div class="d-flex">
                             <div style="width: 28px">
-                                <i class="far {{ $icon }} fa-lg" style="color: {{ $color }}"></i>
+                                <i class="{{ $icon }}" style="color: {{ $color }}"></i>
                             </div>
                             <div style="flex: 1">
                                 <p class="my-0 ml-2">{{ $notification->data['message'] }}</p>
@@ -98,11 +96,12 @@
                                     @if (! empty($filePath))
                                         <button wire:click="download('{{ $filePath }}')" class="btn btn-link">Download</button>
                                     @endif
-
-                                    <button wire:click="markAsRead('{{ $notification->id }}')" wire:key="{{ $notification->id }}" class="btn btn-link">Tandai sudah dibaca</button>
                                 </div>
                             </div>
                         </div>
+                        <button wire:click.prevent="clear('{{ $notification->id }}')" class="close" type="button" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
                 </div>
             @empty
