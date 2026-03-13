@@ -19,7 +19,12 @@ class DatabaseNotification extends Component
 
     public function toggleSidebar(): void
     {
-        $this->isSidebarOpen = ! $this->isSidebarOpen;
+        $opening = ! $this->isSidebarOpen;
+        $this->isSidebarOpen = $opening;
+
+        if ($opening) {
+            $this->markAllAsRead();
+        }
     }
 
     public function render(): View
@@ -42,11 +47,6 @@ class DatabaseNotification extends Component
         auth()->user()->unreadNotifications->markAsRead();
     }
 
-    public function markAsRead(string $notificationId): void
-    {
-        auth()->user()->notifications()->where('id', $notificationId)->first()->markAsRead();
-    }
-
     public function clearAll(): void
     {
         auth()->user()->notifications()->delete();
@@ -59,10 +59,6 @@ class DatabaseNotification extends Component
 
     public function download(string $filePath): StreamedResponse
     {
-        if (Storage::disk('public')->exists($filePath)) {
-            return Storage::disk('public')->download($filePath);
-        } else {
-            return Storage::download($filePath);
-        }
+        return Storage::disk('public')->download($filePath);
     }
 }

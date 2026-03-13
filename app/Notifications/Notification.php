@@ -98,7 +98,7 @@ class Notification extends BaseNotification
         return [
             'message'  => $this->ensureUtf8($this->message),
             'status'   => $this->ensureUtf8($this->status),
-            'filePath' => $this->ensureUtf8($this->filePath),
+            'file'     => $this->ensureUtf8($this->filePath),
         ];
     }
 
