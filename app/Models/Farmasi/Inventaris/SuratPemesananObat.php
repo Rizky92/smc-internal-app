@@ -48,10 +48,11 @@ class SuratPemesananObat extends Model
             SQL;
 
         $queryPOYangDatang = PenerimaanObat::query()
-            ->selectRaw('pemesanan.no_order, pemesanan.tgl_pesan, detailpesan.kode_brng, detailpesan.jumlah2 as jumlah, pemesanan.kode_suplier, datasuplier.nama_suplier')
+            ->selectRaw('pemesanan.no_order, detailpesan.kode_brng, sum(detailpesan.jumlah2) as jumlah, min(datasuplier.nama_suplier) as nama_suplier')
             ->join('datasuplier', 'pemesanan.kode_suplier', '=', 'datasuplier.kode_suplier')
             ->join('detailpesan', 'pemesanan.no_faktur', '=', 'detailpesan.no_faktur')
-            ->join('databarang', 'detailpesan.kode_brng', '=', 'databarang.kode_brng');
+            ->join('databarang', 'detailpesan.kode_brng', '=', 'databarang.kode_brng')
+            ->groupBy('pemesanan.no_order', 'detailpesan.kode_brng');
 
         $this->addSearchConditions([
             'surat_pemesanan_medis.no_pemesanan',
