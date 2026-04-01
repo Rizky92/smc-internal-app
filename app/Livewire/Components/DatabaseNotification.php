@@ -34,11 +34,19 @@ class DatabaseNotification extends Component
 
     public function getNotificationsProperty()
     {
+        if (! auth()->check()) {
+            return collect();
+        }
+
         return auth()->user()->notifications()->get();
     }
 
     public function getUnreadNotificationsCountProperty()
     {
+        if (! auth()->check()) {
+            return 0;
+        }
+
         return auth()->user()->unreadNotifications()->count();
     }
 
