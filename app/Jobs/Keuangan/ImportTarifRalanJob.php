@@ -10,6 +10,7 @@ use App\Models\RekamMedis\Penjamin;
 use App\Notifications\Notification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -74,22 +75,24 @@ class ImportTarifRalanJob implements ShouldQueue
 
                 tracker_start('mysql_sik');
 
-                $requiredHeaders = [
-                    'kd_jenis_prw',
-                    'nama_tarif',
-                    'kd_kategori',
-                    'material',
-                    'bhp',
-                    'tarif_tindakandr',
-                    'tarif_tindakanpr',
-                    'kso',
-                    'menejemen',
-                    'total_byrdr',
-                    'total_byrpr',
-                    'total_byrdrpr',
-                    'kd_pj',
-                    'kd_poli',
+                $headerMapping = [
+                    'Kode Tindakan'         => 'kd_jenis_prw',
+                    'Nama Tnd/Prw/Tagihan'  => 'nama_tarif',
+                    'Kategori'              => 'kd_kategori',
+                    'Jasa Sarana'           => 'material',
+                    'BHP/Paket Obat'        => 'bhp',
+                    'Jasa Medis Dr'         => 'tarif_tindakandr',
+                    'Jasa Medis Pr'         => 'tarif_tindakanpr',
+                    'KSO'                   => 'kso',
+                    'Menejemen'             => 'menejemen',
+                    'Ttl Biaya Dr'          => 'total_byrdr',
+                    'Ttl Biaya Pr'          => 'total_byrpr',
+                    'Ttl Biaya Dr & Pr'     => 'total_byrdrpr',
+                    'Jenis Bayar'           => 'kd_pj',
+                    'Poli'                  => 'kd_poli',
                 ];
+
+                $requiredHeaders = array_keys($headerMapping);
 
                 $reader = SimpleExcelReader::create(storage_path('app/'.$this->fileImport));
 
@@ -111,53 +114,69 @@ class ImportTarifRalanJob implements ShouldQueue
 
                     $line = $index + 2;
 
-                    if (! $kategoriMap->has($row['kd_kategori'])) {
-                        throw new RuntimeException("Baris {$line}: kd_kategori tidak ditemukan");
+                    // Map UI headers to database keys
+                    $data = [];
+                    foreach ($headerMapping as $uiHeader => $dbKey) {
+                        $data[$dbKey] = $row[$uiHeader] ?? null;
                     }
 
-                    if (! $penjaminMap->has($row['kd_pj'])) {
-                        throw new RuntimeException("Baris {$line}: kd_pj tidak ditemukan");
+                    if (! $kategoriMap->has($data['kd_kategori'])) {
+                        throw new RuntimeException("Baris {$line}: Kategori '{$data['kd_kategori']}' tidak ditemukan");
                     }
 
-                    if (! $poliMap->has($row['kd_poli'])) {
-                        throw new RuntimeException("Baris {$line}: kd_poli tidak ditemukan");
+                    if (! $penjaminMap->has($data['kd_pj'])) {
+                        throw new RuntimeException("Baris {$line}: Jenis Bayar '{$data['kd_pj']}' tidak ditemukan");
                     }
 
-                    $subtotal = (
-                        (float) $row['material'] +
-                        (float) $row['bhp'] +
-                        (float) $row['tarif_tindakandr'] +
-                        (float) $row['tarif_tindakanpr'] +
-                        (float) $row['kso'] +
-                        (float) $row['menejemen']
-                    );
+                    if (! $poliMap->has($data['kd_poli'])) {
+                        throw new RuntimeException("Baris {$line}: Poli '{$data['kd_poli']}' tidak ditemukan");
+                    }
+
+                    $data['material'] = parse_numeric($data['material'] ?? 0);
+                    $data['bhp'] = parse_numeric($data['bhp'] ?? 0);
+                    $data['tarif_tindakandr'] = parse_numeric($data['tarif_tindakandr'] ?? 0);
+                    $data['tarif_tindakanpr'] = parse_numeric($data['tarif_tindakanpr'] ?? 0);
+                    $data['kso'] = parse_numeric($data['kso'] ?? 0);
+                    $data['menejemen'] = parse_numeric($data['menejemen'] ?? 0);
+                    $data['total_byrdr'] = parse_numeric($data['total_byrdr'] ?? 0);
+                    $data['total_byrpr'] = parse_numeric($data['total_byrpr'] ?? 0);
+                    $data['total_byrdrpr'] = parse_numeric($data['total_byrdrpr'] ?? 0);
+
+                    $calcTotalDr = $data['material'] + $data['bhp'] + $data['tarif_tindakandr'] + $data['kso'] + $data['menejemen'];
+                    $calcTotalPr = $data['material'] + $data['bhp'] + $data['tarif_tindakanpr'] + $data['kso'] + $data['menejemen'];
+                    $calcTotalDrPr = $data['material'] + $data['bhp'] + $data['tarif_tindakandr'] + $data['tarif_tindakanpr'] + $data['kso'] + $data['menejemen'];
 
                     if (
-                        $subtotal < (float) $row['total_byrdr'] ||
-                        $subtotal < (float) $row['total_byrpr'] ||
-                        $subtotal < (float) $row['total_byrdrpr']
+                        $calcTotalDr != (float) $data['total_byrdr'] &&
+                        $calcTotalPr != (float) $data['total_byrpr'] &&
+                        $calcTotalDrPr != (float) $data['total_byrdrpr']
                     ) {
-                        throw new RuntimeException("Baris {$line}: Total biaya tidak sesuai dengan rincian tarif.");
+                        throw new RuntimeException("Baris {$line}: Tidak ada total biaya yang sesuai dengan rincian tarif (Minimal salah satu Total DR, PR, atau DR&PR harus sesuai).");
                     }
 
-                    JenisPerawatan::query()->updateOrCreate(
-                        ['kd_jenis_prw' => $row['kd_jenis_prw']],
-                        [
-                            'nm_perawatan'      => $row['nama_tarif'],
-                            'material'          => $row['material'],
-                            'bhp'               => $row['bhp'],
-                            'tarif_tindakandr'  => $row['tarif_tindakandr'],
-                            'tarif_tindakanpr'  => $row['tarif_tindakanpr'],
-                            'kso'               => $row['kso'],
-                            'menejemen'         => $row['menejemen'],
-                            'total_byrdr'       => $row['total_byrdr'],
-                            'total_byrpr'       => $row['total_byrpr'],
-                            'total_byrdrpr'     => $row['total_byrdrpr'],
-                            'kd_kategori'       => $row['kd_kategori'],
-                            'kd_pj'             => $row['kd_pj'],
-                            'kd_poli'           => $row['kd_poli'],
-                            'status'            => '1',
-                        ]);
+                    try {
+
+                        JenisPerawatan::query()->updateOrCreate(
+                            ['kd_jenis_prw' => $data['kd_jenis_prw']],
+                            [
+                                'nm_perawatan'      => $data['nama_tarif'],
+                                'material'          => $data['material'],
+                                'bhp'               => $data['bhp'],
+                                'tarif_tindakandr'  => $data['tarif_tindakandr'],
+                                'tarif_tindakanpr'  => $data['tarif_tindakanpr'],
+                                'kso'               => $data['kso'],
+                                'menejemen'         => $data['menejemen'],
+                                'total_byrdr'       => $data['total_byrdr'],
+                                'total_byrpr'       => $data['total_byrpr'],
+                                'total_byrdrpr'     => $data['total_byrdrpr'],
+                                'kd_kategori'       => $data['kd_kategori'],
+                                'kd_pj'             => $data['kd_pj'],
+                                'kd_poli'           => $data['kd_poli'],
+                                'status'            => '1',
+                            ]);
+                    } catch (QueryException $e) {
+                        throw new RuntimeException("Baris {$line}: Gagal menyimpan data ke database. Pastikan format data sudah benar.");
+                    }
                 }
 
                 tracker_end('mysql_sik', $this->userId);

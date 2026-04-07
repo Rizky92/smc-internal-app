@@ -79,17 +79,17 @@ class TarifRalan extends Component
     {
         return [
             'Kode Tindakan',
-            'Nama Tindakan',
+            'Nama Tnd/Prw/Tagihan',
             'Kategori',
             'Jasa Sarana',
             'BHP/Paket Obat',
-            'Jasa Medis DR',
-            'Jasa Medis PR',
+            'Jasa Medis Dr',
+            'Jasa Medis Pr',
             'KSO',
             'Menejemen',
-            'Total Bayar DR',
-            'Total Bayar PR',
-            'Total Bayar DR & PR',
+            'Ttl Biaya Dr',
+            'Ttl Biaya Pr',
+            'Ttl Biaya Dr & Pr',
             'Jenis Bayar',
             'Poli',
         ];

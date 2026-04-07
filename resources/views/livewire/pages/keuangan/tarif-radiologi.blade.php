@@ -23,16 +23,16 @@
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
-                    <x-table.th name="kd_jenis_prw" title="Kode Tindakan" />
-                    <x-table.th name="nm_perawatan" title="Nama Tindakan" />
-                    <x-table.th name="bagian_rs" title="Bagian RS" />
-                    <x-table.th name="bhp" title="BHP/ Paket Obat" />
-                    <x-table.th name="tarif_perujuk" title="Tarif Perujuk" />
-                    <x-table.th name="tarif_tindakan_dokter" title="Tarif Tindakan Dokter" />
-                    <x-table.th name="tarif_tindakan_petugas" title="Tarif Tindakan Petugas" />
+                    <x-table.th name="kd_jenis_prw" title="Kode Periksa" />
+                    <x-table.th name="nm_perawatan" title="Nama Pemeriksaan" />
+                    <x-table.th name="bagian_rs" title="Jasa Sarana" />
+                    <x-table.th name="bhp" title="Paket BHP" />
+                    <x-table.th name="tarif_perujuk" title="Jasa Medis Perujuk" />
+                    <x-table.th name="tarif_tindakan_dokter" title="Jasa Medis Dokter" />
+                    <x-table.th name="tarif_tindakan_petugas" title="Jasa Medis Petugas" />
                     <x-table.th name="kso" title="KSO" />
                     <x-table.th name="menejemen" title="Menejemen" />
-                    <x-table.th name="total_byr" title="Total Bayar" />
+                    <x-table.th name="total_byr" title="Total Tarif" />
                     <x-table.th name="png_jawab" title="Jenis Bayar" />
                     <x-table.th name="kelas" title="Kelas" />
                 </x-slot>

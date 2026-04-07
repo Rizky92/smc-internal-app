@@ -76,16 +76,16 @@ class TarifRadiologi extends Component
     protected function columnHeaders(): array
     {
         return [
-            'Kode Tindakan',
-            'Nama Tindakan',
-            'Bagian RS',
-            'BHP/Paket Obat',
-            'Tarif Perujuk',
-            'Tarif Tindakan Dokter',
-            'Tarif Tindakan Petugas',
+            'Kode Periksa',
+            'Nama Pemeriksaan',
+            'Jasa Sarana',
+            'Paket BHP',
+            'Jasa Medis Perujuk',
+            'Jasa Medis Dokter',
+            'Jasa Medis Petugas',
             'KSO',
             'Menejemen',
-            'Total Bayar',
+            'Total Tarif',
             'Jenis Bayar',
             'Kelas',
         ];

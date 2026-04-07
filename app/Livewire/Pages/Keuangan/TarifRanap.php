@@ -80,19 +80,19 @@ class TarifRanap extends Component
     {
         return [
             'Kode Tindakan',
-            'Nama Tindakan',
+            'Nama Tnd/Prw/Tagihan',
             'Kategori',
             'Jasa Sarana',
             'BHP/Paket Obat',
             'Jasa Medis Dr',
-            'Jasa Medis PR',
+            'Jasa Medis Pr',
             'KSO',
             'Menejemen',
-            'Total Bayar DR',
-            'Total Bayar PR',
-            'Total Bayar DR & PR',
+            'Total Biaya Dr',
+            'Total Biaya Pr',
+            'Total Biaya Dr & Pr',
             'Jenis Bayar',
-            'Nama Bangsal',
+            'Kamar',
             'Kelas',
         ];
     }
