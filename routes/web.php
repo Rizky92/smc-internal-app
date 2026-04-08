@@ -249,6 +249,10 @@ Route::prefix('admin')
                 Route::get('tarif-operasi', Keuangan\TarifOperasi::class)
                     ->name('tarif-operasi')
                     ->middleware('can:keuangan.tarif-operasi.read');
+
+                Route::get('tarif-lab', Keuangan\TarifLab::class)
+                    ->name('tarif-lab')
+                    ->middleware('can:keuangan.tarif-lab.read');
             });
 
         Route::prefix('farmasi')
