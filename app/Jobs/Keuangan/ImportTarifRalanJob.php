@@ -89,7 +89,7 @@ class ImportTarifRalanJob implements ShouldQueue
                     'Ttl Biaya Pr'          => 'total_byrpr',
                     'Ttl Biaya Dr & Pr'     => 'total_byrdrpr',
                     'Jenis Bayar'           => 'kd_pj',
-                    'Poli'                  => 'kd_poli',
+                    'Unit/Poli'             => 'kd_poli',
                 ];
 
                 $requiredHeaders = array_keys($headerMapping);
