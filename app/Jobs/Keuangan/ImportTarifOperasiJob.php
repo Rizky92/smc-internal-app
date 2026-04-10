@@ -2,6 +2,7 @@
 
 namespace App\Jobs\Keuangan;
 
+use App\Exceptions\ImportTarifException;
 use App\Models\Aplikasi\User;
 use App\Models\Keuangan\PaketOperasi;
 use App\Models\RekamMedis\Penjamin;
@@ -15,7 +16,6 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\FilesystemNotFoundException;
-use RuntimeException;
 use Spatie\SimpleExcel\SimpleExcelReader;
 use Throwable;
 
@@ -118,10 +118,10 @@ class ImportTarifOperasiJob implements ShouldQueue
                 $missing = array_diff($requiredHeaders, $headers);
 
                 if (! empty($missing)) {
-                    throw new RuntimeException('Header file import tidak sesuai. Header yang hilang: '.implode(', ', $missing));
+                    throw new ImportTarifException('Header file import tidak sesuai. Header yang hilang: '.implode(', ', $missing));
                 }
 
-                $penjaminMap = Penjamin::query()->pluck('kd_pj')->flip();
+                $penjaminMap = Penjamin::query()->where('status', '1')->pluck('kd_pj')->flip();
 
                 $rows = $reader->getRows();
 
@@ -136,7 +136,7 @@ class ImportTarifOperasiJob implements ShouldQueue
                     }
 
                     if (! $penjaminMap->has($data['kd_pj'])) {
-                        throw new RuntimeException("Baris {$line}: Jenis Bayar '{$data['kd_pj']}' tidak ditemukan");
+                        throw new ImportTarifException("Baris {$line}: Jenis Bayar '{$data['kd_pj']}' tidak ditemukan");
                     }
 
                     $data['operator1'] = parse_numeric($data['operator1'] ?? 0);
@@ -207,7 +207,7 @@ class ImportTarifOperasiJob implements ShouldQueue
                                 'status'             => '1',
                             ]);
                     } catch (QueryException $e) {
-                        throw new RuntimeException("Baris {$line}: Gagal menyimpan data ke database. Pastikan format data sudah benar.");
+                        throw new ImportTarifException("Baris {$line}: Gagal menyimpan data ke database. Pastikan format data sudah benar.");
                     }
                 }
 
@@ -219,7 +219,7 @@ class ImportTarifOperasiJob implements ShouldQueue
                 ->success()
                 ->send($user);
 
-        } catch (RuntimeException $e) {
+        } catch (ImportTarifException $e) {
             Notification::make()
                 ->message($e->getMessage())
                 ->danger()

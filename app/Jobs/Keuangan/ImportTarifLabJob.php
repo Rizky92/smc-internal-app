@@ -2,6 +2,7 @@
 
 namespace App\Jobs\Keuangan;
 
+use App\Exceptions\ImportTarifException;
 use App\Models\Aplikasi\User;
 use App\Models\Keuangan\JenisPerawatanLab;
 use App\Models\RekamMedis\Penjamin;
@@ -15,7 +16,6 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\FilesystemNotFoundException;
-use RuntimeException;
 use Spatie\SimpleExcel\SimpleExcelReader;
 use Throwable;
 
@@ -98,10 +98,10 @@ class ImportTarifLabJob implements ShouldQueue
                 $missing = array_diff($requiredHeaders, $headers);
 
                 if (! empty($missing)) {
-                    throw new RuntimeException('Header file import tidak sesuai. Header yang hilang: '.implode(', ', $missing));
+                    throw new ImportTarifException('Header file import tidak sesuai. Header yang hilang: '.implode(', ', $missing));
                 }
 
-                $penjaminMap = Penjamin::query()->pluck('kd_pj')->flip();
+                $penjaminMap = Penjamin::query()->where('status', '1')->pluck('kd_pj')->flip();
 
                 $rows = $reader->getRows();
 
@@ -116,7 +116,7 @@ class ImportTarifLabJob implements ShouldQueue
                     }
 
                     if (! $penjaminMap->has($data['kd_pj'])) {
-                        throw new RuntimeException("Baris {$line}: Jenis Bayar '{$data['kd_pj']}' tidak ditemukan");
+                        throw new ImportTarifException("Baris {$line}: Jenis Bayar '{$data['kd_pj']}' tidak ditemukan");
                     }
 
                     $data['bagian_rs'] = parse_numeric($data['bagian_rs'] ?? 0);
@@ -137,8 +137,8 @@ class ImportTarifLabJob implements ShouldQueue
                         (float) $data['menejemen']
                     );
 
-                    if ($subtotal != (float) $data['total_byr']) {
-                        throw new RuntimeException("Baris {$line}: Total biaya tidak sesuai dengan rincian tarif.");
+                    if (round($subtotal) != round((float) $data['total_byr'])) {
+                        throw new ImportTarifException("Baris {$line}: Total biaya tidak sesuai dengan rincian tarif.");
                     }
 
                     try {
@@ -156,11 +156,11 @@ class ImportTarifLabJob implements ShouldQueue
                                 'total_byr'              => $data['total_byr'],
                                 'kd_pj'                  => $data['kd_pj'] ?? '-',
                                 'kelas'                  => $data['kelas'] ?? '-',
-                                'kategori'               => $data['kategori'] ?? '-',
+                                'kategori'               => $data['kategori'] ?? 'PK',
                                 'status'                 => '1',
                             ]);
                     } catch (QueryException $e) {
-                        throw new RuntimeException("Baris {$line}: Gagal menyimpan data ke database. Pastikan format data sudah benar.");
+                        throw new ImportTarifException("Baris {$line}: Gagal menyimpan data ke database. Pastikan format data sudah benar.");
                     }
                 }
 
@@ -172,7 +172,7 @@ class ImportTarifLabJob implements ShouldQueue
                 ->success()
                 ->send($user);
 
-        } catch (RuntimeException $e) {
+        } catch (ImportTarifException $e) {
             Notification::make()
                 ->message($e->getMessage())
                 ->danger()
