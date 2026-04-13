@@ -72,6 +72,12 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'keuangan.tarif-ralan.read']);
         Permission::create(['name' => 'keuangan.tarif-ranap.create']);
         Permission::create(['name' => 'keuangan.tarif-ranap.read']);
+        Permission::create(['name' => 'keuangan.tarif-radiologi.create']);
+        Permission::create(['name' => 'keuangan.tarif-radiologi.read']);
+        Permission::create(['name' => 'keuangan.tarif-operasi.create']);
+        Permission::create(['name' => 'keuangan.tarif-operasi.read']);
+        Permission::create(['name' => 'keuangan.tarif-lab.create']);
+        Permission::create(['name' => 'keuangan.tarif-lab.read']);
 
         Permission::create(['name' => 'farmasi.stok-darurat.read']);
         Permission::create(['name' => 'farmasi.pemakaian-stok.read']);

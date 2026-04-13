@@ -24,19 +24,19 @@
             <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th name="kd_jenis_prw" title="Kode Tindakan" />
-                    <x-table.th name="nm_perawatan" title="Nama Tindakan" />
+                    <x-table.th name="nm_perawatan" title="Nama Tnd/Prw/Tagihan" />
                     <x-table.th name="nm_kategori" title="Kategori" />
                     <x-table.th name="material" title="Jasa Sarana" />
                     <x-table.th name="bhp" title="BHP/Paket Obat" />
                     <x-table.th name="tarif_tindakandr" title="Jasa Medis Dr" />
-                    <x-table.th name="tarif_tindakanpr" title="Jasa Medis PR" />
+                    <x-table.th name="tarif_tindakanpr" title="Jasa Medis Pr" />
                     <x-table.th name="kso" title="KSO" />
                     <x-table.th name="menejemen" title="Menejemen" />
-                    <x-table.th name="total_byrdr" title="Total Bayar DR" />
-                    <x-table.th name="total_byrpr" title="Total Bayar PR" />
-                    <x-table.th name="total_byrdrpr" title="Total Bayar DR & PR" />
+                    <x-table.th name="total_byrdr" title="Total Biaya Dr" />
+                    <x-table.th name="total_byrpr" title="Total Biaya Pr" />
+                    <x-table.th name="total_byrdrpr" title="Total Biaya Dr & Pr" />
                     <x-table.th name="kelas" title="Jenis Bayar" />
-                    <x-table.th name="png_jawab" title="Nama Bangsal" />
+                    <x-table.th name="png_jawab" title="Kamar" />
                     <x-table.th name="nm_bangsal" title="Kelas" />
                 </x-slot>
                 <x-slot name="body">
@@ -45,15 +45,15 @@
                             <x-table.td>{{ $item->kd_jenis_prw }}</x-table.td>
                             <x-table.td>{{ $item->nm_perawatan }}</x-table.td>
                             <x-table.td>{{ $item->nm_kategori }}</x-table.td>
-                            <x-table.td>{{ $item->material }}</x-table.td>
-                            <x-table.td>{{ $item->bhp }}</x-table.td>
-                            <x-table.td>{{ $item->tarif_tindakandr }}</x-table.td>
-                            <x-table.td>{{ $item->tarif_tindakanpr }}</x-table.td>
-                            <x-table.td>{{ $item->kso }}</x-table.td>
-                            <x-table.td>{{ $item->menejemen }}</x-table.td>
-                            <x-table.td>{{ $item->total_byrdr }}</x-table.td>
-                            <x-table.td>{{ $item->total_byrpr }}</x-table.td>
-                            <x-table.td>{{ $item->total_byrdrpr }}</x-table.td>
+                            <x-table.td>{{ rp($item->material) }}</x-table.td>
+                            <x-table.td>{{ rp($item->bhp) }}</x-table.td>
+                            <x-table.td>{{ rp($item->tarif_tindakandr) }}</x-table.td>
+                            <x-table.td>{{ rp($item->tarif_tindakanpr) }}</x-table.td>
+                            <x-table.td>{{ rp($item->kso) }}</x-table.td>
+                            <x-table.td>{{ rp($item->menejemen) }}</x-table.td>
+                            <x-table.td>{{ rp($item->total_byrdr) }}</x-table.td>
+                            <x-table.td>{{ rp($item->total_byrpr) }}</x-table.td>
+                            <x-table.td>{{ rp($item->total_byrdrpr) }}</x-table.td>
                             <x-table.td>{{ $item->kelas }}</x-table.td>
                             <x-table.td>{{ $item->png_jawab }}</x-table.td>
                             <x-table.td>{{ $item->nm_bangsal }}</x-table.td>
