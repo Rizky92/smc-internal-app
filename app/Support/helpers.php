@@ -367,3 +367,61 @@ if (! function_exists('attr')) {
         return $name.'='.Str::wrap($attr, '"');
     }
 }
+
+if (! function_exists('parse_numeric')) {
+    /**
+     * Parse a numeric string that might contain thousands separators.
+     * Supports both Indonesian (1.500,00) and US (1,500.00) formats.
+     *
+     * @param  string|int|float|null  $value
+     */
+    function parse_numeric($value): float
+    {
+        if (is_numeric($value)) {
+            return (float) $value;
+        }
+
+        if (empty($value)) {
+            return 0.0;
+        }
+
+        // Remove currency symbols and other non-numeric chars except , and .
+        $value = preg_replace('/[^0-9,.]/', '', (string) $value);
+
+        $hasComma = strpos($value, ',') !== false;
+        $hasDot = strpos($value, '.') !== false;
+
+        if ($hasComma && $hasDot) {
+            if (strrpos($value, '.') > strrpos($value, ',')) {
+                // US: 1,500.00 -> 1500.00
+                return (float) str_replace(',', '', $value);
+            } else {
+                // ID: 1.500,00 -> 1500.00
+                return (float) str_replace(['.', ','], ['', '.'], $value);
+            }
+        }
+
+        if ($hasComma) {
+            // Only comma: 1,500 could be 1500 (ID) or 1.5 (US)
+            // Given Indonesian context, it's more likely a decimal if it has 2 digits after,
+            // or a thousand separator if it has 3 digits after.
+            // But in ID, comma is always decimal.
+            return (float) str_replace(',', '.', $value);
+        }
+
+        if ($hasDot) {
+            // Only dot: 1.500 could be 1.5 (US) or 1500 (ID)
+            // If it has 3 digits after the dot, it's very likely a thousand separator in ID.
+            $parts = explode('.', $value);
+            $lastPart = end($parts);
+
+            if (strlen($lastPart) === 3 && count($parts) > 1) {
+                return (float) str_replace('.', '', $value);
+            }
+
+            return (float) $value;
+        }
+
+        return (float) $value;
+    }
+}

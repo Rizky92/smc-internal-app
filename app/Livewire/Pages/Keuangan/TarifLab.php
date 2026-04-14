@@ -8,12 +8,12 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
-use App\Models\Keuangan\JenisPerawatan;
+use App\Models\Keuangan\JenisPerawatanLab;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class TarifRalan extends Component
+class TarifLab extends Component
 {
     use DeferredLoading;
     use ExcelExportable;
@@ -36,8 +36,8 @@ class TarifRalan extends Component
 
     public function getCollectionProperty()
     {
-        return $this->isDeferred ? [] : JenisPerawatan::query()
-            ->tarifRalan()
+        return $this->isDeferred ? [] : JenisPerawatanLab::query()
+            ->tarifLab()
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage);
@@ -45,32 +45,31 @@ class TarifRalan extends Component
 
     public function render(): View
     {
-        return view('livewire.pages.keuangan.tarif-ralan')
-            ->layout(BaseLayout::class, ['title' => 'Tarif Ralan']);
+        return view('livewire.pages.keuangan.tarif-lab')
+            ->layout(BaseLayout::class, ['title' => 'Tarif Lab']);
     }
 
     protected function dataPerSheet(): array
     {
         return [
-            fn () => JenisPerawatan::query()
-                ->tarifRalan()
+            fn () => JenisPerawatanLab::query()
+                ->tarifLab()
                 ->search($this->cari)
                 ->cursor()
-                ->map(fn (JenisPerawatan $model): array => [
+                ->map(fn (JenisPerawatanLab $model): array => [
                     $model->kd_jenis_prw,
                     $model->nm_perawatan,
-                    $model->nm_kategori,
-                    $model->material,
+                    $model->bagian_rs,
                     $model->bhp,
-                    $model->tarif_tindakandr,
-                    $model->tarif_tindakanpr,
+                    $model->tarif_perujuk,
+                    $model->tarif_tindakan_dokter,
+                    $model->tarif_tindakan_petugas,
                     $model->kso,
                     $model->menejemen,
-                    $model->total_byrdr,
-                    $model->total_byrpr,
-                    $model->total_byrdrpr,
+                    $model->total_byr,
                     $model->png_jawab,
-                    $model->nm_poli,
+                    $model->kelas,
+                    $model->kategori,
                 ]),
         ];
     }
@@ -78,20 +77,19 @@ class TarifRalan extends Component
     protected function columnHeaders(): array
     {
         return [
-            'Kode Tindakan',
-            'Nama Tnd/Prw/Tagihan',
-            'Kategori',
+            'Kode Periksa',
+            'Nama Pemeriksaan',
             'Jasa Sarana',
-            'BHP/Paket Obat',
-            'Jasa Medis Dr',
-            'Jasa Medis Pr',
+            'Paket BHP',
+            'Jasa Medis Perujuk',
+            'Jasa Medis Dokter',
+            'Jasa Medis Petugas',
             'KSO',
             'Menejemen',
-            'Ttl Biaya Dr',
-            'Ttl Biaya Pr',
-            'Ttl Biaya Dr & Pr',
+            'Total Tarif',
             'Jenis Bayar',
-            'Poli',
+            'Kelas',
+            'Kategori',
         ];
     }
 
@@ -99,7 +97,7 @@ class TarifRalan extends Component
     {
         return [
             'RS Samarinda Medika Citra',
-            'Tarif Rawat Jalan',
+            'Tarif Laboratorium',
         ];
     }
 

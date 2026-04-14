@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Pages\Keuangan\Modal;
 
-use App\Jobs\Keuangan\ImportTarifRalanJob;
+use App\Jobs\Keuangan\ImportTarifRadiologiJob;
 use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\FlashComponent;
 use App\Notifications\Notification;
@@ -11,7 +11,7 @@ use Livewire\Component;
 use Livewire\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
-class ImportTarifRalan extends Component
+class ImportTarifRadiologi extends Component
 {
     use DeferredModal;
     use FlashComponent;
@@ -22,8 +22,8 @@ class ImportTarifRalan extends Component
 
     /** @var mixed */
     protected $listeners = [
-        'tarif-ralan.hide-modal' => 'hideModal',
-        'tarif-ralan.show-modal' => 'showModal',
+        'tarif-radiologi.hide-modal' => 'hideModal',
+        'tarif-radiologi.show-modal' => 'showModal',
     ];
 
     public function mount(): void
@@ -33,13 +33,13 @@ class ImportTarifRalan extends Component
 
     public function render(): View
     {
-        return view('livewire.pages.keuangan.modal.import-tarif-ralan');
+        return view('livewire.pages.keuangan.modal.import-tarif-radiologi');
     }
 
     public function importData(): void
     {
-        if (user()->cannot('keuangan.tarif-ralan.create')) {
-            $this->emit('flash.error', 'Anda tidak memiliki izin untuk mengimpor data tarif ralan.');
+        if (user()->cannot('keuangan.tarif-radiologi.create')) {
+            $this->emit('flash.error', 'Anda tidak memiliki izin untuk mengimpor data tarif radiologi.');
             $this->dispatchBrowserEvent('data-denied');
 
             return;
@@ -51,19 +51,19 @@ class ImportTarifRalan extends Component
             return;
         }
 
-        ImportTarifRalanJob::dispatch([
+        ImportTarifRadiologiJob::dispatch([
             'fileImport' => $this->fileImport,
             'userId'     => user()->nik,
         ]);
 
         Notification::make()
-            ->message('Import tarif rawat jalan sedang berjalan')
+            ->message('Import tarif radiologi sedang berjalan')
             ->info()
             ->send(user());
 
         $this->fileImport = null;
         $this->dispatchBrowserEvent('data-saved');
-        $this->emit('flash.info', 'Proses impor data tarif ralan telah dimulai, silahkan tunggu beberapa saat.');
+        $this->emit('flash.info', 'Proses impor data tarif radiologi telah dimulai, silahkan tunggu beberapa saat.');
     }
 
     protected function defaultValues(): void

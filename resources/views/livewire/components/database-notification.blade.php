@@ -1,4 +1,4 @@
-<div @if ($isSidebarOpen) wire:poll.5s @else wire:poll.180s @endif>
+<div @auth @if ($isSidebarOpen) wire:poll.5s @else wire:poll.180s @endif @endauth>
     <style>
         .notification-sidebar {
             display: flex;

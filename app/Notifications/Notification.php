@@ -60,7 +60,7 @@ class Notification extends BaseNotification
 
     public function danger(): self
     {
-        $this->status = 'danger';
+        $this->status = 'error';
 
         return $this;
     }
