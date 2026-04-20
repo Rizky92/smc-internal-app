@@ -7,8 +7,10 @@ use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
+use Spatie\Permission\PermissionRegistrar;
 
 class SetPerizinan extends Component
 {
@@ -77,12 +79,23 @@ class SetPerizinan extends Component
 
         tracker_start('mysql_smc');
 
-        $user->syncRoles($this->checkedRoles);
-        $user->syncPermissions($this->checkedPermissions);
+        try {
+            DB::transaction(function () use ($user) {
+                app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        tracker_end('mysql_smc');
+                $user->syncRoles($this->checkedRoles);
+                $user->syncPermissions($this->checkedPermissions);
+            });
 
-        $this->emit('flash.success', "Perizinan SIAP untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
+            tracker_end('mysql_smc');
+
+            $this->emit('flash.success', "Perizinan SIAP untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
+
+        } catch (\Throwable $th) {
+            tracker_end('mysql_smc');
+
+            $this->emit('flash.error', "Gagal mengupdate perizinan SIAP untuk user {$this->nrp} {$this->nama}!");
+        }
     }
 
     public function defaultValues(): void
