@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Jobs\Concerns\HandlesExportSession;
 use App\Models\Aplikasi\User;
 use App\Models\Export;
 use App\Models\Keuangan\Jurnal\Jurnal;
@@ -24,6 +25,7 @@ class PrepareExport implements ShouldQueue
 {
     use Batchable;
     use Dispatchable;
+    use HandlesExportSession;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
@@ -31,12 +33,6 @@ class PrepareExport implements ShouldQueue
     public $tries = 1;
 
     public $timeout = 3600;
-
-    private string $exportSessionId;
-
-    private string $exportName;
-
-    private string $userId;
 
     private string $tglAwal;
 
@@ -74,6 +70,7 @@ class PrepareExport implements ShouldQueue
 
     public function handle(): void
     {
+        $this->updateSessionStatus('processing');
         $this->InsertToTemporary();
         $this->PrepareCsv();
     }
@@ -179,6 +176,8 @@ class PrepareExport implements ShouldQueue
     public function failed(\Throwable $exception): void
     {
         $user = User::findByNRP($this->userId);
+
+        $this->updateSessionStatus('failed');
 
         Notification::make()
             ->message('Export data failed')

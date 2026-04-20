@@ -10,6 +10,7 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\ExportSession;
 use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\Rekening;
 use App\Notifications\Notification;
@@ -219,6 +220,25 @@ class BukuBesar extends Component
         $exportName = 'buku-besar';
 
         $chunkSize = 1000;
+
+        $existingSession = ExportSession::query()
+            ->where('id_user', $userId)
+            ->where('export_name', $exportName)
+            ->whereIn('status', ['pending', 'processing'])
+            ->first();
+
+        if ($existingSession) {
+            $this->emit('flash.error', 'Anda sudah memiliki proses export Buku Besar yang sedang berjalan. Silahkan tunggu hingga proses tersebut selesai sebelum memulai export baru.');
+
+            return;
+        }
+
+        ExportSession::query()->create([
+            'session_id'  => $exportSessionId,
+            'id_user'     => $userId,
+            'export_name' => $exportName,
+            'status'      => 'pending',
+        ]);
 
         Bus::batch([
             new PrepareExport([

@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Jobs\Concerns\HandlesExportSession;
 use App\Models\Aplikasi\User;
 use App\Models\Export;
 use App\Notifications\Notification;
@@ -21,17 +22,14 @@ use OpenSpout\Writer\XLSX\Writer;
 class WriteExcel implements ShouldQueue
 {
     use Dispatchable;
+    use HandlesExportSession;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
+    public $tries = 1;
+
     public $timeout = 3600;
-
-    private string $userId;
-
-    private string $exportSessionId;
-
-    private string $exportName;
 
     /**
      * @param  array{
@@ -98,6 +96,8 @@ class WriteExcel implements ShouldQueue
 
         $user = User::findByNRP($this->userId);
 
+        $this->updateSessionStatus('completed');
+
         Notification::make()
             ->message('Export data is ready for download')
             ->filePath($this->getFileDirectory().'/'.$fileName)
@@ -118,6 +118,8 @@ class WriteExcel implements ShouldQueue
     public function failed(\Throwable $exception): void
     {
         $user = User::findByNRP($this->userId);
+
+        $this->updateSessionStatus('failed');
 
         Notification::make()
             ->message('Export data failed')
