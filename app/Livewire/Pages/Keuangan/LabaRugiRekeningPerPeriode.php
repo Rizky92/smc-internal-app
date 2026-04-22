@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
+use App\Jobs\ExportLabaRugiRekeningJob;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
@@ -10,6 +11,7 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Keuangan\Rekening;
 use App\Models\RekamMedis\Penjamin;
+use App\Notifications\Notification;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Fluent;
@@ -25,6 +27,9 @@ class LabaRugiRekeningPerPeriode extends Component
     use LiveTable;
     use MenuTracker;
 
+    /** @var int */
+    public $option;
+
     /** @var string */
     public $kodePenjamin;
 
@@ -33,6 +38,12 @@ class LabaRugiRekeningPerPeriode extends Component
 
     /** @var string */
     public $tglAkhir;
+
+    /** @var int */
+    private const EXCEL_EXPORT = 1;
+
+    /** @var int */
+    private const BACKGROUND_EXPORT = 2;
 
     protected function queryString(): array
     {
@@ -93,7 +104,6 @@ class LabaRugiRekeningPerPeriode extends Component
     public function getTotalLabaRugiPerRekeningProperty(): array
     {
         $pendapatan = collect($this->labaRugiPerRekening->get('K'));
-
         $bebanDanBiaya = collect($this->labaRugiPerRekening->get('D'));
 
         $totalDebetPendapatan = $pendapatan->sum('debet');
@@ -128,6 +138,17 @@ class LabaRugiRekeningPerPeriode extends Component
             ->layout(BaseLayout::class, ['title' => 'Laporan Laba Rugi']);
     }
 
+    public function exportWithOption(int $option): void
+    {
+        $this->option = $option;
+
+        if ($this->option === self::EXCEL_EXPORT) {
+            $this->exportToExcel();
+        } elseif ($this->option === self::BACKGROUND_EXPORT) {
+            $this->exportToBackground();
+        }
+    }
+
     protected function defaultValues(): void
     {
         $this->kodePenjamin = '';
@@ -146,8 +167,8 @@ class LabaRugiRekeningPerPeriode extends Component
 
         $total = $this->totalLabaRugiPerRekening;
 
-        $totalPendapatanRow = $this->insertExcelRow('', 'TOTAL', '', $total['totalDebetPendapatan'], $total['totalKreditPendapatan'], $total['totalPendapatan']);
-        $totalBebanRow = $this->insertExcelRow('', 'TOTAL', '', $total['totalDebetBeban'], $total['totalKreditBeban'], $total['totalBebanDanBiaya']);
+        $totalPendapatanRow = $this->insertExcelRow('', 'TOTAL PENDAPATAN', '', $total['totalDebetPendapatan'], $total['totalKreditPendapatan'], $total['totalPendapatan']);
+        $totalBebanRow = $this->insertExcelRow('', 'TOTAL BEBAN & BIAYA', '', $total['totalDebetBeban'], $total['totalKreditBeban'], $total['totalBebanDanBiaya']);
 
         $pendapatanBersih = $this->insertExcelRow('', 'PENDAPATAN BERSIH', '', $total['totalPendapatan'], $total['totalBebanDanBiaya'], $total['labaRugi']);
 
@@ -180,6 +201,8 @@ class LabaRugiRekeningPerPeriode extends Component
     protected function columnHeaders(): array
     {
         return [
+            'Unit',
+            'Dokter',
             'Kode Akun',
             'Nama Akun',
             'Jenis',
@@ -208,5 +231,30 @@ class LabaRugiRekeningPerPeriode extends Component
             now()->translatedFormat('d F Y'),
             $periode,
         ];
+    }
+
+    public function exportToBackground(): void
+    {
+        $userId = user()->nik;
+
+        [$jobClass, $payload] = $this->exportJob();
+
+        $jobClass::dispatch($userId, $payload);
+
+        Notification::make()
+            ->message('Export Laba Rugi sedang berjalan')
+            ->info()
+            ->send(user());
+
+        $this->emit('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
+    }
+
+    protected function exportJob(): array
+    {
+        return [ExportLabaRugiRekeningJob::class, [
+            'tglAwal'      => $this->tglAwal,
+            'tglAkhir'     => $this->tglAkhir,
+            'kodePenjamin' => $this->kodePenjamin,
+        ]];
     }
 }

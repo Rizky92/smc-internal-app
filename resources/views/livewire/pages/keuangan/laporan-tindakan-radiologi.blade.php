@@ -6,6 +6,7 @@
             <x-table :sortColumns="$sortColumns" style="width: 185rem" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
                     <x-table.th style="width: 20ch" name="no_rawat" title="No. Rawat" />
+                    <x-table.th style="width: 20ch" name="no_sep" title="No. SEP" />
                     <x-table.th style="width: 12ch" name="no_rkm_medis" title="No. RM" />
                     <x-table.th style="width: 42ch" name="nm_pasien" title="Pasien" />
                     <x-table.th style="width: 20ch" name="png_jawab" title="Jenis Bayar" />
@@ -26,6 +27,7 @@
                     @forelse ($this->dataLaporanTindakanRadiologi as $item)
                         <x-table.tr>
                             <x-table.td>{{ $item->no_rawat }}</x-table.td>
+                            <x-table.td>{{ $item->no_sep }}</x-table.td>
                             <x-table.td>
                                 {{ $item->no_rkm_medis }}
                             </x-table.td>
@@ -59,7 +61,7 @@
                             </x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="16" padding />
+                        <x-table.tr-empty colspan="17" padding />
                     @endforelse
                 </x-slot>
             </x-table>

@@ -215,7 +215,7 @@ class AccountReceivable extends Component
             ->each(function (array $value, string $key) use ($akunDiskonPiutang, $akunTidakTerbayar) {
                 BayarPiutangPasien::dispatch([
                     'key'                 => $key,
-                    'diskon_piutang'      => $value['diskon_piutang'],
+                    'diskon_piutang'      => floatval(trim($value['diskon_piutang'])),
                     'tgl_bayar'           => $this->tglBayar,
                     'user_id'             => user()->nik,
                     'akun'                => $this->akunBayar->get($this->rekeningAkun),

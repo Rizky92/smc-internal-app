@@ -2,48 +2,37 @@
 
 namespace App\Livewire\Pages\Antrean;
 
-use App\Models\Antrian\AntriPoli;
 use App\Models\Aplikasi\Pintu;
-use Illuminate\Database\Query\JoinClause;
+use Exception;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class AntreanDiPanggil extends Component
 {
-    /** @var string */
-    public $kd_pintu;
+    public string $kd_pintu;
 
-    /** @var bool */
-    public $isCalling = false;
+    public bool $isCalling = false;
 
-    /** @var mixed */
-    protected $lastCalledPatient = null;
+    public $antreanDipanggilSekarang = null;
 
-    /** @var mixed */
-    protected $listeners = ['updateStatusAfterCall'];
-
-    public function mount(string $kd_pintu): void
-    {
-        $this->kd_pintu = $kd_pintu;
-        $cachedPatient = cache("lastCalledPatient_{$kd_pintu}", null);
-        $this->lastCalledPatient = is_string($cachedPatient) ? unserialize($cachedPatient) : null;
-    }
+    // Untuk Livewire v3
+    protected $listeners = ['updateStatus'];
 
     public function getAntreanDiPanggilProperty()
     {
-        $db = \DB::connection('mysql_sik')->getDatabaseName();
-
-        $antripoli = \DB::raw("{$db}.antripoli antripoli");
-
         return Pintu::query()
-            ->antrianPerPintu($this->kd_pintu)
-            ->selectRaw('antripoli.status')
-            ->leftJoin($antripoli, fn (JoinClause $join) => $join
-                ->on('registrasi.no_rawat', '=', 'antripoli.no_rawat')
-                ->on('poliklinik.kd_poli', '=', 'antripoli.kd_poli')
-                ->where('antripoli.status', '1')
-            )
-            ->where('antripoli.status', '1')
+            ->antreanPerPintu($this->kd_pintu)
+            ->where('antripintu_smc.status', '1')
+            ->first();
+    }
+
+    public function getAntreanSedangPeriksaProperty()
+    {
+        return Pintu::query()
+            ->antreanPerPintu($this->kd_pintu)
+            ->where('antripintu_smc.status', '2')
             ->first();
     }
 
@@ -53,48 +42,84 @@ class AntreanDiPanggil extends Component
             return;
         }
 
-        $antrean = $this->antreanDiPanggil;
+        $antrean = $this->getAntreanDiPanggilProperty();
 
-        if ($antrean && $antrean->status === '1') {
-            $this->lastCalledPatient = $antrean;
-
-            cache()->put("lastCalledPatient_{$this->kd_pintu}", serialize($antrean), now()->addHours(12));
-
+        if ($antrean) {
             $this->isCalling = true;
-            $this->dispatchBrowserEvent('play-voice', [
+            $this->antreanDipanggilSekarang = [
+                'no_rawat'  => $antrean->no_rawat,
+                'kd_poli'   => $antrean->kd_poli,
+                'kd_dokter' => $antrean->kd_dokter,
                 'no_reg'    => $antrean->no_reg,
                 'nm_pasien' => $antrean->nm_pasien,
-                'nm_poli'   => $antrean->nm_poli,
-            ]);
-        } else {
-            $cachedPatient = cache("lastCalledPatient_{$this->kd_pintu}", null);
-            if (is_string($cachedPatient)) {
-                $this->lastCalledPatient = unserialize($cachedPatient);
+                'kd_pintu'  => $antrean->kd_pintu,
+                'nm_pintu'  => $antrean->nm_pintu,
+            ];
+
+            // Gunakan dispatch untuk Livewire v3, atau dispatchBrowserEvent untuk v2
+            if (method_exists($this, 'dispatch')) {
+                // Livewire v3
+                $this->dispatch('play-voice',
+                    $antrean->no_reg,
+                    $antrean->nm_pasien,
+                    $antrean->nm_pintu
+                );
             } else {
-                $this->lastCalledPatient = null;
+                // Livewire v2
+                $this->dispatchBrowserEvent('play-voice', [
+                    'no_reg'    => $antrean->no_reg,
+                    'nm_pasien' => $antrean->nm_pasien,
+                    'nm_pintu'  => $antrean->nm_pintu,
+                ]);
             }
         }
     }
 
-    public function updateStatusAfterCall(): void
+    public function updateStatus(): void
     {
-        $antrean = $this->antreanDiPanggil;
+        try {
+            $antrean = $this->antreanDipanggilSekarang;
 
-        if ($antrean) {
-            AntriPoli::query()
-                ->where('no_rawat', $antrean->no_rawat)
-                ->where('kd_poli', $antrean->kd_poli)
-                ->where('status', '1')
-                ->update(['status' => '0']);
+            if ($antrean) {
+
+                tracker_start('mysql_sik');
+
+                try {
+                    DB::connection('mysql_sik')->transaction(function () use (&$antrean) {
+                        $conn = DB::connection('mysql_sik');
+
+                        $conn->table('antripintu_smc')
+                            ->where('kd_pintu', $antrean['kd_pintu'])
+                            ->where('status', '2')
+                            ->update(['status' => '0']);
+
+                        $conn->table('antripintu_smc')
+                            ->where('no_rawat', $antrean['no_rawat'])
+                            ->where('kd_pintu', $antrean['kd_pintu'])
+                            ->where('status', '1')
+                            ->update(['status' => '2']);
+                    });
+                } catch (Exception $e) {
+                    Log::error('Error updating antrean status: '.$e->getMessage());
+                }
+
+                tracker_end('mysql_sik');
+            }
+
+            $this->isCalling = false;
+            $this->antreanDipanggilSekarang = null;
+
+            // Tidak ada return atau redirect di sini
+
+        } catch (Exception $e) {
+            Log::error('Error in updateStatus: '.$e->getMessage());
+            $this->isCalling = false;
+            $this->antreanDipanggilSekarang = null;
         }
-
-        $this->isCalling = false;
     }
 
     public function render(): View
     {
-        return view('livewire.pages.antrean.antrean-di-panggil', [
-            'currentPatient' => $this->antreanDiPanggil ?? $this->lastCalledPatient,
-        ]);
+        return view('livewire.pages.antrean.antrean-di-panggil');
     }
 }

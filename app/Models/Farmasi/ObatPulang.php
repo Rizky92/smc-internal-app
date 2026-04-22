@@ -37,7 +37,7 @@ class ObatPulang extends Model
             0 as diskon_persen,
             0 as diskon_nominal,
             sum(resep_pulang.total) as dpp,
-            0 as ppn_persen,
+            12 as ppn_persen,
             0 as ppn_nominal,
             resep_pulang.kode_brng as kd_jenis_prw,
             'Obat Pulang' as kategori,

@@ -4,6 +4,10 @@
     <x-card use-loading>
         <x-slot name="header">
             <x-row-col-flex>
+                <x-label>{{ $this->jumlahHari }} Hari</x-label>
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
+                <x-filter.date title="Per tanggal" />
                 <x-filter.button-export-excel class="ml-auto" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
@@ -20,11 +24,14 @@
                     <x-table.th name="satuan_kecil" title="Satuan" style="width: 12ch" />
                     <x-table.th name="kategori" title="Kategori" style="width: 25ch" />
                     <x-table.th name="stokminimal" title="Stok minimal" align="right" style="width: 24ch" />
-                    <x-table.th name="stok_sekarang_ifa" title="Stok Farmasi A Sekarang" align="right" style="width: 11ch" />
                     <x-table.th name="stok_sekarang_ap" title="Stok Farmasi B Sekarang" align="right" style="width: 11ch" />
                     <x-table.th name="stok_sekarang_ifi" title="Stok Farmasi RWI Sekarang" align="right" style="width: 11ch" />
                     <x-table.th name="stok_sekarang_ifg" title="Stok Farmasi IGD Sekarang" align="right" style="width: 11ch" />
-                    <x-table.th name="stok_keluar_medis_14_hari" title="Stok Keluar Medis (14 Hari)" align="right" style="width: 11ch" />
+                    <x-table.th name="stok_keluar_medis_14_hari" title="Stok Keluar Medis" align="right" style="width: 11ch" />
+                    <x-table.th name="ke_pasien_14_hari" title="Jumlah Ke Pasien" align="right" style="width: 40ch" />
+                    <x-table.th name="piutang_14_hari" title="Piutang" align="right" style="width: 40ch" />
+                    <x-table.th name="total_stok_sekarang" title="Total Stok Sekarang" align="right" style="width: 40ch" />
+                    <x-table.th name="total_keluar_14_hari" title="Total Keluar" align="right" style="width: 40ch" />
                     <x-table.th name="saran_order" title="Saran order" align="right" style="width: 15ch" />
                     <x-table.th name="nama_industri" title="Supplier" style="width: 40ch" />
                     <x-table.th name="harga_beli" colspan="2" title="Harga Per Unit" align="right" style="width: 18ch" />
@@ -32,7 +39,6 @@
                     <x-table.th name="harga_beli_terakhir" colspan="2" title="Harga Beli Terakhir" align="right" style="width: 25ch" />
                     <x-table.th name="diskon_terakhir" title="Diskon Terakhir (%)" align="right" style="width: 24ch" />
                     <x-table.th name="supplier_terakhir" title="Supplier Terakhir" style="width: 40ch" />
-                    <x-table.th name="ke_pasien_14_hari" title="Jumlah Ke Pasien (14 Hari)" align="right" style="width: 40ch" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->stokDaruratObat as $obat)
@@ -47,9 +53,6 @@
                                 {{ $obat->stokminimal }}
                             </x-table.td>
                             <x-table.td class="text-right">
-                                {{ $obat->stok_sekarang_ifa }}
-                            </x-table.td>
-                            <x-table.td class="text-right">
                                 {{ $obat->stok_sekarang_ap }}
                             </x-table.td>
                             <x-table.td class="text-right">
@@ -60,6 +63,18 @@
                             </x-table.td>
                             <x-table.td class="text-right">
                                 {{ $obat->stok_keluar_medis_14_hari }}
+                            </x-table.td>
+                            <x-table.td class="text-right">
+                                {{ $obat->ke_pasien_14_hari }}
+                            </x-table.td>
+                            <x-table.td class="text-right">
+                                {{ $obat->piutang_14_hari }}
+                            </x-table.td>
+                            <x-table.td class="text-right">
+                                {{ $obat->stok_sekarang_ifi + $obat->stok_sekarang_ap + $obat->stok_sekarang_ifg }}
+                            </x-table.td>
+                            <x-table.td class="text-right">
+                                {{ $obat->stok_keluar_medis_14_hari + $obat->ke_pasien_14_hari + $obat->piutang_14_hari }}
                             </x-table.td>
                             <x-table.td class="text-right">
                                 {{ $obat->saran_order }}
@@ -75,9 +90,6 @@
                             </x-table.td>
                             <x-table.td>
                                 {{ $obat->supplier_terakhir }}
-                            </x-table.td>
-                            <x-table.td class="text-right">
-                                {{ $obat->ke_pasien_14_hari }}
                             </x-table.td>
                         </x-table.tr>
                     @empty

@@ -7,23 +7,15 @@
         @push('js')
             <script>
                 function loadData(e) {
-                    let {
-                        pintuId,
-                        kodePintu,
-                        namaPintu,
-                        kodePoliklinik,
-                        kodeDokter
-                    } = e.dataset
+                    let { kodePintu, kodePoliklinik, kodeDokter } = e.dataset;
 
-                    @this.emit('prepare', {
-                        pintuId,
+                    Livewire.emit('prepare', {
                         kodePintu,
-                        namaPintu,
                         kodePoliklinik,
-                        kodeDokter
-                    })
+                        kodeDokter,
+                    });
 
-                    $('#modal-input-pintu').modal('show')
+                    $('#modal-input-pintu').modal('show');
                 }
             </script>
         @endpush
@@ -34,8 +26,13 @@
             <x-row-col-flex>
                 <x-filter.select-perpage />
                 @can('antrean.manajemen-pintu.create')
-                    <x-button variant="primary" size="sm" title="Buat" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-pintu" class="btn-primary ml-auto" />
+                    {{-- Mark this trigger as a create action so the modal can decide whether to clear client-side widgets --}}
+                    <x-button variant="primary" size="sm" title="Buat" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-pintu" data-action="create" class="btn-primary ml-auto" />
                 @endcan
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
+                <x-filter.button-reset-filters class="ml-auto" />
+                <x-filter.search class="ml-2" />
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
@@ -43,43 +40,33 @@
                 <x-slot name="columns">
                     <x-table.th name="kd_pintu" title="Kode Pintu" />
                     <x-table.th name="nm_pintu" title="Nama Pintu" />
-                    <x-table.th>Poli</x-table.th>
-                    <x-table.th>Dokter</x-table.th>
+                    <x-table.th title="Jadwal" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->pintu as $pintu)
                         <x-table.tr>
                             <x-table.td
                                 :clickable="user()->can('antrean.manajemen-pintu.update')"
-                                data-pintu-id="{{ $pintu->id }}"
-                                data-kode-poliklinik="{{ $pintu->poli }}"
-                                data-kode-dokter="{{ $pintu->dokter }}"
-                                data-kode-pintu="{{ $pintu->kd_pintu }}"
-                                data-nama-pintu="{{ $pintu->nm_pintu }}">
+                                data-kode-poliklinik="{{ $pintu->kd_poli }}"
+                                data-kode-dokter="{{ $pintu->kd_dokter }}"
+                                data-kode-pintu="{{ $pintu->kd_pintu }}">
                                 {{ $pintu->kd_pintu }}
                             </x-table.td>
                             <x-table.td>{{ $pintu->nm_pintu }}</x-table.td>
                             <x-table.td>
-                                <div class="d-inline-flex flex-wrap" style="gap: 0.25rem">
-                                    @foreach ($pintu->poliklinik as $poli)
-                                        <x-badge variant="secondary">
-                                            {{ $poli->nm_poli }}
-                                        </x-badge>
-                                    @endforeach
-                                </div>
-                            </x-table.td>
-                            <x-table.td>
-                                <div class="d-inline-flex flex-wrap" style="gap: 0.25rem">
-                                    @foreach ($pintu->dokter as $dokter)
-                                        <x-badge variant="secondary">
-                                            {{ $dokter->nm_dokter }}
-                                        </x-badge>
-                                    @endforeach
-                                </div>
+                                @if (! empty($pintu->jadwal) && $pintu->jadwal->isNotEmpty())
+                                    <ul class="mb-0 pl-3">
+                                        @foreach ($pintu->jadwal as $j)
+                                            <li>{{ $j->nm_dokter }} - {{ $j->nm_poli }}</li>
+                                        @endforeach
+                                    </ul>
+                                @else
+                                    <span class="text-muted">-</span>
+                                @endif
                             </x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="4" padding />
+                        <x-table.tr-empty colspan="3" padding />
                     @endforelse
                 </x-slot>
             </x-table>

@@ -102,7 +102,8 @@ class ResepObat extends Model
             dokter.nm_dokter,
             poliklinik.nm_poli,
             (select round(sum(detail_pemberian_obat.total)) from detail_pemberian_obat where detail_pemberian_obat.no_rawat = resep_obat.no_rawat and detail_pemberian_obat.tgl_perawatan = resep_obat.tgl_perawatan and detail_pemberian_obat.jam = resep_obat.jam) as total,
-            (select count(*) from detail_pemberian_obat where detail_pemberian_obat.no_rawat = resep_obat.no_rawat and detail_pemberian_obat.tgl_perawatan = resep_obat.tgl_perawatan and detail_pemberian_obat.jam = resep_obat.jam) as jumlah
+            (select count(*) from detail_pemberian_obat where detail_pemberian_obat.no_rawat = resep_obat.no_rawat and detail_pemberian_obat.tgl_perawatan = resep_obat.tgl_perawatan and detail_pemberian_obat.jam = resep_obat.jam) as jumlah,
+            (select round(sum(obat_racikan.jml_dr)) from obat_racikan where obat_racikan.no_rawat = resep_obat.no_rawat and obat_racikan.tgl_perawatan = resep_obat.tgl_perawatan and obat_racikan.jam = resep_obat.jam) as jml_dr
             SQL;
 
         $this->addSearchConditions([
@@ -197,7 +198,7 @@ class ResepObat extends Model
             ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir]);
     }
 
-    public function scopeKunjunganPerPoli(Builder $query, string $tglAwal = '', string $tglAkhir = ''): Builder
+    public function scopeKunjunganPerPoli(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $statusLanjut = 'semua'): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->toDateString();
@@ -243,7 +244,40 @@ class ResepObat extends Model
             ->leftJoin('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->leftJoin('dokter as dokter_poli', 'reg_periksa.kd_dokter', '=', 'dokter_poli.kd_dokter')
             ->leftJoin('dokter as dokter_peresep', 'resep_obat.kd_dokter', '=', 'dokter_peresep.kd_dokter')
-            ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir]);
+            ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
+            ->when($statusLanjut !== 'semua', fn (Builder $q): Builder => $q->where('reg_periksa.status_lanjut', $statusLanjut));
+    }
+
+    public function scopeAntreanFarmasiRawatJalan(Builder $query, string $kategori = ''): Builder
+    {
+        $sqlSelect = <<<'SQL'
+            poliklinik.nm_poli,
+            pasien.nm_pasien, 
+            resep_obat.jam as jam_validasi,
+            dokter.nm_dokter
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->addSelect(DB::raw('EXISTS(SELECT 1 FROM resep_dokter_racikan WHERE resep_dokter_racikan.no_resep = resep_obat.no_resep) as is_racikan'))
+            ->join('reg_periksa', 'resep_obat.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->join('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
+            ->join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
+            ->where('resep_obat.tgl_peresepan', '=', DB::raw('current_date()'))
+            ->where('resep_obat.jam', '!=', '00:00:00')
+            ->where('resep_obat.jam_peresepan', '!=', '00:00:00')
+            ->where(fn (Builder $query): Builder => $query
+                ->when($kategori == 'pengerjaan', fn (Builder $q): Builder => $q->where('resep_obat.jam_penyerahan', '=', '00:00:00'))
+                ->when($kategori == 'penyerahan', fn (Builder $q): Builder => $q->where('resep_obat.jam_penyerahan', '!=', '00:00:00'))
+            )
+            ->whereBetween('resep_obat.jam', [
+                DB::raw('current_time - interval 120 minute'),
+                DB::raw('current_time'),
+            ])
+            ->where('resep_obat.status', '=', 'ralan')
+            ->where('reg_periksa.kd_poli', '!=', 'IGDK')
+            ->orderByDesc('resep_obat.jam');
     }
 
     public function scopeKunjunganPasien(Builder $query, string $jenisPerawatan = 'semua', string $year = '2022'): Builder

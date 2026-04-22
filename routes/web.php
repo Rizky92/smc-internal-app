@@ -42,6 +42,7 @@ use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 Route::get('/', HomeController::class);
 
 Route::get('/antrean', Antrean::class)->name('antrean');
+Route::get('/antrean-farmasi', Informasi\AntreanFarmasi::class)->name('antrean-farmasi');
 Route::get('/antrean-pintu', AntreanPintu::class)->name('antrean-pintu');
 Route::get('/antrean/{kd_poli}', AntreanPoli::class)->name('antrean-poli');
 Route::get('/antrean-per-pintu/{kd_pintu}', AntreanPerPintu::class)->name('antrean-per-pintu');
@@ -228,6 +229,30 @@ Route::prefix('admin')
                 Route::get('obat-ralan-ke-ranap', Keuangan\ObatRalanKeRanap::class)
                     ->name('obat-ralan-ke-ranap')
                     ->middleware('can:keuangan.obat-ralan-ke-ranap.read');
+
+                Route::get('sirkulasi-non-medis', Keuangan\SirkulasiNonMedis::class)
+                    ->name('sirkulasi-non-medis')
+                    ->middleware('can:keuangan.sirkulasi-non-medis.read');
+
+                Route::get('tarif-ralan', Keuangan\TarifRalan::class)
+                    ->name('tarif-ralan')
+                    ->middleware('can:keuangan.tarif-ralan.read');
+
+                Route::get('tarif-ranap', Keuangan\TarifRanap::class)
+                    ->name('tarif-ranap')
+                    ->middleware('can:keuangan.tarif-ranap.read');
+
+                Route::get('tarif-radiologi', Keuangan\TarifRadiologi::class)
+                    ->name('tarif-radiologi')
+                    ->middleware('can:keuangan.tarif-radiologi.read');
+
+                Route::get('tarif-operasi', Keuangan\TarifOperasi::class)
+                    ->name('tarif-operasi')
+                    ->middleware('can:keuangan.tarif-operasi.read');
+
+                Route::get('tarif-lab', Keuangan\TarifLab::class)
+                    ->name('tarif-lab')
+                    ->middleware('can:keuangan.tarif-lab.read');
             });
 
         Route::prefix('farmasi')
@@ -292,6 +317,14 @@ Route::prefix('admin')
                 Route::get('rincian-kunjungan-ralan', Farmasi\RincianKunjunganRalan::class)
                     ->name('rincian-kunjungan-ralan')
                     ->middleware('can:farmasi.rincian-kunjungan-ralan.read');
+
+                Route::get('kunjungan-walk-in', Farmasi\KunjunganWalkIn::class)
+                    ->name('kunjungan-walk-in')
+                    ->middleware('can:farmasi.kunjungan-walk-in.read');
+
+                Route::get('hpp-pembelian-terakhir', Farmasi\HppPembelianTerakhir::class)
+                    ->name('hpp-pembelian-terakhir')
+                    ->middleware('can:farmasi.hpp-pembelian-terakhir.read');
             });
 
         Route::prefix('rekam-medis')

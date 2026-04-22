@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
+use App\Jobs\ExportToExcel;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
@@ -12,6 +13,7 @@ use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\Rekening;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -33,6 +35,12 @@ class BukuBesar extends Component
     /** @var string */
     public $tglAkhir;
 
+    /** @var int */
+    private const EXCEL_EXPORT = 1;
+
+    /** @var int */
+    private const BACKGROUND_EXPORT = 2;
+
     protected function queryString(): array
     {
         return [
@@ -52,11 +60,11 @@ class BukuBesar extends Component
         return $this->isDeferred ? [] : Jurnal::query()
             ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
             ->with(['pengeluaranHarian', 'piutangDilunaskan.tagihan'])
-            ->search($this->cari)
             ->sortWithColumns($this->sortColumns, [
                 'tgl_jurnal' => 'asc',
                 'jam_jurnal' => 'asc',
             ])
+            ->search($this->cari)
             ->paginate($this->perpage);
     }
 
@@ -82,6 +90,17 @@ class BukuBesar extends Component
             ->layout(BaseLayout::class, ['title' => 'Jurnal Buku Besar']);
     }
 
+    public function exportWithOption(int $option): void
+    {
+        $this->option = $option;
+
+        if ($this->option === self::EXCEL_EXPORT) {
+            $this->exportToExcel();
+        } elseif ($this->option === self::BACKGROUND_EXPORT) {
+            $this->exportToBackground();
+        }
+    }
+
     /**
      * @psalm-return array{0: mixed}
      */
@@ -90,7 +109,6 @@ class BukuBesar extends Component
         return [
             fn () => Jurnal::query()
                 ->bukuBesar($this->tglAwal, $this->tglAkhir, $this->kodeRekening)
-                ->with(['pengeluaranHarian', 'piutangDilunaskan'])
                 ->search($this->cari)
                 ->cursor()
                 ->map(fn (Jurnal $model): array => [
@@ -100,7 +118,7 @@ class BukuBesar extends Component
                     'no_bukti'               => $model->no_bukti,
                     'keterangan'             => $model->keterangan,
                     'keterangan_pengeluaran' => optional($model->pengeluaranHarian)->keterangan ?? '-',
-                    'catatan'                => $this->getCatatanPiutang($model),
+                    'catatan_piutang'        => $this->getCatatanPiutang($model),
                     'kd_rek'                 => $model->kd_rek,
                     'nm_rek'                 => $model->nm_rek,
                     'debet'                  => round($model->debet, 2),
@@ -113,7 +131,7 @@ class BukuBesar extends Component
                     'no_bukti'               => '',
                     'keterangan'             => '',
                     'keterangan_pengeluaran' => '',
-                    'catatan'                => '',
+                    'catatan_piutang'        => '',
                     'kd_rek'                 => '',
                     'nm_rek'                 => 'TOTAL :',
                     'debet'                  => round(optional($this->totalDebetDanKredit)->debet, 2),
@@ -136,7 +154,22 @@ class BukuBesar extends Component
             'No. Bukti',
             'Keterangan Jurnal',
             'Keterangan Pengeluaran',
-            'Catatan Penagihan',
+            'Catatan Piutang',
+            'Kode',
+            'Rekening',
+            'Debet',
+            'Kredit',
+        ];
+    }
+
+    protected function backgroundExportColumnHeaders(): array
+    {
+        return [
+            'Tgl',
+            'Jam',
+            'No. Jurnal',
+            'No. Bukti',
+            'Keterangan Jurnal',
             'Kode',
             'Rekening',
             'Debet',
@@ -170,5 +203,23 @@ class BukuBesar extends Component
         $this->kodeRekening = '';
         $this->tglAwal = now()->startOfMonth()->toDateString();
         $this->tglAkhir = now()->endOfMonth()->toDateString();
+    }
+
+    public function exportToBackground(): void
+    {
+        $userId = user()->nik;
+
+        $exportSessionId = Str::uuid()->toString();
+
+        ExportToExcel::dispatch(
+            userId: $userId,
+            exportSessionId: $exportSessionId,
+            tglAwal: $this->tglAwal,
+            tglAkhir: $this->tglAkhir,
+            kodeRekening: $this->kodeRekening,
+            columnHeaders: $this->backgroundExportColumnHeaders(),
+        )->onQueue('exports');
+
+        $this->emit('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
     }
 }

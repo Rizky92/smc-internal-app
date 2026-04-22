@@ -67,6 +67,17 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'keuangan.laporan-faktur-pajak.read']);
         Permission::create(['name' => 'keuangan.igd-ke-rawat-inap.read']);
         Permission::create(['name' => 'keuangan.obat-ralan-ke-ranap.read']);
+        Permission::create(['name' => 'keuangan.sirkulasi-non-medis.read']);
+        Permission::create(['name' => 'keuangan.tarif-ralan.create']);
+        Permission::create(['name' => 'keuangan.tarif-ralan.read']);
+        Permission::create(['name' => 'keuangan.tarif-ranap.create']);
+        Permission::create(['name' => 'keuangan.tarif-ranap.read']);
+        Permission::create(['name' => 'keuangan.tarif-radiologi.create']);
+        Permission::create(['name' => 'keuangan.tarif-radiologi.read']);
+        Permission::create(['name' => 'keuangan.tarif-operasi.create']);
+        Permission::create(['name' => 'keuangan.tarif-operasi.read']);
+        Permission::create(['name' => 'keuangan.tarif-lab.create']);
+        Permission::create(['name' => 'keuangan.tarif-lab.read']);
 
         Permission::create(['name' => 'farmasi.stok-darurat.read']);
         Permission::create(['name' => 'farmasi.pemakaian-stok.read']);
@@ -83,6 +94,8 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'farmasi.daftar-riwayat-obat-alkes.read']);
         Permission::create(['name' => 'farmasi.rincian-perbandingan-po.read']);
         Permission::create(['name' => 'farmasi.rincian-kunjungan-ralan.read']);
+        Permission::create(['name' => 'farmasi.kunjungan-walk-in.read']);
+        Permission::create(['name' => 'farmasi.hpp-pembelian-terakhir.read']);
 
         Permission::create(['name' => 'rekam-medis.laporan-statistik.read']);
         Permission::create(['name' => 'rekam-medis.laporan-demografi.read']);

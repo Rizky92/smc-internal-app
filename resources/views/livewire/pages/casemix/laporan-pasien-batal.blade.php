@@ -33,7 +33,6 @@
                     @empty
                         <x-table.tr-empty colspan="10" padding />
                     @endforelse
-                   
                 </x-slot>
             </x-table>
         </x-slot>

@@ -106,6 +106,12 @@ class Menu
                     'keuangan.laporan-faktur-pajak.read',
                     'keuangan.igd-ke-rawat-inap.read',
                     'keuangan.obat-ralan-ke-ranap.read',
+                    'keuangan.sirkulasi-non-medis.read',
+                    'keuangan.tarif-ralan.read',
+                    'keuangan.tarif-ranap.read',
+                    'keuangan.tarif-radiologi.read',
+                    'keuangan.tarif-operasi.read',
+                    'keuangan.tarif-lab.read',
                 ]),
                 'items' => [
                     [
@@ -282,6 +288,42 @@ class Menu
                         'url'               => route('admin.keuangan.obat-ralan-ke-ranap'),
                         'hasAnyPermissions' => $user->can('keuangan.obat-ralan-ke-ranap.read'),
                     ],
+                    [
+                        'name'              => 'Sirkulasi Non Medis',
+                        'icon'              => 'fas fa-sync-alt',
+                        'url'               => route('admin.keuangan.sirkulasi-non-medis'),
+                        'hasAnyPermissions' => $user->can('keuangan.sirkulasi-non-medis.read'),
+                    ],
+                    [
+                        'name'              => 'Tarif Ralan',
+                        'icon'              => 'fas fa-file-invoice-dollar',
+                        'url'               => route('admin.keuangan.tarif-ralan'),
+                        'hasAnyPermissions' => $user->can('keuangan.tarif-ralan.read'),
+                    ],
+                    [
+                        'name'              => 'Tarif Ranap',
+                        'icon'              => 'fas fa-file-invoice-dollar',
+                        'url'               => route('admin.keuangan.tarif-ranap'),
+                        'hasAnyPermissions' => $user->can('keuangan.tarif-ranap.read'),
+                    ],
+                    [
+                        'name'              => 'Tarif Radiologi',
+                        'icon'              => 'fas fa-file-invoice-dollar',
+                        'url'               => route('admin.keuangan.tarif-radiologi'),
+                        'hasAnyPermissions' => $user->can('keuangan.tarif-radiologi.read'),
+                    ],
+                    [
+                        'name'              => 'Tarif Operasi',
+                        'icon'              => 'fas fa-file-invoice-dollar',
+                        'url'               => route('admin.keuangan.tarif-operasi'),
+                        'hasAnyPermissions' => $user->can('keuangan.tarif-operasi.read'),
+                    ],
+                    [
+                        'name'              => 'Tarif Lab',
+                        'icon'              => 'fas fa-file-invoice-dollar',
+                        'url'               => route('admin.keuangan.tarif-lab'),
+                        'hasAnyPermissions' => $user->can('keuangan.tarif-lab.read'),
+                    ],
                 ],
             ],
             [
@@ -303,6 +345,8 @@ class Menu
                     'farmasi.defecta-depo.read',
                     'farmasi.daftar-riwayat-obat-alkes.read',
                     'farmasi.farmasi.rincian-perbandingan-po.read',
+                    'farmasi.kunjungan-walk-in.read',
+                    'farmasi.hpp-pembelian-terakhir.read',
                 ]),
                 'items' => [
                     [
@@ -394,6 +438,18 @@ class Menu
                         'icon'              => 'fas fa-balance-scale',
                         'url'               => route('admin.farmasi.rincian-kunjungan-ralan'),
                         'hasAnyPermissions' => $user->can('farmasi.rincian-kunjungan-ralan.read'),
+                    ],
+                    [
+                        'name'              => 'Kunjungan Walk In',
+                        'icon'              => 'fas fa-walking',
+                        'url'               => route('admin.farmasi.kunjungan-walk-in'),
+                        'hasAnyPermissions' => $user->can('farmasi.kunjungan-walk-in.read'),
+                    ],
+                    [
+                        'name'              => 'HPP Pembelian Terakhir',
+                        'icon'              => 'fas fa-money-bill',
+                        'url'               => route('admin.farmasi.hpp-pembelian-terakhir'),
+                        'hasAnyPermissions' => $user->can('farmasi.hpp-pembelian-terakhir.read'),
                     ],
                 ],
             ],
@@ -544,6 +600,13 @@ class Menu
                         'name'              => 'Dashboard Dokter',
                         'url'               => route('dashboard-dokter'),
                         'icon'              => 'fas fa-user-md',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => true,
+                    ],
+                    [
+                        'name'              => 'Antrean Farmasi',
+                        'url'               => route('antrean-farmasi'),
+                        'icon'              => 'fas fa-pills',
                         'type'              => 'link',
                         'hasAnyPermissions' => true,
                     ],

@@ -152,4 +152,87 @@ class GudangObat extends Model
                 ->orWhere('pemberian_obat_3hari.jumlah', '>', 0)
                 ->orWhere('pemberian_obat_6hari.jumlah', '>', 0));
     }
+
+    public function scopeHppPembelianTerakhir(Builder $query, string $kodeBangsal = '-'): Builder
+    {
+        $hPesan = 'COALESCE(lp.h_pesan, databarang.h_beli)';
+        $dis = 'COALESCE(lp.dis, 0)';
+        $hargaKecil = <<<'SQL'
+            COALESCE(
+                lp.h_pesan / NULLIF(lp.jumlah2 / NULLIF(lp.jumlah, 0), 0),
+                databarang.h_beli / NULLIF(databarang.isi, 0)
+            )
+            SQL;
+        $hpp = "round(($hargaKecil * (1 - ($dis / 100))) * 1.11, 2)";
+
+        $lastOrder = fn ($query) => $query
+            ->selectRaw('kode_brng, no_faktur_terakhir')
+            ->fromSub(
+                fn ($inner) => $inner
+                    ->selectRaw('
+                        d2.kode_brng,
+                        d2.no_faktur AS no_faktur_terakhir,
+                        ROW_NUMBER() OVER (
+                            PARTITION BY d2.kode_brng
+                            ORDER BY p2.tgl_pesan DESC, d2.h_pesan DESC
+                        ) AS rn
+                    ')
+                    ->from('detailpesan as d2')
+                    ->join('pemesanan as p2', 'd2.no_faktur', '=', 'p2.no_faktur'),
+                'ranked'
+            )
+            ->where('rn', 1);
+
+        $sqlSelect = <<<SQL
+            bangsal.nm_bangsal,
+            databarang.kode_brng,
+            databarang.nama_brng,
+            databarang.kode_satbesar,
+            databarang.isi,
+            databarang.kode_sat,
+            databarang.kapasitas,
+            gudangbarang.stok,
+            lp.no_faktur,
+            pm.tgl_pesan,
+            $hPesan h_pesan,
+            $dis dis,
+            round($hargaKecil, 2) harga_satuan,
+            $hpp hpp
+        SQL;
+
+        $this->addSearchConditions([
+            'x.nm_bangsal',
+            'x.kode_brng',
+            'x.nama_brng',
+        ]);
+
+        $this->addRawColumns([
+            'total_nilai_stok' => DB::raw('ROUND(x.hpp * x.stok, 2)'),
+        ]);
+
+        return $query
+            ->fromSub(
+                fn ($sub) => $sub
+                    ->selectRaw($sqlSelect)
+                    ->from('gudangbarang')
+                    ->join('databarang', 'gudangbarang.kode_brng', '=', 'databarang.kode_brng')
+                    ->join('bangsal', 'gudangbarang.kd_bangsal', '=', 'bangsal.kd_bangsal')
+                    ->leftJoinSub($lastOrder, 'last_order', 'last_order.kode_brng', '=', 'gudangbarang.kode_brng')
+                    ->leftJoinSub(
+                        fn ($q) => $q
+                            ->selectRaw('no_faktur, kode_brng, MAX(h_pesan) as h_pesan, MAX(dis) as dis, MAX(jumlah) as jumlah, MAX(jumlah2) as jumlah2')
+                            ->from('detailpesan')
+                            ->groupBy('no_faktur', 'kode_brng'),
+                        'lp',
+                        fn (JoinClause $join) => $join
+                            ->on('lp.kode_brng', '=', 'gudangbarang.kode_brng')
+                            ->on('lp.no_faktur', '=', 'last_order.no_faktur_terakhir')
+                    )
+                    ->leftJoin('pemesanan as pm', 'pm.no_faktur', '=', 'lp.no_faktur')
+                    ->when($kodeBangsal !== '-', fn ($q) => $q->where('bangsal.kd_bangsal', $kodeBangsal)),
+                'x'
+            )
+            ->selectRaw('x.*, ROUND(x.hpp * x.stok, 2) as total_nilai_stok')
+            ->orderBy('x.kode_brng');
+    }
 }

@@ -15,12 +15,12 @@ use Livewire\Component;
 
 class LaporanPasienBatal extends Component
 {
-    use FlashComponent;
-    use Filterable;
+    use DeferredLoading;
     use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
     use LiveTable;
     use MenuTracker;
-    use DeferredLoading;
 
     /** @var string */
     public $tglAwal;
@@ -65,7 +65,7 @@ class LaporanPasienBatal extends Component
     protected function dataPerSheet(): array
     {
         return [
-            fn() => BridgingSep::query()
+            fn () => BridgingSep::query()
                 ->pasienBatal($this->tglAwal, $this->tglAkhir)
                 ->search($this->cari)
                 ->sortWithColumns($this->sortColumns)
@@ -120,4 +120,3 @@ class LaporanPasienBatal extends Component
         ];
     }
 }
-

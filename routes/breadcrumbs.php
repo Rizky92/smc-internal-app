@@ -172,6 +172,36 @@ Breadcrumbs::for('admin.keuangan.obat-ralan-ke-ranap', function (Trail $trail): 
     $trail->push('Obat Rawat Jalan Ke Rawat Inap', route('admin.keuangan.obat-ralan-ke-ranap'));
 });
 
+Breadcrumbs::for('admin.keuangan.sirkulasi-non-medis', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('Sirkulasi Non Medis', route('admin.keuangan.sirkulasi-non-medis'));
+});
+
+Breadcrumbs::for('admin.keuangan.tarif-ralan', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('Tarif Ralan', route('admin.keuangan.tarif-ralan'));
+});
+
+Breadcrumbs::for('admin.keuangan.tarif-ranap', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('Tarif Ranap', route('admin.keuangan.tarif-ranap'));
+});
+
+Breadcrumbs::for('admin.keuangan.tarif-radiologi', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('Tarif Radiologi', route('admin.keuangan.tarif-radiologi'));
+});
+
+Breadcrumbs::for('admin.keuangan.tarif-operasi', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('Tarif Operasi', route('admin.keuangan.tarif-operasi'));
+});
+
+Breadcrumbs::for('admin.keuangan.tarif-lab', function (Trail $trail): void {
+    $trail->parent('admin.keuangan');
+    $trail->push('Tarif Laboratorium', route('admin.keuangan.tarif-lab'));
+});
+
 Breadcrumbs::for('admin.farmasi', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Farmasi');
@@ -250,6 +280,16 @@ Breadcrumbs::for('admin.farmasi.rincian-perbandingan-po', function (Trail $trail
 Breadcrumbs::for('admin.farmasi.rincian-kunjungan-ralan', function (Trail $trail): void {
     $trail->parent('admin.farmasi');
     $trail->push('Rincian Kunjungan Ralan', route('admin.farmasi.rincian-kunjungan-ralan'));
+});
+
+Breadcrumbs::for('admin.farmasi.kunjungan-walk-in', function (Trail $trail): void {
+    $trail->parent('admin.farmasi');
+    $trail->push('Kunjungan Walk In', route('admin.farmasi.kunjungan-walk-in'));
+});
+
+Breadcrumbs::for('admin.farmasi.hpp-pembelian-terakhir', function (Trail $trail): void {
+    $trail->parent('admin.farmasi');
+    $trail->push('HPP Pembelian Terakhir', route('admin.farmasi.hpp-pembelian-terakhir'));
 });
 
 Breadcrumbs::for('admin.rekam-medis', function (Trail $trail): void {
