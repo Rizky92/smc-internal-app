@@ -312,6 +312,16 @@ Breadcrumbs::for('admin.logistik.stok-darurat', function (Trail $trail): void {
     $trail->push('Stok Darurat', route('admin.logistik.stok-darurat'));
 });
 
+Breadcrumbs::for('admin.form-it', function (Trail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Form IT', route('admin.form-it'));
+});
+
+Breadcrumbs::for('admin.form-it.detail', function (Trail $trail, int $ticketId): void {
+    $trail->parent('admin.form-it');
+    $trail->push('Detail Tiket', route('admin.form-it.detail', ['ticketId' => $ticketId]));
+});
+
 Breadcrumbs::for('admin.manajemen-user', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Manajemen User', route('admin.manajemen-user'));

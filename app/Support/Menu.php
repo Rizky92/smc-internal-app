@@ -625,6 +625,13 @@ class Menu
                 ],
             ],
             [
+                'name'              => 'Form IT',
+                'url'               => route('admin.form-it'),
+                'icon'              => 'fas fa-laptop',
+                'type'              => 'link',
+                'hasAnyPermissions' => $user->can('form-it.read'),
+            ],
+            [
                 'name'              => 'Manajemen User',
                 'url'               => route('admin.manajemen-user'),
                 'icon'              => 'fas fa-users',

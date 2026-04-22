@@ -18,6 +18,7 @@ use App\Livewire\Pages\Casemix;
 use App\Livewire\Pages\Farmasi;
 use App\Livewire\Pages\HakAkses;
 use App\Livewire\Pages\Informasi;
+use App\Livewire\Pages\It;
 use App\Livewire\Pages\Keuangan;
 use App\Livewire\Pages\Laboratorium;
 use App\Livewire\Pages\Logistik;
@@ -400,4 +401,12 @@ Route::prefix('admin')
                 Route::get('job-cleaner', Admin\JobCleaner::class)
                     ->name('job-cleaner');
             });
+
+        Route::get('form-it', It\FormIt::class)
+            ->name('form-it')
+            ->middleware('can:form-it.read');
+
+        Route::get('form-it/detail/{ticketId}', It\Modal\ViewTicketDetail::class)
+            ->name('form-it.detail')
+            ->middleware('can:form-it.read');
     });
