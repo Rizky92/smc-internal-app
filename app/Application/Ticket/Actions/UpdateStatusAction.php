@@ -63,11 +63,13 @@ final class UpdateStatusAction
                 ]);
             }
 
+            $user = User::find($data->changedById);
+
             Event::dispatch(new TicketStatusChanged(
                 $ticket->fresh(),
                 $oldStatus,
                 $newStatus,
-                User::find($data->changedById)
+                $user ? $user->nik : $data->changedById
             ));
 
             return $ticket->load(['category', 'department', 'assignee', 'activities']);

@@ -4,8 +4,6 @@ namespace App\Models\Helpdesk;
 
 use App\Database\Eloquent\Concerns\Searchable;
 use App\Database\Eloquent\Model;
-use App\Domain\Ticket\Enums\TicketPriority;
-use App\Domain\Ticket\Enums\TicketStatus;
 use App\Domain\Ticket\ValueObjects\TicketSla;
 use App\Models\Aplikasi\User;
 use App\Models\Bidang;
@@ -27,16 +25,23 @@ class Ticket extends Model
 
     protected $keyType = 'int';
 
-    const STATUS_OPEN     = 'open';
+    const STATUS_OPEN = 'open';
+
     const STATUS_PROGRESS = 'progress';
-    const STATUS_WAITING  = 'waiting';
+
+    const STATUS_WAITING = 'waiting';
+
     const STATUS_RESOLVED = 'resolved';
-    const STATUS_CLOSED   = 'closed';
+
+    const STATUS_CLOSED = 'closed';
 
     const PRIORITY_CRITICAL = 'critical';
-    const PRIORITY_HIGH     = 'high';
-    const PRIORITY_MEDIUM   = 'medium';
-    const PRIORITY_LOW      = 'low';
+
+    const PRIORITY_HIGH = 'high';
+
+    const PRIORITY_MEDIUM = 'medium';
+
+    const PRIORITY_LOW = 'low';
 
     const STATUS_LABELS = [
         self::STATUS_OPEN     => 'Open',
@@ -130,20 +135,28 @@ class Ticket extends Model
         return $this->belongsTo(TicketCategory::class, 'category_id', 'id');
     }
 
-    public function activities(): HasMany
+    /**
+     * @psalm-return Builder<TRelatedModel>
+     */
+    public function activities(): Builder
     {
         return $this->hasMany(TicketActivity::class)->latest();
     }
 
-    public function comments(): HasMany
+    /**
+     * @psalm-return Builder<TRelatedModel>
+     */
+    public function comments(): Builder
     {
         return $this->hasMany(TicketComment::class)->latest();
     }
 
     /**
      * Komentar yang bisa dilihat pelapor (bukan internal)
+     *
+     * @psalm-return Builder<TRelatedModel>
      */
-    public function publicComments(): HasMany
+    public function publicComments(): Builder
     {
         return $this->hasMany(TicketComment::class)
             ->where('is_internal', false)

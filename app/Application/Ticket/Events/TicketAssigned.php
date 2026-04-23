@@ -2,28 +2,34 @@
 
 namespace App\Application\Ticket\Events;
 
-use App\Models\Aplikasi\User;
 use App\Models\Helpdesk\Ticket;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 
 final class TicketAssigned
 {
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
+
     public Ticket $ticket;
 
-    public User $assignee;
+    public string $assigneeNik;
 
-    public ?User $assignedBy;
+    public ?string $assignedByNik;
 
-    public bool $isReassignment = false;
+    public bool $isReassignment;
 
     public function __construct(
         Ticket $ticket,
-        User $assignee,
-        ?User $assignedBy = null,
+        string $assigneeNik,
+        ?string $assignedByNik = null,
         bool $isReassignment = false
     ) {
         $this->ticket = $ticket;
-        $this->assignee = $assignee;
-        $this->assignedBy = $assignedBy;
+        $this->assigneeNik = $assigneeNik;
+        $this->assignedByNik = $assignedByNik;
         $this->isReassignment = $isReassignment;
     }
 }

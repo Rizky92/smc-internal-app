@@ -2,20 +2,26 @@
 
 namespace App\Application\Ticket\Events;
 
-use App\Models\Aplikasi\User;
 use App\Models\Helpdesk\Ticket;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 
 final class TicketFirstResponseAdded
 {
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
+
     public Ticket $ticket;
 
-    public User $respondedBy;
+    public string $nik;
 
     public function __construct(
         Ticket $ticket,
-        User $respondedBy
+        string $nik
     ) {
         $this->ticket = $ticket;
-        $this->respondedBy = $respondedBy;
+        $this->nik = $nik;
     }
 }

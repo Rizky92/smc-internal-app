@@ -20,8 +20,8 @@ final class SlaCalculator
         [$responseHours, $resolutionHours] = $this->getHoursForPriority($priority);
 
         return TicketSla::calculate(
-            createdAt:       $createdAt,
-            responseHours:   $responseHours,
+            createdAt: $createdAt,
+            responseHours: $responseHours,
             resolutionHours: $resolutionHours,
         );
     }
@@ -34,7 +34,7 @@ final class SlaCalculator
             $policy = SlaPolicy::forPriority($priority);
 
             return [
-                $policy?->response_hours   ?? TicketPriority::defaultResponseHours($priority),
+                $policy?->response_hours ?? TicketPriority::defaultResponseHours($priority),
                 $policy?->resolution_hours ?? TicketPriority::defaultResolutionHours($priority),
             ];
         });
@@ -44,6 +44,7 @@ final class SlaCalculator
     {
         if ($priority) {
             Cache::forget("sla_policy_{$priority}");
+
             return;
         }
 

@@ -32,20 +32,23 @@ final class AddCommentAction
             'is_internal' => $data->isInternal,
         ]);
 
+        // Komentar publik pertama dari teknisi = first response
         if (! $data->isInternal && ! $ticket->first_responded_at) {
             $user = User::find($data->userId);
 
+            // Cek apakah user memiliki hak akses (bukan sekedar login)
             if ($user && $user->can('form-it.read')) {
                 $ticket->first_responded_at = now();
                 $this->repository->save($ticket);
 
                 Event::dispatch(new TicketFirstResponseAdded(
                     $ticket->fresh(),
-                    $user
+                    $user->nik
                 ));
             }
         }
 
+        // Tambah ke activity log jika catatan internal
         if ($data->isInternal) {
             $ticket->activities()->create([
                 'causer_id'   => $data->userId,

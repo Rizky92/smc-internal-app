@@ -32,7 +32,6 @@ final class AssignTicketAction
             $isReassignment = ! is_null($ticket->assignee_id);
             $previousAssigneeId = $ticket->assignee_id;
 
-            // Simpan nama sebelumnya sebelum di-update
             $previousAssigneeName = $ticket->assignee ? $ticket->assignee->name : ($previousAssigneeId ? "#$previousAssigneeId" : null);
 
             $ticket->assignee_id = $data->assigneeId;
@@ -64,8 +63,8 @@ final class AssignTicketAction
 
             Event::dispatch(new TicketAssigned(
                 $ticket->fresh(),
-                $assignee,
-                $assignedBy,
+                $assignee ? $assignee->nik : $data->assigneeId,
+                $assignedBy ? $assignedBy->nik : $data->assignedById,
                 $isReassignment
             ));
 

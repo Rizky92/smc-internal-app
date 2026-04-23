@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Event;
 final class CreateTicketAction
 {
     private TicketRepositoryInterface $repository;
+
     private SlaCalculator $slaCalculator;
 
     public function __construct(
@@ -54,7 +55,7 @@ final class CreateTicketAction
 
             $ticket = $this->repository->save($ticket);
 
-            if (!empty($data->attachments)) {
+            if (! empty($data->attachments)) {
                 foreach ($data->attachments as $file) {
                     $path = $file->store('tickets/attachments', 'public');
 
@@ -88,9 +89,12 @@ final class CreateTicketAction
                 ]);
             }
 
+            // Gunakan NIK/NRP karena merupakan string teks biasa (aman untuk JSON Queue)
+            $user = $data->createdBy ? User::find($data->createdBy) : null;
+
             Event::dispatch(new TicketCreated(
                 $ticket,
-                $data->createdBy ? User::find($data->createdBy) : null
+                $user ? $user->nik : null
             ));
 
             return $ticket->load(['category', 'department', 'assignee', 'reporter', 'attachments']);

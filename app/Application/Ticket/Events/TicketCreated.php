@@ -2,20 +2,27 @@
 
 namespace App\Application\Ticket\Events;
 
-use App\Models\Aplikasi\User;
 use App\Models\Helpdesk\Ticket;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 
 final class TicketCreated
 {
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
+
     public Ticket $ticket;
 
-    public ?User $createdBy;
+    /** @var string|null NIK/NRP Pelapor */
+    public ?string $nik;
 
     public function __construct(
         Ticket $ticket,
-        ?User $createdBy
+        ?string $nik
     ) {
         $this->ticket = $ticket;
-        $this->createdBy = $createdBy;
+        $this->nik = $nik;
     }
 }

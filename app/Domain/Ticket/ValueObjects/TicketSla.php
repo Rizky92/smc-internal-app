@@ -12,9 +12,13 @@ use Carbon\Carbon;
 final class TicketSla
 {
     private Carbon $createdAt;
+
     private ?Carbon $responseDue;
+
     private ?Carbon $resolutionDue;
+
     private string $status;
+
     private ?Carbon $breachedAt;
 
     public function __construct(
@@ -72,7 +76,7 @@ final class TicketSla
 
     public function isActive(): bool
     {
-        return !in_array($this->status, [TicketStatus::Resolved, TicketStatus::Closed]);
+        return ! in_array($this->status, [TicketStatus::Resolved, TicketStatus::Closed]);
     }
 
     /**
@@ -80,7 +84,7 @@ final class TicketSla
      */
     public function percentage(): int
     {
-        if ($this->resolutionDue === null || !$this->isActive()) {
+        if ($this->resolutionDue === null || ! $this->isActive()) {
             return 0;
         }
 
@@ -99,12 +103,13 @@ final class TicketSla
      */
     public function remainingLabel(): string
     {
-        if ($this->resolutionDue === null || !$this->isActive()) {
+        if ($this->resolutionDue === null || ! $this->isActive()) {
             return '—';
         }
 
         if (now()->gt($this->resolutionDue)) {
             $hours = (int) now()->diffInHours($this->resolutionDue);
+
             return "Breach {$hours}j lalu";
         }
 
@@ -114,6 +119,7 @@ final class TicketSla
 
         if ($hours >= 24) {
             $days = (int) $this->resolutionDue->diffInDays(now());
+
             return "{$days} hari";
         }
 

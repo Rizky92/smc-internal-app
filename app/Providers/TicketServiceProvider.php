@@ -6,9 +6,11 @@ use App\Application\Ticket\Actions\AddCommentAction;
 use App\Application\Ticket\Actions\AssignTicketAction;
 use App\Application\Ticket\Actions\CreateTicketAction;
 use App\Application\Ticket\Actions\UpdateStatusAction;
+use App\Application\Ticket\Events\TicketCreated;
 use App\Application\Ticket\Services\SlaCalculator;
 use App\Domain\Ticket\Repositories\TicketRepositoryInterface;
 use App\Infrastructure\Ticket\Repositories\EloquentTicketRepository;
+use App\Listeners\Ticket\SendTicketCreatedNotification;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -52,6 +54,10 @@ class TicketServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        //
+        // Event → Listener mapping
+        $this->app['events']->listen(
+            TicketCreated::class,
+            SendTicketCreatedNotification::class
+        );
     }
 }
