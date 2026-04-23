@@ -4,6 +4,9 @@ namespace App\Models\Helpdesk;
 
 use App\Database\Eloquent\Concerns\Searchable;
 use App\Database\Eloquent\Model;
+use App\Domain\Ticket\Enums\TicketPriority;
+use App\Domain\Ticket\Enums\TicketStatus;
+use App\Domain\Ticket\ValueObjects\TicketSla;
 use App\Models\Aplikasi\User;
 use App\Models\Bidang;
 use Illuminate\Database\Eloquent\Builder;
@@ -24,23 +27,16 @@ class Ticket extends Model
 
     protected $keyType = 'int';
 
-    const STATUS_OPEN = 'open';
-
+    const STATUS_OPEN     = 'open';
     const STATUS_PROGRESS = 'progress';
-
-    const STATUS_WAITING = 'waiting';
-
+    const STATUS_WAITING  = 'waiting';
     const STATUS_RESOLVED = 'resolved';
-
-    const STATUS_CLOSED = 'closed';
+    const STATUS_CLOSED   = 'closed';
 
     const PRIORITY_CRITICAL = 'critical';
-
-    const PRIORITY_HIGH = 'high';
-
-    const PRIORITY_MEDIUM = 'medium';
-
-    const PRIORITY_LOW = 'low';
+    const PRIORITY_HIGH     = 'high';
+    const PRIORITY_MEDIUM   = 'medium';
+    const PRIORITY_LOW      = 'low';
 
     const STATUS_LABELS = [
         self::STATUS_OPEN     => 'Open',
@@ -134,28 +130,20 @@ class Ticket extends Model
         return $this->belongsTo(TicketCategory::class, 'category_id', 'id');
     }
 
-    /**
-     * @psalm-return Builder<TRelatedModel>
-     */
-    public function activities(): Builder
+    public function activities(): HasMany
     {
         return $this->hasMany(TicketActivity::class)->latest();
     }
 
-    /**
-     * @psalm-return Builder<TRelatedModel>
-     */
-    public function comments(): Builder
+    public function comments(): HasMany
     {
         return $this->hasMany(TicketComment::class)->latest();
     }
 
     /**
      * Komentar yang bisa dilihat pelapor (bukan internal)
-     *
-     * @psalm-return Builder<TRelatedModel>
      */
-    public function publicComments(): Builder
+    public function publicComments(): HasMany
     {
         return $this->hasMany(TicketComment::class)
             ->where('is_internal', false)
@@ -165,6 +153,17 @@ class Ticket extends Model
     public function attachments(): HasMany
     {
         return $this->hasMany(TicketAttachment::class);
+    }
+
+    public function sla(): TicketSla
+    {
+        return new TicketSla(
+            $this->created_at,
+            $this->sla_due_at,
+            $this->sla_response_due_at,
+            $this->status,
+            $this->sla_breached_at
+        );
     }
 
     public function scopeOpen(Builder $query): void
@@ -293,7 +292,7 @@ class Ticket extends Model
 
     public function isSlaBreached(): bool
     {
-        return ! is_null($this->sla_breached_at);
+        return $this->sla()->isBreached();
     }
 
     /**
@@ -302,18 +301,7 @@ class Ticket extends Model
      */
     public function getSlaPercentageAttribute(): int
     {
-        if (! $this->sla_due_at || ! $this->isActive()) {
-            return 0;
-        }
-
-        $total = $this->created_at->diffInMinutes($this->sla_due_at);
-        $elapsed = $this->created_at->diffInMinutes(now());
-
-        if ($total <= 0) {
-            return 100;
-        }
-
-        return min(100, (int) round(($elapsed / $total) * 100));
+        return $this->sla()->percentage();
     }
 
     /**
@@ -322,42 +310,13 @@ class Ticket extends Model
      */
     public function getSlaRemainingLabelAttribute(): string
     {
-        if (! $this->sla_due_at || ! $this->isActive()) {
-            return '—';
-        }
-
-        $diff = now()->diff($this->sla_due_at);
-
-        if (now()->gt($this->sla_due_at)) {
-            $hours = (int) now()->diffInHours($this->sla_due_at);
-
-            return "Breach {$hours}j lalu";
-        }
-
-        $hours = (int) $this->sla_due_at->diffInHours(now());
-        $minutes = (int) $this->sla_due_at->diffInMinutes(now()) % 60;
-
-        if ($hours >= 24) {
-            $days = (int) $this->sla_due_at->diffInDays(now());
-
-            return "{$days} hari";
-        }
-
-        return $hours > 0 ? "{$hours}j {$minutes}m" : "{$minutes} mnt";
+        return $this->sla()->remainingLabel();
     }
 
     /** Severity SLA untuk pewarnaan UI: ok | warn | breach */
     public function getSlaSeverityAttribute(): string
     {
-        if ($this->isSlaBreached() || ($this->sla_due_at && now()->gt($this->sla_due_at))) {
-            return 'breach';
-        }
-
-        if ($this->sla_percentage >= 75) {
-            return 'warn';
-        }
-
-        return 'ok';
+        return $this->sla()->severity();
     }
 
     // ----------------------------------------------------------------

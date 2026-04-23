@@ -56,9 +56,6 @@ final class CreateTicketData
         $this->attachments = $attachments;
     }
 
-    /**
-     * Buat dari array
-     */
     public static function fromArray(array $data): self
     {
         return new self(

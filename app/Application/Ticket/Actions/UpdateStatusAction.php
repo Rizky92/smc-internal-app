@@ -12,9 +12,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use InvalidArgumentException;
 
-/**
- * UpdateStatusAction — menangani transisi status tiket.
- */
 final class UpdateStatusAction
 {
     private TicketRepositoryInterface $repository;
@@ -37,20 +34,17 @@ final class UpdateStatusAction
             $oldStatus = $ticket->status;
             $newStatus = $data->newStatus;
 
-            // Guard: validasi transisi di domain layer
             if (! TicketStatus::canTransition($oldStatus, $newStatus)) {
                 throw new InvalidArgumentException(
                     'Transisi status dari ['.TicketStatus::label($oldStatus).'] ke ['.TicketStatus::label($newStatus).'] tidak diizinkan.'
                 );
             }
 
-            // Update status + lifecycle timestamps
             $ticket->status = $newStatus;
             $this->applyLifecycleTimestamps($ticket, $newStatus);
 
             $this->repository->save($ticket);
 
-            // Catat activity log
             $ticket->activities()->create([
                 'causer_id'   => $data->changedById,
                 'type'        => 'status_changed',
@@ -61,7 +55,6 @@ final class UpdateStatusAction
                 'created_at'  => now(),
             ]);
 
-            // Catatan opsional dari teknisi
             if ($data->note) {
                 $ticket->comments()->create([
                     'id_user'     => $data->changedById,
@@ -70,7 +63,6 @@ final class UpdateStatusAction
                 ]);
             }
 
-            // Dispatch domain event
             Event::dispatch(new TicketStatusChanged(
                 $ticket->fresh(),
                 $oldStatus,
@@ -99,11 +91,9 @@ final class UpdateStatusAction
 
     private function handleProgressTransition(Ticket $ticket): void
     {
-        // First response: catat hanya sekali (tidak overwrite jika sudah ada)
         if (! $ticket->first_responded_at) {
             $ticket->first_responded_at = now();
 
-            // Cek apakah response SLA sudah breach
             if ($ticket->sla_response_due_at && now()->gt($ticket->sla_response_due_at)) {
                 $ticket->activities()->create([
                     'causer_id'   => null,

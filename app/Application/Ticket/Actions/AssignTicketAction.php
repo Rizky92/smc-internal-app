@@ -32,10 +32,12 @@ final class AssignTicketAction
             $isReassignment = ! is_null($ticket->assignee_id);
             $previousAssigneeId = $ticket->assignee_id;
 
+            // Simpan nama sebelumnya sebelum di-update
+            $previousAssigneeName = $ticket->assignee ? $ticket->assignee->name : ($previousAssigneeId ? "#$previousAssigneeId" : null);
+
             $ticket->assignee_id = $data->assigneeId;
             $ticket->assigned_at = now();
 
-            // Auto-progress
             if ($ticket->status === Ticket::STATUS_OPEN) {
                 $ticket->status = Ticket::STATUS_PROGRESS;
 
@@ -49,12 +51,11 @@ final class AssignTicketAction
             $assignee = User::find($data->assigneeId);
             $assignedBy = User::find($data->assignedById);
 
-            // Activity log
             $ticket->activities()->create([
                 'causer_id'   => $data->assignedById,
                 'type'        => 'assigned',
                 'description' => $isReassignment
-                    ? 'Re-assign dari '.($ticket->previousAssignee->name ?? "#$previousAssigneeId").' ke '.($assignee->name ?? 'Teknisi')
+                    ? "Re-assign dari {$previousAssigneeName} ke ".($assignee->name ?? 'Teknisi')
                     : 'Di-assign ke '.($assignee->name ?? 'Teknisi'),
                 'old_value'   => $previousAssigneeId ? (string) $previousAssigneeId : null,
                 'new_value'   => (string) $data->assigneeId,

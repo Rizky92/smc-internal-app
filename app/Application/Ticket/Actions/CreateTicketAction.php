@@ -11,13 +11,9 @@ use App\Models\Helpdesk\Ticket;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 
-/**
- * CreateTicketAction — satu use case, satu tanggung jawab.
- */
 final class CreateTicketAction
 {
     private TicketRepositoryInterface $repository;
-
     private SlaCalculator $slaCalculator;
 
     public function __construct(
@@ -32,13 +28,11 @@ final class CreateTicketAction
     {
         return DB::transaction(function () use ($data): Ticket {
 
-            // 1. Hitung SLA berdasarkan priority dan waktu sekarang
-            $slaDeadline = $this->slaCalculator->calculate(
+            $sla = $this->slaCalculator->calculate(
                 $data->priority,
                 now()
             );
 
-            // 2. Bangun model Ticket (belum disimpan)
             $ticket = new Ticket([
                 'ticket_number'      => Ticket::generateTicketNumber(),
                 'title'              => $data->title,
@@ -53,16 +47,14 @@ final class CreateTicketAction
                 'reporter_phone'     => $data->reporterPhone,
                 'assignee_id'        => $data->assigneeId,
                 'created_by'         => $data->createdBy,
-                'sla_due_at'         => $slaDeadline->resolutionDue,
-                'sla_response_due_at'=> $slaDeadline->responseDue,
+                'sla_due_at'         => $sla->getResolutionDue(),
+                'sla_response_due_at'=> $sla->getResponseDue(),
                 'assigned_at'        => $data->assigneeId ? now() : null,
             ]);
 
-            // 3. Simpan via repository
             $ticket = $this->repository->save($ticket);
 
-            // 4. Tangani Lampiran
-            if (! empty($data->attachments)) {
+            if (!empty($data->attachments)) {
                 foreach ($data->attachments as $file) {
                     $path = $file->store('tickets/attachments', 'public');
 
@@ -78,7 +70,6 @@ final class CreateTicketAction
                 }
             }
 
-            // 5. Catat activity log
             $ticket->activities()->create([
                 'causer_id'   => $data->createdBy,
                 'type'        => 'created',
@@ -87,7 +78,6 @@ final class CreateTicketAction
                 'created_at'  => now(),
             ]);
 
-            // 6. Jika langsung di-assign, catat activity assign juga
             if ($data->assigneeId) {
                 $ticket->activities()->create([
                     'causer_id'   => $data->createdBy,
@@ -98,7 +88,6 @@ final class CreateTicketAction
                 ]);
             }
 
-            // 7. Dispatch domain event — listener akan kirim notifikasi
             Event::dispatch(new TicketCreated(
                 $ticket,
                 $data->createdBy ? User::find($data->createdBy) : null

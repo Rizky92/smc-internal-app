@@ -52,7 +52,7 @@ class TicketStatus
     {
         switch ($current) {
             case self::Open:
-                return [self::Progress, self::Waiting];
+                return [self::Progress, self::Waiting, self::Resolved];
             case self::Progress:
                 return [self::Waiting, self::Resolved];
             case self::Waiting:

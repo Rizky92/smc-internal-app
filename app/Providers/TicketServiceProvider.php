@@ -6,10 +6,6 @@ use App\Application\Ticket\Actions\AddCommentAction;
 use App\Application\Ticket\Actions\AssignTicketAction;
 use App\Application\Ticket\Actions\CreateTicketAction;
 use App\Application\Ticket\Actions\UpdateStatusAction;
-use App\Application\Ticket\Events\TicketAssigned;
-use App\Application\Ticket\Events\TicketCreated;
-use App\Application\Ticket\Events\TicketSlaBreached;
-use App\Application\Ticket\Events\TicketStatusChanged;
 use App\Application\Ticket\Services\SlaCalculator;
 use App\Domain\Ticket\Repositories\TicketRepositoryInterface;
 use App\Infrastructure\Ticket\Repositories\EloquentTicketRepository;
@@ -56,28 +52,6 @@ class TicketServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Event → Listener mapping
-        // Listener dibuat terpisah di App\Listeners\Ticket\
-        /*
-        $this->app['events']->listen(
-            TicketCreated::class,
-            \App\Listeners\Ticket\SendTicketCreatedNotification::class,
-        );
-
-        $this->app['events']->listen(
-            TicketAssigned::class,
-            \App\Listeners\Ticket\SendTicketAssignedNotification::class,
-        );
-
-        $this->app['events']->listen(
-            TicketStatusChanged::class,
-            \App\Listeners\Ticket\SendTicketStatusChangedNotification::class,
-        );
-
-        $this->app['events']->listen(
-            TicketSlaBreached::class,
-            \App\Listeners\Ticket\EscalateBreachedTicket::class,
-        );
-        */
+        //
     }
 }
