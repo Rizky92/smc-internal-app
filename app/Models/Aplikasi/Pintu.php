@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class Pintu extends Model
 {
@@ -33,6 +34,14 @@ class Pintu extends Model
         'kd_pintu',
         'nm_pintu',
     ];
+
+    protected function searchColumns(): array
+    {
+        return [
+            DB::raw("(SELECT GROUP_CONCAT(dokter.nm_dokter SEPARATOR ' ') FROM dokter JOIN set_pintu_smc ON dokter.kd_dokter = set_pintu_smc.kd_dokter WHERE set_pintu_smc.kd_pintu = pintu_smc.kd_pintu)"),
+            DB::raw("(SELECT GROUP_CONCAT(poliklinik.nm_poli SEPARATOR ' ') FROM poliklinik JOIN set_pintu_smc ON poliklinik.kd_poli = set_pintu_smc.kd_poli WHERE set_pintu_smc.kd_pintu = pintu_smc.kd_pintu)"),
+        ];
+    }
 
     public function poliklinik(): BelongsToMany
     {

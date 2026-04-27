@@ -22,10 +22,16 @@ class ManajemenPintu extends Component
     use LiveTable;
     use MenuTracker;
 
+    protected function queryString(): array
+    {
+        return [
+            'cari'    => ['except' => ''],
+            'perpage' => ['except' => 25],
+        ];
+    }
+
     /**
-     * @return Collection|array
-     *
-     * @psalm-return Collection<Pintu>|array<empty, empty>
+     * @return \Illuminate\Contracts\Pagination\Paginator|array
      */
     public function getPintuProperty()
     {
@@ -33,7 +39,11 @@ class ManajemenPintu extends Component
             return [];
         }
 
-        $pintus = Pintu::query()->with(['dokter', 'poliklinik'])->get();
+        $pintus = Pintu::query()
+            ->with(['dokter', 'poliklinik'])
+            ->search($this->cari)
+            ->sortWithColumns($this->sortColumns)
+            ->paginate($this->perpage);
 
         $jadwalRows = DB::connection('mysql_sik')
             ->table('set_pintu_smc')
