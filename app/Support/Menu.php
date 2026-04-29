@@ -646,6 +646,23 @@ class Menu
                 ],
             ],
             [
+                'name'              => 'Mutu',
+                'icon'              => 'far fa-circle',
+                'type'              => 'dropdown',
+                'hasAnyPermissions' => $user->canAny([
+                    'mutu.indikator-mutu.read',
+                ]),
+                'items'             => [
+                    [
+                        'name'              => 'Indikator Mutu',
+                        'url'               => route('admin.mutu.indikator-mutu'),
+                        'icon'              => 'fas fa-file-alt',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('mutu.indikator-mutu.read'),
+                    ],
+                ],
+            ],
+            [
                 'name'              => 'Manajemen User',
                 'url'               => route('admin.manajemen-user'),
                 'icon'              => 'fas fa-users',

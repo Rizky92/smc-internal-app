@@ -430,3 +430,13 @@ Breadcrumbs::for('admin.casemix.laporan-triase-igd-zona-hijau', function (Trail 
     $trail->parent('admin.casemix');
     $trail->push('Laporan Triase IGD Zona Hijau', route('admin.casemix.laporan-triase-igd-zona-hijau'));
 });
+
+Breadcrumbs::for('admin.mutu', function (Trail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Mutu');
+});
+
+Breadcrumbs::for('admin.mutu.indikator-mutu', function (Trail $trail): void {
+    $trail->parent('admin.mutu');
+    $trail->push('Indikator Mutu', route('admin.mutu.indikator-mutu'));
+});
