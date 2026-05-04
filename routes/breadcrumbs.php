@@ -440,3 +440,13 @@ Breadcrumbs::for('admin.mutu.indikator-mutu', function (Trail $trail): void {
     $trail->parent('admin.mutu');
     $trail->push('Indikator Mutu', route('admin.mutu.indikator-mutu'));
 });
+
+Breadcrumbs::for('admin.mutu.kategori-indikator', function (Trail $trail): void {
+    $trail->parent('admin.mutu');
+    $trail->push('Kategori Indikator', route('admin.mutu.kategori-indikator'));
+});
+
+Breadcrumbs::for('admin.mutu.tipe-input-indikator', function (Trail $trail): void {
+    $trail->parent('admin.mutu');
+    $trail->push('Tipe Input Indikator', route('admin.mutu.tipe-input-indikator'));
+});

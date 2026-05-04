@@ -399,6 +399,14 @@ Route::prefix('admin')
                 Route::get('indikator-mutu', Mutu\IndikatorMutu::class)
                     ->name('indikator-mutu')
                     ->middleware('can:mutu.indikator-mutu.read');
+
+                Route::get('kategori-indikator', Mutu\KategoriIndikator::class)
+                    ->name('kategori-indikator')
+                    ->middleware('can:mutu.kategori-indikator.read');
+
+                Route::get('tipe-input-indikator', Mutu\TipeInputIndikator::class)
+                    ->name('tipe-input-indikator')
+                    ->middleware('can:mutu.tipe-input-indikator.read');
             });
 
         Route::middleware('role:'.config('permission.superadmin_name'))

@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::connection('mysql_smc')->create('quality_indicators', function (Blueprint $table): void {
             $table->id();
-            $table->foreignId('unit_id')->constrained('service_units');
-            $table->foreignId('category_id')->constrained('indicator_categories');
+            $table->foreignId('bidang_id')->constrained('bidang');
+            $table->foreignId('quality_indicator_category_id')->constrained('quality_indicator_categories');
             $table->integer('sort_order');
             $table->text('title');
             $table->text('dimension')->nullable();
@@ -20,7 +20,7 @@ return new class extends Migration
             $table->text('inclusion')->nullable();
             $table->text('exclusion')->nullable();
             $table->string('frequency', 45);
-            $table->foreignId('input_type_id')->nullable()->constrained('indicator_input_types');
+            $table->foreignId('quality_indicator_input_type_id')->nullable()->constrained('quality_indicator_input_types');
             $table->integer('analysis_period')->nullable();
             $table->text('numerator')->nullable();
             $table->text('denominator')->nullable();

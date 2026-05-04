@@ -6,15 +6,13 @@ use App\Database\Eloquent\Model;
 
 class QualityIndicatorCategory extends Model
 {
-    protected $connection = 'mysql_sik';
+    protected $connection = 'mysql_smc';
 
-    protected $table = 'QualityIndicatorCategory';
+    protected $table = 'quality_indicator_categories';
 
     protected $primaryKey = 'id';
 
     protected $keyType = 'int';
 
-    public $incrementing = false;
-
-    public $timestamps = false;
+    protected $fillable = ['name'];
 }

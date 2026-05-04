@@ -2,20 +2,19 @@
 
 namespace App\Livewire\Pages\Mutu;
 
-use App\Application\Quality\Actions\GetQualityIndicatorListAction;
+use App\Application\Quality\Actions\GetQualityInputTypeListAction;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
-use App\Models\Bidang;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
 use Livewire\Component;
 
-class IndikatorMutu extends Component
+class TipeInputIndikator extends Component
 {
     use DeferredLoading;
     use ExcelExportable;
@@ -24,32 +23,14 @@ class IndikatorMutu extends Component
     use LiveTable;
     use MenuTracker;
 
-    /** @var int */
-    public $unitId;
-
-    /** @var mixed */
     protected $listeners = [
-        'record-saved'    => '$refresh',
-        'indicator-saved' => '$refresh',
+        'input-type-saved' => '$refresh',
     ];
-
-    protected function queryString(): array
-    {
-        return [
-            'unitId' => ['except' => '', 'as' => 'unit'],
-        ];
-    }
-
-    public function getUnitProperty(): array
-    {
-        return Bidang::query()->pluck('nama', 'id')->all();
-    }
 
     public function getCollectionProperty(): LengthAwarePaginator
     {
-        return app(GetQualityIndicatorListAction::class)->execute([
-            'unit_id' => $this->unitId,
-            'search'  => $this->cari,
+        return app(GetQualityInputTypeListAction::class)->execute([
+            'search' => $this->cari,
         ], $this->perpage);
     }
 
@@ -60,10 +41,10 @@ class IndikatorMutu extends Component
 
     public function render(): View
     {
-        return view('livewire.pages.mutu.indikator-mutu', [
-            'indicators' => $this->isDeferred ? [] : $this->collection,
+        return view('livewire.pages.mutu.tipe-input-indikator', [
+            'inputTypes' => $this->isDeferred ? [] : $this->collection,
         ])
-            ->layout(BaseLayout::class, ['title' => 'Indikator Mutu']);
+            ->layout(BaseLayout::class, ['title' => 'Tipe Input Indikator']);
     }
 
     protected function defaultValues(): void

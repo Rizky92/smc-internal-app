@@ -651,6 +651,8 @@ class Menu
                 'type'              => 'dropdown',
                 'hasAnyPermissions' => $user->canAny([
                     'mutu.indikator-mutu.read',
+                    'mutu.kategori-indikator.read',
+                    'mutu.tipe-input-indikator.read',
                 ]),
                 'items'             => [
                     [
@@ -659,6 +661,20 @@ class Menu
                         'icon'              => 'fas fa-file-alt',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('mutu.indikator-mutu.read'),
+                    ],
+                    [
+                        'name'              => 'Kategori Indikator',
+                        'url'               => route('admin.mutu.kategori-indikator'),
+                        'icon'              => 'fas fa-tags',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('mutu.kategori-indikator.read'),
+                    ],
+                    [
+                        'name'              => 'Tipe Input Indikator',
+                        'url'               => route('admin.mutu.tipe-input-indikator'),
+                        'icon'              => 'fas fa-tags',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('mutu.tipe-input-indikator.read'),
                     ],
                 ],
             ],
