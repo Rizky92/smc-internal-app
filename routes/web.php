@@ -400,6 +400,10 @@ Route::prefix('admin')
                     ->name('indikator-mutu')
                     ->middleware('can:mutu.indikator-mutu.read');
 
+                Route::get('indikator-mutu/{indicatorId}', Mutu\DetailIndikatorMutu::class)
+                    ->name('indikator-mutu.detail')
+                    ->middleware('can:mutu.indikator-mutu.read');
+
                 Route::get('kategori-indikator', Mutu\KategoriIndikator::class)
                     ->name('kategori-indikator')
                     ->middleware('can:mutu.kategori-indikator.read');

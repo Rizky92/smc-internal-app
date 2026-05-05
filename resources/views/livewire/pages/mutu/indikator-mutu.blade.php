@@ -8,7 +8,8 @@
                     let { id, action } = e.dataset;
 
                     if (action === 'record') {
-                        Livewire.emit('input-record', id);
+                        // Mengarahkan ke halaman detail indikator
+                        window.location.href = `{{ url('admin/mutu/indikator-mutu') }}/${id}`;
                     } else {
                         Livewire.emit('prepare', id);
                     }
@@ -51,9 +52,7 @@
                                 {{ $indicator->sort_order }}
                             </x-table.td>
                             <x-table.td :clickable="true" data-id="{{ $indicator->id }}" data-action="record">
-                                <span class="text-primary" style="cursor: pointer; text-decoration: underline">
-                                    {{ $indicator->title }}
-                                </span>
+                                {{ $indicator->title }}
                             </x-table.td>
                             <x-table.td>{{ $indicator->category->name ?? '-' }}</x-table.td>
                             <x-table.td>{{ $indicator->standard }}</x-table.td>
@@ -76,5 +75,4 @@
     </x-card>
 
     <livewire:pages.mutu.modal.input-indikator-mutu />
-    <livewire:pages.mutu.modal.input-record-indikator />
 </div>
