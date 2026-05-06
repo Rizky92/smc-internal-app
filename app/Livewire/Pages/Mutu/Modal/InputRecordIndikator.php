@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Pages\Mutu\Modal;
 
+use App\Application\Quality\Actions\DeleteQualityIndicatorRecordAction;
 use App\Application\Quality\Actions\SaveQualityIndicatorRecordAction;
 use App\Application\Quality\DTOs\QualityIndicatorRecordData;
+use App\Domain\Quality\Repositories\QualityIndicatorRecordRepositoryInterface;
 use App\Livewire\Concerns\FlashComponent;
 use App\Models\Quality\QualityIndicator;
 use Illuminate\View\View;
@@ -25,6 +27,9 @@ class InputRecordIndikator extends Component
 
     public $notes;
 
+    /** @var bool */
+    public $isEdit = false;
+
     protected $listeners = ['input-record' => 'loadIndicator'];
 
     protected function rules(): array
@@ -37,13 +42,32 @@ class InputRecordIndikator extends Component
         ];
     }
 
-    public function loadIndicator(int $id): void
+    public function loadIndicator(int $indicatorId, ?string $date = null): void
     {
-        $indicator = QualityIndicator::findOrFail($id);
+        $this->resetExcept([]);
 
+        $indicator = QualityIndicator::findOrFail($indicatorId);
         $this->indicatorId = $indicator->id;
         $this->indicatorName = $indicator->title;
-        $this->recordedDate = now()->format('Y-m-d');
+
+        if ($date) {
+            $record = app(QualityIndicatorRecordRepositoryInterface::class)
+                ->findByIndicatorAndDate($indicatorId, $date);
+
+            if ($record) {
+                $this->recordedDate = $record->recorded_date;
+                $this->numeratorValue = $record->numerator_value;
+                $this->denominatorValue = $record->denominator_value;
+                $this->notes = $record->notes;
+                $this->isEdit = true;
+            }
+        } else {
+            $this->recordedDate = now()->format('Y-m-d');
+            $this->numeratorValue = 0;
+            $this->denominatorValue = 0;
+            $this->notes = '';
+            $this->isEdit = false;
+        }
 
         $this->dispatchBrowserEvent('open-modal', ['id' => 'modal-input-record-indikator']);
     }
@@ -63,10 +87,20 @@ class InputRecordIndikator extends Component
 
         $action->execute($data);
 
-        $this->emit('flash.success', 'Penilaian harian berhasil disimpan.');
+        $this->flashSuccess('Penilaian harian berhasil disimpan.');
         $this->dispatchBrowserEvent('close-modal', ['id' => 'modal-input-record-indikator']);
         $this->emit('record-saved');
-        $this->reset(['numeratorValue', 'denominatorValue', 'notes']);
+        $this->reset(['numeratorValue', 'denominatorValue', 'notes', 'isEdit']);
+    }
+
+    public function delete(DeleteQualityIndicatorRecordAction $action): void
+    {
+        $action->execute($this->indicatorId, $this->recordedDate);
+
+        $this->flashSuccess('Data penilaian berhasil dihapus.');
+        $this->dispatchBrowserEvent('close-modal', ['id' => 'modal-input-record-indikator']);
+        $this->emit('record-saved');
+        $this->reset(['numeratorValue', 'denominatorValue', 'notes', 'isEdit']);
     }
 
     public function render(): View

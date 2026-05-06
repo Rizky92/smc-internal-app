@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Mutu;
 
+use App\Application\Quality\Actions\DeleteQualityIndicatorRecordAction;
 use App\Domain\Quality\Repositories\QualityIndicatorRecordRepositoryInterface;
 use App\Domain\Quality\Repositories\QualityIndicatorRepositoryInterface;
 use App\Livewire\Concerns\DeferredLoading;
@@ -128,9 +129,20 @@ class DetailIndikatorMutu extends Component
 
     public function render(): View
     {
+        $indicator = $this->indicator;
+        $records = $this->records;
+
+        if (! $this->isDeferred) {
+            $this->dispatchBrowserEvent('update-chart', [
+                'labels'   => $records->pluck('recorded_date')->map(fn ($d) => carbon($d)->format('d/m'))->toArray(),
+                'data'     => $records->map(fn ($r) => $r->denominator_value > 0 ? round(($r->numerator_value / $r->denominator_value) * 100, 2) : 0)->toArray(),
+                'standard' => (float) str_replace('%', '', $indicator->standard),
+            ]);
+        }
+
         return view('livewire.pages.mutu.detail-indikator-mutu', [
-            'indicator' => $this->indicator,
-            'records'   => $this->records,
+            'indicator' => $indicator,
+            'records'   => $records,
         ])
             ->layout(BaseLayout::class, ['title' => 'Detail Indikator Mutu']);
     }
@@ -146,5 +158,12 @@ class DetailIndikatorMutu extends Component
         $this->flashSuccess('Indikator Mutu berhasil dihapus.');
 
         $this->redirectRoute('admin.mutu.indikator-mutu');
+    }
+
+    public function deleteRecord(string $date, DeleteQualityIndicatorRecordAction $action): void
+    {
+        $action->execute($this->indicatorId, $date);
+
+        $this->flashSuccess('Data penilaian berhasil dihapus.');
     }
 }

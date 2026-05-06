@@ -23,7 +23,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Tanggal</label>
-                            <input type="date" wire:model.defer="recordedDate" class="form-control form-control-sm" required />
+                            <input type="date" wire:model.defer="recordedDate" class="form-control form-control-sm" required {{ $isEdit ? 'disabled' : '' }} />
                             <x-form.error name="recordedDate" />
                         </div>
                     </div>
@@ -56,7 +56,21 @@
             </x-form>
         </x-slot>
         <x-slot name="footer">
-            <x-button variant="primary" form="form-input-record-indikator" type="submit" wire:loading.attr="disabled" icon="fas fa-save" title="Simpan Penilaian" />
+            <div class="d-flex justify-content-between w-100">
+                <div>
+                    @if ($isEdit)
+                        <x-button
+                            variant="danger"
+                            title="Hapus"
+                            icon="fas fa-trash"
+                            onclick="confirm('Yakin ingin menghapus penilaian ini?') || event.stopImmediatePropagation()"
+                            wire:click="delete" />
+                    @endif
+                </div>
+                <div>
+                    <x-button variant="primary" form="form-input-record-indikator" type="submit" wire:loading.attr="disabled" icon="fas fa-save" title="Simpan Penilaian" />
+                </div>
+            </div>
         </x-slot>
     </x-modal>
 </div>

@@ -1,6 +1,85 @@
 <div wire:init="loadProperties">
     <x-flash />
 
+    @once
+        @push('js')
+            <script src="{{ asset('js/chart.js') }}"></script>
+            <script>
+                let indicatorChart = null;
+
+                window.addEventListener('update-chart', (event) => {
+                    const ctx = document.getElementById('indicatorChart').getContext('2d');
+                    const { labels, data, standard } = event.detail;
+
+                    if (indicatorChart) {
+                        indicatorChart.data.labels = labels;
+                        indicatorChart.data.datasets[0].data = data;
+                        indicatorChart.data.datasets[1].data = new Array(labels.length).fill(standard);
+                        indicatorChart.update();
+                    } else {
+                        indicatorChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: labels,
+                                datasets: [
+                                    {
+                                        label: 'Capaian (%)',
+                                        data: data,
+                                        borderColor: '#007bff',
+                                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                                        borderWidth: 2,
+                                        fill: true,
+                                        tension: 0.3,
+                                        pointRadius: 4,
+                                        pointBackgroundColor: (context) => {
+                                            const index = context.dataIndex;
+                                            const value = context.dataset.data[index];
+                                            return value >= standard ? '#28a745' : '#dc3545';
+                                        },
+                                    },
+                                    {
+                                        label: 'Standar (' + standard + '%)',
+                                        data: new Array(labels.length).fill(standard),
+                                        borderColor: '#ffc107',
+                                        borderDash: [5, 5],
+                                        borderWidth: 2,
+                                        pointRadius: 0,
+                                        fill: false,
+                                    },
+                                ],
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        max: 100,
+                                        ticks: {
+                                            callback: (value) => value + '%',
+                                        },
+                                    },
+                                },
+                                plugins: {
+                                    tooltip: {
+                                        callbacks: {
+                                            label: (context) => `Capaian: ${context.raw}%`,
+                                        },
+                                    },
+                                },
+                            },
+                        });
+                    }
+                });
+
+                function loadData(e) {
+                    let { id, date } = e.dataset;
+                    Livewire.emit('input-record', id, date);
+                }
+            </script>
+        @endpush
+    @endonce
+
     <x-card>
         <x-slot name="header">
             <x-row-col-flex class="mt-2">
@@ -73,6 +152,20 @@
         </x-slot>
     </x-card>
 
+    <x-card class="mt-3">
+        <x-slot name="header">
+            <h6 class="mb-0">
+                <i class="fas fa-chart-line mr-2"></i>
+                Grafik Tren Capaian
+            </h6>
+        </x-slot>
+        <x-slot name="body">
+            <div style="height: 300px">
+                <canvas id="indicatorChart"></canvas>
+            </div>
+        </x-slot>
+    </x-card>
+
     <x-card class="mt-3" use-loading>
         <x-slot name="header">
             <x-row-col-flex class="mt-2">
@@ -101,7 +194,9 @@
                         @endphp
 
                         <x-table.tr>
-                            <x-table.td>{{ carbon($record->recorded_date)->format('d-m-Y') }}</x-table.td>
+                            <x-table.td :clickable="true" data-id="{{ $indicatorId }}" data-date="{{ $record->recorded_date }}">
+                                {{ carbon($record->recorded_date)->format('d-m-Y') }}
+                            </x-table.td>
                             <x-table.td class="text-center">{{ $record->numerator_value }}</x-table.td>
                             <x-table.td class="text-center">{{ $record->denominator_value }}</x-table.td>
                             <x-table.td class="text-center font-weight-bold">{{ $achievement }}%</x-table.td>

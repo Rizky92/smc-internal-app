@@ -11,4 +11,6 @@ interface QualityIndicatorRecordRepositoryInterface
     public function getByIndicatorInRange(int $indicatorId, string $startDate, string $endDate): Collection;
 
     public function save(array $data): object;
+
+    public function delete(int $indicatorId, string $date): bool;
 }

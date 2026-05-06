@@ -32,4 +32,11 @@ class EloquentQualityIndicatorRecordRepository implements QualityIndicatorRecord
             $data
         );
     }
+
+    public function delete(int $indicatorId, string $date): bool
+    {
+        return QualityIndicatorRecord::where('indicator_id', $indicatorId)
+            ->where('recorded_date', $date)
+            ->delete() > 0;
+    }
 }
