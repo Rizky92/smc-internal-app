@@ -443,7 +443,7 @@ Breadcrumbs::for('admin.mutu.indikator-mutu', function (Trail $trail): void {
 
 Breadcrumbs::for('admin.mutu.indikator-mutu.detail', function (Trail $trail, int $indicatorId): void {
     $trail->parent('admin.mutu.indikator-mutu');
-    $trail->push('Indikator Mutu Detail', route('admin.mutu.indikator-mutu', ['indicatorId' => $indicatorId]));
+    $trail->push('Detail Indikator', route('admin.mutu.indikator-mutu.detail', ['indicatorId' => $indicatorId]));
 });
 
 Breadcrumbs::for('admin.mutu.kategori-indikator', function (Trail $trail): void {

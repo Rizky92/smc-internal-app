@@ -5,6 +5,7 @@ namespace App\Infrastructure\Quality\Repositories;
 use App\Domain\Quality\Repositories\QualityIndicatorRepositoryInterface;
 use App\Models\Quality\QualityIndicator;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class EloquentQualityIndicatorRepository implements QualityIndicatorRepositoryInterface
 {
@@ -14,6 +15,14 @@ class EloquentQualityIndicatorRepository implements QualityIndicatorRepositoryIn
             ->when($filters['unit_id'] ?? null, fn ($q, $unitId) => $q->where('bidang_id', $unitId))
             ->when($filters['search'] ?? null, fn ($q, $search) => $q->where('title', 'like', "%{$search}%"))
             ->paginate($perPage);
+    }
+
+    public function getAll(array $filters = []): Collection
+    {
+        return QualityIndicator::query()
+            ->when($filters['unit_id'] ?? null, fn ($q, $unitId) => $q->where('bidang_id', $unitId))
+            ->when($filters['search'] ?? null, fn ($q, $search) => $q->where('title', 'like', "%{$search}%"))
+            ->get();
     }
 
     public function findById(int $id): ?QualityIndicator

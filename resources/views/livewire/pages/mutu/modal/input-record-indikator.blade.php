@@ -18,7 +18,7 @@
     <x-modal id="modal-input-record-indikator" title="Input Penilaian Harian: {{ $indicatorName }}" size="lg" livewire>
         <x-slot name="body" style="overflow-x: hidden">
             <x-flash class="mx-3 mt-3" />
-            <x-form wire:submit.prevent="save">
+            <x-form id="form-input-record-indikator" wire:submit.prevent="save">
                 <x-row>
                     <div class="col-md-6">
                         <div class="form-group">
@@ -56,7 +56,7 @@
             </x-form>
         </x-slot>
         <x-slot name="footer">
-            <x-button type="submit" variant="primary" wire:click="save">Simpan Penilaian</x-button>
+            <x-button variant="primary" form="form-input-record-indikator" type="submit" wire:loading.attr="disabled" icon="fas fa-save" title="Simpan Penilaian" />
         </x-slot>
     </x-modal>
 </div>

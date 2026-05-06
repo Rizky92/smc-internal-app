@@ -17,6 +17,12 @@ class SaveQualityCategoryAction
 
     public function execute(QualityCategoryData $data): object
     {
-        return $this->repository->save($data->toArray());
+        tracker_start('mysql_smc');
+
+        $category = $this->repository->save($data->toArray());
+
+        tracker_end('mysql_smc');
+
+        return $category;
     }
 }

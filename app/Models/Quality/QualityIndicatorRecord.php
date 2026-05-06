@@ -3,7 +3,6 @@
 namespace App\Models\Quality;
 
 use App\Database\Eloquent\Model;
-use App\Models\Aplikasi\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class QualityIndicatorRecord extends Model
@@ -28,10 +27,5 @@ class QualityIndicatorRecord extends Model
     public function indicator(): BelongsTo
     {
         return $this->belongsTo(QualityIndicator::class, 'indicator_id');
-    }
-
-    public function recorder(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'recorded_by');
     }
 }

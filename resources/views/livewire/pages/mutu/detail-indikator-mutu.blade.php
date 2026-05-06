@@ -4,12 +4,20 @@
     <x-card>
         <x-slot name="header">
             <x-row-col-flex class="mt-2">
-                <div class="d-flex align-items-center">
-                    <a href="{{ route('admin.mutu.indikator-mutu') }}" class="btn btn-sm btn-secondary mr-3">
-                        <i class="fas fa-arrow-left"></i>
-                        Kembali
-                    </a>
+                <div class="d-flex align-items-center w-100">
+                    <x-button as="link" href="{{ route('admin.mutu.indikator-mutu') }}" variant="secondary" size="sm" class="mr-3" icon="fas fa-arrow-left" title="Kembali" />
                     <h5 class="mb-0">{{ $indicator->title }}</h5>
+
+                    @can('mutu.indikator-mutu.delete')
+                        <x-button
+                            variant="danger"
+                            size="sm"
+                            class="ml-auto"
+                            title="Hapus Indikator"
+                            icon="fas fa-trash"
+                            onclick="confirm('Yakin ingin menghapus indikator ini? Seluruh data penilaian terkait juga akan terhapus.') || event.stopImmediatePropagation()"
+                            wire:click="delete" />
+                    @endcan
                 </div>
             </x-row-col-flex>
         </x-slot>
@@ -98,7 +106,7 @@
                             <x-table.td class="text-center">{{ $record->denominator_value }}</x-table.td>
                             <x-table.td class="text-center font-weight-bold">{{ $achievement }}%</x-table.td>
                             <x-table.td>{{ $record->notes ?: '-' }}</x-table.td>
-                            <x-table.td>{{ $record->recorder->nm_user ?? '-' }}</x-table.td>
+                            <x-table.td>{{ $this->recorders->get($record->recorded_by)->nama ?? '-' }}</x-table.td>
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="6" padding />

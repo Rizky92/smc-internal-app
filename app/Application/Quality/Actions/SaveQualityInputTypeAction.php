@@ -17,6 +17,12 @@ class SaveQualityInputTypeAction
 
     public function execute(QualityInputTypeData $data): object
     {
-        return $this->repository->save($data->toArray());
+        tracker_start('mysql_smc');
+
+        $inputType = $this->repository->save($data->toArray());
+
+        tracker_end('mysql_smc');
+
+        return $inputType;
     }
 }

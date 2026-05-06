@@ -23,6 +23,12 @@ class SaveQualityIndicatorRecordAction
             $payload['recorded_by'] = auth()->id();
         }
 
-        return $this->repository->save($payload);
+        tracker_start('mysql_smc');
+
+        $record = $this->repository->save($payload);
+
+        tracker_end('mysql_smc');
+
+        return $record;
     }
 }

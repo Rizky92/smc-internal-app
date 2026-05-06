@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\Mutu;
 
+use App\Application\Quality\Actions\GetAllQualityIndicatorAction;
 use App\Application\Quality\Actions\GetQualityIndicatorListAction;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
@@ -68,27 +69,50 @@ class IndikatorMutu extends Component
 
     protected function defaultValues(): void
     {
-        //
+        $this->unitId = null;
     }
 
     protected function dataPerSheet(): array
     {
         return [
-            //
+            'Daftar Indikator' => fn () => app(GetAllQualityIndicatorAction::class)
+                ->execute([
+                    'unit_id' => $this->unitId,
+                    'search'  => $this->cari,
+                ])
+                ->map(fn ($indicator) => [
+                    $indicator->id,
+                    $indicator->sort_order,
+                    $indicator->category->name ?? '-',
+                    $indicator->title,
+                    $indicator->standard,
+                    $indicator->person_in_charge,
+                    $indicator->status === 'active' ? 'Aktif' : 'Nonaktif',
+                ]),
         ];
     }
 
     protected function columnHeaders(): array
     {
         return [
-            //
+            'ID',
+            'Urutan',
+            'Kategori',
+            'Judul Indikator',
+            'Standar',
+            'PJ',
+            'Status',
         ];
     }
 
     protected function pageHeaders(): array
     {
+        $unitName = $this->unitId ? (Bidang::find($this->unitId)->nama ?? 'SEMUA') : 'SEMUA';
+
         return [
-            //
+            'DAFTAR INDIKATOR MUTU',
+            'UNIT: '.strtoupper($unitName),
+            'Tanggal Cetak: '.now()->format('d-m-Y H:i:s'),
         ];
     }
 }

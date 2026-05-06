@@ -27,12 +27,22 @@ class InputRecordIndikator extends Component
 
     protected $listeners = ['input-record' => 'loadIndicator'];
 
+    protected function rules(): array
+    {
+        return [
+            'recordedDate'     => ['required', 'date'],
+            'numeratorValue'   => ['required', 'integer', 'min:0'],
+            'denominatorValue' => ['required', 'integer', 'min:0'],
+            'notes'            => ['nullable', 'string'],
+        ];
+    }
+
     public function loadIndicator(int $id): void
     {
         $indicator = QualityIndicator::findOrFail($id);
 
         $this->indicatorId = $indicator->id;
-        $this->indicatorName = $indicator->name;
+        $this->indicatorName = $indicator->title;
         $this->recordedDate = now()->format('Y-m-d');
 
         $this->dispatchBrowserEvent('open-modal', ['id' => 'modal-input-record-indikator']);
@@ -40,17 +50,20 @@ class InputRecordIndikator extends Component
 
     public function save(SaveQualityIndicatorRecordAction $action): void
     {
+        $this->validate();
+
         $data = QualityIndicatorRecordData::from([
             'indicator_id'      => $this->indicatorId,
             'recorded_date'     => $this->recordedDate,
             'numerator_value'   => $this->numeratorValue,
             'denominator_value' => $this->denominatorValue,
             'notes'             => $this->notes,
+            'recorded_by'       => user()->nik,
         ]);
 
         $action->execute($data);
 
-        $this->flashSuccess('Penilaian harian berhasil disimpan.');
+        $this->emit('flash.success', 'Penilaian harian berhasil disimpan.');
         $this->dispatchBrowserEvent('close-modal', ['id' => 'modal-input-record-indikator']);
         $this->emit('record-saved');
         $this->reset(['numeratorValue', 'denominatorValue', 'notes']);

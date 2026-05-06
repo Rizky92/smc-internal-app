@@ -2,10 +2,10 @@
 
 namespace App\Application\Quality\Actions;
 
-use App\Application\Quality\DTOs\QualityIndicatorData;
 use App\Domain\Quality\Repositories\QualityIndicatorRepositoryInterface;
+use Illuminate\Support\Collection;
 
-class SaveQualityIndicatorAction
+class GetAllQualityIndicatorAction
 {
     /** @var QualityIndicatorRepositoryInterface */
     protected $repository;
@@ -15,14 +15,8 @@ class SaveQualityIndicatorAction
         $this->repository = $repository;
     }
 
-    public function execute(QualityIndicatorData $data): object
+    public function execute(array $filters = []): Collection
     {
-        tracker_start('mysql_smc');
-
-        $indicator = $this->repository->save($data->toArray());
-
-        tracker_end('mysql_smc');
-
-        return $indicator;
+        return $this->repository->getAll($filters);
     }
 }
