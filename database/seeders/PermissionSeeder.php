@@ -125,7 +125,18 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'casemix.laporan-pasien-cob.read']);
         Permission::create(['name' => 'casemix.laporan-triase-igd-zona-hijau.read']);
 
+        Permission::create(['name' => 'mutu.kategori-indikator.create']);
+        Permission::create(['name' => 'mutu.kategori-indikator.read']);
+        Permission::create(['name' => 'mutu.kategori-indikator.update']);
+        Permission::create(['name' => 'mutu.kategori-indikator.delete']);
+        Permission::create(['name' => 'mutu.tipe-input-indikator.create']);
+        Permission::create(['name' => 'mutu.tipe-input-indikator.read']);
+        Permission::create(['name' => 'mutu.tipe-input-indikator.update']);
+        Permission::create(['name' => 'mutu.tipe-input-indikator.delete']);
+        Permission::create(['name' => 'mutu.indikator-mutu.create']);
         Permission::create(['name' => 'mutu.indikator-mutu.read']);
+        Permission::create(['name' => 'mutu.indikator-mutu.update']);
+        Permission::create(['name' => 'mutu.indikator-mutu.delete']);
 
         // Superadmin role name, bypasses all permissions
         $superadminRole = Role::create(['name' => config('permission.superadmin_name')]);
