@@ -94,7 +94,7 @@
                                 <p class="p-2">{{ $notification->created_at->diffForHumans() }}</p>
                                 <div class="d-flex">
                                     @if (! empty($filePath))
-                                        <a href="{{ Storage::url($filePath) }}" class="btn btn-link" download>Download</a>
+                                        <a href="{{ asset(Storage::url($filePath)) }}" class="btn btn-link" download>Download</a>
                                     @endif
                                 </div>
                             </div>
