@@ -55,7 +55,7 @@ abstract class ExcelExportJob implements ShouldQueue
             : $dataSheets[$firstSheet];
         $firstData = is_callable($firstData) ? $firstData() : $firstData;
 
-        $excel = ExcelExport::make($filename, $firstSheet)
+        $excel = ExcelExport::make($filename, $firstSheet, 'excel')
             ->setPageHeaders($this->pageHeaders());
 
         if (Arr::isAssoc($columnHeaders)) {
