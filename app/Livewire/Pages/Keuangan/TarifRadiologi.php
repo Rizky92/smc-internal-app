@@ -10,6 +10,7 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Keuangan\JenisPerawatanRadiologi;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -57,18 +58,18 @@ class TarifRadiologi extends Component
                 ->search($this->cari)
                 ->cursor()
                 ->map(fn (JenisPerawatanRadiologi $model): array => [
-                    'kd_jenis_prw'              => $model->kd_jenis_prw,
-                    'nm_perawatan'              => $model->nm_perawatan,
-                    'bagian_rs'                 => $model->bagian_rs,
-                    'bhp'                       => $model->bhp,
-                    'tarif_perujuk'             => $model->tarif_perujuk,
-                    'tarif_tindakan_dokter'     => $model->tarif_tindakan_dokter,
-                    'tarif_tindakan_petugas'    => $model->tarif_tindakan_petugas,
-                    'kso'                       => $model->kso,
-                    'menejemen'                 => $model->menejemen,
-                    'total_byr'                 => $model->total_byr,
-                    'png_jawab'                 => $model->png_jawab,
-                    'kelas'                     => $model->kelas,
+                    Str::transliterate($model->kd_jenis_prw),
+                    Str::transliterate($model->nm_perawatan),
+                    Str::transliterate($model->bagian_rs),
+                    Str::transliterate($model->bhp),
+                    Str::transliterate($model->tarif_perujuk),
+                    Str::transliterate($model->tarif_tindakan_dokter),
+                    Str::transliterate($model->tarif_tindakan_petugas),
+                    Str::transliterate($model->kso),
+                    Str::transliterate($model->menejemen),
+                    Str::transliterate($model->total_byr),
+                    Str::transliterate($model->png_jawab),
+                    Str::transliterate($model->kelas),
                 ]),
         ];
     }
