@@ -61,64 +61,6 @@ trait ExcelExportable
         return $dataSheets;
     }
 
-    /**
-     * @param mixed $value
-     * @return mixed
-     */
-    protected function sanitizeExcelValue($value)
-    {
-        if (! is_string($value)) {
-            return $value;
-        }
-
-        $value = str_replace(
-            [
-                '–', // en dash
-                '—', // em dash
-                '‘',
-                '’',
-                '“',
-                '”',
-            ],
-            [
-                '-',
-                '-',
-                "'",
-                "'",
-                '"',
-                '"',
-            ],
-            $value
-        );
-
-        $value = preg_replace(
-            '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u',
-            '',
-            $value
-        );
-
-        return trim($value);
-    }
-
-    /**
-     * @param mixed $data
-     * @return mixed
-     */
-    protected function sanitizeExcelData($data)
-    {
-        if (is_array($data)) {
-            return array_map([$this, 'sanitizeExcelData'], $data);
-        }
-
-        if ($data instanceof Collection || $data instanceof LazyCollection) {
-            return $data->map(function ($row) {
-                return $this->sanitizeExcelData($row);
-            });
-        }
-
-        return $this->sanitizeExcelValue($data);
-    }
-
     public function exportToExcel(): void
     {
         $this->emit('flash.info', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
@@ -147,8 +89,6 @@ trait ExcelExportable
 
         $firstData = is_callable($firstData) ? $firstData() : $firstData;
 
-        $firstData = $this->sanitizeExcelData($firstData);
-
         File::ensureDirectoryExists(storage_path('app/public/excel'));
 
         $excel = ExcelExport::make($filename, $firstSheet)
@@ -166,9 +106,6 @@ trait ExcelExportable
 
         foreach ($dataSheets as $sheet => $data) {
             $data = is_callable($data) ? $data() : $data;
-
-            $data = $this->sanitizeExcelData($data);
-
             $excel->addSheet($sheet);
 
             if (Arr::isAssoc($columnHeaders)) {
