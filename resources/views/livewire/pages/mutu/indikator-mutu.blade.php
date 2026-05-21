@@ -8,7 +8,6 @@
                     let { id, action } = e.dataset;
 
                     if (action === 'record') {
-                        // Mengarahkan ke halaman detail indikator
                         window.location.href = `{{ url('admin/mutu/indikator-mutu') }}/${id}`;
                     } else {
                         Livewire.emit('prepare', id);
@@ -24,7 +23,7 @@
                 @can('mutu.indikator-mutu.create')
                     <x-filter.label constant-width>Unit :</x-filter.label>
                     <x-filter.select2 name="Unit" model="unitId" livewire :options="$this->unit" placeholder="SEMUA" />
-                    <x-button variant="primary" size="sm" title="Tambah" icon="fas fa-plus" class="ml-auto" wire:click="$emit('prepare')" />
+                    <x-button variant="primary" size="sm" title="Tambah Mapping" icon="fas fa-plus" class="ml-auto" wire:click="$emit('prepare')" />
                 @endcan
 
                 <x-filter.button-export-excel class="ml-2" />
@@ -38,9 +37,9 @@
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" sortable zebra hover sticky nowrap>
                 <x-slot name="columns">
-                    <x-table.th name="sort_order" title="Urutan" />
+                    <x-table.th title="No. " />
                     <x-table.th title="Indikator" />
-                    <x-table.th title="Kategori" />
+                    <x-table.th title="Unit" />
                     <x-table.th title="Standar" />
                     <x-table.th title="PJ" />
                     <x-table.th title="Status" />
@@ -48,14 +47,12 @@
                 <x-slot name="body">
                     @forelse ($indicators as $indicator)
                         <x-table.tr>
-                            <x-table.td :clickable="user()->can('mutu.indikator-mutu.update')" data-id="{{ $indicator->id }}" data-action="edit">
-                                {{ $indicator->sort_order }}
-                            </x-table.td>
                             <x-table.td :clickable="true" data-id="{{ $indicator->id }}" data-action="record">
-                                {{ $indicator->title }}
+                                {{ $loop->iteration }}
                             </x-table.td>
-                            <x-table.td>{{ $indicator->category->name ?? '-' }}</x-table.td>
-                            <x-table.td>{{ $indicator->standard }}</x-table.td>
+                            <x-table.td>{{ $indicator->profile->title ?? '-' }}</x-table.td>
+                            <x-table.td>{{ $indicator->unit->nama ?? '-' }}</x-table.td>
+                            <x-table.td>{{ $indicator->profile->standard ?? '-' }}</x-table.td>
                             <x-table.td>{{ $indicator->person_in_charge }}</x-table.td>
                             <x-table.td>
                                 <x-badge :variant="$indicator->status === 'active' ? 'success' : 'danger'">

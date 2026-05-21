@@ -64,7 +64,7 @@ class IndikatorMutu extends Component
         return view('livewire.pages.mutu.indikator-mutu', [
             'indicators' => $this->isDeferred ? [] : $this->collection,
         ])
-            ->layout(BaseLayout::class, ['title' => 'Indikator Mutu']);
+            ->layout(BaseLayout::class, ['title' => 'Mapping Indikator Unit']);
     }
 
     protected function defaultValues(): void
@@ -75,17 +75,16 @@ class IndikatorMutu extends Component
     protected function dataPerSheet(): array
     {
         return [
-            'Daftar Indikator' => fn () => app(GetAllQualityIndicatorAction::class)
+            'Mapping Indikator' => fn () => app(GetAllQualityIndicatorAction::class)
                 ->execute([
                     'unit_id' => $this->unitId,
                     'search'  => $this->cari,
                 ])
                 ->map(fn ($indicator) => [
                     $indicator->id,
-                    $indicator->sort_order,
-                    $indicator->category->name ?? '-',
-                    $indicator->title,
-                    $indicator->standard,
+                    $indicator->profile->title ?? '-',
+                    $indicator->unit->nama ?? '-',
+                    $indicator->profile->standard ?? '-',
                     $indicator->person_in_charge,
                     $indicator->status === 'active' ? 'Aktif' : 'Nonaktif',
                 ]),
@@ -97,8 +96,8 @@ class IndikatorMutu extends Component
         return [
             'ID',
             'Urutan',
-            'Kategori',
-            'Judul Indikator',
+            'Indikator',
+            'Unit',
             'Standar',
             'PJ',
             'Status',
@@ -110,7 +109,7 @@ class IndikatorMutu extends Component
         $unitName = $this->unitId ? (Bidang::find($this->unitId)->nama ?? 'SEMUA') : 'SEMUA';
 
         return [
-            'DAFTAR INDIKATOR MUTU',
+            'MAPPING INDIKATOR MUTU PER UNIT',
             'UNIT: '.strtoupper($unitName),
             'Tanggal Cetak: '.now()->format('d-m-Y H:i:s'),
         ];

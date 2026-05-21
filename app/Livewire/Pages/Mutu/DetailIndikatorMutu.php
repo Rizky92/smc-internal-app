@@ -34,7 +34,8 @@ class DetailIndikatorMutu extends Component
     public $tglAkhir;
 
     protected $listeners = [
-        'record-saved' => '$refresh',
+        'record-saved'    => '$refresh',
+        'indicator-saved' => '$refresh',
     ];
 
     public function mount(int $indicatorId): void
@@ -60,7 +61,7 @@ class DetailIndikatorMutu extends Component
                     ? round(($record->numerator_value / $record->denominator_value) * 100, 2).'%'
                     : '0%',
                 $record->notes,
-                $record->recorder->nm_user ?? '-',
+                $this->recorders->get($record->recorded_by)->nama ?? '-',
             ]),
         ];
     }
@@ -83,10 +84,10 @@ class DetailIndikatorMutu extends Component
 
         return [
             'LAPORAN PENILAIAN INDIKATOR MUTU',
-            'INDIKATOR: '.strtoupper($indicator->title),
+            'INDIKATOR: '.strtoupper($indicator->profile->title ?? '-'),
             'PERIODE: '.carbon($this->tglAwal)->format('d/m/Y').' s.d '.carbon($this->tglAkhir)->format('d/m/Y'),
             'UNIT: '.strtoupper($indicator->unit->nama ?? '-'),
-            'STANDAR: '.$indicator->standard,
+            'STANDAR: '.($indicator->profile->standard ?? '-'),
         ];
     }
 
@@ -136,7 +137,7 @@ class DetailIndikatorMutu extends Component
             $this->dispatchBrowserEvent('update-chart', [
                 'labels'   => $records->pluck('recorded_date')->map(fn ($d) => carbon($d)->format('d/m'))->toArray(),
                 'data'     => $records->map(fn ($r) => $r->denominator_value > 0 ? round(($r->numerator_value / $r->denominator_value) * 100, 2) : 0)->toArray(),
-                'standard' => (float) str_replace('%', '', $indicator->standard),
+                'standard' => (float) str_replace('%', '', $indicator->profile->standard ?? '0'),
             ]);
         }
 
@@ -155,7 +156,7 @@ class DetailIndikatorMutu extends Component
 
         tracker_end('mysql_smc');
 
-        $this->flashSuccess('Indikator Mutu berhasil dihapus.');
+        $this->flashSuccess('Mapping Indikator Unit berhasil dihapus.');
 
         $this->redirectRoute('admin.mutu.indikator-mutu');
     }

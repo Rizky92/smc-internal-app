@@ -12,16 +12,18 @@ class EloquentQualityIndicatorRepository implements QualityIndicatorRepositoryIn
     public function getPaginated(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
         return QualityIndicator::query()
+            ->with(['profile', 'unit'])
             ->when($filters['unit_id'] ?? null, fn ($q, $unitId) => $q->where('bidang_id', $unitId))
-            ->when($filters['search'] ?? null, fn ($q, $search) => $q->where('title', 'like', "%{$search}%"))
+            ->when($filters['search'] ?? null, fn ($q, $search) => $q->whereHas('profile', fn ($q) => $q->where('title', 'like', "%{$search}%")))
             ->paginate($perPage);
     }
 
     public function getAll(array $filters = []): Collection
     {
         return QualityIndicator::query()
+            ->with(['profile', 'unit'])
             ->when($filters['unit_id'] ?? null, fn ($q, $unitId) => $q->where('bidang_id', $unitId))
-            ->when($filters['search'] ?? null, fn ($q, $search) => $q->where('title', 'like', "%{$search}%"))
+            ->when($filters['search'] ?? null, fn ($q, $search) => $q->whereHas('profile', fn ($q) => $q->where('title', 'like', "%{$search}%")))
             ->get();
     }
 

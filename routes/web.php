@@ -404,6 +404,10 @@ Route::prefix('admin')
                     ->name('indikator-mutu.detail')
                     ->middleware('can:mutu.indikator-mutu.read');
 
+                Route::get('profil-indikator', Mutu\ProfilIndikator::class)
+                    ->name('profil-indikator')
+                    ->middleware('can:mutu.indikator-mutu.read');
+
                 Route::get('kategori-indikator', Mutu\KategoriIndikator::class)
                     ->name('kategori-indikator')
                     ->middleware('can:mutu.kategori-indikator.read');

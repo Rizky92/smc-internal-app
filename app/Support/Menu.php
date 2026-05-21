@@ -663,6 +663,13 @@ class Menu
                         'hasAnyPermissions' => $user->can('mutu.indikator-mutu.read'),
                     ],
                     [
+                        'name'              => 'Profil Indikator',
+                        'url'               => route('admin.mutu.profil-indikator'),
+                        'icon'              => 'fas fa-book',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('mutu.indikator-mutu.read'),
+                    ],
+                    [
                         'name'              => 'Kategori Indikator',
                         'url'               => route('admin.mutu.kategori-indikator'),
                         'icon'              => 'fas fa-tags',

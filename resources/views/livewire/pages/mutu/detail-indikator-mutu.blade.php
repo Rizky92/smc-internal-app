@@ -85,18 +85,23 @@
             <x-row-col-flex class="mt-2">
                 <div class="d-flex align-items-center w-100">
                     <x-button as="link" href="{{ route('admin.mutu.indikator-mutu') }}" variant="secondary" size="sm" class="mr-3" icon="fas fa-arrow-left" title="Kembali" />
-                    <h5 class="mb-0">{{ $indicator->title }}</h5>
+                    <h5 class="mb-0">{{ $indicator->profile->title ?? '-' }}</h5>
 
-                    @can('mutu.indikator-mutu.delete')
-                        <x-button
-                            variant="danger"
-                            size="sm"
-                            class="ml-auto"
-                            title="Hapus Indikator"
-                            icon="fas fa-trash"
-                            onclick="confirm('Yakin ingin menghapus indikator ini? Seluruh data penilaian terkait juga akan terhapus.') || event.stopImmediatePropagation()"
-                            wire:click="delete" />
-                    @endcan
+                    <div class="ml-auto d-flex" style="gap: 0.5rem">
+                        @can('mutu.indikator-mutu.update')
+                            <x-button variant="warning" size="sm" title="Edit Mapping" icon="fas fa-edit" wire:click="$emit('prepare', {{ $indicatorId }})" />
+                        @endcan
+
+                        @can('mutu.indikator-mutu.delete')
+                            <x-button
+                                variant="danger"
+                                size="sm"
+                                title="Hapus Mapping"
+                                icon="fas fa-trash"
+                                onclick="confirm('Yakin ingin menghapus mapping indikator ini dari unit? Data penilaian terkait akan tetap tersimpan.') || event.stopImmediatePropagation()"
+                                wire:click="delete" />
+                        @endcan
+                    </div>
                 </div>
             </x-row-col-flex>
         </x-slot>
@@ -106,7 +111,7 @@
                     <table class="table table-sm table-borderless">
                         <tr>
                             <th width="150">Kategori</th>
-                            <td>: {{ $indicator->category->name ?? '-' }}</td>
+                            <td>: {{ $indicator->profile->category->name ?? '-' }}</td>
                         </tr>
                         <tr>
                             <th>Unit/Bidang</th>
@@ -114,11 +119,11 @@
                         </tr>
                         <tr>
                             <th>Standar</th>
-                            <td>: {{ $indicator->standard }}</td>
+                            <td>: {{ $indicator->profile->standard ?? '-' }}</td>
                         </tr>
                         <tr>
                             <th>Frekuensi</th>
-                            <td>: {{ $indicator->frequency }}</td>
+                            <td>: {{ $indicator->profile->frequency ?? '-' }}</td>
                         </tr>
                     </table>
                 </div>
@@ -126,10 +131,10 @@
                     <table class="table table-sm table-borderless">
                         <tr>
                             <th width="150">Tipe Input</th>
-                            <td>: {{ $indicator->inputType->name ?? '-' }}</td>
+                            <td>: {{ $indicator->profile->inputType->name ?? '-' }}</td>
                         </tr>
                         <tr>
-                            <th>PJ</th>
+                            <th>PJ Unit</th>
                             <td>: {{ $indicator->person_in_charge }}</td>
                         </tr>
                         <tr>
@@ -147,7 +152,7 @@
             <hr />
             <div class="mt-3 p-4">
                 <h6>Definisi Operasional :</h6>
-                <p class="text-sm text-muted">{{ $indicator->definition ?: '-' }}</p>
+                <p class="text-sm text-muted">{{ $indicator->profile->definition ?: '-' }}</p>
             </div>
         </x-slot>
     </x-card>
@@ -182,7 +187,7 @@
                     <x-table.th title="Denominator" />
                     <x-table.th title="Capaian (%)" />
                     <x-table.th title="Catatan" />
-                    <x-table.th title="Input Oleh" />
+                    <x-table.th title="Petugas" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($records as $record)
@@ -231,4 +236,5 @@
     </x-card>
 
     <livewire:pages.mutu.modal.input-record-indikator />
+    <livewire:pages.mutu.modal.input-indikator-mutu />
 </div>

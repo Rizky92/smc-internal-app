@@ -5,6 +5,7 @@ namespace App\Models\Quality;
 use App\Database\Eloquent\Model;
 use App\Models\Bidang;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class QualityIndicator extends Model
 {
@@ -17,38 +18,25 @@ class QualityIndicator extends Model
     protected $keyType = 'int';
 
     protected $fillable = [
+        'quality_indicator_profile_id',
         'bidang_id',
-        'quality_indicator_category_id',
-        'sort_order',
-        'title',
-        'dimension',
-        'objective',
-        'definition',
-        'inclusion',
-        'exclusion',
-        'frequency',
-        'quality_indicator_input_type_id',
-        'analysis_period',
-        'numerator',
-        'denominator',
-        'data_source',
-        'standard',
         'person_in_charge',
+        'data_source',
         'status',
     ];
 
-    public function category(): BelongsTo
+    public function profile(): BelongsTo
     {
-        return $this->belongsTo(QualityIndicatorCategory::class, 'quality_indicator_category_id');
-    }
-
-    public function inputType(): BelongsTo
-    {
-        return $this->belongsTo(QualityIndicatorInputType::class, 'quality_indicator_input_type_id');
+        return $this->belongsTo(QualityIndicatorProfile::class, 'quality_indicator_profile_id');
     }
 
     public function unit(): BelongsTo
     {
         return $this->belongsTo(Bidang::class, 'bidang_id');
+    }
+
+    public function records(): HasMany
+    {
+        return $this->hasMany(QualityIndicatorRecord::class, 'indicator_id');
     }
 }

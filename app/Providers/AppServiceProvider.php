@@ -4,13 +4,13 @@ namespace App\Providers;
 
 use App\Database\Eloquent\Model;
 use App\Database\Query\Grammars\MysqlGrammar;
-use App\Domain\Pintu\Repositories\PintuRepositoryInterface;
 use App\Domain\Quality\Repositories\QualityCategoryRepositoryInterface;
+use App\Domain\Quality\Repositories\QualityIndicatorProfileRepositoryInterface;
 use App\Domain\Quality\Repositories\QualityIndicatorRecordRepositoryInterface;
 use App\Domain\Quality\Repositories\QualityIndicatorRepositoryInterface;
 use App\Domain\Quality\Repositories\QualityInputTypeRepositoryInterface;
-use App\Infrastructure\Pintu\Repositories\EloquentPintuRepository;
 use App\Infrastructure\Quality\Repositories\EloquentQualityCategoryRepository;
+use App\Infrastructure\Quality\Repositories\EloquentQualityIndicatorProfileRepository;
 use App\Infrastructure\Quality\Repositories\EloquentQualityIndicatorRecordRepository;
 use App\Infrastructure\Quality\Repositories\EloquentQualityIndicatorRepository;
 use App\Infrastructure\Quality\Repositories\EloquentQualityInputTypeRepository;
@@ -82,16 +82,14 @@ class AppServiceProvider extends ServiceProvider
      */
     protected function registerRepositoryBindings(): void
     {
-        // Modul Pintu (Aplikasi)
-        $this->app->bind(
-            PintuRepositoryInterface::class,
-            EloquentPintuRepository::class
-        );
-
-        // Modul Quality (Mutu)
         $this->app->bind(
             QualityIndicatorRepositoryInterface::class,
             EloquentQualityIndicatorRepository::class
+        );
+
+        $this->app->bind(
+            QualityIndicatorProfileRepositoryInterface::class,
+            EloquentQualityIndicatorProfileRepository::class
         );
 
         $this->app->bind(

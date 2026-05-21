@@ -455,3 +455,8 @@ Breadcrumbs::for('admin.mutu.tipe-input-indikator', function (Trail $trail): voi
     $trail->parent('admin.mutu');
     $trail->push('Tipe Input Indikator', route('admin.mutu.tipe-input-indikator'));
 });
+
+Breadcrumbs::for('admin.mutu.profil-indikator', function (Trail $trail): void {
+    $trail->parent('admin.mutu');
+    $trail->push('Profil Indikator', route('admin.mutu.profil-indikator'));
+});
