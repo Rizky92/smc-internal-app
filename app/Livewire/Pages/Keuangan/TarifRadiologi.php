@@ -57,18 +57,18 @@ class TarifRadiologi extends Component
                 ->search($this->cari)
                 ->cursor()
                 ->map(fn (JenisPerawatanRadiologi $model): array => [
-                    $model->kd_jenis_prw,
-                    $model->nm_perawatan,
-                    $model->bagian_rs,
-                    $model->bhp,
-                    $model->tarif_perujuk,
-                    $model->tarif_tindakan_dokter,
-                    $model->tarif_tindakan_petugas,
-                    $model->kso,
-                    $model->menejemen,
-                    $model->total_byr,
-                    $model->png_jawab,
-                    $model->kelas,
+                    'kd_jenis_prw'              => $model->kd_jenis_prw,
+                    'nm_perawatan'              => $model->nm_perawatan,
+                    'bagian_rs'                 => $model->bagian_rs,
+                    'bhp'                       => $model->bhp,
+                    'tarif_perujuk'             => $model->tarif_perujuk,
+                    'tarif_tindakan_dokter'     => $model->tarif_tindakan_dokter,
+                    'tarif_tindakan_petugas'    => $model->tarif_tindakan_petugas,
+                    'kso'                       => $model->kso,
+                    'menejemen'                 => $model->menejemen,
+                    'total_byr'                 => $model->total_byr,
+                    'png_jawab'                 => $model->png_jawab,
+                    'kelas'                     => $model->kelas,
                 ]),
         ];
     }
