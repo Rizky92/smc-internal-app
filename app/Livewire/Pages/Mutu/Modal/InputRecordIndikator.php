@@ -27,6 +27,9 @@ class InputRecordIndikator extends Component
 
     public $notes;
 
+    /** @var string */
+    public $status = 'draft';
+
     /** @var bool */
     public $isEdit = false;
 
@@ -59,6 +62,7 @@ class InputRecordIndikator extends Component
                 $this->numeratorValue = $record->numerator_value;
                 $this->denominatorValue = $record->denominator_value;
                 $this->notes = $record->notes;
+                $this->status = $record->status ?? 'draft';
                 $this->isEdit = true;
             }
         } else {
@@ -66,6 +70,7 @@ class InputRecordIndikator extends Component
             $this->numeratorValue = 0;
             $this->denominatorValue = 0;
             $this->notes = '';
+            $this->status = 'draft';
             $this->isEdit = false;
         }
 
@@ -74,6 +79,12 @@ class InputRecordIndikator extends Component
 
     public function save(SaveQualityIndicatorRecordAction $action): void
     {
+        if (in_array($this->status, ['submitted', 'approved'])) {
+            $this->flashError('Data telah dikunci dan tidak dapat diubah.');
+
+            return;
+        }
+
         $this->validate();
 
         $data = QualityIndicatorRecordData::from([
@@ -83,24 +94,59 @@ class InputRecordIndikator extends Component
             'denominator_value' => $this->denominatorValue,
             'notes'             => $this->notes,
             'recorded_by'       => user()->nik,
+            'status'            => 'draft', // saving as draft
         ]);
 
         $action->execute($data);
 
-        $this->flashSuccess('Penilaian harian berhasil disimpan.');
+        $this->flashSuccess('Penilaian harian berhasil disimpan sebagai draft.');
         $this->dispatchBrowserEvent('close-modal', ['id' => 'modal-input-record-indikator']);
         $this->emit('record-saved');
-        $this->reset(['numeratorValue', 'denominatorValue', 'notes', 'isEdit']);
+        $this->reset(['numeratorValue', 'denominatorValue', 'notes', 'isEdit', 'status']);
+    }
+
+    public function submit(SaveQualityIndicatorRecordAction $action): void
+    {
+        if (in_array($this->status, ['submitted', 'approved'])) {
+            $this->flashError('Data telah dikunci.');
+
+            return;
+        }
+
+        $this->validate();
+
+        $data = QualityIndicatorRecordData::from([
+            'indicator_id'      => $this->indicatorId,
+            'recorded_date'     => $this->recordedDate,
+            'numerator_value'   => $this->numeratorValue,
+            'denominator_value' => $this->denominatorValue,
+            'notes'             => $this->notes,
+            'recorded_by'       => user()->nik,
+            'status'            => 'submitted', // lock and submit
+        ]);
+
+        $action->execute($data);
+
+        $this->flashSuccess('Penilaian harian berhasil dikunci dan diserahkan.');
+        $this->dispatchBrowserEvent('close-modal', ['id' => 'modal-input-record-indikator']);
+        $this->emit('record-saved');
+        $this->reset(['numeratorValue', 'denominatorValue', 'notes', 'isEdit', 'status']);
     }
 
     public function delete(DeleteQualityIndicatorRecordAction $action): void
     {
+        if (in_array($this->status, ['submitted', 'approved'])) {
+            $this->flashError('Data telah dikunci dan tidak dapat dihapus.');
+
+            return;
+        }
+
         $action->execute($this->indicatorId, $this->recordedDate);
 
         $this->flashSuccess('Data penilaian berhasil dihapus.');
         $this->dispatchBrowserEvent('close-modal', ['id' => 'modal-input-record-indikator']);
         $this->emit('record-saved');
-        $this->reset(['numeratorValue', 'denominatorValue', 'notes', 'isEdit']);
+        $this->reset(['numeratorValue', 'denominatorValue', 'notes', 'isEdit', 'status']);
     }
 
     public function render(): View

@@ -22,13 +22,17 @@ class QualityIndicatorRecordData
     /** @var int|null */
     public $recorded_by;
 
+    /** @var string|null */
+    public $status;
+
     public function __construct(
         int $indicator_id,
         string $recorded_date,
         int $numerator_value,
         int $denominator_value,
         ?string $notes,
-        ?int $recorded_by
+        ?int $recorded_by,
+        ?string $status = 'draft'
     ) {
         $this->indicator_id = $indicator_id;
         $this->recorded_date = $recorded_date;
@@ -36,6 +40,7 @@ class QualityIndicatorRecordData
         $this->denominator_value = $denominator_value;
         $this->notes = $notes;
         $this->recorded_by = $recorded_by;
+        $this->status = $status;
     }
 
     public static function from(array $data): self
@@ -46,7 +51,8 @@ class QualityIndicatorRecordData
             (int) $data['numerator_value'],
             (int) $data['denominator_value'],
             $data['notes'] ?? null,
-            isset($data['recorded_by']) ? (int) $data['recorded_by'] : null
+            isset($data['recorded_by']) ? (int) $data['recorded_by'] : null,
+            $data['status'] ?? 'draft'
         );
     }
 
@@ -59,6 +65,7 @@ class QualityIndicatorRecordData
             'denominator_value' => $this->denominator_value,
             'notes'             => $this->notes,
             'recorded_by'       => $this->recorded_by,
+            'status'            => $this->status,
         ];
     }
 }

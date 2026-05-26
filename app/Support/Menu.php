@@ -653,8 +653,16 @@ class Menu
                     'mutu.indikator-mutu.read',
                     'mutu.kategori-indikator.read',
                     'mutu.tipe-input-indikator.read',
+                    'mutu.validasi-data.read',
                 ]),
                 'items'             => [
+                    [
+                        'name'              => 'Validasi Data',
+                        'url'               => route('admin.mutu.validasi-data'),
+                        'icon'              => 'fas fa-check-double',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('mutu.validasi-data.read'),
+                    ],
                     [
                         'name'              => 'Indikator Mutu',
                         'url'               => route('admin.mutu.indikator-mutu'),

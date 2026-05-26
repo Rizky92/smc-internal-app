@@ -460,3 +460,8 @@ Breadcrumbs::for('admin.mutu.profil-indikator', function (Trail $trail): void {
     $trail->parent('admin.mutu');
     $trail->push('Profil Indikator', route('admin.mutu.profil-indikator'));
 });
+
+Breadcrumbs::for('admin.mutu.validasi-data', function (Trail $trail): void {
+    $trail->parent('admin.mutu');
+    $trail->push('Validasi Data', route('admin.mutu.validasi-data'));
+});

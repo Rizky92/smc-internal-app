@@ -186,6 +186,7 @@
                     <x-table.th title="Numerator" />
                     <x-table.th title="Denominator" />
                     <x-table.th title="Capaian (%)" />
+                    <x-table.th title="Status" />
                     <x-table.th title="Catatan" />
                     <x-table.th title="Petugas" />
                 </x-slot>
@@ -196,6 +197,22 @@
                                 $record->denominator_value > 0
                                     ? round(($record->numerator_value / $record->denominator_value) * 100, 2)
                                     : 0;
+
+                            $statusVariant =
+                                [
+                                    'draft' => 'secondary',
+                                    'submitted' => 'info',
+                                    'approved' => 'success',
+                                    'rejected' => 'danger',
+                                ][$record->status ?? 'draft'] ?? 'secondary';
+
+                            $statusLabel =
+                                [
+                                    'draft' => 'Draft',
+                                    'submitted' => 'Submitted',
+                                    'approved' => 'Approved',
+                                    'rejected' => 'Rejected',
+                                ][$record->status ?? 'draft'] ?? 'Draft';
                         @endphp
 
                         <x-table.tr>
@@ -205,11 +222,14 @@
                             <x-table.td class="text-center">{{ $record->numerator_value }}</x-table.td>
                             <x-table.td class="text-center">{{ $record->denominator_value }}</x-table.td>
                             <x-table.td class="text-center font-weight-bold">{{ $achievement }}%</x-table.td>
+                            <x-table.td class="text-center">
+                                <x-badge :variant="$statusVariant">{{ $statusLabel }}</x-badge>
+                            </x-table.td>
                             <x-table.td>{{ $record->notes ?: '-' }}</x-table.td>
                             <x-table.td>{{ $this->recorders->get($record->recorded_by)->nama ?? '-' }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="6" padding />
+                        <x-table.tr-empty colspan="7" padding />
                     @endforelse
                 </x-slot>
                 @if ($records->isNotEmpty())
@@ -227,7 +247,7 @@
 
                                 {{ $totalAch }}%
                             </td>
-                            <td colspan="2"></td>
+                            <td colspan="3"></td>
                         </tr>
                     </x-slot>
                 @endif

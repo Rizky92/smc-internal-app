@@ -396,6 +396,10 @@ Route::prefix('admin')
         Route::prefix('mutu')
             ->as('mutu.')
             ->group(function () {
+                Route::get('validasi-data', Mutu\ValidasiData::class)
+                    ->name('validasi-data')
+                    ->middleware('can:mutu.validasi-data.read');
+
                 Route::get('indikator-mutu', Mutu\IndikatorMutu::class)
                     ->name('indikator-mutu')
                     ->middleware('can:mutu.indikator-mutu.read');

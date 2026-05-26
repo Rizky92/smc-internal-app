@@ -11,8 +11,6 @@ class QualityIndicatorRecord extends Model
 
     protected $table = 'quality_indicator_records';
 
-    protected $primaryKey = ['indicator_id', 'recorded_date'];
-
     public $incrementing = false;
 
     protected $fillable = [
@@ -22,6 +20,7 @@ class QualityIndicatorRecord extends Model
         'numerator_value',
         'denominator_value',
         'recorded_by',
+        'status',
     ];
 
     public function indicator(): BelongsTo
