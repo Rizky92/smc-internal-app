@@ -50,9 +50,9 @@ class User extends Authenticatable
 
         static::addGlobalScope(function (Builder $query) {
             $sqlSelect = <<<'SQL'
-                trim(pegawai.nik) nik, pegawai.nama nama, coalesce(jabatan.nm_jbtn, spesialis.nm_sps, pegawai.jbtn) jbtn,
+                trim(pegawai.nik) nik, pegawai.nama nama, coalesce(jabatan.nm_jbtn, spesialis.nm_sps,pegawai.jbtn) jbtn,
                 (case when petugas.nip is not null then 'Petugas' when dokter.kd_dokter is not null then 'Dokter' else '-' end) jenis,
-                user.id_user id_user, user.password `password`
+                user.id_user id_user, user.password `password`, petugas.no_telp no_hp
                 SQL;
 
             return $query

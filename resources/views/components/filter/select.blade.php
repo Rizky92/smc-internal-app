@@ -2,6 +2,7 @@
     'model' => null,
     'options' => [],
     'placeholder' => null,
+    'placeholderValue' => null,
     'selected' => null,
     'showKey' => false,
 ])
