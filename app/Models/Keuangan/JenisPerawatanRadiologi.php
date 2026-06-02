@@ -65,6 +65,7 @@ class JenisPerawatanRadiologi extends Model
             jns_perawatan_radiologi.kso,
             jns_perawatan_radiologi.menejemen,
             jns_perawatan_radiologi.total_byr,
+            penjab.kd_pj,
             penjab.png_jawab,
             jns_perawatan_radiologi.kelas
         SQL;
