@@ -21,6 +21,7 @@ use App\Livewire\Pages\Informasi;
 use App\Livewire\Pages\Keuangan;
 use App\Livewire\Pages\Laboratorium;
 use App\Livewire\Pages\Logistik;
+use App\Livewire\Pages\Mutu;
 use App\Livewire\Pages\Perawatan;
 use App\Livewire\Pages\RekamMedis;
 use App\Livewire\Pages\User;
@@ -390,6 +391,34 @@ Route::prefix('admin')
                 Route::get('laporan-triase-igd-zona-hijau', Casemix\LaporanTriaseIgdZonaHijau::class)
                     ->name('laporan-triase-igd-zona-hijau')
                     ->middleware('can:casemix.laporan-triase-igd-zona-hijau.read');
+            });
+
+        Route::prefix('mutu')
+            ->as('mutu.')
+            ->group(function () {
+                Route::get('validasi-data', Mutu\ValidasiData::class)
+                    ->name('validasi-data')
+                    ->middleware('can:mutu.validasi-data.read');
+
+                Route::get('indikator-mutu', Mutu\IndikatorMutu::class)
+                    ->name('indikator-mutu')
+                    ->middleware('can:mutu.indikator-mutu.read');
+
+                Route::get('indikator-mutu/{indicatorId}', Mutu\DetailIndikatorMutu::class)
+                    ->name('indikator-mutu.detail')
+                    ->middleware('can:mutu.indikator-mutu.read');
+
+                Route::get('profil-indikator', Mutu\ProfilIndikator::class)
+                    ->name('profil-indikator')
+                    ->middleware('can:mutu.indikator-mutu.read');
+
+                Route::get('kategori-indikator', Mutu\KategoriIndikator::class)
+                    ->name('kategori-indikator')
+                    ->middleware('can:mutu.kategori-indikator.read');
+
+                Route::get('tipe-input-indikator', Mutu\TipeInputIndikator::class)
+                    ->name('tipe-input-indikator')
+                    ->middleware('can:mutu.tipe-input-indikator.read');
             });
 
         Route::middleware('role:'.config('permission.superadmin_name'))

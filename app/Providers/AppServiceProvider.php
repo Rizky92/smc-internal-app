@@ -4,6 +4,16 @@ namespace App\Providers;
 
 use App\Database\Eloquent\Model;
 use App\Database\Query\Grammars\MysqlGrammar;
+use App\Domain\Quality\Repositories\QualityCategoryRepositoryInterface;
+use App\Domain\Quality\Repositories\QualityIndicatorProfileRepositoryInterface;
+use App\Domain\Quality\Repositories\QualityIndicatorRecordRepositoryInterface;
+use App\Domain\Quality\Repositories\QualityIndicatorRepositoryInterface;
+use App\Domain\Quality\Repositories\QualityInputTypeRepositoryInterface;
+use App\Infrastructure\Quality\Repositories\EloquentQualityCategoryRepository;
+use App\Infrastructure\Quality\Repositories\EloquentQualityIndicatorProfileRepository;
+use App\Infrastructure\Quality\Repositories\EloquentQualityIndicatorRecordRepository;
+use App\Infrastructure\Quality\Repositories\EloquentQualityIndicatorRepository;
+use App\Infrastructure\Quality\Repositories\EloquentQualityInputTypeRepository;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
@@ -46,7 +56,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->registerRepositoryBindings();
     }
 
     /**
@@ -65,6 +75,37 @@ class AppServiceProvider extends ServiceProvider
         $this->registerModelConfigurations();
         $this->registerSuperadminRole();
         $this->registerMacrosAndMixins();
+    }
+
+    /**
+     * Centralized Interface to Implementation bindings.
+     */
+    protected function registerRepositoryBindings(): void
+    {
+        $this->app->bind(
+            QualityIndicatorRepositoryInterface::class,
+            EloquentQualityIndicatorRepository::class
+        );
+
+        $this->app->bind(
+            QualityIndicatorProfileRepositoryInterface::class,
+            EloquentQualityIndicatorProfileRepository::class
+        );
+
+        $this->app->bind(
+            QualityIndicatorRecordRepositoryInterface::class,
+            EloquentQualityIndicatorRecordRepository::class
+        );
+
+        $this->app->bind(
+            QualityCategoryRepositoryInterface::class,
+            EloquentQualityCategoryRepository::class
+        );
+
+        $this->app->bind(
+            QualityInputTypeRepositoryInterface::class,
+            EloquentQualityInputTypeRepository::class
+        );
     }
 
     public function registerBladeDirectives(): void

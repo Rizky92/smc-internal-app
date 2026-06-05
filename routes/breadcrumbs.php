@@ -430,3 +430,38 @@ Breadcrumbs::for('admin.casemix.laporan-triase-igd-zona-hijau', function (Trail 
     $trail->parent('admin.casemix');
     $trail->push('Laporan Triase IGD Zona Hijau', route('admin.casemix.laporan-triase-igd-zona-hijau'));
 });
+
+Breadcrumbs::for('admin.mutu', function (Trail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Mutu');
+});
+
+Breadcrumbs::for('admin.mutu.indikator-mutu', function (Trail $trail): void {
+    $trail->parent('admin.mutu');
+    $trail->push('Indikator Mutu', route('admin.mutu.indikator-mutu'));
+});
+
+Breadcrumbs::for('admin.mutu.indikator-mutu.detail', function (Trail $trail, int $indicatorId): void {
+    $trail->parent('admin.mutu.indikator-mutu');
+    $trail->push('Detail Indikator', route('admin.mutu.indikator-mutu.detail', ['indicatorId' => $indicatorId]));
+});
+
+Breadcrumbs::for('admin.mutu.kategori-indikator', function (Trail $trail): void {
+    $trail->parent('admin.mutu');
+    $trail->push('Kategori Indikator', route('admin.mutu.kategori-indikator'));
+});
+
+Breadcrumbs::for('admin.mutu.tipe-input-indikator', function (Trail $trail): void {
+    $trail->parent('admin.mutu');
+    $trail->push('Tipe Input Indikator', route('admin.mutu.tipe-input-indikator'));
+});
+
+Breadcrumbs::for('admin.mutu.profil-indikator', function (Trail $trail): void {
+    $trail->parent('admin.mutu');
+    $trail->push('Profil Indikator', route('admin.mutu.profil-indikator'));
+});
+
+Breadcrumbs::for('admin.mutu.validasi-data', function (Trail $trail): void {
+    $trail->parent('admin.mutu');
+    $trail->push('Validasi Data', route('admin.mutu.validasi-data'));
+});

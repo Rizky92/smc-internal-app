@@ -8,6 +8,7 @@ use App\Models\Aplikasi\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Schema;
+use Spatie\Permission\PermissionRegistrar;
 
 class PermissionSeeder extends Seeder
 {
@@ -17,6 +18,8 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         Schema::connection('mysql_smc')->disableForeignKeyConstraints();
+
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         Permission::truncate();
         Role::truncate();
@@ -124,6 +127,22 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'casemix.laporan-pasien-batal.read']);
         Permission::create(['name' => 'casemix.laporan-pasien-cob.read']);
         Permission::create(['name' => 'casemix.laporan-triase-igd-zona-hijau.read']);
+
+        Permission::create(['name' => 'mutu.kategori-indikator.create']);
+        Permission::create(['name' => 'mutu.kategori-indikator.read']);
+        Permission::create(['name' => 'mutu.kategori-indikator.update']);
+        Permission::create(['name' => 'mutu.kategori-indikator.delete']);
+        Permission::create(['name' => 'mutu.tipe-input-indikator.create']);
+        Permission::create(['name' => 'mutu.tipe-input-indikator.read']);
+        Permission::create(['name' => 'mutu.tipe-input-indikator.update']);
+        Permission::create(['name' => 'mutu.tipe-input-indikator.delete']);
+        Permission::create(['name' => 'mutu.indikator-mutu.create']);
+        Permission::create(['name' => 'mutu.indikator-mutu.read']);
+        Permission::create(['name' => 'mutu.indikator-mutu.update']);
+        Permission::create(['name' => 'mutu.indikator-mutu.delete']);
+        Permission::create(['name' => 'mutu.validasi-data.read']);
+        Permission::create(['name' => 'mutu.validasi-data.approve']);
+        Permission::create(['name' => 'mutu.validasi-data.reject']);
 
         // Superadmin role name, bypasses all permissions
         $superadminRole = Role::create(['name' => config('permission.superadmin_name')]);
