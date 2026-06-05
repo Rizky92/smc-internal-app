@@ -20,12 +20,37 @@ class ExportCsv
     use Queueable;
     use SerializesModels;
 
-    public function __construct(
-        protected string $userId,
-        protected string $exportSessionId,
-        protected array $records,
-        protected int $page
-    ) {}
+    public $tries = 1;
+
+    public $timeout = 3600;
+
+    private string $userId;
+
+    private string $exportSessionId;
+
+    private string $exportName;
+
+    private array $records;
+
+    private int $page;
+
+    /**
+     * @param  array{
+     *      exportSessionId: string,
+     *      exportName: string,
+     *      userId: string,
+     *      records: array,
+     *      page: int,
+     * }  $params
+     */
+    public function __construct(array $params)
+    {
+        $this->exportSessionId = $params['exportSessionId'];
+        $this->exportName = $params['exportName'];
+        $this->userId = $params['userId'];
+        $this->records = $params['records'];
+        $this->page = $params['page'];
+    }
 
     public function handle(): void
     {
@@ -44,6 +69,7 @@ class ExportCsv
             'column9',
         ])
             ->where('export_session_id', $this->exportSessionId)
+            ->where('export_name', $this->exportName)
             ->where('id_user', $this->userId);
 
         foreach ($query->find($this->records) as $record) {
@@ -51,6 +77,6 @@ class ExportCsv
         }
 
         $filePath = "exports/{$this->userId}/{$this->exportSessionId}/".str_pad(strval($this->page), 16, '0', STR_PAD_LEFT).'.csv';
-        Storage::disk('local')->put($filePath, $csv->toString());
+        Storage::disk('public')->put($filePath, $csv->toString());
     }
 }
