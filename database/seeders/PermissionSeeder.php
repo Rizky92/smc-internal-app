@@ -125,6 +125,12 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'casemix.laporan-pasien-cob.read']);
         Permission::create(['name' => 'casemix.laporan-triase-igd-zona-hijau.read']);
 
+        Permission::create(['name' => 'dapur.input-minmax-stok.create']);
+        Permission::create(['name' => 'dapur.input-minmax-stok.read']);
+        Permission::create(['name' => 'dapur.input-minmax-stok.update']);
+        Permission::create(['name' => 'dapur.input-minmax-stok.delete']);
+        Permission::create(['name' => 'dapur.stok-darurat.read']);
+
         // Superadmin role name, bypasses all permissions
         $superadminRole = Role::create(['name' => config('permission.superadmin_name')]);
 
