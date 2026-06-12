@@ -100,7 +100,7 @@
                     <div class="col-12 col-md-6 col-lg-6">
                         <div class="form-group">
                             <label class="text-sm" for="supplier">Supplier</label>
-                            <x-filter.select2 livewire name="supplier" show-key :options="$this->supplier" placeholder="-" placeholder-value="-" width="100%" />
+                            <x-filter.select2 livewire name="supplier" :model="false" show-key :options="$this->supplier" placeholder="-" placeholder-value="-" width="100%" />
                         </div>
                     </div>
                 </x-row>
@@ -162,12 +162,12 @@
                     <x-table.th name="satuan" title="Satuan" />
                     <x-table.th name="jenis" title="Jenis" />
                     <x-table.th name="nama_supplier" title="Supplier" />
-                    <x-table.th name="stokmin" title="Min" />
-                    <x-table.th name="stokmax" title="Max" />
-                    <x-table.th name="stok" title="Saat ini" />
-                    <x-table.th name="saran_order" title="Saran order" />
-                    <x-table.th name="harga" title="Harga Per Unit" />
-                    <x-table.th name="total_harga" title="Total Harga" />
+                    <x-table.th align="right" name="stokmin" title="Min" />
+                    <x-table.th align="right" name="stokmax" title="Max" />
+                    <x-table.th align="right" name="stok" title="Saat ini" />
+                    <x-table.th align="right" name="saran_order" title="Saran order" />
+                    <x-table.th-money align="right" name="harga" title="Harga Per Unit" />
+                    <x-table.th-money align="right" name="total_harga" title="Total Harga" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->barangLogistik as $barang)
@@ -183,29 +183,19 @@
                                 data-saran-order="{{ $barang->saran_order }}">
                                 {{ $barang->kode_brng }}
                             </x-table.td>
-                            <x-table.td>
-                                {{ $barang->nama_brng }}
-                            </x-table.td>
+                            <x-table.td>{{ $barang->nama_brng }}</x-table.td>
                             <x-table.td>{{ $barang->satuan }}</x-table.td>
                             <x-table.td>{{ $barang->jenis }}</x-table.td>
-                            <x-table.td>
-                                {{ $barang->nama_supplier }}
-                            </x-table.td>
+                            <x-table.td>{{ $barang->nama_supplier }}</x-table.td>
                             <x-table.td>{{ $barang->stokmin }}</x-table.td>
                             <x-table.td>{{ $barang->stokmax }}</x-table.td>
                             <x-table.td>{{ $barang->stok }}</x-table.td>
-                            <x-table.td>
-                                {{ $barang->saran_order }}
-                            </x-table.td>
-                            <x-table.td>
-                                {{ rp($barang->harga) }}
-                            </x-table.td>
-                            <x-table.td>
-                                {{ rp($barang->total_harga) }}
-                            </x-table.td>
+                            <x-table.td>{{ $barang->saran_order }}</x-table.td>
+                            <x-table.td-money :value="$barang->harga" /">
+                            <x-table.td-money :value="$barang->total_harga" /">
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="11" padding />
+                        <x-table.tr-empty colspan="13" padding />
                     @endforelse
                 </x-slot>
             </x-table>
