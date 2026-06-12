@@ -15,6 +15,7 @@ use App\Livewire\Pages\Antrean\AntreanPoli;
 use App\Livewire\Pages\Antrian;
 use App\Livewire\Pages\Aplikasi;
 use App\Livewire\Pages\Casemix;
+use App\Livewire\Pages\Dapur;
 use App\Livewire\Pages\Farmasi;
 use App\Livewire\Pages\HakAkses;
 use App\Livewire\Pages\Informasi;
@@ -376,6 +377,18 @@ Route::prefix('admin')
                 Route::get('stok-darurat', Logistik\StokDaruratLogistik::class)
                     ->name('stok-darurat')
                     ->middleware('can:logistik.stok-darurat.read');
+            });
+
+        Route::prefix('dapur')
+            ->as('dapur.')
+            ->group(function () {
+                Route::get('input-minmax-stok', Dapur\InputMinmaxStok::class)
+                    ->name('input-minmax-stok')
+                    ->middleware('can:dapur.input-minmax-stok.read');
+
+                Route::get('stok-darurat', Dapur\StokDaruratDapur::class)
+                    ->name('stok-darurat')
+                    ->middleware('can:dapur.stok-darurat.read');
             });
 
         Route::prefix('casemix')

@@ -83,7 +83,7 @@
 
     <x-card use-loading>
         <x-slot name="header">
-            @canany(['logistik.input-minmax-stok.create', 'logistik.input-minmax-stok.update'])
+            @canany(['dapur.input-minmax-stok.create', 'dapur.input-minmax-stok.update'])
                 <x-row>
                     <div class="col-12 col-md-6 col-lg-2">
                         <div class="form-group">
@@ -142,7 +142,7 @@
                 :class="Arr::toCssClasses([
                     'mt-3' => auth()
                         ->user()
-                        ->canAny(['logistik.input-minmax-stok.create', 'logistik.input-minmax-stok.update']),
+                        ->canAny(['dapur.input-minmax-stok.create', 'dapur.input-minmax-stok.update']),
                 ])">
                 <x-filter.button-export-excel class="ml-auto" />
             </x-row-col-flex>
@@ -162,23 +162,23 @@
                     <x-table.th name="satuan" title="Satuan" />
                     <x-table.th name="jenis" title="Jenis" />
                     <x-table.th name="nama_supplier" title="Supplier" />
-                    <x-table.th align="right" name="stokmin" title="Min" />
-                    <x-table.th align="right" name="stokmax" title="Max" />
+                    <x-table.th align="right" name="stok_min" title="Min" />
+                    <x-table.th align="right" name="stok_max" title="Max" />
                     <x-table.th align="right" name="stok" title="Saat ini" />
                     <x-table.th align="right" name="saran_order" title="Saran order" />
                     <x-table.th-money align="right" name="harga" title="Harga Per Unit" />
                     <x-table.th-money align="right" name="total_harga" title="Total Harga" />
                 </x-slot>
                 <x-slot name="body">
-                    @forelse ($this->barangLogistik as $barang)
+                    @forelse ($this->barangDapur as $barang)
                         <x-table.tr>
                             <x-table.td
                                 clickable
                                 data-kode-barang="{{ $barang->kode_brng }}"
                                 data-nama-barang="{{ $barang->nama_brng }}"
-                                data-kode-supplier="{{ $barang->kode_supplier }}"
-                                data-stok-min="{{ $barang->stokmin }}"
-                                data-stok-max="{{ $barang->stokmax }}"
+                                data-kode-supplier="{{ $barang->kode_suplier }}"
+                                data-stok-min="{{ $barang->stok_min }}"
+                                data-stok-max="{{ $barang->stok_max }}"
                                 data-stok-sekarang="{{ $barang->stok }}"
                                 data-saran-order="{{ $barang->saran_order }}">
                                 {{ $barang->kode_brng }}
@@ -186,13 +186,13 @@
                             <x-table.td>{{ $barang->nama_brng }}</x-table.td>
                             <x-table.td>{{ $barang->satuan }}</x-table.td>
                             <x-table.td>{{ $barang->jenis }}</x-table.td>
-                            <x-table.td>{{ $barang->nama_supplier }}</x-table.td>
-                            <x-table.td>{{ $barang->stokmin }}</x-table.td>
-                            <x-table.td>{{ $barang->stokmax }}</x-table.td>
-                            <x-table.td>{{ $barang->stok }}</x-table.td>
-                            <x-table.td>{{ $barang->saran_order }}</x-table.td>
-                            <x-table.td-money :value="$barang->harga" /">
-                            <x-table.td-money :value="$barang->total_harga" /">
+                            <x-table.td>{{ $barang->nama_suplier }}</x-table.td>
+                            <x-table.td align="right">{{ $barang->stok_min }}</x-table.td>
+                            <x-table.td align="right">{{ $barang->stok_max }}</x-table.td>
+                            <x-table.td align="right">{{ $barang->stok }}</x-table.td>
+                            <x-table.td align="right">{{ $barang->saran_order }}</x-table.td>
+                            <x-table.td-money :value="$barang->harga" />
+                            <x-table.td-money :value="$barang->total_harga" />
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="13" padding />
@@ -201,7 +201,7 @@
             </x-table>
         </x-slot>
         <x-slot name="footer">
-            <x-paginator :data="$this->barangLogistik" />
+            <x-paginator :data="$this->barangDapur" />
         </x-slot>
     </x-card>
 </div>

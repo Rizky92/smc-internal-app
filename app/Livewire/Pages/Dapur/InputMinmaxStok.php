@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Pages\Logistik;
+namespace App\Livewire\Pages\Dapur;
 
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
@@ -8,9 +8,9 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
-use App\Models\Logistik\BarangNonMedis;
-use App\Models\Logistik\MinmaxStokBarangNonMedis;
-use App\Models\Logistik\SupplierNonMedis;
+use App\Models\Dapur\BarangDapur;
+use App\Models\Dapur\MinmaxStokBarangDapur;
+use App\Models\Dapur\SupplierDapur;
 use App\View\Components\BaseLayout;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -31,12 +31,12 @@ class InputMinmaxStok extends Component
 
     public function getSupplierProperty(): array
     {
-        return SupplierNonMedis::pluck('nama_suplier', 'kode_suplier')->all();
+        return SupplierDapur::pluck('nama_suplier', 'kode_suplier')->all();
     }
 
-    public function getBarangLogistikProperty()
+    public function getBarangDapurProperty()
     {
-        return $this->isDeferred ? [] : BarangNonMedis::query()
+        return $this->isDeferred ? [] : BarangDapur::query()
             ->denganMinmax()
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
@@ -45,13 +45,13 @@ class InputMinmaxStok extends Component
 
     public function render(): View
     {
-        return view('livewire.pages.logistik.input-minmax-stok')
-            ->layout(BaseLayout::class, ['title' => 'Stok Minmax Barang Logistik']);
+        return view('livewire.pages.dapur.input-minmax-stok')
+            ->layout(BaseLayout::class, ['title' => 'Stok Minmax Barang Dapur']);
     }
 
     public function simpan(string $kodeBarang, int $stokMin = 0, int $stokMax = 0, string $kodeSupplier = '-'): void
     {
-        if (user()->cannot('logistik.stok-minmax.update')) {
+        if (user()->cannot('dapur.stok-minmax.update')) {
             $this->flashError('Anda tidak memiliki izin untuk mengupdate barang');
 
             return;
@@ -61,7 +61,7 @@ class InputMinmaxStok extends Component
 
         tracker_start('mysql_smc');
 
-        MinmaxStokBarangNonMedis::updateOrCreate(['kode_brng' => $kodeBarang], [
+        MinmaxStokBarangDapur::updateOrCreate(['kode_brng' => $kodeBarang], [
             'stok_min'     => $stokMin,
             'stok_max'     => $stokMax,
             'kode_suplier' => $kodeSupplier,
@@ -80,13 +80,10 @@ class InputMinmaxStok extends Component
         //
     }
 
-    /**
-     * @psalm-return array{0: mixed}
-     */
     protected function dataPerSheet(): array
     {
         return [
-            fn () => BarangNonMedis::query()
+            fn () => BarangDapur::query()
                 ->denganMinmax()
                 ->cursor(),
         ];
@@ -113,7 +110,7 @@ class InputMinmaxStok extends Component
     {
         return [
             'RS Samarinda Medika Citra',
-            'Minmax Stok Barang Non Medis',
+            'Minmax Stok Barang Dapur',
             now()->translatedFormat('d F Y'),
         ];
     }

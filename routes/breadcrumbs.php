@@ -327,6 +327,21 @@ Breadcrumbs::for('admin.logistik.stok-darurat', function (Trail $trail): void {
     $trail->push('Stok Darurat', route('admin.logistik.stok-darurat'));
 });
 
+Breadcrumbs::for('admin.dapur', function (Trail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Dapur');
+});
+
+Breadcrumbs::for('admin.dapur.input-minmax-stok', function (Trail $trail): void {
+    $trail->parent('admin.dapur');
+    $trail->push('Input Minmax Stok', route('admin.dapur.input-minmax-stok'));
+});
+
+Breadcrumbs::for('admin.dapur.stok-darurat', function (Trail $trail): void {
+    $trail->parent('admin.dapur');
+    $trail->push('Stok Darurat', route('admin.dapur.stok-darurat'));
+});
+
 Breadcrumbs::for('admin.manajemen-user', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Manajemen User', route('admin.manajemen-user'));

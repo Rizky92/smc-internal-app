@@ -507,6 +507,29 @@ class Menu
                 ],
             ],
             [
+                'name'              => 'Dapur',
+                'icon'              => 'far fa-circle',
+                'type'              => 'dropdown',
+                'hasAnyPermissions' => $user->canAny([
+                    'logistik.input-minmax-stok.read',
+                    'logistik.stok-darurat.read',
+                ]),
+                'items' => [
+                    [
+                        'name'              => 'Input Minmax Stok',
+                        'icon'              => 'fas fa-pencil-alt',
+                        'url'               => route('admin.dapur.input-minmax-stok'),
+                        'hasAnyPermissions' => $user->can('dapur.input-minmax-stok.read'),
+                    ],
+                    [
+                        'name'              => 'Stok Darurat',
+                        'icon'              => 'far fa-newspaper',
+                        'url'               => route('admin.dapur.stok-darurat'),
+                        'hasAnyPermissions' => $user->can('dapur.stok-darurat.read'),
+                    ],
+                ],
+            ],
+            [
                 'name'              => 'Aplikasi',
                 'icon'              => 'far fa-circle',
                 'type'              => 'dropdown',
