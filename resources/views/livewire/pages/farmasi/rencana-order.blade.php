@@ -27,6 +27,8 @@
                     <x-table.th name="stok_sekarang_ap" title="Stok Farmasi B Sekarang" align="right" style="width: 11ch" />
                     <x-table.th name="stok_sekarang_ifi" title="Stok Farmasi RWI Sekarang" align="right" style="width: 11ch" />
                     <x-table.th name="stok_sekarang_ifg" title="Stok Farmasi IGD Sekarang" align="right" style="width: 11ch" />
+                    <x-table.th name="stok_sekarang_gf" title="Stok Farmasi GF Sekarang" align="right" style="width: 11ch" />
+                    <x-table.th name="stok_sekarang_ko" title="Stok Farmasi KO Sekarang" align="right" style="width: 11ch" />
                     <x-table.th name="stok_keluar_medis_14_hari" title="Stok Keluar Medis" align="right" style="width: 11ch" />
                     <x-table.th name="ke_pasien_14_hari" title="Jumlah Ke Pasien" align="right" style="width: 40ch" />
                     <x-table.th name="piutang_14_hari" title="Piutang" align="right" style="width: 40ch" />
@@ -62,6 +64,12 @@
                                 {{ $obat->stok_sekarang_ifg }}
                             </x-table.td>
                             <x-table.td class="text-right">
+                                {{ $obat->stok_sekarang_gf }}
+                            </x-table.td>
+                            <x-table.td class="text-right">
+                                {{ $obat->stok_sekarang_ko }}
+                            </x-table.td>
+                            <x-table.td class="text-right">
                                 {{ $obat->stok_keluar_medis_14_hari }}
                             </x-table.td>
                             <x-table.td class="text-right">
@@ -71,7 +79,7 @@
                                 {{ $obat->piutang_14_hari }}
                             </x-table.td>
                             <x-table.td class="text-right">
-                                {{ $obat->stok_sekarang_ifi + $obat->stok_sekarang_ap + $obat->stok_sekarang_ifg }}
+                                {{ $obat->stok_sekarang_ifi + $obat->stok_sekarang_ap + $obat->stok_sekarang_ifg + $obat->stok_sekarang_gf + $obat->stok_sekarang_ko }}
                             </x-table.td>
                             <x-table.td class="text-right">
                                 {{ $obat->stok_keluar_medis_14_hari + $obat->ke_pasien_14_hari + $obat->piutang_14_hari }}
@@ -93,7 +101,7 @@
                             </x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="25" padding />
+                        <x-table.tr-empty colspan="27" padding />
                     @endforelse
                 </x-slot>
             </x-table>
