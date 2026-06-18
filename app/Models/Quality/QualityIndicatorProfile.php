@@ -26,6 +26,15 @@ class QualityIndicatorProfile extends Model
         'numerator',
         'denominator',
         'standard',
+        'rationale',
+        'indicator_type',
+        'measurement_unit',
+        'formula',
+        'data_collection_method',
+        'instrument',
+        'sample_size',
+        'sampling_method',
+        'data_presentation',
     ];
 
     public function category(): BelongsTo

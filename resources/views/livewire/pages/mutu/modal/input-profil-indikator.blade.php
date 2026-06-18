@@ -149,6 +149,75 @@
                         </div>
                     </div>
                 </x-row>
+
+                <x-row>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Dasar Pemikiran / Alasan Pemilihan Indikator</label>
+                            <textarea wire:model.defer="rationale" class="form-control form-control-sm" rows="2"></textarea>
+                        </div>
+                    </div>
+                </x-row>
+
+                <x-row>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Tipe Indikator</label>
+                            <x-form.select id="indicator-type" model="indicator_type" :options="$this->indicatorTypeOptions" placeholder="Pilih Tipe" width="full-width" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Satuan Pengukuran</label>
+                            <input type="text" wire:model.defer="measurement_unit" class="form-control form-control-sm" placeholder="Contoh: %, kali, hari" />
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Besar Sampel</label>
+                            <input type="text" wire:model.defer="sample_size" class="form-control form-control-sm" placeholder="Contoh: 100 pasien" />
+                        </div>
+                    </div>
+                </x-row>
+
+                <x-row>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Formula</label>
+                            <textarea wire:model.defer="formula" class="form-control form-control-sm" rows="2" placeholder="Contoh: (Numerator / Denominator) x 100%"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Metode Pengumpulan Data</label>
+                            <textarea wire:model.defer="data_collection_method" class="form-control form-control-sm" rows="2"></textarea>
+                        </div>
+                    </div>
+                </x-row>
+
+                <x-row>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Instrumen</label>
+                            <textarea wire:model.defer="instrument" class="form-control form-control-sm" rows="2"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Cara Pengambilan Sampel</label>
+                            <textarea wire:model.defer="sampling_method" class="form-control form-control-sm" rows="2"></textarea>
+                        </div>
+                    </div>
+                </x-row>
+
+                <x-row>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Penyajian Data</label>
+                            <textarea wire:model.defer="data_presentation" class="form-control form-control-sm" rows="2" placeholder="Contoh: Grafik batang, tabel"></textarea>
+                        </div>
+                    </div>
+                </x-row>
             </x-form>
         </x-slot>
         <x-slot name="footer">

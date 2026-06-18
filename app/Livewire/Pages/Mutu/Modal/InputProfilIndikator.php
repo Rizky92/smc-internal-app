@@ -46,6 +46,24 @@ class InputProfilIndikator extends Component
 
     public $standard;
 
+    public $rationale;
+
+    public $indicator_type;
+
+    public $measurement_unit;
+
+    public $formula;
+
+    public $data_collection_method;
+
+    public $instrument;
+
+    public $sample_size;
+
+    public $sampling_method;
+
+    public $data_presentation;
+
     protected $listeners = [
         'prepare'                           => 'loadProfile',
         'input-profil-indikator.hide-modal' => 'hideModal',
@@ -77,6 +95,15 @@ class InputProfilIndikator extends Component
         ];
     }
 
+    public function getIndicatorTypeOptionsProperty(): array
+    {
+        return [
+            'Proses'   => 'Proses',
+            'Hasil'    => 'Hasil',
+            'Struktur' => 'Struktur',
+        ];
+    }
+
     public function loadProfile(?int $id = null): void
     {
         $this->resetExcept([]);
@@ -99,6 +126,15 @@ class InputProfilIndikator extends Component
             $this->numerator = $profile->numerator;
             $this->denominator = $profile->denominator;
             $this->standard = $profile->standard;
+            $this->rationale = $profile->rationale;
+            $this->indicator_type = $profile->indicator_type;
+            $this->measurement_unit = $profile->measurement_unit;
+            $this->formula = $profile->formula;
+            $this->data_collection_method = $profile->data_collection_method;
+            $this->instrument = $profile->instrument;
+            $this->sample_size = $profile->sample_size;
+            $this->sampling_method = $profile->sampling_method;
+            $this->data_presentation = $profile->data_presentation;
         }
 
         $this->isDeferred = false;
@@ -130,6 +166,15 @@ class InputProfilIndikator extends Component
             'numerator'                       => $this->numerator,
             'denominator'                     => $this->denominator,
             'standard'                        => $this->standard,
+            'rationale'                       => $this->rationale,
+            'indicator_type'                  => $this->indicator_type,
+            'measurement_unit'                => $this->measurement_unit,
+            'formula'                         => $this->formula,
+            'data_collection_method'          => $this->data_collection_method,
+            'instrument'                      => $this->instrument,
+            'sample_size'                     => $this->sample_size,
+            'sampling_method'                 => $this->sampling_method,
+            'data_presentation'               => $this->data_presentation,
         ]);
 
         $action->execute($data);
@@ -170,5 +215,14 @@ class InputProfilIndikator extends Component
         $this->numerator = '';
         $this->denominator = '';
         $this->standard = '';
+        $this->rationale = '';
+        $this->indicator_type = '';
+        $this->measurement_unit = '';
+        $this->formula = '';
+        $this->data_collection_method = '';
+        $this->instrument = '';
+        $this->sample_size = '';
+        $this->sampling_method = '';
+        $this->data_presentation = '';
     }
 }

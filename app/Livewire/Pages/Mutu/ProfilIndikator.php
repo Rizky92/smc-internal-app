@@ -61,13 +61,35 @@ class ProfilIndikator extends Component
                 $profile->category->name ?? '-',
                 $profile->standard,
                 $profile->frequency,
+                $profile->dimension,
+                $profile->rationale,
+                $profile->indicator_type,
+                $profile->objective,
+                $profile->definition,
+                $profile->measurement_unit,
+                $profile->formula,
+                $profile->numerator,
+                $profile->denominator,
+                $profile->data_collection_method,
+                $profile->instrument,
+                $profile->sample_size,
+                $profile->sampling_method,
+                $profile->data_presentation,
+                $profile->analysis_period,
             ]),
         ];
     }
 
     protected function columnHeaders(): array
     {
-        return ['ID', 'Judul Indikator', 'Kategori', 'Standar', 'Frekuensi'];
+        return [
+            'ID', 'Judul Indikator', 'Kategori', 'Standar', 'Frekuensi',
+            'Dimensi Mutu', 'Dasar Pemikiran', 'Tipe Indikator', 'Tujuan',
+            'Definisi Operasional', 'Satuan Pengukuran', 'Formula',
+            'Numerator', 'Denominator', 'Metode Pengumpulan Data',
+            'Instrumen', 'Besar Sampel', 'Cara Pengambilan Sampel',
+            'Penyajian Data', 'Periode Analisis',
+        ];
     }
 
     protected function pageHeaders(): array
