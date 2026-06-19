@@ -30,7 +30,7 @@ class DefectaDepo extends Component
     /** @var "Pagi"|"Siang"|"Malam" */
     public $shift;
 
-    /** @var "IFA"|"IFG"|"IFI"|"KO" */
+    /** @var "IFA"|"AP"|"IFC"|"IFO"|"KO"|"IFI" */
     public $bangsal;
 
     protected function queryString(): array
@@ -120,9 +120,11 @@ class DefectaDepo extends Component
 
         $gudang = [
             'IFA' => 'Farmasi A',
-            'IFG' => 'Farmasi IGD',
-            'IFI' => 'Farmasi Rawat Inap',
-            'KO'  => 'Kamar Operasi OK',
+            'AP'  => 'APOTEK/INSTALASI FARMASI',
+            'IFC' => 'INSTALASI FARMASI CATHLAB',
+            'IFO' => 'INSTALASI FARMASI OK',
+            'KO'  => 'KAMAR OPERASI OK',
+            'IFI' => 'INSTALASI FARMASI RAWAT INAP',
         ];
 
         $shift = $this->dataShiftKerja();
