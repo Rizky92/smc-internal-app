@@ -19,6 +19,7 @@ class EloquentQualityIndicatorRecordRepository implements QualityIndicatorRecord
     {
         return QualityIndicatorRecord::where('indicator_id', $indicatorId)
             ->whereBetween('recorded_date', [$startDate, $endDate])
+            ->orderBy('recorded_date', 'asc')
             ->get();
     }
 
