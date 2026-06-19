@@ -465,3 +465,8 @@ Breadcrumbs::for('admin.mutu.validasi-data', function (Trail $trail): void {
     $trail->parent('admin.mutu');
     $trail->push('Validasi Data', route('admin.mutu.validasi-data'));
 });
+
+Breadcrumbs::for('admin.mutu.mapping-jabatan-unit', function (Trail $trail): void {
+    $trail->parent('admin.mutu');
+    $trail->push('Mapping Jabatan Unit', route('admin.mutu.mapping-jabatan-unit'));
+});

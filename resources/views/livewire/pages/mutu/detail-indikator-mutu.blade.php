@@ -189,6 +189,7 @@
                     <x-table.th title="Status" />
                     <x-table.th title="Catatan" />
                     <x-table.th title="Petugas" />
+                    <x-table.th title="Log" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($records as $record)
@@ -203,6 +204,7 @@
                                     'draft' => 'secondary',
                                     'submitted' => 'info',
                                     'approved' => 'success',
+                                    'approved_with_correction' => 'primary',
                                     'rejected' => 'danger',
                                 ][$record->status ?? 'draft'] ?? 'secondary';
 
@@ -211,6 +213,7 @@
                                     'draft' => 'Draft',
                                     'submitted' => 'Submitted',
                                     'approved' => 'Approved',
+                                    'approved_with_correction' => 'Approved w/ Correction',
                                     'rejected' => 'Rejected',
                                 ][$record->status ?? 'draft'] ?? 'Draft';
                         @endphp
@@ -227,9 +230,21 @@
                             </x-table.td>
                             <x-table.td>{{ $record->notes ?: '-' }}</x-table.td>
                             <x-table.td>{{ $this->recorders->get($record->recorded_by)->nama ?? '-' }}</x-table.td>
+                            <x-table.td class="text-center">
+                                @if ($record->status === 'approved_with_correction')
+                                    <x-button
+                                        variant="info"
+                                        size="xs"
+                                        icon="fas fa-history"
+                                        title="Riwayat Koreksi"
+                                        wire:click="$emit('view-audit-log', {{ $indicatorId }}, '{{ $record->recorded_date }}')" />
+                                @else
+                                    <span class="text-muted text-xs">-</span>
+                                @endif
+                            </x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="7" padding />
+                        <x-table.tr-empty colspan="8" padding />
                     @endforelse
                 </x-slot>
                 @if ($records->isNotEmpty())
@@ -257,4 +272,5 @@
 
     <livewire:pages.mutu.modal.input-record-indikator />
     <livewire:pages.mutu.modal.input-indikator-mutu />
+    <livewire:pages.mutu.modal.view-audit-log-indikator />
 </div>

@@ -269,6 +269,25 @@ if (! function_exists('tracker_dispose')) {
     }
 }
 
+if (! function_exists('user_jabatan_id')) {
+    /**
+     * Get the current user's position ID (kd_jbtn) from mysql_sik.
+     */
+    function user_jabatan_id(): ?string
+    {
+        $nik = user()->nik;
+
+        if (empty($nik)) {
+            return null;
+        }
+
+        return DB::connection('mysql_sik')
+            ->table('petugas')
+            ->where('nip', $nik)
+            ->value('kd_jbtn');
+    }
+}
+
 if (! function_exists('func_get_named_args')) {
     /**
      * @param  object  $object

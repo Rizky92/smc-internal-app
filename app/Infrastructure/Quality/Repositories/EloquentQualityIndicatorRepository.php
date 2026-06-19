@@ -14,6 +14,7 @@ class EloquentQualityIndicatorRepository implements QualityIndicatorRepositoryIn
         return QualityIndicator::query()
             ->with(['profile', 'unit'])
             ->when($filters['unit_id'] ?? null, fn ($q, $unitId) => $q->where('bidang_id', $unitId))
+            ->when($filters['unit_ids'] ?? null, fn ($q, $unitIds) => $q->whereIn('bidang_id', $unitIds))
             ->when($filters['search'] ?? null, fn ($q, $search) => $q->whereHas('profile', fn ($q) => $q->where('title', 'like', "%{$search}%")))
             ->paginate($perPage);
     }
@@ -23,6 +24,7 @@ class EloquentQualityIndicatorRepository implements QualityIndicatorRepositoryIn
         return QualityIndicator::query()
             ->with(['profile', 'unit'])
             ->when($filters['unit_id'] ?? null, fn ($q, $unitId) => $q->where('bidang_id', $unitId))
+            ->when($filters['unit_ids'] ?? null, fn ($q, $unitIds) => $q->whereIn('bidang_id', $unitIds))
             ->when($filters['search'] ?? null, fn ($q, $search) => $q->whereHas('profile', fn ($q) => $q->where('title', 'like', "%{$search}%")))
             ->get();
     }

@@ -654,6 +654,7 @@ class Menu
                     'mutu.kategori-indikator.read',
                     'mutu.tipe-input-indikator.read',
                     'mutu.validasi-data.read',
+                    'mutu.mapping-jabatan-unit.read',
                 ]),
                 'items'             => [
                     [
@@ -676,6 +677,13 @@ class Menu
                         'icon'              => 'fas fa-book',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('mutu.indikator-mutu.read'),
+                    ],
+                    [
+                        'name'              => 'Mapping Jabatan Unit',
+                        'url'               => route('admin.mutu.mapping-jabatan-unit'),
+                        'icon'              => 'fas fa-sitemap',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('mutu.mapping-jabatan-unit.read'),
                     ],
                     [
                         'name'              => 'Kategori Indikator',

@@ -17,6 +17,10 @@
         @endpush
     @endonce
 
+    @if ($noMapping)
+        <x-callout variant="warning" class="mb-3">Belum terdapat mapping unit pada jabatan Anda. Silakan hubungi administrator.</x-callout>
+    @endif
+
     <x-card>
         <x-slot name="header">
             <x-row-col-flex class="mt-2">

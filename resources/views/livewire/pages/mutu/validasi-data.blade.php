@@ -11,9 +11,10 @@
 
                 <div class="d-flex align-items-center">
                     <x-filter.label constant-width>Status :</x-filter.label>
-                    <select class="form-control form-control-sm" style="width: 10rem" wire:model="statusFilter" wire:change="searchData">
+                    <select class="form-control form-control-sm" style="width: 12rem" wire:model="statusFilter" wire:change="searchData">
                         <option value="submitted">Submitted (Perlu Validasi)</option>
                         <option value="approved">Approved (Disetujui)</option>
+                        <option value="approved_with_correction">Approved w/ Correction</option>
                         <option value="rejected">Rejected (Ditolak)</option>
                         <option value="draft">Draft</option>
                         <option value="all">Semua Status</option>
@@ -61,6 +62,7 @@
                                     'draft' => 'secondary',
                                     'submitted' => 'info',
                                     'approved' => 'success',
+                                    'approved_with_correction' => 'primary',
                                     'rejected' => 'danger',
                                 ][$record->status ?? 'draft'] ?? 'secondary';
 
@@ -69,6 +71,7 @@
                                     'draft' => 'Draft',
                                     'submitted' => 'Submitted',
                                     'approved' => 'Approved',
+                                    'approved_with_correction' => 'Approved w/ Correction',
                                     'rejected' => 'Rejected',
                                 ][$record->status ?? 'draft'] ?? 'Draft';
                         @endphp
@@ -104,9 +107,33 @@
                                                 wire:click="approve({{ $record->indicator_id }}, '{{ $record->recorded_date }}')" />
                                         @endcan
 
+                                        @can('mutu.validasi-data.approve')
+                                            <x-button
+                                                variant="primary"
+                                                size="xs"
+                                                icon="fas fa-pen"
+                                                title="Edit & Setuju"
+                                                wire:click="editAndApprove({{ $record->indicator_id }}, '{{ $record->recorded_date }}')" />
+                                        @endcan
+
                                         @can('mutu.validasi-data.reject')
                                             <x-button variant="danger" size="xs" icon="fas fa-times" title="Tolak" wire:click="reject({{ $record->indicator_id }}, '{{ $record->recorded_date }}')" />
                                         @endcan
+                                    @elseif ($record->status === 'approved_with_correction')
+                                        <x-button
+                                            variant="info"
+                                            size="xs"
+                                            icon="fas fa-history"
+                                            title="Riwayat Koreksi"
+                                            wire:click="$emit('view-audit-log', {{ $record->indicator_id }}, '{{ $record->recorded_date }}')" />
+                                        @canany(['mutu.validasi-data.approve', 'mutu.validasi-data.reject'])
+                                            <x-button
+                                                variant="warning"
+                                                size="xs"
+                                                icon="fas fa-undo"
+                                                title="Batal Validasi"
+                                                wire:click="resetStatus({{ $record->indicator_id }}, '{{ $record->recorded_date }}')" />
+                                        @endcanany
                                     @elseif (in_array($record->status ?? 'draft', ['approved', 'rejected']))
                                         @canany(['mutu.validasi-data.approve', 'mutu.validasi-data.reject'])
                                             <x-button
@@ -133,4 +160,7 @@
             <x-paginator :data="$records" />
         </x-slot>
     </x-card>
+
+    <livewire:pages.mutu.modal.input-koreksi-indikator />
+    <livewire:pages.mutu.modal.view-audit-log-indikator />
 </div>

@@ -11,6 +11,7 @@ use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Bidang;
+use App\Models\Quality\IndikatorJabatanUnit;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
@@ -25,8 +26,11 @@ class IndikatorMutu extends Component
     use LiveTable;
     use MenuTracker;
 
-    /** @var int */
+    /** @var int|string */
     public $unitId;
+
+    /** @var bool */
+    public $noMapping = false;
 
     /** @var mixed */
     protected $listeners = [
@@ -48,8 +52,46 @@ class IndikatorMutu extends Component
 
     public function getCollectionProperty(): LengthAwarePaginator
     {
+        $unitId = $this->unitId;
+
+        // When no manual filter is set, auto-filter by user's jabatan mapping
+        if (empty($unitId)) {
+            $jabatanId = user_jabatan_id();
+
+            // If user has no jabatan (admin/dokter/etc), show all
+            if (empty($jabatanId)) {
+                $this->noMapping = false;
+
+                return app(GetQualityIndicatorListAction::class)->execute([
+                    'search' => $this->cari,
+                ], $this->perpage);
+            }
+
+            $userUnitIds = IndikatorJabatanUnit::query()
+                ->where('jabatan_id', $jabatanId)
+                ->pluck('unit_id');
+
+            if ($userUnitIds->isEmpty()) {
+                $this->noMapping = true;
+
+                return app(GetQualityIndicatorListAction::class)->execute([
+                    'unit_ids' => [-1],
+                    'search'   => $this->cari,
+                ], $this->perpage);
+            }
+
+            $this->noMapping = false;
+
+            return app(GetQualityIndicatorListAction::class)->execute([
+                'unit_ids' => $userUnitIds->toArray(),
+                'search'   => $this->cari,
+            ], $this->perpage);
+        }
+
+        $this->noMapping = false;
+
         return app(GetQualityIndicatorListAction::class)->execute([
-            'unit_id' => $this->unitId,
+            'unit_id' => $unitId,
             'search'  => $this->cari,
         ], $this->perpage);
     }
@@ -69,7 +111,8 @@ class IndikatorMutu extends Component
 
     protected function defaultValues(): void
     {
-        $this->unitId = null;
+        $this->unitId = '';
+        $this->noMapping = false;
     }
 
     protected function dataPerSheet(): array

@@ -168,4 +168,15 @@ class ValidasiData extends Component
             $this->flashError('Data tidak ditemukan.');
         }
     }
+
+    public function editAndApprove(int $indicatorId, string $date): void
+    {
+        if (! auth()->user()->can('mutu.validasi-data.approve')) {
+            $this->flashError('Anda tidak memiliki akses untuk melakukan koreksi.');
+
+            return;
+        }
+
+        $this->emit('koreksi-record', $indicatorId, $date);
+    }
 }
