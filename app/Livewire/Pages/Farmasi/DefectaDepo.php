@@ -30,7 +30,7 @@ class DefectaDepo extends Component
     /** @var "Pagi"|"Siang"|"Malam" */
     public $shift;
 
-    /** @var "IFA"|"AP"|"IFC"|"IFO"|"KO"|"IFI" */
+    /** @var "IFA"|"AP"|"IFC"|"IFO"|"KO"|"IFI"|"IFG" */
     public $bangsal;
 
     protected function queryString(): array
