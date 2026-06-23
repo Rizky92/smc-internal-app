@@ -12,9 +12,9 @@ class EloquentQualityIndicatorRepository implements QualityIndicatorRepositoryIn
     public function getPaginated(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
         return QualityIndicator::query()
-            ->with(['profile', 'unit'])
-            ->when($filters['unit_id'] ?? null, fn ($q, $unitId) => $q->where('bidang_id', $unitId))
-            ->when($filters['unit_ids'] ?? null, fn ($q, $unitIds) => $q->whereIn('bidang_id', $unitIds))
+            ->with(['profile', 'departemen'])
+            ->when($filters['dep_id'] ?? null, fn ($q, $depId) => $q->where('dep_id', $depId))
+            ->when($filters['dep_ids'] ?? null, fn ($q, $depIds) => $q->whereIn('dep_id', $depIds))
             ->when($filters['search'] ?? null, fn ($q, $search) => $q->whereHas('profile', fn ($q) => $q->where('title', 'like', "%{$search}%")))
             ->paginate($perPage);
     }
@@ -22,9 +22,9 @@ class EloquentQualityIndicatorRepository implements QualityIndicatorRepositoryIn
     public function getAll(array $filters = []): Collection
     {
         return QualityIndicator::query()
-            ->with(['profile', 'unit'])
-            ->when($filters['unit_id'] ?? null, fn ($q, $unitId) => $q->where('bidang_id', $unitId))
-            ->when($filters['unit_ids'] ?? null, fn ($q, $unitIds) => $q->whereIn('bidang_id', $unitIds))
+            ->with(['profile', 'departemen'])
+            ->when($filters['dep_id'] ?? null, fn ($q, $depId) => $q->where('dep_id', $depId))
+            ->when($filters['dep_ids'] ?? null, fn ($q, $depIds) => $q->whereIn('dep_id', $depIds))
             ->when($filters['search'] ?? null, fn ($q, $search) => $q->whereHas('profile', fn ($q) => $q->where('title', 'like', "%{$search}%")))
             ->get();
     }

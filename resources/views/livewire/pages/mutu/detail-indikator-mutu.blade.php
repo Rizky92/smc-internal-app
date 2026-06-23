@@ -114,8 +114,8 @@
                             <td>: {{ $indicator->profile->category->name ?? '-' }}</td>
                         </tr>
                         <tr>
-                            <th>Unit/Bidang</th>
-                            <td>: {{ $indicator->unit->nama ?? '-' }}</td>
+                            <th>Departemen</th>
+                            <td>: {{ $indicator->departemen->nama ?? '-' }}</td>
                         </tr>
                         <tr>
                             <th>Standar</th>

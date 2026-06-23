@@ -10,8 +10,7 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
-use App\Models\Bidang;
-use App\Models\Quality\IndikatorJabatanUnit;
+use App\Models\Kepegawaian\Departemen;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
@@ -26,8 +25,8 @@ class IndikatorMutu extends Component
     use LiveTable;
     use MenuTracker;
 
-    /** @var int|string */
-    public $unitId;
+    /** @var string */
+    public $depId;
 
     /** @var bool */
     public $noMapping = false;
@@ -41,25 +40,23 @@ class IndikatorMutu extends Component
     protected function queryString(): array
     {
         return [
-            'unitId' => ['except' => '', 'as' => 'unit'],
+            'depId' => ['except' => '', 'as' => 'dep'],
         ];
     }
 
-    public function getUnitProperty(): array
+    public function getDepartemenProperty(): array
     {
-        return Bidang::query()->pluck('nama', 'id')->all();
+        return Departemen::query()->pluck('nama', 'dep_id')->all();
     }
 
     public function getCollectionProperty(): LengthAwarePaginator
     {
-        $unitId = $this->unitId;
+        $depId = $this->depId;
 
-        // When no manual filter is set, auto-filter by user's jabatan mapping
-        if (empty($unitId)) {
-            $jabatanId = user_jabatan_id();
+        if (empty($depId)) {
+            $userDepId = user_departemen_id();
 
-            // If user has no jabatan (admin/dokter/etc), show all
-            if (empty($jabatanId)) {
+            if (empty($userDepId)) {
                 $this->noMapping = false;
 
                 return app(GetQualityIndicatorListAction::class)->execute([
@@ -67,32 +64,19 @@ class IndikatorMutu extends Component
                 ], $this->perpage);
             }
 
-            $userUnitIds = IndikatorJabatanUnit::query()
-                ->where('jabatan_id', $jabatanId)
-                ->pluck('unit_id');
-
-            if ($userUnitIds->isEmpty()) {
-                $this->noMapping = true;
-
-                return app(GetQualityIndicatorListAction::class)->execute([
-                    'unit_ids' => [-1],
-                    'search'   => $this->cari,
-                ], $this->perpage);
-            }
-
             $this->noMapping = false;
 
             return app(GetQualityIndicatorListAction::class)->execute([
-                'unit_ids' => $userUnitIds->toArray(),
-                'search'   => $this->cari,
+                'dep_ids' => [$userDepId],
+                'search'  => $this->cari,
             ], $this->perpage);
         }
 
         $this->noMapping = false;
 
         return app(GetQualityIndicatorListAction::class)->execute([
-            'unit_id' => $unitId,
-            'search'  => $this->cari,
+            'dep_id' => $depId,
+            'search' => $this->cari,
         ], $this->perpage);
     }
 
@@ -106,12 +90,12 @@ class IndikatorMutu extends Component
         return view('livewire.pages.mutu.indikator-mutu', [
             'indicators' => $this->isDeferred ? [] : $this->collection,
         ])
-            ->layout(BaseLayout::class, ['title' => 'Mapping Indikator Unit']);
+            ->layout(BaseLayout::class, ['title' => 'Mapping Indikator Departemen']);
     }
 
     protected function defaultValues(): void
     {
-        $this->unitId = '';
+        $this->depId = '';
         $this->noMapping = false;
     }
 
@@ -120,13 +104,13 @@ class IndikatorMutu extends Component
         return [
             'Mapping Indikator' => fn () => app(GetAllQualityIndicatorAction::class)
                 ->execute([
-                    'unit_id' => $this->unitId,
-                    'search'  => $this->cari,
+                    'dep_id' => $this->depId,
+                    'search' => $this->cari,
                 ])
                 ->map(fn ($indicator) => [
                     $indicator->id,
                     $indicator->profile->title ?? '-',
-                    $indicator->unit->nama ?? '-',
+                    $indicator->departemen->nama ?? '-',
                     $indicator->profile->standard ?? '-',
                     $indicator->person_in_charge,
                     $indicator->status === 'active' ? 'Aktif' : 'Nonaktif',
@@ -140,7 +124,7 @@ class IndikatorMutu extends Component
             'ID',
             'Urutan',
             'Indikator',
-            'Unit',
+            'Departemen',
             'Standar',
             'PJ',
             'Status',
@@ -149,11 +133,11 @@ class IndikatorMutu extends Component
 
     protected function pageHeaders(): array
     {
-        $unitName = $this->unitId ? (Bidang::find($this->unitId)->nama ?? 'SEMUA') : 'SEMUA';
+        $depName = $this->depId ? (Departemen::find($this->depId)->nama ?? 'SEMUA') : 'SEMUA';
 
         return [
-            'MAPPING INDIKATOR MUTU PER UNIT',
-            'UNIT: '.strtoupper($unitName),
+            'MAPPING INDIKATOR MUTU PER DEPARTEMEN',
+            'DEPARTEMEN: '.strtoupper($depName),
             'Tanggal Cetak: '.now()->format('d-m-Y H:i:s'),
         ];
     }

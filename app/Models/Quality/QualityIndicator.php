@@ -3,7 +3,7 @@
 namespace App\Models\Quality;
 
 use App\Database\Eloquent\Model;
-use App\Models\Bidang;
+use App\Models\Kepegawaian\Departemen;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -19,7 +19,7 @@ class QualityIndicator extends Model
 
     protected $fillable = [
         'quality_indicator_profile_id',
-        'bidang_id',
+        'dep_id',
         'person_in_charge',
         'data_source',
         'status',
@@ -30,9 +30,9 @@ class QualityIndicator extends Model
         return $this->belongsTo(QualityIndicatorProfile::class, 'quality_indicator_profile_id');
     }
 
-    public function unit(): BelongsTo
+    public function departemen(): BelongsTo
     {
-        return $this->belongsTo(Bidang::class, 'bidang_id');
+        return $this->belongsTo(Departemen::class, 'dep_id', 'dep_id');
     }
 
     public function records(): HasMany

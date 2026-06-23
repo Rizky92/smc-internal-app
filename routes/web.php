@@ -420,9 +420,6 @@ Route::prefix('admin')
                     ->name('tipe-input-indikator')
                     ->middleware('can:mutu.tipe-input-indikator.read');
 
-                Route::get('mapping-jabatan-unit', Mutu\MappingJabatanUnit::class)
-                    ->name('mapping-jabatan-unit')
-                    ->middleware('can:mutu.mapping-jabatan-unit.read');
             });
 
         Route::middleware('role:'.config('permission.superadmin_name'))

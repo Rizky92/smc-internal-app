@@ -86,7 +86,7 @@ class DetailIndikatorMutu extends Component
             'LAPORAN PENILAIAN INDIKATOR MUTU',
             'INDIKATOR: '.strtoupper($indicator->profile->title ?? '-'),
             'PERIODE: '.carbon($this->tglAwal)->format('d/m/Y').' s.d '.carbon($this->tglAkhir)->format('d/m/Y'),
-            'UNIT: '.strtoupper($indicator->unit->nama ?? '-'),
+            'DEPARTEMEN: '.strtoupper($indicator->departemen->nama ?? '-'),
             'STANDAR: '.($indicator->profile->standard ?? '-'),
         ];
     }

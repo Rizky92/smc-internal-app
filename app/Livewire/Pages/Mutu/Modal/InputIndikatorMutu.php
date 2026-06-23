@@ -6,7 +6,7 @@ use App\Application\Quality\Actions\SaveQualityIndicatorAction;
 use App\Application\Quality\DTOs\QualityIndicatorData;
 use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\FlashComponent;
-use App\Models\Bidang;
+use App\Models\Kepegawaian\Departemen;
 use App\Models\Quality\QualityIndicator;
 use App\Models\Quality\QualityIndicatorProfile;
 use Illuminate\Support\Collection;
@@ -23,8 +23,8 @@ class InputIndikatorMutu extends Component
     /** @var int */
     public $quality_indicator_profile_id;
 
-    /** @var int */
-    public $bidang_id;
+    /** @var string */
+    public $dep_id;
 
     /** @var string|null */
     public $person_in_charge;
@@ -51,9 +51,9 @@ class InputIndikatorMutu extends Component
         $this->emit('select2.hydrate');
     }
 
-    public function getUnitProperty(): Collection
+    public function getDepartemenProperty(): Collection
     {
-        return Bidang::query()->pluck('nama', 'id');
+        return Departemen::query()->pluck('nama', 'dep_id');
     }
 
     public function getProfileProperty(): Collection
@@ -71,7 +71,7 @@ class InputIndikatorMutu extends Component
 
             $this->indikatorId = $indicator->id;
             $this->quality_indicator_profile_id = $indicator->quality_indicator_profile_id;
-            $this->bidang_id = $indicator->bidang_id;
+            $this->dep_id = $indicator->dep_id;
             $this->person_in_charge = $indicator->person_in_charge;
             $this->data_source = $indicator->data_source;
             $this->status = $indicator->status;
@@ -94,7 +94,7 @@ class InputIndikatorMutu extends Component
         $data = QualityIndicatorData::from([
             'id'                           => $this->indikatorId,
             'quality_indicator_profile_id' => $this->quality_indicator_profile_id,
-            'bidang_id'                    => $this->bidang_id,
+            'dep_id'                       => $this->dep_id,
             'person_in_charge'             => $this->person_in_charge,
             'data_source'                  => $this->data_source,
             'status'                       => $this->status,
@@ -102,7 +102,7 @@ class InputIndikatorMutu extends Component
 
         $action->execute($data);
 
-        $this->emit('flash.success', 'Mapping Indikator Unit berhasil disimpan.');
+        $this->emit('flash.success', 'Mapping Indikator Departemen berhasil disimpan.');
         $this->emit('indicator-saved');
         $this->hideModal();
     }
@@ -111,7 +111,7 @@ class InputIndikatorMutu extends Component
     {
         return [
             'quality_indicator_profile_id' => ['required', 'exists:mysql_smc.quality_indicator_profiles,id'],
-            'bidang_id'                    => ['required', 'exists:mysql_smc.bidang,id'],
+            'dep_id'                       => ['required', 'string'],
             'status'                       => ['required', 'in:active,inactive'],
         ];
     }
@@ -125,7 +125,7 @@ class InputIndikatorMutu extends Component
     {
         $this->indikatorId = null;
         $this->quality_indicator_profile_id = null;
-        $this->bidang_id = null;
+        $this->dep_id = '';
         $this->person_in_charge = '';
         $this->data_source = '';
         $this->status = 'active';

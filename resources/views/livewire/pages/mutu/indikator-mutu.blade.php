@@ -18,15 +18,15 @@
     @endonce
 
     @if ($noMapping)
-        <x-callout variant="warning" class="mb-3">Belum terdapat mapping unit pada jabatan Anda. Silakan hubungi administrator.</x-callout>
+        <x-callout variant="warning" class="mb-3">Belum terdapat mapping departemen pada jabatan Anda. Silakan hubungi administrator.</x-callout>
     @endif
 
     <x-card>
         <x-slot name="header">
             <x-row-col-flex class="mt-2">
                 @can('mutu.indikator-mutu.create')
-                    <x-filter.label constant-width>Unit :</x-filter.label>
-                    <x-filter.select2 name="Unit" model="unitId" livewire :options="$this->unit" placeholder="SEMUA" />
+                    <x-filter.label constant-width>Departemen :</x-filter.label>
+                    <x-filter.select2 name="Departemen" model="depId" livewire :options="$this->departemen" placeholder="SEMUA" />
                     <x-button variant="primary" size="sm" title="Tambah Mapping" icon="fas fa-plus" class="ml-auto" wire:click="$emit('prepare')" />
                 @endcan
 
@@ -43,7 +43,7 @@
                 <x-slot name="columns">
                     <x-table.th title="No. " />
                     <x-table.th title="Indikator" />
-                    <x-table.th title="Unit" />
+                    <x-table.th title="Departemen" />
                     <x-table.th title="Standar" />
                     <x-table.th title="PJ" />
                     <x-table.th title="Status" />
@@ -55,7 +55,7 @@
                                 {{ $loop->iteration }}
                             </x-table.td>
                             <x-table.td>{{ $indicator->profile->title ?? '-' }}</x-table.td>
-                            <x-table.td>{{ $indicator->unit->nama ?? '-' }}</x-table.td>
+                            <x-table.td>{{ $indicator->departemen->nama ?? '-' }}</x-table.td>
                             <x-table.td>{{ $indicator->profile->standard ?? '-' }}</x-table.td>
                             <x-table.td>{{ $indicator->person_in_charge }}</x-table.td>
                             <x-table.td>

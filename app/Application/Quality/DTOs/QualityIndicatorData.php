@@ -10,8 +10,8 @@ class QualityIndicatorData
     /** @var int */
     public $quality_indicator_profile_id;
 
-    /** @var int */
-    public $bidang_id;
+    /** @var string */
+    public $dep_id;
 
     /** @var string|null */
     public $data_source;
@@ -25,14 +25,14 @@ class QualityIndicatorData
     public function __construct(
         ?int $id,
         int $quality_indicator_profile_id,
-        int $bidang_id,
+        string $dep_id,
         ?string $data_source,
         ?string $person_in_charge,
         string $status = 'active'
     ) {
         $this->id = $id;
         $this->quality_indicator_profile_id = $quality_indicator_profile_id;
-        $this->bidang_id = $bidang_id;
+        $this->dep_id = $dep_id;
         $this->data_source = $data_source;
         $this->person_in_charge = $person_in_charge;
         $this->status = $status;
@@ -43,7 +43,7 @@ class QualityIndicatorData
         return new self(
             $data['id'] ?? null,
             (int) $data['quality_indicator_profile_id'],
-            (int) $data['bidang_id'],
+            (string) $data['dep_id'],
             $data['data_source'] ?? null,
             $data['person_in_charge'] ?? null,
             $data['status'] ?? 'active'
@@ -55,7 +55,7 @@ class QualityIndicatorData
         return [
             'id'                           => $this->id,
             'quality_indicator_profile_id' => $this->quality_indicator_profile_id,
-            'bidang_id'                    => $this->bidang_id,
+            'dep_id'                       => $this->dep_id,
             'data_source'                  => $this->data_source,
             'person_in_charge'             => $this->person_in_charge,
             'status'                       => $this->status,

@@ -15,7 +15,7 @@
         </script>
     @endpush
 
-    <x-modal id="modal-input-indikator-mutu" title="Mapping Indikator Unit" size="lg" livewire>
+    <x-modal id="modal-input-indikator-mutu" title="Mapping Indikator Departemen" size="lg" livewire>
         <x-slot name="body" style="overflow-x: hidden">
             <x-flash class="mx-3 mt-3" />
             <x-form id="form-input-indikator-mutu" wire:submit.prevent="save">
@@ -32,9 +32,9 @@
                 <x-row>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>Unit / Bidang</label>
-                            <x-form.select2 id="bidang_id" model="bidang_id" :options="$this->unit" placeholder="-" width="full-width" />
-                            <x-form.error name="bidang_id" />
+                            <label>Departemen</label>
+                            <x-form.select2 id="dep_id" model="dep_id" :options="$this->departemen" placeholder="-" width="full-width" />
+                            <x-form.error name="dep_id" />
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -52,7 +52,7 @@
                 <x-row>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>Penanggung Jawab (di Unit)</label>
+                            <label>Penanggung Jawab (di Departemen)</label>
                             <input type="text" wire:model.defer="person_in_charge" class="form-control form-control-sm" placeholder="Nama PJ Unit" />
                             <x-form.error name="person_in_charge" />
                         </div>

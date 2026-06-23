@@ -8,7 +8,7 @@ use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Aplikasi\User;
-use App\Models\Bidang;
+use App\Models\Kepegawaian\Departemen;
 use App\Models\Quality\QualityIndicatorRecord;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -24,8 +24,8 @@ class ValidasiData extends Component
     use LiveTable;
     use MenuTracker;
 
-    /** @var int|null */
-    public $unitId;
+    /** @var string|null */
+    public $depId;
 
     /** @var string */
     public $statusFilter = 'submitted';
@@ -43,7 +43,7 @@ class ValidasiData extends Component
     protected function queryString(): array
     {
         return [
-            'unitId'       => ['except' => '', 'as' => 'unit'],
+            'depId'        => ['except' => '', 'as' => 'dep'],
             'statusFilter' => ['except' => 'submitted', 'as' => 'status'],
             'tglAwal'      => ['except' => '', 'as' => 'tgl_awal'],
             'tglAkhir'     => ['except' => '', 'as' => 'tgl_akhir'],
@@ -65,25 +65,25 @@ class ValidasiData extends Component
 
     protected function defaultValues(): void
     {
-        $this->unitId = null;
+        $this->depId = null;
         $this->statusFilter = 'submitted';
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
-    public function getUnitProperty(): array
+    public function getDepartemenProperty(): array
     {
-        return Bidang::query()->pluck('nama', 'id')->all();
+        return Departemen::query()->pluck('nama', 'dep_id')->all();
     }
 
     public function getCollectionProperty(): LengthAwarePaginator
     {
         return QualityIndicatorRecord::query()
-            ->with(['indicator.profile', 'indicator.unit'])
+            ->with(['indicator.profile', 'indicator.departemen'])
             ->whereBetween('recorded_date', [$this->tglAwal, $this->tglAkhir])
-            ->when($this->unitId, function ($query) {
+            ->when($this->depId, function ($query) {
                 $query->whereHas('indicator', function ($q) {
-                    $q->where('bidang_id', $this->unitId);
+                    $q->where('dep_id', $this->depId);
                 });
             })
             ->when($this->statusFilter && $this->statusFilter !== 'all', function ($query) {

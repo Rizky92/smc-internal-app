@@ -5,8 +5,8 @@
         <x-slot name="header">
             <x-row-col-flex class="mt-2" style="gap: 1rem; flex-wrap: wrap">
                 <div class="d-flex align-items-center">
-                    <x-filter.label constant-width>Unit :</x-filter.label>
-                    <x-filter.select2 name="Unit" model="unitId" livewire :options="$this->unit" placeholder="SEMUA" />
+                    <x-filter.label constant-width>Departemen :</x-filter.label>
+                    <x-filter.select2 name="Departemen" model="depId" livewire :options="$this->departemen" placeholder="SEMUA" />
                 </div>
 
                 <div class="d-flex align-items-center">
@@ -39,7 +39,7 @@
                     <x-table.th title="No." />
                     <x-table.th title="Tanggal" />
                     <x-table.th title="Indikator" />
-                    <x-table.th title="Unit" />
+                    <x-table.th title="Departemen" />
                     <x-table.th title="Numerator" />
                     <x-table.th title="Denominator" />
                     <x-table.th title="Capaian" />
@@ -84,7 +84,7 @@
                                 <br />
                                 <small class="text-muted">{{ $record->indicator->profile->category->name ?? '-' }}</small>
                             </x-table.td>
-                            <x-table.td>{{ $record->indicator->unit->nama ?? '-' }}</x-table.td>
+                            <x-table.td>{{ $record->indicator->departemen->nama ?? '-' }}</x-table.td>
                             <x-table.td class="text-center">{{ $record->numerator_value }}</x-table.td>
                             <x-table.td class="text-center">{{ $record->denominator_value }}</x-table.td>
                             <x-table.td class="text-center font-weight-bold text-primary">{{ $achievement }}%</x-table.td>
