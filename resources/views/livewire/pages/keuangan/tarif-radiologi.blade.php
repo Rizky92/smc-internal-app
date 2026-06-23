@@ -33,7 +33,6 @@
                     <x-table.th name="kso" title="KSO" />
                     <x-table.th name="menejemen" title="Menejemen" />
                     <x-table.th name="total_byr" title="Total Tarif" />
-                    <x-table.th name="kd_pj" title="Kode Jenis Bayar" />
                     <x-table.th name="png_jawab" title="Jenis Bayar" />
                     <x-table.th name="kelas" title="Kelas" />
                 </x-slot>
@@ -50,12 +49,11 @@
                             <x-table.td>{{ rp($item->kso) }}</x-table.td>
                             <x-table.td>{{ rp($item->menejemen) }}</x-table.td>
                             <x-table.td>{{ rp($item->total_byr) }}</x-table.td>
-                            <x-table.td>{{ $item->kd_pj }}</x-table.td>
                             <x-table.td>{{ $item->png_jawab }}</x-table.td>
                             <x-table.td>{{ $item->kelas }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="13" padding />
+                        <x-table.tr-empty colspan="12" padding />
                     @endforelse
                 </x-slot>
             </x-table>

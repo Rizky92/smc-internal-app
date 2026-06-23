@@ -68,7 +68,6 @@ class TarifRadiologi extends Component
                     Str::transliterate($model->kso),
                     Str::transliterate($model->menejemen),
                     Str::transliterate($model->total_byr),
-                    Str::transliterate($model->kd_pj),
                     Str::transliterate($model->png_jawab),
                     Str::transliterate($model->kelas),
                 ]),
@@ -88,7 +87,6 @@ class TarifRadiologi extends Component
             'KSO',
             'Menejemen',
             'Total Tarif',
-            'Kode Jenis Bayar',
             'Jenis Bayar',
             'Kelas',
         ];
