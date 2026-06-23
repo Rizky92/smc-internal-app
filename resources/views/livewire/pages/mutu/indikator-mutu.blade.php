@@ -25,7 +25,7 @@
         <x-slot name="header">
             <x-row-col-flex class="mt-2">
                 @can('mutu.indikator-mutu.create')
-                    <x-filter.label constant-width>Departemen :</x-filter.label>
+                    <x-filter.label class="mr-2">Departemen :</x-filter.label>
                     <x-filter.select2 name="Departemen" model="depId" livewire :options="$this->departemen" placeholder="SEMUA" />
                     <x-button variant="primary" size="sm" title="Tambah Mapping" icon="fas fa-plus" class="ml-auto" wire:click="$emit('prepare')" />
                 @endcan

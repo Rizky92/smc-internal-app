@@ -28,7 +28,7 @@ class ValidasiData extends Component
     public $depId;
 
     /** @var string */
-    public $statusFilter = 'submitted';
+    public $statusFilter;
 
     /** @var string */
     public $tglAwal;
@@ -44,7 +44,7 @@ class ValidasiData extends Component
     {
         return [
             'depId'        => ['except' => '', 'as' => 'dep'],
-            'statusFilter' => ['except' => 'submitted', 'as' => 'status'],
+            'statusFilter' => ['except' => 'all', 'as' => 'status'],
             'tglAwal'      => ['except' => '', 'as' => 'tgl_awal'],
             'tglAkhir'     => ['except' => '', 'as' => 'tgl_akhir'],
         ];
@@ -66,7 +66,7 @@ class ValidasiData extends Component
     protected function defaultValues(): void
     {
         $this->depId = null;
-        $this->statusFilter = 'submitted';
+        $this->statusFilter = 'all';
         $this->tglAwal = now()->startOfMonth()->format('Y-m-d');
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }

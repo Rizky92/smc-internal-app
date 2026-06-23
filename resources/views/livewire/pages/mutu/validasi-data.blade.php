@@ -3,24 +3,21 @@
 
     <x-card>
         <x-slot name="header">
+            <x-row-col-flex class="mt-2">
+                <x-filter.label constant-width>Status :</x-filter.label>
+                <x-filter.select model="statusFilter" :options="[
+                    'submitted' => 'Submitted (Perlu Validasi)',
+                    'approved' => 'Approved (Disetujui)',
+                    'approved_with_correction' => 'Approved w/ Correction',
+                    'rejected' => 'Rejected (Ditolak)',
+                    'draft' => 'Draft',
+                    'all' => 'Semua Status',
+                ]" />
+            </x-row-col-flex>
+
             <x-row-col-flex class="mt-2" style="gap: 1rem; flex-wrap: wrap">
-                <div class="d-flex align-items-center">
-                    <x-filter.label constant-width>Departemen :</x-filter.label>
-                    <x-filter.select2 name="Departemen" model="depId" livewire :options="$this->departemen" placeholder="SEMUA" />
-                </div>
-
-                <div class="d-flex align-items-center">
-                    <x-filter.label constant-width>Status :</x-filter.label>
-                    <select class="form-control form-control-sm" style="width: 12rem" wire:model="statusFilter" wire:change="searchData">
-                        <option value="submitted">Submitted (Perlu Validasi)</option>
-                        <option value="approved">Approved (Disetujui)</option>
-                        <option value="approved_with_correction">Approved w/ Correction</option>
-                        <option value="rejected">Rejected (Ditolak)</option>
-                        <option value="draft">Draft</option>
-                        <option value="all">Semua Status</option>
-                    </select>
-                </div>
-
+                <x-filter.label class="mr-2">Departemen :</x-filter.label>
+                <x-filter.select2 name="Departemen" model="depId" livewire :options="$this->departemen" placeholder="SEMUA" />
                 <div class="ml-md-auto">
                     <x-filter.range-date />
                 </div>
