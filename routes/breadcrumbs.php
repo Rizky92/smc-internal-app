@@ -387,6 +387,11 @@ Breadcrumbs::for('admin.informasi.jadwal-dokter', function (Trail $trail): void 
     $trail->push('Jadwal Dokter', route('admin.informasi.jadwal-dokter'));
 });
 
+Breadcrumbs::for('admin.informasi.dashboard-mutu', function (Trail $trail): void {
+    $trail->parent('admin.informasi');
+    $trail->push('Dashboard Mutu', route('admin.informasi.dashboard-mutu'));
+});
+
 Breadcrumbs::for('jadwal-dokter', function (Trail $trail): void {
     $trail->push('Jadwal Dokter', route('jadwal-dokter'));
 });

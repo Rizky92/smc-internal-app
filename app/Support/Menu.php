@@ -597,6 +597,13 @@ class Menu
                         'hasAnyPermissions' => true,
                     ],
                     [
+                        'name'              => 'Dashboard Mutu',
+                        'url'               => route('admin.informasi.dashboard-mutu'),
+                        'icon'              => 'fas fa-chart-pie',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => true,
+                    ],
+                    [
                         'name'              => 'Dashboard Dokter',
                         'url'               => route('dashboard-dokter'),
                         'icon'              => 'fas fa-user-md',
