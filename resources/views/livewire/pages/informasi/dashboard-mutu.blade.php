@@ -200,16 +200,34 @@
                         });
                     }
                 });
+
+                document.addEventListener('DOMContentLoaded', () => {
+                    const handleSelect2Change = (id, model) => {
+                        const el = document.querySelector(id);
+                        if (!el) return;
+                        $(el).on('select2:select', function () {
+                            const compId = this.closest('[wire\\:id]').getAttribute('wire:id');
+                            const comp = window.Livewire.find(compId);
+                            if (comp) {
+                                comp[model] = $(this).val();
+                                comp.searchData();
+                            }
+                        });
+                    };
+
+                    handleSelect2Change('#departemen', 'depId');
+                    handleSelect2Change('#kategori', 'kategoriId');
+                });
             </script>
         @endpush
     @endonce
 
     <x-row-col-flex class="mt-2 mb-3">
         <x-filter.range-date />
-        <div class="ml-2" style="min-width: 16rem">
+        <div class="ml-2">
             <x-filter.select2 name="Departemen" model="depId" livewire :options="$this->departemen" placeholder="SEMUA DEPARTEMEN" width="16rem" />
         </div>
-        <div class="ml-2" style="min-width: 16rem">
+        <div class="ml-2">
             <x-filter.select2 name="Kategori" model="kategoriId" livewire :options="$this->kategori" placeholder="SEMUA KATEGORI" width="16rem" />
         </div>
         <x-filter.button-reset-filters class="ml-auto" />
@@ -257,7 +275,7 @@
                     <h6 class="mb-0"><i class="fas fa-chart-bar mr-2"></i>Rata-rata Capaian per Departemen</h6>
                 </x-slot>
                 <x-slot name="body">
-                    <div style="height: 320px">
+                    <div wire:ignore style="height: 320px">
                         <canvas id="chartPerDept"></canvas>
                     </div>
                 </x-slot>
@@ -269,7 +287,7 @@
                     <h6 class="mb-0"><i class="fas fa-chart-pie mr-2"></i>Distribusi Status Record</h6>
                 </x-slot>
                 <x-slot name="body">
-                    <div style="height: 320px">
+                    <div wire:ignore style="height: 320px">
                         <canvas id="chartStatus"></canvas>
                     </div>
                 </x-slot>
@@ -284,7 +302,7 @@
                     <h6 class="mb-0"><i class="fas fa-chart-line mr-2"></i>Tren Capaian Bulanan (12 Bulan)</h6>
                 </x-slot>
                 <x-slot name="body">
-                    <div style="height: 280px">
+                    <div wire:ignore style="height: 280px">
                         <canvas id="chartTrend"></canvas>
                     </div>
                 </x-slot>
@@ -296,7 +314,7 @@
                     <h6 class="mb-0"><i class="fas fa-chart-bar mr-2"></i>Rata-rata Capaian per Kategori</h6>
                 </x-slot>
                 <x-slot name="body">
-                    <div style="height: 280px">
+                    <div wire:ignore style="height: 280px">
                         <canvas id="chartPerKategori"></canvas>
                     </div>
                 </x-slot>

@@ -105,7 +105,7 @@ class DashboardMutu extends Component
         $result = [];
         foreach ($aggByDepId as $depId => $row) {
             $result[] = [
-                'nama' => $allDep[$depId] ?? $depId,
+                'nama'        => $allDep[$depId] ?? $depId,
                 'avg_capaian' => round((float) $row->avg_capaian, 2),
             ];
         }

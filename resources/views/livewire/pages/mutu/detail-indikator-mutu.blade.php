@@ -165,7 +165,7 @@
             </h6>
         </x-slot>
         <x-slot name="body">
-            <div style="height: 300px">
+            <div wire:ignore style="height: 300px">
                 <canvas id="indicatorChart"></canvas>
             </div>
         </x-slot>
