@@ -48,7 +48,7 @@ class LaporanPemakaianObatNAPZA extends Component
     public function getDataPemakaianObatNarkotikaProperty()
     {
         return $this->isDeferred ? [] : Obat::query()
-            ->pemakaianObatNAPZA($this->tglAwal, $this->tglAkhir, 'narkotika')
+            ->pemakaianObatNAPZAAgregat($this->tglAwal, $this->tglAkhir, 'narkotika')
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage, ['*'], 'page_narkotika');
@@ -60,7 +60,7 @@ class LaporanPemakaianObatNAPZA extends Component
     public function getDataPemakaianObatPsikotropikaProperty()
     {
         return $this->isDeferred ? [] : Obat::query()
-            ->pemakaianObatNAPZA($this->tglAwal, $this->tglAkhir, 'psikotropika')
+            ->pemakaianObatNAPZAAgregat($this->tglAwal, $this->tglAkhir, 'psikotropika')
             ->search($this->cari)
             ->sortWithColumns($this->sortColumns)
             ->paginate($this->perpage, ['*'], 'page_psikotropika');
@@ -111,12 +111,12 @@ class LaporanPemakaianObatNAPZA extends Component
 
         return [
             'Narkotika' => fn () => Obat::query()
-                ->pemakaianObatNAPZA($this->tglAwal, $this->tglAkhir, 'narkotika')
+                ->pemakaianObatNAPZAAgregat($this->tglAwal, $this->tglAkhir, 'narkotika')
                 ->cursor()
                 ->map($map),
 
             'Psikotropika' => fn () => Obat::query()
-                ->pemakaianObatNAPZA($this->tglAwal, $this->tglAkhir, 'psikotropika')
+                ->pemakaianObatNAPZAAgregat($this->tglAwal, $this->tglAkhir, 'psikotropika')
                 ->cursor()
                 ->map($map),
         ];
