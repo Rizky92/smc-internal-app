@@ -305,13 +305,99 @@ class Obat extends Model
     public function scopePemakaianObatNAPZA(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $golongan = 'narkotika'): Builder
     {
         if (! in_array($golongan, ['narkotika', 'psikotropika'])) {
-            throw new BadMethodCallException('Invalid value provied for parameter [golongan]');
+            throw new BadMethodCallException('Invalid value provided for parameter [golongan]');
         }
 
         $tglAwal = carbon($tglAwal)->startOfMonth()->toDateString();
         $tglAkhir = carbon($tglAkhir)->endOfMonth()->toDateString();
-
         $kodeGudang = array_keys(self::GUDANG_FARMASI);
+
+        $conn = $this->getConnectionName();
+
+        $tfMasuk = DB::connection($conn)->table('mutasibarang')
+            ->select('kode_brng', 'kd_bangsalke', DB::raw('SUM(jml) as total'))
+            ->whereIn('kd_bangsalke', $kodeGudang)
+            ->whereBetween('tanggal', [$tglAwal, $tglAkhir])
+            ->groupBy('kode_brng', 'kd_bangsalke');
+
+        $penerimaan = DB::connection($conn)->table('detailpesan')
+            ->join('pemesanan', 'detailpesan.no_faktur', '=', 'pemesanan.no_faktur')
+            ->select('detailpesan.kode_brng', 'pemesanan.kd_bangsal', DB::raw('SUM(detailpesan.jumlah2) as total'))
+            ->whereIn('pemesanan.kd_bangsal', $kodeGudang)
+            ->whereBetween('pemesanan.tgl_pesan', [$tglAwal, $tglAkhir])
+            ->groupBy('detailpesan.kode_brng', 'pemesanan.kd_bangsal');
+
+        $piutangMasuk = DB::connection($conn)->table('riwayat_barang_medis')
+            ->select('kode_brng', 'kd_bangsal', DB::raw('SUM(masuk) as total'))
+            ->where('posisi', 'Piutang')
+            ->whereIn('kd_bangsal', $kodeGudang)
+            ->whereBetween('tanggal', [$tglAwal, $tglAkhir])
+            ->groupBy('kode_brng', 'kd_bangsal');
+
+        $hibah = DB::connection($conn)->table('detailhibah_obat_bhp')
+            ->join('hibah_obat_bhp', 'detailhibah_obat_bhp.no_hibah', '=', 'hibah_obat_bhp.no_hibah')
+            ->select('detailhibah_obat_bhp.kode_brng', 'hibah_obat_bhp.kd_bangsal', DB::raw('SUM(detailhibah_obat_bhp.jumlah2) as total'))
+            ->whereIn('hibah_obat_bhp.kd_bangsal', $kodeGudang)
+            ->whereBetween('hibah_obat_bhp.tgl_hibah', [$tglAwal, $tglAkhir])
+            ->groupBy('detailhibah_obat_bhp.kode_brng', 'hibah_obat_bhp.kd_bangsal');
+
+        $returPasien = DB::connection($conn)->table('detreturjual')
+            ->join('returjual', 'detreturjual.no_retur_jual', '=', 'returjual.no_retur_jual')
+            ->select('detreturjual.kode_brng', 'returjual.kd_bangsal', DB::raw('SUM(detreturjual.jml_retur) as total'))
+            ->whereIn('returjual.kd_bangsal', $kodeGudang)
+            ->whereBetween('returjual.tgl_retur', [$tglAwal, $tglAkhir])
+            ->groupBy('detreturjual.kode_brng', 'returjual.kd_bangsal');
+
+        $hapusBeriObat = DB::connection($conn)->table('riwayat_barang_medis')
+            ->select('kode_brng', 'kd_bangsal', DB::raw('SUM(masuk) as total'))
+            ->where('posisi', 'Pemberian Obat')
+            ->where('status', 'hapus')
+            ->whereIn('kd_bangsal', $kodeGudang)
+            ->whereBetween('tanggal', [$tglAwal, $tglAkhir])
+            ->groupBy('kode_brng', 'kd_bangsal');
+
+        $pemberianObat = DB::connection($conn)->table('detail_pemberian_obat')
+            ->select('kode_brng', 'kd_bangsal', DB::raw('SUM(jml) as total'))
+            ->whereIn('kd_bangsal', $kodeGudang)
+            ->whereBetween('tgl_perawatan', [$tglAwal, $tglAkhir])
+            ->groupBy('kode_brng', 'kd_bangsal');
+
+        $penjualanObat = DB::connection($conn)->table('detailjual')
+            ->join('penjualan', 'detailjual.nota_jual', '=', 'penjualan.nota_jual')
+            ->select('detailjual.kode_brng', 'penjualan.kd_bangsal', DB::raw('SUM(detailjual.jumlah) as total'))
+            ->whereIn('penjualan.kd_bangsal', $kodeGudang)
+            ->whereBetween('penjualan.tgl_jual', [$tglAwal, $tglAkhir])
+            ->groupBy('detailjual.kode_brng', 'penjualan.kd_bangsal');
+
+        $piutangKeluar = DB::connection($conn)->table('riwayat_barang_medis')
+            ->select('kode_brng', 'kd_bangsal', DB::raw('SUM(keluar) as total'))
+            ->where('posisi', 'Piutang')
+            ->whereIn('kd_bangsal', $kodeGudang)
+            ->whereBetween('tanggal', [$tglAwal, $tglAkhir])
+            ->groupBy('kode_brng', 'kd_bangsal');
+
+        $tfKeluar = DB::connection($conn)->table('mutasibarang')
+            ->select('kode_brng', 'kd_bangsaldari', DB::raw('SUM(jml) as total'))
+            ->whereIn('kd_bangsaldari', $kodeGudang)
+            ->whereBetween('tanggal', [$tglAwal, $tglAkhir])
+            ->groupBy('kode_brng', 'kd_bangsaldari');
+
+        $returSupplier = DB::connection($conn)->table('detreturbeli')
+            ->join('returbeli', 'detreturbeli.no_retur_beli', '=', 'returbeli.no_retur_beli')
+            ->select('detreturbeli.kode_brng', 'returbeli.kd_bangsal', DB::raw('SUM(detreturbeli.jml_retur2) as total'))
+            ->whereIn('returbeli.kd_bangsal', $kodeGudang)
+            ->whereBetween('returbeli.tgl_retur', [$tglAwal, $tglAkhir])
+            ->groupBy('detreturbeli.kode_brng', 'returbeli.kd_bangsal');
+
+        $subBangsal = DB::connection($conn)->table('bangsal')
+            ->select(['kd_bangsal', 'nm_bangsal'])
+            ->whereIn('kd_bangsal', $kodeGudang);
+
+        $this->addSearchConditions([
+            'golongan_barang.nama',
+            'kodesatuan.kode_sat',
+            'kodesatuan.satuan',
+        ]);
 
         $sqlSelect = <<<'SQL'
             databarang.kode_brng,
@@ -321,66 +407,58 @@ class Obat extends Model
             kodesatuan.satuan,
             gudang.kd_bangsal,
             gudang.nm_bangsal,
-            ifnull((select riwayat_barang_medis.stok_awal from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and riwayat_barang_medis.kd_bangsal = gudang.kd_bangsal and riwayat_barang_medis.tanggal between ? and ? order by riwayat_barang_medis.tanggal asc, riwayat_barang_medis.jam asc limit 1), (select riwayat_barang_medis.stok_akhir from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and riwayat_barang_medis.kd_bangsal = gudang.kd_bangsal and riwayat_barang_medis.tanggal < ? order by riwayat_barang_medis.tanggal desc, riwayat_barang_medis.jam desc limit 1)) as stok_awal,
-            (select sum(mutasibarang.jml) from mutasibarang where mutasibarang.kode_brng = databarang.kode_brng and mutasibarang.kd_bangsalke = gudang.kd_bangsal and date(mutasibarang.tanggal) between ? and ?) tf_masuk,
-            (select sum(detailpesan.jumlah2) from detailpesan join pemesanan on detailpesan.no_faktur = pemesanan.no_faktur where detailpesan.kode_brng = databarang.kode_brng and pemesanan.kd_bangsal = gudang.kd_bangsal and pemesanan.tgl_pesan between ? and ?) penerimaan_obat,
-            (select sum(riwayat_barang_medis.masuk) from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and riwayat_barang_medis.kd_bangsal = gudang.kd_bangsal and riwayat_barang_medis.posisi = 'Piutang' and riwayat_barang_medis.tanggal between ? and ?) piutang_masuk,
-            (select sum(detailhibah_obat_bhp.jumlah2) from detailhibah_obat_bhp join hibah_obat_bhp on detailhibah_obat_bhp.no_hibah = hibah_obat_bhp.no_hibah where detailhibah_obat_bhp.kode_brng = databarang.kode_brng and hibah_obat_bhp.kd_bangsal = gudang.kd_bangsal and hibah_obat_bhp.tgl_hibah between ? and ?) hibah_obat,
-            (select sum(detreturjual.jml_retur) from detreturjual join returjual on detreturjual.no_retur_jual = returjual.no_retur_jual where detreturjual.kode_brng = databarang.kode_brng and returjual.kd_bangsal = gudang.kd_bangsal and returjual.tgl_retur between ? and ?) retur_pasien,
-            (select sum(riwayat_barang_medis.masuk) from riwayat_barang_medis where riwayat_barang_medis.posisi = 'Pemberian Obat' and riwayat_barang_medis.status = 'hapus' and riwayat_barang_medis.kode_brng = databarang.kode_brng and riwayat_barang_medis.kd_bangsal = gudang.kd_bangsal and tanggal between ? and ?) hapus_beriobat,
-            (select sum(detail_pemberian_obat.jml) from detail_pemberian_obat where detail_pemberian_obat.kode_brng = databarang.kode_brng and detail_pemberian_obat.kd_bangsal = gudang.kd_bangsal and tgl_perawatan between ? and ?) pemberian_obat,
-            (select sum(detailjual.jumlah) from detailjual join penjualan on detailjual.nota_jual = penjualan.nota_jual where detailjual.kode_brng = databarang.kode_brng and penjualan.kd_bangsal = gudang.kd_bangsal and penjualan.tgl_jual between ? and ?) penjualan_obat,
-            (select sum(riwayat_barang_medis.keluar) from riwayat_barang_medis where riwayat_barang_medis.kode_brng = databarang.kode_brng and riwayat_barang_medis.kd_bangsal = gudang.kd_bangsal and riwayat_barang_medis.posisi = 'Piutang' and riwayat_barang_medis.tanggal between ? and ?) piutang_keluar,
-            (select sum(mutasibarang.jml) from mutasibarang where mutasibarang.kode_brng = databarang.kode_brng and mutasibarang.kd_bangsaldari = gudang.kd_bangsal and date(mutasibarang.tanggal) between ? and ?) tf_keluar,
-            (select sum(detreturbeli.jml_retur2) from detreturbeli join returbeli on detreturbeli.no_retur_beli = returbeli.no_retur_beli where detreturbeli.kode_brng = databarang.kode_brng and returbeli.kd_bangsal = gudang.kd_bangsal and returbeli.tgl_retur between ? and ?) retur_supplier
-            SQL;
-
-        $this->addSearchConditions([
-            'golongan_barang.nama',
-            'kodesatuan.kode_sat',
-            'kodesatuan.satuan',
-            'gudang.nm_bangsal',
-        ]);
+            ifnull((select r1.stok_awal from riwayat_barang_medis r1 where r1.kode_brng = databarang.kode_brng and r1.kd_bangsal = gudang.kd_bangsal and r1.tanggal between ? and ? order by r1.tanggal asc, r1.jam asc limit 1), (select r2.stok_akhir from riwayat_barang_medis r2 where r2.kode_brng = databarang.kode_brng and r2.kd_bangsal = gudang.kd_bangsal and r2.tanggal < ? order by r2.tanggal desc, r2.jam desc limit 1)) stok_awal, 
+            ifnull(tf_masuk.total, 0) tf_masuk,
+            ifnull(penerimaan.total, 0) penerimaan_obat,
+            ifnull(piutang_masuk.total, 0) piutang_masuk,
+            ifnull(hibah.total, 0) hibah_obat,
+            ifnull(retur_pasien.total, 0) retur_pasien,
+            ifnull(hapus_beriobat.total, 0) hapus_beriobat,
+            ifnull(pemberian_obat.total, 0) pemberian_obat,
+            ifnull(penjualan_obat.total, 0) penjualan_obat,
+            ifnull(piutang_keluar.total, 0) piutang_keluar,
+            ifnull(tf_keluar.total, 0) tf_keluar,
+            ifnull(retur_supplier.total, 0) retur_supplier
+        SQL;
 
         return $query
-            ->joinSub(
-                fn ($sub) => $sub->from('bangsal')
-                    ->select(['kd_bangsal', 'nm_bangsal'])
-                    ->whereIn('kd_bangsal', $kodeGudang),
-                'gudang',
-                fn ($join) => $join->whereRaw('1 = 1')
-            )
             ->selectRaw($sqlSelect, [
-                $tglAwal, $tglAkhir, $tglAwal,
                 $tglAwal, $tglAkhir,
-                $tglAwal, $tglAkhir,
-                $tglAwal, $tglAkhir,
-                $tglAwal, $tglAkhir,
-                $tglAwal, $tglAkhir,
-                $tglAwal, $tglAkhir,
-                $tglAwal, $tglAkhir,
-                $tglAwal, $tglAkhir,
-                $tglAwal, $tglAkhir,
-                $tglAwal, $tglAkhir,
-                $tglAwal, $tglAkhir,
+                $tglAwal,
             ])
-            ->withCasts([
-                'stok_awal'       => 'float',
-                'tf_masuk'        => 'float',
-                'penerimaan_obat' => 'float',
-                'hibah_obat'      => 'float',
-                'retur_pasien'    => 'float',
-                'pemberian_obat'  => 'float',
-                'penjualan_obat'  => 'float',
-                'tf_keluar'       => 'float',
-                'retur_supplier'  => 'float',
-            ])
+            ->joinSub($subBangsal, 'gudang', fn ($join) => $join->whereRaw('1 = 1'))
+            ->leftJoinSub($tfMasuk, 'tf_masuk', fn ($j) => $j->on('databarang.kode_brng', '=', 'tf_masuk.kode_brng')->on('gudang.kd_bangsal', '=', 'tf_masuk.kd_bangsalke'))
+            ->leftJoinSub($penerimaan, 'penerimaan', fn ($j) => $j->on('databarang.kode_brng', '=', 'penerimaan.kode_brng')->on('gudang.kd_bangsal', '=', 'penerimaan.kd_bangsal'))
+            ->leftJoinSub($piutangMasuk, 'piutang_masuk', fn ($j) => $j->on('databarang.kode_brng', '=', 'piutang_masuk.kode_brng')->on('gudang.kd_bangsal', '=', 'piutang_masuk.kd_bangsal'))
+            ->leftJoinSub($hibah, 'hibah', fn ($j) => $j->on('databarang.kode_brng', '=', 'hibah.kode_brng')->on('gudang.kd_bangsal', '=', 'hibah.kd_bangsal'))
+            ->leftJoinSub($returPasien, 'retur_pasien', fn ($j) => $j->on('databarang.kode_brng', '=', 'retur_pasien.kode_brng')->on('gudang.kd_bangsal', '=', 'retur_pasien.kd_bangsal'))
+            ->leftJoinSub($hapusBeriObat, 'hapus_beriobat', fn ($j) => $j->on('databarang.kode_brng', '=', 'hapus_beriobat.kode_brng')->on('gudang.kd_bangsal', '=', 'hapus_beriobat.kd_bangsal'))
+            ->leftJoinSub($pemberianObat, 'pemberian_obat', fn ($j) => $j->on('databarang.kode_brng', '=', 'pemberian_obat.kode_brng')->on('gudang.kd_bangsal', '=', 'pemberian_obat.kd_bangsal'))
+            ->leftJoinSub($penjualanObat, 'penjualan_obat', fn ($j) => $j->on('databarang.kode_brng', '=', 'penjualan_obat.kode_brng')->on('gudang.kd_bangsal', '=', 'penjualan_obat.kd_bangsal'))
+            ->leftJoinSub($piutangKeluar, 'piutang_keluar', fn ($j) => $j->on('databarang.kode_brng', '=', 'piutang_keluar.kode_brng')->on('gudang.kd_bangsal', '=', 'piutang_keluar.kd_bangsal'))
+            ->leftJoinSub($tfKeluar, 'tf_keluar', fn ($j) => $j->on('databarang.kode_brng', '=', 'tf_keluar.kode_brng')->on('gudang.kd_bangsal', '=', 'tf_keluar.kd_bangsaldari'))
+            ->leftJoinSub($returSupplier, 'retur_supplier', fn ($j) => $j->on('databarang.kode_brng', '=', 'retur_supplier.kode_brng')->on('gudang.kd_bangsal', '=', 'retur_supplier.kd_bangsal'))
             ->join('golongan_barang', 'databarang.kode_golongan', '=', 'golongan_barang.kode')
             ->join('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
             ->where('databarang.status', '1')
             ->where(fn (Builder $query): Builder => $query
                 ->when($golongan === 'narkotika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G07'))
-                ->when($golongan === 'psikotropika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G01')));
+                ->when($golongan === 'psikotropika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G01'))
+            )
+            ->withCasts([
+                'stok_awal'       => 'float',
+                'tf_masuk'        => 'float',
+                'penerimaan_obat' => 'float',
+                'piutang_masuk'   => 'float',
+                'hibah_obat'      => 'float',
+                'retur_pasien'    => 'float',
+                'hapus_beriobat'  => 'float',
+                'pemberian_obat'  => 'float',
+                'penjualan_obat'  => 'float',
+                'piutang_keluar'  => 'float',
+                'tf_keluar'       => 'float',
+                'retur_supplier'  => 'float',
+            ]);
     }
 
     public function scopePemakaianObatNAPZAAgregat(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $golongan = 'narkotika'): Builder
@@ -392,27 +470,29 @@ class Obat extends Model
             'detail.satuan',
         ]);
 
+        $sqlSelect = <<<'SQL'
+            detail.kode_brng,
+            detail.nama_brng,
+            detail.kode_golongan,
+            detail.nama,
+            detail.satuan,            
+            sum(detail.stok_awal) grand_total_stok_awal,
+            sum(detail.tf_masuk) tf_masuk,
+            sum(detail.penerimaan_obat) penerimaan_obat,
+            sum(detail.piutang_masuk) piutang_masuk,
+            sum(detail.hibah_obat) hibah_obat,
+            sum(detail.retur_pasien) retur_pasien,
+            sum(detail.hapus_beriobat) hapus_beriobat,
+            sum(detail.pemberian_obat) pemberian_obat,
+            sum(detail.penjualan_obat) penjualan_obat,
+            sum(detail.piutang_keluar) piutang_keluar,
+            sum(detail.tf_keluar) tf_keluar,
+            sum(detail.retur_supplier) retur_supplier
+        SQL;
+
         return $query
             ->fromSub($detail, 'detail')
-            ->select([
-                'detail.kode_brng',
-                'detail.nama_brng',
-                'detail.kode_golongan',
-                'detail.nama',
-                'detail.satuan',
-            ])
-            ->selectRaw('SUM(detail.stok_awal) as stok_awal')
-            ->selectRaw('SUM(detail.tf_masuk) as tf_masuk')
-            ->selectRaw('SUM(detail.penerimaan_obat) as penerimaan_obat')
-            ->selectRaw('SUM(detail.piutang_masuk) as piutang_masuk')
-            ->selectRaw('SUM(detail.hibah_obat) as hibah_obat')
-            ->selectRaw('SUM(detail.retur_pasien) as retur_pasien')
-            ->selectRaw('SUM(detail.hapus_beriobat) as hapus_beriobat')
-            ->selectRaw('SUM(detail.pemberian_obat) as pemberian_obat')
-            ->selectRaw('SUM(detail.penjualan_obat) as penjualan_obat')
-            ->selectRaw('SUM(detail.piutang_keluar) as piutang_keluar')
-            ->selectRaw('SUM(detail.tf_keluar) as tf_keluar')
-            ->selectRaw('SUM(detail.retur_supplier) as retur_supplier')
+            ->selectRaw($sqlSelect)
             ->groupBy([
                 'detail.kode_brng',
                 'detail.nama_brng',
@@ -421,15 +501,18 @@ class Obat extends Model
                 'detail.satuan',
             ])
             ->withCasts([
-                'stok_awal'       => 'float',
-                'tf_masuk'        => 'float',
-                'penerimaan_obat' => 'float',
-                'hibah_obat'      => 'float',
-                'retur_pasien'    => 'float',
-                'pemberian_obat'  => 'float',
-                'penjualan_obat'  => 'float',
-                'tf_keluar'       => 'float',
-                'retur_supplier'  => 'float',
+                'grand_total_stok_awal' => 'float',
+                'tf_masuk'              => 'float',
+                'penerimaan_obat'       => 'float',
+                'piutang_masuk'         => 'float',
+                'hibah_obat'            => 'float',
+                'retur_pasien'          => 'float',
+                'hapus_beriobat'        => 'float',
+                'pemberian_obat'        => 'float',
+                'penjualan_obat'        => 'float',
+                'piutang_keluar'        => 'float',
+                'tf_keluar'             => 'float',
+                'retur_supplier'        => 'float',
             ]);
     }
 
