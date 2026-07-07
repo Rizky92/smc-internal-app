@@ -407,7 +407,8 @@ class Obat extends Model
             kodesatuan.satuan,
             gudang.kd_bangsal,
             gudang.nm_bangsal,
-            ifnull((select r1.stok_awal from riwayat_barang_medis r1 where r1.kode_brng = databarang.kode_brng and r1.kd_bangsal = gudang.kd_bangsal and r1.tanggal between ? and ? order by r1.tanggal asc, r1.jam asc limit 1), (select r2.stok_akhir from riwayat_barang_medis r2 where r2.kode_brng = databarang.kode_brng and r2.kd_bangsal = gudang.kd_bangsal and r2.tanggal < ? order by r2.tanggal desc, r2.jam desc limit 1)) stok_awal, 
+            (select r1.stok_awal from riwayat_barang_medis r1 where r1.kode_brng = databarang.kode_brng and r1.kd_bangsal = gudang.kd_bangsal and r1.tanggal between ? and ? order by r1.tanggal asc, r1.jam asc limit 1) stok_awal,
+            (select r2.stok_akhir from riwayat_barang_medis r2 where r2.kode_brng = databarang.kode_brng and r2.kd_bangsal = gudang.kd_bangsal and r2.tanggal < ? order by r2.tanggal desc, r2.jam desc limit 1) stok_awal_terakhir,
             ifnull(tf_masuk.total, 0) tf_masuk,
             ifnull(penerimaan.total, 0) penerimaan_obat,
             ifnull(piutang_masuk.total, 0) piutang_masuk,
@@ -446,18 +447,19 @@ class Obat extends Model
                 ->when($golongan === 'psikotropika', fn (Builder $q): Builder => $q->where('databarang.kode_golongan', 'G01'))
             )
             ->withCasts([
-                'stok_awal'       => 'float',
-                'tf_masuk'        => 'float',
-                'penerimaan_obat' => 'float',
-                'piutang_masuk'   => 'float',
-                'hibah_obat'      => 'float',
-                'retur_pasien'    => 'float',
-                'hapus_beriobat'  => 'float',
-                'pemberian_obat'  => 'float',
-                'penjualan_obat'  => 'float',
-                'piutang_keluar'  => 'float',
-                'tf_keluar'       => 'float',
-                'retur_supplier'  => 'float',
+                'stok_awal'             => 'float',
+                'stok_awal_terakhir'    => 'float',
+                'tf_masuk'              => 'float',
+                'penerimaan_obat'       => 'float',
+                'piutang_masuk'         => 'float',
+                'hibah_obat'            => 'float',
+                'retur_pasien'          => 'float',
+                'hapus_beriobat'        => 'float',
+                'pemberian_obat'        => 'float',
+                'penjualan_obat'        => 'float',
+                'piutang_keluar'        => 'float',
+                'tf_keluar'             => 'float',
+                'retur_supplier'        => 'float',
             ]);
     }
 
@@ -476,7 +478,7 @@ class Obat extends Model
             detail.kode_golongan,
             detail.nama,
             detail.satuan,            
-            sum(detail.stok_awal) grand_total_stok_awal,
+            sum(detail.stok_awal) stok_awal,
             sum(detail.tf_masuk) tf_masuk,
             sum(detail.penerimaan_obat) penerimaan_obat,
             sum(detail.piutang_masuk) piutang_masuk,
@@ -501,7 +503,8 @@ class Obat extends Model
                 'detail.satuan',
             ])
             ->withCasts([
-                'grand_total_stok_awal' => 'float',
+                'stok_awal'             => 'float',
+                'stok_awal_terakhir'    => 'float',
                 'tf_masuk'              => 'float',
                 'penerimaan_obat'       => 'float',
                 'piutang_masuk'         => 'float',
