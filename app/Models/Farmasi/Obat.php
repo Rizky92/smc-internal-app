@@ -422,6 +422,11 @@ class Obat extends Model
             ifnull(retur_supplier.total, 0) retur_supplier
         SQL;
 
+        $this->addRawColumns([
+            'stok_awal'          => DB::raw('(select r1.stok_awal from riwayat_barang_medis r1 where r1.kode_brng = databarang.kode_brng and r1.kd_bangsal = gudang.kd_bangsal and r1.tanggal between ? and ? order by r1.tanggal asc, r1.jam asc limit 1)'),
+            'stok_awal_terakhir' => DB::raw('(select r2.stok_akhir from riwayat_barang_medis r2 where r2.kode_brng = databarang.kode_brng and r2.kd_bangsal = gudang.kd_bangsal and r2.tanggal < ? order by r2.tanggal desc, r2.jam desc limit 1)'),
+        ]);
+
         return $query
             ->selectRaw($sqlSelect, [
                 $tglAwal, $tglAkhir,
@@ -467,7 +472,11 @@ class Obat extends Model
     {
         $detail = static::query()->pemakaianObatNAPZA($tglAwal, $tglAkhir, $golongan);
 
+        $this->searchColumns = [];
+
         $this->addSearchConditions([
+            'detail.kode_brng',
+            'detail.nama_brng',
             'detail.nama',
             'detail.satuan',
         ]);
@@ -491,6 +500,21 @@ class Obat extends Model
             sum(detail.tf_keluar) tf_keluar,
             sum(detail.retur_supplier) retur_supplier
         SQL;
+
+        $this->addRawColumns([
+            'stok_awal'             => DB::raw('sum(detail.stok_awal)'),
+            'tf_masuk'              => DB::raw('sum(detail.tf_masuk)'),
+            'penerimaan_obat'       => DB::raw('sum(detail.penerimaan_obat)'),
+            'piutang_masuk'         => DB::raw('sum(detail.piutang_masuk)'),
+            'hibah_obat'            => DB::raw('sum(detail.hibah_obat)'),
+            'retur_pasien'          => DB::raw('sum(detail.retur_pasien)'),
+            'hapus_beriobat'        => DB::raw('sum(detail.hapus_beriobat)'),
+            'pemberian_obat'        => DB::raw('sum(detail.pemberian_obat)'),
+            'penjualan_obat'        => DB::raw('sum(detail.penjualan_obat)'),
+            'piutang_keluar'        => DB::raw('sum(detail.piutang_keluar)'),
+            'tf_keluar'             => DB::raw('sum(detail.tf_keluar)'),
+            'retur_supplier'        => DB::raw('sum(detail.retur_supplier)'),
+        ]);
 
         return $query
             ->fromSub($detail, 'detail')
