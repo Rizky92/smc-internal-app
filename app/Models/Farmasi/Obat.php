@@ -38,6 +38,7 @@ class Obat extends Model
         'IFC' => 'INSTALASI FARMASI CATHLAB',
         'IFO' => 'INSTALASI FARMASI OK',
         'IFI' => 'INSTALASI FARMASI RAWAT INAP',
+        'IFG' => 'INSTALASI FARMASI IGD',
     ];
 
     protected $searchColumns = [
