@@ -315,12 +315,6 @@ class Obat extends Model
 
         $conn = $this->getConnectionName();
 
-        $tfMasuk = DB::connection($conn)->table('mutasibarang')
-            ->select('kode_brng', 'kd_bangsalke', DB::raw('SUM(jml) as total'))
-            ->whereIn('kd_bangsalke', $kodeGudang)
-            ->whereBetween('tanggal', [$tglAwal, $tglAkhir])
-            ->groupBy('kode_brng', 'kd_bangsalke');
-
         $penerimaan = DB::connection($conn)->table('detailpesan')
             ->join('pemesanan', 'detailpesan.no_faktur', '=', 'pemesanan.no_faktur')
             ->select('detailpesan.kode_brng', 'pemesanan.kd_bangsal', DB::raw('SUM(detailpesan.jumlah2) as total'))
@@ -377,12 +371,6 @@ class Obat extends Model
             ->whereBetween('tanggal', [$tglAwal, $tglAkhir])
             ->groupBy('kode_brng', 'kd_bangsal');
 
-        $tfKeluar = DB::connection($conn)->table('mutasibarang')
-            ->select('kode_brng', 'kd_bangsaldari', DB::raw('SUM(jml) as total'))
-            ->whereIn('kd_bangsaldari', $kodeGudang)
-            ->whereBetween('tanggal', [$tglAwal, $tglAkhir])
-            ->groupBy('kode_brng', 'kd_bangsaldari');
-
         $returSupplier = DB::connection($conn)->table('detreturbeli')
             ->join('returbeli', 'detreturbeli.no_retur_beli', '=', 'returbeli.no_retur_beli')
             ->select('detreturbeli.kode_brng', 'returbeli.kd_bangsal', DB::raw('SUM(detreturbeli.jml_retur2) as total'))
@@ -410,7 +398,6 @@ class Obat extends Model
             gudang.nm_bangsal,
             (select r1.stok_awal from riwayat_barang_medis r1 where r1.kode_brng = databarang.kode_brng and r1.kd_bangsal = gudang.kd_bangsal and r1.tanggal between ? and ? order by r1.tanggal asc, r1.jam asc limit 1) stok_awal,
             (select r2.stok_akhir from riwayat_barang_medis r2 where r2.kode_brng = databarang.kode_brng and r2.kd_bangsal = gudang.kd_bangsal and r2.tanggal < ? order by r2.tanggal desc, r2.jam desc limit 1) stok_awal_terakhir,
-            ifnull(tf_masuk.total, 0) tf_masuk,
             ifnull(penerimaan.total, 0) penerimaan_obat,
             ifnull(piutang_masuk.total, 0) piutang_masuk,
             ifnull(hibah.total, 0) hibah_obat,
@@ -419,7 +406,6 @@ class Obat extends Model
             ifnull(pemberian_obat.total, 0) pemberian_obat,
             ifnull(penjualan_obat.total, 0) penjualan_obat,
             ifnull(piutang_keluar.total, 0) piutang_keluar,
-            ifnull(tf_keluar.total, 0) tf_keluar,
             ifnull(retur_supplier.total, 0) retur_supplier
         SQL;
 
@@ -434,7 +420,6 @@ class Obat extends Model
                 $tglAwal,
             ])
             ->joinSub($subBangsal, 'gudang', fn ($join) => $join->whereRaw('1 = 1'))
-            ->leftJoinSub($tfMasuk, 'tf_masuk', fn ($j) => $j->on('databarang.kode_brng', '=', 'tf_masuk.kode_brng')->on('gudang.kd_bangsal', '=', 'tf_masuk.kd_bangsalke'))
             ->leftJoinSub($penerimaan, 'penerimaan', fn ($j) => $j->on('databarang.kode_brng', '=', 'penerimaan.kode_brng')->on('gudang.kd_bangsal', '=', 'penerimaan.kd_bangsal'))
             ->leftJoinSub($piutangMasuk, 'piutang_masuk', fn ($j) => $j->on('databarang.kode_brng', '=', 'piutang_masuk.kode_brng')->on('gudang.kd_bangsal', '=', 'piutang_masuk.kd_bangsal'))
             ->leftJoinSub($hibah, 'hibah', fn ($j) => $j->on('databarang.kode_brng', '=', 'hibah.kode_brng')->on('gudang.kd_bangsal', '=', 'hibah.kd_bangsal'))
@@ -443,7 +428,6 @@ class Obat extends Model
             ->leftJoinSub($pemberianObat, 'pemberian_obat', fn ($j) => $j->on('databarang.kode_brng', '=', 'pemberian_obat.kode_brng')->on('gudang.kd_bangsal', '=', 'pemberian_obat.kd_bangsal'))
             ->leftJoinSub($penjualanObat, 'penjualan_obat', fn ($j) => $j->on('databarang.kode_brng', '=', 'penjualan_obat.kode_brng')->on('gudang.kd_bangsal', '=', 'penjualan_obat.kd_bangsal'))
             ->leftJoinSub($piutangKeluar, 'piutang_keluar', fn ($j) => $j->on('databarang.kode_brng', '=', 'piutang_keluar.kode_brng')->on('gudang.kd_bangsal', '=', 'piutang_keluar.kd_bangsal'))
-            ->leftJoinSub($tfKeluar, 'tf_keluar', fn ($j) => $j->on('databarang.kode_brng', '=', 'tf_keluar.kode_brng')->on('gudang.kd_bangsal', '=', 'tf_keluar.kd_bangsaldari'))
             ->leftJoinSub($returSupplier, 'retur_supplier', fn ($j) => $j->on('databarang.kode_brng', '=', 'retur_supplier.kode_brng')->on('gudang.kd_bangsal', '=', 'retur_supplier.kd_bangsal'))
             ->join('golongan_barang', 'databarang.kode_golongan', '=', 'golongan_barang.kode')
             ->join('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
@@ -455,7 +439,6 @@ class Obat extends Model
             ->withCasts([
                 'stok_awal'             => 'float',
                 'stok_awal_terakhir'    => 'float',
-                'tf_masuk'              => 'float',
                 'penerimaan_obat'       => 'float',
                 'piutang_masuk'         => 'float',
                 'hibah_obat'            => 'float',
@@ -464,7 +447,6 @@ class Obat extends Model
                 'pemberian_obat'        => 'float',
                 'penjualan_obat'        => 'float',
                 'piutang_keluar'        => 'float',
-                'tf_keluar'             => 'float',
                 'retur_supplier'        => 'float',
             ]);
     }
@@ -489,7 +471,6 @@ class Obat extends Model
             detail.nama,
             detail.satuan,            
             sum(detail.stok_awal) stok_awal,
-            sum(detail.tf_masuk) tf_masuk,
             sum(detail.penerimaan_obat) penerimaan_obat,
             sum(detail.piutang_masuk) piutang_masuk,
             sum(detail.hibah_obat) hibah_obat,
@@ -498,13 +479,11 @@ class Obat extends Model
             sum(detail.pemberian_obat) pemberian_obat,
             sum(detail.penjualan_obat) penjualan_obat,
             sum(detail.piutang_keluar) piutang_keluar,
-            sum(detail.tf_keluar) tf_keluar,
             sum(detail.retur_supplier) retur_supplier
         SQL;
 
         $this->addRawColumns([
             'stok_awal'             => DB::raw('sum(detail.stok_awal)'),
-            'tf_masuk'              => DB::raw('sum(detail.tf_masuk)'),
             'penerimaan_obat'       => DB::raw('sum(detail.penerimaan_obat)'),
             'piutang_masuk'         => DB::raw('sum(detail.piutang_masuk)'),
             'hibah_obat'            => DB::raw('sum(detail.hibah_obat)'),
@@ -513,7 +492,6 @@ class Obat extends Model
             'pemberian_obat'        => DB::raw('sum(detail.pemberian_obat)'),
             'penjualan_obat'        => DB::raw('sum(detail.penjualan_obat)'),
             'piutang_keluar'        => DB::raw('sum(detail.piutang_keluar)'),
-            'tf_keluar'             => DB::raw('sum(detail.tf_keluar)'),
             'retur_supplier'        => DB::raw('sum(detail.retur_supplier)'),
         ]);
 
@@ -530,7 +508,6 @@ class Obat extends Model
             ->withCasts([
                 'stok_awal'             => 'float',
                 'stok_awal_terakhir'    => 'float',
-                'tf_masuk'              => 'float',
                 'penerimaan_obat'       => 'float',
                 'piutang_masuk'         => 'float',
                 'hibah_obat'            => 'float',
@@ -539,7 +516,6 @@ class Obat extends Model
                 'pemberian_obat'        => 'float',
                 'penjualan_obat'        => 'float',
                 'piutang_keluar'        => 'float',
-                'tf_keluar'             => 'float',
                 'retur_supplier'        => 'float',
             ]);
     }
