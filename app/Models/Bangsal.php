@@ -10,6 +10,25 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Bangsal extends Model
 {
+    /**
+     * Daftar gudang farmasi yang dimonitor. Tambahkan/kurangi di sini
+     * jika suatu saat cakupan lokasi berubah.
+     */
+    public const GUDANG_FARMASI = [
+        'GF'  => 'GUDANG FARMASI',
+        'IFA' => 'FARMASI A',
+        'AP'  => 'APOTEK/INSTALASI FARMASI',
+        'IFC' => 'INSTALASI FARMASI CATHLAB',
+        'IFO' => 'INSTALASI FARMASI OK',
+        'IFI' => 'INSTALASI FARMASI RAWAT INAP',
+        'IFG' => 'INSTALASI FARMASI IGD',
+    ];
+
+    public static function gudangFarmasiKeys(): array
+    {
+        return array_keys(self::GUDANG_FARMASI);
+    }
+
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = 'kd_bangsal';

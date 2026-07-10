@@ -3,6 +3,7 @@
 namespace App\Models\Farmasi;
 
 use App\Database\Eloquent\Model;
+use App\Models\Bangsal;
 use App\Models\Farmasi\Inventaris\GudangObat;
 use App\Models\Satuan;
 use BadMethodCallException;
@@ -26,20 +27,6 @@ class Obat extends Model
     public $incrementing = false;
 
     public $timestamps = false;
-
-    /**
-     * Daftar gudang farmasi yang dimonitor. Tambahkan/kurangi di sini
-     * jika suatu saat cakupan lokasi berubah.
-     */
-    private const GUDANG_FARMASI = [
-        'GF'  => 'GUDANG FARMASI',
-        'IFA' => 'FARMASI A',
-        'AP'  => 'APOTEK/INSTALASI FARMASI',
-        'IFC' => 'INSTALASI FARMASI CATHLAB',
-        'IFO' => 'INSTALASI FARMASI OK',
-        'IFI' => 'INSTALASI FARMASI RAWAT INAP',
-        'IFG' => 'INSTALASI FARMASI IGD',
-    ];
 
     protected $searchColumns = [
         'kode_brng',
@@ -311,7 +298,7 @@ class Obat extends Model
 
         $tglAwal = carbon($tglAwal)->startOfMonth()->toDateString();
         $tglAkhir = carbon($tglAkhir)->endOfMonth()->toDateString();
-        $kodeGudang = array_keys(self::GUDANG_FARMASI);
+        $kodeGudang = Bangsal::gudangFarmasiKeys();
 
         $conn = $this->getConnectionName();
 
@@ -471,6 +458,7 @@ class Obat extends Model
             detail.nama,
             detail.satuan,            
             sum(detail.stok_awal) stok_awal,
+            sum(detail.stok_awal_terakhir) stok_awal_terakhir,
             sum(detail.penerimaan_obat) penerimaan_obat,
             sum(detail.piutang_masuk) piutang_masuk,
             sum(detail.hibah_obat) hibah_obat,
@@ -484,6 +472,7 @@ class Obat extends Model
 
         $this->addRawColumns([
             'stok_awal'             => DB::raw('sum(detail.stok_awal)'),
+            'stok_awal_terakhir'    => DB::raw('sum(detail.stok_awal_terakhir)'),
             'penerimaan_obat'       => DB::raw('sum(detail.penerimaan_obat)'),
             'piutang_masuk'         => DB::raw('sum(detail.piutang_masuk)'),
             'hibah_obat'            => DB::raw('sum(detail.hibah_obat)'),
