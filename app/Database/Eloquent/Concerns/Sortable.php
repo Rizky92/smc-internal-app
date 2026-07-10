@@ -54,9 +54,9 @@ trait Sortable
     }
 
     /**
-     * @param  array<string, string>  $sortColumns
-     * @param  array<string, Expression<string>|string>  $rawColumns
-     * @param  array<string, Expression<string>|string>  $initialColumnOrders
+     * @param  array<string,string>  $sortColumns
+     * @param  array<string,Expression<string>|string>  $rawColumns
+     * @param  array<string,Expression<string>|string>  $initialColumnOrders
      */
     public function scopeSortWithColumns(Builder $query, array $sortColumns = [], array $rawColumns = [], array $initialColumnOrders = []): Builder
     {
