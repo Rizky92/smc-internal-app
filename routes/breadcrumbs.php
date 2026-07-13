@@ -312,6 +312,11 @@ Breadcrumbs::for('admin.rekam-medis.status-data-pasien', function (Trail $trail)
     $trail->push('Status Data Pasien', route('admin.rekam-medis.status-data-pasien'));
 });
 
+Breadcrumbs::for('admin.rekam-medis.verifikasi-user-epasien', function (Trail $trail): void {
+    $trail->parent('admin.rekam-medis');
+    $trail->push('Verifikasi User E-Pasien', route('admin.rekam-medis.verifikasi-user-epasien'));
+});
+
 Breadcrumbs::for('admin.logistik', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Logistik');

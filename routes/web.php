@@ -342,6 +342,10 @@ Route::prefix('admin')
                 Route::get('status-data-pasien', RekamMedis\StatusDataPasien::class)
                     ->name('status-data-pasien')
                     ->middleware('can:rekam-medis.status-data-pasien.read');
+
+                Route::get('verifikasi-user-epasien', RekamMedis\VerifikasiUserEpasien::class)
+                    ->name('verifikasi-user-epasien')
+                    ->middleware('can:rekam-medis.verifikasi-user-epasien.read');
             });
 
         Route::prefix('antrean')
