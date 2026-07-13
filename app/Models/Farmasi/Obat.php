@@ -457,7 +457,7 @@ class Obat extends Model
             detail.kode_golongan,
             detail.nama,
             detail.satuan,            
-            sum(detail.stok_awal) stok_awal,
+            sum(if(detail.stok_awal > 0, detail.stok_awal, detail.stok_awal_terakhir)) stok_awal,
             sum(detail.stok_awal_terakhir) stok_awal_terakhir,
             sum(detail.penerimaan_obat) penerimaan_obat,
             sum(detail.piutang_masuk) piutang_masuk,
@@ -472,7 +472,7 @@ class Obat extends Model
 
         $this->addRawColumns([
             'stok_awal'             => DB::raw('sum(detail.stok_awal)'),
-            'stok_awal_terakhir'    => DB::raw('sum(detail.stok_awal_terakhir)'),
+            'stok_awal_terakhir'    => DB::raw('sum(if(detail.stok_awal > 0, detail.stok_awal, detail.stok_awal_terakhir))'),
             'penerimaan_obat'       => DB::raw('sum(detail.penerimaan_obat)'),
             'piutang_masuk'         => DB::raw('sum(detail.piutang_masuk)'),
             'hibah_obat'            => DB::raw('sum(detail.hibah_obat)'),

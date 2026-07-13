@@ -81,18 +81,12 @@ class LaporanPemakaianObatNAPZA extends Component
     protected function dataPerSheet(): array
     {
         $map = function (Obat $model): array {
-            $stokAwal = round($model->stok_awal_terakhir, 2);
-
-            if (round($model->stok_awal, 2) > 0) {
-                $stokAwal = round($model->stok_awal, 2);
-            }
-
             return [
                 'kode_brng'       => $model->kode_brng,
                 'nama_brng'       => $model->nama_brng,
                 'golongan'        => $model->nama,
                 'satuan'          => $model->satuan,
-                'stok_awal'       => $stokAwal,
+                'stok_awal'       => round($model->stok_awal, 2),
                 'penerimaan_obat' => round($model->penerimaan_obat, 2),
                 'piutang_masuk'   => round($model->piutang_masuk, 2),
                 'hibah_obat'      => round($model->hibah_obat, 2),
@@ -103,7 +97,7 @@ class LaporanPemakaianObatNAPZA extends Component
                 'piutang_keluar'  => round($model->piutang_keluar, 2),
                 'retur_supplier'  => round($model->retur_supplier, 2),
                 'total_keluar'    => $totalKeluar = round($model->pemberian_obat + $model->hapus_beriobat + $model->penjualan_obat + $model->piutang_keluar + $model->retur_supplier, 2),
-                'stok_akhir'      => round($stokAwal + $totalMasuk - $totalKeluar, 2),
+                'stok_akhir'      => round($model->stok_awal + $totalMasuk - $totalKeluar, 2),
             ];
         };
 
