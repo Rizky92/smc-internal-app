@@ -71,7 +71,7 @@
                                             {{ number_format($item->retur_supplier, 0, ',', '.') }}
                                         </x-table.td>
                                         <x-table.td class="text-right">
-                                            {{ number_format($totalKeluar = $item->pemberian_obat + $item->hapus_beriobat + $item->penjualan_obat + $item->retur_supplier, 0, ',', '.') }}
+                                            {{ number_format($totalKeluar = $item->pemberian_obat + $item->hapus_beriobat + $item->penjualan_obat + $item->piutang_keluar + $item->retur_supplier, 0, ',', '.') }}
                                         </x-table.td>
                                         <x-table.td class="text-right">
                                             {{ number_format($item->stok_awal + $totalMasuk - $totalKeluar, 0, ',', '.') }}
@@ -146,7 +146,7 @@
                                             {{ number_format($item->retur_supplier, 0, ',', '.') }}
                                         </x-table.td>
                                         <x-table.td class="text-right">
-                                            {{ number_format($totalKeluar = $item->pemberian_obat + $item->hapus_beriobat + $item->penjualan_obat + $item->retur_supplier, 0, ',', '.') }}
+                                            {{ number_format($totalKeluar = $item->pemberian_obat + $item->hapus_beriobat + $item->penjualan_obat + $item->piutang_keluar + $item->retur_supplier, 0, ',', '.') }}
                                         </x-table.td>
                                         <x-table.td class="text-right">
                                             {{ number_format($item->stok_awal + $totalMasuk - $totalKeluar, 0, ',', '.') }}

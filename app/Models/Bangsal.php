@@ -22,6 +22,7 @@ class Bangsal extends Model
         'IFO' => 'INSTALASI FARMASI OK',
         'IFI' => 'INSTALASI FARMASI RAWAT INAP',
         'IFG' => 'INSTALASI FARMASI IGD',
+        'AMB' => 'GUDANG AMBULANCE',
     ];
 
     public static function gudangFarmasiKeys(): array
