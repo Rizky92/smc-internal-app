@@ -44,7 +44,8 @@ class PemberianObat extends Model
             detail_pemberian_obat.tgl_perawatan,
             detail_pemberian_obat.jml,
             dokter.nm_dokter,
-            "RS Samarinda Medika Citra" alamat_dokter
+            "RS Samarinda Medika Citra" alamat_dokter,
+            bangsal.nm_bangsal
         SQL;
 
         $this->addSearchConditions([
@@ -63,7 +64,8 @@ class PemberianObat extends Model
             ->leftJoin('reg_periksa', 'detail_pemberian_obat.no_rawat', '=', 'reg_periksa.no_rawat')
             ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->leftJoin('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
-            ->where('kd_bangsal', $bangsal)
+            ->leftJoin('bangsal', 'detail_pemberian_obat.kd_bangsal', '=', 'bangsal.kd_bangsal')
+            ->when($bangsal, fn ($q) => $q->where('detail_pemberian_obat.kd_bangsal', $bangsal))
             ->where('detail_pemberian_obat.kode_brng', $kodeObat)
             ->whereBetween('detail_pemberian_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
             ->union($penjualan);
