@@ -191,8 +191,8 @@
                             <x-table.td>{{ $barang->stokmax }}</x-table.td>
                             <x-table.td>{{ $barang->stok }}</x-table.td>
                             <x-table.td>{{ $barang->saran_order }}</x-table.td>
-                            <x-table.td-money :value="$barang->harga" /">
-                            <x-table.td-money :value="$barang->total_harga" /">
+                            <x-table.td-money :value="$barang->harga" />
+                            <x-table.td-money :value="$barang->total_harga" />
                         </x-table.tr>
                     @empty
                         <x-table.tr-empty colspan="13" padding />
