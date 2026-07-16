@@ -441,6 +441,11 @@ Breadcrumbs::for('admin.casemix.laporan-pasien-cob', function (Trail $trail): vo
     $trail->push('Laporan Pasien COB', route('admin.casemix.laporan-pasien-cob'));
 });
 
+Breadcrumbs::for('admin.casemix.laporan-potensi-prb', function (Trail $trail): void {
+    $trail->parent('admin.casemix');
+    $trail->push('Laporan Potensi PRB', route('admin.casemix.laporan-potensi-prb'));
+});
+
 Breadcrumbs::for('admin.casemix.laporan-triase-igd-zona-hijau', function (Trail $trail): void {
     $trail->parent('admin.casemix');
     $trail->push('Laporan Triase IGD Zona Hijau', route('admin.casemix.laporan-triase-igd-zona-hijau'));
