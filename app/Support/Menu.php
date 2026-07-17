@@ -642,6 +642,7 @@ class Menu
                 'hasAnyPermissions' => $user->canAny([
                     'casemix.laporan-pasien-batal.read',
                     'casemix.laporan-pasien-cob.read',
+                    'casemix.laporan-potensi-prb.read',
                     'casemix.laporan-triase-igd-zona-hijau.read',
                 ]),
                 'items'             => [
@@ -658,6 +659,13 @@ class Menu
                         'icon'              => 'fas fa-file-alt',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('casemix.laporan-pasien-cob.read'),
+                    ],
+                    [
+                        'name'              => 'Potensi PRB',
+                        'url'               => route('admin.casemix.laporan-potensi-prb'),
+                        'icon'              => 'fas fa-file-alt',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('casemix.laporan-potensi-prb.read'),
                     ],
                     [
                         'name'              => 'Triase IGD Zona Hijau',
