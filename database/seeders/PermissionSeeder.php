@@ -125,6 +125,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'casemix.laporan-pasien-cob.read']);
         Permission::create(['name' => 'casemix.laporan-potensi-prb.read']);
         Permission::create(['name' => 'casemix.laporan-triase-igd-zona-hijau.read']);
+        Permission::create(['name' => 'casemix.laporan-pasien-ranap-pulang.read']);
 
         Permission::create(['name' => 'dapur.input-minmax-stok.create']);
         Permission::create(['name' => 'dapur.input-minmax-stok.read']);

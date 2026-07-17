@@ -450,3 +450,8 @@ Breadcrumbs::for('admin.casemix.laporan-triase-igd-zona-hijau', function (Trail 
     $trail->parent('admin.casemix');
     $trail->push('Laporan Triase IGD Zona Hijau', route('admin.casemix.laporan-triase-igd-zona-hijau'));
 });
+
+Breadcrumbs::for('admin.casemix.laporan-pasien-ranap-pulang', function (Trail $trail): void {
+    $trail->parent('admin.casemix');
+    $trail->push('Laporan Pasien Ranap Pulang Bulan Berikutnya', route('admin.casemix.laporan-pasien-ranap-pulang'));
+});
