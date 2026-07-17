@@ -484,6 +484,23 @@ class Menu
                 ],
             ],
             [
+                'name'              => 'Marketing',
+                'icon'              => 'far fa-circle',
+                'type'              => 'dropdown',
+                'hasAnyPermissions' => $user->canAny([
+                    'marketing.summary-billing-mcu.read',
+                    'marketing.penggunaan-alkes.read',
+                ]),
+                'items' => [
+                    [
+                        'name'              => 'Penggunaan Alkes',
+                        'icon'              => 'fas fa-globe-asia',
+                        'url'               => route('admin.marketing.penggunaan-alkes'),
+                        'hasAnyPermissions' => $user->can('marketing.penggunaan-alkes.read'),
+                    ],
+                ],
+            ],
+            [
                 'name'              => 'Logistik',
                 'icon'              => 'far fa-circle',
                 'type'              => 'dropdown',

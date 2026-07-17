@@ -19,6 +19,13 @@ class TindakanRanapPerawat extends Model
 
     public $timestamps = false;
 
+    protected $searchColumns = [
+        'no_rawat',
+        'kd_jenis_prw',
+        'nip',
+        'tgl_perawatan'
+    ];
+
     public function scopeItemFakturPajak(Builder $query): Builder
     {
         $sqlSelect = <<<'SQL'
@@ -45,5 +52,56 @@ class TindakanRanapPerawat extends Model
             ->join('jns_perawatan_inap', 'rawat_inap_pr.kd_jenis_prw', '=', 'jns_perawatan_inap.kd_jenis_prw')
             ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'rawat_inap_pr.no_rawat'))
             ->groupBy(['rawat_inap_pr.no_rawat', 'rawat_inap_pr.kd_jenis_prw', 'jns_perawatan_inap.nm_perawatan', 'rawat_inap_pr.biaya_rawat']);
+    }
+
+    public function scopePenggunaanAlkes(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $nama): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth();
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth();
+        }
+
+        $kamar = KamarInap::query()
+            ->selectRaw("concat(kamar_inap.kd_kamar, ' ', bangsal.nm_bangsal)")
+            ->join('kamar', 'kamar_inap.kd_kamar', 'kamar.kd_kamar')
+            ->join('bangsal', 'kamar.kd_bangsal', 'bangsal.kd_bangsal')
+            ->whereColumn('kamar_inap.no_rawat', 'rawat_inap_pr.no_rawat')
+            ->whereNotIn('kamar_inap.stts_pulang', ['Pindah Kamar'])
+            ->orderByDesc('kamar_inap.tgl_masuk')
+            ->orderByDesc('kamar_inap.jam_masuk')
+            ->limit(1);
+
+        $sql = $kamar->toSql();
+
+        $sqlSelect = <<<SQL
+            rawat_inap_pr.no_rawat,
+            reg_periksa.no_rkm_medis,
+            pasien.nm_pasien,
+            rawat_inap_pr.kd_jenis_prw,
+            jns_perawatan_inap.nm_perawatan,
+            rawat_inap_pr.nip as nakes,
+            petugas.nama as nama_nakes,
+            rawat_inap_pr.tgl_perawatan as tgl_periksa,
+            rawat_inap_pr.jam_rawat as jam,
+            reg_periksa.kd_pj,
+            penjab.png_jawab,
+            ifnull($sql, poliklinik.nm_poli) as kamar,
+            rawat_inap_pr.biaya_rawat as biaya,
+            reg_periksa.status_lanjut as status
+            SQL;
+
+        return $query
+            ->selectRaw($sqlSelect, $kamar->getBindings())
+            ->join('petugas', 'rawat_inap_pr.nip', 'petugas.nip')
+            ->join('jns_perawatan_inap', 'rawat_inap_pr.kd_jenis_prw', 'jns_perawatan_inap.kd_jenis_prw')
+            ->join('reg_periksa', 'rawat_inap_pr.no_rawat', 'reg_periksa.no_rawat')
+            ->join('pasien', 'reg_periksa.no_rkm_medis', 'pasien.no_rkm_medis')
+            ->join('penjab', 'reg_periksa.kd_pj', 'penjab.kd_pj')
+            ->join('poliklinik', 'reg_periksa.kd_poli', 'poliklinik.kd_poli')
+            ->whereBetween('rawat_inap_pr.tgl_perawatan', [$tglAwal, $tglAkhir])
+            ->where('jns_perawatan_inap.nm_perawatan', 'like', '%'.$nama.'%');
     }
 }

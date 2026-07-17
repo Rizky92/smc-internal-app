@@ -312,6 +312,21 @@ Breadcrumbs::for('admin.rekam-medis.status-data-pasien', function (Trail $trail)
     $trail->push('Status Data Pasien', route('admin.rekam-medis.status-data-pasien'));
 });
 
+Breadcrumbs::for('admin.marketing', function (Trail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Marketing');
+});
+
+Breadcrumbs::for('admin.marketing.summary-billing-mcu', function (Trail $trail): void {
+    $trail->parent('admin.marketing');
+    $trail->push('Summary Billing MCU', route('admin.marketing.summary-billing-mcu'));
+});
+
+Breadcrumbs::for('admin.marketing.penggunaan-alkes', function (Trail $trail): void {
+    $trail->parent('admin.marketing');
+    $trail->push('Penggunaan Alkes', route('admin.marketing.penggunaan-alkes'));
+});
+
 Breadcrumbs::for('admin.logistik', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Logistik');

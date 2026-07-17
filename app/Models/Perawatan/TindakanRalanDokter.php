@@ -19,6 +19,13 @@ class TindakanRalanDokter extends Model
 
     public $timestamps = false;
 
+    protected $searchColumns = [
+        'no_rawat',
+        'kd_jenis_prw',
+        'kd_dokter',
+        'tgl_perawatan'
+    ];
+
     public function scopeItemFakturPajak(Builder $query): Builder
     {
         $sqlSelect = <<<'SQL'
@@ -45,5 +52,53 @@ class TindakanRalanDokter extends Model
             ->join('jns_perawatan', 'rawat_jl_dr.kd_jenis_prw', '=', 'jns_perawatan.kd_jenis_prw')
             ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'rawat_jl_dr.no_rawat'))
             ->groupBy(['rawat_jl_dr.no_rawat', 'rawat_jl_dr.kd_jenis_prw', 'jns_perawatan.nm_perawatan', 'rawat_jl_dr.biaya_rawat']);
+    }
+
+    public function scopePenggunaanAlkes(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $nama): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth();
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth();
+        }
+
+        $sqlSelect = <<<'SQL'
+            rawat_jl_dr.no_rawat,
+            reg_periksa.no_rkm_medis,
+            pasien.nm_pasien,
+            rawat_jl_dr.kd_jenis_prw,
+            jns_perawatan.nm_perawatan,
+            rawat_jl_dr.kd_dokter as nakes,
+            dokter.nm_dokter as nama_nakes,
+            rawat_jl_dr.tgl_perawatan as tgl_periksa,
+            rawat_jl_dr.jam_rawat as jam,
+            reg_periksa.kd_pj,
+            penjab.png_jawab,
+            poliklinik.nm_poli as unit,
+            rawat_jl_dr.biaya_rawat as biaya,
+            'Ralan' as status
+            SQL;
+
+        $this->addSearchConditions([
+            'reg_periksa.no_rkm_medis',
+            'pasien.nm_pasien',
+            'jns_perawatan.nm_perawatan',
+            'dokter.nm_dokter',
+            'reg_periksa.kd_pj',
+            'poliklinik.nm_poli',
+        ]);
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join('dokter', 'rawat_jl_dr.kd_dokter', 'dokter.kd_dokter')
+            ->join('jns_perawatan', 'rawat_jl_dr.kd_jenis_prw', 'jns_perawatan.kd_jenis_prw')
+            ->join('reg_periksa', 'rawat_jl_dr.no_rawat', 'reg_periksa.no_rawat')
+            ->join('pasien', 'reg_periksa.no_rkm_medis', 'pasien.no_rkm_medis')
+            ->join('penjab', 'reg_periksa.kd_pj', 'penjab.kd_pj')
+            ->join('poliklinik', 'reg_periksa.kd_poli', 'poliklinik.kd_poli')
+            ->whereBetween('rawat_jl_dr.tgl_perawatan', [$tglAwal, $tglAkhir])
+            ->where('jns_perawatann.nm_perawatan', 'like', '%'.$nama.'%');
     }
 }

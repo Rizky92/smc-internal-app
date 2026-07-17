@@ -3,6 +3,7 @@
 namespace App\Models\Laboratorium;
 
 use App\Database\Eloquent\Model;
+use App\Models\Perawatan\KamarInap;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
@@ -178,7 +179,7 @@ class PeriksaLab extends Model
             template_laboratorium.nilai_rujukan_pd,
             template_laboratorium.nilai_rujukan_pa,
             detail_periksa_lab.keterangan,
-            template_laboratorium.urut          
+            template_laboratorium.urut
             SQL;
 
         return $query
@@ -218,5 +219,56 @@ class PeriksaLab extends Model
             ->join('jns_perawatan_lab', 'periksa_lab.kd_jenis_prw', '=', 'jns_perawatan_lab.kd_jenis_prw')
             ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'periksa_lab.no_rawat'))
             ->groupBy(['periksa_lab.no_rawat', 'periksa_lab.kd_jenis_prw', 'jns_perawatan_lab.nm_perawatan', 'periksa_lab.biaya']);
+    }
+
+    public function scopePenggunaanAlkes(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $nama): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth();
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth();
+        }
+
+        $kamar = KamarInap::query()
+            ->selectRaw("concat(kamar_inap.kd_kamar, ' ', bangsal.nm_bangsal)")
+            ->join('kamar', 'kamar_inap.kd_kamar', 'kamar.kd_kamar')
+            ->join('bangsal', 'kamar.kd_bangsal', 'bangsal.kd_bangsal')
+            ->whereColumn('kamar_inap.no_rawat', 'periksa_lab.no_rawat')
+            ->whereNotIn('kamar_inap.stts_pulang', ['Pindah Kamar'])
+            ->orderByDesc('kamar_inap.tgl_masuk')
+            ->orderByDesc('kamar_inap.jam_masuk')
+            ->limit(1);
+
+        $sql = $kamar->toSql();
+
+        $sqlSelect = <<<SQL
+            periksa_lab.no_rawat,
+            reg_periksa.no_rkm_medis,
+            pasien.nm_pasien,
+            periksa_lab.kd_jenis_prw,
+            jns_perawatan_lab.nm_perawatan,
+            periksa_lab.kd_dokter as nakes,
+            dokter.nm_dokter as nama_nakes,
+            periksa_lab.tgl_periksa,
+            periksa_lab.jam,
+            reg_periksa.kd_pj,
+            penjab.png_jawab,
+            if(periksa_lab.status = 'Ranap', ifnull(($sql), poliklinik.nm_poli), poliklinik.nm_poli) as unit,
+            periksa_lab.biaya,
+            periksa_lab.status = 'Ranap'
+            SQL;
+
+        return $query
+            ->selectRaw($sqlSelect, $kamar->getBindings())
+            ->join('dokter', 'periksa_lab.kd_dokter', 'dokter.kd_dokter')
+            ->join('jns_perawatan_lab', 'periksa_lab.kd_jenis_prw', 'jns_perawatan_lab.kd_jenis_prw')
+            ->join('reg_periksa', 'periksa_lab.no_rawat', 'reg_periksa.no_rawat')
+            ->join('pasien', 'reg_periksa.no_rkm_medis', 'pasien.no_rkm_medis')
+            ->join('penjab', 'reg_periksa.kd_pj', 'penjab.kd_pj')
+            ->join('poliklinik', 'reg_periksa.kd_poli', 'poliklinik.kd_poli')
+            ->whereBetween('periksa_lab.tgl_periksa', [$tglAwal, $tglAkhir])
+            ->where('jns_perawatan_lab.nm_perawatan', 'like', '%'.$nama.'%');
     }
 }
