@@ -326,6 +326,10 @@ Route::prefix('admin')
                 Route::get('hpp-pembelian-terakhir', Farmasi\HppPembelianTerakhir::class)
                     ->name('hpp-pembelian-terakhir')
                     ->middleware('can:farmasi.hpp-pembelian-terakhir.read');
+
+                Route::get('laporan-potensi-prb', Farmasi\LaporanPotensiPrb::class)
+                    ->name('laporan-potensi-prb')
+                    ->middleware('can:farmasi.laporan-potensi-prb.read');
             });
 
         Route::prefix('rekam-medis')
@@ -400,9 +404,6 @@ Route::prefix('admin')
                 Route::get('laporan-pasien-cob', Casemix\LaporanPasienCob::class)
                     ->name('laporan-pasien-cob')
                     ->middleware('can:casemix.laporan-pasien-cob.read');
-                Route::get('laporan-potensi-prb', Casemix\LaporanPotensiPrb::class)
-                    ->name('laporan-potensi-prb')
-                    ->middleware('can:casemix.laporan-potensi-prb.read');
                 Route::get('laporan-triase-igd-zona-hijau', Casemix\LaporanTriaseIgdZonaHijau::class)
                     ->name('laporan-triase-igd-zona-hijau')
                     ->middleware('can:casemix.laporan-triase-igd-zona-hijau.read');
