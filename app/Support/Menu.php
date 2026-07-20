@@ -347,6 +347,7 @@ class Menu
                     'farmasi.farmasi.rincian-perbandingan-po.read',
                     'farmasi.kunjungan-walk-in.read',
                     'farmasi.hpp-pembelian-terakhir.read',
+                    'farmasi.laporan-potensi-prb.read',
                 ]),
                 'items' => [
                     [
@@ -450,6 +451,12 @@ class Menu
                         'icon'              => 'fas fa-money-bill',
                         'url'               => route('admin.farmasi.hpp-pembelian-terakhir'),
                         'hasAnyPermissions' => $user->can('farmasi.hpp-pembelian-terakhir.read'),
+                    ],
+                    [
+                        'name'              => 'Potensi PRB',
+                        'icon'              => 'fas fa-file-alt',
+                        'url'               => route('admin.farmasi.laporan-potensi-prb'),
+                        'hasAnyPermissions' => $user->can('farmasi.laporan-potensi-prb.read'),
                     ],
                 ],
             ],
@@ -642,7 +649,6 @@ class Menu
                 'hasAnyPermissions' => $user->canAny([
                     'casemix.laporan-pasien-batal.read',
                     'casemix.laporan-pasien-cob.read',
-                    'casemix.laporan-potensi-prb.read',
                     'casemix.laporan-triase-igd-zona-hijau.read',
                 ]),
                 'items'             => [
@@ -659,13 +665,6 @@ class Menu
                         'icon'              => 'fas fa-file-alt',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('casemix.laporan-pasien-cob.read'),
-                    ],
-                    [
-                        'name'              => 'Potensi PRB',
-                        'url'               => route('admin.casemix.laporan-potensi-prb'),
-                        'icon'              => 'fas fa-file-alt',
-                        'type'              => 'link',
-                        'hasAnyPermissions' => $user->can('casemix.laporan-potensi-prb.read'),
                     ],
                     [
                         'name'              => 'Triase IGD Zona Hijau',

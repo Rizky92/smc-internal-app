@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Pages\Casemix;
+namespace App\Livewire\Pages\Farmasi;
 
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
@@ -52,7 +52,7 @@ class LaporanPotensiPrb extends Component
 
     public function render(): View
     {
-        return view('livewire.pages.casemix.laporan-potensi-prb')
+        return view('livewire.pages.farmasi.laporan-potensi-prb')
             ->layout(BaseLayout::class, ['title' => 'Laporan Potensi PRB BPJS']);
     }
 
