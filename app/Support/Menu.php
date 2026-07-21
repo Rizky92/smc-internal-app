@@ -491,6 +491,22 @@ class Menu
                 ],
             ],
             [
+                'name'              => 'Marketing',
+                'icon'              => 'far fa-circle',
+                'type'              => 'dropdown',
+                'hasAnyPermissions' => $user->canAny([
+                    'marketing.summary-billing-mcu.read',
+                ]),
+                'items' => [
+                    [
+                        'name'              => 'Summary Billing MCU',
+                        'icon'              => 'fas fa-file-alt',
+                        'url'               => route('admin.marketing.summary-billing-mcu'),
+                        'hasAnyPermissions' => $user->can('marketing.summary-billing-mcu.read'),
+                    ],
+                ],
+            ],
+            [
                 'name'              => 'Logistik',
                 'icon'              => 'far fa-circle',
                 'type'              => 'dropdown',

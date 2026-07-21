@@ -1340,4 +1340,45 @@ class RegistrasiPasien extends Model
             ->when(! empty($kodePoliklinik), fn (Builder $q) => $q->where('reg_periksa.kd_poli', $kodePoliklinik))
             ->whereBetween('tgl_registrasi', [$tglAwal, $tglAkhir]);
     }
+
+    /**
+     * @param  string|\Carbon\Carbon|null  $tglAwal
+     * @param  string|\Carbon\Carbon|null  $tglAkhir
+     */
+    public function scopeSummaryBillingMCU(Builder $query, $tglAwal = null, $tglAkhir = null, string $kodePoli = 'U0036'): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth();
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth();
+        }
+
+        $sqlSelect = <<<'SQL'
+            reg_periksa.no_rawat,
+            reg_periksa.no_rkm_medis,
+            pasien.nm_pasien,
+            reg_periksa.tgl_registrasi,
+            penjab.png_jawab,
+            reg_periksa.p_jawab,
+            dokter.nm_dokter,
+            ifnull((select sum(billing.totalbiaya) from billing where billing.no_rawat = reg_periksa.no_rawat), 0) as total_billing
+            SQL;
+
+        $this->addSearchConditions([
+            'pasien.nm_pasien',
+            'penjab.png_jawab',
+            'dokter.nm_dokter'
+        ]);
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join('pasien', 'reg_periksa.no_rkm_medis', 'pasien.no_rkm_medis')
+            ->join('penjab', 'reg_periksa.kd_pj', 'penjab.kd_pj')
+            ->join('dokter', 'reg_periksa.kd_dokter', 'dokter.kd_dokter')
+            ->where('reg_periksa.kd_poli', $kodePoli)
+            ->where('reg_periksa.status_bayar', 'Sudah Bayar')
+            ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir]);
+    }
 }
