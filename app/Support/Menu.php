@@ -666,6 +666,7 @@ class Menu
                     'casemix.laporan-pasien-batal.read',
                     'casemix.laporan-pasien-cob.read',
                     'casemix.laporan-triase-igd-zona-hijau.read',
+                    'casemix.laporan-pasien-ranap-pulang.read',
                 ]),
                 'items'             => [
                     [
@@ -688,6 +689,13 @@ class Menu
                         'icon'              => 'fas fa-file-alt',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('casemix.laporan-triase-igd-zona-hijau.read'),
+                    ],
+                    [
+                        'name'              => 'Pasien Ranap Pulang',
+                        'url'               => route('admin.casemix.laporan-pasien-ranap-pulang'),
+                        'icon'              => 'fas fa-file-alt',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('casemix.laporan-pasien-ranap-pulang.read'),
                     ],
                 ],
             ],

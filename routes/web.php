@@ -416,6 +416,9 @@ Route::prefix('admin')
                 Route::get('laporan-triase-igd-zona-hijau', Casemix\LaporanTriaseIgdZonaHijau::class)
                     ->name('laporan-triase-igd-zona-hijau')
                     ->middleware('can:casemix.laporan-triase-igd-zona-hijau.read');
+                Route::get('laporan-pasien-ranap-pulang', Casemix\LaporanPasienRanapPulang::class)
+                    ->name('laporan-pasien-ranap-pulang')
+                    ->middleware('can:casemix.laporan-pasien-ranap-pulang.read');
             });
 
         Route::middleware('role:'.config('permission.superadmin_name'))
