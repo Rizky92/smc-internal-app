@@ -99,6 +99,6 @@ class TindakanRalanPerawat extends Model
             ->join('penjab', 'reg_periksa.kd_pj', 'penjab.kd_pj')
             ->join('poliklinik', 'reg_periksa.kd_poli', 'poliklinik.kd_poli')
             ->whereBetween('rawat_jl_pr.tgl_perawatan', [$tglAwal, $tglAkhir])
-            ->where('jns_perawatann.nm_perawatan', 'like', '%'.$nama.'%');
+            ->where('jns_perawatan.nm_perawatan', 'like', '%'.$nama.'%');
     }
 }

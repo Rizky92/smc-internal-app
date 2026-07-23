@@ -257,7 +257,7 @@ class PeriksaLab extends Model
             penjab.png_jawab,
             if(periksa_lab.status = 'Ranap', ifnull(($sql), poliklinik.nm_poli), poliklinik.nm_poli) as unit,
             periksa_lab.biaya,
-            periksa_lab.status = 'Ranap'
+            if(periksa_lab.status = 'Ranap', 'Ranap', 'Ralan') as status
             SQL;
 
         return $query

@@ -22,6 +22,7 @@ use App\Livewire\Pages\Informasi;
 use App\Livewire\Pages\Keuangan;
 use App\Livewire\Pages\Laboratorium;
 use App\Livewire\Pages\Logistik;
+use App\Livewire\Pages\Marketing;
 use App\Livewire\Pages\Perawatan;
 use App\Livewire\Pages\RekamMedis;
 use App\Livewire\Pages\User;
@@ -347,9 +348,9 @@ Route::prefix('admin')
         Route::prefix('marketing')
             ->as('marketing.')
             ->group(function () {
-                Route::get('summary-billing-mcu', Marketing\SummaryBillingMCU::class)
-                    ->name('summary-billing-mcu')
-                    ->middleware('can:marketing.summary-billing-mcu.read');
+                // Route::get('summary-billing-mcu', Marketing\SummaryBillingMCU::class)
+                //     ->name('summary-billing-mcu')
+                //     ->middleware('can:marketing.summary-billing-mcu.read');
                 Route::get('penggunaan-alkes', Marketing\LaporanPenggunaanAlkes::class)
                     ->name('penggunaan-alkes')
                     ->middleware('can:marketing.penggunaan-alkes.read');

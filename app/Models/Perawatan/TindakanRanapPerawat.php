@@ -54,7 +54,7 @@ class TindakanRanapPerawat extends Model
             ->groupBy(['rawat_inap_pr.no_rawat', 'rawat_inap_pr.kd_jenis_prw', 'jns_perawatan_inap.nm_perawatan', 'rawat_inap_pr.biaya_rawat']);
     }
 
-    public function scopePenggunaanAlkes(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $nama): Builder
+    public function scopePenggunaanAlkes(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $nama, string $cari = ''): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth();
@@ -64,15 +64,19 @@ class TindakanRanapPerawat extends Model
             $tglAkhir = now()->endOfMonth();
         }
 
-        $kamar = KamarInap::query()
-            ->selectRaw("concat(kamar_inap.kd_kamar, ' ', bangsal.nm_bangsal)")
+        $base = KamarInap::query()
             ->join('kamar', 'kamar_inap.kd_kamar', 'kamar.kd_kamar')
             ->join('bangsal', 'kamar.kd_bangsal', 'bangsal.kd_bangsal')
             ->whereColumn('kamar_inap.no_rawat', 'rawat_inap_pr.no_rawat')
-            ->whereNotIn('kamar_inap.stts_pulang', ['Pindah Kamar'])
+            ->whereNotIn('kamar_inap.stts_pulang', ['Pindah Kamar']);
+
+        $kamar = (clone $base)
+            ->selectRaw("concat(kamar_inap.kd_kamar, ' ', bangsal.nm_bangsal)")
             ->orderByDesc('kamar_inap.tgl_masuk')
             ->orderByDesc('kamar_inap.jam_masuk')
             ->limit(1);
+
+        $searchKamar = $base->search($cari, ['kamar.kd_bangsal', 'bangsal.nm_bangsal']);
 
         $sql = $kamar->toSql();
 
@@ -88,10 +92,23 @@ class TindakanRanapPerawat extends Model
             rawat_inap_pr.jam_rawat as jam,
             reg_periksa.kd_pj,
             penjab.png_jawab,
-            ifnull($sql, poliklinik.nm_poli) as kamar,
+            ifnull(($sql), poliklinik.nm_poli) as unit,
             rawat_inap_pr.biaya_rawat as biaya,
             reg_periksa.status_lanjut as status
             SQL;
+
+        $this->addSearchConditions([
+            'reg_periksa.no_rkm_medis',
+            'pasien.nm_pasien',
+            'jns_perawatan_inap.nm_perawatan',
+            'dokter.nm_dokter',
+            'reg_periksa.kd_pj',
+            'poliklinik.nm_poli',
+            [
+                'query'    => $searchKamar->toSql(),
+                'bindings' => $searchKamar->getBindings(),
+            ],
+        ]);
 
         return $query
             ->selectRaw($sqlSelect, $kamar->getBindings())

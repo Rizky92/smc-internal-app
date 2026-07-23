@@ -8,14 +8,17 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
-use App\Models\Perawatan\RegistrasiPasien;
 use App\Models\Perawatan\TindakanRalanDokter;
 use App\Models\Perawatan\TindakanRalanDokterPerawat;
 use App\Models\Perawatan\TindakanRalanPerawat;
 use App\Models\Perawatan\TindakanRanapDokter;
 use App\Models\Perawatan\TindakanRanapDokterPerawat;
 use App\Models\Perawatan\TindakanRanapPerawat;
+use App\Models\Radiologi\PeriksaRadiologi;
 use App\View\Components\BaseLayout;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\LazyCollection;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -217,38 +220,50 @@ class LaporanPenggunaanAlkes extends Component
 
     public function getDataPenggunaanAlkesUSGProperty()
     {
-        return $this->isDeferred ? [] : RegistrasiPasien::query();
+        return $this->isDeferred ? [] : PeriksaRadiologi::query()
+            ->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'usg')
+            ->paginate($this->perpage);
     }
 
     public function getDataPenggunaanAlkesThoraxProperty()
     {
-        return $this->isDeferred ? [] : RegistrasiPasien::query();
+        return $this->isDeferred ? [] : PeriksaRadiologi::query()
+            ->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'thorax')
+            ->paginate($this->perpage);
     }
 
     public function getDataPenggunaanAlkesCTScanProperty()
     {
-        return $this->isDeferred ? [] : RegistrasiPasien::query();
+        return $this->isDeferred ? [] : PeriksaRadiologi::query()
+            ->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'ct-scan')
+            ->paginate($this->perpage);
     }
 
     public function getDataPenggunaanAlkesLumbalProperty()
     {
-        return $this->isDeferred ? [] : RegistrasiPasien::query();
+        return $this->isDeferred ? [] : PeriksaRadiologi::query()
+            ->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'lumbal')
+            ->paginate($this->perpage);
     }
 
     public function getDataPenggunaanAlkesPanoramikProperty()
     {
-        return $this->isDeferred ? [] : RegistrasiPasien::query();
+        return $this->isDeferred ? [] : PeriksaRadiologi::query()
+            ->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'panoramik')
+            ->paginate($this->perpage);
     }
 
     public function getDataPenggunaanAlkesMRIProperty()
     {
-        return $this->isDeferred ? [] : RegistrasiPasien::query();
+        return $this->isDeferred ? [] : PeriksaRadiologi::query()
+            ->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'mri')
+            ->paginate($this->perpage);
     }
 
     public function render(): View
     {
         return view('livewire.pages.marketing.laporan-penggunaan-alkes')
-            ->layout(BaseLayout::class, ['title' => 'LaporanPenggunaanAlkes']);
+            ->layout(BaseLayout::class, ['title' => 'Laporan Penggunaan Alkes']);
     }
 
     protected function defaultValues(): void
@@ -257,24 +272,74 @@ class LaporanPenggunaanAlkes extends Component
         $this->tglAkhir = now()->endOfMonth()->format('Y-m-d');
     }
 
+    private function buildRalanRanapQuery(string $nama): Builder
+    {
+        return TindakanRalanDokter::query()
+            ->penggunaanAlkes($this->tglAwal, $this->tglAkhir, $nama)
+            ->unionAll(TindakanRalanDokterPerawat::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, $nama))
+            ->unionAll(TindakanRalanPerawat::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, $nama))
+            ->unionAll(TindakanRanapDokter::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, $nama))
+            ->unionAll(TindakanRanapDokterPerawat::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, $nama))
+            ->unionAll(TindakanRanapPerawat::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, $nama));
+    }
+
+    private function mapAlkesItem(object $item): array
+    {
+        return [
+            $item->no_rawat,
+            $item->no_rkm_medis,
+            $item->nm_pasien,
+            $item->nm_perawatan,
+            $item->nama_nakes,
+            $item->tgl_periksa.' '.$item->jam,
+            $item->unit,
+            $item->biaya,
+            $item->status,
+        ];
+    }
+
     protected function dataPerSheet(): array
     {
         return [
-            //
+            'Audiometri' => fn () => (new LazyCollection($this->buildRalanRanapQuery('audiometri')->cursor()))->map(fn ($item) => $this->mapAlkesItem($item)),
+            'Spirometri' => fn () => (new LazyCollection($this->buildRalanRanapQuery('spirometri')->cursor()))->map(fn ($item) => $this->mapAlkesItem($item)),
+            'Treadmill'  => fn () => (new LazyCollection($this->buildRalanRanapQuery('treadmill')->cursor()))->map(fn ($item) => $this->mapAlkesItem($item)),
+            'EKG'        => fn () => (new LazyCollection($this->buildRalanRanapQuery('ekg')->cursor()))->map(fn ($item) => $this->mapAlkesItem($item)),
+            'EEG'        => fn () => (new LazyCollection($this->buildRalanRanapQuery('eeg')->cursor()))->map(fn ($item) => $this->mapAlkesItem($item)),
+            'Echo'       => fn () => (new LazyCollection($this->buildRalanRanapQuery('echo')->cursor()))->map(fn ($item) => $this->mapAlkesItem($item)),
+            'USG'        => fn () => (new LazyCollection(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'usg')->cursor()))->map(fn ($item) => $this->mapAlkesItem($item)),
+            'Thorax'     => fn () => (new LazyCollection(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'thorax')->cursor()))->map(fn ($item) => $this->mapAlkesItem($item)),
+            'CT Scan'    => fn () => (new LazyCollection(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'ct-scan')->cursor()))->map(fn ($item) => $this->mapAlkesItem($item)),
+            'Lumbal'     => fn () => (new LazyCollection(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'lumbal')->cursor()))->map(fn ($item) => $this->mapAlkesItem($item)),
+            'Panoramik'  => fn () => (new LazyCollection(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'panoramik')->cursor()))->map(fn ($item) => $this->mapAlkesItem($item)),
+            'MRI'        => fn () => (new LazyCollection(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'mri')->cursor()))->map(fn ($item) => $this->mapAlkesItem($item)),
         ];
     }
 
     protected function columnHeaders(): array
     {
         return [
-            //
+            'No. Rawat',
+            'No. RM',
+            'Pasien',
+            'Tindakan',
+            'Nakes',
+            'Tgl Periksa',
+            'Unit / Kamar',
+            'Biaya',
+            'Status',
         ];
     }
 
     protected function pageHeaders(): array
     {
+        $periode = 'Periode: '.$this->tglAwal.' s/d '.$this->tglAkhir;
+
         return [
-            //
+            'RS Samarinda Medika Citra',
+            'Laporan Penggunaan Alkes',
+            now()->translatedFormat('d F Y'),
+            $periode,
         ];
     }
 }

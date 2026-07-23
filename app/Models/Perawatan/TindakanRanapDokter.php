@@ -92,7 +92,7 @@ class TindakanRanapDokter extends Model
             rawat_inap_dr.jam_rawat as jam,
             reg_periksa.kd_pj,
             penjab.png_jawab,
-            ifnull($sql, poliklinik.nm_poli) as unit,
+            ifnull(($sql), poliklinik.nm_poli) as unit,
             rawat_inap_dr.biaya_rawat as biaya,
             reg_periksa.status_lanjut as status
             SQL;
