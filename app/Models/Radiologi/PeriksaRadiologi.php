@@ -156,7 +156,7 @@ class PeriksaRadiologi extends Model
             ->groupBy(['periksa_radiologi.no_rawat', 'periksa_radiologi.kd_jenis_prw', 'jns_perawatan_radiologi.nm_perawatan', 'periksa_radiologi.biaya']);
     }
 
-    public function scopePenggunaanAlkes(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $nama, string $cari = ''): Builder
+    public function scopePenggunaanAlkes(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $nama, array $exclude = [], string $cari = ''): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth();
@@ -196,7 +196,7 @@ class PeriksaRadiologi extends Model
             penjab.png_jawab,
             if(periksa_radiologi.status = 'Ranap', ifnull(($sql), poliklinik.nm_poli), poliklinik.nm_poli) as unit,
             periksa_radiologi.biaya,
-            if(periksa_radiologi.status = 'Ranap', 'Ranap', 'Ralan') as status
+            periksa_radiologi.status as status
             SQL;
 
         $this->addSearchConditions([
@@ -212,6 +212,10 @@ class PeriksaRadiologi extends Model
             ],
         ]);
 
+        foreach ($exclude as $exc) {
+            $query->where('jns_perawatan_radiologi.nm_perawatan', 'not like', '%'.$exc.'%');
+        }
+
         return $query
             ->selectRaw($sqlSelect, $kamar->getBindings())
             ->join('dokter', 'periksa_radiologi.kd_dokter', 'dokter.kd_dokter')
@@ -221,6 +225,12 @@ class PeriksaRadiologi extends Model
             ->join('penjab', 'reg_periksa.kd_pj', 'penjab.kd_pj')
             ->join('poliklinik', 'reg_periksa.kd_poli', 'poliklinik.kd_poli')
             ->whereBetween('periksa_radiologi.tgl_periksa', [$tglAwal, $tglAkhir])
-            ->where('jns_perawatan_radiologi.nm_perawatan', 'like', '%'.$nama.'%');
+            ->where(function (Builder $q) use ($nama) {
+                $method = 'where';
+                foreach ((array) $nama as $n) {
+                    $q->{$method}('jns_perawatan_radiologi.nm_perawatan', 'like', '%'.$n.'%');
+                    $method = 'orWhere';
+                }
+            });
     }
 }

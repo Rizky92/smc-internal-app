@@ -221,7 +221,7 @@ class PeriksaLab extends Model
             ->groupBy(['periksa_lab.no_rawat', 'periksa_lab.kd_jenis_prw', 'jns_perawatan_lab.nm_perawatan', 'periksa_lab.biaya']);
     }
 
-    public function scopePenggunaanAlkes(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $nama): Builder
+    public function scopePenggunaanAlkes(Builder $query, string $tglAwal, string $tglAkhir, string $nama, array $exclude = []): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth();
@@ -259,6 +259,10 @@ class PeriksaLab extends Model
             periksa_lab.biaya,
             if(periksa_lab.status = 'Ranap', 'Ranap', 'Ralan') as status
             SQL;
+
+        foreach ($exclude as $exc) {
+            $query->where('jns_perawatan_lab.nm_perawatan', 'not like', '%'.$exc.'%');
+        }
 
         return $query
             ->selectRaw($sqlSelect, $kamar->getBindings())
