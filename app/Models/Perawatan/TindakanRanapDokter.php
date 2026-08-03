@@ -3,6 +3,7 @@
 namespace App\Models\Perawatan;
 
 use App\Database\Eloquent\Model;
+use App\Support\AlkesProcedures;
 use Illuminate\Database\Eloquent\Builder;
 
 class TindakanRanapDokter extends Model
@@ -23,7 +24,7 @@ class TindakanRanapDokter extends Model
         'no_rawat',
         'kd_jenis_prw',
         'kd_dokter',
-        'tgl_perawatan'
+        'tgl_perawatan',
     ];
 
     public function scopeItemFakturPajak(Builder $query): Builder
@@ -54,7 +55,7 @@ class TindakanRanapDokter extends Model
             ->groupBy(['rawat_inap_dr.no_rawat', 'rawat_inap_dr.kd_jenis_prw', 'jns_perawatan_inap.nm_perawatan', 'rawat_inap_dr.biaya_rawat']);
     }
 
-    public function scopePenggunaanAlkes(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $nama, string $cari = ''): Builder
+    public function scopePenggunaanAlkes(Builder $query, string $tglAwal, string $tglAkhir, string $nama, string $cari = ''): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth();
@@ -105,7 +106,7 @@ class TindakanRanapDokter extends Model
             'reg_periksa.kd_pj',
             'poliklinik.nm_poli',
             [
-                'query' => $searchKamar->toSql(),
+                'query'    => $searchKamar->toSql(),
                 'bindings' => $searchKamar->getBindings(),
             ],
         ]);
@@ -119,6 +120,6 @@ class TindakanRanapDokter extends Model
             ->join('penjab', 'reg_periksa.kd_pj', 'penjab.kd_pj')
             ->join('poliklinik', 'reg_periksa.kd_poli', 'poliklinik.kd_poli')
             ->whereBetween('rawat_inap_dr.tgl_perawatan', [$tglAwal, $tglAkhir])
-            ->where('jns_perawatan_inap.nm_perawatan', 'like', '%'.$nama.'%');
+            ->whereIn('rawat_inap_dr.kd_jenis_prw', AlkesProcedures::ids($this->getConnectionName(), 'jns_perawatan_inap', $nama));
     }
 }

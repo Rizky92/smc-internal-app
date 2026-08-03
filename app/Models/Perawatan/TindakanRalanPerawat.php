@@ -3,6 +3,7 @@
 namespace App\Models\Perawatan;
 
 use App\Database\Eloquent\Model;
+use App\Support\AlkesProcedures;
 use Illuminate\Database\Eloquent\Builder;
 
 class TindakanRalanPerawat extends Model
@@ -23,7 +24,7 @@ class TindakanRalanPerawat extends Model
         'no_rawat',
         'kd_jenis_prw',
         'nip',
-        'tgl_perawatan'
+        'tgl_perawatan',
     ];
 
     public function scopeItemFakturPajak(Builder $query): Builder
@@ -54,7 +55,7 @@ class TindakanRalanPerawat extends Model
             ->groupBy(['rawat_jl_pr.no_rawat', 'rawat_jl_pr.kd_jenis_prw', 'jns_perawatan.nm_perawatan', 'rawat_jl_pr.biaya_rawat']);
     }
 
-    public function scopePenggunaanAlkes(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $nama): Builder
+    public function scopePenggunaanAlkes(Builder $query, string $tglAwal, string $tglAkhir, string $nama): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth();
@@ -99,6 +100,6 @@ class TindakanRalanPerawat extends Model
             ->join('penjab', 'reg_periksa.kd_pj', 'penjab.kd_pj')
             ->join('poliklinik', 'reg_periksa.kd_poli', 'poliklinik.kd_poli')
             ->whereBetween('rawat_jl_pr.tgl_perawatan', [$tglAwal, $tglAkhir])
-            ->where('jns_perawatan.nm_perawatan', 'like', '%'.$nama.'%');
+            ->whereIn('rawat_jl_pr.kd_jenis_prw', AlkesProcedures::ids($this->getConnectionName(), 'jns_perawatan', $nama));
     }
 }

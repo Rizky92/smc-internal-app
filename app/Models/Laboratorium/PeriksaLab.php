@@ -4,6 +4,7 @@ namespace App\Models\Laboratorium;
 
 use App\Database\Eloquent\Model;
 use App\Models\Perawatan\KamarInap;
+use App\Support\AlkesProcedures;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
@@ -260,10 +261,6 @@ class PeriksaLab extends Model
             if(periksa_lab.status = 'Ranap', 'Ranap', 'Ralan') as status
             SQL;
 
-        foreach ($exclude as $exc) {
-            $query->where('jns_perawatan_lab.nm_perawatan', 'not like', '%'.$exc.'%');
-        }
-
         return $query
             ->selectRaw($sqlSelect, $kamar->getBindings())
             ->join('dokter', 'periksa_lab.kd_dokter', 'dokter.kd_dokter')
@@ -273,6 +270,6 @@ class PeriksaLab extends Model
             ->join('penjab', 'reg_periksa.kd_pj', 'penjab.kd_pj')
             ->join('poliklinik', 'reg_periksa.kd_poli', 'poliklinik.kd_poli')
             ->whereBetween('periksa_lab.tgl_periksa', [$tglAwal, $tglAkhir])
-            ->where('jns_perawatan_lab.nm_perawatan', 'like', '%'.$nama.'%');
+            ->whereIn('periksa_lab.kd_jenis_prw', AlkesProcedures::ids($this->getConnectionName(), 'jns_perawatan_lab', $nama, $exclude));
     }
 }
