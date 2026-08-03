@@ -52,6 +52,16 @@ class LaporanHasilMCU extends Component
 
     public function getDataPasienPoliMCUProperty(): Paginator
     {
+        return $this->baseQuery()->paginate($this->perpage);
+    }
+
+    public function getDataPasienPoliMCUExportProperty(): Collection
+    {
+        return $this->baseQuery()->get();
+    }
+
+    private function baseQuery(): Builder
+    {
         return RegistrasiPasien::query()
             ->selectRaw('reg_periksa.*, penjab.png_jawab, pasien.nm_pasien, pasien.tgl_lahir, pasien.no_ktp, pasien.jk, pasien.agama, poliklinik.nm_poli')
             ->join('pasien', 'reg_periksa.no_rkm_medis', 'pasien.no_rkm_medis')
@@ -68,8 +78,7 @@ class LaporanHasilMCU extends Component
                 'penjab.png_jawab',
             ])
             ->sortWithColumns($this->sortColumns)
-            ->orderByRaw("case when reg_periksa.kd_pj = 'A09' then 0 else 1 end, reg_periksa.kd_pj")
-            ->paginate($this->perpage);
+            ->orderByRaw("case when reg_periksa.kd_pj = 'A09' then 0 else 1 end, reg_periksa.kd_pj");
     }
 
     public function getUniquePemeriksaanProperty(): array
@@ -93,7 +102,7 @@ class LaporanHasilMCU extends Component
 
         $pemeriksaan = [];
 
-        foreach ($this->dataPasienPoliMCU as $pasien) {
+        foreach ($this->dataPasienPoliMCUExport as $pasien) {
             $pemeriksaanPasien = PeriksaLab::laporanTindakanLabDetail($this->tglAwal, $this->tglAkhir)
                 ->where('periksa_lab.no_rawat', $pasien->no_rawat)
                 ->where('reg_periksa.kd_poli', 'U0036')
@@ -238,7 +247,7 @@ class LaporanHasilMCU extends Component
         ];
 
         foreach ($this->uniquePemeriksaan as $pemeriksaan) {
-            $rowSatuan[$pemeriksaan] = $this->pemeriksaan[$this->dataPasienPoliMCU[0]->no_rawat][$pemeriksaan]->satuan ?? '-';
+            $rowSatuan[$pemeriksaan] = $this->pemeriksaan[$this->dataPasienPoliMCUExport[0]->no_rawat][$pemeriksaan]->satuan ?? '-';
         }
 
         $data[] = $rowSatuan;
@@ -346,13 +355,13 @@ class LaporanHasilMCU extends Component
             ];
 
             foreach ($this->uniquePemeriksaan as $pemeriksaan) {
-                $rowRujukan[$pemeriksaan] = $this->pemeriksaan[$this->dataPasienPoliMCU[0]->no_rawat][$pemeriksaan]->{'nilai_rujukan_'.$type} ?? '-';
+                $rowRujukan[$pemeriksaan] = $this->pemeriksaan[$this->dataPasienPoliMCUExport[0]->no_rawat][$pemeriksaan]->{'nilai_rujukan_'.$type} ?? '-';
             }
 
             $data[] = $rowRujukan;
         }
 
-        foreach ($this->dataPasienPoliMCU as $registrasi) {
+        foreach ($this->dataPasienPoliMCUExport as $registrasi) {
             $row = [];
 
             $row['Penjamin'] = $registrasi->png_jawab;
