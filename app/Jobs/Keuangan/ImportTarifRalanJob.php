@@ -147,11 +147,16 @@ class ImportTarifRalanJob implements ShouldQueue
                     $calcTotalDrPr = $data['material'] + $data['bhp'] + $data['tarif_tindakandr'] + $data['tarif_tindakanpr'] + $data['kso'] + $data['menejemen'];
 
                     if (
-                        round($calcTotalDr) != round((float) $data['total_byrdr']) &&
-                        round($calcTotalPr) != round((float) $data['total_byrpr']) &&
+                        round($calcTotalDr) != round((float) $data['total_byrdr']) ||
+                        round($calcTotalPr) != round((float) $data['total_byrpr']) ||
                         round($calcTotalDrPr) != round((float) $data['total_byrdrpr'])
                     ) {
-                        throw new ImportTarifException("Baris {$line}: Tidak ada total biaya yang sesuai dengan rincian tarif (Minimal salah satu Total DR, PR, atau DR&PR harus sesuai).");
+                        throw new ImportTarifException(
+                            "Baris {$line}: Total biaya tidak sesuai. ".
+                            'Total Biaya Dr = Jasa Sarana + BHP + Jasa Medis Dr + KSO + Menejemen; '.
+                            'Total Biaya Pr = Jasa Sarana + BHP + Jasa Medis Pr + KSO + Menejemen; '.
+                            'Total Biaya Dr & Pr = Jasa Sarana + BHP + Jasa Medis Dr + Jasa Medis Pr + KSO + Menejemen.'
+                        );
                     }
 
                     try {
