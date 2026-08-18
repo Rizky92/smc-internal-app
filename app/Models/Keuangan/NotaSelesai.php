@@ -146,7 +146,7 @@ class NotaSelesai extends Model
                     $ket = str($value->keterangan);
 
                     $bentukBayar = $ket->before('PASIEN')->words(1, '')->trim()->value();
-                    $statusPasien = str($ket->after('PASIEN'))->trim()->explode(' ')->take(2)->implode(' ');
+                    $statusPasien = $ket->after('PASIEN')->trim()->explode(' ')->take(2)->implode(' ');
                     $noRawat = $ket->matchAll('/\d+/')->take(4)->join('/');
                     $petugas = $ket->afterLast('OLEH ')->trim()->value();
 
