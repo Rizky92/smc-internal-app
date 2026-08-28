@@ -68,7 +68,17 @@ class WriteExcel implements ShouldQueue
 
         $writeRowsFromFile($this->getFileDirectory().'/headers.csv');
 
-        foreach ($disk->files($this->getFileDirectory()) as $file) {
+        /*
+         * Storage::files() meneruskan hasil listContents apa adanya tanpa
+         * mengurutkan, dan urutan itu bergantung pada filesystem. Nama shard
+         * sudah di-pad 16 digit supaya urutan leksikografis sama dengan urutan
+         * numerik, tapi pengurutannya tetap harus dilakukan sendiri.
+         */
+        $files = $disk->files($this->getFileDirectory());
+
+        sort($files);
+
+        foreach ($files as $file) {
             if (str($file)->endsWith('headers.csv')) {
                 continue;
             }

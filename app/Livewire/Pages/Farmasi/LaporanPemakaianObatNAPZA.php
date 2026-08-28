@@ -80,26 +80,24 @@ class LaporanPemakaianObatNAPZA extends Component
 
     protected function dataPerSheet(): array
     {
-        $map = function (Obat $model): array {
-            return [
-                'kode_brng'       => $model->kode_brng,
-                'nama_brng'       => $model->nama_brng,
-                'golongan'        => $model->nama,
-                'satuan'          => $model->satuan,
-                'stok_awal'       => round($model->stok_awal, 2),
-                'penerimaan_obat' => round($model->penerimaan_obat, 2),
-                'piutang_masuk'   => round($model->piutang_masuk, 2),
-                'hibah_obat'      => round($model->hibah_obat, 2),
-                'retur_pasien'    => round($model->retur_pasien + $model->hapus_beriobat, 2),
-                'total_masuk'     => $totalMasuk = round($model->penerimaan_obat + $model->piutang_masuk + $model->hibah_obat + $model->retur_pasien + $model->hapus_beriobat, 2),
-                'pemberian_obat'  => round($model->pemberian_obat + $model->hapus_beriobat, 2),
-                'penjualan_obat'  => round($model->penjualan_obat, 2),
-                'piutang_keluar'  => round($model->piutang_keluar, 2),
-                'retur_supplier'  => round($model->retur_supplier, 2),
-                'total_keluar'    => $totalKeluar = round($model->pemberian_obat + $model->hapus_beriobat + $model->penjualan_obat + $model->piutang_keluar + $model->retur_supplier, 2),
-                'stok_akhir'      => round($model->stok_awal + $totalMasuk - $totalKeluar, 2),
-            ];
-        };
+        $map = fn (Obat $model): array => [
+            'kode_brng'       => $model->kode_brng,
+            'nama_brng'       => $model->nama_brng,
+            'golongan'        => $model->nama,
+            'satuan'          => $model->satuan,
+            'stok_awal'       => round($model->stok_awal, 2),
+            'penerimaan_obat' => round($model->penerimaan_obat, 2),
+            'piutang_masuk'   => round($model->piutang_masuk, 2),
+            'hibah_obat'      => round($model->hibah_obat, 2),
+            'retur_pasien'    => round($model->retur_pasien + $model->hapus_beriobat, 2),
+            'total_masuk'     => $totalMasuk = round($model->penerimaan_obat + $model->piutang_masuk + $model->hibah_obat + $model->retur_pasien + $model->hapus_beriobat, 2),
+            'pemberian_obat'  => round($model->pemberian_obat + $model->hapus_beriobat, 2),
+            'penjualan_obat'  => round($model->penjualan_obat, 2),
+            'piutang_keluar'  => round($model->piutang_keluar, 2),
+            'retur_supplier'  => round($model->retur_supplier, 2),
+            'total_keluar'    => $totalKeluar = round($model->pemberian_obat + $model->hapus_beriobat + $model->penjualan_obat + $model->piutang_keluar + $model->retur_supplier, 2),
+            'stok_akhir'      => round($model->stok_awal + $totalMasuk - $totalKeluar, 2),
+        ];
 
         return [
             'Narkotika' => fn () => Obat::query()
