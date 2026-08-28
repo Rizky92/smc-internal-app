@@ -140,31 +140,64 @@ class PrepareExport implements ShouldQueue
          */
         $connection = DB::connection('mysql_smc_export');
 
-        $urutan = <<<'SQL'
+        /*
+         * straight_join memaksa MariaDB menjalankan join sesuai urutan yang
+         * ditulis. Tanpa itu optimizer memilih rekening sebagai tabel
+         * penggerak, lalu menyebar ke detailjurnal lewat kd_rek, dan baru
+         * menyaring tanggal saat menyentuh jurnal per baris. Akibatnya seluruh
+         * detailjurnal terbaca berapa pun rentang tanggal yang diminta, dan
+         * indeks tgl_jurnal tidak terpakai sama sekali.
+         *
+         * Penyebabnya statistik indeks yang meleset: cardinality kd_rek pada
+         * detailjurnal tercatat 31.020 padahal nilai uniknya hanya 319, jadi
+         * optimizer menaksir satu lookup hanya 992 baris (kenyataannya ~97.545)
+         * dan menganggap rencana itu 74x lebih murah dari yang sebenarnya.
+         *
+         * Dengan jurnal sebagai penggerak, rentang tanggal dilayani range scan
+         * pada indeks tgl_jurnal, detailjurnal dilayani indeks penutup
+         * (no_jurnal, kd_rek), dan rekening cukup eq_ref lewat primary key.
+         * Terukur 584,88s -> 38,51s untuk satu bulan dengan hasil sama persis.
+         */
+        /*
+         * Dua kunci urutan terakhir mengikuti SIMRS Khanza: debet terbesar
+         * lebih dulu, lalu kredit terbesar. Tanpa keduanya, baris detail di
+         * dalam satu no_jurnal tidak punya urutan yang pasti, sehingga dua kali
+         * export atas periode yang sama bisa menghasilkan susunan baris berbeda
+         * dan menyulitkan saat hasilnya dibandingkan.
+         *
+         * kd_rek ditambahkan sebagai kunci terakhir karena debet dan kredit
+         * saja belum cukup: pada data satu bulan masih ada 131.066 baris yang
+         * nilainya kembar persis. Khanza pun tidak menentukan urutan untuk
+         * baris-baris itu, jadi kunci ini hanya memastikan yang sebelumnya
+         * tidak ditentukan menjadi tetap, tanpa mengubah urutan milik Khanza.
+         */
+        $kolom = <<<'SQL'
+            straight_join
+            ? as export_session_id,
+            ? as export_name,
+            ? as id_user,
             row_number() over (
                 order by
                     jurnal.tgl_jurnal asc,
                     jurnal.jam_jurnal asc,
-                    jurnal.no_jurnal asc
-            )
+                    jurnal.no_jurnal asc,
+                    detailjurnal.debet desc,
+                    detailjurnal.kredit desc,
+                    detailjurnal.kd_rek asc
+            ) as id,
+            jurnal.tgl_jurnal,
+            jurnal.jam_jurnal,
+            jurnal.no_jurnal,
+            jurnal.no_bukti,
+            jurnal.keterangan,
+            detailjurnal.kd_rek,
+            rekening.nm_rek,
+            detailjurnal.debet,
+            detailjurnal.kredit
             SQL;
 
         $query = Jurnal::on('mysql_sik')
-            ->select([
-                DB::raw("'$this->exportSessionId' as export_session_id"),
-                DB::raw("'$this->exportName' as export_name"),
-                DB::raw("'$this->userId' as id_user"),
-                DB::raw("$urutan as id"),
-                'jurnal.tgl_jurnal',
-                'jurnal.jam_jurnal',
-                'jurnal.no_jurnal',
-                'jurnal.no_bukti',
-                'jurnal.keterangan',
-                'detailjurnal.kd_rek',
-                'rekening.nm_rek',
-                'detailjurnal.debet',
-                'detailjurnal.kredit',
-            ])
+            ->selectRaw($kolom, [$this->exportSessionId, $this->exportName, $this->userId])
             ->join('sik.detailjurnal', 'jurnal.no_jurnal', '=', 'detailjurnal.no_jurnal')
             ->join('sik.rekening', 'detailjurnal.kd_rek', '=', 'rekening.kd_rek')
             ->when(! empty($this->kodeRekening), fn (Builder $q) => $q->where('detailjurnal.kd_rek', $this->kodeRekening))
