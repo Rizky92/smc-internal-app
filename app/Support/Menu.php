@@ -556,7 +556,10 @@ class Menu
                 'name'              => 'Aplikasi',
                 'icon'              => 'far fa-circle',
                 'type'              => 'dropdown',
-                'hasAnyPermissions' => $user->canAny(['aplikasi.bidang-unit.read']) || $user->hasRole($develop),
+                'hasAnyPermissions' => $user->canAny([
+                    'aplikasi.bidang-unit.read',
+                    'aplikasi.log-dicom-router-satu-sehat.read',
+                ]) || $user->hasRole($develop),
                 'items'             => [
                     [
                         'name'              => 'Bidang Unit',
@@ -564,6 +567,13 @@ class Menu
                         'icon'              => 'fas fa-hospital',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('aplikasi.bidang-unit.read'),
+                    ],
+                    [
+                        'name'              => 'Log DICOM Router Satu Sehat',
+                        'url'               => route('admin.aplikasi.log-dicom-router-satu-sehat'),
+                        'icon'              => 'fas fa-x-ray',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('aplikasi.log-dicom-router-satu-sehat.read'),
                     ],
                     [
                         'name'              => 'Pengaturan',

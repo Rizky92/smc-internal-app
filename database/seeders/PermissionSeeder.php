@@ -114,6 +114,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'aplikasi.bidang-unit.read']);
         Permission::create(['name' => 'aplikasi.bidang-unit.update']);
         Permission::create(['name' => 'aplikasi.bidang-unit.delete']);
+        Permission::create(['name' => 'aplikasi.log-dicom-router-satu-sehat.read']);
 
         Permission::create(['name' => 'aplikasi.pengaturan-rkat.read']);
         Permission::create(['name' => 'aplikasi.pengaturan-rkat.update']);
