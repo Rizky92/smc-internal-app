@@ -327,6 +327,10 @@ Route::prefix('admin')
                 Route::get('hpp-pembelian-terakhir', Farmasi\HppPembelianTerakhir::class)
                     ->name('hpp-pembelian-terakhir')
                     ->middleware('can:farmasi.hpp-pembelian-terakhir.read');
+
+                Route::get('laporan-potensi-prb', Farmasi\LaporanPotensiPrb::class)
+                    ->name('laporan-potensi-prb')
+                    ->middleware('can:farmasi.laporan-potensi-prb.read');
             });
 
         Route::prefix('rekam-medis')
@@ -348,9 +352,9 @@ Route::prefix('admin')
         Route::prefix('marketing')
             ->as('marketing.')
             ->group(function () {
-                // Route::get('summary-billing-mcu', Marketing\SummaryBillingMCU::class)
-                //     ->name('summary-billing-mcu')
-                //     ->middleware('can:marketing.summary-billing-mcu.read');
+                Route::get('summary-billing-mcu', Marketing\SummaryBillingMCU::class)
+                    ->name('summary-billing-mcu')
+                    ->middleware('can:marketing.summary-billing-mcu.read');
                 Route::get('penggunaan-alkes', Marketing\LaporanPenggunaanAlkes::class)
                     ->name('penggunaan-alkes')
                     ->middleware('can:marketing.penggunaan-alkes.read');
@@ -412,12 +416,12 @@ Route::prefix('admin')
                 Route::get('laporan-pasien-cob', Casemix\LaporanPasienCob::class)
                     ->name('laporan-pasien-cob')
                     ->middleware('can:casemix.laporan-pasien-cob.read');
-                Route::get('laporan-potensi-prb', Casemix\LaporanPotensiPrb::class)
-                    ->name('laporan-potensi-prb')
-                    ->middleware('can:casemix.laporan-potensi-prb.read');
                 Route::get('laporan-triase-igd-zona-hijau', Casemix\LaporanTriaseIgdZonaHijau::class)
                     ->name('laporan-triase-igd-zona-hijau')
                     ->middleware('can:casemix.laporan-triase-igd-zona-hijau.read');
+                Route::get('laporan-pasien-ranap-pulang', Casemix\LaporanPasienRanapPulang::class)
+                    ->name('laporan-pasien-ranap-pulang')
+                    ->middleware('can:casemix.laporan-pasien-ranap-pulang.read');
             });
 
         Route::middleware('role:'.config('permission.superadmin_name'))

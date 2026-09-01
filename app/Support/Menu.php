@@ -347,6 +347,7 @@ class Menu
                     'farmasi.farmasi.rincian-perbandingan-po.read',
                     'farmasi.kunjungan-walk-in.read',
                     'farmasi.hpp-pembelian-terakhir.read',
+                    'farmasi.laporan-potensi-prb.read',
                 ]),
                 'items' => [
                     [
@@ -451,6 +452,12 @@ class Menu
                         'url'               => route('admin.farmasi.hpp-pembelian-terakhir'),
                         'hasAnyPermissions' => $user->can('farmasi.hpp-pembelian-terakhir.read'),
                     ],
+                    [
+                        'name'              => 'Potensi PRB',
+                        'icon'              => 'fas fa-file-alt',
+                        'url'               => route('admin.farmasi.laporan-potensi-prb'),
+                        'hasAnyPermissions' => $user->can('farmasi.laporan-potensi-prb.read'),
+                    ],
                 ],
             ],
             [
@@ -492,6 +499,12 @@ class Menu
                     'marketing.penggunaan-alkes.read',
                 ]),
                 'items' => [
+                    [
+                        'name'              => 'Summary Billing MCU',
+                        'icon'              => 'fas fa-file-alt',
+                        'url'               => route('admin.marketing.summary-billing-mcu'),
+                        'hasAnyPermissions' => $user->can('marketing.summary-billing-mcu.read'),
+                    ],
                     [
                         'name'              => 'Penggunaan Alkes',
                         'icon'              => 'fas fa-globe-asia',
@@ -659,8 +672,8 @@ class Menu
                 'hasAnyPermissions' => $user->canAny([
                     'casemix.laporan-pasien-batal.read',
                     'casemix.laporan-pasien-cob.read',
-                    'casemix.laporan-potensi-prb.read',
                     'casemix.laporan-triase-igd-zona-hijau.read',
+                    'casemix.laporan-pasien-ranap-pulang.read',
                 ]),
                 'items'             => [
                     [
@@ -678,18 +691,18 @@ class Menu
                         'hasAnyPermissions' => $user->can('casemix.laporan-pasien-cob.read'),
                     ],
                     [
-                        'name'              => 'Potensi PRB',
-                        'url'               => route('admin.casemix.laporan-potensi-prb'),
-                        'icon'              => 'fas fa-file-alt',
-                        'type'              => 'link',
-                        'hasAnyPermissions' => $user->can('casemix.laporan-potensi-prb.read'),
-                    ],
-                    [
                         'name'              => 'Triase IGD Zona Hijau',
                         'url'               => route('admin.casemix.laporan-triase-igd-zona-hijau'),
                         'icon'              => 'fas fa-file-alt',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('casemix.laporan-triase-igd-zona-hijau.read'),
+                    ],
+                    [
+                        'name'              => 'Pasien Ranap Pulang',
+                        'url'               => route('admin.casemix.laporan-pasien-ranap-pulang'),
+                        'icon'              => 'fas fa-file-alt',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('casemix.laporan-pasien-ranap-pulang.read'),
                     ],
                 ],
             ],

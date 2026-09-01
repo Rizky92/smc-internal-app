@@ -10,6 +10,7 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Farmasi\ResepObat;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -77,16 +78,16 @@ class KunjunganPerPoli extends Component
                 ->kunjunganPerPoli($this->tglAwal, $this->tglAkhir, $this->statusLanjut)
                 ->cursor()
                 ->map(fn (ResepObat $model): array => [
-                    'no_rawat'          => $model->no_rawat,
-                    'no_resep'          => $model->no_resep,
-                    'nm_pasien'         => $model->nm_pasien,
-                    'umur'              => $model->umur,
-                    'tgl_perawatan'     => $model->tgl_perawatan,
-                    'jam'               => $model->jam,
-                    'nm_dokter_peresep' => $model->nm_dokter_peresep,
-                    'nm_dokter_poli'    => $model->nm_dokter_poli,
-                    'status_lanjut'     => $model->status_lanjut,
-                    'nm_poli'           => $model->nm_poli,
+                    'no_rawat'          => Str::transliterate($model->no_rawat ?? ''),
+                    'no_resep'          => Str::transliterate($model->no_resep ?? ''),
+                    'nm_pasien'         => Str::transliterate($model->nm_pasien ?? ''),
+                    'umur'              => Str::transliterate($model->umur ?? ''),
+                    'tgl_perawatan'     => Str::transliterate($model->tgl_perawatan ?? ''),
+                    'jam'               => Str::transliterate($model->jam ?? ''),
+                    'nm_dokter_peresep' => Str::transliterate($model->nm_dokter_peresep ?? ''),
+                    'nm_dokter_poli'    => Str::transliterate($model->nm_dokter_poli ?? ''),
+                    'status_lanjut'     => Str::transliterate($model->status_lanjut ?? ''),
+                    'nm_poli'           => Str::transliterate($model->nm_poli ?? ''),
                 ]),
         ];
     }

@@ -292,6 +292,11 @@ Breadcrumbs::for('admin.farmasi.hpp-pembelian-terakhir', function (Trail $trail)
     $trail->push('HPP Pembelian Terakhir', route('admin.farmasi.hpp-pembelian-terakhir'));
 });
 
+Breadcrumbs::for('admin.farmasi.laporan-potensi-prb', function (Trail $trail): void {
+    $trail->parent('admin.farmasi');
+    $trail->push('Laporan Potensi PRB', route('admin.farmasi.laporan-potensi-prb'));
+});
+
 Breadcrumbs::for('admin.rekam-medis', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Rekam Medis');
@@ -456,12 +461,12 @@ Breadcrumbs::for('admin.casemix.laporan-pasien-cob', function (Trail $trail): vo
     $trail->push('Laporan Pasien COB', route('admin.casemix.laporan-pasien-cob'));
 });
 
-Breadcrumbs::for('admin.casemix.laporan-potensi-prb', function (Trail $trail): void {
-    $trail->parent('admin.casemix');
-    $trail->push('Laporan Potensi PRB', route('admin.casemix.laporan-potensi-prb'));
-});
-
 Breadcrumbs::for('admin.casemix.laporan-triase-igd-zona-hijau', function (Trail $trail): void {
     $trail->parent('admin.casemix');
     $trail->push('Laporan Triase IGD Zona Hijau', route('admin.casemix.laporan-triase-igd-zona-hijau'));
+});
+
+Breadcrumbs::for('admin.casemix.laporan-pasien-ranap-pulang', function (Trail $trail): void {
+    $trail->parent('admin.casemix');
+    $trail->push('Laporan Pasien Ranap Pulang Bulan Berikutnya', route('admin.casemix.laporan-pasien-ranap-pulang'));
 });

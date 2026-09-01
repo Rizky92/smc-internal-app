@@ -125,6 +125,7 @@ class DefectaDepo extends Component
             'IFO' => 'INSTALASI FARMASI OK',
             'KO'  => 'KAMAR OPERASI OK',
             'IFI' => 'INSTALASI FARMASI RAWAT INAP',
+            'IFG' => 'INSTALASI FARMASI IGD',
         ];
 
         $shift = $this->dataShiftKerja();
