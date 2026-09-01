@@ -10,13 +10,6 @@ class ModalTemplateBaru extends Component
 {
     use DeferredModal;
 
-    /** @var mixed */
-    protected $listeners = [
-        'khanza.show-mtb' => 'showModal',
-        'khanza.hide-mtb' => 'hideModal',
-        'khanza.save-mtb' => 'templateBaru',
-    ];
-
     /** @var array */
     protected $rules = [
         'namaTemplate' => ['required', 'string', 'max:255'],

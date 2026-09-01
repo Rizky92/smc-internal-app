@@ -34,7 +34,7 @@
                                         icon="fas fa-pencil-alt"
                                         data-toggle="modal"
                                         data-target="#modal-perizinan"
-                                        wire:click="$emit('siap.prepare', {{ $role->id }})" />
+                                        wire:click="$dispatch('siap.prepare', {{ $role->id }})" />
                                 @endunless
                             </x-table.td>
                             <x-table.td class="{{ Arr::toCssClasses(['pt-2' => !$superadmin]) }}">

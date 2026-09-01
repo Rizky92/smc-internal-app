@@ -59,7 +59,7 @@
                     inputRolePermissions.each((i, el) => el.checked = permissions.find(v => v === el.value))
                     inputPermissions.each((i, el) => el.checked = permissions.find(v => v === el.value))
 
-                    @this.emit('user.prepare', nrp, nama, roles, permissions)
+                    @this.dispatch('user.prepare', nrp, nama, roles, permissions)
                 }
 
                 function clearData() {

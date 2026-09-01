@@ -4,6 +4,7 @@ namespace App\Livewire\Components;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -13,10 +14,7 @@ class DatabaseNotification extends Component
 
     public bool $isSidebarOpen = false;
 
-    protected $listeners = [
-        'toggleSidebar' => 'toggleSidebar',
-    ];
-
+    #[On('toggleSidebar')]
     public function toggleSidebar(): void
     {
         $opening = ! $this->isSidebarOpen;

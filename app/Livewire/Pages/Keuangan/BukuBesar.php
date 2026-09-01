@@ -220,6 +220,6 @@ class BukuBesar extends Component
             columnHeaders: $this->backgroundExportColumnHeaders(),
         )->onQueue('exports');
 
-        $this->emit('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
+        $this->dispatch('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
     }
 }

@@ -69,7 +69,7 @@
                 marqueePengerjaan.marquee();
                 marqueePengerjaan.off('finished').on('finished', function () {
                     $(this).marquee('destroy');
-                    Livewire.emitTo('pages.informasi.antrean-farmasi.list-pengerjaan', 'marqueePengerjaanFinished');
+                    Livewire.dispatchTo('pages.informasi.antrean-farmasi.list-pengerjaan', 'marqueePengerjaanFinished');
                 });
             }
         }

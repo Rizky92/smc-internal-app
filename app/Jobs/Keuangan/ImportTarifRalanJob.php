@@ -18,6 +18,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\FilesystemNotFoundException;
+use Livewire\TemporaryUploadedFile;
 use Spatie\SimpleExcel\SimpleExcelReader;
 use Throwable;
 
@@ -35,10 +36,10 @@ class ImportTarifRalanJob implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param array{
-     * fileImport: \Livewire\TemporaryUploadedFile,
+     * @param  array{
+     * fileImport: TemporaryUploadedFile,
      * userId: string,
-     * } $params
+     * }  $params
      */
     public function __construct(array $params)
     {

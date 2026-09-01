@@ -10,6 +10,7 @@ use App\Models\Keuangan\Jurnal\JurnalBackup;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class UbahTanggalJurnal extends Component
@@ -41,13 +42,6 @@ class UbahTanggalJurnal extends Component
         'tglJurnalBaru' => ['required', 'date'],
     ];
 
-    /** @var mixed */
-    protected $listeners = [
-        'utj.prepare' => 'prepareJurnal',
-        'utj.show'    => 'showModal',
-        'utj.hide'    => 'hideModal',
-    ];
-
     public function mount(): void
     {
         $this->defaultValues();
@@ -72,6 +66,7 @@ class UbahTanggalJurnal extends Component
         return view('livewire.pages.keuangan.modal.ubah-tanggal-jurnal');
     }
 
+    #[On('utj.prepare')]
     public function prepareJurnal(array $data): void
     {
         $this->noJurnal = $data['noJurnal'];
@@ -126,8 +121,8 @@ class UbahTanggalJurnal extends Component
             tracker_end();
         });
 
-        $this->dispatchBrowserEvent('jurnal-updated');
-        $this->emitUp('flash.success', "Tgl. untuk no. jurnal {$this->noJurnal} berhasil diubah!");
+        $this->dispatch('jurnal-updated');
+        $this->dispatch('flash.success', "Tgl. untuk no. jurnal {$this->noJurnal} berhasil diubah!");
     }
 
     public function restoreTglJurnal(int $backupId): void
@@ -171,7 +166,7 @@ class UbahTanggalJurnal extends Component
         });
 
         $this->flashSuccess("No. jurnal {$this->noJurnal} dikembalikan ke tanggal {$tglJurnalKembali}!");
-        $this->dispatchBrowserEvent('jurnal-restored');
+        $this->dispatch('jurnal-restored');
     }
 
     protected function defaultValues(): void

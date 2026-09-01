@@ -4,11 +4,11 @@
             <script>
                 $(document).on('DOMContentLoaded', e => {
                     $('#modal-perizinan').on('shown.bs.modal', e => {
-                        @this.emit('siap.show')
+                        @this.dispatch('siap.show')
                     })
 
                     $('#modal-perizinan').on('hide.bs.modal', e => {
-                        @this.emit('siap.hide')
+                        @this.dispatch('siap.hide')
                     })
                 })
 
@@ -30,7 +30,7 @@
                     <x-flash />
                     <div class="{{ Arr::toCssClasses(['form-group', 'mt-3' => session()->has(['flash.type', 'flash.message'])]) }}">
                         <label for="role-sekarang">Nama role:</label>
-                        <input type="text" id="role-sekarang" wire:model.defer="roleName" class="form-control form-control-sm" />
+                        <input type="text" id="role-sekarang" wire:model.lazy="roleName" class="form-control form-control-sm" />
                     </div>
                 </x-row-col>
                 <x-row-col class="mt-1">
@@ -44,7 +44,7 @@
                                         id="permission-{{ $key }}"
                                         name="permissions"
                                         value="{{ $key }}"
-                                        wire:model.defer="checkedPermissions.{{ $key }}" />
+                                        wire:model.lazy="checkedPermissions.{{ $key }}" />
                                     <label for="permission-{{ $key }}" class="custom-control-label font-weight-normal">
                                         {{ $name }}
                                     </label>

@@ -15,7 +15,7 @@
                             keterangan
                         } = e.dataset
 
-                        @this.emit('prepare', {
+                        @this.dispatch('prepare', {
                             pemakaianAnggaranId,
                             anggaranBidangId,
                             tglPakai,

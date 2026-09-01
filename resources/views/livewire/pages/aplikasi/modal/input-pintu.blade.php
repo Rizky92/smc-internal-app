@@ -49,11 +49,11 @@
                 }
 
                 // Notify Livewire that modal was shown (modal lifecycle hook)
-                Livewire.emit('pintu.show-modal');
+                Livewire.dispatch('pintu.show-modal');
             });
 
             $('#modal-input-pintu').on('hide.bs.modal', (e) => {
-                Livewire.emit('pintu.hide-modal');
+                Livewire.dispatch('pintu.hide-modal');
             });
 
             $(document).on('data-saved', () => {
@@ -106,7 +106,7 @@
                                 $('#selectedJadwal').select2();
                                 $('#selectedJadwal').on('change', function (e) {
                                     var data = $(this).val();
-                                    Livewire.emit('inputPintu.setSelectedJadwal', data);
+                                    Livewire.dispatch('inputPintu.setSelectedJadwal', data);
                                 });
 
                                 // Listen for server-side event to sync select2 selection
@@ -118,19 +118,19 @@
                                 $('#kodePintu').select2();
                                 $('#kodePintu').on('change', function (e) {
                                     var data = $(this).val();
-                                    Livewire.emit('inputPintu.setKodePintu', data);
+                                    Livewire.dispatch('inputPintu.setKodePintu', data);
                                 });
 
                                 $('#kodePoliklinik').select2();
                                 $('#kodePoliklinik').on('change', function (e) {
                                     var data = $(this).val();
-                                    Livewire.emit('inputPintu.setKodePoliklinik', data);
+                                    Livewire.dispatch('inputPintu.setKodePoliklinik', data);
                                 });
 
                                 $('#kodeDokter').select2();
                                 $('#kodeDokter').on('change', function (e) {
                                     var data = $(this).val();
-                                    Livewire.emit('inputPintu.setKodeDokter', data);
+                                    Livewire.dispatch('inputPintu.setKodeDokter', data);
                                 });
                             });
 

@@ -14,7 +14,7 @@
                             deskripsi
                         } = e.dataset
 
-                        @this.emit('prepare', id, nama, deskripsi)
+                        @this.dispatch('prepare', id, nama, deskripsi)
 
                         $('#modal-input-kategori-rkat').modal('show')
                     }

@@ -72,7 +72,7 @@ class InputMinmaxStok extends Component
         tracker_end('mysql_smc');
 
         $this->resetFilters();
-        $this->dispatchBrowserEvent('data-tersimpan');
+        $this->dispatch('data-tersimpan');
 
         $this->flashSuccess('Data berhasil disimpan!');
     }

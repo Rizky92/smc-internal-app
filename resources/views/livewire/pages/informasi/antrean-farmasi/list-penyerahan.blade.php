@@ -69,7 +69,7 @@
                 marqueePenyerahan.marquee();
                 marqueePenyerahan.off('finished').on('finished', function () {
                     $(this).marquee('destroy');
-                    Livewire.emitTo('pages.informasi.antrean-farmasi.list-penyerahan', 'marqueePenyerahanFinished');
+                    Livewire.dispatchTo('pages.informasi.antrean-farmasi.list-penyerahan', 'marqueePenyerahanFinished');
                 });
             }
         }

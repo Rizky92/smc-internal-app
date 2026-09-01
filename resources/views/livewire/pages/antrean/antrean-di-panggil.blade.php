@@ -214,7 +214,7 @@
 
                 // Support untuk Livewire v2 dan v3
                 if (typeof Livewire.emit === 'function') {
-                    Livewire.emit('updateStatus');
+                    Livewire.dispatch('updateStatus');
                 } else if (typeof Livewire.dispatch === 'function') {
                     Livewire.dispatch('updateStatus');
                 } else {
@@ -231,7 +231,7 @@
                 // Tetap panggil updateStatus untuk menghindari antrean stuck
                 // Support untuk Livewire v2 dan v3
                 if (typeof Livewire.emit === 'function') {
-                    Livewire.emit('updateStatus');
+                    Livewire.dispatch('updateStatus');
                 } else if (typeof Livewire.dispatch === 'function') {
                     Livewire.dispatch('updateStatus');
                 } else {

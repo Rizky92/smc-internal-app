@@ -18,7 +18,7 @@
     ];
 
     if ($model) {
-        $attrs['wire:model.defer'] ??= $model;
+        $attrs['wire:model.lazy'] ??= $model;
     }
 
     $options = $options

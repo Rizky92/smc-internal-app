@@ -161,8 +161,8 @@
                             callVoice();
                         } else {
                             if (typeof Livewire !== 'undefined') {
-                                Livewire.emit('updateStatusAfterCall');
-                                Livewire.emit('updateAntrean');
+                                Livewire.dispatch('updateStatusAfterCall');
+                                Livewire.dispatch('updateAntrean');
                             } else {
                                 console.error('Livewire is not defined');
                             }
@@ -185,8 +185,8 @@
                     if (callCount < 3) {
                         initializeMarquee();
                     } else {
-                        Livewire.emit('updateAntrean');
-                        Livewire.emit('call');
+                        Livewire.dispatch('updateAntrean');
+                        Livewire.dispatch('call');
                         callCount = 0; // Reset call count for next cycle
                     }
                 });

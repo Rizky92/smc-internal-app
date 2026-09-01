@@ -10,5 +10,5 @@
                 'type' => 'text',
                 'style' => 'width: 20rem',
             ])
-            ->when($model, fn ($attr) => $attr->merge(['wire:model.defer' => $model]))
+            ->when($model, fn ($attr) => $attr->merge(['wire:model.lazy' => $model]))
     }} />

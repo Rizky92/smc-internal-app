@@ -4,11 +4,11 @@
             <script>
                 document.addEventListener('DOMContentLoaded', () => {
                     $('#modal-set-hak-akses').on('shown.bs.modal', e => {
-                        @this.emit('khanza.show-sha')
+                        @this.dispatch('khanza.show-sha')
                     })
 
                     $('#modal-set-hak-akses').on('hide.bs.modal', e => {
-                        @this.emit('khanza.hide-sha')
+                        @this.dispatch('khanza.hide-sha')
                     })
 
                     $('#modal-set-hak-akses').on('hidden.bs.modal', e => {
@@ -55,7 +55,7 @@
             <x-filter.search method="$refresh" />
             <x-filter.toggle class="ml-1" id="show-checked-set-hak-akses" title="Tampilkan yang dipilih" model="showChecked" />
             <x-button size="sm" class="ml-auto" data-dismiss="modal" title="Batal" />
-            <x-button size="sm" variant="primary" class="ml-2" data-dismiss="modal" wire:click="$emit('khanza.set')" title="Simpan" icon="fas fa-save" />
+            <x-button size="sm" variant="primary" class="ml-2" data-dismiss="modal" wire:click="$dispatch('khanza.set')" title="Simpan" icon="fas fa-save" />
         </x-slot>
     </x-modal>
 </div>

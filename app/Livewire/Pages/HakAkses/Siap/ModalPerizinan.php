@@ -11,6 +11,7 @@ use App\Models\Aplikasi\Role;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class ModalPerizinan extends Component
@@ -28,13 +29,6 @@ class ModalPerizinan extends Component
 
     /** @var array */
     public $checkedPermissions;
-
-    /** @var mixed */
-    protected $listeners = [
-        'siap.prepare' => 'prepare',
-        'siap.show'    => 'showModal',
-        'siap.hide'    => 'hideModal',
-    ];
 
     public function mount(): void
     {
@@ -56,6 +50,7 @@ class ModalPerizinan extends Component
         return view('livewire.pages.hak-akses.siap.modal-perizinan');
     }
 
+    #[On('siap.prepare')]
     public function prepare(int $id = -1): void
     {
         $this->roleId = $id;
@@ -88,8 +83,8 @@ class ModalPerizinan extends Component
 
         tracker_end();
 
-        $this->emitUp('flash.success', 'Hak akses baru berhasil ditambahkan!');
-        $this->dispatchBrowserEvent('role-created');
+        $this->dispatch('flash.success', 'Hak akses baru berhasil ditambahkan!');
+        $this->dispatch('role-created');
     }
 
     public function update(): void
@@ -112,8 +107,8 @@ class ModalPerizinan extends Component
 
         tracker_end();
 
-        $this->emitUp('flash.success', "Hak akses {$this->roleName} berhasil diupdate!");
-        $this->dispatchBrowserEvent('role-updated');
+        $this->dispatch('flash.success', "Hak akses {$this->roleName} berhasil diupdate!");
+        $this->dispatch('role-updated');
     }
 
     protected function defaultValues(): void

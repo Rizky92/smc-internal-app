@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class AntreanDiPanggil extends Component
@@ -16,9 +17,6 @@ class AntreanDiPanggil extends Component
     public bool $isCalling = false;
 
     public $antreanDipanggilSekarang = null;
-
-    // Untuk Livewire v3
-    protected $listeners = ['updateStatus'];
 
     public function getAntreanDiPanggilProperty()
     {
@@ -56,25 +54,15 @@ class AntreanDiPanggil extends Component
                 'nm_pintu'  => $antrean->nm_pintu,
             ];
 
-            // Gunakan dispatch untuk Livewire v3, atau dispatchBrowserEvent untuk v2
-            if (method_exists($this, 'dispatch')) {
-                // Livewire v3
-                $this->dispatch('play-voice',
-                    $antrean->no_reg,
-                    $antrean->nm_pasien,
-                    $antrean->nm_pintu
-                );
-            } else {
-                // Livewire v2
-                $this->dispatchBrowserEvent('play-voice', [
-                    'no_reg'    => $antrean->no_reg,
-                    'nm_pasien' => $antrean->nm_pasien,
-                    'nm_pintu'  => $antrean->nm_pintu,
-                ]);
-            }
+            $this->dispatch('play-voice', [
+                'no_reg'    => $antrean->no_reg,
+                'nm_pasien' => $antrean->nm_pasien,
+                'nm_pintu'  => $antrean->nm_pintu,
+            ]);
         }
     }
 
+    #[On('updateStatus')]
     public function updateStatus(): void
     {
         try {

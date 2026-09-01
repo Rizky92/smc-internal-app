@@ -2,11 +2,11 @@
     @push('js')
         <script>
             $('#modal-input-penetapan-rkat').on('shown.bs.modal', e => {
-                @this.emit('penetapan-rkat.show-modal')
+                @this.dispatch('penetapan-rkat.show-modal')
             })
 
             $('#modal-input-penetapan-rkat').on('hide.bs.modal', e => {
-                @this.emit('penetapan-rkat.hide-modal')
+                @this.dispatch('penetapan-rkat.hide-modal')
             })
 
             $(document).on('data-saved', () => {
@@ -61,7 +61,7 @@
                         <label for="nominal-anggaran">Nominal Anggaran</label>
                         <div class="d-flex">
                             <span class="mt-1">Rp.</span>
-                            <input type="text" id="nominal-anggaran" wire:model.defer="nominalAnggaran" class="form-control form-control-sm ml-3 text-right" placeholder="0" />
+                            <input type="text" id="nominal-anggaran" wire:model.lazy="nominalAnggaran" class="form-control form-control-sm ml-3 text-right" placeholder="0" />
                         </div>
                         <x-form.error name="nominalAnggaran" />
                     </div>

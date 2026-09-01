@@ -32,7 +32,7 @@
                         @this.set('checkedRoles', selectedRoles)
                         @this.set('checkedPermissions', selectedPermissions)
 
-                        @this.emit('siap.set')
+                        @this.dispatch('siap.set')
                     })
 
                     $('input[type=checkbox]').change(function(e) {
@@ -79,11 +79,11 @@
                     })
 
                     $('#modal-set-perizinan').on('shown.bs.modal', e => {
-                        @this.emit('siap.show-sp')
+                        @this.dispatch('siap.show-sp')
                     })
 
                     $('#modal-set-perizinan').on('hide.bs.modal', e => {
-                        @this.emit('siap.hide-sp')
+                        @this.dispatch('siap.hide-sp')
                     })
                 })
             </script>

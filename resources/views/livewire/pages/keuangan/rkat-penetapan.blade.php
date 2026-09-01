@@ -10,7 +10,7 @@
                     function loadData(e) {
                         let { id } = e.dataset
 
-                        @this.emit('prepare', id)
+                        @this.dispatch('prepare', id)
 
                         $('#modal-input-penetapan-rkat').modal('show')
                     }

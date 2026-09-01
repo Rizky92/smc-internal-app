@@ -4,15 +4,13 @@ namespace App\Livewire\Pages\Antrean;
 
 use App\Models\Aplikasi\Pintu;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class ListAntrean extends Component
 {
     /** @var string */
     public $kd_pintu;
-
-    /** @var mixed */
-    protected $listeners = ['updateAntrean'];
 
     public function mount(string $kd_pintu): void
     {
@@ -30,9 +28,10 @@ class ListAntrean extends Component
             ->get();
     }
 
+    #[On('updateAntrean')]
     public function updateAntrean(): void
     {
-        $this->dispatchBrowserEvent('updateMarqueeData', [
+        $this->dispatch('updateMarqueeData', [
             'rowCount' => $this->antreanPerPintu->count(),
         ]);
     }

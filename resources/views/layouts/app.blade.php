@@ -12,8 +12,6 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('logo.ico') }}" />
 
         @stack('styles')
-
-        @livewireStyles
     </head>
 
     <body>
@@ -33,8 +31,6 @@
         <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
         <script src="{{ asset('js/jquery.overlayScrollbars.min.js') }}"></script>
         <script src="{{ asset('js/adminlte.min.js') }}"></script>
-
-        @livewireScripts
 
         @stack('js')
     </body>

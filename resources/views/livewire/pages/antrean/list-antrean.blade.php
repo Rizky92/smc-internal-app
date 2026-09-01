@@ -65,7 +65,7 @@
                 if (rowCount > 20) {
                     marquee.marquee();
                     marquee.off('finished').on('finished', function () {
-                        Livewire.emit('updateAntrean');
+                        Livewire.dispatch('updateAntrean');
                         console.log('marquee finished, refreshing data after scrolling ends');
                     });
 
@@ -79,7 +79,7 @@
 
                     if (!refreshInterval) {
                         refreshInterval = setInterval(function () {
-                            Livewire.emit('updateAntrean');
+                            Livewire.dispatch('updateAntrean');
                             console.log('rowCount <= 20, refreshing data via interval');
                         }, 5000);
                     }

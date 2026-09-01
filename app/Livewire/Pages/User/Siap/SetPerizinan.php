@@ -8,6 +8,7 @@ use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class SetPerizinan extends Component
@@ -29,13 +30,6 @@ class SetPerizinan extends Component
     /** @var bool */
     public $showChecked;
 
-    protected $listeners = [
-        'siap.show-sp'     => 'showModal',
-        'siap.hide-sp'     => 'hideModal',
-        'siap.prepare-set' => 'prepareUser',
-        'siap.set'         => 'save',
-    ];
-
     public function mount(): void
     {
         $this->defaultValues();
@@ -56,6 +50,7 @@ class SetPerizinan extends Component
         return Permission::whereDoesntHave('roles')->get();
     }
 
+    #[On('siap.prepare-set')]
     public function prepareUser(string $nrp = '', string $nama = '', array $roleIds = [], array $permissionIds = []): void
     {
         $this->nrp = $nrp;
@@ -64,11 +59,12 @@ class SetPerizinan extends Component
         $this->checkedPermissions = $permissionIds;
     }
 
+    #[On('siap.set')]
     public function save(): void
     {
         if (! user()->hasRole(config('permission.superadmin_name'))) {
-            $this->dispatchBrowserEvent('data-denied');
-            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatch('data-denied');
+            $this->dispatch('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
         }
@@ -82,7 +78,7 @@ class SetPerizinan extends Component
 
         tracker_end('mysql_smc');
 
-        $this->emit('flash.success', "Perizinan SIAP untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
+        $this->dispatch('flash.success', "Perizinan SIAP untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
     }
 
     public function defaultValues(): void

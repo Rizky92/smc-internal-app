@@ -13,7 +13,7 @@
                         name
                     } = e.dataset
 
-                    @this.emit('prepare', bidangId, parentId, name)
+                    @this.dispatch('prepare', bidangId, parentId, name)
 
                     $('#modal-input-bidang-unit').modal('show')
                 }

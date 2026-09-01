@@ -9,7 +9,7 @@
                 function loadData(e) {
                     let { kodePintu, kodePoliklinik, kodeDokter } = e.dataset;
 
-                    Livewire.emit('prepare', {
+                    Livewire.dispatch('prepare', {
                         kodePintu,
                         kodePoliklinik,
                         kodeDokter,

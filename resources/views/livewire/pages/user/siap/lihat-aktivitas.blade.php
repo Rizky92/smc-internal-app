@@ -4,11 +4,11 @@
             <script>
                 document.addEventListener('DOMContentLoaded', () => {
                     $('#modal-lihat-aktivitas').on('shown.bs.modal', e => {
-                        @this.emit('siap.show-la')
+                        @this.dispatch('siap.show-la')
                     })
 
                     $('#modal-lihat-aktivitas').on('hide.bs.modal', e => {
-                        @this.emit('siap.hide-la')
+                        @this.dispatch('siap.hide-la')
                     })
                 })
             </script>

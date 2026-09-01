@@ -8,15 +8,13 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class AntreanPoli extends Component
 {
     /** @var string */
     public $kd_poli;
-
-    /** @var mixed */
-    protected $listeners = ['updateStatusAfterCall', 'updateAntrean', 'call'];
 
     public function mount(string $kd_poli): void
     {
@@ -34,9 +32,10 @@ class AntreanPoli extends Component
         return $this->getAntreanQuery()->get();
     }
 
+    #[On('updateAntrean')]
     public function updateAntrean(): void
     {
-        $this->dispatchBrowserEvent('updateMarqueeData');
+        $this->dispatch('updateMarqueeData');
     }
 
     public function getNextAntreanProperty(): ?Model
@@ -49,12 +48,13 @@ class AntreanPoli extends Component
             ->first();
     }
 
+    #[On('call')]
     public function call(): void
     {
         $antrean = $this->getNextAntreanProperty();
 
         if ($antrean && $antrean->status == '1') {
-            $this->dispatchBrowserEvent('play-voice', [
+            $this->dispatch('play-voice', [
                 'no_reg'    => $antrean->no_reg,
                 'nm_pasien' => $antrean->nm_pasien,
                 'nm_poli'   => $antrean->nm_poli,
@@ -62,6 +62,7 @@ class AntreanPoli extends Component
         }
     }
 
+    #[On('updateStatusAfterCall')]
     public function updateStatusAfterCall(): void
     {
         AntriPoli::where('kd_poli', $this->kd_poli)->update(['status' => '0']);

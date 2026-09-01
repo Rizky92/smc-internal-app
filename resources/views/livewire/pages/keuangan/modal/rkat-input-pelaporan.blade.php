@@ -2,11 +2,11 @@
     @push('js')
         <script>
             $('#modal-input-pelaporan-rkat').on('shown.bs.modal', e => {
-                @this.emit('pelaporan-rkat.show-modal')
+                @this.dispatch('pelaporan-rkat.show-modal')
             })
 
             $('#modal-input-pelaporan-rkat').on('hide.bs.modal', e => {
-                @this.emit('pelaporan-rkat.hide-modal')
+                @this.dispatch('pelaporan-rkat.hide-modal')
             })
 
             $(document).on('data-saved', () => {
@@ -37,7 +37,7 @@
                     </div>
                     <div class="form-group mt-3">
                         <label for="keterangan">Keterangan</label>
-                        <input type="text" id="keterangan" wire:model.defer="keterangan" class="form-control form-control-sm" />
+                        <input type="text" id="keterangan" wire:model.lazy="keterangan" class="form-control form-control-sm" />
                         <x-form.error name="keterangan" />
                     </div>
                     @if (! $this->isUpdating())
@@ -52,9 +52,9 @@
                         <ul class="p-0 m-0 mt-2 mb-3 d-flex flex-column" style="row-gap: 0.5rem" id="detail-pemakaian">
                             @foreach ($this->detail as $index => $item)
                                 <li class="d-flex justify-content-start align-items-center m-0 p-0" wire:key="detail-pelaporan-{{ $index }}">
-                                    <input type="text" class="form-control form-control-sm" wire:model.defer="detail.{{ $index }}.keterangan" />
+                                    <input type="text" class="form-control form-control-sm" wire:model.lazy="detail.{{ $index }}.keterangan" />
                                     <span class="ml-4 text-sm" style="width: 3rem">Rp.</span>
-                                    <input type="text" class="form-control form-control-sm text-right w-25" wire:model.defer="detail.{{ $index }}.nominal" />
+                                    <input type="text" class="form-control form-control-sm text-right w-25" wire:model.lazy="detail.{{ $index }}.nominal" />
                                     @can('keuangan.rkat-pelaporan.update')
                                         <button type="button" wire:click="removeDetail({{ $index }})" class="btn btn-sm btn-danger ml-3">
                                             <i class="fas fa-trash"></i>

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class TransferPerizinan extends Component
@@ -39,14 +40,6 @@ class TransferPerizinan extends Component
 
     /** @var bool */
     public $softTransfer;
-
-    /** @var mixed */
-    protected $listeners = [
-        'siap.show-tp'          => 'showModal',
-        'siap.hide-tp'          => 'hideModal',
-        'siap.prepare-transfer' => 'prepareTransfer',
-        'siap.transfer'         => 'save',
-    ];
 
     public function mount(): void
     {
@@ -79,6 +72,7 @@ class TransferPerizinan extends Component
                 ->get();
     }
 
+    #[On('siap.prepare-transfer')]
     public function prepareTransfer(string $nrp = '', string $nama = ''): void
     {
         $this->nrp = $nrp;
@@ -97,11 +91,12 @@ class TransferPerizinan extends Component
         $this->permissions = $user->permissions->pluck('name', 'id')->all();
     }
 
+    #[On('siap.transfer')]
     public function save(): void
     {
         if (! user()->hasRole(config('permission.superadmin_name'))) {
-            $this->dispatchBrowserEvent('data-denied');
-            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatch('data-denied');
+            $this->dispatch('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
         }
@@ -124,8 +119,8 @@ class TransferPerizinan extends Component
 
         tracker_end('mysql_smc');
 
-        $this->dispatchBrowserEvent('data-saved');
-        $this->emit('flash.success', 'Transfer perizinan SIAP berhasil!');
+        $this->dispatch('data-saved');
+        $this->dispatch('flash.success', 'Transfer perizinan SIAP berhasil!');
     }
 
     protected function defaultValues(): void

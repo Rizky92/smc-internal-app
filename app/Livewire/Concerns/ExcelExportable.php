@@ -6,6 +6,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\LazyCollection;
+use Livewire\Attributes\On;
 use Rizky92\Xlswriter\ExcelExport;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -19,14 +20,6 @@ trait ExcelExportable
     private $invalidSheetCharacters = [
         '\\', '/', '?', '*', ':', '[', ']',
     ];
-
-    public function initializeExcelExportable(): void
-    {
-        $this->listeners = array_merge($this->listeners, [
-            'exportToExcel',
-            'beginExcelExport',
-        ]);
-    }
 
     /**
      * @return array<array-key, (\Closure(): \Illuminate\Database\Eloquent\Collection|Collection|LazyCollection|array)|Collection|Collection|array>
@@ -61,13 +54,15 @@ trait ExcelExportable
         return $dataSheets;
     }
 
+    #[On('exportToExcel')]
     public function exportToExcel(): void
     {
-        $this->emit('flash.info', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+        $this->dispatch('flash.info', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
 
-        $this->emit('beginExcelExport');
+        $this->dispatch('beginExcelExport');
     }
 
+    #[On('beginExcelExport')]
     public function beginExcelExport(): ?StreamedResponse
     {
         $filename = now()->format('Ymd_His').'_';
