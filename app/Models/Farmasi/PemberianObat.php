@@ -235,4 +235,66 @@ class PemberianObat extends Model
 
         return map_bulan($data);
     }
+
+    public function scopeLaporanPemakaianObatAntibiotik(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $jenisPerawatan): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->toDateString();
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->toDateString();
+        }
+
+        $sqlSelect = <<<'SQL'
+            detail_pemberian_obat.no_rawat,
+            reg_periksa.no_rkm_medis,
+            pasien.nm_pasien,
+            detail_pemberian_obat.tgl_perawatan,
+            detail_pemberian_obat.kode_brng,
+            databarang.nama_brng,
+            detail_pemberian_obat.jml,
+            case
+                when detail_pemberian_obat.status = 'Ranap' or reg_periksa.status_lanjut = 'Ranap' then (
+                    select group_concat(distinct d.nm_dokter separator ', ')
+                    from dpjp_ranap dr
+                    join dokter d on dr.kd_dokter = d.kd_dokter
+                    where dr.no_rawat = detail_pemberian_obat.no_rawat
+                )
+                else dokter.nm_dokter
+            end as dokter,
+            detail_pemberian_obat.status as status_layanan,
+            spesialis.nm_sps
+        SQL;
+
+        $this->addSearchConditions([
+            'detail_pemberian_obat.no_rawat',
+            'reg_periksa.no_rkm_medis',
+            'pasien.nm_pasien',
+            'detail_pemberian_obat.kode_brng',
+            'databarang.nama_brng',
+            'dokter.nm_dokter',
+            'spesialis.nm_sps'
+        ]);
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->withCasts([
+                'jml' => 'float',
+            ])
+            ->join('reg_periksa', 'detail_pemberian_obat.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->join('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
+            ->leftJoin('golongan_barang', 'databarang.kode_golongan', '=', 'golongan_barang.kode')
+            ->leftJoin('kategori_barang', 'databarang.kode_kategori', '=', 'kategori_barang.kode')
+            ->leftJoin('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
+            ->leftJoin('spesialis', 'dokter.kd_sps', '=', 'spesialis.kd_sps')
+            ->whereBetween('detail_pemberian_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
+            ->where(function (Builder $q) {
+                $q->where('kategori_barang.kode', '=', '2.16')
+                    ->orWhere('kategori_barang.kode', '=', '2.17')
+                    ->orWhere('kategori_barang.kode', '=', '2.18');
+            })
+            ->when($jenisPerawatan !== 'semua', fn (Builder $q): Builder => $q->where('detail_pemberian_obat.status', $jenisPerawatan));
+    }
 }

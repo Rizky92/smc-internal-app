@@ -342,6 +342,7 @@ class Menu
                     'farmasi.laporan-pemakaian-obat-napza.read',
                     'farmasi.laporan-pemakaian-obat-morphine.read',
                     'farmasi.laporan-pemakaian-obat-tb.read',
+                    'farmasi.laporan-pemakaian-obat-antibiotik.read',
                     'farmasi.defecta-depo.read',
                     'farmasi.daftar-riwayat-obat-alkes.read',
                     'farmasi.farmasi.rincian-perbandingan-po.read',
@@ -415,6 +416,12 @@ class Menu
                         'icon'              => 'fas fa-file-invoice',
                         'url'               => route('admin.farmasi.laporan-pemakaian-obat-tb'),
                         'hasAnyPermissions' => $user->can('farmasi.laporan-pemakaian-obat-tb.read'),
+                    ],
+                    [
+                        'name'              => 'Pemakaian Obat Antibiotik',
+                        'icon'              => 'fas fa-file-invoice',
+                        'url'               => route('admin.farmasi.laporan-pemakaian-obat-antibiotik'),
+                        'hasAnyPermissions' => $user->can('farmasi.laporan-pemakaian-obat-antibiotik.read'),
                     ],
                     [
                         'name'              => 'Defecta Depo',

@@ -308,6 +308,10 @@ Route::prefix('admin')
                     ->name('laporan-pemakaian-obat-tb')
                     ->middleware('can:farmasi.laporan-pemakaian-obat-tb.read');
 
+                Route::get('laporan-pemakaian-obat-antibiotik', Farmasi\LaporanPemakaianObatAntibiotik::class)
+                    ->name('laporan-pemakaian-obat-antibiotik')
+                    ->middleware('can:farmasi.laporan-pemakaian-obat-antibiotik.read');
+
                 Route::get('daftar-riwayat-obat-alkes', Farmasi\DaftarRiwayatObatAlkes::class)
                     ->name('daftar-riwayat-obat-alkes')
                     ->middleware('can:farmasi.daftar-riwayat-obat-alkes.read');
