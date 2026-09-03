@@ -10,17 +10,18 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Perawatan\RegistrasiPasien;
 use App\View\Components\BaseLayout;
+use Illuminate\Pagination\Paginator;
 use Illuminate\View\View;
 use Livewire\Component;
 
 class SummaryBillingMCU extends Component
 {
-    use FlashComponent;
-    use Filterable;
+    use DeferredLoading;
     use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
     use LiveTable;
     use MenuTracker;
-    use DeferredLoading;
 
     /** @var string */
     public $tglAwal;
@@ -42,7 +43,7 @@ class SummaryBillingMCU extends Component
     }
 
     /**
-     * @return array<empty,empty>|\Illuminate\Pagination\Paginator
+     * @return array<empty,empty>|Paginator
      */
     public function getDataSummaryBillingMCUProperty()
     {

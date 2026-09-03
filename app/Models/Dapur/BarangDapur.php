@@ -46,31 +46,30 @@ class BarangDapur extends Model
             dapurbarang.harga * if(dapurbarang.stok <= ifnull(minmax.stok_min, 0), ifnull(ifnull(minmax.stok_max, ifnull(minmax.stok_min, 0)) - dapurbarang.stok, 0), 0) total_harga
             SQL;
 
-            $this->addSearchConditions([
-                'dapurbarang.kode_brng',
-                'dapurbarang.nama_brng',
-                "ifnull(dapursuplier.kode_suplier, ('-')",
-                "ifnull(dapursuplier.nama_suplier, ('-')",
-                'kodesatuan.satuan',
-            ]);
+        $this->addSearchConditions([
+            'dapurbarang.kode_brng',
+            'dapurbarang.nama_brng',
+            "ifnull(dapursuplier.kode_suplier, ('-')",
+            "ifnull(dapursuplier.nama_suplier, ('-')",
+            'kodesatuan.satuan',
+        ]);
 
-            $this->addRawColumns([
-                'kode_suplier' => DB::raw("ifnull(dapursuplier.kode_suplier, '-')"),
-                'nama_suplier' => DB::raw("ifnull(dapursuplier.nama_suplier, '-')"),
-                'stokmin'      => DB::raw('ifnull(minmax.stok_min, 0)'),
-                'stokmax'      => DB::raw('ifnull(minmax.stok_max, 0)'),
-                'saran_order'  => DB::raw('if(dapurbarang.stok <= ifnull(minmax.stok_min, 0), ifnull(ifnull(minmax.stok_max, ifnull(minmax.stok_min, 0)) - dapurbarang.stok, 0), 0)'),
-                'total_harga'  => DB::raw('if(dapurbarang.stok <= ifnull(minmax.stok_min, 0), dapurbarang.harga * ifnull(ifnull(minmax.stok_max, ifnull(minmax.stok_min, 0)) - dapurbarang.stok, 0), 0)')
-            ]);
+        $this->addRawColumns([
+            'kode_suplier' => DB::raw("ifnull(dapursuplier.kode_suplier, '-')"),
+            'nama_suplier' => DB::raw("ifnull(dapursuplier.nama_suplier, '-')"),
+            'stokmin'      => DB::raw('ifnull(minmax.stok_min, 0)'),
+            'stokmax'      => DB::raw('ifnull(minmax.stok_max, 0)'),
+            'saran_order'  => DB::raw('if(dapurbarang.stok <= ifnull(minmax.stok_min, 0), ifnull(ifnull(minmax.stok_max, ifnull(minmax.stok_min, 0)) - dapurbarang.stok, 0), 0)'),
+            'total_harga'  => DB::raw('if(dapurbarang.stok <= ifnull(minmax.stok_min, 0), dapurbarang.harga * ifnull(ifnull(minmax.stok_max, ifnull(minmax.stok_min, 0)) - dapurbarang.stok, 0), 0)'),
+        ]);
 
-            return $query
-                ->selectRaw($sqlSelect)
-                ->leftJoin('kodesatuan', 'dapurbarang.kode_sat', 'kodesatuan.kode_sat')
-                ->leftJoin(sprintf('%s.minmax_stok_dapur as minmax', $db), 'dapurbarang.kode_brng', 'minmax.kode_brng')
-                ->leftJoin('dapursuplier', 'minmax.kode_suplier', 'dapursuplier.kode_suplier')
-                ->where('dapurbarang.status', '1');
+        return $query
+            ->selectRaw($sqlSelect)
+            ->leftJoin('kodesatuan', 'dapurbarang.kode_sat', 'kodesatuan.kode_sat')
+            ->leftJoin(sprintf('%s.minmax_stok_dapur as minmax', $db), 'dapurbarang.kode_brng', 'minmax.kode_brng')
+            ->leftJoin('dapursuplier', 'minmax.kode_suplier', 'dapursuplier.kode_suplier')
+            ->where('dapurbarang.status', '1');
     }
-
 
     public function scopeDaruratStok(Builder $query, bool $saranOrderNol = true): Builder
     {
@@ -103,7 +102,7 @@ class BarangDapur extends Model
             'stokmin'       => DB::raw('ifnull(minmax.stok_min, 0)'),
             'stokmax'       => DB::raw('ifnull(minmax.stok_max, 0)'),
             'saran_order'   => DB::raw('if(dapurbarang.stok <= ifnull(minmax.stok_min, 0), ifnull(ifnull(minmax.stok_max, ifnull(minmax.stok_min, 0)) - dapurbarang.stok, 0), 0)'),
-            'total_harga'   => DB::raw('dapurbarang.harga * if(dapurbarang.stok <= ifnull(minmax.stok_min, 0), ifnull(ifnull(minmax.stok_max, ifnull(minmax.stok_min, 0)) - dapurbarang.stok, 0), 0)')
+            'total_harga'   => DB::raw('dapurbarang.harga * if(dapurbarang.stok <= ifnull(minmax.stok_min, 0), ifnull(ifnull(minmax.stok_max, ifnull(minmax.stok_min, 0)) - dapurbarang.stok, 0), 0)'),
         ]);
 
         return $query
@@ -113,6 +112,6 @@ class BarangDapur extends Model
             ->leftJoin('dapursuplier', 'minmax.kode_suplier', 'dapursuplier.kode_suplier')
             ->where('dapurbarang.status', '1')
             ->whereColumn('dapurbarang.stok', '<=', DB::raw('ifnull(minmax.stok_min, 0)'))
-            ->when(!$saranOrderNol, fn (Builder $query) => $query->whereRaw('ifnull(ifnull(minmax.stok_max, 0) - dapurbarang.stok, 0) > 0'));
+            ->when(! $saranOrderNol, fn (Builder $query) => $query->whereRaw('ifnull(ifnull(minmax.stok_max, 0) - dapurbarang.stok, 0) > 0'));
     }
 }

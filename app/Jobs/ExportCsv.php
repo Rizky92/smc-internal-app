@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\Export;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use League\Csv\Writer;
 use SplTempFileObject;
 
-class ExportCsv
+class ExportCsv implements ShouldQueue
 {
     use Batchable;
     use Dispatchable;
@@ -70,7 +71,10 @@ class ExportCsv
         ])
             ->where('export_session_id', $this->exportSessionId)
             ->where('export_name', $this->exportName)
-            ->where('id_user', $this->userId);
+            ->where('id_user', $this->userId)
+            // Urutan baris di dalam satu shard mengikuti `id`. Tanpa ORDER BY,
+            // urutannya diserahkan ke optimizer dan bisa berubah sewaktu-waktu.
+            ->orderBy('id');
 
         foreach ($query->find($this->records) as $record) {
             $csv->insertOne($record->toArray());

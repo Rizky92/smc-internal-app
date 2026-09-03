@@ -17,6 +17,7 @@ use App\Models\Radiologi\PermintaanRadiologi;
 use App\Models\RekamMedis\BerkasDigitalKeperawatan;
 use App\Models\RekamMedis\Pasien;
 use App\Models\RekamMedis\Penjamin;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -1342,8 +1343,8 @@ class RegistrasiPasien extends Model
     }
 
     /**
-     * @param  string|\Carbon\Carbon|null  $tglAwal
-     * @param  string|\Carbon\Carbon|null  $tglAkhir
+     * @param  string|Carbon|null  $tglAwal
+     * @param  string|Carbon|null  $tglAkhir
      */
     public function scopeSummaryBillingMCU(Builder $query, $tglAwal = null, $tglAkhir = null, string $kodePoli = 'U0036'): Builder
     {
@@ -1369,7 +1370,7 @@ class RegistrasiPasien extends Model
         $this->addSearchConditions([
             'pasien.nm_pasien',
             'penjab.png_jawab',
-            'dokter.nm_dokter'
+            'dokter.nm_dokter',
         ]);
 
         return $query

@@ -9,7 +9,7 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Aplikasi\Pintu;
 use App\View\Components\BaseLayout;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -31,7 +31,7 @@ class ManajemenPintu extends Component
     }
 
     /**
-     * @return \Illuminate\Contracts\Pagination\Paginator|array
+     * @return Paginator|array
      */
     public function getPintuProperty()
     {
