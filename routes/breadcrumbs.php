@@ -397,6 +397,11 @@ Breadcrumbs::for('admin.aplikasi.pengaturan', function (Trail $trail): void {
     $trail->push('Pengaturan', route('admin.aplikasi.pengaturan'));
 });
 
+Breadcrumbs::for('admin.aplikasi.log-dicom-router-satu-sehat', function (Trail $trail): void {
+    $trail->parent('admin.aplikasi');
+    $trail->push('Log DICOM Router Satu Sehat', route('admin.aplikasi.log-dicom-router-satu-sehat'));
+});
+
 Breadcrumbs::for('admin.route-list', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Route List', route('admin.route-list'));

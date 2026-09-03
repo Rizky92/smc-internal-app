@@ -95,6 +95,10 @@ Route::prefix('admin')
                 Route::get('pengaturan', Aplikasi\Pengaturan::class)
                     ->name('pengaturan')
                     ->middleware('canany:'.Aplikasi\Pengaturan::permissions());
+
+                Route::get('log-dicom-router-satu-sehat', Aplikasi\LogDicomRouterSatuSehat::class)
+                    ->name('log-dicom-router-satu-sehat')
+                    ->middleware('can:aplikasi.log-dicom-router-satu-sehat.read');
             });
 
         Route::prefix('perawatan')
