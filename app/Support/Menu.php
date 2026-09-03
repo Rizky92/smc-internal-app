@@ -496,6 +496,7 @@ class Menu
                 'type'              => 'dropdown',
                 'hasAnyPermissions' => $user->canAny([
                     'marketing.summary-billing-mcu.read',
+                    'marketing.penggunaan-alkes.read',
                 ]),
                 'items' => [
                     [
@@ -503,6 +504,12 @@ class Menu
                         'icon'              => 'fas fa-file-alt',
                         'url'               => route('admin.marketing.summary-billing-mcu'),
                         'hasAnyPermissions' => $user->can('marketing.summary-billing-mcu.read'),
+                    ],
+                    [
+                        'name'              => 'Penggunaan Alkes',
+                        'icon'              => 'fas fa-globe-asia',
+                        'url'               => route('admin.marketing.penggunaan-alkes'),
+                        'hasAnyPermissions' => $user->can('marketing.penggunaan-alkes.read'),
                     ],
                 ],
             ],

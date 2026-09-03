@@ -355,6 +355,9 @@ Route::prefix('admin')
                 Route::get('summary-billing-mcu', Marketing\SummaryBillingMCU::class)
                     ->name('summary-billing-mcu')
                     ->middleware('can:marketing.summary-billing-mcu.read');
+                Route::get('penggunaan-alkes', Marketing\LaporanPenggunaanAlkes::class)
+                    ->name('penggunaan-alkes')
+                    ->middleware('can:marketing.penggunaan-alkes.read');
             });
 
         Route::prefix('antrean')

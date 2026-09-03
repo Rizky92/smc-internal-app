@@ -103,6 +103,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'rekam-medis.status-data-pasien.read']);
 
         Permission::create(['name' => 'marketing.summary-billing-mcu.read']);
+        Permission::create(['name' => 'marketing.penggunaan-alkes.read']);
 
         Permission::create(['name' => 'logistik.input-minmax-stok.create']);
         Permission::create(['name' => 'logistik.input-minmax-stok.read']);

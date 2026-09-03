@@ -327,6 +327,11 @@ Breadcrumbs::for('admin.marketing.summary-billing-mcu', function (Trail $trail):
     $trail->push('Summary Billing MCU', route('admin.marketing.summary-billing-mcu'));
 });
 
+Breadcrumbs::for('admin.marketing.penggunaan-alkes', function (Trail $trail): void {
+    $trail->parent('admin.marketing');
+    $trail->push('Penggunaan Alkes', route('admin.marketing.penggunaan-alkes'));
+});
+
 Breadcrumbs::for('admin.logistik', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Logistik');
