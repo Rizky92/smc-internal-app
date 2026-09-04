@@ -97,8 +97,10 @@ class LaporanStatistik extends Component
                     Str::transliterate($model->tgl_keluar ?? ''),
                     Str::transliterate($model->jam_keluar ?? ''),
                     Str::transliterate($model->diagnosa_awal ?? ''),
-                    Str::transliterate($model->icd_diagnosa ?? ''),
-                    Str::transliterate($model->diagnosa ?? ''),
+                    Str::transliterate($this->diagnosaUtama($model->icd_diagnosa ?? '')),
+                    Str::transliterate($this->diagnosaSekunder($model->icd_diagnosa ?? '')),
+                    Str::transliterate($this->diagnosaUtama($model->diagnosa ?? '')),
+                    Str::transliterate($this->diagnosaSekunder($model->diagnosa ?? '')),
                     Str::transliterate($model->kd_tindakan_ralan ?? ''),
                     Str::transliterate($model->nm_tindakan_ralan ?? ''),
                     Str::transliterate($model->kd_tindakan_ranap ?? ''),
@@ -117,6 +119,16 @@ class LaporanStatistik extends Component
                     Str::transliterate($model->kd_pj ?? ''),
                 ]),
         ];
+    }
+
+    protected function diagnosaUtama(string $value): string
+    {
+        return str($value)->split('/(; )/')->first() ?? '';
+    }
+
+    protected function diagnosaSekunder(string $value): string
+    {
+        return str($value)->split('/(; )/')->slice(1)->implode('; ');
     }
 
     protected function columnHeaders(): array
@@ -142,8 +154,10 @@ class LaporanStatistik extends Component
             'Tgl. Pulang',
             'Jam Pulang',
             'Diagnosa Masuk',
-            'ICD Diagnosa',
-            'Diagnosa',
+            'ICD-10 Utama',
+            'ICD-10 Sekunder',
+            'Diagnosa Utama',
+            'Diagnosa Sekunder',
             'Kode Tindakan Ralan',
             'Tindakan Ralan',
             'Kode Tindakan Ranap',
