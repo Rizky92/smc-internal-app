@@ -265,7 +265,7 @@ class LaporanPenggunaanAlkes extends Component
     public function getDataPenggunaanAlkesPanoramikProperty()
     {
         return $this->isDeferred ? [] : PeriksaRadiologi::query()
-            ->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'panoramik')
+            ->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'panoramic')
             ->paginate($this->perpage);
     }
 
@@ -352,7 +352,7 @@ class LaporanPenggunaanAlkes extends Component
             'Thorax'    => fn (): array => $this->countAlkesByUnit(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'thorax', self::ALKES_EXCLUDE['thorax'] ?? [])),
             'CT-Scan'   => fn (): array => $this->countAlkesByUnit(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'ct-scan')),
             'Lumbal'    => fn (): array => $this->countAlkesByUnit(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'lumbal', self::ALKES_EXCLUDE['lumbal'] ?? [])),
-            'Panoramik' => fn (): array => $this->countAlkesByUnit(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'panoramik')),
+            'Panoramik' => fn (): array => $this->countAlkesByUnit(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'panoramic')),
             'MRI'       => fn (): array => $this->countAlkesByUnit(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'mri')),
         ];
 
@@ -383,7 +383,7 @@ class LaporanPenggunaanAlkes extends Component
             'Thorax'     => fn () => (new LazyCollection(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'thorax', self::ALKES_EXCLUDE['thorax'] ?? [])->cursor()))->map(fn ($item) => $this->mapAlkesItem($item)),
             'CT Scan'    => fn () => (new LazyCollection(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'ct-scan')->cursor()))->map(fn ($item) => $this->mapAlkesItem($item)),
             'Lumbal'     => fn () => (new LazyCollection(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'lumbal', self::ALKES_EXCLUDE['lumbal'] ?? [])->cursor()))->map(fn ($item) => $this->mapAlkesItem($item)),
-            'Panoramik'  => fn () => (new LazyCollection(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'panoramik')->cursor()))->map(fn ($item) => $this->mapAlkesItem($item)),
+            'Panoramik'  => fn () => (new LazyCollection(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'panoramic')->cursor()))->map(fn ($item) => $this->mapAlkesItem($item)),
             'MRI'        => fn () => (new LazyCollection(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'mri')->cursor()))->map(fn ($item) => $this->mapAlkesItem($item)),
         ];
     }
