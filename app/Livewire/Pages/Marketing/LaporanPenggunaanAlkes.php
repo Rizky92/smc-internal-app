@@ -42,6 +42,17 @@ class LaporanPenggunaanAlkes extends Component
         'thorax' => ['ct'],
     ];
 
+    private const MCU_KD_POLI = 'U0036';
+
+    private const ALKES_SUMMARY_TINDAKAN = [
+        'Audiometri' => 'audiometri',
+        'Spirometri' => 'spirometri',
+        'Treadmil'   => 'treadmill',
+        'EKG'        => 'ekg',
+        'EEG'        => 'eeg',
+        'Echo'       => 'echo',
+    ];
+
     protected function queryString(): array
     {
         return [
@@ -303,9 +314,65 @@ class LaporanPenggunaanAlkes extends Component
         ];
     }
 
+    private function classifyAlkesUnit(object $item): string
+    {
+        if ($item->status === 'Ranap') {
+            return 'Ranap';
+        }
+
+        if ($item->kd_poli === self::MCU_KD_POLI) {
+            return 'MCU';
+        }
+
+        return 'Poli';
+    }
+
+    /**
+     * @return array{Poli: int, MCU: int, Ranap: int}
+     */
+    private function countAlkesByUnit(Builder $query): array
+    {
+        $counts = ['Poli' => 0, 'MCU' => 0, 'Ranap' => 0];
+
+        foreach ($query->cursor() as $item) {
+            $counts[$this->classifyAlkesUnit($item)]++;
+        }
+
+        return $counts;
+    }
+
+    private function buildSummaryRows(): array
+    {
+        $resolvers = [
+            ...array_map(
+                fn (string $nama) => fn (): array => $this->countAlkesByUnit($this->buildRalanRanapQuery($nama)),
+                self::ALKES_SUMMARY_TINDAKAN
+            ),
+            'USG'       => fn (): array => $this->countAlkesByUnit(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, ['usg', 'hsg'])),
+            'Thorax'    => fn (): array => $this->countAlkesByUnit(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'thorax', self::ALKES_EXCLUDE['thorax'] ?? [])),
+            'CT-Scan'   => fn (): array => $this->countAlkesByUnit(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'ct-scan')),
+            'Lumbal'    => fn (): array => $this->countAlkesByUnit(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'lumbal', self::ALKES_EXCLUDE['lumbal'] ?? [])),
+            'Panoramik' => fn (): array => $this->countAlkesByUnit(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'panoramik')),
+            'MRI'       => fn (): array => $this->countAlkesByUnit(PeriksaRadiologi::query()->penggunaanAlkes($this->tglAwal, $this->tglAkhir, 'mri')),
+        ];
+
+        $rows = [];
+        $no = 1;
+
+        foreach ($resolvers as $tindakan => $resolver) {
+            $counts = $resolver();
+            $total = $counts['Poli'] + $counts['MCU'] + $counts['Ranap'];
+
+            $rows[] = [$no++, $tindakan, $counts['Poli'], $counts['MCU'], $counts['Ranap'], $total];
+        }
+
+        return $rows;
+    }
+
     protected function dataPerSheet(): array
     {
         return [
+            'Summary'    => fn () => $this->buildSummaryRows(),
             'Audiometri' => fn () => (new LazyCollection($this->buildRalanRanapQuery('audiometri')->cursor()))->map(fn ($item) => $this->mapAlkesItem($item)),
             'Spirometri' => fn () => (new LazyCollection($this->buildRalanRanapQuery('spirometri')->cursor()))->map(fn ($item) => $this->mapAlkesItem($item)),
             'Treadmill'  => fn () => (new LazyCollection($this->buildRalanRanapQuery('treadmill')->cursor()))->map(fn ($item) => $this->mapAlkesItem($item)),
@@ -323,7 +390,7 @@ class LaporanPenggunaanAlkes extends Component
 
     protected function columnHeaders(): array
     {
-        return [
+        $detailHeaders = [
             'No. Rawat',
             'No. RM',
             'Pasien',
@@ -333,6 +400,22 @@ class LaporanPenggunaanAlkes extends Component
             'Unit / Kamar',
             'Biaya',
             'Status',
+        ];
+
+        return [
+            'Summary'    => ['No.', 'Tindakan', 'Poli', 'MCU', 'Ranap', 'Total'],
+            'Audiometri' => $detailHeaders,
+            'Spirometri' => $detailHeaders,
+            'Treadmill'  => $detailHeaders,
+            'EKG'        => $detailHeaders,
+            'EEG'        => $detailHeaders,
+            'Echo'       => $detailHeaders,
+            'USG'        => $detailHeaders,
+            'Thorax'     => $detailHeaders,
+            'CT Scan'    => $detailHeaders,
+            'Lumbal'     => $detailHeaders,
+            'Panoramik'  => $detailHeaders,
+            'MRI'        => $detailHeaders,
         ];
     }
 

@@ -194,6 +194,7 @@ class PeriksaRadiologi extends Model
             periksa_radiologi.tgl_periksa,
             periksa_radiologi.jam,
             reg_periksa.kd_pj,
+            reg_periksa.kd_poli,
             penjab.png_jawab,
             if(periksa_radiologi.status = 'Ranap', ifnull(($sql), poliklinik.nm_poli), poliklinik.nm_poli) as unit,
             periksa_radiologi.biaya,
