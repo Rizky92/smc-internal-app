@@ -76,6 +76,7 @@ class TindakanRalanDokter extends Model
             rawat_jl_dr.tgl_perawatan as tgl_periksa,
             rawat_jl_dr.jam_rawat as jam,
             reg_periksa.kd_pj,
+            reg_periksa.kd_poli,
             penjab.png_jawab,
             poliklinik.nm_poli as unit,
             rawat_jl_dr.biaya_rawat as biaya,

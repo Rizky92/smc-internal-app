@@ -93,6 +93,7 @@ class TindakanRanapDokterPerawat extends Model
             rawat_inap_drpr.tgl_perawatan as tgl_periksa,
             rawat_inap_drpr.jam_rawat as jam,
             reg_periksa.kd_pj,
+            reg_periksa.kd_poli,
             penjab.png_jawab,
             ifnull(($sql), poliklinik.nm_poli) as unit,
             rawat_inap_drpr.biaya_rawat as biaya,

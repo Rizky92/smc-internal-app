@@ -36,7 +36,6 @@
                     <x-table.th name="status_layanan" title="Jenis Perawatan" />
                     <x-table.th name="dokter" title="Dokter" />
                     <x-table.th name="nm_spesialis" title="Spesialis" />
-
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->dataLaporanPemakaianObatAntibiotik as $item)
