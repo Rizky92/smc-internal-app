@@ -236,7 +236,7 @@ class PemberianObat extends Model
         return map_bulan($data);
     }
 
-    public function scopeLaporanPemakaianObatAntibiotik(Builder $query, string $tglAwal = '', string $tglAkhir = '', string $jenisPerawatan): Builder
+    public function scopeLaporanPemakaianObatAntibiotik(Builder $query, string $tglAwal, string $tglAkhir, string $jenisPerawatan): Builder
     {
         if (empty($tglAwal)) {
             $tglAwal = now()->startOfMonth()->toDateString();
@@ -274,7 +274,7 @@ class PemberianObat extends Model
             'detail_pemberian_obat.kode_brng',
             'databarang.nama_brng',
             'dokter.nm_dokter',
-            'spesialis.nm_sps'
+            'spesialis.nm_sps',
         ]);
 
         return $query

@@ -24,12 +24,12 @@ use Livewire\Component;
 
 class LaporanPenggunaanAlkes extends Component
 {
-    use FlashComponent;
-    use Filterable;
+    use DeferredLoading;
     use ExcelExportable;
+    use Filterable;
+    use FlashComponent;
     use LiveTable;
     use MenuTracker;
-    use DeferredLoading;
 
     /** @var string */
     public $tglAwal;
@@ -67,7 +67,7 @@ class LaporanPenggunaanAlkes extends Component
     }
 
     /**
-     * @return array|\Illuminate\Pagination\Paginator
+     * @return array|Paginator
      */
     public function getDataPenggunaanAlkesAudiometriProperty()
     {
@@ -95,7 +95,7 @@ class LaporanPenggunaanAlkes extends Component
     }
 
     /**
-     * @return array|\Illuminate\Pagination\Paginator
+     * @return array|Paginator
      */
     public function getDataPenggunaanAlkesSpirometriProperty()
     {
@@ -123,7 +123,7 @@ class LaporanPenggunaanAlkes extends Component
     }
 
     /**
-     * @return array|\Illuminate\Pagination\Paginator
+     * @return array|Paginator
      */
     public function getDataPenggunaanAlkesTreadmillProperty()
     {
@@ -151,7 +151,7 @@ class LaporanPenggunaanAlkes extends Component
     }
 
     /**
-     * @return array|\Illuminate\Pagination\Paginator
+     * @return array|Paginator
      */
     public function getDataPenggunaanAlkesEKGProperty()
     {
@@ -179,7 +179,7 @@ class LaporanPenggunaanAlkes extends Component
     }
 
     /**
-     * @return array|\Illuminate\Pagination\Paginator
+     * @return array|Paginator
      */
     public function getDataPenggunaanAlkesEEGProperty()
     {
@@ -207,7 +207,7 @@ class LaporanPenggunaanAlkes extends Component
     }
 
     /**
-     * @return array|\Illuminate\Pagination\Paginator
+     * @return array|Paginator
      */
     public function getDataPenggunaanAlkesEchoProperty()
     {
