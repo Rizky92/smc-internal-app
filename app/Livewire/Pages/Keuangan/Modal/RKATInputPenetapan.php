@@ -194,7 +194,11 @@ class RKATInputPenetapan extends Component
 
     public function delete(): void
     {
-        if ($this->isUpdating()) {
+        // Refuse when nothing is selected, which is what the message says.
+        // Written without the negation, this refused whenever a row *was*
+        // selected and otherwise ran destroy() against the -1 placeholder, so
+        // deleting a penetapan could never work.
+        if (! $this->isUpdating()) {
             $this->flashError('Data tidak ditemukan!');
             $this->dispatch('data-denied');
 
