@@ -87,11 +87,18 @@ class RKATInputPenetapan extends Component
     #[On('prepare')]
     public function prepare(int $id = -1): void
     {
-        $this->anggaranBidangId = $id;
-
-        /** @var AnggaranBidang */
         $data = AnggaranBidang::find($id);
 
+        // A stale id arrives whenever the table is left open while somebody else
+        // deletes the row. Fall back to create mode rather than dereferencing
+        // null.
+        if ($data === null) {
+            $this->defaultValues();
+
+            return;
+        }
+
+        $this->anggaranBidangId = $id;
         $this->anggaranId = $data->anggaran_id;
         $this->bidangId = $data->bidang_id;
         $this->nominalAnggaran = $data->nominal_anggaran;

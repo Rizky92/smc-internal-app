@@ -71,7 +71,13 @@ class AntrianPoli extends Component
                 $response = ['changed' => false, 'data' => $nextAntrian];
             }
         } else {
-            $response = ['changed' => true, 'data' => $nextAntrian + ['namaDokter' => $namaDokter, 'namaPoli' => $namaPoli]];
+            // Nothing is waiting, so there is nothing to change to. This used to
+            // evaluate `null + [...]`, a TypeError under PHP 8, from two
+            // variables that only ever existed in AntrianPoliController::show() —
+            // so every poll for an empty poli answered 500. The display reads
+            // response.data.no_reg whenever changed is true, which is why this
+            // reports false rather than true with a null payload.
+            $response = ['changed' => false, 'data' => null];
         }
 
         return response()->json($response);

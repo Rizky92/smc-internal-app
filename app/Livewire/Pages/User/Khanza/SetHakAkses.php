@@ -44,11 +44,15 @@ class SetHakAkses extends Component
     }
 
     /**
-     * @return Collection|array<empty, empty>
+     * Always a Collection, empty while deferred.
+     *
+     * This used to hand back a plain array before the modal opened, which save()
+     * then called ->mapWithKeys() on. khanza.set is a global event and can arrive
+     * first, so that was a reachable fatal.
      */
-    public function getHakAksesKhanzaProperty()
+    public function getHakAksesKhanzaProperty(): Collection
     {
-        return $this->isDeferred ? [] : HakAkses::query()
+        return $this->isDeferred ? new Collection : HakAkses::query()
             ->search($this->cari, ['nama_field', 'judul_menu'])
             ->when($this->showChecked, fn (Builder $q): Builder => $q
                 ->orWhereIn('nama_field', collect($this->checkedHakAkses)->filter()->keys()->all())
@@ -79,8 +83,13 @@ class SetHakAkses extends Component
             return;
         }
 
+        // toBase() because mapWithKeys() on an *empty* Eloquent collection stays
+        // an Eloquent collection — the downgrade only happens once it holds
+        // something that is not a model — and merging booleans into one makes it
+        // call getKey() on a bool.
         $hakAksesUser = $this->hakAksesKhanza
             ->mapWithKeys(fn (HakAkses $hakAkses): array => [$hakAkses->nama_field => $hakAkses->default_value])
+            ->toBase()
             ->merge($this->checkedHakAkses)
             ->all();
 
