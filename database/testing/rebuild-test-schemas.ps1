@@ -90,5 +90,13 @@ if ($target -notmatch 'smc_test') {
 }
 & $PhpBin artisan migrate --force
 
+# khanza_mapping_akses is configuration, not user data: it maps each of Khanza's
+# permission columns to a menu title. User\Khanza\SetHakAkses reads it to build
+# the defaults it writes, and on an empty table its mapWithKeys() stays an
+# Eloquent collection, so the following merge() treats a boolean as a model and
+# fatals. The seeder only truncates and refills its own table.
+Write-Host '==> Seeding khanza_mapping_akses' -ForegroundColor Cyan
+& $PhpBin artisan db:seed --class=KhanzaHakAksesSeeder --force
+
 Write-Host ''
 Write-Host 'Done. Verify with: php vendor/bin/phpunit --filter=TestEnvironmentTest' -ForegroundColor Green
