@@ -2,8 +2,15 @@
     <link rel="stylesheet" href="{{ asset('css/bed.css') }}" />
 @endpush
 
-@section('informasi-kamar')
-    <header class="d-flex flex-wrap justify-content-center mb-0 border-bottom">
+{{--
+    Rendered into the layout's {{ $slot }}, not into @yield('informasi-kamar').
+
+    Livewire 3 requires a component's own output to have exactly one root HTML
+    element. Wrapping the body in @section buffers it instead of echoing it, so
+    Livewire saw an empty render and threw RootTagMissingFromViewException. The
+    matching @yield in layouts/app.blade.php is now dead for this page.
+--}}
+<div>
         <div class="container-fluid d-flex justify-content-center">
             <img src="{{ asset('img/logo.png') }}" alt="logo" width="100vh" height="auto" />
             <span class="header">KETERSEDIAAN KAMAR</span>
@@ -50,4 +57,4 @@
             });
         </script>
     @endpush
-@endsection
+</div>
