@@ -181,6 +181,11 @@ class RKATInputPelaporan extends Component
     {
         if (! $this->isUpdating()) {
             $this->create();
+
+            // Without this the method carried on into the update path, where
+            // PemakaianAnggaran::find(-1) is null and ->update() on it is fatal.
+            // RKATInputPenetapan::update() returns here for the same reason.
+            return;
         }
 
         if (user()->cannot('keuangan.rkat-pelaporan.update')) {
