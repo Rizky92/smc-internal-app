@@ -35,11 +35,16 @@ $sqlFile = Join-Path $env:TEMP 'siap_sik_structure.sql'
 # Khanza is latin1. The test copies must match, or collation-sensitive
 # comparisons behave differently under test than they do in development.
 Write-Host '==> Creating schemas' -ForegroundColor Cyan
+# Both schemas are dropped, not reused. smc_test in particular has to be
+# recreated rather than re-migrated: repeatedly migrating over it left InnoDB
+# holding foreign key metadata that outlived the rows, to the point where
+# deleting a freshly inserted `anggaran` row was refused by a constraint whose
+# child table was empty.
 & $mysql -u $DbUser -e @"
-CREATE DATABASE IF NOT EXISTS sik_test CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-CREATE DATABASE IF NOT EXISTS smc_test CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-DROP DATABASE sik_test;
+DROP DATABASE IF EXISTS sik_test;
+DROP DATABASE IF EXISTS smc_test;
 CREATE DATABASE sik_test CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+CREATE DATABASE smc_test CHARACTER SET latin1 COLLATE latin1_swedish_ci;
 "@
 
 Write-Host "==> Dumping structure of '$SourceSik' (no data)" -ForegroundColor Cyan
