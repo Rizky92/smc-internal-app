@@ -212,6 +212,23 @@ class RKATInputPenetapanTest extends TestCase
     /**
      * @test
      *
+     * A stale row id reaches prepare() whenever the table is open while somebody
+     * else deletes the row. Falling back to create mode is recoverable; a fatal
+     * on null is not.
+     */
+    public function preparing_a_penetapan_that_no_longer_exists_falls_back_to_create_mode(): void
+    {
+        $petugas = $this->petugasWithPermissions([], '99999901');
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPenetapan::class)
+            ->dispatch('prepare', 999999)
+            ->assertSet('anggaranBidangId', -1);
+    }
+
+    /**
+     * @test
+     *
      * prepare() is how the table hands a row to this modal for editing.
      */
     public function loading_an_existing_penetapan_fills_the_form(): void

@@ -93,6 +93,27 @@ class SetHakAksesTest extends TestCase
     }
 
     /**
+     * @test
+     *
+     * khanza.set is a global event, so it can arrive before showModal() has run.
+     * While deferred, getHakAksesKhanzaProperty() hands back a plain array, and
+     * save() calls ->mapWithKeys() on it. Whatever the component decides to do
+     * here, it must not be a fatal.
+     */
+    public function saving_before_the_modal_opens_is_not_a_fatal(): void
+    {
+        $petugas = $this->petugasWithRole($this->superadminName(), '99999901');
+        $this->petugasWithPermissions([], '99999902');
+
+        Livewire::actingAs($petugas)
+            ->test(SetHakAkses::class)
+            ->dispatch('khanza.prepare-set', '99999902', 'Budi Santoso')
+            ->set('checkedHakAkses', ['pasien' => true])
+            ->dispatch('khanza.set')
+            ->assertOk();
+    }
+
+    /**
      * Read one Khanza permission column straight from the row, matching on the
      * decrypted id_user because that is the only thing tying it to a NRP.
      */
