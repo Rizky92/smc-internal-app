@@ -3,6 +3,8 @@
 namespace App\Models\Farmasi;
 
 use App\Database\Eloquent\Model;
+use App\Models\Bangsal;
+use App\Models\Perawatan\KamarInap;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
@@ -246,7 +248,32 @@ class PemberianObat extends Model
             $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
-        $sqlSelect = <<<'SQL'
+        // Kamar ICU diprioritaskan; barisnya hampir selalu ber-stts_pulang "Pindah Kamar"
+        // karena pasien dipindah ke ruang biasa setelah stabil, jadi jangan difilter.
+        $kamarIcu = KamarInap::query()
+            ->selectRaw("concat(kamar_inap.kd_kamar, ' ', bangsal.nm_bangsal)")
+            ->join('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
+            ->join('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
+            ->whereColumn('kamar_inap.no_rawat', 'detail_pemberian_obat.no_rawat')
+            ->whereIn('kamar.kd_bangsal', Bangsal::ruangIcuKeys())
+            ->orderByDesc('kamar_inap.tgl_masuk')
+            ->orderByDesc('kamar_inap.jam_masuk')
+            ->limit(1);
+
+        $kamarTerakhir = KamarInap::query()
+            ->selectRaw("concat(kamar_inap.kd_kamar, ' ', bangsal.nm_bangsal)")
+            ->join('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
+            ->join('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
+            ->whereColumn('kamar_inap.no_rawat', 'detail_pemberian_obat.no_rawat')
+            ->whereNotIn('kamar_inap.stts_pulang', ['Pindah Kamar'])
+            ->orderByDesc('kamar_inap.tgl_masuk')
+            ->orderByDesc('kamar_inap.jam_masuk')
+            ->limit(1);
+
+        $sqlKamarIcu = $kamarIcu->toSql();
+        $sqlKamarTerakhir = $kamarTerakhir->toSql();
+
+        $sqlSelect = <<<SQL
             detail_pemberian_obat.no_rawat,
             reg_periksa.no_rkm_medis,
             pasien.nm_pasien,
@@ -264,6 +291,7 @@ class PemberianObat extends Model
                 else dokter.nm_dokter
             end as dokter,
             detail_pemberian_obat.status as status_layanan,
+            ifnull(coalesce(($sqlKamarIcu), ($sqlKamarTerakhir)), '') as kamar,
             spesialis.nm_sps
         SQL;
 
@@ -278,7 +306,7 @@ class PemberianObat extends Model
         ]);
 
         return $query
-            ->selectRaw($sqlSelect)
+            ->selectRaw($sqlSelect, [...$kamarIcu->getBindings(), ...$kamarTerakhir->getBindings()])
             ->withCasts([
                 'jml' => 'float',
             ])

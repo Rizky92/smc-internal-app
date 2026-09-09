@@ -34,8 +34,9 @@
                     <x-table.th name="nama_brng" title="Nama Obat" />
                     <x-table.th name="jml" align="right" title="Jumlah" />
                     <x-table.th name="status_layanan" title="Jenis Perawatan" />
+                    <x-table.th title="Kamar" />
                     <x-table.th name="dokter" title="Dokter" />
-                    <x-table.th name="nm_spesialis" title="Spesialis" />
+                    <x-table.th name="nm_sps" title="Spesialis" />
                 </x-slot>
                 <x-slot name="body">
                     @forelse ($this->dataLaporanPemakaianObatAntibiotik as $item)
@@ -48,11 +49,12 @@
                             <x-table.td>{{ $item->nama_brng }}</x-table.td>
                             <x-table.td class="text-right">{{ round($item->jml, 2) }}</x-table.td>
                             <x-table.td>{{ $item->status_layanan }}</x-table.td>
+                            <x-table.td>{{ $item->kamar }}</x-table.td>
                             <x-table.td>{{ $item->dokter }}</x-table.td>
                             <x-table.td>{{ $item->nm_sps }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="10" padding />
+                        <x-table.tr-empty colspan="11" padding />
                     @endforelse
                 </x-slot>
             </x-table>

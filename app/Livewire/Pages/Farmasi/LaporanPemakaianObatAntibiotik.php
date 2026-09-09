@@ -88,6 +88,7 @@ class LaporanPemakaianObatAntibiotik extends Component
                     'nama_brng'      => $model->nama_brng,
                     'jml'            => $model->jml,
                     'status_layanan' => $model->status_layanan,
+                    'kamar'          => $model->kamar,
                     'dokter'         => $model->dokter,
                     'spesialis'      => $model->nm_sps,
                 ]),
@@ -105,6 +106,7 @@ class LaporanPemakaianObatAntibiotik extends Component
             'Nama Obat',
             'Jumlah',
             'Jenis Perawatan',
+            'Kamar',
             'Dokter',
             'Spesialis',
         ];
