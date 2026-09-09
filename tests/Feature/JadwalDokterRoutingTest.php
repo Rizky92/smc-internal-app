@@ -34,20 +34,33 @@ class JadwalDokterRoutingTest extends TestCase
 
     /**
      * @test
-     *
-     * The registration that does work. It carries no can: middleware — unlike
-     * every other route in its group — so RouteSweepTest, which only covers
-     * permission-gated routes, does not reach it.
      */
-    public function opens_for_an_authenticated_petugas(): void
+    public function opens_for_a_petugas_holding_the_permission(): void
     {
-        $petugas = $this->petugasWithPermissions([], '99999901');
+        $petugas = $this->petugasWithPermissions(['informasi.jadwal-dokter.read'], '99999901');
 
         $this->withoutExceptionHandling();
 
         $this->actingAs($petugas)
             ->get('/admin/informasi/jadwal-dokter')
             ->assertOk();
+    }
+
+    /**
+     * @test
+     *
+     * Every other route under the informasi prefix is gated; this one was
+     * reachable by any authenticated petugas. 404 rather than 403 because
+     * Handler::render() rewrites AuthorizationException, so being refused does
+     * not reveal that the page exists.
+     */
+    public function refuses_a_petugas_without_the_permission(): void
+    {
+        $petugas = $this->petugasWithPermissions([], '99999901');
+
+        $this->actingAs($petugas)
+            ->get('/admin/informasi/jadwal-dokter')
+            ->assertNotFound();
     }
 
     /**
