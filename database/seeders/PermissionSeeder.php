@@ -125,6 +125,16 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'casemix.laporan-pasien-cob.read']);
         Permission::create(['name' => 'casemix.laporan-triase-igd-zona-hijau.read']);
 
+        // routes/web.php gates on all three of these. The first two were never
+        // created here, and this seeder truncates the table before it fills it,
+        // so after a seed nobody held them and both pages answered 404 to
+        // everyone except the superadmin, whose Gate::before in AppServiceProvider
+        // skips the check entirely. Creating a permission grants it to nobody; it
+        // only makes it assignable.
+        Permission::create(['name' => 'informasi.informasi-kamar.read']);
+        Permission::create(['name' => 'informasi.jadwal-dokter.read']);
+        Permission::create(['name' => 'lab.hasil-mcu-karyawan.read']);
+
         // Superadmin role name, bypasses all permissions
         $superadminRole = Role::create(['name' => config('permission.superadmin_name')]);
 

@@ -353,7 +353,8 @@ Route::prefix('admin')
                     ->middleware('can:informasi.informasi-kamar.read');
 
                 Route::get('jadwal-dokter', Informasi\JadwalDokter::class)
-                    ->name('jadwal-dokter');
+                    ->name('jadwal-dokter')
+                    ->middleware('can:informasi.jadwal-dokter.read');
             });
 
         Route::prefix('logistik')
