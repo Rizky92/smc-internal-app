@@ -35,6 +35,7 @@
                     <x-table.th name="jml" align="right" title="Jumlah" />
                     <x-table.th name="status_layanan" title="Jenis Perawatan" />
                     <x-table.th title="Kamar" />
+                    <x-table.th align="right" title="Lama Rawat Inap" />
                     <x-table.th name="dokter" title="Dokter" />
                     <x-table.th name="nm_sps" title="Spesialis" />
                 </x-slot>
@@ -50,11 +51,12 @@
                             <x-table.td class="text-right">{{ round($item->jml, 2) }}</x-table.td>
                             <x-table.td>{{ $item->status_layanan }}</x-table.td>
                             <x-table.td>{{ $item->kamar }}</x-table.td>
+                            <x-table.td class="text-right">{{ is_null($item->lama_ranap) ? '' : round($item->lama_ranap, 2) }}</x-table.td>
                             <x-table.td>{{ $item->dokter }}</x-table.td>
                             <x-table.td>{{ $item->nm_sps }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="11" padding />
+                        <x-table.tr-empty colspan="12" padding />
                     @endforelse
                 </x-slot>
             </x-table>
