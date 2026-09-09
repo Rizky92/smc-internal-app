@@ -270,8 +270,15 @@ class PemberianObat extends Model
             ->orderByDesc('kamar_inap.jam_masuk')
             ->limit(1);
 
+        // Lama rawat inap dihitung untuk seluruh episode (semua kamar dalam
+        // satu no. rawat), memakai nilai kamar_inap.lama apa adanya.
+        $lamaRanap = KamarInap::query()
+            ->selectRaw('sum(kamar_inap.lama)')
+            ->whereColumn('kamar_inap.no_rawat', 'detail_pemberian_obat.no_rawat');
+
         $sqlKamarIcu = $kamarIcu->toSql();
         $sqlKamarTerakhir = $kamarTerakhir->toSql();
+        $sqlLamaRanap = $lamaRanap->toSql();
 
         $sqlSelect = <<<SQL
             detail_pemberian_obat.no_rawat,
@@ -292,6 +299,7 @@ class PemberianObat extends Model
             end as dokter,
             detail_pemberian_obat.status as status_layanan,
             ifnull(coalesce(($sqlKamarIcu), ($sqlKamarTerakhir)), '') as kamar,
+            ($sqlLamaRanap) as lama_ranap,
             spesialis.nm_sps
         SQL;
 
@@ -306,9 +314,10 @@ class PemberianObat extends Model
         ]);
 
         return $query
-            ->selectRaw($sqlSelect, [...$kamarIcu->getBindings(), ...$kamarTerakhir->getBindings()])
+            ->selectRaw($sqlSelect, [...$kamarIcu->getBindings(), ...$kamarTerakhir->getBindings(), ...$lamaRanap->getBindings()])
             ->withCasts([
-                'jml' => 'float',
+                'jml'        => 'float',
+                'lama_ranap' => 'float',
             ])
             ->join('reg_periksa', 'detail_pemberian_obat.no_rawat', '=', 'reg_periksa.no_rawat')
             ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
