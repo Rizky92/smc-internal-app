@@ -15,16 +15,6 @@
     </head>
 
     <body>
-        @yield('fitur-baru')
-
-        @yield('informasi-kamar')
-
-        @yield('display-jadwal-dokter')
-
-        <div>
-            @yield('antrian-poli')
-        </div>
-
         {{ $slot }}
 
         <script src="{{ asset('js/jquery.min.js') }}"></script>

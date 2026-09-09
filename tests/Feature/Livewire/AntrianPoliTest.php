@@ -25,6 +25,21 @@ class AntrianPoliTest extends TestCase
     /**
      * @test
      *
+     * The page the display actually shows. Its route carries parameters, so
+     * RouteSweepTest never opens it, and its view wrapped the whole body in a
+     * Blade section — the arrangement that made Livewire 3 refuse
+     * informasi-kamar and display-jadwal-dokter for want of a root tag.
+     */
+    public function the_display_page_renders(): void
+    {
+        $this->withoutExceptionHandling();
+
+        $this->get('/admin/antrian-poli/UJI01/99999902')->assertOk();
+    }
+
+    /**
+     * @test
+     *
      * An empty queue is the ordinary state of a poli outside its session, not an
      * error. The display polls regardless.
      */
