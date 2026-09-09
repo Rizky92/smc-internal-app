@@ -25,9 +25,25 @@ class Bangsal extends Model
         'AMB' => 'GUDANG AMBULANCE',
     ];
 
+    /**
+     * Daftar bangsal perawatan intensif (ICU) yang diprioritaskan pada laporan.
+     * Tambahkan/kurangi di sini jika suatu saat cakupan ruang intensif berubah.
+     */
+    public const RUANG_ICU = [
+        'ICU'  => 'KAMAR ICU / PICU',
+        'ICU1' => 'KAMAR ICU LANTAI 1',
+        'NICU' => 'KAMAR NICU / PERINA',
+        'HCU'  => 'RUANG PERAWATAN HCU',
+    ];
+
     public static function gudangFarmasiKeys(): array
     {
         return array_keys(self::GUDANG_FARMASI);
+    }
+
+    public static function ruangIcuKeys(): array
+    {
+        return array_keys(self::RUANG_ICU);
     }
 
     protected $connection = 'mysql_sik';
