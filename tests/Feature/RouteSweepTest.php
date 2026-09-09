@@ -112,22 +112,19 @@ class RouteSweepTest extends TestCase
      * Routes this sweep found already broken, excluded so they do not mask
      * regressions elsewhere. Each needs a decision, not a test.
      *
-     * - print-layout: PrintLayoutController::index() defaults `jurnalSementara`
-     *   to an array and then passes it to json_decode(), which only accepts a
-     *   string. Reaching the page without that query parameter is a 500.
-     *
-     * - jadwal-dokter: registered twice, publicly at routes/web.php:56 and behind
-     *   auth at :365. Informasi\JadwalDokter calls user(), which throws when
+     * - jadwal-dokter: registered twice, publicly at routes/web.php:55 and behind
+     *   auth at :364. Informasi\JadwalDokter calls user(), which throws when
      *   nobody is authenticated, so the public registration cannot work.
      *
      * Delete an entry here once the underlying defect is fixed; the sweep will
-     * pick the route back up on its own.
+     * pick the route back up on its own. print-layout has already gone that way,
+     * and PrintLayoutTest covers it in more detail than a sweep can.
      *
      * @return list<string>
      */
     private static function brokenBeforeThisSweep(): array
     {
-        return ['print-layout', 'jadwal-dokter'];
+        return ['jadwal-dokter'];
     }
 
     /**
