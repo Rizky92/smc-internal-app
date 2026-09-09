@@ -387,10 +387,6 @@ Breadcrumbs::for('admin.informasi.jadwal-dokter', function (Trail $trail): void 
     $trail->push('Jadwal Dokter', route('admin.informasi.jadwal-dokter'));
 });
 
-Breadcrumbs::for('jadwal-dokter', function (Trail $trail): void {
-    $trail->push('Jadwal Dokter', route('jadwal-dokter'));
-});
-
 Breadcrumbs::for('admin.antrean', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Antrean');

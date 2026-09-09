@@ -52,8 +52,6 @@ Route::get('/print-layout', [PrintLayoutController::class, 'index']);
 
 Route::get('/informasi-kamar', Informasi\InformasiKamar::class)->name('informasi-kamar');
 
-Route::get('/jadwal-dokter', Informasi\JadwalDokter::class);
-
 Route::get('admin/antrian-poli/{kd_poli}/{kd_dokter}', Antrian\AntrianPoli::class)
     ->name('admin.antrian-poli');
 
