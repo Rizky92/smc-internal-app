@@ -109,22 +109,22 @@ class RouteSweepTest extends TestCase
     }
 
     /**
-     * Routes this sweep found already broken, excluded so they do not mask
-     * regressions elsewhere. Each needs a decision, not a test.
+     * Routes known to be broken, excluded so they do not mask regressions
+     * elsewhere. Empty, and worth keeping that way.
      *
-     * - jadwal-dokter: registered twice, publicly at routes/web.php:55 and behind
-     *   auth at :364. Informasi\JadwalDokter calls user(), which throws when
-     *   nobody is authenticated, so the public registration cannot work.
+     * Both original entries have been dealt with rather than tolerated:
+     * print-layout was fixed and rejoined the sweep, covered in more detail by
+     * PrintLayoutTest; jadwal-dokter's public duplicate was removed, and
+     * JadwalDokterRoutingTest guards against it coming back.
      *
-     * Delete an entry here once the underlying defect is fixed; the sweep will
-     * pick the route back up on its own. print-layout has already gone that way,
-     * and PrintLayoutTest covers it in more detail than a sweep can.
+     * Add a URI here only to quarantine a defect you are not fixing yet, with a
+     * note saying why, and take it out again once the defect is gone.
      *
      * @return list<string>
      */
     private static function brokenBeforeThisSweep(): array
     {
-        return ['jadwal-dokter'];
+        return [];
     }
 
     /**
