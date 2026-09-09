@@ -8,9 +8,10 @@
     Livewire 3 requires a component's own output to have exactly one root HTML
     element. Wrapping the body in @section buffers it instead of echoing it, so
     Livewire saw an empty render and threw RootTagMissingFromViewException. The
-    matching @yield in layouts/app.blade.php is now dead for this page.
+    @yield it paired with has since been removed from layouts/app.blade.php.
 --}}
 <div>
+    <header class="d-flex flex-wrap justify-content-center mb-0 border-bottom">
         <div class="container-fluid d-flex justify-content-center">
             <img src="{{ asset('img/logo.png') }}" alt="logo" width="100vh" height="auto" />
             <span class="header">KETERSEDIAAN KAMAR</span>
