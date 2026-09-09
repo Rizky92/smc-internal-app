@@ -17,6 +17,20 @@ class ListAntrean extends Component
         $this->kd_pintu = $kd_pintu;
     }
 
+    /**
+     * Null when kd_pintu names no pintu.
+     *
+     * Queried here rather than inline in the view, where the result was
+     * dereferenced without allowing for a code that no longer exists. value()
+     * returns null instead of a model, so there is nothing to dereference.
+     */
+    public function getNamaPintuProperty(): ?string
+    {
+        return Pintu::query()
+            ->where('kd_pintu', $this->kd_pintu)
+            ->value('nm_pintu');
+    }
+
     public function getAntreanPerPintuProperty()
     {
         return Pintu::query()

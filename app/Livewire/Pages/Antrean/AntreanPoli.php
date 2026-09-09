@@ -3,6 +3,7 @@
 namespace App\Livewire\Pages\Antrean;
 
 use App\Models\Antrian\AntriPoli;
+use App\Models\Perawatan\Poliklinik;
 use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -19,6 +20,21 @@ class AntreanPoli extends Component
     public function mount(string $kd_poli): void
     {
         $this->kd_poli = $kd_poli;
+    }
+
+    /**
+     * Null when kd_poli names no poliklinik.
+     *
+     * The code comes from the URL, so nothing guarantees it still exists. This
+     * used to be queried inline in the view and dereferenced, which took the
+     * whole display down. value() returns null rather than a model, so there is
+     * nothing to dereference.
+     */
+    public function getNamaPoliProperty(): ?string
+    {
+        return Poliklinik::query()
+            ->where('kd_poli', $this->kd_poli)
+            ->value('nm_poli');
     }
 
     public function getAntreanQuery(): Builder

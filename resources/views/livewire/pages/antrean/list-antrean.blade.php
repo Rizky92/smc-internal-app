@@ -14,7 +14,7 @@
         <div class="card-header d-flex justify-content-center">
             <h5 class="text-uppercase">
                 Antrean
-                {{ \App\Models\Aplikasi\Pintu::where('kd_pintu', $this->kd_pintu)->first()->nm_pintu }}
+                {{ $this->namaPintu }}
             </h5>
         </div>
         <div class="card-body">
