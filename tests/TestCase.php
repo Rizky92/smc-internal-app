@@ -5,6 +5,7 @@ namespace Tests;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\PermissionRegistrar;
+use Tests\Concerns\CreatesPasien;
 use Tests\Concerns\CreatesPetugas;
 
 /**
@@ -33,6 +34,7 @@ use Tests\Concerns\CreatesPetugas;
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
+    use CreatesPasien;
     use CreatesPetugas;
 
     protected function setUp(): void
@@ -42,12 +44,14 @@ abstract class TestCase extends BaseTestCase
         // A previous run that died mid-test can leave rows behind. Start clean
         // rather than inheriting them.
         $this->deleteAuthorisationFixtures();
+        $this->deletePasienFixtures();
         $this->deletePetugasFixtures();
     }
 
     protected function tearDown(): void
     {
         $this->deleteAuthorisationFixtures();
+        $this->deletePasienFixtures();
         $this->deletePetugasFixtures();
 
         parent::tearDown();

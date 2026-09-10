@@ -75,7 +75,16 @@ Write-Host '==> Seeding reference tables' -ForegroundColor Cyan
 $reference = @(
     'jnj_jabatan', 'kelompok_jabatan', 'resiko_kerja', 'departemen', 'bidang',
     'stts_wp', 'stts_kerja', 'pendidikan', 'bank', 'emergency_index', 'jabatan',
-    'setting', 'closing_kasir'
+    'setting', 'closing_kasir',
+
+    # What `pasien` and `reg_periksa` point at. A patient row cannot be created
+    # without them, and most of this application reports on patients, so without
+    # these the whole of Perawatan, Casemix, RekamMedis and the receivables
+    # reports stay untestable. Geography, languages, ethnicities, insurers and
+    # clinics — reference data, none of it about anybody.
+    'propinsi', 'kabupaten', 'kecamatan', 'kelurahan',
+    'suku_bangsa', 'bahasa_pasien', 'cacat_fisik', 'perusahaan_pasien',
+    'penjab', 'poliklinik'
 )
 $copy = 'SET FOREIGN_KEY_CHECKS=0;'
 foreach ($t in $reference) {
