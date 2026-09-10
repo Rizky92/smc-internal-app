@@ -89,7 +89,11 @@ class PenerimaanObat extends Model
         return $query
             ->selectRaw($sqlSelect, [$tglAkhir])
             ->withCasts([
-                'nama_bayar' => 'float',
+                // nama_bayar is the name of the account an invoice was paid from
+                // — a varchar, and a foreign key into akun_bayar_hutang. Cast to
+                // float it became 0, so the "Akun Bayar" column showed a number
+                // instead of the account. The non-medical half of this same
+                // report casts nothing and has always displayed it correctly.
                 'tagihan'    => 'float',
                 'dibayar'    => 'float',
                 'sisa'       => 'float',
