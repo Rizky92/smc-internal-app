@@ -14,8 +14,8 @@ class MixinQueryBuilder
      */
     public function orderByField()
     {
-        /** psalm-scope-this Illuminate\Database\Query\Builder */
         return function ($column, $values, $direction = 'asc') {
+            /** @var \Illuminate\Database\Query\Builder $this */
             if (! in_array($direction, ['asc', 'desc'], true)) {
                 throw new InvalidArgumentException('Order direction must be "asc" or "desc".');
             }
@@ -29,7 +29,7 @@ class MixinQueryBuilder
             $binds = implode(', ', $binds);
 
             if ($column instanceof Expression) {
-                $column = $column->getValue();
+                $column = $column->getValue($this->getGrammar());
             }
 
             $direction = Str::lower($direction);
@@ -46,8 +46,8 @@ class MixinQueryBuilder
      */
     public function orderByFieldFirst()
     {
-        /** psalm-scope-this Illuminate\Database\Query\Builder */
         return function ($column, $values, $direction = 'asc') {
+            /** @var \Illuminate\Database\Query\Builder $this */        
             $binds = [];
 
             for ($i = 0; $i < count($values); $i++) {
@@ -57,7 +57,7 @@ class MixinQueryBuilder
             $binds = implode(', ', $binds);
 
             if ($column instanceof Expression) {
-                $column = $column->getValue();
+                $column = $column->getValue($this->getGrammar());
             }
 
             $direction = Str::lower($direction);
