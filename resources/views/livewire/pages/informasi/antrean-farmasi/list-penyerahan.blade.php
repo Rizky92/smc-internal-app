@@ -74,12 +74,14 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', initMarqueePenyerahan);
+        document.addEventListener('DOMContentLoaded', () => {
+            initMarqueePenyerahan();
 
-        Livewire.hook('message.processed', (message, component) => {
-            if (component.fingerprint.name === 'pages.informasi.antrean-farmasi.list-penyerahan') {
-                initMarqueePenyerahan();
-            }
+            Livewire.hook('message.processed', (message, component) => {
+                if (component.fingerprint.name === 'pages.informasi.antrean-farmasi.list-penyerahan') {
+                    initMarqueePenyerahan();
+                }
+            });
         });
     </script>
 @endpush
