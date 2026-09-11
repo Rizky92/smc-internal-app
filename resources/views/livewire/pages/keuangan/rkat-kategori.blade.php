@@ -14,7 +14,9 @@
                             deskripsi
                         } = e.dataset
 
-                        @this.dispatch('prepare', id, nama, deskripsi)
+                        // Wrapped as an object matching prepare()'s parameter names - see the
+                        // identical fix and full explanation in manajemen-user.blade.php.
+                        @this.dispatch('prepare', { id, nama, deskripsi })
 
                         $('#modal-input-kategori-rkat').modal('show')
                     }

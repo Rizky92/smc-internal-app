@@ -175,9 +175,14 @@ class RKATInputPelaporanTest extends TestCase
             ['keterangan' => 'Barang A', 'nominal' => 250000],
         ]);
 
+        // rkat-pelaporan.blade.php nests the payload under "options" to match
+        // prepare(array $options)'s parameter name; dispatched at the top level
+        // it spreads as named arguments (pemakaianAnggaranId, tglPakai, ...),
+        // none of which is named "options", and always threw. Named here too,
+        // to match the corrected dispatch.
         Livewire::actingAs($petugas)
             ->test(RKATInputPelaporan::class)
-            ->dispatch('prepare', [
+            ->dispatch('prepare', options: [
                 'anggaranBidangId'    => $rkat->id,
                 'pemakaianAnggaranId' => $pemakaian->id,
                 'tglPakai'            => '2026-02-01',

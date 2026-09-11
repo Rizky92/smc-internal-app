@@ -15,12 +15,17 @@
                             keterangan
                         } = e.dataset
 
-                        @this.dispatch('prepare', {
+                        // Nested under "options" to match prepare(array $options)'s
+                        // parameter name - dispatching the fields directly at the top
+                        // level spreads them as named arguments (pemakaianAnggaranId,
+                        // tglPakai, ...), none of which is named "options", so it
+                        // always threw.
+                        @this.dispatch('prepare', { options: {
                             pemakaianAnggaranId,
                             anggaranBidangId,
                             tglPakai,
                             keterangan
-                        })
+                        } })
 
                         $('#modal-input-pelaporan-rkat').modal('show')
                     }

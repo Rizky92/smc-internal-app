@@ -13,7 +13,9 @@
                         name
                     } = e.dataset
 
-                    @this.dispatch('prepare', bidangId, parentId, name)
+                    // Wrapped as an object matching prepare()'s parameter names - see the
+                    // identical fix and full explanation in manajemen-user.blade.php.
+                    @this.dispatch('prepare', { bidangId, parentId, nama: name })
 
                     $('#modal-input-bidang-unit').modal('show')
                 }

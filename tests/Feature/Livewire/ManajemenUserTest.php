@@ -83,6 +83,12 @@ class ManajemenUserTest extends TestCase
      * which replaced v2's $listeners array and emitTo(). If the migration got the
      * event names or the component targets wrong, every one of those modals opens
      * blank, and nothing in the PHP would throw to tell you.
+     *
+     * manajemen-user.blade.php dispatches {nrp, nama, roles, permissions} as one
+     * object, which Livewire 3 spreads as named PHP arguments - passed as four
+     * separate positional arguments instead, only the first ever arrived (a fixed
+     * 3-argument JS function silently drops anything past it). Named here too, to
+     * match the corrected dispatch.
      */
     public function selecting_a_petugas_reaches_all_five_modals(): void
     {
@@ -90,7 +96,7 @@ class ManajemenUserTest extends TestCase
 
         Livewire::actingAs($petugas)
             ->test(ManajemenUser::class)
-            ->dispatch('user.prepare', '99999901', 'Budi Santoso', [], [])
+            ->dispatch('user.prepare', nrp: '99999901', nama: 'Budi Santoso', roles: [], permissions: [])
             ->assertDispatchedTo('pages.user.khanza.set-hak-akses', 'khanza.prepare-set')
             ->assertDispatchedTo('pages.user.khanza.transfer-hak-akses', 'khanza.prepare-transfer')
             ->assertDispatchedTo('pages.user.siap.lihat-aktivitas', 'siap.prepare-la')
