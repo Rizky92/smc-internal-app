@@ -151,6 +151,12 @@ class InputPintuTest extends TestCase
      * named PHP arguments - not one bundled array. Passed as named arguments
      * here too, so this actually exercises the shape the browser sends
      * rather than a single-array shape nothing in production ever produces.
+     *
+     * The sync-back dispatch is asserted by its actual params, not just its
+     * name: a bare positional dispatch() (fixed earlier) reaches
+     * Livewire.on()'s JS callback still wrapped in the params list, which
+     * jQuery's multi-select .val() can never match against an <option>, so
+     * a previously mapped doctor silently failed to show as selected.
      */
     public function loading_an_existing_pintu_fills_the_form(): void
     {
@@ -171,7 +177,9 @@ class InputPintuTest extends TestCase
             ->assertSet('kodePintu', self::KODE)
             ->assertSet('namaPintu', 'Pintu Uji')
             ->assertSet('selectedJadwal', ['99999902|UJI01'])
-            ->assertDispatched('inputPintu.syncSelectedJadwal');
+            ->assertDispatched('inputPintu.syncSelectedJadwal', function ($name, $params) {
+                return $params === ['selectedJadwal' => ['99999902|UJI01']];
+            });
     }
 
     /**

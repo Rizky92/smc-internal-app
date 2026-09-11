@@ -148,8 +148,14 @@ class InputPintu extends Component
             $this->kodePoliklinik = $firstPoli;
         }
 
-        // Notify front-end to sync select2 value for selectedJadwal
-        $this->dispatch('inputPintu.syncSelectedJadwal', $this->selectedJadwal);
+        // Notify front-end to sync select2 value for selectedJadwal. Named so
+        // the dispatched array serializes as a JSON object ({selectedJadwal:
+        // [...]}) rather than a bare positional array - a lone positional arg
+        // here would arrive at Livewire.on()'s callback still wrapped in the
+        // params list ([[...]]), which jQuery's multi-select .val() can't
+        // match against any <option>, so the previously mapped doctor never
+        // showed as selected.
+        $this->dispatch('inputPintu.syncSelectedJadwal', selectedJadwal: $this->selectedJadwal);
     }
 
     public function update(): void

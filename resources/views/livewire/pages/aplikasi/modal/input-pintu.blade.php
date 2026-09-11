@@ -46,6 +46,15 @@
                     } catch (err) {
                         // ignore if select2 isn't ready
                     }
+
+                    // Clearing the select2 widget only resets the DOM control -
+                    // kodePintu/namaPintu/originalKodePintu on the component were
+                    // never touched, so opening "Tambah" right after editing a
+                    // record left the modal titled "Edit", still showing the old
+                    // record's fields, submit still routed to update(), and the
+                    // delete button still visible. prepare() with no kodePintu
+                    // is the same reset loadData() runs before an edit's prepare.
+                    Livewire.dispatch('prepare', {});
                 }
 
                 // Notify Livewire that modal was shown (modal lifecycle hook)
@@ -114,10 +123,12 @@
                                     Livewire.dispatch('inputPintu.setSelectedJadwal', { data });
                                 });
 
-                                // Listen for server-side event to sync select2 selection
-                                Livewire.on('inputPintu.syncSelectedJadwal', function (data) {
-                                    // set value (array) and trigger change so Livewire receives it if needed
-                                    $('#selectedJadwal').val(data).trigger('change');
+                                // Listen for server-side event to sync select2 selection.
+                                // Dispatched as {selectedJadwal: [...]} (named arg) so it
+                                // arrives here as an object - read the key rather than the
+                                // raw callback argument.
+                                Livewire.on('inputPintu.syncSelectedJadwal', function (event) {
+                                    $('#selectedJadwal').val(event.selectedJadwal).trigger('change');
                                 });
                             });
                         </script>
