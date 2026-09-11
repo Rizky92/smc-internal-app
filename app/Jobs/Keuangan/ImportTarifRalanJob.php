@@ -18,6 +18,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\FilesystemNotFoundException;
+use Livewire\TemporaryUploadedFile;
 use Spatie\SimpleExcel\SimpleExcelReader;
 use Throwable;
 
@@ -35,10 +36,10 @@ class ImportTarifRalanJob implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param array{
-     * fileImport: \Livewire\TemporaryUploadedFile,
+     * @param  array{
+     * fileImport: TemporaryUploadedFile,
      * userId: string,
-     * } $params
+     * }  $params
      */
     public function __construct(array $params)
     {
@@ -146,12 +147,24 @@ class ImportTarifRalanJob implements ShouldQueue
                     $calcTotalPr = $data['material'] + $data['bhp'] + $data['tarif_tindakanpr'] + $data['kso'] + $data['menejemen'];
                     $calcTotalDrPr = $data['material'] + $data['bhp'] + $data['tarif_tindakandr'] + $data['tarif_tindakanpr'] + $data['kso'] + $data['menejemen'];
 
-                    if (
-                        round($calcTotalDr) != round((float) $data['total_byrdr']) &&
-                        round($calcTotalPr) != round((float) $data['total_byrpr']) &&
-                        round($calcTotalDrPr) != round((float) $data['total_byrdrpr'])
-                    ) {
-                        throw new ImportTarifException("Baris {$line}: Tidak ada total biaya yang sesuai dengan rincian tarif (Minimal salah satu Total DR, PR, atau DR&PR harus sesuai).");
+                    $skipPr = $data['total_byrdrpr'] != 0 && $data['tarif_tindakanpr'] == 0;
+
+                    $errors = [];
+
+                    if ($data['total_byrdr'] != 0 && round($calcTotalDr) != round($data['total_byrdr'])) {
+                        $errors[] = "Total Biaya Dr ({$data['total_byrdr']}) tidak sesuai. Rumus: Jasa Sarana + BHP + Jasa Medis Dr + KSO + Menejemen = {$calcTotalDr}";
+                    }
+
+                    if (! $skipPr && $data['total_byrpr'] != 0 && round($calcTotalPr) != round($data['total_byrpr'])) {
+                        $errors[] = "Total Biaya Pr ({$data['total_byrpr']}) tidak sesuai. Rumus: Jasa Sarana + BHP + Jasa Medis Pr + KSO + Menejemen = {$calcTotalPr}";
+                    }
+
+                    if ($data['total_byrdrpr'] != 0 && round($calcTotalDrPr) != round($data['total_byrdrpr'])) {
+                        $errors[] = "Total Biaya Dr & Pr ({$data['total_byrdrpr']}) tidak sesuai. Rumus: Jasa Sarana + BHP + Jasa Medis Dr + Jasa Medis Pr + KSO + Menejemen = {$calcTotalDrPr}";
+                    }
+
+                    if ($errors) {
+                        throw new ImportTarifException("Baris {$line}: ".implode('; ', $errors));
                     }
 
                     try {

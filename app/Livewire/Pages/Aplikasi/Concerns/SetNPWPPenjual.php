@@ -24,8 +24,8 @@ trait SetNPWPPenjual
     public function updateNPWPPenjual(): void
     {
         if (user()->cannot('aplikasi.set-npwp-penjual.update')) {
-            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->dispatchBrowserEvent('set-npwp-penjual.data-denied');
+            $this->dispatch('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatch('set-npwp-penjual.data-denied');
 
             return;
         }
@@ -44,8 +44,8 @@ trait SetNPWPPenjual
 
         tracker_end();
 
-        $this->emit('flash.success', 'Pengaturan NPWP Penjual berhasil diupdate!');
-        $this->dispatchBrowserEvent('set-npwp-penjual.data-saved');
+        $this->dispatch('flash.success', 'Pengaturan NPWP Penjual berhasil diupdate!');
+        $this->dispatch('set-npwp-penjual.data-saved');
     }
 
     protected function defaultValuesSetNPWPPenjual(): void

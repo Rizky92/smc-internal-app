@@ -30,19 +30,25 @@ class DefectaDepo extends Component
     /** @var "Pagi"|"Siang"|"Malam" */
     public $shift;
 
-    /** @var "IFA"|"IFG"|"IFI"|"KO" */
+    /** @var "IFA"|"AP"|"IFC"|"IFO"|"KO"|"IFI"|"IFG" */
     public $bangsal;
 
     protected function queryString(): array
     {
         return [
             'tanggal' => ['except' => now()->toDateString(), 'as' => 'tgl_awal'],
-            'shift'   => ['except' => $this->dataShiftKerja()->shift, 'as' => 'shift_kerja'],
+            'shift'   => ['except' => $this->dataShiftKerja()?->shift, 'as' => 'shift_kerja'],
             'bangsal' => ['as' => 'depo'],
         ];
     }
 
-    protected function dataShiftKerja(): object
+    /**
+     * The shift covering right now, or null if closing_kasir is empty.
+     *
+     * Nullable because it genuinely can be: the type was `object` while the body
+     * ended in ->first(), so an unmatched filter returned null and fatalled.
+     */
+    protected function dataShiftKerja(): ?object
     {
         $waktuShiftSemua = Cache::remember('waktu_shift_semua', now()->addWeek(), fn () => DB::connection('mysql_sik')
             ->table('closing_kasir')
@@ -54,11 +60,17 @@ class DefectaDepo extends Component
                 ->first();
         }
 
-        return $waktuShiftSemua
+        // Shifts that have already begun today, latest first.
+        $sudahMulai = $waktuShiftSemua
             ->filter(fn ($waktuShift) => now()->floorHour()->diffInHours(
                 now()->setHour($waktuShift->jam_masuk), false
-            ) <= 0)
-            ->first();
+            ) <= 0);
+
+        // Before the earliest shift starts — between midnight and 07:00 — nothing
+        // has begun today, and the shift actually running is the last one, which
+        // started yesterday evening and wraps past midnight. Taking ->first() of
+        // an empty result here returned null and fatalled every night.
+        return $sudahMulai->first() ?? $waktuShiftSemua->last();
     }
 
     public function mount(): void
@@ -84,7 +96,7 @@ class DefectaDepo extends Component
     protected function defaultValues(): void
     {
         $this->tanggal = now()->toDateString();
-        $this->shift = $this->dataShiftKerja()->shift;
+        $this->shift = $this->dataShiftKerja()?->shift;
         $this->bangsal = 'IFA';
     }
 
@@ -120,9 +132,12 @@ class DefectaDepo extends Component
 
         $gudang = [
             'IFA' => 'Farmasi A',
-            'IFG' => 'Farmasi IGD',
-            'IFI' => 'Farmasi Rawat Inap',
-            'KO'  => 'Kamar Operasi OK',
+            'AP'  => 'APOTEK/INSTALASI FARMASI',
+            'IFC' => 'INSTALASI FARMASI CATHLAB',
+            'IFO' => 'INSTALASI FARMASI OK',
+            'KO'  => 'KAMAR OPERASI OK',
+            'IFI' => 'INSTALASI FARMASI RAWAT INAP',
+            'IFG' => 'INSTALASI FARMASI IGD',
         ];
 
         $shift = $this->dataShiftKerja();
@@ -130,7 +145,7 @@ class DefectaDepo extends Component
         return [
             'RS Samarinda Medika Citra',
             'Defecta Depo '.$gudang[$this->bangsal],
-            sprintf('Shift kerja %s (%s s.d. %s)', $this->shift, $shift->jam_masuk, $shift->jam_pulang),
+            sprintf('Shift kerja %s (%s s.d. %s)', $this->shift, $shift?->jam_masuk ?? '-', $shift?->jam_pulang ?? '-'),
             $periode,
         ];
     }

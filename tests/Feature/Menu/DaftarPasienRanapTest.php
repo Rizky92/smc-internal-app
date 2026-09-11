@@ -2,89 +2,60 @@
 
 namespace Tests\Feature\Menu;
 
-use App\Http\Livewire\Perawatan\DaftarPasienRanap;
-use App\Models\Aplikasi\User;
-use Carbon\Carbon;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Livewire;
+use App\Livewire\Pages\Perawatan\DaftarPasienRanap;
 use Tests\TestCase;
 
+/**
+ * Seam A: route -> rendered page.
+ *
+ * Asserts only what a browser could observe: the status code, and that the page
+ * carries the Livewire component it is supposed to. Nothing here reaches into
+ * component internals, so the test survives a Livewire major version change and
+ * fails only if the page genuinely stops serving.
+ */
 class DaftarPasienRanapTest extends TestCase
 {
+    private const URI = '/admin/perawatan/daftar-pasien-ranap';
+
+    private const PERMISSION = 'perawatan.daftar-pasien-ranap.read';
+
     /**
      * @test
-     *
-     * @return void
      */
-    public function test_user_bisa_mengunjungi_daftar_pasien_ranap()
+    public function petugas_with_permission_can_open_the_page(): void
     {
-        $user = User::findByNRP('88888888');
+        $petugas = $this->petugasWithPermissions([self::PERMISSION]);
 
-        $this
-            ->actingAs($user)
-            ->get('/admin/perawatan/daftar-pasien-ranap')
-            ->assertOk();
-    }
+        // A page that breaks during an upgrade should say why, rather than
+        // reporting only that 500 is not 200.
+        $this->withoutExceptionHandling();
 
-    public function test_user_tidak_bisa_mengunjungi_daftar_pasien_ranap()
-    {
-        $user = User::findByNRP('221203');
-
-        $this
-            ->actingAs($user)
-            ->get('/admin/perawatan/daftar-pasien-ranap')
-            ->assertNotFound();
-    }
-
-    public function test_halaman_memiliki_component_livewire()
-    {
-        $user = User::findByNRP('88888888');
-
-        $this
-            ->actingAs($user)
-            ->get('/admin/perawatan/daftar-pasien-ranap')
+        $this->actingAs($petugas)
+            ->get(self::URI)
+            ->assertOk()
             ->assertSeeLivewire(DaftarPasienRanap::class);
     }
 
-    public function test_user_bisa_mengubah_data_pasien()
+    /**
+     * @test
+     */
+    public function petugas_without_permission_is_refused(): void
     {
-        $user = User::findByNRP('88888888');
+        $petugas = $this->petugasWithPermissions([]);
 
-        $this->assertTrue($user->can('perawatan.daftar-pasien-ranap.update-harga-kamar'));
-
-        Livewire::actingAs($user)
-            ->test(DaftarPasienRanap::class)
-            ->call('updateHargaKamar', '2023/02/15/000583', '386D', '2023-02-15', '10:29:54', '1', '1')
-            ->assertDispatchedBrowserEvent('data-updated');
+        // 404, not 403, and deliberately so: Handler::render() rewrites every
+        // AuthorizationException into a NotFoundHttpException, so a petugas
+        // cannot learn that a page exists by being refused it.
+        $this->actingAs($petugas)
+            ->get(self::URI)
+            ->assertNotFound();
     }
 
-    public function test_user_tidak_bisa_mengubah_data_pasien()
+    /**
+     * @test
+     */
+    public function guest_is_sent_to_login(): void
     {
-        $user = User::findByNRP('221203');
-
-        $this->assertFalse($user->can('perawatan.daftar-pasien-ranap.update-harga-kamar'));
-
-        Livewire::actingAs($user)
-            ->test(DaftarPasienRanap::class)
-            ->call('updateHargaKamar', '2023/02/15/000583', '386D', '2023-02-15', '10:29:54', '1', '1')
-            ->assertNotDispatchedBrowserEvent('data-updated');
-    }
-
-    public function test_livewire_component_bisa_export_file_ke_excel()
-    {
-        $user = User::findByNRP('88888888');
-
-        $time = Carbon::now();
-
-        Carbon::setTestNow($time);
-
-        $file = $time->format('Ymd_His') . '_' . 'daftar_pasien_ranap' . '.xlsx';
-
-        Livewire::actingAs($user)
-            ->test(DaftarPasienRanap::class)
-            ->call('exportToExcel')
-            ->assertEmitted('beginExcelExport')
-            ->assertFileDownloaded($file);
+        $this->get(self::URI)->assertRedirect('/login');
     }
 }

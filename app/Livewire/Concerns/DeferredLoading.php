@@ -19,13 +19,13 @@ trait DeferredLoading
     {
         $this->isDeferred = false;
 
-        $this->emit('$refresh');
+        $this->dispatch('$refresh');
     }
 
     public function undefer(): void
     {
         $this->isDeferred = true;
 
-        $this->emit('$refresh');
+        $this->dispatch('$refresh');
     }
 }

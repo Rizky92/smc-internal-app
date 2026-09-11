@@ -1,4 +1,13 @@
-@section('display-jadwal-dokter')
+{{--
+    Rendered into the layout's {{ $slot }}, not into
+    @yield('display-jadwal-dokter').
+    
+    Livewire 3 requires a component's own output to have exactly one root HTML
+    element. Wrapping the body in @section buffers it instead of echoing it, so
+    Livewire saw an empty render and threw RootTagMissingFromViewException. The
+    @yield it paired with has since been removed from layouts/app.blade.php.
+--}}
+<div>
     @push('styles')
         <link rel="stylesheet" href="{{ asset('css/jadwal.css') }}" />
     @endpush
@@ -70,4 +79,4 @@
             refreshPage();
         });
     </script>
-@endsection
+</div>

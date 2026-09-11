@@ -15,7 +15,7 @@ class MixinQueryBuilder
     public function orderByField()
     {
         return function ($column, $values, $direction = 'asc') {
-            /** @var \Illuminate\Database\Query\Builder $this */
+            /** @var Builder $this */
             if (! in_array($direction, ['asc', 'desc'], true)) {
                 throw new InvalidArgumentException('Order direction must be "asc" or "desc".');
             }
@@ -47,7 +47,7 @@ class MixinQueryBuilder
     public function orderByFieldFirst()
     {
         return function ($column, $values, $direction = 'asc') {
-            /** @var \Illuminate\Database\Query\Builder $this */        
+            /** @var Builder $this */
             $binds = [];
 
             for ($i = 0; $i < count($values); $i++) {

@@ -246,7 +246,7 @@ class LabaRugiRekeningPerPeriode extends Component
             ->info()
             ->send(user());
 
-        $this->emit('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
+        $this->dispatch('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
     }
 
     protected function exportJob(): array

@@ -12,7 +12,7 @@
 </x-filter.label>
 
 <div class="input-group input-group-sm" style="width: 4.25rem">
-    <select class="custom-control custom-select" wire:model.defer="{{ $model }}">
+    <select class="custom-control custom-select" wire:model="{{ $model }}">
         @foreach ($steps as $step)
             <option value="{{ $step }}" {{ $selected === $step ? 'selected' : null }}>
                 {{ $step }}

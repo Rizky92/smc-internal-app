@@ -4,11 +4,11 @@
             <script>
                 document.addEventListener('DOMContentLoaded', () => {
                     $('#modal-transfer-hak-akses').on('shown.bs.modal', e => {
-                        @this.emit('khanza.show-tha')
+                        @this.dispatch('khanza.show-tha')
                     })
 
                     $('#modal-transfer-hak-akses').on('hide.bs.modal', e => {
-                        @this.emit('khanza.hide-tha')
+                        @this.dispatch('khanza.hide-tha')
                     })
 
                     $('#modal-transfer-hak-akses').on('hidden.bs.modal', e => {
@@ -54,7 +54,7 @@
             <x-filter.search method="$refresh" />
             <x-filter.toggle class="ml-1" id="show-checked-khanza-transfer" title="Tampilkan yang dipilih" model="showChecked" />
             <x-button size="sm" class="ml-auto" data-dismiss="modal" title="Batal" />
-            <x-button size="sm" variant="primary" class="ml-2" data-dismiss="modal" wire:click="$emit('khanza.transfer')" title="Transfer" icon="fas fa-share-square" />
+            <x-button size="sm" variant="primary" class="ml-2" data-dismiss="modal" wire:click="$dispatch('khanza.transfer')" title="Transfer" icon="fas fa-share-square" />
         </x-slot>
     </x-modal>
 </div>

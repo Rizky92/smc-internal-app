@@ -10,6 +10,7 @@ use App\Models\Aplikasi\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class SetHakAkses extends Component
@@ -30,14 +31,6 @@ class SetHakAkses extends Component
     /** @var string[] */
     public $checkedHakAkses;
 
-    /** @var mixed */
-    protected $listeners = [
-        'khanza.show-sha'    => 'showModal',
-        'khanza.hide-sha'    => 'hideModal',
-        'khanza.prepare-set' => 'prepareUser',
-        'khanza.set'         => 'save',
-    ];
-
     protected function queryString(): array
     {
         return [
@@ -51,11 +44,15 @@ class SetHakAkses extends Component
     }
 
     /**
-     * @return Collection|array<empty, empty>
+     * Always a Collection, empty while deferred.
+     *
+     * This used to hand back a plain array before the modal opened, which save()
+     * then called ->mapWithKeys() on. khanza.set is a global event and can arrive
+     * first, so that was a reachable fatal.
      */
-    public function getHakAksesKhanzaProperty()
+    public function getHakAksesKhanzaProperty(): Collection
     {
-        return $this->isDeferred ? [] : HakAkses::query()
+        return $this->isDeferred ? new Collection : HakAkses::query()
             ->search($this->cari, ['nama_field', 'judul_menu'])
             ->when($this->showChecked, fn (Builder $q): Builder => $q
                 ->orWhereIn('nama_field', collect($this->checkedHakAkses)->filter()->keys()->all())
@@ -69,23 +66,30 @@ class SetHakAkses extends Component
         return view('livewire.pages.user.khanza.set-hak-akses');
     }
 
+    #[On('khanza.prepare-set')]
     public function prepareUser(string $nrp = '', string $nama = ''): void
     {
         $this->nrp = $nrp;
         $this->nama = $nama;
     }
 
+    #[On('khanza.set')]
     public function save(): void
     {
         if (! user()->hasRole(config('permission.superadmin_name'))) {
-            $this->dispatchBrowserEvent('data-denied');
-            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatch('data-denied');
+            $this->dispatch('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
         }
 
+        // toBase() because mapWithKeys() on an *empty* Eloquent collection stays
+        // an Eloquent collection — the downgrade only happens once it holds
+        // something that is not a model — and merging booleans into one makes it
+        // call getKey() on a bool.
         $hakAksesUser = $this->hakAksesKhanza
             ->mapWithKeys(fn (HakAkses $hakAkses): array => [$hakAkses->nama_field => $hakAkses->default_value])
+            ->toBase()
             ->merge($this->checkedHakAkses)
             ->all();
 
@@ -97,8 +101,8 @@ class SetHakAkses extends Component
 
         tracker_end('mysql_sik');
 
-        $this->dispatchBrowserEvent('data-saved');
-        $this->emit('flash.success', "Hak akses SIMRS Khanza untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
+        $this->dispatch('data-saved');
+        $this->dispatch('flash.success', "Hak akses SIMRS Khanza untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
     }
 
     public function showModal(): void
@@ -115,7 +119,7 @@ class SetHakAkses extends Component
                 ->all();
         }
 
-        $this->emit('$refresh');
+        $this->dispatch('$refresh');
     }
 
     public function defaultValues(): void

@@ -17,7 +17,6 @@
                                 <x-table.th name="nama" title="Golongan" />
                                 <x-table.th name="satuan" title="Satuan" />
                                 <x-table.th align="right" title="Stok Awal" />
-                                <x-table.th align="right" title="Transfer Obat Masuk" />
                                 <x-table.th align="right" title="Penerimaan Obat" />
                                 <x-table.th align="right" title="Hibah Obat" />
                                 <x-table.th align="right" title="Obat Retur" />
@@ -25,7 +24,6 @@
                                 <x-table.th align="right" title="Pemberian Obat" />
                                 <x-table.th align="right" title="Penjualan Obat" />
                                 <x-table.th align="right" title="Piutang Keluar" />
-                                <x-table.th align="right" title="Transfer Obat Keluar" />
                                 <x-table.th align="right" title="Retur ke Supplier" />
                                 <x-table.th align="right" title="Total Keluar" />
                                 <x-table.th align="right" title="Stok Akhir" />
@@ -46,10 +44,7 @@
                                             {{ $item->satuan }}
                                         </x-table.td>
                                         <x-table.td class="text-right">
-                                            {{ number_format($stokAwal = $item->stok_awal > 0 ? $item->stok_awal : $item->stok_awal_terakhir, 0, ',', '.') }}
-                                        </x-table.td>
-                                        <x-table.td class="text-right">
-                                            {{ number_format($item->tf_masuk, 0, ',', '.') }}
+                                            {{ number_format($item->stok_awal, 0, ',', '.') }}
                                         </x-table.td>
                                         <x-table.td class="text-right">
                                             {{ number_format($item->penerimaan_obat, 0, ',', '.') }}
@@ -61,7 +56,7 @@
                                             {{ number_format($item->retur_pasien + $item->hapus_beriobat, 0, ',', '.') }}
                                         </x-table.td>
                                         <x-table.td class="text-right">
-                                            {{ number_format($totalMasuk = $item->tf_masuk + $item->penerimaan_obat + $item->hibah_obat + $item->retur_pasien + $item->hapus_beriobat, 0, ',', '.') }}
+                                            {{ number_format($totalMasuk = $item->penerimaan_obat + $item->hibah_obat + $item->retur_pasien + $item->hapus_beriobat, 0, ',', '.') }}
                                         </x-table.td>
                                         <x-table.td class="text-right">
                                             {{ number_format($item->pemberian_obat + $item->hapus_beriobat, 0, ',', '.') }}
@@ -73,20 +68,17 @@
                                             {{ number_format($item->piutang_keluar, 0, ',', '.') }}
                                         </x-table.td>
                                         <x-table.td class="text-right">
-                                            {{ number_format($item->tf_keluar, 0, ',', '.') }}
-                                        </x-table.td>
-                                        <x-table.td class="text-right">
                                             {{ number_format($item->retur_supplier, 0, ',', '.') }}
                                         </x-table.td>
                                         <x-table.td class="text-right">
-                                            {{ number_format($totalKeluar = $item->pemberian_obat + $item->hapus_beriobat + $item->penjualan_obat + $item->tf_keluar + $item->retur_supplier, 0, ',', '.') }}
+                                            {{ number_format($totalKeluar = $item->pemberian_obat + $item->hapus_beriobat + $item->penjualan_obat + $item->piutang_keluar + $item->retur_supplier, 0, ',', '.') }}
                                         </x-table.td>
                                         <x-table.td class="text-right">
-                                            {{ number_format($stokAwal + $totalMasuk - $totalKeluar, 0, ',', '.') }}
+                                            {{ number_format($item->stok_awal + $totalMasuk - $totalKeluar, 0, ',', '.') }}
                                         </x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty colspan="19" padding />
+                                    <x-table.tr-empty colspan="17" padding />
                                 @endforelse
                             </x-slot>
                         </x-table>
@@ -100,7 +92,6 @@
                                 <x-table.th name="nama" title="Golongan" />
                                 <x-table.th name="satuan" title="Satuan" />
                                 <x-table.th align="right" title="Stok Awal" />
-                                <x-table.th align="right" title="Transfer Obat Masuk" />
                                 <x-table.th align="right" title="Penerimaan Obat" />
                                 <x-table.th align="right" title="Hibah Obat" />
                                 <x-table.th align="right" title="Obat Retur" />
@@ -108,7 +99,6 @@
                                 <x-table.th align="right" title="Pemberian Obat" />
                                 <x-table.th align="right" title="Penjualan Obat" />
                                 <x-table.th align="right" title="Piutang Keluar" />
-                                <x-table.th align="right" title="Transfer Obat Keluar" />
                                 <x-table.th align="right" title="Retur ke Supplier" />
                                 <x-table.th align="right" title="Total Keluar" />
                                 <x-table.th align="right" title="Stok Akhir" />
@@ -129,10 +119,7 @@
                                             {{ $item->satuan }}
                                         </x-table.td>
                                         <x-table.td class="text-right">
-                                            {{ number_format($stokAwal = $item->stok_awal > 0 ? $item->stok_awal : $item->stok_awal_terakhir, 0, ',', '.') }}
-                                        </x-table.td>
-                                        <x-table.td class="text-right">
-                                            {{ number_format($item->tf_masuk, 0, ',', '.') }}
+                                            {{ number_format($item->stok_awal, 0, ',', '.') }}
                                         </x-table.td>
                                         <x-table.td class="text-right">
                                             {{ number_format($item->penerimaan_obat, 0, ',', '.') }}
@@ -144,7 +131,7 @@
                                             {{ number_format($item->retur_pasien + $item->hapus_beriobat, 0, ',', '.') }}
                                         </x-table.td>
                                         <x-table.td class="text-right">
-                                            {{ number_format($totalMasuk = $item->tf_masuk + $item->penerimaan_obat + $item->hibah_obat + $item->retur_pasien + $item->hapus_beriobat, 0, ',', '.') }}
+                                            {{ number_format($totalMasuk = $item->penerimaan_obat + $item->hibah_obat + $item->retur_pasien + $item->hapus_beriobat, 0, ',', '.') }}
                                         </x-table.td>
                                         <x-table.td class="text-right">
                                             {{ number_format($item->pemberian_obat + $item->hapus_beriobat, 0, ',', '.') }}
@@ -156,20 +143,17 @@
                                             {{ number_format($item->piutang_keluar, 0, ',', '.') }}
                                         </x-table.td>
                                         <x-table.td class="text-right">
-                                            {{ number_format($item->tf_keluar, 0, ',', '.') }}
-                                        </x-table.td>
-                                        <x-table.td class="text-right">
                                             {{ number_format($item->retur_supplier, 0, ',', '.') }}
                                         </x-table.td>
                                         <x-table.td class="text-right">
-                                            {{ number_format($totalKeluar = $item->pemberian_obat + $item->hapus_beriobat + $item->penjualan_obat + $item->tf_keluar + $item->retur_supplier, 0, ',', '.') }}
+                                            {{ number_format($totalKeluar = $item->pemberian_obat + $item->hapus_beriobat + $item->penjualan_obat + $item->piutang_keluar + $item->retur_supplier, 0, ',', '.') }}
                                         </x-table.td>
                                         <x-table.td class="text-right">
-                                            {{ number_format($stokAwal + $totalMasuk - $totalKeluar, 0, ',', '.') }}
+                                            {{ number_format($item->stok_awal + $totalMasuk - $totalKeluar, 0, ',', '.') }}
                                         </x-table.td>
                                     </x-table.tr>
                                 @empty
-                                    <x-table.tr-empty colspan="19" padding />
+                                    <x-table.tr-empty colspan="17" padding />
                                 @endforelse
                             </x-slot>
                         </x-table>

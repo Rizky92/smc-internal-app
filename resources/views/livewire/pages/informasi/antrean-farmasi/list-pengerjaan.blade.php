@@ -69,17 +69,19 @@
                 marqueePengerjaan.marquee();
                 marqueePengerjaan.off('finished').on('finished', function () {
                     $(this).marquee('destroy');
-                    Livewire.emitTo('pages.informasi.antrean-farmasi.list-pengerjaan', 'marqueePengerjaanFinished');
+                    Livewire.dispatchTo('pages.informasi.antrean-farmasi.list-pengerjaan', 'marqueePengerjaanFinished');
                 });
             }
         }
 
-        document.addEventListener('DOMContentLoaded', initMarqueePengerjaan);
+        document.addEventListener('DOMContentLoaded', () => {
+            initMarqueePengerjaan();
 
-        Livewire.hook('message.processed', (message, component) => {
-            if (component.fingerprint.name === 'pages.informasi.antrean-farmasi.list-pengerjaan') {
-                initMarqueePengerjaan();
-            }
+            Livewire.hook('morph.updated', ({ component }) => {
+                if (component.name === 'pages.informasi.antrean-farmasi.list-pengerjaan') {
+                    initMarqueePengerjaan();
+                }
+            });
         });
     </script>
 @endpush

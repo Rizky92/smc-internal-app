@@ -3,6 +3,8 @@
 namespace App\Models\Farmasi;
 
 use App\Database\Eloquent\Model;
+use App\Models\Bangsal;
+use App\Models\Perawatan\KamarInap;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
@@ -44,7 +46,8 @@ class PemberianObat extends Model
             detail_pemberian_obat.tgl_perawatan,
             detail_pemberian_obat.jml,
             dokter.nm_dokter,
-            "RS Samarinda Medika Citra" alamat_dokter
+            "RS Samarinda Medika Citra" alamat_dokter,
+            bangsal.nm_bangsal
         SQL;
 
         $this->addSearchConditions([
@@ -63,7 +66,8 @@ class PemberianObat extends Model
             ->leftJoin('reg_periksa', 'detail_pemberian_obat.no_rawat', '=', 'reg_periksa.no_rawat')
             ->leftJoin('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->leftJoin('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
-            ->where('kd_bangsal', $bangsal)
+            ->leftJoin('bangsal', 'detail_pemberian_obat.kd_bangsal', '=', 'bangsal.kd_bangsal')
+            ->when($bangsal, fn ($q) => $q->where('detail_pemberian_obat.kd_bangsal', $bangsal))
             ->where('detail_pemberian_obat.kode_brng', $kodeObat)
             ->whereBetween('detail_pemberian_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
             ->union($penjualan);
@@ -232,5 +236,102 @@ class PemberianObat extends Model
         $data = static::pendapatanObat($year, 'alkes')->pluck('jumlah', 'bulan');
 
         return map_bulan($data);
+    }
+
+    public function scopeLaporanPemakaianObatAntibiotik(Builder $query, string $tglAwal, string $tglAkhir, string $jenisPerawatan): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->toDateString();
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->toDateString();
+        }
+
+        // Kamar ICU diprioritaskan; barisnya hampir selalu ber-stts_pulang "Pindah Kamar"
+        // karena pasien dipindah ke ruang biasa setelah stabil, jadi jangan difilter.
+        $kamarIcu = KamarInap::query()
+            ->selectRaw("concat(kamar_inap.kd_kamar, ' ', bangsal.nm_bangsal)")
+            ->join('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
+            ->join('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
+            ->whereColumn('kamar_inap.no_rawat', 'detail_pemberian_obat.no_rawat')
+            ->whereIn('kamar.kd_bangsal', Bangsal::ruangIcuKeys())
+            ->orderByDesc('kamar_inap.tgl_masuk')
+            ->orderByDesc('kamar_inap.jam_masuk')
+            ->limit(1);
+
+        $kamarTerakhir = KamarInap::query()
+            ->selectRaw("concat(kamar_inap.kd_kamar, ' ', bangsal.nm_bangsal)")
+            ->join('kamar', 'kamar_inap.kd_kamar', '=', 'kamar.kd_kamar')
+            ->join('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
+            ->whereColumn('kamar_inap.no_rawat', 'detail_pemberian_obat.no_rawat')
+            ->whereNotIn('kamar_inap.stts_pulang', ['Pindah Kamar'])
+            ->orderByDesc('kamar_inap.tgl_masuk')
+            ->orderByDesc('kamar_inap.jam_masuk')
+            ->limit(1);
+
+        // Lama rawat inap dihitung untuk seluruh episode (semua kamar dalam
+        // satu no. rawat), memakai nilai kamar_inap.lama apa adanya.
+        $lamaRanap = KamarInap::query()
+            ->selectRaw('sum(kamar_inap.lama)')
+            ->whereColumn('kamar_inap.no_rawat', 'detail_pemberian_obat.no_rawat');
+
+        $sqlKamarIcu = $kamarIcu->toSql();
+        $sqlKamarTerakhir = $kamarTerakhir->toSql();
+        $sqlLamaRanap = $lamaRanap->toSql();
+
+        $sqlSelect = <<<SQL
+            detail_pemberian_obat.no_rawat,
+            reg_periksa.no_rkm_medis,
+            pasien.nm_pasien,
+            detail_pemberian_obat.tgl_perawatan,
+            detail_pemberian_obat.kode_brng,
+            databarang.nama_brng,
+            detail_pemberian_obat.jml,
+            case
+                when detail_pemberian_obat.status = 'Ranap' or reg_periksa.status_lanjut = 'Ranap' then (
+                    select group_concat(distinct d.nm_dokter separator ', ')
+                    from dpjp_ranap dr
+                    join dokter d on dr.kd_dokter = d.kd_dokter
+                    where dr.no_rawat = detail_pemberian_obat.no_rawat
+                )
+                else dokter.nm_dokter
+            end as dokter,
+            detail_pemberian_obat.status as status_layanan,
+            ifnull(coalesce(($sqlKamarIcu), ($sqlKamarTerakhir)), '') as kamar,
+            ($sqlLamaRanap) as lama_ranap,
+            spesialis.nm_sps
+        SQL;
+
+        $this->addSearchConditions([
+            'detail_pemberian_obat.no_rawat',
+            'reg_periksa.no_rkm_medis',
+            'pasien.nm_pasien',
+            'detail_pemberian_obat.kode_brng',
+            'databarang.nama_brng',
+            'dokter.nm_dokter',
+            'spesialis.nm_sps',
+        ]);
+
+        return $query
+            ->selectRaw($sqlSelect, [...$kamarIcu->getBindings(), ...$kamarTerakhir->getBindings(), ...$lamaRanap->getBindings()])
+            ->withCasts([
+                'jml'        => 'float',
+                'lama_ranap' => 'float',
+            ])
+            ->join('reg_periksa', 'detail_pemberian_obat.no_rawat', '=', 'reg_periksa.no_rawat')
+            ->join('pasien', 'reg_periksa.no_rkm_medis', '=', 'pasien.no_rkm_medis')
+            ->join('databarang', 'detail_pemberian_obat.kode_brng', '=', 'databarang.kode_brng')
+            ->leftJoin('golongan_barang', 'databarang.kode_golongan', '=', 'golongan_barang.kode')
+            ->leftJoin('kategori_barang', 'databarang.kode_kategori', '=', 'kategori_barang.kode')
+            ->leftJoin('dokter', 'reg_periksa.kd_dokter', '=', 'dokter.kd_dokter')
+            ->leftJoin('spesialis', 'dokter.kd_sps', '=', 'spesialis.kd_sps')
+            ->whereBetween('detail_pemberian_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
+            ->where(function (Builder $q) {
+                $q->where('kategori_barang.kode', '=', '2.16')
+                    ->orWhere('kategori_barang.kode', '=', '2.17')
+                    ->orWhere('kategori_barang.kode', '=', '2.18');
+            })
+            ->when($jenisPerawatan !== 'semua', fn (Builder $q): Builder => $q->where('detail_pemberian_obat.status', $jenisPerawatan));
     }
 }

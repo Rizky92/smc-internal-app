@@ -101,7 +101,7 @@ class DaftarPasienRanap extends Component
         tracker_end('mysql_sik');
 
         $this->resetFilters();
-        $this->dispatchBrowserEvent('data-updated');
+        $this->dispatch('data-updated');
 
         $this->flashSuccess('Harga kamar berhasil diupdate!');
     }

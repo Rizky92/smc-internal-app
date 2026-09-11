@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\AuthenticateDicomRouterWebhook;
 use App\Http\Middleware\AuthorizeAny;
 use App\Http\Middleware\CheckForMaintenanceMode;
 use App\Http\Middleware\EncryptCookies;
@@ -89,5 +90,7 @@ class Kernel extends HttpKernel
         'throttle'         => ThrottleRequests::class,
         'verified'         => EnsureEmailIsVerified::class,
         'role'             => RoleMiddleware::class,
+
+        'dicom-router.webhook' => AuthenticateDicomRouterWebhook::class,
     ];
 }

@@ -1,4 +1,4 @@
-<div class="row" style="height: 60%" @if(!$isCalling) wire:poll.2000ms.keep-alive="call" @endif>
+<div class="row" style="height: 60%" wire:poll.2000ms.keep-alive="panggilAntrean">
     @if ($this->antreanDiPanggil)
         <div class="col">
             <div class="card card-outline card-success d-flex justify-content-center h-100" id="calling-card">
@@ -214,7 +214,7 @@
 
                 // Support untuk Livewire v2 dan v3
                 if (typeof Livewire.emit === 'function') {
-                    Livewire.emit('updateStatus');
+                    Livewire.dispatch('updateStatus');
                 } else if (typeof Livewire.dispatch === 'function') {
                     Livewire.dispatch('updateStatus');
                 } else {
@@ -231,7 +231,7 @@
                 // Tetap panggil updateStatus untuk menghindari antrean stuck
                 // Support untuk Livewire v2 dan v3
                 if (typeof Livewire.emit === 'function') {
-                    Livewire.emit('updateStatus');
+                    Livewire.dispatch('updateStatus');
                 } else if (typeof Livewire.dispatch === 'function') {
                     Livewire.dispatch('updateStatus');
                 } else {
