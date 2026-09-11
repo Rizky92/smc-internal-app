@@ -34,7 +34,13 @@ class AntreanDiPanggil extends Component
             ->first();
     }
 
-    public function call(): void
+    /**
+     * "call" is reserved on Livewire 3's $wire proxy (an alias for its own
+     * $call() helper), so wire:poll="call" never reaches this method — it
+     * invokes Livewire's internal helper with no arguments instead, which
+     * sends {method: "undefined"} to the server on every tick.
+     */
+    public function panggilAntrean(): void
     {
         if ($this->isCalling) {
             return;

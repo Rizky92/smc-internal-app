@@ -1,4 +1,4 @@
-<div class="row" style="height: 60%" @if(!$isCalling) wire:poll.2000ms.keep-alive="call" @endif>
+<div class="row" style="height: 60%" wire:poll.2000ms.keep-alive="panggilAntrean">
     @if ($this->antreanDiPanggil)
         <div class="col">
             <div class="card card-outline card-success d-flex justify-content-center h-100" id="calling-card">
