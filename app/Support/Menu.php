@@ -342,11 +342,13 @@ class Menu
                     'farmasi.laporan-pemakaian-obat-napza.read',
                     'farmasi.laporan-pemakaian-obat-morphine.read',
                     'farmasi.laporan-pemakaian-obat-tb.read',
+                    'farmasi.laporan-pemakaian-obat-antibiotik.read',
                     'farmasi.defecta-depo.read',
                     'farmasi.daftar-riwayat-obat-alkes.read',
                     'farmasi.farmasi.rincian-perbandingan-po.read',
                     'farmasi.kunjungan-walk-in.read',
                     'farmasi.hpp-pembelian-terakhir.read',
+                    'farmasi.laporan-potensi-prb.read',
                 ]),
                 'items' => [
                     [
@@ -416,6 +418,12 @@ class Menu
                         'hasAnyPermissions' => $user->can('farmasi.laporan-pemakaian-obat-tb.read'),
                     ],
                     [
+                        'name'              => 'Pemakaian Obat Antibiotik',
+                        'icon'              => 'fas fa-file-invoice',
+                        'url'               => route('admin.farmasi.laporan-pemakaian-obat-antibiotik'),
+                        'hasAnyPermissions' => $user->can('farmasi.laporan-pemakaian-obat-antibiotik.read'),
+                    ],
+                    [
                         'name'              => 'Defecta Depo',
                         'icon'              => 'fas fa-shopping-cart',
                         'url'               => route('admin.farmasi.defecta-depo'),
@@ -451,6 +459,12 @@ class Menu
                         'url'               => route('admin.farmasi.hpp-pembelian-terakhir'),
                         'hasAnyPermissions' => $user->can('farmasi.hpp-pembelian-terakhir.read'),
                     ],
+                    [
+                        'name'              => 'Potensi PRB',
+                        'icon'              => 'fas fa-file-alt',
+                        'url'               => route('admin.farmasi.laporan-potensi-prb'),
+                        'hasAnyPermissions' => $user->can('farmasi.laporan-potensi-prb.read'),
+                    ],
                 ],
             ],
             [
@@ -484,6 +498,29 @@ class Menu
                 ],
             ],
             [
+                'name'              => 'Marketing',
+                'icon'              => 'far fa-circle',
+                'type'              => 'dropdown',
+                'hasAnyPermissions' => $user->canAny([
+                    'marketing.summary-billing-mcu.read',
+                    'marketing.penggunaan-alkes.read',
+                ]),
+                'items' => [
+                    [
+                        'name'              => 'Summary Billing MCU',
+                        'icon'              => 'fas fa-file-alt',
+                        'url'               => route('admin.marketing.summary-billing-mcu'),
+                        'hasAnyPermissions' => $user->can('marketing.summary-billing-mcu.read'),
+                    ],
+                    [
+                        'name'              => 'Penggunaan Alkes',
+                        'icon'              => 'fas fa-globe-asia',
+                        'url'               => route('admin.marketing.penggunaan-alkes'),
+                        'hasAnyPermissions' => $user->can('marketing.penggunaan-alkes.read'),
+                    ],
+                ],
+            ],
+            [
                 'name'              => 'Logistik',
                 'icon'              => 'far fa-circle',
                 'type'              => 'dropdown',
@@ -507,10 +544,36 @@ class Menu
                 ],
             ],
             [
+                'name'              => 'Dapur',
+                'icon'              => 'far fa-circle',
+                'type'              => 'dropdown',
+                'hasAnyPermissions' => $user->canAny([
+                    'logistik.input-minmax-stok.read',
+                    'logistik.stok-darurat.read',
+                ]),
+                'items' => [
+                    [
+                        'name'              => 'Input Minmax Stok',
+                        'icon'              => 'fas fa-pencil-alt',
+                        'url'               => route('admin.dapur.input-minmax-stok'),
+                        'hasAnyPermissions' => $user->can('dapur.input-minmax-stok.read'),
+                    ],
+                    [
+                        'name'              => 'Stok Darurat',
+                        'icon'              => 'far fa-newspaper',
+                        'url'               => route('admin.dapur.stok-darurat'),
+                        'hasAnyPermissions' => $user->can('dapur.stok-darurat.read'),
+                    ],
+                ],
+            ],
+            [
                 'name'              => 'Aplikasi',
                 'icon'              => 'far fa-circle',
                 'type'              => 'dropdown',
-                'hasAnyPermissions' => $user->canAny(['aplikasi.bidang-unit.read']) || $user->hasRole($develop),
+                'hasAnyPermissions' => $user->canAny([
+                    'aplikasi.bidang-unit.read',
+                    'aplikasi.log-dicom-router-satu-sehat.read',
+                ]) || $user->hasRole($develop),
                 'items'             => [
                     [
                         'name'              => 'Bidang Unit',
@@ -518,6 +581,13 @@ class Menu
                         'icon'              => 'fas fa-hospital',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('aplikasi.bidang-unit.read'),
+                    ],
+                    [
+                        'name'              => 'Log DICOM Router Satu Sehat',
+                        'url'               => route('admin.aplikasi.log-dicom-router-satu-sehat'),
+                        'icon'              => 'fas fa-x-ray',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('aplikasi.log-dicom-router-satu-sehat.read'),
                     ],
                     [
                         'name'              => 'Pengaturan',
@@ -620,6 +690,7 @@ class Menu
                     'casemix.laporan-pasien-batal.read',
                     'casemix.laporan-pasien-cob.read',
                     'casemix.laporan-triase-igd-zona-hijau.read',
+                    'casemix.laporan-pasien-ranap-pulang.read',
                 ]),
                 'items'             => [
                     [
@@ -642,6 +713,13 @@ class Menu
                         'icon'              => 'fas fa-file-alt',
                         'type'              => 'link',
                         'hasAnyPermissions' => $user->can('casemix.laporan-triase-igd-zona-hijau.read'),
+                    ],
+                    [
+                        'name'              => 'Pasien Ranap Pulang',
+                        'url'               => route('admin.casemix.laporan-pasien-ranap-pulang'),
+                        'icon'              => 'fas fa-file-alt',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => $user->can('casemix.laporan-pasien-ranap-pulang.read'),
                     ],
                 ],
             ],

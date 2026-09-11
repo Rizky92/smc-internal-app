@@ -14,12 +14,14 @@ use App\Livewire\Pages\Antrean\AntreanPoli;
 use App\Livewire\Pages\Antrian;
 use App\Livewire\Pages\Aplikasi;
 use App\Livewire\Pages\Casemix;
+use App\Livewire\Pages\Dapur;
 use App\Livewire\Pages\Farmasi;
 use App\Livewire\Pages\HakAkses;
 use App\Livewire\Pages\Informasi;
 use App\Livewire\Pages\Keuangan;
 use App\Livewire\Pages\Laboratorium;
 use App\Livewire\Pages\Logistik;
+use App\Livewire\Pages\Marketing;
 use App\Livewire\Pages\Perawatan;
 use App\Livewire\Pages\RekamMedis;
 use App\Livewire\Pages\User;
@@ -83,6 +85,10 @@ Route::prefix('admin')
                 Route::get('pengaturan', Aplikasi\Pengaturan::class)
                     ->name('pengaturan')
                     ->middleware('canany:'.Aplikasi\Pengaturan::permissions());
+
+                Route::get('log-dicom-router-satu-sehat', Aplikasi\LogDicomRouterSatuSehat::class)
+                    ->name('log-dicom-router-satu-sehat')
+                    ->middleware('can:aplikasi.log-dicom-router-satu-sehat.read');
             });
 
         Route::prefix('perawatan')
@@ -296,6 +302,10 @@ Route::prefix('admin')
                     ->name('laporan-pemakaian-obat-tb')
                     ->middleware('can:farmasi.laporan-pemakaian-obat-tb.read');
 
+                Route::get('laporan-pemakaian-obat-antibiotik', Farmasi\LaporanPemakaianObatAntibiotik::class)
+                    ->name('laporan-pemakaian-obat-antibiotik')
+                    ->middleware('can:farmasi.laporan-pemakaian-obat-antibiotik.read');
+
                 Route::get('daftar-riwayat-obat-alkes', Farmasi\DaftarRiwayatObatAlkes::class)
                     ->name('daftar-riwayat-obat-alkes')
                     ->middleware('can:farmasi.daftar-riwayat-obat-alkes.read');
@@ -315,6 +325,10 @@ Route::prefix('admin')
                 Route::get('hpp-pembelian-terakhir', Farmasi\HppPembelianTerakhir::class)
                     ->name('hpp-pembelian-terakhir')
                     ->middleware('can:farmasi.hpp-pembelian-terakhir.read');
+
+                Route::get('laporan-potensi-prb', Farmasi\LaporanPotensiPrb::class)
+                    ->name('laporan-potensi-prb')
+                    ->middleware('can:farmasi.laporan-potensi-prb.read');
             });
 
         Route::prefix('rekam-medis')
@@ -331,6 +345,17 @@ Route::prefix('admin')
                 Route::get('status-data-pasien', RekamMedis\StatusDataPasien::class)
                     ->name('status-data-pasien')
                     ->middleware('can:rekam-medis.status-data-pasien.read');
+            });
+
+        Route::prefix('marketing')
+            ->as('marketing.')
+            ->group(function () {
+                Route::get('summary-billing-mcu', Marketing\SummaryBillingMCU::class)
+                    ->name('summary-billing-mcu')
+                    ->middleware('can:marketing.summary-billing-mcu.read');
+                Route::get('penggunaan-alkes', Marketing\LaporanPenggunaanAlkes::class)
+                    ->name('penggunaan-alkes')
+                    ->middleware('can:marketing.penggunaan-alkes.read');
             });
 
         Route::prefix('antrean')
@@ -369,6 +394,18 @@ Route::prefix('admin')
                     ->middleware('can:logistik.stok-darurat.read');
             });
 
+        Route::prefix('dapur')
+            ->as('dapur.')
+            ->group(function () {
+                Route::get('input-minmax-stok', Dapur\InputMinmaxStok::class)
+                    ->name('input-minmax-stok')
+                    ->middleware('can:dapur.input-minmax-stok.read');
+
+                Route::get('stok-darurat', Dapur\StokDaruratDapur::class)
+                    ->name('stok-darurat')
+                    ->middleware('can:dapur.stok-darurat.read');
+            });
+
         Route::prefix('casemix')
             ->as('casemix.')
             ->group(function () {
@@ -381,6 +418,9 @@ Route::prefix('admin')
                 Route::get('laporan-triase-igd-zona-hijau', Casemix\LaporanTriaseIgdZonaHijau::class)
                     ->name('laporan-triase-igd-zona-hijau')
                     ->middleware('can:casemix.laporan-triase-igd-zona-hijau.read');
+                Route::get('laporan-pasien-ranap-pulang', Casemix\LaporanPasienRanapPulang::class)
+                    ->name('laporan-pasien-ranap-pulang')
+                    ->middleware('can:casemix.laporan-pasien-ranap-pulang.read');
             });
 
         Route::middleware('role:'.config('permission.superadmin_name'))

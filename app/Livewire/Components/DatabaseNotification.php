@@ -63,8 +63,18 @@ class DatabaseNotification extends Component
         auth()->user()->notifications()->where('id', $notificationId)->first()->delete();
     }
 
-    public function download(string $filePath): StreamedResponse
+    public function download(string $filePath): ?StreamedResponse
     {
-        return Storage::disk('public')->download($filePath);
+        if (Storage::disk('public')->exists($filePath)) {
+            return Storage::disk('public')->download($filePath);
+        }
+
+        if (Storage::disk('local')->exists($filePath)) {
+            return Storage::disk('local')->download($filePath);
+        }
+
+        $this->emit('flash.error', 'File tidak ditemukan!');
+
+        return null;
     }
 }

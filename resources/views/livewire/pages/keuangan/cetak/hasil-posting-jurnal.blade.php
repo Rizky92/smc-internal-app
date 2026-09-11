@@ -242,8 +242,8 @@
             <br />
             <br />
             <br />
-            <div>dr. ISMET ALIMIN, MM, MARS</div>
-            <div>DIREKTUR</div>
+            <div>dr. INDRIANI LIM, MARS</div>
+            <div>PLT DIREKTUR</div>
         </div>
     </div>
     @push('js')
