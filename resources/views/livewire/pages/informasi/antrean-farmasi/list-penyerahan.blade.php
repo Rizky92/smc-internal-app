@@ -77,8 +77,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             initMarqueePenyerahan();
 
-            Livewire.hook('message.processed', (message, component) => {
-                if (component.fingerprint.name === 'pages.informasi.antrean-farmasi.list-penyerahan') {
+            Livewire.hook('morph.updated', ({ component }) => {
+                if (component.name === 'pages.informasi.antrean-farmasi.list-penyerahan') {
                     initMarqueePenyerahan();
                 }
             });

@@ -133,7 +133,7 @@
                                     Livewire.dispatch('inputPintu.setKodeDokter', data);
                                 });
 
-                                Livewire.hook('element.updated', (el, component) => {
+                                Livewire.hook('morph.updated', ({ el, component }) => {
                                     $('#kodePintu').select2();
                                     $('#kodePoliklinik').select2();
                                     $('#kodeDokter').select2();

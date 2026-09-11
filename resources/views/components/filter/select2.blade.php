@@ -63,7 +63,7 @@
             })
 
             @if ($livewire)
-                Livewire.hook('element.updated', (el, component) => {
+                Livewire.hook('morph.updated', ({ el, component }) => {
                     {{ $varName }}.select2({
                         dropdownCssClass: 'text-sm px-0',
                     })

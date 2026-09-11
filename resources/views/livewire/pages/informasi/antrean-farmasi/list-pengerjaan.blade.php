@@ -77,8 +77,8 @@
         document.addEventListener('DOMContentLoaded', () => {
             initMarqueePengerjaan();
 
-            Livewire.hook('message.processed', (message, component) => {
-                if (component.fingerprint.name === 'pages.informasi.antrean-farmasi.list-pengerjaan') {
+            Livewire.hook('morph.updated', ({ component }) => {
+                if (component.name === 'pages.informasi.antrean-farmasi.list-pengerjaan') {
                     initMarqueePengerjaan();
                 }
             });
