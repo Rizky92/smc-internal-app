@@ -251,4 +251,83 @@ class RKATInputPenetapanTest extends TestCase
             ->assertSet('anggaranId', $anggaran->id)
             ->assertSet('bidangId', $bidang->id);
     }
+
+    /**
+     * @test
+     *
+     * "Anggaran Baru" only has a bare data-toggle="modal" button behind it,
+     * with no action to reset the form - unlike a row click, which reaches
+     * prepare() via JS. rkat-input-penetapan.blade.php's shown.bs.modal
+     * handler dispatches prepare with no id at all in that case, which this
+     * component already handles via its existing "id not found" fallback
+     * (AnggaranBidang::find(-1) is null) - this pins that the reset actually
+     * happens when the button, not just a stale id, triggers it.
+     */
+    public function reopening_for_a_new_penetapan_resets_the_form(): void
+    {
+        $petugas = $this->petugasWithPermissions([], '99999901');
+        $anggaran = $this->kategori();
+        $bidang = $this->bidang();
+
+        $existing = AnggaranBidang::create([
+            'anggaran_id'      => $anggaran->id,
+            'bidang_id'        => $bidang->id,
+            'tahun'            => app(RKATSettings::class)->tahun,
+            'nominal_anggaran' => 500000,
+        ]);
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPenetapan::class)
+            ->dispatch('prepare', $existing->id)
+            ->assertSet('anggaranBidangId', $existing->id)
+            ->dispatch('prepare')
+            ->assertSet('anggaranBidangId', -1)
+            ->assertSet('anggaranId', -1)
+            ->assertSet('bidangId', -1);
+    }
+
+    /**
+     * @test
+     *
+     * update() delegates through isUpdating() on anggaranBidangId. Before the
+     * dispatch above ran on every "Anggaran Baru" open, a stale
+     * anggaranBidangId left over from editing $existing meant this call
+     * silently overwrote it instead of creating a new penetapan.
+     */
+    public function creating_after_editing_another_penetapan_does_not_touch_it(): void
+    {
+        $petugas = $this->petugasWithPermissions([
+            'keuangan.rkat-penetapan.create',
+            'keuangan.rkat-penetapan.update',
+        ], '99999901');
+        $anggaran = $this->kategori();
+        $bidang = $this->bidang();
+        $anggaranBaru = $this->kategori();
+        $bidangBaru = $this->bidang();
+
+        $existing = AnggaranBidang::create([
+            'anggaran_id'      => $anggaran->id,
+            'bidang_id'        => $bidang->id,
+            'tahun'            => app(RKATSettings::class)->tahun,
+            'nominal_anggaran' => 500000,
+        ]);
+
+        $this->travelTo($this->insidePeriod());
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPenetapan::class)
+            ->dispatch('prepare', $existing->id)
+            ->dispatch('prepare')
+            ->set('anggaranId', $anggaranBaru->id)
+            ->set('bidangId', $bidangBaru->id)
+            ->set('nominalAnggaran', 750000)
+            ->call('create')
+            ->assertDispatched('data-saved');
+
+        $existing->refresh();
+
+        $this->assertSame((int) $anggaran->id, (int) $existing->anggaran_id);
+        $this->assertSame(500000, (int) $existing->nominal_anggaran);
+        $this->assertSame(2, AnggaranBidang::query()->count());
+    }
 }

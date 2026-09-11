@@ -33,7 +33,7 @@
             </x-row-col-flex>
             <x-row-col-flex class="pt-3 border-top">
                 @if ($this->bisaTetapkanRKAT())
-                    <x-button variant="primary" size="sm" title="Anggaran Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-penetapan-rkat" class="btn-primary ml-auto" />
+                    <x-button variant="primary" size="sm" title="Anggaran Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-penetapan-rkat" data-action="create" class="btn-primary ml-auto" />
                 @endif
             </x-row-col-flex>
         </x-slot>

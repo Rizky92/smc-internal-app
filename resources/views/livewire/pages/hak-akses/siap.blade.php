@@ -9,7 +9,7 @@
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-                <x-button variant="primary" size="sm" title="Role Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-perizinan" class="btn-primary ml-3" />
+                <x-button variant="primary" size="sm" title="Role Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-perizinan" data-action="create" class="btn-primary ml-3" />
             </x-row-col-flex>
         </x-slot>
 

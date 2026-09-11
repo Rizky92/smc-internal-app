@@ -32,7 +32,7 @@
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
                 @can('keuangan.rkat-kategori.create')
-                    <x-button variant="primary" size="sm" title="Anggaran Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-kategori-rkat" class="btn-primary ml-3" />
+                    <x-button variant="primary" size="sm" title="Anggaran Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-kategori-rkat" data-action="create" class="btn-primary ml-3" />
                 @endcan
             </x-row-col-flex>
         </x-slot>

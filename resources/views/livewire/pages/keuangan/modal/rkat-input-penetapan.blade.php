@@ -2,6 +2,19 @@
     @push('js')
         <script>
             $('#modal-input-penetapan-rkat').on('shown.bs.modal', e => {
+                // Only the "Anggaran Baru" button marks itself data-action="create".
+                // Without this check, anggaranBidangId/anggaranId/bidangId/
+                // nominalAnggaran from a previous edit stayed on the component, so
+                // reopening via Tambah right after Edit kept the old title and
+                // fields and routed Simpan into update() on that same row instead
+                // of creating a new one. prepare() with no id already resets via
+                // its existing "id not found" fallback (AnggaranBidang::find(-1)
+                // is null).
+                var trigger = e.relatedTarget || null
+                if (trigger && trigger.dataset && trigger.dataset.action === 'create') {
+                    @this.dispatch('prepare', {})
+                }
+
                 @this.dispatch('penetapan-rkat.show-modal')
             })
 

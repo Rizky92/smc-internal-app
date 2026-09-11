@@ -53,15 +53,26 @@ class ModalPerizinan extends Component
     #[On('siap.prepare')]
     public function prepare(int $id = -1): void
     {
+        // The "Role Baru" trigger dispatches siap.prepare with no id to reset
+        // the form for a new role. Previously roleId alone was reset here -
+        // roleName/checkedPermissions were only ever set inside the branch
+        // below, never cleared - so reopening via Tambah right after Edit kept
+        // the previous role's name and permissions checked, and Simpan (still
+        // correctly routed to create(), since roleId itself did reset) created
+        // a confusing duplicate role instead of a genuinely new, blank one.
+        if ($id === -1) {
+            $this->defaultValues();
+
+            return;
+        }
+
         $this->roleId = $id;
 
-        if ($id !== -1) {
-            /** @var Role */
-            $role = Role::findById($id);
+        /** @var Role */
+        $role = Role::findById($id);
 
-            $this->roleName = $role->name;
-            $this->checkedPermissions = $role->permissions->pluck('id', 'id')->all();
-        }
+        $this->roleName = $role->name;
+        $this->checkedPermissions = $role->permissions->pluck('id', 'id')->all();
     }
 
     public function create(): void

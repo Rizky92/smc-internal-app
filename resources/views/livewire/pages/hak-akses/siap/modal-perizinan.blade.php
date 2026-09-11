@@ -4,6 +4,19 @@
             <script>
                 $(document).on('DOMContentLoaded', e => {
                     $('#modal-perizinan').on('shown.bs.modal', e => {
+                        // Only the "Role Baru" button marks itself
+                        // data-action="create". Without this check, roleId/
+                        // roleName/checkedPermissions from a previous edit
+                        // stayed on the component, so reopening via Tambah
+                        // right after Edit kept the old role's name and
+                        // permissions checked, and the form's submit action
+                        // (wired to update() whenever roleId !== -1) silently
+                        // renamed that role instead of creating a new one.
+                        var trigger = e.relatedTarget || null
+                        if (trigger && trigger.dataset && trigger.dataset.action === 'create') {
+                            @this.dispatch('siap.prepare')
+                        }
+
                         @this.dispatch('siap.show')
                     })
 

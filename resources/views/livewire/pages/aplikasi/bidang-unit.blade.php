@@ -28,7 +28,7 @@
             <x-row-col-flex>
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-                <x-button variant="primary" size="sm" title="Bidang Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-bidang-unit" class="btn-primary ml-3" />
+                <x-button variant="primary" size="sm" title="Bidang Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-bidang-unit" data-action="create" class="btn-primary ml-3" />
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">

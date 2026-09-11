@@ -50,7 +50,7 @@
                 <x-filter.label constant-width>Bidang:</x-filter.label>
                 <x-filter.select model="bidang" :options="$this->dataBidang" placeholder="SEMUA" />
                 @can('keuangan.rkat-pelaporan.create')
-                    <x-button variant="primary" size="sm" title="Laporan Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-pelaporan-rkat" class="btn-primary ml-auto" />
+                    <x-button variant="primary" size="sm" title="Laporan Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-pelaporan-rkat" data-action="create" class="btn-primary ml-auto" />
                 @endcan
             </x-row-col-flex>
         </x-slot>

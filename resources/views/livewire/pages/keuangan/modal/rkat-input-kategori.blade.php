@@ -2,6 +2,16 @@
     @push('js')
         <script>
             $('#modal-input-kategori-rkat').on('shown.bs.modal', e => {
+                // Only the "Anggaran Baru" button marks itself data-action="create".
+                // Without this check, anggaranId/nama/deskripsi from a previous
+                // edit stayed on the component, so reopening via Tambah right
+                // after Edit kept the old title and fields and routed Simpan
+                // into update() on that same row instead of creating a new one.
+                var trigger = e.relatedTarget || null
+                if (trigger && trigger.dataset && trigger.dataset.action === 'create') {
+                    @this.dispatch('prepare', {})
+                }
+
                 @this.dispatch('kategori-rkat.show-modal')
             })
 

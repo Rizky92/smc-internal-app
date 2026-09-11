@@ -2,6 +2,19 @@
     @push('js')
         <script>
             $('#modal-input-bidang-unit').on('shown.bs.modal', (e) => {
+                // relatedTarget carries the element that opened the modal - only
+                // the "Bidang Baru" button marks itself data-action="create".
+                // Without this, bidangId/nama/parentId from a previous edit stay
+                // on the component (only clearing them here, not on every close,
+                // avoids racing prepare()'s own edit-time population), so
+                // reopening via Tambah right after Edit kept the old title, the
+                // old fields, and routed Simpan into update() on that same row
+                // instead of creating a new one.
+                var trigger = e.relatedTarget || null;
+                if (trigger && trigger.dataset && trigger.dataset.action === 'create') {
+                    Livewire.dispatch('prepare', {});
+                }
+
                 Livewire.dispatch('bidang.show-modal');
             });
 

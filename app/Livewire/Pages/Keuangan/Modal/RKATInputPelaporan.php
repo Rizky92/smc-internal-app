@@ -102,8 +102,19 @@ class RKATInputPelaporan extends Component
     }
 
     #[On('prepare')]
-    public function prepare(array $options): void
+    public function prepare(array $options = []): void
     {
+        // The "Laporan Baru" trigger dispatches prepare with no options at all
+        // (see rkat-pelaporan.blade.php's shown.bs.modal handler) to reset the
+        // form for a new report; reading tglPakai/keterangan out of an empty
+        // array below would leave them null instead of defaultValues()'s actual
+        // defaults, and detail would end up [] instead of one blank row.
+        if (empty($options)) {
+            $this->defaultValues();
+
+            return;
+        }
+
         $this->anggaranBidangId = $options['anggaranBidangId'] ?? -1;
         $this->pemakaianAnggaranId = $options['pemakaianAnggaranId'] ?? -1;
         $this->tglPakai = $options['tglPakai'];

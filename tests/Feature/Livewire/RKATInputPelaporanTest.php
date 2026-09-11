@@ -191,4 +191,91 @@ class RKATInputPelaporanTest extends TestCase
             ->assertSet('pemakaianAnggaranId', $pemakaian->id)
             ->assertSet('detail', [['keterangan' => 'Barang A', 'nominal' => 250000.0]]);
     }
+
+    /**
+     * @test
+     *
+     * "Laporan Baru" only has a bare data-toggle="modal" button behind it,
+     * with no action to reset the form - unlike a row click, which reaches
+     * prepare() via JS. rkat-input-pelaporan.blade.php's shown.bs.modal
+     * handler dispatches prepare with no options at all in that case, which
+     * needs its own empty-array branch: reading tglPakai/keterangan out of an
+     * empty array left them null instead of defaultValues()'s actual
+     * defaults, and detail ended up [] instead of one blank row.
+     */
+    public function reopening_for_a_new_report_resets_the_form(): void
+    {
+        $petugas = $this->petugasWithPermissions([], '99999901');
+        $rkat = $this->anggaranBidang();
+
+        $pemakaian = PemakaianAnggaran::create([
+            'judul'              => 'Pembelian Lama',
+            'tgl_dipakai'        => '2026-02-01',
+            'anggaran_bidang_id' => $rkat->id,
+            'user_id'            => '99999901',
+        ]);
+        $pemakaian->detail()->createMany([['keterangan' => 'Barang A', 'nominal' => 250000]]);
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPelaporan::class)
+            ->dispatch('prepare', options: [
+                'anggaranBidangId'    => $rkat->id,
+                'pemakaianAnggaranId' => $pemakaian->id,
+                'tglPakai'            => '2026-02-01',
+                'keterangan'          => 'Pembelian Lama',
+            ])
+            ->assertSet('pemakaianAnggaranId', $pemakaian->id)
+            ->dispatch('prepare')
+            ->assertSet('anggaranBidangId', -1)
+            ->assertSet('pemakaianAnggaranId', -1)
+            ->assertSet('tglPakai', now()->toDateString())
+            ->assertSet('keterangan', '')
+            ->assertSet('detail', [['keterangan' => '', 'nominal' => 0]]);
+    }
+
+    /**
+     * @test
+     *
+     * update() delegates through isUpdating() on pemakaianAnggaranId. Before
+     * the dispatch above ran on every "Laporan Baru" open, a stale
+     * pemakaianAnggaranId left over from editing $pemakaian meant this call
+     * silently overwrote it instead of creating a new report.
+     */
+    public function creating_after_editing_another_report_does_not_touch_it(): void
+    {
+        $petugas = $this->petugasWithPermissions([
+            'keuangan.rkat-pelaporan.create',
+            'keuangan.rkat-pelaporan.update',
+        ], '99999901');
+        $rkat = $this->anggaranBidang();
+
+        $pemakaian = PemakaianAnggaran::create([
+            'judul'              => 'Pembelian Lama',
+            'tgl_dipakai'        => '2026-02-01',
+            'anggaran_bidang_id' => $rkat->id,
+            'user_id'            => '99999901',
+        ]);
+        $pemakaian->detail()->createMany([['keterangan' => 'Barang A', 'nominal' => 250000]]);
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPelaporan::class)
+            ->dispatch('prepare', options: [
+                'anggaranBidangId'    => $rkat->id,
+                'pemakaianAnggaranId' => $pemakaian->id,
+                'tglPakai'            => '2026-02-01',
+                'keterangan'          => 'Pembelian Lama',
+            ])
+            ->dispatch('prepare')
+            ->set('anggaranBidangId', $rkat->id)
+            ->set('tglPakai', '2026-03-01')
+            ->set('keterangan', 'Pembelian Baru')
+            ->set('detail', [['keterangan' => 'Barang B', 'nominal' => 125000]])
+            ->call('create')
+            ->assertDispatched('data-saved');
+
+        $pemakaian->refresh();
+
+        $this->assertSame('Pembelian Lama', $pemakaian->judul);
+        $this->assertSame(2, PemakaianAnggaran::query()->count());
+    }
 }
