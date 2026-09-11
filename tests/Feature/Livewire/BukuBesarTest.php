@@ -3,6 +3,7 @@
 namespace Tests\Feature\Livewire;
 
 use App\Livewire\Pages\Keuangan\BukuBesar;
+use App\Models\ExportSession;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
@@ -47,6 +48,8 @@ class BukuBesarTest extends TestCase
         $sik->table('detailjurnal')->where('no_jurnal', 'like', 'UJI%')->delete();
         $sik->table('jurnal')->where('no_jurnal', 'like', 'UJI%')->delete();
         $sik->table('rekening')->where('kd_rek', 'like', 'UJI%')->delete();
+
+        ExportSession::query()->where('export_name', 'buku-besar')->where('id_user', '99999901')->delete();
 
         parent::tearDown();
     }
@@ -175,5 +178,29 @@ class BukuBesarTest extends TestCase
             ->assertSee('Rp. 90.000')
             ->assertDontSee('Rp. 400.000')
             ->assertDontSee('UJI-001');
+    }
+
+    /**
+     * @test
+     *
+     * exportToBackground() used to flash this warning with $this->emit(),
+     * removed in Livewire 3 - calling it would have been a fatal error the
+     * moment a user already had an export running.
+     */
+    public function refuses_a_second_background_export_while_one_is_running(): void
+    {
+        ExportSession::query()->create([
+            'session_id'  => 'UJI-SESSION',
+            'id_user'     => '99999901',
+            'export_name' => 'buku-besar',
+            'status'      => 'processing',
+        ]);
+
+        $petugas = $this->petugasWithPermissions([self::URI_PERMISSION], '99999901');
+
+        Livewire::actingAs($petugas)
+            ->test(BukuBesar::class)
+            ->call('exportToBackground')
+            ->assertDispatched('flash.error');
     }
 }

@@ -73,7 +73,7 @@ class DatabaseNotification extends Component
             return Storage::disk('local')->download($filePath);
         }
 
-        $this->emit('flash.error', 'File tidak ditemukan!');
+        $this->dispatch('flash.error', 'File tidak ditemukan!');
 
         return null;
     }
