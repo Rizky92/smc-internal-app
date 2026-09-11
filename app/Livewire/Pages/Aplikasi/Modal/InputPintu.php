@@ -54,6 +54,14 @@ class InputPintu extends Component
     /**
      * Handler for JS-emitted selected jadwal values (from select2).
      * Accepts an array of strings like ["KD_DOKTER|KD_POLI", ...] or a JSON string.
+     *
+     * Livewire 3 spreads an associative array dispatched from JS as PHP named
+     * arguments (plain ...$array semantics, nothing Livewire-specific), so the
+     * browser side wraps the payload as {data} to match this parameter name -
+     * without that wrapping, a lone string still binds correctly (dispatch()
+     * wraps a bare string as [string] before spreading), but an empty
+     * selection sends [] and spreads to zero arguments, leaving $data
+     * unresolvable.
      */
     #[On('inputPintu.setSelectedJadwal')]
     public function setSelectedJadwal($data): void
@@ -102,29 +110,34 @@ class InputPintu extends Component
         return view('livewire.pages.aplikasi.modal.input-pintu');
     }
 
+    /**
+     * Fed by manajemen-pintu.blade.php's loadData(), which dispatches
+     * {kodePintu, kodePoliklinik, kodeDokter} - an associative array from JS,
+     * which Livewire 3 spreads as named PHP arguments. A single array
+     * $options parameter here never matched any of those names and always
+     * threw BindingResolutionException; kodePoliklinik/kodeDokter are
+     * accepted but unused; nothing dispatches them today.
+     */
     #[On('prepare')]
-    public function prepare(array $options): void
+    public function prepare($kodePintu = null, $kodePoliklinik = null, $kodeDokter = null): void
     {
-        // Normalize incoming keys (JS may send kodePintu or kd_pintu)
-        $kd = $options['kd_pintu'] ?? $options['kodePintu'] ?? null;
-
         // If no kd provided, treat as create
-        if (empty($kd)) {
+        if (empty($kodePintu)) {
             $this->defaultValues();
 
             return;
         }
 
-        $this->originalKodePintu = $kd;
+        $this->originalKodePintu = $kodePintu;
 
         // Load pintu record to fill fields
-        $pintu = Pintu::query()->where('kd_pintu', $kd)->first();
+        $pintu = Pintu::query()->where('kd_pintu', $kodePintu)->first();
 
-        $this->kodePintu = $pintu->kd_pintu ?? $kd;
-        $this->namaPintu = $pintu->nm_pintu ?? ($options['nm_pintu'] ?? '');
+        $this->kodePintu = $pintu->kd_pintu ?? $kodePintu;
+        $this->namaPintu = $pintu->nm_pintu ?? '';
 
         // Load existing mappings and populate selectedJadwal as array of "kd_dokter|kd_poli"
-        $mappings = SetPintuSmc::query()->where('kd_pintu', $kd)->get(['kd_dokter', 'kd_poli']);
+        $mappings = SetPintuSmc::query()->where('kd_pintu', $kodePintu)->get(['kd_dokter', 'kd_poli']);
 
         $this->selectedJadwal = $mappings->map(fn ($m) => $m->kd_dokter.'|'.$m->kd_poli)->toArray();
 

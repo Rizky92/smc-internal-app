@@ -43,6 +43,11 @@ class InputPintuTest extends TestCase
      * JSON array, a comma-separated string and an empty string, because all three
      * arrive from the browser depending on how the field was touched.
      *
+     * The browser wraps the payload as {data} before dispatching, since
+     * Livewire 3 spreads a dispatched associative array as named PHP
+     * arguments - an unwrapped [] (empty selection) spreads to zero
+     * arguments and $data can't resolve. Named here too, to match.
+     *
      * @dataProvider selectedJadwalPayloads
      *
      * @param  list<string>  $expected
@@ -53,7 +58,7 @@ class InputPintuTest extends TestCase
 
         Livewire::actingAs($petugas)
             ->test(InputPintu::class)
-            ->dispatch('inputPintu.setSelectedJadwal', $payload)
+            ->dispatch('inputPintu.setSelectedJadwal', data: $payload)
             ->assertSet('selectedJadwal', $expected);
     }
 
@@ -67,6 +72,7 @@ class InputPintuTest extends TestCase
             'comma separated'  => ['D001|POL1,D002|POL2', ['D001|POL1', 'D002|POL2']],
             'empty string'     => ['', []],
             'already an array' => [['D001|POL1'], ['D001|POL1']],
+            'empty selection'  => [[], []],
         ];
     }
 
@@ -139,6 +145,12 @@ class InputPintuTest extends TestCase
      * prepare() is how the table hands a row to this modal. It has to fill the
      * fields and rebuild selectedJadwal in the "kd_dokter|kd_poli" shape select2
      * expects, then tell the front end to resync.
+     *
+     * manajemen-pintu.blade.php's loadData() dispatches an associative array
+     * ({kodePintu, kodePoliklinik, kodeDokter}), which Livewire 3 spreads as
+     * named PHP arguments - not one bundled array. Passed as named arguments
+     * here too, so this actually exercises the shape the browser sends
+     * rather than a single-array shape nothing in production ever produces.
      */
     public function loading_an_existing_pintu_fills_the_form(): void
     {
@@ -155,7 +167,7 @@ class InputPintuTest extends TestCase
 
         Livewire::actingAs($petugas)
             ->test(InputPintu::class)
-            ->dispatch('prepare', ['kd_pintu' => self::KODE])
+            ->dispatch('prepare', kodePintu: self::KODE, kodePoliklinik: '', kodeDokter: '')
             ->assertSet('kodePintu', self::KODE)
             ->assertSet('namaPintu', 'Pintu Uji')
             ->assertSet('selectedJadwal', ['99999902|UJI01'])
@@ -176,7 +188,7 @@ class InputPintuTest extends TestCase
             ->test(InputPintu::class)
             ->set('kodePintu', 'SISA')
             ->set('originalKodePintu', 'SISA')
-            ->dispatch('prepare', [])
+            ->dispatch('prepare')
             ->assertSet('kodePintu', '')
             ->assertSet('originalKodePintu', null);
     }
@@ -220,7 +232,7 @@ class InputPintuTest extends TestCase
 
         Livewire::actingAs($petugas)
             ->test(InputPintu::class)
-            ->dispatch('inputPintu.setSelectedJadwal', ['D001|POL1'])
+            ->dispatch('inputPintu.setSelectedJadwal', data: ['D001|POL1'])
             ->assertSet('kodeDokter', 'D001')
             ->assertSet('kodePoliklinik', 'POL1');
     }

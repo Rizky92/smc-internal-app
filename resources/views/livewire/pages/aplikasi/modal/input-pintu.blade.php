@@ -106,37 +106,18 @@
                                 $('#selectedJadwal').select2();
                                 $('#selectedJadwal').on('change', function (e) {
                                     var data = $(this).val();
-                                    Livewire.dispatch('inputPintu.setSelectedJadwal', data);
+                                    // Wrapped as {data} so PHP's named-argument spread of the
+                                    // dispatched associative array binds to setSelectedJadwal's
+                                    // $data parameter regardless of whether data is a string,
+                                    // a populated array, or [] (an empty selection) - unwrapped,
+                                    // [] spreads to zero arguments and $data can't resolve.
+                                    Livewire.dispatch('inputPintu.setSelectedJadwal', { data });
                                 });
 
                                 // Listen for server-side event to sync select2 selection
                                 Livewire.on('inputPintu.syncSelectedJadwal', function (data) {
                                     // set value (array) and trigger change so Livewire receives it if needed
                                     $('#selectedJadwal').val(data).trigger('change');
-                                });
-
-                                $('#kodePintu').select2();
-                                $('#kodePintu').on('change', function (e) {
-                                    var data = $(this).val();
-                                    Livewire.dispatch('inputPintu.setKodePintu', data);
-                                });
-
-                                $('#kodePoliklinik').select2();
-                                $('#kodePoliklinik').on('change', function (e) {
-                                    var data = $(this).val();
-                                    Livewire.dispatch('inputPintu.setKodePoliklinik', data);
-                                });
-
-                                $('#kodeDokter').select2();
-                                $('#kodeDokter').on('change', function (e) {
-                                    var data = $(this).val();
-                                    Livewire.dispatch('inputPintu.setKodeDokter', data);
-                                });
-
-                                Livewire.hook('morph.updated', ({ el, component }) => {
-                                    $('#kodePintu').select2();
-                                    $('#kodePoliklinik').select2();
-                                    $('#kodeDokter').select2();
                                 });
                             });
                         </script>
