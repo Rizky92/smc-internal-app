@@ -19,7 +19,7 @@
     ];
 
     if ($model) {
-        $attrs['wire:model.lazy'] ??= $model;
+        $attrs['wire:model'] ??= $model;
     }
 
     if (! $isAssoc) {

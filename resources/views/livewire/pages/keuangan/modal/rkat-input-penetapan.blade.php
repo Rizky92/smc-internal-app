@@ -74,7 +74,7 @@
                         <label for="nominal-anggaran">Nominal Anggaran</label>
                         <div class="d-flex">
                             <span class="mt-1">Rp.</span>
-                            <input type="text" id="nominal-anggaran" wire:model.lazy="nominalAnggaran" class="form-control form-control-sm ml-3 text-right" placeholder="0" />
+                            <input type="text" id="nominal-anggaran" wire:model="nominalAnggaran" class="form-control form-control-sm ml-3 text-right" placeholder="0" />
                         </div>
                         <x-form.error name="nominalAnggaran" />
                     </div>

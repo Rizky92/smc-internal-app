@@ -23,7 +23,7 @@
                     <div class="col-6">
                         <div class="form-group">
                             <label class="form-control-label text-sm" for="no_bukti">No. Bukti</label>
-                            <input type="text" id="no_bukti" wire:model.lazy="no_bukti" class="form-control form-control-sm" autocomplete="off" />
+                            <input type="text" id="no_bukti" wire:model="no_bukti" class="form-control form-control-sm" autocomplete="off" />
                             <x-form.error name="no_bukti" />
                         </div>
                     </div>
@@ -44,7 +44,7 @@
                     <div class="col-2">
                         <div class="form-group">
                             <label class="form-control-label text-sm" for="jam_jurnal">Jam</label>
-                            <input type="text" id="jam_jurnal" wire:model.lazy="jam_jurnal" class="form-control form-control-sm" autocomplete="off" />
+                            <input type="text" id="jam_jurnal" wire:model="jam_jurnal" class="form-control form-control-sm" autocomplete="off" />
                             <x-form.error name="jam_jurnal" />
                         </div>
                     </div>
@@ -52,7 +52,7 @@
                 <x-row-col>
                     <div class="form-group">
                         <label class="form-control-label text-sm" for="keterangan">Keterangan</label>
-                        <input type="text" id="keterangan" wire:model.lazy="keterangan" class="form-control form-control-sm" autocomplete="off" />
+                        <input type="text" id="keterangan" wire:model="keterangan" class="form-control form-control-sm" autocomplete="off" />
                         <x-form.error name="keterangan" />
                     </div>
                 </x-row-col>
@@ -70,7 +70,7 @@
                                         <div style="width: 100%" wire:ignore>
                                             <select
                                                 id="kd_rek_{{ $index }}"
-                                                wire:model.lazy="detail.{{ $index }}.kd_rek"
+                                                wire:model="detail.{{ $index }}.kd_rek"
                                                 class="form-control form-control-sm select2 input-sm"
                                                 data-index="{{ $index }}">
                                                 <option value="">Pilih Rekening</option>
@@ -130,7 +130,7 @@
                                             <div class="input-group-prepend">
                                                 <label class="input-group-text" for="debet-{{ $index }}">Rp.</label>
                                             </div>
-                                            <input type="number" id="debet-{{ $index }}" class="form-control text-right" wire:model.lazy="detail.{{ $index }}.debet" />
+                                            <input type="number" id="debet-{{ $index }}" class="form-control text-right" wire:model="detail.{{ $index }}.debet" />
                                         </div>
                                         <x-form.error name="detail.{{ $index }}.debet" />
                                     </x-table.td>
@@ -139,7 +139,7 @@
                                             <div class="input-group-prepend">
                                                 <label class="input-group-text" for="kredit-{{ $index }}">Rp.</label>
                                             </div>
-                                            <input type="number" id="kredit-{{ $index }}" class="form-control text-right" wire:model.lazy="detail.{{ $index }}.kredit" />
+                                            <input type="number" id="kredit-{{ $index }}" class="form-control text-right" wire:model="detail.{{ $index }}.kredit" />
                                         </div>
                                         <x-form.error name="detail.{{ $index }}.kredit" />
                                     </x-table.td>

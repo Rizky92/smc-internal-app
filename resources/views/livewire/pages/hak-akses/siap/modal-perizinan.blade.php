@@ -43,7 +43,7 @@
                     <x-flash />
                     <div class="{{ Arr::toCssClasses(['form-group', 'mt-3' => session()->has(['flash.type', 'flash.message'])]) }}">
                         <label for="role-sekarang">Nama role:</label>
-                        <input type="text" id="role-sekarang" wire:model.lazy="roleName" class="form-control form-control-sm" />
+                        <input type="text" id="role-sekarang" wire:model="roleName" class="form-control form-control-sm" />
                     </div>
                 </x-row-col>
                 <x-row-col class="mt-1">
@@ -57,7 +57,7 @@
                                         id="permission-{{ $key }}"
                                         name="permissions"
                                         value="{{ $key }}"
-                                        wire:model.lazy="checkedPermissions.{{ $key }}" />
+                                        wire:model="checkedPermissions.{{ $key }}" />
                                     <label for="permission-{{ $key }}" class="custom-control-label font-weight-normal">
                                         {{ $name }}
                                     </label>

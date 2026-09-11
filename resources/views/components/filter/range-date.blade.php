@@ -9,7 +9,7 @@
         <span class="text-sm" style="width: 5rem">{{ $title }}</span>
     @endif
 
-    <input class="form-control form-control-sm" type="date" style="width: 9rem" wire:model.lazy="{{ $modelStart }}" value="{{ now()->startOfMonth()->toDateString() }}" />
+    <input class="form-control form-control-sm" type="date" style="width: 9rem" wire:model="{{ $modelStart }}" value="{{ now()->startOfMonth()->toDateString() }}" />
     <span class="text-sm px-3">sampai</span>
-    <input class="form-control form-control-sm" type="date" style="width: 9rem" wire:model.lazy="{{ $modelEnd }}" value="{{ now()->endOfMonth()->toDateString() }}" />
+    <input class="form-control form-control-sm" type="date" style="width: 9rem" wire:model="{{ $modelEnd }}" value="{{ now()->endOfMonth()->toDateString() }}" />
 </div>

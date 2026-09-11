@@ -5,7 +5,7 @@
 ])
 
 <div {{ $attributes->merge(['class' => 'custom-control custom-switch']) }}>
-    <input class="custom-control-input" id="{{ $id ?? Str::slug($title) }}" type="checkbox" wire:model.lazy="{{ $model }}" />
+    <input class="custom-control-input" id="{{ $id ?? Str::slug($title) }}" type="checkbox" wire:model="{{ $model }}" />
     <label class="custom-control-label text-sm" for="{{ $id ?? Str::slug($title) }}">
         {{ $title }}
     </label>

@@ -35,7 +35,7 @@
                 <x-row-col class="sticky-top bg-white pt-1 pb-2 px-3">
                     <div class="form-group mt-3">
                         <label for="nama-bidang">Nama Bidang:</label>
-                        <input type="text" id="nama-bidang" wire:model.lazy="nama" class="form-control form-control-sm" />
+                        <input type="text" id="nama-bidang" wire:model="nama" class="form-control form-control-sm" />
                     </div>
                     <div class="form-group mt-3">
                         <label for="parent-bidang">Sub-bidang dari:</label>

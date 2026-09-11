@@ -31,11 +31,11 @@
                 <x-row-col class="sticky-top bg-white pt-3 pb-1 px-3">
                     <div class="form-group">
                         <label for="nama-anggaran">Nama Anggaran:</label>
-                        <input type="text" id="nama-anggaran" wire:model.lazy="nama" class="form-control form-control-sm" />
+                        <input type="text" id="nama-anggaran" wire:model="nama" class="form-control form-control-sm" />
                     </div>
                     <div class="form-group mt-3">
                         <label for="deskripsi-anggaran">Deskripsi:</label>
-                        <textarea wire:model.lazy="deskripsi" id="deskrips-anggaran" class="form-control form-control-sm"></textarea>
+                        <textarea wire:model="deskripsi" id="deskrips-anggaran" class="form-control form-control-sm"></textarea>
                     </div>
                 </x-row-col>
             </form>
