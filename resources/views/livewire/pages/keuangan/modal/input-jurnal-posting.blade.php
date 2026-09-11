@@ -109,7 +109,7 @@
                                                 @endonce
 
                                                 <script>
-                                                    document.addEventListener('livewire:load', function (e) {
+                                                    document.addEventListener('DOMContentLoaded', function (e) {
                                                         Livewire.on('detailAdded', function () {
                                                             $('.select2').select2({ dropdownCssClass: 'text-sm px-0' });
                                                         })

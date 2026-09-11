@@ -73,7 +73,7 @@
         }
 
         @if ($livewire)
-            $(document).on('livewire:load', () => {
+            $(document).on('DOMContentLoaded', () => {
                 select2()
 
                 Livewire.on('select2.hydrate', () => {

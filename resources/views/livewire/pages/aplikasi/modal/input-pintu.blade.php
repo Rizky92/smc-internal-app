@@ -102,7 +102,7 @@
                         @endonce
 
                         <script>
-                            document.addEventListener('livewire:load', function () {
+                            document.addEventListener('DOMContentLoaded', function () {
                                 $('#selectedJadwal').select2();
                                 $('#selectedJadwal').on('change', function (e) {
                                     var data = $(this).val();
@@ -132,12 +132,12 @@
                                     var data = $(this).val();
                                     Livewire.dispatch('inputPintu.setKodeDokter', data);
                                 });
-                            });
 
-                            document.addEventListener('livewire:update', function () {
-                                $('#kodePintu').select2();
-                                $('#kodePoliklinik').select2();
-                                $('#kodeDokter').select2();
+                                Livewire.hook('element.updated', (el, component) => {
+                                    $('#kodePintu').select2();
+                                    $('#kodePoliklinik').select2();
+                                    $('#kodeDokter').select2();
+                                });
                             });
                         </script>
                     @endpush
