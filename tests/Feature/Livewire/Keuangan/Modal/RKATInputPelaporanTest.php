@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Livewire;
+namespace Tests\Feature\Livewire\Keuangan\Modal;
 
 use App\Livewire\Pages\Keuangan\Modal\RKATInputPelaporan;
 use App\Models\Bidang;

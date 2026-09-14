@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Livewire;
+namespace Tests\Feature\Livewire\Keuangan\Cetak;
 
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;

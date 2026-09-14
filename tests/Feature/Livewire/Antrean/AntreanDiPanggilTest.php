@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Livewire;
+namespace Tests\Feature\Livewire\Antrean;
 
 use App\Livewire\Pages\Antrean\AntreanDiPanggil;
 use Livewire\Livewire;

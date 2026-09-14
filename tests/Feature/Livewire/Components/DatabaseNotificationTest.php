@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Livewire;
+namespace Tests\Feature\Livewire\Components;
 
 use App\Livewire\Components\DatabaseNotification;
 use Livewire\Livewire;

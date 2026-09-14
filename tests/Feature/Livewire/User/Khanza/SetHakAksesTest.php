@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Livewire;
+namespace Tests\Feature\Livewire\User\Khanza;
 
 use App\Livewire\Pages\User\Khanza\SetHakAkses;
 use Illuminate\Support\Facades\DB;

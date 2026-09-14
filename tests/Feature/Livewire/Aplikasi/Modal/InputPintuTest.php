@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Livewire;
+namespace Tests\Feature\Livewire\Aplikasi\Modal;
 
 use App\Livewire\Pages\Aplikasi\Modal\InputPintu;
 use Illuminate\Support\Facades\DB;

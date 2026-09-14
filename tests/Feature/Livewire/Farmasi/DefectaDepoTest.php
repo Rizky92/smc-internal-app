@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Livewire;
+namespace Tests\Feature\Livewire\Farmasi;
 
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Livewire;
+namespace Tests\Feature\Livewire\Keuangan;
 
 use App\Livewire\Pages\Keuangan\RKATPemantauan;
 use App\Models\Bidang;

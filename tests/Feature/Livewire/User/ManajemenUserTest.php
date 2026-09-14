@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Livewire;
+namespace Tests\Feature\Livewire\User;
 
 use App\Livewire\Pages\User\ManajemenUser;
 use Livewire\Livewire;

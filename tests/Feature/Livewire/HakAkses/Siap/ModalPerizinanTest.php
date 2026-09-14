@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Livewire;
+namespace Tests\Feature\Livewire\HakAkses\Siap;
 
 use App\Livewire\Pages\HakAkses\Siap\ModalPerizinan;
 use App\Models\Aplikasi\Role;

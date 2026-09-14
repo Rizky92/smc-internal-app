@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Livewire;
+namespace Tests\Feature\Livewire\Antrean;
 
 use App\Livewire\Pages\Antrean\ListAntrean;
 use Illuminate\Support\Facades\DB;
