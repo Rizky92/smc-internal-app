@@ -150,7 +150,7 @@
                             <x-table.tr>
                                 <x-table.td>
                                     <x-button size="sm" variant="secondary" title="Tambah Detail" icon="fas fa-plus" wire:click="add" />
-                                    <x-form.error name="totalDebitKredit" />
+                                    <x-form.error name="totalDebetKredit" />
                                 </x-table.td>
                                 <x-table.td>
                                     {{ rp($this->totalDebet) }}
