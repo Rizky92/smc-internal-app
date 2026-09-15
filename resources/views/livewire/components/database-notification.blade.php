@@ -94,7 +94,7 @@
                                 <p class="p-2">{{ $notification->created_at->diffForHumans() }}</p>
                                 <div class="d-flex">
                                     @if (! empty($filePath))
-                                        <button wire:click="download('{{ $filePath }}')" class="btn btn-link">Download</button>
+                                        <a href="{{ asset(Storage::url($filePath)) }}" class="btn btn-link" download>Download</a>
                                     @endif
                                 </div>
                             </div>
@@ -123,12 +123,12 @@
     <script>
         document.getElementById('notification-icon').addEventListener('click', function (event) {
             event.preventDefault();
-            window.livewire.emit('toggleSidebar');
+            Livewire.dispatch('toggleSidebar');
         });
 
         document.getElementById('close-sidebar').addEventListener('click', function (event) {
             event.preventDefault();
-            window.livewire.emit('toggleSidebar');
+            Livewire.dispatch('toggleSidebar');
         });
     </script>
 </div>

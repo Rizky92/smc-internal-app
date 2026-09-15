@@ -3,11 +3,13 @@
 namespace App\Livewire\Pages\Antrean;
 
 use App\Models\Antrian\AntriPoli;
+use App\Models\Perawatan\Poliklinik;
 use App\Models\Perawatan\RegistrasiPasien;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class AntreanPoli extends Component
@@ -15,12 +17,24 @@ class AntreanPoli extends Component
     /** @var string */
     public $kd_poli;
 
-    /** @var mixed */
-    protected $listeners = ['updateStatusAfterCall', 'updateAntrean', 'call'];
-
     public function mount(string $kd_poli): void
     {
         $this->kd_poli = $kd_poli;
+    }
+
+    /**
+     * Null when kd_poli names no poliklinik.
+     *
+     * The code comes from the URL, so nothing guarantees it still exists. This
+     * used to be queried inline in the view and dereferenced, which took the
+     * whole display down. value() returns null rather than a model, so there is
+     * nothing to dereference.
+     */
+    public function getNamaPoliProperty(): ?string
+    {
+        return Poliklinik::query()
+            ->where('kd_poli', $this->kd_poli)
+            ->value('nm_poli');
     }
 
     public function getAntreanQuery(): Builder
@@ -34,9 +48,10 @@ class AntreanPoli extends Component
         return $this->getAntreanQuery()->get();
     }
 
+    #[On('updateAntrean')]
     public function updateAntrean(): void
     {
-        $this->dispatchBrowserEvent('updateMarqueeData');
+        $this->dispatch('updateMarqueeData');
     }
 
     public function getNextAntreanProperty(): ?Model
@@ -49,12 +64,13 @@ class AntreanPoli extends Component
             ->first();
     }
 
+    #[On('call')]
     public function call(): void
     {
         $antrean = $this->getNextAntreanProperty();
 
         if ($antrean && $antrean->status == '1') {
-            $this->dispatchBrowserEvent('play-voice', [
+            $this->dispatch('play-voice', [
                 'no_reg'    => $antrean->no_reg,
                 'nm_pasien' => $antrean->nm_pasien,
                 'nm_poli'   => $antrean->nm_poli,
@@ -62,6 +78,7 @@ class AntreanPoli extends Component
         }
     }
 
+    #[On('updateStatusAfterCall')]
     public function updateStatusAfterCall(): void
     {
         AntriPoli::where('kd_poli', $this->kd_poli)->update(['status' => '0']);

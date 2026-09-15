@@ -9,12 +9,12 @@
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
-                <x-filter.button-reset-filters class="ml-auto" />
-                <x-filter.search class="ml-2" />
+                <x-filter.label class="ml-auto">Gudang :</x-filter.label>
+                <x-filter.select2 livewire name="bangsal" placeholder="SEMUA" :options="$this->bangsalOptions" class="ml-2" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
-                <x-filter.label class="ml-auto pr-3">Gudang:</x-filter.label>
-                <x-filter.select model="bangsal" :options="['IFA' => 'Farmasi A', 'AP' => 'Farmasi B', 'IFG' => 'Farmasi IGD', 'IFI' => 'Farmasi Rawat Inap']" />
+                <x-filter.button-reset-filters class="ml-auto" />
+                <x-filter.search class="ml-2" />
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">
@@ -38,6 +38,7 @@
                                     <x-table.th name="jml" title="Jumlah" />
                                     <x-table.th name="nm_dokter" title="Nama Dokter" />
                                     <x-table.th name="alamat_dokter" title="Alamat Dokter" />
+                                    <x-table.th name="nm_bangsal" title="Farmasi" />
                                 </x-slot>
                                 <x-slot name="body">
                                     @forelse ($this->{$property} as $item)
@@ -66,9 +67,12 @@
                                             <x-table.td>
                                                 {{ $item->alamat_dokter }}
                                             </x-table.td>
+                                            <x-table.td>
+                                                {{ $item->nm_bangsal }}
+                                            </x-table.td>
                                         </x-table.tr>
                                     @empty
-                                        <x-table.tr-empty colspan="8" padding />
+                                        <x-table.tr-empty colspan="9" padding />
                                     @endforelse
                                 </x-slot>
                             </x-table>

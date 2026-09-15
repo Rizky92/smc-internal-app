@@ -137,7 +137,7 @@ class PiutangPasien extends Model
         }
 
         if (empty($tglAkhir)) {
-            $tglAkhir = now()->endOfMont()->toDateString();
+            $tglAkhir = now()->endOfMonth()->toDateString();
         }
 
         $sqlSelect = <<<'SQL'

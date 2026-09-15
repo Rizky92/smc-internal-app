@@ -90,16 +90,21 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'farmasi.laporan-pemakaian-obat-napza.read']);
         Permission::create(['name' => 'farmasi.laporan-pemakaian-obat-morphine.read']);
         Permission::create(['name' => 'farmasi.laporan-pemakaian-obat-tb.read']);
+        Permission::create(['name' => 'farmasi.laporan-pemakaian-obat-antibiotik.read']);
         Permission::create(['name' => 'farmasi.defecta-depo.read']);
         Permission::create(['name' => 'farmasi.daftar-riwayat-obat-alkes.read']);
         Permission::create(['name' => 'farmasi.rincian-perbandingan-po.read']);
         Permission::create(['name' => 'farmasi.rincian-kunjungan-ralan.read']);
         Permission::create(['name' => 'farmasi.kunjungan-walk-in.read']);
         Permission::create(['name' => 'farmasi.hpp-pembelian-terakhir.read']);
+        Permission::create(['name' => 'farmasi.laporan-potensi-prb.read']);
 
         Permission::create(['name' => 'rekam-medis.laporan-statistik.read']);
         Permission::create(['name' => 'rekam-medis.laporan-demografi.read']);
         Permission::create(['name' => 'rekam-medis.status-data-pasien.read']);
+
+        Permission::create(['name' => 'marketing.summary-billing-mcu.read']);
+        Permission::create(['name' => 'marketing.penggunaan-alkes.read']);
 
         Permission::create(['name' => 'logistik.input-minmax-stok.create']);
         Permission::create(['name' => 'logistik.input-minmax-stok.read']);
@@ -111,6 +116,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'aplikasi.bidang-unit.read']);
         Permission::create(['name' => 'aplikasi.bidang-unit.update']);
         Permission::create(['name' => 'aplikasi.bidang-unit.delete']);
+        Permission::create(['name' => 'aplikasi.log-dicom-router-satu-sehat.read']);
 
         Permission::create(['name' => 'aplikasi.pengaturan-rkat.read']);
         Permission::create(['name' => 'aplikasi.pengaturan-rkat.update']);
@@ -124,6 +130,23 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'casemix.laporan-pasien-batal.read']);
         Permission::create(['name' => 'casemix.laporan-pasien-cob.read']);
         Permission::create(['name' => 'casemix.laporan-triase-igd-zona-hijau.read']);
+        Permission::create(['name' => 'casemix.laporan-pasien-ranap-pulang.read']);
+
+        Permission::create(['name' => 'dapur.input-minmax-stok.create']);
+        Permission::create(['name' => 'dapur.input-minmax-stok.read']);
+        Permission::create(['name' => 'dapur.input-minmax-stok.update']);
+        Permission::create(['name' => 'dapur.input-minmax-stok.delete']);
+        Permission::create(['name' => 'dapur.stok-darurat.read']);
+
+        // routes/web.php gates on all three of these. The first two were never
+        // created here, and this seeder truncates the table before it fills it,
+        // so after a seed nobody held them and both pages answered 404 to
+        // everyone except the superadmin, whose Gate::before in AppServiceProvider
+        // skips the check entirely. Creating a permission grants it to nobody; it
+        // only makes it assignable.
+        Permission::create(['name' => 'informasi.informasi-kamar.read']);
+        Permission::create(['name' => 'informasi.jadwal-dokter.read']);
+        Permission::create(['name' => 'lab.hasil-mcu-karyawan.read']);
 
         // Superadmin role name, bypasses all permissions
         $superadminRole = Role::create(['name' => config('permission.superadmin_name')]);

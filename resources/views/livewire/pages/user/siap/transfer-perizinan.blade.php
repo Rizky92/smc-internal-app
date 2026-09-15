@@ -4,11 +4,11 @@
             <script>
                 document.addEventListener('DOMContentLoaded', () => {
                     $('#modal-transfer-perizinan').on('shown.bs.modal', e => {
-                        @this.emit('siap.show-tp')
+                        @this.dispatch('siap.show-tp')
                     })
 
                     $('#modal-transfer-perizinan').on('hide.bs.modal', e => {
-                        @this.emit('siap.hide-tp')
+                        @this.dispatch('siap.hide-tp')
                     })
 
                     $('#modal-transfer-perizinan').on('hidden.bs.modal', e => {
@@ -81,7 +81,7 @@
             <x-filter.search method="$refresh" />
             <x-filter.toggle class="ml-1" id="show-checked-siap-transfer" title="Tampilkan yang dipilih" model="showChecked" />
             <x-button size="sm" class="ml-auto" data-dismiss="modal" title="Batal" />
-            <x-button size="sm" variant="primary" class="ml-2" data-dismiss="modal" wire:click="$emit('siap.transfer')" title="Simpan" icon="fas fa-save" />
+            <x-button size="sm" variant="primary" class="ml-2" data-dismiss="modal" wire:click="$dispatch('siap.transfer')" title="Simpan" icon="fas fa-save" />
         </x-slot>
     </x-modal>
 </div>

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class TransferHakAkses extends Component
@@ -32,14 +33,6 @@ class TransferHakAkses extends Component
 
     /** @var bool|false */
     public $softTransfer;
-
-    /** @var mixed */
-    protected $listeners = [
-        'khanza.show-tha'         => 'showModal',
-        'khanza.hide-tha'         => 'hideModal',
-        'khanza.prepare-transfer' => 'prepareTransfer',
-        'khanza.transfer'         => 'save',
-    ];
 
     public function mount(): void
     {
@@ -73,17 +66,19 @@ class TransferHakAkses extends Component
         return view('livewire.pages.user.khanza.transfer-hak-akses');
     }
 
+    #[On('khanza.prepare-transfer')]
     public function prepareTransfer(string $nrp = '', string $nama = ''): void
     {
         $this->nrp = $nrp;
         $this->nama = $nama;
     }
 
+    #[On('khanza.transfer')]
     public function save(): void
     {
         if (! user()->hasRole(config('permission.superadmin_name'))) {
-            $this->dispatchBrowserEvent('data-denied');
-            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatch('data-denied');
+            $this->dispatch('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
         }
@@ -103,8 +98,8 @@ class TransferHakAkses extends Component
 
         tracker_end('mysql_sik');
 
-        $this->dispatchBrowserEvent('data-saved');
-        $this->emit('flash.success', 'Transfer hak akses SIMRS Khanza berhasil!');
+        $this->dispatch('data-saved');
+        $this->dispatch('flash.success', 'Transfer hak akses SIMRS Khanza berhasil!');
     }
 
     protected function defaultValues(): void

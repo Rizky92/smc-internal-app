@@ -262,6 +262,11 @@ Breadcrumbs::for('admin.farmasi.laporan-pemakaian-obat-tb', function (Trail $tra
     $trail->push('Pemakaian Obat TB', route('admin.farmasi.laporan-pemakaian-obat-tb'));
 });
 
+Breadcrumbs::for('admin.farmasi.laporan-pemakaian-obat-antibiotik', function (Trail $trail): void {
+    $trail->parent('admin.farmasi');
+    $trail->push('Pemakaian Obat Antibiotik', route('admin.farmasi.laporan-pemakaian-obat-antibiotik'));
+});
+
 Breadcrumbs::for('admin.farmasi.defecta-depo', function (Trail $trail): void {
     $trail->parent('admin.farmasi');
     $trail->push('Defecta Depo', route('admin.farmasi.defecta-depo'));
@@ -292,6 +297,11 @@ Breadcrumbs::for('admin.farmasi.hpp-pembelian-terakhir', function (Trail $trail)
     $trail->push('HPP Pembelian Terakhir', route('admin.farmasi.hpp-pembelian-terakhir'));
 });
 
+Breadcrumbs::for('admin.farmasi.laporan-potensi-prb', function (Trail $trail): void {
+    $trail->parent('admin.farmasi');
+    $trail->push('Laporan Potensi PRB', route('admin.farmasi.laporan-potensi-prb'));
+});
+
 Breadcrumbs::for('admin.rekam-medis', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Rekam Medis');
@@ -312,6 +322,21 @@ Breadcrumbs::for('admin.rekam-medis.status-data-pasien', function (Trail $trail)
     $trail->push('Status Data Pasien', route('admin.rekam-medis.status-data-pasien'));
 });
 
+Breadcrumbs::for('admin.marketing', function (Trail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Marketing');
+});
+
+Breadcrumbs::for('admin.marketing.summary-billing-mcu', function (Trail $trail): void {
+    $trail->parent('admin.marketing');
+    $trail->push('Summary Billing MCU', route('admin.marketing.summary-billing-mcu'));
+});
+
+Breadcrumbs::for('admin.marketing.penggunaan-alkes', function (Trail $trail): void {
+    $trail->parent('admin.marketing');
+    $trail->push('Penggunaan Alkes', route('admin.marketing.penggunaan-alkes'));
+});
+
 Breadcrumbs::for('admin.logistik', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Logistik');
@@ -325,6 +350,21 @@ Breadcrumbs::for('admin.logistik.input-minmax-stok', function (Trail $trail): vo
 Breadcrumbs::for('admin.logistik.stok-darurat', function (Trail $trail): void {
     $trail->parent('admin.logistik');
     $trail->push('Stok Darurat', route('admin.logistik.stok-darurat'));
+});
+
+Breadcrumbs::for('admin.dapur', function (Trail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Dapur');
+});
+
+Breadcrumbs::for('admin.dapur.input-minmax-stok', function (Trail $trail): void {
+    $trail->parent('admin.dapur');
+    $trail->push('Input Minmax Stok', route('admin.dapur.input-minmax-stok'));
+});
+
+Breadcrumbs::for('admin.dapur.stok-darurat', function (Trail $trail): void {
+    $trail->parent('admin.dapur');
+    $trail->push('Stok Darurat', route('admin.dapur.stok-darurat'));
 });
 
 Breadcrumbs::for('admin.manajemen-user', function (Trail $trail): void {
@@ -362,6 +402,11 @@ Breadcrumbs::for('admin.aplikasi.pengaturan', function (Trail $trail): void {
     $trail->push('Pengaturan', route('admin.aplikasi.pengaturan'));
 });
 
+Breadcrumbs::for('admin.aplikasi.log-dicom-router-satu-sehat', function (Trail $trail): void {
+    $trail->parent('admin.aplikasi');
+    $trail->push('Log DICOM Router Satu Sehat', route('admin.aplikasi.log-dicom-router-satu-sehat'));
+});
+
 Breadcrumbs::for('admin.route-list', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Route List', route('admin.route-list'));
@@ -385,10 +430,6 @@ Breadcrumbs::for('admin.informasi.informasi-kamar', function (Trail $trail): voi
 Breadcrumbs::for('admin.informasi.jadwal-dokter', function (Trail $trail): void {
     $trail->parent('admin.informasi');
     $trail->push('Jadwal Dokter', route('admin.informasi.jadwal-dokter'));
-});
-
-Breadcrumbs::for('jadwal-dokter', function (Trail $trail): void {
-    $trail->push('Jadwal Dokter', route('jadwal-dokter'));
 });
 
 Breadcrumbs::for('admin.antrean', function (Trail $trail): void {
@@ -429,4 +470,9 @@ Breadcrumbs::for('admin.casemix.laporan-pasien-cob', function (Trail $trail): vo
 Breadcrumbs::for('admin.casemix.laporan-triase-igd-zona-hijau', function (Trail $trail): void {
     $trail->parent('admin.casemix');
     $trail->push('Laporan Triase IGD Zona Hijau', route('admin.casemix.laporan-triase-igd-zona-hijau'));
+});
+
+Breadcrumbs::for('admin.casemix.laporan-pasien-ranap-pulang', function (Trail $trail): void {
+    $trail->parent('admin.casemix');
+    $trail->push('Laporan Pasien Ranap Pulang Bulan Berikutnya', route('admin.casemix.laporan-pasien-ranap-pulang'));
 });

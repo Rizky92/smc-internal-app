@@ -12,11 +12,6 @@
       <code>array&lt;string, \Illuminate\Database\Query\Expression&lt;string&gt;|string&gt;</code>
     </TooManyTemplateParams>
   </file>
-  <file src="app/Http/Controllers/Auth/LogoutOtherSessionsController.php">
-    <PossiblyNullArgument occurrences="1">
-      <code>$request-&gt;getPassword()</code>
-    </PossiblyNullArgument>
-  </file>
   <file src="app/Http/Middleware/TrustProxies.php">
     <NonInvariantDocblockPropertyType occurrences="1">
       <code>$headers</code>

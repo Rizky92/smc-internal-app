@@ -59,7 +59,14 @@ class RKATPemantauan extends Component
             ->with([
                 'descendants' => fn (Descendants $q) => $q
                     ->with([
-                        'anggaranBidang' => fn (HasMany $q) => $q->withSum('detailPemakaian as total_pemakaian', 'nominal'),
+                        // Constrained to the selected year, as the export is.
+                        // Without this the year selector changed nothing on
+                        // screen — every year's budgets were listed and totalled
+                        // together, while the spreadsheet downloaded from the
+                        // same page showed only the year that was chosen.
+                        'anggaranBidang' => fn (HasMany $q) => $q
+                            ->where('tahun', $this->tahun)
+                            ->withSum('detailPemakaian as total_pemakaian', 'nominal'),
                         'anggaranBidang.anggaran',
                     ]),
             ])
@@ -109,7 +116,12 @@ class RKATPemantauan extends Component
 
                 $selisih = $nominal - $total;
 
-                $persentase = $total > 0
+                // Both operands are checked, not just the numerator.
+                // RKATInputPenetapan accepts a budget of 0 (its rule is min:0),
+                // and spending against one made this a DivisionByZeroError. The
+                // view guards the same division already; this brings the export
+                // into line with it.
+                $persentase = $total > 0 && $nominal > 0
                     ? round($total / $nominal, 4)
                     : 0;
 

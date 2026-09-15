@@ -2,11 +2,11 @@
     @push('js')
         <script>
             $('#modal-import-tarif-radiologi').on('shown.bs.modal', (e) => {
-                Livewire.emit('tarif-radiologi.show-modal');
+                Livewire.dispatch('tarif-radiologi.show-modal');
             });
 
             $('#modal-import-tarif-radiologi').on('hide.bs.modal', (e) => {
-                Livewire.emit('tarif-radiologi.hide-modal');
+                Livewire.dispatch('tarif-radiologi.hide-modal');
             });
 
             $(document).on('data-saved', () => {

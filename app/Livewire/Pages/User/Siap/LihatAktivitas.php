@@ -6,6 +6,7 @@ use App\Livewire\Concerns\DeferredModal;
 use App\Models\Aplikasi\TrackerMenu;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class LihatAktivitas extends Component
@@ -17,13 +18,6 @@ class LihatAktivitas extends Component
 
     /** @var ?string */
     public $nama;
-
-    /** @var mixed */
-    protected $listeners = [
-        'siap.prepare-la' => 'prepareUser',
-        'siap.show-la'    => 'showModal',
-        'siap.hide-la'    => 'hideModal',
-    ];
 
     public function mount(): void
     {
@@ -47,6 +41,7 @@ class LihatAktivitas extends Component
         return view('livewire.pages.user.siap.lihat-aktivitas');
     }
 
+    #[On('siap.prepare-la')]
     public function prepareUser(?string $userId = null, ?string $nama = null): void
     {
         $this->userId = $userId;

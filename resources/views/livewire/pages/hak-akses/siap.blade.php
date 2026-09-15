@@ -9,7 +9,7 @@
                 <x-filter.select-perpage />
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-                <x-button variant="primary" size="sm" title="Role Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-perizinan" class="btn-primary ml-3" />
+                <x-button variant="primary" size="sm" title="Role Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-perizinan" data-action="create" class="btn-primary ml-3" />
             </x-row-col-flex>
         </x-slot>
 
@@ -34,7 +34,7 @@
                                         icon="fas fa-pencil-alt"
                                         data-toggle="modal"
                                         data-target="#modal-perizinan"
-                                        wire:click="$emit('siap.prepare', {{ $role->id }})" />
+                                        wire:click="$dispatch('siap.prepare', {{ $role->id }})" />
                                 @endunless
                             </x-table.td>
                             <x-table.td class="{{ Arr::toCssClasses(['pt-2' => !$superadmin]) }}">

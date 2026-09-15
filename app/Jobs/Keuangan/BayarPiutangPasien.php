@@ -57,7 +57,7 @@ class BayarPiutangPasien implements ShouldQueue
      *     akun_diskon_piutang: string,
      *     tidak_terbayar: float,
      *     akun_tidak_terbayar: string,
-     * } $params
+     * }  $params
      */
     public function __construct(array $params)
     {

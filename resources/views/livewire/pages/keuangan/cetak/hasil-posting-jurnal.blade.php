@@ -102,22 +102,24 @@
         </style>
     @endpush
 
+    {{-- getSIMRSSettingsProperty() is declared ?object: it reads the single row
+         in Khanza's `setting` table, which nothing guarantees is there. --}}
     <div id="printHeader">
         <div class="container">
             <img
-                src="data:image/jpeg;base64,{{ base64_encode($this->SIMRSSettings->logo) }}"
+                src="data:image/jpeg;base64,{{ base64_encode($this->SIMRSSettings?->logo ?? '') }}"
                 style="display: block; width: 80px; position: absolute; left: 1%; top: 1%; transform: translate(-1% -1%)" />
             <div class="row">
                 <div class="col-12">
                     <h2 style="font-size: 12pt; margin: 0">
-                        {{ $this->SIMRSSettings->nama_instansi }}
+                        {{ $this->SIMRSSettings?->nama_instansi }}
                     </h2>
                     <p style="font-size: 9pt; margin: 1px">
-                        {{ $this->SIMRSSettings->alamat_instansi }}
+                        {{ $this->SIMRSSettings?->alamat_instansi }}
                         <br />
-                        {{ $this->SIMRSSettings->kontak }}
+                        {{ $this->SIMRSSettings?->kontak }}
                         <br />
-                        E-mail: {{ $this->SIMRSSettings->email }}
+                        E-mail: {{ $this->SIMRSSettings?->email }}
                     </p>
                 </div>
             </div>
@@ -240,8 +242,8 @@
             <br />
             <br />
             <br />
-            <div>dr. ISMET ALIMIN, MM, MARS</div>
-            <div>DIREKTUR</div>
+            <div>dr. INDRIANI LIM, MARS</div>
+            <div>PLT DIREKTUR</div>
         </div>
     </div>
     @push('js')

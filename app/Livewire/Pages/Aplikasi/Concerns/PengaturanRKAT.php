@@ -44,8 +44,8 @@ trait PengaturanRKAT
     public function updatePengaturanRKAT(): void
     {
         if (user()->cannot('aplikasi.pengaturan-rkat.update')) {
-            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->dispatchBrowserEvent('pengaturan-rkat.data-denied');
+            $this->dispatch('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatch('pengaturan-rkat.data-denied');
 
             return;
         }
@@ -70,8 +70,8 @@ trait PengaturanRKAT
 
         tracker_end();
 
-        $this->emit('flash.success', 'Pengaturan RKAT berhasil diupdate!');
-        $this->dispatchBrowserEvent('pengaturan-rkat.data-saved');
+        $this->dispatch('flash.success', 'Pengaturan RKAT berhasil diupdate!');
+        $this->dispatch('pengaturan-rkat.data-saved');
     }
 
     protected function defaultValuesPengaturanRKAT(): void

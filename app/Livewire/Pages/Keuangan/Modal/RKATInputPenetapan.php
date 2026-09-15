@@ -12,6 +12,7 @@ use App\Settings\RKATSettings;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class RKATInputPenetapan extends Component
@@ -31,13 +32,6 @@ class RKATInputPenetapan extends Component
 
     /** @var int|float */
     public $nominalAnggaran;
-
-    /** @var mixed */
-    protected $listeners = [
-        'prepare',
-        'penetapan-rkat.show-modal' => 'showModal',
-        'penetapan-rkat.hide-modal' => 'hideModal',
-    ];
 
     protected function rules(): array
     {
@@ -90,13 +84,21 @@ class RKATInputPenetapan extends Component
         return view('livewire.pages.keuangan.modal.rkat-input-penetapan');
     }
 
+    #[On('prepare')]
     public function prepare(int $id = -1): void
     {
-        $this->anggaranBidangId = $id;
-
-        /** @var AnggaranBidang */
         $data = AnggaranBidang::find($id);
 
+        // A stale id arrives whenever the table is left open while somebody else
+        // deletes the row. Fall back to create mode rather than dereferencing
+        // null.
+        if ($data === null) {
+            $this->defaultValues();
+
+            return;
+        }
+
+        $this->anggaranBidangId = $id;
         $this->anggaranId = $data->anggaran_id;
         $this->bidangId = $data->bidang_id;
         $this->nominalAnggaran = $data->nominal_anggaran;
@@ -112,7 +114,7 @@ class RKATInputPenetapan extends Component
 
         if (user()->cannot('keuangan.rkat-penetapan.create')) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->dispatchBrowserEvent('data-denied');
+            $this->dispatch('data-denied');
 
             return;
         }
@@ -121,7 +123,7 @@ class RKATInputPenetapan extends Component
 
         if (! now()->between($settings->tgl_penetapan_awal, $settings->tgl_penetapan_akhir)) {
             $this->flashError('Waktu penetapan RKAT diluar periode yang sudah ditetapkan!');
-            $this->dispatchBrowserEvent('data-denied');
+            $this->dispatch('data-denied');
 
             return;
         }
@@ -140,11 +142,11 @@ class RKATInputPenetapan extends Component
 
             tracker_end('mysql_smc');
 
-            $this->dispatchBrowserEvent('data-saved');
-            $this->emit('flash.success', 'Data berhasil disimpan!');
+            $this->dispatch('data-saved');
+            $this->dispatch('flash.success', 'Data berhasil disimpan!');
         } catch (Exception $e) {
             $this->flashError('Terjadi kesalahan saat menyimpan data!');
-            $this->dispatchBrowserEvent('data-denied');
+            $this->dispatch('data-denied');
         }
     }
 
@@ -158,7 +160,7 @@ class RKATInputPenetapan extends Component
 
         if (user()->cannot('keuangan.rkat-penetapan.update')) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->dispatchBrowserEvent('data-denied');
+            $this->dispatch('data-denied');
 
             return;
         }
@@ -167,7 +169,7 @@ class RKATInputPenetapan extends Component
 
         if (! now()->between($settings->tgl_penetapan_awal, $settings->tgl_penetapan_akhir)) {
             $this->flashError('Batas waktu penetapan RKAT melewati periode yang ditetapkan!');
-            $this->dispatchBrowserEvent('data-denied');
+            $this->dispatch('data-denied');
 
             return;
         }
@@ -187,28 +189,32 @@ class RKATInputPenetapan extends Component
             tracker_end('mysql_smc');
 
             $this->defaultValues();
-            $this->dispatchBrowserEvent('data-saved');
-            $this->emit('flash.success', 'Data berhasil diubah!');
+            $this->dispatch('data-saved');
+            $this->dispatch('flash.success', 'Data berhasil diubah!');
         } catch (Exception $e) {
             tracker_dispose('mysql_smc');
 
-            $this->dispatchBrowserEvent('data-errored');
+            $this->dispatch('data-errored');
             $this->flashError('Terjadi kesalahan pada saat mengubah data');
         }
     }
 
     public function delete(): void
     {
-        if ($this->isUpdating()) {
+        // Refuse when nothing is selected, which is what the message says.
+        // Written without the negation, this refused whenever a row *was*
+        // selected and otherwise ran destroy() against the -1 placeholder, so
+        // deleting a penetapan could never work.
+        if (! $this->isUpdating()) {
             $this->flashError('Data tidak ditemukan!');
-            $this->dispatchBrowserEvent('data-denied');
+            $this->dispatch('data-denied');
 
             return;
         }
 
         if (user()->cannot('keuangan.rkat-penetapan.delete')) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->dispatchBrowserEvent('data-denied');
+            $this->dispatch('data-denied');
 
             return;
         }
@@ -217,7 +223,7 @@ class RKATInputPenetapan extends Component
 
         if (! now()->between($settings->tgl_penetapan_awal, $settings->tgl_penetapan_akhir)) {
             $this->flashError('Batas waktu penetapan RKAT melewati periode yang ditetapkan!');
-            $this->dispatchBrowserEvent('data-denied');
+            $this->dispatch('data-denied');
 
             return;
         }
@@ -232,14 +238,14 @@ class RKATInputPenetapan extends Component
             tracker_end('mysql_smc');
 
             $this->defaultValues();
-            $this->dispatchBrowserEvent('data-deleted');
-            $this->emitUp('Data berhasil dihapus!');
+            $this->dispatch('data-deleted');
+            $this->dispatch('flash.success', 'Data berhasil dihapus!');
         } catch (Exception $e) {
             tracker_dispose('mysql_smc');
 
             $this->defaultValues();
-            $this->dispatchBrowserEvent('data-errored');
-            $this->emitUp('Terjadi kesalahan pada saat menghapus data!');
+            $this->dispatch('data-errored');
+            $this->dispatch('flash.error', 'Terjadi kesalahan pada saat menghapus data!');
         }
     }
 
