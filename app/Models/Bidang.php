@@ -28,6 +28,10 @@ class Bidang extends Model
         'parent_id',
     ];
 
+    protected $searchColumns = [
+        'nama',
+    ];
+
     public function getParentKeyName()
     {
         return 'parent_id';
