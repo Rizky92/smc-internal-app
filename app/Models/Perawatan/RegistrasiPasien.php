@@ -960,7 +960,6 @@ class RegistrasiPasien extends Model
             'pasien.nm_pasien',
             'pasien.alamat',
             'pasien.jk',
-            'penyakit.nm_penyakit',
             'pasien.agama',
             'pasien.pnd',
             'bahasa_pasien.nama_bahasa',

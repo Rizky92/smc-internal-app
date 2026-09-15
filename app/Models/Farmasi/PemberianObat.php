@@ -97,6 +97,15 @@ class PemberianObat extends Model
             detail_pemberian_obat.total
         SQL;
 
+        $this->addSearchConditions([
+            'detail_pemberian_obat.no_rawat',
+            'reg_periksa.no_rkm_medis',
+            'pasien.nm_pasien',
+            'penjab.png_jawab',
+            'detail_pemberian_obat.kode_brng',
+            'databarang.nama_brng',
+        ]);
+
         return $query
             ->selectRaw($sqlSelect)
             ->withCasts([
