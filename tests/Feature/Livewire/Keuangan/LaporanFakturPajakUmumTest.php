@@ -26,6 +26,17 @@ use Tests\TestCase;
  * row, then all its detail rows, then runs updateHargaObat()'s correction
  * UPDATE, with no DB::transaction() wrapping the sequence, so a failure
  * partway through leaves a partial snapshot under that tgl_tarikan.
+ *
+ * simpanTarikan() also used to call $this->forgetComputed(['dataLaporanFakturPajak',
+ * 'dataDetailFakturPajak']) at the very end - a Livewire v2 method that no
+ * longer exists in v3 (see Filterable::fullRefresh(), fixed for the same
+ * reason in the Batch 7 commit). That meant every real "Tarik Data Terbaru"
+ * export crashed with BadMethodCallException right after writing the
+ * snapshot. Fixed to unset($this->dataLaporanFakturPajak, ...) - the exact
+ * replacement Livewire's own upgrade tool uses for this API. Confirmed via
+ * exports_with_no_matching_billing_data_without_crashing() below, which runs
+ * simpanTarikan()/updateHargaObat() for real (against an empty result set,
+ * so it needs no billing fixtures) and would have errored on the old code.
  */
 class LaporanFakturPajakUmumTest extends TestCase
 {
@@ -158,5 +169,22 @@ class LaporanFakturPajakUmumTest extends TestCase
             ['UJI/001'],
             $test->instance()->dataLaporanFakturPajak->pluck('no_rawat')->all()
         );
+    }
+
+    /**
+     * @test
+     *
+     * Runs simpanTarikan()/updateHargaObat() for real via the actual export
+     * entrypoint. With nothing seeded on the mysql_sik billing side every
+     * unioned query simply returns no rows, so this needs no billing
+     * fixtures - but it still exercises the full write sequence, including
+     * the forgetComputed()->unset() fix documented on this class. On the old
+     * code this errored with BadMethodCallException every time.
+     */
+    public function exports_with_no_matching_billing_data_without_crashing(): void
+    {
+        $this->report()
+            ->call('beginExcelExport')
+            ->assertFileDownloaded();
     }
 }

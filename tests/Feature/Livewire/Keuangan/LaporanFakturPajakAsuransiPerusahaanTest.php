@@ -18,6 +18,11 @@ use Tests\TestCase;
  * faktur-pajak reports (a single read permission also gates the tarikan
  * write, and simpanTarikan()'s multi-step insert isn't wrapped in a
  * transaction).
+ *
+ * Also shared: simpanTarikan() used to end with $this->forgetComputed(...), a
+ * removed Livewire v2 method - see LaporanFakturPajakUmumTest's docblock.
+ * exports_with_no_matching_billing_data_without_crashing() below exercises
+ * that fix on this page too.
  */
 class LaporanFakturPajakAsuransiPerusahaanTest extends TestCase
 {
@@ -141,6 +146,18 @@ class LaporanFakturPajakAsuransiPerusahaanTest extends TestCase
             ['UJI/001'],
             $test->instance()->dataLaporanFakturPajak->pluck('no_rawat')->all()
         );
+    }
+
+    /**
+     * @test
+     *
+     * See LaporanFakturPajakUmumTest::exports_with_no_matching_billing_data_without_crashing().
+     */
+    public function exports_with_no_matching_billing_data_without_crashing(): void
+    {
+        $this->report()
+            ->call('beginExcelExport')
+            ->assertFileDownloaded();
     }
 
     private function penjamin(): void

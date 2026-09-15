@@ -55,7 +55,13 @@ trait Filterable
     #[On('fullRefresh')]
     public function fullRefresh(): void
     {
-        $this->forgetComputed();
+        collect(get_class_methods($this))
+            ->filter(fn (string $method) => Str::startsWith($method, 'get') && Str::endsWith($method, 'Property'))
+            ->each(function (string $method) {
+                $property = Str::camel(Str::between($method, 'get', 'Property'));
+
+                unset($this->{$property});
+            });
 
         $this->resetFilters();
     }
