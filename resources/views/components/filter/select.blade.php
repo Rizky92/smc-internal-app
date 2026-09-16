@@ -18,7 +18,7 @@
     ];
 
     if ($model) {
-        $attrs['wire:model'] ??= $model;
+        $attrs['wire:model.live'] ??= $model;
     }
 
     $options = $options

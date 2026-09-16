@@ -48,6 +48,12 @@ class LihatAktivitas extends Component
         $this->nama = $nama;
     }
 
+    #[On('siap.show-la')]
+    public function showModal(): void
+    {
+        $this->loadProperties();
+    }
+
     protected function defaultValues(): void
     {
         $this->userId = null;

@@ -8,9 +8,9 @@
 
 <div {{ $attributes->merge(['class' => 'd-flex align-items-center']) }}>
     <span class="text-sm" style="width: 5rem">{{ $title }}</span>
-    <input class="form-control form-control-sm" type="date" style="width: 9rem" wire:model="{{ $modelDateStart }}" />
-    <input class="form-control form-control-sm ml-2" type="time" style="width: 9rem" wire:model="{{ $modelTimeStart }}" />
+    <input class="form-control form-control-sm" type="date" style="width: 9rem" wire:model.live="{{ $modelDateStart }}" />
+    <input class="form-control form-control-sm ml-2" type="time" style="width: 9rem" wire:model.live="{{ $modelTimeStart }}" />
     <span class="text-sm px-3">sampai</span>
-    <input class="form-control form-control-sm" type="date" style="width: 9rem" wire:model="{{ $modelDateEnd }}" />
-    <input class="form-control form-control-sm ml-2" type="time" style="width: 9rem" wire:model="{{ $modelTimeEnd }}" />
+    <input class="form-control form-control-sm" type="date" style="width: 9rem" wire:model.live="{{ $modelDateEnd }}" />
+    <input class="form-control form-control-sm ml-2" type="time" style="width: 9rem" wire:model.live="{{ $modelTimeEnd }}" />
 </div>

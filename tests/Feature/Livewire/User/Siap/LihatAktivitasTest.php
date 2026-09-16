@@ -93,4 +93,30 @@ class LihatAktivitasTest extends TestCase
         $this->assertCount(2, $aktivitas->get('2026-03-05'));
         $this->assertCount(1, $aktivitas->get('2026-03-06'));
     }
+
+    /**
+     * @test
+     *
+     * The test above lifts isDeferred by calling loadProperties() by name,
+     * which is not how the modal does it: lihat-aktivitas.blade.php fires
+     * 'siap.show-la' from jQuery's shown.bs.modal. DeferredModal only
+     * registers #[On('showModal')], and nothing in this app dispatches that
+     * generic name - so without a listener for 'siap.show-la' the modal opens
+     * with isDeferred still true and the timeline is empty for every user.
+     * Calling the method directly can never catch that; dispatching the event
+     * the blade actually sends can.
+     */
+    public function loads_activity_when_the_modal_fires_its_own_shown_event(): void
+    {
+        $petugas = $this->petugasWithPermissions([], '99999901');
+        $this->aktivitas('99999902', '2026-03-05 08:00:00', 'admin.dashboard');
+
+        $aktivitas = Livewire::actingAs($petugas)
+            ->test(LihatAktivitas::class)
+            ->set('userId', '99999902')
+            ->dispatch('siap.show-la')
+            ->get('aktivitasUser');
+
+        $this->assertCount(1, $aktivitas);
+    }
 }
