@@ -61,9 +61,7 @@ class InputMinmaxStok extends Component
 
         tracker_start('mysql_smc');
 
-        MinmaxStokBarangNonMedis::updateOrCreate([
-            'kode_brng' => $kodeBarang,
-        ], [
+        MinmaxStokBarangNonMedis::updateOrCreate(['kode_brng' => $kodeBarang], [
             'stok_min'     => $stokMin,
             'stok_max'     => $stokMax,
             'kode_suplier' => $kodeSupplier,
@@ -72,7 +70,7 @@ class InputMinmaxStok extends Component
         tracker_end('mysql_smc');
 
         $this->resetFilters();
-        $this->dispatchBrowserEvent('data-tersimpan');
+        $this->dispatch('data-tersimpan');
 
         $this->flashSuccess('Data berhasil disimpan!');
     }

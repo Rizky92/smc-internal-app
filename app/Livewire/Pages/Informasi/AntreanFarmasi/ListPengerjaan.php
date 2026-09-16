@@ -4,15 +4,15 @@ namespace App\Livewire\Pages\Informasi\AntreanFarmasi;
 
 use App\Models\Farmasi\ResepObat;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class ListPengerjaan extends Component
 {
-    protected $listeners = ['marqueePengerjaanFinished' => 'refreshData'];
-
+    #[On('marqueePengerjaanFinished')]
     public function refreshData(): void
     {
-        $this->emitSelf('$refresh');
+        $this->dispatch('$refresh');
     }
 
     public function getDataPengerjaanProperty()

@@ -25,8 +25,10 @@
                     <x-table.th style="width: 15ch" title="Tgl. Pulang" />
                     <x-table.th style="width: 15ch" title="Jam Pulang" />
                     <x-table.th style="width: 18ch" title="Diagnosa Masuk" />
-                    <x-table.th style="width: 10ch" title="ICD-10" />
-                    <x-table.th style="width: 50ch" title="Diagnosa" />
+                    <x-table.th style="width: 10ch" title="ICD-10 Utama" />
+                    <x-table.th style="width: 10ch" title="ICD-10 Sekunder" />
+                    <x-table.th style="width: 25ch" title="Diagnosa Utama" />
+                    <x-table.th style="width: 25ch" title="Diagnosa Sekunder" />
                     <x-table.th style="width: 50ch" title="Tindakan Ralan" />
                     <x-table.th style="width: 50ch" title="Tindakan Ranap" />
                     <x-table.th style="width: 13ch" title="Lama Operasi" />
@@ -112,7 +114,12 @@
                                 {{ $registrasi->diagnosa_awal }}
                             </x-table.td>
                             <x-table.td>
-                                @foreach ($icdDiagnosa as $item)
+                                @if ($icdDiagnosa->isNotEmpty())
+                                    {{ $icdDiagnosa->first() }}
+                                @endif
+                            </x-table.td>
+                            <x-table.td>
+                                @foreach ($icdDiagnosa->slice(1) as $item)
                                     {{ $item }}
                                     @if (! $loop->last)
                                         <br />
@@ -120,7 +127,12 @@
                                 @endforeach
                             </x-table.td>
                             <x-table.td>
-                                @foreach ($diagnosa as $item)
+                                @if ($diagnosa->isNotEmpty())
+                                    {{ $diagnosa->first() }}
+                                @endif
+                            </x-table.td>
+                            <x-table.td>
+                                @foreach ($diagnosa->slice(1) as $item)
                                     {{ $item }}
                                     @if (! $loop->last)
                                         <br />
@@ -183,7 +195,7 @@
                             </x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="33" padding />
+                        <x-table.tr-empty colspan="37" padding />
                     @endforelse
                 </x-slot>
             </x-table>

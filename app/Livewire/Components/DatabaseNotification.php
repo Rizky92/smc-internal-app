@@ -4,6 +4,7 @@ namespace App\Livewire\Components;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -13,10 +14,7 @@ class DatabaseNotification extends Component
 
     public bool $isSidebarOpen = false;
 
-    protected $listeners = [
-        'toggleSidebar' => 'toggleSidebar',
-    ];
-
+    #[On('toggleSidebar')]
     public function toggleSidebar(): void
     {
         $opening = ! $this->isSidebarOpen;
@@ -65,8 +63,18 @@ class DatabaseNotification extends Component
         auth()->user()->notifications()->where('id', $notificationId)->first()->delete();
     }
 
-    public function download(string $filePath): StreamedResponse
+    public function download(string $filePath): ?StreamedResponse
     {
-        return Storage::disk('public')->download($filePath);
+        if (Storage::disk('public')->exists($filePath)) {
+            return Storage::disk('public')->download($filePath);
+        }
+
+        if (Storage::disk('local')->exists($filePath)) {
+            return Storage::disk('local')->download($filePath);
+        }
+
+        $this->dispatch('flash.error', 'File tidak ditemukan!');
+
+        return null;
     }
 }

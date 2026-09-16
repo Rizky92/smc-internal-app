@@ -75,7 +75,7 @@ class RekapPiutangPasien extends Component
 
     public function getTotalTagihanPiutangPasienProperty(): float
     {
-        return $this->isDeferred ? [] : PiutangPasien::query()
+        return $this->isDeferred ? 0.0 : (float) PiutangPasien::query()
             ->rekapPiutangPasien($this->tglAwal, $this->tglAkhir, $this->caraBayar)
             ->search($this->cari, [
                 'piutang_pasien.no_rawat',

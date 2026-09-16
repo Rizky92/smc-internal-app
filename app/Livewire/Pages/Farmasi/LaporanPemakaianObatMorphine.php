@@ -8,6 +8,7 @@ use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Bangsal;
 use App\Models\Farmasi\Obat;
 use App\Models\Farmasi\PemberianObat;
 use App\View\Components\BaseLayout;
@@ -31,7 +32,7 @@ class LaporanPemakaianObatMorphine extends Component
     /** @var string */
     public $tglAkhir;
 
-    /** @var "IFA"|"AP"|"IFG"|"IFI" */
+    /** @var string */
     public $bangsal;
 
     protected function queryString(): array
@@ -39,13 +40,18 @@ class LaporanPemakaianObatMorphine extends Component
         return [
             'tglAwal'  => ['except' => now()->startOfMonth()->toDateString(), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->toDateString(), 'as' => 'tgl_akhir'],
-            'bangsal'  => ['as' => 'depo'],
+            'bangsal'  => ['except' => '', 'as' => 'depo'],
         ];
     }
 
     public function mount(): void
     {
         $this->defaultValues();
+    }
+
+    public function getBangsalOptionsProperty(): Collection
+    {
+        return Bangsal::query()->pluck('nm_bangsal', 'kd_bangsal');
     }
 
     public function getDataObatProperty(): Collection
@@ -98,7 +104,7 @@ class LaporanPemakaianObatMorphine extends Component
     {
         $this->tglAwal = now()->startOfMonth()->toDateString();
         $this->tglAkhir = now()->endOfMonth()->toDateString();
-        $this->bangsal = 'IFA';
+        $this->bangsal = '';
     }
 
     protected function dataPerSheet(): array
@@ -126,6 +132,7 @@ class LaporanPemakaianObatMorphine extends Component
             'Jumlah',
             'Nama Dokter',
             'Alamat Dokter',
+            'Farmasi',
         ];
     }
 
@@ -140,16 +147,9 @@ class LaporanPemakaianObatMorphine extends Component
             $periode = $periodeAwal->translatedFormat('d F Y');
         }
 
-        $gudang = [
-            'IFA' => 'Farmasi A',
-            'AP'  => 'Farmasi B',
-            'IFG' => 'Farmasi IGD',
-            'IFI' => 'Farmasi Rawat Inap',
-        ];
-
         return [
             'RS Samarinda Medika Citra',
-            'Pemakaian Obat Morfin '.$gudang[$this->bangsal],
+            'Pemakaian Obat Morfin ke Pasien',
             $periode,
         ];
     }

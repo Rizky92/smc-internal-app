@@ -2,7 +2,14 @@
     <link rel="stylesheet" href="{{ asset('css/antrian-poli.css') }}" />
 @endpush
 
-@section('antrian-poli')
+{{--
+    Rendered into the layout's {{ $slot }}, not into @yield('antrian-poli').
+
+    The root element below was already here, but @section buffers its contents
+    instead of echoing them, so Livewire 3 saw an empty render and threw
+    RootTagMissingFromViewException. The @yield it paired with has since been
+    removed from layouts/app.blade.php. The body keeps its original indentation.
+--}}
     <div>
         <header class="d-flex flex-wrap justify-content-center py-2 pb-2 mb-4 border-bottom shadow header">
             <div class="container-fluid d-flex justify-content-center">
@@ -126,4 +133,3 @@
             <script src="https://code.responsivevoice.org/responsivevoice.js?key=OGPOBj1g"></script>
         @endif
     </div>
-@endsection

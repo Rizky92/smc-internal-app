@@ -50,13 +50,6 @@ class InputJurnalPosting extends Component
     public $totalKredit;
 
     /** @var mixed */
-    protected $listeners = [
-        'prepare',
-        'posting-jurnal.hide-modal' => 'hideModal',
-        'posting-jurnal.show-modal' => 'showModal',
-    ];
-
-    /** @var mixed */
     public $rules = [
         'no_bukti'        => ['required', 'string', 'max:20'],
         'tgl_jurnal'      => ['required', 'date'],
@@ -76,7 +69,7 @@ class InputJurnalPosting extends Component
 
     public function hydrate(): void
     {
-        $this->emit('select2.hydrate');
+        $this->dispatch('select2.hydrate');
     }
 
     public function getRekeningProperty(): Collection
@@ -102,7 +95,7 @@ class InputJurnalPosting extends Component
             'kredit' => 0,
         ];
 
-        $this->emit('detailAdded');
+        $this->dispatch('detailAdded');
     }
 
     protected function validateBalance(): void
@@ -119,8 +112,8 @@ class InputJurnalPosting extends Component
     public function push(): void
     {
         if (user()->cannot('keuangan.posting-jurnal.create')) {
-            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->dispatchBrowserEvent('data-denied');
+            $this->dispatch('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatch('data-denied');
 
             return;
         }
@@ -148,7 +141,7 @@ class InputJurnalPosting extends Component
         $this->totalDebet = 0;
         $this->totalKredit = 0;
 
-        $this->emit('detailAdded');
+        $this->dispatch('detailAdded');
     }
 
     public function pop(int $index): void
@@ -164,8 +157,8 @@ class InputJurnalPosting extends Component
     public function create()
     {
         if (user()->cannot('keuangan.posting-jurnal.create')) {
-            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->dispatchBrowserEvent('data-denied');
+            $this->dispatch('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatch('data-denied');
 
             return;
         }
@@ -184,8 +177,8 @@ class InputJurnalPosting extends Component
         ]);
 
         if ($validator->fails()) {
-            $this->emit('flash.error', 'Tidak dapat melakukan proses posting jurnal! Cek kembali data jurnal yang diinput.');
-            $this->dispatchBrowserEvent('data-denied');
+            $this->dispatch('flash.error', 'Tidak dapat melakukan proses posting jurnal! Cek kembali data jurnal yang diinput.');
+            $this->dispatch('data-denied');
 
             return;
         }
@@ -220,7 +213,7 @@ class InputJurnalPosting extends Component
             tracker_end('mysql_smc');
         } catch (Exception $_) {
             $this->flashError('Terjadi kesalahan saat menyimpan data');
-            $this->dispatchBrowserEvent('data-denied');
+            $this->dispatch('data-denied');
             $this->defaultValues();
 
             return;

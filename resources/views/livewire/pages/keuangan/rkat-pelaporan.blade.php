@@ -15,12 +15,17 @@
                             keterangan
                         } = e.dataset
 
-                        @this.emit('prepare', {
+                        // Nested under "options" to match prepare(array $options)'s
+                        // parameter name - dispatching the fields directly at the top
+                        // level spreads them as named arguments (pemakaianAnggaranId,
+                        // tglPakai, ...), none of which is named "options", so it
+                        // always threw.
+                        @this.dispatch('prepare', { options: {
                             pemakaianAnggaranId,
                             anggaranBidangId,
                             tglPakai,
                             keterangan
-                        })
+                        } })
 
                         $('#modal-input-pelaporan-rkat').modal('show')
                     }
@@ -45,7 +50,7 @@
                 <x-filter.label constant-width>Bidang:</x-filter.label>
                 <x-filter.select model="bidang" :options="$this->dataBidang" placeholder="SEMUA" />
                 @can('keuangan.rkat-pelaporan.create')
-                    <x-button variant="primary" size="sm" title="Laporan Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-pelaporan-rkat" class="btn-primary ml-auto" />
+                    <x-button variant="primary" size="sm" title="Laporan Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-pelaporan-rkat" data-action="create" class="btn-primary ml-auto" />
                 @endcan
             </x-row-col-flex>
         </x-slot>

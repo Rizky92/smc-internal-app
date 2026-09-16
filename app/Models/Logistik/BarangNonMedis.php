@@ -10,11 +10,11 @@ class BarangNonMedis extends Model
 {
     protected $connection = 'mysql_sik';
 
+    protected $table = 'ipsrsbarang';
+
     protected $primaryKey = 'kode_brng';
 
     protected $keyType = 'string';
-
-    protected $table = 'ipsrsbarang';
 
     public $incrementing = false;
 

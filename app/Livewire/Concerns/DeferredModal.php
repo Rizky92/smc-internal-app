@@ -2,25 +2,26 @@
 
 namespace App\Livewire\Concerns;
 
+use Livewire\Attributes\On;
+
 trait DeferredModal
 {
     use DeferredLoading;
 
     public function mountDeferredModal(): void
     {
-        $this->listeners = array_merge($this->listeners, [
-            'showModal',
-            'hideModal',
-        ]);
+        //
     }
 
+    #[On('showModal')]
     public function showModal(): void
     {
         $this->loadProperties();
 
-        $this->dispatchBrowserEvent('modal-loaded');
+        $this->dispatch('modal-loaded');
     }
 
+    #[On('hideModal')]
     public function hideModal(): void
     {
         $this->undefer();
@@ -29,6 +30,6 @@ trait DeferredModal
             $this->resetFilters();
         }
 
-        $this->dispatchBrowserEvent('modal-unloaded');
+        $this->dispatch('modal-unloaded');
     }
 }

@@ -4,6 +4,8 @@ namespace App\Models\Radiologi;
 
 use App\Casts\CastAsciiChars;
 use App\Database\Eloquent\Model;
+use App\Models\Perawatan\KamarInap;
+use App\Support\AlkesProcedures;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
@@ -153,5 +155,74 @@ class PeriksaRadiologi extends Model
             ->join('jns_perawatan_radiologi', 'periksa_radiologi.kd_jenis_prw', '=', 'jns_perawatan_radiologi.kd_jenis_prw')
             ->whereExists(fn ($q) => $q->from('regist_faktur')->whereColumn('regist_faktur.no_rawat', 'periksa_radiologi.no_rawat'))
             ->groupBy(['periksa_radiologi.no_rawat', 'periksa_radiologi.kd_jenis_prw', 'jns_perawatan_radiologi.nm_perawatan', 'periksa_radiologi.biaya']);
+    }
+
+    public function scopePenggunaanAlkes(Builder $query, string $tglAwal, string $tglAkhir, $nama, array $exclude = [], string $cari = ''): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth();
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth();
+        }
+
+        $base = KamarInap::query()
+            ->join('kamar', 'kamar_inap.kd_kamar', 'kamar.kd_kamar')
+            ->join('bangsal', 'kamar.kd_bangsal', 'bangsal.kd_bangsal')
+            ->whereColumn('kamar_inap.no_rawat', 'periksa_radiologi.no_rawat')
+            ->whereNotIn('kamar_inap.stts_pulang', ['Pindah Kamar']);
+
+        $kamar = (clone $base)
+            ->selectRaw("concat(kamar_inap.kd_kamar, ' ', bangsal.nm_bangsal)")
+            ->orderByDesc('kamar_inap.tgl_masuk')
+            ->orderByDesc('kamar_inap.jam_masuk')
+            ->limit(1);
+
+        $searchKamar = $base->search($cari, ['kamar.kd_bangsal', 'bangsal.nm_bangsal']);
+
+        $sql = $kamar->toSql();
+
+        $sqlSelect = <<<SQL
+            periksa_radiologi.no_rawat,
+            reg_periksa.no_rkm_medis,
+            pasien.nm_pasien,
+            periksa_radiologi.kd_jenis_prw,
+            jns_perawatan_radiologi.nm_perawatan,
+            periksa_radiologi.kd_dokter as nakes,
+            dokter.nm_dokter as nama_nakes,
+            periksa_radiologi.tgl_periksa,
+            periksa_radiologi.jam,
+            reg_periksa.kd_pj,
+            reg_periksa.kd_poli,
+            penjab.png_jawab,
+            if(periksa_radiologi.status = 'Ranap', ifnull(($sql), poliklinik.nm_poli), poliklinik.nm_poli) as unit,
+            periksa_radiologi.biaya,
+            periksa_radiologi.status as status
+            SQL;
+
+        $this->addSearchConditions([
+            'reg_periksa.no_rkm_medis',
+            'pasien.nm_pasien',
+            'jns_perawatan_inap.nm_perawatan',
+            'dokter.nm_dokter',
+            'reg_periksa.kd_pj',
+            'poliklinik.nm_poli',
+            [
+                'query'    => $searchKamar->toSql(),
+                'bindings' => $searchKamar->getBindings(),
+            ],
+        ]);
+
+        return $query
+            ->selectRaw($sqlSelect, $kamar->getBindings())
+            ->join('dokter', 'periksa_radiologi.kd_dokter', 'dokter.kd_dokter')
+            ->join('jns_perawatan_radiologi', 'periksa_radiologi.kd_jenis_prw', 'jns_perawatan_radiologi.kd_jenis_prw')
+            ->join('reg_periksa', 'periksa_radiologi.no_rawat', 'reg_periksa.no_rawat')
+            ->join('pasien', 'reg_periksa.no_rkm_medis', 'pasien.no_rkm_medis')
+            ->join('penjab', 'reg_periksa.kd_pj', 'penjab.kd_pj')
+            ->join('poliklinik', 'reg_periksa.kd_poli', 'poliklinik.kd_poli')
+            ->whereBetween('periksa_radiologi.tgl_periksa', [$tglAwal, $tglAkhir])
+            ->whereIn('periksa_radiologi.kd_jenis_prw', AlkesProcedures::ids($this->getConnectionName(), 'jns_perawatan_radiologi', $nama, $exclude));
     }
 }

@@ -11,6 +11,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\FilesystemNotFoundException;
+use Livewire\TemporaryUploadedFile;
 use Spatie\SimpleExcel\SimpleExcelReader;
 
 class ImportPemakaianAnggaranDetail implements ShouldQueue
@@ -34,14 +35,14 @@ class ImportPemakaianAnggaranDetail implements ShouldQueue
     private string $userId;
 
     /**
-     * @param array{
+     * @param  array{
      *      keterangan: string,
      *      tglPakai: string,
      *      anggaranBidangId: int,
-     *      fileImport: \Livewire\TemporaryUploadedFile,
+     *      fileImport: TemporaryUploadedFile,
      *      detail: array<array-key, array{keterangan: string, nominal: numeric}>,
      *      userId: string,
-     * } $params
+     * }  $params
      */
     public function __construct(array $params)
     {

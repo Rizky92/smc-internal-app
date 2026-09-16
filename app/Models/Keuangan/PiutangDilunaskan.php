@@ -10,7 +10,6 @@ use App\Models\RekamMedis\Pasien;
 use App\Models\RekamMedis\Penjamin;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
 class PiutangDilunaskan extends Model
