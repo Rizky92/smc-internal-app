@@ -60,11 +60,16 @@ class AntreanDiPanggil extends Component
                 'nm_pintu'  => $antrean->nm_pintu,
             ];
 
-            $this->dispatch('play-voice', [
-                'no_reg'    => $antrean->no_reg,
-                'nm_pasien' => $antrean->nm_pasien,
-                'nm_pintu'  => $antrean->nm_pintu,
-            ]);
+            // Named, not one array: dispatch() is variadic and passes $params
+            // through to the browser CustomEvent's detail as-is, so an array
+            // handed in positionally arrives as {"0": {...}} and the listener's
+            // event.detail.nm_pasien is undefined.
+            $this->dispatch(
+                'play-voice',
+                no_reg: $antrean->no_reg,
+                nm_pasien: $antrean->nm_pasien,
+                nm_pintu: $antrean->nm_pintu
+            );
         }
     }
 

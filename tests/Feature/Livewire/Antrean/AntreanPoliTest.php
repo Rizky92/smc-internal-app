@@ -2,7 +2,9 @@
 
 namespace Tests\Feature\Livewire\Antrean;
 
+use App\Livewire\Pages\Antrean\AntreanPoli;
 use Illuminate\Support\Facades\DB;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 /**
@@ -16,9 +18,24 @@ use Tests\TestCase;
  */
 class AntreanPoliTest extends TestCase
 {
+    /**
+     * dokter.kd_dokter is a foreign key into pegawai.nik, so the doctor has to
+     * be a real member of staff. Inside CreatesPetugas' reserved 9999990 range
+     * so TestCase's own teardown reclaims the pegawai row.
+     */
+    private const KD_DOKTER = '99999903';
+
+    private const NO_RAWAT = 'UJI/0001';
+
+    private const NO_REKAM_MEDIS = 'UJI-RM01';
+
     protected function tearDown(): void
     {
-        DB::connection('mysql_sik')->table('poliklinik')->where('kd_poli', 'like', 'UJI%')->delete();
+        $sik = DB::connection('mysql_sik');
+
+        $sik->table('antripoli')->where('no_rawat', self::NO_RAWAT)->delete();
+        $sik->table('dokter')->where('kd_dokter', self::KD_DOKTER)->delete();
+        $sik->table('poliklinik')->where('kd_poli', 'like', 'UJI%')->delete();
 
         parent::tearDown();
     }
@@ -32,6 +49,61 @@ class AntreanPoliTest extends TestCase
             'registrasilama' => 0,
             'status'         => '1',
         ]);
+    }
+
+    /**
+     * A patient waiting at the front of one poli's queue: registered today
+     * against a doctor in that poli, still "Belum", with an antripoli row at
+     * status 1 ("being called").
+     */
+    private function antreanSiapDipanggil(string $kdPoli, string $namaPoli, string $namaPasien): void
+    {
+        $sik = DB::connection('mysql_sik');
+
+        $this->createPoliklinik($kdPoli, $namaPoli);
+        $this->petugasWithPermissions([], self::KD_DOKTER);
+
+        $sik->table('dokter')->insert([
+            'kd_dokter' => self::KD_DOKTER, 'nm_dokter' => 'Dokter Uji',
+            'email'     => 'dokter.uji@test.invalid', 'status' => '1',
+        ]);
+
+        $this->createPasien(self::NO_REKAM_MEDIS, $namaPasien);
+
+        $sik->table('reg_periksa')->insert([
+            'no_reg'       => '001', 'no_rawat' => self::NO_RAWAT,
+            'no_rkm_medis' => self::NO_REKAM_MEDIS, 'tgl_registrasi' => now()->toDateString(),
+            'jam_reg'      => '09:00:00', 'kd_poli' => $kdPoli, 'kd_dokter' => self::KD_DOKTER,
+            'kd_pj'        => $sik->table('penjab')->value('kd_pj'), 'stts' => 'Belum',
+            'stts_daftar'  => 'Baru', 'status_lanjut' => 'Ralan',
+            'status_bayar' => 'Belum Bayar', 'status_poli' => 'Baru',
+        ]);
+
+        $sik->table('antripoli')->insert([
+            'kd_dokter' => self::KD_DOKTER, 'kd_poli' => $kdPoli,
+            'no_rawat'  => self::NO_RAWAT, 'status' => '1',
+        ]);
+    }
+
+    /**
+     * @test
+     *
+     * Same shape as AntreanDiPanggil: the blade announces the patient straight
+     * off event.detail.nm_pasien.toLowerCase(), so the fields have to reach the
+     * browser as named parameters rather than one positional array.
+     */
+    public function announces_the_patient_with_the_fields_the_browser_reads(): void
+    {
+        $this->antreanSiapDipanggil('UJI01', 'Poli Uji Dalam', 'BUDI SANTOSO');
+
+        Livewire::test(AntreanPoli::class, ['kd_poli' => 'UJI01'])
+            ->call('call')
+            ->assertDispatched(
+                'play-voice',
+                no_reg: '001',
+                nm_pasien: 'BUDI SANTOSO',
+                nm_poli: 'Poli Uji Dalam'
+            );
     }
 
     /**

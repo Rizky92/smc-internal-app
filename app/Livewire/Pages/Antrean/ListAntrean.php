@@ -63,9 +63,11 @@ class ListAntrean extends Component
     #[On('updateAntrean')]
     public function updateAntrean(): void
     {
-        $this->dispatch('updateMarqueeData', [
-            'rowCount' => $this->totalRow,
-        ]);
+        // Named, not one array: dispatch() is variadic and passes $params
+        // through to the browser CustomEvent's detail as-is, so an array handed
+        // in positionally arrives as {"0": {...}} and event.detail.rowCount is
+        // undefined.
+        $this->dispatch('updateMarqueeData', rowCount: $this->totalRow);
     }
 
     public function render(): View
