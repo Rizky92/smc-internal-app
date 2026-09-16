@@ -102,6 +102,12 @@ class TransferHakAkses extends Component
         $this->dispatch('flash.success', 'Transfer hak akses SIMRS Khanza berhasil!');
     }
 
+    #[On('khanza.show-tha')]
+    public function showModal(): void
+    {
+        $this->loadProperties();
+    }
+
     protected function defaultValues(): void
     {
         $this->undefer();

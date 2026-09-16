@@ -123,6 +123,12 @@ class TransferPerizinan extends Component
         $this->dispatch('flash.success', 'Transfer perizinan SIAP berhasil!');
     }
 
+    #[On('siap.show-tp')]
+    public function showModal(): void
+    {
+        $this->loadProperties();
+    }
+
     protected function defaultValues(): void
     {
         $this->undefer();

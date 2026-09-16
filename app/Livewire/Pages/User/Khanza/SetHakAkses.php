@@ -105,6 +105,7 @@ class SetHakAkses extends Component
         $this->dispatch('flash.success', "Hak akses SIMRS Khanza untuk user {$this->nrp} {$this->nama} berhasil diupdate!");
     }
 
+    #[On('khanza.show-sha')]
     public function showModal(): void
     {
         $this->isDeferred = false;
