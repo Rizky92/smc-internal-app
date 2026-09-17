@@ -46,7 +46,34 @@ class RKATInputPenetapan extends Component
             $rules->prepend(['required'], 'anggaranBidangId');
         }
 
+        if ($this->sudahDipakai()) {
+            $tersimpan = AnggaranBidang::find($this->anggaranBidangId);
+
+            $rules->put('anggaranId', [...$rules->get('anggaranId'), $this->tidakBerubah($tersimpan->anggaran_id, 'Kategori Anggaran')]);
+            $rules->put('bidangId', [...$rules->get('bidangId'), $this->tidakBerubah($tersimpan->bidang_id, 'Bidang')]);
+        }
+
         return $rules->all();
+    }
+
+    /**
+     * Once Pemakaian Anggaran is charged to a Penetapan RKAT, changing its
+     * Kategori Anggaran or Bidang would move that spending along with it.
+     */
+    private function tidakBerubah(int $tersimpan, string $label): \Closure
+    {
+        return function (string $attribute, mixed $value, \Closure $fail) use ($tersimpan, $label): void {
+            if ((int) $value !== $tersimpan) {
+                $fail(sprintf('%s tidak dapat diubah karena Penetapan RKAT ini sudah memiliki Pemakaian Anggaran.', $label));
+            }
+        };
+    }
+
+    public function sudahDipakai(): bool
+    {
+        return $this->isUpdating() && PemakaianAnggaran::query()
+            ->where('anggaran_bidang_id', $this->anggaranBidangId)
+            ->exists();
     }
 
     public function mount(): void

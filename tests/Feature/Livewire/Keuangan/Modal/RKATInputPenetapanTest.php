@@ -368,6 +368,125 @@ class RKATInputPenetapanTest extends TestCase
         $this->assertSame(1, AnggaranBidang::query()->count());
     }
 
+    private function pemakaianUntuk(AnggaranBidang $penetapan): void
+    {
+        PemakaianAnggaran::create([
+            'judul'              => 'Pembelian Uji',
+            'tgl_dipakai'        => '2026-03-01',
+            'anggaran_bidang_id' => $penetapan->id,
+            'user_id'            => '99999901',
+        ]);
+    }
+
+    /**
+     * @test
+     *
+     * Changing the Kategori Anggaran of a Penetapan RKAT that has Pemakaian
+     * Anggaran would move all of that spending to another category.
+     */
+    public function refuses_a_new_kategori_for_a_penetapan_that_has_spending_reported(): void
+    {
+        $petugas = $this->petugasWithPermissions(['keuangan.rkat-penetapan.update'], '99999901');
+        $existing = $this->penetapanTersimpan();
+        $this->pemakaianUntuk($existing);
+        $kategoriLain = $this->kategori();
+
+        $this->travelTo($this->insidePeriod());
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPenetapan::class)
+            ->dispatch('prepare', $existing->id)
+            ->set('anggaranId', (string) $kategoriLain->id)
+            ->call('create')
+            ->assertHasErrors('anggaranId')
+            ->assertNotDispatched('data-saved');
+
+        $this->assertNotSame((int) $kategoriLain->id, (int) $existing->refresh()->anggaran_id);
+    }
+
+    /**
+     * @test
+     */
+    public function refuses_a_new_bidang_for_a_penetapan_that_has_spending_reported(): void
+    {
+        $petugas = $this->petugasWithPermissions(['keuangan.rkat-penetapan.update'], '99999901');
+        $existing = $this->penetapanTersimpan();
+        $this->pemakaianUntuk($existing);
+        $bidangLain = $this->bidang();
+
+        $this->travelTo($this->insidePeriod());
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPenetapan::class)
+            ->dispatch('prepare', $existing->id)
+            ->set('bidangId', (string) $bidangLain->id)
+            ->call('create')
+            ->assertHasErrors('bidangId')
+            ->assertNotDispatched('data-saved');
+
+        $this->assertNotSame((int) $bidangLain->id, (int) $existing->refresh()->bidang_id);
+    }
+
+    /**
+     * @test
+     *
+     * Only the Kategori Anggaran and Bidang are fixed. The amount can still be
+     * revised, even below what has already been spent.
+     */
+    public function still_revises_the_nominal_of_a_penetapan_that_has_spending_reported(): void
+    {
+        $petugas = $this->petugasWithPermissions(['keuangan.rkat-penetapan.update'], '99999901');
+        $existing = $this->penetapanTersimpan();
+        $this->pemakaianUntuk($existing);
+
+        $this->travelTo($this->insidePeriod());
+
+        $test = Livewire::actingAs($petugas)
+            ->test(RKATInputPenetapan::class)
+            ->dispatch('prepare', $existing->id);
+
+        $html = $test->html();
+        $this->assertMatchesRegularExpression('/<select(?=[^>]*id="anggaran-id")(?=[^>]*\sdisabled)[^>]*>/', $html);
+        $this->assertMatchesRegularExpression('/<select(?=[^>]*id="bidang-id")(?=[^>]*\sdisabled)[^>]*>/', $html);
+
+        $test->set('nominalAnggaran', 1000)
+            ->call('create')
+            ->assertHasNoErrors()
+            ->assertDispatched('data-saved');
+
+        $this->assertSame(1000, (int) $existing->refresh()->nominal_anggaran);
+    }
+
+    /**
+     * @test
+     */
+    public function a_penetapan_without_spending_can_change_kategori_and_bidang(): void
+    {
+        $petugas = $this->petugasWithPermissions(['keuangan.rkat-penetapan.update'], '99999901');
+        $existing = $this->penetapanTersimpan();
+        $kategoriLain = $this->kategori();
+        $bidangLain = $this->bidang();
+
+        $this->travelTo($this->insidePeriod());
+
+        $test = Livewire::actingAs($petugas)
+            ->test(RKATInputPenetapan::class)
+            ->dispatch('prepare', $existing->id);
+
+        $this->assertDoesNotMatchRegularExpression('/<select(?=[^>]*id="anggaran-id")(?=[^>]*\sdisabled)[^>]*>/', $test->html());
+
+        $test->set('anggaranId', (string) $kategoriLain->id)
+            ->set('bidangId', (string) $bidangLain->id)
+            ->call('create')
+            ->assertHasNoErrors()
+            ->assertDispatched('data-saved');
+
+        $existing->refresh();
+
+        $this->assertSame((int) $kategoriLain->id, (int) $existing->anggaran_id);
+        $this->assertSame((int) $bidangLain->id, (int) $existing->bidang_id);
+    }
+
     /**
      * @test
      *

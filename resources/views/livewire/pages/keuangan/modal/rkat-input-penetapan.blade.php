@@ -60,12 +60,12 @@
                 <x-row-col-flex col-gap="1rem">
                     <div class="form-group w-100">
                         <label for="bidang-id">Bidang:</label>
-                        <x-form.select id="bidang-id" model="bidangId" :options="$this->bidangUnit" placeholder="-" width="full-width" />
+                        <x-form.select id="bidang-id" model="bidangId" :options="$this->bidangUnit" placeholder="-" width="full-width" :disabled="$this->sudahDipakai()" />
                         <x-form.error name="bidangId" />
                     </div>
                     <div class="form-group w-100">
                         <label for="anggaran-id">Kategori Anggaran:</label>
-                        <x-form.select id="anggaran-id" model="anggaranId" :options="$this->kategoriAnggaran" placeholder="-" width="full-width" />
+                        <x-form.select id="anggaran-id" model="anggaranId" :options="$this->kategoriAnggaran" placeholder="-" width="full-width" :disabled="$this->sudahDipakai()" />
                         <x-form.error name="anggaranId" />
                     </div>
                 </x-row-col-flex>
