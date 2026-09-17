@@ -182,8 +182,10 @@ class RKATInputPelaporan extends Component
                 $this->dispatch('data-saved');
                 $this->dispatch('flash.success', 'Data Pemakaian RKAT baru berhasil disimpan!');
             } catch (\Exception $e) {
+                tracker_dispose('mysql_smc');
+
                 $this->dispatch('data-failed');
-                $this->dispatch('flash.success', 'Terjadi kegagalan pada saat menyimpan pemakaian RKAT!');
+                $this->dispatch('flash.error', 'Terjadi kegagalan pada saat menyimpan pemakaian RKAT!');
             }
         }
     }
@@ -211,24 +213,37 @@ class RKATInputPelaporan extends Component
         /** @var PemakaianAnggaran */
         $pemakaianAnggaran = PemakaianAnggaran::find($this->pemakaianAnggaranId);
 
-        tracker_start('mysql_smc');
+        try {
+            tracker_start('mysql_smc');
 
-        $pemakaianAnggaran->update([
-            'judul'              => $this->keterangan,
-            'tgl_dipakai'        => $this->tglPakai,
-            'anggaran_bidang_id' => $this->anggaranBidangId,
-        ]);
+            // The lines are removed and written again, so the whole update has
+            // to succeed or fail together: a failed write must not leave the
+            // Pemakaian with no lines at all.
+            DB::connection('mysql_smc')->transaction(function () use ($pemakaianAnggaran) {
+                $pemakaianAnggaran->update([
+                    'judul'              => $this->keterangan,
+                    'tgl_dipakai'        => $this->tglPakai,
+                    'anggaran_bidang_id' => $this->anggaranBidangId,
+                ]);
 
-        // hapus data yang ada terlebih dahulu, lalu lakukan insert ulang
-        $pemakaianAnggaran
-            ->detail()
-            ->delete();
+                $pemakaianAnggaran
+                    ->detail()
+                    ->delete();
 
-        $pemakaianAnggaran
-            ->detail()
-            ->createMany($this->detail);
+                $pemakaianAnggaran
+                    ->detail()
+                    ->createMany($this->detail);
+            });
 
-        tracker_end('mysql_smc');
+            tracker_end('mysql_smc');
+        } catch (\Exception $e) {
+            tracker_dispose('mysql_smc');
+
+            $this->dispatch('data-failed');
+            $this->dispatch('flash.error', 'Terjadi kegagalan pada saat mengubah pemakaian RKAT!');
+
+            return;
+        }
 
         $this->dispatch('data-saved');
         $this->dispatch('flash.success', 'Data Pemakaian RKAT baru berhasil diupdate!');

@@ -470,18 +470,13 @@ class RKATInputPelaporanTest extends TestCase
     }
 
     /**
-     * DEFECT, recorded rather than asserted as correct.
-     *
-     * When the transaction in create() throws, the catch dispatches data-failed
-     * alongside flash.success — so the failure message "Terjadi kegagalan..."
-     * arrives in a green success banner. A null keterangan on a line reaches
-     * that branch: the rule allows it, the NOT NULL column does not.
-     *
-     * The catch should dispatch flash.error. Flip the assertion when it does.
-     *
      * @test
+     *
+     * A null keterangan on a line gets past validation (the rule allows it) and
+     * fails on the NOT NULL column, which is the simplest way to make the save
+     * itself throw. The failure used to arrive in a green success banner.
      */
-    public function a_failed_save_is_currently_announced_in_a_success_banner(): void
+    public function a_failed_save_is_announced_as_an_error(): void
     {
         $petugas = $this->petugasWithPermissions(['keuangan.rkat-pelaporan.create'], '99999901');
         $rkat = $this->anggaranBidang();
@@ -494,12 +489,40 @@ class RKATInputPelaporanTest extends TestCase
             ->set('detail', [['keterangan' => null, 'nominal' => 1000]])
             ->call('create')
             ->assertDispatched('data-failed')
+            ->assertNotDispatched('flash.success')
             ->assertDispatched(
-                'flash.success',
+                'flash.error',
                 fn (string $event, array $params): bool => str_contains($params[0], 'kegagalan')
-            );
+            )
+            ->assertSet('keterangan', 'Pembelian Uji');
 
-        // The transaction did its job: nothing half-written.
         $this->assertSame(0, PemakaianAnggaran::query()->count());
+    }
+
+    /**
+     * @test
+     *
+     * Updating removes every Rincian Pemakaian before writing the form's. If the
+     * write fails after the removal, the Pemakaian must keep the Rincian it had,
+     * not be left with none.
+     */
+    public function a_failed_update_keeps_the_existing_lines_and_is_announced_as_an_error(): void
+    {
+        $petugas = $this->petugasWithPermissions(['keuangan.rkat-pelaporan.update'], '99999901');
+        [$pemakaian, $options] = $this->laporanTersimpan($this->anggaranBidang());
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPelaporan::class)
+            ->dispatch('prepare', options: $options)
+            ->set('keterangan', 'Pembelian Diubah')
+            ->set('detail', [['keterangan' => null, 'nominal' => 1000]])
+            ->call('create')
+            ->assertDispatched('data-failed')
+            ->assertNotDispatched('data-saved')
+            ->assertNotDispatched('flash.success')
+            ->assertDispatched('flash.error');
+
+        $this->assertSame('Pembelian Lama', $pemakaian->refresh()->judul);
+        $this->assertSame(['Barang A'], $pemakaian->detail()->pluck('keterangan')->all());
     }
 }
