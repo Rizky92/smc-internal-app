@@ -36,21 +36,24 @@ class RKATInputPenetapan extends Component
 
     protected function rules(): array
     {
+        $tersimpan = $this->sudahDipakai()
+            ? AnggaranBidang::find($this->anggaranBidangId)
+            : null;
+
         $rules = collect([
-            'anggaranId'      => ['required', 'exists:anggaran,id'],
-            'bidangId'        => ['required', 'exists:bidang,id'],
+            'anggaranId' => array_filter([
+                'required', 'exists:anggaran,id',
+                $tersimpan ? $this->tidakBerubah($tersimpan->anggaran_id, 'Kategori Anggaran') : null,
+            ]),
+            'bidangId' => array_filter([
+                'required', 'exists:bidang,id',
+                $tersimpan ? $this->tidakBerubah($tersimpan->bidang_id, 'Bidang') : null,
+            ]),
             'nominalAnggaran' => ['required', 'numeric', 'min:0'],
         ]);
 
         if ($this->isUpdating()) {
             $rules->prepend(['required'], 'anggaranBidangId');
-        }
-
-        if ($this->sudahDipakai()) {
-            $tersimpan = AnggaranBidang::find($this->anggaranBidangId);
-
-            $rules->put('anggaranId', [...$rules->get('anggaranId'), $this->tidakBerubah($tersimpan->anggaran_id, 'Kategori Anggaran')]);
-            $rules->put('bidangId', [...$rules->get('bidangId'), $this->tidakBerubah($tersimpan->bidang_id, 'Bidang')]);
         }
 
         return $rules->all();
