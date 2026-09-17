@@ -4,7 +4,7 @@
 
 {{--
     Rendered into the layout's {{ $slot }}, not into @yield('informasi-kamar').
-
+    
     Livewire 3 requires a component's own output to have exactly one root HTML
     element. Wrapping the body in @section buffers it instead of echoing it, so
     Livewire saw an empty render and threw RootTagMissingFromViewException. The

@@ -68,11 +68,7 @@
                                 <x-table.tr>
                                     <x-table.td>
                                         <div style="width: 100%" wire:ignore>
-                                            <select
-                                                id="kd_rek_{{ $index }}"
-                                                wire:model="detail.{{ $index }}.kd_rek"
-                                                class="form-control form-control-sm select2 input-sm"
-                                                data-index="{{ $index }}">
+                                            <select id="kd_rek_{{ $index }}" wire:model="detail.{{ $index }}.kd_rek" class="form-control form-control-sm select2 input-sm" data-index="{{ $index }}">
                                                 <option value="">Pilih Rekening</option>
                                                 @foreach ($this->rekening as $kd_rek => $rekening)
                                                     <option value="{{ $kd_rek }}">

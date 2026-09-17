@@ -102,8 +102,10 @@
         </style>
     @endpush
 
-    {{-- getSIMRSSettingsProperty() is declared ?object: it reads the single row
-         in Khanza's `setting` table, which nothing guarantees is there. --}}
+    {{--
+        getSIMRSSettingsProperty() is declared ?object: it reads the single row
+        in Khanza's `setting` table, which nothing guarantees is there.
+    --}}
     <div id="printHeader">
         <div class="container">
             <img
