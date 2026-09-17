@@ -56,7 +56,10 @@ trait Searchable
                 }
 
                 if ($column instanceof Expression) {
-                    return $column->getValue();
+                    // Laravel 10 changed Expression::getValue() to require the
+                    // grammar it should be rendered with; in Laravel 9 it took no
+                    // arguments.
+                    return $column->getValue($this->getConnection()->getQueryGrammar());
                 }
 
                 if (Str::doesntContain($column, ['(', ')', '<', '>', '=', '.', '-'])) {

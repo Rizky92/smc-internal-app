@@ -11,10 +11,10 @@ use App\Livewire\Concerns\MenuTracker;
 use App\Models\Bidang;
 use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Models\Keuangan\RKAT\PemakaianAnggaran;
+use App\Settings\RKATSettings;
 use App\View\Components\BaseLayout;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\Relations\Descendants;
@@ -34,7 +34,7 @@ class RKATPemantauan extends Component
     protected function queryString(): array
     {
         return [
-            'tahun' => ['except' => now()->format('Y')],
+            'tahun' => ['except' => (string) app(RKATSettings::class)->tahun],
         ];
     }
 
@@ -45,12 +45,7 @@ class RKATPemantauan extends Component
 
     public function getDataTahunProperty(): array
     {
-        return DB::table('anggaran_bidang')
-            ->select('tahun')
-            ->groupBy('tahun')
-            ->orderBy('tahun', 'asc')
-            ->pluck('tahun', 'tahun')
-            ->all();
+        return AnggaranBidang::pilihanTahun();
     }
 
     public function getDataLaporanRKATProperty(): Collection
@@ -59,7 +54,14 @@ class RKATPemantauan extends Component
             ->with([
                 'descendants' => fn (Descendants $q) => $q
                     ->with([
-                        'anggaranBidang' => fn (HasMany $q) => $q->withSum('detailPemakaian as total_pemakaian', 'nominal'),
+                        // Constrained to the selected year, as the export is.
+                        // Without this the year selector changed nothing on
+                        // screen — every year's budgets were listed and totalled
+                        // together, while the spreadsheet downloaded from the
+                        // same page showed only the year that was chosen.
+                        'anggaranBidang' => fn (HasMany $q) => $q
+                            ->where('tahun', $this->tahun)
+                            ->withSum('detailPemakaian as total_pemakaian', 'nominal'),
                         'anggaranBidang.anggaran',
                     ]),
             ])
@@ -75,7 +77,7 @@ class RKATPemantauan extends Component
 
     protected function defaultValues(): void
     {
-        $this->tahun = now()->format('Y');
+        $this->tahun = (string) app(RKATSettings::class)->tahun;
     }
 
     /**
@@ -109,7 +111,12 @@ class RKATPemantauan extends Component
 
                 $selisih = $nominal - $total;
 
-                $persentase = $total > 0
+                // Both operands are checked, not just the numerator.
+                // RKATInputPenetapan accepts a budget of 0 (its rule is min:0),
+                // and spending against one made this a DivisionByZeroError. The
+                // view guards the same division already; this brings the export
+                // into line with it.
+                $persentase = $total > 0 && $nominal > 0
                     ? round($total / $nominal, 4)
                     : 0;
 

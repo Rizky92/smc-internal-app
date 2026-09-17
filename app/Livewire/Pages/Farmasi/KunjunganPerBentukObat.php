@@ -88,7 +88,7 @@ class KunjunganPerBentukObat extends Component
         $this->resetPage('page_regular');
         $this->resetPage('page_racikan');
 
-        $this->emit('$refresh');
+        $this->dispatch('$refresh');
     }
 
     protected function dataPerSheet(): array

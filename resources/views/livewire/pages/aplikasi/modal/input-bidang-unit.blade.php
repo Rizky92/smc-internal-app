@@ -2,11 +2,24 @@
     @push('js')
         <script>
             $('#modal-input-bidang-unit').on('shown.bs.modal', (e) => {
-                Livewire.emit('bidang.show-modal');
+                // relatedTarget carries the element that opened the modal - only
+                // the "Bidang Baru" button marks itself data-action="create".
+                // Without this, bidangId/nama/parentId from a previous edit stay
+                // on the component (only clearing them here, not on every close,
+                // avoids racing prepare()'s own edit-time population), so
+                // reopening via Tambah right after Edit kept the old title, the
+                // old fields, and routed Simpan into update() on that same row
+                // instead of creating a new one.
+                var trigger = e.relatedTarget || null;
+                if (trigger && trigger.dataset && trigger.dataset.action === 'create') {
+                    Livewire.dispatch('prepare', {});
+                }
+
+                Livewire.dispatch('bidang.show-modal');
             });
 
             $('#modal-input-bidang-unit').on('hide.bs.modal', (e) => {
-                Livewire.emit('bidang.hide-modal');
+                Livewire.dispatch('bidang.hide-modal');
             });
 
             $(document).on('data-saved', () => {
@@ -22,7 +35,7 @@
                 <x-row-col class="sticky-top bg-white pt-1 pb-2 px-3">
                     <div class="form-group mt-3">
                         <label for="nama-bidang">Nama Bidang:</label>
-                        <input type="text" id="nama-bidang" wire:model.defer="nama" class="form-control form-control-sm" />
+                        <input type="text" id="nama-bidang" wire:model="nama" class="form-control form-control-sm" />
                     </div>
                     <div class="form-group mt-3">
                         <label for="parent-bidang">Sub-bidang dari:</label>

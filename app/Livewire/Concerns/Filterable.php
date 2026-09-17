@@ -3,20 +3,11 @@
 namespace App\Livewire\Concerns;
 
 use Illuminate\Support\Str;
+use Livewire\Attributes\On;
 
 trait Filterable
 {
     abstract protected function defaultValues(): void;
-
-    public function initializeFilterable(): void
-    {
-        $this->listeners = array_merge($this->listeners, [
-            'searchData',
-            'resetState',
-            'resetFilters',
-            'fullRefresh',
-        ]);
-    }
 
     protected function getDefaultValues(): void
     {
@@ -30,6 +21,7 @@ trait Filterable
             });
     }
 
+    #[On('searchData')]
     public function searchData(): void
     {
         if (method_exists($this, 'resetPage')) {
@@ -40,16 +32,18 @@ trait Filterable
             $this->isDeferred = false;
         }
 
-        $this->emit('$refresh');
+        $this->dispatch('$refresh');
     }
 
+    #[On('resetState')]
     public function resetState(): void
     {
         $this->defaultValues();
 
-        $this->emit('$refresh');
+        $this->dispatch('$refresh');
     }
 
+    #[On('resetFilters')]
     public function resetFilters(): void
     {
         $this->defaultValues();
@@ -58,9 +52,16 @@ trait Filterable
         $this->searchData();
     }
 
+    #[On('fullRefresh')]
     public function fullRefresh(): void
     {
-        $this->forgetComputed();
+        collect(get_class_methods($this))
+            ->filter(fn (string $method) => Str::startsWith($method, 'get') && Str::endsWith($method, 'Property'))
+            ->each(function (string $method) {
+                $property = Str::camel(Str::between($method, 'get', 'Property'));
+
+                unset($this->{$property});
+            });
 
         $this->resetFilters();
     }

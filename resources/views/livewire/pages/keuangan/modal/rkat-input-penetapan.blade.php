@@ -2,11 +2,24 @@
     @push('js')
         <script>
             $('#modal-input-penetapan-rkat').on('shown.bs.modal', e => {
-                @this.emit('penetapan-rkat.show-modal')
+                // Only the "Anggaran Baru" button marks itself data-action="create".
+                // Without this check, anggaranBidangId/anggaranId/bidangId/
+                // nominalAnggaran from a previous edit stayed on the component, so
+                // reopening via Tambah right after Edit kept the old title and
+                // fields and routed Simpan into update() on that same row instead
+                // of creating a new one. prepare() with no id already resets via
+                // its existing "id not found" fallback (AnggaranBidang::find(-1)
+                // is null).
+                var trigger = e.relatedTarget || null
+                if (trigger && trigger.dataset && trigger.dataset.action === 'create') {
+                    @this.dispatch('prepare', {})
+                }
+
+                @this.dispatch('penetapan-rkat.show-modal')
             })
 
             $('#modal-input-penetapan-rkat').on('hide.bs.modal', e => {
-                @this.emit('penetapan-rkat.hide-modal')
+                @this.dispatch('penetapan-rkat.hide-modal')
             })
 
             $(document).on('data-saved', () => {
@@ -47,12 +60,12 @@
                 <x-row-col-flex col-gap="1rem">
                     <div class="form-group w-100">
                         <label for="bidang-id">Bidang:</label>
-                        <x-form.select id="bidang-id" model="bidangId" :options="$this->bidangUnit" placeholder="-" width="full-width" />
+                        <x-form.select id="bidang-id" model="bidangId" :options="$this->bidangUnit" placeholder="-" width="full-width" :disabled="$this->sudahDipakai()" />
                         <x-form.error name="bidangId" />
                     </div>
                     <div class="form-group w-100">
                         <label for="anggaran-id">Kategori Anggaran:</label>
-                        <x-form.select id="anggaran-id" model="anggaranId" :options="$this->kategoriAnggaran" placeholder="-" width="full-width" />
+                        <x-form.select id="anggaran-id" model="anggaranId" :options="$this->kategoriAnggaran" placeholder="-" width="full-width" :disabled="$this->sudahDipakai()" />
                         <x-form.error name="anggaranId" />
                     </div>
                 </x-row-col-flex>
@@ -61,7 +74,7 @@
                         <label for="nominal-anggaran">Nominal Anggaran</label>
                         <div class="d-flex">
                             <span class="mt-1">Rp.</span>
-                            <input type="text" id="nominal-anggaran" wire:model.defer="nominalAnggaran" class="form-control form-control-sm ml-3 text-right" placeholder="0" />
+                            <input type="text" id="nominal-anggaran" wire:model="nominalAnggaran" class="form-control form-control-sm ml-3 text-right" placeholder="0" />
                         </div>
                         <x-form.error name="nominalAnggaran" />
                     </div>

@@ -228,7 +228,7 @@ class BukuBesar extends Component
             ->first();
 
         if ($existingSession) {
-            $this->emit('flash.error', 'Anda sudah memiliki proses export Buku Besar yang sedang berjalan. Silahkan tunggu hingga proses tersebut selesai sebelum memulai export baru.');
+            $this->dispatch('flash.error', 'Anda sudah memiliki proses export Buku Besar yang sedang berjalan. Silahkan tunggu hingga proses tersebut selesai sebelum memulai export baru.');
 
             return;
         }
@@ -268,6 +268,6 @@ class BukuBesar extends Component
             ->info()
             ->send(user());
 
-        $this->emit('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
+        $this->dispatch('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
     }
 }

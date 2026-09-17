@@ -63,19 +63,23 @@
             })
 
             @if ($livewire)
-                Livewire.hook('element.updated', (el, component) => {
+                Livewire.hook('morph.updated', ({ el, component }) => {
                     {{ $varName }}.select2({
                         dropdownCssClass: 'text-sm px-0',
                     })
                 })
 
                 @if ($model)
+                    // Deferred: the choice is applied with the next search, not
+                    // the moment it is made, because report queries are heavy.
+                    // In Livewire 2 the third argument true meant "defer"; in
+                    // Livewire 3 it means "live".
                     {{ $varName }}.on('select2:select', e => {
-                        @this.set('{{ $model }}', {{ $varName }}.val(), true)
+                        @this.set('{{ $model }}', {{ $varName }}.val(), false)
                     })
 
                     {{ $varName }}.on('select2:unselect', e => {
-                        @this.set('{{ $model }}', {{ $varName }}.val(), true)
+                        @this.set('{{ $model }}', {{ $varName }}.val(), false)
                     })
 
                     @if ($event)

@@ -1,5 +1,9 @@
 @props([
     'useDefaultFilter' => false,
+    // The default filter row carries an "Export ke Excel" button. Turn it off
+    // on a page that has no export: pressing it there only reaches an empty
+    // dataPerSheet().
+    'useExport' => true,
     'useLoading' => false,
 
     'header' => null,
@@ -15,7 +19,9 @@
         <div class="card-body">
             <x-row-col-flex>
                 <x-filter.range-date />
-                <x-filter.button-export-excel class="ml-auto" />
+                @if ($useExport)
+                    <x-filter.button-export-excel class="ml-auto" />
+                @endif
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
