@@ -435,22 +435,23 @@ class RKATInputPenetapanTest extends TestCase
     /**
      * @test
      *
-     * Once spending has been reported against a penetapan, the RESTRICT key
-     * from pemakaian_anggaran refuses the delete. That refusal is what keeps
-     * reported spending from losing the budget it was charged to, so it has to
-     * surface as a handled error, not a crash, and leave both rows alone.
+     * A Penetapan RKAT with Pemakaian Anggaran charged to it cannot be deleted.
+     * The refusal says how many Pemakaian hold it, rather than the generic
+     * error the foreign key used to produce, and leaves both rows alone.
      */
     public function refuses_to_delete_a_penetapan_that_already_has_spending_reported(): void
     {
         $petugas = $this->petugasWithPermissions(['keuangan.rkat-penetapan.delete'], '99999901');
         $existing = $this->penetapanTersimpan();
 
-        PemakaianAnggaran::create([
-            'judul'              => 'Pembelian Uji',
-            'tgl_dipakai'        => '2026-03-01',
-            'anggaran_bidang_id' => $existing->id,
-            'user_id'            => '99999901',
-        ]);
+        foreach (['Pembelian Uji A', 'Pembelian Uji B'] as $judul) {
+            PemakaianAnggaran::create([
+                'judul'              => $judul,
+                'tgl_dipakai'        => '2026-03-01',
+                'anggaran_bidang_id' => $existing->id,
+                'user_id'            => '99999901',
+            ]);
+        }
 
         $this->travelTo($this->insidePeriod());
 
@@ -458,10 +459,12 @@ class RKATInputPenetapanTest extends TestCase
             ->test(RKATInputPenetapan::class)
             ->dispatch('prepare', $existing->id)
             ->call('delete')
-            ->assertDispatched('data-errored')
-            ->assertNotDispatched('data-deleted');
+            ->assertDispatched('data-denied')
+            ->assertNotDispatched('data-deleted')
+            ->assertNotDispatched('data-errored')
+            ->assertSee('sudah memiliki 2 Pemakaian Anggaran');
 
         $this->assertSame(1, AnggaranBidang::query()->count());
-        $this->assertSame(1, PemakaianAnggaran::query()->count());
+        $this->assertSame(2, PemakaianAnggaran::query()->count());
     }
 }

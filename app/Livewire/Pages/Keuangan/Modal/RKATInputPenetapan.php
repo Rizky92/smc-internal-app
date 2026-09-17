@@ -8,6 +8,7 @@ use App\Livewire\Concerns\FlashComponent;
 use App\Models\Bidang;
 use App\Models\Keuangan\RKAT\Anggaran;
 use App\Models\Keuangan\RKAT\AnggaranBidang;
+use App\Models\Keuangan\RKAT\PemakaianAnggaran;
 use App\Settings\RKATSettings;
 use Exception;
 use Illuminate\Support\Collection;
@@ -229,6 +230,21 @@ class RKATInputPenetapan extends Component
         }
 
         $this->validate();
+
+        // Deleting it would leave that spending charged to no budget.
+        $jumlahPemakaian = PemakaianAnggaran::query()
+            ->where('anggaran_bidang_id', $this->anggaranBidangId)
+            ->count();
+
+        if ($jumlahPemakaian > 0) {
+            $this->flashError(sprintf(
+                'Penetapan RKAT ini tidak dapat dihapus karena sudah memiliki %d Pemakaian Anggaran!',
+                $jumlahPemakaian
+            ));
+            $this->dispatch('data-denied');
+
+            return;
+        }
 
         try {
             tracker_start('mysql_smc');
