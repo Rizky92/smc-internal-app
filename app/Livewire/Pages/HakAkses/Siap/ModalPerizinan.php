@@ -90,7 +90,7 @@ class ModalPerizinan extends Component
             'guard_name' => 'web',
         ]);
 
-        $role->syncPermissions(array_values($this->checkedPermissions));
+        $role->syncPermissions($this->tickedPermissionIds());
 
         tracker_end();
 
@@ -114,12 +114,34 @@ class ModalPerizinan extends Component
         $role->name = $this->roleName;
         $role->save();
 
-        $role->syncPermissions(array_values($this->checkedPermissions));
+        $role->syncPermissions($this->tickedPermissionIds());
 
         tracker_end();
 
         $this->dispatch('flash.success', "Hak akses {$this->roleName} berhasil diupdate!");
         $this->dispatch('role-updated');
+    }
+
+    /**
+     * The ids of the permissions whose box is ticked.
+     *
+     * checkedPermissions is keyed by permission id. Its values are not ids to be
+     * relied on: prepare() loads id => id, but each checkbox is bound as
+     * wire:model="checkedPermissions.{id}", and Livewire 3 writes the box's
+     * checked state there, true or false. Livewire 2 wrote the value attribute
+     * instead, which is why passing the values straight to syncPermissions()
+     * used to work. Reading the keys of the truthy entries handles every shape.
+     *
+     * @return list<int>
+     */
+    protected function tickedPermissionIds(): array
+    {
+        return collect($this->checkedPermissions)
+            ->filter()
+            ->keys()
+            ->map(fn ($id): int => (int) $id)
+            ->values()
+            ->all();
     }
 
     protected function defaultValues(): void
