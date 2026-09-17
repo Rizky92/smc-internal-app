@@ -64,7 +64,7 @@ class RencanaOrderPermissionTest extends DuskTestCase
             ->type('user', $nik)
             ->type('pass', self::PASSWORD)
             ->press('Masuk')
-            ->assertPathIs('/admin');
+            ->waitForLocation('/admin');
     }
 
     /**

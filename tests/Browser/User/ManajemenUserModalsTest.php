@@ -68,7 +68,7 @@ class ManajemenUserModalsTest extends DuskTestCase
             ->type('user', self::ACTOR_NIK)
             ->type('pass', self::PASSWORD)
             ->press('Masuk')
-            ->assertPathIs('/admin');
+            ->waitForLocation('/admin');
     }
 
     private function openPilihanFor(Browser $browser, string $nik): void

@@ -58,7 +58,7 @@ class LoginTest extends DuskTestCase
                 ->type('user', '99999902')
                 ->type('pass', 'uji-password-123')
                 ->press('Masuk')
-                ->assertPathIs('/admin')
+                ->waitForLocation('/admin')
                 ->assertSee('Selamat Datang');
         });
     }
@@ -80,8 +80,8 @@ class LoginTest extends DuskTestCase
                 ->type('user', '99999903')
                 ->type('pass', 'password-yang-salah')
                 ->press('Masuk')
-                ->assertPathIs('/login')
-                ->assertSee('Username atau Password salah');
+                ->waitForText('Username atau Password salah')
+                ->assertPathIs('/login');
         });
     }
 }

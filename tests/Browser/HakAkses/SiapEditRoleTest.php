@@ -55,11 +55,14 @@ class SiapEditRoleTest extends DuskTestCase
                 ->type('user', self::NIK)
                 ->type('pass', self::PASSWORD)
                 ->press('Masuk')
-                ->assertPathIs('/admin')
+                ->waitForLocation('/admin')
                 ->visit('/admin/hak-akses/smc-internal-app')
                 ->waitForText('UJI-DUSK-Role')
                 ->click('button[wire\\:click*="siap.prepare"]')
-                ->waitFor('#role-sekarang')
+                // The input is part of the modal markup from the first paint,
+                // so waiting for the element returns before the prepare round
+                // trip has filled it in. Wait for the value itself.
+                ->waitUntil("document.querySelector('#role-sekarang').value === 'UJI-DUSK-Role'")
                 ->assertInputValue('#role-sekarang', 'UJI-DUSK-Role')
                 ->assertDontSee('TypeError')
                 ->type('#role-sekarang', 'UJI-DUSK-Role-Diubah')

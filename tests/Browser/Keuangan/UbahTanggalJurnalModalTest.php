@@ -50,7 +50,7 @@ class UbahTanggalJurnalModalTest extends DuskTestCase
         $sik = DB::connection('mysql_sik');
 
         $sik->table('jurnal')->insert([
-            'no_jurnal' => $noJurnal, 'no_bukti' => 'BUKTI-'.$noJurnal, 'tgl_jurnal' => $tanggal,
+            'no_jurnal'  => $noJurnal, 'no_bukti' => 'BUKTI-'.$noJurnal, 'tgl_jurnal' => $tanggal,
             'jam_jurnal' => '09:00:00', 'jenis' => 'U', 'keterangan' => 'Jurnal '.$noJurnal,
         ]);
 
@@ -87,17 +87,23 @@ class UbahTanggalJurnalModalTest extends DuskTestCase
         $this->jurnal('UJI-DUSK-000001', $hariIni);
         $this->jurnal('UJI-DUSK-000002', $hariIni);
 
-        $this->browse(function (Browser $browser) use ($tanggalBaruKetikan) {
+        $this->browse(function (Browser $browser) use ($tanggalBaruKetikan, $hariIni, $tanggalBaru) {
             $browser->visit('/login')
                 ->type('user', self::NIK)
                 ->type('pass', self::PASSWORD)
                 ->press('Masuk')
-                ->assertPathIs('/admin')
+                ->waitForLocation('/admin')
                 ->visit('/admin/keuangan/jurnal-perbaikan')
                 ->waitForText('UJI-DUSK-000001')
                 ->click('#edit-UJI-DUSK-000001')
-                ->waitFor('#tgl-jurnal-baru')
+                // The input is in the page from the first paint, so waiting for
+                // the element does not wait for prepareJurnal(). Its response
+                // writes the old date into the field; typing before it arrives
+                // gets overwritten, and the save then "succeeds" with the date
+                // unchanged. Wait for the old date to land first.
+                ->waitUntil("document.querySelector('#tgl-jurnal-baru').value === '{$hariIni}'")
                 ->type('#tgl-jurnal-baru', $tanggalBaruKetikan)
+                ->waitUntil("document.querySelector('#tgl-jurnal-baru').value === '{$tanggalBaru}'")
                 ->press('Simpan')
                 ->waitForText('berhasil diubah');
         });
