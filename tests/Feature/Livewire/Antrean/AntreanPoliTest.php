@@ -33,7 +33,7 @@ class AntreanPoliTest extends TestCase
     {
         $sik = DB::connection('mysql_sik');
 
-        $sik->table('antripoli')->where('no_rawat', self::NO_RAWAT)->delete();
+        $sik->table('antripoli')->where('no_rawat', 'like', 'UJI/%')->delete();
         $sik->table('dokter')->where('kd_dokter', self::KD_DOKTER)->delete();
         $sik->table('poliklinik')->where('kd_poli', 'like', 'UJI%')->delete();
 
@@ -131,5 +131,61 @@ class AntreanPoliTest extends TestCase
         $this->withoutExceptionHandling();
 
         $this->get('/antrean/TIDAKADA')->assertOk();
+    }
+
+    /**
+     * @test
+     *
+     * Once the voice has played, the display marks the call as done. The reset
+     * is scoped to this display's poli: several displays run at once, and one of
+     * them finishing its announcement must not cancel a call another poli is
+     * about to make.
+     */
+    public function finishing_a_call_resets_only_this_polis_queue(): void
+    {
+        $this->antreanSiapDipanggil('UJI01', 'Poli Uji Dalam', 'BUDI SANTOSO');
+
+        DB::connection('mysql_sik')->table('antripoli')->insert([
+            'kd_dokter' => self::KD_DOKTER, 'kd_poli' => 'UJI02',
+            'no_rawat'  => 'UJI/0002', 'status' => '1',
+        ]);
+
+        Livewire::test(AntreanPoli::class, ['kd_poli' => 'UJI01'])
+            ->dispatch('updateStatusAfterCall');
+
+        $status = DB::connection('mysql_sik')->table('antripoli')
+            ->where('no_rawat', 'like', 'UJI/%')
+            ->pluck('status', 'kd_poli');
+
+        $this->assertSame('0', $status['UJI01']);
+        $this->assertSame('1', $status['UJI02']);
+    }
+
+    /**
+     * @test
+     *
+     * The display polls with call(); after the reset above, the same patient
+     * must not be announced a second time.
+     */
+    public function a_call_that_has_been_completed_is_not_announced_again(): void
+    {
+        $this->antreanSiapDipanggil('UJI01', 'Poli Uji Dalam', 'BUDI SANTOSO');
+
+        Livewire::test(AntreanPoli::class, ['kd_poli' => 'UJI01'])
+            ->call('call')
+            ->assertDispatched('play-voice')
+            ->dispatch('updateStatusAfterCall')
+            ->call('call')
+            ->assertNotDispatched('play-voice');
+    }
+
+    /**
+     * @test
+     */
+    public function an_update_signal_refreshes_the_running_text(): void
+    {
+        Livewire::test(AntreanPoli::class, ['kd_poli' => 'UJI01'])
+            ->dispatch('updateAntrean')
+            ->assertDispatched('updateMarqueeData');
     }
 }

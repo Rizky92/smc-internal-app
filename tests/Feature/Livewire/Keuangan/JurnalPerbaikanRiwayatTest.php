@@ -81,4 +81,22 @@ class JurnalPerbaikanRiwayatTest extends TestCase
             ->assertOk()
             ->assertSee('UJI-TANPA-PEGAWAI');
     }
+
+    /**
+     * @test
+     *
+     * No export is written for this page — dataPerSheet() is empty — yet
+     * <x-card use-default-filter> used to add an "Export ke Excel" button to it
+     * anyway, and every press failed with "Undefined array key 0". The page now
+     * turns that button off.
+     */
+    public function does_not_offer_an_export_it_cannot_produce(): void
+    {
+        Livewire::actingAs($this->petugasWithPermissions(['keuangan.jurnal-perbaikan-riwayat.read'], '99999901'))
+            ->test(JurnalPerbaikanRiwayat::class)
+            ->call('loadProperties')
+            ->assertOk()
+            ->assertDontSeeHtml('wire:click.prevent="exportToExcel"')
+            ->assertDontSee('Export ke Excel');
+    }
 }

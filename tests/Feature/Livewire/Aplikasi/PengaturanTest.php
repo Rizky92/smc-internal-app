@@ -192,6 +192,31 @@ class PengaturanTest extends TestCase
     }
 
     /**
+     * DEFECT, recorded rather than asserted as correct.
+     *
+     * Before any budget has been set, the earliest year is null, and range()
+     * reads it as 0 — so the year picker opens at year 0 and runs to five years
+     * from now, two thousand entries long. That is the state of a fresh install,
+     * and of the dev smc schema today (no anggaran_bidang rows).
+     *
+     * Falling back to the RKATSettings year, or the current one, fixes it. Flip
+     * the assertions when it lands.
+     *
+     * @test
+     */
+    public function without_any_budget_the_year_list_currently_starts_at_year_zero(): void
+    {
+        $this->assertSame(0, AnggaranBidang::query()->count(), 'Test ini mengandaikan belum ada anggaran_bidang.');
+
+        $tahun = Livewire::actingAs($this->petugasWithPermissions([], '99999901'))
+            ->test(Pengaturan::class)
+            ->get('dataTahun');
+
+        $this->assertSame(0, array_key_first($tahun));
+        $this->assertGreaterThan(2000, count($tahun));
+    }
+
+    /**
      * @test
      *
      * permissions() walks every trait prefixed "Pengaturan*" on the class and

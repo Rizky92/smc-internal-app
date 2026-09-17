@@ -342,8 +342,7 @@ class AccountReceivableTest extends TestCase
 
         Queue::assertPushed(BayarPiutangPasien::class, 1);
 
-        Queue::assertPushed(function (BayarPiutangPasien $job) use ($petugas) {
-            return $this->jobProperty($job, 'noTagihan') === 'TAG01'
+        Queue::assertPushed(fn (BayarPiutangPasien $job) => $this->jobProperty($job, 'noTagihan') === 'TAG01'
                 && $this->jobProperty($job, 'kodePJ') === 'PJ1'
                 && $this->jobProperty($job, 'noRawat') === 'RWT01'
                 && $this->jobProperty($job, 'userId') === $petugas->nik
@@ -351,8 +350,7 @@ class AccountReceivableTest extends TestCase
                 && $this->jobProperty($job, 'akunBayar') === 'UJI.9'
                 && $this->jobProperty($job, 'diskonPiutang') === 5000.0
                 && $this->jobProperty($job, 'akunDiskonPiutang') === 'UJI.DISKON'
-                && $this->jobProperty($job, 'akunTidakTerbayar') === 'UJI.TT';
-        });
+                && $this->jobProperty($job, 'akunTidakTerbayar') === 'UJI.TT');
     }
 
     /**
@@ -379,5 +377,76 @@ class AccountReceivableTest extends TestCase
 
         $this->assertSame([], $test->instance()->tagihanDipilih);
         $this->assertSame(0, $test->instance()->totalDibayar);
+    }
+
+    /**
+     * @test
+     *
+     * "Pilih semua" builds the same selection a user would by ticking every
+     * row: one entry per invoice in the filtered period, keyed exactly as
+     * validasiPiutang() splits it apart ("no_tagihan_kd_pj_no_rawat"), carrying
+     * the invoice's own discount. The running total it leaves behind is what
+     * the user is about to confirm as paid, so it is checked to the rupiah:
+     * outstanding after instalments, less the discounts being applied.
+     */
+    public function pilih_semua_selects_every_invoice_in_the_period_with_its_discount(): void
+    {
+        $this->tagihan('11', '2026-03-10', 300000, 50000);
+        $this->tagihan('12', '2026-02-10', 120000);
+        $this->tagihan('13', '2025-10-01', 999000);     // before AWAL: must not be picked
+
+        DB::connection('mysql_sik')->table('detail_penagihan_piutang')
+            ->where('no_rawat', 'UJI/12')
+            ->update(['diskon' => 20000]);
+
+        $kodePenjamin = DB::connection('mysql_sik')->table('penjab')->value('kd_pj');
+
+        $test = $this->report()->call('pilihSemua', true);
+
+        $dipilih = $test->instance()->tagihanDipilih;
+
+        $this->assertEqualsCanonicalizing(
+            ["UJI-TAG11_{$kodePenjamin}_UJI/11", "UJI-TAG12_{$kodePenjamin}_UJI/12"],
+            array_keys($dipilih)
+        );
+        $this->assertTrue($dipilih["UJI-TAG11_{$kodePenjamin}_UJI/11"]['selected']);
+        $this->assertEquals(20000, $dipilih["UJI-TAG12_{$kodePenjamin}_UJI/12"]['diskon_piutang']);
+
+        // (300000 - 50000) + (120000 - 0) - 20000
+        $this->assertEquals(350000, $test->instance()->totalDibayar);
+    }
+
+    /**
+     * @test
+     *
+     * The selection follows the search box, not only the date range, so a
+     * narrowed list selects only what is on it.
+     */
+    public function pilih_semua_respects_the_search_term(): void
+    {
+        $this->tagihan('14', '2026-03-10', 100000);
+        $this->tagihan('15', '2026-03-11', 200000);
+
+        $test = $this->report()
+            ->set('cari', 'UJI/15')
+            ->call('pilihSemua', true);
+
+        $this->assertCount(1, $test->instance()->tagihanDipilih);
+        $this->assertStringEndsWith('_UJI/15', array_key_first($test->instance()->tagihanDipilih));
+    }
+
+    /**
+     * @test
+     */
+    public function unticking_pilih_semua_clears_the_selection_and_the_total(): void
+    {
+        $this->tagihan('16', '2026-03-10', 100000);
+
+        $test = $this->report()
+            ->call('pilihSemua', true)
+            ->call('pilihSemua', false);
+
+        $this->assertSame([], $test->instance()->tagihanDipilih);
+        $this->assertEquals(0, $test->instance()->totalDibayar);
     }
 }

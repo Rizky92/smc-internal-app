@@ -6,6 +6,7 @@ use App\Livewire\Pages\Keuangan\Modal\RKATInputPenetapan;
 use App\Models\Bidang;
 use App\Models\Keuangan\RKAT\Anggaran;
 use App\Models\Keuangan\RKAT\AnggaranBidang;
+use App\Models\Keuangan\RKAT\PemakaianAnggaran;
 use App\Settings\RKATSettings;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -48,6 +49,8 @@ class RKATInputPenetapanTest extends TestCase
         $smc = DB::connection('mysql_smc');
 
         $smc->statement('set foreign_key_checks = 0');
+        $smc->table('pemakaian_anggaran_detail')->delete();
+        $smc->table('pemakaian_anggaran')->delete();
         $smc->table('anggaran_bidang')->delete();
         $smc->table('anggaran')->delete();
         $smc->table('bidang')->delete();
@@ -329,5 +332,136 @@ class RKATInputPenetapanTest extends TestCase
         $this->assertSame((int) $anggaran->id, (int) $existing->anggaran_id);
         $this->assertSame(500000, (int) $existing->nominal_anggaran);
         $this->assertSame(2, AnggaranBidang::query()->count());
+    }
+
+    private function penetapanTersimpan(int $nominal = 500000): AnggaranBidang
+    {
+        return AnggaranBidang::create([
+            'anggaran_id'      => $this->kategori()->id,
+            'bidang_id'        => $this->bidang()->id,
+            'tahun'            => app(RKATSettings::class)->tahun,
+            'nominal_anggaran' => $nominal,
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function updates_the_nominal_of_the_selected_penetapan(): void
+    {
+        $petugas = $this->petugasWithPermissions(['keuangan.rkat-penetapan.update'], '99999901');
+        $existing = $this->penetapanTersimpan();
+
+        $this->travelTo($this->insidePeriod());
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPenetapan::class)
+            ->dispatch('prepare', $existing->id)
+            ->set('nominalAnggaran', 875000.5)
+            ->call('create')
+            ->assertHasNoErrors()
+            ->assertDispatched('data-saved')
+            // A successful update resets the form so the next open starts clean.
+            ->assertSet('anggaranBidangId', -1);
+
+        $this->assertEquals(875000.5, $existing->refresh()->nominal_anggaran);
+        $this->assertSame(1, AnggaranBidang::query()->count());
+    }
+
+    /**
+     * @test
+     *
+     * The calendar guard applies to edits as well, not only to new penetapan —
+     * otherwise a budget closed for the year could still be moved.
+     */
+    public function refuses_an_update_outside_the_configured_period(): void
+    {
+        $petugas = $this->petugasWithPermissions(['keuangan.rkat-penetapan.update'], '99999901');
+        $existing = $this->penetapanTersimpan();
+
+        $this->travelTo($this->outsidePeriod());
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPenetapan::class)
+            ->dispatch('prepare', $existing->id)
+            ->set('nominalAnggaran', 999999)
+            ->call('create')
+            ->assertDispatched('data-denied')
+            ->assertNotDispatched('data-saved');
+
+        $this->assertSame(500000, (int) $existing->refresh()->nominal_anggaran);
+    }
+
+    /**
+     * @test
+     */
+    public function refuses_an_update_without_the_update_permission(): void
+    {
+        $petugas = $this->petugasWithPermissions(['keuangan.rkat-penetapan.create'], '99999901');
+        $existing = $this->penetapanTersimpan();
+
+        $this->travelTo($this->insidePeriod());
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPenetapan::class)
+            ->dispatch('prepare', $existing->id)
+            ->set('nominalAnggaran', 999999)
+            ->call('create')
+            ->assertDispatched('data-denied');
+
+        $this->assertSame(500000, (int) $existing->refresh()->nominal_anggaran);
+    }
+
+    /**
+     * @test
+     */
+    public function refuses_a_delete_without_the_delete_permission(): void
+    {
+        $petugas = $this->petugasWithPermissions(['keuangan.rkat-penetapan.update'], '99999901');
+        $existing = $this->penetapanTersimpan();
+
+        $this->travelTo($this->insidePeriod());
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPenetapan::class)
+            ->dispatch('prepare', $existing->id)
+            ->call('delete')
+            ->assertDispatched('data-denied')
+            ->assertNotDispatched('data-deleted');
+
+        $this->assertSame(1, AnggaranBidang::query()->count());
+    }
+
+    /**
+     * @test
+     *
+     * Once spending has been reported against a penetapan, the RESTRICT key
+     * from pemakaian_anggaran refuses the delete. That refusal is what keeps
+     * reported spending from losing the budget it was charged to, so it has to
+     * surface as a handled error, not a crash, and leave both rows alone.
+     */
+    public function refuses_to_delete_a_penetapan_that_already_has_spending_reported(): void
+    {
+        $petugas = $this->petugasWithPermissions(['keuangan.rkat-penetapan.delete'], '99999901');
+        $existing = $this->penetapanTersimpan();
+
+        PemakaianAnggaran::create([
+            'judul'              => 'Pembelian Uji',
+            'tgl_dipakai'        => '2026-03-01',
+            'anggaran_bidang_id' => $existing->id,
+            'user_id'            => '99999901',
+        ]);
+
+        $this->travelTo($this->insidePeriod());
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPenetapan::class)
+            ->dispatch('prepare', $existing->id)
+            ->call('delete')
+            ->assertDispatched('data-errored')
+            ->assertNotDispatched('data-deleted');
+
+        $this->assertSame(1, AnggaranBidang::query()->count());
+        $this->assertSame(1, PemakaianAnggaran::query()->count());
     }
 }

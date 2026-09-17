@@ -9,6 +9,7 @@ use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Models\Keuangan\RKAT\PemakaianAnggaran;
 use App\Models\Keuangan\RKAT\PemakaianAnggaranDetail;
 use App\Settings\RKATSettings;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -277,5 +278,228 @@ class RKATInputPelaporanTest extends TestCase
 
         $this->assertSame('Pembelian Lama', $pemakaian->judul);
         $this->assertSame(2, PemakaianAnggaran::query()->count());
+    }
+
+    /**
+     * An existing report with one detail line, and the options array the row
+     * click hands to prepare() for it.
+     *
+     * @return array{0: PemakaianAnggaran, 1: array<string, mixed>}
+     */
+    private function laporanTersimpan(AnggaranBidang $rkat, array $detail = [['keterangan' => 'Barang A', 'nominal' => 250000]]): array
+    {
+        $pemakaian = PemakaianAnggaran::create([
+            'judul'              => 'Pembelian Lama',
+            'tgl_dipakai'        => '2026-02-01',
+            'anggaran_bidang_id' => $rkat->id,
+            'user_id'            => '99999901',
+        ]);
+
+        if ($detail !== []) {
+            $pemakaian->detail()->createMany($detail);
+        }
+
+        return [$pemakaian, [
+            'anggaranBidangId'    => $rkat->id,
+            'pemakaianAnggaranId' => $pemakaian->id,
+            'tglPakai'            => '2026-02-01',
+            'keterangan'          => 'Pembelian Lama',
+        ]];
+    }
+
+    /**
+     * @test
+     *
+     * Updating rewrites the detail lines wholesale — deletes them all, then
+     * inserts the form's. The old lines must be gone, not added to.
+     */
+    public function updating_a_report_replaces_its_detail_lines(): void
+    {
+        $petugas = $this->petugasWithPermissions(['keuangan.rkat-pelaporan.update'], '99999901');
+        [$pemakaian, $options] = $this->laporanTersimpan($this->anggaranBidang());
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPelaporan::class)
+            ->dispatch('prepare', options: $options)
+            ->set('keterangan', 'Pembelian Diubah')
+            ->set('detail', [
+                ['keterangan' => 'Barang C', 'nominal' => 100000],
+                ['keterangan' => 'Barang D', 'nominal' => 50000],
+            ])
+            ->call('create')
+            ->assertHasNoErrors()
+            ->assertDispatched('data-saved');
+
+        $this->assertSame('Pembelian Diubah', $pemakaian->refresh()->judul);
+        $this->assertSame(
+            ['Barang C', 'Barang D'],
+            $pemakaian->detail()->orderBy('keterangan')->pluck('keterangan')->all()
+        );
+        $this->assertEqualsWithDelta(150000, $pemakaian->detail()->sum('nominal'), 0.001);
+    }
+
+    /**
+     * @test
+     */
+    public function refuses_an_update_without_the_update_permission(): void
+    {
+        $petugas = $this->petugasWithPermissions(['keuangan.rkat-pelaporan.create'], '99999901');
+        [$pemakaian, $options] = $this->laporanTersimpan($this->anggaranBidang());
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPelaporan::class)
+            ->dispatch('prepare', options: $options)
+            ->set('keterangan', 'Pembelian Diubah')
+            ->call('create')
+            ->assertDispatched('data-denied');
+
+        $this->assertSame('Pembelian Lama', $pemakaian->refresh()->judul);
+        $this->assertSame(1, $pemakaian->detail()->count());
+    }
+
+    /**
+     * @test
+     */
+    public function refuses_a_delete_without_the_delete_permission(): void
+    {
+        $petugas = $this->petugasWithPermissions(['keuangan.rkat-pelaporan.update'], '99999901');
+        [, $options] = $this->laporanTersimpan($this->anggaranBidang(), []);
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPelaporan::class)
+            ->dispatch('prepare', options: $options)
+            ->call('delete')
+            ->assertDispatched('data-denied');
+
+        $this->assertSame(1, PemakaianAnggaran::query()->count());
+    }
+
+    /**
+     * @test
+     */
+    public function deletes_a_report_that_has_no_detail_lines(): void
+    {
+        $petugas = $this->petugasWithPermissions(['keuangan.rkat-pelaporan.delete'], '99999901');
+        [, $options] = $this->laporanTersimpan($this->anggaranBidang(), []);
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPelaporan::class)
+            ->dispatch('prepare', options: $options)
+            ->call('delete')
+            ->assertDispatched('data-saved');
+
+        $this->assertSame(0, PemakaianAnggaran::query()->count());
+    }
+
+    /**
+     * DEFECT, recorded rather than asserted as correct.
+     *
+     * pemakaian_anggaran_detail.pemakaian_anggaran_id is a RESTRICT foreign key
+     * (the migration's plain ->constrained(), and the same rule on the dev smc
+     * schema), and neither delete() nor the model removes the detail lines
+     * first. Every real report has at least one line, so deleting a report from
+     * this modal fails on the constraint, uncaught, and the row stays.
+     *
+     * Deleting $pemakaianAnggaran->detail() before the parent, inside a
+     * transaction, fixes it. Flip this test to assert the report and its lines
+     * are gone when that lands.
+     *
+     * @test
+     */
+    public function deleting_a_report_with_detail_lines_currently_fails_on_the_foreign_key(): void
+    {
+        $petugas = $this->petugasWithPermissions(['keuangan.rkat-pelaporan.delete'], '99999901');
+        [, $options] = $this->laporanTersimpan($this->anggaranBidang());
+
+        try {
+            Livewire::actingAs($petugas)
+                ->test(RKATInputPelaporan::class)
+                ->dispatch('prepare', options: $options)
+                ->call('delete');
+
+            $this->fail('Menghapus laporan RKAT yang punya rincian ternyata berhasil; balik test ini.');
+        } catch (QueryException $e) {
+            $this->assertSame('23000', $e->getCode());
+        }
+
+        $this->assertSame(1, PemakaianAnggaran::query()->count());
+    }
+
+    /**
+     * @test
+     */
+    public function add_detail_appends_a_blank_line(): void
+    {
+        Livewire::actingAs($this->petugasWithPermissions([], '99999901'))
+            ->test(RKATInputPelaporan::class)
+            ->call('addDetail')
+            ->assertCount('detail', 2)
+            ->assertSet('detail.1', ['keterangan' => '', 'nominal' => 0]);
+    }
+
+    /**
+     * @test
+     *
+     * removeDetail() unsets by index, leaving a gap in the keys. The lines that
+     * are left must still be the ones saved.
+     */
+    public function a_removed_detail_line_is_not_saved(): void
+    {
+        $petugas = $this->petugasWithPermissions(['keuangan.rkat-pelaporan.create'], '99999901');
+        $rkat = $this->anggaranBidang();
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPelaporan::class)
+            ->set('anggaranBidangId', $rkat->id)
+            ->set('tglPakai', '2026-03-01')
+            ->set('keterangan', 'Pembelian Uji')
+            ->set('detail', [
+                ['keterangan' => 'Tetap A', 'nominal' => 1000],
+                ['keterangan' => 'Dibuang', 'nominal' => 2000],
+                ['keterangan' => 'Tetap B', 'nominal' => 3000],
+            ])
+            ->call('removeDetail', 1)
+            ->call('create')
+            ->assertHasNoErrors()
+            ->assertDispatched('data-saved');
+
+        $this->assertSame(
+            ['Tetap A', 'Tetap B'],
+            PemakaianAnggaranDetail::query()->orderBy('keterangan')->pluck('keterangan')->all()
+        );
+    }
+
+    /**
+     * DEFECT, recorded rather than asserted as correct.
+     *
+     * When the transaction in create() throws, the catch dispatches data-failed
+     * alongside flash.success — so the failure message "Terjadi kegagalan..."
+     * arrives in a green success banner. A null keterangan on a line reaches
+     * that branch: the rule allows it, the NOT NULL column does not.
+     *
+     * The catch should dispatch flash.error. Flip the assertion when it does.
+     *
+     * @test
+     */
+    public function a_failed_save_is_currently_announced_in_a_success_banner(): void
+    {
+        $petugas = $this->petugasWithPermissions(['keuangan.rkat-pelaporan.create'], '99999901');
+        $rkat = $this->anggaranBidang();
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPelaporan::class)
+            ->set('anggaranBidangId', $rkat->id)
+            ->set('tglPakai', '2026-03-01')
+            ->set('keterangan', 'Pembelian Uji')
+            ->set('detail', [['keterangan' => null, 'nominal' => 1000]])
+            ->call('create')
+            ->assertDispatched('data-failed')
+            ->assertDispatched(
+                'flash.success',
+                fn (string $event, array $params): bool => str_contains($params[0], 'kegagalan')
+            );
+
+        // The transaction did its job: nothing half-written.
+        $this->assertSame(0, PemakaianAnggaran::query()->count());
     }
 }

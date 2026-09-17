@@ -79,6 +79,21 @@ class KirimHasilMCUKaryawanTest extends TestCase
 
     /**
      * @test
+     *
+     * dataPerSheet() is empty — the export was never written — yet the page
+     * carried an "Export ke Excel" button, and every press failed with
+     * "Undefined array key 0". The button is gone until an export exists.
+     */
+    public function does_not_offer_an_export_it_cannot_produce(): void
+    {
+        $this->report()
+            ->assertOk()
+            ->assertDontSeeHtml('wire:click.prevent="exportToExcel"')
+            ->assertDontSee('Export ke Excel');
+    }
+
+    /**
+     * @test
      */
     public function narrows_the_employee_list_to_the_selected_company(): void
     {

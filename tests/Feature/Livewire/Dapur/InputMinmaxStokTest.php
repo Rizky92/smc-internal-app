@@ -31,6 +31,7 @@ class InputMinmaxStokTest extends TestCase
         // Soft-deleted by the model; delete the row outright so it doesn't
         // leak into another test's read of the same kode_brng.
         $smc->table('minmax_stok_dapur')->where('kode_brng', 'like', 'UJI-%')->delete();
+        $sik->table('dapursuplier')->where('kode_suplier', 'like', 'UJ%')->delete();
 
         parent::tearDown();
     }
@@ -158,5 +159,91 @@ class InputMinmaxStokTest extends TestCase
         $this->assertNotNull($item, 'Barang uji tidak ditemukan pada daftar setelah disimpan.');
         $this->assertSame(5, (int) $item->stok_min);
         $this->assertSame(20, (int) $item->stok_max);
+    }
+
+    /**
+     * The kode_brng of every item the list shows after searching for $cari.
+     *
+     * @return list<string>
+     */
+    private function hasilCari(string $cari): array
+    {
+        $component = Livewire::actingAs($this->petugasWithPermissions(['dapur.stok-minmax.read'], '99999901'))
+            ->test(InputMinmaxStok::class)
+            ->call('loadProperties')
+            ->set('cari', $cari)
+            ->assertOk();
+
+        return collect($component->get('barangDapur')->items())
+            ->pluck('kode_brng')
+            ->filter(fn (string $kode): bool => str_starts_with($kode, 'UJI-'))
+            ->sort()
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Two items, one supplied by a named supplier. The search spans the item's
+     * own columns and the supplier's code and name, and the supplier columns are
+     * read through ifnull(..., '-') because most items have no supplier set.
+     *
+     * Those two supplier conditions were written with an unclosed parenthesis —
+     * ifnull(dapursuplier.kode_suplier, ('-') — so every search on this page,
+     * whatever was typed, failed with SQL error 1582 before a single row came
+     * back. That shipped on the live branch as well.
+     */
+    private function duaBarangSatuBerpemasok(): void
+    {
+        $this->barang('UJI-BRG-001');
+        $this->barang('UJI-BRG-002');
+
+        DB::connection('mysql_sik')->table('dapursuplier')->insert([
+            'kode_suplier' => 'UJ001', 'nama_suplier' => 'Sayur Segar Uji',
+            'alamat'       => '-', 'kota' => '-', 'no_telp' => '-', 'nama_bank' => '-', 'rekening' => '-',
+        ]);
+
+        MinmaxStokBarangDapur::create([
+            'kode_brng' => 'UJI-BRG-002', 'stok_min' => 1, 'stok_max' => 5, 'kode_suplier' => 'UJ001',
+        ]);
+    }
+
+    /**
+     * @test
+     */
+    public function searching_by_item_name_narrows_the_list(): void
+    {
+        $this->duaBarangSatuBerpemasok();
+
+        $this->assertSame(['UJI-BRG-001'], $this->hasilCari('Barang Uji UJI-BRG-001'));
+    }
+
+    /**
+     * @test
+     */
+    public function searching_by_supplier_name_finds_the_items_it_supplies(): void
+    {
+        $this->duaBarangSatuBerpemasok();
+
+        $this->assertSame(['UJI-BRG-002'], $this->hasilCari('Sayur Segar Uji'));
+    }
+
+    /**
+     * @test
+     */
+    public function searching_by_supplier_code_finds_the_items_it_supplies(): void
+    {
+        $this->duaBarangSatuBerpemasok();
+
+        $this->assertSame(['UJI-BRG-002'], $this->hasilCari('UJ001'));
+    }
+
+    /**
+     * @test
+     */
+    public function a_search_matching_nothing_returns_an_empty_list(): void
+    {
+        $this->duaBarangSatuBerpemasok();
+
+        $this->assertSame([], $this->hasilCari('tidak ada yang cocok'));
     }
 }

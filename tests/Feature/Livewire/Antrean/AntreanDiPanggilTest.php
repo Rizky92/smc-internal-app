@@ -154,4 +154,81 @@ class AntreanDiPanggilTest extends TestCase
 
         $test->assertSet('antreanDipanggilSekarang', ['no_rawat' => 'UJI/1']);
     }
+
+    /**
+     * @return array<string, string>
+     */
+    private function statusAntrean(): array
+    {
+        return DB::connection('mysql_sik')->table('antripintu_smc')
+            ->where('kd_pintu', self::KD_PINTU)
+            ->pluck('status', 'no_rawat')
+            ->all();
+    }
+
+    /**
+     * @test
+     *
+     * When the announcement finishes the browser fires updateStatus. The patient
+     * just called goes in (1 -> 2), and whoever was still marked as in the room
+     * at this pintu comes out (2 -> 0) — a pintu has one patient inside at a
+     * time, and the "sedang diperiksa" panel reads exactly that row.
+     */
+    public function finishing_the_announcement_moves_the_called_patient_into_the_room(): void
+    {
+        $this->antreanSiapDipanggil('BUDI SANTOSO', 'Pintu Uji');
+
+        DB::connection('mysql_sik')->table('antripintu_smc')->insert([
+            'kd_pintu' => self::KD_PINTU, 'no_rawat' => 'UJI/0009', 'status' => '2',
+        ]);
+
+        Livewire::test(AntreanDiPanggil::class, ['kd_pintu' => self::KD_PINTU])
+            ->call('panggilAntrean')
+            ->assertSet('isCalling', true)
+            ->dispatch('updateStatus')
+            ->assertSet('isCalling', false)
+            ->assertSet('antreanDipanggilSekarang', null);
+
+        $this->assertSame([self::NO_RAWAT => '2', 'UJI/0009' => '0'], $this->statusAntrean());
+    }
+
+    /**
+     * @test
+     *
+     * Releasing the lock is what lets the next poll call the next patient. If it
+     * stayed set, the display would announce one patient and then fall silent.
+     */
+    public function after_the_announcement_the_display_can_call_again(): void
+    {
+        $this->antreanSiapDipanggil('BUDI SANTOSO', 'Pintu Uji');
+
+        $test = Livewire::test(AntreanDiPanggil::class, ['kd_pintu' => self::KD_PINTU])
+            ->call('panggilAntrean')
+            ->dispatch('updateStatus');
+
+        DB::connection('mysql_sik')->table('antripintu_smc')
+            ->where('no_rawat', self::NO_RAWAT)
+            ->update(['status' => '1']);
+
+        $test->call('panggilAntrean')
+            ->assertSet('isCalling', true)
+            ->assertDispatched('play-voice');
+    }
+
+    /**
+     * @test
+     *
+     * A stray updateStatus with nothing being called — a second browser tab,
+     * a reload mid-announcement — must not touch the queue.
+     */
+    public function an_update_with_nothing_being_called_changes_nothing(): void
+    {
+        $this->antreanSiapDipanggil('BUDI SANTOSO', 'Pintu Uji');
+
+        Livewire::test(AntreanDiPanggil::class, ['kd_pintu' => self::KD_PINTU])
+            ->dispatch('updateStatus')
+            ->assertSet('isCalling', false);
+
+        $this->assertSame([self::NO_RAWAT => '1'], $this->statusAntrean());
+    }
 }
