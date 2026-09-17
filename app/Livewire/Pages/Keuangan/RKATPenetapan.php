@@ -80,8 +80,9 @@ class RKATPenetapan extends Component
         $penetapanAwal = $settings->tgl_penetapan_awal;
         $penetapanAkhir = $settings->tgl_penetapan_akhir;
 
-        // Superadmin is let through outside the period here and in the modal's
-        // writes alike, so what is offered can be saved.
+        // Superadmin keeps access to the actions outside the period. Saving
+        // them is still refused by the modal, with a message saying the
+        // period has passed.
         return (carbon()->between($penetapanAwal, $penetapanAkhir) && $hasPermission) || $isDevelop;
     }
 

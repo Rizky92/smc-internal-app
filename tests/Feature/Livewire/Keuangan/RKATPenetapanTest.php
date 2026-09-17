@@ -16,8 +16,8 @@ use Tests\TestCase;
  *
  * bisaTetapkanRKAT() is what the paired RKATInputPenetapan modal's "Tambah"
  * button and clickable rows are shown or hidden behind: eligible inside the
- * Periode Penetapan when holding the permission, or at any time as superadmin,
- * matching the guard on the modal's own writes. The write path itself is already
+ * Periode Penetapan when holding the permission, or at any time as superadmin.
+ * The modal's writes hold superadmin to the period all the same. The write path itself is already
  * covered by RKATInputPenetapanTest.
  */
 class RKATPenetapanTest extends TestCase
@@ -122,9 +122,9 @@ class RKATPenetapanTest extends TestCase
     /**
      * @test
      *
-     * Superadmin is the one exception to the Periode Penetapan. The modal lets
-     * its writes through outside the period as well, so the actions offered
-     * here can actually be saved.
+     * Superadmin keeps access to the Penetapan actions outside the Periode
+     * Penetapan. Saving them outside it is still refused by the modal, which
+     * RKATInputPenetapanTest covers.
      */
     public function superadmin_is_eligible_outside_the_period(): void
     {

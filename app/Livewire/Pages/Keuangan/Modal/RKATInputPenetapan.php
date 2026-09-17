@@ -292,14 +292,12 @@ class RKATInputPenetapan extends Component
     }
 
     /**
-     * Superadmin is the one exception to the Periode Penetapan.
+     * No role is exempt here. Superadmin is still offered the actions outside
+     * the period (RKATPenetapan::bisaTetapkanRKAT()), and is told on saving
+     * that the period has passed.
      */
     private function diLuarPeriodePenetapan(): bool
     {
-        if (user()->hasRole(config('permission.superadmin_name'))) {
-            return false;
-        }
-
         $settings = app(RKATSettings::class);
 
         return ! now()->between($settings->tgl_penetapan_awal, $settings->tgl_penetapan_akhir);

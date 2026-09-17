@@ -163,46 +163,46 @@ class RKATInputPenetapanTest extends TestCase
     /**
      * @test
      *
-     * Superadmin is the one exception to the Periode Penetapan, on every write:
-     * the page offers it the actions outside the period, so the modal has to
-     * let those actions through.
+     * The page still offers superadmin its actions outside the Periode
+     * Penetapan, but the writes themselves hold superadmin to the period like
+     * everyone else, and say why.
      */
-    public function superadmin_creates_updates_and_deletes_outside_the_period(): void
+    public function superadmin_is_told_the_period_has_passed_on_every_write(): void
     {
         $superadmin = $this->petugasWithRole(config('permission.superadmin_name'), '99999901');
-        $anggaran = $this->kategori();
-        $bidang = $this->bidang();
+        $existing = $this->penetapanTersimpan();
 
         $this->travelTo($this->outsidePeriod());
 
         Livewire::actingAs($superadmin)
             ->test(RKATInputPenetapan::class)
-            ->set('anggaranId', $anggaran->id)
-            ->set('bidangId', $bidang->id)
+            ->set('anggaranId', $this->kategori()->id)
+            ->set('bidangId', $this->bidang()->id)
             ->set('nominalAnggaran', 500000)
             ->call('create')
-            ->assertHasNoErrors()
-            ->assertDispatched('data-saved');
-
-        $tersimpan = AnggaranBidang::query()->sole();
+            ->assertDispatched('data-denied')
+            ->assertNotDispatched('data-saved')
+            ->assertSee('diluar periode');
 
         Livewire::actingAs($superadmin)
             ->test(RKATInputPenetapan::class)
-            ->dispatch('prepare', $tersimpan->id)
+            ->dispatch('prepare', $existing->id)
             ->set('nominalAnggaran', 750000)
             ->call('create')
-            ->assertHasNoErrors()
-            ->assertDispatched('data-saved');
-
-        $this->assertSame(750000, (int) $tersimpan->refresh()->nominal_anggaran);
+            ->assertDispatched('data-denied')
+            ->assertNotDispatched('data-saved')
+            ->assertSee('melewati periode');
 
         Livewire::actingAs($superadmin)
             ->test(RKATInputPenetapan::class)
-            ->dispatch('prepare', $tersimpan->id)
+            ->dispatch('prepare', $existing->id)
             ->call('delete')
-            ->assertDispatched('data-deleted');
+            ->assertDispatched('data-denied')
+            ->assertNotDispatched('data-deleted')
+            ->assertSee('melewati periode');
 
-        $this->assertSame(0, AnggaranBidang::query()->count());
+        $this->assertSame(1, AnggaranBidang::query()->count());
+        $this->assertSame(500000, (int) $existing->refresh()->nominal_anggaran);
     }
 
     /**
