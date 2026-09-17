@@ -164,6 +164,65 @@ class RKATPelaporanFormTest extends DuskTestCase
 
     /**
      * @test
+     *
+     * The dropdown is wire:ignore'd, so re-rendering the component alone leaves
+     * the old year's options in it. Moving the tanggal pakai into last year has
+     * to replace them with last year's Penetapan RKAT, drop the choice made
+     * from this year's, and let last year's be chosen and saved.
+     */
+    public function moving_the_tanggal_pakai_to_last_year_offers_last_years_budgets(): void
+    {
+        $this->anggaranBidang('Bidang Dusk Ini', 'Kategori Dusk Ini');
+
+        $tahunLalu = app(RKATSettings::class)->tahun - 1;
+        $milikTahunLalu = AnggaranBidang::create([
+            'anggaran_id'      => Anggaran::create(['nama' => 'Kategori Dusk Lalu'])->id,
+            'bidang_id'        => Bidang::create(['nama' => 'Bidang Dusk Lalu'])->id,
+            'tahun'            => $tahunLalu,
+            'nominal_anggaran' => 10000000,
+        ]);
+
+        $this->browse(function (Browser $browser) use ($tahunLalu, $milikTahunLalu) {
+            $this->masuk($browser);
+            $this->hitungInisialisasiSelect2($browser);
+
+            $browser->press('Laporan Baru')
+                ->waitFor('#modal-input-pelaporan-rkat.show');
+
+            $this->tungguInisialisasiSelect2($browser, 1)
+                ->click('span[aria-labelledby="select2-anggaran-bidang-id-container"]')
+                ->waitFor('.select2-container--open .select2-search__field')
+                ->keys('.select2-container--open .select2-search__field', 'Bidang Dusk Ini', '{enter}')
+                ->waitUntilMissing('.select2-container--open')
+                ->pause(500)
+                ->script("const tgl = document.querySelector('#tgl-pemakaian'); tgl.value = '{$tahunLalu}-12-20'; tgl.dispatchEvent(new Event('change', { bubbles: true }))");
+
+            $browser->waitUntil("document.querySelector('#anggaran-bidang-id option[value=\"{$milikTahunLalu->id}\"]') !== null");
+
+            $this->tungguInisialisasiSelect2($browser, 2)
+                ->assertScript("document.querySelectorAll('#anggaran-bidang-id option[value]:not([disabled])').length", 1)
+                ->assertScript($this->nilaiSelect2(), '-')
+                ->click('span[aria-labelledby="select2-anggaran-bidang-id-container"]')
+                ->waitFor('.select2-container--open .select2-search__field')
+                ->keys('.select2-container--open .select2-search__field', 'Bidang Dusk Lalu', '{enter}')
+                ->waitUntilMissing('.select2-container--open')
+                ->pause(500)
+                ->assertScript($this->nilaiSelect2(), "Bidang Dusk Lalu - {$tahunLalu} - Kategori Dusk Lalu")
+                ->type('#keterangan', 'Tagihan Dusk Desember')
+                ->type($this->baris(1, 'keterangan'), 'Kertas A4')
+                ->type($this->baris(1, 'nominal'), '150000')
+                ->click('#simpandata')
+                ->waitForText('berhasil disimpan');
+        });
+
+        $laporan = PemakaianAnggaran::query()->where('judul', 'Tagihan Dusk Desember')->sole();
+
+        $this->assertSame((int) $milikTahunLalu->id, (int) $laporan->anggaran_bidang_id);
+        $this->assertSame("{$tahunLalu}-12-20", carbon($laporan->tgl_dipakai)->toDateString());
+    }
+
+    /**
+     * @test
      */
     public function editing_a_report_shows_and_keeps_its_own_budget(): void
     {

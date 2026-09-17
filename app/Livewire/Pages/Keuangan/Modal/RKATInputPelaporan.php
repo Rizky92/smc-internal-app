@@ -48,7 +48,7 @@ class RKATInputPelaporan extends Component
     {
         $rules = collect([
             'anggaranBidangId'    => ['required', 'exists:anggaran_bidang,id'],
-            'tglPakai'            => ['required', 'date'],
+            'tglPakai'            => ['required', 'date', $this->diTahunPenetapan()],
             'keterangan'          => ['required', 'string'],
             'detail'              => ['array'],
             'detail.*.keterangan' => ['nullable', 'string'],
@@ -72,9 +72,60 @@ class RKATInputPelaporan extends Component
         $this->dispatch('select2.hydrate');
     }
 
+    /**
+     * A Pemakaian Anggaran is dated within the year of its Penetapan RKAT.
+     */
+    private function diTahunPenetapan(): \Closure
+    {
+        return function (string $attribute, mixed $value, \Closure $fail): void {
+            $tahunPenetapan = AnggaranBidang::query()
+                ->whereKey($this->anggaranBidangId)
+                ->value('tahun');
+
+            // No Penetapan chosen is anggaranBidangId's own error to report.
+            if ($tahunPenetapan === null || $this->tahunPakai() === null) {
+                return;
+            }
+
+            if ($this->tahunPakai() !== (int) $tahunPenetapan) {
+                $fail(sprintf('Tgl. pemakaian harus berada di tahun Penetapan RKAT yang dipilih (%d).', $tahunPenetapan));
+            }
+        };
+    }
+
+    private function tahunPakai(): ?int
+    {
+        // carbon() reads a blank value as now.
+        if (blank($this->tglPakai)) {
+            return null;
+        }
+
+        try {
+            return carbon($this->tglPakai)->year;
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+
+    /**
+     * The year of the tanggal pakai, which decides the Penetapan RKAT on offer.
+     * The Tahun RKAT only stands in while the date cannot be read.
+     */
     public function getTahunProperty(): int
     {
-        return app(RKATSettings::class)->tahun;
+        return $this->tahunPakai() ?? app(RKATSettings::class)->tahun;
+    }
+
+    public function updatedTglPakai(): void
+    {
+        $masihDitawarkan = AnggaranBidang::query()
+            ->whereKey($this->anggaranBidangId)
+            ->where('tahun', $this->tahun)
+            ->exists();
+
+        if (! $masihDitawarkan) {
+            $this->anggaranBidangId = -1;
+        }
     }
 
     public function getDataRKATPerBidangProperty(): Collection

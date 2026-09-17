@@ -38,12 +38,16 @@
                 <x-row-col class="sticky-top bg-white">
                     <div class="form-group">
                         <label for="anggaran-bidang-id">Anggaran bidang digunakan:</label>
-                        <x-form.select2 id="anggaran-bidang-id" model="anggaranBidangId" :options="$this->dataRKATPerBidang" placeholder="-" width="full-width" />
+                        {{-- The select is wire:ignore'd, so its options never re-render in place. Keying it by year makes a new tanggal pakai year replace the whole dropdown with that year's Penetapan RKAT; select2.hydrate then initialises the new one. --}}
+                        <div wire:key="anggaran-bidang-tahun-{{ $this->tahun }}">
+                            <x-form.select2 id="anggaran-bidang-id" model="anggaranBidangId" :options="$this->dataRKATPerBidang" placeholder="-" width="full-width" />
+                        </div>
                         <x-form.error name="anggaranBidangId" />
                     </div>
                     <div class="form-group mt-3">
                         <label for="tgl-pemakaian">Tgl. Pemakaian</label>
-                        <x-form.date model="tglPakai" />
+                        {{-- Sent on change rather than deferred, so the Penetapan RKAT on offer follows the date as soon as it is picked. --}}
+                        <x-form.date id="tgl-pemakaian" :model="null" wire:model.change="tglPakai" />
                         <x-form.error name="tglPakai" />
                     </div>
                     <div class="form-group mt-3">

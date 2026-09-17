@@ -10,7 +10,9 @@ use App\Models\Keuangan\RKAT\PemakaianAnggaran;
 use App\Models\Keuangan\RKAT\PemakaianAnggaranDetail;
 use App\Settings\RKATSettings;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -42,14 +44,177 @@ class RKATInputPelaporanTest extends TestCase
         parent::tearDown();
     }
 
-    private function anggaranBidang(): AnggaranBidang
+    private function anggaranBidang(?int $tahun = null): AnggaranBidang
     {
         return AnggaranBidang::create([
             'anggaran_id'      => Anggaran::create(['nama' => 'Kategori Uji'])->id,
             'bidang_id'        => Bidang::create(['nama' => 'Bidang Uji'])->id,
-            'tahun'            => app(RKATSettings::class)->tahun,
+            'tahun'            => $tahun ?? app(RKATSettings::class)->tahun,
             'nominal_anggaran' => 10000000,
         ]);
+    }
+
+    /**
+     * @test
+     *
+     * The Tahun RKAT is 2026 in the test schema. It limits which year
+     * Penetapan RKAT is set for, not which year spending may be recorded
+     * against: the form offers the Penetapan of whatever year the tanggal pakai
+     * falls in.
+     */
+    public function offers_the_penetapan_of_the_year_the_tanggal_pakai_falls_in(): void
+    {
+        $tahunLalu = $this->anggaranBidang(2025);
+        $tahunIni = $this->anggaranBidang(2026);
+
+        $test = Livewire::actingAs($this->petugasWithPermissions([], '99999901'))
+            ->test(RKATInputPelaporan::class)
+            ->set('tglPakai', '2026-01-10');
+
+        $this->assertSame([(int) $tahunIni->id], array_keys($test->get('dataRKATPerBidang')->all()));
+
+        $test->set('tglPakai', '2025-12-20');
+
+        $this->assertSame([(int) $tahunLalu->id], array_keys($test->get('dataRKATPerBidang')->all()));
+    }
+
+    /**
+     * @test
+     */
+    public function records_spending_against_last_years_penetapan(): void
+    {
+        $petugas = $this->petugasWithPermissions(['keuangan.rkat-pelaporan.create'], '99999901');
+        $tahunLalu = $this->anggaranBidang(2025);
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPelaporan::class)
+            ->set('tglPakai', '2025-12-20')
+            ->set('anggaranBidangId', $tahunLalu->id)
+            ->set('keterangan', 'Tagihan Desember')
+            ->set('detail', [['keterangan' => 'Barang', 'nominal' => 1000]])
+            ->call('create')
+            ->assertHasNoErrors()
+            ->assertDispatched('data-saved');
+
+        $this->assertSame((int) $tahunLalu->id, (int) PemakaianAnggaran::query()->sole()->anggaran_bidang_id);
+    }
+
+    /**
+     * @test
+     */
+    public function moving_the_tanggal_pakai_to_another_year_clears_the_chosen_penetapan(): void
+    {
+        $tahunIni = $this->anggaranBidang(2026);
+
+        Livewire::actingAs($this->petugasWithPermissions([], '99999901'))
+            ->test(RKATInputPelaporan::class)
+            ->set('tglPakai', '2026-03-01')
+            ->set('anggaranBidangId', $tahunIni->id)
+            ->set('tglPakai', '2026-04-15')
+            ->assertSet('anggaranBidangId', $tahunIni->id)
+            ->set('tglPakai', '2025-12-20')
+            ->assertSet('anggaranBidangId', -1);
+    }
+
+    /**
+     * @test
+     *
+     * The form clears a choice from the wrong year, but the rule has to hold on
+     * save as well: here the Penetapan is chosen after the date.
+     */
+    public function refuses_a_tanggal_pakai_outside_the_year_of_the_chosen_penetapan(): void
+    {
+        $petugas = $this->petugasWithPermissions(['keuangan.rkat-pelaporan.create'], '99999901');
+        $tahunIni = $this->anggaranBidang(2026);
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPelaporan::class)
+            ->set('tglPakai', '2025-12-20')
+            ->set('anggaranBidangId', $tahunIni->id)
+            ->set('keterangan', 'Pembelian Uji')
+            ->set('detail', [['keterangan' => 'Barang', 'nominal' => 1000]])
+            ->call('create')
+            ->assertHasErrors('tglPakai')
+            ->assertNotDispatched('data-saved');
+
+        $this->assertSame(0, PemakaianAnggaran::query()->count());
+    }
+
+    /**
+     * @test
+     */
+    public function refuses_an_edit_that_moves_the_tanggal_pakai_out_of_the_penetapan_year(): void
+    {
+        $petugas = $this->petugasWithPermissions(['keuangan.rkat-pelaporan.update'], '99999901');
+        $rkat = $this->anggaranBidang(2026);
+        [$pemakaian, $options] = $this->laporanTersimpan($rkat);
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPelaporan::class)
+            ->dispatch('prepare', options: $options)
+            ->set('tglPakai', '2025-12-20')
+            ->set('anggaranBidangId', $rkat->id)
+            ->call('create')
+            ->assertHasErrors('tglPakai')
+            ->assertNotDispatched('data-saved');
+
+        $this->assertSame('2026-02-01', carbon($pemakaian->refresh()->tgl_dipakai)->toDateString());
+    }
+
+    /**
+     * @test
+     *
+     * Rincian Pemakaian attached from a file are saved by a queued job, which
+     * must not be queued for a date outside the Penetapan's year.
+     */
+    public function refuses_to_queue_an_import_outside_the_year_of_the_chosen_penetapan(): void
+    {
+        Queue::fake();
+
+        $petugas = $this->petugasWithPermissions(['keuangan.rkat-pelaporan.create'], '99999901');
+        $tahunIni = $this->anggaranBidang(2026);
+
+        Livewire::actingAs($petugas)
+            ->test(RKATInputPelaporan::class)
+            ->set('tglPakai', '2025-12-20')
+            ->set('anggaranBidangId', $tahunIni->id)
+            ->set('keterangan', 'Pembelian Uji')
+            ->set('fileImport', UploadedFile::fake()->create('rincian.xlsx', 10))
+            ->call('create')
+            ->assertHasErrors('tglPakai');
+
+        Queue::assertNothingPushed();
+    }
+
+    /**
+     * @test
+     *
+     * Opening a Pemakaian from last year, after the Tahun RKAT has moved on,
+     * must still offer its own Penetapan so the dropdown can show it.
+     */
+    public function opening_last_years_pemakaian_offers_its_own_penetapan(): void
+    {
+        $tahunLalu = $this->anggaranBidang(2025);
+        $this->anggaranBidang(2026);
+
+        $pemakaian = PemakaianAnggaran::create([
+            'judul'              => 'Pembelian Lama',
+            'tgl_dipakai'        => '2025-11-03',
+            'anggaran_bidang_id' => $tahunLalu->id,
+            'user_id'            => '99999901',
+        ]);
+
+        $test = Livewire::actingAs($this->petugasWithPermissions([], '99999901'))
+            ->test(RKATInputPelaporan::class)
+            ->dispatch('prepare', options: [
+                'anggaranBidangId'    => $tahunLalu->id,
+                'pemakaianAnggaranId' => $pemakaian->id,
+                'tglPakai'            => '2025-11-03',
+                'keterangan'          => 'Pembelian Lama',
+            ])
+            ->assertSet('anggaranBidangId', $tahunLalu->id);
+
+        $this->assertSame([(int) $tahunLalu->id], array_keys($test->get('dataRKATPerBidang')->all()));
     }
 
     /**
