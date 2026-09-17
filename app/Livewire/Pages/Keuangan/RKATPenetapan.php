@@ -75,13 +75,14 @@ class RKATPenetapan extends Component
 
         $hasPermission = user()->can('keuangan.rkat-penetapan.create');
 
+        $isDevelop = user()->hasRole(config('permission.superadmin_name'));
+
         $penetapanAwal = $settings->tgl_penetapan_awal;
         $penetapanAkhir = $settings->tgl_penetapan_akhir;
 
-        // No exception for superadmin: the modal refuses every write outside
-        // the period whoever asks, so offering its actions there only leads to
-        // a form that cannot be saved.
-        return carbon()->between($penetapanAwal, $penetapanAkhir) && $hasPermission;
+        // Superadmin is let through outside the period here and in the modal's
+        // writes alike, so what is offered can be saved.
+        return (carbon()->between($penetapanAwal, $penetapanAkhir) && $hasPermission) || $isDevelop;
     }
 
     protected function defaultValues(): void

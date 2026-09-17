@@ -162,6 +162,51 @@ class RKATInputPenetapanTest extends TestCase
 
     /**
      * @test
+     *
+     * Superadmin is the one exception to the Periode Penetapan, on every write:
+     * the page offers it the actions outside the period, so the modal has to
+     * let those actions through.
+     */
+    public function superadmin_creates_updates_and_deletes_outside_the_period(): void
+    {
+        $superadmin = $this->petugasWithRole(config('permission.superadmin_name'), '99999901');
+        $anggaran = $this->kategori();
+        $bidang = $this->bidang();
+
+        $this->travelTo($this->outsidePeriod());
+
+        Livewire::actingAs($superadmin)
+            ->test(RKATInputPenetapan::class)
+            ->set('anggaranId', $anggaran->id)
+            ->set('bidangId', $bidang->id)
+            ->set('nominalAnggaran', 500000)
+            ->call('create')
+            ->assertHasNoErrors()
+            ->assertDispatched('data-saved');
+
+        $tersimpan = AnggaranBidang::query()->sole();
+
+        Livewire::actingAs($superadmin)
+            ->test(RKATInputPenetapan::class)
+            ->dispatch('prepare', $tersimpan->id)
+            ->set('nominalAnggaran', 750000)
+            ->call('create')
+            ->assertHasNoErrors()
+            ->assertDispatched('data-saved');
+
+        $this->assertSame(750000, (int) $tersimpan->refresh()->nominal_anggaran);
+
+        Livewire::actingAs($superadmin)
+            ->test(RKATInputPenetapan::class)
+            ->dispatch('prepare', $tersimpan->id)
+            ->call('delete')
+            ->assertDispatched('data-deleted');
+
+        $this->assertSame(0, AnggaranBidang::query()->count());
+    }
+
+    /**
+     * @test
      */
     public function rejects_a_penetapan_with_no_nominal(): void
     {

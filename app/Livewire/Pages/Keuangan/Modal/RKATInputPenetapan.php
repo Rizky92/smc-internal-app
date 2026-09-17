@@ -152,7 +152,7 @@ class RKATInputPenetapan extends Component
 
         $settings = app(RKATSettings::class);
 
-        if (! now()->between($settings->tgl_penetapan_awal, $settings->tgl_penetapan_akhir)) {
+        if ($this->diLuarPeriodePenetapan()) {
             $this->flashError('Waktu penetapan RKAT diluar periode yang sudah ditetapkan!');
             $this->dispatch('data-denied');
 
@@ -196,9 +196,7 @@ class RKATInputPenetapan extends Component
             return;
         }
 
-        $settings = app(RKATSettings::class);
-
-        if (! now()->between($settings->tgl_penetapan_awal, $settings->tgl_penetapan_akhir)) {
+        if ($this->diLuarPeriodePenetapan()) {
             $this->flashError('Batas waktu penetapan RKAT melewati periode yang ditetapkan!');
             $this->dispatch('data-denied');
 
@@ -250,9 +248,7 @@ class RKATInputPenetapan extends Component
             return;
         }
 
-        $settings = app(RKATSettings::class);
-
-        if (! now()->between($settings->tgl_penetapan_awal, $settings->tgl_penetapan_akhir)) {
+        if ($this->diLuarPeriodePenetapan()) {
             $this->flashError('Batas waktu penetapan RKAT melewati periode yang ditetapkan!');
             $this->dispatch('data-denied');
 
@@ -293,6 +289,20 @@ class RKATInputPenetapan extends Component
             $this->dispatch('data-errored');
             $this->dispatch('flash.error', 'Terjadi kesalahan pada saat menghapus data!');
         }
+    }
+
+    /**
+     * Superadmin is the one exception to the Periode Penetapan.
+     */
+    private function diLuarPeriodePenetapan(): bool
+    {
+        if (user()->hasRole(config('permission.superadmin_name'))) {
+            return false;
+        }
+
+        $settings = app(RKATSettings::class);
+
+        return ! now()->between($settings->tgl_penetapan_awal, $settings->tgl_penetapan_akhir);
     }
 
     public function isUpdating(): bool

@@ -15,9 +15,9 @@ use Tests\TestCase;
  * Seam B: the RKAT budget-setting list and its eligibility gate.
  *
  * bisaTetapkanRKAT() is what the paired RKATInputPenetapan modal's "Tambah"
- * button and clickable rows are shown or hidden behind: eligible only inside
- * the Periode Penetapan and holding the permission, for every role, matching
- * the guard on the modal's own writes. The write path itself is already
+ * button and clickable rows are shown or hidden behind: eligible inside the
+ * Periode Penetapan when holding the permission, or at any time as superadmin,
+ * matching the guard on the modal's own writes. The write path itself is already
  * covered by RKATInputPenetapanTest.
  */
 class RKATPenetapanTest extends TestCase
@@ -122,11 +122,11 @@ class RKATPenetapanTest extends TestCase
     /**
      * @test
      *
-     * The Periode Penetapan has no exceptions. Superadmin used to be offered
-     * the add button and clickable rows outside it, while every save behind
-     * them was refused; working outside the period means opening it first.
+     * Superadmin is the one exception to the Periode Penetapan. The modal lets
+     * its writes through outside the period as well, so the actions offered
+     * here can actually be saved.
      */
-    public function superadmin_is_not_eligible_outside_the_period(): void
+    public function superadmin_is_eligible_outside_the_period(): void
     {
         $petugas = $this->petugasWithRole(config('permission.superadmin_name'), '99999901');
 
@@ -137,6 +137,6 @@ class RKATPenetapanTest extends TestCase
             ->instance()
             ->bisaTetapkanRKAT();
 
-        $this->assertFalse($bisa);
+        $this->assertTrue($bisa);
     }
 }
