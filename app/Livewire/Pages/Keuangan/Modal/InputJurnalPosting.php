@@ -194,7 +194,8 @@ class InputJurnalPosting extends Component
                         $temp['no_bukti'],
                         str($temp['keterangan'])->upper()->trim()->replaceLast('.', '')->append(', DIPOSTING OLEH '.user()->nik)->value(),
                         carbon($temp['tgl_jurnal'])->setTimeFromTimeString($temp['jam_jurnal']),
-                        $temp['detail']
+                        $temp['detail'],
+                        $temp['jenis']
                     );
 
                     $jurnalTercatat[] = [

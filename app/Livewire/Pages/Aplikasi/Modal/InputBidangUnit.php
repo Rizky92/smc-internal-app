@@ -67,7 +67,7 @@ class InputBidangUnit extends Component
 
         tracker_start();
 
-        Bidang::create(['nama' => $this->nama, 'parent_id' => $this->parentId === -1 ? null : $this->parentId]);
+        Bidang::create(['nama' => $this->nama, 'parent_id' => $this->parentIdUntukDisimpan()]);
 
         tracker_end();
 
@@ -90,7 +90,7 @@ class InputBidangUnit extends Component
             ->where('id', $this->bidangId)
             ->update([
                 'nama'      => $this->nama,
-                'parent_id' => $this->parentId,
+                'parent_id' => $this->parentIdUntukDisimpan(),
             ]);
 
         tracker_end('mysql_smc');
@@ -132,6 +132,22 @@ class InputBidangUnit extends Component
 
         $this->dispatch('data-success');
         $this->dispatch('flash.success', 'Data bidang berhasil dihapus!');
+    }
+
+    /**
+     * The parent to store: an id, or null for a top-level bidang.
+     *
+     * The form's "no parent" is -1, and it arrives in two shapes. prepare() sets
+     * the integer; picking "-" in the dropdown sends placeholderValue, the string
+     * "-1". Comparing strictly against -1 caught only the first, and parent_id
+     * is unsigned, so the other went to the database as -1 and was refused as
+     * out of range.
+     */
+    protected function parentIdUntukDisimpan(): ?int
+    {
+        $parentId = (int) $this->parentId;
+
+        return $parentId > 0 ? $parentId : null;
     }
 
     protected function defaultValues(): void
