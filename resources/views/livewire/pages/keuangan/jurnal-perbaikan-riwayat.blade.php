@@ -1,7 +1,8 @@
 <div wire:init="loadProperties">
     <x-flash />
 
-    <x-card use-default-filter use-loading>
+    {{-- No export is written for this page; see JurnalPerbaikanRiwayat::dataPerSheet(). --}}
+    <x-card use-default-filter :use-export="false" use-loading>
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" zebra hover sticky nowrap>
                 <x-slot name="columns">
