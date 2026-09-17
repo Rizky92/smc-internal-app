@@ -3,8 +3,7 @@
 namespace Tests;
 
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Illuminate\Support\Facades\DB;
-use Spatie\Permission\PermissionRegistrar;
+use Tests\Concerns\CleansAuthorisationFixtures;
 use Tests\Concerns\CreatesPasien;
 use Tests\Concerns\CreatesPetugas;
 
@@ -33,6 +32,7 @@ use Tests\Concerns\CreatesPetugas;
  */
 abstract class TestCase extends BaseTestCase
 {
+    use CleansAuthorisationFixtures;
     use CreatesApplication;
     use CreatesPasien;
     use CreatesPetugas;
@@ -55,27 +55,5 @@ abstract class TestCase extends BaseTestCase
         $this->deletePetugasFixtures();
 
         parent::tearDown();
-    }
-
-    /**
-     * Children before parents: the pivot tables carry foreign keys into
-     * `permissions` and `roles`.
-     */
-    private function deleteAuthorisationFixtures(): void
-    {
-        $smc = DB::connection('mysql_smc');
-        $tables = config('permission.table_names');
-
-        foreach ([
-            $tables['model_has_permissions'],
-            $tables['model_has_roles'],
-            $tables['role_has_permissions'],
-            $tables['permissions'],
-            $tables['roles'],
-        ] as $table) {
-            $smc->table($table)->delete();
-        }
-
-        app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }
