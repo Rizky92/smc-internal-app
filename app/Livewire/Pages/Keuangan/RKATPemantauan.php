@@ -11,10 +11,10 @@ use App\Livewire\Concerns\MenuTracker;
 use App\Models\Bidang;
 use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Models\Keuangan\RKAT\PemakaianAnggaran;
+use App\Settings\RKATSettings;
 use App\View\Components\BaseLayout;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 use Staudenmeir\LaravelAdjacencyList\Eloquent\Relations\Descendants;
@@ -34,7 +34,7 @@ class RKATPemantauan extends Component
     protected function queryString(): array
     {
         return [
-            'tahun' => ['except' => now()->format('Y')],
+            'tahun' => ['except' => (string) app(RKATSettings::class)->tahun],
         ];
     }
 
@@ -45,12 +45,7 @@ class RKATPemantauan extends Component
 
     public function getDataTahunProperty(): array
     {
-        return DB::table('anggaran_bidang')
-            ->select('tahun')
-            ->groupBy('tahun')
-            ->orderBy('tahun', 'asc')
-            ->pluck('tahun', 'tahun')
-            ->all();
+        return AnggaranBidang::pilihanTahun();
     }
 
     public function getDataLaporanRKATProperty(): Collection
@@ -82,7 +77,7 @@ class RKATPemantauan extends Component
 
     protected function defaultValues(): void
     {
-        $this->tahun = now()->format('Y');
+        $this->tahun = (string) app(RKATSettings::class)->tahun;
     }
 
     /**

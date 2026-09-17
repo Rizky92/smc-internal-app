@@ -69,4 +69,25 @@ class RKATPelaporanTest extends TestCase
             ->assertSee('Uji Pembelian 2025')
             ->assertDontSee('Uji Pembelian 2026');
     }
+
+    /**
+     * @test
+     *
+     * Years with a Penetapan RKAT plus the Tahun RKAT (2026 in the test schema),
+     * newest first, defaulting to the Tahun RKAT. The Tahun RKAT is offered even
+     * while it is still ahead of the calendar, which the old 2023-to-this-year
+     * range never did.
+     */
+    public function offers_the_years_with_penetapan_and_the_tahun_rkat(): void
+    {
+        $this->pemakaian('Uji Pembelian 2024', 2024);
+
+        $this->travelTo(carbon('2025-06-01'));
+
+        $test = Livewire::actingAs($this->petugasWithPermissions([], '99999901'))
+            ->test(RKATPelaporan::class)
+            ->assertSet('tahun', '2026');
+
+        $this->assertSame([2026, 2024], array_keys($test->get('dataTahun')));
+    }
 }

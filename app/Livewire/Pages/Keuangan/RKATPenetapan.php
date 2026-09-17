@@ -32,7 +32,7 @@ class RKATPenetapan extends Component
     protected function queryString(): array
     {
         return [
-            'tahun' => ['except' => now()->format('Y')],
+            'tahun' => ['except' => (string) app(RKATSettings::class)->tahun],
         ];
     }
 
@@ -51,17 +51,7 @@ class RKATPenetapan extends Component
 
     public function getDataTahunProperty(): array
     {
-        $tahunAwal = AnggaranBidang::query()
-            ->withCasts(['tahun' => 'int'])
-            ->orderBy('tahun')
-            ->limit(1)
-            ->value('tahun') ?? 2023;
-
-        $tahunAkhir = app(RKATSettings::class)->tahun;
-
-        return collect(range($tahunAwal, $tahunAkhir, 1))
-            ->mapWithKeys(fn (int $v, int $_): array => [$v => $v])
-            ->all();
+        return AnggaranBidang::pilihanTahun();
     }
 
     public function getDataBidangProperty(): Collection

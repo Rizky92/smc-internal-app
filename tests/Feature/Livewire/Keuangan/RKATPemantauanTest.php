@@ -92,6 +92,37 @@ class RKATPemantauanTest extends TestCase
     /**
      * @test
      *
+     * Before any Penetapan RKAT exists for it, the Tahun RKAT (2026 in the test
+     * schema) is still offered and selected, rather than an empty year filter.
+     */
+    public function offers_the_tahun_rkat_before_any_penetapan_exists(): void
+    {
+        $this->travelTo(carbon('2025-06-01'));
+
+        $test = Livewire::actingAs($this->petugasWithPermissions([self::PERMISSION], '99999901'))
+            ->test(RKATPemantauan::class)
+            ->assertSet('tahun', '2026');
+
+        $this->assertSame([2026], array_keys($test->get('dataTahun')));
+    }
+
+    /**
+     * @test
+     */
+    public function offers_the_years_with_penetapan_newest_first(): void
+    {
+        [$unit, $anggaran] = $this->bidangTree();
+        $this->anggaranBidang($unit, $anggaran, '2024', 1000);
+        $this->anggaranBidang($unit, $anggaran, '2027', 1000);
+
+        $tahun = $this->report()->get('dataTahun');
+
+        $this->assertSame([2027, 2026, 2024], array_keys($tahun));
+    }
+
+    /**
+     * @test
+     *
      * Spending is summed through pemakaian_anggaran into its detail lines, and
      * what is left is the budget less that sum.
      */

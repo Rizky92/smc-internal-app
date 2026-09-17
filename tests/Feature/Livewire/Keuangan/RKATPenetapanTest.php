@@ -3,7 +3,11 @@
 namespace Tests\Feature\Livewire\Keuangan;
 
 use App\Livewire\Pages\Keuangan\RKATPenetapan;
+use App\Models\Bidang;
+use App\Models\Keuangan\RKAT\Anggaran;
+use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Settings\RKATSettings;
+use Illuminate\Support\Facades\DB;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -26,6 +30,42 @@ class RKATPenetapanTest extends TestCase
     private function outsidePeriod()
     {
         return app(RKATSettings::class)->tgl_penetapan_akhir->copy()->addYear();
+    }
+
+    protected function tearDown(): void
+    {
+        $smc = DB::connection('mysql_smc');
+
+        $smc->statement('set foreign_key_checks = 0');
+        $smc->table('anggaran_bidang')->delete();
+        $smc->table('anggaran')->where('nama', 'Kategori Uji')->delete();
+        $smc->table('bidang')->where('nama', 'Bidang Uji')->delete();
+        $smc->statement('set foreign_key_checks = 1');
+
+        parent::tearDown();
+    }
+
+    /**
+     * @test
+     *
+     * Years with a Penetapan RKAT plus the Tahun RKAT (2026 in the test schema),
+     * newest first — not a continuous range from the first Penetapan, which
+     * listed years in between that hold nothing.
+     */
+    public function offers_the_years_with_penetapan_and_the_tahun_rkat(): void
+    {
+        AnggaranBidang::create([
+            'anggaran_id'      => Anggaran::create(['nama' => 'Kategori Uji'])->id,
+            'bidang_id'        => Bidang::create(['nama' => 'Bidang Uji'])->id,
+            'tahun'            => 2024,
+            'nominal_anggaran' => 1000,
+        ]);
+
+        $tahun = Livewire::actingAs($this->petugasWithPermissions([], '99999901'))
+            ->test(RKATPenetapan::class)
+            ->get('dataTahun');
+
+        $this->assertSame([2026, 2024], array_keys($tahun));
     }
 
     /**

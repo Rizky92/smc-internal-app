@@ -166,10 +166,11 @@ class PengaturanTest extends TestCase
     /**
      * @test
      *
-     * getDataTahunProperty() starts the range at the earliest year any RKAT
-     * budget was ever set for, not at the current RKATSettings year.
+     * The years that have a Penetapan RKAT, the saved Tahun RKAT, and this year
+     * and next so the Tahun RKAT can be advanced before anything is set for it —
+     * newest first, with no years in between that hold nothing.
      */
-    public function lists_years_starting_from_the_first_rkat_budget(): void
+    public function offers_the_years_with_penetapan_the_tahun_rkat_and_this_year_and_next(): void
     {
         $anggaran = Anggaran::create(['nama' => 'Kategori Uji Pengaturan']);
         $bidang = Bidang::create(['nama' => 'Bidang Uji Pengaturan', 'parent_id' => null]);
@@ -181,39 +182,36 @@ class PengaturanTest extends TestCase
             'nominal_anggaran' => 1000000,
         ]);
 
-        $petugas = $this->petugasWithPermissions([], '99999901');
+        app(RKATSettings::class)->fill(['tahun' => 2023])->save();
 
-        $tahun = Livewire::actingAs($petugas)
-            ->test(Pengaturan::class)
-            ->get('dataTahun');
-
-        $this->assertArrayHasKey(2020, $tahun);
-        $this->assertArrayNotHasKey(2019, $tahun);
-    }
-
-    /**
-     * DEFECT, recorded rather than asserted as correct.
-     *
-     * Before any budget has been set, the earliest year is null, and range()
-     * reads it as 0 — so the year picker opens at year 0 and runs to five years
-     * from now, two thousand entries long. That is the state of a fresh install,
-     * and of the dev smc schema today (no anggaran_bidang rows).
-     *
-     * Falling back to the RKATSettings year, or the current one, fixes it. Flip
-     * the assertions when it lands.
-     *
-     * @test
-     */
-    public function without_any_budget_the_year_list_currently_starts_at_year_zero(): void
-    {
-        $this->assertSame(0, AnggaranBidang::query()->count(), 'Test ini mengandaikan belum ada anggaran_bidang.');
+        $this->travelTo(carbon('2026-09-17'));
 
         $tahun = Livewire::actingAs($this->petugasWithPermissions([], '99999901'))
             ->test(Pengaturan::class)
             ->get('dataTahun');
 
-        $this->assertSame(0, array_key_first($tahun));
-        $this->assertGreaterThan(2000, count($tahun));
+        $this->assertSame([2027, 2026, 2023, 2020], array_keys($tahun));
+    }
+
+    /**
+     * @test
+     *
+     * A fresh install has no Penetapan RKAT at all. The list used to start at
+     * year 0 in that state, two thousand entries long.
+     */
+    public function offers_a_short_list_before_any_penetapan_exists(): void
+    {
+        $this->assertSame(0, AnggaranBidang::query()->count(), 'Test ini mengandaikan belum ada anggaran_bidang.');
+
+        app(RKATSettings::class)->fill(['tahun' => 2026])->save();
+
+        $this->travelTo(carbon('2026-09-17'));
+
+        $tahun = Livewire::actingAs($this->petugasWithPermissions([], '99999901'))
+            ->test(Pengaturan::class)
+            ->get('dataTahun');
+
+        $this->assertSame([2027, 2026], array_keys($tahun));
     }
 
     /**

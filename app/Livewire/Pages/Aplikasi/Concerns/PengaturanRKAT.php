@@ -31,14 +31,9 @@ trait PengaturanRKAT
 
     public function getDataTahunProperty(): array
     {
-        $firstRKAT = AnggaranBidang::query()
-            ->orderBy('tahun', 'asc')
-            ->limit(1)
-            ->value('tahun');
-
-        return collect(range($firstRKAT, (int) now()->addYears(5)->format('Y'), 1))
-            ->mapWithKeys(fn (int $v, $_): array => [$v => $v])
-            ->all();
+        // This year and next, so the Tahun RKAT can be advanced before any
+        // Penetapan RKAT exists for it.
+        return AnggaranBidang::pilihanTahun(now()->year, now()->year + 1);
     }
 
     public function updatePengaturanRKAT(): void
