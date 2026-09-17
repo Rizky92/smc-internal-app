@@ -2,9 +2,13 @@
 
 namespace Tests\Feature\Livewire\Keuangan;
 
+use App\Jobs\ExportLabaRugiRekeningJob;
 use App\Livewire\Pages\Keuangan\LabaRugiRekeningPerPeriode;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
+use ReflectionProperty;
 use Tests\TestCase;
 
 /**
@@ -203,5 +207,74 @@ class LabaRugiRekeningPerPeriodeTest extends TestCase
             ->assertDontSee('Rp. 550.000')
             ->assertDontSee('Rp. 210.000')
             ->assertDontSee('Rp. 340.000');
+    }
+
+    /**
+     * @test
+     *
+     * The background option hands the filters on screen to a Single-Pass Export
+     * job on the exports queue. The job builds the workbook from its payload
+     * alone, long after this request is gone, so a filter left out of it would
+     * produce a report for a different period or penjamin than the one asked
+     * for. SinglePassExportTest covers what the job does with them.
+     */
+    public function the_background_option_queues_the_export_with_the_filters_on_screen(): void
+    {
+        Queue::fake();
+        Notification::fake();
+        $this->seedLedger();
+
+        $this->report('UJI-PJ')
+            ->call('exportWithOption', 2)
+            ->assertDispatched('flash.info')
+            ->assertNotDispatched('beginExcelExport');
+
+        Queue::assertPushedOn('exports', ExportLabaRugiRekeningJob::class, fn (ExportLabaRugiRekeningJob $job) => (new ReflectionProperty($job, 'payload'))->getValue($job) === [
+            'tglAwal'      => self::AWAL,
+            'tglAkhir'     => self::AKHIR,
+            'kodePenjamin' => 'UJI-PJ',
+        ] && (string) (new ReflectionProperty($job, 'userId'))->getValue($job) === '99999901');
+    }
+
+    /**
+     * @test
+     */
+    public function the_synchronous_option_downloads_in_place_without_queueing(): void
+    {
+        Queue::fake();
+        $this->seedLedger();
+
+        $this->report()
+            ->call('exportWithOption', 1)
+            ->assertDispatched('beginExcelExport');
+
+        Queue::assertNothingPushed();
+    }
+
+    /**
+     * Where the defect surfaced for users: a NIK that is not a number made the
+     * background option throw a TypeError the moment it was clicked, because the
+     * job took an int. See SinglePassExportTest for the job running end to end.
+     *
+     * @test
+     */
+    public function a_user_with_a_non_numeric_nik_can_start_the_background_export(): void
+    {
+        Queue::fake();
+        Notification::fake();
+        $this->seedLedger();
+
+        Livewire::actingAs($this->petugasWithPermissions([self::PERMISSION], '9999990A'))
+            ->test(LabaRugiRekeningPerPeriode::class)
+            ->set('tglAwal', self::AWAL)
+            ->set('tglAkhir', self::AKHIR)
+            ->call('loadProperties')
+            ->call('exportWithOption', 2)
+            ->assertDispatched('flash.info');
+
+        Queue::assertPushed(
+            ExportLabaRugiRekeningJob::class,
+            fn (ExportLabaRugiRekeningJob $job) => (new ReflectionProperty($job, 'userId'))->getValue($job) === '9999990A'
+        );
     }
 }

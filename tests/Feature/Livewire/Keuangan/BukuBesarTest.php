@@ -2,11 +2,17 @@
 
 namespace Tests\Feature\Livewire\Keuangan;
 
+use App\Jobs\PrepareExport;
+use App\Jobs\WriteExcel;
 use App\Livewire\Pages\Keuangan\BukuBesar;
 use App\Models\ExportSession;
+use Illuminate\Bus\PendingBatch;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
+use ReflectionProperty;
 use Tests\TestCase;
 
 /**
@@ -49,7 +55,7 @@ class BukuBesarTest extends TestCase
         $sik->table('jurnal')->where('no_jurnal', 'like', 'UJI%')->delete();
         $sik->table('rekening')->where('kd_rek', 'like', 'UJI%')->delete();
 
-        ExportSession::query()->where('export_name', 'buku-besar')->where('id_user', '99999901')->delete();
+        ExportSession::query()->where('export_name', 'buku-besar')->where('id_user', 'like', '9999990%')->delete();
 
         parent::tearDown();
     }
@@ -202,5 +208,179 @@ class BukuBesarTest extends TestCase
             ->test(BukuBesar::class)
             ->call('exportToBackground')
             ->assertDispatched('flash.error');
+    }
+
+    private function exporter()
+    {
+        return Livewire::actingAs($this->petugasWithPermissions([self::URI_PERMISSION], '99999901'))
+            ->test(BukuBesar::class)
+            ->set('tglAwal', self::AWAL)
+            ->set('tglAkhir', self::AKHIR)
+            ->set('kodeRekening', 'UJI.1');
+    }
+
+    private function prop(object $job, string $name)
+    {
+        return (new ReflectionProperty($job, $name))->getValue($job);
+    }
+
+    /**
+     * @test
+     *
+     * Requesting a Sharded Export opens an Export Session and queues exactly one
+     * batch on the exports queue, whose only starting job is PrepareExport for
+     * that session, carrying the filters on screen at the moment of the click.
+     */
+    public function a_background_export_opens_a_session_and_queues_the_preparation(): void
+    {
+        Bus::fake();
+        Notification::fake();
+
+        $this->exporter()
+            ->call('exportWithOption', 2)
+            ->assertDispatched('flash.info')
+            ->assertNotDispatched('beginExcelExport');
+
+        $sesi = ExportSession::query()->where('id_user', '99999901')->where('export_name', 'buku-besar')->sole();
+
+        $this->assertSame('pending', $sesi->status);
+
+        Bus::assertBatched(function (PendingBatch $batch) use ($sesi) {
+            $prepare = $batch->jobs->first();
+
+            return $batch->queue() === 'exports'
+                && $batch->jobs->count() === 1
+                && $prepare instanceof PrepareExport
+                && $this->prop($prepare, 'exportSessionId') === $sesi->session_id
+                && $this->prop($prepare, 'userId') === '99999901'
+                && $this->prop($prepare, 'tglAwal') === self::AWAL
+                && $this->prop($prepare, 'tglAkhir') === self::AKHIR
+                && $this->prop($prepare, 'kodeRekening') === 'UJI.1';
+        });
+    }
+
+    /**
+     * @test
+     *
+     * The batch's then-callback is what starts the last step. If it pointed at
+     * another session, or another queue, the shards would be written and the
+     * workbook never built — and the session would stay "processing" forever,
+     * locking the user out of exporting this report again.
+     */
+    public function once_every_shard_is_written_the_workbook_is_queued_for_the_same_session(): void
+    {
+        Bus::fake();
+        Notification::fake();
+
+        $this->exporter()->call('exportToBackground');
+
+        $sesi = ExportSession::query()->where('id_user', '99999901')->where('export_name', 'buku-besar')->sole();
+
+        Bus::assertBatched(function (PendingBatch $batch) {
+            foreach ($batch->thenCallbacks() as $then) {
+                $then();
+            }
+
+            return true;
+        });
+
+        Bus::assertDispatched(WriteExcel::class, fn (WriteExcel $job) => $job->queue === 'exports'
+            && $this->prop($job, 'exportSessionId') === $sesi->session_id
+            && $this->prop($job, 'userId') === '99999901'
+            && $this->prop($job, 'exportName') === 'buku-besar');
+    }
+
+    /**
+     * @test
+     *
+     * "Pending" locks the report as firmly as "processing": the batch may simply
+     * not have been picked up yet.
+     */
+    public function refuses_a_second_background_export_while_the_first_is_still_queued(): void
+    {
+        Bus::fake();
+
+        ExportSession::query()->create([
+            'session_id' => 'UJI-SESSION', 'id_user' => '99999901', 'export_name' => 'buku-besar', 'status' => 'pending',
+        ]);
+
+        $this->exporter()
+            ->call('exportToBackground')
+            ->assertDispatched('flash.error');
+
+        Bus::assertNothingBatched();
+        $this->assertSame(1, ExportSession::query()->where('id_user', '99999901')->count());
+    }
+
+    /**
+     * @return array<string, array{0: string}>
+     */
+    public static function statusSelesai(): array
+    {
+        return ['selesai' => ['completed'], 'gagal' => ['failed']];
+    }
+
+    /**
+     * @test
+     *
+     * @dataProvider statusSelesai
+     *
+     * The lock lifts once the earlier export has finished either way. A failed
+     * one in particular must not keep the user from trying again.
+     */
+    public function a_finished_export_does_not_block_the_next_one(string $status): void
+    {
+        Bus::fake();
+        Notification::fake();
+
+        ExportSession::query()->create([
+            'session_id' => 'UJI-SESSION', 'id_user' => '99999901', 'export_name' => 'buku-besar', 'status' => $status,
+        ]);
+
+        $this->exporter()
+            ->call('exportToBackground')
+            ->assertNotDispatched('flash.error');
+
+        Bus::assertBatchCount(1);
+    }
+
+    /**
+     * @test
+     *
+     * The lock is per user. One member of staff exporting the ledger must not
+     * stop another from doing the same.
+     */
+    public function another_users_running_export_does_not_block_this_one(): void
+    {
+        Bus::fake();
+        Notification::fake();
+
+        ExportSession::query()->create([
+            'session_id' => 'UJI-SESSION', 'id_user' => '99999902', 'export_name' => 'buku-besar', 'status' => 'processing',
+        ]);
+
+        $this->exporter()
+            ->call('exportToBackground')
+            ->assertNotDispatched('flash.error');
+
+        Bus::assertBatchCount(1);
+    }
+
+    /**
+     * @test
+     *
+     * The other option is the Synchronous Export, which must not touch the queue
+     * or open a session.
+     */
+    public function the_synchronous_option_downloads_in_place_without_queueing(): void
+    {
+        Bus::fake();
+
+        $this->exporter()
+            ->call('exportWithOption', 1)
+            ->assertDispatched('beginExcelExport');
+
+        Bus::assertNothingBatched();
+        $this->assertSame(0, ExportSession::query()->where('id_user', '99999901')->count());
     }
 }
