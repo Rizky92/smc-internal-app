@@ -14,7 +14,7 @@
         <div class="card-header d-flex justify-content-center">
             <h5 class="text-uppercase">
                 Antrean
-                {{ \App\Models\Aplikasi\Pintu::where('kd_pintu', $this->kd_pintu)->first()->nm_pintu }}
+                {{ $this->namaPintu }}
             </h5>
         </div>
         <div class="card-body">
@@ -67,7 +67,8 @@
                 if (rowCount > 10) {
                     marquee.marquee();
                     marquee.off('finished').on('finished', function () {
-                        Livewire.emit('updateAntrean');
+                        Livewire.dispatch('updateAntrean');
+                        console.log('marquee finished, refreshing data after scrolling ends');
                     });
 
                     if (refreshInterval) {
@@ -79,7 +80,8 @@
 
                     if (!refreshInterval) {
                         refreshInterval = setInterval(function () {
-                            Livewire.emit('updateAntrean');
+                            Livewire.dispatch('updateAntrean');
+                            console.log('rowCount <= 20, refreshing data via interval');
                         }, 5000);
                     }
                 }

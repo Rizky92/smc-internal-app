@@ -6,6 +6,7 @@ use App\Models\Aplikasi\Pintu;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class ListAntrean extends Component
@@ -13,12 +14,23 @@ class ListAntrean extends Component
     /** @var string */
     public $kd_pintu;
 
-    /** @var mixed */
-    protected $listeners = ['updateAntrean'];
-
     public function mount(string $kd_pintu): void
     {
         $this->kd_pintu = $kd_pintu;
+    }
+
+    /**
+     * Null when kd_pintu names no pintu.
+     *
+     * Queried here rather than inline in the view, where the result was
+     * dereferenced without allowing for a code that no longer exists. value()
+     * returns null instead of a model, so there is nothing to dereference.
+     */
+    public function getNamaPintuProperty(): ?string
+    {
+        return Pintu::query()
+            ->where('kd_pintu', $this->kd_pintu)
+            ->value('nm_pintu');
     }
 
     public function getAntreanPerPintuProperty(): Collection
@@ -48,11 +60,14 @@ class ListAntrean extends Component
         return $this->antreanPerPintu->sum(fn ($group) => 1 + $group['items']->count());
     }
 
+    #[On('updateAntrean')]
     public function updateAntrean(): void
     {
-        $this->dispatchBrowserEvent('updateMarqueeData', [
-            'rowCount' => $this->totalRow,
-        ]);
+        // Named, not one array: dispatch() is variadic and passes $params
+        // through to the browser CustomEvent's detail as-is, so an array handed
+        // in positionally arrives as {"0": {...}} and event.detail.rowCount is
+        // undefined.
+        $this->dispatch('updateMarqueeData', rowCount: $this->totalRow);
     }
 
     public function render(): View

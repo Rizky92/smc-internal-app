@@ -31,21 +31,16 @@ trait PengaturanRKAT
 
     public function getDataTahunProperty(): array
     {
-        $firstRKAT = AnggaranBidang::query()
-            ->orderBy('tahun', 'asc')
-            ->limit(1)
-            ->value('tahun');
-
-        return collect(range($firstRKAT, (int) now()->addYears(5)->format('Y'), 1))
-            ->mapWithKeys(fn (int $v, $_): array => [$v => $v])
-            ->all();
+        // This year and next, so the Tahun RKAT can be advanced before any
+        // Penetapan RKAT exists for it.
+        return AnggaranBidang::pilihanTahun(now()->year, now()->year + 1);
     }
 
     public function updatePengaturanRKAT(): void
     {
         if (user()->cannot('aplikasi.pengaturan-rkat.update')) {
-            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->dispatchBrowserEvent('pengaturan-rkat.data-denied');
+            $this->dispatch('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatch('pengaturan-rkat.data-denied');
 
             return;
         }
@@ -70,8 +65,8 @@ trait PengaturanRKAT
 
         tracker_end();
 
-        $this->emit('flash.success', 'Pengaturan RKAT berhasil diupdate!');
-        $this->dispatchBrowserEvent('pengaturan-rkat.data-saved');
+        $this->dispatch('flash.success', 'Pengaturan RKAT berhasil diupdate!');
+        $this->dispatch('pengaturan-rkat.data-saved');
     }
 
     protected function defaultValuesPengaturanRKAT(): void

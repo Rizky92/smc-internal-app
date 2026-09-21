@@ -4,11 +4,24 @@
             <script>
                 $(document).on('DOMContentLoaded', e => {
                     $('#modal-perizinan').on('shown.bs.modal', e => {
-                        @this.emit('siap.show')
+                        // Only the "Role Baru" button marks itself
+                        // data-action="create". Without this check, roleId/
+                        // roleName/checkedPermissions from a previous edit
+                        // stayed on the component, so reopening via Tambah
+                        // right after Edit kept the old role's name and
+                        // permissions checked, and the form's submit action
+                        // (wired to update() whenever roleId !== -1) silently
+                        // renamed that role instead of creating a new one.
+                        var trigger = e.relatedTarget || null
+                        if (trigger && trigger.dataset && trigger.dataset.action === 'create') {
+                            @this.dispatch('siap.prepare')
+                        }
+
+                        @this.dispatch('siap.show')
                     })
 
                     $('#modal-perizinan').on('hide.bs.modal', e => {
-                        @this.emit('siap.hide')
+                        @this.dispatch('siap.hide')
                     })
                 })
 
@@ -30,7 +43,7 @@
                     <x-flash />
                     <div class="{{ Arr::toCssClasses(['form-group', 'mt-3' => session()->has(['flash.type', 'flash.message'])]) }}">
                         <label for="role-sekarang">Nama role:</label>
-                        <input type="text" id="role-sekarang" wire:model.defer="roleName" class="form-control form-control-sm" />
+                        <input type="text" id="role-sekarang" wire:model="roleName" class="form-control form-control-sm" />
                     </div>
                 </x-row-col>
                 <x-row-col class="mt-1">
@@ -44,7 +57,7 @@
                                         id="permission-{{ $key }}"
                                         name="permissions"
                                         value="{{ $key }}"
-                                        wire:model.defer="checkedPermissions.{{ $key }}" />
+                                        wire:model="checkedPermissions.{{ $key }}" />
                                     <label for="permission-{{ $key }}" class="custom-control-label font-weight-normal">
                                         {{ $name }}
                                     </label>

@@ -5,7 +5,7 @@
         <x-slot name="header">
             <x-row-col-flex>
                 <x-filter.range-date />
-                <x-filter.button-export-excel class="ml-auto" />
+                {{-- No export is written for this page; see KirimHasilMCUKaryawan::dataPerSheet(). --}}
             </x-row-col-flex>
             <x-row-col-flex class="mt-2 pb-3">
                 <x-filter.select-perpage />

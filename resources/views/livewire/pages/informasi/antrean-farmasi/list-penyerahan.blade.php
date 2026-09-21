@@ -69,17 +69,19 @@
                 marqueePenyerahan.marquee();
                 marqueePenyerahan.off('finished').on('finished', function () {
                     $(this).marquee('destroy');
-                    Livewire.emitTo('pages.informasi.antrean-farmasi.list-penyerahan', 'marqueePenyerahanFinished');
+                    Livewire.dispatchTo('pages.informasi.antrean-farmasi.list-penyerahan', 'marqueePenyerahanFinished');
                 });
             }
         }
 
-        document.addEventListener('DOMContentLoaded', initMarqueePenyerahan);
+        document.addEventListener('DOMContentLoaded', () => {
+            initMarqueePenyerahan();
 
-        Livewire.hook('message.processed', (message, component) => {
-            if (component.fingerprint.name === 'pages.informasi.antrean-farmasi.list-penyerahan') {
-                initMarqueePenyerahan();
-            }
+            Livewire.hook('morph.updated', ({ component }) => {
+                if (component.name === 'pages.informasi.antrean-farmasi.list-penyerahan') {
+                    initMarqueePenyerahan();
+                }
+            });
         });
     </script>
 @endpush

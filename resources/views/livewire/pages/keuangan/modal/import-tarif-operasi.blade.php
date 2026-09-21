@@ -2,11 +2,11 @@
     @push('js')
         <script>
             $('#modal-import-tarif-operasi').on('shown.bs.modal', (e) => {
-                Livewire.emit('tarif-operasi.show-modal');
+                Livewire.dispatch('tarif-operasi.show-modal');
             });
 
             $('#modal-import-tarif-operasi').on('hide.bs.modal', (e) => {
-                Livewire.emit('tarif-operasi.hide-modal');
+                Livewire.dispatch('tarif-operasi.hide-modal');
             });
 
             $(document).on('data-saved', () => {

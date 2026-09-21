@@ -14,7 +14,7 @@
     <header class="d-flex flex-wrap justify-content-center py-2 pb-2 mb-4 border-bottom shadow header">
         <div class="container-fluid d-flex justify-content-center">
             <h1 class="text-uppercase text-success">
-                {{ \App\Models\Perawatan\Poliklinik::where('kd_poli', $this->kd_poli)->first()->nm_poli }}
+                {{ $this->namaPoli }}
             </h1>
         </div>
     </header>
@@ -161,8 +161,8 @@
                             callVoice();
                         } else {
                             if (typeof Livewire !== 'undefined') {
-                                Livewire.emit('updateStatusAfterCall');
-                                Livewire.emit('updateAntrean');
+                                Livewire.dispatch('updateStatusAfterCall');
+                                Livewire.dispatch('updateAntrean');
                             } else {
                                 console.error('Livewire is not defined');
                             }
@@ -185,8 +185,8 @@
                     if (callCount < 3) {
                         initializeMarquee();
                     } else {
-                        Livewire.emit('updateAntrean');
-                        Livewire.emit('call');
+                        Livewire.dispatch('updateAntrean');
+                        Livewire.dispatch('call');
                         callCount = 0; // Reset call count for next cycle
                     }
                 });

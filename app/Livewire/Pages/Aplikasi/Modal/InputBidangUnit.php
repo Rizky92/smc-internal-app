@@ -7,6 +7,7 @@ use App\Livewire\Concerns\Filterable;
 use App\Models\Bidang;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class InputBidangUnit extends Component
@@ -22,13 +23,6 @@ class InputBidangUnit extends Component
 
     /** @var string */
     public $nama;
-
-    /** @var mixed */
-    protected $listeners = [
-        'prepare',
-        'bidang.show-modal' => 'showModal',
-        'bidang.hide-modal' => 'hideModal',
-    ];
 
     public function mount(): void
     {
@@ -48,6 +42,7 @@ class InputBidangUnit extends Component
         return view('livewire.pages.aplikasi.modal.input-bidang-unit');
     }
 
+    #[On('prepare')]
     public function prepare(int $bidangId = -1, int $parentId = -1, string $nama = ''): void
     {
         $this->parentId = $parentId;
@@ -64,27 +59,27 @@ class InputBidangUnit extends Component
         }
 
         if (user()->cannot('aplikasi.bidang-unit.create')) {
-            $this->dispatchBrowserEvent('data-denied');
-            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini.');
+            $this->dispatch('data-denied');
+            $this->dispatch('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini.');
 
             return;
         }
 
         tracker_start();
 
-        Bidang::create(['nama' => $this->nama, 'parent_id' => $this->parentId === -1 ? null : $this->parentId]);
+        Bidang::create(['nama' => $this->nama, 'parent_id' => $this->parentIdUntukDisimpan()]);
 
         tracker_end();
 
-        $this->dispatchBrowserEvent('data-saved');
-        $this->emit('flash.success', 'Bidang baru berhasil ditambahkan!');
+        $this->dispatch('data-saved');
+        $this->dispatch('flash.success', 'Bidang baru berhasil ditambahkan!');
     }
 
     public function update(): void
     {
         if (user()->cannot('aplikasi.bidang-unit.update')) {
-            $this->dispatchBrowserEvent('data-denied');
-            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini.');
+            $this->dispatch('data-denied');
+            $this->dispatch('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini.');
 
             return;
         }
@@ -95,20 +90,20 @@ class InputBidangUnit extends Component
             ->where('id', $this->bidangId)
             ->update([
                 'nama'      => $this->nama,
-                'parent_id' => $this->parentId,
+                'parent_id' => $this->parentIdUntukDisimpan(),
             ]);
 
         tracker_end('mysql_smc');
 
-        $this->dispatchBrowserEvent('data-saved');
-        $this->emit('flash.success', 'Data bidang berhasil diubah!');
+        $this->dispatch('data-saved');
+        $this->dispatch('flash.success', 'Data bidang berhasil diubah!');
     }
 
     public function delete(): void
     {
         if (user()->cannot('aplikasi.bidang-unit.delete')) {
-            $this->dispatchBrowserEvent('data-denied');
-            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatch('data-denied');
+            $this->dispatch('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
 
             return;
         }
@@ -116,15 +111,15 @@ class InputBidangUnit extends Component
         $bidang = Bidang::find($this->bidangId);
 
         if (! $bidang) {
-            $this->dispatchBrowserEvent('data-not-found');
-            $this->emit('flash.error', 'Tidak dapat menemukan data yang bisa dihapus. Silahkan coba kembali.');
+            $this->dispatch('data-not-found');
+            $this->dispatch('flash.error', 'Tidak dapat menemukan data yang bisa dihapus. Silahkan coba kembali.');
 
             return;
         }
 
         if (Bidang::whereId($this->bidangId)->hasChildren()->exists()) {
-            $this->dispatchBrowserEvent('data-denied');
-            $this->emit('flash.error', 'Bidang terkait masih ada sub-bidang! Tidak boleh dihapus!');
+            $this->dispatch('data-denied');
+            $this->dispatch('flash.error', 'Bidang terkait masih ada sub-bidang! Tidak boleh dihapus!');
 
             return;
         }
@@ -135,8 +130,24 @@ class InputBidangUnit extends Component
 
         tracker_end('mysql_smc');
 
-        $this->dispatchBrowserEvent('data-success');
-        $this->emit('flash.success', 'Data bidang berhasil dihapus!');
+        $this->dispatch('data-success');
+        $this->dispatch('flash.success', 'Data bidang berhasil dihapus!');
+    }
+
+    /**
+     * The parent to store: an id, or null for a top-level bidang.
+     *
+     * The form's "no parent" is -1, and it arrives in two shapes. prepare() sets
+     * the integer; picking "-" in the dropdown sends placeholderValue, the string
+     * "-1". Comparing strictly against -1 caught only the first, and parent_id
+     * is unsigned, so the other went to the database as -1 and was refused as
+     * out of range.
+     */
+    protected function parentIdUntukDisimpan(): ?int
+    {
+        $parentId = (int) $this->parentId;
+
+        return $parentId > 0 ? $parentId : null;
     }
 
     protected function defaultValues(): void

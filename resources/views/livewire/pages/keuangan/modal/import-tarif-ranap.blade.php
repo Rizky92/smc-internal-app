@@ -2,11 +2,11 @@
     @push('js')
         <script>
             $('#modal-import-tarif-ranap').on('shown.bs.modal', (e) => {
-                Livewire.emit('tarif-ranap.show-modal');
+                Livewire.dispatch('tarif-ranap.show-modal');
             });
 
             $('#modal-import-tarif-ranap').on('hidden.bs.modal', (e) => {
-                Livewire.emit('tarif-ranap.hide-modal');
+                Livewire.dispatch('tarif-ranap.hide-modal');
             });
 
             $(document).on('data-saved', () => {

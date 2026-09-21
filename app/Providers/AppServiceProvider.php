@@ -7,6 +7,7 @@ use App\Database\Query\Grammars\MysqlGrammar;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
+use App\Support\BasePathAwareLivewireManager;
 use App\Support\MixinArr;
 use App\Support\MixinCollections;
 use App\Support\MixinEloquentBuilder;
@@ -16,6 +17,7 @@ use App\Support\MixinStringable;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
@@ -24,6 +26,8 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
+use Livewire\LivewireManager;
+use Livewire\LivewireServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -46,7 +50,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->registerBasePathAwareLivewire();
     }
 
     /**
@@ -65,6 +69,28 @@ class AppServiceProvider extends ServiceProvider
         $this->registerModelConfigurations();
         $this->registerSuperadminRole();
         $this->registerMacrosAndMixins();
+    }
+
+    /**
+     * Livewire emits its update endpoint anchored at the domain root, which is
+     * wrong wherever this application is served from a subdirectory. See
+     * BasePathAwareLivewireManager for why the manager is the thing replaced.
+     *
+     * Livewire resolves its own manager during register() and calls setProvider()
+     * on it. Rebinding here drops that instance, so the provider has to be put
+     * back by hand — LivewireManager::$provider is typed and uninitialised, and
+     * FrontendAssets and SupportPagination both reach it through provide()
+     * during boot.
+     */
+    public function registerBasePathAwareLivewire(): void
+    {
+        $this->app->singleton(LivewireManager::class, function (Application $app): BasePathAwareLivewireManager {
+            $manager = new BasePathAwareLivewireManager;
+
+            $manager->setProvider($app->getProvider(LivewireServiceProvider::class));
+
+            return $manager;
+        });
     }
 
     public function registerBladeDirectives(): void

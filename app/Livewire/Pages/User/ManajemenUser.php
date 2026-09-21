@@ -13,6 +13,7 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class ManajemenUser extends Component
@@ -25,11 +26,6 @@ class ManajemenUser extends Component
 
     /** @var bool */
     public $tampilkanYangMemilikiHakAkses;
-
-    /** @var mixed */
-    protected $listeners = [
-        'user.prepare' => 'prepareUser',
-    ];
 
     protected function queryString(): array
     {
@@ -105,13 +101,14 @@ class ManajemenUser extends Component
      * @param  array<string|int, bool|string>  $roles
      * @param  array<string|int, bool|string>  $permissions
      */
+    #[On('user.prepare')]
     public function prepareUser($nrp, $nama, $roles, $permissions): void
     {
-        $this->emitTo('pages.user.khanza.set-hak-akses', 'khanza.prepare-set', $nrp, $nama);
-        $this->emitTo('pages.user.khanza.transfer-hak-akses', 'khanza.prepare-transfer', $nrp, $nama);
+        $this->dispatch('khanza.prepare-set', $nrp, $nama)->to('pages.user.khanza.set-hak-akses');
+        $this->dispatch('khanza.prepare-transfer', $nrp, $nama)->to('pages.user.khanza.transfer-hak-akses');
 
-        $this->emitTo('pages.user.siap.lihat-aktivitas', 'siap.prepare-la', $nrp, $nama);
-        $this->emitTo('pages.user.siap.set-perizinan', 'siap.prepare-set', $nrp, $nama, $roles, $permissions);
-        $this->emitTo('pages.user.siap.transfer-perizinan', 'siap.prepare-transfer', $nrp, $nama);
+        $this->dispatch('siap.prepare-la', $nrp, $nama)->to('pages.user.siap.lihat-aktivitas');
+        $this->dispatch('siap.prepare-set', $nrp, $nama, $roles, $permissions)->to('pages.user.siap.set-perizinan');
+        $this->dispatch('siap.prepare-transfer', $nrp, $nama)->to('pages.user.siap.transfer-perizinan');
     }
 }

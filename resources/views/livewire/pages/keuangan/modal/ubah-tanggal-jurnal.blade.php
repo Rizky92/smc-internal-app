@@ -4,11 +4,11 @@
             <script>
                 $(document).on('DOMContentLoaded', e => {
                     $('#modal-ubah-tgl-jurnal').on('shown.bs.modal', e => {
-                        @this.emit('utj.show')
+                        @this.dispatch('utj.show')
                     })
 
                     $('#modal-ubah-tgl-jurnal').on('hide.bs.modal', e => {
-                        @this.emit('utj.hide')
+                        @this.dispatch('utj.hide')
                     })
                 })
 
@@ -40,13 +40,13 @@
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label class="text-sm" for="no-jurnal">No. Jurnal</label>
-                                        <input type="text" class="form-control form-control-sm" id="no-jurnal" wire:model.defer="noJurnal" readonly autocomplete="off" />
+                                        <input type="text" class="form-control form-control-sm" id="no-jurnal" wire:model="noJurnal" readonly autocomplete="off" />
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label class="text-sm" for="no-bukti">No. Bukti</label>
-                                        <input type="text" class="form-control form-control-sm" id="no-bukti" wire:model.defer="noBukti" readonly autocomplete="off" />
+                                        <input type="text" class="form-control form-control-sm" id="no-bukti" wire:model="noBukti" readonly autocomplete="off" />
                                     </div>
                                 </div>
                             </x-row>
@@ -54,7 +54,7 @@
                                 <div class="col-12">
                                     <div class="form-group">
                                         <label class="text-sm" for="keterangan">Keterangan</label>
-                                        <textarea class="form-control form-control-sm" id="keterangan" wire:model.defer="keterangan" readonly style="resize: none"></textarea>
+                                        <textarea class="form-control form-control-sm" id="keterangan" wire:model="keterangan" readonly style="resize: none"></textarea>
                                     </div>
                                 </div>
                             </x-row>
@@ -62,13 +62,13 @@
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label class="text-sm" for="tgl-jurnal-lama">Tgl. Jurnal lama</label>
-                                        <input type="date" class="form-control form-control-sm" id="tgl-jurnal-lama" wire:model.defer="tglJurnalLama" readonly autocomplete="off" />
+                                        <input type="date" class="form-control form-control-sm" id="tgl-jurnal-lama" wire:model="tglJurnalLama" readonly autocomplete="off" />
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-group">
                                         <label class="text-sm" for="tgl-jurnal-baru">Tgl. Jurnal BARU</label>
-                                        <input type="date" class="form-control form-control-sm" id="tgl-jurnal-baru" autocomplete="off" wire:model.defer="tglJurnalBaru" />
+                                        <input type="date" class="form-control form-control-sm" id="tgl-jurnal-baru" autocomplete="off" wire:model="tglJurnalBaru" />
                                     </div>
                                 </div>
                             </x-row>
