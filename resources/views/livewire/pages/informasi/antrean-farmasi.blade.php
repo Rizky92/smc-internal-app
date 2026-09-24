@@ -43,7 +43,10 @@
                     $(this).marquee('destroy');
                     refresh(seconds * 1000);
                 });
-                list.timer = setTimeout(() => refresh(seconds * 1000), seconds * 2000);
+                // The fallback must outlast the pass itself, which grows with the row count.
+                const style = getComputedStyle(marquee.find('.js-marquee-wrapper')[0]);
+                const pass = (parseFloat(style.animationDuration) + parseFloat(style.animationDelay)) * 1000 || 0;
+                list.timer = setTimeout(() => refresh(seconds * 1000), Math.max(seconds * 1000, pass * 1.25 + 10000));
             } else {
                 list.timer = setTimeout(() => refresh(seconds * 1000), seconds * 1000);
             }

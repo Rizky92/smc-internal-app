@@ -71,6 +71,24 @@ class AntreanFarmasiTest extends DuskTestCase
         });
     }
 
+    public function test_fallback_refresh_tidak_memotong_putaran_yang_berjalan()
+    {
+        AntreanFarmasiFixture::seed(10);
+
+        $this->browse(function (Browser $browser) {
+            // A 5s interval is far shorter than a 10-row pass, so a fixed fallback would cut it.
+            $browser->visit('/antrean-farmasi?refresh=5')
+                ->waitUsing(5, 100, fn () => $this->bergulir($browser, 'pengerjaan'))
+                ->script("window.__t0 = Date.now(); window.__refreshes = []; Livewire.hook('message.processed', (m, c) => { if (c.fingerprint.name.endsWith('list-pengerjaan')) window.__refreshes.push(Date.now() - window.__t0); });");
+
+            $pass = $browser->script("const s = getComputedStyle(document.querySelector('#marquee-pengerjaan .js-marquee-wrapper')); return (parseFloat(s.animationDuration) + parseFloat(s.animationDelay)) * 1000;")[0];
+
+            $browser->waitUsing(150, 500, fn () => $browser->script('return window.__refreshes.length > 0')[0]);
+
+            $this->assertGreaterThanOrEqual($pass - 2000, $browser->script('return window.__refreshes[0]')[0]);
+        });
+    }
+
     public function test_list_yang_tidak_bergulir_refresh_sendiri()
     {
         AntreanFarmasiFixture::seed(3);
