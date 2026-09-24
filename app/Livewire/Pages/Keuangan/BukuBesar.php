@@ -2,8 +2,7 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
-use App\Jobs\PrepareExport;
-use App\Jobs\WriteExcel;
+use App\Jobs\BukuBesarExport;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
@@ -15,7 +14,6 @@ use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\Rekening;
 use App\Notifications\Notification;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -219,8 +217,6 @@ class BukuBesar extends Component
 
         $exportName = 'buku-besar';
 
-        $chunkSize = 1000;
-
         $existingSession = ExportSession::query()
             ->where('id_user', $userId)
             ->where('export_name', $exportName)
@@ -240,28 +236,15 @@ class BukuBesar extends Component
             'status'      => 'pending',
         ]);
 
-        Bus::batch([
-            new PrepareExport([
-                'exportSessionId' => $exportSessionId,
-                'exportName'      => $exportName,
-                'userId'          => $userId,
-                'tglAwal'         => $this->tglAwal,
-                'tglAkhir'        => $this->tglAkhir,
-                'kodeRekening'    => $this->kodeRekening,
-                'columnHeaders'   => $this->backgroundExportColumnHeaders(),
-                'chunkSize'       => $chunkSize,
-            ]),
-        ])
-            ->then(function () use ($exportSessionId, $exportName, $userId) {
-                WriteExcel::dispatch([
-                    'exportSessionId' => $exportSessionId,
-                    'exportName'      => $exportName,
-                    'userId'          => $userId,
-                ])->onQueue('exports');
-            })
-            ->allowFailures()
-            ->onQueue('exports')
-            ->dispatch();
+        BukuBesarExport::dispatch([
+            'exportSessionId' => $exportSessionId,
+            'exportName'      => $exportName,
+            'userId'          => $userId,
+            'tglAwal'         => $this->tglAwal,
+            'tglAkhir'        => $this->tglAkhir,
+            'kodeRekening'    => $this->kodeRekening,
+            'columnHeaders'   => $this->backgroundExportColumnHeaders(),
+        ])->onQueue('exports');
 
         Notification::make()
             ->message('Export Buku Besar sedang berjalan')
