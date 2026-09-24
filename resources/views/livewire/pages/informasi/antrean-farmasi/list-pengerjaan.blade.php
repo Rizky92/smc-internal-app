@@ -18,7 +18,7 @@
                         <span class="af-row-main">
                             <span class="af-row-name">{{ $item->nm_pasien }}</span>
                             <span class="af-row-detail">{{ trim($item->nm_poli) }}</span>
-                            <span class="af-row-detail">{{ __('Dokter Peresep: :dokter', ['dokter' => $item->nm_dokter]) }}</span>
+                            <span class="af-row-detail">{{ $item->nm_dokter }}</span>
                         </span>
 
                         @if ($item->is_racikan == '1')
