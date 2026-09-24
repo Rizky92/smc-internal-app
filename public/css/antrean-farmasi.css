@@ -115,11 +115,12 @@
     list-style: none;
 }
 
+/* Same arrangement as the original table: details | Racikan tag | time. Long text wraps, never cut. */
 .af-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto 6vw;
     align-items: center;
-    justify-content: space-between;
-    gap: 1vw;
+    gap: 1.5vw;
     padding: var(--af-space-row) 1.5vw;
     font-size: var(--af-font-row);
     border-bottom: 1px solid var(--af-border-subtle);
@@ -137,17 +138,21 @@
 
 .af-row-name {
     font-weight: 700;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+}
+
+.af-row-poli {
+    font-weight: 400;
+    color: var(--af-text-muted);
 }
 
 .af-row-detail {
     font-size: var(--af-font-detail);
     color: var(--af-text-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+}
+
+.af-row-time {
+    justify-self: end;
+    font-variant-numeric: tabular-nums;
 }
 
 .af-tag {

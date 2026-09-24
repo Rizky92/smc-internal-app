@@ -16,8 +16,11 @@
                 @foreach ($this->dataPengerjaan as $item)
                     <li class="af-row">
                         <span class="af-row-main">
-                            <span class="af-row-name">{{ $item->nm_pasien }}</span>
-                            <span class="af-row-detail">{{ trim($item->nm_poli) }} · {{ $item->nm_dokter }} · {{ substr($item->jam_validasi, 0, 5) }}</span>
+                            <span class="af-row-name">
+                                {{ $item->nm_pasien }}
+                                <span class="af-row-poli">({{ trim($item->nm_poli) }})</span>
+                            </span>
+                            <span class="af-row-detail">{{ __('Dokter Peresep: :dokter', ['dokter' => $item->nm_dokter]) }}</span>
                         </span>
 
                         @if ($item->is_racikan == '1')
@@ -25,6 +28,7 @@
                         @else
                             <span class="af-tag">{{ __('Non racikan') }}</span>
                         @endif
+                        <span class="af-row-time">{{ substr($item->jam_validasi, 0, 5) }}</span>
                     </li>
                 @endforeach
             </ul>
