@@ -32,6 +32,7 @@ class AntreanLoketFarmasi extends Model
         return $query
             ->where('tanggal', now()->toDateString())
             ->whereNotNull('jam_panggil')
-            ->orderByDesc('jam_panggil');
+            ->orderByDesc('jam_panggil')
+            ->orderByDesc('nomor');
     }
 }

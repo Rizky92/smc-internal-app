@@ -69,6 +69,19 @@ class AntreanFarmasiNomorDipanggilTest extends TestCase
             ->assertSee('Dipanggil pukul 09:30');
     }
 
+    public function test_panggilan_pada_detik_yang_sama_menampilkan_nomor_terbesar()
+    {
+        $hariIni = now()->toDateString();
+
+        // Inserted high-first so an unordered tie would tend to return 0012.
+        $this->antrean('0012', $hariIni, '09:45:00');
+        $this->antrean('0013', $hariIni, '09:45:00');
+
+        Livewire::test(NomorDipanggil::class)
+            ->assertSee('0013')
+            ->assertDontSee('0012');
+    }
+
     public function test_antrean_yang_belum_dipanggil_diabaikan()
     {
         $hariIni = now()->toDateString();
