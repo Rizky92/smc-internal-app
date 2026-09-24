@@ -17,16 +17,20 @@
         // its timer before sending, so a lost 'finished' event or a failed request can
         // never leave a list frozen.
         const antreanFarmasiLists = {};
-        const antreanFarmasiIntervalOverride = @if (app()->isProduction()) null @else parseInt(new URLSearchParams(window.location.search).get('refresh')) || null @endif;
+        const antreanFarmasiRefreshSeconds = @if (app()->isProduction()) 300 @else parseInt(new URLSearchParams(window.location.search).get('refresh')) || 300 @endif;
 
-        function registerAntreanFarmasiList(id, component, event) {
-            antreanFarmasiLists[component] = { id, event, timer: null };
+        // 'pengerjaan' → #marquee-pengerjaan, list-pengerjaan component, marqueePengerjaanFinished listener.
+        function registerAntreanFarmasiList(key) {
+            const component = 'pages.informasi.antrean-farmasi.list-' + key;
+            const event = 'marquee' + key.charAt(0).toUpperCase() + key.slice(1) + 'Finished';
+
+            antreanFarmasiLists[component] = { id: 'marquee-' + key, event, timer: null };
         }
 
         function initAntreanFarmasiList(component) {
             const list = antreanFarmasiLists[component];
             const marquee = $('#' + list.id);
-            const seconds = antreanFarmasiIntervalOverride || parseInt(marquee.data('refresh-interval')) || 300;
+            const seconds = antreanFarmasiRefreshSeconds;
             const refresh = (delay) => {
                 clearTimeout(list.timer);
                 list.timer = setTimeout(() => refresh(delay), delay);

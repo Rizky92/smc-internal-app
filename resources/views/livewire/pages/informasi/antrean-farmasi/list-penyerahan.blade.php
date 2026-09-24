@@ -10,7 +10,6 @@
                 id="marquee-penyerahan"
                 wire:key="marquee-penyerahan-{{ $this->dataPenyerahan->count() }}"
                 class="marquee bg-white"
-                data-refresh-interval="300"
                 data-direction="up"
                 data-duration="30000"
                 startVisible="true"
@@ -47,6 +46,6 @@
 
 @push('js')
     <script>
-        registerAntreanFarmasiList('marquee-penyerahan', 'pages.informasi.antrean-farmasi.list-penyerahan', 'marqueePenyerahanFinished');
+        registerAntreanFarmasiList('penyerahan');
     </script>
 @endpush

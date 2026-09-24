@@ -18,6 +18,8 @@ class AntreanFarmasiFixture
 
     private const KD_DOKTER = 'DSK-DR';
 
+    private const NO_RAWAT_PREFIX = '9999/12/31/';
+
     public static function seed(int $pengerjaan = 0, int $penyerahan = 0): array
     {
         $db = self::connection();
@@ -53,7 +55,7 @@ class AntreanFarmasiFixture
                     $seq++;
                     $id = str_pad((string) $seq, 6, '0', STR_PAD_LEFT);
                     $noRkmMedis = self::PREFIX.$id;
-                    $noRawat = '9999/12/31/'.$id;
+                    $noRawat = self::NO_RAWAT_PREFIX.$id;
                     $nama = 'PASIEN DUSK '.$id;
                     // Newest first on screen, all well inside the 120-minute window.
                     $jam = $now->copy()->subMinutes(10 + $seq)->format('H:i:s');
@@ -115,7 +117,7 @@ class AntreanFarmasiFixture
     {
         self::withoutForeignKeys(self::connection(), function (ConnectionInterface $db) {
             $db->table('resep_obat')->where('no_resep', 'like', self::PREFIX.'%')->delete();
-            $db->table('reg_periksa')->where('no_rawat', 'like', '9999/12/31/%')->delete();
+            $db->table('reg_periksa')->where('no_rawat', 'like', self::NO_RAWAT_PREFIX.'%')->delete();
             $db->table('pasien')->where('no_rkm_medis', 'like', self::PREFIX.'%')->delete();
             $db->table('dokter')->where('kd_dokter', self::KD_DOKTER)->delete();
         });

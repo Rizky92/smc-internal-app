@@ -3,27 +3,23 @@
 namespace Tests\Feature\Informasi;
 
 use App\Livewire\Pages\Informasi\AntreanFarmasi\NomorDipanggil;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use Livewire;
 use Tests\TestCase;
 
 class AntreanFarmasiNomorDipanggilTest extends TestCase
 {
+    use DatabaseTransactions;
+
+    protected $connectionsToTransact = ['mysql_sik'];
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        DB::connection('mysql_sik')->beginTransaction();
-
-        // Kosongkan antrean asli agar tidak mengganggu test; dikembalikan oleh rollBack() di tearDown().
+        // Kosongkan antrean yang ada agar tidak mengganggu test; dikembalikan oleh rollback DatabaseTransactions.
         DB::connection('mysql_sik')->table('antriloketfarmasi_smc')->delete();
-    }
-
-    protected function tearDown(): void
-    {
-        DB::connection('mysql_sik')->rollBack();
-
-        parent::tearDown();
     }
 
     private function antrean(string $nomor, string $tanggal, ?string $jamPanggil): void

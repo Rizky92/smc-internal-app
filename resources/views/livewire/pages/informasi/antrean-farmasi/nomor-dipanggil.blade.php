@@ -8,7 +8,7 @@
                 {{ $this->antrean->nomor ?? '–' }}
             </span>
             <span style="font-size: 2vh">
-                {{ $this->antrean ? 'Dipanggil pukul ' . $this->antrean->jam_panggil_singkat : 'Belum ada panggilan' }}
+                {{ $this->antrean ? __('Dipanggil pukul :jam', ['jam' => $this->antrean->jam_panggil_singkat]) : __('Belum ada panggilan') }}
             </span>
         </div>
     </div>

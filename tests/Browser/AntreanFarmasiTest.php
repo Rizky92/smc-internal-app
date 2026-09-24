@@ -155,7 +155,7 @@ class AntreanFarmasiTest extends DuskTestCase
     private function berisi(Browser $browser, string $list, string $teks): bool
     {
         // textContent, not visible text: rows below the fold are clipped by the box.
-        return $browser->script("return document.querySelector('#marquee-{$list}').textContent.includes('{$teks}')")[0];
+        return $browser->script("return document.querySelector('#marquee-{$list}').textContent.includes(".json_encode($teks).')')[0];
     }
 
     private function bergulir(Browser $browser, string $list): bool

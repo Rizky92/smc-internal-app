@@ -10,7 +10,6 @@
                 id="marquee-pengerjaan"
                 wire:key="marquee-pengerjaan-{{ $this->dataPengerjaan->count() }}"
                 class="marquee bg-white"
-                data-refresh-interval="300"
                 data-direction="up"
                 data-duration="30000"
                 startVisible="true"
@@ -47,6 +46,6 @@
 
 @push('js')
     <script>
-        registerAntreanFarmasiList('marquee-pengerjaan', 'pages.informasi.antrean-farmasi.list-pengerjaan', 'marqueePengerjaanFinished');
+        registerAntreanFarmasiList('pengerjaan');
     </script>
 @endpush
