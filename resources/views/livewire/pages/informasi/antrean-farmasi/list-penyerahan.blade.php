@@ -3,7 +3,7 @@
         .marquee {
             width: 100%;
             overflow-y: hidden;
-            height: calc(90vh);
+            height: calc(60vh);
         }
     </style>
 @endpush

@@ -8,5 +8,8 @@
             <livewire:pages.informasi.antrean-farmasi.list-pengerjaan />
             <livewire:pages.informasi.antrean-farmasi.list-penyerahan />
         </div>
+        <div class="col-12 d-flex">
+            <livewire:pages.informasi.antrean-farmasi.nomor-dipanggil />
+        </div>
     </div>
 </div>
