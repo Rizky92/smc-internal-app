@@ -1,13 +1,3 @@
-@push('styles')
-    <style>
-        .marquee {
-            width: 100%;
-            overflow-y: hidden;
-            height: calc(60vh);
-        }
-    </style>
-@endpush
-
 <div class="col-6 pt-2">
     <div class="card card-outline card-success">
         <div class="card-body">
@@ -20,8 +10,7 @@
                 id="marquee-pengerjaan"
                 wire:key="marquee-pengerjaan-{{ $this->dataPengerjaan->count() }}"
                 class="marquee bg-white"
-                @if ($this->dataPengerjaan->count() < 10) wire:poll.300s @endif
-                data-row-count="{{ $this->dataPengerjaan->count() }}"
+                data-refresh-interval="300"
                 data-direction="up"
                 data-duration="30000"
                 startVisible="true"
@@ -57,29 +46,7 @@
 </div>
 
 @push('js')
-    <script src="{{ asset('js/jquery.marquee.min.js') }}"></script>
     <script>
-        function initMarqueePengerjaan() {
-            let marqueePengerjaan = $('#marquee-pengerjaan');
-            let rowCount = parseInt(marqueePengerjaan.data('row-count'));
-
-            if (rowCount > 10) {
-                marqueePengerjaan.marquee('destroy');
-                marqueePengerjaan.find('.js-marquee-wrapper').remove();
-                marqueePengerjaan.marquee();
-                marqueePengerjaan.off('finished').on('finished', function () {
-                    $(this).marquee('destroy');
-                    Livewire.emitTo('pages.informasi.antrean-farmasi.list-pengerjaan', 'marqueePengerjaanFinished');
-                });
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', initMarqueePengerjaan);
-
-        Livewire.hook('message.processed', (message, component) => {
-            if (component.fingerprint.name === 'pages.informasi.antrean-farmasi.list-pengerjaan') {
-                initMarqueePengerjaan();
-            }
-        });
+        registerAntreanFarmasiList('marquee-pengerjaan', 'pages.informasi.antrean-farmasi.list-pengerjaan', 'marqueePengerjaanFinished');
     </script>
 @endpush

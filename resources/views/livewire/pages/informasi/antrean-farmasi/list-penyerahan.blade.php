@@ -1,13 +1,3 @@
-@push('styles')
-    <style>
-        .marquee {
-            width: 100%;
-            overflow-y: hidden;
-            height: calc(60vh);
-        }
-    </style>
-@endpush
-
 <div class="col-6 pt-2">
     <div class="card card-outline card-success">
         <div class="card-body">
@@ -20,8 +10,7 @@
                 id="marquee-penyerahan"
                 wire:key="marquee-penyerahan-{{ $this->dataPenyerahan->count() }}"
                 class="marquee bg-white"
-                @if ($this->dataPenyerahan->count() < 10) wire:poll.300s @endif
-                data-row-count="{{ $this->dataPenyerahan->count() }}"
+                data-refresh-interval="300"
                 data-direction="up"
                 data-duration="30000"
                 startVisible="true"
@@ -57,29 +46,7 @@
 </div>
 
 @push('js')
-    <script src="{{ asset('js/jquery.marquee.min.js') }}"></script>
     <script>
-        function initMarqueePenyerahan() {
-            let marqueePenyerahan = $('#marquee-penyerahan');
-            let rowCount = parseInt(marqueePenyerahan.data('row-count'));
-
-            if (rowCount > 10) {
-                marqueePenyerahan.marquee('destroy');
-                marqueePenyerahan.find('.js-marquee-wrapper').remove();
-                marqueePenyerahan.marquee();
-                marqueePenyerahan.off('finished').on('finished', function () {
-                    $(this).marquee('destroy');
-                    Livewire.emitTo('pages.informasi.antrean-farmasi.list-penyerahan', 'marqueePenyerahanFinished');
-                });
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', initMarqueePenyerahan);
-
-        Livewire.hook('message.processed', (message, component) => {
-            if (component.fingerprint.name === 'pages.informasi.antrean-farmasi.list-penyerahan') {
-                initMarqueePenyerahan();
-            }
-        });
+        registerAntreanFarmasiList('marquee-penyerahan', 'pages.informasi.antrean-farmasi.list-penyerahan', 'marqueePenyerahanFinished');
     </script>
 @endpush
