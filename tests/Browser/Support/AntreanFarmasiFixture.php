@@ -20,6 +20,8 @@ class AntreanFarmasiFixture
 
     private const NO_RAWAT_PREFIX = '9999/12/31/';
 
+    private const NO_RESEP_PANGGILAN = 'DSK-PANGGIL';
+
     public static function seed(int $pengerjaan = 0, int $penyerahan = 0): array
     {
         $db = self::connection();
@@ -113,9 +115,27 @@ class AntreanFarmasiFixture
         return $names;
     }
 
+    /**
+     * Records a pharmacy counter call for today, marked so clean() can remove it.
+     */
+    public static function panggil(string $nomor, ?string $jamPanggil = null): void
+    {
+        $db = self::connection();
+        $now = carbon($db->selectOne('select now() as now')->now);
+
+        $db->table('antriloketfarmasi_smc')->insert([
+            'nomor'       => $nomor,
+            'tanggal'     => $now->toDateString(),
+            'jam'         => $now->copy()->subMinutes(30)->format('H:i:s'),
+            'jam_panggil' => $jamPanggil ?? $now->format('H:i:s'),
+            'no_resep'    => self::NO_RESEP_PANGGILAN,
+        ]);
+    }
+
     public static function clean(): void
     {
         self::withoutForeignKeys(self::connection(), function (ConnectionInterface $db) {
+            $db->table('antriloketfarmasi_smc')->where('no_resep', self::NO_RESEP_PANGGILAN)->delete();
             $db->table('resep_obat')->where('no_resep', 'like', self::PREFIX.'%')->delete();
             $db->table('reg_periksa')->where('no_rawat', 'like', self::NO_RAWAT_PREFIX.'%')->delete();
             $db->table('pasien')->where('no_rkm_medis', 'like', self::PREFIX.'%')->delete();

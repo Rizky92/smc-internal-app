@@ -37,7 +37,25 @@ class AntreanFarmasiTest extends DuskTestCase
                 ->assertSeeIn('#marquee-pengerjaan', $names['pengerjaan'][0])
                 ->assertSeeIn('#marquee-pengerjaan', $names['pengerjaan'][1])
                 ->assertSeeIn('#marquee-penyerahan', $names['penyerahan'][0])
-                ->assertDontSeeIn('#marquee-pengerjaan', $names['penyerahan'][0]);
+                ->assertDontSeeIn('#marquee-pengerjaan', $names['penyerahan'][0])
+                ->assertDontSeeIn('#marquee-pengerjaan', 'Dokter Peresep');
+        });
+    }
+
+    public function test_panggilan_baru_tampil_dalam_15_detik_dan_disorot()
+    {
+        AntreanFarmasiFixture::panggil('0101', now()->subMinutes(5)->format('H:i:s'));
+
+        $this->browse(function (Browser $browser) {
+            $browser->visit('/antrean-farmasi')
+                ->assertSeeIn('#nomor-dipanggil', '0101')
+                ->assertScript("!document.querySelector('#nomor-dipanggil').classList.contains('is-new')");
+
+            AntreanFarmasiFixture::panggil('0102');
+
+            // The card polls every 10s, so a new call must show within 15s and be highlighted.
+            $browser->waitForTextIn('#nomor-dipanggil', '0102', 15)
+                ->assertScript("document.querySelector('#nomor-dipanggil').classList.contains('is-new')");
         });
     }
 
@@ -50,7 +68,7 @@ class AntreanFarmasiTest extends DuskTestCase
                 ->visit('/antrean-farmasi')
                 ->pause(500)
                 ->assertScript('document.documentElement.scrollHeight <= window.innerHeight')
-                ->assertScript("document.querySelector('.card.bg-primary').getBoundingClientRect().bottom <= window.innerHeight");
+                ->assertScript("document.querySelector('#nomor-dipanggil').getBoundingClientRect().bottom <= window.innerHeight");
         });
     }
 
@@ -122,19 +140,17 @@ class AntreanFarmasiTest extends DuskTestCase
         });
     }
 
-    public function test_layar_lebih_kecil_tetap_bergulir_saat_overflow()
+    public function test_layar_lebih_kecil_tetap_muat_dan_bergulir_saat_overflow()
     {
-        // Box and rows both scale with vh: 8 rows fit at 1920x1080 (~8.3) but not at 1366x768 (~7.0).
-        AntreanFarmasiFixture::seed(8);
+        // The layout is sized in vh, so a list holds ~8 rows at any 16:9 viewport.
+        AntreanFarmasiFixture::seed(9);
 
         $this->browse(function (Browser $browser) {
-            $browser->resize(1920, 1080)
+            $this->viewport($browser, 1366, 768)
                 ->visit('/antrean-farmasi')
-                ->pause(500)
-                ->assertScript("document.querySelector('#marquee-pengerjaan .js-marquee-wrapper') === null")
-                ->resize(1366, 768)
-                ->refresh()
-                ->waitUsing(5, 100, fn () => $this->bergulir($browser, 'pengerjaan'));
+                ->waitUsing(5, 100, fn () => $this->bergulir($browser, 'pengerjaan'))
+                ->assertScript('document.documentElement.scrollHeight <= window.innerHeight')
+                ->assertScript("document.querySelector('#nomor-dipanggil').getBoundingClientRect().bottom <= window.innerHeight");
 
             $this->assertTrue($this->bergulir($browser, 'pengerjaan'));
         });

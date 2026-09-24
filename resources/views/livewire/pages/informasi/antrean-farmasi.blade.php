@@ -1,11 +1,5 @@
 @push('styles')
-    <style>
-        .marquee {
-            width: 100%;
-            overflow-y: hidden;
-            height: calc(60vh);
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/antrean-farmasi.css') }}" />
 @endpush
 
 @push('js')
@@ -68,19 +62,41 @@
                 initAntreanFarmasiList(component.fingerprint.name);
             }
         });
+
+        // Highlight the called-number band for a few seconds whenever the number changes.
+        let antreanFarmasiNomorTerakhir = null;
+
+        Livewire.hook('message.processed', (message, component) => {
+            if (component.fingerprint.name !== 'pages.informasi.antrean-farmasi.nomor-dipanggil') {
+                return;
+            }
+
+            const band = component.el;
+            const nomor = band.dataset.nomor;
+
+            if (nomor && nomor !== antreanFarmasiNomorTerakhir) {
+                band.classList.add('is-new');
+                clearTimeout(band.highlightTimer);
+                band.highlightTimer = setTimeout(() => band.classList.remove('is-new'), 8000);
+            }
+
+            antreanFarmasiNomorTerakhir = nomor;
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            antreanFarmasiNomorTerakhir = document.getElementById('nomor-dipanggil')?.dataset.nomor ?? null;
+        });
     </script>
 @endpush
 
-<div class="container-fluid">
-    <div class="container-fluid d-flex justify-content-center border-bottom shadow">
-        <img src="img/logo.png" alt="logo" width="120" />
-        <h1 style="font-size: 4vh" class="pt-4">{{ __('Antrean Farmasi Rawat Jalan') }}</h1>
-    </div>
-    <div class="row">
+<div class="antrean-farmasi">
+    <header class="af-header">
+        <img src="{{ asset('img/logo.png') }}" alt="SMC" />
+        <h1>{{ __('Antrean Farmasi Rawat Jalan') }}</h1>
+    </header>
+    <div class="af-lists">
         <livewire:pages.informasi.antrean-farmasi.list-pengerjaan />
         <livewire:pages.informasi.antrean-farmasi.list-penyerahan />
     </div>
-    <div class="row">
-        <livewire:pages.informasi.antrean-farmasi.nomor-dipanggil />
-    </div>
+    <livewire:pages.informasi.antrean-farmasi.nomor-dipanggil />
 </div>

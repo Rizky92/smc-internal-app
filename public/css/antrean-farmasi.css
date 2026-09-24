@@ -1,0 +1,248 @@
+/*
+ * Antrean Farmasi display (waiting-room TV). Scoped to .antrean-farmasi so the rest of the
+ * AdminLTE app is untouched. Everything is sized in vh so the page fits any 16:9 viewport.
+ * Brand greens are taken from the SMC logo (#006030 wordmark, #30b040 leaf).
+ */
+
+.antrean-farmasi {
+    /* Colour tokens */
+    --af-surface-page: #f4f3ee;
+    --af-surface-card: #fcfbf7;
+    --af-surface-stripe: #f0efe8;
+    --af-border-subtle: #dcdad0;
+    --af-text-primary: #1a2420;
+    --af-text-muted: #4a5550;
+    --af-brand: #00602f;
+    --af-brand-tint: #e3efe7;
+    --af-on-brand: #fbfaf5;
+    --af-on-brand-muted: #c9dccf;
+    --af-accent: #f5b301;
+    --af-on-accent: #1a2420;
+
+    /* Type scale */
+    --af-font-number: 15vh;
+    --af-font-title: 4.2vh;
+    --af-font-heading: 3.4vh;
+    --af-font-row: 3vh;
+    --af-font-tag: 2.2vh;
+    --af-font-caption: 2.8vh;
+    --af-font-overline: 2.2vh;
+
+    /* Spacing and shape */
+    --af-space-page: 2vw;
+    --af-space-gap: 1.6vh;
+    --af-space-row: 1.1vh;
+    --af-radius: 1vh;
+    --af-band-height: 24vh;
+    --af-duration-highlight: 8s;
+
+    /* Pinned to the viewport: nothing else on <body> (e.g. the dev debug bar) can push it. */
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--af-space-gap);
+    padding: var(--af-space-gap) var(--af-space-page);
+    overflow: hidden;
+    background: var(--af-surface-page);
+    color: var(--af-text-primary);
+}
+
+/* Header */
+.af-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5vw;
+    flex: none;
+}
+
+.af-header img {
+    height: 7vh;
+    width: auto;
+}
+
+.af-header h1 {
+    margin: 0;
+    font-size: var(--af-font-title);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--af-brand);
+}
+
+/* The two lists share the space the header and band leave. */
+.af-lists {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5vw;
+    flex: 1;
+    min-height: 0;
+}
+
+.af-list {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    background: var(--af-surface-card);
+    border: 1px solid var(--af-border-subtle);
+    border-radius: var(--af-radius);
+    overflow: hidden;
+}
+
+.af-list-heading {
+    flex: none;
+    margin: 0;
+    padding: 1.4vh 1.5vw;
+    font-size: var(--af-font-heading);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--af-brand);
+    background: var(--af-brand-tint);
+    border-bottom: 0.4vh solid var(--af-brand);
+}
+
+/* The scrolling box: its height is whatever the list card leaves, measured by the marquee JS. */
+.af-list .marquee {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.af-rows {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.af-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1vw;
+    padding: var(--af-space-row) 1.5vw;
+    font-size: var(--af-font-row);
+    border-bottom: 1px solid var(--af-border-subtle);
+}
+
+.af-row:nth-child(even) {
+    background: var(--af-surface-stripe);
+}
+
+.af-row-name {
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.af-tag {
+    flex: none;
+    padding: 0.3vh 0.9vw;
+    font-size: var(--af-font-tag);
+    font-weight: 600;
+    border-radius: 999px;
+    color: var(--af-text-muted);
+    border: 1px solid var(--af-border-subtle);
+}
+
+.af-tag.is-racikan {
+    color: var(--af-brand);
+    background: var(--af-brand-tint);
+    border-color: var(--af-brand);
+}
+
+.af-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    margin: 0;
+    padding: 4vh 2vw;
+    font-size: var(--af-font-caption);
+    text-align: center;
+    color: var(--af-text-muted);
+}
+
+/* Called-number band */
+.af-called {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 3vw;
+    flex: none;
+    height: var(--af-band-height);
+    padding: 0 3vw;
+    border-radius: var(--af-radius);
+    background: var(--af-brand);
+    color: var(--af-on-brand);
+}
+
+.af-called-overline {
+    font-size: var(--af-font-overline);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--af-on-brand-muted);
+}
+
+.af-called-number {
+    font-size: var(--af-font-number);
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+}
+
+.af-called-action {
+    justify-self: end;
+    text-align: right;
+}
+
+.af-called-cta {
+    display: block;
+    font-size: var(--af-font-heading);
+    font-weight: 700;
+}
+
+.af-called-time {
+    display: block;
+    font-size: var(--af-font-caption);
+    color: var(--af-on-brand-muted);
+}
+
+.af-called-empty {
+    grid-column: 2;
+    justify-self: center;
+    font-size: var(--af-font-heading);
+    color: var(--af-on-brand-muted);
+}
+
+/* A new call: swap to the accent for a few seconds and pulse the number. */
+.af-called.is-new {
+    background: var(--af-accent);
+    color: var(--af-on-accent);
+    transition: background-color 300ms ease-out, color 300ms ease-out;
+}
+
+.af-called.is-new .af-called-overline,
+.af-called.is-new .af-called-time {
+    color: var(--af-on-accent);
+}
+
+.af-called.is-new .af-called-number {
+    animation: af-pulse 1s ease-in-out 3;
+}
+
+@keyframes af-pulse {
+    50% {
+        transform: scale(1.08);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .af-called.is-new,
+    .af-called.is-new .af-called-number {
+        transition: none;
+        animation: none;
+    }
+}

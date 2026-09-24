@@ -1,15 +1,14 @@
-<div class="col-12" wire:poll.30s>
-    <div class="card bg-primary mb-0" style="height: 15vh">
-        <div class="card-body d-flex flex-column justify-content-center align-items-center p-2">
-            <h4 class="font-weight-bold text-uppercase mb-0" style="font-size: 2.5vh">
-                {{ __('Nomor Antrean Dipanggil') }}
-            </h4>
-            <span class="font-weight-bold" style="font-size: 8vh; line-height: 1">
-                {{ $this->antrean->nomor ?? '–' }}
+<section id="nomor-dipanggil" class="af-called" data-nomor="{{ $this->antrean->nomor ?? '' }}" wire:poll.10s>
+    <span class="af-called-overline">{{ __('Nomor antrean dipanggil') }}</span>
+    @if ($this->antrean)
+        <span class="af-called-number">{{ $this->antrean->nomor }}</span>
+        <span class="af-called-action">
+            <span class="af-called-cta">{{ __('Silakan ke Loket Farmasi') }}</span>
+            <span class="af-called-time">
+                {{ __('Dipanggil pukul :jam', ['jam' => $this->antrean->jam_panggil_singkat]) }}
             </span>
-            <span style="font-size: 2vh">
-                {{ $this->antrean ? __('Dipanggil pukul :jam', ['jam' => $this->antrean->jam_panggil_singkat]) : __('Belum ada panggilan') }}
-            </span>
-        </div>
-    </div>
-</div>
+        </span>
+    @else
+        <span class="af-called-empty">{{ __('Belum ada panggilan') }}</span>
+    @endif
+</section>

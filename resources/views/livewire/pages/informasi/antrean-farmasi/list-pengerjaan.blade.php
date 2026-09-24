@@ -1,48 +1,33 @@
-<div class="col-6 pt-2">
-    <div class="card card-outline card-success">
-        <div class="card-body">
-            <div class="bg-success p-2 text-center">
-                <h4 class="text-white font-weight-bold text-uppercase" style="font-size: 4vh">
-                    {{ __('Sedang Dikerjakan') }}
-                </h4>
-            </div>
-            <div
-                id="marquee-pengerjaan"
-                wire:key="marquee-pengerjaan-{{ $this->dataPengerjaan->count() }}"
-                class="marquee bg-white"
-                data-direction="up"
-                data-duration="30000"
-                startVisible="true"
-                data-gap="10"
-                data-duplicated="false">
-                <table class="table table-bordered table-striped" style="font-size: 1.5vh">
-                    <tbody>
-                        @forelse ($this->dataPengerjaan as $item)
-                            <tr>
-                                <td style="width: 60%">
-                                    <span class="font-weight-bold">{{ $item->nm_pasien }}</span>
-                                    (
-                                    <span>{{ $item->nm_poli }}</span>
-                                    )
-                                    <br />
-                                    <span>Dokter Peresep : {{ $item->nm_dokter }}</span>
-                                </td>
-                                <td style="width: 20%">
-                                    {{ $item->is_racikan == '1' ? 'Racikan' : 'Non Racikan' }}
-                                </td>
-                                <td style="width: 20%">{{ $item->jam_validasi }}</td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="3" class="text-center p-4">Tidak ada yang dapat ditampilkan saat ini</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<section class="af-list">
+    <h2 class="af-list-heading">{{ __('Sedang Dikerjakan') }}</h2>
+    <div
+        id="marquee-pengerjaan"
+        wire:key="marquee-pengerjaan-{{ $this->dataPengerjaan->count() }}"
+        class="marquee"
+        data-direction="up"
+        data-duration="30000"
+        startVisible="true"
+        data-gap="10"
+        data-duplicated="false">
+        @if ($this->dataPengerjaan->isEmpty())
+            <p class="af-empty">{{ __('Belum ada resep yang sedang dikerjakan') }}</p>
+        @else
+            <ul class="af-rows">
+                @foreach ($this->dataPengerjaan as $item)
+                    <li class="af-row">
+                        <span class="af-row-name">{{ $item->nm_pasien }}</span>
+
+                        @if ($item->is_racikan == '1')
+                            <span class="af-tag is-racikan">{{ __('Racikan') }}</span>
+                        @else
+                            <span class="af-tag">{{ __('Non racikan') }}</span>
+                        @endif
+                    </li>
+                @endforeach
+            </ul>
+        @endif
     </div>
-</div>
+</section>
 
 @push('js')
     <script>
