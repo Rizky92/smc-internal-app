@@ -41,6 +41,19 @@ class AntreanFarmasiTest extends DuskTestCase
         });
     }
 
+    public function test_display_muat_satu_layar_di_1080p()
+    {
+        AntreanFarmasiFixture::seed(12, 12);
+
+        $this->browse(function (Browser $browser) {
+            $this->viewport($browser, 1920, 1080)
+                ->visit('/antrean-farmasi')
+                ->pause(500)
+                ->assertScript('document.documentElement.scrollHeight <= window.innerHeight')
+                ->assertScript("document.querySelector('.card.bg-primary').getBoundingClientRect().bottom <= window.innerHeight");
+        });
+    }
+
     public function test_list_yang_melebihi_tinggi_kotak_bergulir()
     {
         // 9 rows: more than 60vh holds at 1080p, but not more than the old 10-row threshold.
@@ -125,6 +138,18 @@ class AntreanFarmasiTest extends DuskTestCase
 
             $this->assertTrue($this->bergulir($browser, 'pengerjaan'));
         });
+    }
+
+    /**
+     * Size the viewport, not the window: the TV runs full screen, while resize() includes
+     * the browser frame (a 1920x1080 window only leaves a ~929px tall viewport).
+     */
+    private function viewport(Browser $browser, int $width, int $height): Browser
+    {
+        $browser->resize($width, $height);
+        $frame = $browser->script('return window.outerHeight - window.innerHeight')[0];
+
+        return $browser->resize($width, $height + $frame);
     }
 
     private function berisi(Browser $browser, string $list, string $teks): bool
