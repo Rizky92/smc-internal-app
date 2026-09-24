@@ -94,7 +94,11 @@
                                 <p class="p-2">{{ $notification->created_at->diffForHumans() }}</p>
                                 <div class="d-flex">
                                     @if (! empty($filePath))
-                                        <a href="{{ asset(Storage::url($filePath)) }}" class="btn btn-link" download>Download</a>
+                                        @if (Storage::disk('public')->exists($filePath))
+                                            <a href="{{ asset(Storage::url($filePath)) }}" class="btn btn-link" download>Download</a>
+                                        @else
+                                            <span class="text-muted px-2">File sudah kedaluwarsa, silahkan export ulang.</span>
+                                        @endif
                                     @endif
                                 </div>
                             </div>

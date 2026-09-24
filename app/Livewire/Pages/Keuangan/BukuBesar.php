@@ -2,8 +2,7 @@
 
 namespace App\Livewire\Pages\Keuangan;
 
-use App\Jobs\PrepareExport;
-use App\Jobs\WriteExcel;
+use App\Jobs\BukuBesarExport;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
@@ -15,7 +14,6 @@ use App\Models\Keuangan\Jurnal\Jurnal;
 use App\Models\Keuangan\Rekening;
 use App\Notifications\Notification;
 use App\View\Components\BaseLayout;
-use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -219,8 +217,6 @@ class BukuBesar extends Component
 
         $exportName = 'buku-besar';
 
-        $chunkSize = 1000;
-
         $existingSession = ExportSession::query()
             ->where('id_user', $userId)
             ->where('export_name', $exportName)
@@ -233,15 +229,20 @@ class BukuBesar extends Component
             return;
         }
 
-        ExportSession::query()->create([
+        $session = ExportSession::query()->create([
             'session_id'  => $exportSessionId,
             'id_user'     => $userId,
             'export_name' => $exportName,
             'status'      => 'pending',
         ]);
 
-        Bus::batch([
-            new PrepareExport([
+        /*
+         * Session sudah tercatat pending sebelum dispatch. Bila dispatch gagal,
+         * tidak ada job yang akan mengubah statusnya, dan session yatim itu
+         * akan selamanya menolak export berikutnya lewat pengecekan di atas.
+         */
+        try {
+            BukuBesarExport::dispatch([
                 'exportSessionId' => $exportSessionId,
                 'exportName'      => $exportName,
                 'userId'          => $userId,
@@ -249,19 +250,16 @@ class BukuBesar extends Component
                 'tglAkhir'        => $this->tglAkhir,
                 'kodeRekening'    => $this->kodeRekening,
                 'columnHeaders'   => $this->backgroundExportColumnHeaders(),
-                'chunkSize'       => $chunkSize,
-            ]),
-        ])
-            ->then(function () use ($exportSessionId, $exportName, $userId) {
-                WriteExcel::dispatch([
-                    'exportSessionId' => $exportSessionId,
-                    'exportName'      => $exportName,
-                    'userId'          => $userId,
-                ])->onQueue('exports');
-            })
-            ->allowFailures()
-            ->onQueue('exports')
-            ->dispatch();
+            ])->onQueue('exports');
+        } catch (\Throwable $e) {
+            $session->update(['status' => 'failed']);
+
+            report($e);
+
+            $this->emit('flash.error', 'Export Buku Besar gagal dimulai. Silahkan coba lagi.');
+
+            return;
+        }
 
         Notification::make()
             ->message('Export Buku Besar sedang berjalan')
