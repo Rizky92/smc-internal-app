@@ -1,5 +1,5 @@
 <section id="nomor-dipanggil" class="af-called" data-nomor="{{ $this->antrean->nomor ?? '' }}" wire:poll.10s>
-    <span class="af-called-overline">{{ __('Nomor antrean dipanggil') }}</span>
+    <span class="af-called-overline">{{ __('Antrean terakhir') }}</span>
     @if ($this->antrean)
         <span class="af-called-number">{{ $this->antrean->nomor }}</span>
         <span class="af-called-action">

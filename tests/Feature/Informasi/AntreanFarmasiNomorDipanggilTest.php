@@ -49,7 +49,7 @@ class AntreanFarmasiNomorDipanggilTest extends TestCase
         $this->antrean('0003', $hariIni, '08:05:00');
 
         Livewire::test(NomorDipanggil::class)
-            ->assertSeeInOrder(['Nomor antrean dipanggil', '0002', 'Silakan ke Loket Farmasi', 'Dipanggil pukul 08:15'])
+            ->assertSeeInOrder(['Antrean terakhir', '0002', 'Silakan ke Loket Farmasi', 'Dipanggil pukul 08:15'])
             ->assertDontSee('Belum ada panggilan');
     }
 
@@ -96,7 +96,7 @@ class AntreanFarmasiNomorDipanggilTest extends TestCase
 
         Livewire::test(NomorDipanggil::class)
             ->assertDontSee('0042')
-            ->assertSeeInOrder(['Nomor antrean dipanggil', 'Belum ada panggilan'])
+            ->assertSeeInOrder(['Antrean terakhir', 'Belum ada panggilan'])
             ->assertDontSee('–')
             ->assertDontSee('Silakan ke Loket Farmasi');
     }
@@ -104,7 +104,7 @@ class AntreanFarmasiNomorDipanggilTest extends TestCase
     public function test_tanpa_antrean_menampilkan_belum_ada_panggilan()
     {
         Livewire::test(NomorDipanggil::class)
-            ->assertSeeInOrder(['Nomor antrean dipanggil', 'Belum ada panggilan'])
+            ->assertSeeInOrder(['Antrean terakhir', 'Belum ada panggilan'])
             ->assertDontSee('–')
             ->assertDontSee('Silakan ke Loket Farmasi');
     }
