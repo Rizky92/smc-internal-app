@@ -40,7 +40,11 @@ class AntreanFarmasiFixture
             'cacat_fisik'       => $db->table('cacat_fisik')->value('id'),
         ];
 
-        $names = ['pengerjaan' => [], 'penyerahan' => []];
+        $names = [
+            'pengerjaan' => [],
+            'penyerahan' => [],
+            'poli'       => $db->table('poliklinik')->where('kd_poli', $kdPoli)->value('nm_poli'),
+        ];
 
         self::withoutForeignKeys($db, function (ConnectionInterface $db) use ($pengerjaan, $penyerahan, $now, $kdPoli, $kdPj, $lookup, &$names) {
             $db->table('dokter')->insertOrIgnore([

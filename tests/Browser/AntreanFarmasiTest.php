@@ -38,7 +38,9 @@ class AntreanFarmasiTest extends DuskTestCase
                 ->assertSeeIn('#marquee-pengerjaan', $names['pengerjaan'][1])
                 ->assertSeeIn('#marquee-penyerahan', $names['penyerahan'][0])
                 ->assertDontSeeIn('#marquee-pengerjaan', $names['penyerahan'][0])
-                ->assertDontSeeIn('#marquee-pengerjaan', 'Dokter Peresep');
+                ->assertSeeIn('#marquee-pengerjaan', trim($names['poli']))
+                ->assertSeeIn('#marquee-pengerjaan', 'dr. Dusk Fixture')
+                ->assertScript("/\d{2}:\d{2}/.test(document.querySelector('#marquee-pengerjaan .af-row-detail').textContent)");
         });
     }
 

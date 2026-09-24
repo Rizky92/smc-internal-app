@@ -24,6 +24,7 @@
     --af-font-title: 4.2vh;
     --af-font-heading: 3.4vh;
     --af-font-row: 3vh;
+    --af-font-detail: 2vh;
     --af-font-tag: 2.2vh;
     --af-font-caption: 2.8vh;
     --af-font-overline: 2.2vh;
@@ -128,8 +129,22 @@
     background: var(--af-surface-stripe);
 }
 
+.af-row-main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
 .af-row-name {
     font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.af-row-detail {
+    font-size: var(--af-font-detail);
+    color: var(--af-text-muted);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

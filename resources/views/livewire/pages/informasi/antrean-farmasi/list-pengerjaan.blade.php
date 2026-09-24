@@ -15,7 +15,10 @@
             <ul class="af-rows">
                 @foreach ($this->dataPengerjaan as $item)
                     <li class="af-row">
-                        <span class="af-row-name">{{ $item->nm_pasien }}</span>
+                        <span class="af-row-main">
+                            <span class="af-row-name">{{ $item->nm_pasien }}</span>
+                            <span class="af-row-detail">{{ trim($item->nm_poli) }} · {{ $item->nm_dokter }} · {{ substr($item->jam_validasi, 0, 5) }}</span>
+                        </span>
 
                         @if ($item->is_racikan == '1')
                             <span class="af-tag is-racikan">{{ __('Racikan') }}</span>
