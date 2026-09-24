@@ -229,22 +229,37 @@ class BukuBesar extends Component
             return;
         }
 
-        ExportSession::query()->create([
+        $session = ExportSession::query()->create([
             'session_id'  => $exportSessionId,
             'id_user'     => $userId,
             'export_name' => $exportName,
             'status'      => 'pending',
         ]);
 
-        BukuBesarExport::dispatch([
-            'exportSessionId' => $exportSessionId,
-            'exportName'      => $exportName,
-            'userId'          => $userId,
-            'tglAwal'         => $this->tglAwal,
-            'tglAkhir'        => $this->tglAkhir,
-            'kodeRekening'    => $this->kodeRekening,
-            'columnHeaders'   => $this->backgroundExportColumnHeaders(),
-        ])->onQueue('exports');
+        /*
+         * Session sudah tercatat pending sebelum dispatch. Bila dispatch gagal,
+         * tidak ada job yang akan mengubah statusnya, dan session yatim itu
+         * akan selamanya menolak export berikutnya lewat pengecekan di atas.
+         */
+        try {
+            BukuBesarExport::dispatch([
+                'exportSessionId' => $exportSessionId,
+                'exportName'      => $exportName,
+                'userId'          => $userId,
+                'tglAwal'         => $this->tglAwal,
+                'tglAkhir'        => $this->tglAkhir,
+                'kodeRekening'    => $this->kodeRekening,
+                'columnHeaders'   => $this->backgroundExportColumnHeaders(),
+            ])->onQueue('exports');
+        } catch (\Throwable $e) {
+            $session->update(['status' => 'failed']);
+
+            report($e);
+
+            $this->emit('flash.error', 'Export Buku Besar gagal dimulai. Silahkan coba lagi.');
+
+            return;
+        }
 
         Notification::make()
             ->message('Export Buku Besar sedang berjalan')
