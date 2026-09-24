@@ -16,10 +16,8 @@
                 @foreach ($this->dataPenyerahan as $item)
                     <li class="af-row">
                         <span class="af-row-main">
-                            <span class="af-row-name">
-                                {{ $item->nm_pasien }}
-                                <span class="af-row-poli">({{ trim($item->nm_poli) }})</span>
-                            </span>
+                            <span class="af-row-name">{{ $item->nm_pasien }}</span>
+                            <span class="af-row-detail">{{ trim($item->nm_poli) }}</span>
                             <span class="af-row-detail">{{ __('Dokter Peresep: :dokter', ['dokter' => $item->nm_dokter]) }}</span>
                         </span>
 
