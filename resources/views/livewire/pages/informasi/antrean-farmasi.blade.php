@@ -17,7 +17,10 @@
         // its timer before sending, so a lost 'finished' event or a failed request can
         // never leave a list frozen.
         const antreanFarmasiLists = {};
-        const antreanFarmasiRefreshSeconds = @if (app()->isProduction()) 300 @else parseInt(new URLSearchParams(window.location.search).get('refresh')) || 300 @endif;
+        const antreanFarmasiRefreshSeconds = @unless (app()->isProduction()) parseInt(new URLSearchParams(window.location.search).get('refresh')) || @endunless 300;
+        // A scrolling list's fallback waits out the whole pass with room to spare.
+        const antreanFarmasiFallbackPassFactor = 1.25;
+        const antreanFarmasiFallbackMarginMs = 10000;
 
         // 'pengerjaan' → #marquee-pengerjaan, list-pengerjaan component, marqueePengerjaanFinished listener.
         function registerAntreanFarmasiList(key) {
@@ -50,7 +53,7 @@
                 // The fallback must outlast the pass itself, which grows with the row count.
                 const style = getComputedStyle(marquee.find('.js-marquee-wrapper')[0]);
                 const pass = (parseFloat(style.animationDuration) + parseFloat(style.animationDelay)) * 1000 || 0;
-                list.timer = setTimeout(() => refresh(seconds * 1000), Math.max(seconds * 1000, pass * 1.25 + 10000));
+                list.timer = setTimeout(() => refresh(seconds * 1000), Math.max(seconds * 1000, pass * antreanFarmasiFallbackPassFactor + antreanFarmasiFallbackMarginMs));
             } else {
                 list.timer = setTimeout(() => refresh(seconds * 1000), seconds * 1000);
             }

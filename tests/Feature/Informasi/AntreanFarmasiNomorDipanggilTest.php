@@ -69,7 +69,7 @@ class AntreanFarmasiNomorDipanggilTest extends TestCase
     {
         $hariIni = now()->toDateString();
 
-        // Inserted high-first so an unordered tie would tend to return 0012.
+        // Inserted low-first: without a tie-break the query returned 0012 (verified red).
         $this->antrean('0012', $hariIni, '09:45:00');
         $this->antrean('0013', $hariIni, '09:45:00');
 
