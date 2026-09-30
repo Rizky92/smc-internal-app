@@ -6,7 +6,6 @@ use App\Jobs\BukuBesarExport;
 use App\Models\ExportSession;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use OpenSpout\Reader\XLSX\Reader;
@@ -172,6 +171,40 @@ class BukuBesarExportTest extends TestCase
         $this->assertSame('failed', $session->fresh()->status);
     }
 
+    public function test_karakter_khusus_xml_di_keterangan_tetap_utuh(): void
+    {
+        DB::connection('mysql_sik')->table('jurnal')
+            ->where('no_jurnal', 'TSTJ01')
+            ->update(['keterangan' => 'Bayar <PT A&B> "lunas" \'ok\'']);
+
+        $session = $this->buatSession();
+
+        BukuBesarExport::dispatchSync($this->params($session));
+
+        $sheets = $this->bacaXlsx($session);
+
+        $this->assertSame('Bayar <PT A&B> "lunas" \'ok\'', $sheets[0][1][4]);
+    }
+
+    public function test_export_langsung_gagal_bila_ruang_kosong_folder_sementara_kurang(): void
+    {
+        $session = $this->buatSession();
+
+        // Lebih besar dari disk mana pun.
+        config(['export.min_free_gb' => 1e12]);
+
+        try {
+            BukuBesarExport::dispatchSync($this->params($session));
+
+            $this->fail('Export seharusnya gagal.');
+        } catch (\RuntimeException $e) {
+            $this->assertStringContainsString('Ruang kosong', $e->getMessage());
+        }
+
+        $this->assertSame([], $this->disk->allFiles("exports/{$this->userId}/{$session->session_id}"));
+        $this->assertSame('failed', $session->fresh()->status);
+    }
+
     public function test_failed_membersihkan_file_saat_worker_dihentikan_karena_timeout(): void
     {
         /*
@@ -181,20 +214,12 @@ class BukuBesarExportTest extends TestCase
          */
         $session = $this->buatSession();
 
-        $tempDir = storage_path('framework/testing/export-temp');
-        config(['export.temp_dir' => $tempDir]);
-
         $this->disk->put("exports/{$this->userId}/{$session->session_id}/setengah-jadi.xlsx", 'partial');
-        mkdir($tempDir.'/export-'.$session->session_id, 0777, true);
-        file_put_contents($tempDir.'/export-'.$session->session_id.'/sheet1.xml', 'partial');
 
         (new BukuBesarExport($this->params($session)))->failed(new \RuntimeException('timeout'));
 
         $this->assertSame([], $this->disk->allFiles("exports/{$this->userId}/{$session->session_id}"));
-        $this->assertDirectoryDoesNotExist($tempDir.'/export-'.$session->session_id);
         $this->assertSame('failed', $session->fresh()->status);
-
-        File::deleteDirectory($tempDir);
     }
 
     private function buatSession(): ExportSession

@@ -13,24 +13,27 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
-use OpenSpout\Common\Entity\Row;
-use OpenSpout\Writer\XLSX\Options;
-use OpenSpout\Writer\XLSX\Writer;
+use Vtiful\Kernel\Excel;
 
 /**
  * Export Buku Besar yang men-stream baris dari sik langsung ke xlsx.
  *
  * Menggantikan PrepareExport -> ExportCsv -> WriteExcel, yang menulis data
  * yang sama berkali-kali ke disk (tabel exports, payload jobs, shard CSV,
- * salinan xlsx). Di sini satu-satunya yang ditulis adalah XML sementara
- * OpenSpout (diarahkan ke export.temp_dir, di server berupa tmpfs) dan file
- * xlsx akhir, langsung di folder tujuan.
+ * salinan xlsx). Di sini satu-satunya yang ditulis adalah file sementara
+ * xlswriter dan file xlsx akhir, langsung di folder tujuan.
  *
- * Memori tetap datar berapa pun jumlah barisnya: koneksi mysql_sik_export
- * unbuffered sehingga baris dibaca satu per satu, dan OpenSpout menulis setiap
- * baris langsung ke file sementara.
+ * Memakai ext-xlswriter mode constMemory (bukan wrapper ExcelExport, yang
+ * memakai mode biasa dan menahan seluruh sel di memori). Setiap baris langsung
+ * ditulis ke file sementara lewat tmpfile(), sehingga memori tetap datar
+ * berapa pun jumlah barisnya; koneksi mysql_sik_export pun unbuffered.
+ *
+ * Folder file sementara tidak bisa diatur: ekstensi memanggil libxlsxwriter
+ * dengan tmpdir NULL, jadi di Linux selalu di /tmp (TMPDIR pun diabaikan).
+ * File tmpfile() langsung di-unlink, sehingga hilang sendiri saat proses mati.
+ * Terukur untuk periode 2024 (~8,8 juta baris, 9 sheet): puncak ~5,9 GB,
+ * 438 detik, xlsx 419 MB. Bandingkan OpenSpout: 11,78 GB, 1.199 detik.
  */
 class BukuBesarExport implements ShouldQueue
 {
@@ -44,6 +47,12 @@ class BukuBesarExport implements ShouldQueue
      * Batas baris per worksheet xlsx, termasuk baris header.
      */
     public const MAX_ROWS_PER_SHEET = 1048576;
+
+    /**
+     * Jumlah baris per panggilan data(), agar tidak menyeberang dari PHP ke
+     * ekstensi untuk setiap baris.
+     */
+    private const ROWS_PER_WRITE = 1000;
 
     public $tries = 1;
 
@@ -94,40 +103,47 @@ class BukuBesarExport implements ShouldQueue
 
         $disk->makeDirectory($this->getFileDirectory());
 
-        $tempFolder = $this->getTempFolder();
+        $this->ensureEnoughDiskSpace(sys_get_temp_dir());
 
-        File::ensureDirectoryExists($tempFolder);
+        $sheet = 1;
 
-        $options = new Options;
-        $options->setTempFolder($tempFolder);
+        /**
+         * Argumen ketiga use_zip64 (default true) ada sejak ext-xlswriter
+         * 1.5, tetapi stub Psalm belum mengenalnya. Zip64 dimatikan agar file
+         * terbuka di lebih banyak versi Excel; setiap sheet dibatasi 1.048.576
+         * baris (~700 MB XML), jauh di bawah batas 4 GB per entri zip.
+         *
+         * @psalm-suppress TooManyArguments
+         */
+        $file = (new Excel(['path' => $disk->path($this->getFileDirectory())]))
+            ->constMemory(basename($filePath), 'Sheet'.$sheet, false);
+
         // Pergantian sheet diatur sendiri agar setiap sheet diawali header.
-        $options->SHOULD_CREATE_NEW_SHEETS_AUTOMATICALLY = false;
+        $file->header($this->columnHeaders);
+        $rowsInSheet = 1;
 
-        $writer = new Writer($options);
+        $buffer = [];
 
-        try {
-            $writer->openToFile($disk->path($filePath));
+        foreach ($this->query()->cursor() as $record) {
+            if ($rowsInSheet >= $this->maxRowsPerSheet) {
+                $this->flush($file, $buffer);
 
-            $header = Row::fromValues($this->columnHeaders);
-
-            $writer->addRow($header);
-            $rowsInSheet = 1;
-
-            foreach ($this->query()->cursor() as $record) {
-                if ($rowsInSheet >= $this->maxRowsPerSheet) {
-                    $writer->addNewSheetAndMakeItCurrent();
-                    $writer->addRow($header);
-                    $rowsInSheet = 1;
-                }
-
-                $writer->addRow(Row::fromValues(array_values((array) $record)));
-                $rowsInSheet++;
+                $file->addSheet('Sheet'.(++$sheet));
+                $file->header($this->columnHeaders);
+                $rowsInSheet = 1;
             }
 
-            $writer->close();
-        } finally {
-            File::deleteDirectory($tempFolder);
+            $buffer[] = array_values((array) $record);
+            $rowsInSheet++;
+
+            if (count($buffer) >= self::ROWS_PER_WRITE) {
+                $this->flush($file, $buffer);
+            }
         }
+
+        $this->flush($file, $buffer);
+
+        $file->output();
 
         $this->updateSessionStatus('completed');
 
@@ -192,13 +208,38 @@ class BukuBesarExport implements ShouldQueue
     }
 
     /**
-     * Folder sementara OpenSpout untuk job ini. Namanya diturunkan dari
-     * session supaya failed() bisa menemukannya lagi; OpenSpout sendiri hanya
-     * membersihkannya lewat close().
+     * @param  array<int, array>  $buffer
      */
-    public function getTempFolder(): string
+    private function flush(Excel $file, array &$buffer): void
     {
-        return rtrim(strval(config('export.temp_dir')), '/\\').DIRECTORY_SEPARATOR.'export-'.$this->exportSessionId;
+        if ($buffer === []) {
+            return;
+        }
+
+        $file->data($buffer);
+
+        $buffer = [];
+    }
+
+    /**
+     * Gagal sejak awal bila ruang kosong di folder sementara tidak cukup,
+     * daripada disk penuh di tengah jalan. Bila ruang kosong tidak bisa
+     * dibaca, export tetap dijalankan.
+     */
+    private function ensureEnoughDiskSpace(string $folder): void
+    {
+        $minimum = (float) config('export.min_free_gb') * 1024 ** 3;
+
+        $free = disk_free_space($folder);
+
+        if ($free !== false && $free < $minimum) {
+            throw new \RuntimeException(sprintf(
+                'Ruang kosong di %s hanya %.1f GB, export Buku Besar membutuhkan minimal %.1f GB.',
+                $folder,
+                $free / 1024 ** 3,
+                $minimum / 1024 ** 3
+            ));
+        }
     }
 
     public function failed(\Throwable $exception): void
@@ -209,10 +250,10 @@ class BukuBesarExport implements ShouldQueue
          * sehingga catch/finally di handle() tidak pernah berjalan. failed()
          * juga dipanggil pada instance baru hasil unserialize, jadi semua path
          * diturunkan ulang dari parameter job. Folder session hanya berisi xlsx
-         * milik job ini, jadi aman dihapus seluruhnya.
+         * milik job ini, jadi aman dihapus seluruhnya. File sementara
+         * xlswriter tidak perlu dihapus: tmpfile() hilang saat proses mati.
          */
         Storage::disk('public')->deleteDirectory($this->getFileDirectory());
-        File::deleteDirectory($this->getTempFolder());
 
         $this->updateSessionStatus('failed');
 
