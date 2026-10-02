@@ -34,10 +34,7 @@ class RecordIndikatorTest extends MutuTestCase
 
     private function record(): ?QualityIndicatorRecord
     {
-        return QualityIndicatorRecord::query()
-            ->where('indicator_id', $this->indicator->id)
-            ->where('recorded_date', self::TANGGAL)
-            ->first();
+        return QualityIndicatorRecord::tanggal($this->indicator->id, self::TANGGAL)->first();
     }
 
     private function recordTersimpan(string $status, array $attributes = []): QualityIndicatorRecord

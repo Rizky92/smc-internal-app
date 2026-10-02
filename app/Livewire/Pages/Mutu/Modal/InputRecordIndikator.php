@@ -86,7 +86,7 @@ class InputRecordIndikator extends Component
         $this->persist(QualityIndicatorRecord::STATUS_DRAFT);
 
         $this->flashSuccess('Penilaian harian berhasil disimpan sebagai draft.');
-        $this->closeModal();
+        $this->closeModalAndRefresh();
     }
 
     public function submit(): void
@@ -102,7 +102,7 @@ class InputRecordIndikator extends Component
         $this->persist(QualityIndicatorRecord::STATUS_SUBMITTED);
 
         $this->flashSuccess('Penilaian harian berhasil dikunci dan diserahkan.');
-        $this->closeModal();
+        $this->closeModalAndRefresh();
     }
 
     public function delete(): void
@@ -115,15 +115,12 @@ class InputRecordIndikator extends Component
 
         tracker_start('mysql_smc');
 
-        QualityIndicatorRecord::query()
-            ->where('indicator_id', $this->indicatorId)
-            ->where('recorded_date', $this->recordedDate)
-            ->delete();
+        QualityIndicatorRecord::tanggal($this->indicatorId, $this->recordedDate)->delete();
 
         tracker_end('mysql_smc');
 
         $this->flashSuccess('Data penilaian berhasil dihapus.');
-        $this->closeModal();
+        $this->closeModalAndRefresh();
     }
 
     public function render(): View
@@ -147,10 +144,7 @@ class InputRecordIndikator extends Component
 
     protected function findRecord(int $indicatorId, string $date): ?QualityIndicatorRecord
     {
-        return QualityIndicatorRecord::query()
-            ->where('indicator_id', $indicatorId)
-            ->where('recorded_date', $date)
-            ->first();
+        return QualityIndicatorRecord::tanggal($indicatorId, $date)->first();
     }
 
     protected function persist(string $status): void
@@ -174,7 +168,7 @@ class InputRecordIndikator extends Component
         tracker_end('mysql_smc');
     }
 
-    protected function closeModal(): void
+    protected function closeModalAndRefresh(): void
     {
         $this->dispatchBrowserEvent('close-modal', ['id' => 'modal-input-record-indikator']);
         $this->emit('record-saved');

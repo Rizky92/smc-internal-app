@@ -162,10 +162,7 @@ class DetailIndikatorMutu extends Component
     {
         tracker_start('mysql_smc');
 
-        QualityIndicatorRecord::query()
-            ->where('indicator_id', $this->indicatorId)
-            ->where('recorded_date', $date)
-            ->delete();
+        QualityIndicatorRecord::tanggal($this->indicatorId, $date)->delete();
 
         tracker_end('mysql_smc');
 

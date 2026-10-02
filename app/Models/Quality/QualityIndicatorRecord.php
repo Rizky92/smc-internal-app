@@ -41,6 +41,16 @@ class QualityIndicatorRecord extends Model
         return in_array($this->status, [self::STATUS_SUBMITTED, self::STATUS_APPROVED], true);
     }
 
+    /**
+     * Satu indikator hanya punya satu record per tanggal.
+     */
+    public function scopeTanggal(Builder $query, int $indicatorId, string $tanggal): Builder
+    {
+        return $query
+            ->where('indicator_id', $indicatorId)
+            ->where('recorded_date', $tanggal);
+    }
+
     public function scopePeriode(Builder $query, string $tglAwal, string $tglAkhir): Builder
     {
         return $query
