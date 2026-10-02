@@ -9,6 +9,7 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Aplikasi\User;
 use App\Models\Kepegawaian\Departemen;
+use App\Models\Quality\QualityIndicatorCorrectionRequest;
 use App\Models\Quality\QualityIndicatorRecord;
 use App\Models\Quality\QualityIndicatorRecordHistory;
 use App\View\Components\BaseLayout;
@@ -40,7 +41,12 @@ class ValidasiData extends Component
     /**
      * Aksi validator yang wajib disertai alasan; nilainya adalah nama method aksi.
      */
-    private const AKSI_BERALASAN = ['reject', 'void'];
+    private const AKSI_BERALASAN = ['reject', 'void', 'tolakKoreksi'];
+
+    /**
+     * Nilai filter status (bukan status record) untuk record yang punya pengajuan koreksi pending.
+     */
+    public const FILTER_KOREKSI = 'koreksi';
 
     /** @var string|null */
     public $alasanAksi;
@@ -76,7 +82,12 @@ class ValidasiData extends Component
     public function render(): View
     {
         return view('livewire.pages.mutu.validasi-data', [
-            'records' => $this->isDeferred ? [] : $this->collection,
+            'records'         => $this->isDeferred ? [] : $this->collection,
+            'judulFormAlasan' => [
+                'reject'       => 'Alasan Penolakan',
+                'void'         => 'Alasan Pembatalan (Void)',
+                'tolakKoreksi' => 'Alasan Penolakan Koreksi',
+            ][(string) $this->alasanAksi] ?? 'Alasan',
         ])
             ->layout(BaseLayout::class, ['title' => 'Validasi Data Indikator Mutu']);
     }
@@ -98,10 +109,12 @@ class ValidasiData extends Component
     {
         return QualityIndicatorRecord::query()
             ->with(['indicator.profile.category', 'indicator.departemen'])
+            ->with('pendingCorrection')
             ->withCount('histories')
             ->periode($this->tglAwal, $this->tglAkhir)
             ->when($this->depId, fn ($q) => $q->departemen($this->depId))
-            ->when($this->statusFilter && $this->statusFilter !== 'all', fn ($q) => $q->where('status', $this->statusFilter))
+            ->when($this->statusFilter === self::FILTER_KOREKSI, fn ($q) => $q->has('pendingCorrection'))
+            ->when($this->statusFilter && ! in_array($this->statusFilter, ['all', self::FILTER_KOREKSI], true), fn ($q) => $q->where('status', $this->statusFilter))
             ->when($this->cari, fn ($q) => $q->search($this->cari))
             ->orderBy('recorded_date', 'desc')
             ->paginate($this->perpage);
@@ -261,7 +274,103 @@ class ValidasiData extends Component
 
             $record->update(['status' => $status]);
             $record->recordHistory($aksiHistori, $statusLama, $alasan);
+
+            // Pengajuan koreksi hanya berlaku selama data masih berstatus disetujui.
+            if (! in_array($status, QualityIndicatorRecord::STATUSES_DISETUJUI, true)) {
+                $record->pendingCorrection()->update([
+                    'status'        => QualityIndicatorCorrectionRequest::STATUS_REJECTED,
+                    'reviewed_by'   => user()->nik,
+                    'review_reason' => 'Ditutup otomatis karena status data berubah menjadi '.$record->statusLabel().'.',
+                ]);
+            }
         });
+    }
+
+    public function setujuiKoreksi(int $indicatorId, string $date): void
+    {
+        if (! auth()->user()->can('mutu.validasi-data.approve')) {
+            $this->flashError('Anda tidak memiliki akses untuk menyetujui koreksi.');
+
+            return;
+        }
+
+        $record = QualityIndicatorRecord::tanggal($indicatorId, $date)->first();
+        $pengajuan = $record ? $record->pendingCorrection()->first() : null;
+
+        if (! $record || ! $pengajuan) {
+            $this->flashError('Tidak ada pengajuan koreksi yang menunggu validasi.');
+
+            return;
+        }
+
+        DB::connection('mysql_smc')->transaction(function () use ($record, $pengajuan): void {
+            $statusLama = $record->status;
+            $nilaiLama = $record->only(['numerator_value', 'denominator_value', 'notes']);
+
+            $record->update([
+                'numerator_value'   => $pengajuan->numerator_value,
+                'denominator_value' => $pengajuan->denominator_value,
+                'notes'             => $pengajuan->notes,
+                'status'            => QualityIndicatorRecord::STATUS_APPROVED_WITH_CORRECTION,
+            ]);
+
+            foreach ($nilaiLama as $field => $lama) {
+                if ((string) $lama === (string) $record->{$field}) {
+                    continue;
+                }
+
+                $record->auditLogs()->create([
+                    'field_name'    => $field,
+                    'old_value'     => (string) $lama,
+                    'new_value'     => (string) $record->{$field},
+                    'changed_by'    => user()->nik,
+                    'reason'        => $pengajuan->reason,
+                    'recorded_date' => $record->recorded_date,
+                ]);
+            }
+
+            $pengajuan->update([
+                'status'      => QualityIndicatorCorrectionRequest::STATUS_APPROVED,
+                'reviewed_by' => user()->nik,
+            ]);
+
+            $record->recordHistory(QualityIndicatorRecordHistory::ACTION_CORRECTION_APPROVED, $statusLama, $pengajuan->reason);
+        });
+
+        $this->flashSuccess('Pengajuan koreksi berhasil disetujui.');
+    }
+
+    public function tolakKoreksi(int $indicatorId, string $date): void
+    {
+        if (! auth()->user()->can('mutu.validasi-data.reject')) {
+            $this->flashError('Anda tidak memiliki akses untuk menolak koreksi.');
+
+            return;
+        }
+
+        $record = QualityIndicatorRecord::tanggal($indicatorId, $date)->first();
+        $pengajuan = $record ? $record->pendingCorrection()->first() : null;
+
+        if (! $record || ! $pengajuan) {
+            $this->flashError('Tidak ada pengajuan koreksi yang menunggu validasi.');
+
+            return;
+        }
+
+        $this->validate(['alasan' => ['required', 'string', 'min:3']]);
+
+        DB::connection('mysql_smc')->transaction(function () use ($record, $pengajuan): void {
+            $pengajuan->update([
+                'status'        => QualityIndicatorCorrectionRequest::STATUS_REJECTED,
+                'reviewed_by'   => user()->nik,
+                'review_reason' => $this->alasan,
+            ]);
+
+            $record->recordHistory(QualityIndicatorRecordHistory::ACTION_CORRECTION_REJECTED, $record->status, $this->alasan);
+        });
+
+        $this->tutupFormAlasan();
+        $this->flashSuccess('Pengajuan koreksi berhasil ditolak.');
     }
 
     protected function tutupFormAlasan(): void

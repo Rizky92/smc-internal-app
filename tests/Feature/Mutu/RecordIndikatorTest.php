@@ -5,6 +5,7 @@ namespace Tests\Feature\Mutu;
 use App\Livewire\Pages\Mutu\DetailIndikatorMutu;
 use App\Livewire\Pages\Mutu\Modal\InputRecordIndikator;
 use App\Models\Quality\QualityIndicator;
+use App\Models\Quality\QualityIndicatorCorrectionRequest;
 use App\Models\Quality\QualityIndicatorRecord;
 use Database\Factories\Quality\QualityIndicatorFactory;
 use Database\Factories\Quality\QualityIndicatorRecordFactory;
@@ -430,5 +431,158 @@ class RecordIndikatorTest extends MutuTestCase
             ->assertSee('Data penilaian tidak ditemukan.')
             ->assertSeeHtml('alert-danger')
             ->assertDontSee('Data penilaian berhasil dihapus.');
+    }
+
+    private function pengajuanKoreksi(QualityIndicatorRecord $record, string $status = 'pending', array $attributes = []): QualityIndicatorCorrectionRequest
+    {
+        return $record->corrections()->create(array_merge([
+            'numerator_value'   => 3,
+            'denominator_value' => 5,
+            'notes'             => 'Catatan diajukan',
+            'reason'            => 'Salah hitung',
+            'requested_by'      => self::NIK,
+            'status'            => $status,
+        ], $attributes));
+    }
+
+    /**
+     * @return array<string, array{0: string}>
+     */
+    public function statusDisetujui(): array
+    {
+        return [
+            'approved'                 => ['approved'],
+            'approved_with_correction' => ['approved_with_correction'],
+        ];
+    }
+
+    /**
+     * @dataProvider statusDisetujui
+     */
+    public function test_petugas_bisa_mengajukan_koreksi_untuk_record_disetujui(string $status): void
+    {
+        $this->recordTersimpan($status);
+
+        $this->modal(self::TANGGAL)
+            ->assertSet('koreksiNumerator', 4)
+            ->assertSet('koreksiDenominator', 5)
+            ->assertSet('koreksiNotes', 'Catatan awal')
+            ->set('koreksiNumerator', 3)
+            ->set('koreksiAlasan', 'Salah hitung pasien')
+            ->call('ajukanKoreksi')
+            ->assertHasNoErrors()
+            ->assertEmitted('record-saved')
+            ->assertSee('Pengajuan koreksi berhasil dikirim dan menunggu validasi.');
+
+        $record = $this->record();
+
+        $this->assertSame($status, $record->status);
+        $this->assertSame(4, (int) $record->numerator_value, 'Nilai record berubah sebelum koreksi disetujui');
+
+        $pengajuan = $record->corrections()->get();
+
+        $this->assertCount(1, $pengajuan);
+        $this->assertSame('pending', $pengajuan[0]->status);
+        $this->assertSame(3, (int) $pengajuan[0]->numerator_value);
+        $this->assertSame(5, (int) $pengajuan[0]->denominator_value);
+        $this->assertSame('Salah hitung pasien', $pengajuan[0]->reason);
+        $this->assertSame(self::NIK, $pengajuan[0]->requested_by);
+
+        $histori = $record->histories()->latest('id')->first();
+
+        $this->assertSame('correction_requested', $histori->action);
+        $this->assertSame('Salah hitung pasien', $histori->reason);
+    }
+
+    /**
+     * @return array<string, array{0: string, 1: string}>
+     */
+    public function alasanKoreksiTidakValid(): array
+    {
+        return [
+            'kosong'         => ['', 'required'],
+            'terlalu pendek' => ['ab', 'min'],
+        ];
+    }
+
+    /**
+     * @dataProvider alasanKoreksiTidakValid
+     */
+    public function test_pengajuan_koreksi_wajib_disertai_alasan(string $alasan, string $rule): void
+    {
+        $this->recordTersimpan('approved');
+
+        $this->modal(self::TANGGAL)
+            ->set('koreksiNumerator', 3)
+            ->set('koreksiAlasan', $alasan)
+            ->call('ajukanKoreksi')
+            ->assertHasErrors(['koreksiAlasan' => $rule]);
+
+        $this->assertSame(0, $this->record()->corrections()->count());
+    }
+
+    /**
+     * @return array<string, array{0: string}>
+     */
+    public function statusTidakBisaDikoreksi(): array
+    {
+        return [
+            'draft'     => ['draft'],
+            'submitted' => ['submitted'],
+            'rejected'  => ['rejected'],
+            'voided'    => ['voided'],
+        ];
+    }
+
+    /**
+     * @dataProvider statusTidakBisaDikoreksi
+     */
+    public function test_koreksi_hanya_bisa_diajukan_untuk_record_disetujui(string $status): void
+    {
+        $this->recordTersimpan($status);
+
+        $this->modal(self::TANGGAL)
+            ->set('koreksiNumerator', 3)
+            ->set('koreksiAlasan', 'Salah hitung')
+            ->call('ajukanKoreksi')
+            ->assertSee('Koreksi hanya dapat diajukan untuk data yang sudah disetujui.')
+            ->assertNotEmitted('record-saved');
+
+        $this->assertSame(0, $this->record()->corrections()->count());
+    }
+
+    public function test_koreksi_tidak_bisa_diajukan_bila_masih_ada_pengajuan_pending(): void
+    {
+        $this->pengajuanKoreksi($this->recordTersimpan('approved'));
+
+        $this->modal(self::TANGGAL)
+            ->set('koreksiNumerator', 2)
+            ->set('koreksiAlasan', 'Pengajuan kedua')
+            ->call('ajukanKoreksi')
+            ->assertSee('Masih ada pengajuan koreksi yang menunggu validasi.')
+            ->assertNotEmitted('record-saved');
+
+        $this->assertSame(1, $this->record()->corrections()->count());
+    }
+
+    public function test_modal_menampilkan_pengajuan_koreksi_pending(): void
+    {
+        $this->pengajuanKoreksi($this->recordTersimpan('approved'), 'pending', ['reason' => 'Alasan-Pending']);
+
+        $this->modal(self::TANGGAL)
+            ->assertSet('koreksiPending', true)
+            ->assertSee('Pengajuan koreksi menunggu validasi')
+            ->assertSee('Alasan-Pending')
+            ->assertDontSeeHtml('wire:click="ajukanKoreksi"');
+    }
+
+    public function test_modal_menampilkan_alasan_penolakan_pengajuan_terakhir(): void
+    {
+        $this->pengajuanKoreksi($this->recordTersimpan('approved'), 'rejected', ['review_reason' => 'Bukti-Tidak-Cukup']);
+
+        $this->modal(self::TANGGAL)
+            ->assertSet('koreksiPending', false)
+            ->assertSee('Bukti-Tidak-Cukup')
+            ->assertSeeHtml('wire:click="ajukanKoreksi"');
     }
 }

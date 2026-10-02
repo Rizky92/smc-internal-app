@@ -22,13 +22,22 @@ class QualityIndicatorRecordHistory extends Model
 
     public const ACTION_VOIDED = 'voided';
 
+    public const ACTION_CORRECTION_REQUESTED = 'correction_requested';
+
+    public const ACTION_CORRECTION_APPROVED = 'correction_approved';
+
+    public const ACTION_CORRECTION_REJECTED = 'correction_rejected';
+
     public const ACTION_LABELS = [
-        self::ACTION_SUBMITTED => 'Diserahkan',
-        self::ACTION_APPROVED  => 'Disetujui',
-        self::ACTION_REJECTED  => 'Ditolak',
-        self::ACTION_CORRECTED => 'Dikoreksi validator',
-        self::ACTION_RESET     => 'Batal validasi',
-        self::ACTION_VOIDED    => 'Dibatalkan (void)',
+        self::ACTION_SUBMITTED            => 'Diserahkan',
+        self::ACTION_APPROVED             => 'Disetujui',
+        self::ACTION_REJECTED             => 'Ditolak',
+        self::ACTION_CORRECTED            => 'Dikoreksi validator',
+        self::ACTION_RESET                => 'Batal validasi',
+        self::ACTION_VOIDED               => 'Dibatalkan (void)',
+        self::ACTION_CORRECTION_REQUESTED => 'Koreksi diajukan',
+        self::ACTION_CORRECTION_APPROVED  => 'Koreksi disetujui',
+        self::ACTION_CORRECTION_REJECTED  => 'Koreksi ditolak',
     ];
 
     protected $connection = 'mysql_smc';

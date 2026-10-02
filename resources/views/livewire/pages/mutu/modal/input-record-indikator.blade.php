@@ -98,6 +98,65 @@
                     </div>
                 </x-row>
             </x-form>
+
+            @if ($isEdit && in_array($status, \App\Models\Quality\QualityIndicatorRecord::STATUSES_DISETUJUI, true))
+                <hr />
+                <div class="px-3 pb-3">
+                    <h6>Koreksi Data</h6>
+
+                    @if ($koreksiPending && $pengajuanPending)
+                        <div class="alert alert-warning mb-0">
+                            <i class="fas fa-hourglass-half mr-2"></i>
+                            Pengajuan koreksi menunggu validasi: numerator {{ $pengajuanPending['numerator_value'] }}, denominator {{ $pengajuanPending['denominator_value'] }}.
+                            <div class="mt-1">
+                                <strong>Alasan:</strong>
+                                {{ $pengajuanPending['reason'] }}
+                            </div>
+                        </div>
+                    @else
+                        @if ($alasanTolakKoreksi)
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-circle mr-2"></i>
+                                Pengajuan koreksi terakhir ditolak.
+                                <strong>Alasan:</strong>
+                                {{ $alasanTolakKoreksi }}
+                            </div>
+                        @endif
+
+                        <p class="text-muted text-sm">Data yang sudah disetujui tidak dapat diubah langsung. Ajukan nilai yang benar; nilai lama tetap berlaku sampai validator menyetujui koreksi.</p>
+                        <x-row>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Numerator Koreksi</label>
+                                    <input type="number" wire:model.defer="koreksiNumerator" class="form-control form-control-sm" min="0" />
+                                    <x-form.error name="koreksiNumerator" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Denominator Koreksi</label>
+                                    <input type="number" wire:model.defer="koreksiDenominator" class="form-control form-control-sm" min="0" />
+                                    <x-form.error name="koreksiDenominator" />
+                                </div>
+                            </div>
+                        </x-row>
+                        <div class="form-group">
+                            <label>Catatan Koreksi</label>
+                            <textarea wire:model.defer="koreksiNotes" class="form-control form-control-sm" rows="2"></textarea>
+                            <x-form.error name="koreksiNotes" />
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                Alasan Koreksi
+                                <span class="text-danger">*</span>
+                            </label>
+                            <textarea wire:model.defer="koreksiAlasan" class="form-control form-control-sm" rows="2"></textarea>
+                            <x-form.error name="koreksiAlasan" />
+                        </div>
+                        <x-button variant="warning" size="sm" type="button" wire:click="ajukanKoreksi" wire:loading.attr="disabled" icon="fas fa-paper-plane" title="Ajukan Koreksi" />
+                    @endif
+                </div>
+            @endif
         </x-slot>
         <x-slot name="footer">
             <div class="d-flex justify-content-between w-100">

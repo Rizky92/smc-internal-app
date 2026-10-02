@@ -3,7 +3,9 @@
 namespace Tests\Feature\Mutu;
 
 use App\Livewire\Pages\Mutu\ValidasiData;
+use App\Models\Quality\IndicatorAuditLog;
 use App\Models\Quality\QualityIndicator;
+use App\Models\Quality\QualityIndicatorCorrectionRequest;
 use App\Models\Quality\QualityIndicatorRecord;
 use App\Models\Quality\QualityIndicatorRecordHistory;
 use Database\Factories\Quality\QualityIndicatorFactory;
@@ -440,5 +442,196 @@ class ValidasiDataTest extends MutuTestCase
         $halaman->set('cari', 'Sendiri-Approved')
             ->assertSee('Record-Sendiri-Approved')
             ->assertDontSee('Record-Lain-Submitted');
+    }
+
+    private function recordDenganPengajuanKoreksi(string $status = 'approved'): QualityIndicatorRecord
+    {
+        $record = $this->recordTersimpan($status, ['numerator_value' => 8, 'denominator_value' => 10, 'notes' => 'Catatan lama']);
+
+        $record->corrections()->create([
+            'numerator_value'   => 6,
+            'denominator_value' => 10,
+            'notes'             => 'Catatan baru',
+            'reason'            => 'Dua pasien tercatat ganda',
+            'requested_by'      => 'PETUGAS-01',
+            'status'            => 'pending',
+        ]);
+
+        return $record;
+    }
+
+    private function pengajuan(): QualityIndicatorCorrectionRequest
+    {
+        return QualityIndicatorCorrectionRequest::query()
+            ->whereHas('record', fn ($q) => $q->tanggal($this->indicator->id, self::TANGGAL))
+            ->latest('id')
+            ->firstOrFail();
+    }
+
+    public function test_filter_koreksi_diajukan_menampilkan_record_dengan_pengajuan_pending(): void
+    {
+        $this->recordDenganPengajuanKoreksi();
+        $this->recordTersimpan('approved', ['recorded_date' => '2026-03-11', 'notes' => 'Record-Tanpa-Pengajuan']);
+
+        $this->halaman()
+            ->set('tglAwal', '2026-03-01')
+            ->set('tglAkhir', '2026-03-31')
+            ->call('loadProperties')
+            ->set('statusFilter', 'koreksi')
+            ->assertSee('Catatan lama')
+            ->assertSee('Dua pasien tercatat ganda')
+            ->assertDontSee('Record-Tanpa-Pengajuan');
+    }
+
+    /**
+     * @dataProvider statusBisaDivoid
+     */
+    public function test_validator_bisa_menyetujui_pengajuan_koreksi(string $status): void
+    {
+        $this->recordDenganPengajuanKoreksi($status);
+
+        $this->halaman()
+            ->call('setujuiKoreksi', $this->indicator->id, self::TANGGAL)
+            ->assertSee('Pengajuan koreksi berhasil disetujui.')
+            ->assertSeeHtml('alert-success');
+
+        $record = QualityIndicatorRecord::tanggal($this->indicator->id, self::TANGGAL)->firstOrFail();
+
+        $this->assertSame('approved_with_correction', $record->status);
+        $this->assertSame(6, (int) $record->numerator_value);
+        $this->assertSame(10, (int) $record->denominator_value);
+        $this->assertSame('Catatan baru', $record->notes);
+
+        $pengajuan = $this->pengajuan();
+
+        $this->assertSame('approved', $pengajuan->status);
+        $this->assertSame(self::NIK, $pengajuan->reviewed_by);
+
+        $this->assertSame(
+            [
+                ['field_name' => 'notes', 'old_value' => 'Catatan lama', 'new_value' => 'Catatan baru', 'reason' => 'Dua pasien tercatat ganda'],
+                ['field_name' => 'numerator_value', 'old_value' => '8', 'new_value' => '6', 'reason' => 'Dua pasien tercatat ganda'],
+            ],
+            IndicatorAuditLog::query()
+                ->where('indicator_id', $this->indicator->id)
+                ->orderBy('field_name')
+                ->get(['field_name', 'old_value', 'new_value', 'reason'])
+                ->toArray()
+        );
+
+        $histori = $this->historiTerakhir();
+
+        $this->assertSame('correction_approved', $histori->action);
+        $this->assertSame($status, $histori->status_before);
+        $this->assertSame('approved_with_correction', $histori->status_after);
+        $this->assertSame(6, (int) $histori->numerator_value);
+    }
+
+    public function test_setujui_koreksi_ditolak_tanpa_izin_approve(): void
+    {
+        $this->recordDenganPengajuanKoreksi();
+
+        $this->halaman(['mutu.validasi-data.read', 'mutu.validasi-data.reject'])
+            ->call('setujuiKoreksi', $this->indicator->id, self::TANGGAL)
+            ->assertSeeHtml('alert-danger');
+
+        $this->assertSame('approved', $this->statusRecord());
+        $this->assertSame('pending', $this->pengajuan()->status);
+    }
+
+    public function test_setujui_koreksi_tanpa_pengajuan_pending_menghasilkan_error(): void
+    {
+        $this->recordTersimpan('approved');
+
+        $this->halaman()
+            ->call('setujuiKoreksi', $this->indicator->id, self::TANGGAL)
+            ->assertSee('Tidak ada pengajuan koreksi yang menunggu validasi.')
+            ->assertSeeHtml('alert-danger');
+
+        $this->assertSame('approved', $this->statusRecord());
+    }
+
+    public function test_validator_bisa_menolak_pengajuan_koreksi_dengan_alasan(): void
+    {
+        $this->recordDenganPengajuanKoreksi();
+
+        $this->halaman()
+            ->call('bukaFormAlasan', 'tolakKoreksi', $this->indicator->id, self::TANGGAL)
+            ->set('alasan', 'Bukti register tidak dilampirkan')
+            ->call('simpanAlasan')
+            ->assertSee('Pengajuan koreksi berhasil ditolak.')
+            ->assertDispatchedBrowserEvent('close-modal', ['id' => 'modal-alasan-validasi']);
+
+        $record = QualityIndicatorRecord::tanggal($this->indicator->id, self::TANGGAL)->firstOrFail();
+
+        $this->assertSame('approved', $record->status);
+        $this->assertSame(8, (int) $record->numerator_value);
+
+        $pengajuan = $this->pengajuan();
+
+        $this->assertSame('rejected', $pengajuan->status);
+        $this->assertSame('Bukti register tidak dilampirkan', $pengajuan->review_reason);
+        $this->assertSame(self::NIK, $pengajuan->reviewed_by);
+
+        $histori = $this->historiTerakhir();
+
+        $this->assertSame('correction_rejected', $histori->action);
+        $this->assertSame('Bukti register tidak dilampirkan', $histori->reason);
+    }
+
+    /**
+     * @dataProvider alasanTidakValid
+     */
+    public function test_tolak_koreksi_wajib_disertai_alasan(string $alasan, string $rule): void
+    {
+        $this->recordDenganPengajuanKoreksi();
+
+        $this->halaman()
+            ->set('alasan', $alasan)
+            ->call('tolakKoreksi', $this->indicator->id, self::TANGGAL)
+            ->assertHasErrors(['alasan' => $rule]);
+
+        $this->assertSame('pending', $this->pengajuan()->status);
+    }
+
+    public function test_tolak_koreksi_ditolak_tanpa_izin_reject(): void
+    {
+        $this->recordDenganPengajuanKoreksi();
+
+        $this->halaman(['mutu.validasi-data.read', 'mutu.validasi-data.approve'])
+            ->set('alasan', 'Alasan tolak')
+            ->call('tolakKoreksi', $this->indicator->id, self::TANGGAL)
+            ->assertSeeHtml('alert-danger');
+
+        $this->assertSame('pending', $this->pengajuan()->status);
+    }
+
+    /**
+     * @return array<string, array{0: string}>
+     */
+    public function aksiPenutupPengajuan(): array
+    {
+        return [
+            'void'           => ['void'],
+            'batal validasi' => ['resetStatus'],
+        ];
+    }
+
+    /**
+     * @dataProvider aksiPenutupPengajuan
+     */
+    public function test_void_dan_batal_validasi_menutup_pengajuan_koreksi_pending(string $aksi): void
+    {
+        $this->recordDenganPengajuanKoreksi();
+
+        $this->halaman()
+            ->set('alasan', 'Data dibatalkan')
+            ->call($aksi, $this->indicator->id, self::TANGGAL)
+            ->assertSeeHtml('alert-success');
+
+        $pengajuan = $this->pengajuan();
+
+        $this->assertSame('rejected', $pengajuan->status);
+        $this->assertNotEmpty($pengajuan->review_reason);
     }
 }

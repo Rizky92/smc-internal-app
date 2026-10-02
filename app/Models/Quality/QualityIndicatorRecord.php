@@ -6,6 +6,7 @@ use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\DB;
 
 class QualityIndicatorRecord extends Model
@@ -180,6 +181,20 @@ class QualityIndicatorRecord extends Model
     public function histories(): HasMany
     {
         return $this->hasMany(QualityIndicatorRecordHistory::class, 'record_id');
+    }
+
+    public function corrections(): HasMany
+    {
+        return $this->hasMany(QualityIndicatorCorrectionRequest::class, 'record_id');
+    }
+
+    /**
+     * Paling banyak satu pengajuan pending per record (dijaga saat mengajukan).
+     */
+    public function pendingCorrection(): HasOne
+    {
+        return $this->hasOne(QualityIndicatorCorrectionRequest::class, 'record_id')
+            ->where('status', QualityIndicatorCorrectionRequest::STATUS_PENDING);
     }
 
     /**

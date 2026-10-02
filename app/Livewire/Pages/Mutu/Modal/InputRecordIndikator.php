@@ -4,6 +4,7 @@ namespace App\Livewire\Pages\Mutu\Modal;
 
 use App\Livewire\Concerns\FlashComponent;
 use App\Models\Quality\QualityIndicator;
+use App\Models\Quality\QualityIndicatorCorrectionRequest;
 use App\Models\Quality\QualityIndicatorRecord;
 use App\Models\Quality\QualityIndicatorRecordHistory;
 use Illuminate\Support\Facades\DB;
@@ -42,6 +43,31 @@ class InputRecordIndikator extends Component
      */
     public $bisaDihapus = false;
 
+    /** @var int|string|null */
+    public $koreksiNumerator;
+
+    /** @var int|string|null */
+    public $koreksiDenominator;
+
+    /** @var string|null */
+    public $koreksiNotes;
+
+    /** @var string */
+    public $koreksiAlasan = '';
+
+    /** @var bool */
+    public $koreksiPending = false;
+
+    /**
+     * Pengajuan yang sedang menunggu, untuk ditampilkan ke petugas.
+     *
+     * @var array{numerator_value: int, denominator_value: int, notes: ?string, reason: string}|null
+     */
+    public $pengajuanPending;
+
+    /** @var string|null */
+    public $alasanTolakKoreksi;
+
     protected $listeners = ['input-record' => 'loadIndicator'];
 
     protected function rules(): array
@@ -76,6 +102,10 @@ class InputRecordIndikator extends Component
                 $this->alasanPenolakan = $record->status === QualityIndicatorRecord::STATUS_REJECTED
                     ? $record->lastRejectionReason()
                     : null;
+
+                if (in_array($record->status, QualityIndicatorRecord::STATUSES_DISETUJUI, true)) {
+                    $this->muatPengajuanKoreksi($record);
+                }
             }
         } else {
             $this->recordedDate = now()->format('Y-m-d');
@@ -139,11 +169,60 @@ class InputRecordIndikator extends Component
 
         tracker_start('mysql_smc');
 
-        optional($record)->delete();
+        if ($record) {
+            $record->delete();
+        }
 
         tracker_end('mysql_smc');
 
         $this->flashSuccess('Data penilaian berhasil dihapus.');
+        $this->closeModalAndRefresh();
+    }
+
+    /**
+     * Data yang sudah disetujui tidak diubah langsung; petugas mengajukan koreksi untuk divalidasi ulang (ADR 0002).
+     */
+    public function ajukanKoreksi(): void
+    {
+        $record = $this->findRecord((int) $this->indicatorId, (string) $this->recordedDate);
+
+        if (! $record || ! in_array($record->status, QualityIndicatorRecord::STATUSES_DISETUJUI, true)) {
+            $this->flashError('Koreksi hanya dapat diajukan untuk data yang sudah disetujui.');
+
+            return;
+        }
+
+        if ($record->pendingCorrection()->exists()) {
+            $this->flashError('Masih ada pengajuan koreksi yang menunggu validasi.');
+
+            return;
+        }
+
+        $this->validate([
+            'koreksiNumerator'   => ['required', 'integer', 'min:0'],
+            'koreksiDenominator' => ['required', 'integer', 'min:0'],
+            'koreksiNotes'       => ['nullable', 'string'],
+            'koreksiAlasan'      => ['required', 'string', 'min:3'],
+        ]);
+
+        tracker_start('mysql_smc');
+
+        DB::connection('mysql_smc')->transaction(function () use ($record): void {
+            $record->corrections()->create([
+                'numerator_value'   => $this->koreksiNumerator,
+                'denominator_value' => $this->koreksiDenominator,
+                'notes'             => $this->koreksiNotes,
+                'reason'            => $this->koreksiAlasan,
+                'requested_by'      => user()->nik,
+                'status'            => QualityIndicatorCorrectionRequest::STATUS_PENDING,
+            ]);
+
+            $record->recordHistory(QualityIndicatorRecordHistory::ACTION_CORRECTION_REQUESTED, $record->status, $this->koreksiAlasan);
+        });
+
+        tracker_end('mysql_smc');
+
+        $this->flashSuccess('Pengajuan koreksi berhasil dikirim dan menunggu validasi.');
         $this->closeModalAndRefresh();
     }
 
@@ -167,6 +246,28 @@ class InputRecordIndikator extends Component
         $record = $this->findRecord($this->indicatorId, $this->recordedDate);
 
         return $record !== null && $record->isLocked();
+    }
+
+    protected function muatPengajuanKoreksi(QualityIndicatorRecord $record): void
+    {
+        $this->koreksiNumerator = $record->numerator_value;
+        $this->koreksiDenominator = $record->denominator_value;
+        $this->koreksiNotes = $record->notes;
+        $this->koreksiAlasan = '';
+
+        $pending = $record->pendingCorrection()->first();
+
+        $this->koreksiPending = $pending !== null;
+        $this->pengajuanPending = $pending
+            ? $pending->only(['numerator_value', 'denominator_value', 'notes', 'reason'])
+            : null;
+
+        $this->alasanTolakKoreksi = $pending
+            ? null
+            : $record->corrections()
+                ->where('status', QualityIndicatorCorrectionRequest::STATUS_REJECTED)
+                ->latest('id')
+                ->value('review_reason');
     }
 
     protected function findRecord(int $indicatorId, string $date): ?QualityIndicatorRecord
@@ -209,6 +310,6 @@ class InputRecordIndikator extends Component
     {
         $this->dispatchBrowserEvent('close-modal', ['id' => 'modal-input-record-indikator']);
         $this->emit('record-saved');
-        $this->reset(['numeratorValue', 'denominatorValue', 'notes', 'isEdit', 'status', 'alasanPenolakan', 'bisaDihapus']);
+        $this->reset(['numeratorValue', 'denominatorValue', 'notes', 'isEdit', 'status', 'alasanPenolakan', 'bisaDihapus', 'koreksiNumerator', 'koreksiDenominator', 'koreksiNotes', 'koreksiAlasan', 'koreksiPending', 'pengajuanPending', 'alasanTolakKoreksi']);
     }
 }

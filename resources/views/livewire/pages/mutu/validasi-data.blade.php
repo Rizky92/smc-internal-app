@@ -14,6 +14,7 @@
                         \App\Models\Quality\QualityIndicatorRecord::STATUS_REJECTED => 'Rejected (Ditolak)',
                         \App\Models\Quality\QualityIndicatorRecord::STATUS_DRAFT => 'Draft',
                         \App\Models\Quality\QualityIndicatorRecord::STATUS_VOIDED => 'Voided (Dibatalkan)',
+                        \App\Livewire\Pages\Mutu\ValidasiData::FILTER_KOREKSI => 'Koreksi Diajukan',
                         'all' => 'Semua Status',
                     ]" />
             </x-row-col-flex>
@@ -73,6 +74,14 @@
                             <x-table.td>{{ $this->recorders->get($record->recorded_by)->nama ?? '-' }}</x-table.td>
                             <x-table.td>
                                 <span class="text-sm" title="{{ $record->notes }}">{{ Str::limit($record->notes ?: '-', 30) }}</span>
+                                @if ($record->pendingCorrection)
+                                    <div class="text-xs text-warning mt-1">
+                                        <i class="fas fa-hourglass-half"></i>
+                                        Koreksi diajukan: {{ $record->pendingCorrection->numerator_value }} / {{ $record->pendingCorrection->denominator_value }}
+                                        <br />
+                                        <span class="text-muted">{{ $record->pendingCorrection->reason }}</span>
+                                    </div>
+                                @endif
                             </x-table.td>
                             <x-table.td class="text-center">
                                 <x-badge :variant="$record->statusBadgeVariant()">{{ $record->statusLabel() }}</x-badge>
@@ -128,6 +137,26 @@
                                         <span class="text-muted text-xs">-</span>
                                     @endif
 
+                                    @if ($record->pendingCorrection)
+                                        @can('mutu.validasi-data.approve')
+                                            <x-button
+                                                variant="success"
+                                                size="xs"
+                                                icon="fas fa-check-double"
+                                                title="Setujui Koreksi"
+                                                wire:click="setujuiKoreksi({{ $record->indicator_id }}, '{{ $record->recorded_date }}')" />
+                                        @endcan
+
+                                        @can('mutu.validasi-data.reject')
+                                            <x-button
+                                                variant="danger"
+                                                size="xs"
+                                                icon="fas fa-times-circle"
+                                                title="Tolak Koreksi"
+                                                wire:click="bukaFormAlasan('tolakKoreksi', {{ $record->indicator_id }}, '{{ $record->recorded_date }}')" />
+                                        @endcan
+                                    @endif
+
                                     @if ($record->punyaRiwayat())
                                         <x-button
                                             variant="info"
@@ -151,7 +180,7 @@
         </x-slot>
     </x-card>
 
-    <x-modal id="modal-alasan-validasi" :title="$alasanAksi === 'void' ? 'Alasan Pembatalan (Void)' : 'Alasan Penolakan'" livewire>
+    <x-modal id="modal-alasan-validasi" :title="$judulFormAlasan" livewire>
         <x-slot name="body">
             <x-form id="form-alasan-validasi" wire:submit.prevent="simpanAlasan">
                 <div class="form-group">
