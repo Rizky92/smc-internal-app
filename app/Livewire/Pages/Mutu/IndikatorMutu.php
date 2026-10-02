@@ -28,9 +28,6 @@ class IndikatorMutu extends Component
     /** @var string */
     public $depId;
 
-    /** @var bool */
-    public $noMapping = false;
-
     /** @var mixed */
     protected $listeners = [
         'record-saved'    => '$refresh',
@@ -51,8 +48,6 @@ class IndikatorMutu extends Component
 
     public function getCollectionProperty(): LengthAwarePaginator
     {
-        $this->noMapping = false;
-
         return $this->query()->paginate($this->perpage);
     }
 
@@ -81,6 +76,7 @@ class IndikatorMutu extends Component
     {
         return view('livewire.pages.mutu.indikator-mutu', [
             'indicators' => $this->isDeferred ? [] : $this->collection,
+            'noMapping'  => ! $this->isDeferred && empty($this->departemenAktif),
         ])
             ->layout(BaseLayout::class, ['title' => 'Mapping Indikator Departemen']);
     }
@@ -88,7 +84,6 @@ class IndikatorMutu extends Component
     protected function defaultValues(): void
     {
         $this->depId = '';
-        $this->noMapping = false;
     }
 
     protected function dataPerSheet(): array

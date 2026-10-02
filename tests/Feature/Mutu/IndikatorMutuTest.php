@@ -17,6 +17,8 @@ class IndikatorMutuTest extends MutuTestCase
 {
     private const DEP_LAIN = 'ADM';
 
+    private const PESAN_TANPA_MAPPING = 'Belum terdapat mapping departemen pada jabatan Anda';
+
     private function indikator(string $title, string $depId = self::DEP_ID): QualityIndicator
     {
         return QualityIndicatorFactory::new()->create([
@@ -96,6 +98,24 @@ class IndikatorMutuTest extends MutuTestCase
             ->call('loadProperties')
             ->assertSee('Indikator Departemen Sendiri')
             ->assertDontSee('Indikator Departemen Lain');
+    }
+
+    public function test_user_tanpa_departemen_diberi_tahu_belum_ada_mapping(): void
+    {
+        Livewire::actingAs($this->createUser('MUTU-TANPA-DEP', ['mutu.*'], ''))
+            ->test(IndikatorMutu::class)
+            ->call('loadProperties')
+            ->assertSee(self::PESAN_TANPA_MAPPING)
+            ->set('depId', self::DEP_LAIN)
+            ->assertDontSee(self::PESAN_TANPA_MAPPING);
+    }
+
+    public function test_user_dengan_departemen_tidak_melihat_pesan_belum_ada_mapping(): void
+    {
+        Livewire::actingAs($this->createUser())
+            ->test(IndikatorMutu::class)
+            ->call('loadProperties')
+            ->assertDontSee(self::PESAN_TANPA_MAPPING);
     }
 
     public function test_user_bisa_memfilter_indikator_berdasarkan_departemen(): void
