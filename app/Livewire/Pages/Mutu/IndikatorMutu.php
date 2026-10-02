@@ -53,17 +53,22 @@ class IndikatorMutu extends Component
     {
         $this->noMapping = false;
 
-        $depId = $this->depId ?: user_departemen_id();
+        return $this->query()->paginate($this->perpage);
+    }
 
-        return $this->query()
-            ->when($depId, fn ($q) => $q->departemen($depId))
-            ->paginate($this->perpage);
+    /**
+     * Tanpa pilihan departemen, layar dan export memakai departemen user yang login.
+     */
+    public function getDepartemenAktifProperty(): ?string
+    {
+        return $this->depId ?: user_departemen_id();
     }
 
     protected function query(): Builder
     {
         return QualityIndicator::query()
             ->with(['profile', 'departemen'])
+            ->when($this->departemenAktif, fn ($q) => $q->departemen($this->departemenAktif))
             ->when($this->cari, fn ($q) => $q->search($this->cari));
     }
 
@@ -90,7 +95,6 @@ class IndikatorMutu extends Component
     {
         return [
             'Mapping Indikator' => fn () => $this->query()
-                ->when($this->depId, fn ($q) => $q->departemen($this->depId))
                 ->get()
                 ->map(fn ($indicator) => [
                     $indicator->id,
@@ -107,7 +111,6 @@ class IndikatorMutu extends Component
     {
         return [
             'ID',
-            'Urutan',
             'Indikator',
             'Departemen',
             'Standar',
@@ -118,7 +121,9 @@ class IndikatorMutu extends Component
 
     protected function pageHeaders(): array
     {
-        $depName = $this->depId ? (Departemen::find($this->depId)->nama ?? 'SEMUA') : 'SEMUA';
+        $depName = $this->departemenAktif
+            ? (Departemen::find($this->departemenAktif)->nama ?? $this->departemenAktif)
+            : 'SEMUA';
 
         return [
             'MAPPING INDIKATOR MUTU PER DEPARTEMEN',

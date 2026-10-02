@@ -9,7 +9,9 @@ use App\Models\Quality\QualityIndicator;
 use Database\Factories\Quality\QualityIndicatorFactory;
 use Database\Factories\Quality\QualityIndicatorProfileFactory;
 use Database\Factories\Quality\QualityIndicatorRecordFactory;
+use Illuminate\Support\Facades\File;
 use Livewire\Livewire;
+use Vtiful\Kernel\Excel;
 
 class IndikatorMutuTest extends MutuTestCase
 {
@@ -120,6 +122,67 @@ class IndikatorMutuTest extends MutuTestCase
             ->set('cari', 'cuci')
             ->assertSee('Kepatuhan Cuci Tangan')
             ->assertDontSee('Waktu Tunggu Rawat Jalan');
+    }
+
+    /**
+     * @return string[][]
+     */
+    private function isiExport(?string $depId = null): array
+    {
+        $component = Livewire::actingAs($this->createUser())
+            ->test(IndikatorMutu::class)
+            ->set('depId', $depId ?? '')
+            ->call('beginExcelExport')
+            ->assertFileDownloaded();
+
+        $dir = storage_path('framework/testing/export-mutu');
+        File::ensureDirectoryExists($dir);
+        File::put($dir.'/export.xlsx', base64_decode(data_get($component->lastResponse, 'original.effects.download.content')));
+
+        $rows = (new Excel(['path' => $dir]))->openFile('export.xlsx')->openSheet()->getSheetData();
+
+        // Nama file export berbasis detik; hapus agar test berikutnya tidak membaca file yang sama.
+        File::deleteDirectory($dir);
+        File::delete(storage_path('app/public/excel/'.data_get($component->lastResponse, 'original.effects.download.name')));
+
+        return $rows;
+    }
+
+    public function test_export_tanpa_filter_berisi_indikator_departemen_user_seperti_layar(): void
+    {
+        $this->indikator('Indikator Departemen Sendiri');
+        $this->indikator('Indikator Departemen Lain', self::DEP_LAIN);
+
+        $isi = collect($this->isiExport())->flatten()->implode('|');
+
+        $this->assertStringContainsString('Indikator Departemen Sendiri', $isi);
+        $this->assertStringNotContainsString('Indikator Departemen Lain', $isi);
+        $this->assertStringContainsString('DEPARTEMEN: BAGIAN IT/PROGRAMER/EDP', $isi);
+    }
+
+    public function test_export_dengan_filter_departemen_berisi_indikator_departemen_itu(): void
+    {
+        $this->indikator('Indikator Departemen Sendiri');
+        $this->indikator('Indikator Departemen Lain', self::DEP_LAIN);
+
+        $isi = collect($this->isiExport(self::DEP_LAIN))->flatten()->implode('|');
+
+        $this->assertStringContainsString('Indikator Departemen Lain', $isi);
+        $this->assertStringNotContainsString('Indikator Departemen Sendiri', $isi);
+        $this->assertStringContainsString('DEPARTEMEN: ADMISSION', $isi);
+    }
+
+    public function test_kolom_export_sejajar_dengan_header(): void
+    {
+        $indicator = $this->indikator('Indikator Export');
+
+        $rows = collect($this->isiExport())->map(fn (array $row) => array_values(array_filter($row, fn ($v) => $v !== '')));
+        $header = $rows->search(fn (array $row) => ($row[0] ?? null) === 'ID');
+
+        $this->assertSame(['ID', 'Indikator', 'Departemen', 'Standar', 'PJ', 'Status'], $rows[$header]);
+        $this->assertSame('Indikator Export', $rows[$header + 1][1]);
+        $this->assertSame('Bagian IT/Programer/EDP', $rows[$header + 1][2]);
+        $this->assertSame((string) $indicator->person_in_charge, $rows[$header + 1][4]);
     }
 
     public function test_detail_menampilkan_record_dalam_rentang_tanggal_secara_berurutan(): void
