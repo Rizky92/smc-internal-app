@@ -16,7 +16,7 @@ use Livewire\Testing\TestableLivewire;
 /**
  * Fixture Maret 2026:
  * - Indikator-A (IT, Kategori-Satu): approved 80% & 60%, submitted, rejected; approved 20% di Februari; submitted di April
- * - Indikator-B (IT, Kategori-Dua): approved 50%, approved_with_correction
+ * - Indikator-B (IT, Kategori-Dua): approved 50%, approved_with_correction 100%
  * - Indikator-C (ADM, Kategori-Satu): approved 100%, draft
  */
 class DashboardMutuTest extends MutuTestCase
@@ -43,7 +43,7 @@ class DashboardMutuTest extends MutuTestCase
         $this->record($a, '2026-02-15', 'approved', 2);
         $this->record($a, '2026-04-01', 'submitted', 1);
         $this->record($b, '2026-03-03', 'approved', 5);
-        $this->record($b, '2026-03-06', 'approved_with_correction', 9);
+        $this->record($b, '2026-03-06', 'approved_with_correction', 10);
         $this->record($c, '2026-03-04', 'approved', 10);
         $this->record($c, '2026-03-07', 'draft', 1);
     }
@@ -91,7 +91,7 @@ class DashboardMutuTest extends MutuTestCase
         $this->dashboard()
             ->assertViewHas('totalActiveIndicators', 3)
             ->assertViewHas('monthlyRecordsCount', 6)
-            ->assertViewHas('averageAchievement', 72.5)
+            ->assertViewHas('averageAchievement', 78.0)
             ->assertViewHas('pendingValidationCount', 2);
     }
 
@@ -100,7 +100,7 @@ class DashboardMutuTest extends MutuTestCase
         $this->dashboard()
             ->set('depId', self::DEP_ID)
             ->assertViewHas('monthlyRecordsCount', 5)
-            ->assertViewHas('averageAchievement', 63.33)
+            ->assertViewHas('averageAchievement', 72.5)
             ->assertViewHas('pendingValidationCount', 2);
 
         $this->dashboard()
@@ -115,11 +115,11 @@ class DashboardMutuTest extends MutuTestCase
         $this->dashboard()
             ->assertDispatchedBrowserEvent('update-chart-per-dept', [
                 'labels' => ['ADMISSION', 'Bagian IT/Programer/EDP'],
-                'data'   => [100.0, 63.33],
+                'data'   => [100.0, 72.5],
             ])
             ->assertDispatchedBrowserEvent('update-chart-per-kategori', [
                 'labels' => ['Kategori-Dua', 'Kategori-Satu'],
-                'data'   => [50.0, 80.0],
+                'data'   => [75.0, 80.0],
             ]);
     }
 
@@ -155,13 +155,13 @@ class DashboardMutuTest extends MutuTestCase
                     'Apr 2025', 'May 2025', 'Jun 2025', 'Jul 2025', 'Aug 2025', 'Sep 2025',
                     'Oct 2025', 'Nov 2025', 'Dec 2025', 'Jan 2026', 'Feb 2026', 'Mar 2026',
                 ],
-                'data' => [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 20.0, 72.5],
+                'data' => [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 20.0, 78.0],
             ]);
     }
 
     public function test_indikator_capaian_tertinggi_dan_terendah(): void
     {
         $this->dashboard()
-            ->assertSeeInOrder(['Indikator-C', 'Indikator-A', 'Indikator-B', 'Indikator-B', 'Indikator-A', 'Indikator-C']);
+            ->assertSeeInOrder(['Indikator-C', 'Indikator-B', 'Indikator-A', 'Indikator-A', 'Indikator-B', 'Indikator-C']);
     }
 }

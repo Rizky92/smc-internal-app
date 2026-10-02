@@ -19,6 +19,16 @@ class QualityIndicatorRecord extends Model
 
     public const STATUS_APPROVED_WITH_CORRECTION = 'approved_with_correction';
 
+    /**
+     * Record yang datanya sudah divalidasi dan dipakai untuk menghitung capaian.
+     */
+    public const STATUSES_DISETUJUI = [self::STATUS_APPROVED, self::STATUS_APPROVED_WITH_CORRECTION];
+
+    /**
+     * Record yang sudah diserahkan petugas unit, baik yang belum maupun yang sudah divalidasi.
+     */
+    public const STATUSES_DILAPORKAN = [self::STATUS_SUBMITTED, ...self::STATUSES_DISETUJUI];
+
     protected $connection = 'mysql_smc';
 
     protected $table = 'quality_indicator_records';
@@ -57,6 +67,16 @@ class QualityIndicatorRecord extends Model
     public function scopePeriode(Builder $query, string $tglAwal, string $tglAkhir): Builder
     {
         return $query->whereBetween($this->qualifyColumn('recorded_date'), [$tglAwal, $tglAkhir]);
+    }
+
+    public function scopeDisetujui(Builder $query): Builder
+    {
+        return $query->whereIn($this->qualifyColumn('status'), self::STATUSES_DISETUJUI);
+    }
+
+    public function scopeDilaporkan(Builder $query): Builder
+    {
+        return $query->whereIn($this->qualifyColumn('status'), self::STATUSES_DILAPORKAN);
     }
 
     /**
