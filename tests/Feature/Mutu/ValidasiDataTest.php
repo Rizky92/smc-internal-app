@@ -286,6 +286,104 @@ class ValidasiDataTest extends MutuTestCase
         $this->assertSame('voided', $this->statusRecord());
     }
 
+    /**
+     * @return array<string, array{0: string, 1: string}>
+     */
+    public function aksiPadaStatusYangTidakMenungguValidasi(): array
+    {
+        $kasus = [];
+
+        foreach (['draft', 'approved', 'approved_with_correction', 'rejected', 'voided'] as $status) {
+            $kasus["approve {$status}"] = ['approve', $status];
+            $kasus["reject {$status}"] = ['reject', $status];
+        }
+
+        return $kasus;
+    }
+
+    /**
+     * @dataProvider aksiPadaStatusYangTidakMenungguValidasi
+     */
+    public function test_approve_dan_reject_hanya_untuk_record_submitted(string $aksi, string $status): void
+    {
+        $this->recordTersimpan($status);
+
+        $this->halaman()
+            ->set('alasan', 'Alasan validator')
+            ->call($aksi, $this->indicator->id, self::TANGGAL)
+            ->assertSee('Hanya data yang menunggu validasi yang dapat disetujui atau ditolak.')
+            ->assertSeeHtml('alert-danger');
+
+        $this->assertSame($status, $this->statusRecord());
+        $this->assertNull($this->historiTerakhir());
+    }
+
+    /**
+     * @return array<string, array{0: string}>
+     */
+    public function statusTidakBisaDireset(): array
+    {
+        return [
+            'draft'     => ['draft'],
+            'submitted' => ['submitted'],
+        ];
+    }
+
+    /**
+     * @dataProvider statusTidakBisaDireset
+     */
+    public function test_batal_validasi_hanya_untuk_record_yang_sudah_divalidasi(string $status): void
+    {
+        $this->recordTersimpan($status);
+
+        $this->halaman()
+            ->call('resetStatus', $this->indicator->id, self::TANGGAL)
+            ->assertSeeHtml('alert-danger');
+
+        $this->assertSame($status, $this->statusRecord());
+    }
+
+    /**
+     * @return array<string, array{0: string}>
+     */
+    public function statusBukanSubmitted(): array
+    {
+        return [
+            'draft'                    => ['draft'],
+            'approved'                 => ['approved'],
+            'approved_with_correction' => ['approved_with_correction'],
+            'rejected'                 => ['rejected'],
+            'voided'                   => ['voided'],
+        ];
+    }
+
+    /**
+     * @dataProvider statusBukanSubmitted
+     */
+    public function test_edit_dan_approve_hanya_untuk_record_submitted(string $status): void
+    {
+        $this->recordTersimpan($status);
+
+        $this->halaman()
+            ->call('editAndApprove', $this->indicator->id, self::TANGGAL)
+            ->assertNotEmitted('koreksi-record')
+            ->assertSeeHtml('alert-danger');
+    }
+
+    public function test_filter_status_voided(): void
+    {
+        $this->recordTersimpan('voided', ['notes' => 'Record-Voided']);
+        $this->recordTersimpan('approved', ['recorded_date' => '2026-03-11', 'notes' => 'Record-Approved']);
+
+        $this->halaman()
+            ->set('tglAwal', '2026-03-01')
+            ->set('tglAkhir', '2026-03-31')
+            ->call('loadProperties')
+            ->set('statusFilter', 'voided')
+            ->assertSee('Record-Voided')
+            ->assertDontSee('Record-Approved');
+    }
+
     public function test_batal_validasi_ditolak_tanpa_izin(): void
     {
         $this->recordTersimpan('approved');

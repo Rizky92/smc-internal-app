@@ -137,6 +137,40 @@ class KoreksiIndikatorTest extends MutuTestCase
         $this->assertSame([], $this->auditLog());
     }
 
+    /**
+     * @return array<string, array{0: string}>
+     */
+    public function statusBukanSubmitted(): array
+    {
+        return [
+            'draft'                    => ['draft'],
+            'approved'                 => ['approved'],
+            'approved_with_correction' => ['approved_with_correction'],
+            'rejected'                 => ['rejected'],
+            'voided'                   => ['voided'],
+        ];
+    }
+
+    /**
+     * @dataProvider statusBukanSubmitted
+     */
+    public function test_koreksi_validator_hanya_untuk_record_submitted(string $status): void
+    {
+        $component = $this->koreksi();
+
+        $this->record()->update(['status' => $status]);
+
+        $component
+            ->set('numeratorValue', 1)
+            ->set('reason', 'Salah hitung')
+            ->call('save')
+            ->assertNotEmitted('record-saved')
+            ->assertSee('Koreksi langsung hanya untuk data yang menunggu validasi.');
+
+        $this->assertSame($status, $this->record()->status);
+        $this->assertSame(4, (int) $this->record()->numerator_value);
+    }
+
     public function test_koreksi_ditolak_tanpa_izin_approve(): void
     {
         $this->koreksi(['mutu.validasi-data.read', 'mutu.validasi-data.reject'])

@@ -65,6 +65,13 @@ class InputKoreksiIndikator extends Component
 
         $record = QualityIndicatorRecord::tanggal($this->indicatorId, $this->recordedDate)->firstOrFail();
 
+        // Data yang sudah divalidasi hanya berubah lewat pengajuan koreksi atau void (ADR 0002).
+        if ($record->status !== QualityIndicatorRecord::STATUS_SUBMITTED) {
+            $this->flashError('Koreksi langsung hanya untuk data yang menunggu validasi.');
+
+            return;
+        }
+
         $changes = [];
         $oldNumerator = $record->numerator_value;
         $oldDenominator = $record->denominator_value;

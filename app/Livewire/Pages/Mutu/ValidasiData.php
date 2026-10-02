@@ -178,6 +178,10 @@ class ValidasiData extends Component
             return;
         }
 
+        if (! $this->menungguValidasi($record)) {
+            return;
+        }
+
         $this->ubahStatus($record, QualityIndicatorRecord::STATUS_APPROVED, QualityIndicatorRecordHistory::ACTION_APPROVED);
 
         $this->flashSuccess('Data penilaian berhasil disetujui.');
@@ -196,6 +200,10 @@ class ValidasiData extends Component
         if (! $record) {
             $this->flashError('Data tidak ditemukan.');
 
+            return;
+        }
+
+        if (! $this->menungguValidasi($record)) {
             return;
         }
 
@@ -225,6 +233,12 @@ class ValidasiData extends Component
 
         if ($record->status === QualityIndicatorRecord::STATUS_VOIDED) {
             $this->flashError('Data yang sudah dibatalkan tidak dapat di-reset.');
+
+            return;
+        }
+
+        if (! in_array($record->status, QualityIndicatorRecord::STATUSES_BISA_DIRESET, true)) {
+            $this->flashError('Hanya data yang sudah divalidasi yang dapat di-reset.');
 
             return;
         }
@@ -387,6 +401,28 @@ class ValidasiData extends Component
             return;
         }
 
+        $record = QualityIndicatorRecord::tanggal($indicatorId, $date)->first();
+
+        if (! $record || $record->status !== QualityIndicatorRecord::STATUS_SUBMITTED) {
+            $this->flashError('Koreksi langsung hanya untuk data yang menunggu validasi.');
+
+            return;
+        }
+
         $this->emit('koreksi-record', $indicatorId, $date);
+    }
+
+    /**
+     * Approve dan reject hanya untuk data yang diserahkan; data disetujui diubah lewat koreksi atau void (ADR 0002).
+     */
+    protected function menungguValidasi(QualityIndicatorRecord $record): bool
+    {
+        if ($record->status === QualityIndicatorRecord::STATUS_SUBMITTED) {
+            return true;
+        }
+
+        $this->flashError('Hanya data yang menunggu validasi yang dapat disetujui atau ditolak.');
+
+        return false;
     }
 }

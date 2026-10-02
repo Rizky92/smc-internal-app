@@ -47,6 +47,11 @@ class QualityIndicatorRecord extends Model
      */
     public const STATUSES_BISA_DIVOID = self::STATUSES_DISETUJUI;
 
+    /**
+     * "Batal Validasi" mengembalikan keputusan validator ke antrean validasi; voided bersifat final.
+     */
+    public const STATUSES_BISA_DIRESET = [...self::STATUSES_DISETUJUI, self::STATUS_REJECTED];
+
     public const STATUS_LABELS = [
         self::STATUS_DRAFT                    => 'Draft',
         self::STATUS_SUBMITTED                => 'Submitted',
