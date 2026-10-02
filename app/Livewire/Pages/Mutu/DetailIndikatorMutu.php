@@ -3,14 +3,13 @@
 namespace App\Livewire\Pages\Mutu;
 
 use App\Application\Quality\Actions\DeleteQualityIndicatorRecordAction;
-use App\Domain\Quality\Repositories\QualityIndicatorRecordRepositoryInterface;
-use App\Domain\Quality\Repositories\QualityIndicatorRepositoryInterface;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Models\Aplikasi\User;
 use App\Models\Quality\QualityIndicator;
+use App\Models\Quality\QualityIndicatorRecord;
 use App\View\Components\BaseLayout;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -93,7 +92,7 @@ class DetailIndikatorMutu extends Component
 
     public function getIndicatorProperty(): ?QualityIndicator
     {
-        return app(QualityIndicatorRepositoryInterface::class)->findById($this->indicatorId);
+        return QualityIndicator::find($this->indicatorId);
     }
 
     public function getRecordsProperty(): Collection
@@ -102,11 +101,10 @@ class DetailIndikatorMutu extends Component
             return collect();
         }
 
-        return app(QualityIndicatorRecordRepositoryInterface::class)->getByIndicatorInRange(
-            $this->indicatorId,
-            $this->tglAwal,
-            $this->tglAkhir
-        );
+        return QualityIndicatorRecord::query()
+            ->where('indicator_id', $this->indicatorId)
+            ->periode($this->tglAwal, $this->tglAkhir)
+            ->get();
     }
 
     /**
@@ -148,11 +146,11 @@ class DetailIndikatorMutu extends Component
             ->layout(BaseLayout::class, ['title' => 'Detail Indikator Mutu']);
     }
 
-    public function delete(QualityIndicatorRepositoryInterface $repository): void
+    public function delete(): void
     {
         tracker_start('mysql_smc');
 
-        $repository->delete($this->indicatorId);
+        QualityIndicator::destroy($this->indicatorId);
 
         tracker_end('mysql_smc');
 

@@ -2,8 +2,6 @@
 
 namespace App\Livewire\Pages\Mutu\Modal;
 
-use App\Application\Quality\Actions\SaveQualityIndicatorAction;
-use App\Application\Quality\DTOs\QualityIndicatorData;
 use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\FlashComponent;
 use App\Models\Kepegawaian\Departemen;
@@ -87,12 +85,13 @@ class InputIndikatorMutu extends Component
         $this->dispatchBrowserEvent('input-indikator-mutu.hide-modal');
     }
 
-    public function save(SaveQualityIndicatorAction $action): void
+    public function save(): void
     {
         $this->validate();
 
-        $data = QualityIndicatorData::from([
-            'id'                           => $this->indikatorId,
+        tracker_start('mysql_smc');
+
+        QualityIndicator::updateOrCreate(['id' => $this->indikatorId], [
             'quality_indicator_profile_id' => $this->quality_indicator_profile_id,
             'dep_id'                       => $this->dep_id,
             'person_in_charge'             => $this->person_in_charge,
@@ -100,7 +99,7 @@ class InputIndikatorMutu extends Component
             'status'                       => $this->status,
         ]);
 
-        $action->execute($data);
+        tracker_end('mysql_smc');
 
         $this->emit('flash.success', 'Mapping Indikator Departemen berhasil disimpan.');
         $this->emit('indicator-saved');

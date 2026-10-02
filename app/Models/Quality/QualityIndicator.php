@@ -4,8 +4,11 @@ namespace App\Models\Quality;
 
 use App\Database\Eloquent\Model;
 use App\Models\Kepegawaian\Departemen;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 class QualityIndicator extends Model
 {
@@ -24,6 +27,21 @@ class QualityIndicator extends Model
         'data_source',
         'status',
     ];
+
+    protected function searchColumns(): array
+    {
+        return [
+            DB::raw('(select quality_indicator_profiles.title from quality_indicator_profiles where quality_indicator_profiles.id = quality_indicators.quality_indicator_profile_id)'),
+        ];
+    }
+
+    /**
+     * @param  string|string[]  $depId
+     */
+    public function scopeDepartemen(Builder $query, $depId): Builder
+    {
+        return $query->whereIn('dep_id', Arr::wrap($depId));
+    }
 
     public function profile(): BelongsTo
     {

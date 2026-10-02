@@ -2,8 +2,6 @@
 
 namespace App\Livewire\Pages\Mutu;
 
-use App\Application\Quality\Actions\GetAllQualityIndicatorAction;
-use App\Application\Quality\Actions\GetQualityIndicatorListAction;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
@@ -11,8 +9,10 @@ use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Kepegawaian\Departemen;
+use App\Models\Quality\QualityIndicator;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -51,33 +51,20 @@ class IndikatorMutu extends Component
 
     public function getCollectionProperty(): LengthAwarePaginator
     {
-        $depId = $this->depId;
-
-        if (empty($depId)) {
-            $userDepId = user_departemen_id();
-
-            if (empty($userDepId)) {
-                $this->noMapping = false;
-
-                return app(GetQualityIndicatorListAction::class)->execute([
-                    'search' => $this->cari,
-                ], $this->perpage);
-            }
-
-            $this->noMapping = false;
-
-            return app(GetQualityIndicatorListAction::class)->execute([
-                'dep_ids' => [$userDepId],
-                'search'  => $this->cari,
-            ], $this->perpage);
-        }
-
         $this->noMapping = false;
 
-        return app(GetQualityIndicatorListAction::class)->execute([
-            'dep_id' => $depId,
-            'search' => $this->cari,
-        ], $this->perpage);
+        $depId = $this->depId ?: user_departemen_id();
+
+        return $this->query()
+            ->when($depId, fn ($q) => $q->departemen($depId))
+            ->paginate($this->perpage);
+    }
+
+    protected function query(): Builder
+    {
+        return QualityIndicator::query()
+            ->with(['profile', 'departemen'])
+            ->when($this->cari, fn ($q) => $q->search($this->cari));
     }
 
     public function mount(): void
@@ -102,11 +89,9 @@ class IndikatorMutu extends Component
     protected function dataPerSheet(): array
     {
         return [
-            'Mapping Indikator' => fn () => app(GetAllQualityIndicatorAction::class)
-                ->execute([
-                    'dep_id' => $this->depId,
-                    'search' => $this->cari,
-                ])
+            'Mapping Indikator' => fn () => $this->query()
+                ->when($this->depId, fn ($q) => $q->departemen($this->depId))
+                ->get()
                 ->map(fn ($indicator) => [
                     $indicator->id,
                     $indicator->profile->title ?? '-',

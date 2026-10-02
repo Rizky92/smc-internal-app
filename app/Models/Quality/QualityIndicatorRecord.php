@@ -3,6 +3,7 @@
 namespace App\Models\Quality;
 
 use App\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -21,6 +22,13 @@ class QualityIndicatorRecord extends Model
         'recorded_by',
         'status',
     ];
+
+    public function scopePeriode(Builder $query, string $tglAwal, string $tglAkhir): Builder
+    {
+        return $query
+            ->whereBetween('recorded_date', [$tglAwal, $tglAkhir])
+            ->orderBy('recorded_date');
+    }
 
     public function indicator(): BelongsTo
     {
