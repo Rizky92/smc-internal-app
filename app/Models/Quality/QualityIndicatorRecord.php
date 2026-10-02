@@ -6,6 +6,7 @@ use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 class QualityIndicatorRecord extends Model
 {
@@ -68,6 +69,14 @@ class QualityIndicatorRecord extends Model
     public function isLocked(): bool
     {
         return in_array($this->status, [self::STATUS_SUBMITTED, self::STATUS_APPROVED], true);
+    }
+
+    protected function searchColumns(): array
+    {
+        return [
+            DB::raw('(select quality_indicator_profiles.title from quality_indicator_profiles join quality_indicators on quality_indicators.quality_indicator_profile_id = quality_indicator_profiles.id where quality_indicators.id = quality_indicator_records.indicator_id)'),
+            'notes',
+        ];
     }
 
     /**

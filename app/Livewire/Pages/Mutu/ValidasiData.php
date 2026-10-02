@@ -83,14 +83,7 @@ class ValidasiData extends Component
             ->periode($this->tglAwal, $this->tglAkhir)
             ->when($this->depId, fn ($q) => $q->departemen($this->depId))
             ->when($this->statusFilter && $this->statusFilter !== 'all', fn ($q) => $q->where('status', $this->statusFilter))
-            ->when($this->cari, function ($query) {
-                $query->where(function ($q) {
-                    $q->whereHas('indicator.profile', function ($qp) {
-                        $qp->where('title', 'like', '%'.$this->cari.'%');
-                    })
-                        ->orWhere('notes', 'like', '%'.$this->cari.'%');
-                });
-            })
+            ->when($this->cari, fn ($q) => $q->search($this->cari))
             ->orderBy('recorded_date', 'desc')
             ->paginate($this->perpage);
     }

@@ -154,6 +154,22 @@ class ValidasiDataTest extends MutuTestCase
             ->assertDontSee('Catatan-01-Apr');
     }
 
+    public function test_cari_beberapa_kata_mencocokkan_judul_dan_catatan(): void
+    {
+        $lain = $this->indikator('Indikator Departemen Lain');
+
+        $this->recordTersimpan('submitted', ['notes' => 'Catatan pasien jatuh']);
+        $this->recordTersimpan('submitted', ['indicator_id' => $lain->id, 'notes' => 'Catatan pasien jatuh di bangsal']);
+
+        $this->halaman()
+            ->set('tglAwal', '2026-03-01')
+            ->set('tglAkhir', '2026-03-31')
+            ->call('loadProperties')
+            ->set('cari', 'validasi jatuh')
+            ->assertSee('Catatan pasien jatuh')
+            ->assertDontSee('Catatan pasien jatuh di bangsal');
+    }
+
     public function test_badge_status_tampil_dengan_label_dan_warnanya(): void
     {
         $this->recordTersimpan('draft', ['recorded_date' => '2026-03-01']);
