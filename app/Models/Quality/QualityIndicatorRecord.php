@@ -9,6 +9,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class QualityIndicatorRecord extends Model
 {
+    public const STATUS_DRAFT = 'draft';
+
+    public const STATUS_SUBMITTED = 'submitted';
+
+    public const STATUS_APPROVED = 'approved';
+
+    public const STATUS_REJECTED = 'rejected';
+
+    public const STATUS_APPROVED_WITH_CORRECTION = 'approved_with_correction';
+
     protected $connection = 'mysql_smc';
 
     protected $table = 'quality_indicator_records';
@@ -22,6 +32,14 @@ class QualityIndicatorRecord extends Model
         'recorded_by',
         'status',
     ];
+
+    /**
+     * Record yang sudah diserahkan atau disetujui tidak boleh diubah maupun dihapus oleh petugas unit.
+     */
+    public function isLocked(): bool
+    {
+        return in_array($this->status, [self::STATUS_SUBMITTED, self::STATUS_APPROVED], true);
+    }
 
     public function scopePeriode(Builder $query, string $tglAwal, string $tglAkhir): Builder
     {

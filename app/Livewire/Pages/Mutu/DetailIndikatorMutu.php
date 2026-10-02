@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Pages\Mutu;
 
-use App\Application\Quality\Actions\DeleteQualityIndicatorRecordAction;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
@@ -159,9 +158,16 @@ class DetailIndikatorMutu extends Component
         $this->redirectRoute('admin.mutu.indikator-mutu');
     }
 
-    public function deleteRecord(string $date, DeleteQualityIndicatorRecordAction $action): void
+    public function deleteRecord(string $date): void
     {
-        $action->execute($this->indicatorId, $date);
+        tracker_start('mysql_smc');
+
+        QualityIndicatorRecord::query()
+            ->where('indicator_id', $this->indicatorId)
+            ->where('recorded_date', $date)
+            ->delete();
+
+        tracker_end('mysql_smc');
 
         $this->flashSuccess('Data penilaian berhasil dihapus.');
     }

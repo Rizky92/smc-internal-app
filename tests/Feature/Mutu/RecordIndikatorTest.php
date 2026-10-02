@@ -166,6 +166,20 @@ class RecordIndikatorTest extends MutuTestCase
         }
     }
 
+    public function test_status_kunci_dibaca_dari_database_bukan_dari_klien(): void
+    {
+        $this->recordTersimpan('submitted');
+
+        $this->modal(self::TANGGAL)
+            ->set('status', 'draft')
+            ->set('numeratorValue', 1)
+            ->call('save')
+            ->assertNotEmitted('record-saved');
+
+        $this->assertSame('submitted', $this->record()->status);
+        $this->assertSame(4, (int) $this->record()->numerator_value);
+    }
+
     public function test_petugas_bisa_menghapus_draft(): void
     {
         $this->recordTersimpan('draft');
