@@ -60,9 +60,9 @@ class DashboardMutu extends Component
     public function getMonthlyRecordsCountProperty(): int
     {
         return QualityIndicatorRecord::query()
-            ->whereIn('status', ['submitted', 'approved', 'approved_with_correction'])
-            ->whereBetween('recorded_date', [$this->tglAwal, $this->tglAkhir])
-            ->when($this->depId, fn ($q) => $q->whereHas('indicator', fn ($q) => $q->where('dep_id', $this->depId)))
+            ->whereIn('status', [QualityIndicatorRecord::STATUS_SUBMITTED, QualityIndicatorRecord::STATUS_APPROVED, QualityIndicatorRecord::STATUS_APPROVED_WITH_CORRECTION])
+            ->periode($this->tglAwal, $this->tglAkhir)
+            ->when($this->depId, fn ($q) => $q->departemen($this->depId))
             ->count();
     }
 
@@ -70,9 +70,9 @@ class DashboardMutu extends Component
     {
         $row = QualityIndicatorRecord::query()
             ->selectRaw('AVG((numerator_value / NULLIF(denominator_value, 0)) * 100) as avg_capaian')
-            ->where('status', 'approved')
-            ->whereBetween('recorded_date', [$this->tglAwal, $this->tglAkhir])
-            ->when($this->depId, fn ($q) => $q->whereHas('indicator', fn ($q) => $q->where('dep_id', $this->depId)))
+            ->where('status', QualityIndicatorRecord::STATUS_APPROVED)
+            ->periode($this->tglAwal, $this->tglAkhir)
+            ->when($this->depId, fn ($q) => $q->departemen($this->depId))
             ->when($this->kategoriId, fn ($q) => $q->whereHas('indicator.profile', fn ($q) => $q->where('quality_indicator_category_id', $this->kategoriId)))
             ->first();
 
@@ -82,8 +82,8 @@ class DashboardMutu extends Component
     public function getPendingValidationCountProperty(): int
     {
         return QualityIndicatorRecord::query()
-            ->where('status', 'submitted')
-            ->when($this->depId, fn ($q) => $q->whereHas('indicator', fn ($q) => $q->where('dep_id', $this->depId)))
+            ->where('status', QualityIndicatorRecord::STATUS_SUBMITTED)
+            ->when($this->depId, fn ($q) => $q->departemen($this->depId))
             ->count();
     }
 
@@ -92,8 +92,8 @@ class DashboardMutu extends Component
         $aggByDepId = QualityIndicatorRecord::query()
             ->selectRaw('quality_indicators.dep_id, AVG((quality_indicator_records.numerator_value / NULLIF(quality_indicator_records.denominator_value, 0)) * 100) as avg_capaian')
             ->join('quality_indicators', 'quality_indicator_records.indicator_id', '=', 'quality_indicators.id')
-            ->where('quality_indicator_records.status', 'approved')
-            ->whereBetween('quality_indicator_records.recorded_date', [$this->tglAwal, $this->tglAkhir])
+            ->where('quality_indicator_records.status', QualityIndicatorRecord::STATUS_APPROVED)
+            ->periode($this->tglAwal, $this->tglAkhir)
             ->when($this->depId, fn ($q) => $q->where('quality_indicators.dep_id', $this->depId))
             ->when($this->kategoriId, fn ($q) => $q->whereHas('indicator.profile', fn ($q) => $q->where('quality_indicator_category_id', $this->kategoriId)))
             ->groupBy('quality_indicators.dep_id')
@@ -119,27 +119,27 @@ class DashboardMutu extends Component
     {
         $results = QualityIndicatorRecord::query()
             ->selectRaw('status, COUNT(*) as total')
-            ->whereBetween('recorded_date', [$this->tglAwal, $this->tglAkhir])
-            ->when($this->depId, fn ($q) => $q->whereHas('indicator', fn ($q) => $q->where('dep_id', $this->depId)))
+            ->periode($this->tglAwal, $this->tglAkhir)
+            ->when($this->depId, fn ($q) => $q->departemen($this->depId))
             ->when($this->kategoriId, fn ($q) => $q->whereHas('indicator.profile', fn ($q) => $q->where('quality_indicator_category_id', $this->kategoriId)))
             ->groupBy('status')
             ->get()
             ->keyBy('status');
 
         $labels = [
-            'draft'                    => 'Draft',
-            'submitted'                => 'Submitted',
-            'approved'                 => 'Approved',
-            'rejected'                 => 'Rejected',
-            'approved_with_correction' => 'Approved w/ Correction',
+            QualityIndicatorRecord::STATUS_DRAFT                    => 'Draft',
+            QualityIndicatorRecord::STATUS_SUBMITTED                => 'Submitted',
+            QualityIndicatorRecord::STATUS_APPROVED                 => 'Approved',
+            QualityIndicatorRecord::STATUS_REJECTED                 => 'Rejected',
+            QualityIndicatorRecord::STATUS_APPROVED_WITH_CORRECTION => 'Approved w/ Correction',
         ];
 
         $colors = [
-            'draft'                    => '#6c757d',
-            'submitted'                => '#17a2b8',
-            'approved'                 => '#28a745',
-            'rejected'                 => '#dc3545',
-            'approved_with_correction' => '#007bff',
+            QualityIndicatorRecord::STATUS_DRAFT                    => '#6c757d',
+            QualityIndicatorRecord::STATUS_SUBMITTED                => '#17a2b8',
+            QualityIndicatorRecord::STATUS_APPROVED                 => '#28a745',
+            QualityIndicatorRecord::STATUS_REJECTED                 => '#dc3545',
+            QualityIndicatorRecord::STATUS_APPROVED_WITH_CORRECTION => '#007bff',
         ];
 
         $data = [];
@@ -161,9 +161,9 @@ class DashboardMutu extends Component
 
         $results = QualityIndicatorRecord::query()
             ->selectRaw("DATE_FORMAT(recorded_date, '%Y-%m') as bulan, AVG((numerator_value / NULLIF(denominator_value, 0)) * 100) as avg_capaian")
-            ->where('status', 'approved')
-            ->whereBetween('recorded_date', [$start, $end])
-            ->when($this->depId, fn ($q) => $q->whereHas('indicator', fn ($q) => $q->where('dep_id', $this->depId)))
+            ->where('status', QualityIndicatorRecord::STATUS_APPROVED)
+            ->periode($start, $end)
+            ->when($this->depId, fn ($q) => $q->departemen($this->depId))
             ->when($this->kategoriId, fn ($q) => $q->whereHas('indicator.profile', fn ($q) => $q->where('quality_indicator_category_id', $this->kategoriId)))
             ->groupBy('bulan')
             ->orderBy('bulan')
@@ -188,8 +188,8 @@ class DashboardMutu extends Component
             ->join('quality_indicators', 'quality_indicator_records.indicator_id', '=', 'quality_indicators.id')
             ->join('quality_indicator_profiles', 'quality_indicators.quality_indicator_profile_id', '=', 'quality_indicator_profiles.id')
             ->join('quality_indicator_categories', 'quality_indicator_profiles.quality_indicator_category_id', '=', 'quality_indicator_categories.id')
-            ->where('quality_indicator_records.status', 'approved')
-            ->whereBetween('quality_indicator_records.recorded_date', [$this->tglAwal, $this->tglAkhir])
+            ->where('quality_indicator_records.status', QualityIndicatorRecord::STATUS_APPROVED)
+            ->periode($this->tglAwal, $this->tglAkhir)
             ->when($this->depId, fn ($q) => $q->where('quality_indicators.dep_id', $this->depId))
             ->when($this->kategoriId, fn ($q) => $q->where('quality_indicator_profiles.quality_indicator_category_id', $this->kategoriId))
             ->groupBy('quality_indicator_categories.name')
@@ -208,8 +208,8 @@ class DashboardMutu extends Component
             )
             ->join('quality_indicators', 'quality_indicator_records.indicator_id', '=', 'quality_indicators.id')
             ->join('quality_indicator_profiles', 'quality_indicators.quality_indicator_profile_id', '=', 'quality_indicator_profiles.id')
-            ->where('quality_indicator_records.status', 'approved')
-            ->whereBetween('quality_indicator_records.recorded_date', [$this->tglAwal, $this->tglAkhir])
+            ->where('quality_indicator_records.status', QualityIndicatorRecord::STATUS_APPROVED)
+            ->periode($this->tglAwal, $this->tglAkhir)
             ->when($this->depId, fn ($q) => $q->where('quality_indicators.dep_id', $this->depId))
             ->when($this->kategoriId, fn ($q) => $q->where('quality_indicator_profiles.quality_indicator_category_id', $this->kategoriId))
             ->groupBy('quality_indicator_profiles.title', 'quality_indicator_records.indicator_id')
@@ -229,8 +229,8 @@ class DashboardMutu extends Component
             )
             ->join('quality_indicators', 'quality_indicator_records.indicator_id', '=', 'quality_indicators.id')
             ->join('quality_indicator_profiles', 'quality_indicators.quality_indicator_profile_id', '=', 'quality_indicator_profiles.id')
-            ->where('quality_indicator_records.status', 'approved')
-            ->whereBetween('quality_indicator_records.recorded_date', [$this->tglAwal, $this->tglAkhir])
+            ->where('quality_indicator_records.status', QualityIndicatorRecord::STATUS_APPROVED)
+            ->periode($this->tglAwal, $this->tglAkhir)
             ->when($this->depId, fn ($q) => $q->where('quality_indicators.dep_id', $this->depId))
             ->when($this->kategoriId, fn ($q) => $q->where('quality_indicator_profiles.quality_indicator_category_id', $this->kategoriId))
             ->groupBy('quality_indicator_profiles.title', 'quality_indicator_records.indicator_id')
