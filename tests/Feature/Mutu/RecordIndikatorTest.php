@@ -245,4 +245,14 @@ class RecordIndikatorTest extends MutuTestCase
 
         $this->assertNotNull($this->record(), "Record {$status} terhapus dari halaman detail");
     }
+
+    public function test_hapus_record_yang_tidak_ada_dari_halaman_detail_menampilkan_error(): void
+    {
+        Livewire::actingAs($this->createUser())
+            ->test(DetailIndikatorMutu::class, ['indicatorId' => $this->indicator->id])
+            ->call('deleteRecord', self::TANGGAL)
+            ->assertSee('Data penilaian tidak ditemukan.')
+            ->assertSeeHtml('alert-danger')
+            ->assertDontSee('Data penilaian berhasil dihapus.');
+    }
 }

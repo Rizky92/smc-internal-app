@@ -163,7 +163,13 @@ class DetailIndikatorMutu extends Component
     {
         $record = QualityIndicatorRecord::tanggal($this->indicatorId, $date)->first();
 
-        if ($record && $record->isLocked()) {
+        if (! $record) {
+            $this->flashError('Data penilaian tidak ditemukan.');
+
+            return;
+        }
+
+        if ($record->isLocked()) {
             $this->flashError('Data telah dikunci dan tidak dapat dihapus.');
 
             return;
@@ -171,7 +177,7 @@ class DetailIndikatorMutu extends Component
 
         tracker_start('mysql_smc');
 
-        optional($record)->delete();
+        $record->delete();
 
         tracker_end('mysql_smc');
 
