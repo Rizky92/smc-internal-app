@@ -345,6 +345,9 @@ Route::prefix('admin')
 
                 Route::get('jadwal-dokter', Informasi\JadwalDokter::class)
                     ->name('jadwal-dokter');
+
+                Route::get('dashboard-mod', Informasi\DashboardMod::class)
+                    ->name('dashboard-mod');
             });
 
         Route::prefix('logistik')

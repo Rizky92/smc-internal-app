@@ -365,6 +365,11 @@ Breadcrumbs::for('admin.informasi.jadwal-dokter', function (Trail $trail): void 
     $trail->push('Jadwal Dokter', route('admin.informasi.jadwal-dokter'));
 });
 
+Breadcrumbs::for('admin.informasi.dashboard-mod', function (Trail $trail): void {
+    $trail->parent('admin.informasi');
+    $trail->push('Dashboard MOD', route('admin.informasi.dashboard-mod'));
+});
+
 Breadcrumbs::for('jadwal-dokter', function (Trail $trail): void {
     $trail->push('Jadwal Dokter', route('jadwal-dokter'));
 });

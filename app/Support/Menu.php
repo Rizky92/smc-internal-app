@@ -569,6 +569,13 @@ class Menu
                         'hasAnyPermissions' => true,
                     ],
                     [
+                        'name'              => 'Dashboard MOD',
+                        'url'               => route('admin.informasi.dashboard-mod'),
+                        'icon'              => 'fas fa-chart-line',
+                        'type'              => 'link',
+                        'hasAnyPermissions' => true,
+                    ],
+                    [
                         'name'              => 'Antrean Farmasi',
                         'url'               => route('antrean-farmasi'),
                         'icon'              => 'fas fa-pills',
