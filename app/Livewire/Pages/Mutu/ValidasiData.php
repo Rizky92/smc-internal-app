@@ -80,15 +80,9 @@ class ValidasiData extends Component
     {
         return QualityIndicatorRecord::query()
             ->with(['indicator.profile.category', 'indicator.departemen'])
-            ->whereBetween('recorded_date', [$this->tglAwal, $this->tglAkhir])
-            ->when($this->depId, function ($query) {
-                $query->whereHas('indicator', function ($q) {
-                    $q->where('dep_id', $this->depId);
-                });
-            })
-            ->when($this->statusFilter && $this->statusFilter !== 'all', function ($query) {
-                $query->where('status', $this->statusFilter);
-            })
+            ->periode($this->tglAwal, $this->tglAkhir)
+            ->when($this->depId, fn ($q) => $q->departemen($this->depId))
+            ->when($this->statusFilter && $this->statusFilter !== 'all', fn ($q) => $q->where('status', $this->statusFilter))
             ->when($this->cari, function ($query) {
                 $query->where(function ($q) {
                     $q->whereHas('indicator.profile', function ($qp) {
@@ -123,12 +117,10 @@ class ValidasiData extends Component
             return;
         }
 
-        $record = QualityIndicatorRecord::where('indicator_id', $indicatorId)
-            ->where('recorded_date', $date)
-            ->first();
+        $record = QualityIndicatorRecord::tanggal($indicatorId, $date)->first();
 
         if ($record) {
-            $record->update(['status' => 'approved']);
+            $record->update(['status' => QualityIndicatorRecord::STATUS_APPROVED]);
             $this->flashSuccess('Data penilaian berhasil disetujui.');
         } else {
             $this->flashError('Data tidak ditemukan.');
@@ -143,12 +135,10 @@ class ValidasiData extends Component
             return;
         }
 
-        $record = QualityIndicatorRecord::where('indicator_id', $indicatorId)
-            ->where('recorded_date', $date)
-            ->first();
+        $record = QualityIndicatorRecord::tanggal($indicatorId, $date)->first();
 
         if ($record) {
-            $record->update(['status' => 'rejected']);
+            $record->update(['status' => QualityIndicatorRecord::STATUS_REJECTED]);
             $this->flashSuccess('Data penilaian berhasil ditolak.');
         } else {
             $this->flashError('Data tidak ditemukan.');
@@ -157,12 +147,10 @@ class ValidasiData extends Component
 
     public function resetStatus(int $indicatorId, string $date): void
     {
-        $record = QualityIndicatorRecord::where('indicator_id', $indicatorId)
-            ->where('recorded_date', $date)
-            ->first();
+        $record = QualityIndicatorRecord::tanggal($indicatorId, $date)->first();
 
         if ($record) {
-            $record->update(['status' => 'submitted']);
+            $record->update(['status' => QualityIndicatorRecord::STATUS_SUBMITTED]);
             $this->flashSuccess('Status data penilaian berhasil di-reset.');
         } else {
             $this->flashError('Data tidak ditemukan.');

@@ -51,11 +51,20 @@ class QualityIndicatorRecord extends Model
             ->where('recorded_date', $tanggal);
     }
 
+    /**
+     * Kolom diberi nama tabel agar scope tetap aman di query yang men-join `quality_indicators`.
+     */
     public function scopePeriode(Builder $query, string $tglAwal, string $tglAkhir): Builder
     {
-        return $query
-            ->whereBetween('recorded_date', [$tglAwal, $tglAkhir])
-            ->orderBy('recorded_date');
+        return $query->whereBetween($this->qualifyColumn('recorded_date'), [$tglAwal, $tglAkhir]);
+    }
+
+    /**
+     * @param  string|string[]  $depId
+     */
+    public function scopeDepartemen(Builder $query, $depId): Builder
+    {
+        return $query->whereHas('indicator', fn (Builder $q) => $q->departemen($depId));
     }
 
     public function indicator(): BelongsTo
