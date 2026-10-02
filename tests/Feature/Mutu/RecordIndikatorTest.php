@@ -230,4 +230,19 @@ class RecordIndikatorTest extends MutuTestCase
 
         $this->assertNull($this->record());
     }
+
+    /**
+     * @dataProvider statusTerkunci
+     */
+    public function test_record_terkunci_tidak_bisa_dihapus_dari_halaman_detail(string $status): void
+    {
+        $this->recordTersimpan($status);
+
+        Livewire::actingAs($this->createUser())
+            ->test(DetailIndikatorMutu::class, ['indicatorId' => $this->indicator->id])
+            ->call('deleteRecord', self::TANGGAL)
+            ->assertSee('Data telah dikunci dan tidak dapat dihapus.');
+
+        $this->assertNotNull($this->record(), "Record {$status} terhapus dari halaman detail");
+    }
 }

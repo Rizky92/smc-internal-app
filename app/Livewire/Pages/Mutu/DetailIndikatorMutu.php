@@ -161,9 +161,17 @@ class DetailIndikatorMutu extends Component
 
     public function deleteRecord(string $date): void
     {
+        $record = QualityIndicatorRecord::tanggal($this->indicatorId, $date)->first();
+
+        if ($record && $record->isLocked()) {
+            $this->flashError('Data telah dikunci dan tidak dapat dihapus.');
+
+            return;
+        }
+
         tracker_start('mysql_smc');
 
-        QualityIndicatorRecord::tanggal($this->indicatorId, $date)->delete();
+        optional($record)->delete();
 
         tracker_end('mysql_smc');
 
