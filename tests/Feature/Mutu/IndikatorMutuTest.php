@@ -205,6 +205,32 @@ class IndikatorMutuTest extends MutuTestCase
         $this->assertSame((string) $indicator->person_in_charge, $rows[$header + 1][4]);
     }
 
+    public function test_detail_menampilkan_badge_status_dengan_label_dan_warnanya(): void
+    {
+        $indicator = $this->indikator('Indikator Badge');
+
+        $statuses = ['draft', 'submitted', 'approved', 'rejected', 'approved_with_correction'];
+
+        foreach ($statuses as $i => $status) {
+            QualityIndicatorRecordFactory::new()->create([
+                'indicator_id'  => $indicator->id,
+                'recorded_date' => '2026-03-0'.($i + 1),
+                'status'        => $status,
+            ]);
+        }
+
+        Livewire::actingAs($this->createUser())
+            ->test(DetailIndikatorMutu::class, ['indicatorId' => $indicator->id])
+            ->set('tglAwal', '2026-03-01')
+            ->set('tglAkhir', '2026-03-31')
+            ->call('loadProperties')
+            ->assertSeeHtml('<span class="badge badge-secondary">Draft</span>')
+            ->assertSeeHtml('<span class="badge badge-info">Submitted</span>')
+            ->assertSeeHtml('<span class="badge badge-success">Approved</span>')
+            ->assertSeeHtml('<span class="badge badge-danger">Rejected</span>')
+            ->assertSeeHtml('<span class="badge badge-primary">Approved w/ Correction</span>');
+    }
+
     public function test_detail_menampilkan_record_dalam_rentang_tanggal_secara_berurutan(): void
     {
         $indicator = $this->indikator('Indikator Detail');

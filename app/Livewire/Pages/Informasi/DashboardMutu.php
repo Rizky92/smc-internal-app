@@ -126,14 +126,6 @@ class DashboardMutu extends Component
             ->get()
             ->keyBy('status');
 
-        $labels = [
-            QualityIndicatorRecord::STATUS_DRAFT                    => 'Draft',
-            QualityIndicatorRecord::STATUS_SUBMITTED                => 'Submitted',
-            QualityIndicatorRecord::STATUS_APPROVED                 => 'Approved',
-            QualityIndicatorRecord::STATUS_REJECTED                 => 'Rejected',
-            QualityIndicatorRecord::STATUS_APPROVED_WITH_CORRECTION => 'Approved w/ Correction',
-        ];
-
         $colors = [
             QualityIndicatorRecord::STATUS_DRAFT                    => '#6c757d',
             QualityIndicatorRecord::STATUS_SUBMITTED                => '#17a2b8',
@@ -143,7 +135,7 @@ class DashboardMutu extends Component
         ];
 
         $data = [];
-        foreach ($labels as $key => $label) {
+        foreach (QualityIndicatorRecord::STATUS_LABELS as $key => $label) {
             $data[] = [
                 'label' => $label,
                 'value' => (int) ($results[$key]->total ?? 0),

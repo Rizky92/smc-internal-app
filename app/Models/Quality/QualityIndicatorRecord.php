@@ -29,6 +29,25 @@ class QualityIndicatorRecord extends Model
      */
     public const STATUSES_DILAPORKAN = [self::STATUS_SUBMITTED, ...self::STATUSES_DISETUJUI];
 
+    public const STATUS_LABELS = [
+        self::STATUS_DRAFT                    => 'Draft',
+        self::STATUS_SUBMITTED                => 'Submitted',
+        self::STATUS_APPROVED                 => 'Approved',
+        self::STATUS_REJECTED                 => 'Rejected',
+        self::STATUS_APPROVED_WITH_CORRECTION => 'Approved w/ Correction',
+    ];
+
+    /**
+     * Varian komponen `<x-badge>` per status.
+     */
+    public const STATUS_BADGES = [
+        self::STATUS_DRAFT                    => 'secondary',
+        self::STATUS_SUBMITTED                => 'info',
+        self::STATUS_APPROVED                 => 'success',
+        self::STATUS_REJECTED                 => 'danger',
+        self::STATUS_APPROVED_WITH_CORRECTION => 'primary',
+    ];
+
     protected $connection = 'mysql_smc';
 
     protected $table = 'quality_indicator_records';
@@ -49,6 +68,19 @@ class QualityIndicatorRecord extends Model
     public function isLocked(): bool
     {
         return in_array($this->status, [self::STATUS_SUBMITTED, self::STATUS_APPROVED], true);
+    }
+
+    /**
+     * Status kosong atau tidak dikenal ditampilkan sebagai draft.
+     */
+    public function statusLabel(): string
+    {
+        return self::STATUS_LABELS[$this->status] ?? self::STATUS_LABELS[self::STATUS_DRAFT];
+    }
+
+    public function statusBadge(): string
+    {
+        return self::STATUS_BADGES[$this->status] ?? self::STATUS_BADGES[self::STATUS_DRAFT];
     }
 
     /**

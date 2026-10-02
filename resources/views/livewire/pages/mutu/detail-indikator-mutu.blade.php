@@ -198,24 +198,6 @@
                                 $record->denominator_value > 0
                                     ? round(($record->numerator_value / $record->denominator_value) * 100, 2)
                                     : 0;
-
-                            $statusVariant =
-                                [
-                                    'draft' => 'secondary',
-                                    'submitted' => 'info',
-                                    'approved' => 'success',
-                                    'approved_with_correction' => 'primary',
-                                    'rejected' => 'danger',
-                                ][$record->status ?? 'draft'] ?? 'secondary';
-
-                            $statusLabel =
-                                [
-                                    'draft' => 'Draft',
-                                    'submitted' => 'Submitted',
-                                    'approved' => 'Approved',
-                                    'approved_with_correction' => 'Approved w/ Correction',
-                                    'rejected' => 'Rejected',
-                                ][$record->status ?? 'draft'] ?? 'Draft';
                         @endphp
 
                         <x-table.tr>
@@ -226,12 +208,12 @@
                             <x-table.td class="text-center">{{ $record->denominator_value }}</x-table.td>
                             <x-table.td class="text-center font-weight-bold">{{ $achievement }}%</x-table.td>
                             <x-table.td class="text-center">
-                                <x-badge :variant="$statusVariant">{{ $statusLabel }}</x-badge>
+                                <x-badge :variant="$record->statusBadge()">{{ $record->statusLabel() }}</x-badge>
                             </x-table.td>
                             <x-table.td>{{ $record->notes ?: '-' }}</x-table.td>
                             <x-table.td>{{ $this->recorders->get($record->recorded_by)->nama ?? '-' }}</x-table.td>
                             <x-table.td class="text-center">
-                                @if ($record->status === 'approved_with_correction')
+                                @if ($record->status === \App\Models\Quality\QualityIndicatorRecord::STATUS_APPROVED_WITH_CORRECTION)
                                     <x-button
                                         variant="info"
                                         size="xs"

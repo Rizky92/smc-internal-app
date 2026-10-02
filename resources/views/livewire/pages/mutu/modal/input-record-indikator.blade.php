@@ -19,17 +19,17 @@
         <x-slot name="body" style="overflow-x: hidden">
             <x-flash class="mx-3 mt-3" />
 
-            @if ($status === 'submitted')
+            @if ($status === \App\Models\Quality\QualityIndicatorRecord::STATUS_SUBMITTED)
                 <div class="alert alert-info mx-3 mt-3">
                     <i class="fas fa-info-circle mr-2"></i>
                     Data ini telah dikunci dan sedang menunggu validasi.
                 </div>
-            @elseif ($status === 'approved')
+            @elseif ($status === \App\Models\Quality\QualityIndicatorRecord::STATUS_APPROVED)
                 <div class="alert alert-success mx-3 mt-3">
                     <i class="fas fa-check-circle mr-2"></i>
                     Data ini telah disetujui oleh validator.
                 </div>
-            @elseif ($status === 'rejected')
+            @elseif ($status === \App\Models\Quality\QualityIndicatorRecord::STATUS_REJECTED)
                 <div class="alert alert-danger mx-3 mt-3">
                     <i class="fas fa-exclamation-circle mr-2"></i>
                     Data ini ditolak oleh validator. Silakan perbaiki dan kirim kembali.
@@ -37,7 +37,7 @@
             @endif
 
             @php
-                $isDisabled = in_array($status, ['submitted', 'approved']);
+                $isDisabled = in_array($status, [\App\Models\Quality\QualityIndicatorRecord::STATUS_SUBMITTED, \App\Models\Quality\QualityIndicatorRecord::STATUS_APPROVED], true);
             @endphp
 
             <x-form id="form-input-record-indikator" wire:submit.prevent="save">

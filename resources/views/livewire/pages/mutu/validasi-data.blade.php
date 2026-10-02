@@ -8,11 +8,11 @@
                 <x-filter.select
                     model="statusFilter"
                     :options="[
-                        'submitted' => 'Submitted (Perlu Validasi)',
-                        'approved' => 'Approved (Disetujui)',
-                        'approved_with_correction' => 'Approved w/ Correction',
-                        'rejected' => 'Rejected (Ditolak)',
-                        'draft' => 'Draft',
+                        \App\Models\Quality\QualityIndicatorRecord::STATUS_SUBMITTED => 'Submitted (Perlu Validasi)',
+                        \App\Models\Quality\QualityIndicatorRecord::STATUS_APPROVED => 'Approved (Disetujui)',
+                        \App\Models\Quality\QualityIndicatorRecord::STATUS_APPROVED_WITH_CORRECTION => 'Approved w/ Correction',
+                        \App\Models\Quality\QualityIndicatorRecord::STATUS_REJECTED => 'Rejected (Ditolak)',
+                        \App\Models\Quality\QualityIndicatorRecord::STATUS_DRAFT => 'Draft',
                         'all' => 'Semua Status',
                     ]" />
             </x-row-col-flex>
@@ -55,24 +55,6 @@
                                 $record->denominator_value > 0
                                     ? round(($record->numerator_value / $record->denominator_value) * 100, 2)
                                     : 0;
-
-                            $statusVariant =
-                                [
-                                    'draft' => 'secondary',
-                                    'submitted' => 'info',
-                                    'approved' => 'success',
-                                    'approved_with_correction' => 'primary',
-                                    'rejected' => 'danger',
-                                ][$record->status ?? 'draft'] ?? 'secondary';
-
-                            $statusLabel =
-                                [
-                                    'draft' => 'Draft',
-                                    'submitted' => 'Submitted',
-                                    'approved' => 'Approved',
-                                    'approved_with_correction' => 'Approved w/ Correction',
-                                    'rejected' => 'Rejected',
-                                ][$record->status ?? 'draft'] ?? 'Draft';
                         @endphp
 
                         <x-table.tr>
@@ -92,11 +74,11 @@
                                 <span class="text-sm" title="{{ $record->notes }}">{{ Str::limit($record->notes ?: '-', 30) }}</span>
                             </x-table.td>
                             <x-table.td class="text-center">
-                                <x-badge :variant="$statusVariant">{{ $statusLabel }}</x-badge>
+                                <x-badge :variant="$record->statusBadge()">{{ $record->statusLabel() }}</x-badge>
                             </x-table.td>
                             <x-table.td>
                                 <div class="d-flex" style="gap: 0.25rem">
-                                    @if (($record->status ?? 'draft') === 'submitted')
+                                    @if ($record->status === \App\Models\Quality\QualityIndicatorRecord::STATUS_SUBMITTED)
                                         @can('mutu.validasi-data.approve')
                                             <x-button
                                                 variant="success"
@@ -118,7 +100,7 @@
                                         @can('mutu.validasi-data.reject')
                                             <x-button variant="danger" size="xs" icon="fas fa-times" title="Tolak" wire:click="reject({{ $record->indicator_id }}, '{{ $record->recorded_date }}')" />
                                         @endcan
-                                    @elseif ($record->status === 'approved_with_correction')
+                                    @elseif ($record->status === \App\Models\Quality\QualityIndicatorRecord::STATUS_APPROVED_WITH_CORRECTION)
                                         <x-button
                                             variant="info"
                                             size="xs"
@@ -133,7 +115,7 @@
                                                 title="Batal Validasi"
                                                 wire:click="resetStatus({{ $record->indicator_id }}, '{{ $record->recorded_date }}')" />
                                         @endcanany
-                                    @elseif (in_array($record->status ?? 'draft', ['approved', 'rejected']))
+                                    @elseif (in_array($record->status, [\App\Models\Quality\QualityIndicatorRecord::STATUS_APPROVED, \App\Models\Quality\QualityIndicatorRecord::STATUS_REJECTED], true))
                                         @canany(['mutu.validasi-data.approve', 'mutu.validasi-data.reject'])
                                             <x-button
                                                 variant="warning"

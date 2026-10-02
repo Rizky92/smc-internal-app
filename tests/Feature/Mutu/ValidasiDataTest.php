@@ -154,6 +154,25 @@ class ValidasiDataTest extends MutuTestCase
             ->assertDontSee('Catatan-01-Apr');
     }
 
+    public function test_badge_status_tampil_dengan_label_dan_warnanya(): void
+    {
+        $this->recordTersimpan('draft', ['recorded_date' => '2026-03-01']);
+        $this->recordTersimpan('submitted', ['recorded_date' => '2026-03-02']);
+        $this->recordTersimpan('approved', ['recorded_date' => '2026-03-03']);
+        $this->recordTersimpan('rejected', ['recorded_date' => '2026-03-04']);
+        $this->recordTersimpan('approved_with_correction', ['recorded_date' => '2026-03-05']);
+
+        $this->halaman()
+            ->set('tglAwal', '2026-03-01')
+            ->set('tglAkhir', '2026-03-31')
+            ->call('loadProperties')
+            ->assertSeeHtml('<span class="badge badge-secondary">Draft</span>')
+            ->assertSeeHtml('<span class="badge badge-info">Submitted</span>')
+            ->assertSeeHtml('<span class="badge badge-success">Approved</span>')
+            ->assertSeeHtml('<span class="badge badge-danger">Rejected</span>')
+            ->assertSeeHtml('<span class="badge badge-primary">Approved w/ Correction</span>');
+    }
+
     public function test_daftar_record_bisa_difilter_departemen_status_dan_cari(): void
     {
         $lain = $this->indikator('Indikator Departemen Lain', self::DEP_LAIN);
