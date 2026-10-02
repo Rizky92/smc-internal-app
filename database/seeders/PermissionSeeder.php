@@ -117,6 +117,14 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'casemix.laporan-pasien-cob.read']);
         Permission::create(['name' => 'casemix.laporan-triase-igd-zona-hijau.read']);
 
+        Permission::create(['name' => 'akreditasi.master-data.create']);
+        Permission::create(['name' => 'akreditasi.master-data.read']);
+        Permission::create(['name' => 'akreditasi.master-data.update']);
+        Permission::create(['name' => 'akreditasi.master-data.delete']);
+        Permission::create(['name' => 'akreditasi.self-assessment.read']);
+        Permission::create(['name' => 'akreditasi.self-assessment.upload']);
+        Permission::create(['name' => 'akreditasi.self-assessment.skor']);
+
         // Superadmin role name, bypasses all permissions
         $superadminRole = Role::create(['name' => config('permission.superadmin_name')]);
 

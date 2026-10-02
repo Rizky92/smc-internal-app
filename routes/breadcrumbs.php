@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Akreditasi\AssessmentElement;
+use App\Models\Akreditasi\FocusArea;
+use App\Models\Akreditasi\Standard;
 use Diglactic\Breadcrumbs\Breadcrumbs;
 use Diglactic\Breadcrumbs\Generator as Trail;
 
@@ -404,4 +407,78 @@ Breadcrumbs::for('admin.casemix.laporan-pasien-cob', function (Trail $trail): vo
 Breadcrumbs::for('admin.casemix.laporan-triase-igd-zona-hijau', function (Trail $trail): void {
     $trail->parent('admin.casemix');
     $trail->push('Laporan Triase IGD Zona Hijau', route('admin.casemix.laporan-triase-igd-zona-hijau'));
+});
+
+Breadcrumbs::for('admin.akreditasi', function (Trail $trail): void {
+    $trail->parent('admin.dashboard');
+    $trail->push('Akreditasi RS');
+});
+
+Breadcrumbs::for('admin.akreditasi.dashboard', function (Trail $trail): void {
+    $trail->parent('admin.akreditasi');
+    $trail->push('Asesmen Mandiri', route('admin.akreditasi.dashboard'));
+});
+
+Breadcrumbs::for('admin.akreditasi.standard-by-focus-area', function (Trail $trail): void {
+    $trail->parent('admin.akreditasi.dashboard');
+    $focusAreaId = request()->route('focusAreaId');
+    $focusArea = $focusAreaId ? FocusArea::find((int) $focusAreaId) : null;
+    $trail->push($focusArea ? ($focusArea->kode.' - '.$focusArea->nama) : 'Standar');
+});
+
+Breadcrumbs::for('admin.akreditasi.focus-area', function (Trail $trail): void {
+    $trail->parent('admin.akreditasi');
+    $trail->push('Focus Area', route('admin.akreditasi.focus-area'));
+});
+
+Breadcrumbs::for('admin.akreditasi.standard', function (Trail $trail): void {
+    $trail->parent('admin.akreditasi');
+    $trail->push('Standard', route('admin.akreditasi.standard'));
+});
+
+Breadcrumbs::for('admin.akreditasi.proof-method', function (Trail $trail): void {
+    $trail->parent('admin.akreditasi');
+    $trail->push('Proof Method', route('admin.akreditasi.proof-method'));
+});
+
+Breadcrumbs::for('admin.akreditasi.assessment-element', function (Trail $trail): void {
+    $trail->parent('admin.akreditasi');
+    $trail->push('Assessment Element', route('admin.akreditasi.assessment-element'));
+});
+
+Breadcrumbs::for('admin.akreditasi.element-by-standard', function (Trail $trail): void {
+    $standardId = request()->route('standardId');
+    $standard = $standardId ? Standard::with('focusArea')->find((int) $standardId) : null;
+
+    $trail->parent('admin.akreditasi.dashboard');
+
+    if ($standard && $standard->focusArea) {
+        $trail->push(
+            $standard->focusArea->kode.' - '.$standard->focusArea->nama,
+            route('admin.akreditasi.standard-by-focus-area', $standard->focus_area_id)
+        );
+    }
+
+    $trail->push('Elemen Penilaian');
+});
+
+Breadcrumbs::for('admin.akreditasi.ep-detail', function (Trail $trail): void {
+    $epId = request()->route('assessmentElementId');
+    $ep = $epId ? AssessmentElement::with(['standard.focusArea'])->find((int) $epId) : null;
+
+    $trail->parent('admin.akreditasi.dashboard');
+
+    if ($ep && $ep->standard && $ep->standard->focusArea) {
+        $fa = $ep->standard->focusArea;
+        $trail->push(
+            $fa->kode.' - '.$fa->nama,
+            route('admin.akreditasi.standard-by-focus-area', $fa->id)
+        );
+        $trail->push(
+            $ep->standard->kode.' - '.$ep->standard->judul,
+            route('admin.akreditasi.element-by-standard', $ep->standard_id)
+        );
+    }
+
+    $trail->push('EP '.($ep->kode ?? ''));
 });

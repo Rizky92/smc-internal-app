@@ -10,6 +10,7 @@ use App\Livewire\Antrean;
 use App\Livewire\AntreanPintu;
 use App\Livewire\Pages\Admin;
 use App\Livewire\Pages\Admission;
+use App\Livewire\Pages\Akreditasi;
 use App\Livewire\Pages\Antrean\AntreanPerPintu;
 use App\Livewire\Pages\Antrean\AntreanPoli;
 use App\Livewire\Pages\Antrian;
@@ -370,6 +371,42 @@ Route::prefix('admin')
                 Route::get('laporan-triase-igd-zona-hijau', Casemix\LaporanTriaseIgdZonaHijau::class)
                     ->name('laporan-triase-igd-zona-hijau')
                     ->middleware('can:casemix.laporan-triase-igd-zona-hijau.read');
+            });
+
+        Route::prefix('akreditasi')
+            ->as('akreditasi.')
+            ->group(function () {
+                Route::get('dashboard', Akreditasi\FocusAreaDashboard::class)
+                    ->name('dashboard')
+                    ->middleware('can:akreditasi.self-assessment.read');
+
+                Route::get('standard/{focusAreaId}', Akreditasi\StandardByFocusArea::class)
+                    ->name('standard-by-focus-area')
+                    ->middleware('can:akreditasi.self-assessment.read');
+
+                Route::get('focus-area', Akreditasi\FocusAreaList::class)
+                    ->name('focus-area')
+                    ->middleware('can:akreditasi.master-data.read');
+
+                Route::get('standard', Akreditasi\StandardList::class)
+                    ->name('standard')
+                    ->middleware('can:akreditasi.master-data.read');
+
+                Route::get('proof-method', Akreditasi\ProofMethodList::class)
+                    ->name('proof-method')
+                    ->middleware('can:akreditasi.master-data.read');
+
+                Route::get('assessment-element', Akreditasi\AssessmentElementList::class)
+                    ->name('assessment-element')
+                    ->middleware('can:akreditasi.master-data.read');
+
+                Route::get('element/{standardId}', Akreditasi\AssessmentElementByStandard::class)
+                    ->name('element-by-standard')
+                    ->middleware('can:akreditasi.self-assessment.read');
+
+                Route::get('ep/{assessmentElementId}', Akreditasi\AssessmentElementDetail::class)
+                    ->name('ep-detail')
+                    ->middleware('can:akreditasi.self-assessment.read');
             });
 
         Route::middleware('role:'.config('permission.superadmin_name'))

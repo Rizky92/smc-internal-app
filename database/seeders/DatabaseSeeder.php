@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             KhanzaHakAksesSeeder::class,
             SmcSeeder::class,
+            AkreditasiSeeder::class,
         ]);
     }
 }

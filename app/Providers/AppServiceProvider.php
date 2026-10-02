@@ -4,6 +4,20 @@ namespace App\Providers;
 
 use App\Database\Eloquent\Model;
 use App\Database\Query\Grammars\MysqlGrammar;
+use App\Domain\Akreditasi\Repositories\AssessmentDocumentRepositoryInterface;
+use App\Domain\Akreditasi\Repositories\AssessmentElementRepositoryInterface;
+use App\Domain\Akreditasi\Repositories\AssessmentScoreHistoryRepositoryInterface;
+use App\Domain\Akreditasi\Repositories\AssessmentScoreRepositoryInterface;
+use App\Domain\Akreditasi\Repositories\FocusAreaRepositoryInterface;
+use App\Domain\Akreditasi\Repositories\ProofMethodRepositoryInterface;
+use App\Domain\Akreditasi\Repositories\StandardRepositoryInterface;
+use App\Infrastructure\Akreditasi\Repositories\EloquentAssessmentDocumentRepository;
+use App\Infrastructure\Akreditasi\Repositories\EloquentAssessmentElementRepository;
+use App\Infrastructure\Akreditasi\Repositories\EloquentAssessmentScoreHistoryRepository;
+use App\Infrastructure\Akreditasi\Repositories\EloquentAssessmentScoreRepository;
+use App\Infrastructure\Akreditasi\Repositories\EloquentFocusAreaRepository;
+use App\Infrastructure\Akreditasi\Repositories\EloquentProofMethodRepository;
+use App\Infrastructure\Akreditasi\Repositories\EloquentStandardRepository;
 use App\Models\Aplikasi\Permission;
 use App\Models\Aplikasi\Role;
 use App\Models\Aplikasi\User;
@@ -46,7 +60,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->registerRepositoryBindings();
     }
 
     /**
@@ -65,6 +79,47 @@ class AppServiceProvider extends ServiceProvider
         $this->registerModelConfigurations();
         $this->registerSuperadminRole();
         $this->registerMacrosAndMixins();
+    }
+
+    /**
+     * Centralized Interface to Implementation bindings.
+     */
+    protected function registerRepositoryBindings(): void
+    {
+        $this->app->bind(
+            FocusAreaRepositoryInterface::class,
+            EloquentFocusAreaRepository::class
+        );
+
+        $this->app->bind(
+            StandardRepositoryInterface::class,
+            EloquentStandardRepository::class
+        );
+
+        $this->app->bind(
+            ProofMethodRepositoryInterface::class,
+            EloquentProofMethodRepository::class
+        );
+
+        $this->app->bind(
+            AssessmentElementRepositoryInterface::class,
+            EloquentAssessmentElementRepository::class
+        );
+
+        $this->app->bind(
+            AssessmentDocumentRepositoryInterface::class,
+            EloquentAssessmentDocumentRepository::class
+        );
+
+        $this->app->bind(
+            AssessmentScoreRepositoryInterface::class,
+            EloquentAssessmentScoreRepository::class
+        );
+
+        $this->app->bind(
+            AssessmentScoreHistoryRepositoryInterface::class,
+            EloquentAssessmentScoreHistoryRepository::class
+        );
     }
 
     public function registerBladeDirectives(): void
