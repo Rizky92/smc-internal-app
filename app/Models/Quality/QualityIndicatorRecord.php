@@ -87,6 +87,14 @@ class QualityIndicatorRecord extends Model
         return $query->whereHas('indicator', fn (Builder $q) => $q->departemen($depId));
     }
 
+    /**
+     * @param  int|string  $kategoriId
+     */
+    public function scopeKategori(Builder $query, $kategoriId): Builder
+    {
+        return $query->whereHas('indicator.profile', fn (Builder $q) => $q->where('quality_indicator_category_id', $kategoriId));
+    }
+
     public function indicator(): BelongsTo
     {
         return $this->belongsTo(QualityIndicator::class, 'indicator_id');

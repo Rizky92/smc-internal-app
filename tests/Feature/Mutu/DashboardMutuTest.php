@@ -137,6 +137,35 @@ class DashboardMutuTest extends MutuTestCase
             ]);
     }
 
+    public function test_angka_dan_chart_mengikuti_filter_kategori(): void
+    {
+        $satu = QualityIndicatorCategory::query()->where('name', 'Kategori-Satu')->value('id');
+
+        $this->dashboard()
+            ->set('kategoriId', $satu)
+            ->assertViewHas('averageAchievement', 80.0)
+            ->assertDispatchedBrowserEvent('update-chart-per-dept', [
+                'labels' => ['ADMISSION', 'Bagian IT/Programer/EDP'],
+                'data'   => [100.0, 70.0],
+            ])
+            ->assertDispatchedBrowserEvent('update-chart-per-kategori', [
+                'labels' => ['Kategori-Satu'],
+                'data'   => [80.0],
+            ])
+            ->assertDispatchedBrowserEvent('update-chart-status', [
+                'labels' => ['Draft', 'Submitted', 'Approved', 'Rejected', 'Approved w/ Correction'],
+                'data'   => [1, 1, 3, 1, 0],
+                'colors' => ['#6c757d', '#17a2b8', '#28a745', '#dc3545', '#007bff'],
+            ])
+            ->assertDispatchedBrowserEvent('update-chart-trend', [
+                'labels' => [
+                    'Apr 2025', 'May 2025', 'Jun 2025', 'Jul 2025', 'Aug 2025', 'Sep 2025',
+                    'Oct 2025', 'Nov 2025', 'Dec 2025', 'Jan 2026', 'Feb 2026', 'Mar 2026',
+                ],
+                'data' => [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 20.0, 80.0],
+            ]);
+    }
+
     public function test_chart_distribusi_status(): void
     {
         $this->dashboard()

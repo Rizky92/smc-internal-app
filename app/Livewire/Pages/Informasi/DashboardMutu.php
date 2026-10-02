@@ -73,7 +73,7 @@ class DashboardMutu extends Component
             ->disetujui()
             ->periode($this->tglAwal, $this->tglAkhir)
             ->when($this->depId, fn ($q) => $q->departemen($this->depId))
-            ->when($this->kategoriId, fn ($q) => $q->whereHas('indicator.profile', fn ($q) => $q->where('quality_indicator_category_id', $this->kategoriId)))
+            ->when($this->kategoriId, fn ($q) => $q->kategori($this->kategoriId))
             ->first();
 
         return round((float) ($row->avg_capaian ?? 0), 2);
@@ -95,7 +95,7 @@ class DashboardMutu extends Component
             ->disetujui()
             ->periode($this->tglAwal, $this->tglAkhir)
             ->when($this->depId, fn ($q) => $q->where('quality_indicators.dep_id', $this->depId))
-            ->when($this->kategoriId, fn ($q) => $q->whereHas('indicator.profile', fn ($q) => $q->where('quality_indicator_category_id', $this->kategoriId)))
+            ->when($this->kategoriId, fn ($q) => $q->kategori($this->kategoriId))
             ->groupBy('quality_indicators.dep_id')
             ->get()
             ->keyBy('dep_id');
@@ -121,7 +121,7 @@ class DashboardMutu extends Component
             ->selectRaw('status, COUNT(*) as total')
             ->periode($this->tglAwal, $this->tglAkhir)
             ->when($this->depId, fn ($q) => $q->departemen($this->depId))
-            ->when($this->kategoriId, fn ($q) => $q->whereHas('indicator.profile', fn ($q) => $q->where('quality_indicator_category_id', $this->kategoriId)))
+            ->when($this->kategoriId, fn ($q) => $q->kategori($this->kategoriId))
             ->groupBy('status')
             ->get()
             ->keyBy('status');
@@ -164,7 +164,7 @@ class DashboardMutu extends Component
             ->disetujui()
             ->periode($start, $end)
             ->when($this->depId, fn ($q) => $q->departemen($this->depId))
-            ->when($this->kategoriId, fn ($q) => $q->whereHas('indicator.profile', fn ($q) => $q->where('quality_indicator_category_id', $this->kategoriId)))
+            ->when($this->kategoriId, fn ($q) => $q->kategori($this->kategoriId))
             ->groupBy('bulan')
             ->orderBy('bulan')
             ->get()
