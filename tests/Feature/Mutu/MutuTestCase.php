@@ -28,6 +28,9 @@ abstract class MutuTestCase extends TestCase
     /** @var string[] */
     protected $connectionsToTransact = ['mysql_smc', 'mysql_sik'];
 
+    /** @var array<string, User> */
+    private $users = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -37,6 +40,10 @@ abstract class MutuTestCase extends TestCase
 
     protected function createUser(string $nik = self::NIK, array $permissions = ['mutu.*'], string $departemen = self::DEP_ID): User
     {
+        if (isset($this->users[$nik])) {
+            return $this->users[$nik];
+        }
+
         $sik = DB::connection('mysql_sik');
 
         $sik->statement('set foreign_key_checks = 0');
@@ -100,7 +107,7 @@ abstract class MutuTestCase extends TestCase
             $names->map(fn (string $name): Permission => Permission::firstOrCreate(['name' => $name, 'guard_name' => 'web']))->all()
         );
 
-        return $user;
+        return $this->users[$nik] = $user;
     }
 
     /**
