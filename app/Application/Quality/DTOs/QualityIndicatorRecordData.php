@@ -19,7 +19,7 @@ class QualityIndicatorRecordData
     /** @var string|null */
     public $notes;
 
-    /** @var int|null */
+    /** @var string|null */
     public $recorded_by;
 
     /** @var string|null */
@@ -31,7 +31,7 @@ class QualityIndicatorRecordData
         int $numerator_value,
         int $denominator_value,
         ?string $notes,
-        ?int $recorded_by,
+        ?string $recorded_by,
         ?string $status = 'draft'
     ) {
         $this->indicator_id = $indicator_id;
@@ -51,7 +51,7 @@ class QualityIndicatorRecordData
             (int) $data['numerator_value'],
             (int) $data['denominator_value'],
             $data['notes'] ?? null,
-            isset($data['recorded_by']) ? (int) $data['recorded_by'] : null,
+            $data['recorded_by'] ?? null,
             $data['status'] ?? 'draft'
         );
     }

@@ -83,6 +83,18 @@ class RecordIndikatorTest extends MutuTestCase
         $this->assertSame('Observasi pagi', $record->notes);
     }
 
+    public function test_nik_perekam_tersimpan_utuh(): void
+    {
+        $this->modal()
+            ->set('recordedDate', self::TANGGAL)
+            ->set('numeratorValue', 8)
+            ->set('denominatorValue', 10)
+            ->call('submit')
+            ->assertHasNoErrors();
+
+        $this->assertSame(self::NIK, $this->record()->recorded_by);
+    }
+
     public function test_petugas_bisa_membuka_draft_dan_melihat_nilai_tersimpan(): void
     {
         $this->recordTersimpan('draft');
