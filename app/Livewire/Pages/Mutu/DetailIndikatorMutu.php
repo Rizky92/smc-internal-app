@@ -176,6 +176,12 @@ class DetailIndikatorMutu extends Component
             return;
         }
 
+        if (! $record->canBeDeleted()) {
+            $this->flashError('Data yang pernah diserahkan tidak dapat dihapus.');
+
+            return;
+        }
+
         tracker_start('mysql_smc');
 
         $record->delete();

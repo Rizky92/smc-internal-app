@@ -24,7 +24,7 @@
                     <i class="fas fa-info-circle mr-2"></i>
                     Data ini telah dikunci dan sedang menunggu validasi.
                 </div>
-            @elseif ($status === \App\Models\Quality\QualityIndicatorRecord::STATUS_APPROVED)
+            @elseif (in_array($status, \App\Models\Quality\QualityIndicatorRecord::STATUSES_DISETUJUI, true))
                 <div class="alert alert-success mx-3 mt-3">
                     <i class="fas fa-check-circle mr-2"></i>
                     Data ini telah disetujui oleh validator.
@@ -97,7 +97,7 @@
         <x-slot name="footer">
             <div class="d-flex justify-content-between w-100">
                 <div>
-                    @if ($isEdit && ! $isDisabled)
+                    @if ($isEdit && $bisaDihapus)
                         <x-button
                             variant="danger"
                             title="Hapus"

@@ -137,8 +137,9 @@ class RecordIndikatorTest extends MutuTestCase
     public function statusTerkunci(): array
     {
         return [
-            'submitted' => ['submitted'],
-            'approved'  => ['approved'],
+            'submitted'                => ['submitted'],
+            'approved'                 => ['approved'],
+            'approved_with_correction' => ['approved_with_correction'],
         ];
     }
 
@@ -173,7 +174,7 @@ class RecordIndikatorTest extends MutuTestCase
             'submitted'                => ['submitted', true],
             'approved'                 => ['approved', true],
             'rejected'                 => ['rejected', false],
-            'approved_with_correction' => ['approved_with_correction', false],
+            'approved_with_correction' => ['approved_with_correction', true],
         ];
     }
 
@@ -288,6 +289,77 @@ class RecordIndikatorTest extends MutuTestCase
             ->assertEmitted('record-saved');
 
         $this->assertNull($this->record());
+    }
+
+    private function recordPernahDiserahkan(string $status): QualityIndicatorRecord
+    {
+        $record = $this->recordTersimpan($status);
+
+        $record->histories()->forceCreate([
+            'action'            => 'rejected',
+            'status_before'     => 'submitted',
+            'status_after'      => 'rejected',
+            'numerator_value'   => 4,
+            'denominator_value' => 5,
+            'reason'            => 'Ditolak',
+            'actor'             => self::NIK,
+        ]);
+
+        return $record;
+    }
+
+    /**
+     * @return array<string, array{0: string}>
+     */
+    public function statusPernahDiserahkan(): array
+    {
+        return [
+            'rejected'                   => ['rejected'],
+            'draft setelah ditolak'      => ['draft'],
+        ];
+    }
+
+    /**
+     * @dataProvider statusPernahDiserahkan
+     */
+    public function test_record_yang_pernah_diserahkan_tidak_bisa_dihapus_dari_modal(string $status): void
+    {
+        $this->recordPernahDiserahkan($status);
+
+        $this->modal(self::TANGGAL)
+            ->call('delete')
+            ->assertNotEmitted('record-saved')
+            ->assertSee('Data yang pernah diserahkan tidak dapat dihapus.')
+            ->assertSeeHtml('alert-danger');
+
+        $this->assertNotNull($this->record());
+    }
+
+    /**
+     * @dataProvider statusPernahDiserahkan
+     */
+    public function test_record_yang_pernah_diserahkan_tidak_bisa_dihapus_dari_halaman_detail(string $status): void
+    {
+        $this->recordPernahDiserahkan($status);
+
+        Livewire::actingAs($this->createUser())
+            ->test(DetailIndikatorMutu::class, ['indicatorId' => $this->indicator->id])
+            ->call('deleteRecord', self::TANGGAL)
+            ->assertSee('Data yang pernah diserahkan tidak dapat dihapus.');
+
+        $this->assertNotNull($this->record());
+    }
+
+    public function test_tombol_hapus_hanya_tampil_untuk_draft_yang_belum_pernah_diserahkan(): void
+    {
+        $this->recordTersimpan('draft');
+
+        $this->modal(self::TANGGAL)->assertSeeHtml('wire:click="delete"');
+
+        $this->record()->delete();
+        $this->recordPernahDiserahkan('rejected');
+
+        $this->modal(self::TANGGAL)->assertDontSeeHtml('wire:click="delete"');
     }
 
     /**

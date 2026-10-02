@@ -32,9 +32,9 @@ class QualityIndicatorRecord extends Model
 
     /**
      * Record berstatus ini tidak boleh diubah maupun dihapus oleh petugas unit.
-     * `approved_with_correction` dan `rejected` belum diputuskan (tiket 11).
+     * Record ditolak tetap bisa diperbaiki dan diserahkan ulang (ADR 0002).
      */
-    public const STATUSES_TERKUNCI = [self::STATUS_SUBMITTED, self::STATUS_APPROVED];
+    public const STATUSES_TERKUNCI = [self::STATUS_SUBMITTED, self::STATUS_APPROVED, self::STATUS_APPROVED_WITH_CORRECTION];
 
     public const STATUS_LABELS = [
         self::STATUS_DRAFT                    => 'Draft',
@@ -75,6 +75,14 @@ class QualityIndicatorRecord extends Model
     public function isLocked(): bool
     {
         return in_array($this->status, self::STATUSES_TERKUNCI, true);
+    }
+
+    /**
+     * Hapus permanen hanya untuk draft yang belum pernah diserahkan; histori validasi tidak boleh hilang.
+     */
+    public function canBeDeleted(): bool
+    {
+        return $this->status === self::STATUS_DRAFT && ! $this->histories()->exists();
     }
 
     protected function searchColumns(): array

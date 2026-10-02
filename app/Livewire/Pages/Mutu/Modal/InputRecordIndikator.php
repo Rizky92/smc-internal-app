@@ -35,6 +35,13 @@ class InputRecordIndikator extends Component
     /** @var string|null */
     public $alasanPenolakan;
 
+    /**
+     * Hanya untuk tampilan tombol hapus; aksi hapus tetap memeriksa database.
+     *
+     * @var bool
+     */
+    public $bisaDihapus = false;
+
     protected $listeners = ['input-record' => 'loadIndicator'];
 
     protected function rules(): array
@@ -65,6 +72,7 @@ class InputRecordIndikator extends Component
                 $this->notes = $record->notes;
                 $this->status = $record->status ?? QualityIndicatorRecord::STATUS_DRAFT;
                 $this->isEdit = true;
+                $this->bisaDihapus = $record->canBeDeleted();
                 $this->alasanPenolakan = $record->status === QualityIndicatorRecord::STATUS_REJECTED
                     ? $record->lastRejectionReason()
                     : null;
@@ -121,9 +129,17 @@ class InputRecordIndikator extends Component
             return;
         }
 
+        $record = $this->findRecord($this->indicatorId, $this->recordedDate);
+
+        if ($record && ! $record->canBeDeleted()) {
+            $this->flashError('Data yang pernah diserahkan tidak dapat dihapus.');
+
+            return;
+        }
+
         tracker_start('mysql_smc');
 
-        QualityIndicatorRecord::tanggal($this->indicatorId, $this->recordedDate)->delete();
+        optional($record)->delete();
 
         tracker_end('mysql_smc');
 
@@ -193,6 +209,6 @@ class InputRecordIndikator extends Component
     {
         $this->dispatchBrowserEvent('close-modal', ['id' => 'modal-input-record-indikator']);
         $this->emit('record-saved');
-        $this->reset(['numeratorValue', 'denominatorValue', 'notes', 'isEdit', 'status', 'alasanPenolakan']);
+        $this->reset(['numeratorValue', 'denominatorValue', 'notes', 'isEdit', 'status', 'alasanPenolakan', 'bisaDihapus']);
     }
 }
