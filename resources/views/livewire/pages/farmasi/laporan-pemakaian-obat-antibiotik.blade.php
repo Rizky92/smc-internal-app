@@ -29,6 +29,8 @@
                     <x-table.th name="no_rawat" title="No. Rawat" />
                     <x-table.th name="no_rkm_medis" title="No. RM" />
                     <x-table.th name="nm_pasien" title="Nama Pasien" />
+                    <x-table.th title="Kode ICD" />
+                    <x-table.th title="Diagnosa Utama" />
                     <x-table.th name="tgl_perawatan" title="Tanggal Pemakaian" />
                     <x-table.th name="kode_brng" title="Kode Obat" />
                     <x-table.th name="nama_brng" title="Nama Obat" />
@@ -45,6 +47,8 @@
                             <x-table.td>{{ $item->no_rawat }}</x-table.td>
                             <x-table.td>{{ $item->no_rkm_medis }}</x-table.td>
                             <x-table.td>{{ $item->nm_pasien }}</x-table.td>
+                            <x-table.td>{{ $item->kd_penyakit }}</x-table.td>
+                            <x-table.td>{{ $item->nm_penyakit }}</x-table.td>
                             <x-table.td>{{ $item->tgl_perawatan }}</x-table.td>
                             <x-table.td>{{ $item->kode_brng }}</x-table.td>
                             <x-table.td>{{ $item->nama_brng }}</x-table.td>
@@ -56,7 +60,7 @@
                             <x-table.td>{{ $item->nm_sps }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="12" padding />
+                        <x-table.tr-empty colspan="14" padding />
                     @endforelse
                 </x-slot>
             </x-table>

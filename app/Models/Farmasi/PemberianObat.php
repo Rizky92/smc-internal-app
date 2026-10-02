@@ -4,6 +4,7 @@ namespace App\Models\Farmasi;
 
 use App\Database\Eloquent\Model;
 use App\Models\Bangsal;
+use App\Models\Perawatan\DiagnosaPasien;
 use App\Models\Perawatan\KamarInap;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -276,14 +277,32 @@ class PemberianObat extends Model
             ->selectRaw('sum(kamar_inap.lama)')
             ->whereColumn('kamar_inap.no_rawat', 'detail_pemberian_obat.no_rawat');
 
+        // Diagnosa utama (prioritas 1) mengikuti status baris obat (Ralan/Ranap);
+        // bila status itu belum di-coding, pakai diagnosa utama dari status lainnya.
+        $diagnosaUtama = fn (string $kolom): Builder => DiagnosaPasien::query()
+            ->select($kolom)
+            ->join('penyakit', 'diagnosa_pasien.kd_penyakit', '=', 'penyakit.kd_penyakit')
+            ->whereColumn('diagnosa_pasien.no_rawat', 'detail_pemberian_obat.no_rawat')
+            ->where('diagnosa_pasien.prioritas', 1)
+            ->orderByRaw('diagnosa_pasien.status = detail_pemberian_obat.status desc')
+            ->orderBy('diagnosa_pasien.kd_penyakit')
+            ->limit(1);
+
+        $kdDiagnosaUtama = $diagnosaUtama('diagnosa_pasien.kd_penyakit');
+        $nmDiagnosaUtama = $diagnosaUtama('penyakit.nm_penyakit');
+
         $sqlKamarIcu = $kamarIcu->toSql();
         $sqlKamarTerakhir = $kamarTerakhir->toSql();
         $sqlLamaRanap = $lamaRanap->toSql();
+        $sqlKdDiagnosaUtama = $kdDiagnosaUtama->toSql();
+        $sqlNmDiagnosaUtama = $nmDiagnosaUtama->toSql();
 
         $sqlSelect = <<<SQL
             detail_pemberian_obat.no_rawat,
             reg_periksa.no_rkm_medis,
             pasien.nm_pasien,
+            ifnull(($sqlKdDiagnosaUtama), '') as kd_penyakit,
+            ifnull(($sqlNmDiagnosaUtama), '') as nm_penyakit,
             detail_pemberian_obat.tgl_perawatan,
             detail_pemberian_obat.kode_brng,
             databarang.nama_brng,
@@ -314,7 +333,13 @@ class PemberianObat extends Model
         ]);
 
         return $query
-            ->selectRaw($sqlSelect, [...$kamarIcu->getBindings(), ...$kamarTerakhir->getBindings(), ...$lamaRanap->getBindings()])
+            ->selectRaw($sqlSelect, array_merge(
+                $kdDiagnosaUtama->getBindings(),
+                $nmDiagnosaUtama->getBindings(),
+                $kamarIcu->getBindings(),
+                $kamarTerakhir->getBindings(),
+                $lamaRanap->getBindings(),
+            ))
             ->withCasts([
                 'jml'        => 'float',
                 'lama_ranap' => 'float',
