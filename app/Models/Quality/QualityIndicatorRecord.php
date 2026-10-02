@@ -21,6 +21,11 @@ class QualityIndicatorRecord extends Model
     public const STATUS_APPROVED_WITH_CORRECTION = 'approved_with_correction';
 
     /**
+     * Dibatalkan validator. Record tetap ada sebagai histori dan tidak dihitung di laporan.
+     */
+    public const STATUS_VOIDED = 'voided';
+
+    /**
      * Record yang datanya sudah divalidasi dan dipakai untuk menghitung capaian.
      */
     public const STATUSES_DISETUJUI = [self::STATUS_APPROVED, self::STATUS_APPROVED_WITH_CORRECTION];
@@ -34,7 +39,12 @@ class QualityIndicatorRecord extends Model
      * Record berstatus ini tidak boleh diubah maupun dihapus oleh petugas unit.
      * Record ditolak tetap bisa diperbaiki dan diserahkan ulang (ADR 0002).
      */
-    public const STATUSES_TERKUNCI = [self::STATUS_SUBMITTED, self::STATUS_APPROVED, self::STATUS_APPROVED_WITH_CORRECTION];
+    public const STATUSES_TERKUNCI = [self::STATUS_SUBMITTED, self::STATUS_APPROVED, self::STATUS_APPROVED_WITH_CORRECTION, self::STATUS_VOIDED];
+
+    /**
+     * Pembatalan hanya untuk data yang sudah disetujui; data lain cukup ditolak.
+     */
+    public const STATUSES_BISA_DIVOID = self::STATUSES_DISETUJUI;
 
     public const STATUS_LABELS = [
         self::STATUS_DRAFT                    => 'Draft',
@@ -42,6 +52,7 @@ class QualityIndicatorRecord extends Model
         self::STATUS_APPROVED                 => 'Approved',
         self::STATUS_REJECTED                 => 'Rejected',
         self::STATUS_APPROVED_WITH_CORRECTION => 'Approved w/ Correction',
+        self::STATUS_VOIDED                   => 'Voided',
     ];
 
     /**
@@ -53,6 +64,7 @@ class QualityIndicatorRecord extends Model
         self::STATUS_APPROVED                 => 'success',
         self::STATUS_REJECTED                 => 'danger',
         self::STATUS_APPROVED_WITH_CORRECTION => 'primary',
+        self::STATUS_VOIDED                   => 'dark',
     ];
 
     protected $connection = 'mysql_smc';

@@ -15,7 +15,7 @@ use Livewire\Testing\TestableLivewire;
 
 /**
  * Fixture Maret 2026:
- * - Indikator-A (IT, Kategori-Satu): approved 80% & 60%, submitted, rejected; approved 20% di Februari; submitted di April
+ * - Indikator-A (IT, Kategori-Satu): approved 80% & 60%, submitted, rejected, voided 0%; approved 20% di Februari; submitted di April
  * - Indikator-B (IT, Kategori-Dua): approved 50%, approved_with_correction 100%
  * - Indikator-C (ADM, Kategori-Satu): approved 100%, draft
  */
@@ -40,6 +40,7 @@ class DashboardMutuTest extends MutuTestCase
         $this->record($a, '2026-03-02', 'approved', 6);
         $this->record($a, '2026-03-05', 'submitted', 1);
         $this->record($a, '2026-03-08', 'rejected', 1);
+        $this->record($a, '2026-03-09', 'voided', 0);
         $this->record($a, '2026-02-15', 'approved', 2);
         $this->record($a, '2026-04-01', 'submitted', 1);
         $this->record($b, '2026-03-03', 'approved', 5);
@@ -153,9 +154,9 @@ class DashboardMutuTest extends MutuTestCase
                 'data'   => [80.0],
             ])
             ->assertDispatchedBrowserEvent('update-chart-status', [
-                'labels' => ['Draft', 'Submitted', 'Approved', 'Rejected', 'Approved w/ Correction'],
-                'data'   => [1, 1, 3, 1, 0],
-                'colors' => ['#6c757d', '#17a2b8', '#28a745', '#dc3545', '#007bff'],
+                'labels' => ['Draft', 'Submitted', 'Approved', 'Rejected', 'Approved w/ Correction', 'Voided'],
+                'data'   => [1, 1, 3, 1, 0, 1],
+                'colors' => ['#6c757d', '#17a2b8', '#28a745', '#dc3545', '#007bff', '#343a40'],
             ])
             ->assertDispatchedBrowserEvent('update-chart-trend', [
                 'labels' => [
@@ -170,9 +171,9 @@ class DashboardMutuTest extends MutuTestCase
     {
         $this->dashboard()
             ->assertDispatchedBrowserEvent('update-chart-status', [
-                'labels' => ['Draft', 'Submitted', 'Approved', 'Rejected', 'Approved w/ Correction'],
-                'data'   => [1, 1, 4, 1, 1],
-                'colors' => ['#6c757d', '#17a2b8', '#28a745', '#dc3545', '#007bff'],
+                'labels' => ['Draft', 'Submitted', 'Approved', 'Rejected', 'Approved w/ Correction', 'Voided'],
+                'data'   => [1, 1, 4, 1, 1, 1],
+                'colors' => ['#6c757d', '#17a2b8', '#28a745', '#dc3545', '#007bff', '#343a40'],
             ]);
     }
 

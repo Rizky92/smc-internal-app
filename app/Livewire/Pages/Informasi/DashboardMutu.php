@@ -132,6 +132,7 @@ class DashboardMutu extends Component
             QualityIndicatorRecord::STATUS_APPROVED                 => '#28a745',
             QualityIndicatorRecord::STATUS_REJECTED                 => '#dc3545',
             QualityIndicatorRecord::STATUS_APPROVED_WITH_CORRECTION => '#007bff',
+            QualityIndicatorRecord::STATUS_VOIDED                   => '#343a40',
         ];
 
         $data = [];

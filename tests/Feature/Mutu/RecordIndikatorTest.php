@@ -140,6 +140,7 @@ class RecordIndikatorTest extends MutuTestCase
             'submitted'                => ['submitted'],
             'approved'                 => ['approved'],
             'approved_with_correction' => ['approved_with_correction'],
+            'voided'                   => ['voided'],
         ];
     }
 
@@ -175,6 +176,7 @@ class RecordIndikatorTest extends MutuTestCase
             'approved'                 => ['approved', true],
             'rejected'                 => ['rejected', false],
             'approved_with_correction' => ['approved_with_correction', true],
+            'voided'                   => ['voided', true],
         ];
     }
 

@@ -13,6 +13,7 @@
                         \App\Models\Quality\QualityIndicatorRecord::STATUS_APPROVED_WITH_CORRECTION => 'Approved w/ Correction',
                         \App\Models\Quality\QualityIndicatorRecord::STATUS_REJECTED => 'Rejected (Ditolak)',
                         \App\Models\Quality\QualityIndicatorRecord::STATUS_DRAFT => 'Draft',
+                        \App\Models\Quality\QualityIndicatorRecord::STATUS_VOIDED => 'Voided (Dibatalkan)',
                         'all' => 'Semua Status',
                     ]" />
             </x-row-col-flex>
@@ -113,6 +114,15 @@
                                                 icon="fas fa-undo"
                                                 title="Batal Validasi"
                                                 wire:click="resetStatus({{ $record->indicator_id }}, '{{ $record->recorded_date }}')" />
+
+                                            @if (in_array($record->status, \App\Models\Quality\QualityIndicatorRecord::STATUSES_BISA_DIVOID, true))
+                                                <x-button
+                                                    variant="dark"
+                                                    size="xs"
+                                                    icon="fas fa-ban"
+                                                    title="Void"
+                                                    wire:click="bukaFormAlasan('void', {{ $record->indicator_id }}, '{{ $record->recorded_date }}')" />
+                                            @endif
                                         @endcanany
                                     @elseif (! $record->punyaRiwayat())
                                         <span class="text-muted text-xs">-</span>
@@ -141,7 +151,7 @@
         </x-slot>
     </x-card>
 
-    <x-modal id="modal-alasan-validasi" title="Alasan Penolakan" livewire>
+    <x-modal id="modal-alasan-validasi" :title="$alasanAksi === 'void' ? 'Alasan Pembatalan (Void)' : 'Alasan Penolakan'" livewire>
         <x-slot name="body">
             <x-form id="form-alasan-validasi" wire:submit.prevent="simpanAlasan">
                 <div class="form-group">

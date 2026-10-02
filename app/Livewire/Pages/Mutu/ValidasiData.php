@@ -40,7 +40,7 @@ class ValidasiData extends Component
     /**
      * Aksi validator yang wajib disertai alasan; nilainya adalah nama method aksi.
      */
-    private const AKSI_BERALASAN = ['reject'];
+    private const AKSI_BERALASAN = ['reject', 'void'];
 
     /** @var string|null */
     public $alasanAksi;
@@ -210,9 +210,48 @@ class ValidasiData extends Component
             return;
         }
 
+        if ($record->status === QualityIndicatorRecord::STATUS_VOIDED) {
+            $this->flashError('Data yang sudah dibatalkan tidak dapat di-reset.');
+
+            return;
+        }
+
         $this->ubahStatus($record, QualityIndicatorRecord::STATUS_SUBMITTED, QualityIndicatorRecordHistory::ACTION_RESET);
 
         $this->flashSuccess('Status data penilaian berhasil di-reset.');
+    }
+
+    /**
+     * Batalkan data yang sudah disetujui tanpa menghapusnya (ADR 0002).
+     */
+    public function void(int $indicatorId, string $date): void
+    {
+        if (! auth()->user()->canAny(['mutu.validasi-data.approve', 'mutu.validasi-data.reject'])) {
+            $this->flashError('Anda tidak memiliki akses untuk membatalkan data.');
+
+            return;
+        }
+
+        $record = QualityIndicatorRecord::tanggal($indicatorId, $date)->first();
+
+        if (! $record) {
+            $this->flashError('Data tidak ditemukan.');
+
+            return;
+        }
+
+        if (! in_array($record->status, QualityIndicatorRecord::STATUSES_BISA_DIVOID, true)) {
+            $this->flashError('Hanya data yang sudah disetujui yang dapat dibatalkan.');
+
+            return;
+        }
+
+        $this->validate(['alasan' => ['required', 'string', 'min:3']]);
+
+        $this->ubahStatus($record, QualityIndicatorRecord::STATUS_VOIDED, QualityIndicatorRecordHistory::ACTION_VOIDED, $this->alasan);
+
+        $this->tutupFormAlasan();
+        $this->flashSuccess('Data penilaian berhasil dibatalkan.');
     }
 
     protected function ubahStatus(QualityIndicatorRecord $record, string $status, string $aksiHistori, ?string $alasan = null): void

@@ -20,12 +20,15 @@ class QualityIndicatorRecordHistory extends Model
 
     public const ACTION_RESET = 'reset';
 
+    public const ACTION_VOIDED = 'voided';
+
     public const ACTION_LABELS = [
         self::ACTION_SUBMITTED => 'Diserahkan',
         self::ACTION_APPROVED  => 'Disetujui',
         self::ACTION_REJECTED  => 'Ditolak',
         self::ACTION_CORRECTED => 'Dikoreksi validator',
         self::ACTION_RESET     => 'Batal validasi',
+        self::ACTION_VOIDED    => 'Dibatalkan (void)',
     ];
 
     protected $connection = 'mysql_smc';

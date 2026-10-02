@@ -168,6 +168,122 @@ class ValidasiDataTest extends MutuTestCase
         $this->assertSame('Data ganda', $this->historiTerakhir()->reason);
     }
 
+    /**
+     * @return array<string, array{0: string}>
+     */
+    public function statusBisaDivoid(): array
+    {
+        return [
+            'approved'                 => ['approved'],
+            'approved_with_correction' => ['approved_with_correction'],
+        ];
+    }
+
+    /**
+     * @dataProvider statusBisaDivoid
+     */
+    public function test_validator_bisa_membatalkan_record_disetujui_dengan_alasan(string $status): void
+    {
+        $this->recordTersimpan($status);
+
+        $this->halaman()
+            ->set('alasan', 'Pasien tercatat di unit lain')
+            ->call('void', $this->indicator->id, self::TANGGAL)
+            ->assertSee('Data penilaian berhasil dibatalkan.')
+            ->assertSeeHtml('alert-success');
+
+        $this->assertSame('voided', $this->statusRecord());
+
+        $histori = $this->historiTerakhir();
+
+        $this->assertSame('voided', $histori->action);
+        $this->assertSame($status, $histori->status_before);
+        $this->assertSame('Pasien tercatat di unit lain', $histori->reason);
+    }
+
+    /**
+     * @dataProvider alasanTidakValid
+     */
+    public function test_void_wajib_disertai_alasan(string $alasan, string $rule): void
+    {
+        $this->recordTersimpan('approved');
+
+        $this->halaman()
+            ->set('alasan', $alasan)
+            ->call('void', $this->indicator->id, self::TANGGAL)
+            ->assertHasErrors(['alasan' => $rule]);
+
+        $this->assertSame('approved', $this->statusRecord());
+    }
+
+    /**
+     * @return array<string, array{0: string}>
+     */
+    public function statusTidakBisaDivoid(): array
+    {
+        return [
+            'draft'     => ['draft'],
+            'submitted' => ['submitted'],
+            'rejected'  => ['rejected'],
+            'voided'    => ['voided'],
+        ];
+    }
+
+    /**
+     * @dataProvider statusTidakBisaDivoid
+     */
+    public function test_void_hanya_untuk_record_disetujui(string $status): void
+    {
+        $this->recordTersimpan($status);
+
+        $this->halaman()
+            ->set('alasan', 'Alasan void')
+            ->call('void', $this->indicator->id, self::TANGGAL)
+            ->assertSee('Hanya data yang sudah disetujui yang dapat dibatalkan.')
+            ->assertSeeHtml('alert-danger');
+
+        $this->assertSame($status, $this->statusRecord());
+        $this->assertNull($this->historiTerakhir());
+    }
+
+    public function test_void_ditolak_tanpa_izin(): void
+    {
+        $this->recordTersimpan('approved');
+
+        $this->halaman(['mutu.validasi-data.read'])
+            ->set('alasan', 'Alasan void')
+            ->call('void', $this->indicator->id, self::TANGGAL)
+            ->assertSeeHtml('alert-danger');
+
+        $this->assertSame('approved', $this->statusRecord());
+    }
+
+    public function test_void_lewat_form_alasan(): void
+    {
+        $this->recordTersimpan('approved');
+
+        $this->halaman()
+            ->call('bukaFormAlasan', 'void', $this->indicator->id, self::TANGGAL)
+            ->assertSet('alasanAksi', 'void')
+            ->set('alasan', 'Data ganda')
+            ->call('simpanAlasan')
+            ->assertDispatchedBrowserEvent('close-modal', ['id' => 'modal-alasan-validasi']);
+
+        $this->assertSame('voided', $this->statusRecord());
+    }
+
+    public function test_record_voided_tidak_bisa_dibatalkan_validasinya(): void
+    {
+        $this->recordTersimpan('voided');
+
+        $this->halaman()
+            ->call('resetStatus', $this->indicator->id, self::TANGGAL)
+            ->assertSee('Data yang sudah dibatalkan tidak dapat di-reset.')
+            ->assertSeeHtml('alert-danger');
+
+        $this->assertSame('voided', $this->statusRecord());
+    }
+
     public function test_batal_validasi_ditolak_tanpa_izin(): void
     {
         $this->recordTersimpan('approved');
@@ -277,6 +393,7 @@ class ValidasiDataTest extends MutuTestCase
         $this->recordTersimpan('approved', ['recorded_date' => '2026-03-03']);
         $this->recordTersimpan('rejected', ['recorded_date' => '2026-03-04']);
         $this->recordTersimpan('approved_with_correction', ['recorded_date' => '2026-03-05']);
+        $this->recordTersimpan('voided', ['recorded_date' => '2026-03-06']);
 
         $this->halaman()
             ->set('tglAwal', '2026-03-01')
@@ -286,7 +403,8 @@ class ValidasiDataTest extends MutuTestCase
             ->assertSeeHtml('<span class="badge badge-info">Submitted</span>')
             ->assertSeeHtml('<span class="badge badge-success">Approved</span>')
             ->assertSeeHtml('<span class="badge badge-danger">Rejected</span>')
-            ->assertSeeHtml('<span class="badge badge-primary">Approved w/ Correction</span>');
+            ->assertSeeHtml('<span class="badge badge-primary">Approved w/ Correction</span>')
+            ->assertSeeHtml('<span class="badge badge-dark">Voided</span>');
     }
 
     public function test_daftar_record_bisa_difilter_departemen_status_dan_cari(): void

@@ -40,6 +40,11 @@
                         </div>
                     @endif
                 </div>
+            @elseif ($status === \App\Models\Quality\QualityIndicatorRecord::STATUS_VOIDED)
+                <div class="alert alert-dark mx-3 mt-3">
+                    <i class="fas fa-ban mr-2"></i>
+                    Data ini telah dibatalkan (void) oleh validator dan tidak dihitung di laporan.
+                </div>
             @endif
 
             <x-form id="form-input-record-indikator" wire:submit.prevent="save">
