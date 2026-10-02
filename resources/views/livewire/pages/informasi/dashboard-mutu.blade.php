@@ -13,7 +13,7 @@
                 window.addEventListener('update-chart-per-dept', (event) => {
                     const ctx = document.getElementById('chartPerDept').getContext('2d');
                     const { labels, data } = event.detail;
-                    const colors = data.map(v => v >= 75 ? '#28a745' : '#dc3545');
+                    const colors = data.map((v) => (v >= 75 ? '#28a745' : '#dc3545'));
 
                     if (chartPerDept) {
                         chartPerDept.data.labels = labels;
@@ -25,13 +25,15 @@
                             type: 'bar',
                             data: {
                                 labels: labels,
-                                datasets: [{
-                                    label: 'Rata-rata Capaian (%)',
-                                    data: data,
-                                    backgroundColor: colors,
-                                    borderColor: colors.map(c => c),
-                                    borderWidth: 1,
-                                }],
+                                datasets: [
+                                    {
+                                        label: 'Rata-rata Capaian (%)',
+                                        data: data,
+                                        backgroundColor: colors,
+                                        borderColor: colors.map((c) => c),
+                                        borderWidth: 1,
+                                    },
+                                ],
                             },
                             options: {
                                 responsive: true,
@@ -75,11 +77,13 @@
                             type: 'doughnut',
                             data: {
                                 labels: labels,
-                                datasets: [{
-                                    data: data,
-                                    backgroundColor: colors,
-                                    borderWidth: 1,
-                                }],
+                                datasets: [
+                                    {
+                                        data: data,
+                                        backgroundColor: colors,
+                                        borderWidth: 1,
+                                    },
+                                ],
                             },
                             options: {
                                 responsive: true,
@@ -113,19 +117,21 @@
                             type: 'line',
                             data: {
                                 labels: labels,
-                                datasets: [{
-                                    label: 'Rata-rata Capaian (%)',
-                                    data: data,
-                                    borderColor: '#007bff',
-                                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
-                                    borderWidth: 2,
-                                    fill: true,
-                                    tension: 0.3,
-                                    pointRadius: 3,
-                                    pointBackgroundColor: (context) => {
-                                        return context.dataset.data[context.dataIndex] >= 75 ? '#28a745' : '#dc3545';
+                                datasets: [
+                                    {
+                                        label: 'Rata-rata Capaian (%)',
+                                        data: data,
+                                        borderColor: '#007bff',
+                                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                                        borderWidth: 2,
+                                        fill: true,
+                                        tension: 0.3,
+                                        pointRadius: 3,
+                                        pointBackgroundColor: (context) => {
+                                            return context.dataset.data[context.dataIndex] >= 75 ? '#28a745' : '#dc3545';
+                                        },
                                     },
-                                }],
+                                ],
                             },
                             options: {
                                 responsive: true,
@@ -154,7 +160,7 @@
                 window.addEventListener('update-chart-per-kategori', (event) => {
                     const ctx = document.getElementById('chartPerKategori').getContext('2d');
                     const { labels, data } = event.detail;
-                    const colors = data.map(v => v >= 75 ? '#28a745' : '#dc3545');
+                    const colors = data.map((v) => (v >= 75 ? '#28a745' : '#dc3545'));
 
                     if (chartPerKategori) {
                         chartPerKategori.data.labels = labels;
@@ -166,13 +172,15 @@
                             type: 'bar',
                             data: {
                                 labels: labels,
-                                datasets: [{
-                                    label: 'Rata-rata Capaian (%)',
-                                    data: data,
-                                    backgroundColor: colors,
-                                    borderColor: colors.map(c => c),
-                                    borderWidth: 1,
-                                }],
+                                datasets: [
+                                    {
+                                        label: 'Rata-rata Capaian (%)',
+                                        data: data,
+                                        backgroundColor: colors,
+                                        borderColor: colors.map((c) => c),
+                                        borderWidth: 1,
+                                    },
+                                ],
                             },
                             options: {
                                 responsive: true,
@@ -272,7 +280,10 @@
         <div class="col-md-6">
             <x-card>
                 <x-slot name="header">
-                    <h6 class="mb-0"><i class="fas fa-chart-bar mr-2"></i>Rata-rata Capaian per Departemen</h6>
+                    <h6 class="mb-0">
+                        <i class="fas fa-chart-bar mr-2"></i>
+                        Rata-rata Capaian per Departemen
+                    </h6>
                 </x-slot>
                 <x-slot name="body">
                     <div wire:ignore style="height: 320px">
@@ -284,7 +295,10 @@
         <div class="col-md-6">
             <x-card>
                 <x-slot name="header">
-                    <h6 class="mb-0"><i class="fas fa-chart-pie mr-2"></i>Distribusi Status Record</h6>
+                    <h6 class="mb-0">
+                        <i class="fas fa-chart-pie mr-2"></i>
+                        Distribusi Status Record
+                    </h6>
                 </x-slot>
                 <x-slot name="body">
                     <div wire:ignore style="height: 320px">
@@ -299,7 +313,10 @@
         <div class="col-md-6">
             <x-card>
                 <x-slot name="header">
-                    <h6 class="mb-0"><i class="fas fa-chart-line mr-2"></i>Tren Capaian Bulanan (12 Bulan)</h6>
+                    <h6 class="mb-0">
+                        <i class="fas fa-chart-line mr-2"></i>
+                        Tren Capaian Bulanan (12 Bulan)
+                    </h6>
                 </x-slot>
                 <x-slot name="body">
                     <div wire:ignore style="height: 280px">
@@ -311,7 +328,10 @@
         <div class="col-md-6">
             <x-card>
                 <x-slot name="header">
-                    <h6 class="mb-0"><i class="fas fa-chart-bar mr-2"></i>Rata-rata Capaian per Kategori</h6>
+                    <h6 class="mb-0">
+                        <i class="fas fa-chart-bar mr-2"></i>
+                        Rata-rata Capaian per Kategori
+                    </h6>
                 </x-slot>
                 <x-slot name="body">
                     <div wire:ignore style="height: 280px">
@@ -326,7 +346,10 @@
         <div class="col-md-6">
             <x-card>
                 <x-slot name="header">
-                    <h6 class="mb-0"><i class="fas fa-arrow-up mr-2 text-success"></i>5 Indikator Capaian Tertinggi</h6>
+                    <h6 class="mb-0">
+                        <i class="fas fa-arrow-up mr-2 text-success"></i>
+                        5 Indikator Capaian Tertinggi
+                    </h6>
                 </x-slot>
                 <x-slot name="body">
                     <table class="table table-sm table-hover mb-0">
@@ -357,7 +380,10 @@
         <div class="col-md-6">
             <x-card>
                 <x-slot name="header">
-                    <h6 class="mb-0"><i class="fas fa-arrow-down mr-2 text-danger"></i>5 Indikator Capaian Terendah</h6>
+                    <h6 class="mb-0">
+                        <i class="fas fa-arrow-down mr-2 text-danger"></i>
+                        5 Indikator Capaian Terendah
+                    </h6>
                 </x-slot>
                 <x-slot name="body">
                     <table class="table table-sm table-hover mb-0">

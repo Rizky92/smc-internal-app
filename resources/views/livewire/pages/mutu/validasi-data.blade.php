@@ -5,14 +5,16 @@
         <x-slot name="header">
             <x-row-col-flex class="mt-2">
                 <x-filter.label constant-width>Status :</x-filter.label>
-                <x-filter.select model="statusFilter" :options="[
-                    'submitted' => 'Submitted (Perlu Validasi)',
-                    'approved' => 'Approved (Disetujui)',
-                    'approved_with_correction' => 'Approved w/ Correction',
-                    'rejected' => 'Rejected (Ditolak)',
-                    'draft' => 'Draft',
-                    'all' => 'Semua Status',
-                ]" />
+                <x-filter.select
+                    model="statusFilter"
+                    :options="[
+                        'submitted' => 'Submitted (Perlu Validasi)',
+                        'approved' => 'Approved (Disetujui)',
+                        'approved_with_correction' => 'Approved w/ Correction',
+                        'rejected' => 'Rejected (Ditolak)',
+                        'draft' => 'Draft',
+                        'all' => 'Semua Status',
+                    ]" />
             </x-row-col-flex>
 
             <x-row-col-flex class="mt-2" style="gap: 1rem; flex-wrap: wrap">
