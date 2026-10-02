@@ -15,4 +15,9 @@ class QualityIndicatorCategory extends Model
     protected $keyType = 'int';
 
     protected $fillable = ['name'];
+
+    protected function searchColumns(): array
+    {
+        return ['name'];
+    }
 }

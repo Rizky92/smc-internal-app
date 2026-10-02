@@ -43,6 +43,27 @@ class KategoriDanTipeInputTest extends MutuTestCase
         $this->assertSame(1, QualityIndicatorCategory::where('name', 'like', 'Nama %')->count());
     }
 
+    public function test_nama_kategori_dan_tipe_input_wajib_diisi(): void
+    {
+        $user = $this->createUser();
+
+        Livewire::actingAs($user)
+            ->test(InputKategoriIndikator::class)
+            ->call('loadCategory')
+            ->set('name', '')
+            ->call('save')
+            ->assertHasErrors(['name' => 'required'])
+            ->assertNotEmitted('category-saved');
+
+        Livewire::actingAs($user)
+            ->test(InputTipeInputIndikator::class)
+            ->call('loadInputType')
+            ->set('name', '')
+            ->call('save')
+            ->assertHasErrors(['name' => 'required'])
+            ->assertNotEmitted('input-type-saved');
+    }
+
     public function test_admin_bisa_mencari_kategori_indikator(): void
     {
         QualityIndicatorCategoryFactory::new()->create(['name' => 'Keselamatan Pasien']);

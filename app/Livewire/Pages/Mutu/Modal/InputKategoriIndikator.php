@@ -2,8 +2,6 @@
 
 namespace App\Livewire\Pages\Mutu\Modal;
 
-use App\Application\Quality\Actions\SaveQualityCategoryAction;
-use App\Application\Quality\DTOs\QualityCategoryData;
 use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\FlashComponent;
 use App\Models\Quality\QualityIndicatorCategory;
@@ -41,14 +39,15 @@ class InputKategoriIndikator extends Component
         $this->dispatchBrowserEvent('input-kategori-indikator.show-modal');
     }
 
-    public function save(SaveQualityCategoryAction $action): void
+    public function save(): void
     {
-        $data = QualityCategoryData::from([
-            'id'   => $this->categoryId,
-            'name' => $this->name,
-        ]);
+        $this->validate();
 
-        $action->execute($data);
+        tracker_start('mysql_smc');
+
+        QualityIndicatorCategory::updateOrCreate(['id' => $this->categoryId], ['name' => $this->name]);
+
+        tracker_end('mysql_smc');
 
         $this->emit('flash.success', 'Kategori Indikator berhasil disimpan.');
         $this->emit('category-saved');
@@ -64,5 +63,12 @@ class InputKategoriIndikator extends Component
     public function render(): View
     {
         return view('livewire.pages.mutu.modal.input-kategori-indikator');
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:50'],
+        ];
     }
 }
