@@ -37,6 +37,11 @@ class QualityIndicatorProfile extends Model
         'data_presentation',
     ];
 
+    protected function searchColumns(): array
+    {
+        return ['title'];
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(QualityIndicatorCategory::class, 'quality_indicator_category_id');

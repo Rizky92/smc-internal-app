@@ -2,8 +2,6 @@
 
 namespace App\Livewire\Pages\Mutu\Modal;
 
-use App\Application\Quality\Actions\SaveQualityIndicatorProfileAction;
-use App\Application\Quality\DTOs\QualityIndicatorProfileData;
 use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\FlashComponent;
 use App\Models\Quality\QualityIndicatorCategory;
@@ -147,37 +145,21 @@ class InputProfilIndikator extends Component
         $this->dispatchBrowserEvent('input-profil-indikator.hide-modal');
     }
 
-    public function save(SaveQualityIndicatorProfileAction $action): void
+    public function save(): void
     {
         $this->validate();
 
-        $data = QualityIndicatorProfileData::from([
-            'id'                              => $this->profileId,
-            'quality_indicator_category_id'   => $this->quality_indicator_category_id,
-            'quality_indicator_input_type_id' => $this->quality_indicator_input_type_id,
-            'title'                           => $this->title,
-            'dimension'                       => $this->dimension,
-            'objective'                       => $this->objective,
-            'definition'                      => $this->definition,
-            'inclusion'                       => $this->inclusion,
-            'exclusion'                       => $this->exclusion,
-            'frequency'                       => $this->frequency,
-            'analysis_period'                 => $this->analysis_period,
-            'numerator'                       => $this->numerator,
-            'denominator'                     => $this->denominator,
-            'standard'                        => $this->standard,
-            'rationale'                       => $this->rationale,
-            'indicator_type'                  => $this->indicator_type,
-            'measurement_unit'                => $this->measurement_unit,
-            'formula'                         => $this->formula,
-            'data_collection_method'          => $this->data_collection_method,
-            'instrument'                      => $this->instrument,
-            'sample_size'                     => $this->sample_size,
-            'sampling_method'                 => $this->sampling_method,
-            'data_presentation'               => $this->data_presentation,
-        ]);
+        tracker_start('mysql_smc');
 
-        $action->execute($data);
+        QualityIndicatorProfile::updateOrCreate(['id' => $this->profileId], array_merge(
+            $this->only((new QualityIndicatorProfile)->getFillable()),
+            [
+                'quality_indicator_input_type_id' => $this->quality_indicator_input_type_id ?: null,
+                'analysis_period'                 => filled($this->analysis_period) ? (int) $this->analysis_period : null,
+            ]
+        ));
+
+        tracker_end('mysql_smc');
 
         $this->emit('flash.success', 'Data Profil Indikator berhasil disimpan.');
         $this->emit('profile-saved');
@@ -187,10 +169,12 @@ class InputProfilIndikator extends Component
     protected function rules(): array
     {
         return [
-            'quality_indicator_category_id' => ['required', 'exists:mysql_smc.quality_indicator_categories,id'],
-            'title'                         => ['required', 'string'],
-            'frequency'                     => ['required', 'string'],
-            'standard'                      => ['required', 'string'],
+            'quality_indicator_category_id'   => ['required', 'exists:mysql_smc.quality_indicator_categories,id'],
+            'quality_indicator_input_type_id' => ['nullable', 'exists:mysql_smc.quality_indicator_input_types,id'],
+            'title'                           => ['required', 'string'],
+            'frequency'                       => ['required', 'string'],
+            'analysis_period'                 => ['nullable', 'integer'],
+            'standard'                        => ['required', 'string'],
         ];
     }
 

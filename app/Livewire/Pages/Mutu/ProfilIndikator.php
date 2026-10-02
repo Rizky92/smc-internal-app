@@ -2,13 +2,13 @@
 
 namespace App\Livewire\Pages\Mutu;
 
-use App\Application\Quality\Actions\GetQualityIndicatorProfileListAction;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
 use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
+use App\Models\Quality\QualityIndicatorProfile;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
@@ -29,9 +29,10 @@ class ProfilIndikator extends Component
 
     public function getCollectionProperty(): LengthAwarePaginator
     {
-        return app(GetQualityIndicatorProfileListAction::class)->execute([
-            'search' => $this->cari,
-        ], $this->perpage);
+        return QualityIndicatorProfile::query()
+            ->with('category')
+            ->when($this->cari, fn ($q) => $q->search($this->cari))
+            ->paginate($this->perpage);
     }
 
     public function mount(): void
