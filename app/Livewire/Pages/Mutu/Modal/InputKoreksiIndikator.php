@@ -39,9 +39,7 @@ class InputKoreksiIndikator extends Component
     {
         $this->resetExcept([]);
 
-        $record = QualityIndicatorRecord::where('indicator_id', $indicatorId)
-            ->where('recorded_date', $date)
-            ->firstOrFail();
+        $record = QualityIndicatorRecord::tanggal($indicatorId, $date)->firstOrFail();
 
         $this->indicatorId = $indicatorId;
         $this->recordedDate = $date;
@@ -63,9 +61,7 @@ class InputKoreksiIndikator extends Component
 
         $this->validate();
 
-        $record = QualityIndicatorRecord::where('indicator_id', $this->indicatorId)
-            ->where('recorded_date', $this->recordedDate)
-            ->firstOrFail();
+        $record = QualityIndicatorRecord::tanggal($this->indicatorId, $this->recordedDate)->firstOrFail();
 
         $changes = [];
         $oldNumerator = $record->numerator_value;
@@ -100,7 +96,7 @@ class InputKoreksiIndikator extends Component
             'numerator_value'   => $this->numeratorValue,
             'denominator_value' => $this->denominatorValue,
             'notes'             => $this->notes,
-            'status'            => 'approved_with_correction',
+            'status'            => QualityIndicatorRecord::STATUS_APPROVED_WITH_CORRECTION,
         ]);
 
         foreach ($changes as $change) {

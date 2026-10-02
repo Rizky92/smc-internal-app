@@ -20,9 +20,7 @@ class ViewAuditLogIndikator extends Component
 
     public function loadLogs(int $indicatorId, string $date): void
     {
-        $record = QualityIndicatorRecord::where('indicator_id', $indicatorId)
-            ->where('recorded_date', $date)
-            ->first();
+        $record = QualityIndicatorRecord::tanggal($indicatorId, $date)->first();
 
         if (! $record) {
             $this->flashError('Data tidak ditemukan.');
