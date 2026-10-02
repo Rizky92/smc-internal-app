@@ -5,6 +5,8 @@ namespace App\Livewire\Pages\Mutu\Modal;
 use App\Livewire\Concerns\FlashComponent;
 use App\Models\Quality\QualityIndicator;
 use App\Models\Quality\QualityIndicatorRecord;
+use App\Models\Quality\QualityIndicatorRecordHistory;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -29,6 +31,9 @@ class InputRecordIndikator extends Component
 
     /** @var bool */
     public $isEdit = false;
+
+    /** @var string|null */
+    public $alasanPenolakan;
 
     protected $listeners = ['input-record' => 'loadIndicator'];
 
@@ -60,6 +65,9 @@ class InputRecordIndikator extends Component
                 $this->notes = $record->notes;
                 $this->status = $record->status ?? QualityIndicatorRecord::STATUS_DRAFT;
                 $this->isEdit = true;
+                $this->alasanPenolakan = $record->status === QualityIndicatorRecord::STATUS_REJECTED
+                    ? $record->lastRejectionReason()
+                    : null;
             }
         } else {
             $this->recordedDate = now()->format('Y-m-d');
@@ -154,19 +162,29 @@ class InputRecordIndikator extends Component
     {
         tracker_start('mysql_smc');
 
-        QualityIndicatorRecord::updateOrCreate(
-            [
-                'indicator_id'  => $this->indicatorId,
-                'recorded_date' => $this->recordedDate,
-            ],
-            [
-                'numerator_value'   => $this->numeratorValue,
-                'denominator_value' => $this->denominatorValue,
-                'notes'             => $this->notes,
-                'recorded_by'       => user()->nik,
-                'status'            => $status,
-            ]
-        );
+        DB::connection('mysql_smc')->transaction(function () use ($status): void {
+            $recordLama = $this->findRecord($this->indicatorId, $this->recordedDate);
+            $statusLama = $recordLama ? $recordLama->status : null;
+
+            $record = QualityIndicatorRecord::updateOrCreate(
+                [
+                    'indicator_id'  => $this->indicatorId,
+                    'recorded_date' => $this->recordedDate,
+                ],
+                [
+                    'numerator_value'   => $this->numeratorValue,
+                    'denominator_value' => $this->denominatorValue,
+                    'notes'             => $this->notes,
+                    'recorded_by'       => user()->nik,
+                    'status'            => $status,
+                ]
+            );
+
+            // Simpan draft bukan transisi validasi, jadi hanya penyerahan yang dicatat.
+            if ($status === QualityIndicatorRecord::STATUS_SUBMITTED) {
+                $record->recordHistory(QualityIndicatorRecordHistory::ACTION_SUBMITTED, $statusLama);
+            }
+        });
 
         tracker_end('mysql_smc');
     }
@@ -175,6 +193,6 @@ class InputRecordIndikator extends Component
     {
         $this->dispatchBrowserEvent('close-modal', ['id' => 'modal-input-record-indikator']);
         $this->emit('record-saved');
-        $this->reset(['numeratorValue', 'denominatorValue', 'notes', 'isEdit', 'status']);
+        $this->reset(['numeratorValue', 'denominatorValue', 'notes', 'isEdit', 'status', 'alasanPenolakan']);
     }
 }

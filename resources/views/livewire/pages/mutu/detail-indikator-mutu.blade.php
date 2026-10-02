@@ -213,13 +213,8 @@
                             <x-table.td>{{ $record->notes ?: '-' }}</x-table.td>
                             <x-table.td>{{ $this->recorders->get($record->recorded_by)->nama ?? '-' }}</x-table.td>
                             <x-table.td class="text-center">
-                                @if ($record->status === \App\Models\Quality\QualityIndicatorRecord::STATUS_APPROVED_WITH_CORRECTION)
-                                    <x-button
-                                        variant="info"
-                                        size="xs"
-                                        icon="fas fa-history"
-                                        title="Riwayat Koreksi"
-                                        wire:click="$emit('view-audit-log', {{ $indicatorId }}, '{{ $record->recorded_date }}')" />
+                                @if ($record->punyaRiwayat())
+                                    <x-button variant="info" size="xs" icon="fas fa-history" title="Riwayat" wire:click="$emit('view-audit-log', {{ $indicatorId }}, '{{ $record->recorded_date }}')" />
                                 @else
                                     <span class="text-muted text-xs">-</span>
                                 @endif

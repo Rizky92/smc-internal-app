@@ -10,6 +10,7 @@ use App\Livewire\Concerns\MenuTracker;
 use App\Models\Aplikasi\User;
 use App\Models\Kepegawaian\Departemen;
 use App\Models\Quality\QualityIndicatorRecord;
+use App\Models\Quality\QualityIndicatorRecordHistory;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
@@ -35,6 +36,23 @@ class ValidasiData extends Component
 
     /** @var string */
     public $tglAkhir;
+
+    /**
+     * Aksi validator yang wajib disertai alasan; nilainya adalah nama method aksi.
+     */
+    private const AKSI_BERALASAN = ['reject'];
+
+    /** @var string|null */
+    public $alasanAksi;
+
+    /** @var int|null */
+    public $alasanIndicatorId;
+
+    /** @var string|null */
+    public $alasanDate;
+
+    /** @var string */
+    public $alasan = '';
 
     protected $listeners = [
         'record-saved' => '$refresh',
@@ -80,6 +98,7 @@ class ValidasiData extends Component
     {
         return QualityIndicatorRecord::query()
             ->with(['indicator.profile.category', 'indicator.departemen'])
+            ->withCount('histories')
             ->periode($this->tglAwal, $this->tglAkhir)
             ->when($this->depId, fn ($q) => $q->departemen($this->depId))
             ->when($this->statusFilter && $this->statusFilter !== 'all', fn ($q) => $q->where('status', $this->statusFilter))
@@ -102,6 +121,34 @@ class ValidasiData extends Component
             ->keyBy('nik');
     }
 
+    /**
+     * Buka form alasan untuk aksi validator yang wajib beralasan.
+     */
+    public function bukaFormAlasan(string $aksi, int $indicatorId, string $date): void
+    {
+        if (! in_array($aksi, self::AKSI_BERALASAN, true)) {
+            return;
+        }
+
+        $this->resetErrorBag();
+
+        $this->alasanAksi = $aksi;
+        $this->alasanIndicatorId = $indicatorId;
+        $this->alasanDate = $date;
+        $this->alasan = '';
+
+        $this->dispatchBrowserEvent('open-modal', ['id' => 'modal-alasan-validasi']);
+    }
+
+    public function simpanAlasan(): void
+    {
+        if (! in_array($this->alasanAksi, self::AKSI_BERALASAN, true)) {
+            return;
+        }
+
+        $this->{$this->alasanAksi}((int) $this->alasanIndicatorId, (string) $this->alasanDate);
+    }
+
     public function approve(int $indicatorId, string $date): void
     {
         if (! auth()->user()->can('mutu.validasi-data.approve')) {
@@ -112,12 +159,15 @@ class ValidasiData extends Component
 
         $record = QualityIndicatorRecord::tanggal($indicatorId, $date)->first();
 
-        if ($record) {
-            $record->update(['status' => QualityIndicatorRecord::STATUS_APPROVED]);
-            $this->flashSuccess('Data penilaian berhasil disetujui.');
-        } else {
+        if (! $record) {
             $this->flashError('Data tidak ditemukan.');
+
+            return;
         }
+
+        $this->ubahStatus($record, QualityIndicatorRecord::STATUS_APPROVED, QualityIndicatorRecordHistory::ACTION_APPROVED);
+
+        $this->flashSuccess('Data penilaian berhasil disetujui.');
     }
 
     public function reject(int $indicatorId, string $date): void
@@ -130,24 +180,55 @@ class ValidasiData extends Component
 
         $record = QualityIndicatorRecord::tanggal($indicatorId, $date)->first();
 
-        if ($record) {
-            $record->update(['status' => QualityIndicatorRecord::STATUS_REJECTED]);
-            $this->flashSuccess('Data penilaian berhasil ditolak.');
-        } else {
+        if (! $record) {
             $this->flashError('Data tidak ditemukan.');
+
+            return;
         }
+
+        $this->validate(['alasan' => ['required', 'string', 'min:3']]);
+
+        $this->ubahStatus($record, QualityIndicatorRecord::STATUS_REJECTED, QualityIndicatorRecordHistory::ACTION_REJECTED, $this->alasan);
+
+        $this->tutupFormAlasan();
+        $this->flashSuccess('Data penilaian berhasil ditolak.');
     }
 
     public function resetStatus(int $indicatorId, string $date): void
     {
+        if (! auth()->user()->canAny(['mutu.validasi-data.approve', 'mutu.validasi-data.reject'])) {
+            $this->flashError('Anda tidak memiliki akses untuk membatalkan validasi.');
+
+            return;
+        }
+
         $record = QualityIndicatorRecord::tanggal($indicatorId, $date)->first();
 
-        if ($record) {
-            $record->update(['status' => QualityIndicatorRecord::STATUS_SUBMITTED]);
-            $this->flashSuccess('Status data penilaian berhasil di-reset.');
-        } else {
+        if (! $record) {
             $this->flashError('Data tidak ditemukan.');
+
+            return;
         }
+
+        $this->ubahStatus($record, QualityIndicatorRecord::STATUS_SUBMITTED, QualityIndicatorRecordHistory::ACTION_RESET);
+
+        $this->flashSuccess('Status data penilaian berhasil di-reset.');
+    }
+
+    protected function ubahStatus(QualityIndicatorRecord $record, string $status, string $aksiHistori, ?string $alasan = null): void
+    {
+        DB::connection('mysql_smc')->transaction(function () use ($record, $status, $aksiHistori, $alasan): void {
+            $statusLama = $record->status;
+
+            $record->update(['status' => $status]);
+            $record->recordHistory($aksiHistori, $statusLama, $alasan);
+        });
+    }
+
+    protected function tutupFormAlasan(): void
+    {
+        $this->dispatchBrowserEvent('close-modal', ['id' => 'modal-alasan-validasi']);
+        $this->reset(['alasanAksi', 'alasanIndicatorId', 'alasanDate', 'alasan']);
     }
 
     public function editAndApprove(int $indicatorId, string $date): void

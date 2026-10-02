@@ -5,6 +5,7 @@ namespace App\Livewire\Pages\Mutu\Modal;
 use App\Livewire\Concerns\FlashComponent;
 use App\Models\Quality\IndicatorAuditLog;
 use App\Models\Quality\QualityIndicatorRecord;
+use App\Models\Quality\QualityIndicatorRecordHistory;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -15,6 +16,9 @@ class ViewAuditLogIndikator extends Component
 
     /** @var Collection<int, IndicatorAuditLog>|null */
     public $logs;
+
+    /** @var Collection<int, QualityIndicatorRecordHistory>|null */
+    public $histories;
 
     protected $listeners = ['view-audit-log' => 'loadLogs'];
 
@@ -29,6 +33,7 @@ class ViewAuditLogIndikator extends Component
         }
 
         $this->logs = $record->auditLogs()->orderBy('created_at', 'asc')->get();
+        $this->histories = $record->histories()->orderBy('created_at')->orderBy('id')->get();
 
         $this->dispatchBrowserEvent('open-modal', ['id' => 'modal-view-audit-log-indikator']);
     }

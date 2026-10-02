@@ -4,6 +4,8 @@ namespace App\Livewire\Pages\Mutu\Modal;
 
 use App\Livewire\Concerns\FlashComponent;
 use App\Models\Quality\QualityIndicatorRecord;
+use App\Models\Quality\QualityIndicatorRecordHistory;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -92,23 +94,29 @@ class InputKoreksiIndikator extends Component
             ];
         }
 
-        $record->update([
-            'numerator_value'   => $this->numeratorValue,
-            'denominator_value' => $this->denominatorValue,
-            'notes'             => $this->notes,
-            'status'            => QualityIndicatorRecord::STATUS_APPROVED_WITH_CORRECTION,
-        ]);
+        DB::connection('mysql_smc')->transaction(function () use ($record, $changes): void {
+            $statusLama = $record->status;
 
-        foreach ($changes as $change) {
-            $record->auditLogs()->create([
-                'field_name'    => $change['field_name'],
-                'old_value'     => $change['old_value'],
-                'new_value'     => $change['new_value'],
-                'changed_by'    => user()->nik,
-                'reason'        => $this->reason,
-                'recorded_date' => $this->recordedDate,
+            $record->update([
+                'numerator_value'   => $this->numeratorValue,
+                'denominator_value' => $this->denominatorValue,
+                'notes'             => $this->notes,
+                'status'            => QualityIndicatorRecord::STATUS_APPROVED_WITH_CORRECTION,
             ]);
-        }
+
+            foreach ($changes as $change) {
+                $record->auditLogs()->create([
+                    'field_name'    => $change['field_name'],
+                    'old_value'     => $change['old_value'],
+                    'new_value'     => $change['new_value'],
+                    'changed_by'    => user()->nik,
+                    'reason'        => $this->reason,
+                    'recorded_date' => $this->recordedDate,
+                ]);
+            }
+
+            $record->recordHistory(QualityIndicatorRecordHistory::ACTION_CORRECTED, $statusLama, $this->reason);
+        });
 
         $this->flashSuccess('Data berhasil dikoreksi dan disetujui.');
         $this->dispatchBrowserEvent('close-modal', ['id' => 'modal-input-koreksi-indikator']);

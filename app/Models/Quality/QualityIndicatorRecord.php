@@ -156,4 +156,54 @@ class QualityIndicatorRecord extends Model
         return $this->hasMany(IndicatorAuditLog::class, 'indicator_id', 'indicator_id')
             ->where('recorded_date', $this->recorded_date);
     }
+
+    public function histories(): HasMany
+    {
+        return $this->hasMany(QualityIndicatorRecordHistory::class, 'record_id');
+    }
+
+    /**
+     * Catat transisi validasi dengan nilai record saat ini dan user yang sedang login sebagai pelaku.
+     */
+    public function recordHistory(string $action, ?string $statusBefore, ?string $reason = null): QualityIndicatorRecordHistory
+    {
+        /** @var QualityIndicatorRecordHistory */
+        $history = $this->histories()->create([
+            'action'            => $action,
+            'status_before'     => $statusBefore,
+            'status_after'      => $this->status,
+            'numerator_value'   => $this->numerator_value,
+            'denominator_value' => $this->denominator_value,
+            'notes'             => $this->notes,
+            'reason'            => $reason,
+            'actor'             => user()->nik,
+        ]);
+
+        return $history;
+    }
+
+    /**
+     * Record hasil koreksi lama belum punya histori, tetapi punya audit log.
+     * Muat `withCount('histories')` di daftar agar tidak ada query per baris.
+     */
+    public function punyaRiwayat(): bool
+    {
+        if ($this->status === self::STATUS_APPROVED_WITH_CORRECTION) {
+            return true;
+        }
+
+        return (int) ($this->histories_count ?? $this->histories()->count()) > 0;
+    }
+
+    /**
+     * Alasan penolakan terakhir, untuk ditampilkan ke petugas yang memperbaiki record.
+     */
+    public function lastRejectionReason(): ?string
+    {
+        return $this->histories()
+            ->where('action', QualityIndicatorRecordHistory::ACTION_REJECTED)
+            ->latest('created_at')
+            ->latest('id')
+            ->value('reason');
+    }
 }

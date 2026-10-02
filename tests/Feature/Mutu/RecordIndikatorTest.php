@@ -191,6 +191,80 @@ class RecordIndikatorTest extends MutuTestCase
         $this->assertSame($terkunci, $numeratorTerkunci, "Isian numerator untuk record {$status}");
     }
 
+    public function test_submit_mencatat_histori(): void
+    {
+        $this->modal()
+            ->set('recordedDate', self::TANGGAL)
+            ->set('numeratorValue', 2)
+            ->set('denominatorValue', 5)
+            ->call('submit');
+
+        $histori = $this->record()->histories()->get();
+
+        $this->assertCount(1, $histori);
+        $this->assertSame('submitted', $histori[0]->action);
+        $this->assertNull($histori[0]->status_before);
+        $this->assertSame('submitted', $histori[0]->status_after);
+        $this->assertSame(self::NIK, $histori[0]->actor);
+    }
+
+    public function test_simpan_draft_tidak_mencatat_histori(): void
+    {
+        $this->modal()
+            ->set('recordedDate', self::TANGGAL)
+            ->call('save');
+
+        $this->assertSame(0, $this->record()->histories()->count());
+    }
+
+    public function test_record_ditolak_bisa_diperbaiki_dan_disubmit_ulang_pada_record_yang_sama(): void
+    {
+        $id = $this->recordTersimpan('rejected')->id;
+
+        $this->modal(self::TANGGAL)
+            ->set('numeratorValue', 5)
+            ->call('submit')
+            ->assertEmitted('record-saved');
+
+        $this->assertSame(1, QualityIndicatorRecord::where('indicator_id', $this->indicator->id)->count());
+
+        $record = $this->record();
+
+        $this->assertSame($id, $record->id);
+        $this->assertSame('submitted', $record->status);
+        $this->assertSame(5, (int) $record->numerator_value);
+
+        $histori = $record->histories()->latest('id')->first();
+
+        $this->assertSame('submitted', $histori->action);
+        $this->assertSame('rejected', $histori->status_before);
+        $this->assertSame(5, (int) $histori->numerator_value);
+    }
+
+    public function test_alasan_penolakan_terakhir_tampil_di_modal(): void
+    {
+        $record = $this->recordTersimpan('rejected');
+
+        $tolak = fn (string $reason, string $at) => $record->histories()->forceCreate([
+            'action'            => 'rejected',
+            'status_before'     => 'submitted',
+            'status_after'      => 'rejected',
+            'numerator_value'   => 4,
+            'denominator_value' => 5,
+            'reason'            => $reason,
+            'actor'             => self::NIK,
+            'created_at'        => $at,
+        ]);
+
+        $tolak('Alasan-Lama', '2026-03-11 09:00:00');
+        $tolak('Alasan-Terbaru', '2026-03-12 09:00:00');
+
+        $this->modal(self::TANGGAL)
+            ->assertSet('alasanPenolakan', 'Alasan-Terbaru')
+            ->assertSee('Alasan-Terbaru')
+            ->assertDontSee('Alasan-Lama');
+    }
+
     public function test_status_kunci_dibaca_dari_database_bukan_dari_klien(): void
     {
         $this->recordTersimpan('submitted');

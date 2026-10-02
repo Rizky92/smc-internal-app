@@ -33,6 +33,12 @@
                 <div class="alert alert-danger mx-3 mt-3">
                     <i class="fas fa-exclamation-circle mr-2"></i>
                     Data ini ditolak oleh validator. Silakan perbaiki dan kirim kembali.
+                    @if ($alasanPenolakan)
+                        <div class="mt-1">
+                            <strong>Alasan:</strong>
+                            {{ $alasanPenolakan }}
+                        </div>
+                    @endif
                 </div>
             @endif
 

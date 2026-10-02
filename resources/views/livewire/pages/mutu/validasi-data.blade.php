@@ -98,34 +98,33 @@
                                         @endcan
 
                                         @can('mutu.validasi-data.reject')
-                                            <x-button variant="danger" size="xs" icon="fas fa-times" title="Tolak" wire:click="reject({{ $record->indicator_id }}, '{{ $record->recorded_date }}')" />
+                                            <x-button
+                                                variant="danger"
+                                                size="xs"
+                                                icon="fas fa-times"
+                                                title="Tolak"
+                                                wire:click="bukaFormAlasan('reject', {{ $record->indicator_id }}, '{{ $record->recorded_date }}')" />
                                         @endcan
-                                    @elseif ($record->status === \App\Models\Quality\QualityIndicatorRecord::STATUS_APPROVED_WITH_CORRECTION)
+                                    @elseif (in_array($record->status, [\App\Models\Quality\QualityIndicatorRecord::STATUS_APPROVED, \App\Models\Quality\QualityIndicatorRecord::STATUS_APPROVED_WITH_CORRECTION, \App\Models\Quality\QualityIndicatorRecord::STATUS_REJECTED], true))
+                                        @canany(['mutu.validasi-data.approve', 'mutu.validasi-data.reject'])
+                                            <x-button
+                                                variant="warning"
+                                                size="xs"
+                                                icon="fas fa-undo"
+                                                title="Batal Validasi"
+                                                wire:click="resetStatus({{ $record->indicator_id }}, '{{ $record->recorded_date }}')" />
+                                        @endcanany
+                                    @elseif (! $record->punyaRiwayat())
+                                        <span class="text-muted text-xs">-</span>
+                                    @endif
+
+                                    @if ($record->punyaRiwayat())
                                         <x-button
                                             variant="info"
                                             size="xs"
                                             icon="fas fa-history"
-                                            title="Riwayat Koreksi"
+                                            title="Riwayat"
                                             wire:click="$emit('view-audit-log', {{ $record->indicator_id }}, '{{ $record->recorded_date }}')" />
-                                        @canany(['mutu.validasi-data.approve', 'mutu.validasi-data.reject'])
-                                            <x-button
-                                                variant="warning"
-                                                size="xs"
-                                                icon="fas fa-undo"
-                                                title="Batal Validasi"
-                                                wire:click="resetStatus({{ $record->indicator_id }}, '{{ $record->recorded_date }}')" />
-                                        @endcanany
-                                    @elseif (in_array($record->status, [\App\Models\Quality\QualityIndicatorRecord::STATUS_APPROVED, \App\Models\Quality\QualityIndicatorRecord::STATUS_REJECTED], true))
-                                        @canany(['mutu.validasi-data.approve', 'mutu.validasi-data.reject'])
-                                            <x-button
-                                                variant="warning"
-                                                size="xs"
-                                                icon="fas fa-undo"
-                                                title="Batal Validasi"
-                                                wire:click="resetStatus({{ $record->indicator_id }}, '{{ $record->recorded_date }}')" />
-                                        @endcanany
-                                    @else
-                                        <span class="text-muted text-xs">-</span>
                                     @endif
                                 </div>
                             </x-table.td>
@@ -141,6 +140,26 @@
             <x-paginator :data="$records" />
         </x-slot>
     </x-card>
+
+    <x-modal id="modal-alasan-validasi" title="Alasan Penolakan" livewire>
+        <x-slot name="body">
+            <x-form id="form-alasan-validasi" wire:submit.prevent="simpanAlasan">
+                <div class="form-group">
+                    <label>
+                        Alasan
+                        <span class="text-danger">*</span>
+                    </label>
+                    <textarea wire:model.defer="alasan" class="form-control form-control-sm" rows="3" placeholder="Contoh: Denominator tidak sesuai register pasien"></textarea>
+                    <x-form.error name="alasan" />
+                    <small class="text-muted">Alasan dicatat di riwayat dan ditampilkan ke petugas.</small>
+                </div>
+            </x-form>
+        </x-slot>
+        <x-slot name="footer">
+            <x-button variant="secondary" data-dismiss="modal" icon="fas fa-times" title="Batal" />
+            <x-button variant="danger" form="form-alasan-validasi" type="submit" wire:loading.attr="disabled" icon="fas fa-check" title="Simpan" />
+        </x-slot>
+    </x-modal>
 
     <livewire:pages.mutu.modal.input-koreksi-indikator />
     <livewire:pages.mutu.modal.view-audit-log-indikator />

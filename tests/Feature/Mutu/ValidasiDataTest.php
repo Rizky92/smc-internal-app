@@ -5,6 +5,7 @@ namespace Tests\Feature\Mutu;
 use App\Livewire\Pages\Mutu\ValidasiData;
 use App\Models\Quality\QualityIndicator;
 use App\Models\Quality\QualityIndicatorRecord;
+use App\Models\Quality\QualityIndicatorRecordHistory;
 use Database\Factories\Quality\QualityIndicatorFactory;
 use Database\Factories\Quality\QualityIndicatorProfileFactory;
 use Database\Factories\Quality\QualityIndicatorRecordFactory;
@@ -55,31 +56,128 @@ class ValidasiDataTest extends MutuTestCase
         return QualityIndicatorRecord::tanggal($this->indicator->id, self::TANGGAL)->value('status');
     }
 
+    private function historiTerakhir(): ?QualityIndicatorRecordHistory
+    {
+        return QualityIndicatorRecordHistory::query()
+            ->whereHas('record', fn ($q) => $q->tanggal($this->indicator->id, self::TANGGAL))
+            ->latest('id')
+            ->first();
+    }
+
     /**
-     * @return array<string, array{0: string, 1: string, 2: string}>
+     * @return array<string, array{0: string, 1: string, 2: string, 3: string, 4: string}>
      */
     public function aksiValidasi(): array
     {
         return [
-            'approve' => ['approve', 'approved', 'Data penilaian berhasil disetujui.'],
-            'reject'  => ['reject', 'rejected', 'Data penilaian berhasil ditolak.'],
-            'reset'   => ['resetStatus', 'submitted', 'Status data penilaian berhasil di-reset.'],
+            'approve' => ['approve', 'submitted', 'approved', 'approved', 'Data penilaian berhasil disetujui.'],
+            'reject'  => ['reject', 'submitted', 'rejected', 'rejected', 'Data penilaian berhasil ditolak.'],
+            'reset'   => ['resetStatus', 'approved', 'submitted', 'reset', 'Status data penilaian berhasil di-reset.'],
         ];
     }
 
     /**
      * @dataProvider aksiValidasi
      */
-    public function test_validator_bisa_mengubah_status_record(string $aksi, string $statusBaru, string $pesan): void
+    public function test_validator_bisa_mengubah_status_record_dan_tercatat_di_histori(string $aksi, string $statusLama, string $statusBaru, string $aksiHistori, string $pesan): void
     {
-        $this->recordTersimpan($aksi === 'resetStatus' ? 'approved' : 'submitted');
+        $this->recordTersimpan($statusLama);
 
         $this->halaman()
+            ->set('alasan', 'Alasan validator')
             ->call($aksi, $this->indicator->id, self::TANGGAL)
             ->assertSee($pesan)
             ->assertSeeHtml('alert-success');
 
         $this->assertSame($statusBaru, $this->statusRecord());
+
+        $histori = $this->historiTerakhir();
+
+        $this->assertNotNull($histori, "Aksi {$aksi} tidak tercatat di histori");
+        $this->assertSame($aksiHistori, $histori->action);
+        $this->assertSame($statusLama, $histori->status_before);
+        $this->assertSame($statusBaru, $histori->status_after);
+        $this->assertSame(self::NIK, $histori->actor);
+    }
+
+    public function test_alasan_penolakan_tersimpan_di_histori(): void
+    {
+        $this->recordTersimpan('submitted', ['numerator_value' => 3, 'denominator_value' => 7]);
+
+        $this->halaman()
+            ->set('alasan', 'Denominator tidak sesuai register')
+            ->call('reject', $this->indicator->id, self::TANGGAL);
+
+        $histori = $this->historiTerakhir();
+
+        $this->assertSame('Denominator tidak sesuai register', $histori->reason);
+        $this->assertSame(3, (int) $histori->numerator_value);
+        $this->assertSame(7, (int) $histori->denominator_value);
+    }
+
+    /**
+     * @return array<string, array{0: string, 1: string}>
+     */
+    public function alasanTidakValid(): array
+    {
+        return [
+            'kosong'         => ['', 'required'],
+            'terlalu pendek' => ['ab', 'min'],
+        ];
+    }
+
+    /**
+     * @dataProvider alasanTidakValid
+     */
+    public function test_tolak_wajib_disertai_alasan(string $alasan, string $rule): void
+    {
+        $this->recordTersimpan();
+
+        $this->halaman()
+            ->set('alasan', $alasan)
+            ->call('reject', $this->indicator->id, self::TANGGAL)
+            ->assertHasErrors(['alasan' => $rule]);
+
+        $this->assertSame('submitted', $this->statusRecord());
+        $this->assertNull($this->historiTerakhir());
+    }
+
+    public function test_tolak_membuka_form_alasan(): void
+    {
+        $this->recordTersimpan();
+
+        $this->halaman()
+            ->call('bukaFormAlasan', 'reject', $this->indicator->id, self::TANGGAL)
+            ->assertSet('alasanAksi', 'reject')
+            ->assertSet('alasan', '')
+            ->assertDispatchedBrowserEvent('open-modal', ['id' => 'modal-alasan-validasi']);
+    }
+
+    public function test_simpan_form_alasan_menolak_record_dan_menutup_form(): void
+    {
+        $this->recordTersimpan();
+
+        $this->halaman()
+            ->call('bukaFormAlasan', 'reject', $this->indicator->id, self::TANGGAL)
+            ->set('alasan', 'Data ganda')
+            ->call('simpanAlasan')
+            ->assertDispatchedBrowserEvent('close-modal', ['id' => 'modal-alasan-validasi'])
+            ->assertSet('alasanAksi', null);
+
+        $this->assertSame('rejected', $this->statusRecord());
+        $this->assertSame('Data ganda', $this->historiTerakhir()->reason);
+    }
+
+    public function test_batal_validasi_ditolak_tanpa_izin(): void
+    {
+        $this->recordTersimpan('approved');
+
+        $this->halaman(['mutu.validasi-data.read'])
+            ->call('resetStatus', $this->indicator->id, self::TANGGAL)
+            ->assertSeeHtml('alert-danger');
+
+        $this->assertSame('approved', $this->statusRecord());
+        $this->assertNull($this->historiTerakhir());
     }
 
     /**

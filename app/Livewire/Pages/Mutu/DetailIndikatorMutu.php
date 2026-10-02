@@ -101,6 +101,7 @@ class DetailIndikatorMutu extends Component
         }
 
         return QualityIndicatorRecord::query()
+            ->withCount('histories')
             ->where('indicator_id', $this->indicatorId)
             ->periode($this->tglAwal, $this->tglAkhir)
             ->orderBy('recorded_date')

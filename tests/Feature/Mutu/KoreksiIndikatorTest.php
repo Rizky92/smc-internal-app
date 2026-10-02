@@ -176,6 +176,46 @@ class KoreksiIndikatorTest extends MutuTestCase
             ->assertDontSee('Koreksi-Tanggal-Lain');
     }
 
+    public function test_koreksi_validator_tercatat_di_histori(): void
+    {
+        $this->koreksi()
+            ->set('numeratorValue', 3)
+            ->set('reason', 'Salah hitung')
+            ->call('save');
+
+        $histori = $this->record()->histories()->latest('id')->first();
+
+        $this->assertNotNull($histori);
+        $this->assertSame('corrected', $histori->action);
+        $this->assertSame('submitted', $histori->status_before);
+        $this->assertSame('approved_with_correction', $histori->status_after);
+        $this->assertSame(3, (int) $histori->numerator_value);
+        $this->assertSame('Salah hitung', $histori->reason);
+        $this->assertSame(self::NIK, $histori->actor);
+    }
+
+    public function test_riwayat_menampilkan_histori_transisi_secara_berurutan(): void
+    {
+        $histori = fn (string $action, string $reason, string $at) => $this->record()->histories()->forceCreate([
+            'action'            => $action,
+            'status_before'     => 'submitted',
+            'status_after'      => $action,
+            'numerator_value'   => 4,
+            'denominator_value' => 5,
+            'reason'            => $reason,
+            'actor'             => self::NIK,
+            'created_at'        => $at,
+        ]);
+
+        $histori('approved', 'Histori-Kedua', '2026-03-12 09:00:00');
+        $histori('rejected', 'Histori-Pertama', '2026-03-11 09:00:00');
+
+        Livewire::actingAs($this->createUser())
+            ->test(ViewAuditLogIndikator::class)
+            ->call('loadLogs', $this->indicator->id, self::TANGGAL)
+            ->assertSeeInOrder(['Ditolak', 'Histori-Pertama', 'Disetujui', 'Histori-Kedua']);
+    }
+
     public function test_audit_log_record_yang_tidak_ada_menghasilkan_pesan_error(): void
     {
         Livewire::actingAs($this->createUser())
