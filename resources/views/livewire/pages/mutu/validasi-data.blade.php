@@ -74,7 +74,7 @@
                                 <span class="text-sm" title="{{ $record->notes }}">{{ Str::limit($record->notes ?: '-', 30) }}</span>
                             </x-table.td>
                             <x-table.td class="text-center">
-                                <x-badge :variant="$record->statusBadge()">{{ $record->statusLabel() }}</x-badge>
+                                <x-badge :variant="$record->statusBadgeVariant()">{{ $record->statusLabel() }}</x-badge>
                             </x-table.td>
                             <x-table.td>
                                 <div class="d-flex" style="gap: 0.25rem">

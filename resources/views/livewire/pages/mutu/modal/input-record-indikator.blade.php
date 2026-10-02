@@ -36,10 +36,6 @@
                 </div>
             @endif
 
-            @php
-                $isDisabled = in_array($status, [\App\Models\Quality\QualityIndicatorRecord::STATUS_SUBMITTED, \App\Models\Quality\QualityIndicatorRecord::STATUS_APPROVED], true);
-            @endphp
-
             <x-form id="form-input-record-indikator" wire:submit.prevent="save">
                 <x-row>
                     <div class="col-md-6">

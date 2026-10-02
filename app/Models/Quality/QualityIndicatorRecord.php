@@ -30,6 +30,12 @@ class QualityIndicatorRecord extends Model
      */
     public const STATUSES_DILAPORKAN = [self::STATUS_SUBMITTED, ...self::STATUSES_DISETUJUI];
 
+    /**
+     * Record berstatus ini tidak boleh diubah maupun dihapus oleh petugas unit.
+     * `approved_with_correction` dan `rejected` belum diputuskan (tiket 11).
+     */
+    public const STATUSES_TERKUNCI = [self::STATUS_SUBMITTED, self::STATUS_APPROVED];
+
     public const STATUS_LABELS = [
         self::STATUS_DRAFT                    => 'Draft',
         self::STATUS_SUBMITTED                => 'Submitted',
@@ -68,7 +74,7 @@ class QualityIndicatorRecord extends Model
      */
     public function isLocked(): bool
     {
-        return in_array($this->status, [self::STATUS_SUBMITTED, self::STATUS_APPROVED], true);
+        return in_array($this->status, self::STATUSES_TERKUNCI, true);
     }
 
     protected function searchColumns(): array
@@ -87,7 +93,7 @@ class QualityIndicatorRecord extends Model
         return self::STATUS_LABELS[$this->status] ?? self::STATUS_LABELS[self::STATUS_DRAFT];
     }
 
-    public function statusBadge(): string
+    public function statusBadgeVariant(): string
     {
         return self::STATUS_BADGES[$this->status] ?? self::STATUS_BADGES[self::STATUS_DRAFT];
     }

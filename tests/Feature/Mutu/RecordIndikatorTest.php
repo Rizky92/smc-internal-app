@@ -163,6 +163,34 @@ class RecordIndikatorTest extends MutuTestCase
         }
     }
 
+    /**
+     * @return array<string, array{0: string, 1: bool}>
+     */
+    public function isianPerStatus(): array
+    {
+        return [
+            'draft'                    => ['draft', false],
+            'submitted'                => ['submitted', true],
+            'approved'                 => ['approved', true],
+            'rejected'                 => ['rejected', false],
+            'approved_with_correction' => ['approved_with_correction', false],
+        ];
+    }
+
+    /**
+     * @dataProvider isianPerStatus
+     */
+    public function test_isian_modal_dikunci_sesuai_status_record(string $status, bool $terkunci): void
+    {
+        $this->recordTersimpan($status);
+
+        $html = $this->modal(self::TANGGAL)->lastRenderedDom;
+
+        $numeratorTerkunci = (bool) preg_match('/wire:model\.defer="numeratorValue"[^>]*\bdisabled\b/', $html);
+
+        $this->assertSame($terkunci, $numeratorTerkunci, "Isian numerator untuk record {$status}");
+    }
+
     public function test_status_kunci_dibaca_dari_database_bukan_dari_klien(): void
     {
         $this->recordTersimpan('submitted');

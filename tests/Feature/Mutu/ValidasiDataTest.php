@@ -158,16 +158,18 @@ class ValidasiDataTest extends MutuTestCase
     {
         $lain = $this->indikator('Indikator Departemen Lain');
 
-        $this->recordTersimpan('submitted', ['notes' => 'Catatan pasien jatuh']);
-        $this->recordTersimpan('submitted', ['indicator_id' => $lain->id, 'notes' => 'Catatan pasien jatuh di bangsal']);
+        $this->recordTersimpan('submitted', ['notes' => 'Record-Cocok pasien jatuh']);
+        $this->recordTersimpan('submitted', ['indicator_id' => $lain->id, 'notes' => 'Record-Lain pasien jatuh']);
+        $this->recordTersimpan('submitted', ['recorded_date' => '2026-03-11', 'notes' => 'Record-Tanpa-Kata-Kedua']);
 
         $this->halaman()
             ->set('tglAwal', '2026-03-01')
             ->set('tglAkhir', '2026-03-31')
             ->call('loadProperties')
             ->set('cari', 'validasi jatuh')
-            ->assertSee('Catatan pasien jatuh')
-            ->assertDontSee('Catatan pasien jatuh di bangsal');
+            ->assertSee('Record-Cocok')
+            ->assertDontSee('Record-Lain')
+            ->assertDontSee('Record-Tanpa-Kata-Kedua');
     }
 
     public function test_badge_status_tampil_dengan_label_dan_warnanya(): void

@@ -125,7 +125,10 @@ class InputRecordIndikator extends Component
 
     public function render(): View
     {
-        return view('livewire.pages.mutu.modal.input-record-indikator');
+        // Hanya untuk tampilan; aksi tetap memeriksa status di database lewat isLocked().
+        return view('livewire.pages.mutu.modal.input-record-indikator', [
+            'isDisabled' => in_array($this->status, QualityIndicatorRecord::STATUSES_TERKUNCI, true),
+        ]);
     }
 
     /**

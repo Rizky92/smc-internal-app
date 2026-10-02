@@ -208,7 +208,7 @@
                             <x-table.td class="text-center">{{ $record->denominator_value }}</x-table.td>
                             <x-table.td class="text-center font-weight-bold">{{ $achievement }}%</x-table.td>
                             <x-table.td class="text-center">
-                                <x-badge :variant="$record->statusBadge()">{{ $record->statusLabel() }}</x-badge>
+                                <x-badge :variant="$record->statusBadgeVariant()">{{ $record->statusLabel() }}</x-badge>
                             </x-table.td>
                             <x-table.td>{{ $record->notes ?: '-' }}</x-table.td>
                             <x-table.td>{{ $this->recorders->get($record->recorded_by)->nama ?? '-' }}</x-table.td>
