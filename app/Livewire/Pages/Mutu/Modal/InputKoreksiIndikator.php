@@ -101,6 +101,8 @@ class InputKoreksiIndikator extends Component
             ];
         }
 
+        tracker_start('mysql_smc');
+
         DB::connection('mysql_smc')->transaction(function () use ($record, $changes): void {
             $statusLama = $record->status;
 
@@ -124,6 +126,8 @@ class InputKoreksiIndikator extends Component
 
             $record->recordHistory(QualityIndicatorRecordHistory::ACTION_CORRECTED, $statusLama, $this->reason);
         });
+
+        tracker_end('mysql_smc');
 
         $this->flashSuccess('Data berhasil dikoreksi dan disetujui.');
         $this->dispatchBrowserEvent('close-modal', ['id' => 'modal-input-koreksi-indikator']);

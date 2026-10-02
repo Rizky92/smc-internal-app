@@ -78,8 +78,13 @@
                                     <div class="text-xs text-warning mt-1">
                                         <i class="fas fa-hourglass-half"></i>
                                         Koreksi diajukan: {{ $record->pendingCorrection->numerator_value }} / {{ $record->pendingCorrection->denominator_value }}
+                                        @if ((string) $record->pendingCorrection->notes !== (string) $record->notes)
+                                            <br />
+                                            Catatan: {{ Str::limit($record->pendingCorrection->notes ?: '-', 30) }}
+                                        @endif
+
                                         <br />
-                                        <span class="text-muted">{{ $record->pendingCorrection->reason }}</span>
+                                        <span class="text-muted">Alasan: {{ $record->pendingCorrection->reason }}</span>
                                     </div>
                                 @endif
                             </x-table.td>

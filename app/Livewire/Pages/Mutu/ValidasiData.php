@@ -283,6 +283,8 @@ class ValidasiData extends Component
 
     protected function ubahStatus(QualityIndicatorRecord $record, string $status, string $aksiHistori, ?string $alasan = null): void
     {
+        tracker_start('mysql_smc');
+
         DB::connection('mysql_smc')->transaction(function () use ($record, $status, $aksiHistori, $alasan): void {
             $statusLama = $record->status;
 
@@ -298,6 +300,8 @@ class ValidasiData extends Component
                 ]);
             }
         });
+
+        tracker_end('mysql_smc');
     }
 
     public function setujuiKoreksi(int $indicatorId, string $date): void
@@ -317,7 +321,15 @@ class ValidasiData extends Component
             return;
         }
 
-        DB::connection('mysql_smc')->transaction(function () use ($record, $pengajuan): void {
+        tracker_start('mysql_smc');
+
+        $diproses = DB::connection('mysql_smc')->transaction(function () use ($record, $pengajuan): bool {
+            $pengajuan = $this->kunciPengajuanPending($pengajuan);
+
+            if (! $pengajuan) {
+                return false;
+            }
+
             $statusLama = $record->status;
             $nilaiLama = $record->only(['numerator_value', 'denominator_value', 'notes']);
 
@@ -349,7 +361,17 @@ class ValidasiData extends Component
             ]);
 
             $record->recordHistory(QualityIndicatorRecordHistory::ACTION_CORRECTION_APPROVED, $statusLama, $pengajuan->reason);
+
+            return true;
         });
+
+        tracker_end('mysql_smc');
+
+        if (! $diproses) {
+            $this->flashError('Tidak ada pengajuan koreksi yang menunggu validasi.');
+
+            return;
+        }
 
         $this->flashSuccess('Pengajuan koreksi berhasil disetujui.');
     }
@@ -373,7 +395,15 @@ class ValidasiData extends Component
 
         $this->validate(['alasan' => ['required', 'string', 'min:3']]);
 
-        DB::connection('mysql_smc')->transaction(function () use ($record, $pengajuan): void {
+        tracker_start('mysql_smc');
+
+        $diproses = DB::connection('mysql_smc')->transaction(function () use ($record, $pengajuan): bool {
+            $pengajuan = $this->kunciPengajuanPending($pengajuan);
+
+            if (! $pengajuan) {
+                return false;
+            }
+
             $pengajuan->update([
                 'status'        => QualityIndicatorCorrectionRequest::STATUS_REJECTED,
                 'reviewed_by'   => user()->nik,
@@ -381,10 +411,36 @@ class ValidasiData extends Component
             ]);
 
             $record->recordHistory(QualityIndicatorRecordHistory::ACTION_CORRECTION_REJECTED, $record->status, $this->alasan);
+
+            return true;
         });
 
+        tracker_end('mysql_smc');
+
         $this->tutupFormAlasan();
+
+        if (! $diproses) {
+            $this->flashError('Tidak ada pengajuan koreksi yang menunggu validasi.');
+
+            return;
+        }
+
         $this->flashSuccess('Pengajuan koreksi berhasil ditolak.');
+    }
+
+    /**
+     * Kunci baris pengajuan dan pastikan masih pending, agar dua validator tidak memproses pengajuan yang sama.
+     */
+    protected function kunciPengajuanPending(QualityIndicatorCorrectionRequest $pengajuan): ?QualityIndicatorCorrectionRequest
+    {
+        /** @var QualityIndicatorCorrectionRequest|null */
+        $terkunci = QualityIndicatorCorrectionRequest::query()
+            ->whereKey($pengajuan->id)
+            ->where('status', QualityIndicatorCorrectionRequest::STATUS_PENDING)
+            ->lockForUpdate()
+            ->first();
+
+        return $terkunci;
     }
 
     protected function tutupFormAlasan(): void

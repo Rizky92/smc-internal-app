@@ -207,7 +207,14 @@ class InputRecordIndikator extends Component
 
         tracker_start('mysql_smc');
 
-        DB::connection('mysql_smc')->transaction(function () use ($record): void {
+        $diajukan = DB::connection('mysql_smc')->transaction(function () use ($record): bool {
+            // Kunci baris record agar dua pengajuan bersamaan tidak sama-sama lolos cek pending.
+            QualityIndicatorRecord::query()->whereKey($record->id)->lockForUpdate()->first();
+
+            if ($record->pendingCorrection()->exists()) {
+                return false;
+            }
+
             $record->corrections()->create([
                 'numerator_value'   => $this->koreksiNumerator,
                 'denominator_value' => $this->koreksiDenominator,
@@ -218,9 +225,17 @@ class InputRecordIndikator extends Component
             ]);
 
             $record->recordHistory(QualityIndicatorRecordHistory::ACTION_CORRECTION_REQUESTED, $record->status, $this->koreksiAlasan);
+
+            return true;
         });
 
         tracker_end('mysql_smc');
+
+        if (! $diajukan) {
+            $this->flashError('Masih ada pengajuan koreksi yang menunggu validasi.');
+
+            return;
+        }
 
         $this->flashSuccess('Pengajuan koreksi berhasil dikirim dan menunggu validasi.');
         $this->closeModalAndRefresh();

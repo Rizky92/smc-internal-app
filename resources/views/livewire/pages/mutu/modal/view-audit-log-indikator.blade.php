@@ -22,6 +22,7 @@
                         <x-table.th title="Aksi" />
                         <x-table.th title="Status" />
                         <x-table.th title="Num / Den" />
+                        <x-table.th title="Catatan" />
                         <x-table.th title="Oleh" />
                         <x-table.th title="Alasan" />
                     </x-slot>
@@ -32,6 +33,7 @@
                                 <x-table.td>{{ $history->actionLabel() }}</x-table.td>
                                 <x-table.td>{{ $history->status_before ?? '-' }} &rarr; {{ $history->status_after }}</x-table.td>
                                 <x-table.td>{{ $history->numerator_value }} / {{ $history->denominator_value }}</x-table.td>
+                                <x-table.td>{{ $history->notes ?: '-' }}</x-table.td>
                                 <x-table.td>{{ $history->actor ?: '-' }}</x-table.td>
                                 <x-table.td>{{ $history->reason ?: '-' }}</x-table.td>
                             </x-table.tr>
