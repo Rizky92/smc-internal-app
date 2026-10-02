@@ -79,7 +79,7 @@ class ValidasiData extends Component
     public function getCollectionProperty(): LengthAwarePaginator
     {
         return QualityIndicatorRecord::query()
-            ->with(['indicator.profile', 'indicator.departemen'])
+            ->with(['indicator.profile.category', 'indicator.departemen'])
             ->whereBetween('recorded_date', [$this->tglAwal, $this->tglAkhir])
             ->when($this->depId, function ($query) {
                 $query->whereHas('indicator', function ($q) {
