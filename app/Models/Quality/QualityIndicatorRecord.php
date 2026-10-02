@@ -72,9 +72,13 @@ class QualityIndicatorRecord extends Model
         return $this->belongsTo(QualityIndicator::class, 'indicator_id');
     }
 
+    /**
+     * Audit log tidak punya foreign key ke record; pasangannya adalah indikator + tanggal.
+     * Relasi ini hanya untuk satu record (tidak bisa di-eager load).
+     */
     public function auditLogs(): HasMany
     {
         return $this->hasMany(IndicatorAuditLog::class, 'indicator_id', 'indicator_id')
-            ->whereColumn('recorded_date', 'recorded_date');
+            ->where('recorded_date', $this->recorded_date);
     }
 }
