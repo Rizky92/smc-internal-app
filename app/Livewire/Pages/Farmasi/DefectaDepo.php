@@ -105,6 +105,7 @@ class DefectaDepo extends Component
         return [
             'Kode',
             'Nama',
+            'Kategori',
             'Satuan',
             'Stok Sekarang',
             'Jumlah Pemakaian per Shift',
