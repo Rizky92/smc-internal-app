@@ -117,6 +117,7 @@ class GudangObat extends Model
         $sqlSelect = <<<'SQL'
             `gudangbarang`.`kode_brng`,
             `databarang`.`nama_brng`,
+            ifnull(`kategori_barang`.`nama`, '') as `kategori`,
             `kodesatuan`.`satuan`,
             `gudangbarang`.`stok`,
             ifnull(`pemberian_obat_shift`.`jumlah`, 0) as `jumlah_shift`,
@@ -130,12 +131,18 @@ class GudangObat extends Model
             'databarang.nama_brng',
             'databarang.kode_sat',
             'kodesatuan.satuan',
+            'kategori_barang.nama',
+        ]);
+
+        $this->addSortColumns([
+            'kategori' => 'kategori_barang.nama',
         ]);
 
         return $query
             ->selectRaw($sqlSelect)
             ->withCasts(['stok' => 'float', 'jumlah_shift' => 'float', 'jumlah_3hari' => 'float', 'jumlah_6hari' => 'float', 'sisa_6hari' => 'float'])
             ->join('databarang', 'gudangbarang.kode_brng', '=', 'databarang.kode_brng')
+            ->leftJoin('kategori_barang', 'databarang.kode_kategori', '=', 'kategori_barang.kode')
             ->leftJoin('kodesatuan', 'databarang.kode_sat', '=', 'kodesatuan.kode_sat')
             ->leftJoinSub($pemberianObatPerShift, 'pemberian_obat_shift', fn (JoinClause $join) => $join
                 ->on('gudangbarang.kode_brng', '=', 'pemberian_obat_shift.kode_brng')
