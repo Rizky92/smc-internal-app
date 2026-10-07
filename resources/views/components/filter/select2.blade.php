@@ -88,13 +88,26 @@
                 @endif
             @endif
 
-            @notnull($resetOn)
-                $('{{ $resetOn }}').click(e => {
-                    {{ $varName }}.val('')
+            @if ($livewire && $model && $resetOn)
+                // Nilai reset ditentukan server: setelah request reset selesai,
+                // tampilkan nilai properti Livewire saat ini. Hanya 'change.select2'
+                // (update tampilan), tidak mengirim nilai balik ke Livewire.
+                let {{ $varName }}MenungguReset = false
 
-                    {{ $varName }}.trigger('change')
+                $('{{ $resetOn }}').click(e => {
+                    {{ $varName }}MenungguReset = true
                 })
-            @endnotnull
+
+                Livewire.hook('message.processed', (message, component) => {
+                    if (! {{ $varName }}MenungguReset || component.id !== '{{ $_instance->id }}') {
+                        return
+                    }
+
+                    {{ $varName }}MenungguReset = false
+
+                    {{ $varName }}.val(@this.get('{{ $model }}')).trigger('change.select2')
+                })
+            @endif
         })
     </script>
 @endpush
