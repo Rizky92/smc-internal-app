@@ -3,6 +3,7 @@
 namespace App\Jobs\Keuangan;
 
 use App\Exceptions\ImportTarifException;
+use App\Jobs\Keuangan\Concerns\ImportsTarifRows;
 use App\Models\Aplikasi\User;
 use App\Models\Bangsal;
 use App\Models\Keuangan\JenisPerawatanRanap;
@@ -25,6 +26,7 @@ use Throwable;
 class ImportTarifRanapJob implements ShouldQueue
 {
     use Dispatchable;
+    use ImportsTarifRows;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
@@ -111,17 +113,15 @@ class ImportTarifRanapJob implements ShouldQueue
                 $penjaminMap = Penjamin::query()->where('status', '1')->pluck('kd_pj')->flip();
                 $bangsalMap = Bangsal::query()->pluck('kd_bangsal')->flip();
 
-                $rows = $reader->getRows();
-
-                foreach ($rows as $index => $row) {
-
-                    $line = $index + 2;
+                foreach ($this->dataRows($reader) as $line => $row) {
 
                     // Map UI headers to database keys
                     $data = [];
                     foreach ($headerMapping as $uiHeader => $dbKey) {
                         $data[$dbKey] = $row[$uiHeader] ?? null;
                     }
+
+                    $raw = $data;
 
                     if (! $kategoriMap->has($data['kd_kategori'])) {
                         throw new ImportTarifException("Baris {$line}: Kategori '{$data['kd_kategori']}' tidak ditemukan");
@@ -135,15 +135,7 @@ class ImportTarifRanapJob implements ShouldQueue
                         throw new ImportTarifException("Baris {$line}: Bangsal '{$data['kd_bangsal']}' tidak ditemukan");
                     }
 
-                    $data['material'] = parse_numeric($data['material'] ?? 0);
-                    $data['bhp'] = parse_numeric($data['bhp'] ?? 0);
-                    $data['tarif_tindakandr'] = parse_numeric($data['tarif_tindakandr'] ?? 0);
-                    $data['tarif_tindakanpr'] = parse_numeric($data['tarif_tindakanpr'] ?? 0);
-                    $data['kso'] = parse_numeric($data['kso'] ?? 0);
-                    $data['menejemen'] = parse_numeric($data['menejemen'] ?? 0);
-                    $data['total_byrdr'] = parse_numeric($data['total_byrdr'] ?? 0);
-                    $data['total_byrpr'] = parse_numeric($data['total_byrpr'] ?? 0);
-                    $data['total_byrdrpr'] = parse_numeric($data['total_byrdrpr'] ?? 0);
+                    $data = $this->parseAmounts($line, $data, $headerMapping, ['material', 'bhp', 'tarif_tindakandr', 'tarif_tindakanpr', 'kso', 'menejemen', 'total_byrdr', 'total_byrpr', 'total_byrdrpr']);
 
                     $calcTotalDr = $data['material'] + $data['bhp'] + $data['tarif_tindakandr'] + $data['kso'] + $data['menejemen'];
                     $calcTotalPr = $data['material'] + $data['bhp'] + $data['tarif_tindakanpr'] + $data['kso'] + $data['menejemen'];
@@ -192,7 +184,7 @@ class ImportTarifRanapJob implements ShouldQueue
                             ]
                         );
                     } catch (QueryException $e) {
-                        throw new ImportTarifException("Baris {$line}: Gagal menyimpan data ke database. Pastikan format data sudah benar.");
+                        throw $this->saveFailed($e, 'jns_perawatan_inap', $line, $headerMapping, $raw);
                     }
                 }
 
