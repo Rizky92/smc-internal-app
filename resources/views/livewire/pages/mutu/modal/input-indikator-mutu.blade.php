@@ -52,11 +52,21 @@
                 <x-row>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>Penanggung Jawab (di Departemen)</label>
-                            <input type="text" wire:model.defer="person_in_charge" class="form-control form-control-sm" placeholder="Nama PJ Unit" />
+                            <label>PIC (Pegawai)</label>
+                            <x-form.select2 id="pic_nik" model="pic_nik" :options="$this->pegawai" placeholder="-" width="full-width" />
+                            <x-form.error name="pic_nik" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Jabatan PJ (di Departemen)</label>
+                            <input type="text" wire:model.defer="person_in_charge" class="form-control form-control-sm" placeholder="Contoh: Ka. Instalasi IGD" />
                             <x-form.error name="person_in_charge" />
                         </div>
                     </div>
+                </x-row>
+
+                <x-row>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Sumber Data</label>

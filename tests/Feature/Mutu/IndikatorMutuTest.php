@@ -17,6 +17,8 @@ class IndikatorMutuTest extends MutuTestCase
 {
     private const DEP_LAIN = 'ADM';
 
+    private const NIK_PIC = 'MUTU-PIC-01';
+
     private const PESAN_TANPA_MAPPING = 'Belum terdapat mapping departemen pada jabatan Anda';
 
     private function indikator(string $title, string $depId = self::DEP_ID): QualityIndicator
@@ -199,10 +201,92 @@ class IndikatorMutuTest extends MutuTestCase
         $rows = collect($this->isiExport())->map(fn (array $row) => array_values(array_filter($row, fn ($v) => $v !== '')));
         $header = $rows->search(fn (array $row) => ($row[0] ?? null) === 'ID');
 
-        $this->assertSame(['ID', 'Indikator', 'Departemen', 'Standar', 'PJ', 'Status'], $rows[$header]);
+        $this->assertSame(['ID', 'Indikator', 'Departemen', 'Standar', 'PJ', 'PIC', 'Status'], $rows[$header]);
         $this->assertSame('Indikator Export', $rows[$header + 1][1]);
         $this->assertSame('Bagian IT/Programer/EDP', $rows[$header + 1][2]);
         $this->assertSame((string) $indicator->person_in_charge, $rows[$header + 1][4]);
+        $this->assertSame('-', $rows[$header + 1][5]);
+        $this->assertSame('Aktif', $rows[$header + 1][6]);
+    }
+
+    public function test_export_menampilkan_nama_pic(): void
+    {
+        $this->createUser(self::NIK_PIC, []);
+        $this->indikator('Indikator Export PIC')->update(['pic_nik' => self::NIK_PIC]);
+
+        $rows = collect($this->isiExport())->map(fn (array $row) => array_values(array_filter($row, fn ($v) => $v !== '')));
+        $baris = $rows->first(fn (array $row) => ($row[1] ?? null) === 'Indikator Export PIC');
+
+        $this->assertSame('Pegawai '.self::NIK_PIC, $baris[5]);
+    }
+
+    public function test_admin_bisa_memilih_pegawai_sebagai_pic(): void
+    {
+        $this->createUser(self::NIK_PIC, []);
+        $indicator = $this->indikator('Indikator PIC');
+
+        Livewire::actingAs($this->createUser())
+            ->test(InputIndikatorMutu::class)
+            ->call('loadIndicator', $indicator->id)
+            ->assertSet('pic_nik', null)
+            ->set('pic_nik', self::NIK_PIC)
+            ->call('save')
+            ->assertHasNoErrors()
+            ->assertEmitted('indicator-saved');
+
+        $this->assertSame(self::NIK_PIC, $indicator->refresh()->pic_nik);
+
+        Livewire::actingAs($this->createUser())
+            ->test(InputIndikatorMutu::class)
+            ->call('loadIndicator', $indicator->id)
+            ->assertSet('pic_nik', self::NIK_PIC);
+    }
+
+    public function test_pic_boleh_kosong(): void
+    {
+        $indicator = $this->indikator('Indikator Tanpa PIC');
+        $indicator->update(['pic_nik' => self::NIK_PIC]);
+
+        Livewire::actingAs($this->createUser())
+            ->test(InputIndikatorMutu::class)
+            ->call('loadIndicator', $indicator->id)
+            ->set('pic_nik', '')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $this->assertNull($indicator->refresh()->pic_nik);
+    }
+
+    public function test_pic_harus_pegawai_yang_terdaftar(): void
+    {
+        $indicator = $this->indikator('Indikator PIC Asing');
+
+        Livewire::actingAs($this->createUser())
+            ->test(InputIndikatorMutu::class)
+            ->call('loadIndicator', $indicator->id)
+            ->set('pic_nik', 'NIK-TIDAK-ADA')
+            ->call('save')
+            ->assertHasErrors(['pic_nik' => 'exists'])
+            ->assertNotEmitted('indicator-saved');
+
+        $this->assertNull($indicator->refresh()->pic_nik);
+    }
+
+    public function test_daftar_dan_detail_menampilkan_nama_pic(): void
+    {
+        $this->createUser(self::NIK_PIC, []);
+        $indicator = $this->indikator('Indikator Daftar PIC');
+        $indicator->update(['pic_nik' => self::NIK_PIC]);
+
+        Livewire::actingAs($this->createUser())
+            ->test(IndikatorMutu::class)
+            ->call('loadProperties')
+            ->assertSee('Pegawai '.self::NIK_PIC);
+
+        Livewire::actingAs($this->createUser())
+            ->test(DetailIndikatorMutu::class, ['indicatorId' => $indicator->id])
+            ->call('loadProperties')
+            ->assertSee('Pegawai '.self::NIK_PIC);
     }
 
     public function test_detail_menampilkan_badge_status_dengan_label_dan_warnanya(): void

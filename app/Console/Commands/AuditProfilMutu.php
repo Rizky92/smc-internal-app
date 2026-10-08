@@ -8,6 +8,7 @@ use App\Models\Quality\QualityIndicatorCategory;
 use App\Models\Quality\QualityIndicatorProfile;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 /**
@@ -38,6 +39,7 @@ class AuditProfilMutu extends Command
         $this->periodeTidakBaku($profiles);
         $this->kategoriBesertaIndikator($profiles);
         $this->indikatorTanpaPenanggungJawab();
+        $this->indikatorTanpaPic();
 
         return Command::SUCCESS;
     }
@@ -137,6 +139,42 @@ class AuditProfilMutu extends Command
                     $indicator->status,
                 ])
         );
+    }
+
+    private function indikatorTanpaPic(): void
+    {
+        $this->judul('Indikator tanpa PIC (pic_nik)');
+
+        if (! $this->kolomAda('quality_indicators', 'pic_nik')) {
+            $this->line('kolom pic_nik belum ada (migrasi belum dijalankan)');
+
+            return;
+        }
+
+        $this->tabel(
+            ['ID indikator', 'Judul profil', 'Unit', 'Jabatan PJ', 'Status'],
+            QualityIndicator::query()
+                ->with('profile')
+                ->where(fn ($q) => $q->whereNull('pic_nik')->orWhere('pic_nik', ''))
+                ->orderBy('id')
+                ->get()
+                ->map(fn (QualityIndicator $indicator): array => [
+                    $indicator->id,
+                    $this->singkat(optional($indicator->profile)->title),
+                    $this->departemen($indicator->dep_id),
+                    $indicator->person_in_charge ?: '-',
+                    $indicator->status,
+                ])
+        );
+    }
+
+    /**
+     * Audit dijalankan di production sebelum migrasi fase 1, jadi bagian yang membaca kolom baru
+     * harus tetap jalan ketika kolomnya belum ada.
+     */
+    private function kolomAda(string $table, string $column): bool
+    {
+        return Schema::connection('mysql_smc')->hasColumn($table, $column);
     }
 
     private function judul(string $judul): void

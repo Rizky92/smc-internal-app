@@ -110,6 +110,21 @@ class AuditProfilTest extends MutuTestCase
         $this->assertStringNotContainsString('Audit PJ Ada', $bagian);
     }
 
+    public function test_indikator_tanpa_pic_dilaporkan(): void
+    {
+        foreach (['Audit PIC Kosong' => null, 'Audit PIC Ada' => 'MUTU-PIC-01'] as $title => $nik) {
+            QualityIndicatorFactory::new()->create([
+                'quality_indicator_profile_id' => QualityIndicatorProfileFactory::new()->create(['title' => $title]),
+                'pic_nik'                      => $nik,
+            ]);
+        }
+
+        $bagian = $this->bagian($this->audit(), 'Indikator tanpa PIC (pic_nik)');
+
+        $this->assertStringContainsString('Audit PIC Kosong', $bagian);
+        $this->assertStringNotContainsString('Audit PIC Ada', $bagian);
+    }
+
     public function test_audit_tidak_mengubah_data(): void
     {
         QualityIndicatorFactory::new()->create([

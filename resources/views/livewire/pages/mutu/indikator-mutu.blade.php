@@ -46,6 +46,7 @@
                     <x-table.th title="Departemen" />
                     <x-table.th title="Standar" />
                     <x-table.th title="PJ" />
+                    <x-table.th title="PIC" />
                     <x-table.th title="Status" />
                 </x-slot>
                 <x-slot name="body">
@@ -58,6 +59,7 @@
                             <x-table.td>{{ $indicator->departemen->nama ?? '-' }}</x-table.td>
                             <x-table.td>{{ $indicator->profile->standard ?? '-' }}</x-table.td>
                             <x-table.td>{{ $indicator->person_in_charge }}</x-table.td>
+                            <x-table.td>{{ $indicator->pic->nama ?? '-' }}</x-table.td>
                             <x-table.td>
                                 <x-badge :variant="$indicator->status === 'active' ? 'success' : 'danger'">
                                     {{ $indicator->status === 'active' ? 'Aktif' : 'Nonaktif' }}
@@ -65,7 +67,7 @@
                             </x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="6" padding />
+                        <x-table.tr-empty colspan="7" padding />
                     @endforelse
                 </x-slot>
             </x-table>

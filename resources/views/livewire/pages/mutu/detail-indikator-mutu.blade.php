@@ -138,6 +138,10 @@
                             <td>: {{ $indicator->person_in_charge }}</td>
                         </tr>
                         <tr>
+                            <th>PIC</th>
+                            <td>: {{ $indicator->pic->nama ?? '-' }}</td>
+                        </tr>
+                        <tr>
                             <th>Status</th>
                             <td>
                                 :

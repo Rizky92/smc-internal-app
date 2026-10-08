@@ -62,7 +62,7 @@ class IndikatorMutu extends Component
     protected function query(): Builder
     {
         return QualityIndicator::query()
-            ->with(['profile', 'departemen'])
+            ->with(['profile', 'departemen', 'pic'])
             ->when($this->departemenAktif, fn ($q) => $q->departemen($this->departemenAktif))
             ->when($this->cari, fn ($q) => $q->search($this->cari));
     }
@@ -97,6 +97,7 @@ class IndikatorMutu extends Component
                     $indicator->departemen->nama ?? '-',
                     $indicator->profile->standard ?? '-',
                     $indicator->person_in_charge,
+                    $indicator->pic->nama ?? '-',
                     $indicator->status === 'active' ? 'Aktif' : 'Nonaktif',
                 ]),
         ];
@@ -110,6 +111,7 @@ class IndikatorMutu extends Component
             'Departemen',
             'Standar',
             'PJ',
+            'PIC',
             'Status',
         ];
     }

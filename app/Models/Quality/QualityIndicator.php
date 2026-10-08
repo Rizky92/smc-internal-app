@@ -4,6 +4,7 @@ namespace App\Models\Quality;
 
 use App\Database\Eloquent\Model;
 use App\Models\Kepegawaian\Departemen;
+use App\Models\Kepegawaian\Pegawai;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -24,6 +25,7 @@ class QualityIndicator extends Model
         'quality_indicator_profile_id',
         'dep_id',
         'person_in_charge',
+        'pic_nik',
         'data_source',
         'status',
     ];
@@ -51,6 +53,14 @@ class QualityIndicator extends Model
     public function departemen(): BelongsTo
     {
         return $this->belongsTo(Departemen::class, 'dep_id', 'dep_id');
+    }
+
+    /**
+     * Pegawai PIC indikator (mysql_sik). `person_in_charge` tetap menyimpan label jabatan.
+     */
+    public function pic(): BelongsTo
+    {
+        return $this->belongsTo(Pegawai::class, 'pic_nik', 'nik');
     }
 
     public function records(): HasMany
