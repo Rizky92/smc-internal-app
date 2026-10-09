@@ -18,6 +18,8 @@
                     const ctx = document.getElementById('indicatorChart').getContext('2d');
                     const { labels, data, statuses, target, targetLabel } = event.detail;
 
+                    const pointColors = statuses.map((status) => statusColors[status] ?? statusColors.belum_dinilai);
+
                     const datasets = [
                         {
                             label: 'Capaian (%)',
@@ -29,7 +31,8 @@
                             tension: 0,
                             spanGaps: false,
                             pointRadius: 5,
-                            pointBackgroundColor: statuses.map((status) => statusColors[status] ?? statusColors.belum_dinilai),
+                            pointBackgroundColor: pointColors,
+                            pointBorderColor: pointColors,
                         },
                     ];
 
