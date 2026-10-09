@@ -45,6 +45,12 @@ class InputProfilIndikator extends Component
 
     public $standard;
 
+    /** @var string|null `gte` / `lte`; kosong = target belum terstruktur (tidak ada default ≥) */
+    public $target_operator;
+
+    /** @var float|string|null */
+    public $target_value;
+
     public $rationale;
 
     public $indicator_type;
@@ -142,6 +148,8 @@ class InputProfilIndikator extends Component
             $this->numerator = $profile->numerator;
             $this->denominator = $profile->denominator;
             $this->standard = $profile->standard;
+            $this->target_operator = $profile->target_operator;
+            $this->target_value = $profile->target_value;
             $this->rationale = $profile->rationale;
             $this->indicator_type = $profile->indicator_type;
             $this->measurement_unit = $profile->measurement_unit;
@@ -174,6 +182,8 @@ class InputProfilIndikator extends Component
             [
                 'quality_indicator_input_type_id' => $this->quality_indicator_input_type_id ?: null,
                 'analysis_period'                 => filled($this->analysis_period) ? (int) $this->analysis_period : null,
+                'target_operator'                 => filled($this->target_operator) ? $this->target_operator : null,
+                'target_value'                    => filled($this->target_value) ? (float) $this->target_value : null,
             ]
         ));
 
@@ -193,6 +203,8 @@ class InputProfilIndikator extends Component
             'frequency'                       => ['required', 'string'],
             'analysis_period'                 => ['nullable', 'integer', Rule::in(array_keys(QualityIndicatorProfile::ANALYSIS_PERIODS))],
             'standard'                        => ['required', 'string'],
+            'target_operator'                 => ['nullable', Rule::in(array_keys(QualityIndicatorProfile::TARGET_OPERATORS))],
+            'target_value'                    => ['nullable', 'numeric', 'min:0', 'max:999999.99'],
         ];
     }
 
@@ -224,6 +236,8 @@ class InputProfilIndikator extends Component
         $this->numerator = '';
         $this->denominator = '';
         $this->standard = '';
+        $this->target_operator = null;
+        $this->target_value = null;
         $this->rationale = '';
         $this->indicator_type = '';
         $this->measurement_unit = '';

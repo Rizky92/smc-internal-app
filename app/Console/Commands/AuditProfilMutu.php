@@ -6,6 +6,7 @@ use App\Models\Kepegawaian\Departemen;
 use App\Models\Quality\QualityIndicator;
 use App\Models\Quality\QualityIndicatorCategory;
 use App\Models\Quality\QualityIndicatorProfile;
+use App\Support\Mutu\StandardParser;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
@@ -37,6 +38,8 @@ class AuditProfilMutu extends Command
 
         $this->distribusiPeriode($profiles);
         $this->periodeTidakBaku($profiles);
+        $this->standarGagalDiparse($profiles);
+        $this->profilTanpaTarget($profiles);
         $this->kategoriBesertaIndikator($profiles);
         $this->indikatorTanpaPenanggungJawab();
         $this->indikatorTanpaPic();
@@ -80,6 +83,56 @@ class AuditProfilMutu extends Command
                     $profile->analysis_period ?? '(kosong)',
                 ])
         );
+    }
+
+    /**
+     * Teks `standard` yang tidak menghasilkan angka, sehingga `target_value` tidak terisi oleh backfill.
+     *
+     * @param  Collection<int, QualityIndicatorProfile>  $profiles
+     */
+    private function standarGagalDiparse(Collection $profiles): void
+    {
+        $this->judul('Standar yang gagal diparse');
+
+        $this->tabel(
+            ['ID profil', 'Judul profil', 'Standar (teks asli)'],
+            $profiles
+                ->filter(fn (QualityIndicatorProfile $profile): bool => StandardParser::parse($profile->standard) === null)
+                ->map(fn (QualityIndicatorProfile $profile): array => [
+                    $profile->id,
+                    $this->singkat($profile->title),
+                    $profile->standard ?? '(kosong)',
+                ])
+        );
+    }
+
+    /**
+     * Tanpa operator atau nilai target, capaian indikator belum bisa dinilai.
+     *
+     * @param  Collection<int, QualityIndicatorProfile>  $profiles
+     */
+    private function profilTanpaTarget(Collection $profiles): void
+    {
+        foreach (['target_operator' => 'Profil tanpa operator target', 'target_value' => 'Profil tanpa nilai target'] as $kolom => $judul) {
+            $this->judul($judul);
+
+            if (! $this->kolomAda('quality_indicator_profiles', $kolom)) {
+                $this->line("kolom {$kolom} belum ada (migrasi belum dijalankan)");
+
+                continue;
+            }
+
+            $this->tabel(
+                ['ID profil', 'Judul profil', 'Standar (teks asli)'],
+                $profiles
+                    ->filter(fn (QualityIndicatorProfile $profile): bool => blank($profile->getAttribute($kolom)))
+                    ->map(fn (QualityIndicatorProfile $profile): array => [
+                        $profile->id,
+                        $this->singkat($profile->title),
+                        $profile->standard ?? '(kosong)',
+                    ])
+            );
+        }
     }
 
     /**

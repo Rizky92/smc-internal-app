@@ -7,46 +7,54 @@
             <script>
                 let indicatorChart = null;
 
+                // Status dihitung di server (QualityIndicatorProfile::achievementStatus); di sini hanya dipetakan ke warna.
+                const statusColors = {
+                    tercapai: '#28a745',
+                    tidak_tercapai: '#dc3545',
+                    belum_dinilai: '#6c757d',
+                };
+
                 window.addEventListener('update-chart', (event) => {
                     const ctx = document.getElementById('indicatorChart').getContext('2d');
-                    const { labels, data, standard } = event.detail;
+                    const { labels, data, statuses, target, targetLabel } = event.detail;
+
+                    const datasets = [
+                        {
+                            label: 'Capaian (%)',
+                            data: data,
+                            borderColor: '#007bff',
+                            backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0,
+                            spanGaps: false,
+                            pointRadius: 5,
+                            pointBackgroundColor: statuses.map((status) => statusColors[status] ?? statusColors.belum_dinilai),
+                        },
+                    ];
+
+                    if (target !== null) {
+                        datasets.push({
+                            label: targetLabel,
+                            data: new Array(labels.length).fill(target),
+                            borderColor: '#ffc107',
+                            borderDash: [5, 5],
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            fill: false,
+                        });
+                    }
 
                     if (indicatorChart) {
                         indicatorChart.data.labels = labels;
-                        indicatorChart.data.datasets[0].data = data;
-                        indicatorChart.data.datasets[1].data = new Array(labels.length).fill(standard);
+                        indicatorChart.data.datasets = datasets;
                         indicatorChart.update();
                     } else {
                         indicatorChart = new Chart(ctx, {
                             type: 'line',
                             data: {
                                 labels: labels,
-                                datasets: [
-                                    {
-                                        label: 'Capaian (%)',
-                                        data: data,
-                                        borderColor: '#007bff',
-                                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
-                                        borderWidth: 2,
-                                        fill: true,
-                                        tension: 0.3,
-                                        pointRadius: 4,
-                                        pointBackgroundColor: (context) => {
-                                            const index = context.dataIndex;
-                                            const value = context.dataset.data[index];
-                                            return value >= standard ? '#28a745' : '#dc3545';
-                                        },
-                                    },
-                                    {
-                                        label: 'Standar (' + standard + '%)',
-                                        data: new Array(labels.length).fill(standard),
-                                        borderColor: '#ffc107',
-                                        borderDash: [5, 5],
-                                        borderWidth: 2,
-                                        pointRadius: 0,
-                                        fill: false,
-                                    },
-                                ],
+                                datasets: datasets,
                             },
                             options: {
                                 responsive: true,
@@ -63,7 +71,7 @@
                                 plugins: {
                                     tooltip: {
                                         callbacks: {
-                                            label: (context) => `Capaian: ${context.raw}%`,
+                                            label: (context) => (context.datasetIndex === 0 ? `Capaian: ${context.raw}%` : context.dataset.label),
                                         },
                                     },
                                 },
@@ -165,10 +173,14 @@
         <x-slot name="header">
             <h6 class="mb-0">
                 <i class="fas fa-chart-line mr-2"></i>
-                Grafik Tren Capaian
+                Run Chart Capaian Bulanan (12 bulan s.d. {{ carbon($tglAkhir)->translatedFormat('F Y') }})
             </h6>
         </x-slot>
         <x-slot name="body">
+            @unless ($indicator->profile && $indicator->profile->targetLabel())
+                <p class="text-muted text-sm mb-2">Target belum terstruktur: arah dan nilai target belum diisi di profil, sehingga capaian belum bisa dinilai.</p>
+            @endunless
+
             <div wire:ignore style="height: 300px">
                 <canvas id="indicatorChart"></canvas>
             </div>

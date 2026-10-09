@@ -27,6 +27,17 @@ class QualityIndicatorProfile extends Model
         12 => 'yearly',
     ];
 
+    public const TARGET_OPERATORS = [
+        'gte' => '≥',
+        'lte' => '≤',
+    ];
+
+    public const STATUS_TERCAPAI = 'tercapai';
+
+    public const STATUS_TIDAK_TERCAPAI = 'tidak_tercapai';
+
+    public const STATUS_BELUM_DINILAI = 'belum_dinilai';
+
     protected $connection = 'mysql_smc';
 
     protected $table = 'quality_indicator_profiles';
@@ -45,6 +56,8 @@ class QualityIndicatorProfile extends Model
         'numerator',
         'denominator',
         'standard',
+        'target_operator',
+        'target_value',
         'rationale',
         'indicator_type',
         'measurement_unit',
@@ -56,9 +69,46 @@ class QualityIndicatorProfile extends Model
         'data_presentation',
     ];
 
+    protected $casts = [
+        'target_value' => 'float',
+    ];
+
     protected function searchColumns(): array
     {
         return ['title'];
+    }
+
+    /**
+     * Status capaian terhadap target terstruktur. Tanpa operator atau nilai target, atau tanpa capaian
+     * (ΣD = 0 / tidak ada data), hasilnya belum bisa dinilai: tidak ada asumsi arah ≥.
+     *
+     * Method murni (tanpa query), diuji di tests/Unit.
+     */
+    public function achievementStatus(?float $achievement): string
+    {
+        if ($achievement === null || $this->target_value === null || ! isset(self::TARGET_OPERATORS[$this->target_operator])) {
+            return self::STATUS_BELUM_DINILAI;
+        }
+
+        $achievement = round($achievement, 2);
+
+        $tercapai = $this->target_operator === 'gte'
+            ? $achievement >= $this->target_value
+            : $achievement <= $this->target_value;
+
+        return $tercapai ? self::STATUS_TERCAPAI : self::STATUS_TIDAK_TERCAPAI;
+    }
+
+    /**
+     * "Target ≥ 85%", atau null bila target belum terstruktur.
+     */
+    public function targetLabel(): ?string
+    {
+        if ($this->target_value === null || ! isset(self::TARGET_OPERATORS[$this->target_operator])) {
+            return null;
+        }
+
+        return sprintf('Target %s %s%%', self::TARGET_OPERATORS[$this->target_operator], rtrim(rtrim(number_format($this->target_value, 2, '.', ''), '0'), '.'));
     }
 
     /**

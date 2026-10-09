@@ -191,6 +191,58 @@ class ProfilIndikatorTest extends MutuTestCase
         $this->assertSame(3, (int) $profile->refresh()->analysis_period);
     }
 
+    public function test_admin_bisa_mengisi_target_terstruktur(): void
+    {
+        $profile = QualityIndicatorProfileFactory::new()->create(['standard' => '≤ 5%']);
+
+        Livewire::actingAs($this->createUser())
+            ->test(InputProfilIndikator::class)
+            ->call('loadProfile', $profile->id)
+            ->assertSet('target_operator', null)
+            ->set('target_operator', 'lte')
+            ->set('target_value', '5')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $profile->refresh();
+        $this->assertSame('lte', $profile->target_operator);
+        $this->assertSame(5.0, $profile->target_value);
+        $this->assertSame('≤ 5%', $profile->standard);
+
+        Livewire::actingAs($this->createUser())
+            ->test(InputProfilIndikator::class)
+            ->call('loadProfile', $profile->id)
+            ->assertSet('target_operator', 'lte')
+            ->assertSet('target_value', 5.0);
+    }
+
+    public function test_operator_target_boleh_kosong_tanpa_default(): void
+    {
+        $profile = QualityIndicatorProfileFactory::new()->create(['target_operator' => 'gte', 'target_value' => 80]);
+
+        Livewire::actingAs($this->createUser())
+            ->test(InputProfilIndikator::class)
+            ->call('loadProfile', $profile->id)
+            ->set('target_operator', '')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $profile->refresh();
+        $this->assertNull($profile->target_operator);
+        $this->assertSame(80.0, $profile->target_value);
+    }
+
+    public function test_operator_dan_nilai_target_divalidasi(): void
+    {
+        Livewire::actingAs($this->createUser())
+            ->test(InputProfilIndikator::class)
+            ->call('loadProfile')
+            ->set('target_operator', 'eq')
+            ->set('target_value', 'delapan puluh')
+            ->call('save')
+            ->assertHasErrors(['target_operator' => 'in', 'target_value' => 'numeric']);
+    }
+
     public function test_admin_bisa_mencari_profil_indikator_berdasarkan_judul(): void
     {
         QualityIndicatorProfileFactory::new()->create(['title' => 'Kepatuhan Cuci Tangan']);

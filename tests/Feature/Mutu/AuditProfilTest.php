@@ -158,6 +158,36 @@ class AuditProfilTest extends MutuTestCase
         $this->assertStringNotContainsString('Audit PIC Belum Diisi', $bagian);
     }
 
+    public function test_standard_yang_gagal_diparse_dilaporkan_dengan_teks_aslinya(): void
+    {
+        QualityIndicatorProfileFactory::new()->create(['title' => 'Audit Standar Teks', 'standard' => 'sesuai SPO']);
+        QualityIndicatorProfileFactory::new()->create(['title' => 'Audit Standar Angka', 'standard' => '≥ 85 %']);
+
+        $bagian = $this->bagian($this->audit(), 'Standar yang gagal diparse');
+
+        $this->assertMatchesRegularExpression('/Audit Standar Teks.*sesuai SPO/', $bagian);
+        $this->assertStringNotContainsString('Audit Standar Angka', $bagian);
+    }
+
+    public function test_profil_tanpa_operator_atau_nilai_target_dilaporkan(): void
+    {
+        QualityIndicatorProfileFactory::new()->create(['title' => 'Audit Tanpa Operator', 'target_operator' => null, 'target_value' => 80]);
+        QualityIndicatorProfileFactory::new()->create(['title' => 'Audit Tanpa Nilai', 'target_operator' => 'gte', 'target_value' => null]);
+        QualityIndicatorProfileFactory::new()->create(['title' => 'Audit Target Lengkap', 'target_operator' => 'lte', 'target_value' => 5]);
+
+        $output = $this->audit();
+        $tanpaOperator = $this->bagian($output, 'Profil tanpa operator target');
+        $tanpaNilai = $this->bagian($output, 'Profil tanpa nilai target');
+
+        $this->assertStringContainsString('Audit Tanpa Operator', $tanpaOperator);
+        $this->assertStringNotContainsString('Audit Tanpa Nilai', $tanpaOperator);
+        $this->assertStringNotContainsString('Audit Target Lengkap', $tanpaOperator);
+
+        $this->assertStringContainsString('Audit Tanpa Nilai', $tanpaNilai);
+        $this->assertStringNotContainsString('Audit Tanpa Operator', $tanpaNilai);
+        $this->assertStringNotContainsString('Audit Target Lengkap', $tanpaNilai);
+    }
+
     public function test_audit_tidak_mengubah_data(): void
     {
         QualityIndicatorFactory::new()->create([

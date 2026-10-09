@@ -137,7 +137,7 @@
                 <x-row>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>Standar (%)</label>
+                            <label>Standar (teks profil)</label>
                             <input type="text" wire:model.defer="standard" class="form-control form-control-sm" placeholder="Contoh: 100%" />
                             <x-form.error name="standard" />
                         </div>
@@ -147,6 +147,27 @@
                             <label>Periode Analisis</label>
                             <x-form.select id="analysis-period" model="analysis_period" :options="$this->analysisPeriodOptions" placeholder="Pilih Periode" placeholderValue="" width="full-width" />
                             <x-form.error name="analysis_period" />
+                        </div>
+                    </div>
+                </x-row>
+
+                <x-row>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Arah Target</label>
+                            <select wire:model.defer="target_operator" class="custom-control custom-select text-sm">
+                                <option value="">Belum ditentukan (capaian belum bisa dinilai)</option>
+                                <option value="gte">≥ (makin tinggi makin baik)</option>
+                                <option value="lte">≤ (makin rendah makin baik)</option>
+                            </select>
+                            <x-form.error name="target_operator" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Nilai Target (%)</label>
+                            <input type="number" step="0.01" min="0" wire:model.defer="target_value" class="form-control form-control-sm" placeholder="Contoh: 85" />
+                            <x-form.error name="target_value" />
                         </div>
                     </div>
                 </x-row>

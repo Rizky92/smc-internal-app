@@ -11,6 +11,7 @@ use Database\Factories\Quality\QualityIndicatorProfileFactory;
 use Database\Factories\Quality\QualityIndicatorRecordFactory;
 use Illuminate\Support\Facades\File;
 use Livewire\Livewire;
+use Livewire\Testing\TestableLivewire;
 use Vtiful\Kernel\Excel;
 
 class IndikatorMutuTest extends MutuTestCase
@@ -287,6 +288,81 @@ class IndikatorMutuTest extends MutuTestCase
             ->test(DetailIndikatorMutu::class, ['indicatorId' => $indicator->id])
             ->call('loadProperties')
             ->assertSee('Pegawai '.self::NIK_PIC);
+    }
+
+    private function runChart(QualityIndicator $indicator): TestableLivewire
+    {
+        return Livewire::actingAs($this->createUser())
+            ->test(DetailIndikatorMutu::class, ['indicatorId' => $indicator->id])
+            ->set('tglAwal', '2026-03-01')
+            ->set('tglAkhir', '2026-03-31')
+            ->call('loadProperties');
+    }
+
+    private function recordRunChart(QualityIndicator $indicator, string $date, int $numerator, int $denominator, string $status = 'approved'): void
+    {
+        QualityIndicatorRecordFactory::new()->create([
+            'indicator_id'      => $indicator->id,
+            'recorded_date'     => $date,
+            'numerator_value'   => $numerator,
+            'denominator_value' => $denominator,
+            'status'            => $status,
+        ]);
+    }
+
+    public function test_run_chart_detail_berisi_capaian_bulanan_dan_status_dari_target_terstruktur(): void
+    {
+        $indicator = $this->indikator('Penundaan Operasi Elektif');
+        $indicator->profile->update(['target_operator' => 'lte', 'target_value' => 5]);
+
+        // Februari: ΣN/ΣD = 91/102 = 89,22% (bukan rata-rata harian 70%); Maret: 3/100 = 3%.
+        $this->recordRunChart($indicator, '2026-02-02', 1, 2);
+        $this->recordRunChart($indicator, '2026-02-03', 90, 100);
+        $this->recordRunChart($indicator, '2026-03-02', 3, 100);
+        $this->recordRunChart($indicator, '2026-03-03', 50, 100, 'submitted');
+        // Di luar 12 bulan yang berakhir Maret 2026.
+        $this->recordRunChart($indicator, '2025-03-31', 1, 1);
+
+        $kosong = array_fill(0, 10, null);
+
+        $this->runChart($indicator)->assertDispatchedBrowserEvent('update-chart', [
+            'labels' => [
+                'Apr 2025', 'May 2025', 'Jun 2025', 'Jul 2025', 'Aug 2025', 'Sep 2025',
+                'Oct 2025', 'Nov 2025', 'Dec 2025', 'Jan 2026', 'Feb 2026', 'Mar 2026',
+            ],
+            'data'        => array_merge($kosong, [89.22, 3.0]),
+            'statuses'    => array_merge($kosong, ['tidak_tercapai', 'tercapai']),
+            'target'      => 5.0,
+            'targetLabel' => 'Target ≤ 5%',
+        ]);
+    }
+
+    public function test_run_chart_tanpa_target_terstruktur_tidak_menilai_capaian(): void
+    {
+        $indicator = $this->indikator('Indikator Target Teks');
+        $indicator->profile->update(['standard' => '80%', 'target_operator' => null, 'target_value' => 80]);
+
+        $this->recordRunChart($indicator, '2026-03-02', 9, 10);
+        $this->recordRunChart($indicator, '2026-03-03', 0, 0);
+
+        $this->runChart($indicator)
+            ->assertDispatchedBrowserEvent('update-chart', fn (string $name, array $data): bool => $data['data'][11] === 90.0
+                && $data['statuses'][11] === 'belum_dinilai'
+                && $data['target'] === null
+                && $data['targetLabel'] === null)
+            ->assertSee('Target belum terstruktur');
+    }
+
+    public function test_run_chart_bulan_dengan_total_denominator_nol_kosong(): void
+    {
+        $indicator = $this->indikator('Indikator Denominator Nol');
+        $indicator->profile->update(['target_operator' => 'gte', 'target_value' => 80]);
+
+        $this->recordRunChart($indicator, '2026-03-02', 0, 0);
+
+        $this->runChart($indicator)
+            ->assertDispatchedBrowserEvent('update-chart', fn (string $name, array $data): bool => $data['data'][11] === null
+                && $data['statuses'][11] === null);
     }
 
     public function test_detail_menampilkan_badge_status_dengan_label_dan_warnanya(): void
