@@ -144,8 +144,9 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label>Periode Analisis (Bulan)</label>
-                            <input type="number" wire:model.defer="analysis_period" class="form-control form-control-sm" />
+                            <label>Periode Analisis</label>
+                            <x-form.select id="analysis-period" model="analysis_period" :options="$this->analysisPeriodOptions" placeholder="Pilih Periode" placeholderValue="" width="full-width" />
+                            <x-form.error name="analysis_period" />
                         </div>
                     </div>
                 </x-row>

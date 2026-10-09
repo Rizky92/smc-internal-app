@@ -8,6 +8,7 @@ use App\Models\Quality\QualityIndicatorCategory;
 use App\Models\Quality\QualityIndicatorInputType;
 use App\Models\Quality\QualityIndicatorProfile;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -93,6 +94,23 @@ class InputProfilIndikator extends Component
         ];
     }
 
+    /**
+     * Pilihan periode baku. Nilai lama di luar daftar ikut ditampilkan agar terlihat dan bisa dipilih ulang;
+     * nilai itu ditolak saat disimpan.
+     *
+     * @return array<int, string>
+     */
+    public function getAnalysisPeriodOptionsProperty(): array
+    {
+        $options = QualityIndicatorProfile::ANALYSIS_PERIODS;
+
+        if (filled($this->analysis_period) && ! array_key_exists((int) $this->analysis_period, $options)) {
+            $options[(int) $this->analysis_period] = "{$this->analysis_period} bulan (tidak berlaku, pilih ulang)";
+        }
+
+        return $options;
+    }
+
     public function getIndicatorTypeOptionsProperty(): array
     {
         return [
@@ -173,8 +191,15 @@ class InputProfilIndikator extends Component
             'quality_indicator_input_type_id' => ['nullable', 'exists:mysql_smc.quality_indicator_input_types,id'],
             'title'                           => ['required', 'string'],
             'frequency'                       => ['required', 'string'],
-            'analysis_period'                 => ['nullable', 'integer'],
+            'analysis_period'                 => ['nullable', 'integer', Rule::in(array_keys(QualityIndicatorProfile::ANALYSIS_PERIODS))],
             'standard'                        => ['required', 'string'],
+        ];
+    }
+
+    protected function messages(): array
+    {
+        return [
+            'analysis_period.in' => 'Periode analisis harus Bulanan, Triwulan, Semester, atau Tahunan.',
         ];
     }
 
