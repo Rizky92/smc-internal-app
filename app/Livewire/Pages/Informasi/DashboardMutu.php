@@ -9,6 +9,7 @@ use App\Livewire\Concerns\MenuTracker;
 use App\Models\Kepegawaian\Departemen;
 use App\Models\Quality\QualityIndicator;
 use App\Models\Quality\QualityIndicatorCategory;
+use App\Models\Quality\QualityIndicatorProfile;
 use App\Models\Quality\QualityIndicatorRecord;
 use App\View\Components\BaseLayout;
 use Illuminate\Database\Eloquent\Builder;
@@ -69,17 +70,34 @@ class DashboardMutu extends Component
             ->count();
     }
 
-    public function getAverageAchievementProperty(): float
+    /**
+     * % indikator tercapai di periode filter, dengan jumlahnya. `belum` = indikator aktif dalam filter yang
+     * belum bisa dinilai (target belum terstruktur, ΣD = 0, atau tanpa record disetujui).
+     *
+     * @return array{persen: float|null, tercapai: int, dinilai: int, belum: int}
+     */
+    public function getRingkasanTercapaiProperty(): array
     {
-        $row = $this->rataRataCapaianIndikator(
+        $hasil = $this->persenTercapai(
             QualityIndicatorRecord::query()
                 ->disetujui()
                 ->periode($this->tglAwal, $this->tglAkhir)
                 ->when($this->depId, fn ($q) => $q->departemen($this->depId))
                 ->when($this->kategoriId, fn ($q) => $q->kategori($this->kategoriId))
-        )->first();
+        )->get('', ['tercapai' => 0, 'dinilai' => 0, 'persen' => null]);
 
-        return round((float) ($row->avg_capaian ?? 0), 2);
+        $aktif = QualityIndicator::query()
+            ->where('status', 'active')
+            ->when($this->depId, fn ($q) => $q->departemen($this->depId))
+            ->when($this->kategoriId, fn ($q) => $q->whereHas('profile', fn ($q) => $q->where('quality_indicator_category_id', $this->kategoriId)))
+            ->count();
+
+        return [
+            'persen'   => $hasil['persen'],
+            'tercapai' => $hasil['tercapai'],
+            'dinilai'  => $hasil['dinilai'],
+            'belum'    => max(0, $aktif - $hasil['dinilai']),
+        ];
     }
 
     public function getPendingValidationCountProperty(): int
@@ -92,29 +110,23 @@ class DashboardMutu extends Component
 
     public function getAchievementPerDepartemenProperty(): array
     {
-        $aggByDepId = $this->rataRataCapaianIndikator(
+        $perDepId = $this->persenTercapai(
             QualityIndicatorRecord::query()
                 ->join('quality_indicators', 'quality_indicator_records.indicator_id', '=', 'quality_indicators.id')
                 ->disetujui()
                 ->periode($this->tglAwal, $this->tglAkhir)
                 ->when($this->depId, fn ($q) => $q->where('quality_indicators.dep_id', $this->depId))
                 ->when($this->kategoriId, fn ($q) => $q->kategori($this->kategoriId)),
-            ['dep_id' => 'quality_indicators.dep_id']
-        )->keyBy('dep_id');
+            'quality_indicators.dep_id'
+        );
 
-        $allDep = Departemen::query()->whereIn('dep_id', $aggByDepId->keys())->pluck('nama', 'dep_id');
+        $allDep = Departemen::query()->whereIn('dep_id', $perDepId->keys())->pluck('nama', 'dep_id');
 
-        $result = [];
-        foreach ($aggByDepId as $depId => $row) {
-            $result[] = [
-                'nama'        => $allDep[$depId] ?? $depId,
-                'avg_capaian' => round((float) $row->avg_capaian, 2),
-            ];
-        }
-
-        usort($result, fn ($a, $b) => strcmp($a['nama'], $b['nama']));
-
-        return $result;
+        return $perDepId
+            ->map(fn (array $hasil, string $depId): array => ['nama' => $allDep[$depId] ?? $depId] + $hasil)
+            ->sortBy('nama')
+            ->values()
+            ->all();
     }
 
     public function getStatusDistributionProperty(): array
@@ -154,29 +166,33 @@ class DashboardMutu extends Component
         $start = now()->subMonths(11)->startOfMonth()->format('Y-m-d');
         $end = now()->endOfMonth()->format('Y-m-d');
 
-        $results = $this->rataRataCapaianIndikator(
+        $perBulan = $this->persenTercapai(
             QualityIndicatorRecord::query()
                 ->disetujui()
                 ->periode($start, $end)
                 ->when($this->depId, fn ($q) => $q->departemen($this->depId))
                 ->when($this->kategoriId, fn ($q) => $q->kategori($this->kategoriId)),
-            ['bulan' => "DATE_FORMAT(quality_indicator_records.recorded_date, '%Y-%m')"]
-        )->keyBy('bulan');
+            "DATE_FORMAT(quality_indicator_records.recorded_date, '%Y-%m')"
+        );
 
-        $data = [];
-        $labels = [];
+        $tren = ['labels' => [], 'data' => [], 'tercapai' => [], 'dinilai' => []];
+
+        // Bulan tanpa indikator yang bisa dinilai = null (celah di grafik), bukan 0%.
         for ($i = 11; $i >= 0; $i--) {
-            $bulan = now()->subMonths($i)->format('Y-m');
-            $labels[] = now()->subMonths($i)->format('M Y');
-            $data[] = round((float) ($results[$bulan]->avg_capaian ?? 0), 2);
+            $hasil = $perBulan->get(now()->subMonths($i)->format('Y-m'));
+
+            $tren['labels'][] = now()->subMonths($i)->format('M Y');
+            $tren['data'][] = $hasil['persen'] ?? null;
+            $tren['tercapai'][] = $hasil['tercapai'] ?? null;
+            $tren['dinilai'][] = $hasil['dinilai'] ?? null;
         }
 
-        return ['labels' => $labels, 'data' => $data];
+        return $tren;
     }
 
     public function getAchievementPerCategoryProperty(): array
     {
-        return $this->rataRataCapaianIndikator(
+        return $this->persenTercapai(
             QualityIndicatorRecord::query()
                 ->join('quality_indicators', 'quality_indicator_records.indicator_id', '=', 'quality_indicators.id')
                 ->join('quality_indicator_profiles', 'quality_indicators.quality_indicator_profile_id', '=', 'quality_indicator_profiles.id')
@@ -185,17 +201,17 @@ class DashboardMutu extends Component
                 ->periode($this->tglAwal, $this->tglAkhir)
                 ->when($this->depId, fn ($q) => $q->where('quality_indicators.dep_id', $this->depId))
                 ->when($this->kategoriId, fn ($q) => $q->where('quality_indicator_profiles.quality_indicator_category_id', $this->kategoriId)),
-            ['name' => 'quality_indicator_categories.name']
+            'quality_indicator_categories.name'
         )
+            ->map(fn (array $hasil, string $name): array => ['name' => $name] + $hasil)
             ->sortBy('name')
-            ->map(fn (object $row): array => ['name' => $row->name, 'avg_capaian' => $row->avg_capaian])
             ->values()
             ->all();
     }
 
     public function getTopIndicatorsProperty(): array
     {
-        return QualityIndicatorRecord::query()
+        return $this->denganStatus(QualityIndicatorRecord::query()
             ->select('quality_indicator_profiles.title', 'quality_indicator_records.indicator_id')
             ->selectCapaian('avg_capaian')
             ->join('quality_indicators', 'quality_indicator_records.indicator_id', '=', 'quality_indicators.id')
@@ -208,12 +224,12 @@ class DashboardMutu extends Component
             ->orderBy('avg_capaian', 'desc')
             ->limit(5)
             ->get()
-            ->toArray();
+            ->toArray());
     }
 
     public function getBottomIndicatorsProperty(): array
     {
-        return QualityIndicatorRecord::query()
+        return $this->denganStatus(QualityIndicatorRecord::query()
             ->select('quality_indicator_profiles.title', 'quality_indicator_records.indicator_id')
             ->selectCapaian('avg_capaian')
             ->join('quality_indicators', 'quality_indicator_records.indicator_id', '=', 'quality_indicators.id')
@@ -226,34 +242,70 @@ class DashboardMutu extends Component
             ->orderBy('avg_capaian', 'asc')
             ->limit(5)
             ->get()
-            ->toArray();
+            ->toArray());
     }
 
     /**
-     * Agregat lintas indikator: capaian tiap indikator (ΣN/ΣD) dirata-rata dengan bobot sama, supaya
-     * indikator ber-denominator besar tidak mendominasi. Indikator dengan total denominator 0 tidak
-     * ikut dirata-rata. Langkah sementara sampai agregat diganti menjadi "% indikator tercapai".
+     * Agregat lintas indikator = % indikator tercapai dari yang bisa dinilai. Rata-rata capaian tidak dipakai
+     * karena tidak bermakna untuk indikator dengan arah target berbeda (95% ≥ dan 3% ≤ sama-sama tercapai).
+     * Status tiap indikator: capaian ΣN/ΣD (`selectCapaian()`) dibandingkan target lewat `achievementStatus()`;
+     * indikator yang belum bisa dinilai tidak masuk pembilang maupun penyebut.
      *
-     * @param  array<string, string>  $groups  alias => ekspresi SQL pengelompokan
-     * @return Collection<int, object>
+     * @return Collection<string, array{persen: float|null, tercapai: int, dinilai: int}> dikunci nilai grup ('' tanpa grup)
      */
-    private function rataRataCapaianIndikator(Builder $records, array $groups = []): Collection
+    private function persenTercapai(Builder $records, ?string $groupExpression = null): Collection
     {
         $perIndikator = $records
             ->select('quality_indicator_records.indicator_id')
             ->selectCapaian()
-            ->groupBy('quality_indicator_records.indicator_id');
-
-        foreach ($groups as $alias => $expression) {
-            $perIndikator->selectRaw("{$expression} as {$alias}")->groupBy(DB::raw($expression));
-        }
-
-        return $perIndikator->getQuery()->newQuery()
-            ->fromSub($perIndikator, 'per_indikator')
-            ->select(array_keys($groups))
-            ->selectRaw('AVG(capaian) as avg_capaian')
-            ->when($groups, fn ($q) => $q->groupBy(array_keys($groups)))
+            ->groupBy('quality_indicator_records.indicator_id')
+            ->when($groupExpression, fn ($q) => $q->selectRaw("{$groupExpression} as grup")->groupBy(DB::raw($groupExpression)))
+            ->toBase()
             ->get();
+
+        $status = $this->statusIndikator($perIndikator);
+
+        return $perIndikator
+            ->groupBy(fn (object $row): string => (string) ($row->grup ?? ''))
+            ->map(function (Collection $rows) use ($status): array {
+                $statuses = $rows->map(fn (object $row): string => $status($row->indicator_id, $row->capaian));
+                $tercapai = $statuses->filter(fn (string $s): bool => $s === QualityIndicatorProfile::STATUS_TERCAPAI)->count();
+                $dinilai = $statuses->reject(fn (string $s): bool => $s === QualityIndicatorProfile::STATUS_BELUM_DINILAI)->count();
+
+                return [
+                    'persen'   => $dinilai > 0 ? round($tercapai / $dinilai * 100, 2) : null,
+                    'tercapai' => $tercapai,
+                    'dinilai'  => $dinilai,
+                ];
+            });
+    }
+
+    /**
+     * Fungsi (indicator_id, capaian) => status capaian, memakai target profil masing-masing indikator.
+     *
+     * @param  Collection<int, object>  $rows  baris dengan `indicator_id`
+     */
+    private function statusIndikator(Collection $rows): \Closure
+    {
+        $profiles = QualityIndicator::query()
+            ->with('profile')
+            ->whereIn('id', $rows->pluck('indicator_id')->unique()->values()->all())
+            ->get()
+            ->mapWithKeys(fn (QualityIndicator $indicator): array => [$indicator->id => $indicator->profile ?? new QualityIndicatorProfile]);
+
+        return fn ($indicatorId, $capaian): string => ($profiles[$indicatorId] ?? new QualityIndicatorProfile)
+            ->achievementStatus($capaian === null ? null : (float) $capaian);
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $items  baris Top/Bottom 5 dengan `indicator_id` dan `avg_capaian`
+     * @return array<int, array<string, mixed>>
+     */
+    private function denganStatus(array $items): array
+    {
+        $status = $this->statusIndikator(collect($items)->map(fn (array $item): object => (object) $item));
+
+        return array_map(fn (array $item): array => $item + ['status' => $status($item['indicator_id'], $item['avg_capaian'])], $items);
     }
 
     public function render(): View
@@ -265,8 +317,10 @@ class DashboardMutu extends Component
             $perKategori = $this->achievementPerCategory;
 
             $this->dispatchBrowserEvent('update-chart-per-dept', [
-                'labels' => array_column($perDept, 'nama'),
-                'data'   => array_map(fn ($v) => round((float) $v, 2), array_column($perDept, 'avg_capaian')),
+                'labels'   => array_column($perDept, 'nama'),
+                'data'     => array_column($perDept, 'persen'),
+                'tercapai' => array_column($perDept, 'tercapai'),
+                'dinilai'  => array_column($perDept, 'dinilai'),
             ]);
 
             $this->dispatchBrowserEvent('update-chart-status', [
@@ -275,21 +329,20 @@ class DashboardMutu extends Component
                 'colors' => array_column($statusDist, 'color'),
             ]);
 
-            $this->dispatchBrowserEvent('update-chart-trend', [
-                'labels' => $monthlyTrend['labels'],
-                'data'   => $monthlyTrend['data'],
-            ]);
+            $this->dispatchBrowserEvent('update-chart-trend', $monthlyTrend);
 
             $this->dispatchBrowserEvent('update-chart-per-kategori', [
-                'labels' => array_column($perKategori, 'name'),
-                'data'   => array_map(fn ($v) => round((float) $v, 2), array_column($perKategori, 'avg_capaian')),
+                'labels'   => array_column($perKategori, 'name'),
+                'data'     => array_column($perKategori, 'persen'),
+                'tercapai' => array_column($perKategori, 'tercapai'),
+                'dinilai'  => array_column($perKategori, 'dinilai'),
             ]);
         }
 
         return view('livewire.pages.informasi.dashboard-mutu', [
             'totalActiveIndicators'  => $this->totalActiveIndicators,
             'monthlyRecordsCount'    => $this->monthlyRecordsCount,
-            'averageAchievement'     => $this->averageAchievement,
+            'ringkasanTercapai'      => $this->ringkasanTercapai,
             'pendingValidationCount' => $this->pendingValidationCount,
         ])
             ->layout(BaseLayout::class, ['title' => 'Dashboard Mutu']);

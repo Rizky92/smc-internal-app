@@ -38,6 +38,15 @@ class QualityIndicatorProfile extends Model
 
     public const STATUS_BELUM_DINILAI = 'belum_dinilai';
 
+    /**
+     * Label dan varian badge untuk status capaian.
+     */
+    public const ACHIEVEMENT_BADGES = [
+        self::STATUS_TERCAPAI       => ['Tercapai', 'success'],
+        self::STATUS_TIDAK_TERCAPAI => ['Tidak Tercapai', 'danger'],
+        self::STATUS_BELUM_DINILAI  => ['Belum Dinilai', 'secondary'],
+    ];
+
     protected $connection = 'mysql_smc';
 
     protected $table = 'quality_indicator_profiles';

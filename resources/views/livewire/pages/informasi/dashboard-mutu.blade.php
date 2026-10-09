@@ -10,57 +10,70 @@
                 let chartTrend = null;
                 let chartPerKategori = null;
 
-                window.addEventListener('update-chart-per-dept', (event) => {
-                    const ctx = document.getElementById('chartPerDept').getContext('2d');
-                    const { labels, data } = event.detail;
-                    const colors = data.map((v) => (v >= 75 ? '#28a745' : '#dc3545'));
+                // Agregat lintas indikator = % indikator tercapai dari yang bisa dinilai (dihitung di server).
+                // `null` = grup/bulan tanpa indikator yang bisa dinilai: tanpa batang/titik dan label diberi "(-)".
+                const persenTercapai = {
+                    labels: (labels, data) => labels.map((label, i) => (data[i] === null ? `${label} (-)` : label)),
+                    tooltip: (detail) => (context) => {
+                        const i = context.dataIndex;
+                        return `${detail.tercapai[i]} dari ${detail.dinilai[i]} indikator tercapai (${context.raw}%)`;
+                    },
+                    options: (detail, indexAxis) => ({
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: indexAxis,
+                        scales: {
+                            [indexAxis === 'y' ? 'x' : 'y']: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: {
+                                    callback: (value) => value + '%',
+                                },
+                            },
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: persenTercapai.tooltip(detail),
+                                },
+                            },
+                            legend: {
+                                display: false,
+                            },
+                        },
+                    }),
+                };
 
-                    if (chartPerDept) {
-                        chartPerDept.data.labels = labels;
-                        chartPerDept.data.datasets[0].data = data;
-                        chartPerDept.data.datasets[0].backgroundColor = colors;
-                        chartPerDept.update();
-                    } else {
-                        chartPerDept = new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: labels,
-                                datasets: [
-                                    {
-                                        label: 'Rata-rata Capaian (%)',
-                                        data: data,
-                                        backgroundColor: colors,
-                                        borderColor: colors.map((c) => c),
-                                        borderWidth: 1,
-                                    },
-                                ],
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                indexAxis: 'y',
-                                scales: {
-                                    x: {
-                                        beginAtZero: true,
-                                        max: 100,
-                                        ticks: {
-                                            callback: (value) => value + '%',
-                                        },
-                                    },
+                const renderBarTercapai = (chart, canvasId, detail, indexAxis) => {
+                    const config = {
+                        type: 'bar',
+                        data: {
+                            labels: persenTercapai.labels(detail.labels, detail.data),
+                            datasets: [
+                                {
+                                    label: '% Indikator Tercapai',
+                                    data: detail.data,
+                                    backgroundColor: '#007bff',
+                                    borderWidth: 1,
                                 },
-                                plugins: {
-                                    tooltip: {
-                                        callbacks: {
-                                            label: (context) => `Capaian: ${context.raw}%`,
-                                        },
-                                    },
-                                    legend: {
-                                        display: false,
-                                    },
-                                },
-                            },
-                        });
+                            ],
+                        },
+                        options: persenTercapai.options(detail, indexAxis),
+                    };
+
+                    if (chart) {
+                        chart.data = config.data;
+                        chart.options = config.options;
+                        chart.update();
+
+                        return chart;
                     }
+
+                    return new Chart(document.getElementById(canvasId).getContext('2d'), config);
+                };
+
+                window.addEventListener('update-chart-per-dept', (event) => {
+                    chartPerDept = renderBarTercapai(chartPerDept, 'chartPerDept', event.detail, 'y');
                 });
 
                 window.addEventListener('update-chart-status', (event) => {
@@ -105,108 +118,39 @@
                 });
 
                 window.addEventListener('update-chart-trend', (event) => {
-                    const ctx = document.getElementById('chartTrend').getContext('2d');
-                    const { labels, data } = event.detail;
+                    const detail = event.detail;
+                    const config = {
+                        type: 'line',
+                        data: {
+                            labels: detail.labels,
+                            datasets: [
+                                {
+                                    label: '% Indikator Tercapai',
+                                    data: detail.data,
+                                    borderColor: '#007bff',
+                                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                                    borderWidth: 2,
+                                    fill: false,
+                                    tension: 0,
+                                    spanGaps: false,
+                                    pointRadius: 4,
+                                },
+                            ],
+                        },
+                        options: persenTercapai.options(detail, 'x'),
+                    };
 
                     if (chartTrend) {
-                        chartTrend.data.labels = labels;
-                        chartTrend.data.datasets[0].data = data;
+                        chartTrend.data = config.data;
+                        chartTrend.options = config.options;
                         chartTrend.update();
                     } else {
-                        chartTrend = new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                labels: labels,
-                                datasets: [
-                                    {
-                                        label: 'Rata-rata Capaian (%)',
-                                        data: data,
-                                        borderColor: '#007bff',
-                                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
-                                        borderWidth: 2,
-                                        fill: true,
-                                        tension: 0.3,
-                                        pointRadius: 3,
-                                        pointBackgroundColor: (context) => {
-                                            return context.dataset.data[context.dataIndex] >= 75 ? '#28a745' : '#dc3545';
-                                        },
-                                    },
-                                ],
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        max: 100,
-                                        ticks: {
-                                            callback: (value) => value + '%',
-                                        },
-                                    },
-                                },
-                                plugins: {
-                                    tooltip: {
-                                        callbacks: {
-                                            label: (context) => `Capaian: ${context.raw}%`,
-                                        },
-                                    },
-                                },
-                            },
-                        });
+                        chartTrend = new Chart(document.getElementById('chartTrend').getContext('2d'), config);
                     }
                 });
 
                 window.addEventListener('update-chart-per-kategori', (event) => {
-                    const ctx = document.getElementById('chartPerKategori').getContext('2d');
-                    const { labels, data } = event.detail;
-                    const colors = data.map((v) => (v >= 75 ? '#28a745' : '#dc3545'));
-
-                    if (chartPerKategori) {
-                        chartPerKategori.data.labels = labels;
-                        chartPerKategori.data.datasets[0].data = data;
-                        chartPerKategori.data.datasets[0].backgroundColor = colors;
-                        chartPerKategori.update();
-                    } else {
-                        chartPerKategori = new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: labels,
-                                datasets: [
-                                    {
-                                        label: 'Rata-rata Capaian (%)',
-                                        data: data,
-                                        backgroundColor: colors,
-                                        borderColor: colors.map((c) => c),
-                                        borderWidth: 1,
-                                    },
-                                ],
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        max: 100,
-                                        ticks: {
-                                            callback: (value) => value + '%',
-                                        },
-                                    },
-                                },
-                                plugins: {
-                                    tooltip: {
-                                        callbacks: {
-                                            label: (context) => `Capaian: ${context.raw}%`,
-                                        },
-                                    },
-                                    legend: {
-                                        display: false,
-                                    },
-                                },
-                            },
-                        });
-                    }
+                    chartPerKategori = renderBarTercapai(chartPerKategori, 'chartPerKategori', event.detail, 'x');
                 });
 
                 document.addEventListener('DOMContentLoaded', () => {
@@ -261,8 +205,21 @@
         <div class="col-md-3">
             <div class="card border-left-success">
                 <div class="card-body">
-                    <div class="text-xs text-muted text-uppercase font-weight-bold">Rata-rata Capaian</div>
-                    <div class="h3 mb-0 font-weight-bold text-success mt-2">{{ $averageAchievement }}%</div>
+                    <div class="text-xs text-muted text-uppercase font-weight-bold">Indikator Tercapai</div>
+
+                    @php
+                        $keterangan = collect([
+                            $ringkasanTercapai['persen'] === null ? 'Belum ada indikator yang bisa dinilai' : "{$ringkasanTercapai['tercapai']} dari {$ringkasanTercapai['dinilai']} indikator tercapai",
+                            $ringkasanTercapai['belum'] > 0 ? "{$ringkasanTercapai['belum']} belum bisa dinilai" : null,
+                        ])
+                            ->filter()
+                            ->implode('; ');
+                    @endphp
+
+                    <div class="h3 mb-0 font-weight-bold {{ $ringkasanTercapai['persen'] === null ? 'text-muted' : 'text-success' }} mt-2">
+                        {{ $ringkasanTercapai['persen'] === null ? '-' : $ringkasanTercapai['persen'] . '%' }}
+                    </div>
+                    <div class="text-xs text-muted">{{ $keterangan }}</div>
                 </div>
             </div>
         </div>
@@ -282,7 +239,7 @@
                 <x-slot name="header">
                     <h6 class="mb-0">
                         <i class="fas fa-chart-bar mr-2"></i>
-                        Rata-rata Capaian per Departemen
+                        % Indikator Tercapai per Departemen
                     </h6>
                 </x-slot>
                 <x-slot name="body">
@@ -315,7 +272,7 @@
                 <x-slot name="header">
                     <h6 class="mb-0">
                         <i class="fas fa-chart-line mr-2"></i>
-                        Tren Capaian Bulanan (12 Bulan)
+                        Tren % Indikator Tercapai (12 Bulan)
                     </h6>
                 </x-slot>
                 <x-slot name="body">
@@ -330,7 +287,7 @@
                 <x-slot name="header">
                     <h6 class="mb-0">
                         <i class="fas fa-chart-bar mr-2"></i>
-                        Rata-rata Capaian per Kategori
+                        % Indikator Tercapai per Kategori
                     </h6>
                 </x-slot>
                 <x-slot name="body">
@@ -358,6 +315,7 @@
                                 <th>#</th>
                                 <th>Indikator</th>
                                 <th class="text-center">Capaian</th>
+                                <th class="text-center">Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -365,11 +323,16 @@
                                 <tr>
                                     <td>{{ $i + 1 }}</td>
                                     <td>{{ $item['title'] }}</td>
-                                    <td class="text-center font-weight-bold text-success">{{ round((float) $item['avg_capaian'], 2) }}%</td>
+                                    <td class="text-center font-weight-bold">{{ $item['avg_capaian'] === null ? '-' : round((float) $item['avg_capaian'], 2) . '%' }}</td>
+                                    <td class="text-center">
+                                        <x-badge :variant="\App\Models\Quality\QualityIndicatorProfile::ACHIEVEMENT_BADGES[$item['status']][1]">
+                                            {{ \App\Models\Quality\QualityIndicatorProfile::ACHIEVEMENT_BADGES[$item['status']][0] }}
+                                        </x-badge>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="text-center text-muted">Belum ada data</td>
+                                    <td colspan="4" class="text-center text-muted">Belum ada data</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -392,6 +355,7 @@
                                 <th>#</th>
                                 <th>Indikator</th>
                                 <th class="text-center">Capaian</th>
+                                <th class="text-center">Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -399,11 +363,16 @@
                                 <tr>
                                     <td>{{ $i + 1 }}</td>
                                     <td>{{ $item['title'] }}</td>
-                                    <td class="text-center font-weight-bold text-danger">{{ round((float) $item['avg_capaian'], 2) }}%</td>
+                                    <td class="text-center font-weight-bold">{{ $item['avg_capaian'] === null ? '-' : round((float) $item['avg_capaian'], 2) . '%' }}</td>
+                                    <td class="text-center">
+                                        <x-badge :variant="\App\Models\Quality\QualityIndicatorProfile::ACHIEVEMENT_BADGES[$item['status']][1]">
+                                            {{ \App\Models\Quality\QualityIndicatorProfile::ACHIEVEMENT_BADGES[$item['status']][0] }}
+                                        </x-badge>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="text-center text-muted">Belum ada data</td>
+                                    <td colspan="4" class="text-center text-muted">Belum ada data</td>
                                 </tr>
                             @endforelse
                         </tbody>
