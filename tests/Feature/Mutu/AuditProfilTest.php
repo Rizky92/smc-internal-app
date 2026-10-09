@@ -9,6 +9,7 @@ use Database\Factories\Quality\QualityIndicatorCategoryFactory;
 use Database\Factories\Quality\QualityIndicatorFactory;
 use Database\Factories\Quality\QualityIndicatorProfileFactory;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class AuditProfilTest extends MutuTestCase
@@ -123,6 +124,38 @@ class AuditProfilTest extends MutuTestCase
 
         $this->assertStringContainsString('Audit PIC Kosong', $bagian);
         $this->assertStringNotContainsString('Audit PIC Ada', $bagian);
+    }
+
+    public function test_indikator_dengan_pic_tidak_aktif_dilaporkan_beserta_statusnya(): void
+    {
+        $this->createUser('MUTU-PIC-KELUAR', []);
+        $this->createUser('MUTU-PIC-CUTI', []);
+        $this->createUser('MUTU-PIC-AKTIF', []);
+        DB::connection('mysql_sik')->table('pegawai')->where('nik', 'MUTU-PIC-KELUAR')->update(['stts_aktif' => 'KELUAR']);
+        DB::connection('mysql_sik')->table('pegawai')->where('nik', 'MUTU-PIC-CUTI')->update(['stts_aktif' => 'CUTI']);
+
+        $pic = [
+            'Audit PIC Keluar'          => 'MUTU-PIC-KELUAR',
+            'Audit PIC Cuti'            => 'MUTU-PIC-CUTI',
+            'Audit PIC Tidak Ditemukan' => 'MUTU-PIC-HILANG',
+            'Audit PIC Masih Aktif'     => 'MUTU-PIC-AKTIF',
+            'Audit PIC Belum Diisi'     => null,
+        ];
+
+        foreach ($pic as $title => $nik) {
+            QualityIndicatorFactory::new()->create([
+                'quality_indicator_profile_id' => QualityIndicatorProfileFactory::new()->create(['title' => $title]),
+                'pic_nik'                      => $nik,
+            ]);
+        }
+
+        $bagian = $this->bagian($this->audit(), 'Indikator dengan PIC tidak aktif');
+
+        $this->assertMatchesRegularExpression('/Audit PIC Keluar.*KELUAR/', $bagian);
+        $this->assertMatchesRegularExpression('/Audit PIC Cuti.*CUTI/', $bagian);
+        $this->assertMatchesRegularExpression('/Audit PIC Tidak Ditemukan.*tidak ditemukan/', $bagian);
+        $this->assertStringNotContainsString('Audit PIC Masih Aktif', $bagian);
+        $this->assertStringNotContainsString('Audit PIC Belum Diisi', $bagian);
     }
 
     public function test_audit_tidak_mengubah_data(): void

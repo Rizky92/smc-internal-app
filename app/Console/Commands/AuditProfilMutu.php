@@ -40,6 +40,7 @@ class AuditProfilMutu extends Command
         $this->kategoriBesertaIndikator($profiles);
         $this->indikatorTanpaPenanggungJawab();
         $this->indikatorTanpaPic();
+        $this->indikatorDenganPicTidakAktif();
 
         return Command::SUCCESS;
     }
@@ -164,6 +165,38 @@ class AuditProfilMutu extends Command
                     $this->departemen($indicator->dep_id),
                     $indicator->person_in_charge ?: '-',
                     $indicator->status,
+                ])
+        );
+    }
+
+    /**
+     * PIC yang pegawainya tidak berstatus AKTIF (termasuk CUTI) atau NIK-nya tidak ditemukan.
+     */
+    private function indikatorDenganPicTidakAktif(): void
+    {
+        $this->judul('Indikator dengan PIC tidak aktif');
+
+        if (! $this->kolomAda('quality_indicators', 'pic_nik')) {
+            $this->line('kolom pic_nik belum ada (migrasi belum dijalankan)');
+
+            return;
+        }
+
+        $this->tabel(
+            ['ID indikator', 'Judul profil', 'Unit', 'NIK PIC', 'Nama PIC', 'Status pegawai'],
+            QualityIndicator::query()
+                ->with(['profile', 'pic'])
+                ->where('pic_nik', '<>', '')
+                ->orderBy('id')
+                ->get()
+                ->filter(fn (QualityIndicator $indicator): bool => optional($indicator->pic)->stts_aktif !== 'AKTIF')
+                ->map(fn (QualityIndicator $indicator): array => [
+                    $indicator->id,
+                    $this->singkat(optional($indicator->profile)->title),
+                    $this->departemen($indicator->dep_id),
+                    $indicator->pic_nik,
+                    optional($indicator->pic)->nama ?? '-',
+                    optional($indicator->pic)->stts_aktif ?? 'tidak ditemukan',
                 ])
         );
     }
