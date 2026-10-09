@@ -45,7 +45,6 @@ return [
 
         'mysql_sik' => [
             'driver'         => 'mysql',
-            'url'            => env('SIK_URL'),
             'host'           => env('SIK_HOST', '127.0.0.1'),
             'port'           => env('SIK_PORT', '3306'),
             'database'       => env('SIK_DATABASE'),
@@ -60,6 +59,7 @@ return [
             // salah, lalu QueryErrorTranslator menerjemahkannya (docs/adr/0003). Tanpa strict mode,
             // nilai salah dipotong atau dikosongkan tanpa error. Karena 'modes' diisi, Laravel memakai
             // 'modes' dan mengabaikan nilai ini, jadi yang benar-benar menjaga adalah STRICT_TRANS_TABLES.
+            // 'url' sengaja tidak dipakai: parameter query di URL koneksi bisa menimpa 'modes' dan 'strict'.
             'strict'         => true,
             'engine'         => null,
             'options'        => extension_loaded('pdo_mysql')
