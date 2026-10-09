@@ -11,6 +11,9 @@ use App\Models\Quality\QualityIndicator;
 use App\Models\Quality\QualityIndicatorCategory;
 use App\Models\Quality\QualityIndicatorRecord;
 use App\View\Components\BaseLayout;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -68,13 +71,13 @@ class DashboardMutu extends Component
 
     public function getAverageAchievementProperty(): float
     {
-        $row = QualityIndicatorRecord::query()
-            ->selectRaw('AVG((numerator_value / NULLIF(denominator_value, 0)) * 100) as avg_capaian')
-            ->disetujui()
-            ->periode($this->tglAwal, $this->tglAkhir)
-            ->when($this->depId, fn ($q) => $q->departemen($this->depId))
-            ->when($this->kategoriId, fn ($q) => $q->kategori($this->kategoriId))
-            ->first();
+        $row = $this->rataRataCapaianIndikator(
+            QualityIndicatorRecord::query()
+                ->disetujui()
+                ->periode($this->tglAwal, $this->tglAkhir)
+                ->when($this->depId, fn ($q) => $q->departemen($this->depId))
+                ->when($this->kategoriId, fn ($q) => $q->kategori($this->kategoriId))
+        )->first();
 
         return round((float) ($row->avg_capaian ?? 0), 2);
     }
@@ -89,16 +92,15 @@ class DashboardMutu extends Component
 
     public function getAchievementPerDepartemenProperty(): array
     {
-        $aggByDepId = QualityIndicatorRecord::query()
-            ->selectRaw('quality_indicators.dep_id, AVG((quality_indicator_records.numerator_value / NULLIF(quality_indicator_records.denominator_value, 0)) * 100) as avg_capaian')
-            ->join('quality_indicators', 'quality_indicator_records.indicator_id', '=', 'quality_indicators.id')
-            ->disetujui()
-            ->periode($this->tglAwal, $this->tglAkhir)
-            ->when($this->depId, fn ($q) => $q->where('quality_indicators.dep_id', $this->depId))
-            ->when($this->kategoriId, fn ($q) => $q->kategori($this->kategoriId))
-            ->groupBy('quality_indicators.dep_id')
-            ->get()
-            ->keyBy('dep_id');
+        $aggByDepId = $this->rataRataCapaianIndikator(
+            QualityIndicatorRecord::query()
+                ->join('quality_indicators', 'quality_indicator_records.indicator_id', '=', 'quality_indicators.id')
+                ->disetujui()
+                ->periode($this->tglAwal, $this->tglAkhir)
+                ->when($this->depId, fn ($q) => $q->where('quality_indicators.dep_id', $this->depId))
+                ->when($this->kategoriId, fn ($q) => $q->kategori($this->kategoriId)),
+            ['dep_id' => 'quality_indicators.dep_id']
+        )->keyBy('dep_id');
 
         $allDep = Departemen::query()->whereIn('dep_id', $aggByDepId->keys())->pluck('nama', 'dep_id');
 
@@ -152,16 +154,14 @@ class DashboardMutu extends Component
         $start = now()->subMonths(11)->startOfMonth()->format('Y-m-d');
         $end = now()->endOfMonth()->format('Y-m-d');
 
-        $results = QualityIndicatorRecord::query()
-            ->selectRaw("DATE_FORMAT(recorded_date, '%Y-%m') as bulan, AVG((numerator_value / NULLIF(denominator_value, 0)) * 100) as avg_capaian")
-            ->disetujui()
-            ->periode($start, $end)
-            ->when($this->depId, fn ($q) => $q->departemen($this->depId))
-            ->when($this->kategoriId, fn ($q) => $q->kategori($this->kategoriId))
-            ->groupBy('bulan')
-            ->orderBy('bulan')
-            ->get()
-            ->keyBy('bulan');
+        $results = $this->rataRataCapaianIndikator(
+            QualityIndicatorRecord::query()
+                ->disetujui()
+                ->periode($start, $end)
+                ->when($this->depId, fn ($q) => $q->departemen($this->depId))
+                ->when($this->kategoriId, fn ($q) => $q->kategori($this->kategoriId)),
+            ['bulan' => "DATE_FORMAT(quality_indicator_records.recorded_date, '%Y-%m')"]
+        )->keyBy('bulan');
 
         $data = [];
         $labels = [];
@@ -176,29 +176,28 @@ class DashboardMutu extends Component
 
     public function getAchievementPerCategoryProperty(): array
     {
-        return QualityIndicatorRecord::query()
-            ->selectRaw('quality_indicator_categories.name, AVG((quality_indicator_records.numerator_value / NULLIF(quality_indicator_records.denominator_value, 0)) * 100) as avg_capaian')
-            ->join('quality_indicators', 'quality_indicator_records.indicator_id', '=', 'quality_indicators.id')
-            ->join('quality_indicator_profiles', 'quality_indicators.quality_indicator_profile_id', '=', 'quality_indicator_profiles.id')
-            ->join('quality_indicator_categories', 'quality_indicator_profiles.quality_indicator_category_id', '=', 'quality_indicator_categories.id')
-            ->disetujui()
-            ->periode($this->tglAwal, $this->tglAkhir)
-            ->when($this->depId, fn ($q) => $q->where('quality_indicators.dep_id', $this->depId))
-            ->when($this->kategoriId, fn ($q) => $q->where('quality_indicator_profiles.quality_indicator_category_id', $this->kategoriId))
-            ->groupBy('quality_indicator_categories.name')
-            ->orderBy('quality_indicator_categories.name')
-            ->get()
-            ->toArray();
+        return $this->rataRataCapaianIndikator(
+            QualityIndicatorRecord::query()
+                ->join('quality_indicators', 'quality_indicator_records.indicator_id', '=', 'quality_indicators.id')
+                ->join('quality_indicator_profiles', 'quality_indicators.quality_indicator_profile_id', '=', 'quality_indicator_profiles.id')
+                ->join('quality_indicator_categories', 'quality_indicator_profiles.quality_indicator_category_id', '=', 'quality_indicator_categories.id')
+                ->disetujui()
+                ->periode($this->tglAwal, $this->tglAkhir)
+                ->when($this->depId, fn ($q) => $q->where('quality_indicators.dep_id', $this->depId))
+                ->when($this->kategoriId, fn ($q) => $q->where('quality_indicator_profiles.quality_indicator_category_id', $this->kategoriId)),
+            ['name' => 'quality_indicator_categories.name']
+        )
+            ->sortBy('name')
+            ->map(fn (object $row): array => ['name' => $row->name, 'avg_capaian' => $row->avg_capaian])
+            ->values()
+            ->all();
     }
 
     public function getTopIndicatorsProperty(): array
     {
         return QualityIndicatorRecord::query()
-            ->selectRaw(
-                'quality_indicator_profiles.title,
-                quality_indicator_records.indicator_id,
-                AVG((quality_indicator_records.numerator_value / NULLIF(quality_indicator_records.denominator_value, 0)) * 100) as avg_capaian'
-            )
+            ->select('quality_indicator_profiles.title', 'quality_indicator_records.indicator_id')
+            ->selectCapaian('avg_capaian')
             ->join('quality_indicators', 'quality_indicator_records.indicator_id', '=', 'quality_indicators.id')
             ->join('quality_indicator_profiles', 'quality_indicators.quality_indicator_profile_id', '=', 'quality_indicator_profiles.id')
             ->disetujui()
@@ -215,11 +214,8 @@ class DashboardMutu extends Component
     public function getBottomIndicatorsProperty(): array
     {
         return QualityIndicatorRecord::query()
-            ->selectRaw(
-                'quality_indicator_profiles.title,
-                quality_indicator_records.indicator_id,
-                AVG((quality_indicator_records.numerator_value / NULLIF(quality_indicator_records.denominator_value, 0)) * 100) as avg_capaian'
-            )
+            ->select('quality_indicator_profiles.title', 'quality_indicator_records.indicator_id')
+            ->selectCapaian('avg_capaian')
             ->join('quality_indicators', 'quality_indicator_records.indicator_id', '=', 'quality_indicators.id')
             ->join('quality_indicator_profiles', 'quality_indicators.quality_indicator_profile_id', '=', 'quality_indicator_profiles.id')
             ->disetujui()
@@ -231,6 +227,33 @@ class DashboardMutu extends Component
             ->limit(5)
             ->get()
             ->toArray();
+    }
+
+    /**
+     * Agregat lintas indikator: capaian tiap indikator (ΣN/ΣD) dirata-rata dengan bobot sama, supaya
+     * indikator ber-denominator besar tidak mendominasi. Indikator dengan total denominator 0 tidak
+     * ikut dirata-rata. Langkah sementara sampai agregat diganti menjadi "% indikator tercapai".
+     *
+     * @param  array<string, string>  $groups  alias => ekspresi SQL pengelompokan
+     * @return Collection<int, object>
+     */
+    private function rataRataCapaianIndikator(Builder $records, array $groups = []): Collection
+    {
+        $perIndikator = $records
+            ->select('quality_indicator_records.indicator_id')
+            ->selectCapaian()
+            ->groupBy('quality_indicator_records.indicator_id');
+
+        foreach ($groups as $alias => $expression) {
+            $perIndikator->selectRaw("{$expression} as {$alias}")->groupBy(DB::raw($expression));
+        }
+
+        return $perIndikator->getQuery()->newQuery()
+            ->fromSub($perIndikator, 'per_indikator')
+            ->select(array_keys($groups))
+            ->selectRaw('AVG(capaian) as avg_capaian')
+            ->when($groups, fn ($q) => $q->groupBy(array_keys($groups)))
+            ->get();
     }
 
     public function render(): View

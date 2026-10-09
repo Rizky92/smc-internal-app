@@ -18,6 +18,9 @@ use Livewire\Testing\TestableLivewire;
  * - Indikator-A (IT, Kategori-Satu): approved 80% & 60%, submitted, rejected, voided 0%; approved 20% di Februari; submitted di April
  * - Indikator-B (IT, Kategori-Dua): approved 50%, approved_with_correction 100%
  * - Indikator-C (ADM, Kategori-Satu): approved 100%, draft
+ *
+ * Capaian indikator = ΣN/ΣD × 100 record disetujui; agregat lintas indikator = rata-rata capaian
+ * indikator (Maret: A 70, B 75, C 100).
  */
 class DashboardMutuTest extends MutuTestCase
 {
@@ -67,14 +70,14 @@ class DashboardMutuTest extends MutuTestCase
         ]);
     }
 
-    private function record(QualityIndicator $indicator, string $date, string $status, int $numerator): void
+    private function record(QualityIndicator $indicator, string $date, string $status, int $numerator, int $denominator = 10): void
     {
         QualityIndicatorRecordFactory::new()->create([
             'indicator_id'      => $indicator->id,
             'recorded_date'     => $date,
             'status'            => $status,
             'numerator_value'   => $numerator,
-            'denominator_value' => 10,
+            'denominator_value' => $denominator,
         ]);
     }
 
@@ -92,7 +95,7 @@ class DashboardMutuTest extends MutuTestCase
         $this->dashboard()
             ->assertViewHas('totalActiveIndicators', 3)
             ->assertViewHas('monthlyRecordsCount', 6)
-            ->assertViewHas('averageAchievement', 78.0)
+            ->assertViewHas('averageAchievement', 81.67)
             ->assertViewHas('pendingValidationCount', 2);
     }
 
@@ -120,7 +123,7 @@ class DashboardMutuTest extends MutuTestCase
             ])
             ->assertDispatchedBrowserEvent('update-chart-per-kategori', [
                 'labels' => ['Kategori-Dua', 'Kategori-Satu'],
-                'data'   => [75.0, 80.0],
+                'data'   => [75.0, 85.0],
             ]);
     }
 
@@ -144,14 +147,14 @@ class DashboardMutuTest extends MutuTestCase
 
         $this->dashboard()
             ->set('kategoriId', $satu)
-            ->assertViewHas('averageAchievement', 80.0)
+            ->assertViewHas('averageAchievement', 85.0)
             ->assertDispatchedBrowserEvent('update-chart-per-dept', [
                 'labels' => ['ADMISSION', 'Bagian IT/Programer/EDP'],
                 'data'   => [100.0, 70.0],
             ])
             ->assertDispatchedBrowserEvent('update-chart-per-kategori', [
                 'labels' => ['Kategori-Satu'],
-                'data'   => [80.0],
+                'data'   => [85.0],
             ])
             ->assertDispatchedBrowserEvent('update-chart-status', [
                 'labels' => ['Draft', 'Submitted', 'Approved', 'Rejected', 'Approved w/ Correction', 'Voided'],
@@ -163,7 +166,7 @@ class DashboardMutuTest extends MutuTestCase
                     'Apr 2025', 'May 2025', 'Jun 2025', 'Jul 2025', 'Aug 2025', 'Sep 2025',
                     'Oct 2025', 'Nov 2025', 'Dec 2025', 'Jan 2026', 'Feb 2026', 'Mar 2026',
                 ],
-                'data' => [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 20.0, 80.0],
+                'data' => [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 20.0, 85.0],
             ]);
     }
 
@@ -185,7 +188,7 @@ class DashboardMutuTest extends MutuTestCase
                     'Apr 2025', 'May 2025', 'Jun 2025', 'Jul 2025', 'Aug 2025', 'Sep 2025',
                     'Oct 2025', 'Nov 2025', 'Dec 2025', 'Jan 2026', 'Feb 2026', 'Mar 2026',
                 ],
-                'data' => [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 20.0, 78.0],
+                'data' => [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 20.0, 81.67],
             ]);
     }
 
@@ -193,5 +196,47 @@ class DashboardMutuTest extends MutuTestCase
     {
         $this->dashboard()
             ->assertSeeInOrder(['Indikator-C', 'Indikator-B', 'Indikator-A', 'Indikator-A', 'Indikator-B', 'Indikator-C']);
+    }
+
+    public function test_capaian_indikator_memakai_total_numerator_dibagi_total_denominator(): void
+    {
+        $satu = QualityIndicatorCategory::query()->where('name', 'Kategori-Satu')->value('id');
+        $d = $this->indikator('Indikator-D', self::DEP_ID, QualityIndicatorCategory::findOrFail($satu));
+
+        // Rata-rata rasio harian = (50 + 90) / 2 = 70; ΣN/ΣD = 91 / 102 × 100 = 89,22.
+        $this->record($d, '2026-01-05', 'approved', 1, 2);
+        $this->record($d, '2026-01-06', 'approved', 90, 100);
+
+        Livewire::actingAs($this->createUser())
+            ->test(DashboardMutu::class)
+            ->set('tglAwal', '2026-01-01')
+            ->set('tglAkhir', '2026-01-31')
+            ->call('loadProperties')
+            ->assertViewHas('averageAchievement', 89.22)
+            ->assertDispatchedBrowserEvent('update-chart-per-dept', [
+                'labels' => ['Bagian IT/Programer/EDP'],
+                'data'   => [89.22],
+            ])
+            ->assertSee('89.22%');
+    }
+
+    public function test_indikator_dengan_total_denominator_nol_tidak_ikut_dirata_rata(): void
+    {
+        $satu = QualityIndicatorCategory::query()->where('name', 'Kategori-Satu')->value('id');
+        $kategori = QualityIndicatorCategory::findOrFail($satu);
+
+        $this->record($this->indikator('Indikator-E', self::DEP_ID, $kategori), '2026-01-05', 'approved', 3, 4);
+        $this->record($this->indikator('Indikator-F', self::DEP_ID, $kategori), '2026-01-05', 'approved', 0, 0);
+
+        Livewire::actingAs($this->createUser())
+            ->test(DashboardMutu::class)
+            ->set('tglAwal', '2026-01-01')
+            ->set('tglAkhir', '2026-01-31')
+            ->call('loadProperties')
+            ->assertViewHas('averageAchievement', 75.0)
+            ->assertDispatchedBrowserEvent('update-chart-per-kategori', [
+                'labels' => ['Kategori-Satu'],
+                'data'   => [75.0],
+            ]);
     }
 }
