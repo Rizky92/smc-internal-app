@@ -10,8 +10,9 @@ return new class extends Migration
 {
     /**
      * Aditif: hanya menambah kolom nullable. `standard` tidak diubah agar `mutu:audit-profil` tetap valid
-     * sebelum dan sesudah migrasi. `target_operator` sengaja tidak diisi (tidak ada default ≥); arah
-     * target dipastikan bersama Komite Mutu saat rollout.
+     * sebelum dan sesudah migrasi. `target_operator` hanya diisi bila teks standar menulis arah secara
+     * eksplisit (≥, >=, ≤, <=, "minimal", "maksimal"); tidak ada default ≥. Sisanya dipastikan bersama
+     * Komite Mutu saat rollout dan muncul di audit.
      */
     public function up(): void
     {
@@ -27,10 +28,13 @@ return new class extends Migration
             ->orderBy('id')
             ->get()
             ->each(function (object $profile) use ($db): void {
-                $value = StandardParser::parse($profile->standard);
+                $target = array_filter([
+                    'target_value'    => StandardParser::parse($profile->standard),
+                    'target_operator' => StandardParser::parseOperator($profile->standard),
+                ], fn ($value): bool => $value !== null);
 
-                if ($value !== null) {
-                    $db->table('quality_indicator_profiles')->where('id', $profile->id)->update(['target_value' => $value]);
+                if ($target) {
+                    $db->table('quality_indicator_profiles')->where('id', $profile->id)->update($target);
                 }
             });
     }
