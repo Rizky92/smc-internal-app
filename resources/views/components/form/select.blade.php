@@ -45,7 +45,7 @@
         @endif
 
         @foreach ($options as $key => $value)
-            <option value="{{ $key }}" {{ $this->$model === $key ? 'selected' : null }}>
+            <option value="{{ $key }}" {{ $model && $this->$model === $key ? 'selected' : null }}>
                 {{ $value }}
             </option>
         @endforeach
