@@ -153,6 +153,21 @@ class QualityIndicatorRecord extends Model
     }
 
     /**
+     * Capaian = ΣN / ΣD × 100 atas record di grup query, sesuai formula profil INM. Satu-satunya
+     * rumus capaian: Dashboard, snapshot analisis, dan export SIMAR memakai scope ini.
+     * Total denominator 0 menghasilkan NULL.
+     */
+    public function scopeSelectCapaian(Builder $query, string $as = 'capaian'): Builder
+    {
+        return $query->selectRaw(sprintf(
+            'SUM(%s) * 100 / NULLIF(SUM(%s), 0) as %s',
+            $this->qualifyColumn('numerator_value'),
+            $this->qualifyColumn('denominator_value'),
+            $as
+        ));
+    }
+
+    /**
      * @param  string|string[]  $depId
      */
     public function scopeDepartemen(Builder $query, $depId): Builder
