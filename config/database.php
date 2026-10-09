@@ -56,6 +56,10 @@ return [
             'collation'      => env('SIK_COLLATION', 'latin1_swedish_ci'),
             'prefix'         => '',
             'prefix_indexes' => true,
+            // Import Tarif bergantung pada strict mode: MySQL menolak enum, panjang, dan NOT NULL yang
+            // salah, lalu QueryErrorTranslator menerjemahkannya (docs/adr/0003). Tanpa strict mode,
+            // nilai salah dipotong atau dikosongkan tanpa error. Karena 'modes' diisi, Laravel memakai
+            // 'modes' dan mengabaikan nilai ini, jadi yang benar-benar menjaga adalah STRICT_TRANS_TABLES.
             'strict'         => true,
             'engine'         => null,
             'options'        => extension_loaded('pdo_mysql')
@@ -65,7 +69,7 @@ return [
                 ])
                 : [],
             'modes'          => [
-                'STRICT_TRANS_TABLES',
+                'STRICT_TRANS_TABLES', // wajib untuk Import Tarif, lihat 'strict' di atas
                 'ERROR_FOR_DIVISION_BY_ZERO',
                 'NO_ENGINE_SUBSTITUTION',
             ],
