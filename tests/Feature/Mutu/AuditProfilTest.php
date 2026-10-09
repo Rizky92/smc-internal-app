@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Mutu;
 
+use App\Models\Aplikasi\Permission;
+use App\Models\Aplikasi\Role;
 use App\Models\Quality\QualityIndicator;
 use App\Models\Quality\QualityIndicatorCategory;
 use App\Models\Quality\QualityIndicatorProfile;
@@ -186,6 +188,52 @@ class AuditProfilTest extends MutuTestCase
         $this->assertStringContainsString('Audit Tanpa Nilai', $tanpaNilai);
         $this->assertStringNotContainsString('Audit Tanpa Operator', $tanpaNilai);
         $this->assertStringNotContainsString('Audit Target Lengkap', $tanpaNilai);
+    }
+
+    private function indikatorDenganPic(string $title, ?string $pic, string $status = 'active'): void
+    {
+        QualityIndicatorFactory::new()->create([
+            'quality_indicator_profile_id' => QualityIndicatorProfileFactory::new()->create(['title' => $title]),
+            'pic_nik'                      => $pic,
+            'status'                       => $status,
+        ]);
+    }
+
+    public function test_tanpa_pemegang_izin_review_semua_indikator_aktif_tanpa_reviewer(): void
+    {
+        $this->indikatorDenganPic('Audit Reviewer Tidak Ada', null);
+        $this->indikatorDenganPic('Audit Reviewer Nonaktif', null, 'inactive');
+
+        $bagian = $this->bagian($this->audit(), 'Indikator tanpa reviewer yang memenuhi syarat');
+
+        $this->assertMatchesRegularExpression('/Audit Reviewer Tidak Ada.*tidak ada pemegang izin/', $bagian);
+        $this->assertStringNotContainsString('Audit Reviewer Nonaktif', $bagian);
+    }
+
+    public function test_pic_tidak_dihitung_sebagai_reviewer_indikatornya_sendiri(): void
+    {
+        $this->createUser('MUTU-KOMITE-01', ['mutu.review-analisis.approve']);
+
+        $this->indikatorDenganPic('Audit Reviewer Hanya PIC', 'MUTU-KOMITE-01');
+        $this->indikatorDenganPic('Audit Reviewer Ada', 'MUTU-PIC-LAIN');
+
+        $bagian = $this->bagian($this->audit(), 'Indikator tanpa reviewer yang memenuhi syarat');
+
+        $this->assertMatchesRegularExpression('/Audit Reviewer Hanya PIC.*hanya PIC/', $bagian);
+        $this->assertStringNotContainsString('Audit Reviewer Ada', $bagian);
+    }
+
+    public function test_izin_review_lewat_role_ikut_dihitung(): void
+    {
+        $role = Role::create(['name' => 'Komite Mutu Audit', 'guard_name' => 'web']);
+        $role->givePermissionTo(Permission::firstOrCreate(['name' => 'mutu.review-analisis.approve', 'guard_name' => 'web']));
+        $this->createUser('MUTU-KOMITE-02', [])->assignRole($role);
+
+        $this->indikatorDenganPic('Audit Reviewer Lewat Role', null);
+
+        $bagian = $this->bagian($this->audit(), 'Indikator tanpa reviewer yang memenuhi syarat');
+
+        $this->assertStringNotContainsString('Audit Reviewer Lewat Role', $bagian);
     }
 
     public function test_audit_tidak_mengubah_data(): void

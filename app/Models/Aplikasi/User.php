@@ -7,6 +7,7 @@ use App\Database\Eloquent\Authenticatable;
 use App\Traits\Override\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Lab404\Impersonate\Models\Impersonate;
@@ -98,6 +99,41 @@ class User extends Authenticatable
         return $query->when($hakAkses, fn (Builder $q): Builder => $q
             ->whereRaw("exists ({$sqlHasRoles})")
             ->orWhereRaw("exists ({$sqlHasPermissions})"));
+    }
+
+    /**
+     * NIK user yang memegang izin, langsung atau lewat role. Izin ada di mysql_smc sedangkan user di
+     * mysql_sik, jadi dicari bertahap (tanpa whereHas lintas koneksi). Role superadmin yang lolos lewat
+     * Gate::before tidak dihitung: ia bukan pemegang izin secara organisasi.
+     *
+     * @return Collection<int, string>
+     */
+    public static function nikPemegangIzin(string $permission): Collection
+    {
+        $smc = DB::connection('mysql_smc');
+        $tables = config('permission.table_names');
+        $modelType = (new static)->getMorphClass();
+
+        $permissionIds = $smc->table($tables['permissions'])->where('name', $permission)->pluck('id');
+
+        if ($permissionIds->isEmpty()) {
+            return collect();
+        }
+
+        $roleIds = $smc->table($tables['role_has_permissions'])->whereIn('permission_id', $permissionIds)->pluck('role_id');
+
+        $userIds = $smc->table($tables['model_has_permissions'])
+            ->where('model_type', $modelType)
+            ->whereIn('permission_id', $permissionIds)
+            ->pluck('model_id')
+            ->merge($smc->table($tables['model_has_roles'])->where('model_type', $modelType)->whereIn('role_id', $roleIds)->pluck('model_id'))
+            ->unique();
+
+        if ($userIds->isEmpty()) {
+            return collect();
+        }
+
+        return static::query()->whereIn('user.id_user', $userIds->values()->all())->pluck('nik')->unique()->values();
     }
 
     /**

@@ -143,6 +143,13 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'mutu.validasi-data.read']);
         Permission::create(['name' => 'mutu.validasi-data.approve']);
         Permission::create(['name' => 'mutu.validasi-data.reject']);
+        Permission::create(['name' => 'mutu.analisis.read']);
+        Permission::create(['name' => 'mutu.analisis.create']);
+        Permission::create(['name' => 'mutu.analisis.update']);
+        Permission::create(['name' => 'mutu.review-analisis.read']);
+        Permission::create(['name' => 'mutu.review-analisis.approve']);
+        Permission::create(['name' => 'mutu.review-analisis.request-revision']);
+        Permission::create(['name' => 'mutu.review-analisis.verify']);
 
         // Superadmin role name, bypasses all permissions
         $superadminRole = Role::create(['name' => config('permission.superadmin_name')]);

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Aplikasi\User;
 use App\Models\Kepegawaian\Departemen;
 use App\Models\Quality\QualityIndicator;
 use App\Models\Quality\QualityIndicatorCategory;
@@ -44,6 +45,7 @@ class AuditProfilMutu extends Command
         $this->indikatorTanpaPenanggungJawab();
         $this->indikatorTanpaPic();
         $this->indikatorDenganPicTidakAktif();
+        $this->indikatorTanpaReviewer();
 
         return Command::SUCCESS;
     }
@@ -250,6 +252,35 @@ class AuditProfilMutu extends Command
                     $indicator->pic_nik,
                     optional($indicator->pic)->nama ?? '-',
                     optional($indicator->pic)->stts_aktif ?? 'tidak ditemukan',
+                ])
+        );
+    }
+
+    /**
+     * Indikator aktif yang tidak bisa direview siapa pun karena satu-satunya pemegang izin review adalah PIC-nya
+     * sendiri, atau belum ada pemegang izin sama sekali.
+     */
+    private function indikatorTanpaReviewer(): void
+    {
+        $this->judul('Indikator tanpa reviewer yang memenuhi syarat');
+
+        $izin = 'mutu.review-analisis.approve';
+        $pemegangIzin = User::nikPemegangIzin($izin);
+
+        $this->tabel(
+            ['ID indikator', 'Judul profil', 'Unit', 'NIK PIC', 'Keterangan'],
+            QualityIndicator::query()
+                ->with('profile')
+                ->where('status', 'active')
+                ->orderBy('id')
+                ->get()
+                ->filter(fn (QualityIndicator $indicator): bool => $indicator->reviewerMemenuhiSyarat($pemegangIzin)->isEmpty())
+                ->map(fn (QualityIndicator $indicator): array => [
+                    $indicator->id,
+                    $this->singkat(optional($indicator->profile)->title),
+                    $this->departemen($indicator->dep_id),
+                    $indicator->pic_nik ?: '-',
+                    $pemegangIzin->isEmpty() ? "tidak ada pemegang izin {$izin}" : 'hanya PIC yang memegang izin review',
                 ])
         );
     }
