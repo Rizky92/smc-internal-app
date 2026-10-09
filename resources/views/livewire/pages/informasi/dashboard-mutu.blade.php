@@ -203,7 +203,7 @@
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card border-left-success">
+            <div class="card border-left-secondary">
                 <div class="card-body">
                     <div class="text-xs text-muted text-uppercase font-weight-bold">Indikator Tercapai</div>
 
@@ -216,7 +216,7 @@
                             ->implode('; ');
                     @endphp
 
-                    <div class="h3 mb-0 font-weight-bold {{ $ringkasanTercapai['persen'] === null ? 'text-muted' : 'text-success' }} mt-2">
+                    <div class="h3 mb-0 font-weight-bold {{ $ringkasanTercapai['persen'] === null ? 'text-muted' : 'text-dark' }} mt-2">
                         {{ $ringkasanTercapai['persen'] === null ? '-' : $ringkasanTercapai['persen'] . '%' }}
                     </div>
                     <div class="text-xs text-muted">{{ $keterangan }}</div>
