@@ -269,7 +269,11 @@ class PenagihanPiutang extends Model
         return $query
             ->selectRaw($sqlSelect, [$tglAkhir, $tglAkhir, $tglAkhir, $tglAkhir])
             ->withCasts([
-                'periode'       => 'int',
+                // periode is the bucket's name — 'periode_0_30' and so on — not a
+                // number. Cast to int it became 0 on every row, pluck() then
+                // collapsed all four buckets onto that one key, and the ageing
+                // summary showed nothing but zeroes while the sums behind it were
+                // right all along.
                 'total_piutang' => 'float',
                 'total_cicilan' => 'float',
                 'sisa_piutang'  => 'float',

@@ -35,11 +35,7 @@
             }
         </style>
 
-        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
-
         @stack('css')
-
-        @livewireStyles
     </head>
 
     <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed bg-light">
@@ -87,7 +83,5 @@
         <script src="{{ asset('js/jquery.overlayScrollbars.min.js') }}"></script>
         <script src="{{ asset('js/adminlte.min.js') }}"></script>
         @stack('js')
-
-        @livewireScripts
     </body>
 </html>

@@ -23,11 +23,16 @@ abstract class ExcelExportJob implements ShouldQueue
 
     public int $tries = 1;
 
-    protected int $userId;
+    /**
+     * The requesting user's NIK, as Khanza stores it. A string, not an int: NIKs
+     * such as "A0419" exist, and an int parameter refused them outright, so the
+     * export could not even be queued for those users.
+     */
+    protected string $userId;
 
     protected array $payload;
 
-    public function __construct(int $userId, array $payload)
+    public function __construct(string $userId, array $payload)
     {
         $this->userId = $userId;
         $this->payload = $payload;

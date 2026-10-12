@@ -2,11 +2,11 @@
     @push('js')
         <script>
             $('#modal-import-tarif-ralan').on('shown.bs.modal', (e) => {
-                Livewire.emit('tarif-ralan.show-modal');
+                Livewire.dispatch('tarif-ralan.show-modal');
             });
 
             $('#modal-import-tarif-ralan').on('hide.bs.modal', (e) => {
-                Livewire.emit('tarif-ralan.hide-modal');
+                Livewire.dispatch('tarif-ralan.hide-modal');
             });
 
             $(document).on('data-saved', () => {

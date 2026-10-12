@@ -12,20 +12,29 @@
             <directory suffix="Test.php">./tests/Feature</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
+    <source>
+        <include>
             <directory suffix=".php">./app</directory>
-        </whitelist>
-    </filter>
+        </include>
+    </source>
     <php>
         <server name="APP_ENV" value="testing"/>
         <server name="BCRYPT_ROUNDS" value="4"/>
         <server name="CACHE_DRIVER" value="array"/>
-        <!-- <server name="DB_CONNECTION" value="sqlite"/> -->
-        <!-- <server name="DB_DATABASE" value=":memory:"/> -->
         <server name="MAIL_MAILER" value="array"/>
         <server name="QUEUE_CONNECTION" value="sync"/>
         <server name="SESSION_DRIVER" value="array"/>
         <server name="TELESCOPE_ENABLED" value="false"/>
+
+        <!--
+            Test schemas, isolated from the databases a developer actually works against.
+            SIAP does not own SIMRS Khanza's schema and cannot rebuild it from migrations, so
+            sik_test is a structure-only copy of it. Charsets mirror the real schemas (latin1)
+            because collation affects comparison results.
+
+            TestEnvironmentTest enforces the "_test" suffix; do not point these at sik/smc_old.
+        -->
+        <server name="SIK_DATABASE" value="sik_test"/>
+        <server name="SMC_DATABASE" value="smc_test"/>
     </php>
 </phpunit>

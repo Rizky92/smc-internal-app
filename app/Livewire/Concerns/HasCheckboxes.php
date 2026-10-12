@@ -9,11 +9,6 @@ trait HasCheckboxes
 
     abstract public function keyFormat(): string;
 
-    public function bootHasCheckboxes(): void
-    {
-        //
-    }
-
     public function mountHasCheckboxes(): void
     {
         $this->defaultValueHasCheckboxes();
@@ -25,14 +20,14 @@ trait HasCheckboxes
             $this->selectedItems = $data();
         }
 
-        $this->emit('$refresh');
+        $this->dispatch('$refresh');
     }
 
     public function deselectAll()
     {
         $this->selectedItems = [];
 
-        $this->emit('$refresh');
+        $this->dispatch('$refresh');
     }
 
     protected function defaultValueHasCheckboxes(): void

@@ -2,11 +2,11 @@
     @push('js')
         <script>
             $('#modal-import-tarif-lab').on('shown.bs.modal', (e) => {
-                Livewire.emit('tarif-lab.show-modal');
+                Livewire.dispatch('tarif-lab.show-modal');
             });
 
             $('#modal-import-tarif-lab').on('hide.bs.modal', (e) => {
-                Livewire.emit('tarif-lab.hide-modal');
+                Livewire.dispatch('tarif-lab.hide-modal');
             });
 
             $(document).on('data-saved', () => {

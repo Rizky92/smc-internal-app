@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
@@ -43,18 +44,11 @@ class RKATInputPelaporan extends Component
     /** @var TemporaryUploadedFile|null */
     public $fileImport;
 
-    /** @var mixed */
-    protected $listeners = [
-        'prepare',
-        'pelaporan-rkat.hide-modal' => 'hideModal',
-        'pelaporan-rkat.show-modal' => 'showModal',
-    ];
-
     protected function rules(): array
     {
         $rules = collect([
             'anggaranBidangId'    => ['required', 'exists:anggaran_bidang,id'],
-            'tglPakai'            => ['required', 'date'],
+            'tglPakai'            => ['required', 'date', $this->diTahunPenetapan()],
             'keterangan'          => ['required', 'string'],
             'detail'              => ['array'],
             'detail.*.keterangan' => ['nullable', 'string'],
@@ -75,12 +69,63 @@ class RKATInputPelaporan extends Component
 
     public function hydrate(): void
     {
-        $this->emit('select2.hydrate');
+        $this->dispatch('select2.hydrate');
     }
 
+    /**
+     * A Pemakaian Anggaran is dated within the year of its Penetapan RKAT.
+     */
+    private function diTahunPenetapan(): \Closure
+    {
+        return function (string $attribute, mixed $value, \Closure $fail): void {
+            $tahunPenetapan = AnggaranBidang::query()
+                ->whereKey($this->anggaranBidangId)
+                ->value('tahun');
+
+            // No Penetapan chosen is anggaranBidangId's own error to report.
+            if ($tahunPenetapan === null || $this->tahunPakai() === null) {
+                return;
+            }
+
+            if ($this->tahunPakai() !== (int) $tahunPenetapan) {
+                $fail(sprintf('Tgl. pemakaian harus berada di tahun Penetapan RKAT yang dipilih (%d).', $tahunPenetapan));
+            }
+        };
+    }
+
+    private function tahunPakai(): ?int
+    {
+        // carbon() reads a blank value as now.
+        if (blank($this->tglPakai)) {
+            return null;
+        }
+
+        try {
+            return carbon($this->tglPakai)->year;
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+
+    /**
+     * The year of the tanggal pakai, which decides the Penetapan RKAT on offer.
+     * The Tahun RKAT only stands in while the date cannot be read.
+     */
     public function getTahunProperty(): int
     {
-        return app(RKATSettings::class)->tahun;
+        return $this->tahunPakai() ?? app(RKATSettings::class)->tahun;
+    }
+
+    public function updatedTglPakai(): void
+    {
+        $masihDitawarkan = AnggaranBidang::query()
+            ->whereKey($this->anggaranBidangId)
+            ->where('tahun', $this->tahun)
+            ->exists();
+
+        if (! $masihDitawarkan) {
+            $this->anggaranBidangId = -1;
+        }
     }
 
     public function getDataRKATPerBidangProperty(): Collection
@@ -107,8 +152,20 @@ class RKATInputPelaporan extends Component
         return view('livewire.pages.keuangan.modal.rkat-input-pelaporan');
     }
 
-    public function prepare(array $options): void
+    #[On('prepare')]
+    public function prepare(array $options = []): void
     {
+        // The "Laporan Baru" trigger dispatches prepare with no options at all
+        // (see rkat-pelaporan.blade.php's shown.bs.modal handler) to reset the
+        // form for a new report; reading tglPakai/keterangan out of an empty
+        // array below would leave them null instead of defaultValues()'s actual
+        // defaults, and detail would end up [] instead of one blank row.
+        if (empty($options)) {
+            $this->defaultValues();
+
+            return;
+        }
+
         $this->anggaranBidangId = $options['anggaranBidangId'] ?? -1;
         $this->pemakaianAnggaranId = $options['pemakaianAnggaranId'] ?? -1;
         $this->tglPakai = $options['tglPakai'];
@@ -135,8 +192,8 @@ class RKATInputPelaporan extends Component
         }
 
         if (user()->cannot('keuangan.rkat-pelaporan.create')) {
-            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->dispatchBrowserEvent('data-denied');
+            $this->dispatch('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatch('data-denied');
 
             return;
         }
@@ -154,8 +211,8 @@ class RKATInputPelaporan extends Component
             ]);
 
             $this->fileImport = null;
-            $this->dispatchBrowserEvent('data-saved');
-            $this->emit('flash.info', 'Data Pemakaian RKAT baru sedang diproses!');
+            $this->dispatch('data-saved');
+            $this->dispatch('flash.info', 'Data Pemakaian RKAT baru sedang diproses!');
         } else {
             try {
                 tracker_start();
@@ -173,11 +230,13 @@ class RKATInputPelaporan extends Component
 
                 tracker_end();
 
-                $this->dispatchBrowserEvent('data-saved');
-                $this->emit('flash.success', 'Data Pemakaian RKAT baru berhasil disimpan!');
+                $this->dispatch('data-saved');
+                $this->dispatch('flash.success', 'Data Pemakaian RKAT baru berhasil disimpan!');
             } catch (\Exception $e) {
-                $this->dispatchBrowserEvent('data-failed');
-                $this->emit('flash.success', 'Terjadi kegagalan pada saat menyimpan pemakaian RKAT!');
+                tracker_dispose('mysql_smc');
+
+                $this->dispatch('data-failed');
+                $this->dispatch('flash.error', 'Terjadi kegagalan pada saat menyimpan pemakaian RKAT!');
             }
         }
     }
@@ -186,11 +245,16 @@ class RKATInputPelaporan extends Component
     {
         if (! $this->isUpdating()) {
             $this->create();
+
+            // Without this the method carried on into the update path, where
+            // PemakaianAnggaran::find(-1) is null and ->update() on it is fatal.
+            // RKATInputPenetapan::update() returns here for the same reason.
+            return;
         }
 
         if (user()->cannot('keuangan.rkat-pelaporan.update')) {
-            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->dispatchBrowserEvent('data-denied');
+            $this->dispatch('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatch('data-denied');
 
             return;
         }
@@ -200,34 +264,47 @@ class RKATInputPelaporan extends Component
         /** @var PemakaianAnggaran */
         $pemakaianAnggaran = PemakaianAnggaran::find($this->pemakaianAnggaranId);
 
-        tracker_start('mysql_smc');
+        try {
+            tracker_start('mysql_smc');
 
-        $pemakaianAnggaran->update([
-            'judul'              => $this->keterangan,
-            'tgl_dipakai'        => $this->tglPakai,
-            'anggaran_bidang_id' => $this->anggaranBidangId,
-        ]);
+            // The lines are removed and written again, so the whole update has
+            // to succeed or fail together: a failed write must not leave the
+            // Pemakaian with no lines at all.
+            DB::connection('mysql_smc')->transaction(function () use ($pemakaianAnggaran) {
+                $pemakaianAnggaran->update([
+                    'judul'              => $this->keterangan,
+                    'tgl_dipakai'        => $this->tglPakai,
+                    'anggaran_bidang_id' => $this->anggaranBidangId,
+                ]);
 
-        // hapus data yang ada terlebih dahulu, lalu lakukan insert ulang
-        $pemakaianAnggaran
-            ->detail()
-            ->delete();
+                $pemakaianAnggaran
+                    ->detail()
+                    ->delete();
 
-        $pemakaianAnggaran
-            ->detail()
-            ->createMany($this->detail);
+                $pemakaianAnggaran
+                    ->detail()
+                    ->createMany($this->detail);
+            });
 
-        tracker_end('mysql_smc');
+            tracker_end('mysql_smc');
+        } catch (\Exception $e) {
+            tracker_dispose('mysql_smc');
 
-        $this->dispatchBrowserEvent('data-saved');
-        $this->emit('flash.success', 'Data Pemakaian RKAT baru berhasil diupdate!');
+            $this->dispatch('data-failed');
+            $this->dispatch('flash.error', 'Terjadi kegagalan pada saat mengubah pemakaian RKAT!');
+
+            return;
+        }
+
+        $this->dispatch('data-saved');
+        $this->dispatch('flash.success', 'Data Pemakaian RKAT baru berhasil diupdate!');
     }
 
     public function delete(): void
     {
         if (user()->cannot('keuangan.rkat-pelaporan.delete')) {
-            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->dispatchBrowserEvent('data-denied');
+            $this->dispatch('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatch('data-denied');
 
             return;
         }
@@ -240,8 +317,8 @@ class RKATInputPelaporan extends Component
 
         tracker_end('mysql_smc');
 
-        $this->dispatchBrowserEvent('data-saved');
-        $this->emit('flash.success', 'Data Pemakaian RKAT baru berhasil dihapus!');
+        $this->dispatch('data-saved');
+        $this->dispatch('flash.success', 'Data Pemakaian RKAT baru berhasil dihapus!');
     }
 
     public function addDetail(): void

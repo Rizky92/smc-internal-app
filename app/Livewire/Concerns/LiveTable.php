@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Concerns;
 
+use Livewire\Attributes\On;
 use Livewire\WithPagination;
 
 trait LiveTable
@@ -26,18 +27,12 @@ trait LiveTable
         'perpage'     => ['except' => 25],
     ];
 
-    public function initializeLiveTable(): void
-    {
-        $this->listeners = array_merge($this->listeners, [
-            'sortBy',
-        ]);
-    }
-
     public function mountLiveTable(): void
     {
         $this->defaultValuesLiveTable();
     }
 
+    #[On('sortBy')]
     public function sortBy(string $column, ?string $direction): void
     {
         switch ($direction) {
@@ -55,7 +50,7 @@ trait LiveTable
                 break;
         }
 
-        $this->emit('$refresh');
+        $this->dispatch('$refresh');
     }
 
     protected function defaultValuesLiveTable(): void

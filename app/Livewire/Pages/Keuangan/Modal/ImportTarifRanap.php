@@ -19,12 +19,6 @@ class ImportTarifRanap extends Component
     /** @var TemporaryUploadedFile|null */
     public $fileImport;
 
-    /** @var mixed */
-    protected $listeners = [
-        'tarif-ranap.hide-modal' => 'hideModal',
-        'tarif-ranap.show-modal' => 'showModal',
-    ];
-
     public function mount(): void
     {
         $this->defaultValues();
@@ -38,14 +32,14 @@ class ImportTarifRanap extends Component
     public function importData(): void
     {
         if (user()->cannot('keuangan.tarif-ranap.create')) {
-            $this->emit('flash.error', 'Anda tidak memiliki izin untuk mengimpor data tarif ranap.');
-            $this->dispatchBrowserEvent('data-denied');
+            $this->dispatch('flash.error', 'Anda tidak memiliki izin untuk mengimpor data tarif ranap.');
+            $this->dispatch('data-denied');
 
             return;
         }
 
         if (! $this->fileImport) {
-            $this->emit('flash.error', 'File import belum diunggah.');
+            $this->dispatch('flash.error', 'File import belum diunggah.');
 
             return;
         }
@@ -61,8 +55,8 @@ class ImportTarifRanap extends Component
             ->send(user());
 
         $this->fileImport = null;
-        $this->dispatchBrowserEvent('data-saved');
-        $this->emit('flash.info', 'Proses impor data tarif ranap telah dimulai, silahkan tunggu beberapa saat.');
+        $this->dispatch('data-saved');
+        $this->dispatch('flash.info', 'Proses impor data tarif ranap telah dimulai, silahkan tunggu beberapa saat.');
     }
 
     protected function defaultValues(): void

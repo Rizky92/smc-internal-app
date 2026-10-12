@@ -2,33 +2,40 @@
 
 namespace App\Livewire\Concerns;
 
+use Livewire\Attributes\On;
+
 trait DeferredModal
 {
     use DeferredLoading;
 
     public function mountDeferredModal(): void
     {
-        $this->listeners = array_merge($this->listeners, [
-            'showModal',
-            'hideModal',
-        ]);
+        //
     }
 
+    #[On('showModal')]
     public function showModal(): void
     {
         $this->loadProperties();
 
-        $this->dispatchBrowserEvent('modal-loaded');
+        $this->dispatch('modal-loaded');
     }
 
+    /**
+     * Order matters here. resetFilters() ends in Filterable::searchData(), which
+     * lifts the deferral, so undefer() has to come after it — the other way
+     * round the modal stays loaded and re-runs its query on every later render
+     * of the page it sits on.
+     */
+    #[On('hideModal')]
     public function hideModal(): void
     {
-        $this->undefer();
-
         if (method_exists($this, 'resetFilters')) {
             $this->resetFilters();
         }
 
-        $this->dispatchBrowserEvent('modal-unloaded');
+        $this->undefer();
+
+        $this->dispatch('modal-unloaded');
     }
 }

@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
-use App\Http\Controllers\Auth\LogoutOtherSessionsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PrintLayoutController;
@@ -55,8 +54,6 @@ Route::get('/print-layout', [PrintLayoutController::class, 'index']);
 
 Route::get('/informasi-kamar', Informasi\InformasiKamar::class)->name('informasi-kamar');
 
-Route::get('/jadwal-dokter', Informasi\JadwalDokter::class);
-
 Route::get('admin/antrian-poli/{kd_poli}/{kd_dokter}', Antrian\AntrianPoli::class)
     ->name('admin.antrian-poli');
 
@@ -69,13 +66,6 @@ Route::post('login', [LoginController::class, 'store']);
 Route::post('logout', LogoutController::class)
     ->name('logout')
     ->middleware('auth');
-
-Route::get('logout-other-device', [LogoutOtherSessionsController::class, 'show'])
-    ->name('logout-other-device')
-    ->middleware('auth');
-
-Route::delete('logout-other-device', [LogoutOtherSessionsController::class, 'destroy'])
-    ->middleware(['auth', 'password.confirm']);
 
 Route::prefix('admin')
     ->middleware('auth')
@@ -388,7 +378,8 @@ Route::prefix('admin')
                     ->middleware('can:informasi.informasi-kamar.read');
 
                 Route::get('jadwal-dokter', Informasi\JadwalDokter::class)
-                    ->name('jadwal-dokter');
+                    ->name('jadwal-dokter')
+                    ->middleware('can:informasi.jadwal-dokter.read');
             });
 
         Route::prefix('logistik')

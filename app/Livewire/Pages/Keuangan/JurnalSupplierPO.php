@@ -88,7 +88,7 @@ class JurnalSupplierPO extends Component
         $this->resetPage('page_medis');
         $this->resetPage('page_nonmedis');
 
-        $this->emit('$refresh');
+        $this->dispatch('$refresh');
     }
 
     protected function dataPerSheet(): array

@@ -49,8 +49,8 @@ class BarangDapur extends Model
         $this->addSearchConditions([
             'dapurbarang.kode_brng',
             'dapurbarang.nama_brng',
-            "ifnull(dapursuplier.kode_suplier, ('-')",
-            "ifnull(dapursuplier.nama_suplier, ('-')",
+            "ifnull(dapursuplier.kode_suplier, '-')",
+            "ifnull(dapursuplier.nama_suplier, '-')",
             'kodesatuan.satuan',
         ]);
 

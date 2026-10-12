@@ -9,7 +9,9 @@ use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Bidang;
+use App\Models\Keuangan\RKAT\AnggaranBidang;
 use App\Models\Keuangan\RKAT\PemakaianAnggaran;
+use App\Settings\RKATSettings;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Collection;
@@ -42,7 +44,7 @@ class RKATPelaporan extends Component
         return [
             'tglAwal'  => ['except' => now()->startOfMonth()->toDateString(), 'as' => 'tgl_awal'],
             'tglAkhir' => ['except' => now()->endOfMonth()->toDateString(), 'as' => 'tgl_akhir'],
-            'tahun'    => ['except' => now()->format('Y')],
+            'tahun'    => ['except' => (string) app(RKATSettings::class)->tahun],
             'bidang'   => ['except' => -1],
         ];
     }
@@ -61,9 +63,7 @@ class RKATPelaporan extends Component
 
     public function getDataTahunProperty(): array
     {
-        return collect(range((int) now()->format('Y'), 2023, -1))
-            ->mapWithKeys(fn (int $v, int $_): array => [$v => $v])
-            ->all();
+        return AnggaranBidang::pilihanTahun();
     }
 
     public function getDataBidangProperty(): Collection
@@ -92,7 +92,7 @@ class RKATPelaporan extends Component
     {
         $this->tglAwal = now()->startOfMonth()->toDateString();
         $this->tglAkhir = now()->endOfMonth()->toDateString();
-        $this->tahun = now()->format('Y');
+        $this->tahun = (string) app(RKATSettings::class)->tahun;
         $this->bidang = -1;
     }
 

@@ -22,6 +22,12 @@ class AntreanOnsite extends Model
 
     public $timestamps = false;
 
+    protected $searchColumns = [
+        'nomor',
+        'no_rawat',
+        'no_rkm_medis',
+    ];
+
     /**
      * @psalm-return Builder<\Illuminate\Database\Eloquent\Model>
      */

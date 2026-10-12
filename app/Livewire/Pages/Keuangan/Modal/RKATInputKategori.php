@@ -6,6 +6,7 @@ use App\Livewire\Concerns\DeferredModal;
 use App\Livewire\Concerns\Filterable;
 use App\Models\Keuangan\RKAT\Anggaran;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class RKATInputKategori extends Component
@@ -22,13 +23,6 @@ class RKATInputKategori extends Component
     /** @var string */
     public $deskripsi;
 
-    /** @var mixed */
-    protected $listeners = [
-        'prepare',
-        'kategori-rkat.show-modal' => 'showModal',
-        'kategori-rkat.hide-modal' => 'hideModal',
-    ];
-
     public function mount(): void
     {
         $this->defaultValues();
@@ -39,6 +33,7 @@ class RKATInputKategori extends Component
         return view('livewire.pages.keuangan.modal.rkat-input-kategori');
     }
 
+    #[On('prepare')]
     public function prepare(int $id = -1, string $nama = '', string $deskripsi = ''): void
     {
         $this->anggaranId = $id;
@@ -55,8 +50,8 @@ class RKATInputKategori extends Component
         }
 
         if (user()->cannot('keuangan.rkat-kategori.create')) {
-            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->dispatchBrowserEvent('data-denied');
+            $this->dispatch('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini!');
+            $this->dispatch('data-denied');
 
             return;
         }
@@ -70,15 +65,15 @@ class RKATInputKategori extends Component
 
         tracker_end();
 
-        $this->dispatchBrowserEvent('data-saved');
-        $this->emit('flash.success', 'Anggaran baru berhasil ditambahkan!');
+        $this->dispatch('data-saved');
+        $this->dispatch('flash.success', 'Anggaran baru berhasil ditambahkan!');
     }
 
     public function update(): void
     {
         if (user()->cannot('keuangan.rkat-kategori.update')) {
-            $this->dispatchBrowserEvent('data-denied');
-            $this->emit('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini.');
+            $this->dispatch('data-denied');
+            $this->dispatch('flash.error', 'Anda tidak diizinkan untuk melakukan tindakan ini.');
 
             return;
         }
@@ -86,8 +81,8 @@ class RKATInputKategori extends Component
         $anggaran = Anggaran::find($this->anggaranId);
 
         if (! $anggaran) {
-            $this->dispatchBrowserEvent('data-not-found');
-            $this->emit('flash.error', 'Tidak dapat menemukan data yang bisa diupdate. Silahkan coba kembali.');
+            $this->dispatch('data-not-found');
+            $this->dispatch('flash.error', 'Tidak dapat menemukan data yang bisa diupdate. Silahkan coba kembali.');
 
             return;
         }
@@ -101,8 +96,8 @@ class RKATInputKategori extends Component
 
         tracker_end();
 
-        $this->dispatchBrowserEvent('data-saved');
-        $this->emit('flash.success', 'Data anggaran berhasil diubah!');
+        $this->dispatch('data-saved');
+        $this->dispatch('flash.success', 'Data anggaran berhasil diubah!');
     }
 
     public function isUpdating(): bool

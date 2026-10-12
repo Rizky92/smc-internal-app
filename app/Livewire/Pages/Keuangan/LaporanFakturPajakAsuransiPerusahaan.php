@@ -337,7 +337,7 @@ class LaporanFakturPajakAsuransiPerusahaan extends Component
         $this->updateHargaObat();
 
         $this->isDeferred = true;
-        $this->forgetComputed(['dataLaporanFakturPajak', 'dataDetailFakturPajak']);
+        unset($this->dataLaporanFakturPajak, $this->dataDetailFakturPajak);
     }
 
     protected function updateHargaObat(): void

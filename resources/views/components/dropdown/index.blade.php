@@ -22,11 +22,11 @@
 
                 buttonComponent.data('toggle', 'dropdown');
 
-                Livewire.hook('element.updating', (from, to, component) => {
+                Livewire.hook('morph.updating', ({ el, toEl, component }) => {
                     buttonComponent.dropdown('dispose');
                 });
 
-                Livewire.hook('element.updated', (el, component) => {
+                Livewire.hook('morph.updated', ({ el, component }) => {
                     buttonComponent.dropdown();
                 });
             });

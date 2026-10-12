@@ -103,7 +103,7 @@
                                             class="form-control text-sm m-0"
                                             style="width: 9rem; height: 1.4rem; padding: 0 0.5rem; position: relative; z-index: 15"
                                             id="tagihanDipilih_{{ $idDataTagihan }}_diskon_piutang"
-                                            wire:model.defer="tagihanDipilih.{{ $dataTagihan }}.diskon_piutang"
+                                            wire:model="tagihanDipilih.{{ $dataTagihan }}.diskon_piutang"
                                             placeholder="{{ $item->diskon }}" />
                                     </div>
                                 </x-table.td>

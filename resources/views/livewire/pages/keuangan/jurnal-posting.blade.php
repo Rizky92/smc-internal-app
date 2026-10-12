@@ -9,7 +9,7 @@
                 <script>
                     function loadData(e) {
                         let { keterangan } = e.dataset
-                        @this.emit('prepare', { keterangan: keterangan })
+                        @this.dispatch('prepare', { keterangan: keterangan })
                         $('#modal-input-posting-jurnal').modal('show');
                     }
                 </script>

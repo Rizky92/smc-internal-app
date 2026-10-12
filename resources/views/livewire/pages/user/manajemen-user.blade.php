@@ -59,7 +59,13 @@
                     inputRolePermissions.each((i, el) => el.checked = permissions.find(v => v === el.value))
                     inputPermissions.each((i, el) => el.checked = permissions.find(v => v === el.value))
 
-                    @this.emit('user.prepare', nrp, nama, roles, permissions)
+                    // Wrapped as an object so PHP's named-argument spread of the dispatched
+                    // associative array binds to prepareUser's own parameter names - passed
+                    // as separate positional arguments, only the first (nrp) ever arrived:
+                    // Livewire's dispatch(component, name, params) has three fixed JS
+                    // parameters, and a JS function call with more arguments than that
+                    // silently drops the extras before anything is sent to the server.
+                    @this.dispatch('user.prepare', { nrp, nama, roles, permissions })
                 }
 
                 function clearData() {

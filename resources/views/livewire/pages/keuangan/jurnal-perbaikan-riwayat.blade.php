@@ -1,7 +1,8 @@
 <div wire:init="loadProperties">
     <x-flash />
 
-    <x-card use-default-filter use-loading>
+    {{-- No export is written for this page; see JurnalPerbaikanRiwayat::dataPerSheet(). --}}
+    <x-card use-default-filter :use-export="false" use-loading>
         <x-slot name="body">
             <x-table :sortColumns="$sortColumns" zebra hover sticky nowrap>
                 <x-slot name="columns">
@@ -25,13 +26,22 @@
                                 {{ $item->tgl_jurnal_diubah }}
                             </x-table.td>
                             <x-table.td>
-                                {{ $item->jurnal->keterangan }}
+                                {{--
+                                    jurnal_backup lives in mysql_smc and the journal in mysql_sik,
+                                    so no foreign key holds them together and the journal this row
+                                    records an edit to may since have been deleted.
+                                --}}
+                                {{ $item->jurnal?->keterangan }}
                             </x-table.td>
-                            <x-table.td-money :value="$item->jurnal->total_debet" />
-                            <x-table.td-money :value="$item->jurnal->total_kredit" />
+                            <x-table.td-money :value="$item->jurnal?->total_debet ?? 0" />
+                            <x-table.td-money :value="$item->jurnal?->total_kredit ?? 0" />
                             <x-table.td>{{ $item->nip }}</x-table.td>
                             <x-table.td>
-                                {{ $item->pegawai->nama }}
+                                {{--
+                                    nip is a plain string across the database boundary, so the
+                                    petugas may no longer exist in Khanza.
+                                --}}
+                                {{ $item->pegawai?->nama }}
                             </x-table.td>
                         </x-table.tr>
                     @empty

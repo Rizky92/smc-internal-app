@@ -123,12 +123,12 @@
     <script>
         document.getElementById('notification-icon').addEventListener('click', function (event) {
             event.preventDefault();
-            window.livewire.emit('toggleSidebar');
+            Livewire.dispatch('toggleSidebar');
         });
 
         document.getElementById('close-sidebar').addEventListener('click', function (event) {
             event.preventDefault();
-            window.livewire.emit('toggleSidebar');
+            Livewire.dispatch('toggleSidebar');
         });
     </script>
 </div>

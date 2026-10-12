@@ -5,6 +5,7 @@ namespace App\Models\Keuangan\RKAT;
 use App\Casts\Year;
 use App\Database\Eloquent\Model;
 use App\Models\Bidang;
+use App\Settings\RKATSettings;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -38,6 +39,25 @@ class AnggaranBidang extends Model
             SQL;
 
         return $query;
+    }
+
+    /**
+     * The years every RKAT page offers: those with a Penetapan RKAT, plus the
+     * Tahun RKAT and any $tambahan, newest first.
+     *
+     * @return array<int, int>
+     */
+    public static function pilihanTahun(int ...$tambahan): array
+    {
+        return static::query()
+            ->distinct()
+            ->pluck('tahun')
+            ->map(fn ($tahun): int => (int) $tahun)
+            ->push(app(RKATSettings::class)->tahun, ...$tambahan)
+            ->unique()
+            ->sortDesc()
+            ->mapWithKeys(fn (int $tahun): array => [$tahun => $tahun])
+            ->all();
     }
 
     public function anggaran(): BelongsTo

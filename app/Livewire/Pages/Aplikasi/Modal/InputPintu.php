@@ -12,6 +12,7 @@ use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class InputPintu extends Component
@@ -38,19 +39,6 @@ class InputPintu extends Component
     /** @var string|null */
     public $originalKodePintu;
 
-    /** @var mixed */
-    protected $listeners = [
-        'prepare',
-        'pintu.hide-modal' => 'hideModal',
-        'pintu.show-modal' => 'showModal',
-        // listeners for JS emitted events from select2
-        'inputPintu.setKodePintu'          => 'setKodePintu',
-        'inputPintu.setKodePoliklinik'     => 'setKodePoliklinik',
-        'inputPintu.setKodeDokter'         => 'setKodeDokter',
-        // emitted from select2 change (multiple select)
-        'inputPintu.setSelectedJadwal'     => 'setSelectedJadwal',
-    ];
-
     protected function rules(): array
     {
         $rules = collect([
@@ -66,7 +54,16 @@ class InputPintu extends Component
     /**
      * Handler for JS-emitted selected jadwal values (from select2).
      * Accepts an array of strings like ["KD_DOKTER|KD_POLI", ...] or a JSON string.
+     *
+     * Livewire 3 spreads an associative array dispatched from JS as PHP named
+     * arguments (plain ...$array semantics, nothing Livewire-specific), so the
+     * browser side wraps the payload as {data} to match this parameter name -
+     * without that wrapping, a lone string still binds correctly (dispatch()
+     * wraps a bare string as [string] before spreading), but an empty
+     * selection sends [] and spreads to zero arguments, leaving $data
+     * unresolvable.
      */
+    #[On('inputPintu.setSelectedJadwal')]
     public function setSelectedJadwal($data): void
     {
         if (is_string($data)) {
@@ -96,7 +93,7 @@ class InputPintu extends Component
 
     public function hydrate(): void
     {
-        $this->emit('select2.hydrate');
+        $this->dispatch('select2.hydrate');
     }
 
     public function getJadwalPraktikProperty(): Collection
@@ -113,28 +110,34 @@ class InputPintu extends Component
         return view('livewire.pages.aplikasi.modal.input-pintu');
     }
 
-    public function prepare(array $options): void
+    /**
+     * Fed by manajemen-pintu.blade.php's loadData(), which dispatches
+     * {kodePintu, kodePoliklinik, kodeDokter} - an associative array from JS,
+     * which Livewire 3 spreads as named PHP arguments. A single array
+     * $options parameter here never matched any of those names and always
+     * threw BindingResolutionException; kodePoliklinik/kodeDokter are
+     * accepted but unused; nothing dispatches them today.
+     */
+    #[On('prepare')]
+    public function prepare($kodePintu = null, $kodePoliklinik = null, $kodeDokter = null): void
     {
-        // Normalize incoming keys (JS may send kodePintu or kd_pintu)
-        $kd = $options['kd_pintu'] ?? $options['kodePintu'] ?? null;
-
         // If no kd provided, treat as create
-        if (empty($kd)) {
+        if (empty($kodePintu)) {
             $this->defaultValues();
 
             return;
         }
 
-        $this->originalKodePintu = $kd;
+        $this->originalKodePintu = $kodePintu;
 
         // Load pintu record to fill fields
-        $pintu = Pintu::query()->where('kd_pintu', $kd)->first();
+        $pintu = Pintu::query()->where('kd_pintu', $kodePintu)->first();
 
-        $this->kodePintu = $pintu->kd_pintu ?? $kd;
-        $this->namaPintu = $pintu->nm_pintu ?? ($options['nm_pintu'] ?? '');
+        $this->kodePintu = $pintu->kd_pintu ?? $kodePintu;
+        $this->namaPintu = $pintu->nm_pintu ?? '';
 
         // Load existing mappings and populate selectedJadwal as array of "kd_dokter|kd_poli"
-        $mappings = SetPintuSmc::query()->where('kd_pintu', $kd)->get(['kd_dokter', 'kd_poli']);
+        $mappings = SetPintuSmc::query()->where('kd_pintu', $kodePintu)->get(['kd_dokter', 'kd_poli']);
 
         $this->selectedJadwal = $mappings->map(fn ($m) => $m->kd_dokter.'|'.$m->kd_poli)->toArray();
 
@@ -145,15 +148,21 @@ class InputPintu extends Component
             $this->kodePoliklinik = $firstPoli;
         }
 
-        // Notify front-end to sync select2 value for selectedJadwal
-        $this->emit('inputPintu.syncSelectedJadwal', $this->selectedJadwal);
+        // Notify front-end to sync select2 value for selectedJadwal. Named so
+        // the dispatched array serializes as a JSON object ({selectedJadwal:
+        // [...]}) rather than a bare positional array - a lone positional arg
+        // here would arrive at Livewire.on()'s callback still wrapped in the
+        // params list ([[...]]), which jQuery's multi-select .val() can't
+        // match against any <option>, so the previously mapped doctor never
+        // showed as selected.
+        $this->dispatch('inputPintu.syncSelectedJadwal', selectedJadwal: $this->selectedJadwal);
     }
 
     public function update(): void
     {
         if (user()->cannot('antrean.manajemen-pintu.update')) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->dispatchBrowserEvent('data-denied');
+            $this->dispatch('data-denied');
 
             return;
         }
@@ -194,8 +203,8 @@ class InputPintu extends Component
 
             tracker_end('mysql_sik');
 
-            $this->dispatchBrowserEvent('data-saved');
-            $this->emit('flash.success', 'Data pintu berhasil diperbarui.');
+            $this->dispatch('data-saved');
+            $this->dispatch('flash.success', 'Data pintu berhasil diperbarui.');
             $this->defaultValues();
         } catch (Exception $e) {
             logger()->error('Gagal mengupdate Pintu: '.$e->getMessage(), ['exception' => $e, 'payload' => [
@@ -204,8 +213,8 @@ class InputPintu extends Component
                 'selectedJadwal' => $this->selectedJadwal,
             ]]);
 
-            $this->dispatchBrowserEvent('data-failed');
-            $this->emit('flash.error', "Terjadi kegagalan saat memperbarui data pintu: {$e->getMessage()}");
+            $this->dispatch('data-failed');
+            $this->dispatch('flash.error', "Terjadi kegagalan saat memperbarui data pintu: {$e->getMessage()}");
             $this->defaultValues();
         }
     }
@@ -214,7 +223,7 @@ class InputPintu extends Component
     {
         if (user()->cannot('antrean.manajemen-pintu.create')) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->dispatchBrowserEvent('data-denied');
+            $this->dispatch('data-denied');
 
             return;
         }
@@ -259,8 +268,8 @@ class InputPintu extends Component
 
             tracker_end('mysql_sik');
 
-            $this->dispatchBrowserEvent('data-saved');
-            $this->emit('flash.success', 'Data pintu berhasil disimpan.');
+            $this->dispatch('data-saved');
+            $this->dispatch('flash.success', 'Data pintu berhasil disimpan.');
             $this->defaultValues();
         } catch (Exception $e) {
             // Log full exception to storage/logs/laravel.log so we can inspect root cause
@@ -273,10 +282,10 @@ class InputPintu extends Component
                 ],
             ]);
 
-            $this->dispatchBrowserEvent('data-failed');
+            $this->dispatch('data-failed');
 
             // Surface the specific error message to the user (useful in dev). In production you may keep a generic message.
-            $this->emit('flash.error', "Terjadi kegagalan saat menyimpan data pintu: {$e->getMessage()}");
+            $this->dispatch('flash.error', "Terjadi kegagalan saat menyimpan data pintu: {$e->getMessage()}");
             $this->defaultValues();
         }
     }
@@ -285,14 +294,14 @@ class InputPintu extends Component
     {
         if (user()->cannot('antrean.manajemen-pintu.delete')) {
             $this->flashError('Anda tidak diizinkan untuk melakukan tindakan ini!');
-            $this->dispatchBrowserEvent('data-denied');
+            $this->dispatch('data-denied');
 
             return;
         }
 
         // Ensure we have a target to delete
         if (empty($this->originalKodePintu)) {
-            $this->emit('flash.error', 'Tidak ada data yang dipilih untuk dihapus.');
+            $this->dispatch('flash.error', 'Tidak ada data yang dipilih untuk dihapus.');
 
             return;
         }
@@ -310,8 +319,8 @@ class InputPintu extends Component
 
             tracker_end('mysql_sik');
 
-            $this->dispatchBrowserEvent('data-saved');
-            $this->emit('flash.success', 'Data pintu berhasil dihapus.');
+            $this->dispatch('data-saved');
+            $this->dispatch('flash.success', 'Data pintu berhasil dihapus.');
             $this->defaultValues();
         } catch (Exception $e) {
             logger()->error('Gagal menghapus Pintu: '.$e->getMessage(), [
@@ -319,8 +328,8 @@ class InputPintu extends Component
                 'payload'   => ['original' => $this->originalKodePintu],
             ]);
 
-            $this->dispatchBrowserEvent('data-failed');
-            $this->emit('flash.error', "Terjadi kegagalan saat menghapus data pintu: {$e->getMessage()}");
+            $this->dispatch('data-failed');
+            $this->dispatch('flash.error', "Terjadi kegagalan saat menghapus data pintu: {$e->getMessage()}");
             $this->defaultValues();
         }
     }

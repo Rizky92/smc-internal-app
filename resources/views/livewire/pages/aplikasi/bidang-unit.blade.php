@@ -13,7 +13,9 @@
                         name
                     } = e.dataset
 
-                    @this.emit('prepare', bidangId, parentId, name)
+                    // Wrapped as an object matching prepare()'s parameter names - see the
+                    // identical fix and full explanation in manajemen-user.blade.php.
+                    @this.dispatch('prepare', { bidangId, parentId, nama: name })
 
                     $('#modal-input-bidang-unit').modal('show')
                 }
@@ -26,7 +28,7 @@
             <x-row-col-flex>
                 <x-filter.button-reset-filters class="ml-auto" />
                 <x-filter.search class="ml-2" />
-                <x-button variant="primary" size="sm" title="Bidang Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-bidang-unit" class="btn-primary ml-3" />
+                <x-button variant="primary" size="sm" title="Bidang Baru" icon="fas fa-plus" data-toggle="modal" data-target="#modal-input-bidang-unit" data-action="create" class="btn-primary ml-3" />
             </x-row-col-flex>
         </x-slot>
         <x-slot name="body">

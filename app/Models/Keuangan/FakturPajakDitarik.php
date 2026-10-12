@@ -18,6 +18,13 @@ class FakturPajakDitarik extends Model
 
     public $timestamps = false;
 
+    protected $searchColumns = [
+        'no_rawat',
+        'no_rkm_medis',
+        'nama_pasien',
+        'kode_transaksi',
+    ];
+
     protected $fillable = [
         'no_rawat',
         'kode_transaksi',

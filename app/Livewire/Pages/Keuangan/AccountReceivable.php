@@ -226,7 +226,7 @@ class AccountReceivable extends Component
 
         $this->tagihanDipilih = [];
         $this->totalDibayar = 0;
-        $this->dispatchBrowserEvent('clear-selected');
+        $this->dispatch('clear-selected');
 
         $this->flashInfo('Validasi piutang sedang diproses!');
     }
