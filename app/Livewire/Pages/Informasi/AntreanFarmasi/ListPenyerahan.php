@@ -8,12 +8,7 @@ use Livewire\Component;
 
 class ListPenyerahan extends Component
 {
-    protected $listeners = ['marqueePenyerahanFinished' => 'refreshData'];
-
-    public function refreshData(): void
-    {
-        $this->emitSelf('$refresh');
-    }
+    protected $listeners = ['marqueePenyerahanFinished' => '$refresh'];
 
     public function getDataPenyerahanProperty()
     {
