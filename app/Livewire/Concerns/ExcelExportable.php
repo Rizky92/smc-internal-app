@@ -20,14 +20,6 @@ trait ExcelExportable
         '\\', '/', '?', '*', ':', '[', ']',
     ];
 
-    public function initializeExcelExportable(): void
-    {
-        $this->listeners = array_merge($this->listeners, [
-            'exportToExcel',
-            'beginExcelExport',
-        ]);
-    }
-
     /**
      * @return array<array-key, (\Closure(): \Illuminate\Database\Eloquent\Collection|Collection|LazyCollection|array)|Collection|Collection|array>
      */
@@ -61,11 +53,13 @@ trait ExcelExportable
         return $dataSheets;
     }
 
-    public function exportToExcel(): void
+    public function exportToExcel(): ?StreamedResponse
     {
-        $this->emit('flash.info', 'Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+        if (method_exists($this, 'flashInfo')) {
+            $this->flashInfo('Proses ekspor laporan dimulai! Silahkan tunggu beberapa saat. Mohon untuk tidak menutup halaman agar proses ekspor dapat berlanjut.');
+        }
 
-        $this->emit('beginExcelExport');
+        return $this->beginExcelExport();
     }
 
     public function beginExcelExport(): ?StreamedResponse
