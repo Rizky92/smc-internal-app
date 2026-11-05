@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\RekamMedis;
 
+use App\Jobs\ExportLaporanStatistikJob;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
@@ -9,6 +10,7 @@ use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Perawatan\RegistrasiPasien;
+use App\Notifications\Notification;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Str;
@@ -24,11 +26,20 @@ class LaporanStatistik extends Component
     use LiveTable;
     use MenuTracker;
 
+    /** @var int */
+    public $option;
+
     /** @var string */
     public $tglAwal;
 
     /** @var string */
     public $tglAkhir;
+
+    /** @var int */
+    private const EXCEL_EXPORT = 1;
+
+    /** @var int */
+    private const BACKGROUND_EXPORT = 2;
 
     protected function queryString(): array
     {
@@ -64,6 +75,36 @@ class LaporanStatistik extends Component
     {
         $this->tglAwal = now()->startOfWeek()->toDateString();
         $this->tglAkhir = now()->endOfWeek()->toDateString();
+    }
+
+    public function exportWithOption(int $option): void
+    {
+        $this->option = $option;
+
+        if ($this->option === self::EXCEL_EXPORT) {
+            $this->exportToExcel();
+        } elseif ($this->option === self::BACKGROUND_EXPORT) {
+            $this->exportToBackground();
+        }
+    }
+
+    public function exportToBackground(): void
+    {
+        $userId = user()->nik;
+
+        $payload = [
+            'tglAwal'  => $this->tglAwal,
+            'tglAkhir' => $this->tglAkhir,
+        ];
+
+        ExportLaporanStatistikJob::dispatch($userId, $payload);
+
+        Notification::make()
+            ->message('Export Laporan Statistik sedang berjalan')
+            ->info()
+            ->send(user());
+
+        $this->emit('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
     }
 
     /**
