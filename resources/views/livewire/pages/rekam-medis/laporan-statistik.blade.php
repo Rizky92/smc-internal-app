@@ -46,6 +46,7 @@
                     <x-table.th style="width: 10ch" title="ICD-10 Sekunder" />
                     <x-table.th style="width: 25ch" title="Diagnosa Utama" />
                     <x-table.th style="width: 25ch" title="Diagnosa Sekunder" />
+                    <x-table.th style="width: 50ch" title="ICD-9" />
                     <x-table.th style="width: 50ch" title="Tindakan Ralan" />
                     <x-table.th style="width: 50ch" title="Tindakan Ranap" />
                     <x-table.th style="width: 13ch" title="Lama Operasi" />
@@ -66,6 +67,7 @@
                             $ruangan = str($registrasi->ruangan)->split('/(; )/');
                             $icdDiagnosa = str($registrasi->icd_diagnosa)->split('/(; )/');
                             $diagnosa = str($registrasi->diagnosa)->split('/(; )/');
+                            $icd9 = str($registrasi->icd9_prosedur)->split('/(; )/');
                             $tindakanRalan = str($registrasi->nm_tindakan_ralan)->split('/(; )/');
                             $tindakanRanap = str($registrasi->nm_tindakan_ranap)->split('/(; )/');
                             $dokterPj = str($registrasi->dokter_pj)->split('/(; )/');
@@ -157,6 +159,14 @@
                                 @endforeach
                             </x-table.td>
                             <x-table.td>
+                                @foreach ($icd9 as $item)
+                                    {{ $item }}
+                                    @if (! $loop->last)
+                                        <br />
+                                    @endif
+                                @endforeach
+                            </x-table.td>
+                            <x-table.td>
                                 @foreach ($tindakanRalan as $item)
                                     {{ $item }}
                                     @if (! $loop->last)
@@ -212,7 +222,7 @@
                             </x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="37" padding />
+                        <x-table.tr-empty colspan="38" padding />
                     @endforelse
                 </x-slot>
             </x-table>
