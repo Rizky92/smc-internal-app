@@ -52,6 +52,7 @@
                     <x-table.th style="width: 13ch" title="Lama Operasi" />
                     <x-table.th style="width: 20ch" title="Rujukan Masuk" />
                     <x-table.th style="width: 30ch" title="DPJP Ranap" />
+                    <x-table.th style="width: 30ch" title="DPJP Anastesi" />
                     <x-table.th style="width: 8ch" title="Kelas" />
                     <x-table.th style="width: 30ch" title="Penjamin" />
                     <x-table.th style="width: 20ch" title="Status Bayar" />
@@ -71,6 +72,7 @@
                             $tindakanRalan = str($registrasi->nm_tindakan_ralan)->split('/(; )/');
                             $tindakanRanap = str($registrasi->nm_tindakan_ranap)->split('/(; )/');
                             $dokterPj = str($registrasi->dokter_pj)->split('/(; )/');
+                            $dpjpAnastesi = str($registrasi->dpjp_anastesi)->split('/(; )/');
                         @endphp
 
                         <x-table.tr>
@@ -197,6 +199,14 @@
                                 @endforeach
                             </x-table.td>
                             <x-table.td>
+                                @foreach ($dpjpAnastesi as $item)
+                                    {{ $item }}
+                                    @if (! $loop->last)
+                                        <br />
+                                    @endif
+                                @endforeach
+                            </x-table.td>
+                            <x-table.td>
                                 {{ $registrasi->kelas }}
                             </x-table.td>
                             <x-table.td>
@@ -222,7 +232,7 @@
                             </x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="38" padding />
+                        <x-table.tr-empty colspan="39" padding />
                     @endforelse
                 </x-slot>
             </x-table>
