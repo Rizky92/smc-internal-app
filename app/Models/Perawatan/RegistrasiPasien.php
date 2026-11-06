@@ -466,6 +466,7 @@ class RegistrasiPasien extends Model
             '-' as lama_operasi,
             rujuk_masuk.perujuk as rujukan_masuk,
             group_concat(distinct dokter_dpjp.nm_dokter separator '; ') as dokter_pj,
+            coalesce(dokter_anastesi.dpjp_anastesi, '-') as dpjp_anastesi,
             kamar.kelas as kelas,
             penjab.png_jawab as penjamin,
             reg_periksa.status_bayar as status_bayar,
@@ -498,6 +499,7 @@ class RegistrasiPasien extends Model
             'rujuk_masuk.perujuk',
             'dokter_dpjp.kd_dokter',
             'dokter_dpjp.nm_dokter',
+            'dokter_anastesi.dpjp_anastesi',
             'kamar.kelas',
             'penjab.png_jawab',
             'rujuk.rujuk_ke',
@@ -523,6 +525,14 @@ class RegistrasiPasien extends Model
             ->unionAll(TindakanRanapDokter::select(['no_rawat', 'kd_jenis_prw']))
             ->unionAll(TindakanRanapPerawat::select(['no_rawat', 'kd_jenis_prw']));
 
+        $dokterAnastesi = Operasi::query()
+            ->select(['operasi.no_rawat', DB::raw("group_concat(distinct dokter.nm_dokter separator '; ') as dpjp_anastesi")])
+            ->join('dokter', 'operasi.dokter_anestesi', '=', 'dokter.kd_dokter')
+            ->whereNotNull('operasi.dokter_anestesi')
+            ->whereRaw("trim(operasi.dokter_anestesi) <> ''")
+            ->whereRaw("trim(operasi.dokter_anestesi) <> '-'")
+            ->groupBy('operasi.no_rawat');
+
         return $query
             ->selectRaw($sqlSelect)
             ->withCasts(['kunjungan_ke' => 'int'])
@@ -534,6 +544,7 @@ class RegistrasiPasien extends Model
             ->leftJoinSub($rawatInap, 'rawat_inap', fn (JoinClause $join) => $join->on('reg_periksa.no_rawat', '=', 'rawat_inap.no_rawat'))
             ->leftJoin('dpjp_ranap', 'reg_periksa.no_rawat', '=', 'dpjp_ranap.no_rawat')
             ->leftJoin(DB::raw('dokter dokter_dpjp'), 'dpjp_ranap.kd_dokter', '=', 'dokter_dpjp.kd_dokter')
+            ->leftJoinSub($dokterAnastesi, 'dokter_anastesi', fn (JoinClause $join) => $join->on('reg_periksa.no_rawat', '=', 'dokter_anastesi.no_rawat'))
             ->leftJoin('kamar', 'rawat_inap.kd_kamar', '=', 'kamar.kd_kamar')
             ->leftJoin('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
             ->leftJoin('rujuk', 'reg_periksa.no_rawat', '=', 'rujuk.no_rawat')
