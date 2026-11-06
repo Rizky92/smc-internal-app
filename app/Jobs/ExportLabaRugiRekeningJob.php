@@ -13,6 +13,16 @@ class ExportLabaRugiRekeningJob extends ExcelExportJob
         return 'laba-rugi-rekening';
     }
 
+    protected function successMessage(): string
+    {
+        return 'Export Laba Rugi ready for download';
+    }
+
+    protected function failureMessage(): string
+    {
+        return 'Export Laba Rugi Failed';
+    }
+
     protected function columnHeaders(): array
     {
         return ['Unit', 'Dokter', 'Kode Akun', 'Nama Akun', 'Jenis', 'Debet', 'Kredit', 'Total'];
