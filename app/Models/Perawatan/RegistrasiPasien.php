@@ -458,6 +458,7 @@ class RegistrasiPasien extends Model
             rawat_inap.diagnosa_awal as diagnosa_awal,
             group_concat(distinct diagnosa_pasien.kd_penyakit order by diagnosa_pasien.prioritas asc separator '; ') as icd_diagnosa,
             group_concat(distinct trim(concat_ws(' - ', diagnosa_pasien.kd_penyakit, penyakit.nm_penyakit)) order by diagnosa_pasien.prioritas asc separator '; ') as diagnosa,
+            group_concat(distinct trim(concat_ws(' - ', prosedur_pasien.kode, icd9.deskripsi_pendek)) order by prosedur_pasien.prioritas asc, prosedur_pasien.kode asc separator '; ') as icd9_prosedur,
             group_concat(distinct perawatan_ralan.kd_jenis_prw separator '; ') as kd_tindakan_ralan,
             group_concat(distinct trim(concat_ws(' - ', perawatan_ralan.kd_jenis_prw, jns_perawatan.nm_perawatan)) separator '; ') as nm_tindakan_ralan,
             group_concat(distinct perawatan_ranap.kd_jenis_prw separator '; ') as kd_tindakan_ranap,
@@ -485,6 +486,8 @@ class RegistrasiPasien extends Model
             'rawat_inap.diagnosa_awal',
             'diagnosa_pasien.kd_penyakit',
             'penyakit.nm_penyakit',
+            'prosedur_pasien.kode',
+            'icd9.deskripsi_pendek',
             'perawatan_ralan.kd_jenis_prw',
             'jns_perawatan.nm_perawatan',
             'perawatan_ranap.kd_jenis_prw',
@@ -537,6 +540,8 @@ class RegistrasiPasien extends Model
             ->leftJoin('rujuk_masuk', 'reg_periksa.no_rawat', '=', 'rujuk_masuk.no_rawat')
             ->leftJoin('diagnosa_pasien', 'reg_periksa.no_rawat', '=', 'diagnosa_pasien.no_rawat')
             ->leftJoin('penyakit', 'diagnosa_pasien.kd_penyakit', '=', 'penyakit.kd_penyakit')
+            ->leftJoin('prosedur_pasien', 'reg_periksa.no_rawat', '=', 'prosedur_pasien.no_rawat')
+            ->leftJoin('icd9', 'prosedur_pasien.kode', '=', 'icd9.kode')
             ->leftJoinSub($perawatanRalan, 'perawatan_ralan', fn (JoinClause $join) => $join->on('reg_periksa.no_rawat', '=', 'perawatan_ralan.no_rawat'))
             ->leftJoin('jns_perawatan', 'perawatan_ralan.kd_jenis_prw', '=', 'jns_perawatan.kd_jenis_prw')
             ->leftJoinSub($perawatanRanap, 'perawatan_ranap', fn (JoinClause $join) => $join->on('reg_periksa.no_rawat', '=', 'perawatan_ranap.no_rawat'))
