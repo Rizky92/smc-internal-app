@@ -1,7 +1,24 @@
 <div>
     <x-flash />
 
-    <x-card use-default-filter use-loading>
+    <x-card use-loading>
+        <x-slot name="header">
+            <x-row-col-flex>
+                <x-filter.range-date />
+                <x-dropdown class="ml-auto" livewire split menu-position="right">
+                    <x-slot name="button" size="sm" variant="dark" outline title="Export Ke Excel" icon="fas fa-file-excel" wire:click.prevent="exportToExcel"></x-slot>
+                    <x-slot name="menu">
+                        <x-dropdown.item as="button" id="button-export-excel" title="Export Excel" wire:click.prevent="exportWithOption(1)" />
+                        <x-dropdown.item as="button" id="button-export-background" title="Export Background" wire:click.prevent="exportWithOption(2)" />
+                    </x-slot>
+                </x-dropdown>
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
+                <x-filter.select-perpage />
+                <x-filter.button-reset-filters class="ml-auto" />
+                <x-filter.search class="ml-2" />
+            </x-row-col-flex>
+        </x-slot>
         <x-slot name="body">
             <x-table zebra hover sticky nowrap style="width: 360rem">
                 <x-slot name="columns">
