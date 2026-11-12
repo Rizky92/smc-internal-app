@@ -138,6 +138,50 @@ return [
             ],
         ],
 
+        /*
+         * Koneksi baca ke sik khusus export background yang men-stream hasil
+         * query langsung ke xlsx.
+         *
+         * Unbuffered: tanpa ini PDO menarik seluruh result set (jutaan baris)
+         * ke memori PHP sebelum baris pertama bisa dibaca, bahkan lewat
+         * cursor(). Konsekuensinya, selama cursor masih terbuka koneksi ini
+         * tidak bisa dipakai untuk query lain, jadi jangan dipakai bersama.
+         *
+         * READ COMMITTED: pembacaan jurnal/detailjurnal menjadi consistent read
+         * tanpa lock, sehingga export yang berjalan menit-menitan tidak
+         * bertabrakan dengan penulisan jurnal oleh Khanza (lihat #248).
+         */
+        'mysql_sik_export' => [
+            'driver'          => 'mysql',
+            'url'             => env('SIK_URL'),
+            'host'            => env('SIK_HOST', '127.0.0.1'),
+            'port'            => env('SIK_PORT', '3306'),
+            'database'        => env('SIK_DATABASE'),
+            'username'        => env('SIK_USERNAME'),
+            'password'        => env('SIK_PASSWORD'),
+            'unix_socket'     => env('SIK_SOCKET'),
+            'charset'         => env('SIK_CHARSET', 'latin1'),
+            'collation'       => env('SIK_COLLATION', 'latin1_swedish_ci'),
+            'prefix'          => '',
+            'prefix_indexes'  => true,
+            'strict'          => true,
+            'engine'          => null,
+            'isolation_level' => 'READ COMMITTED',
+            'options'         => extension_loaded('pdo_mysql')
+                ? array_filter([
+                    \PDO::MYSQL_ATTR_SSL_CA              => env('MYSQL_ATTR_SSL_CA'),
+                    \PDO::ATTR_EMULATE_PREPARES          => true,
+                ]) + [
+                    \PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false,
+                ]
+                : [],
+            'modes'           => [
+                'STRICT_TRANS_TABLES',
+                'ERROR_FOR_DIVISION_BY_ZERO',
+                'NO_ENGINE_SUBSTITUTION',
+            ],
+        ],
+
         'mysql_sisro' => [
             'driver'         => 'mysql',
             'url'            => env('SISRO_URL'),
