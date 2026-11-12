@@ -16,6 +16,8 @@
 
     $livewire = ! is_null($model);
 
+    $selected = $livewire ? $this->$model : null;
+
     $isList = $options->isList();
 
     $options = $options
@@ -91,13 +93,13 @@
 }}>
     <select @if ($livewire) wire:model.defer="{{ $model }}" @endif id="{{ $id }}" name="{{ $name }}" class="form-control form-control-sm simple-select2-sm input-sm" autocomplete="off">
         @if ($placeholder)
-            <option disabled {{ $options->has($this->$model) ? null : 'selected' }}>
+            <option disabled {{ $livewire && $options->has($selected) ? null : 'selected' }}>
                 {{ $placeholder }}
             </option>
         @endif
 
         @foreach ($options->all() as $key => $value)
-            <option value="{{ $key }}" {{ $this->$model === $key ? 'selected' : null }}>
+            <option value="{{ $key }}" {{ $selected === $key ? 'selected' : null }}>
                 {{ $value }}
             </option>
         @endforeach
