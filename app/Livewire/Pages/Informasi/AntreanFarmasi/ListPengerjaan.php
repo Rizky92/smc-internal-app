@@ -8,12 +8,7 @@ use Livewire\Component;
 
 class ListPengerjaan extends Component
 {
-    protected $listeners = ['marqueePengerjaanFinished' => 'refreshData'];
-
-    public function refreshData(): void
-    {
-        $this->emitSelf('$refresh');
-    }
+    protected $listeners = ['marqueePengerjaanFinished' => '$refresh'];
 
     public function getDataPengerjaanProperty()
     {
