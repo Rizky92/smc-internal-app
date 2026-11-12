@@ -3,6 +3,7 @@
 namespace App\Jobs\Keuangan;
 
 use App\Exceptions\ImportTarifException;
+use App\Jobs\Keuangan\Concerns\ImportsTarifRows;
 use App\Models\Aplikasi\User;
 use App\Models\Keuangan\JenisPerawatan;
 use App\Models\Keuangan\KategoriPerawatan;
@@ -25,6 +26,7 @@ use Throwable;
 class ImportTarifRalanJob implements ShouldQueue
 {
     use Dispatchable;
+    use ImportsTarifRows;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
@@ -78,7 +80,7 @@ class ImportTarifRalanJob implements ShouldQueue
 
                 $headerMapping = [
                     'Kode Tindakan'         => 'kd_jenis_prw',
-                    'Nama Tnd/Prw/Tagihan'  => 'nama_tarif',
+                    'Nama Tnd/Prw/Tagihan'  => 'nm_perawatan',
                     'Kategori'              => 'kd_kategori',
                     'Jasa Sarana'           => 'material',
                     'BHP/Paket Obat'        => 'bhp',
@@ -109,17 +111,15 @@ class ImportTarifRalanJob implements ShouldQueue
                 $penjaminMap = Penjamin::query()->where('status', '1')->pluck('kd_pj')->flip();
                 $poliMap = Poliklinik::query()->pluck('kd_poli')->flip();
 
-                $rows = $reader->getRows();
-
-                foreach ($rows as $index => $row) {
-
-                    $line = $index + 2;
+                foreach ($this->dataRows($reader) as $line => $row) {
 
                     // Map UI headers to database keys
                     $data = [];
                     foreach ($headerMapping as $uiHeader => $dbKey) {
                         $data[$dbKey] = $row[$uiHeader] ?? null;
                     }
+
+                    $raw = $data;
 
                     if (! $kategoriMap->has($data['kd_kategori'])) {
                         throw new ImportTarifException("Baris {$line}: Kategori '{$data['kd_kategori']}' tidak ditemukan");
@@ -133,15 +133,7 @@ class ImportTarifRalanJob implements ShouldQueue
                         throw new ImportTarifException("Baris {$line}: Poli '{$data['kd_poli']}' tidak ditemukan");
                     }
 
-                    $data['material'] = parse_numeric($data['material'] ?? 0);
-                    $data['bhp'] = parse_numeric($data['bhp'] ?? 0);
-                    $data['tarif_tindakandr'] = parse_numeric($data['tarif_tindakandr'] ?? 0);
-                    $data['tarif_tindakanpr'] = parse_numeric($data['tarif_tindakanpr'] ?? 0);
-                    $data['kso'] = parse_numeric($data['kso'] ?? 0);
-                    $data['menejemen'] = parse_numeric($data['menejemen'] ?? 0);
-                    $data['total_byrdr'] = parse_numeric($data['total_byrdr'] ?? 0);
-                    $data['total_byrpr'] = parse_numeric($data['total_byrpr'] ?? 0);
-                    $data['total_byrdrpr'] = parse_numeric($data['total_byrdrpr'] ?? 0);
+                    $data = $this->parseAmounts($line, $data, $headerMapping, ['material', 'bhp', 'tarif_tindakandr', 'tarif_tindakanpr', 'kso', 'menejemen', 'total_byrdr', 'total_byrpr', 'total_byrdrpr']);
 
                     $calcTotalDr = $data['material'] + $data['bhp'] + $data['tarif_tindakandr'] + $data['kso'] + $data['menejemen'];
                     $calcTotalPr = $data['material'] + $data['bhp'] + $data['tarif_tindakanpr'] + $data['kso'] + $data['menejemen'];
@@ -172,7 +164,7 @@ class ImportTarifRalanJob implements ShouldQueue
                         JenisPerawatan::query()->updateOrCreate(
                             ['kd_jenis_prw' => $data['kd_jenis_prw']],
                             [
-                                'nm_perawatan'      => $data['nama_tarif'],
+                                'nm_perawatan'      => $data['nm_perawatan'],
                                 'material'          => $data['material'],
                                 'bhp'               => $data['bhp'],
                                 'tarif_tindakandr'  => $data['tarif_tindakandr'],
@@ -188,7 +180,7 @@ class ImportTarifRalanJob implements ShouldQueue
                                 'status'            => '1',
                             ]);
                     } catch (QueryException $e) {
-                        throw new ImportTarifException("Baris {$line}: Gagal menyimpan data ke database. Pastikan format data sudah benar.");
+                        throw $this->saveFailed($e, 'jns_perawatan', $line, $headerMapping, $raw);
                     }
                 }
 

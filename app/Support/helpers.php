@@ -370,58 +370,60 @@ if (! function_exists('attr')) {
 
 if (! function_exists('parse_numeric')) {
     /**
-     * Parse a numeric string that might contain thousands separators.
-     * Supports both Indonesian (1.500,00) and US (1,500.00) formats.
+     * Parse a rupiah amount from an import cell, Indonesian format only.
+     *
+     * Accepted: Excel numbers, blank or '-' (0), an optional Rp prefix (any case),
+     * thousands grouped by '.' or ' ' (one kind per value), a ',' decimal or a
+     * 1–2 digit '.' decimal when there is no grouping, and an optional ',-' suffix.
+     * A ',' followed by exactly 3 digits with no grouping (1,500) is ambiguous and
+     * rejected, as are negatives, letters and US format (1,500.50).
      *
      * @param  string|int|float|null  $value
+     *
+     * @throws \InvalidArgumentException
      */
     function parse_numeric($value): float
     {
-        if (is_numeric($value)) {
+        if (is_int($value) || is_float($value)) {
+            if ($value < 0) {
+                throw new \InvalidArgumentException("Nilai negatif tidak diperbolehkan: {$value}");
+            }
+
             return (float) $value;
         }
 
-        if (empty($value)) {
+        // Copy-pasted numbers often use NBSP / narrow NBSP, which trim() keeps
+        $str = trim(str_replace(["\u{00A0}", "\u{202F}"], ' ', (string) $value));
+
+        if ($str === '' || $str === '-') {
             return 0.0;
         }
 
-        // Remove currency symbols and other non-numeric chars except , and .
-        $value = preg_replace('/[^0-9,.]/', '', (string) $value);
+        $number = preg_replace(['/^rp\s?/i', '/,-$/'], '', $str);
 
-        $hasComma = strpos($value, ',') !== false;
-        $hasDot = strpos($value, '.') !== false;
-
-        if ($hasComma && $hasDot) {
-            if (strrpos($value, '.') > strrpos($value, ',')) {
-                // US: 1,500.00 -> 1500.00
-                return (float) str_replace(',', '', $value);
-            } else {
-                // ID: 1.500,00 -> 1500.00
-                return (float) str_replace(['.', ','], ['', '.'], $value);
-            }
+        // Grouped thousands: 1.500 / 1 500 / 1.500.000, optional ,decimal
+        if (preg_match('/^\d{1,3}(?:(?<sep>[. ])\d{3})(?:\k<sep>\d{3})*(?:,(?<dec>\d+))?$/', $number, $m)) {
+            return (float) (preg_replace('/[. ]/', '', explode(',', $number)[0]).(isset($m['dec']) ? '.'.$m['dec'] : ''));
         }
 
-        if ($hasComma) {
-            // Only comma: 1,500 could be 1500 (ID) or 1.5 (US)
-            // Given Indonesian context, it's more likely a decimal if it has 2 digits after,
-            // or a thousand separator if it has 3 digits after.
-            // But in ID, comma is always decimal.
-            return (float) str_replace(',', '.', $value);
-        }
-
-        if ($hasDot) {
-            // Only dot: 1.500 could be 1.5 (US) or 1500 (ID)
-            // If it has 3 digits after the dot, it's very likely a thousand separator in ID.
-            $parts = explode('.', $value);
-            $lastPart = end($parts);
-
-            if (strlen($lastPart) === 3 && count($parts) > 1) {
-                return (float) str_replace('.', '', $value);
+        // Plain digits with ,decimal; ',' + exactly 3 digits is ambiguous (1,500)
+        if (preg_match('/^\d+(?:,(?<dec>\d+))?$/', $number, $m)) {
+            if (isset($m['dec']) && strlen($m['dec']) === 3) {
+                throw new \InvalidArgumentException("Format angka ambigu: {$str}");
             }
 
-            return (float) $value;
+            return (float) str_replace(',', '.', $number);
         }
 
-        return (float) $value;
+        // Plain digits with a 1–2 digit .decimal (1.5, 1.50)
+        if (preg_match('/^\d+\.\d{1,2}$/', $number)) {
+            return (float) $number;
+        }
+
+        if ($number === $str && is_numeric($number) && (float) $number >= 0 && $number[0] !== '-') {
+            return (float) $number;
+        }
+
+        throw new \InvalidArgumentException("Format angka tidak valid: {$str}");
     }
 }

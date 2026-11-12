@@ -3,6 +3,7 @@
 namespace App\Jobs\Keuangan;
 
 use App\Exceptions\ImportTarifException;
+use App\Jobs\Keuangan\Concerns\ImportsTarifRows;
 use App\Models\Aplikasi\User;
 use App\Models\Keuangan\PaketOperasi;
 use App\Models\RekamMedis\Penjamin;
@@ -23,6 +24,7 @@ use Throwable;
 class ImportTarifOperasiJob implements ShouldQueue
 {
     use Dispatchable;
+    use ImportsTarifRows;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
@@ -124,11 +126,7 @@ class ImportTarifOperasiJob implements ShouldQueue
 
                 $penjaminMap = Penjamin::query()->where('status', '1')->pluck('kd_pj')->flip();
 
-                $rows = $reader->getRows();
-
-                foreach ($rows as $index => $row) {
-
-                    $line = $index + 2;
+                foreach ($this->dataRows($reader) as $line => $row) {
 
                     // Map UI headers to database keys
                     $data = [];
@@ -136,38 +134,25 @@ class ImportTarifOperasiJob implements ShouldQueue
                         $data[$dbKey] = $row[$uiHeader] ?? null;
                     }
 
+                    $raw = $data;
+
+                    if ($this->blankCell($data['kelas'])) {
+                        $data['kelas'] = '-';
+                    }
+
                     if (! $penjaminMap->has($data['kd_pj'])) {
                         throw new ImportTarifException("Baris {$line}: Jenis Bayar '{$data['kd_pj']}' tidak ditemukan");
                     }
 
-                    $data['operator1'] = parse_numeric($data['operator1'] ?? 0);
-                    $data['operator2'] = parse_numeric($data['operator2'] ?? 0);
-                    $data['operator3'] = parse_numeric($data['operator3'] ?? 0);
-                    $data['asisten_operator1'] = parse_numeric($data['asisten_operator1'] ?? 0);
-                    $data['asisten_operator2'] = parse_numeric($data['asisten_operator2'] ?? 0);
-                    $data['asisten_operator3'] = parse_numeric($data['asisten_operator3'] ?? 0);
-                    $data['instrumen'] = parse_numeric($data['instrumen'] ?? 0);
-                    $data['dokter_anestesi'] = parse_numeric($data['dokter_anestesi'] ?? 0);
-                    $data['asisten_anestesi'] = parse_numeric($data['asisten_anestesi'] ?? 0);
-                    $data['asisten_anestesi2'] = parse_numeric($data['asisten_anestesi2'] ?? 0);
-                    $data['dokter_anak'] = parse_numeric($data['dokter_anak'] ?? 0);
-                    $data['perawaat_resusitas'] = parse_numeric($data['perawaat_resusitas'] ?? 0);
-                    $data['bidan'] = parse_numeric($data['bidan'] ?? 0);
-                    $data['bidan2'] = parse_numeric($data['bidan2'] ?? 0);
-                    $data['bidan3'] = parse_numeric($data['bidan3'] ?? 0);
-                    $data['perawat_luar'] = parse_numeric($data['perawat_luar'] ?? 0);
-                    $data['alat'] = parse_numeric($data['alat'] ?? 0);
-                    $data['sewa_ok'] = parse_numeric($data['sewa_ok'] ?? 0);
-                    $data['akomodasi'] = parse_numeric($data['akomodasi'] ?? 0);
-                    $data['bagian_rs'] = parse_numeric($data['bagian_rs'] ?? 0);
-                    $data['omloop'] = parse_numeric($data['omloop'] ?? 0);
-                    $data['omloop2'] = parse_numeric($data['omloop2'] ?? 0);
-                    $data['omloop3'] = parse_numeric($data['omloop3'] ?? 0);
-                    $data['omloop4'] = parse_numeric($data['omloop4'] ?? 0);
-                    $data['omloop5'] = parse_numeric($data['omloop5'] ?? 0);
-                    $data['sarpras'] = parse_numeric($data['sarpras'] ?? 0);
-                    $data['dokter_pjanak'] = parse_numeric($data['dokter_pjanak'] ?? 0);
-                    $data['dokter_umum'] = parse_numeric($data['dokter_umum'] ?? 0);
+                    $data = $this->parseAmounts($line, $data, $headerMapping, [
+                        'operator1', 'operator2', 'operator3',
+                        'asisten_operator1', 'asisten_operator2', 'asisten_operator3',
+                        'instrumen', 'dokter_anestesi', 'asisten_anestesi', 'asisten_anestesi2',
+                        'dokter_anak', 'perawaat_resusitas', 'bidan', 'bidan2', 'bidan3',
+                        'perawat_luar', 'alat', 'sewa_ok', 'akomodasi', 'bagian_rs',
+                        'omloop', 'omloop2', 'omloop3', 'omloop4', 'omloop5',
+                        'sarpras', 'dokter_pjanak', 'dokter_umum',
+                    ]);
 
                     try {
                         PaketOperasi::query()->updateOrCreate(
@@ -204,11 +189,11 @@ class ImportTarifOperasiJob implements ShouldQueue
                                 'dokter_pjanak'      => $data['dokter_pjanak'],
                                 'dokter_umum'        => $data['dokter_umum'],
                                 'kd_pj'              => $data['kd_pj'] ?? '-',
-                                'kelas'              => $data['kelas'] ?? '-',
+                                'kelas'              => $data['kelas'],
                                 'status'             => '1',
                             ]);
                     } catch (QueryException $e) {
-                        throw new ImportTarifException("Baris {$line}: Gagal menyimpan data ke database. Pastikan format data sudah benar.");
+                        throw $this->saveFailed($e, 'paket_operasi', $line, $headerMapping, $raw);
                     }
                 }
 
