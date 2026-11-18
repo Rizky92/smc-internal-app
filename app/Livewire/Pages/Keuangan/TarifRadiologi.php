@@ -10,6 +10,7 @@ use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Keuangan\JenisPerawatanRadiologi;
 use App\View\Components\BaseLayout;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -57,18 +58,19 @@ class TarifRadiologi extends Component
                 ->search($this->cari)
                 ->cursor()
                 ->map(fn (JenisPerawatanRadiologi $model): array => [
-                    $model->kd_jenis_prw,
-                    $model->nm_perawatan,
-                    $model->bagian_rs,
-                    $model->bhp,
-                    $model->tarif_perujuk,
-                    $model->tarif_tindakan_dokter,
-                    $model->tarif_tindakan_petugas,
-                    $model->kso,
-                    $model->menejemen,
-                    $model->total_byr,
-                    $model->png_jawab,
-                    $model->kelas,
+                    Str::transliterate($model->kd_jenis_prw),
+                    Str::transliterate($model->nm_perawatan),
+                    Str::transliterate($model->bagian_rs),
+                    Str::transliterate($model->bhp),
+                    Str::transliterate($model->tarif_perujuk),
+                    Str::transliterate($model->tarif_tindakan_dokter),
+                    Str::transliterate($model->tarif_tindakan_petugas),
+                    Str::transliterate($model->kso),
+                    Str::transliterate($model->menejemen),
+                    Str::transliterate($model->total_byr),
+                    Str::transliterate($model->kd_pj),
+                    Str::transliterate($model->png_jawab),
+                    Str::transliterate($model->kelas),
                 ]),
         ];
     }
@@ -86,6 +88,7 @@ class TarifRadiologi extends Component
             'KSO',
             'Menejemen',
             'Total Tarif',
+            'Kode Jenis Bayar',
             'Jenis Bayar',
             'Kelas',
         ];

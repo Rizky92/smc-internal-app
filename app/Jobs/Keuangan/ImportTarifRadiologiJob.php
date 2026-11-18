@@ -16,6 +16,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\FilesystemNotFoundException;
+use Livewire\TemporaryUploadedFile;
 use Spatie\SimpleExcel\SimpleExcelReader;
 use Throwable;
 
@@ -34,7 +35,7 @@ class ImportTarifRadiologiJob implements ShouldQueue
      * Create a new job instance.
      *
      * @param  array{
-     * fileImport: \Livewire\TemporaryUploadedFile,
+     * fileImport: TemporaryUploadedFile,
      * userId: string,
      * }  $params
      */

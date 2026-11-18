@@ -1,7 +1,24 @@
 <div>
     <x-flash />
 
-    <x-card use-default-filter use-loading>
+    <x-card use-loading>
+        <x-slot name="header">
+            <x-row-col-flex>
+                <x-filter.range-date />
+                <x-dropdown class="ml-auto" livewire split menu-position="right">
+                    <x-slot name="button" size="sm" variant="dark" outline title="Export Ke Excel" icon="fas fa-file-excel" wire:click.prevent="exportToExcel"></x-slot>
+                    <x-slot name="menu">
+                        <x-dropdown.item as="button" id="button-export-excel" title="Export Excel" wire:click.prevent="exportWithOption(1)" />
+                        <x-dropdown.item as="button" id="button-export-background" title="Export Background" wire:click.prevent="exportWithOption(2)" />
+                    </x-slot>
+                </x-dropdown>
+            </x-row-col-flex>
+            <x-row-col-flex class="mt-2">
+                <x-filter.select-perpage />
+                <x-filter.button-reset-filters class="ml-auto" />
+                <x-filter.search class="ml-2" />
+            </x-row-col-flex>
+        </x-slot>
         <x-slot name="body">
             <x-table zebra hover sticky nowrap style="width: 360rem">
                 <x-slot name="columns">
@@ -25,13 +42,17 @@
                     <x-table.th style="width: 15ch" title="Tgl. Pulang" />
                     <x-table.th style="width: 15ch" title="Jam Pulang" />
                     <x-table.th style="width: 18ch" title="Diagnosa Masuk" />
-                    <x-table.th style="width: 10ch" title="ICD-10" />
-                    <x-table.th style="width: 50ch" title="Diagnosa" />
+                    <x-table.th style="width: 10ch" title="ICD-10 Utama" />
+                    <x-table.th style="width: 10ch" title="ICD-10 Sekunder" />
+                    <x-table.th style="width: 25ch" title="Diagnosa Utama" />
+                    <x-table.th style="width: 25ch" title="Diagnosa Sekunder" />
+                    <x-table.th style="width: 50ch" title="ICD-9" />
                     <x-table.th style="width: 50ch" title="Tindakan Ralan" />
                     <x-table.th style="width: 50ch" title="Tindakan Ranap" />
                     <x-table.th style="width: 13ch" title="Lama Operasi" />
                     <x-table.th style="width: 20ch" title="Rujukan Masuk" />
                     <x-table.th style="width: 30ch" title="DPJP Ranap" />
+                    <x-table.th style="width: 30ch" title="DPJP Anastesi" />
                     <x-table.th style="width: 8ch" title="Kelas" />
                     <x-table.th style="width: 30ch" title="Penjamin" />
                     <x-table.th style="width: 20ch" title="Status Bayar" />
@@ -47,9 +68,11 @@
                             $ruangan = str($registrasi->ruangan)->split('/(; )/');
                             $icdDiagnosa = str($registrasi->icd_diagnosa)->split('/(; )/');
                             $diagnosa = str($registrasi->diagnosa)->split('/(; )/');
+                            $icd9 = str($registrasi->icd9_prosedur)->split('/(; )/');
                             $tindakanRalan = str($registrasi->nm_tindakan_ralan)->split('/(; )/');
                             $tindakanRanap = str($registrasi->nm_tindakan_ranap)->split('/(; )/');
                             $dokterPj = str($registrasi->dokter_pj)->split('/(; )/');
+                            $dpjpAnastesi = str($registrasi->dpjp_anastesi)->split('/(; )/');
                         @endphp
 
                         <x-table.tr>
@@ -112,7 +135,12 @@
                                 {{ $registrasi->diagnosa_awal }}
                             </x-table.td>
                             <x-table.td>
-                                @foreach ($icdDiagnosa as $item)
+                                @if ($icdDiagnosa->isNotEmpty())
+                                    {{ $icdDiagnosa->first() }}
+                                @endif
+                            </x-table.td>
+                            <x-table.td>
+                                @foreach ($icdDiagnosa->slice(1) as $item)
                                     {{ $item }}
                                     @if (! $loop->last)
                                         <br />
@@ -120,7 +148,20 @@
                                 @endforeach
                             </x-table.td>
                             <x-table.td>
-                                @foreach ($diagnosa as $item)
+                                @if ($diagnosa->isNotEmpty())
+                                    {{ $diagnosa->first() }}
+                                @endif
+                            </x-table.td>
+                            <x-table.td>
+                                @foreach ($diagnosa->slice(1) as $item)
+                                    {{ $item }}
+                                    @if (! $loop->last)
+                                        <br />
+                                    @endif
+                                @endforeach
+                            </x-table.td>
+                            <x-table.td>
+                                @foreach ($icd9 as $item)
                                     {{ $item }}
                                     @if (! $loop->last)
                                         <br />
@@ -158,6 +199,14 @@
                                 @endforeach
                             </x-table.td>
                             <x-table.td>
+                                @foreach ($dpjpAnastesi as $item)
+                                    {{ $item }}
+                                    @if (! $loop->last)
+                                        <br />
+                                    @endif
+                                @endforeach
+                            </x-table.td>
+                            <x-table.td>
                                 {{ $registrasi->kelas }}
                             </x-table.td>
                             <x-table.td>
@@ -183,7 +232,7 @@
                             </x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="33" padding />
+                        <x-table.tr-empty colspan="39" padding />
                     @endforelse
                 </x-slot>
             </x-table>

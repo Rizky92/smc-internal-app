@@ -16,7 +16,7 @@ trait Searchable
     }
 
     /**
-     * @param  Collection<int, string>|string[]  $columns
+     * @param  Collection<int,string>|array<array-key,string|array{bindings:string[],query:string}>  $columns
      * @return $this
      */
     public function addSearchConditions($columns)

@@ -55,7 +55,7 @@ abstract class ExcelExportJob implements ShouldQueue
             : $dataSheets[$firstSheet];
         $firstData = is_callable($firstData) ? $firstData() : $firstData;
 
-        $excel = ExcelExport::make($filename, $firstSheet)
+        $excel = ExcelExport::make($filename, $firstSheet, 'excel')
             ->setPageHeaders($this->pageHeaders());
 
         if (Arr::isAssoc($columnHeaders)) {
@@ -84,7 +84,7 @@ abstract class ExcelExportJob implements ShouldQueue
         $user = User::findByNRP($this->userId);
 
         Notification::make()
-            ->message('Export Laba Rugi ready for download')
+            ->message($this->successMessage())
             ->filePath($filePath)
             ->success()
             ->send($user);
@@ -95,8 +95,18 @@ abstract class ExcelExportJob implements ShouldQueue
         $user = User::findByNRP($this->userId);
 
         Notification::make()
-            ->message('Export Laba Rugi Failed')
+            ->message($this->failureMessage())
             ->danger()
             ->send($user);
+    }
+
+    protected function successMessage(): string
+    {
+        return 'Export data is ready for download';
+    }
+
+    protected function failureMessage(): string
+    {
+        return 'Export data failed';
     }
 }

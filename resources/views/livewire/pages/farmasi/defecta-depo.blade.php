@@ -11,7 +11,9 @@
                 <x-filter.label constant-width>Shift Kerja:</x-filter.label>
                 <x-filter.select model="shift" :options="['Pagi' => 'Pagi', 'Siang' => 'Siang', 'Malam' => 'Malam']" />
                 <x-filter.label class="ml-auto pr-3">Gudang:</x-filter.label>
-                <x-filter.select model="bangsal" :options="['IFA' => 'Farmasi A', 'IFG' => 'Farmasi IGD', 'IFI' => 'Farmasi Rawat Inap', 'KO' => 'Kamar Operasi OK']" />
+                <x-filter.select
+                    model="bangsal"
+                    :options="['IFA' => 'INSTALASI FARMASI A', 'AP' => 'APOTEK/INSTALASI FARMASI', 'IFC' => 'INSTALASI FARMASI CATHLAB', 'IFO' => 'INSTALASI FARMASI OK', 'KO' => 'KAMAR OPERASI OK', 'IFI' => 'INSTALASI FARMASI RAWAT INAP', 'IFG' => 'INSTALASI FARMASI IGD']" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
@@ -24,6 +26,7 @@
                 <x-slot name="columns">
                     <x-table.th name="kode_brng" title="Kode" />
                     <x-table.th name="nama_brng" title="Nama" />
+                    <x-table.th name="kategori" title="Kategori" />
                     <x-table.th name="satuan" title="Satuan" />
                     <x-table.th name="stok" title="Stok Gudang" />
                     <x-table.th name="jumlah_shift" :title="'Pemakaian per Shift ' . $this->shift" />
@@ -36,6 +39,7 @@
                         <x-table.tr>
                             <x-table.td>{{ $item->kode_brng }}</x-table.td>
                             <x-table.td>{{ $item->nama_brng }}</x-table.td>
+                            <x-table.td>{{ $item->kategori }}</x-table.td>
                             <x-table.td>{{ $item->satuan }}</x-table.td>
                             <x-table.td>{{ $item->stok }}</x-table.td>
                             <x-table.td>
@@ -52,7 +56,7 @@
                             </x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="8" padding />
+                        <x-table.tr-empty colspan="9" padding />
                     @endforelse
                 </x-slot>
             </x-table>

@@ -10,6 +10,42 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Bangsal extends Model
 {
+    /**
+     * Daftar gudang farmasi yang dimonitor. Tambahkan/kurangi di sini
+     * jika suatu saat cakupan lokasi berubah.
+     */
+    public const GUDANG_FARMASI = [
+        'GF'  => 'GUDANG FARMASI',
+        'IFA' => 'FARMASI A',
+        'AP'  => 'APOTEK/INSTALASI FARMASI',
+        'IFC' => 'INSTALASI FARMASI CATHLAB',
+        'IFO' => 'INSTALASI FARMASI OK',
+        'IFI' => 'INSTALASI FARMASI RAWAT INAP',
+        'IFG' => 'INSTALASI FARMASI IGD',
+        'AMB' => 'GUDANG AMBULANCE',
+    ];
+
+    /**
+     * Daftar bangsal perawatan intensif (ICU) yang diprioritaskan pada laporan.
+     * Tambahkan/kurangi di sini jika suatu saat cakupan ruang intensif berubah.
+     */
+    public const RUANG_ICU = [
+        'ICU'  => 'KAMAR ICU / PICU',
+        'ICU1' => 'KAMAR ICU LANTAI 1',
+        'NICU' => 'KAMAR NICU / PERINA',
+        'HCU'  => 'RUANG PERAWATAN HCU',
+    ];
+
+    public static function gudangFarmasiKeys(): array
+    {
+        return array_keys(self::GUDANG_FARMASI);
+    }
+
+    public static function ruangIcuKeys(): array
+    {
+        return array_keys(self::RUANG_ICU);
+    }
+
     protected $connection = 'mysql_sik';
 
     protected $primaryKey = 'kd_bangsal';

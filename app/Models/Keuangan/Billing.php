@@ -22,6 +22,9 @@ class Billing extends Model
 
     public $timestamps = false;
 
+    /**
+     * @param  string|array<string>|Collection<int,RegistrasiPasien|string>  $noRawat
+     */
     public function scopeTotalBillingan(Builder $query, $noRawat): Builder
     {
         if (empty($noRawat)) {

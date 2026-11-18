@@ -61,9 +61,7 @@ class InputMinmaxStok extends Component
 
         tracker_start('mysql_smc');
 
-        MinmaxStokBarangNonMedis::updateOrCreate([
-            'kode_brng' => $kodeBarang,
-        ], [
+        MinmaxStokBarangNonMedis::updateOrCreate(['kode_brng' => $kodeBarang], [
             'stok_min'     => $stokMin,
             'stok_max'     => $stokMax,
             'kode_suplier' => $kodeSupplier,

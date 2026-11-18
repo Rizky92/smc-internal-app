@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages\RekamMedis;
 
+use App\Jobs\ExportLaporanStatistikJob;
 use App\Livewire\Concerns\DeferredLoading;
 use App\Livewire\Concerns\ExcelExportable;
 use App\Livewire\Concerns\Filterable;
@@ -9,6 +10,7 @@ use App\Livewire\Concerns\FlashComponent;
 use App\Livewire\Concerns\LiveTable;
 use App\Livewire\Concerns\MenuTracker;
 use App\Models\Perawatan\RegistrasiPasien;
+use App\Notifications\Notification;
 use App\View\Components\BaseLayout;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Str;
@@ -24,11 +26,20 @@ class LaporanStatistik extends Component
     use LiveTable;
     use MenuTracker;
 
+    /** @var int */
+    public $option;
+
     /** @var string */
     public $tglAwal;
 
     /** @var string */
     public $tglAkhir;
+
+    /** @var int */
+    private const EXCEL_EXPORT = 1;
+
+    /** @var int */
+    private const BACKGROUND_EXPORT = 2;
 
     protected function queryString(): array
     {
@@ -66,6 +77,36 @@ class LaporanStatistik extends Component
         $this->tglAkhir = now()->endOfWeek()->toDateString();
     }
 
+    public function exportWithOption(int $option): void
+    {
+        $this->option = $option;
+
+        if ($this->option === self::EXCEL_EXPORT) {
+            $this->exportToExcel();
+        } elseif ($this->option === self::BACKGROUND_EXPORT) {
+            $this->exportToBackground();
+        }
+    }
+
+    public function exportToBackground(): void
+    {
+        $userId = user()->nik;
+
+        $payload = [
+            'tglAwal'  => $this->tglAwal,
+            'tglAkhir' => $this->tglAkhir,
+        ];
+
+        ExportLaporanStatistikJob::dispatch($userId, $payload);
+
+        Notification::make()
+            ->message('Export Laporan Statistik sedang berjalan')
+            ->info()
+            ->send(user());
+
+        $this->emit('flash.info', 'Proses export ke Excel telah dimulai, silahkan tunggu beberapa saat.');
+    }
+
     /**
      * @psalm-return array{0: mixed}
      */
@@ -97,8 +138,11 @@ class LaporanStatistik extends Component
                     Str::transliterate($model->tgl_keluar ?? ''),
                     Str::transliterate($model->jam_keluar ?? ''),
                     Str::transliterate($model->diagnosa_awal ?? ''),
-                    Str::transliterate($model->icd_diagnosa ?? ''),
-                    Str::transliterate($model->diagnosa ?? ''),
+                    Str::transliterate($this->diagnosaUtama($model->icd_diagnosa ?? '')),
+                    Str::transliterate($this->diagnosaSekunder($model->icd_diagnosa ?? '')),
+                    Str::transliterate($this->diagnosaUtama($model->diagnosa ?? '')),
+                    Str::transliterate($this->diagnosaSekunder($model->diagnosa ?? '')),
+                    Str::transliterate($model->icd9_prosedur ?? ''),
                     Str::transliterate($model->kd_tindakan_ralan ?? ''),
                     Str::transliterate($model->nm_tindakan_ralan ?? ''),
                     Str::transliterate($model->kd_tindakan_ranap ?? ''),
@@ -106,6 +150,7 @@ class LaporanStatistik extends Component
                     Str::transliterate($model->lama_operasi ?? ''),
                     Str::transliterate($model->rujukan_masuk ?? ''),
                     Str::transliterate($model->dokter_pj ?? ''),
+                    Str::transliterate($model->dpjp_anastesi ?? ''),
                     Str::transliterate($model->kelas ?? ''),
                     Str::transliterate($model->penjamin ?? ''),
                     Str::transliterate($model->status_bayar ?? ''),
@@ -117,6 +162,16 @@ class LaporanStatistik extends Component
                     Str::transliterate($model->kd_pj ?? ''),
                 ]),
         ];
+    }
+
+    protected function diagnosaUtama(string $value): string
+    {
+        return str($value)->split('/(; )/')->first() ?? '';
+    }
+
+    protected function diagnosaSekunder(string $value): string
+    {
+        return str($value)->split('/(; )/')->slice(1)->implode('; ');
     }
 
     protected function columnHeaders(): array
@@ -142,8 +197,11 @@ class LaporanStatistik extends Component
             'Tgl. Pulang',
             'Jam Pulang',
             'Diagnosa Masuk',
-            'ICD Diagnosa',
-            'Diagnosa',
+            'ICD-10 Utama',
+            'ICD-10 Sekunder',
+            'Diagnosa Utama',
+            'Diagnosa Sekunder',
+            'ICD-9',
             'Kode Tindakan Ralan',
             'Tindakan Ralan',
             'Kode Tindakan Ranap',
@@ -151,6 +209,7 @@ class LaporanStatistik extends Component
             'Lama Operasi',
             'Rujukan Masuk',
             'DPJP Ranap',
+            'DPJP Anastesi',
             'Kelas',
             'Penjamin',
             'Status Bayar',

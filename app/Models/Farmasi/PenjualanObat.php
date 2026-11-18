@@ -95,14 +95,16 @@ class PenjualanObat extends Model
             penjualan.tgl_jual as tgl_perawatan,
             detailjual.jumlah as jml,
             null as nm_dokter,
-            "RS Samarinda Medika Citra" as alamat_dokter
+            "RS Samarinda Medika Citra" as alamat_dokter,
+            bangsal.nm_bangsal
         SQL;
 
         return $query
             ->selectRaw($sqlSelect)
             ->leftJoin('pasien', 'penjualan.no_rkm_medis', '=', 'pasien.no_rkm_medis')
             ->leftJoin('detailjual', 'penjualan.nota_jual', '=', 'detailjual.nota_jual')
-            ->where('penjualan.kd_bangsal', $bangsal)
+            ->leftJoin('bangsal', 'penjualan.kd_bangsal', '=', 'bangsal.kd_bangsal')
+            ->when($bangsal, fn ($q) => $q->where('penjualan.kd_bangsal', $bangsal))
             ->where('detailjual.kode_brng', $kodeObat)
             ->whereBetween('penjualan.tgl_jual', [$tglAwal, $tglAkhir]);
     }

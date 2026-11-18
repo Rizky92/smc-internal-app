@@ -17,6 +17,7 @@ use App\Models\Radiologi\PermintaanRadiologi;
 use App\Models\RekamMedis\BerkasDigitalKeperawatan;
 use App\Models\RekamMedis\Pasien;
 use App\Models\RekamMedis\Penjamin;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -457,6 +458,7 @@ class RegistrasiPasien extends Model
             rawat_inap.diagnosa_awal as diagnosa_awal,
             group_concat(distinct diagnosa_pasien.kd_penyakit order by diagnosa_pasien.prioritas asc separator '; ') as icd_diagnosa,
             group_concat(distinct trim(concat_ws(' - ', diagnosa_pasien.kd_penyakit, penyakit.nm_penyakit)) order by diagnosa_pasien.prioritas asc separator '; ') as diagnosa,
+            group_concat(distinct trim(concat_ws(' - ', prosedur_pasien.kode, icd9.deskripsi_pendek)) order by prosedur_pasien.prioritas asc, prosedur_pasien.kode asc separator '; ') as icd9_prosedur,
             group_concat(distinct perawatan_ralan.kd_jenis_prw separator '; ') as kd_tindakan_ralan,
             group_concat(distinct trim(concat_ws(' - ', perawatan_ralan.kd_jenis_prw, jns_perawatan.nm_perawatan)) separator '; ') as nm_tindakan_ralan,
             group_concat(distinct perawatan_ranap.kd_jenis_prw separator '; ') as kd_tindakan_ranap,
@@ -464,6 +466,7 @@ class RegistrasiPasien extends Model
             '-' as lama_operasi,
             rujuk_masuk.perujuk as rujukan_masuk,
             group_concat(distinct dokter_dpjp.nm_dokter separator '; ') as dokter_pj,
+            coalesce(dokter_anastesi.dpjp_anastesi, '-') as dpjp_anastesi,
             kamar.kelas as kelas,
             penjab.png_jawab as penjamin,
             reg_periksa.status_bayar as status_bayar,
@@ -484,6 +487,8 @@ class RegistrasiPasien extends Model
             'rawat_inap.diagnosa_awal',
             'diagnosa_pasien.kd_penyakit',
             'penyakit.nm_penyakit',
+            'prosedur_pasien.kode',
+            'icd9.deskripsi_pendek',
             'perawatan_ralan.kd_jenis_prw',
             'jns_perawatan.nm_perawatan',
             'perawatan_ranap.kd_jenis_prw',
@@ -494,6 +499,7 @@ class RegistrasiPasien extends Model
             'rujuk_masuk.perujuk',
             'dokter_dpjp.kd_dokter',
             'dokter_dpjp.nm_dokter',
+            'dokter_anastesi.dpjp_anastesi',
             'kamar.kelas',
             'penjab.png_jawab',
             'rujuk.rujuk_ke',
@@ -519,6 +525,14 @@ class RegistrasiPasien extends Model
             ->unionAll(TindakanRanapDokter::select(['no_rawat', 'kd_jenis_prw']))
             ->unionAll(TindakanRanapPerawat::select(['no_rawat', 'kd_jenis_prw']));
 
+        $dokterAnastesi = Operasi::query()
+            ->select(['operasi.no_rawat', DB::raw("group_concat(distinct dokter.nm_dokter separator '; ') as dpjp_anastesi")])
+            ->join('dokter', 'operasi.dokter_anestesi', '=', 'dokter.kd_dokter')
+            ->whereNotNull('operasi.dokter_anestesi')
+            ->whereRaw("trim(operasi.dokter_anestesi) <> ''")
+            ->whereRaw("trim(operasi.dokter_anestesi) <> '-'")
+            ->groupBy('operasi.no_rawat');
+
         return $query
             ->selectRaw($sqlSelect)
             ->withCasts(['kunjungan_ke' => 'int'])
@@ -530,12 +544,15 @@ class RegistrasiPasien extends Model
             ->leftJoinSub($rawatInap, 'rawat_inap', fn (JoinClause $join) => $join->on('reg_periksa.no_rawat', '=', 'rawat_inap.no_rawat'))
             ->leftJoin('dpjp_ranap', 'reg_periksa.no_rawat', '=', 'dpjp_ranap.no_rawat')
             ->leftJoin(DB::raw('dokter dokter_dpjp'), 'dpjp_ranap.kd_dokter', '=', 'dokter_dpjp.kd_dokter')
+            ->leftJoinSub($dokterAnastesi, 'dokter_anastesi', fn (JoinClause $join) => $join->on('reg_periksa.no_rawat', '=', 'dokter_anastesi.no_rawat'))
             ->leftJoin('kamar', 'rawat_inap.kd_kamar', '=', 'kamar.kd_kamar')
             ->leftJoin('bangsal', 'kamar.kd_bangsal', '=', 'bangsal.kd_bangsal')
             ->leftJoin('rujuk', 'reg_periksa.no_rawat', '=', 'rujuk.no_rawat')
             ->leftJoin('rujuk_masuk', 'reg_periksa.no_rawat', '=', 'rujuk_masuk.no_rawat')
             ->leftJoin('diagnosa_pasien', 'reg_periksa.no_rawat', '=', 'diagnosa_pasien.no_rawat')
             ->leftJoin('penyakit', 'diagnosa_pasien.kd_penyakit', '=', 'penyakit.kd_penyakit')
+            ->leftJoin('prosedur_pasien', 'reg_periksa.no_rawat', '=', 'prosedur_pasien.no_rawat')
+            ->leftJoin('icd9', 'prosedur_pasien.kode', '=', 'icd9.kode')
             ->leftJoinSub($perawatanRalan, 'perawatan_ralan', fn (JoinClause $join) => $join->on('reg_periksa.no_rawat', '=', 'perawatan_ralan.no_rawat'))
             ->leftJoin('jns_perawatan', 'perawatan_ralan.kd_jenis_prw', '=', 'jns_perawatan.kd_jenis_prw')
             ->leftJoinSub($perawatanRanap, 'perawatan_ranap', fn (JoinClause $join) => $join->on('reg_periksa.no_rawat', '=', 'perawatan_ranap.no_rawat'))
@@ -1339,5 +1356,46 @@ class RegistrasiPasien extends Model
             ->where('status_lanjut', 'Ranap')
             ->when(! empty($kodePoliklinik), fn (Builder $q) => $q->where('reg_periksa.kd_poli', $kodePoliklinik))
             ->whereBetween('tgl_registrasi', [$tglAwal, $tglAkhir]);
+    }
+
+    /**
+     * @param  string|Carbon|null  $tglAwal
+     * @param  string|Carbon|null  $tglAkhir
+     */
+    public function scopeSummaryBillingMCU(Builder $query, $tglAwal = null, $tglAkhir = null, string $kodePoli = 'U0036'): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth();
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth();
+        }
+
+        $sqlSelect = <<<'SQL'
+            reg_periksa.no_rawat,
+            reg_periksa.no_rkm_medis,
+            pasien.nm_pasien,
+            reg_periksa.tgl_registrasi,
+            penjab.png_jawab,
+            reg_periksa.p_jawab,
+            dokter.nm_dokter,
+            ifnull((select sum(billing.totalbiaya) from billing where billing.no_rawat = reg_periksa.no_rawat), 0) as total_billing
+            SQL;
+
+        $this->addSearchConditions([
+            'pasien.nm_pasien',
+            'penjab.png_jawab',
+            'dokter.nm_dokter',
+        ]);
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->join('pasien', 'reg_periksa.no_rkm_medis', 'pasien.no_rkm_medis')
+            ->join('penjab', 'reg_periksa.kd_pj', 'penjab.kd_pj')
+            ->join('dokter', 'reg_periksa.kd_dokter', 'dokter.kd_dokter')
+            ->where('reg_periksa.kd_poli', $kodePoli)
+            ->where('reg_periksa.status_bayar', 'Sudah Bayar')
+            ->whereBetween('reg_periksa.tgl_registrasi', [$tglAwal, $tglAkhir]);
     }
 }
