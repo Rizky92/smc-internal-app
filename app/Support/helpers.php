@@ -1,6 +1,7 @@
 <?php
 
 use App\Database\Eloquent\Authenticatable;
+use App\Models\Kepegawaian\Pegawai;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -266,6 +267,38 @@ if (! function_exists('tracker_dispose')) {
     {
         DB::connection($connection)->flushQueryLog();
         DB::connection($connection)->disableQueryLog();
+    }
+}
+
+if (! function_exists('user_jabatan_id')) {
+    /**
+     * Get the current user's position ID (kd_jbtn) from mysql_sik.
+     */
+    function user_jabatan_id(): ?string
+    {
+        $nik = user()->nik;
+
+        if (empty($nik)) {
+            return null;
+        }
+
+        return DB::connection('mysql_sik')
+            ->table('petugas')
+            ->where('nip', $nik)
+            ->value('kd_jbtn');
+    }
+}
+
+if (! function_exists('user_departemen_id')) {
+    function user_departemen_id(): ?string
+    {
+        $nik = user()->nik;
+
+        if (empty($nik)) {
+            return null;
+        }
+
+        return Pegawai::where('nik', $nik)->value('departemen');
     }
 }
 

@@ -45,9 +45,16 @@
 @endphp
 
 <div {{ $attributes->merge(['class' => $calloutClass]) }}>
-    <h6 {{ $title->attributes }}>
-        <i class="{{ $iconClass }}"></i>
-        <span class="ml-2">{{ $title }}</span>
-    </h6>
-    <p {{ $content->attributes }}>{{ $content }}</p>
+    @if ($title)
+        <h6 {{ $title->attributes }}>
+            <i class="{{ $iconClass }}"></i>
+            <span class="ml-2">{{ $title }}</span>
+        </h6>
+    @endif
+
+    @if ($content)
+        <p {{ $content->attributes }}>{{ $content }}</p>
+    @else
+        <p>{{ $slot }}</p>
+    @endif
 </div>

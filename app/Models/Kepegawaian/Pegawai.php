@@ -4,6 +4,7 @@ namespace App\Models\Kepegawaian;
 
 use App\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Pegawai extends Model
 {
@@ -18,6 +19,11 @@ class Pegawai extends Model
     public $incrementing = true;
 
     public $timestamps = false;
+
+    public function departemen(): BelongsTo
+    {
+        return $this->belongsTo(Departemen::class, 'departemen', 'dep_id');
+    }
 
     public static function findNIP(string $nip): self
     {
