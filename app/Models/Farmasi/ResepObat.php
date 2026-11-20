@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -70,6 +71,75 @@ class ResepObat extends Model
                             ->where('reg_periksa.kd_poli', '=', 'IGDK');
                 }
             });
+    }
+
+    /**
+     * Resep BPJS tervalidasi yang belum memiliki SJP Apotek (no_sjp), per obat.
+     *
+     * Status dihitung per SEP: selama bridging_apotek_bpjs tidak memiliki baris
+     * untuk no_sep tersebut, resep dianggap belum terbridging.
+     */
+    public function scopeResepBpjsBelumTerbridging(Builder $query, string $tglAwal, string $tglAkhir): Builder
+    {
+        if (empty($tglAwal)) {
+            $tglAwal = now()->startOfMonth()->toDateString();
+        }
+
+        if (empty($tglAkhir)) {
+            $tglAkhir = now()->endOfMonth()->toDateString();
+        }
+
+        $this->addSearchConditions([
+            'resep_obat.no_resep',
+            'pasien.nm_pasien',
+            'poliklinik.nm_poli',
+            'detail_pemberian_obat.kode_brng',
+            'databarang.nama_brng',
+            'bridging_sep.no_sep',
+            'bridging_sep.nomr',
+            'bridging_sep.no_kartu',
+        ]);
+
+        $sqlSelect = <<<'SQL'
+            resep_obat.no_resep no_resep,
+            concat(resep_obat.tgl_perawatan, ' ', resep_obat.jam) waktu_validasi,
+            pasien.nm_pasien nama_pasien,
+            poliklinik.nm_poli nm_poli,
+            detail_pemberian_obat.kode_brng kode_obat,
+            databarang.nama_brng nama_obat,
+            detail_pemberian_obat.total harga_obat,
+            bridging_sep.no_sep no_sep,
+            bridging_sep.nomr no_rm,
+            bridging_sep.no_kartu no_kartu
+        SQL;
+
+        return $query
+            ->selectRaw($sqlSelect)
+            ->withCasts(['harga_obat' => 'float'])
+            ->join('bridging_sep', 'bridging_sep.no_rawat', '=', 'resep_obat.no_rawat')
+            ->join('reg_periksa', 'reg_periksa.no_rawat', '=', 'bridging_sep.no_rawat')
+            ->leftJoin('pasien', 'pasien.no_rkm_medis', '=', 'reg_periksa.no_rkm_medis')
+            ->leftJoin('poliklinik', 'poliklinik.kd_poli', '=', 'reg_periksa.kd_poli')
+            ->join('detail_pemberian_obat', function (JoinClause $join): void {
+                $join->on('detail_pemberian_obat.no_rawat', '=', 'resep_obat.no_rawat')
+                    ->on('detail_pemberian_obat.tgl_perawatan', '=', 'resep_obat.tgl_perawatan')
+                    ->on('detail_pemberian_obat.jam', '=', 'resep_obat.jam');
+            })
+            ->join('databarang', 'databarang.kode_brng', '=', 'detail_pemberian_obat.kode_brng')
+            ->whereNotExists(function (QueryBuilder $query): void {
+                $query->select(DB::raw(1))
+                    ->from('bridging_apotek_bpjs')
+                    ->whereColumn('bridging_apotek_bpjs.no_sep', '=', 'bridging_sep.no_sep');
+            })
+            ->where('resep_obat.tgl_perawatan', '>', '0000-00-00')
+            ->whereBetween('resep_obat.tgl_perawatan', [$tglAwal, $tglAkhir])
+            ->where('resep_obat.status', 'ralan')
+            ->where('bridging_sep.jnspelayanan', '2')
+            ->whereNotIn('reg_periksa.kd_poli', ['IGDK', 'U0026'])
+            ->orderByDesc('resep_obat.tgl_perawatan')
+            ->orderByDesc('resep_obat.jam')
+            ->orderBy('resep_obat.no_resep')
+            ->orderBy('databarang.nama_brng');
     }
 
     public function scopeKunjunganResep(Builder $query, string $jenisResep = 'umum', string $tglAwal = '', string $tglAkhir = '', string $shift = 'Pagi'): Builder
