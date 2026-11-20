@@ -73,6 +73,8 @@ class ResepBpjsBelumTerbridging extends Component
                 ->map(fn (ResepObat $model): array => [
                     'No. Resep'     => $model->no_resep,
                     'No. SEP'       => $model->no_sep,
+                    'No. RM'        => $model->no_rm,
+                    'No. Kartu'     => $model->no_kartu,
                     'Nama Pasien'   => $model->nama_pasien,
                     'Poliklinik'    => $model->nm_poli,
                     'Kode Obat'     => $model->kode_obat,
@@ -88,6 +90,8 @@ class ResepBpjsBelumTerbridging extends Component
         return [
             'No. Resep',
             'No. SEP',
+            'No. RM',
+            'No. Kartu',
             'Nama Pasien',
             'Poliklinik',
             'Kode Obat',

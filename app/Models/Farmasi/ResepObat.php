@@ -96,6 +96,8 @@ class ResepObat extends Model
             'detail_pemberian_obat.kode_brng',
             'databarang.nama_brng',
             'bridging_sep.no_sep',
+            'bridging_sep.nomr',
+            'bridging_sep.no_kartu',
         ]);
 
         $sqlSelect = <<<'SQL'
@@ -106,7 +108,9 @@ class ResepObat extends Model
             detail_pemberian_obat.kode_brng kode_obat,
             databarang.nama_brng nama_obat,
             detail_pemberian_obat.total harga_obat,
-            bridging_sep.no_sep no_sep
+            bridging_sep.no_sep no_sep,
+            bridging_sep.nomr no_rm,
+            bridging_sep.no_kartu no_kartu
         SQL;
 
         return $query

@@ -7,6 +7,8 @@
                 <x-slot name="columns">
                     <x-table.th name="no_resep" title="No. Resep" />
                     <x-table.th name="no_sep" title="No. SEP" />
+                    <x-table.th name="no_rm" title="No. RM" />
+                    <x-table.th name="no_kartu" title="No. Kartu" />
                     <x-table.th name="nama_pasien" title="Nama Pasien" />
                     <x-table.th name="nm_poli" title="Poliklinik" />
                     <x-table.th name="kode_obat" title="Kode Obat" />
@@ -19,6 +21,8 @@
                         <x-table.tr>
                             <x-table.td>{{ $item->no_resep }}</x-table.td>
                             <x-table.td>{{ $item->no_sep }}</x-table.td>
+                            <x-table.td>{{ $item->no_rm }}</x-table.td>
+                            <x-table.td>{{ $item->no_kartu }}</x-table.td>
                             <x-table.td>{{ $item->nama_pasien }}</x-table.td>
                             <x-table.td>{{ $item->nm_poli }}</x-table.td>
                             <x-table.td>{{ $item->kode_obat }}</x-table.td>
@@ -27,7 +31,7 @@
                             <x-table.td>{{ $item->waktu_validasi }}</x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="9" padding />
+                        <x-table.tr-empty colspan="11" padding />
                     @endforelse
                 </x-slot>
             </x-table>
