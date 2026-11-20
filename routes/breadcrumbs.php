@@ -302,6 +302,11 @@ Breadcrumbs::for('admin.farmasi.laporan-potensi-prb', function (Trail $trail): v
     $trail->push('Laporan Potensi PRB', route('admin.farmasi.laporan-potensi-prb'));
 });
 
+Breadcrumbs::for('admin.farmasi.resep-bpjs-belum-terbridging', function (Trail $trail): void {
+    $trail->parent('admin.farmasi');
+    $trail->push('Resep Belum Terbridging', route('admin.farmasi.resep-bpjs-belum-terbridging'));
+});
+
 Breadcrumbs::for('admin.rekam-medis', function (Trail $trail): void {
     $trail->parent('admin.dashboard');
     $trail->push('Rekam Medis');

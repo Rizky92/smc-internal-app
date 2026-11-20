@@ -349,6 +349,7 @@ class Menu
                     'farmasi.kunjungan-walk-in.read',
                     'farmasi.hpp-pembelian-terakhir.read',
                     'farmasi.laporan-potensi-prb.read',
+                    'farmasi.resep-bpjs-belum-terbridging.read',
                 ]),
                 'items' => [
                     [
@@ -464,6 +465,12 @@ class Menu
                         'icon'              => 'fas fa-file-alt',
                         'url'               => route('admin.farmasi.laporan-potensi-prb'),
                         'hasAnyPermissions' => $user->can('farmasi.laporan-potensi-prb.read'),
+                    ],
+                    [
+                        'name'              => 'Resep Belum Terbridging',
+                        'icon'              => 'fas fa-file-alt',
+                        'url'               => route('admin.farmasi.resep-bpjs-belum-terbridging'),
+                        'hasAnyPermissions' => $user->can('farmasi.resep-bpjs-belum-terbridging.read'),
                     ],
                 ],
             ],
