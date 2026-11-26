@@ -22,6 +22,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->command('antrean:clean-pintu')->timezone('Asia/Singapore')->daily();
+        $schedule->command('exports:clean')->hourly();
     }
 
     /**
