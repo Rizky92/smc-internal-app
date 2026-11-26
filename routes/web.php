@@ -339,6 +339,10 @@ Route::prefix('admin')
                 Route::get('laporan-potensi-prb', Farmasi\LaporanPotensiPrb::class)
                     ->name('laporan-potensi-prb')
                     ->middleware('can:farmasi.laporan-potensi-prb.read');
+
+                Route::get('resep-bpjs-belum-terbridging', Farmasi\ResepBpjsBelumTerbridging::class)
+                    ->name('resep-bpjs-belum-terbridging')
+                    ->middleware('can:farmasi.resep-bpjs-belum-terbridging.read');
             });
 
         Route::prefix('rekam-medis')
