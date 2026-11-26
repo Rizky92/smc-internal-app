@@ -11,13 +11,11 @@
                 <x-filter.label constant-width>Shift Kerja:</x-filter.label>
                 <x-filter.select model="shift" :options="['Pagi' => 'Pagi', 'Siang' => 'Siang', 'Malam' => 'Malam']" />
                 <x-filter.label class="ml-auto pr-3">Gudang:</x-filter.label>
-                <x-filter.select
-                    model="bangsal"
-                    :options="['IFA' => 'INSTALASI FARMASI A', 'AP' => 'APOTEK/INSTALASI FARMASI', 'IFC' => 'INSTALASI FARMASI CATHLAB', 'IFO' => 'INSTALASI FARMASI OK', 'KO' => 'KAMAR OPERASI OK', 'IFI' => 'INSTALASI FARMASI RAWAT INAP', 'IFG' => 'INSTALASI FARMASI IGD']" />
+                <x-filter.select2 livewire name="bangsal" placeholder="-" placeholder-value="-" reset-on="button#reset-filter-defecta-depo" :selected="$bangsal" :options="$this->dataBangsal" />
             </x-row-col-flex>
             <x-row-col-flex class="mt-2">
                 <x-filter.select-perpage />
-                <x-filter.button-reset-filters class="ml-auto" />
+                <x-filter.button-reset-filters class="ml-auto" id="reset-filter-defecta-depo" />
                 <x-filter.search class="ml-2" />
             </x-row-col-flex>
         </x-slot>
@@ -56,7 +54,7 @@
                             </x-table.td>
                         </x-table.tr>
                     @empty
-                        <x-table.tr-empty colspan="9" padding />
+                        <x-table.tr-empty colspan="9" padding :text="$bangsal === '-' ? 'Pilih depo untuk menampilkan defecta' : 'Tidak ada yang dapat ditampilkan saat ini'" />
                     @endforelse
                 </x-slot>
             </x-table>
