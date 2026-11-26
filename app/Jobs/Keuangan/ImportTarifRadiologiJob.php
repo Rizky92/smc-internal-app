@@ -3,6 +3,7 @@
 namespace App\Jobs\Keuangan;
 
 use App\Exceptions\ImportTarifException;
+use App\Jobs\Keuangan\Concerns\ImportsTarifRows;
 use App\Models\Aplikasi\User;
 use App\Models\Keuangan\JenisPerawatanRadiologi;
 use App\Models\RekamMedis\Penjamin;
@@ -23,6 +24,7 @@ use Throwable;
 class ImportTarifRadiologiJob implements ShouldQueue
 {
     use Dispatchable;
+    use ImportsTarifRows;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
@@ -103,11 +105,7 @@ class ImportTarifRadiologiJob implements ShouldQueue
 
                 $penjaminMap = Penjamin::query()->where('status', '1')->pluck('kd_pj')->flip();
 
-                $rows = $reader->getRows();
-
-                foreach ($rows as $index => $row) {
-
-                    $line = $index + 2;
+                foreach ($this->dataRows($reader) as $line => $row) {
 
                     // Map UI headers to database keys
                     $data = [];
@@ -115,18 +113,17 @@ class ImportTarifRadiologiJob implements ShouldQueue
                         $data[$dbKey] = $row[$uiHeader] ?? null;
                     }
 
+                    $raw = $data;
+
+                    if ($this->blankCell($data['kelas'])) {
+                        $data['kelas'] = '-';
+                    }
+
                     if (! $penjaminMap->has($data['kd_pj'])) {
                         throw new ImportTarifException("Baris {$line}: Jenis Bayar '{$data['kd_pj']}' tidak ditemukan");
                     }
 
-                    $data['bagian_rs'] = parse_numeric($data['bagian_rs'] ?? 0);
-                    $data['bhp'] = parse_numeric($data['bhp'] ?? 0);
-                    $data['tarif_perujuk'] = parse_numeric($data['tarif_perujuk'] ?? 0);
-                    $data['tarif_tindakan_dokter'] = parse_numeric($data['tarif_tindakan_dokter'] ?? 0);
-                    $data['tarif_tindakan_petugas'] = parse_numeric($data['tarif_tindakan_petugas'] ?? 0);
-                    $data['kso'] = parse_numeric($data['kso'] ?? 0);
-                    $data['menejemen'] = parse_numeric($data['menejemen'] ?? 0);
-                    $data['total_byr'] = parse_numeric($data['total_byr'] ?? 0);
+                    $data = $this->parseAmounts($line, $data, $headerMapping, ['bagian_rs', 'bhp', 'tarif_perujuk', 'tarif_tindakan_dokter', 'tarif_tindakan_petugas', 'kso', 'menejemen', 'total_byr']);
 
                     $subtotal = (
                         (float) $data['bagian_rs'] +
@@ -156,11 +153,11 @@ class ImportTarifRadiologiJob implements ShouldQueue
                                 'menejemen'              => $data['menejemen'],
                                 'total_byr'              => $data['total_byr'],
                                 'kd_pj'                  => $data['kd_pj'] ?? '-',
-                                'kelas'                  => $data['kelas'] ?? '-',
+                                'kelas'                  => $data['kelas'],
                                 'status'                 => '1',
                             ]);
                     } catch (QueryException $e) {
-                        throw new ImportTarifException("Baris {$line}: Gagal menyimpan data ke database. Pastikan format data sudah benar.");
+                        throw $this->saveFailed($e, 'jns_perawatan_radiologi', $line, $headerMapping, $raw);
                     }
                 }
 
